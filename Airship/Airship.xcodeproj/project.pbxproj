@@ -122,6 +122,7 @@
 		6014AD6C2C2032730072DCF0 /* ChallengeResolverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6014AD6A2C2032360072DCF0 /* ChallengeResolverTest.swift */; };
 		6014AD752C20410B0072DCF0 /* airship.der in Resources */ = {isa = PBXBuildFile; fileRef = 6014AD742C20410A0072DCF0 /* airship.der */; };
 		6018AF572B29C20A008E528B /* SearchEventTemplateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6018AF562B29C20A008E528B /* SearchEventTemplateTest.swift */; };
+		602AD0D52D7242B300C7D566 /* ThomasSmsLocale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602AD0D42D7242B300C7D566 /* ThomasSmsLocale.swift */; };
 		603269532BF4B141007F7F75 /* AdditionalAudienceCheckerApiClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603269522BF4B141007F7F75 /* AdditionalAudienceCheckerApiClient.swift */; };
 		603269552BF4B8D5007F7F75 /* AdditionalAudienceCheckerResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603269542BF4B8D5007F7F75 /* AdditionalAudienceCheckerResolver.swift */; };
 		603269582BF7550E007F7F75 /* AdditionalAudienceCheckerResolverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603269572BF7550E007F7F75 /* AdditionalAudienceCheckerResolverTest.swift */; };
@@ -147,6 +148,7 @@
 		608B16E82C2C6DDB005298FA /* ChannelSubscriptionListProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608B16E72C2C6DDB005298FA /* ChannelSubscriptionListProvider.swift */; };
 		608B16F12C2D5F0D005298FA /* BaseCachingRemoteDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608B16F02C2D5F0D005298FA /* BaseCachingRemoteDataProvider.swift */; };
 		60956D862CBE7CFA00950172 /* AirshipLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E1C9A26447B3800B11791 /* AirshipLock.swift */; };
+		609843562D6F518900690371 /* SmsLocalePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 609843552D6F518900690371 /* SmsLocalePicker.swift */; };
 		60A292112CB7C5C30096F5EB /* TestDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */; };
 		60A364ED2C3479BF00B05E26 /* ExecutionWindowTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A364EC2C3479BF00B05E26 /* ExecutionWindowTest.swift */; };
 		60A5CC082B28DC500017EDB2 /* NotificationCategoriesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A5CC072B28DC500017EDB2 /* NotificationCategoriesTest.swift */; };
@@ -1384,6 +1386,7 @@
 		6014AD6A2C2032360072DCF0 /* ChallengeResolverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeResolverTest.swift; sourceTree = "<group>"; };
 		6014AD742C20410A0072DCF0 /* airship.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = airship.der; sourceTree = "<group>"; };
 		6018AF562B29C20A008E528B /* SearchEventTemplateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchEventTemplateTest.swift; sourceTree = "<group>"; };
+		602AD0D42D7242B300C7D566 /* ThomasSmsLocale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasSmsLocale.swift; sourceTree = "<group>"; };
 		603269522BF4B141007F7F75 /* AdditionalAudienceCheckerApiClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdditionalAudienceCheckerApiClient.swift; sourceTree = "<group>"; };
 		603269542BF4B8D5007F7F75 /* AdditionalAudienceCheckerResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdditionalAudienceCheckerResolver.swift; sourceTree = "<group>"; };
 		603269572BF7550E007F7F75 /* AdditionalAudienceCheckerResolverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdditionalAudienceCheckerResolverTest.swift; sourceTree = "<group>"; };
@@ -1405,6 +1408,7 @@
 		608B16E52C2C1137005298FA /* SubscriptionListProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListProvider.swift; sourceTree = "<group>"; };
 		608B16E72C2C6DDB005298FA /* ChannelSubscriptionListProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelSubscriptionListProvider.swift; sourceTree = "<group>"; };
 		608B16F02C2D5F0D005298FA /* BaseCachingRemoteDataProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseCachingRemoteDataProvider.swift; sourceTree = "<group>"; };
+		609843552D6F518900690371 /* SmsLocalePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmsLocalePicker.swift; sourceTree = "<group>"; };
 		60A364EC2C3479BF00B05E26 /* ExecutionWindowTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutionWindowTest.swift; sourceTree = "<group>"; };
 		60A5CC072B28DC500017EDB2 /* NotificationCategoriesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCategoriesTest.swift; sourceTree = "<group>"; };
 		60A5CC0B2B29AE890017EDB2 /* ProximityRegionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProximityRegionTest.swift; sourceTree = "<group>"; };
@@ -4196,6 +4200,7 @@
 				6EED68282CE28C960087CDCB /* ThomasVisibilityInfo.swift */,
 				6EED67742CDEE8460087CDCB /* ThomasWindowSize.swift */,
 				60CE9BDD2D0B6A0900A8B625 /* ThomasPagerControllerBranching.swift */,
+				602AD0D42D7242B300C7D566 /* ThomasSmsLocale.swift */,
 			);
 			name = Types;
 			sourceTree = "<group>";
@@ -4225,6 +4230,7 @@
 				6EF27DE22730E6F900548DA3 /* RadioInputController.swift */,
 				6EF27DE82730E85700548DA3 /* RadioInput.swift */,
 				A6849386273290520021675E /* Score.swift */,
+				609843552D6F518900690371 /* SmsLocalePicker.swift */,
 			);
 			name = Forms;
 			sourceTree = "<group>";
@@ -5518,6 +5524,7 @@
 				99E433942C9A03D9006436B9 /* Pager.swift in Sources */,
 				6E698E5F267BF63B00654DB2 /* ApplicationState.swift in Sources */,
 				8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */,
+				602AD0D52D7242B300C7D566 /* ThomasSmsLocale.swift in Sources */,
 				6E698DF026790AC300654DB2 /* AirshipLogger.swift in Sources */,
 				6EFD6D8B272A53FB005B26F1 /* PagerController.swift in Sources */,
 				6E664BD326C4917000A2C8E5 /* RemoveTagsAction.swift in Sources */,
@@ -5650,6 +5657,7 @@
 				6E68203228EDE3E200A4F90B /* LiveActivityRestorer.swift in Sources */,
 				6E92EC8D2849378E0038802D /* PermissionPrompter.swift in Sources */,
 				6EDE5F4F2BA248FF00E33D04 /* TouchViewModifier.swift in Sources */,
+				609843562D6F518900690371 /* SmsLocalePicker.swift in Sources */,
 				6E1892DE2694F1C100417887 /* ChannelRegistrar.swift in Sources */,
 				6E2F5A8E2A66FE8900CABD3D /* AirshipTimeCriteria.swift in Sources */,
 				6E213B182BC60AF100BF24AE /* AirshipWeakValueHolder.swift in Sources */,

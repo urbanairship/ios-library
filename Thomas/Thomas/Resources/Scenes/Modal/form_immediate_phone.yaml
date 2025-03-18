@@ -1,0 +1,231 @@
+---
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  default_placement:
+    size:
+      width: 100%
+      height: auto
+    margin:
+      start: 16
+      end: 16
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.75
+view:
+  type: state_controller
+  view:
+    type: form_controller
+    validation_mode:
+        type: immediate
+    identifier: a_form
+    submit: submit_event
+    view:
+      type: scroll_layout
+      direction: vertical
+      view:
+        type: container
+        background_color:
+          default:
+            hex: "#ffffff"
+            alpha: 1
+        items:
+          - position:
+              horizontal: center
+              vertical: center
+            size:
+              width: 100%
+              height: auto
+            margin:
+              top: 24
+              start: 24
+              bottom: 24
+              end: 24
+            view:
+              type: linear_layout
+              direction: vertical
+              items:
+
+                #
+                # Text Input type: email
+                #
+
+                - size:
+                    width: 100%
+                    height: auto
+                  view:
+                    type: label
+                    text: Phone number with placeholder
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 12
+                    bottom: 12
+                  view:
+                    type: text_input
+                    place_holder: Tap in here
+                    identifier: text_input_sms_1
+                    border:
+                      radius: 5
+                      stroke_width: 1
+                      stroke_color:
+                        default:
+                          type: hex
+                          hex: "#cccccc"
+                          alpha: 1
+                    text_appearance:
+                      alignment: start
+                      font_size: 20
+                      color:
+                        default:
+                          type: hex
+                          hex: "#a8323a"
+                          alpha: 1
+                    input_type: sms
+                    locales:
+                      - country_code: "US"
+                        prefix: "+1"
+                      - country_code: "FR"
+                        prefix: "+33"
+                      - country_code: "UA"
+                        prefix: "+380"
+                    required: true
+                    on_error:
+                      state_actions:
+                        - type: set
+                          key: is_valid_email
+                          value: "error"
+                    on_valid:
+                      state_actions:
+                        - type: set
+                          key: is_valid_email
+                          value: "valid"
+                    on_edit:
+                      state_actions:
+                        - type: set
+                          key: is_valid_email
+                          value: "editing"
+
+                - size:
+                    width: 100%
+                    height: auto
+                  view:
+                    type: label
+                    text: Phone with no placeholder
+                    text_appearance:
+                      alignment: center
+                      font_size: 14
+                      color:
+                        default:
+                          hex: "#000000"
+                          alpha: 1
+                - size:
+                    width: 100%
+                    height: auto
+                  margin:
+                    top: 12
+                    bottom: 12
+                  view:
+                    type: text_input
+                    identifier: text_input_sms_2
+                    border:
+                      radius: 5
+                      stroke_width: 1
+                      stroke_color:
+                        default:
+                          type: hex
+                          hex: "#cccccc"
+                          alpha: 1
+                    text_appearance:
+                      alignment: start
+                      font_size: 20
+                      color:
+                        default:
+                          type: hex
+                          hex: "#a8323a"
+                          alpha: 1
+                    input_type: sms
+                    locales:
+                      - country_code: "US"
+                        prefix: "+1"
+                        registration:
+                          type: opt_in
+                          sender_id: "123123123"
+                      - country_code: "FR"
+                        prefix: "+33"
+                        registration:
+                          type: opt_in
+                          sender_id: "123123123"
+                      - country_code: "UA"
+                        prefix: "+380"
+                        registration:
+                          type: opt_in
+                          sender_id: "123123123"
+                    required: false
+                    on_error:
+                      state_actions:
+                        - type: set
+                          key: is_valid_email
+                          value: "error"
+                    on_valid:
+                      state_actions:
+                        - type: set
+                          key: is_valid_email
+                          value: "valid"
+                    on_edit:
+                      state_actions:
+                        - type: set
+                          key: is_valid_email
+                          value: "editing"
+                - margin:
+                  size:
+                    height: auto
+                    width: 100%
+                  view:
+                    when_state_matches:
+                        key: is_valid_email
+                        value:
+                          equals: false
+                    background_color:
+                      default:
+                        alpha: 1
+                        hex: "#222222"
+                        type: hex
+                    border:
+                      radius: 0
+                      stroke_color:
+                        default:
+                          alpha: 1
+                          hex: "#222222"
+                          type: hex
+                      stroke_width: 1
+                    enabled:
+                        - form_validation
+                    button_click:
+                      - form_submit
+                      - dismiss
+                    identifier: e49c1d9a-1118-4a7b-8ae8-2e1ce42b0f1a
+                    label:
+                      text: Submit
+                      text_appearance:
+                        alignment: center
+                        color:
+                          default:
+                            alpha: 1
+                            hex: "#FFFFFF"
+                            type: hex
+                        font_families:
+                          - sans-serif
+                        font_size: 24
+                      type: label
+                    type: label_button

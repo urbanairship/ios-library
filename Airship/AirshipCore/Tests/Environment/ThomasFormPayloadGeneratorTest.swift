@@ -15,7 +15,8 @@ struct ThomasFormPayloadGeneratorTest {
                     "some-toggle-input": .toggle(true),
                     "some-score-input": .score(7),
                     "some-text-input": .text("neat text"),
-                    "some-email-input": .emailText("email@email.email"),
+                    "some-email-input": .email("email@email.email"),
+                    "some-sms-input": .sms("123"),
                     "some-child-score": .score(8),
                     "some-child-form": .form(
                         responseType: "some-child-form-response",
@@ -33,7 +34,8 @@ struct ThomasFormPayloadGeneratorTest {
 
                     // nil gets filtered out
                     "text-nil-filtered": .text(nil),
-                    "email-nil-filtered": .emailText(nil),
+                    "email-nil-filtered": .email(nil),
+                    "sms-nil-filtered": .sms(nil),
                     "score-nil-filtered": .score(nil),
                     "radio-nil-filtered": .radio(nil)
                 ]
@@ -64,6 +66,10 @@ struct ThomasFormPayloadGeneratorTest {
               "some-email-input": {
                 "type": "email_input",
                 "value": "email@email.email"
+              },
+              "some-sms-input": {
+                "type": "sms_input",
+                "value": "123"
               },
               "some-child-score": {
                 "type": "score",
@@ -110,7 +116,7 @@ struct ThomasFormPayloadGeneratorTest {
                 scoreID: "some-child-score",
                 children: [
                     "some-text-input": .text("neat text"),
-                    "some-email-input": .emailText("email@email.email"),
+                    "some-email-input": .email("email@email.email"),
                     "some-child-score": .score(8),
 
                     // nil gets filtered out
@@ -178,8 +184,8 @@ struct ThomasFormPayloadGeneratorTest {
         let pendingField = ThomasFormField.asyncField(identifier: "some-pending-async-id", input: .score(7), earlyProcessingDelay: 100.0) { .invalid }
 
         let fields: [ThomasFormField] = [
-            ThomasFormField.invalidField(identifier: "some-invalid-id", input: .emailText("neat")),
-            ThomasFormField.validField(identifier: "some-valid-id", input: .emailText("neat"), result: .init(value: .emailText("actual"))),
+            ThomasFormField.invalidField(identifier: "some-invalid-id", input: .email("neat")),
+            ThomasFormField.validField(identifier: "some-valid-id", input: .email("neat"), result: .init(value: .email("actual"))),
             errorField,
             pendingField
         ]

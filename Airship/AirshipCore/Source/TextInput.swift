@@ -45,16 +45,19 @@ struct TextInput: View {
             return .default
         case .textMultiline:
             return .default
+        case .sms:
+            return .phonePad
         }
     }
 #endif
 
     @ViewBuilder
-    private func createTextEditor() -> some View {
+    private func makeTextEditor() -> some View {
         if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
             AirshipTextField(
                 info: self.info,
                 constraints: constraints,
+                alignment: self.textFieldAlignment,
                 binding: self.$viewModel.input,
                 isEditing: $isEditing
             )
@@ -65,7 +68,7 @@ struct TextInput: View {
                 text: self.$viewModel.input,
                 isEditing: $isEditing
             )
-            .constraints(constraints, alignment: .topLeading)
+            .constraints(constraints, alignment: self.textFieldAlignment)
             .airshipOnChangeOf(self.isEditing) { newValue in
                 let focusedID = newValue ? self.info.properties.identifier : nil
                 self.thomasEnvironment.focusedID = focusedID
@@ -74,34 +77,78 @@ struct TextInput: View {
 #endif
         }
     }
+    
+    @ViewBuilder
+    private func inputAccessoryView() -> some View {
+#if !os(watchOS)
+        if
+            self.info.properties.inputType == .sms,
+            let locales = self.viewModel.availableLocales
+        {
+            SmsLocalePicker(selectedLocale: $viewModel.selectedSmsLocale, availableLocales: locales)
+        } else {
+            EmptyView()
+        }
+#else
+        EmptyView()
+#endif
+    }
+
+
+
+    var textFieldAlignment: Alignment {
+        return switch(self.info.properties.inputType) {
+        case .email, .text, .number, .sms: .center
+        case .textMultiline: .top
+        }
+    }
+
+    var placeHolderAlignment: Alignment {
+        let textAlignment = self.info.properties.textAppearance.alignment ?? .start
+
+        let horizontalAlignment: HorizontalAlignment = switch(textAlignment) {
+        case .start: .leading
+        case .end: .trailing
+        case .center: .center
+        }
+
+        return Alignment(
+            horizontal: horizontalAlignment,
+            vertical: self.textFieldAlignment.vertical
+        )
+    }
 
     @ViewBuilder
     var body: some View {
-        ZStack {
-            if let hint = self.info.properties.placeholder {
-                Text(hint)
-                    .textAppearance(placeHolderTextAppearance())
-                    .padding(5)
-                    .constraints(constraints, alignment: self.info.properties.textAppearance.alignment?.placeholderAlignment ?? .topLeading)
-                    .opacity(self.viewModel.input.isEmpty && !isEditing ? 1 : 0)
-                    .animation(.linear(duration: 0.1), value: self.info.properties.placeholder)
-            }
-            HStack {
-                createTextEditor()
-#if !os(watchOS)
-                    .airshipApplyIf(self.info.properties.inputType == .email) { view in
-                        view.textInputAutocapitalization(.never)
-                    }
-#endif
-                    .id(self.info.properties.identifier)
-
-                if let resolvedIconEndInfo = resolvedIconEndInfo?.icon {
-                    let maxIconWidth = self.info.properties.textAppearance.fontSize
-                    let maxIconHeight = maxIconWidth
-
-                    Icons.icon(info: resolvedIconEndInfo, colorScheme: colorScheme, resizable: false)
-                        .frame(maxWidth: maxIconWidth, maxHeight: maxIconHeight)
+        HStack {
+            inputAccessoryView()
+            
+            ZStack {
+                if let hint = self.info.properties.placeholder ?? self.viewModel.selectedSmsLocale?.prefix {
+                    Text(hint)
+                        .textAppearance(placeHolderTextAppearance())
                         .padding(5)
+                        .constraints(constraints, alignment: self.placeHolderAlignment)
+                        .opacity(self.viewModel.input.isEmpty && !isEditing ? 1 : 0)
+                        .animation(.linear(duration: 0.1), value: self.info.properties.placeholder)
+                }
+                HStack {
+                    makeTextEditor()
+    #if !os(watchOS)
+                        .airshipApplyIf(self.info.properties.inputType == .email) { view in
+                            view.textInputAutocapitalization(.never)
+                        }
+    #endif
+                        .id(self.info.properties.identifier)
+
+                    if let resolvedIconEndInfo = resolvedIconEndInfo?.icon {
+                        let maxIconWidth = self.info.properties.textAppearance.fontSize
+                        let maxIconHeight = maxIconWidth
+
+                        Icons.icon(info: resolvedIconEndInfo, colorScheme: colorScheme, resizable: false)
+                            .frame(maxWidth: maxIconWidth, maxHeight: maxIconHeight)
+                            .padding(5)
+                    }
                 }
             }
         }
@@ -154,7 +201,19 @@ struct TextInput: View {
         switch(self.info.properties.inputType) {
         case .email:
             guard
-                case .emailText(let value) = self.formState.field(
+                case .email(let value) = self.formState.field(
+                    identifier: self.info.properties.identifier
+                )?.input,
+                let value
+            else {
+                return
+            }
+
+            self.viewModel.input = value
+
+        case .sms:
+            guard
+                case .sms(let value) = self.formState.field(
                     identifier: self.info.properties.identifier
                 )?.input,
                 let value
@@ -238,6 +297,10 @@ struct TextInput: View {
         @Published
         var formField: ThomasFormField?
         private var lastInput: String?
+        
+        @Published
+        var selectedSmsLocale: ThomasSmsLocale?
+        let availableLocales: [ThomasSmsLocale]?
 
         @Published
         var input: String = "" {
@@ -255,6 +318,8 @@ struct TextInput: View {
         init(inputProperties: ThomasViewInfo.TextInput.Properties, isRequired: Bool) {
             self.inputProperties = inputProperties
             self.isRequired = isRequired
+            self.availableLocales = inputProperties.smsLocales
+            self.selectedSmsLocale = inputProperties.smsLocales?.first
             self.formField = self.makeFormField(input: "")
         }
 
@@ -282,15 +347,24 @@ struct TextInput: View {
             ]
         }
 
-        private func makeChannels(value: String) -> [ThomasFormField.Channel]? {
-            guard
-                !value.isEmpty,
-                let options = inputProperties.emailRegistration
-            else {
-                return nil
-            }
+        private func makeChannels(value: String, selectedSmsLocale: ThomasSmsLocale? = nil) -> [ThomasFormField.Channel]? {
+            guard !value.isEmpty else { return nil }
 
-            return [.email(value, options)]
+            switch(self.inputProperties.inputType) {
+            case .email:
+                return if let options = self.inputProperties.emailRegistration {
+                    [.email(value, options)]
+                } else {
+                    nil
+                }
+            case .sms:
+                return if let options = selectedSmsLocale?.registration {
+                    [.sms(value, options)]
+                } else {
+                    nil
+                }
+            case .number, .text, .textMultiline: return nil
+            }
         }
 
         private func makeFormField(input: String) -> ThomasFormField {
@@ -303,22 +377,21 @@ struct TextInput: View {
                     return if isRequired {
                         ThomasFormField.invalidField(
                             identifier: inputProperties.identifier,
-                            input: .emailText(input)
+                            input: .email(input)
                         )
                     } else {
                         ThomasFormField.validField(
                             identifier: inputProperties.identifier,
-                            input: .emailText(input),
-                            result: .init(value: .emailText(trimmed))
+                            input: .email(input),
+                            result: .init(value: .email(trimmed))
                         )
                     }
                 }
 
                 return ThomasFormField.asyncField(
                     identifier: inputProperties.identifier,
-                    input: .emailText(input)
+                    input: .email(input)
                 ) { [inputValidator, weak self] in
-                    print("validating \(trimmed)")
                     let email = AirshipInputValidator.Email(trimmed)
                     guard inputValidator.validate(email: email) else {
                         return .invalid
@@ -328,14 +401,46 @@ struct TextInput: View {
 
                     return .valid(
                         .init(
-                            value: .emailText(email.address),
+                            value: .email(email.address),
                             channels: self.makeChannels(value: email.address),
                             attributes: self.makeAttributes(value: email.address)
                         )
                     )
                 }
+            case .sms:
+                guard !trimmed.isEmpty, let selectedSmsLocale else {
+                    return if isRequired, selectedSmsLocale == nil {
+                        ThomasFormField.invalidField(
+                            identifier: inputProperties.identifier,
+                            input: .sms(input)
+                        )
+                    } else {
+                        ThomasFormField.validField(
+                            identifier: inputProperties.identifier,
+                            input: .sms(input),
+                            result: .init(value: .sms(trimmed))
+                        )
+                    }
+                }
 
+                return ThomasFormField.asyncField(
+                    identifier: inputProperties.identifier,
+                    input: .sms(input)
+                ) { [weak self, selectedSmsLocale] in
+                    // TODO wire up validation
 
+                    let number = AirshipInputValidator.PhoneNumber(trimmed, countryCode: selectedSmsLocale.prefix)
+
+                    guard let self, number.isValidFormat else { return .invalid }
+
+                    return .valid(
+                        .init(
+                            value: .sms(number.address),
+                            channels: self.makeChannels(value: number.address, selectedSmsLocale: selectedSmsLocale),
+                            attributes: self.makeAttributes(value: number.address)
+                        )
+                    )
+                }
             case .number, .text, .textMultiline:
                 return if trimmed.isEmpty, isRequired {
                     ThomasFormField.invalidField(
@@ -363,6 +468,7 @@ struct AirshipTextField: View {
 
     let info: ThomasViewInfo.TextInput
     let constraints: ViewConstraints
+    let alignment: Alignment
 
     @Binding var binding: String
     @Binding var isEditing: Bool
@@ -381,7 +487,7 @@ struct AirshipTextField: View {
 
         return TextField("", text: $binding, axis: axis)
             .padding(5)
-            .constraints(constraints, alignment: .topLeading)
+            .constraints(constraints, alignment: alignment)
             .focused($focused)
             .foregroundColor(self.info.properties.textAppearance.color.toColor(colorScheme))
             .contentShape(Rectangle())
@@ -556,18 +662,6 @@ extension UITextView {
 }
 #endif
 
-extension ThomasTextAppearance.TextAlignement {
-    fileprivate var placeholderAlignment: Alignment {
-        switch self {
-        case .start:
-            return Alignment.topLeading
-        case .end:
-            return Alignment.topTrailing
-        case .center:
-            return Alignment.top
-        }
-    }
-}
 
 fileprivate extension String {
     var nilIfEmpty: String? {

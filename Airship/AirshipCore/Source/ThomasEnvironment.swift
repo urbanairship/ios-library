@@ -92,7 +92,10 @@ class ThomasEnvironment: ObservableObject {
                     address,
                     options: options.makeContactOptions()
                 )
+            case .sms(_, _): break
+                // TODO
             }
+            
         }
     }
 

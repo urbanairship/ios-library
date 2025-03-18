@@ -97,11 +97,22 @@ struct ThomasFormPayloadGenerator {
                     builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)
                 }
             }
-        case .emailText(let value):
+        case .email(let value):
             guard let value else { return nil }
 
             return AirshipJSON.makeObject { builder in
                 builder.set(string: "email_input", key: Self.typeKey)
+                builder.set(string: value, key: Self.valueKey)
+                if let status {
+                    builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)
+                }
+            }
+
+        case .sms(let value):
+            guard let value else { return nil }
+
+            return AirshipJSON.makeObject { builder in
+                builder.set(string: "sms_input", key: Self.typeKey)
                 builder.set(string: value, key: Self.valueKey)
                 if let status {
                     builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)

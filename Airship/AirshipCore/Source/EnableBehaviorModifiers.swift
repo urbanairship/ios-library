@@ -36,8 +36,6 @@ internal struct ValidFormButtonEnableBehavior: ViewModifier {
                 self.formState.status,
                 initial: true
             ) { status in
-                print("value: \(status)")
-
                 let isEnabled = switch(formState.validationMode) {
                 case .onDemand:
                     switch(status) {

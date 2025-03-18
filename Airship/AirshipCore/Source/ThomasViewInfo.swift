@@ -1290,6 +1290,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var inputType: TextInputType
             var iconEnd: IconEndInfo?
             var emailRegistration: ThomasEmailRegistrationOptions?
+            var smsLocales: [ThomasSmsLocale]?
 
             enum CodingKeys: String, CodingKey {
                 case attributeName = "attribute_name"
@@ -1300,6 +1301,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case type
                 case iconEnd = "icon_end"
                 case emailRegistration = "email_registration"
+                case smsLocales = "locales"
             }
         }
 
@@ -1316,6 +1318,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             case number
             case text
             case textMultiline = "text_multiline"
+            case sms
         }
     }
 

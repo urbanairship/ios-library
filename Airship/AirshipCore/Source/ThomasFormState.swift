@@ -332,7 +332,7 @@ class ThomasFormState: ObservableObject {
         guard self.status != .submitted, self.status != status else {
             return
         }
-        print("updating status \(self.status) => \(status)")
+        AirshipLogger.trace("Updating status \(self.status) => \(status)")
         self.status = status
     }
 

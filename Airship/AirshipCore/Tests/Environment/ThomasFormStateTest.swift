@@ -96,7 +96,7 @@ struct ThomasFormStateTest {
         )
         form.onSubmit = { _, _, _ in }
 
-        form.updateField(.invalidField(identifier: "some-id", input: .emailText(nil)))
+        form.updateField(.invalidField(identifier: "some-id", input: .email(nil)))
 
         await #expect(throws: NSError.self) {
             try await form.submit(layoutState: .empty)
@@ -114,7 +114,7 @@ struct ThomasFormStateTest {
         form.onSubmit = { _, _, _ in }
 
         form.updateField(
-            .validField(identifier: "some-id", input: .emailText(nil), result: .init(value: .emailText("valid email")))
+            .validField(identifier: "some-id", input: .email(nil), result: .init(value: .email("valid email")))
         ) {
             false
         }
@@ -135,9 +135,9 @@ struct ThomasFormStateTest {
 
         let field: ThomasFormField = .validField(
             identifier: "some-id",
-            input: .emailText(nil),
+            input: .email(nil),
             result: .init(
-                value: .emailText("valid email"),
+                value: .email("valid email"),
                 channels: [
                     .email("some email", .doubleOptIn(.init()))
                 ],
@@ -152,9 +152,9 @@ struct ThomasFormStateTest {
 
         let anotherField: ThomasFormField = .validField(
             identifier: "some-other-id",
-            input: .emailText(nil),
+            input: .email(nil),
             result: .init(
-                value: .emailText("other valid email"),
+                value: .email("other valid email"),
                 channels: [
                     .email("some other email", .doubleOptIn(.init()))
                 ],
@@ -177,8 +177,8 @@ struct ThomasFormStateTest {
                     value: .form(
                         responseType: form.formResponseType,
                         children: [
-                            "some-other-id": .emailText("other valid email"),
-                            "some-id": .emailText("valid email"),
+                            "some-other-id": .email("other valid email"),
+                            "some-id": .email("valid email"),
                         ]
                     ),
                     channels: field.channels + anotherField.channels,
@@ -208,9 +208,9 @@ struct ThomasFormStateTest {
 
         let fooField: ThomasFormField = .validField(
             identifier: "foo-id",
-            input: .emailText(nil),
+            input: .email(nil),
             result: .init(
-                value: .emailText("foo"),
+                value: .email("foo"),
                 channels: [
                     .email("some email", .doubleOptIn(.init()))
                 ],
@@ -225,9 +225,9 @@ struct ThomasFormStateTest {
 
         let barField: ThomasFormField = .validField(
             identifier: "bar-id",
-            input: .emailText(nil),
+            input: .email(nil),
             result: .init(
-                value: .emailText("bar"),
+                value: .email("bar"),
                 channels: [
                     .email("some other email", .doubleOptIn(.init()))
                 ],
@@ -258,7 +258,7 @@ struct ThomasFormStateTest {
                     value: .form(
                         responseType: form.formResponseType,
                         children: [
-                            "bar-id": .emailText("bar"),
+                            "bar-id": .email("bar"),
                         ]
                     ),
                     channels: barField.channels,
@@ -294,15 +294,15 @@ struct ThomasFormStateTest {
 
         let fooField: ThomasFormField = .validField(
             identifier: "foo-id",
-            input: .emailText(nil),
+            input: .email(nil),
             result: .init(
-                value: .emailText("foo")
+                value: .email("foo")
             )
         )
 
         let barField: ThomasFormField = .invalidField(
             identifier: "bar-id",
-            input: .emailText(nil)
+            input: .email(nil)
         )
 
         form.updateField(fooField) {
@@ -374,15 +374,15 @@ struct ThomasFormStateTest {
 
         let fooField: ThomasFormField = .validField(
             identifier: "foo-id",
-            input: .emailText(nil),
+            input: .email(nil),
             result: .init(
-                value: .emailText("foo")
+                value: .email("foo")
             )
         )
 
         let barField: ThomasFormField = .invalidField(
             identifier: "bar-id",
-            input: .emailText(nil)
+            input: .email(nil)
         )
 
         form.updateField(fooField) {

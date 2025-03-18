@@ -35,6 +35,8 @@ final class ThomasFormField: Sendable {
 
     enum Channel: Sendable, Equatable, Hashable {
         case email(String, ThomasEmailRegistrationOptions)
+        case sms(String, ThomasSmsLocaleRegistration)
+
     }
 
     struct Attribute: Sendable, Equatable, Hashable {
@@ -49,7 +51,8 @@ final class ThomasFormField: Sendable {
         case form(responseType: String?, children: [String: Value])
         case npsForm(responseType: String?, scoreID: String, children: [String: Value])
         case text(String?)
-        case emailText(String?)
+        case email(String?)
+        case sms(String?)
         case score(Int?)
     }
 
