@@ -13,10 +13,36 @@ struct ThomasSMSLocale: ThomasSerializable {
     /// Registration info
     let registration: ThomasSMSRegistrationOption?
 
+    // Validation hints
+    let validationHints: ValidationHints?
+
+    init(
+        countryCode: String,
+        prefix: String,
+        registration: ThomasSMSRegistrationOption? = nil,
+        validationHints: ValidationHints? = nil
+    ) {
+        self.countryCode = countryCode
+        self.prefix = prefix
+        self.registration = registration
+        self.validationHints = validationHints
+    }
+    
+    struct ValidationHints: ThomasSerializable {
+        var minDigits: Int?
+        var maxDigits: Int?
+
+        enum CodingKeys: String, CodingKey {
+            case minDigits = "min_digits"
+            case maxDigits = "max_digits"
+        }
+    }
+
     enum CodingKeys: String, CodingKey {
         case countryCode = "country_code"
         case prefix
         case registration
+        case validationHints = "validation_hints"
     }
 }
 

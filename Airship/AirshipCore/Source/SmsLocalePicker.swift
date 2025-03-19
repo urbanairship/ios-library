@@ -7,6 +7,7 @@ struct SmsLocalePicker: View {
     
     @Binding var selectedLocale: ThomasSMSLocale?
     let availableLocales: [ThomasSMSLocale]
+    let fontSize: Double
 
     var body: some View {
         Menu {
@@ -23,17 +24,17 @@ struct SmsLocalePicker: View {
             HStack(spacing: 0) {
                 if let selectedLocale {
                     Text(selectedLocale.countryCode.toFlagEmoji())
-                        .font(.system(size: 34))
+                        .font(.system(size: fontSize))
                         .minimumScaleFactor(0.1)
                         .scaledToFit()
+                        .padding(.trailing, 5)
                 }
                     
                 Image(systemName: "chevron.down")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: 8)
+                    .frame(width: fontSize * 0.75, height: fontSize * 0.75)
                     .foregroundStyle(.gray)
-                    .padding(.vertical, 3)
             }
         }
     }
@@ -73,7 +74,8 @@ private extension String {
                 prefix: "+853",
                 registration: nil
             ),
-        ]
+        ],
+        fontSize: 34
     )
 }
 #endif

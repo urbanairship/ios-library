@@ -13,7 +13,14 @@ struct Label: View {
 
     @EnvironmentObject var thomasState: ThomasState
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.sizeCategory) var sizeCategory
 
+    private var scaledFontSize: Double {
+        UIFontMetrics.default.scaledValue(
+            for: self.info.properties.textAppearance.fontSize
+        )
+    }
+    
     private var markdownText: Text {
         get throws {
             var text = try AttributedString(
@@ -76,9 +83,9 @@ struct Label: View {
     var body: some View {
         HStack(spacing: 0) {
             if let icon = resolvedStartIcon {
-                let size = info.properties.textAppearance.fontSize
+                let size = scaledFontSize
                 Icons.icon(info: icon.icon, colorScheme: colorScheme)
-                    .frame(height: size)
+                    .frame(width: size, height: size)
                     .padding(.trailing, icon.space)
                     .accessibilityHidden(true)
             }

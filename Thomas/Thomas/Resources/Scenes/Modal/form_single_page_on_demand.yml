@@ -205,7 +205,7 @@ view:
                                                 type: floating
                                                 icon:
                                                   type: icon
-                                                  icon: exclamationmark_circle_fill
+                                                  icon: asterisk_circle_fill
                                                   color:
                                                       default:
                                                           hex: "#ff0000"
@@ -1100,7 +1100,7 @@ view:
                                                 type: floating
                                                 icon:
                                                   type: icon
-                                                  icon: exclamationmark_circle_fill
+                                                  icon: asterisk_circle_fill
                                                   color:
                                                       default:
                                                           hex: "#ff0000"
@@ -2500,7 +2500,7 @@ view:
                                             type: floating
                                             icon:
                                               type: icon
-                                              icon: exclamationmark_circle_fill
+                                              icon: asterisk_circle_fill
                                               color:
                                                   default:
                                                       hex: "#ff0000"
@@ -2768,7 +2768,7 @@ view:
                                                 type: floating
                                                 icon:
                                                   type: icon
-                                                  icon: exclamationmark_circle_fill
+                                                  icon: asterisk_circle_fill
                                                   scale: 1
                                                   color:
                                                     default:
@@ -3078,7 +3078,7 @@ view:
                                                 type: floating
                                                 icon:
                                                   type: icon
-                                                  icon: exclamationmark_circle_fill
+                                                  icon: asterisk_circle_fill
                                                   scale: 1
                                                   color:
                                                     default:
@@ -3156,7 +3156,7 @@ view:
                                                 type: floating
                                                 icon:
                                                   type: icon
-                                                  icon: exclamationmark_circle_fill
+                                                  icon: asterisk_circle_fill
                                                   color:
                                                       default:
                                                           hex: "#ff0000"
@@ -3615,7 +3615,7 @@ view:
                                                     type: floating
                                                     icon:
                                                       type: icon
-                                                      icon: exclamationmark_circle_fill
+                                                      icon: asterisk_circle_fill
                                                       color:
                                                           default:
                                                               hex: "#ff0000"

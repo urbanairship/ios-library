@@ -6,6 +6,7 @@ import SwiftUI
 
 struct TextInput: View {
 
+
     let info: ThomasViewInfo.TextInput
     let constraints: ViewConstraints
 
@@ -23,10 +24,15 @@ struct TextInput: View {
 
     @StateObject private var viewModel: ViewModel
 
+    private var scaledFontSize: Double {
+        UIFontMetrics.default.scaledValue(
+            for: self.info.properties.textAppearance.fontSize
+        )
+    }
+
     init(info: ThomasViewInfo.TextInput, constraints: ViewConstraints) {
         self.info = info
         self.constraints = constraints
-
 
         self._viewModel = StateObject(
             wrappedValue: ViewModel(
@@ -79,24 +85,29 @@ struct TextInput: View {
 #endif
         }
     }
-    
-    @ViewBuilder
-    private func inputAccessoryView() -> some View {
-#if !os(watchOS)
-        if
+
+    var showSMSPicker: Bool {
+        guard
             self.info.properties.inputType == .sms,
-            let locales = self.viewModel.availableLocales
-        {
-            SmsLocalePicker(selectedLocale: $viewModel.selectedSMSLocale, availableLocales: locales)
-        } else {
-            EmptyView()
+            self.viewModel.availableLocales != nil
+        else {
+            return false
         }
+        return true
+    }
+
+    @ViewBuilder
+    private func smsPicker() -> some View {
+#if !os(watchOS)
+        SmsLocalePicker(
+            selectedLocale: $viewModel.selectedSMSLocale,
+            availableLocales: self.viewModel.availableLocales ?? [],
+            fontSize: scaledFontSize
+        )
 #else
         EmptyView()
 #endif
     }
-
-
 
     var textFieldAlignment: Alignment {
         return switch(self.info.properties.inputType) {
@@ -123,7 +134,11 @@ struct TextInput: View {
     @ViewBuilder
     var body: some View {
         HStack {
-            inputAccessoryView()
+            if showSMSPicker {
+                smsPicker()
+                    .padding(.vertical, 5)
+                    .padding(.leading, 5)
+            }
             
             ZStack {
                 if let hint = self.info.properties.placeholder ?? self.viewModel.selectedSMSLocale?.prefix {
@@ -144,11 +159,9 @@ struct TextInput: View {
                         .id(self.info.properties.identifier)
 
                     if let resolvedIconEndInfo = resolvedIconEndInfo?.icon {
-                        let maxIconWidth = self.info.properties.textAppearance.fontSize
-                        let maxIconHeight = maxIconWidth
-
+                        let size = scaledFontSize
                         Icons.icon(info: resolvedIconEndInfo, colorScheme: colorScheme, resizable: false)
-                            .frame(maxWidth: maxIconWidth, maxHeight: maxIconHeight)
+                            .frame(maxWidth: size, maxHeight: size)
                             .padding(5)
                     }
                 }
@@ -457,7 +470,10 @@ struct TextInput: View {
                     AirshipInputValidation.Request.SMS(
                         rawInput: input,
                         validationOptions: .prefix(prefix: selectedSMSLocale.prefix),
-                        validationHints: .init(minDigits: 4, maxDigits: 25)
+                        validationHints: .init(
+                            minDigits: selectedSMSLocale.validationHints?.minDigits,
+                            maxDigits: selectedSMSLocale.validationHints?.maxDigits
+                        )
                     )
                 )
 

@@ -31,6 +31,12 @@ struct Icons {
                 resizable: resizable,
                 color: color
             )
+        case .asteriskCicleFill:
+            makeSystemImageIcon(
+                name: "asterisk.circle.fill",
+                resizable: resizable,
+                color: color
+            )
         case .checkmark:
             makeSystemImageIcon(
                 name: "checkmark",
