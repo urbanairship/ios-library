@@ -150,6 +150,13 @@
 			remoteGlobalIDString = 3CA0E346237E4A7B00EE76CF;
 			remoteInfo = AirshipMessageCenter;
 		};
+		999A80782D8A025200999A3F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E524D072C25FA51002CA094 /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A641E1472BDBBDB400DE6FAA;
+			remoteInfo = AirshipObjectiveC;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -173,6 +180,7 @@
 
 /* Begin PBXFileReference section */
 		6E524D072C25FA51002CA094 /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
+		999A806D2D8A025200999A3F /* Accessibility-Sample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Accessibility-Sample-Info.plist"; sourceTree = SOURCE_ROOT; };
 		99AF54B92C24B1DC007952F2 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		99DFF4362B76DC6700EDFB52 /* a11y.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = a11y.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		99DFF4392B76DC6700EDFB52 /* MainApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainApp.swift; sourceTree = "<group>"; };
@@ -212,6 +220,7 @@
 				6E524D3A2C25FA51002CA094 /* AirshipFeatureFlags.framework */,
 				6E524D2E2C25FA51002CA094 /* AirshipMessageCenter.framework */,
 				6E524D302C25FA51002CA094 /* AirshipPreferenceCenter.framework */,
+				999A80792D8A025200999A3F /* AirshipObjectiveC.framework */,
 				6E524D2C2C25FA51002CA094 /* AirshipDebug.framework */,
 				6E524D2A2C25FA51002CA094 /* AirshipTests.xctest */,
 				6E524D382C25FA51002CA094 /* AirshipAutomationTests.xctest */,
@@ -244,6 +253,7 @@
 		99DFF4382B76DC6700EDFB52 /* Accessibility Sample */ = {
 			isa = PBXGroup;
 			children = (
+				999A806D2D8A025200999A3F /* Accessibility-Sample-Info.plist */,
 				99EAD6362B7ABEA700B7A4FC /* Accessibility Sample.entitlements */,
 				99DFF49D2B794AEC00EDFB52 /* AppDelegate.swift */,
 				99DFF4392B76DC6700EDFB52 /* MainApp.swift */,
@@ -425,6 +435,13 @@
 			fileType = wrapper.cfbundle;
 			path = AirshipFeatureFlagsTests.xctest;
 			remoteRef = 6E524D3B2C25FA51002CA094 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		999A80792D8A025200999A3F /* AirshipObjectiveC.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipObjectiveC.framework;
+			remoteRef = 999A80782D8A025200999A3F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -613,11 +630,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Accessibility Sample/Accessibility Sample.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"Accessibility Sample/Preview Content\"";
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Accessibility-Sample-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -629,7 +647,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.5;
+				MARKETING_VERSION = 1.0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.accessample;
 				PRODUCT_NAME = a11y;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -645,11 +663,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Accessibility Sample/Accessibility Sample.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"Accessibility Sample/Preview Content\"";
 				DEVELOPMENT_TEAM = PGJV57GD94;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Accessibility-Sample-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -661,7 +680,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.5;
+				MARKETING_VERSION = 1.0.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.accessample;
 				PRODUCT_NAME = a11y;
 				SWIFT_EMIT_LOC_STRINGS = YES;
