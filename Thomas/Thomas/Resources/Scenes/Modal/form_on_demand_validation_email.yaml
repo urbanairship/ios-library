@@ -219,7 +219,7 @@ view:
                     height: auto
                   view:
                     type: label
-                    text: Give me your email, I need it.
+                    text: Give me your number, I require it.
                     text_appearance:
                       alignment: center
                       font_size: 14
@@ -317,7 +317,14 @@ view:
                           type: hex
                           hex: "#a8323a"
                           alpha: 1
-                    input_type: email
+                    input_type: sms
+                    locales:
+                      - country_code: "US"
+                        prefix: "+1"
+                      - country_code: "FR"
+                        prefix: "+33"
+                      - country_code: "UA"
+                        prefix: "+380"
                     required: true
                     on_error:
                       state_actions:

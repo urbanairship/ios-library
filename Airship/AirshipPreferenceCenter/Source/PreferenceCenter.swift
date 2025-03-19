@@ -29,6 +29,8 @@ public final class PreferenceCenter: Sendable {
         return Airship.preferenceCenter
     }
 
+    let inputValidator: any AirshipInputValidation.Validator
+
     private static let payloadType = "preference_forms"
     private static let preferenceFormsKey = "preference_forms"
 
@@ -80,11 +82,13 @@ public final class PreferenceCenter: Sendable {
     init(
         dataStore: PreferenceDataStore,
         privacyManager: AirshipPrivacyManager,
-        remoteData: any RemoteDataProtocol
+        remoteData: any RemoteDataProtocol,
+        inputValidator: any AirshipInputValidation.Validator
     ) {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
         self.remoteData = remoteData
+        self.inputValidator = inputValidator
         self._theme.set(PreferenceCenterThemeLoader.defaultPlist())
         AirshipLogger.info("PreferenceCenter initialized")
     }

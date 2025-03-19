@@ -77,6 +77,15 @@ final class ThomasFormField: Sendable {
         }
     }
 
+    func cancel() {
+        switch(self.fieldType) {
+        case .just:
+            break
+        case .async(let operation):
+            operation.cancel()
+        }
+    }
+
 
     private let fieldType: FieldType
 
@@ -94,7 +103,7 @@ final class ThomasFormField: Sendable {
     static func asyncField(
         identifier: String,
         input: Value,
-        earlyProcessingDelay: TimeInterval = 1.0,
+        processDelay: TimeInterval = 1.0,
         processor: any ThomasFormFieldProcessor = DefaultThomasFormFieldProcessor(),
         resultBlock: @escaping @MainActor @Sendable () async throws -> ThomasFormFieldPendingResult
     ) -> Self {
@@ -103,7 +112,7 @@ final class ThomasFormField: Sendable {
             input: input,
             fieldType: .async(
                 processor.submit(
-                    earlyProcessDelay: earlyProcessingDelay,
+                    processDelay: processDelay,
                     resultBlock: resultBlock
                 )
             )

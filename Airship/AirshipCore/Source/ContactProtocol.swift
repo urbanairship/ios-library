@@ -24,6 +24,8 @@ public protocol AirshipContactProtocol: AnyObject, Sendable {
 
     /// SMS validator delegate to allow overriding the default SMS validation
     /// - Returns: Bool indicating if SMS is valid.
+    @MainActor
+    @available(*, deprecated, message: "Marked to be removed in SDK 20. Use AirshipConfig.inputValidationOverrides instead.")
     var smsValidatorDelegate: (any SMSValidatorDelegate)? { get set }
 
     /**
@@ -32,6 +34,7 @@ public protocol AirshipContactProtocol: AnyObject, Sendable {
      *   - msisdn: The mobile phone number to validate.
      *   - sender: The identifier given to the sender of the SMS message.
      */
+    @available(*, deprecated, message: "Marked to be removed in SDK 20. For Airship use only.")
     func validateSMS(_ msisdn: String, sender: String) async throws -> Bool
 
     /**

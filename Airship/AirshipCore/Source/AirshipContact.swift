@@ -77,20 +77,20 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
     private let date: any AirshipDateProtocol
     private let audienceOverridesProvider: any AudienceOverridesProvider
     private let contactManager: any ContactManagerProtocol
-    private var smsValidator: any SMSValidatorProtocol
     private let cachedSubscriptionLists: CachedValue<(String, [String: [ChannelScope]])>
     private var setupTask: Task<Void, Never>? = nil
     private var subscriptions: Set<AnyCancellable> = Set()
     private let serialQueue: AirshipAsyncSerialQueue
 
     /// Publishes all edits made to the subscription lists through the  SDK
+    @MainActor
     public var smsValidatorDelegate: (any SMSValidatorDelegate)? {
         set {
-            self.smsValidator.delegate = newValue
+            Airship.inputValidator.legacySMSDelegate = newValue
         }
 
         get {
-            self.smsValidator.delegate
+            Airship.inputValidator.legacySMSDelegate
         }
     }
 
@@ -164,7 +164,6 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         audienceOverridesProvider: any AudienceOverridesProvider,
         contactManager: any ContactManagerProtocol,
-        smsValidator: any SMSValidatorProtocol,
         serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue(priority: .high)
     ) {
 
@@ -175,7 +174,6 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
         self.audienceOverridesProvider = audienceOverridesProvider
         self.date = date
         self.contactManager = contactManager
-        self.smsValidator = smsValidator
         self.serialQueue = serialQueue
         self.subscriptionListProvider = subscriptionListProvider
         self.cachedSubscriptionLists = CachedValue(date: date)
@@ -341,8 +339,7 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
                 channel: channel,
                 localeManager: localeManager,
                 apiClient: ContactAPIClient(config: config)
-            ), 
-            smsValidator: SMSValidator(apiClient: SMSValidatorAPIClient(config: config))
+            )
         )
     }
 
@@ -508,12 +505,19 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
         _ msisdn: String,
         sender: String
     ) async throws -> Bool {
-        if let delegate = self.smsValidatorDelegate {
-            AirshipLogger.trace("Validating phone number through delegate")
-            return try await delegate.validateSMS(msisdn: msisdn, sender: sender)
-        } else {
-            AirshipLogger.trace("Using default phone number validator")
-            return try await self.smsValidator.validateSMS(msisdn: msisdn, sender: sender)
+        AirshipLogger.trace("Using depreacted validateSMS call \(msisdn), \(sender).")
+        
+        let request: AirshipInputValidation.Request = .sms(
+            AirshipInputValidation.Request.SMS(
+                rawInput: msisdn,
+                validationOptions: .sender(senderID: sender, prefix: nil),
+                validationHints: .init(minDigits: 4)
+            )
+        )
+
+        return switch(try await Airship.inputValidator.validateRequest(request)) {
+        case .valid: true
+        case .invalid: false
         }
     }
 

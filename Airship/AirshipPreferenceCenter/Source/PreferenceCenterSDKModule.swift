@@ -17,7 +17,8 @@ public class PreferenceCenterSDKModule: NSObject, AirshipSDKModule {
         let preferenceCenter = PreferenceCenter(
             dataStore: args.dataStore,
             privacyManager: args.privacyManager,
-            remoteData: args.remoteData
+            remoteData: args.remoteData,
+            inputValidator: args.inputValidator
         )
         return PreferenceCenterSDKModule(preferenceCenter)
     }

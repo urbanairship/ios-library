@@ -16,6 +16,7 @@ protocol AirshipInstanceProtocol: Sendable {
     var deepLinkDelegate: (any DeepLinkDelegate)? { get set }
     var urlAllowList: any URLAllowListProtocol { get }
     var localeManager: AirshipLocaleManager { get }
+    var inputValidator: any AirshipInputValidation.Validator { get }
     var privacyManager: AirshipPrivacyManager { get }
     var components: [any AirshipComponent] { get }
 
@@ -28,7 +29,8 @@ protocol AirshipInstanceProtocol: Sendable {
 final class AirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
     public let config: RuntimeConfig
     public let preferenceDataStore: PreferenceDataStore
-    
+
+    let inputValidator: any AirshipInputValidation.Validator
     public let actionRegistry: ActionRegistry
     public let permissionsManager: AirshipPermissionsManager
     
@@ -71,6 +73,10 @@ final class AirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
             appCredentials: appCredentials,
             dataStore: dataStore,
             requestSession: requestSession
+        )
+
+        self.inputValidator = AirshipInputValidation.DefaultValidator(
+            config: config
         )
 
         self.privacyManager = AirshipPrivacyManager(
@@ -192,7 +198,8 @@ final class AirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
             meteredUsage: meteredUsage,
             deferredResolver: deferredResolver,
             cache: cache,
-            audienceChecker: audienceChecker
+            audienceChecker: audienceChecker,
+            inputValidator: inputValidator
         )
         
         var components: [any AirshipComponent] = [

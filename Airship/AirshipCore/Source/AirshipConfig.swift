@@ -54,7 +54,10 @@ public struct AirshipConfig: Decodable, Sendable {
     /// Flag to enable or disable web view inspection on Airship created  web views. Applies only to iOS 16.4+.
     /// Defaults to `false`
     public var isWebViewInspectionEnabled: Bool = false
-    
+
+    // Overrides the input validation used by Preference Center and Scenes.
+    public var inputValidationOverrides: AirshipInputValidation.OverridesClosure?
+
     /// Optional closure for auth challenge certificate validation.
     public var connectionChallengeResolver: ChallengeResolveClosure?
     

@@ -186,14 +186,9 @@ struct AddChannelPromptView: View, @unchecked Sendable {
                 .position(x: proxy.frame(in: .local).midX, y: proxy.frame(in: .local).midY)
                 .transition(.opacity)
                 .airshipOnChangeOf(viewModel.inputText) { newValue in
-                    let isValid = viewModel.validateInputFormat()
-
+                    /// Resets the text to valid ready state since user is trying
                     withAnimation {
-                        self.viewModel.isInputFormatValid = isValid
-
-                        if isValid {
-                            self.viewModel.state = .ready
-                        }
+                        self.viewModel.state = .ready
                     }
                 }
         }

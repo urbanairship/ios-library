@@ -17,7 +17,6 @@ class AirshipContactTest: XCTestCase {
     private let audienceOverridesProvider: DefaultAudienceOverridesProvider = DefaultAudienceOverridesProvider()
     private let contactManager: TestContactManager = TestContactManager()
     private var contactQueue: AirshipAsyncSerialQueue!
-    private let smsValidator: TestSMSValidator = TestSMSValidator()
     private var contact: AirshipContact!
     private var privacyManager: AirshipPrivacyManager!
     private var config: RuntimeConfig = RuntimeConfig.testConfig()
@@ -57,7 +56,6 @@ class AirshipContactTest: XCTestCase {
             notificationCenter: self.notificationCenter,
             audienceOverridesProvider: self.audienceOverridesProvider,
             contactManager: self.contactManager,
-            smsValidator: self.smsValidator,
             serialQueue: contactQueue
         )
     }
@@ -880,14 +878,6 @@ class AirshipContactTest: XCTestCase {
         await fulfillment(of: [expectation], timeout: 10.0)
     }
 
-}
-
-fileprivate class TestSMSValidator: SMSValidatorProtocol, @unchecked Sendable {
-    var delegate: SMSValidatorDelegate? = nil
-
-    func validateSMS(msisdn: String, sender: String) async throws -> Bool {
-        true
-    }
 }
 
 

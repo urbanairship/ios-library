@@ -6,6 +6,9 @@ import Foundation
 import AirshipCore
 
 final class TestAirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
+    var inputValidator: any AirshipCore.AirshipInputValidation.Validator {
+        fatalError("Not implemented")
+    }
 
     var _permissionsManager: AirshipPermissionsManager?
     var permissionsManager: AirshipPermissionsManager {

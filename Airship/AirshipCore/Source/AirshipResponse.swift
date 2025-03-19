@@ -25,6 +25,8 @@ extension AirshipHTTPResponse {
 }
 
 
+extension AirshipHTTPResponse: Equatable where T: Equatable {}
+
 extension AirshipHTTPResponse {
     func map<R>(onMap: (AirshipHTTPResponse<T>) throws -> R?) throws -> AirshipHTTPResponse<R> {
         return AirshipHTTPResponse<R>(

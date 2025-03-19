@@ -2,112 +2,295 @@
 
 import Foundation
 
+/// A struct that encapsulates input validation logic for different request types such as email and SMS.
+public struct AirshipInputValidation {
 
-/// NOTE: For internal use only. :nodoc:
-public struct AirshipInputValidator: Sendable {
+    /// A closure type used for overriding validation logic.
+    public typealias OverridesClosure = (@Sendable (Request) async throws -> Override)
 
-    /// Phone Number validation arguments.
-    public enum PhoneNumberValidation: Sendable, Equatable {
-        /// Sender argument for phone number validation.
-        case sender(String)
+    private init() {}
+
+    /// Enum representing the result of validation.
+    /// It indicates whether an input is valid or invalid.
+    public enum Result: Sendable, Equatable {
+        /// Indicates a valid input with the associated address (e.g., email or phone number).
+        case valid(address: String)
+        /// Indicates an invalid input.
+        case invalid
     }
 
-    /// Represents a phone number.
-    public struct PhoneNumber: Sendable, Equatable {
-        /// The formatted phone number address.
-        public let address: String
+    /// Enum representing the override options for input validation.
+    public enum Override: Sendable, Equatable {
+        /// Override the result of validation with a custom validation result.
+        case override(Result)
+        /// Skip the override and use the default validation method.
+        case useDefault
+    }
 
-        /// Validates the format of the phone number using a regex pattern.
-        public var isValidFormat: Bool {
-            // E.164 format
-            let regex = "^[1-9]\\d{1,14}$"
-            let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
-            return predicate.evaluate(with: address)
-        }
+    /// Enum representing the types of requests to be validated (e.g., Email or SMS).
+    public enum Request: Sendable, Equatable {
+        case email(Email)
+        case sms(SMS)
 
-        /// Initializes a PhoneNumber instance by cleaning and formatting the provided phone number.
-        /// - Parameters:
-        ///   - msisdn: The phone number to format.
-        ///   - countryCode: The country code to be included in the formatted number.
-        public init(_ msisdn: String, countryCode: String) {
+        /// A struct representing an SMS request for validation.
+        public struct SMS: Sendable, Equatable {
+            public var rawInput: String
+            public var validationOptions: ValidationOptions
+            public var validationHints: ValidationHints?
 
-            /// Format for MSISDN  standards - including removing plus, dashes, spaces etc.
-            /// Formatting behind the scenes like this makes sense because there are lots of valid ways to show
-            /// Phone numbers like 1.503.867.5309 1-504-867-5309. This also allows us to strip the "+" from the country code
-
-            let cleanedCountryCode = countryCode.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
-            var cleanedNumber = msisdn.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
-
-            // Remove country code from the beginning of the number if it's already present
-            if cleanedNumber.hasPrefix(cleanedCountryCode) {
-                cleanedNumber = String(cleanedNumber.dropFirst(cleanedCountryCode.count))
+            /// Enum specifying the options for validating an SMS, such as sender ID or prefix.
+            public enum ValidationOptions: Sendable, Equatable {
+                case sender(senderID: String, prefix: String? = nil)
+                case prefix(prefix: String)
             }
-            self.address = cleanedCountryCode + cleanedNumber
+
+            /// A struct for defining validation hints like min/max digit requirements.
+            public struct ValidationHints: Sendable, Equatable {
+                var minDigits: Int?
+                var maxDigits: Int?
+
+                public init(minDigits: Int? = nil, maxDigits: Int? = nil) {
+                    self.minDigits = minDigits
+                    self.maxDigits = maxDigits
+                }
+            }
+
+            /// Initializes the SMS validation request.
+            /// - Parameters:
+            ///   - rawInput: The raw input string to be validated.
+            ///   - validationOptions: The validation options to be applied.
+            ///   - validationHints: Optional validation hints such as min/max digit constraints.
+            public init(
+                rawInput: String,
+                validationOptions: ValidationOptions,
+                validationHints: ValidationHints? = nil
+            ) {
+                self.rawInput = rawInput
+                self.validationOptions = validationOptions
+                self.validationHints = validationHints
+            }
         }
-    }
 
-    /// Represents an email address.
-    public struct Email: Sendable, Equatable {
-        /// The formatted email address.
-        public let address: String
+        /// A struct representing an email request for validation.
+        public struct Email: Sendable, Equatable {
+            public var rawInput: String
 
-        /// Validates the format of the email using a regex pattern.
-        public var isValidFormat: Bool {
-            // checks for <ANYTHING>@<ANYTHING>.<ANYTHING>
-            let regex = #"^[^@\s]+@[^@\s]+\.[^@\s.]+$"#
-            let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
-            return predicate.evaluate(with: address)
-        }
-
-        /// Initializes an Email instance by cleaning and formatting the provided email.
-        /// - Parameters:
-        ///   - email: The email to format.
-        public init(_ email: String) {
-            self.address = email.trimmingCharacters(in: .whitespaces)
-        }
-    }
-
-    private let onValidatePhoneNumber: @Sendable (PhoneNumber, PhoneNumberValidation) async throws -> Bool
-
-    /// Initializes a validator instance with a custom phone number validation block.
-    /// - Parameters:
-    ///   - onValidatePhoneNumber: A block to run when a phone number needs to be validated.
-    public init(onValidatePhoneNumber: @Sendable @escaping (PhoneNumber, PhoneNumberValidation) -> Bool) {
-        self.onValidatePhoneNumber = onValidatePhoneNumber
-    }
-
-    /// Initializes a validator instance with the default validation logic for phone numbers.
-    public init() {
-        self.onValidatePhoneNumber = { phoneNumber, validation in
-            switch(validation) {
-            case .sender(let sender):
-                // Sends an SMS validation request via Airship's contact service
-                return try await Airship.contact.validateSMS(phoneNumber.address, sender: sender)
+            /// Initializes the Email validation request.
+            /// - Parameter rawInput: The raw email input to be validated.
+            public init(rawInput: String) {
+                self.rawInput = rawInput
             }
         }
     }
 
-    /// Validates a phone number.
-    /// - Parameters:
-    ///   - phoneNumber: The phone number to validate.
-    ///   - validation: Validation arguments (e.g., sender).
-    /// - Returns: `true` if valid format and successfully validated, otherwise `false`.
-    public func validate(phoneNumber: PhoneNumber, validation: PhoneNumberValidation) async throws -> Bool {
-        guard phoneNumber.isValidFormat else {
-            return false
-        }
-        return try await onValidatePhoneNumber(phoneNumber, validation)
-    }
+    /// Protocol for validators that perform validation of input requests.
+    /// NOTE: For internal use only. :nodoc:
+    public protocol Validator: AnyObject, Sendable {
+        @MainActor
+        var legacySMSDelegate: (any SMSValidatorDelegate)? { get set }
 
-    /// Validates an email address.
-    /// - Parameters:
-    ///   - email: The email to validate.
-    /// - Returns: `true` if valid format, otherwise `false`.
-    /// - Note: This method only checks if the email has a valid format, not if the email exists.
-    public func validate(email: Email) -> Bool {
-        guard email.isValidFormat else {
+        /// Validates the provided request and returns a result.
+        /// - Parameter request: The request to be validated (either SMS or Email).
+        /// - Throws: Can throw errors if validation fails.
+        /// - Returns: The validation result, either valid or invalid.
+        func validateRequest(_ request: Request) async throws -> Result
+    }
+}
+
+extension AirshipInputValidation {
+    /// A default implementation of the `Validator` protocol that uses a standard SMS validation API.
+    /// /// NOTE: For internal use only. :nodoc:
+    final class DefaultValidator: Validator {
+
+        @MainActor
+        public var legacySMSDelegate: (any SMSValidatorDelegate)? {
+            get {
+                self.storage.smsDelegate
+            }
+            set {
+                self.storage.smsDelegate = newValue
+            }
+        }
+
+        // Regular expression for validating email addresses.
+        private static let emailRegex = #"^[^@\s]+@[^@\s]+\.[^@\s.]+$"#
+
+        // Internal storage for delegates and configurations.
+        private let storage = Storage()
+
+        private let overrides: OverridesClosure?
+        private let smsValidatorAPIClient: any SMSValidatorAPIClientProtocol
+
+        /// Initializes the validator with custom overrides and a SMS validation API client.
+        /// - Parameters:
+        ///   - smsValidatorAPIClient: The client used to validate SMS numbers.
+        ///   - overrides: An optional closure for overriding validation logic.
+        public init(
+            smsValidatorAPIClient: any SMSValidatorAPIClientProtocol,
+            overrides: OverridesClosure? = nil
+        ) {
+            self.overrides = overrides
+            self.smsValidatorAPIClient = smsValidatorAPIClient
+        }
+
+        /// Initializes the validator using a configuration object.
+        /// - Parameter config: The runtime configuration used for initializing the validator.
+        public convenience init(config: RuntimeConfig) {
+            self.init(
+                smsValidatorAPIClient: CachingSMSValidatorAPIClient(
+                    client: SMSValidatorAPIClient(config: config)
+                ),
+                overrides: config.airshipConfig.inputValidationOverrides
+            )
+        }
+
+        /// Validates the provided request asynchronously.
+        /// - Parameter request: The request to be validated (either SMS or Email).
+        /// - Throws: Can throw errors if validation fails or on cancellation.
+        /// - Returns: The validation result, either valid or invalid.
+        public func validateRequest(_ request: Request) async throws -> Result {
+            try Task.checkCancellation()
+
+            AirshipLogger.debug("Validating input request \(request)")
+
+            if let overrides {
+                AirshipLogger.trace("Attempting to use overrides for request \(request)")
+
+                switch(try await overrides(request)) {
+                case .override(let result):
+                    AirshipLogger.debug("Overrides result \(result) for request \(request)")
+                    return result
+                case .useDefault:
+                    AirshipLogger.trace("Overrides skipped, using default method for request \(request)")
+                    break
+                }
+            }
+
+            try Task.checkCancellation()
+
+            let result = switch(request) {
+            case .sms(let sms):
+                try await validateSMS(sms, request: request)
+            case .email(let email):
+                try await validateEmail(email, request: request)
+            }
+
+            AirshipLogger.debug("Result \(result) for request \(request)")
+            return result
+        }
+
+        /// Validates an email address.
+        /// - Parameter email: The email to be validated.
+        /// - Parameter request: The original request associated with the email.
+        /// - Throws: Can throw errors during validation or cancellation.
+        /// - Returns: The result of the email validation, either valid or invalid.
+        private func validateEmail(_ email: Request.Email, request: Request) async throws -> Result {
+            let address = email.rawInput.trimmingCharacters(in: .whitespacesAndNewlines)
+            let predicate = NSPredicate(format: "SELF MATCHES %@", Self.emailRegex)
+
+            guard predicate.evaluate(with: address) else {
+                return .invalid
+            }
+            return .valid(address: address)
+        }
+
+        /// Validates an SMS number.
+        /// - Parameter sms: The SMS object containing validation information.
+        /// - Parameter request: The original request associated with the SMS.
+        /// - Throws: Can throw errors during validation or cancellation.
+        /// - Returns: The result of the SMS validation, either valid or invalid.
+        private func validateSMS(_ sms: Request.SMS, request: Request) async throws -> Result {
+            guard sms.validationHints?.matches(sms.rawInput) != false else {
+                AirshipLogger.trace("SMS validation failed for \(request), did not pass validation hints")
+                return .invalid
+            }
+
+            // Legacy delegate validation
+            if case let .sender(senderID, prefix) = sms.validationOptions, let delegate = await self.legacySMSDelegate {
+                AirshipLogger.trace("Using deprecated SMSValidatorDelegate for \(request)")
+                return try await legacySMSValidation(
+                    address: sms.rawInput,
+                    senderID: senderID,
+                    prefix: prefix,
+                    delegate: delegate
+                )
+            }
+
+            // Airship SMS validation
+            let result = switch(sms.validationOptions) {
+            case .sender(let sender, _):
+                try await smsValidatorAPIClient.validateSMS(msisdn: sms.rawInput, sender: sender)
+            case .prefix(let prefix):
+                try await smsValidatorAPIClient.validateSMS(msisdn: sms.rawInput, prefix: prefix)
+            }
+
+            // Assume client errors are not valid
+            guard result.isClientError == false else { return .invalid }
+
+            // Make sure we have a result, if not throw an error
+            guard result.isSuccess, let value = result.result else {
+                throw AirshipErrors.error("Failed to validate SMS \(result)")
+            }
+
+            // Convert the result
+            return switch (value) {
+            case .invalid: .invalid
+            case .valid(let address): .valid(address: address)
+            }
+        }
+
+        /// Performs legacy SMS validation using a deprecated delegate.
+        /// - Parameters:
+        ///   - address: The phone number to be validated.
+        ///   - senderID: The sender ID for validation.
+        ///   - prefix: An optional prefix for the validation.
+        ///   - delegate: The legacy delegate that will handle the SMS validation.
+        /// - Throws: Can throw errors if validation fails.
+        /// - Returns: The result of the validation, either valid or invalid.
+        private func legacySMSValidation(
+            address: String,
+            senderID: String,
+            prefix: String?,
+            delegate: any SMSValidatorDelegate
+        ) async throws -> Result {
+            let trimmed = address.trimmingCharacters(in: .whitespacesAndNewlines)
+            var cleanedNumber = trimmed.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
+
+            if let prefix {
+                let cleanedCountryCode = prefix.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
+                if cleanedNumber.hasPrefix(cleanedCountryCode) {
+                    cleanedNumber = String(cleanedNumber.dropFirst(cleanedCountryCode.count))
+                }
+                cleanedNumber =  cleanedCountryCode + cleanedNumber
+            }
+
+            guard try await delegate.validateSMS(msisdn: cleanedNumber, sender: senderID) else {
+                return .invalid
+            }
+
+            return .valid(address: cleanedNumber)
+        }
+
+        /// Internal storage for SMS delegate.
+        private final class Storage: Sendable  {
+            @MainActor
+            var smsDelegate: (any SMSValidatorDelegate)?
+        }
+    }
+}
+/// Extension to add matching logic for SMS validation hints (e.g., minimum or maximum digits).
+fileprivate extension AirshipInputValidation.Request.SMS.ValidationHints {
+
+    func matches(_ rawInput: String) -> Bool {
+        let digits = rawInput.filter { $0.isNumber }
+
+        guard
+            digits.count >= (self.minDigits ?? 0),
+            digits.count <= (self.maxDigits ?? Int.max)
+        else {
             return false
         }
+
         return true
     }
 }

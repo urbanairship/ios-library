@@ -249,6 +249,7 @@ class ThomasFormState: ObservableObject {
             updateStatus(.pendingValidation)
         }
 
+
         // If we are in onDemand mode and the old value is invalid, make sure
         // the incoming value is not also invalid. This helps prevent removing
         // the invalid status until we know its valid or pending.
@@ -263,6 +264,7 @@ class ThomasFormState: ObservableObject {
         self.children.removeAll { child in
             if child.field.identifier == field.identifier {
                 child.watchTask.cancel()
+                child.field.cancel()
                 return true
             }
             return false

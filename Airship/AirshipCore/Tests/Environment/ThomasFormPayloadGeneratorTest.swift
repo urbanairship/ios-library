@@ -178,10 +178,10 @@ struct ThomasFormPayloadGeneratorTest {
         ]
     )
     func testStateData(formStatus: ThomasFormState.Status) async throws {
-        let errorField = ThomasFormField.asyncField(identifier: "some-async-id", input: .score(7), earlyProcessingDelay: 0) { .error }
+        let errorField = ThomasFormField.asyncField(identifier: "some-async-id", input: .score(7), processDelay: 0) { .error }
         await errorField.process() // gets the error
 
-        let pendingField = ThomasFormField.asyncField(identifier: "some-pending-async-id", input: .score(7), earlyProcessingDelay: 100.0) { .invalid }
+        let pendingField = ThomasFormField.asyncField(identifier: "some-pending-async-id", input: .score(7), processDelay: 100.0) { .invalid }
 
         let fields: [ThomasFormField] = [
             ThomasFormField.invalidField(identifier: "some-invalid-id", input: .email("neat")),

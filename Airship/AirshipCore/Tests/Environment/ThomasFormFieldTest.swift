@@ -60,7 +60,7 @@ struct ThomasFormFieldTest {
         let field = ThomasFormField.asyncField(
             identifier: "some-ID",
             input: .text("some-text"),
-            earlyProcessingDelay: 3.0,
+            processDelay: 3.0,
             processor: processor
         ) {
             .valid(.init(value: .text("some valid text")))
@@ -99,6 +99,10 @@ struct ThomasFormFieldTest {
 
     @MainActor
     fileprivate class TestPendinRequest: ThomasFormFieldPendingRequest {
+        func cancel() {
+
+        }
+        
         var result: ThomasFormFieldPendingResult? {
             didSet {
                 onResult.values.forEach { $0(result) }
@@ -143,10 +147,10 @@ struct ThomasFormFieldTest {
         var onSubmit: ((TimeInterval, @escaping @MainActor @Sendable () async throws -> ThomasFormFieldPendingResult) -> TestPendinRequest)?
 
         func submit(
-            earlyProcessDelay: TimeInterval,
+            processDelay: TimeInterval,
             resultBlock: @escaping @MainActor @Sendable () async throws -> ThomasFormFieldPendingResult
         ) -> any ThomasFormFieldPendingRequest {
-            return onSubmit!(earlyProcessDelay, resultBlock)
+            return onSubmit!(processDelay, resultBlock)
         }
     }
 }

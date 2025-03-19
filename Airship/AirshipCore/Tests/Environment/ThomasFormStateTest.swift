@@ -340,7 +340,7 @@ struct ThomasFormStateTest {
             .asyncField(
                 identifier: "bar-id",
                 input: .score(2),
-                earlyProcessingDelay: 0.1
+                processDelay: 0.1
             ) {
                 .valid(.init(value: .score(1)))
             }
@@ -421,7 +421,7 @@ struct ThomasFormStateTest {
             .asyncField(
                 identifier: "bar-id",
                 input: .score(2),
-                earlyProcessingDelay: 0.1
+                processDelay: 0.1
             ) {
                 .valid(.init(value: .score(1)))
             }
@@ -478,7 +478,7 @@ struct ThomasFormStateTest {
             .asyncField(
                 identifier: "some-other-id",
                 input: .score(2),
-                earlyProcessingDelay: 0.1
+                processDelay: 0.1
             ) {
                 .valid(.init(value: .score(1)))
             }
@@ -548,7 +548,7 @@ struct ThomasFormStateTest {
             .asyncField(
                 identifier: "some-other-id",
                 input: .score(2),
-                earlyProcessingDelay: 0.1
+                processDelay: 0.1
             ) {
                 .valid(.init(value: .score(1)))
             }

@@ -11,7 +11,7 @@ import AirshipCore
 
 @MainActor
 internal class AddChannelPromptViewModel: ObservableObject {
-    let inputValidator = AirshipInputValidator()
+    let inputValidator: (any AirshipInputValidation.Validator)?
 
     @Published var state: AddChannelState = .ready
     @Published var selectedSender: PreferenceCenterConfig.ContactManagementItem.SMSSenderInfo
@@ -26,13 +26,16 @@ internal class AddChannelPromptViewModel: ObservableObject {
     internal let onRegisterSMS: (_ msisdn: String, _ senderID: String) -> Void
     internal let onRegisterEmail: (_ email: String) -> Void
 
+    private var validatedAddress: String?
+
     internal init(
         item: PreferenceCenterConfig.ContactManagementItem.AddChannelPrompt,
         theme: PreferenceCenterTheme.ContactManagement?,
         registrationOptions: PreferenceCenterConfig.ContactManagementItem.Platform?,
         onCancel: @escaping () -> Void,
         onRegisterSMS: @escaping (_ msisdn: String, _ senderID: String) -> Void,
-        onRegisterEmail: @escaping (_ email: String) -> Void
+        onRegisterEmail: @escaping (_ email: String) -> Void,
+        validator: (any AirshipInputValidation.Validator)? = nil
     ) {
         self.item = item
         self.theme = theme
@@ -41,6 +44,11 @@ internal class AddChannelPromptViewModel: ObservableObject {
         self.onRegisterSMS = onRegisterSMS
         self.onRegisterEmail = onRegisterEmail
         self.selectedSender = .none
+        self.inputValidator = if Airship.isFlying {
+            validator ?? Airship.preferenceCenter.inputValidator
+        } else {
+            validator
+        }
     }
 
     /// Attempts submission and updates state based on results of attempt
@@ -61,18 +69,19 @@ internal class AddChannelPromptViewModel: ObservableObject {
             /// Only start to load when we are sure it's not a duplicate failed request
             onStartLoading()
 
-            let phoneNumber = AirshipInputValidator.PhoneNumber(
-                self.inputText,
-                countryCode: selectedSender.countryCode
+            let smsRequest: AirshipInputValidation.Request = .sms(
+                AirshipInputValidation.Request.SMS(
+                    rawInput: self.inputText,
+                    validationOptions: .sender(senderID: selectedSender.senderId, prefix: selectedSender.countryCode),
+                    validationHints: .init(minDigits: 4)
+                )
             )
 
             /// Attempt validation call
-            let passedValidation = try await inputValidator.validate(
-                phoneNumber: phoneNumber,
-                validation: .sender(selectedSender.senderId)
-            )
+            let passedValidation = try await inputValidator?.validateRequest(smsRequest) ?? .invalid
 
-            if passedValidation {
+            if case let .valid(address) = passedValidation {
+                validatedAddress = address
                 onValidationSucceeded()
             } else {
                 onValidationFailed()
@@ -91,33 +100,38 @@ internal class AddChannelPromptViewModel: ObservableObject {
     private func attemptEmailSubmission() async {
         onStartLoading()
 
-        let email = AirshipInputValidator.Email(self.inputText)
-
-        let passedValidation = inputValidator.validate(
-            email: email
+        let emailRequest: AirshipInputValidation.Request = .email(
+            AirshipInputValidation.Request.Email(
+                rawInput: self.inputText
+            )
         )
 
-        if passedValidation {
-            onValidationSucceeded()
-        } else {
-            onValidationFailed()
+        do {
+            let passedValidation = try await inputValidator?.validateRequest(emailRequest) ?? .invalid
+
+            if case let .valid(address) = passedValidation {
+                validatedAddress = address
+                onValidationSucceeded()
+            } else {
+                onValidationFailed()
+            }
+        } catch {
+            AirshipLogger.error(error.localizedDescription)
+            onValidationError()
         }
     }
 
     internal func onSubmit() {
-        if let platform = platform {
+        if let platform = platform, let validatedAddress = validatedAddress {
             switch platform {
             case .sms(_):
-                let phoneNumber = AirshipInputValidator.PhoneNumber(
-                    self.inputText,
-                    countryCode: selectedSender.countryCode
-                )
-                onRegisterSMS(phoneNumber.address, selectedSender.senderId)
+                onRegisterSMS(validatedAddress, selectedSender.senderId)
             case .email(_):
-                let email = AirshipInputValidator.Email(self.inputText)
-                onRegisterEmail(email.address)
+                onRegisterEmail(validatedAddress)
             }
         }
+
+        validatedAddress = nil
     }
 
     @MainActor
@@ -147,43 +161,24 @@ internal class AddChannelPromptViewModel: ObservableObject {
             self.state = .failedDefault
         }
     }
-}
 
-// MARK: Remote operations
-
-extension AddChannelPromptViewModel {
+    /// Validates input format for UI feedback (enabling/disabling submit button)
     @MainActor
-    private func validateSMS(msisdn: String, sender: String) async throws -> Bool {
-        if let delegate = Airship.contact.smsValidatorDelegate {
-            let result = try await delegate.validateSMS(msisdn: msisdn, sender: sender)
-            AirshipLogger.trace("Validating phone number through delegate")
-            return result
-        } else {
-            let result = try await Airship.contact.validateSMS(msisdn, sender: sender)
-            AirshipLogger.trace("Using default phone number validator")
-            return result
-        }
-    }
-}
-
-// MARK: Utilities
-extension AddChannelPromptViewModel {
-
-    /// Initial validation that unlocks the submit button. Email is currently only validated via this method.
-    @MainActor
-    internal func validateInputFormat() -> Bool {
+    internal func validateInputFormat() {
         if let platform = self.platform {
+            // Basic validation to enable/disable submit button
+            // Full validation happens in attemptSubmission
             switch platform {
             case .email(_):
-                return AirshipInputValidator.Email(self.inputText).isValidFormat
+                let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+                let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+                isInputFormatValid = emailPredicate.evaluate(with: inputText)
             case .sms(_):
-                return AirshipInputValidator.PhoneNumber(
-                    self.inputText,
-                    countryCode: self.selectedSender.countryCode
-                ).isValidFormat
+                let formattedPhone = inputText.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
+                isInputFormatValid = formattedPhone.count >= 7
             }
         } else {
-            return false
+            isInputFormatValid = false
         }
     }
 }

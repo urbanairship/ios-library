@@ -58,11 +58,15 @@ public final class TestAirshipRequestSession: AirshipRequestSession, @unchecked 
         if let error = self.error {
             throw error
         }
-        
+
+        guard let response else {
+            throw AirshipErrors.error("No response")
+        }
+
         let result = AirshipHTTPResponse(
-            result: try responseParser?(data, response!),
-            statusCode: response!.statusCode,
-            headers: response!.allHeaderFields as? [String: String] ?? [:]
+            result: try responseParser?(data, response),
+            statusCode: response.statusCode,
+            headers: response.allHeaderFields as? [String: String] ?? [:]
         )
         return result
     }

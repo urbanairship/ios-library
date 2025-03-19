@@ -435,10 +435,11 @@ public final class AirshipUtils {
 }
 
 public extension String {
+    @available(*, deprecated, message: "Marked to be removed in SDK 20. Internal use only.")
     func airshipIsValidEmail() -> Bool {
-        return AirshipInputValidator().validate(
-            email: AirshipInputValidator.Email(self)
-        )
+        let regex = #"^[^@\s]+@[^@\s]+\.[^@\s.]+$"#
+        let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
+        return predicate.evaluate(with: self)
     }
 }
 

@@ -22,12 +22,14 @@ protocol ThomasFormFieldPendingRequest: Sendable {
     func resultUpdates<T: Sendable>(mapper: @escaping @Sendable (ThomasFormFieldPendingResult?) -> T) -> AsyncStream<T>
 
     func process(retryErrors: Bool) async
+
+    func cancel()
 }
 
 @MainActor
 protocol ThomasFormFieldProcessor: Sendable {
     func submit(
-        earlyProcessDelay: TimeInterval,
+        processDelay: TimeInterval,
         resultBlock: @escaping @MainActor @Sendable () async throws -> ThomasFormFieldPendingResult
     ) -> any ThomasFormFieldPendingRequest
 }
@@ -47,13 +49,13 @@ final class DefaultThomasFormFieldProcessor: ThomasFormFieldProcessor {
 
     @MainActor
     func submit(
-        earlyProcessDelay: TimeInterval,
+        processDelay: TimeInterval,
         resultBlock: @escaping @MainActor @Sendable () async throws -> ThomasFormFieldPendingResult
     ) -> any ThomasFormFieldPendingRequest {
         AsyncOperation(
             date: self.date,
             taskSleeper: self.taskSleeper,
-            earlyProcessDelay: earlyProcessDelay,
+            processDelay: processDelay,
             resultBlock: resultBlock
         )
     }
@@ -87,8 +89,7 @@ final class DefaultThomasFormFieldProcessor: ThomasFormFieldProcessor {
         private let date: any AirshipDateProtocol
         private let taskSleeper: any AirshipTaskSleeper
 
-        private var processingTask: Task<ThomasFormFieldPendingResult, Never>?
-        private var scheduleTask: Task<Void, any Error>? = nil
+        private var processingTask: Task<Void, Never>?
         private(set) var lastResult: ThomasFormFieldPendingResult?
         private var nextBackOff: TimeInterval? = nil
         private var lastAttempt: Date?
@@ -104,65 +105,56 @@ final class DefaultThomasFormFieldProcessor: ThomasFormFieldProcessor {
         init(
             date: any AirshipDateProtocol,
             taskSleeper: any AirshipTaskSleeper,
-            earlyProcessDelay: TimeInterval,
+            processDelay: TimeInterval,
             resultBlock: @escaping @MainActor @Sendable () async throws -> ThomasFormFieldPendingResult
         ) {
             self.resultBlock = resultBlock
             self.date = date
             self.taskSleeper = taskSleeper
+            startProcessing(additionalDelay: processDelay)
+        }
 
-            self.scheduleTask = Task { @MainActor [weak self] in
-                try await taskSleeper.sleep(timeInterval: earlyProcessDelay)
-                try Task.checkCancellation()
-                self?.startProcessing()
-            }
+        func cancel() {
+            self.processingTask?.cancel()
+            self.processingTask = nil
         }
 
         deinit {
-            self.scheduleTask?.cancel()
             self.processingTask?.cancel()
         }
 
         func process(retryErrors: Bool) async {
-            if let lastResult, !lastResult.isError || retryErrors == false {
+            guard lastResult == nil || (lastResult?.isError == true && retryErrors == true) else {
                 return
             }
 
-            // If we have an active processing task reuse it
-            if let processingTask, processingTask.isCancelled == false {
-                _ = await processingTask.value
+            guard let processingTask, !processingTask.isCancelled else {
+                await startProcessing().value
                 return
             }
+            
+            await processingTask.value
 
-            // Cancel and start a new task
-            self.scheduleTask?.cancel()
-            self.processingTask?.cancel()
-            _ = await startProcessing().value
         }
 
         /// Starts the validation process.
         /// - Returns: The task performing the validation.
         @discardableResult
-        private func startProcessing() -> Task<ThomasFormFieldPendingResult, Never> {
-            if let processingTask, processingTask.isCancelled == false {
-                return processingTask
-            }
-
+        private func startProcessing(additionalDelay: TimeInterval? = nil) -> Task<Void, Never> {
             self.lastResult = nil
 
-            let task: Task<ThomasFormFieldPendingResult, Never> = Task { @MainActor [weak self, resultBlock] in
+            let task: Task<Void, Never> = Task { @MainActor [weak self] in
                 do {
+                    if let additionalDelay {
+                        try await self?.taskSleeper.sleep(timeInterval: additionalDelay)
+                    }
                     try await self?.processBackOff()
                     try Task.checkCancellation()
-                    let result = try await resultBlock()
+                    let result = try await self?.resultBlock()
                     try Task.checkCancellation()
-                    self?.processResult(result)
-                    return result
+                    self?.processResult(result ?? .error)
                 } catch {
-                    if !Task.isCancelled {
-                        self?.processResult(.error)
-                    }
-                    return .error
+                    self?.processResult(.error)
                 }
             }
 

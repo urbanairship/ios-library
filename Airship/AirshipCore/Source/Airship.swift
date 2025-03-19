@@ -99,6 +99,10 @@ public final class Airship: Sendable {
         return shared.airshipInstance.privacyManager
     }
 
+    static var inputValidator: any AirshipInputValidation.Validator {
+        return shared.airshipInstance.inputValidator
+    }
+
     /// - NOTE: For internal use only. :nodoc:
     public var components: [any AirshipComponent] { return airshipInstance.components }
 

@@ -26,6 +26,8 @@ struct TextInput: View {
     init(info: ThomasViewInfo.TextInput, constraints: ViewConstraints) {
         self.info = info
         self.constraints = constraints
+
+
         self._viewModel = StateObject(
             wrappedValue: ViewModel(
                 inputProperties: info.properties,
@@ -156,6 +158,9 @@ struct TextInput: View {
         .keyboardType(keyboardType)
         .airshipApplyIf(self.info.properties.inputType == .email) { view in
             view.textContentType(.emailAddress)
+        }
+        .airshipApplyIf(self.info.properties.inputType == .sms) { view in
+            view.textContentType(.telephoneNumber)
         }
 #endif
         .thomasCommon(self.info)
@@ -292,7 +297,11 @@ struct TextInput: View {
     fileprivate final class ViewModel: ObservableObject {
         private let inputProperties: ThomasViewInfo.TextInput.Properties
         private let isRequired: Bool
-        private let inputValidator: AirshipInputValidator = AirshipInputValidator()
+
+        private var inputValidator: (any AirshipInputValidation.Validator)? {
+            guard Airship.isFlying else { return nil }
+            return Airship.inputValidator
+        }
 
         @Published
         var formField: ThomasFormField?
@@ -315,7 +324,10 @@ struct TextInput: View {
         @Published
         var didEdit: Bool = false
 
-        init(inputProperties: ThomasViewInfo.TextInput.Properties, isRequired: Bool) {
+        init(
+            inputProperties: ThomasViewInfo.TextInput.Properties,
+            isRequired: Bool
+        ) {
             self.inputProperties = inputProperties
             self.isRequired = isRequired
             self.availableLocales = inputProperties.smsLocales
@@ -383,33 +395,47 @@ struct TextInput: View {
                         ThomasFormField.validField(
                             identifier: inputProperties.identifier,
                             input: .email(input),
-                            result: .init(value: .email(trimmed))
+                            result: .init(value: .email(nil))
                         )
                     }
                 }
+
+                let request: AirshipInputValidation.Request = .email(
+                    AirshipInputValidation.Request.Email(
+                        rawInput: input
+                    )
+                )
 
                 return ThomasFormField.asyncField(
                     identifier: inputProperties.identifier,
-                    input: .email(input)
+                    input: .email(input),
+                    processDelay: 1.5
                 ) { [inputValidator, weak self] in
-                    let email = AirshipInputValidator.Email(trimmed)
-                    guard inputValidator.validate(email: email) else {
-                        return .invalid
-                    }
+
+                    guard let inputValidator else { return .invalid }
+
+                    let result = try await inputValidator.validateRequest(
+                        request
+                    )
 
                     guard let self else { return .invalid }
 
-                    return .valid(
-                        .init(
-                            value: .email(email.address),
-                            channels: self.makeChannels(value: email.address),
-                            attributes: self.makeAttributes(value: email.address)
+                    switch (result) {
+                    case .invalid:
+                        return .invalid
+                    case .valid(let address):
+                        return .valid(
+                            .init(
+                                value: .email(address),
+                                channels: self.makeChannels(value: address),
+                                attributes: self.makeAttributes(value: address)
+                            )
                         )
-                    )
+                    }
                 }
             case .sms:
                 guard !trimmed.isEmpty, let selectedSmsLocale else {
-                    return if isRequired, selectedSmsLocale == nil {
+                    return if isRequired || selectedSmsLocale == nil {
                         ThomasFormField.invalidField(
                             identifier: inputProperties.identifier,
                             input: .sms(input)
@@ -418,28 +444,40 @@ struct TextInput: View {
                         ThomasFormField.validField(
                             identifier: inputProperties.identifier,
                             input: .sms(input),
-                            result: .init(value: .sms(trimmed))
+                            result: .init(value: .sms(nil))
                         )
                     }
                 }
 
+                let request: AirshipInputValidation.Request = .sms(
+                    AirshipInputValidation.Request.SMS(
+                        rawInput: input,
+                        validationOptions: .prefix(prefix: selectedSmsLocale.prefix),
+                        validationHints: .init(minDigits: 4, maxDigits: 25)
+                    )
+                )
+
                 return ThomasFormField.asyncField(
                     identifier: inputProperties.identifier,
                     input: .sms(input)
-                ) { [weak self, selectedSmsLocale] in
-                    // TODO wire up validation
+                ) { [weak self, inputValidator] in
+                    guard let inputValidator else { return .invalid }
 
-                    let number = AirshipInputValidator.PhoneNumber(trimmed, countryCode: selectedSmsLocale.prefix)
+                    let result = try await inputValidator.validateRequest(request)
+                    guard let self else { return .invalid }
 
-                    guard let self, number.isValidFormat else { return .invalid }
-
-                    return .valid(
-                        .init(
-                            value: .sms(number.address),
-                            channels: self.makeChannels(value: number.address, selectedSmsLocale: selectedSmsLocale),
-                            attributes: self.makeAttributes(value: number.address)
+                    switch (result) {
+                    case .invalid:
+                        return .invalid
+                    case .valid(let address):
+                        return .valid(
+                            .init(
+                                value: .sms(address),
+                                channels: self.makeChannels(value: address),
+                                attributes: self.makeAttributes(value: address)
+                            )
                         )
-                    )
+                    }
                 }
             case .number, .text, .textMultiline:
                 return if trimmed.isEmpty, isRequired {

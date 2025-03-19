@@ -5,6 +5,7 @@ import XCTest
 
 @testable import AirshipPreferenceCenter
 
+
 class PreferenceCenterTest: XCTestCase {
 
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
@@ -22,7 +23,8 @@ class PreferenceCenterTest: XCTestCase {
         self.preferenceCenter = await PreferenceCenter(
             dataStore: self.dataStore,
             privacyManager: self.privacyManager,
-            remoteData: self.remoteDataProvider
+            remoteData: self.remoteDataProvider,
+            inputValidator: TestInputValidator()
         )
     }
 
@@ -157,5 +159,13 @@ class PreferenceCenterTest: XCTestCase {
             data: try! AirshipJSON.from(json: json),
             remoteDataInfo: nil
         )
+    }
+}
+
+fileprivate final class TestInputValidator: AirshipInputValidation.Validator {
+    var legacySMSDelegate: (any AirshipCore.SMSValidatorDelegate)?
+    
+    func validateRequest(_ request: AirshipCore.AirshipInputValidation.Request) async throws -> AirshipCore.AirshipInputValidation.Result {
+        return .invalid
     }
 }

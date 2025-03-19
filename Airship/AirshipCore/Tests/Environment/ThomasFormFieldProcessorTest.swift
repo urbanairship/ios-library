@@ -22,7 +22,7 @@ struct ThomasFormFieldProcessorTest {
     func testProcessingEarlyProcessDelay() async throws {
         await taskSleeper.pause()
 
-        let request = processor.submit(earlyProcessDelay: 200.0) {
+        let request = processor.submit(processDelay: 200.0) {
             return .invalid
         }
 
@@ -39,7 +39,7 @@ struct ThomasFormFieldProcessorTest {
     func testProcessingEarlyProcessNatativeDelay() async throws {
         await taskSleeper.pause()
 
-        let request = processor.submit(earlyProcessDelay: -1.0) {
+        let request = processor.submit(processDelay: -1.0) {
             return .invalid
         }
 
@@ -55,7 +55,7 @@ struct ThomasFormFieldProcessorTest {
     @Test("Test invalid result does not retry")
     func testInvalidResultDoesNotRetry() async throws {
         await confirmation { confirmation in
-            let request = processor.submit(earlyProcessDelay: 1.0) {
+            let request = processor.submit(processDelay: 1.0) {
                 confirmation.confirm()
                 return .invalid
             }
@@ -72,7 +72,7 @@ struct ThomasFormFieldProcessorTest {
     func testValidResultDoesNotRetry() async throws {
         let result = ThomasFormFieldPendingResult.valid(.init(value: .score(100)))
         await confirmation { confirmation in
-            let request = processor.submit(earlyProcessDelay: 1.0) {
+            let request = processor.submit(processDelay: 1.0) {
                 confirmation.confirm()
                 return result
             }
@@ -88,7 +88,7 @@ struct ThomasFormFieldProcessorTest {
     @Test("Test error result will retry")
     func testErrorRetries() async throws {
         await confirmation(expectedCount: 3) { confirmation in
-            let request = processor.submit(earlyProcessDelay: 1.0) {
+            let request = processor.submit(processDelay: 1.0) {
                 confirmation.confirm()
                 return .error
             }
@@ -102,7 +102,7 @@ struct ThomasFormFieldProcessorTest {
     @Test("Test retry backoff")
     func testAsyncValidationError() async throws {
         await confirmation(expectedCount: 8) { confirmation in
-            let request = processor.submit(earlyProcessDelay: 1.0) {
+            let request = processor.submit(processDelay: 1.0) {
                 confirmation.confirm()
                 return .error
             }
@@ -142,7 +142,7 @@ struct ThomasFormFieldProcessorTest {
             continuation.yield(.invalid)
         }.makeAsyncIterator()
 
-        let request = processor.submit(earlyProcessDelay: 1.0) {
+        let request = processor.submit(processDelay: 1.0) {
             return await resultStream.next()!
         }
 
