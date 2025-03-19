@@ -1289,8 +1289,8 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var textAppearance: ThomasTextAppearance
             var inputType: TextInputType
             var iconEnd: IconEndInfo?
-            var emailRegistration: ThomasEmailRegistrationOptions?
-            var smsLocales: [ThomasSmsLocale]?
+            var emailRegistration: ThomasEmailRegistrationOption?
+            var smsLocales: [ThomasSMSLocale]?
 
             enum CodingKeys: String, CodingKey {
                 case attributeName = "attribute_name"

@@ -87,7 +87,7 @@ struct TextInput: View {
             self.info.properties.inputType == .sms,
             let locales = self.viewModel.availableLocales
         {
-            SmsLocalePicker(selectedLocale: $viewModel.selectedSmsLocale, availableLocales: locales)
+            SmsLocalePicker(selectedLocale: $viewModel.selectedSMSLocale, availableLocales: locales)
         } else {
             EmptyView()
         }
@@ -126,7 +126,7 @@ struct TextInput: View {
             inputAccessoryView()
             
             ZStack {
-                if let hint = self.info.properties.placeholder ?? self.viewModel.selectedSmsLocale?.prefix {
+                if let hint = self.info.properties.placeholder ?? self.viewModel.selectedSMSLocale?.prefix {
                     Text(hint)
                         .textAppearance(placeHolderTextAppearance())
                         .padding(5)
@@ -308,8 +308,8 @@ struct TextInput: View {
         private var lastInput: String?
         
         @Published
-        var selectedSmsLocale: ThomasSmsLocale?
-        let availableLocales: [ThomasSmsLocale]?
+        var selectedSMSLocale: ThomasSMSLocale?
+        let availableLocales: [ThomasSMSLocale]?
 
         @Published
         var input: String = "" {
@@ -331,7 +331,7 @@ struct TextInput: View {
             self.inputProperties = inputProperties
             self.isRequired = isRequired
             self.availableLocales = inputProperties.smsLocales
-            self.selectedSmsLocale = inputProperties.smsLocales?.first
+            self.selectedSMSLocale = inputProperties.smsLocales?.first
             self.formField = self.makeFormField(input: "")
         }
 
@@ -359,7 +359,10 @@ struct TextInput: View {
             ]
         }
 
-        private func makeChannels(value: String, selectedSmsLocale: ThomasSmsLocale? = nil) -> [ThomasFormField.Channel]? {
+        private func makeChannels(
+            value: String,
+            selectedSMSLocale: ThomasSMSLocale? = nil
+        ) -> [ThomasFormField.Channel]? {
             guard !value.isEmpty else { return nil }
 
             switch(self.inputProperties.inputType) {
@@ -370,7 +373,7 @@ struct TextInput: View {
                     nil
                 }
             case .sms:
-                return if let options = selectedSmsLocale?.registration {
+                return if let options = selectedSMSLocale?.registration {
                     [.sms(value, options)]
                 } else {
                     nil
@@ -434,8 +437,9 @@ struct TextInput: View {
                     }
                 }
             case .sms:
-                guard !trimmed.isEmpty, let selectedSmsLocale else {
-                    return if isRequired || selectedSmsLocale == nil {
+
+                guard !trimmed.isEmpty, let selectedSMSLocale else {
+                    return if isRequired, selectedSMSLocale == nil {
                         ThomasFormField.invalidField(
                             identifier: inputProperties.identifier,
                             input: .sms(input)
@@ -452,7 +456,7 @@ struct TextInput: View {
                 let request: AirshipInputValidation.Request = .sms(
                     AirshipInputValidation.Request.SMS(
                         rawInput: input,
-                        validationOptions: .prefix(prefix: selectedSmsLocale.prefix),
+                        validationOptions: .prefix(prefix: selectedSMSLocale.prefix),
                         validationHints: .init(minDigits: 4, maxDigits: 25)
                     )
                 )

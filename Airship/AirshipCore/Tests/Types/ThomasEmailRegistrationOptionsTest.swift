@@ -19,10 +19,10 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
         }
         """
 
-        let options = try JSONDecoder().decode(ThomasEmailRegistrationOptions.self, from: json.data(using: .utf8)!)
+        let options = try JSONDecoder().decode(ThomasEmailRegistrationOption.self, from: json.data(using: .utf8)!)
 
-        let expected: ThomasEmailRegistrationOptions = .commercial(
-            ThomasEmailRegistrationOptions.Commercial(
+        let expected: ThomasEmailRegistrationOption = .commercial(
+            ThomasEmailRegistrationOption.Commercial(
                 optedIn: true,
                 properties: try AirshipJSON.wrap(["cool": "prop"])
             )
@@ -38,10 +38,10 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
         }
         """
 
-        let options = try JSONDecoder().decode(ThomasEmailRegistrationOptions.self, from: json.data(using: .utf8)!)
+        let options = try JSONDecoder().decode(ThomasEmailRegistrationOption.self, from: json.data(using: .utf8)!)
 
-        let expected: ThomasEmailRegistrationOptions = .commercial(
-            ThomasEmailRegistrationOptions.Commercial(
+        let expected: ThomasEmailRegistrationOption = .commercial(
+            ThomasEmailRegistrationOption.Commercial(
                 optedIn: false,
                 properties: nil
             )
@@ -59,10 +59,10 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
         }
         """
 
-        let options = try JSONDecoder().decode(ThomasEmailRegistrationOptions.self, from: json.data(using: .utf8)!)
+        let options = try JSONDecoder().decode(ThomasEmailRegistrationOption.self, from: json.data(using: .utf8)!)
 
-        let expected: ThomasEmailRegistrationOptions = .transactional(
-            ThomasEmailRegistrationOptions.Transactional(
+        let expected: ThomasEmailRegistrationOption = .transactional(
+            ThomasEmailRegistrationOption.Transactional(
                 properties: try AirshipJSON.wrap(["cool": "prop"])
             )
         )
@@ -76,10 +76,10 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
         }
         """
 
-        let options = try JSONDecoder().decode(ThomasEmailRegistrationOptions.self, from: json.data(using: .utf8)!)
+        let options = try JSONDecoder().decode(ThomasEmailRegistrationOption.self, from: json.data(using: .utf8)!)
 
-        let expected: ThomasEmailRegistrationOptions = .transactional(
-            ThomasEmailRegistrationOptions.Transactional(
+        let expected: ThomasEmailRegistrationOption = .transactional(
+            ThomasEmailRegistrationOption.Transactional(
                 properties: nil
             )
         )
@@ -96,10 +96,10 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
         }
         """
 
-        let options = try JSONDecoder().decode(ThomasEmailRegistrationOptions.self, from: json.data(using: .utf8)!)
+        let options = try JSONDecoder().decode(ThomasEmailRegistrationOption.self, from: json.data(using: .utf8)!)
 
-        let expected: ThomasEmailRegistrationOptions = .doubleOptIn(
-            ThomasEmailRegistrationOptions.DoubleOptIn(
+        let expected: ThomasEmailRegistrationOption = .doubleOptIn(
+            ThomasEmailRegistrationOption.DoubleOptIn(
                 properties: try AirshipJSON.wrap(["cool": "prop"])
             )
         )
@@ -113,10 +113,10 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
         }
         """
 
-        let options = try JSONDecoder().decode(ThomasEmailRegistrationOptions.self, from: json.data(using: .utf8)!)
+        let options = try JSONDecoder().decode(ThomasEmailRegistrationOption.self, from: json.data(using: .utf8)!)
 
-        let expected: ThomasEmailRegistrationOptions = .doubleOptIn(
-            ThomasEmailRegistrationOptions.DoubleOptIn(
+        let expected: ThomasEmailRegistrationOption = .doubleOptIn(
+            ThomasEmailRegistrationOption.DoubleOptIn(
                 properties: nil
             )
         )
@@ -124,8 +124,8 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
     }
 
     func testCommercialToContactOptions() throws {
-        let options: ThomasEmailRegistrationOptions = .commercial(
-            ThomasEmailRegistrationOptions.Commercial(
+        let options: ThomasEmailRegistrationOption = .commercial(
+            ThomasEmailRegistrationOption.Commercial(
                 optedIn: true,
                 properties: try AirshipJSON.wrap(["cool": "prop"])
             )
@@ -140,8 +140,8 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
     }
 
     func testCommercialNoPropertiesToContactOptions() {
-        let options: ThomasEmailRegistrationOptions = .commercial(
-            ThomasEmailRegistrationOptions.Commercial(
+        let options: ThomasEmailRegistrationOption = .commercial(
+            ThomasEmailRegistrationOption.Commercial(
                 optedIn: false,
                 properties: nil
             )
@@ -156,8 +156,8 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
     }
 
     func testTransactionalToContactOptions() throws {
-        let options: ThomasEmailRegistrationOptions = .transactional(
-            ThomasEmailRegistrationOptions.Transactional(
+        let options: ThomasEmailRegistrationOption = .transactional(
+            ThomasEmailRegistrationOption.Transactional(
                 properties: try AirshipJSON.wrap(["cool": "prop"])
             )
         )
@@ -171,8 +171,8 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
     }
 
     func testTransactionalNoPropertiesToContactOptions() {
-        let options: ThomasEmailRegistrationOptions = .transactional(
-            ThomasEmailRegistrationOptions.Transactional(
+        let options: ThomasEmailRegistrationOption = .transactional(
+            ThomasEmailRegistrationOption.Transactional(
                 properties: nil
             )
         )
@@ -186,8 +186,8 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
     }
 
     func testDoubleOptInToContactOptions() throws {
-        let options: ThomasEmailRegistrationOptions = .doubleOptIn(
-            ThomasEmailRegistrationOptions.DoubleOptIn(
+        let options: ThomasEmailRegistrationOption = .doubleOptIn(
+            ThomasEmailRegistrationOption.DoubleOptIn(
                 properties: try AirshipJSON.wrap(["cool": "prop"])
             )
         )
@@ -197,8 +197,8 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
     }
 
     func testDoubleOptInNoPropertiesToContactOptions() {
-        let options: ThomasEmailRegistrationOptions = .doubleOptIn(
-            ThomasEmailRegistrationOptions.DoubleOptIn(
+        let options: ThomasEmailRegistrationOption = .doubleOptIn(
+            ThomasEmailRegistrationOption.DoubleOptIn(
                 properties: nil
             )
         )

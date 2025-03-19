@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ThomasEmailRegistrationOptions: ThomasSerializable, Hashable {
+enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
     case doubleOptIn(DoubleOptIn)
     case commercial(Commercial)
     case transactional(Transactional)
@@ -80,7 +80,7 @@ enum ThomasEmailRegistrationOptions: ThomasSerializable, Hashable {
     }
 }
 
-extension ThomasEmailRegistrationOptions {
+extension ThomasEmailRegistrationOption {
     func makeContactOptions(date: Date = Date.now) -> EmailRegistrationOptions {
         switch (self) {
         case .commercial(let properties):

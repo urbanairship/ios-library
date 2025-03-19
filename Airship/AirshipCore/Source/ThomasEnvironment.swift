@@ -92,8 +92,11 @@ class ThomasEnvironment: ObservableObject {
                     address,
                     options: options.makeContactOptions()
                 )
-            case .sms(_, _): break
-                // TODO
+            case .sms(let address, let options):
+                Airship.contact.registerSMS(
+                    address,
+                    options: options.makeContactOptions()
+                )
             }
             
         }
