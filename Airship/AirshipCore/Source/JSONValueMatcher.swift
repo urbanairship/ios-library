@@ -11,6 +11,7 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
     private static let versionConstraintKey = "version_matches"
     private static let alternateVersionConstraintKey = "version"
     private static let arrayContainsKey = "array_contains"
+    private static let arrayLength = "array_length"
     private static let arrayIndexKey = "index"
     private static let errorDomainKey = "com.urbanairship.json_value_matcher"
 
@@ -22,6 +23,7 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
     private var versionMatcher: VersionMatcher?
     private var arrayPredicate: JSONPredicate?
     private var arrayIndex: NSNumber?
+    private var arrayLength: JSONPredicate?
 
     /**
      * The matcher's JSON payload.
@@ -36,6 +38,7 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         payload[JSONValueMatcher.versionConstraintKey] = versionConstraint
         payload[JSONValueMatcher.arrayIndexKey] = arrayIndex
         payload[JSONValueMatcher.arrayContainsKey] = arrayPredicate?.payload()
+        payload[JSONValueMatcher.arrayLength] = arrayLength?.payload()
 
         return payload
     }
@@ -118,6 +121,14 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
                 return false
             }
             return arrayPredicate.evaluate(array[index])
+        }
+
+        if let arrayLength {
+            guard let array = value as? [AnyHashable] else {
+                return false
+            }
+
+            return arrayLength.evaluate(array.count)
         }
 
         return true
@@ -398,6 +409,14 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
                     .boolValue
                     ?? false
             )
+        }
+
+        if let arrayLength = parsedJson[Self.arrayLength] {
+            let matcher = JSONValueMatcher()
+            matcher.arrayLength = try JSONPredicate.fromJson(
+                json: arrayLength
+            )
+            return matcher
         }
 
         if self.isArrayMatcherExpression(parsedJson) {

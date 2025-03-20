@@ -139,6 +139,33 @@ final class JSONPredicateTest: XCTestCase {
         XCTAssertEqual(decoded, expected)
     }
 
+    func testJSONPredicateArrayLength() throws {
+        let json: String = """
+        {
+          "value": {
+            "array_contains": {
+                "value": {
+                  "equals": 2,
+                },
+              },
+              "array_length": {
+                "value": {
+                  "equals": 1,
+                },
+              },
+            },
+          }
+        """
+
+        let predicate: JSONPredicate = try JSONDecoder().decode(
+            JSONPredicate.self,
+            from: json.data(using: .utf8)!
+        )
+
+        XCTAssertTrue(predicate.evaluate([2]))
+        XCTAssertFalse(predicate.evaluate([0, 1, 2]))
+    }
+
     func testAndPredicate() {
         let fooPredicate = JSONPredicate(jsonMatcher: fooMatcher)
         let storyPredicate = JSONPredicate(jsonMatcher: storyMatcher)
