@@ -28,8 +28,8 @@ extension UserDefaults {
 // MARK: - LastLayoutButtonView
 
 struct LastLayoutButtonView: View {
-    @AppStorage("lastLayoutFile") var lastLayoutFile: String?
-    @State private var recentLayouts: [String] = UserDefaults.standard.recentLayouts
+    @State
+    private var recentLayouts: [String] = UserDefaults.standard.recentLayouts
 
     var body: some View {
         Button(action: {
@@ -37,8 +37,8 @@ struct LastLayoutButtonView: View {
         }, label: {
             HStack {
                 Image(systemName: "clock.arrow.circlepath")
-                Text(lastLayoutFile ?? "No Recent Layout")
-                    .foregroundColor(lastLayoutFile == nil ? .gray : .primary)
+                Text(recentLayouts.first ?? "No Recent Layout")
+                    .foregroundColor(recentLayouts.first == nil ? .gray : .primary)
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -61,12 +61,12 @@ struct LastLayoutButtonView: View {
         .onReceive(NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)) { _ in
             recentLayouts = UserDefaults.standard.recentLayouts
         }
-        .disabled(lastLayoutFile == nil)
+        .disabled(recentLayouts.first == nil)
     }
 
     private func openLastLayout() {
         let layouts = Layouts.shared.layouts
-        if let lastFileName = lastLayoutFile,
+        if let lastFileName = recentLayouts.first,
            let layout = layouts.first(where: { $0.fileName == lastFileName }) {
             openLayout(layout: layout)
         }
@@ -75,8 +75,6 @@ struct LastLayoutButtonView: View {
     private func openLayout(layout: LayoutFile) {
         do {
             try Layouts.shared.openLayout(layout)
-            // Update last layout and recent list
-            lastLayoutFile = layout.fileName
             UserDefaults.standard.addRecentLayout(layout.fileName)
         } catch {
             print("Error opening layout: \(error)")
