@@ -94,8 +94,7 @@ final class Layouts {
         }
 
         if layout.type != .sceneEmbedded {
-            // Save the last non-embedded displayed layout file's filename to user defaults
-            UserDefaults.standard.recentLayouts.append(layout.fileName)
+            UserDefaults.standard.addRecentLayout(layout.fileName)
         }
     }
 
