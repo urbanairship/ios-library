@@ -19,6 +19,34 @@ struct HomeView: View {
         }
     }
 
+    func makeEmbeddedSection(parentHeight: CGFloat) -> some View {
+        let embeddedID = "a11y_embedded"
+        return Section {
+            AirshipEmbeddedView(
+                embeddedID: embeddedID,
+                embeddedSize: AirshipEmbeddedSize(
+                    parentHeight: parentHeight
+                )
+            ) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12)
+                        .foregroundColor(.accentColor)
+                    VStack(alignment: .leading) {
+                        Text("Embedded Placeholder View")
+                            .font(.body)
+                            .foregroundColor(.white)
+                        Text("Embedded ID: \(embeddedID)")
+                            .font(.caption)
+                            .foregroundColor(.white)
+                    }.padding()
+                }
+            }.padding()
+        } header: {
+            Text("Embedded")
+                .font(.headline)
+        }
+    }
+
     var sceneSection: some View {
         Section {
             Button {
@@ -109,10 +137,13 @@ struct HomeView: View {
 
     var body: some View {
         NavigationView {
-            Form {
-                sceneSection
-                iaaSection
-            }.navigationTitle("Layout Viewer")
+            GeometryReader { formSize in
+                Form {
+                    makeEmbeddedSection(parentHeight: formSize.size.height)
+                    sceneSection
+                    iaaSection
+                }.navigationTitle("Layout Viewer")
+            }
         }
     }
 }

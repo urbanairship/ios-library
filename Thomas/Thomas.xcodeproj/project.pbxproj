@@ -24,6 +24,7 @@
 		6E6802AD2B867B0900F4591F /* Scenes in Resources */ = {isa = PBXBuildFile; fileRef = 6E6802AB2B867B0900F4591F /* Scenes */; };
 		6E938DCE2AC3DA0600F691D9 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E938DCD2AC3DA0600F691D9 /* AirshipConfig.plist */; };
 		6EABB8212AB272C0008B89E3 /* SharedAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EABB8202AB272C0008B89E3 /* SharedAssets.xcassets */; };
+		990D5D8F2D6FFBEA00F4D20E /* LastLayoutButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990D5D7F2D6FFBE500F4D20E /* LastLayoutButton.swift */; };
 		991BE0D02B047417006109EE /* MapRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0CF2B047417006109EE /* MapRouteView.swift */; };
 		991BE0D22B05684A006109EE /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0D12B05684A006109EE /* CameraView.swift */; };
 		991BE0F32B05C37C006109EE /* WeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0F22B05C37C006109EE /* WeatherViewModel.swift */; };
@@ -146,6 +147,13 @@
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = AirshipCore;
 		};
+		990D5D8D2D6FFBE500F4D20E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9908E5922AFDA95000DB3E2E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A641E1472BDBBDB400DE6FAA;
+			remoteInfo = AirshipObjectiveC;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -184,6 +192,7 @@
 		6EABB8202AB272C0008B89E3 /* SharedAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SharedAssets.xcassets; sourceTree = "<group>"; };
 		6ED807A5273DEA1800D1F455 /* AirshipAutomation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9908E5922AFDA95000DB3E2E /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
+		990D5D7F2D6FFBE500F4D20E /* LastLayoutButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastLayoutButton.swift; sourceTree = "<group>"; };
 		991BE0CF2B047417006109EE /* MapRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRouteView.swift; sourceTree = "<group>"; };
 		991BE0D12B05684A006109EE /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		991BE0F22B05C37C006109EE /* WeatherViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherViewModel.swift; sourceTree = "<group>"; };
@@ -246,6 +255,7 @@
 				3244492E2721667D00D108B5 /* ThomasApp.swift */,
 				324449302721667D00D108B5 /* LayoutsList.swift */,
 				6E3C67052AB37B72000E1057 /* AppView.swift */,
+				990D5D7F2D6FFBE500F4D20E /* LastLayoutButton.swift */,
 				324449322721668100D108B5 /* Assets.xcassets */,
 				6EABB8202AB272C0008B89E3 /* SharedAssets.xcassets */,
 				3244495B2721A5CB00D108B5 /* Resources */,
@@ -298,7 +308,7 @@
 				9908E5C72AFDA95000DB3E2E /* AirshipFeatureFlags.framework */,
 				9908E5BB2AFDA95000DB3E2E /* AirshipMessageCenter.framework */,
 				9908E5BD2AFDA95000DB3E2E /* AirshipPreferenceCenter.framework */,
-				6EAA61AB2D52BCE7006602F7 /* AirshipObjectiveC.framework */,
+				990D5D8E2D6FFBE500F4D20E /* AirshipObjectiveC.framework */,
 				9908E5B72AFDA95000DB3E2E /* AirshipDebug.framework */,
 				9908E5B52AFDA95000DB3E2E /* AirshipTests.xctest */,
 				9908E5C52AFDA95000DB3E2E /* AirshipAutomationTests.xctest */,
@@ -421,13 +431,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		6EAA61AB2D52BCE7006602F7 /* AirshipObjectiveC.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipObjectiveC.framework;
-			remoteRef = 6EAA61AA2D52BCE7006602F7 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		9908E5A92AFDA95000DB3E2E /* AirshipBasement.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -512,6 +515,13 @@
 			remoteRef = 9908E5C82AFDA95000DB3E2E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		990D5D8E2D6FFBE500F4D20E /* AirshipObjectiveC.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipObjectiveC.framework;
+			remoteRef = 990D5D8D2D6FFBE500F4D20E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -536,6 +546,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				990D5D8F2D6FFBEA00F4D20E /* LastLayoutButton.swift in Sources */,
 				606137042A82ACEA0064E62A /* HomeView23Grande.swift in Sources */,
 				9948E61C2B464F1B00C1F21E /* EmbeddedPlaygroundView.swift in Sources */,
 				9948E61B2B464F1B00C1F21E /* KeyView.swift in Sources */,
