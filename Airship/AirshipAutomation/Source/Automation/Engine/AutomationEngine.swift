@@ -405,7 +405,12 @@ fileprivate extension AutomationEngine {
         }
 
         guard
-            try await self.store.getSchedule(scheduleID: scheduleID) == data
+            let isCurrent = try? await self.store.isCurrent(
+                scheduleID: scheduleID,
+                lastScheduleModifiedDate: data.lastScheduleModifiedDate,
+                scheduleState: data.scheduleState
+            ),
+            isCurrent
         else {
             AirshipLogger.trace("Trigger data has changed since preprocessing, retrying \(scheduleID)")
             try await processTriggeredSchedule(scheduleID: scheduleID)
