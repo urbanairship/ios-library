@@ -1,6 +1,13 @@
 
 # iOS Changelog
 
+## Version 19.1.1 March 25, 2025
+Patch release with bug fixes and minor improvements.
+
+### Changes
+- Fixed a bug that allowed channel registration updates to proceed in certain cases when all features were disabled via the Privacy Manager.
+- Fixed a potential bug involving unecessary comparison checks in the layout system.
+
 ## Version 19.1.0 February 20, 2025
 Minor release that adds support for email registration in Scenes, fixes bugs, and improves Airship configuration, Scene keyboard avoidance, and logging.
 
