@@ -25,7 +25,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
     private let client: any MeteredUsageAPIClientProtocol
     private let workManager: any AirshipWorkManagerProtocol
     private let store: MeteredUsageStore
-    private let privacyManager: AirshipPrivacyManager
+    private let privacyManager: any PrivacyManagerProtocol
 
     @MainActor
     convenience init(
@@ -33,7 +33,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
         dataStore: PreferenceDataStore,
         channel: any AirshipChannelProtocol,
         contact: any InternalAirshipContactProtocol,
-        privacyManager: AirshipPrivacyManager
+        privacyManager: any PrivacyManagerProtocol
     ) {
         self.init(
             config: config,
@@ -52,7 +52,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
         dataStore: PreferenceDataStore,
         channel: any AirshipChannelProtocol,
         contact: any InternalAirshipContactProtocol,
-        privacyManager: AirshipPrivacyManager,
+        privacyManager: any PrivacyManagerProtocol,
         client: any MeteredUsageAPIClientProtocol,
         store: MeteredUsageStore,
         workManager: any AirshipWorkManagerProtocol = AirshipWorkManager.shared,

@@ -524,7 +524,7 @@ public extension AirshipConfig {
 
 // The Channel generation method. In `automatic` mode Airship will generate a new channelID and create a new channel.
 // If the restore option is specified and `channelID` is a correct ID, Airship will try to restore a channel with the specified ID
-public enum ChannelGenerationMethod {
+public enum ChannelGenerationMethod: Sendable {
     case automatic
     case restore(channelID: String)
 }

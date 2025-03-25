@@ -10,21 +10,21 @@ final class AirshipMeteredUsageTest: XCTestCase {
     private let channel: TestChannel = TestChannel()
     private let contact: TestContact = TestContact()
 
-    private var privacyManager: AirshipPrivacyManager!
+    private var privacyManager: TestPrivacyManager!
     private let apiClient: MeteredUsageAPIClientProtocol = MeteredTestApiClient()
     private let storage = MeteredUsageStore(appKey: "test.app.key", inMemory: true)
     private let workManager = TestWorkManager()
     private var config: RuntimeConfig = RuntimeConfig.testConfig()
     private var target: AirshipMeteredUsage!
-    
+
     @MainActor
     override func setUp() async throws {
-        self.privacyManager = AirshipPrivacyManager(
-            dataStore: self.dataStore, 
-            config: self.config,
-            defaultEnabledFeatures: []
+        self.privacyManager = TestPrivacyManager(
+            dataStore: self.dataStore,
+            config:self.config,
+            defaultEnabledFeatures:[]
         )
-        
+
         self.target = AirshipMeteredUsage(
             config: config,
             dataStore: dataStore,

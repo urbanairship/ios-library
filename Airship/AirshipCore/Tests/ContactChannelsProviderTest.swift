@@ -7,7 +7,7 @@ class ContactChannelsProviderTest: XCTestCase {
     private var audienceOverridesProvider: DefaultAudienceOverridesProvider!
     private var provider: ContactChannelsProvider!
     var apiClient: TestContactChannelsAPIClient!
-    private var privacyManager: AirshipPrivacyManager!
+    private var privacyManager: TestPrivacyManager!
     private var dataStore: PreferenceDataStore!
     private var notificationCenter: AirshipNotificationCenter!
     private var taskSleeper: TestSleeper!
@@ -75,7 +75,7 @@ class ContactChannelsProviderTest: XCTestCase {
         self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         self.taskSleeper = TestSleeper()
         self.notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
-        self.privacyManager = await AirshipPrivacyManager(
+        self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: .testConfig(),
             defaultEnabledFeatures: .all,
@@ -110,6 +110,12 @@ class ContactChannelsProviderTest: XCTestCase {
             continuation.yield("test-contact-id-1")
             continuation.finish()
         }
+
+        self.apiClient.fetchResponse = AirshipHTTPResponse(
+            result: self.testChannels2,
+            statusCode: 200,
+            headers: [:]
+        )
 
         var resultStream = provider.contactChannels(stableContactIDUpdates: contactIDStream).makeAsyncIterator()
         let result = await resultStream.next()
@@ -160,7 +166,6 @@ class ContactChannelsProviderTest: XCTestCase {
         var resultStream = provider.contactChannels(
             stableContactIDUpdates: await contactIDChannel.makeStream()
         ).makeAsyncIterator()
-
 
         self.apiClient.fetchResponse = AirshipHTTPResponse(
             result: self.testChannels1,

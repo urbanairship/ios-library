@@ -8,11 +8,11 @@ class RemoteConfigManagerTest: XCTestCase {
     private let testRemoteData = TestRemoteData()
     private let notificationCenter = AirshipNotificationCenter.shared
 
-    private var privacyManager: AirshipPrivacyManager!
+    private var privacyManager: TestPrivacyManager!
     private var remoteConfigManager: RemoteConfigManager!
     private var config: RuntimeConfig = RuntimeConfig.testConfig()
     override func setUp() async throws {
-        self.privacyManager = await AirshipPrivacyManager(
+        self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: self.config,
             defaultEnabledFeatures: .all,

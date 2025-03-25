@@ -18,7 +18,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
     private let analytics: TestFeatureFlagAnalytics = TestFeatureFlagAnalytics()
     private let deviceInfoProvider: TestDeviceInfoProvider = TestDeviceInfoProvider()
     private let deferredResolver: TestFeatureFlagResolver = TestFeatureFlagResolver()
-    private var privacyManager: AirshipPrivacyManager!
+    private var privacyManager: TestPrivacyManager!
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let resultCache: FeatureFlagResultCache = FeatureFlagResultCache(cache: TestCache())
 
@@ -26,7 +26,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
 
     override func setUp() async throws {
         let config: RuntimeConfig = .testConfig()
-        self.privacyManager = await AirshipPrivacyManager(
+        self.privacyManager = TestPrivacyManager(
             dataStore: dataStore,
             config: config,
             defaultEnabledFeatures: .all,

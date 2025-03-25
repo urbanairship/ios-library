@@ -37,11 +37,12 @@ class AirshipContactTest: XCTestCase {
             privacyManager: self.privacyManager)
 
         self.channel.identifier = "channel id"
-        setupContact()
+        await setupContact()
         self.contact.airshipReady()
         await self.waitOnContactQueue() // waits for the initial setup task
     }
 
+    @MainActor
     func setupContact()  {
         contactQueue = AirshipAsyncSerialQueue(priority: .high)
 
@@ -100,7 +101,7 @@ class AirshipContactTest: XCTestCase {
             forKey: AirshipContact.legacyNamedUserKey
         )
 
-        setupContact()
+        await setupContact()
 
         await verifyOperations(
             [
@@ -136,7 +137,7 @@ class AirshipContactTest: XCTestCase {
             ContactIDInfo(contactID: "some contact ID", isStable: false, namedUserID: nil)
         )
 
-        setupContact()
+        await setupContact()
 
         let _ = await contact.namedUserID
 
@@ -428,7 +429,7 @@ class AirshipContactTest: XCTestCase {
     @MainActor
     func testResolveSkippedContactsDisabled() async throws {
         self.privacyManager.disableFeatures(.contacts)
-        notificationCenter.post(name:  AirshipNotifications.ChannelCreated.name)
+        notificationCenter.post(name: AirshipNotifications.ChannelCreated.name)
         await self.verifyOperations([.reset])
     }
 
@@ -460,7 +461,7 @@ class AirshipContactTest: XCTestCase {
     }
 
     @MainActor
-    func testResetOnDisbleContacts() async throws {
+    func testResetOnDisableContacts() async throws {
         self.privacyManager.disableFeatures(.contacts)
         await self.verifyOperations([.reset])
     }
@@ -882,6 +883,7 @@ class AirshipContactTest: XCTestCase {
 
 
 fileprivate actor TestContactManager: ContactManagerProtocol {
+
     private var _currentNamedUserID: String? = nil
     private var _currentContactIDInfo: ContactIDInfo? = nil
     private var _pendingAudienceOverrides = ContactAudienceOverrides()
@@ -970,4 +972,8 @@ fileprivate actor TestContactManager: ContactManagerProtocol {
 
     }
 
+    func resetIfNeeded() {
+
+        addOperation(.reset)
+    }
 }

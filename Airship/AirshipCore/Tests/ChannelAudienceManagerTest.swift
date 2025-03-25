@@ -15,12 +15,11 @@ class ChannelAudienceManagerTest: XCTestCase {
     private let subscriptionListClient: TestSubscriptionListAPIClient = TestSubscriptionListAPIClient()
     private let updateClient: TestChannelBulkUpdateAPIClient = TestChannelBulkUpdateAPIClient()
     private let audienceOverridesProvider: DefaultAudienceOverridesProvider = DefaultAudienceOverridesProvider()
-    private var privacyManager: AirshipPrivacyManager!
+    private var privacyManager: TestPrivacyManager!
     private var audienceManager: ChannelAudienceManager!
 
     override func setUp() async throws {
-
-        self.privacyManager = await AirshipPrivacyManager(
+        self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: RuntimeConfig.testConfig(),
             defaultEnabledFeatures: .all,
@@ -198,6 +197,10 @@ class ChannelAudienceManagerTest: XCTestCase {
         editor.subscribe("pizza")
         editor.unsubscribe("coffee")
         editor.apply()
+
+        self.updateClient.updateCallback = { identifier, update in
+            return AirshipHTTPResponse(result: nil, statusCode: 200, headers: [:])
+        }
 
         self.privacyManager.enableFeatures(.tagsAndAttributes)
         _ = try? await self.workManager.launchTask(

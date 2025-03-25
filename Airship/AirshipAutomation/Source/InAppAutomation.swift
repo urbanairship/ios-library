@@ -20,7 +20,7 @@ public final class InAppAutomation: Sendable {
     private let engine: any AutomationEngineProtocol
     private let remoteDataSubscriber: any AutomationRemoteDataSubscriberProtocol
     private let dataStore: PreferenceDataStore
-    private let privacyManager: AirshipPrivacyManager
+    private let privacyManager: any PrivacyManagerProtocol
     private let notificationCenter: AirshipNotificationCenter
     private static let pausedStoreKey: String = "UAInAppMessageManagerPaused"
     private let _legacyInAppMessaging: any InternalLegacyInAppMessagingProtocol
@@ -46,7 +46,7 @@ public final class InAppAutomation: Sendable {
         legacyInAppMessaging: any InternalLegacyInAppMessagingProtocol,
         remoteDataSubscriber: any AutomationRemoteDataSubscriberProtocol,
         dataStore: PreferenceDataStore,
-        privacyManager: AirshipPrivacyManager,
+        privacyManager: any PrivacyManagerProtocol,
         config: RuntimeConfig,
         notificationCenter: AirshipNotificationCenter = .shared
     ) {

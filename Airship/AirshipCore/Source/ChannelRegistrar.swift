@@ -1,16 +1,17 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import Combine
+@preconcurrency import Combine
 
 /// NOTE: For internal use only. :nodoc:
 protocol ChannelRegistrarProtocol: AnyObject, Sendable {
     var channelID: String? { get }
     var updatesPublisher: AnyPublisher<ChannelRegistrationUpdate, Never> { get }
+
+    @MainActor
+    var payloadCreateBlock: (@Sendable () async -> ChannelRegistrationPayload?)? { get set }
+
     func register(forcefully: Bool)
-    func addChannelRegistrationExtender(
-        extender: @escaping (ChannelRegistrationPayload) async -> ChannelRegistrationPayload
-    )
 }
 
 enum ChannelRegistrationUpdate {
@@ -20,7 +21,7 @@ enum ChannelRegistrationUpdate {
 
 /// The ChannelRegistrar class is responsible for device registrations.
 /// - Note: For internal use only. :nodoc:
-final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
+final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
     static let workID = "UAChannelRegistrar.registration"
     private static let payloadCadence: TimeInterval = 24 * 60 * 60
 
@@ -28,16 +29,22 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
     private static let channelIDKey = "UAChannelID"
     private static let lastRegistrationInfo = "ChannelRegistrar.lastRegistrationInfo"
 
-    private var extenders: [(ChannelRegistrationPayload) async -> ChannelRegistrationPayload] = []
 
     private let dataStore: PreferenceDataStore
     private let channelAPIClient: any ChannelAPIClientProtocol
     private let date: any AirshipDateProtocol
     private let workManager: any AirshipWorkManagerProtocol
     private let appStateTracker: any AppStateTrackerProtocol
+
     private let updatesSubject = CurrentValueSubject<ChannelRegistrationUpdate?, Never>(nil)
+
+    @MainActor
     private var checkAppRestoreTask: Task<Void, Never>?
-    private let channelCreateMethod: (() async throws -> ChannelGenerationMethod)?
+    
+    private let channelCreateMethod: (@Sendable () async throws -> ChannelGenerationMethod)?
+
+    @MainActor
+    var payloadCreateBlock: (@Sendable () async -> ChannelRegistrationPayload?)?
 
     private var lastRegistrationInfo: LastRegistrationInfo? {
         get {
@@ -80,6 +87,8 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         return self.updatesSubject.compactMap { $0 }.eraseToAnyPublisher()
     }
 
+    private let privacyManager: any PrivacyManagerProtocol
+
     @MainActor
     init(
         dataStore: PreferenceDataStore,
@@ -87,7 +96,8 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         date: any AirshipDateProtocol = AirshipDate.shared,
         workManager: any AirshipWorkManagerProtocol = AirshipWorkManager.shared,
         appStateTracker: (any AppStateTrackerProtocol)? = nil,
-        channelCreateMethod: AirshipChannelCreateOptionClosure? = nil
+        channelCreateMethod: AirshipChannelCreateOptionClosure? = nil,
+        privacyManager: any PrivacyManagerProtocol
     ) {
         self.dataStore = dataStore
         self.channelAPIClient = channelAPIClient
@@ -95,6 +105,8 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         self.workManager = workManager
         self.appStateTracker = appStateTracker ?? AppStateTracker.shared
         self.channelCreateMethod = channelCreateMethod
+
+        self.privacyManager = privacyManager
 
         if self.channelID != nil {
             checkAppRestoreTask = Task { [weak self] in
@@ -114,12 +126,14 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
     @MainActor
     convenience init(
         config: RuntimeConfig,
-        dataStore: PreferenceDataStore
+        dataStore: PreferenceDataStore,
+        privacyManager: any PrivacyManagerProtocol
     ) {
         self.init(
             dataStore: dataStore,
             channelAPIClient: ChannelAPIClient(config: config),
-            channelCreateMethod: config.airshipConfig.restoreChannelID
+            channelCreateMethod: config.airshipConfig.restoreChannelID,
+            privacyManager: privacyManager
         )
     }
 
@@ -147,19 +161,13 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         )
     }
 
-    func addChannelRegistrationExtender(
-        extender: @escaping (ChannelRegistrationPayload) async -> ChannelRegistrationPayload
-    ) {
-        self.extenders.append(extender)
-    }
-
     private func handleRegistrationWorkRequest(
         _ workRequest: AirshipWorkRequest
     ) async throws -> AirshipWorkResult {
 
         _ = await self.checkAppRestoreTask?.value
 
-        let payload = await self.makePayload()
+        let payload = try await self.makePayload()
 
         guard let channelID = self.channelID else {
             return try await self.createChannel(
@@ -351,14 +359,12 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         }
     }
 
-    private func makePayload() async -> ChannelRegistrationPayload {
-        var result: ChannelRegistrationPayload = ChannelRegistrationPayload()
-
-        for extender in extenders {
-            result = await extender(result)
+    @MainActor
+    private func makePayload() async throws -> ChannelRegistrationPayload {
+        guard let payloadCreateBlock, let payload = await payloadCreateBlock() else {
+            throw AirshipErrors.error("Failed to make a payload")
         }
-
-        return result
+        return payload
     }
 
     private func makeNextUpdatePayload(
@@ -370,6 +376,15 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, @unchecked Sendable {
         let currentLocation = try self.channelAPIClient.makeChannelLocation(
             channelID: channelID
         )
+
+        // If no channel registrations are enabled - skip the cadence check
+        guard privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false) else {
+            return if lastRegistrationInfo?.location != currentLocation || lastRegistrationInfo?.payload != payload {
+                payload.minimizePayload(previous: lastRegistrationInfo?.payload)
+            } else {
+                nil
+            }
+        }
 
         guard let lastRegistrationInfo = lastRegistrationInfo,
               currentLocation == lastRegistrationInfo.location,

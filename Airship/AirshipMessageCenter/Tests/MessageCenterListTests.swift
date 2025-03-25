@@ -6,6 +6,7 @@ import XCTest
 @testable import AirshipCore
 @testable import AirshipMessageCenter
 
+@MainActor
 final class MessageCenterListTest: XCTestCase {
 
     private var disposables = Set<AnyCancellable>()
@@ -49,7 +50,8 @@ final class MessageCenterListTest: XCTestCase {
     private let sleeper = TestTaskSleeper()
     private let notificationCenter = NotificationCenter()
     private let date = UATestDate(offset: 0, dateOverride: Date())
-    
+
+
     private lazy var inbox = MessageCenterInbox(
         channel: channel,
         client: client,

@@ -3,26 +3,28 @@ import Combine
 @testable import AirshipCore
 
 class TestChannelRegistrar:  ChannelRegistrarProtocol, @unchecked Sendable {
+    var payloadCreateBlock: (@Sendable () async -> AirshipCore.ChannelRegistrationPayload?)?
 
     let updatesSubject = PassthroughSubject<ChannelRegistrationUpdate, Never>()
     public var updatesPublisher: AnyPublisher<ChannelRegistrationUpdate, Never> {
         return updatesSubject.eraseToAnyPublisher()
     }
 
-    public var extenders: [(ChannelRegistrationPayload) async -> ChannelRegistrationPayload] = []
-    
+    private var extenders: [@Sendable (inout ChannelRegistrationPayload) async -> Void] = []
+
     public var channelPayload: ChannelRegistrationPayload {
         get async {
-            var result: ChannelRegistrationPayload = ChannelRegistrationPayload()
+            let payload = await payloadCreateBlock?()
+            var result: ChannelRegistrationPayload = payload ?? ChannelRegistrationPayload()
 
             for extender in extenders {
-                result = await extender(result)
+                await extender(&result)
             }
             return result
         }
     }
 
-    public func addChannelRegistrationExtender(extender: @escaping (AirshipCore.ChannelRegistrationPayload) async -> AirshipCore.ChannelRegistrationPayload) {
+    public func addRegistrationExtender(_ extender: @Sendable @escaping (inout ChannelRegistrationPayload) async -> Void) {
         self.extenders.append(extender)
     }
 
@@ -34,3 +36,4 @@ class TestChannelRegistrar:  ChannelRegistrarProtocol, @unchecked Sendable {
         registerCalled = true
     }
 }
+

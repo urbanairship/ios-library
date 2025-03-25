@@ -70,24 +70,24 @@ class AirshipPrivacyManagerTest: XCTestCase {
     }
 
     func testIsAnyEnabled() {
-        XCTAssertTrue(self.privacyManager.isAnyFeatureEnabled())
+        XCTAssertTrue(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
 
         self.privacyManager.disableFeatures([.push, .contacts])
-        XCTAssertTrue(self.privacyManager.isAnyFeatureEnabled())
+        XCTAssertTrue(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
 
         self.privacyManager.disableFeatures(.all)
-        XCTAssertFalse(self.privacyManager.isAnyFeatureEnabled())
+        XCTAssertFalse(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
     }
 
     func testNoneEnabled() {
         self.privacyManager.enabledFeatures = []
-        XCTAssertFalse(self.privacyManager.isAnyFeatureEnabled())
+        XCTAssertFalse(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
 
         self.privacyManager.enableFeatures([.push, .tagsAndAttributes])
-        XCTAssertTrue(self.privacyManager.isAnyFeatureEnabled())
+        XCTAssertTrue(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
 
         self.privacyManager.enabledFeatures = []
-        XCTAssertFalse(self.privacyManager.isAnyFeatureEnabled())
+        XCTAssertFalse(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
     }
 
     func testSetEnabled() {
@@ -157,5 +157,4 @@ class AirshipPrivacyManagerTest: XCTestCase {
         notificationCenter.removeObserver(observer)
 
     }
-    
 }

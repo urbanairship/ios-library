@@ -6,10 +6,10 @@ import AirshipCore
 
 final class AirshipAnalyticFeedTest: XCTestCase {
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private var privacyManager: AirshipPrivacyManager!
+    private var privacyManager: TestPrivacyManager!
 
     override func setUp() async throws {
-        self.privacyManager = await AirshipPrivacyManager(
+        self.privacyManager = TestPrivacyManager(
             dataStore: dataStore,
             config: .testConfig(),
             defaultEnabledFeatures: .all

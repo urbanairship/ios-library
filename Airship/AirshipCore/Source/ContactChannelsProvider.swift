@@ -23,7 +23,7 @@ final class ContactChannelsProvider: ContactChannelsProviderProtocol {
         date: any AirshipDateProtocol = AirshipDate.shared,
         taskSleeper: any AirshipTaskSleeper = .shared,
         maxChannelListCacheAgeSeconds: TimeInterval = 600,
-        privacyManager: AirshipPrivacyManager
+        privacyManager: any PrivacyManagerProtocol
     ) {
         self.actor = BaseCachingRemoteDataProvider(
             remoteFetcher: { contactID in

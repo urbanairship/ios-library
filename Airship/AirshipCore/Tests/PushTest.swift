@@ -22,7 +22,7 @@ class PushTest: XCTestCase {
     private var pushDelegate: TestPushNotificationDelegate!
 
     private var config = AirshipConfig()
-    private var privacyManager: AirshipPrivacyManager!
+    private var privacyManager: TestPrivacyManager!
     private var push: AirshipPush!
     private var serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue(priority: .high)
 
@@ -30,7 +30,7 @@ class PushTest: XCTestCase {
         self.pushDelegate = await TestPushNotificationDelegate()
         self.apnsRegistrar = await TestAPNSRegistrar()
         self.permissionsManager = await AirshipPermissionsManager()
-        self.privacyManager = await AirshipPrivacyManager(
+        self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: .testConfig(),
             defaultEnabledFeatures: .all,

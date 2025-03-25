@@ -70,7 +70,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
     private let channel: any InternalAirshipChannelProtocol
-    private let privacyManager: AirshipPrivacyManager
+    private let privacyManager: any PrivacyManagerProtocol
     private let permissionsManager: AirshipPermissionsManager
     private let notificationCenter: AirshipNotificationCenter
     private let notificationRegistrar: any NotificationRegistrar
@@ -108,7 +108,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         dataStore: PreferenceDataStore,
         channel: any InternalAirshipChannelProtocol,
         analytics: any InternalAnalyticsProtocol,
-        privacyManager: AirshipPrivacyManager,
+        privacyManager: any PrivacyManagerProtocol,
         permissionsManager: AirshipPermissionsManager,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         notificationRegistrar: any NotificationRegistrar =
@@ -174,9 +174,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
 
         self.channel.addRegistrationExtender { payload in
             await checkAppRestoreTask.value
-            return await self.extendChannelRegistrationPayload(
-                payload
-            )
+            return await self.extendChannelRegistrationPayload(&payload)
         }
 
         analytics.addHeaderProvider {
@@ -717,7 +715,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
 
     public func setBadgeNumber(_ newBadgeNumber: Int) async throws {
         try await self.badger.setBadgeNumber(newBadgeNumber)
-        if self.autobadgeEnabled {
+        if self.autobadgeEnabled, privacyManager.isEnabled(.push) {
             self.channel.updateRegistration(forcefully: true)
         }
     }
@@ -737,7 +735,10 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
                     newValue,
                     forKey: AirshipPush.badgeSettingsKey
                 )
-                self.channel.updateRegistration(forcefully: true)
+
+                if privacyManager.isEnabled(.push) {
+                    self.channel.updateRegistration(forcefully: true)
+                }
             }
         }
 
@@ -918,18 +919,16 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
 
     @MainActor
     private func extendChannelRegistrationPayload(
-        _ payload: ChannelRegistrationPayload
-    ) async -> ChannelRegistrationPayload {
-        var payload = payload
-
+        _ payload: inout ChannelRegistrationPayload
+    ) async {
         guard self.privacyManager.isEnabled(.push) else {
-            return payload
+            return
         }
 
         await self.waitForDeviceTokenRegistration()
 
         guard self.privacyManager.isEnabled(.push) else {
-            return payload
+            return
         }
 
 
@@ -969,7 +968,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
          & AirshipAuthorizedNotificationSettings.timeSensitive.rawValue
          > 0)
 
-        return payload
+        return
     }
 
     @MainActor

@@ -9,12 +9,12 @@ import XCTest
 class PreferenceCenterTest: XCTestCase {
 
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private var privacyManager: AirshipPrivacyManager!
+    private var privacyManager: TestPrivacyManager!
     private var preferenceCenter: PreferenceCenter!
     private let remoteDataProvider: TestRemoteData = TestRemoteData()
 
     override func setUp() async throws {
-        self.privacyManager = await AirshipPrivacyManager(
+        self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: .testConfig(),
             defaultEnabledFeatures: .all

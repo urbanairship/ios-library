@@ -136,7 +136,7 @@ final class ChannelAPIClient: ChannelAPIClientProtocol, Sendable {
 }
 
 /// - Note: For internal use only. :nodoc:
-protocol ChannelAPIClientProtocol {
+protocol ChannelAPIClientProtocol: Sendable {
     func makeChannelLocation(channelID: String) throws -> URL
 
     func createChannel(

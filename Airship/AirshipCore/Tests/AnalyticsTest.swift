@@ -19,7 +19,7 @@ class AnalyticsTest: XCTestCase {
     private let sessionEventFactory = TestSessionEventFactory()
     private let sessionTracker = TestSessionTracker()
 
-    private var privacyManager: AirshipPrivacyManager!
+    private var privacyManager: TestPrivacyManager!
     private var analytics: AirshipAnalytics!
     private var testAirship: TestAirshipInstance!
 
@@ -28,7 +28,7 @@ class AnalyticsTest: XCTestCase {
     override func setUp() async throws {
         testAirship = TestAirshipInstance()
         self.permissionsManager = AirshipPermissionsManager()
-        self.privacyManager = AirshipPrivacyManager(
+        self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: RuntimeConfig.testConfig(),
             defaultEnabledFeatures: .all,

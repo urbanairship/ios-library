@@ -14,7 +14,7 @@ class TestChannel: NSObject, AirshipChannelProtocol, AirshipComponent, @unchecke
                 .compactMap { $0 }
                 .removeDuplicates()
                 .sink { update in
-                    continuation.yield(update)
+                    continuation.yield(update) 
                 }
 
             continuation.onTermination = { _ in
@@ -25,14 +25,14 @@ class TestChannel: NSObject, AirshipChannelProtocol, AirshipComponent, @unchecke
 
     private let subscriptionListEditsSubject = PassthroughSubject<SubscriptionListEdit, Never>()
 
-    public var extenders: [(ChannelRegistrationPayload) async -> ChannelRegistrationPayload] = []
+    public var extenders: [@Sendable (inout ChannelRegistrationPayload) async -> Void] = []
 
     public var channelPayload: ChannelRegistrationPayload {
         get async {
             var result: ChannelRegistrationPayload = ChannelRegistrationPayload()
 
             for extender in extenders {
-                result = await extender(result)
+                await extender(&result)
             }
             return result
         }
@@ -129,7 +129,9 @@ class TestChannel: NSObject, AirshipChannelProtocol, AirshipComponent, @unchecke
         return "TestChannel"
     }
 
-    public func addRegistrationExtender(_ extender: @escaping (AirshipCore.ChannelRegistrationPayload) async -> AirshipCore.ChannelRegistrationPayload) {
+    public func addRegistrationExtender(
+        _ extender: @Sendable @escaping (inout ChannelRegistrationPayload) async -> Void
+    ) {
         self.extenders.append(extender)
     }
 
@@ -172,6 +174,6 @@ class TestChannel: NSObject, AirshipChannelProtocol, AirshipComponent, @unchecke
 
 extension TestChannel: InternalAirshipChannelProtocol {
     func clearSubscriptionListsCache() {
-        
+
     }
 }
