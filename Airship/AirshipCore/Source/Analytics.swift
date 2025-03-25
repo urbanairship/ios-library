@@ -20,7 +20,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
     private let channel: any AirshipChannelProtocol
-    private let privacyManager: AirshipPrivacyManager
+    private let privacyManager: any PrivacyManagerProtocol
     private let notificationCenter: AirshipNotificationCenter
     private let date: any AirshipDateProtocol
     private let eventManager: any EventManagerProtocol
@@ -75,7 +75,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
         dataStore: PreferenceDataStore,
         channel: any AirshipChannelProtocol,
         localeManager: any AirshipLocaleManagerProtocol,
-        privacyManager: AirshipPrivacyManager,
+        privacyManager: any PrivacyManagerProtocol,
         permissionsManager: AirshipPermissionsManager
     ) {
         self.init(
@@ -101,7 +101,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         date: any AirshipDateProtocol = AirshipDate.shared,
         localeManager: any AirshipLocaleManagerProtocol,
-        privacyManager: AirshipPrivacyManager,
+        privacyManager: any PrivacyManagerProtocol,
         permissionsManager: AirshipPermissionsManager,
         eventManager: any EventManagerProtocol,
         sessionTracker: (any SessionTrackerProtocol)? = nil,

@@ -147,6 +147,14 @@ actor ContactManager: ContactManagerProtocol {
         self.onAudienceUpdatedCallback = onAudienceUpdatedCallback
     }
 
+    func resetIfNeeded() {
+        guard self.operationEntries.isEmpty == false || lastContactInfo?.isAnonymous == false || self.hasAnonData() else {
+            return
+        }
+
+        addOperation(.reset)
+    }
+
     func addOperation(_ operation: ContactOperation) {
         self.operationEntries.append(
             ContactOperationEntry(date: self.date.now, operation: operation, identifier: UUID().uuidString)

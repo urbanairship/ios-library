@@ -8,7 +8,7 @@ final class RemoteConfigManager: @unchecked Sendable {
 
     private var subscription: AnyCancellable?
     private let remoteData: any RemoteDataProtocol
-    private let privacyManager: AirshipPrivacyManager
+    private let privacyManager: any PrivacyManagerProtocol
     private let notificationCenter: AirshipNotificationCenter
 
     private let appVersion: String
@@ -18,7 +18,7 @@ final class RemoteConfigManager: @unchecked Sendable {
     init(
         config: RuntimeConfig,
         remoteData: any RemoteDataProtocol,
-        privacyManager: AirshipPrivacyManager,
+        privacyManager: any PrivacyManagerProtocol,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         appVersion: String = AirshipUtils.bundleShortVersionString() ?? ""
     ) {
@@ -68,7 +68,7 @@ final class RemoteConfigManager: @unchecked Sendable {
     @objc
     private func updateRemoteConfigSubscription() {
         lock.sync {
-            if self.privacyManager.isAnyFeatureEnabled() {
+            if self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false) {
                 if self.subscription == nil {
                     self.subscription = self.remoteData.publisher(
                         types: ["app_config", "app_config:ios"]

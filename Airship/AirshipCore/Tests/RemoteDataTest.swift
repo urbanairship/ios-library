@@ -20,10 +20,10 @@ final class RemoteDataTest: AirshipBaseTest {
     private let testLocaleManager: TestLocaleManager = TestLocaleManager()
     private let testWorkManager: TestWorkManager = TestWorkManager()
     private var remoteData: RemoteData!
-    private var privacyManager: AirshipPrivacyManager!
+    private var privacyManager: TestPrivacyManager!
 
     override func setUp() async throws {
-        self.privacyManager = await AirshipPrivacyManager(
+        self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: self.config,
             defaultEnabledFeatures: .all

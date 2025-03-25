@@ -51,7 +51,7 @@ public final class PreferenceCenter: Sendable {
     }
 
     private let dataStore: PreferenceDataStore
-    private let privacyManager: AirshipPrivacyManager
+    private let privacyManager: any PrivacyManagerProtocol
     private let remoteData: any RemoteDataProtocol
 
     @MainActor
@@ -79,7 +79,7 @@ public final class PreferenceCenter: Sendable {
     @MainActor
     init(
         dataStore: PreferenceDataStore,
-        privacyManager: AirshipPrivacyManager,
+        privacyManager: any PrivacyManagerProtocol,
         remoteData: any RemoteDataProtocol
     ) {
         self.dataStore = dataStore

@@ -151,8 +151,9 @@ public protocol AirshipChannelProtocol: AnyObject, Sendable {
 
 /// NOTE: For internal use only. :nodoc:
 public protocol InternalAirshipChannelProtocol: AirshipChannelProtocol {
+    @MainActor
     func addRegistrationExtender(
-        _ extender: @escaping (ChannelRegistrationPayload) async -> ChannelRegistrationPayload
+        _ extender: @Sendable @escaping (inout ChannelRegistrationPayload) async -> Void
     )
 
     func updateRegistration()

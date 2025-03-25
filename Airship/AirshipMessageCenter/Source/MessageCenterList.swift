@@ -175,7 +175,8 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
             return await self.store.unreadCount
         }
     }
-    
+
+    @MainActor
     init(
         channel: any InternalAirshipChannelProtocol,
         client: any MessageCenterAPIClientProtocol,
@@ -262,10 +263,9 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
             guard self?.enabled == true,
                   let user = await self?.store.user
             else {
-                return payload
+                return
             }
 
-            var payload = payload
             if payload.identityHints == nil {
                 payload.identityHints = ChannelRegistrationPayload.IdentityHints(
                     userID: user.username
@@ -273,12 +273,10 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
             } else {
                 payload.identityHints?.userID = user.username
             }
-
-
-            return payload
         }
     }
 
+    @MainActor
     convenience init(
         with config: RuntimeConfig,
         dataStore: PreferenceDataStore,
@@ -358,7 +356,7 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
             }
 
             group.addTask {
-                try await _Concurrency.Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
+                try await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
                 throw AirshipErrors.error("Timed out")
             }
 
@@ -424,9 +422,9 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
         }
     }
 
-    private func getOrCreateUser(forChannelID channelID: String) async
-        -> MessageCenterUser?
-    {
+    private func getOrCreateUser(
+        forChannelID channelID: String
+    ) async -> MessageCenterUser? {
         guard let user = await self.store.user else {
             do {
                 AirshipLogger.debug("Creating Message Center user")
@@ -486,6 +484,11 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
     private func updateInbox() async throws -> AirshipWorkResult {
         await self.startUpTask?.value
 
+        guard self.enabled else {
+            await self.sendUpdate(.refreshFailed)
+            return .success
+        }
+
         guard let channelID = channel.identifier else {
             await self.sendUpdate(.refreshFailed)
             return .success
@@ -533,6 +536,7 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
         conflictPolicy: AirshipWorkRequestConflictPolicy = .keepIfNotStarted,
         requireNetwork: Bool = true
     ) {
+        guard self.enabled else { return }
         self.workManager.dispatchWorkRequest(
             AirshipWorkRequest(
                 workID: self.updateWorkID,

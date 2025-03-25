@@ -71,7 +71,7 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
-    private let privacyManager: AirshipPrivacyManager
+    private let privacyManager: any PrivacyManagerProtocol
     private let contactChannelsProvider: any ContactChannelsProviderProtocol
     private let subscriptionListProvider: any SubscriptionListProviderProtocol
     private let date: any AirshipDateProtocol
@@ -153,11 +153,12 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
      * Internal only
      * :nodoc:
      */
+    @MainActor
     init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         channel: any InternalAirshipChannelProtocol,
-        privacyManager: AirshipPrivacyManager,
+        privacyManager: any PrivacyManagerProtocol,
         contactChannelsProvider: any ContactChannelsProviderProtocol,
         subscriptionListProvider: any SubscriptionListProviderProtocol,
         date: any AirshipDateProtocol = AirshipDate.shared,
@@ -242,15 +243,11 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
 
         channel.addRegistrationExtender { [weak self] payload in
             await self?.setupTask?.value
-            var payload = payload
-
             if (channel.identifier != nil) {
                 payload.channel.contactID = await self?.getStableVerifiedContactID()
             } else {
                 payload.channel.contactID = await self?.contactID
             }
-
-            return payload
         }
 
         notificationCenter.addObserver(
@@ -313,11 +310,12 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
      * Internal only
      * :nodoc:
      */
+    @MainActor
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         channel: AirshipChannel,
-        privacyManager: AirshipPrivacyManager,
+        privacyManager: any PrivacyManagerProtocol,
         audienceOverridesProvider: any AudienceOverridesProvider,
         localeManager: any AirshipLocaleManagerProtocol
     ) {
@@ -714,7 +712,7 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
                 return
             }
 
-            await self.contactManager.addOperation(.reset)
+            await self.contactManager.resetIfNeeded()
         }
     }
 

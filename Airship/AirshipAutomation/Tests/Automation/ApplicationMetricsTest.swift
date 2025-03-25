@@ -11,11 +11,11 @@ final class ApplicationMetricsTest: XCTestCase {
         notificationCenter: NotificationCenter()
     )
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private var privacyManager: AirshipPrivacyManager!
+    private var privacyManager: TestPrivacyManager!
     private var metrics: ApplicationMetrics!
 
     override func setUp() async throws {
-        self.privacyManager = await AirshipPrivacyManager(
+        self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: .testConfig(),
             defaultEnabledFeatures: .all,

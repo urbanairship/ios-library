@@ -34,7 +34,7 @@ public final class FeatureFlagManager: Sendable {
     private let analytics: any FeatureFlagAnalyticsProtocol
     private let deviceInfoProviderFactory: @Sendable () -> any AudienceDeviceInfoProvider
     private let deferredResolver: any FeatureFlagDeferredResolverProtocol
-    private let privacyManager: AirshipPrivacyManager
+    private let privacyManager: any PrivacyManagerProtocol
 
     /// Feature flag result cache. This can be used to return a cached result for `flag(name:useResultCache:)`
     /// if the flag fails to resolve or it does not exist.
@@ -51,7 +51,7 @@ public final class FeatureFlagManager: Sendable {
         audienceChecker: any DeviceAudienceChecker,
         deviceInfoProviderFactory: @escaping @Sendable () -> any AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() },
         deferredResolver: any FeatureFlagDeferredResolverProtocol,
-        privacyManager: AirshipPrivacyManager,
+        privacyManager: any PrivacyManagerProtocol,
         resultCache: FeatureFlagResultCache
     ) {
         self.remoteDataAccess = remoteDataAccess

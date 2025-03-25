@@ -45,7 +45,7 @@ public final class MessageCenter: Sendable {
     }
 
     private let mutable: MutableValues
-    private let privacyManager: AirshipPrivacyManager
+    private let privacyManager: any PrivacyManagerProtocol
 
     /// Message center inbox.
     public let inbox: any MessageCenterInboxProtocol
@@ -108,7 +108,7 @@ public final class MessageCenter: Sendable {
     init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        privacyManager: AirshipPrivacyManager,
+        privacyManager: any PrivacyManagerProtocol,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         inbox: MessageCenterInbox,
         controller: MessageCenterController
@@ -141,7 +141,7 @@ public final class MessageCenter: Sendable {
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         channel: any InternalAirshipChannelProtocol,
-        privacyManager: AirshipPrivacyManager,
+        privacyManager: any PrivacyManagerProtocol,
         workManager: any AirshipWorkManagerProtocol
     ) {
 

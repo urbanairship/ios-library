@@ -16,7 +16,7 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
-    private let privacyManager: AirshipPrivacyManager
+    private let privacyManager: any PrivacyManagerProtocol
     private let permissionsManager: AirshipPermissionsManager
     private let localeManager: any AirshipLocaleManagerProtocol
     private let audienceManager: any ChannelAudienceManagerProtocol
@@ -28,6 +28,8 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
 
     private let liveActivityQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
 
+    @MainActor
+    private var extenders: [@Sendable (inout ChannelRegistrationPayload) async -> Void] = []
 
     #if canImport(ActivityKit)
     private let liveActivityRegistry: LiveActivityRegistry
@@ -105,7 +107,7 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
     init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        privacyManager: AirshipPrivacyManager,
+        privacyManager: any PrivacyManagerProtocol,
         permissionsManager: AirshipPermissionsManager,
         localeManager: any AirshipLocaleManagerProtocol,
         audienceManager: any ChannelAudienceManagerProtocol,
@@ -150,8 +152,8 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
                 self?.processChannelUpdate(update)
             }
 
-        self.channelRegistrar.addChannelRegistrationExtender { [weak self] payload in
-            return await self?.extendPayload(payload: payload) ?? payload
+        self.channelRegistrar.payloadCreateBlock = { [weak self] in
+            return await self?.makePayload()
         }
 
         self.audienceManager.channelID = self.channelRegistrar.channelID
@@ -169,6 +171,10 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
         #if canImport(ActivityKit)
         Task {
             for await update in self.liveActivityRegistry.updates {
+                guard privacyManager.isEnabled(.push) || update.action == .remove else {
+                    AirshipLogger.error("Unable tot track set operation, push is disabled \(update)")
+                    return
+                }
                 self.audienceManager.addLiveActivityUpdate(update)
             }
         }
@@ -185,7 +191,7 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        privacyManager: AirshipPrivacyManager,
+        privacyManager: any PrivacyManagerProtocol,
         permissionsManager: AirshipPermissionsManager,
         localeManager: any AirshipLocaleManagerProtocol,
         audienceOverridesProvider: any AudienceOverridesProvider
@@ -204,7 +210,8 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
             ),
             channelRegistrar: ChannelRegistrar(
                 config: config,
-                dataStore: dataStore
+                dataStore: dataStore,
+                privacyManager: privacyManager
             ),
             notificationCenter: AirshipNotificationCenter.shared,
             appStateTracker: AppStateTracker.shared
@@ -287,20 +294,12 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
 
     @objc
     private func applicationDidTransitionToForeground() {
-        if self.privacyManager.isAnyFeatureEnabled() {
+        if self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false) {
             AirshipLogger.trace(
                 "Application did become active. Updating registration."
             )
             self.updateRegistration()
         }
-    }
-
-    public func addRegistrationExtender(
-        _ extender: @escaping (ChannelRegistrationPayload) -> ChannelRegistrationPayload
-    ) {
-        self.channelRegistrar.addChannelRegistrationExtender(
-            extender: extender
-        )
     }
 
     public func editTags() -> TagEditor {
@@ -381,7 +380,7 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
         }
 
         guard
-            self.identifier != nil || self.privacyManager.isAnyFeatureEnabled()
+            self.identifier != nil || self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false)
         else {
             AirshipLogger.trace(
                 "Skipping channel create. All features are disabled."
@@ -438,11 +437,21 @@ extension AirshipChannel: AirshipPushableComponent {
         }
     }
 
-    private func extendPayload(
-        payload: ChannelRegistrationPayload
-    ) async -> ChannelRegistrationPayload {
-        var payload = payload
+    private func makePayload() async -> ChannelRegistrationPayload {
+        var payload = ChannelRegistrationPayload()
 
+        guard privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false) else {
+            payload.channel.tags = []
+            payload.channel.setTags = true
+            payload.channel.isOptedIn = false
+            payload.channel.isBackgroundEnabled = false
+            return payload
+        }
+
+        for extender in await self.extenders {
+            await extender(&payload)
+        }
+        
         if await self.appStateTracker.state == .active {
             payload.channel.isActive = true
         }
@@ -463,7 +472,7 @@ extension AirshipChannel: AirshipPushableComponent {
 #endif
         }
 
-        if self.privacyManager.isAnyFeatureEnabled() {
+        if self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false) {
             let currentLocale = self.localeManager.currentLocale
             payload.channel.language = currentLocale.getLanguageCode()
             payload.channel.country = currentLocale.getRegionCode()
@@ -490,12 +499,11 @@ extension AirshipChannel: AirshipPushableComponent {
 }
 
 extension AirshipChannel: InternalAirshipChannelProtocol {
+    @MainActor
     public func addRegistrationExtender(
-        _ extender: @escaping (ChannelRegistrationPayload) async -> ChannelRegistrationPayload
+        _ extender: @Sendable @escaping (inout ChannelRegistrationPayload) async -> Void
     ) {
-        self.channelRegistrar.addChannelRegistrationExtender(
-            extender: extender
-        )
+        self.extenders.append(extender)
     }
 
     public func clearSubscriptionListsCache() {
@@ -516,7 +524,6 @@ extension AirshipChannel {
     public func liveActivityRegistrationStatusUpdates(
         name: String
     ) -> LiveActivityRegistrationStatusUpdates {
-
         self.liveActivityRegistry.registrationUpdates(name: name, id: nil)
     }
 
@@ -546,8 +553,12 @@ extension AirshipChannel {
         _ activity: Activity<T>,
         name: String
     ) {
-        let liveActivity = LiveActivity(activity: activity)
+        guard privacyManager.isEnabled(.push) else {
+            AirshipLogger.error("Push is not enabled, unable to track live activity.")
+            return
+        }
 
+        let liveActivity = LiveActivity(activity: activity)
         liveActivityQueue.enqueue { [liveActivityRegistry] in
             await liveActivityRegistry.addLiveActivity(liveActivity, name: name)
         }

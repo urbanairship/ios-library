@@ -31,7 +31,7 @@ final class AutomationEngineTest: XCTestCase {
     private let actionPreparer: TestPreparerDelegate<AirshipJSON, AirshipJSON> = TestPreparerDelegate()
     private let messagePreparer: TestPreparerDelegate<InAppMessage, PreparedInAppMessageData> = TestPreparerDelegate()
     private let remoteDataAccess: TestRemoteDataAccess = TestRemoteDataAccess()
-    private var privacyManager: AirshipPrivacyManager!
+    private var privacyManager: TestPrivacyManager!
     private let deferredResolver: TestDeferredResolver = TestDeferredResolver()
     private let experiments: TestExperimentDataProvider = TestExperimentDataProvider()
     private let frequencyLimits: TestFrequencyLimitManager = TestFrequencyLimitManager()
@@ -48,7 +48,7 @@ final class AutomationEngineTest: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-        self.privacyManager = AirshipPrivacyManager(
+        self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: runtimeConfig,
             defaultEnabledFeatures: .all,

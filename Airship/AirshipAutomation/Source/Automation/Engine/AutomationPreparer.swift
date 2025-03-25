@@ -91,7 +91,6 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         let queue = await self.queues.queue(name: schedule.queue)
         
         return await queue.run(name: "schedule: \(schedule.identifier)") { retryState in
-
             guard await !self.remoteDataAccess.requiresUpdate(schedule: schedule) else {
                 AirshipLogger.trace("Schedule out of date \(schedule.identifier)")
                 await self.remoteDataAccess.waitFullRefresh(schedule: schedule)
