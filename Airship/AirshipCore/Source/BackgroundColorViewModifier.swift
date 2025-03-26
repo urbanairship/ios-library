@@ -15,24 +15,38 @@ struct BackgroundViewModifier: ViewModifier {
     var shadow: ThomasShadow?
 
     func body(content: Content) -> some View {
-        let border = ThomasPropertyOverride<ThomasBorder>.resolveOptional(
-            state: self.state,
-            overrides: self.borderOverrides,
-            defaultValue: self.border
+        let resolvedBorder = ThomasPropertyOverride<ThomasBorder>.resolveOptional(
+            state: state,
+            overrides: borderOverrides,
+            defaultValue: border
+        )
+        let resolvedBackgroundColor = ThomasPropertyOverride<ThomasColor>.resolveOptional(
+            state: state,
+            overrides: backgroundColorOverrides,
+            defaultValue: backgroundColor
         )
 
-        let backgroundColor = ThomasPropertyOverride<ThomasColor>.resolveOptional(
-            state: self.state,
-            overrides: self.backgroundColorOverrides,
-            defaultValue: self.backgroundColor
-        )
+        let innerCornerRadii = CustomCornerRadii(innerRadiiFor: resolvedBorder)
 
-        content
-            .clipContent(border: border)
-            .applyPadding(padding: border?.strokeWidth)
-            .applyBackground(color: backgroundColor, border: border, colorScheme: colorScheme)
-            .applyShadow(shadow, border: border, colorScheme: colorScheme)
-            .contentShape(.rect(cornerRadius: border?.radius ?? 0, style: .continuous))
+        return content
+            .clipContent(border: resolvedBorder)
+            .applyPadding(padding: resolvedBorder?.strokeWidth)
+            .applyBackground(
+                color: resolvedBackgroundColor,
+                border: resolvedBorder,
+                colorScheme: colorScheme
+            )
+            .applyShadow(
+                shadow,
+                border: resolvedBorder,
+                colorScheme: colorScheme
+            )
+            .contentShape(
+                CustomRoundedRectangle(
+                    cornerRadii: innerCornerRadii,
+                    style: .continuous
+                )
+            )
     }
 }
 
@@ -119,31 +133,46 @@ fileprivate extension View {
             self.background(backgroundColor)
         }
     }
+
+    @ViewBuilder
+    func clipContent(
+        border: ThomasBorder?
+    ) -> some View {
+        if let cornerRadius = border?.radius,
+           let width = border?.strokeWidth,
+           cornerRadius > width
+        {
+            let cornerRadii = CustomCornerRadii(innerRadiiFor: border)
+            ZStack {
+                let shape = CustomRoundedRectangle(
+                    cornerRadii: cornerRadii,
+                    style: .continuous)
+                self.clipShape(shape)
+            }
+        } else {
+            self
+        }
+    }
 }
 
 fileprivate extension ThomasShadow {
     var resolvedBoxShadow: ThomasShadow.BoxShadow? {
-        self.selectors?.first(
-            where: { selector in
-                selector.platform == nil || selector.platform == .ios
-            }
-        )?.shadow.boxShadow
+        selectors?.first {
+            $0.platform == nil || $0.platform == .ios
+        }?.shadow.boxShadow
     }
 }
 
 fileprivate extension ThomasBorder {
-    var borderShape: RoundedRectangle? {
-        guard let cornerRadius = self.radius, cornerRadius > 0 else {
-            return nil
-        }
+    var borderShape: CustomRoundedRectangle? {
+        let cornerRadii = CustomCornerRadii(outerRadiiFor: self)
 
-        return RoundedRectangle(
-            cornerRadius: cornerRadius,
+        return CustomRoundedRectangle(
+            cornerRadii: cornerRadii,
             style: .continuous
         )
     }
 }
-
 
 extension View {
     @ViewBuilder
@@ -154,7 +183,11 @@ extension View {
         borderOverrides: [ThomasPropertyOverride<ThomasBorder>]? = nil,
         shadow: ThomasShadow? = nil
     ) -> some View {
-        if border != nil || shadow != nil || color != nil || borderOverrides?.isEmpty == false || colorOverrides?.isEmpty == false {
+        if border != nil ||
+            shadow != nil ||
+            color != nil ||
+            (borderOverrides?.isEmpty == false) ||
+            (colorOverrides?.isEmpty == false) {
             self.modifier(
                 BackgroundViewModifier(
                     backgroundColor: color,
@@ -168,26 +201,144 @@ extension View {
             self
         }
     }
+}
 
-    @ViewBuilder
-    fileprivate func clipContent(
-        border: ThomasBorder?
-    ) -> some View {
-        if let width = border?.strokeWidth,
-           let cornerRadius = border?.radius,
-           cornerRadius > width
-        {
-            ZStack {
-                let shape = RoundedRectangle(
-                    cornerRadius: cornerRadius - width,
-                    style: .continuous
-                )
-                self.clipShape(shape)
-            }
+struct CustomCornerRadii: Equatable, Animatable {
+    var topLeading: CGFloat
+    var topTrailing: CGFloat
+    var bottomLeading: CGFloat
+    var bottomTrailing: CGFloat
+
+    /// Initializes CustomCornerRadii representing the INNER radii
+    /// calculated from a ThomasBorder, subtracting the stroke width.
+    init(innerRadiiFor border: ThomasBorder?) {
+        // Use guard let for safe unwrapping
+        guard let border = border else {
+            // If border is nil, initialize with all zeros
+            self.init(topLeading: 0, topTrailing: 0, bottomLeading: 0, bottomTrailing: 0)
+            return
+        }
+
+        // Convert properties to CGFloat for calculations
+        let strokeWidth = CGFloat(border.strokeWidth ?? 0.0)
+
+        if let corners = border.cornerRadius {
+            // Per-corner radii defined, calculate inner values using max(0, ...)
+            self.init( // Call the memberwise initializer
+                topLeading: max(0, CGFloat(corners.topLeft ?? 0.0) - strokeWidth),
+                topTrailing: max(0, CGFloat(corners.topRight ?? 0.0) - strokeWidth),
+                bottomLeading: max(0, CGFloat(corners.bottomLeft ?? 0.0) - strokeWidth),
+                bottomTrailing: max(0, CGFloat(corners.bottomRight ?? 0.0) - strokeWidth)
+            )
         } else {
-            self
+            // Fallback to single radius
+            let radius = CGFloat(border.radius ?? 0.0)
+            let innerRadius = max(0, radius - strokeWidth) // Ensure non-negative
+            // Call the memberwise initializer with the single inner radius
+            self.init(
+                topLeading: innerRadius,
+                topTrailing: innerRadius,
+                bottomLeading: innerRadius,
+                bottomTrailing: innerRadius
+            )
         }
     }
 
+    init(outerRadiiFor border: ThomasBorder?) {
+        guard let border = border else {
+            self.init(topLeading: 0, topTrailing: 0, bottomLeading: 0, bottomTrailing: 0)
+            return
+        }
 
+        if let corners = border.cornerRadius {
+            self.init(
+                topLeading: CGFloat(corners.topLeft ?? 0.0),
+                topTrailing: CGFloat(corners.topRight ?? 0.0),
+                bottomLeading: CGFloat(corners.bottomLeft ?? 0.0),
+                bottomTrailing: CGFloat(corners.bottomRight ?? 0.0)
+            )
+        } else {
+            let radius = CGFloat(border.radius ?? 0.0)
+            self.init(
+                topLeading: radius,
+                topTrailing: radius,
+                bottomLeading: radius,
+                bottomTrailing: radius
+            )
+        }
+    }
+
+    init(topLeading: CGFloat = 0,
+                 topTrailing: CGFloat = 0,
+                 bottomLeading: CGFloat = 0,
+                 bottomTrailing: CGFloat = 0
+    ) {
+        self.topLeading = topLeading
+        self.topTrailing = topTrailing
+        self.bottomLeading = bottomLeading
+        self.bottomTrailing = bottomTrailing
+    }
+
+    var animatableData: AnimatablePair<
+        AnimatablePair<CGFloat, CGFloat>,
+        AnimatablePair<CGFloat, CGFloat>
+    > {
+        get {
+            AnimatablePair(
+                AnimatablePair(topLeading, bottomLeading),
+                AnimatablePair(bottomTrailing, topTrailing)
+            )
+        }
+        set {
+            topLeading = newValue.first.first
+            bottomLeading = newValue.first.second
+            bottomTrailing = newValue.second.first
+            topTrailing = newValue.second.second
+        }
+    }
+}
+
+struct CustomRoundedRectangle: InsettableShape {
+    let cornerRadii: CustomCornerRadii
+    let style: RoundedCornerStyle
+    var insetAmount: CGFloat = 0
+
+    func path(in rect: CGRect) -> Path {
+        let insetRect = rect.insetBy(dx: insetAmount, dy: insetAmount)
+        if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
+
+            return UnevenRoundedRectangle(
+                topLeadingRadius: cornerRadii.topLeading,
+                bottomLeadingRadius: cornerRadii.bottomLeading,
+                bottomTrailingRadius: cornerRadii.bottomTrailing,
+                topTrailingRadius: cornerRadii.topTrailing,
+                style: .continuous
+            ).path(in: insetRect)
+        } else {
+            /// Not supporting this currently but we could draw a shape here instead of iOS 15
+            let maxRadius = max(
+                cornerRadii.topLeading,
+                cornerRadii.topTrailing,
+                cornerRadii.bottomTrailing,
+                cornerRadii.bottomLeading
+            )
+            return RoundedRectangle(cornerRadius: maxRadius, style: style)
+                .path(in: insetRect)
+        }
+    }
+
+    func inset(by amount: CGFloat) -> CustomRoundedRectangle {
+        let adjustedRadii = CustomCornerRadii(
+            topLeading: max(0, cornerRadii.topLeading - amount),
+            topTrailing: max(0, cornerRadii.topTrailing - amount),
+            bottomLeading: max(0, cornerRadii.bottomLeading - amount),
+            bottomTrailing: max(0, cornerRadii.bottomTrailing - amount)
+        )
+
+        return CustomRoundedRectangle(
+            cornerRadii: adjustedRadii,
+            style: self.style,
+            insetAmount: self.insetAmount + amount
+        )
+    }
 }

@@ -43,11 +43,28 @@ enum ThomasPresentationInfo: ThomasSerializable {
         }
     }
 
+    /// Keyboard avoidance methods
+    enum KeyboardAvoidanceMethod: String, ThomasSerializable {
+        /// Slide keyboard over the top
+        case overTheTop = "over_the_top"
+        /// Treat it as safe area
+        case safeArea = "sare_area"
+    }
+
+    struct iOS: ThomasSerializable {
+        var keyboardAvoidance: KeyboardAvoidanceMethod?
+
+        private enum CodingKeys: String, CodingKey {
+            case keyboardAvoidance = "keyboard_avoidance"
+        }
+    }
+
     struct Banner: ThomasSerializable {
         let type: PresentationType = .banner
         var duration: Int?
         var placementSelectors: [PlacementSelector<Placement>]?
         var defaultPlacement: Placement
+        var ios: iOS?
 
         private enum CodingKeys: String, CodingKey {
             case duration = "duration_milliseconds"
@@ -68,6 +85,8 @@ enum ThomasPresentationInfo: ThomasSerializable {
             var ignoreSafeArea: Bool?
             var border: ThomasBorder?
             var backgroundColor: ThomasColor?
+            var nubInfo: ThomasViewInfo.NubInfo?
+            var cornerRadius: ThomasViewInfo.CornerRadiusInfo?
 
             private enum CodingKeys: String, CodingKey {
                 case margin
@@ -75,7 +94,9 @@ enum ThomasPresentationInfo: ThomasSerializable {
                 case position
                 case ignoreSafeArea = "ignore_safe_area"
                 case border
-                case backgroundColor = "background_color"
+                case backgroundColor = "background_color"  
+                case nubInfo = "nub"
+                case cornerRadius = "corner_radius"
             }
         }
     }
@@ -95,22 +116,6 @@ enum ThomasPresentationInfo: ThomasSerializable {
             case device
             case type
             case ios
-        }
-
-        /// Keyboard avoidance methods
-        enum KeyboardAvoidanceMethod: String, ThomasSerializable {
-            /// Slide keyboard over the top
-            case overTheTop = "over_the_top"
-            /// Treat it as safe area
-            case safeArea = "sare_area"
-        }
-
-        struct iOS: ThomasSerializable {
-            var keyboardAvoidance: KeyboardAvoidanceMethod?
-
-            private enum CodingKeys: String, CodingKey {
-                case keyboardAvoidance = "keyboard_avoidance"
-            }
         }
 
         struct Placement: ThomasSerializable {
