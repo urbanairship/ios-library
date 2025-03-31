@@ -67,3 +67,4 @@
 "ua_play" = "Reproduzir";
 "ua_pause" = "Pausar";
 "ua_stop" = "Parar";
+"ua_form_processing_error" = "Erro ao processar formulário. Por favor, tente novamente";

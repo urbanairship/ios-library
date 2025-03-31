@@ -67,3 +67,4 @@
 "ua_play" = "Spelen";
 "ua_pause" = "Pauze";
 "ua_stop" = "Stoppen";
+"ua_form_processing_error" = "Fout bij het verwerken van formulier. Probeer het opnieuw";

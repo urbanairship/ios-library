@@ -67,3 +67,4 @@
 "ua_play" = "Přehrát";
 "ua_pause" = "Pozastavit";
 "ua_stop" = "Zastavit";
+"ua_form_processing_error" = "Chyba při zpracování formuláře. Zkuste to prosím znovu";

@@ -67,3 +67,4 @@
 "ua_play" = "Reproduciraj";
 "ua_pause" = "Pauziraj";
 "ua_stop" = "Zaustavi";
+"ua_form_processing_error" = "Pogreška u obradi obrasca. Molimo pokušajte ponovno";

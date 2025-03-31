@@ -67,3 +67,4 @@
 "ua_play" = "Afspil";
 "ua_pause" = "Pause";
 "ua_stop" = "Stop";
+"ua_form_processing_error" = "Fejl ved behandling af formular. Prøv venligst igen";

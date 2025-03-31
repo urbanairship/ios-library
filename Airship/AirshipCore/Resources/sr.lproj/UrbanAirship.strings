@@ -67,3 +67,4 @@
 "ua_play" = "Pusti";
 "ua_pause" = "Pauziraj";
 "ua_stop" = "Zaustavi";
+"ua_form_processing_error" = "Грешка при обради обрасца. Молимо покушајте поново";

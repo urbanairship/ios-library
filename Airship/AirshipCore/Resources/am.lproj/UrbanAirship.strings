@@ -67,3 +67,4 @@
 "ua_play" = "አጫውት";
 "ua_pause" = "ለአጭር ጊዜ ቆም";
 "ua_stop" = "አቁም";
+"ua_form_processing_error" = "ቅጹን በማስኬድ ላይ ስህተት። እባክዎ እንደገና ይሞክሩ";

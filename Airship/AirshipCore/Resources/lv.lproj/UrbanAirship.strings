@@ -67,3 +67,4 @@
 "ua_play" = "Atskaņot";
 "ua_pause" = "Pauze";
 "ua_stop" = "Apturēt";
+"ua_form_processing_error" = "Kļūda, apstrādājot veidlapu. Lūdzu, mēģiniet vēlreiz";

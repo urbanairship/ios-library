@@ -67,3 +67,4 @@
 "ua_play" = "Jouer";
 "ua_pause" = "Pause";
 "ua_stop" = "Arrêter";
+"ua_form_processing_error" = "Erreur lors du traitement du formulaire. Veuillez réessayer";

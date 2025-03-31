@@ -67,3 +67,4 @@
 "ua_play" = "Groti";
 "ua_pause" = "Pristabdyti";
 "ua_stop" = "Sustabdyti";
+"ua_form_processing_error" = "Klaida apdorojant formą. Bandykite dar kartą";

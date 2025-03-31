@@ -67,3 +67,4 @@
 "ua_play" = "לנגן";
 "ua_pause" = "להפסיק";
 "ua_stop" = "לעצור";
+"ua_form_processing_error" = "שגיאה בעיבוד הטופס. אנא נסה שוב";

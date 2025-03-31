@@ -67,3 +67,4 @@
 "ua_play" = "Redă";
 "ua_pause" = "Pauză";
 "ua_stop" = "Oprire";
+"ua_form_processing_error" = "Eroare la procesarea formularului. Vă rugăm să încercați din nou";

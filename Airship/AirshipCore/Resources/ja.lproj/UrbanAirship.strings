@@ -67,3 +67,4 @@
 "ua_play" = "再生";
 "ua_pause" = "一時停止";
 "ua_stop" = "止める";
+"ua_form_processing_error" = "フォームの処理中にエラーが発生しました。もう一度お試しください";

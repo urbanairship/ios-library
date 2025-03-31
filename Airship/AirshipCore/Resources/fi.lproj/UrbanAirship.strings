@@ -67,3 +67,4 @@
 "ua_play" = "Toista";
 "ua_pause" = "Tauko";
 "ua_stop" = "Pysäytä";
+"ua_form_processing_error" = "Virhe lomakkeen käsittelyssä. Yritä uudelleen";

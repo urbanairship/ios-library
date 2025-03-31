@@ -67,3 +67,4 @@
 "ua_play" = "Spela";
 "ua_pause" = "Pausa";
 "ua_stop" = "Stoppa";
+"ua_form_processing_error" = "Fel vid bearbetning av formulär. Försök igen";

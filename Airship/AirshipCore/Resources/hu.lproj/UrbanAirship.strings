@@ -67,3 +67,4 @@
 "ua_play" = "Lejátszás";
 "ua_pause" = "Szünet";
 "ua_stop" = "Leállítás";
+"ua_form_processing_error" = "Hiba az űrlap feldolgozása során. Kérjük, próbálja újra";

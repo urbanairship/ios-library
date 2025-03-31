@@ -87,3 +87,4 @@
 "ua_play" = "Play";
 "ua_pause" = "Pause";
 "ua_stop" = "Stop";
+"ua_form_processing_error" = "Error processing form. Please try again";

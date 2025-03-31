@@ -67,3 +67,4 @@
 "ua_play" = "Igraj";
 "ua_pause" = "Premor";
 "ua_stop" = "Ustavi";
+"ua_form_processing_error" = "Napaka pri obdelavi obrazca. Poskusite znova";
