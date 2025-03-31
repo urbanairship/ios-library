@@ -1,6 +1,12 @@
 
 # iOS Changelog
 
+## Version 19.1.2 March 31, 2025
+Patch release with bug fix for swipe gestures in Scenes.
+
+### Changes
+- Fixed regression that caused horizontal swipe gestures to be disabled on some devices.
+
 ## Version 19.1.1 March 25, 2025
 Patch release with bug fixes and minor improvements.
 
