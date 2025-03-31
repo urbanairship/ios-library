@@ -162,7 +162,7 @@ struct Pager: View {
             }
             .scrollTargetLayout()
         }
-        .scrollDisabled(!self.shouldAddSwipeGesture || self.pagerState.pageRequest != nil)
+        .scrollDisabled(self.info.properties.disableSwipe == true || self.pagerState.pageRequest != nil)
         .scrollTargetBehavior(.paging)
         .scrollPosition(id: $scrollPosition)
         .scrollIndicators(.never)
