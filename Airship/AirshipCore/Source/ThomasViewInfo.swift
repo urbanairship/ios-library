@@ -310,12 +310,12 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         struct Properties: ThomasSerializable {
             let type: ViewType = .customView
             let name: String
-            let json: AirshipJSON?
+            let properties: AirshipJSON?
 
             private enum CodingKeys: String, CodingKey {
                 case type
                 case name
-                case json
+                case properties
             }
         }
     }

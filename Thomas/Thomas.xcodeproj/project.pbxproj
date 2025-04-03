@@ -36,7 +36,6 @@
 		9948E61C2B464F1B00C1F21E /* EmbeddedPlaygroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9948E6152B464F1B00C1F21E /* EmbeddedPlaygroundView.swift */; };
 		9948E61D2B464F1B00C1F21E /* PlaceholderToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9948E6172B464F1B00C1F21E /* PlaceholderToggleView.swift */; };
 		9948E61E2B464F1B00C1F21E /* EmbeddedPlaygroundMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9948E6192B464F1B00C1F21E /* EmbeddedPlaygroundMenuView.swift */; };
-		995902F52B02C710001614AF /* CustomViewExampleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995902F42B02C710001614AF /* CustomViewExampleHelper.swift */; };
 		995902FA2B031842001614AF /* AdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 995902F92B031842001614AF /* AdView.swift */; };
 		9970D2312B0667B2003F4A8B /* BiometricLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9970D2302B0667B2003F4A8B /* BiometricLoginView.swift */; };
 		99F662CD2B61DB4600696098 /* JurassicPark.otf in Resources */ = {isa = PBXBuildFile; fileRef = 99F662CC2B61DB4600696098 /* JurassicPark.otf */; };
@@ -49,6 +48,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 6E0B8729294A9C120064B7BD;
 			remoteInfo = AirshipAutomationSwift;
+		};
+		6EAA61AA2D52BCE7006602F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9908E5922AFDA95000DB3E2E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A641E1472BDBBDB400DE6FAA;
+			remoteInfo = AirshipObjectiveC;
 		};
 		9908E5A82AFDA95000DB3E2E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -196,7 +202,6 @@
 		9948E6172B464F1B00C1F21E /* PlaceholderToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderToggleView.swift; sourceTree = "<group>"; };
 		9948E6182B464F1B00C1F21E /* EmbeddedPlaygroundPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedPlaygroundPicker.swift; sourceTree = "<group>"; };
 		9948E6192B464F1B00C1F21E /* EmbeddedPlaygroundMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedPlaygroundMenuView.swift; sourceTree = "<group>"; };
-		995902F42B02C710001614AF /* CustomViewExampleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViewExampleHelper.swift; sourceTree = "<group>"; };
 		995902F92B031842001614AF /* AdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdView.swift; sourceTree = "<group>"; };
 		9970D2302B0667B2003F4A8B /* BiometricLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricLoginView.swift; sourceTree = "<group>"; };
 		99F662CC2B61DB4600696098 /* JurassicPark.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = JurassicPark.otf; sourceTree = "<group>"; };
@@ -303,7 +308,7 @@
 				9908E5C72AFDA95000DB3E2E /* AirshipFeatureFlags.framework */,
 				9908E5BB2AFDA95000DB3E2E /* AirshipMessageCenter.framework */,
 				9908E5BD2AFDA95000DB3E2E /* AirshipPreferenceCenter.framework */,
-				990D5D8E2D6FFBE500F4D20E /* AirshipObjectiveC.framework */,
+				6EAA61AB2D52BCE7006602F7 /* AirshipObjectiveC.framework */,
 				9908E5B72AFDA95000DB3E2E /* AirshipDebug.framework */,
 				9908E5B52AFDA95000DB3E2E /* AirshipTests.xctest */,
 				9908E5C52AFDA95000DB3E2E /* AirshipAutomationTests.xctest */,
@@ -317,7 +322,6 @@
 		99303D032B17EA0500E16295 /* Examples */ = {
 			isa = PBXGroup;
 			children = (
-				995902F42B02C710001614AF /* CustomViewExampleHelper.swift */,
 				991BE0CF2B047417006109EE /* MapRouteView.swift */,
 				991BE0D12B05684A006109EE /* CameraView.swift */,
 				995902F92B031842001614AF /* AdView.swift */,
@@ -427,6 +431,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		6EAA61AB2D52BCE7006602F7 /* AirshipObjectiveC.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipObjectiveC.framework;
+			remoteRef = 6EAA61AA2D52BCE7006602F7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		9908E5A92AFDA95000DB3E2E /* AirshipBasement.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -545,7 +556,6 @@
 				990D5D8F2D6FFBEA00F4D20E /* LastLayoutButton.swift in Sources */,
 				606137042A82ACEA0064E62A /* HomeView23Grande.swift in Sources */,
 				9948E61C2B464F1B00C1F21E /* EmbeddedPlaygroundView.swift in Sources */,
-				995902F52B02C710001614AF /* CustomViewExampleHelper.swift in Sources */,
 				9948E61B2B464F1B00C1F21E /* KeyView.swift in Sources */,
 				6E3C66FA2AB3770A000E1057 /* Layouts.swift in Sources */,
 				995902FA2B031842001614AF /* AdView.swift in Sources */,

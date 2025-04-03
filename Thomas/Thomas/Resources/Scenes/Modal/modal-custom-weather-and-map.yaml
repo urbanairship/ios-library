@@ -70,8 +70,7 @@ view:
                                               view:
                                                 type: custom_view
                                                 name: weather_custom_view
-                                                height: 420
-                                                keys:
+                                                properties:
                                                   weather_type: "storm"
                                                 background_color:
                                                 default:
@@ -415,8 +414,7 @@ view:
                                               view:
                                                 type: custom_view
                                                 name: ad_custom_view
-                                                height: 42
-                                                keys:
+                                                properties:
                                                   ad_type: "survival"
                                                 background_color:
                                                 default:
@@ -433,7 +431,7 @@ view:
                                               view:
                                                 media_type: image
                                                 media_fit: center_inside
-                                                url: https://www.oneblink.io/images/landing-pages/Outdated-Risk-Assessment-Tools-Risks.png
+                                                url: https://ehs.stanford.edu/wp-content/uploads/Risk-Assessment-Tool.png
                                                 type: media
                                             - margin:
                                                 start: 16
@@ -733,12 +731,11 @@ view:
                                                 start: 0
                                               size:
                                                 width: 100%
-                                                height: auto
+                                                height: 420
                                               view:
                                                 type: custom_view
                                                 name: map_custom_view
-                                                height: 420
-                                                keys:
+                                                properties:
                                                   map_type: "route"
                                                 background_color:
                                                 default:

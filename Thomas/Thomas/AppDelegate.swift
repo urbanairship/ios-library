@@ -24,6 +24,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return true
         }
 
+        registerCustomViews()
+
         Airship.inAppAutomation.inAppMessaging.themeManager.htmlThemeExtender = { message, theme in
             theme.maxWidth = 300
             theme.maxHeight = 300
@@ -67,6 +69,35 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
             self.window?.rootViewController?
                 .present(alertController, animated: true, completion: nil)
+        }
+    }
+
+    @MainActor
+    private func registerCustomViews() {
+        AirshipCustomViewManager.shared.register(name: "weather_custom_view") { args in
+            WeatherView()
+        }
+
+        AirshipCustomViewManager.shared.register(name: "map_custom_view") { args in
+            MapRouteView()
+        }
+
+        AirshipCustomViewManager.shared.register(name: "camera_custom_view") { args in
+            CameraView()
+        }
+
+        AirshipCustomViewManager.shared.register(name: "biometric_login_custom_view") { args in
+            BiometricLoginView()
+        }
+
+        AirshipCustomViewManager.shared.fallbackBuilder = { args in
+            ZStack {
+                Text("Missing custom view \(args.name)")
+                    .foregroundColor(Color.black)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .border(Color.red)
+            .background(Color.white)
         }
     }
 }

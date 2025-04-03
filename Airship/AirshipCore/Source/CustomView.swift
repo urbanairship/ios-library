@@ -14,15 +14,22 @@ struct CustomView: View {
     @EnvironmentObject
     var thomasEnvironment: ThomasEnvironment
 
-    @Environment(\.layoutState) var layoutState
+    @Environment(\.layoutState)
+    var layoutState
 
     var body: some View {
-        AirshipCustomViewManager.shared.makeCustomView(
+        let args = AirshipCustomViewArguments(
             name: self.info.properties.name,
-            json: self.info.properties.json
+            properties: self.info.properties.properties,
+            sizeInfo: AirshipCustomViewArguments.SizeInfo(
+                isAutoHeight: constraints.height == nil,
+                isAutoWidth: constraints.width == nil
+            )
         )
-        .constraints(constraints)
-        .clipped() /// Clip to view frame to ensure we don't overflow when the view has an intrinsic size it's trying to enforce
-        .thomasCommon(self.info)
+        
+        AirshipCustomViewManager.shared.makeView(args: args)
+            .constraints(constraints)
+            .clipped() /// Clip to view frame to ensure we don't overflow when the view has an intrinsic size it's trying to enforce
+            .thomasCommon(self.info)
     }
 }
