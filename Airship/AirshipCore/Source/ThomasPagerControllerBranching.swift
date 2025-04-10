@@ -56,44 +56,16 @@ struct ThomasPageBranching: ThomasSerializable {
       */
     let nextPage: [ThomasNextPageSelector]?
     
-    /**
-      * Controls if moving to the previous page is allowed; only evaluated when the
-      * `PagerController` is configured for branching logic. If this directive is
-      * not present, moving to the previous page is allowed.
-      */
-    let previousPageControl: PreviousPageControl?
-    
     enum CodingKeys: String, CodingKey {
         case nextPage = "next_page"
-        case previousPageControl = "previous_page_disabled"
     }
     
     private enum NextPageSelectorKeys: String, CodingKey {
         case selectors
     }
     
-    struct PreviousPageControl: ThomasSerializable {
-        /**
-          * When provided, moving to the previous page is disabled when the predicate
-          * matches.
-          */
-        let predicate: JSONPredicate?
-        
-        /**
-          * When set `true`, moving to the previous page is always disabled.
-          */
-        let alwaysDisabled: Bool?
-        
-        enum CodingKeys: String, CodingKey {
-            case predicate = "when_state_matches"
-            case alwaysDisabled = "always"
-        }
-    }
-    
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        self.previousPageControl = try container.decodeIfPresent(PreviousPageControl.self, forKey: .previousPageControl)
         
         let nextPageContainer = try container.nestedContainer(
             keyedBy: NextPageSelectorKeys.self,
@@ -104,8 +76,6 @@ struct ThomasPageBranching: ThomasSerializable {
     
     func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encodeIfPresent(self.previousPageControl, forKey: .previousPageControl)
         
         var nextPageContainer = container.nestedContainer(keyedBy: NextPageSelectorKeys.self, forKey: .nextPage)
         try nextPageContainer.encode(self.nextPage, forKey: .selectors)

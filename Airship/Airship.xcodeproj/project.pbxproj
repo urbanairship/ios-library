@@ -163,6 +163,7 @@
 		60D1D9B82B68FB6400EBE0A4 /* PreparedTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D1D9B72B68FB6400EBE0A4 /* PreparedTrigger.swift */; };
 		60D1D9BB2B6A53F000EBE0A4 /* PreparedTriggerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D1D9BA2B6A53F000EBE0A4 /* PreparedTriggerTest.swift */; };
 		60D1D9BD2B6AB2D100EBE0A4 /* AutomationTriggerProcessorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D1D9BC2B6AB2D100EBE0A4 /* AutomationTriggerProcessorTest.swift */; };
+		60D2B3352D9F0FCF00B0752D /* PagerDisableSwipeSelectorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D2B3342D9F0FCF00B0752D /* PagerDisableSwipeSelectorTest.swift */; };
 		60D3BCC42A1529D800E07524 /* ExperimentDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCC32A1529D800E07524 /* ExperimentDataProvider.swift */; };
 		60D3BCC62A152A0D00E07524 /* ExperimentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCC52A152A0D00E07524 /* ExperimentManager.swift */; };
 		60D3BCCC2A153C0700E07524 /* Experiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60D3BCCB2A153C0700E07524 /* Experiment.swift */; };
@@ -1431,6 +1432,7 @@
 		60D1D9B72B68FB6400EBE0A4 /* PreparedTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreparedTrigger.swift; sourceTree = "<group>"; };
 		60D1D9BA2B6A53F000EBE0A4 /* PreparedTriggerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreparedTriggerTest.swift; sourceTree = "<group>"; };
 		60D1D9BC2B6AB2D100EBE0A4 /* AutomationTriggerProcessorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationTriggerProcessorTest.swift; sourceTree = "<group>"; };
+		60D2B3342D9F0FCF00B0752D /* PagerDisableSwipeSelectorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerDisableSwipeSelectorTest.swift; sourceTree = "<group>"; };
 		60D3BCC32A1529D800E07524 /* ExperimentDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentDataProvider.swift; sourceTree = "<group>"; };
 		60D3BCC52A152A0D00E07524 /* ExperimentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentManager.swift; sourceTree = "<group>"; };
 		60D3BCCB2A153C0700E07524 /* Experiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiment.swift; sourceTree = "<group>"; };
@@ -3217,6 +3219,7 @@
 			isa = PBXGroup;
 			children = (
 				6E2FA28B2D515C5A005893E2 /* ThomasEmailRegistrationOptionsTest.swift */,
+				60D2B3342D9F0FCF00B0752D /* PagerDisableSwipeSelectorTest.swift */,
 			);
 			path = Types;
 			sourceTree = "<group>";
@@ -6227,6 +6230,7 @@
 				6E1767F729B923D100D65F60 /* ChannelAuthTokenAPIClientTest.swift in Sources */,
 				6E6ED1432683B8FA00A2CBD0 /* TestDate.swift in Sources */,
 				6E92ECA7284AC1120038802D /* EnableFeatureActionTest.swift in Sources */,
+				60D2B3352D9F0FCF00B0752D /* PagerDisableSwipeSelectorTest.swift in Sources */,
 				6050738A2B32F85100209B51 /* ThomasViewModelTest.swift in Sources */,
 				6E6EF9E7270625C400D30C35 /* AirshipEventsTest.swift in Sources */,
 				6E590E6E29A94CA90036DFAB /* AppStateTrackerTest.swift in Sources */,

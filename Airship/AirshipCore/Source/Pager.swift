@@ -366,7 +366,8 @@ struct Pager: View {
     private func attachToPagerState() {
         pagerState.setPagesAndListenForUpdates(
             pages: info.properties.items,
-            thomasState: thomasState
+            thomasState: thomasState,
+            swipeDisableSelectors: info.properties.disableSwipePredicate
         )
     }
 

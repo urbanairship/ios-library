@@ -755,12 +755,14 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             let disableSwipe: Bool?
             let items: [Item]
             let gestures: [Gesture]?
+            let disableSwipePredicate: [DisableSwipeSelector]?
 
             enum CodingKeys: String, CodingKey {
                 case items = "items"
                 case disableSwipe = "disable_swipe"
                 case gestures = "gestures"
                 case type
+                case disableSwipePredicate = "disable_swipe_when"
             }
         }
 
@@ -784,6 +786,40 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             }
             
             var id: String { return identifier }
+        }
+        
+        struct DisableSwipeSelector: ThomasSerializable {
+            let predicate: JSONPredicate?
+            let direction: Direction
+            
+            enum CodingKeys: String, CodingKey {
+                case predicate = "when_state_matches"
+                case direction = "directions"
+            }
+            
+            private enum DirectionCodingKeys: String, CodingKey {
+                case type
+            }
+            
+            init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                predicate = try container.decodeIfPresent(JSONPredicate.self, forKey: .predicate)
+                
+                let directionContainer = try container.nestedContainer(keyedBy: DirectionCodingKeys.self, forKey: .direction)
+                direction = try directionContainer.decode(Direction.self, forKey: .type)
+            }
+            
+            func encode(to encoder: any Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                try container.encodeIfPresent(predicate, forKey: .predicate)
+                
+                var nested = container.nestedContainer(keyedBy: DirectionCodingKeys.self, forKey: .direction)
+                try nested.encode(direction, forKey: .type)
+            }
+        }
+        
+        enum Direction: String, ThomasSerializable {
+            case horizontal = "horizontal"
         }
 
         indirect enum Gesture: ThomasSerializable {

@@ -92,8 +92,12 @@ class PagerState: ObservableObject {
     
     let identifier: String
     private let branchControl: BranchControl?
+    private var thomasStateSubscription: AnyCancellable? = nil
+    
+    //determin if the scrollview should be disabled based on `ThomasViewInfo.Pager.DisableSwipeSelector`
+    private var isScrollSelectorDisabled: Bool = false
 
-    init(identifier: String, branching: ThomasPagerControllerBranching? ) {
+    init(identifier: String, branching: ThomasPagerControllerBranching?) {
         self.identifier = identifier
         
         if let branching {
@@ -116,7 +120,8 @@ class PagerState: ObservableObject {
     
     func setPagesAndListenForUpdates(
         pages: [ThomasViewInfo.Pager.Item],
-        thomasState: ThomasState
+        thomasState: ThomasState,
+        swipeDisableSelectors: [ThomasViewInfo.Pager.DisableSwipeSelector]?
     ) {
         if let branchControl {
             branchControl.configureAndAttachTo(
@@ -127,6 +132,16 @@ class PagerState: ObservableObject {
             self.pageStates = pages.map({ $0.toPageState() })
             self.pageItems = pages
         }
+        
+        thomasStateSubscription?.cancel()
+        if let selectors = swipeDisableSelectors {
+            thomasStateSubscription = thomasState.$state
+                .receive(on: DispatchQueue.main)
+                .sink { @MainActor [weak self] newState in
+                    self?.reEvaluateScrollability(state: newState, selectors: selectors)
+                }
+        }
+        
         
         self.currentPageId = pageItems.first?.identifier
     }
@@ -164,7 +179,7 @@ class PagerState: ObservableObject {
     }
     
     var canGoBack: Bool {
-        return branchControl?.canGoBack ?? (pageIndex > 0)
+        return pageIndex > 0 && !isScrollingDisabled
     }
     
     func nagivateToPage(id: String) {
@@ -179,19 +194,34 @@ class PagerState: ObservableObject {
     }
     
     func process(request: PageRequest) {
-        guard
-            branchControl?.resolve(request: request) != false
-        else {
-            return
-        }
-
+        let currentId = self.currentPageId
+        
         self.nagivateToPage(id: pageItems[nextIndexNoBranching(request: request)].identifier)
+        if (currentId != self.currentPageId) {
+            branchControl?.onPageRequest(request)
+        }
         
         if #available(iOS 16.0, *) {
             fixTouchDuringNavigationIssue()
         } else {
             updateScrollControl()
         }
+    }
+    
+    private func reEvaluateScrollability(
+        state: AirshipJSON,
+        selectors: [ThomasViewInfo.Pager.DisableSwipeSelector]
+    ) {
+        let selector = selectors.first(where: { $0.predicate?.evaluate(json: state) ?? true })
+        
+        switch(selector?.direction) {
+        case .horizontal:
+            isScrollSelectorDisabled = true
+        case .none:
+            isScrollSelectorDisabled = false
+        }
+         
+        self.updateScrollControl()
     }
     
     private func resetExecutedActions(for pageId: String?) {
@@ -206,7 +236,7 @@ class PagerState: ObservableObject {
     }
     
     private func updateScrollControl() {
-        self.isScrollingDisabled = (branchControl?.canGoBack == false && !isFirstPage)
+        self.isScrollingDisabled = isScrollSelectorDisabled
     }
     
     @available(iOS 16.0, *)
@@ -287,7 +317,6 @@ private class BranchControl: Sendable {
     
     @Published private(set) var pages: [ThomasViewInfo.Pager.Item] = []
     @Published private(set) var isComplete: Bool = false
-    @Published private(set) var canGoBack: Bool = true
 
     private var thomasState: ThomasState?
     private var history: [ThomasViewInfo.Pager.Item] = []
@@ -329,33 +358,16 @@ private class BranchControl: Sendable {
     private func updateState() {
         self.reEvaluatePath()
         self.evaluateCompletion()
-        updateCanGoBack()
     }
     
-    private func updateCanGoBack() {
-        self.canGoBack = if let current = self.history.last {
-            current.branching?.canGoBack(json: payload) != false
-        } else {
-            false
-        }
-    }
-
-    func resolve(request: PageRequest) -> Bool {
+    
+    func onPageRequest(_ request: PageRequest) {
         self.updateState()
 
         switch request {
-        case .next:
-            return true
-        case .first:
-            history.removeAll()
-            return true
-        case .back:
-            guard canGoBack else {
-                return false
-            }
-
-            _ = history.popLast()
-            return true
+        case .next: break
+        case .first: history.removeAll()
+        case .back: _ = history.popLast()
         }
     }
     
@@ -365,7 +377,6 @@ private class BranchControl: Sendable {
         }
         
         history.removeSubrange((index + 1)...)
-        updateCanGoBack()
     }
     
     func addToHistoryPage(id: String) {
@@ -377,7 +388,6 @@ private class BranchControl: Sendable {
         }
         
         history.append(page)
-        updateCanGoBack()
     }
 
     private func reEvaluatePath() {
@@ -465,20 +475,6 @@ fileprivate extension ThomasPageBranching {
                 return isMatched
             })?
             .pageId
-    }
-    
-    func canGoBack(json: AirshipJSON) -> Bool {
-        guard let control = previousPageControl else {
-            return true
-        }
-        
-        if control.alwaysDisabled == true {
-            return false
-        }
-        
-        let isAllowed = control.predicate?.evaluate(json: json) != true
-        
-        return isAllowed
     }
 }
 
