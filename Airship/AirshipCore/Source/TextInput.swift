@@ -18,10 +18,8 @@ struct TextInput: View {
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject private var thomasState: ThomasState
-
+    @EnvironmentObject var validatableHelper: ValidatableHelper
     @State private var isEditing: Bool = false
-    @State private var isValid: Bool?
-
     @StateObject private var viewModel: ViewModel
 
     private var scaledFontSize: Double {
@@ -181,22 +179,23 @@ struct TextInput: View {
         .formElement()
         .onAppear {
             restoreFormState()
-        }
-        .airshipOnChangeOf(self.formState.status) { status in
-            updateValidationState(status)
+            validatableHelper.subscribe(
+                forIdentifier: info.properties.identifier,
+                formState: formState,
+                initialValue: self.viewModel.input,
+                valueUpdates: self.viewModel.$input,
+                validatables: info.validation
+            ) { [weak thomasState, weak viewModel] actions in
+                guard let thomasState, let viewModel else { return }
+                thomasState.processStateActions(
+                    actions,
+                    formFieldValue: viewModel.formField?.input
+                )
+            }
         }
         .onReceive(self.viewModel.$formField) { field in
             guard let field else { return }
-            if self.isValid != nil {
-                self.info.validation.onEdit?.stateActions.map(handleStateActions)
-                self.isValid = nil
-            }
-
             self.formDataCollector.updateField(field, pageID: pageID)
-
-            if formState.validationMode == .immediate {
-                updateValidationState(self.formState.status)
-            }
         }
     }
 
@@ -251,48 +250,6 @@ struct TextInput: View {
             }
 
             self.viewModel.input = value
-        }
-    }
-
-    @MainActor
-    private func updateValidationState(
-        _ status: ThomasFormState.Status
-    ) {
-
-        switch (status) {
-        case .valid:
-            guard self.isValid == true else {
-                self.info.validation.onValid?.stateActions.map(handleStateActions)
-                self.isValid = true
-                return
-            }
-        case .error, .invalid:
-            guard let fieldStatus = self.formState.lastFieldStatus(
-                identifier: self.info.properties.identifier
-            ) else {
-                return
-            }
-
-            if fieldStatus.isValid {
-                guard self.isValid == true else {
-                    self.info.validation.onValid?.stateActions.map(handleStateActions)
-                    self.isValid = true
-                    return
-                }
-            } else if fieldStatus == .invalid {
-                guard
-                    self.isValid == false
-                else {
-                    // Makes initial required fields not show an error in immediate validation
-                    // mode
-                    if self.formState.validationMode == .onDemand || viewModel.didEdit {
-                        self.info.validation.onError?.stateActions.map(handleStateActions)
-                    }
-                    self.isValid = false
-                    return
-                }
-            }
-        case .validating, .pendingValidation, .submitted: return
         }
     }
 
@@ -452,7 +409,7 @@ struct TextInput: View {
             case .sms:
 
                 guard !trimmed.isEmpty, let selectedSMSLocale else {
-                    return if isRequired, selectedSMSLocale == nil {
+                    return if isRequired {
                         ThomasFormField.invalidField(
                             identifier: inputProperties.identifier,
                             input: .sms(input)

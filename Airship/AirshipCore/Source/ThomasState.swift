@@ -29,7 +29,8 @@ class ThomasState: ObservableObject {
         self.state = ThomasStatePayload(
             formData: ThomasFormPayloadGenerator.makeFormStatePayload(
                 status: formState.status,
-                fields: formState.activeFields.map { $0.value }
+                fields: formState.activeFields.map { $0.value },
+                formType: formState.formType
             ),
             mutableState: mutableState.state
         ).json
@@ -39,7 +40,8 @@ class ThomasState: ObservableObject {
                 ThomasStatePayload(
                     formData: ThomasFormPayloadGenerator.makeFormStatePayload(
                         status: formStatus,
-                        fields: activeFields.map { $0.value }
+                        fields: activeFields.map { $0.value },
+                        formType: formState.formType
                     ),
                     mutableState: mutableState
                 ).json

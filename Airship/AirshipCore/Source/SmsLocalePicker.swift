@@ -55,7 +55,7 @@ private extension String {
 }
 
 #Preview {
-    var locale: ThomasSMSLocale? = .init(countryCode: "US", prefix: "+1", registration: nil)
+    let locale: ThomasSMSLocale? = .init(countryCode: "US", prefix: "+1", registration: nil)
     SmsLocalePicker(
         selectedLocale: .constant(locale),
         availableLocales: [

@@ -23,6 +23,7 @@ struct RootView<Content: View>: View {
 
     @ObservedObject var thomasEnvironment: ThomasEnvironment
     @StateObject var thomasState: ThomasState
+    @StateObject var validatableHelper: ValidatableHelper = ValidatableHelper()
     let layout: AirshipLayout
     let content: (ThomasOrientation, ThomasWindowSize) -> Content
 
@@ -52,6 +53,7 @@ struct RootView<Content: View>: View {
                     formState: thomasEnvironment.defaultFormState
                 )
             )
+            .environmentObject(validatableHelper)
             .environment(\.orientation, currentOrientation)
             .environment(\.windowSize, resolveWindowSize())
             .environment(\.isVisible, isVisible)

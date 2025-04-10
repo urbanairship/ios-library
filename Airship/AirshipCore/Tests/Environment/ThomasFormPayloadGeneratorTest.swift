@@ -1,6 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import Testing
+import Foundation
+
 @testable import AirshipCore
 
 @MainActor
@@ -31,13 +33,11 @@ struct ThomasFormPayloadGeneratorTest {
                             "some-other-child-score": .score(9)
                         ]
                     ),
-
-                    // nil gets filtered out
-                    "text-nil-filtered": .text(nil),
-                    "email-nil-filtered": .email(nil),
-                    "sms-nil-filtered": .sms(nil),
-                    "score-nil-filtered": .score(nil),
-                    "radio-nil-filtered": .radio(nil)
+                    "text-nil": .text(nil),
+                    "email-nil": .email(nil),
+                    "sms-nil": .sms(nil),
+                    "score-nil": .score(nil),
+                    "radio-nil": .radio(nil)
                 ]
         )
 
@@ -74,6 +74,21 @@ struct ThomasFormPayloadGeneratorTest {
               "some-child-score": {
                 "type": "score",
                 "value": 8
+              },
+              "text-nil": {
+                "type": "text_input"
+              },
+              "email-nil": {
+                "type": "email_input"
+              },
+              "sms-nil": {
+                "type": "sms_input"
+              },
+              "score-nil": {
+                "type": "score"
+              },
+              "radio-nil": {
+                "type": "single_choice"
               },
               "some-child-form": {
                 "type": "form",
@@ -118,9 +133,6 @@ struct ThomasFormPayloadGeneratorTest {
                     "some-text-input": .text("neat text"),
                     "some-email-input": .email("email@email.email"),
                     "some-child-score": .score(8),
-
-                    // nil gets filtered out
-                    "text-nil-filtered": .text(nil),
                 ]
         )
 
@@ -226,7 +238,8 @@ struct ThomasFormPayloadGeneratorTest {
                        "type":"pending"
                     }
                  }
-              }
+              },
+              "type": "form"
            },
            "status":{
               "type": "\(formStatus.rawValue)"
@@ -238,7 +251,8 @@ struct ThomasFormPayloadGeneratorTest {
         let expected = try AirshipJSON.from(json: expectedJSON)
         let actual = ThomasFormPayloadGenerator.makeFormStatePayload(
             status: formStatus,
-            fields: fields
+            fields: fields,
+            formType: .form
         )
         #expect(actual == expected)
 

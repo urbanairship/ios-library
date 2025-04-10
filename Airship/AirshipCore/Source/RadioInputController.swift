@@ -3,6 +3,7 @@
 import Foundation
 import SwiftUI
 
+@MainActor
 struct RadioInputController: View {
     let info: ThomasViewInfo.RadioInputController
     let constraints: ViewConstraints
@@ -12,7 +13,7 @@ struct RadioInputController: View {
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var thomasState: ThomasState
     @StateObject var radioInputState: RadioInputState = RadioInputState()
-    @State private var isValid: Bool?
+    @EnvironmentObject var validatableHelper: ValidatableHelper
 
     var body: some View {
         ViewFactory.createView(self.info.properties.view, constraints: constraints)
@@ -21,22 +22,26 @@ struct RadioInputController: View {
             .accessible(self.info.accessible)
             .formElement()
             .environmentObject(radioInputState)
-            .airshipOnChangeOf(self.formState.status) { status in
-                guard self.formState.validationMode == .onDemand else { return }
-                updateValidationState(status)
-            }
             .airshipOnChangeOf(self.radioInputState.selectedItem) { incoming in
                 updateFormState(incoming)
-
-                guard self.formState.validationMode == .onDemand else { return }
-                if self.isValid != nil {
-                    self.info.validation.onEdit?.stateActions.map(handleStateActions)
-                    self.isValid = nil
-                }
-                updateValidationState(self.formState.status)
             }
             .onAppear {
                 restoreFormState()
+                if self.formState.validationMode == .onDemand {
+                    validatableHelper.subscribe(
+                        forIdentifier: info.properties.identifier,
+                        formState: formState,
+                        initialValue: radioInputState.selectedItem,
+                        valueUpdates: radioInputState.$selectedItem,
+                        validatables: info.validation
+                    ) { [weak thomasState, weak radioInputState] actions in
+                        guard let thomasState, let radioInputState else { return }
+                        thomasState.processStateActions(
+                            actions,
+                            formFieldValue: .radio(radioInputState.selectedItem)
+                        )
+                    }
+                }
             }
     }
 
@@ -52,50 +57,6 @@ struct RadioInputController: View {
         }
 
         self.radioInputState.selectedItem = value
-    }
-
-    @MainActor
-    private func updateValidationState(
-        _ status: ThomasFormState.Status
-    ) {
-        switch (status) {
-        case .valid:
-            guard self.isValid == true else {
-                self.info.validation.onValid?.stateActions.map(handleStateActions)
-                self.isValid = true
-                return
-            }
-        case .error, .invalid:
-            guard let fieldStatus = self.formState.lastFieldStatus(
-                identifier: self.info.properties.identifier
-            ) else {
-                return
-            }
-
-            if fieldStatus.isValid {
-                guard self.isValid == true else {
-                    self.info.validation.onValid?.stateActions.map(handleStateActions)
-                    self.isValid = true
-                    return
-                }
-            } else if fieldStatus == .invalid {
-                guard
-                    self.isValid == false
-                else {
-                    self.info.validation.onError?.stateActions.map(handleStateActions)
-                    self.isValid = false
-                    return
-                }
-            }
-        case .validating, .pendingValidation, .submitted: return
-        }
-    }
-
-    private func handleStateActions(_ stateActions: [ThomasStateAction]) {
-        thomasState.processStateActions(
-            stateActions,
-            formFieldValue: .radio(self.radioInputState.selectedItem)
-        )
     }
 
     private func checkValid(value: String?) -> Bool {

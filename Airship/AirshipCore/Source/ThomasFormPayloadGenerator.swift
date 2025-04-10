@@ -19,7 +19,12 @@ struct ThomasFormPayloadGenerator {
      * that are encodable so we can have better type safety.
      */
 
-    static func makeFormStatePayload(status: ThomasFormState.Status, fields: [ThomasFormField]) -> AirshipJSON {
+    static func makeFormStatePayload(
+        status: ThomasFormState.Status,
+        fields: [ThomasFormField],
+        formType: ThomasFormState.FormType
+    ) -> AirshipJSON {
+
         let data = AirshipJSON.makeObject { builder in
             let childData = AirshipJSON.makeObject { builder in
                 fields.forEach {
@@ -30,6 +35,14 @@ struct ThomasFormPayloadGenerator {
                 }
             }
             builder.set(json: childData, key: Self.childrenKey)
+            switch(formType) {
+            case .nps(let scoreID):
+                builder.set(string: "nps", key: Self.typeKey)
+                builder.set(string: scoreID, key: Self.scoreIDKey)
+            case .form:
+                builder.set(string: "form", key: Self.typeKey)
+            }
+
         }
 
         return .object(
@@ -70,8 +83,6 @@ struct ThomasFormPayloadGenerator {
                 }
             }
         case .radio(let value):
-            guard let value else { return nil }
-
             return AirshipJSON.makeObject { builder in
                 builder.set(string: "single_choice", key: Self.typeKey)
                 builder.set(string: value, key: Self.valueKey)
@@ -88,8 +99,6 @@ struct ThomasFormPayloadGenerator {
                 }
             }
         case .text(let value):
-            guard let value else { return nil }
-
             return AirshipJSON.makeObject { builder in
                 builder.set(string: "text_input", key: Self.typeKey)
                 builder.set(string: value, key: Self.valueKey)
@@ -98,8 +107,6 @@ struct ThomasFormPayloadGenerator {
                 }
             }
         case .email(let value):
-            guard let value else { return nil }
-
             return AirshipJSON.makeObject { builder in
                 builder.set(string: "email_input", key: Self.typeKey)
                 builder.set(string: value, key: Self.valueKey)
@@ -109,8 +116,6 @@ struct ThomasFormPayloadGenerator {
             }
 
         case .sms(let value):
-            guard let value else { return nil }
-
             return AirshipJSON.makeObject { builder in
                 builder.set(string: "sms_input", key: Self.typeKey)
                 builder.set(string: value, key: Self.valueKey)
@@ -119,11 +124,12 @@ struct ThomasFormPayloadGenerator {
                 }
             }
         case .score(let value):
-            guard let value else { return nil }
 
             return AirshipJSON.makeObject { builder in
                 builder.set(string: "score", key: Self.typeKey)
-                builder.set(double: Double(value), key: Self.valueKey)
+                if let value {
+                    builder.set(double: Double(value), key: Self.valueKey)
+                }
                 if let status {
                     builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)
                 }

@@ -7,21 +7,26 @@ struct Score: View {
     let info: ThomasViewInfo.Score
     let constraints: ViewConstraints
 
-    @State var score: Int?
+    @MainActor
+    class ViewModel: ObservableObject {
+        @Published
+        var score: Int?
+    }
 
     @Environment(\.pageIdentifier) var pageID
     @EnvironmentObject var formDataCollector: ThomasFormDataCollector
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var thomasState: ThomasState
     @Environment(\.colorScheme) var colorScheme
-    @State private var isValid: Bool?
+    @EnvironmentObject var validatableHelper: ValidatableHelper
+    @StateObject var viewModel: ViewModel = ViewModel()
 
     @ViewBuilder
     private func makeNumberRangeScoreItems(style: ThomasViewInfo.Score.ScoreStyle.NumberRange, constraints: ViewConstraints) -> some View {
         ForEach((style.start...style.end), id: \.self) { index in
             let isOn = Binding(
-                get: { self.score == index },
-                set: { if $0 { self.score = index } }
+                get: { self.viewModel.score == index },
+                set: { if $0 { self.viewModel.score = index } }
             )
             Toggle(isOn: isOn.animation()) {}
                 .toggleStyle(
@@ -68,69 +73,29 @@ struct Score: View {
             .thomasCommon(self.info, formInputID: self.info.properties.identifier)
             .accessible(self.info.accessible, hideIfDescriptionIsMissing: false)
             .formElement()
-            .airshipOnChangeOf(self.score) { score in
+            .airshipOnChangeOf(self.viewModel.score) { score in
                 self.updateScore(score)
-                if self.isValid != nil {
-                    self.info.validation.onEdit?.stateActions.map(handleStateActions)
-                    self.isValid = nil
-                }
-                updateValidationState(self.formState.status)
-            }
-            .airshipOnChangeOf(self.formState.status) { status in
-                guard self.formState.validationMode == .onDemand else { return }
-                updateValidationState(status)
             }
             .onAppear {
                 self.restoreFormState()
-            }
-    }
-
-    @MainActor
-    private func updateValidationState(
-        _ status: ThomasFormState.Status
-    ) {
-        guard self.formState.validationMode == .onDemand else { return }
-
-        switch (status) {
-        case .valid:
-            guard self.isValid == true else {
-                self.info.validation.onValid?.stateActions.map(handleStateActions)
-                self.isValid = true
-                return
-            }
-        case .error, .invalid:
-            guard let fieldStatus = self.formState.lastFieldStatus(
-                identifier: self.info.properties.identifier
-            ) else {
-                return
-            }
-
-            if fieldStatus.isValid {
-                guard self.isValid == true else {
-                    self.info.validation.onValid?.stateActions.map(handleStateActions)
-                    self.isValid = true
-                    return
-                }
-            } else if fieldStatus == .invalid {
-                guard
-                    self.isValid == false
-                else {
-                    self.info.validation.onError?.stateActions.map(handleStateActions)
-                    self.isValid = false
-                    return
+                if self.formState.validationMode == .onDemand {
+                    validatableHelper.subscribe(
+                        forIdentifier: info.properties.identifier,
+                        formState: formState,
+                        initialValue: self.viewModel.score,
+                        valueUpdates: self.viewModel.$score,
+                        validatables: info.validation
+                    ) { [weak thomasState, weak viewModel] actions in
+                        guard let thomasState, let viewModel else { return }
+                        thomasState.processStateActions(
+                            actions,
+                            formFieldValue: .score(viewModel.score)
+                        )
+                    }
                 }
             }
-        case .validating, .pendingValidation, .submitted: return
-        }
     }
 
-    private func handleStateActions(_ stateActions: [ThomasStateAction]) {
-        thomasState.processStateActions(
-            stateActions,
-            formFieldValue: .score(self.score)
-        )
-    }
-    
     private func modifiedConstraints() -> ViewConstraints {
         var constraints = self.constraints
         if self.constraints.width == nil && self.constraints.height == nil {
@@ -210,11 +175,11 @@ struct Score: View {
             )?.input,
             let value
         else {
-            self.updateScore(self.score)
+            self.updateScore(self.viewModel.score)
             return
         }
 
-        self.score = value
+        self.viewModel.score = value
     }
 }
 
@@ -320,4 +285,6 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
         let font = UIFont.resolveUIFont(appearance)
         return (text as NSString).size(withAttributes: [.font: font]).height
     }
+
+
 }
