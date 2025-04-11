@@ -49,6 +49,7 @@ class ThomasState: ObservableObject {
             .removeDuplicates()
             .sink { [weak self] state in
                 self?.state = state
+                AirshipLogger.trace("State updated: \(state.prettyJSONString)")
             }
             .store(in: &subscriptions)
     }
@@ -216,5 +217,17 @@ fileprivate extension ThomasFormField.Value {
             return nil
         }
 
+    }
+}
+
+fileprivate extension AirshipJSON {
+    var prettyJSONString: String {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted]
+        do {
+            return try self.toString(encoder: encoder)
+        } catch {
+            return "Error: \(error)"
+        }
     }
 }
