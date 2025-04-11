@@ -523,14 +523,7 @@ struct ThomasFormStateTest {
 
         // Update the invalid fields with more invalid data
         form.updateField(.invalidField(identifier: "some-id", input: .score(1)))
-        await #expect(updates.next() == .pendingValidation)
-        await #expect(updates.next() == .validating)
-        await #expect(updates.next() == .invalid)
-
         form.updateField(.invalidField(identifier: "some-other-id", input: .score(2)))
-        await #expect(updates.next() == .pendingValidation)
-        await #expect(updates.next() == .validating)
-        await #expect(updates.next() == .invalid)
 
         // Update the invalid fields with valid fields
         form.updateField(.validField(identifier: "some-id", input: .score(1), result: .init(value: .score(1))))

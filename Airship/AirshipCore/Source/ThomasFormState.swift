@@ -249,12 +249,9 @@ class ThomasFormState: ObservableObject {
             updateStatus(.pendingValidation)
         }
 
-        switch(validationMode) {
-        case .onDemand:
-            if lastChildStatus[field.identifier] != .invalid || field.status != .invalid {
-                lastChildStatus[field.identifier] = .pending
-            }
-        case .immediate:
+        // Skip updating the field to pending if its invalid and the incoming data
+        // is invalid.
+        if field.status != .invalid || lastChildStatus[field.identifier] != .invalid {
             lastChildStatus[field.identifier] = .pending
         }
 
