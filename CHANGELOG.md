@@ -1,6 +1,18 @@
 
 # iOS Changelog
 
+## Version 19.2.0 Apr 3, 2025
+Minor release with Custom Views functionality allowing native SwiftUI views to be displayed in Scenes.
+
+### Changes
+- Added Custom Views functionality allowing native SwiftUI views to be displayed in Scenes.
+
+## Version 19.1.2 March 31, 2025
+Patch release with bug fix for swipe gestures in Scenes.
+
+### Changes
+- Fixed regression that caused horizontal swipe gestures to be disabled on some devices.
+
 ## Version 19.1.1 March 25, 2025
 Patch release with bug fixes and minor improvements.
 

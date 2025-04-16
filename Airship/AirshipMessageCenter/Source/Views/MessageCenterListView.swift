@@ -36,7 +36,7 @@ public struct MessageCenterListView: View {
     
     @State
     private var listOpacity = 0.0
-    
+
     @State
     private var isRefreshing = false
     
@@ -45,7 +45,15 @@ public struct MessageCenterListView: View {
     
     @State
     private var messageIDs: [String] = []
-    
+
+    private let buttonTextMinScaleFactor: CGFloat = 0.65
+
+    @State
+    var maxEditButtonsWidth: CGFloat = .infinity
+
+    @State
+    var lastMaxEditButtonsWidth: CGFloat = 0
+
     private func markRead(messages: Set<String>) {
         editMode?.animation().wrappedValue = .inactive
         viewModel.markRead(messages: messages)
@@ -190,8 +198,9 @@ public struct MessageCenterListView: View {
             )
         }
     }
-    
-    private func markDeleteButton() -> some View {
+
+
+    private func markDeleteButton(maxWidth: CGFloat) -> some View {
         Button(
             action: {
                 delete(messages: selection)
@@ -201,10 +210,17 @@ public struct MessageCenterListView: View {
                     Text(
                         "\("ua_delete_messages".messageCenterLocalizedString) (\(self.selection.count))"
                     )
+                    .minimumScaleFactor(buttonTextMinScaleFactor)
+                    .lineLimit(1)
                     .foregroundColor(colorScheme.airshipResolveColor(light: theme.deleteButtonTitleColor, dark: theme.deleteButtonTitleColorDark))
+                    .frame(maxWidth: maxWidth)
+
                 } else {
                     Text("ua_delete_messages".messageCenterLocalizedString)
+                        .minimumScaleFactor(buttonTextMinScaleFactor)
+                        .lineLimit(1)
                         .foregroundColor(colorScheme.airshipResolveColor(light: theme.deleteButtonTitleColor, dark: theme.deleteButtonTitleColorDark))
+                        .frame(maxWidth: maxWidth)
                 }
             }
         )
@@ -213,7 +229,7 @@ public struct MessageCenterListView: View {
     }
     
     @ViewBuilder
-    private func markReadButton() -> some View {
+    private func markReadButton(maxWidth: CGFloat) -> some View {
         Button(
             action: {
                 markRead(messages: selection)
@@ -223,10 +239,18 @@ public struct MessageCenterListView: View {
                     Text(
                         "\("ua_mark_messages_read".messageCenterLocalizedString) (\(self.selection.count))"
                     )
+                    .minimumScaleFactor(buttonTextMinScaleFactor)
+                    .lineLimit(1)
                     .foregroundColor(colorScheme.airshipResolveColor(light: theme.markAsReadButtonTitleColor, dark: theme.markAsReadButtonTitleColorDark))
+                    .frame(maxWidth: maxWidth)
+
                 } else {
                     Text("ua_mark_messages_read".messageCenterLocalizedString)
+                        .minimumScaleFactor(buttonTextMinScaleFactor)
+                        .lineLimit(1)
                         .foregroundColor(colorScheme.airshipResolveColor(light: theme.markAsReadButtonTitleColor, dark: theme.markAsReadButtonTitleColorDark))
+                        .frame(maxWidth: maxWidth)
+
                 }
             }
         )
@@ -235,50 +259,68 @@ public struct MessageCenterListView: View {
     }
     
     @ViewBuilder
-    private func selectButton() -> some View {
+    private func selectButton(maxWidth: CGFloat) -> some View {
         if self.selection.count == self.messageIDs.count {
-            selectNone()
+            selectNone(maxWidth: maxWidth)
         } else {
-            selectAll()
+            selectAll(maxWidth: maxWidth)
         }
     }
     
-    private func selectAll() -> some View {
+    private func selectAll(maxWidth: CGFloat) -> some View {
         Button {
             self.selection = Set(self.messageIDs)
         } label: {
             Text("ua_select_all_messages".messageCenterLocalizedString)
+                .minimumScaleFactor(buttonTextMinScaleFactor)
+                .lineLimit(1)
                 .foregroundColor(colorScheme.airshipResolveColor(light: theme.selectAllButtonTitleColor, dark: theme.selectAllButtonTitleColorDark))
+                .frame(maxWidth: maxWidth)
         }
         .accessibilityHint("ua_select_all_messages".messageCenterLocalizedString)
     }
     
-    private func selectNone() -> some View {
+    private func selectNone(maxWidth: CGFloat) -> some View {
         Button {
             self.selection = Set()
         } label: {
             Text("ua_select_none_messages".messageCenterLocalizedString)
+                .minimumScaleFactor(buttonTextMinScaleFactor)
+                .lineLimit(1)
                 .foregroundColor(
                     colorScheme.airshipResolveColor(
                         light: theme.selectAllButtonTitleColor,
                         dark: theme.selectAllButtonTitleColorDark
                     )
                 )
+                .frame(maxWidth: maxWidth)
+
         }
         .accessibilityHint("ua_select_none_messages".messageCenterLocalizedString)
     }
-    
+
     @available(tvOS 18.0, *)
     private func bottomToolBar() -> some ToolbarContent {
         ToolbarItemGroup(placement: .bottomBar) {
             if self.editMode?.wrappedValue.isEditing == true {
-                HStack {
-                    selectButton()
-                    Spacer()
-                    markReadButton()
-                    Spacer()
-                    markDeleteButton()
-                }
+                    HStack {
+                        selectButton(maxWidth: maxEditButtonsWidth/3)
+                        Spacer()
+                        markReadButton(maxWidth: maxEditButtonsWidth/3)
+                        Spacer()
+                        markDeleteButton(maxWidth: maxEditButtonsWidth/3)
+                    }.background(
+                        GeometryReader(content: { geo -> Color in
+                            DispatchQueue.main.async {
+                                if lastMaxEditButtonsWidth != maxEditButtonsWidth {
+                                    self.maxEditButtonsWidth = geo.size.width
+                                }
+
+                                self.lastMaxEditButtonsWidth = geo.size.width
+                            }
+                            return Color.clear
+                        })
+                    )
             }
         }
     }

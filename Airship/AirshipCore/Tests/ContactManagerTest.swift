@@ -520,6 +520,67 @@ final class ContactManagerTest: XCTestCase {
         )
     }
 
+    func testResetIfNeeded() async throws {
+        let info = await self.contactManager.currentContactIDInfo()
+        XCTAssertNil(info)
+
+        await self.contactManager.resetIfNeeded()
+
+        // Resolve is called first if we do not have a valid token
+        let resolve = XCTestExpectation(description: "resolve contact")
+        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+            XCTAssertEqual(self.channel.identifier, channelID)
+            XCTAssertNil(contactID)
+            resolve.fulfill()
+            return AirshipHTTPResponse(
+                result: self.nonAnonIdentifyResponse,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let reset = XCTestExpectation()
+        self.apiClient.resetCallback = { channelID, possiblyOrphanedContactID in
+            XCTAssertEqual(self.channel.identifier, channelID)
+            reset.fulfill()
+            return AirshipHTTPResponse(
+                result: self.anonIdentifyResponse,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(
+                workID: ContactManager.updateTaskID
+            )
+        )
+
+        XCTAssertEqual(result, .success)
+        await fulfillment(of: [resolve, reset])
+
+        await self.verifyUpdates(
+            [
+                .contactIDUpdate(
+                    ContactIDInfo(
+                        contactID: self.nonAnonIdentifyResponse.contact.contactID,
+                        isStable: false,
+                        namedUserID: nil,
+                        resolveDate: self.date.now
+                    )
+                ),
+                .contactIDUpdate(
+                    ContactIDInfo(
+                        contactID: self.anonIdentifyResponse.contact.contactID,
+                        isStable: true,
+                        namedUserID: nil,
+                        resolveDate: self.date.now
+                    )
+                )
+            ]
+        )
+    }
+
     func testAuthTokenNoContactInfo() async throws {
         let resolve = XCTestExpectation(description: "resolve contact")
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in

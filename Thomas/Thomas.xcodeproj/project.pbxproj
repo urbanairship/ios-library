@@ -308,7 +308,7 @@
 				9908E5C72AFDA95000DB3E2E /* AirshipFeatureFlags.framework */,
 				9908E5BB2AFDA95000DB3E2E /* AirshipMessageCenter.framework */,
 				9908E5BD2AFDA95000DB3E2E /* AirshipPreferenceCenter.framework */,
-				990D5D8E2D6FFBE500F4D20E /* AirshipObjectiveC.framework */,
+				6EAA61AB2D52BCE7006602F7 /* AirshipObjectiveC.framework */,
 				9908E5B72AFDA95000DB3E2E /* AirshipDebug.framework */,
 				9908E5B52AFDA95000DB3E2E /* AirshipTests.xctest */,
 				9908E5C52AFDA95000DB3E2E /* AirshipAutomationTests.xctest */,
@@ -431,6 +431,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		6EAA61AB2D52BCE7006602F7 /* AirshipObjectiveC.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipObjectiveC.framework;
+			remoteRef = 6EAA61AA2D52BCE7006602F7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		9908E5A92AFDA95000DB3E2E /* AirshipBasement.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
