@@ -148,7 +148,9 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     func resetIfNeeded() {
-        guard self.operationEntries.isEmpty == false || lastContactInfo?.isAnonymous == false || self.hasAnonData() else {
+        guard
+            self.operationEntries.isEmpty == false || lastContactInfo?.isAnonymous == false || self.hasAnonData() || self.lastContactInfo == nil
+        else {
             return
         }
 

@@ -9,6 +9,7 @@ import Foundation
 /// airshipconfig.plist file with `enabledFeatures = none`.
 /// If any feature is enabled, the SDK will collect and send the following data:
 /// - Channel ID
+/// - Contact ID
 /// - Locale
 /// - TimeZone
 /// - Platform

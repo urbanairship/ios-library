@@ -243,6 +243,10 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
 
         channel.addRegistrationExtender { [weak self] payload in
             await self?.setupTask?.value
+            if await self?.contactID == nil {
+                await self?.contactManager.generateDefaultContactIDIfNotSet()
+            }
+
             if (channel.identifier != nil) {
                 payload.channel.contactID = await self?.getStableVerifiedContactID()
             } else {
@@ -678,7 +682,8 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
         let info = await waitForContactIDInfo(filter: { $0.isStable })
         return StableContactInfo(
             contactID: info.contactID,
-            namedUserID: info.namedUserID)
+            namedUserID: info.namedUserID
+        )
     }
 
     private func getStableVerifiedContactID() async -> String {
@@ -707,12 +712,14 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
     @objc
     private func checkPrivacyManager() {
         self.serialQueue.enqueue {
-            guard !self.privacyManager.isEnabled(.contacts) else {
+            if self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false) {
                 await self.contactManager.generateDefaultContactIDIfNotSet()
-                return
             }
 
-            await self.contactManager.resetIfNeeded()
+            guard self.privacyManager.isEnabled(.contacts) else {
+                await self.contactManager.resetIfNeeded()
+                return
+            }
         }
     }
 

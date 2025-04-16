@@ -267,6 +267,14 @@ class AirshipContactTest: XCTestCase {
         XCTAssertEqual("some-contact-id", payload.channel.contactID)
     }
 
+    func testExtendRegistrationPayloadGeneratesContactID() async throws {
+        self.channel.identifier = nil
+        await self.contactManager.clearGenerateDefaultContactIDCalledFlag()
+        _ = await self.channel.channelPayload
+        let generated = await self.contactManager.generateDefaultContactIDCalled
+        XCTAssertTrue(generated)
+    }
+
     func testForegroundResolves() async throws {
         notificationCenter.post(
             name: AppStateTracker.didBecomeActiveNotification
