@@ -1,6 +1,12 @@
 
 # iOS Changelog
 
+## Version 19.2.1 Apr 17, 2025
+Resolved a regression introduced in 19.2.0 where channel audience updates and In-App experiences were unintentionally blocked when the Contact privacy manager flag was disabled. 
+
+### Changes
+- Fixed Channel operations and IAX being blocked when Contacts are disabled.
+
 ## Version 19.2.0 Apr 3, 2025
 Minor release with Custom Views functionality allowing native SwiftUI views to be displayed in Scenes.
 
