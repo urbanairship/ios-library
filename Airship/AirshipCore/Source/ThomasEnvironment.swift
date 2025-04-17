@@ -349,7 +349,7 @@ extension PagerState {
             identifier: self.identifier,
             pageIndex: index,
             pageIdentifier: pageId,
-            pageCount: self.pageStates.count,
+            pageCount: self.reportingPageCount,
             completed: self.completed
         )
     }

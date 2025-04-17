@@ -96,6 +96,11 @@ class PagerState: ObservableObject {
     
     //determin if the scrollview should be disabled based on `ThomasViewInfo.Pager.DisableSwipeSelector`
     private var isScrollSelectorDisabled: Bool = false
+    
+    //used for reporting
+    var reportingPageCount: Int {
+        get { branchControl == nil ? pageItems.count : -1 }
+    }
 
     init(identifier: String, branching: ThomasPagerControllerBranching?) {
         self.identifier = identifier
