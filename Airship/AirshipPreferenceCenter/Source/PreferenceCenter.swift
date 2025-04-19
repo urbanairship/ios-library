@@ -186,7 +186,7 @@ extension PreferenceCenter {
         theme: PreferenceCenterTheme?
     ) -> any AirshipMainActorCancellable {
 
-        var window: UIWindow? = UIWindow(windowScene: scene)
+        var window: UIWindow? = AirshipWindowFactory.shared.makeWindow(windowScene: scene)
 
         let cancellable = AirshipMainActorCancellableBlock {
             window?.windowLevel = .normal

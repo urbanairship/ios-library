@@ -118,7 +118,7 @@ public extension UIWindow {
     static func airshipMakeModalReadyWindow(
         scene: UIWindowScene
     ) -> UIWindow {
-        let window: UIWindow = UIWindow(windowScene: scene)
+        let window: UIWindow = AirshipWindowFactory.shared.makeWindow(windowScene: scene)
         window.accessibilityViewIsModal = true
         window.alpha = 0
         window.makeKeyAndVisible()

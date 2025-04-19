@@ -316,7 +316,7 @@ extension MessageCenter {
             return
         }
 
-        var window: UIWindow? = UIWindow(windowScene: scene)
+        var window: UIWindow? = AirshipWindowFactory.shared.makeWindow(windowScene: scene)
 
         self.mutable.currentDisplay = AirshipMainActorCancellableBlock {
             window?.windowLevel = .normal

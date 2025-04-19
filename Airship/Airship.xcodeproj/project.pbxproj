@@ -596,6 +596,7 @@
 		6E8BDF012A679E5000F816D9 /* FeatureFlagRemoteDataAccessTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BDEFF2A679CD100F816D9 /* FeatureFlagRemoteDataAccessTest.swift */; };
 		6E8BDF022A684FC700F816D9 /* TestRemoteData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E15B70426CE07180099C92D /* TestRemoteData.swift */; };
 		6E8CE762284137D600CF4B11 /* PushTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8CE761284137D600CF4B11 /* PushTest.swift */; };
+		6E916C572DB30DA200C676FA /* AirshipWindowFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E916C562DB30D9E00C676FA /* AirshipWindowFactory.swift */; };
 		6E91B43C26868A6300DDB1A8 /* CircularRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E91B43B26868A6300DDB1A8 /* CircularRegion.swift */; };
 		6E91B44026868C3400DDB1A8 /* RegionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E91B43E26868C3400DDB1A8 /* RegionEvent.swift */; };
 		6E91B44226868C3400DDB1A8 /* ProximityRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E91B43F26868C3400DDB1A8 /* ProximityRegion.swift */; };
@@ -1889,6 +1890,7 @@
 		6E8BDEFF2A679CD100F816D9 /* FeatureFlagRemoteDataAccessTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagRemoteDataAccessTest.swift; sourceTree = "<group>"; };
 		6E8CE761284137D600CF4B11 /* PushTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushTest.swift; sourceTree = "<group>"; };
 		6E8E1C9A26447B3800B11791 /* AirshipLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipLock.swift; sourceTree = "<group>"; };
+		6E916C562DB30D9E00C676FA /* AirshipWindowFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipWindowFactory.swift; sourceTree = "<group>"; };
 		6E91B43B26868A6300DDB1A8 /* CircularRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircularRegion.swift; sourceTree = "<group>"; };
 		6E91B43E26868C3400DDB1A8 /* RegionEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegionEvent.swift; sourceTree = "<group>"; };
 		6E91B43F26868C3400DDB1A8 /* ProximityRegion.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProximityRegion.swift; sourceTree = "<group>"; };
@@ -3491,6 +3493,7 @@
 		6E411D5F2538D26200FEE4E8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				6E916C562DB30D9E00C676FA /* AirshipWindowFactory.swift */,
 				6EAA61482D5297A2006602F7 /* SubjectExtension.swift */,
 				99E433972C9A044C006436B9 /* AirshipResources.swift */,
 				3237D5F12B865D990055932B /* JSONValueTransformer.swift */,
@@ -5671,6 +5674,7 @@
 				6EED68012CE26DCD0087CDCB /* ThomasAttributeValue.swift in Sources */,
 				6E78848F29B9643C00ACAE45 /* ContactProtocol.swift in Sources */,
 				6EED67A22CE1A47C0087CDCB /* ThomasColor.swift in Sources */,
+				6E916C572DB30DA200C676FA /* AirshipWindowFactory.swift in Sources */,
 				6E299FDF28D14258001305A7 /* AirshipRequestSession.swift in Sources */,
 				6E7112A52880DACB004942E4 /* StateController.swift in Sources */,
 				6ECDDE7429B80462009D79DB /* ChannelAuthTokenProvider.swift in Sources */,

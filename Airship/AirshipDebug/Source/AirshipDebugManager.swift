@@ -139,7 +139,7 @@ public final class AirshipDebugManager: @unchecked Sendable {
 
         currentDisplay?.cancel()
 
-        var window: UIWindow? = UIWindow(windowScene: scene)
+        var window: UIWindow? = AirshipWindowFactory.shared.makeWindow(windowScene: scene)
         let disposable = AirshipMainActorCancellableBlock {
             window?.windowLevel = .normal
             window?.isHidden = true

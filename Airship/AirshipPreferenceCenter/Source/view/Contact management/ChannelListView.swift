@@ -266,7 +266,7 @@ extension ChannelListView {
             return nil
         }
 
-        let window: UIWindow? = UIWindow(windowScene: scene)
+        let window: UIWindow? = AirshipWindowFactory.shared.makeWindow(windowScene: scene)
 
         let disposable = AirshipMainActorCancellableBlock {
             DispatchQueue.main.async {

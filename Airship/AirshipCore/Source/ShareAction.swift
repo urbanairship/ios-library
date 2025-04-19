@@ -88,7 +88,7 @@ public final class ShareAction: AirshipAction {
     ) -> UIWindow? {
         do {
             let scene = try AirshipSceneManager.shared.lastActiveScene
-            let window = UIWindow(windowScene: scene)
+            let window = AirshipWindowFactory.shared.makeWindow(windowScene: scene)
             window.rootViewController = rootViewController
             window.windowLevel = windowLevel
             window.makeKeyAndVisible()
