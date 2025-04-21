@@ -10,6 +10,8 @@ public final class AttributesEditor {
     private var removes: [String] = []
     private let completionHandler: ([AttributeUpdate]) -> Void
 
+    private static let JSON_EXPIRY_KEY = "exp"
+
     init(
         date: any AirshipDateProtocol,
         completionHandler: @escaping ([AttributeUpdate]) -> Void
@@ -30,9 +32,7 @@ public final class AttributesEditor {
      *   - attribute: The attribute.
      */
     public func remove(_ attribute: String) {
-        guard isValid(key: attribute) else { return }
-        sets[attribute] = nil
-        removes.append(attribute)
+        tryRemoveAttribute(attribute)
     }
 
     /**
@@ -42,8 +42,8 @@ public final class AttributesEditor {
      *   - attribute: The attribute
      */
     public func set(date: Date, attribute: String) {
-        add(
-            attribute: attribute,
+        trySetAttribute(
+            attribute,
             value: .string(
                 AirshipDateFormatter.string(fromDate: date, format: .isoDelimitter)
             )
@@ -57,7 +57,7 @@ public final class AttributesEditor {
      *   - attribute: The attribute.
      */
     public func set(number: NSNumber, attribute: String) {
-        add(attribute: attribute, value: .number(number.doubleValue))
+        trySetAttribute(attribute, value: .number(number.doubleValue))
     }
 
     /**
@@ -74,7 +74,65 @@ public final class AttributesEditor {
             return
         }
 
-        add(attribute: attribute, value: .string(string))
+        trySetAttribute(attribute, value: .string(string))
+    }
+
+    /// Sets a custom attribute with a JSON payload and optional expiration.
+    ///
+    /// - Parameters:
+    ///   - json: A dictionary of key-value pairs (`[String: AirshipJSON]`) representing the custom payload.
+    ///   - attribute: The name of the attribute to be set.
+    ///   - instanceID: An identifier used to differentiate instances of the attribute.
+    ///   - expiration: An optional expiration `Date`. If provided, it must be greater than 0 and less than or equal to 731 days from now.
+    ///
+    /// - Throws:
+    ///   - `AirshipErrors.error` if:
+    ///     - The expiration is invalid (more than 731 days or not in the future).
+    ///     - The input `json` is empty.
+    ///     - The JSON contains a top-level `"exp"` key (reserved for expiration).
+    ///     - The attribute contains `"#"`or is empty
+    ///     - The instanceID contains `"#"`or is empty
+    ///
+    public func set(
+        json: [String: AirshipJSON],
+        attribute: String,
+        instanceID: String,
+        expiration: Date? = nil
+    ) throws {
+        if let expiration, expiration.timeIntervalSinceNow > 63158400, expiration.timeIntervalSinceNow <= 0 {
+            throw AirshipErrors.error("The expiration is invalid (more than 731 days or not in the future).")
+        }
+
+        guard json.isEmpty == false else {
+            throw AirshipErrors.error("The input `json` is empty.")
+        }
+
+        guard json[Self.JSON_EXPIRY_KEY] == nil else {
+            throw AirshipErrors.error("The JSON contains a top-level `\(Self.JSON_EXPIRY_KEY)` key (reserved for expiration).")
+        }
+
+        let json = AirshipJSON.makeObject { builder in
+            json.forEach { key, value in
+                builder.set(json: value, key: key)
+            }
+            if let expiration {
+                builder.set(double: expiration.timeIntervalSince1970, key: Self.JSON_EXPIRY_KEY)
+            }
+        }
+
+        try setAttribute(attribute, instanceID: instanceID, value: json)
+    }
+
+    /// Removes a JSON attribute.
+    ///   - attribute: The name of the attribute to be set.
+    ///   - instanceID: An identifier used to differentiate instances of the attribute.
+    ///
+    /// - Throws:
+    ///   - `AirshipErrors.error` if:
+    ///     - The attribute contains `"#"`or is empty
+    ///     - The instanceID contains `"#"`or is empty
+    public func remove(attribute: String, instanceID: String) throws {
+        try removeAttribute(attribute, instanceID: instanceID)
     }
 
     /**
@@ -84,7 +142,7 @@ public final class AttributesEditor {
      *   - attribute: The attribute.
      */
     public func set(float: Float, attribute: String) {
-        add(attribute: attribute, value: .number(Double(float)))
+        trySetAttribute(attribute, value: .number(Double(float)))
     }
 
     /**
@@ -94,7 +152,7 @@ public final class AttributesEditor {
      *   - attribute: The attribute.
      */
     public func set(double: Double, attribute: String) {
-        add(attribute: attribute, value: .number(double))
+        trySetAttribute(attribute, value: .number(double))
     }
 
     /**
@@ -104,7 +162,7 @@ public final class AttributesEditor {
      *   - attribute: The attribute.
      */
     public func set(int: Int, attribute: String) {
-        add(attribute: attribute, value: .number(Double(int)))
+        trySetAttribute(attribute, value: .number(Double(int)))
     }
 
     /**
@@ -114,9 +172,8 @@ public final class AttributesEditor {
      *   - attribute: The attribute.
      */
     public func set(uint: UInt, attribute: String) {
-        add(attribute: attribute, value: .number(Double(uint)))
+        trySetAttribute(attribute, value: .number(Double(uint)))
     }
-
     /**
      * Applies the attribute changes.
      */
@@ -137,19 +194,56 @@ public final class AttributesEditor {
         sets.removeAll()
     }
 
-    private func add(attribute: String, value: AirshipJSON) {
-        guard isValid(key: attribute) else { return }
-        sets[attribute] = value
-        removes.removeAll(where: { $0 == attribute })
+    private func setAttribute(_ attribute: String, instanceID: String? = nil, value: AirshipJSON) throws {
+        let key = try formatKey(attribute: attribute, instanceID: instanceID)
+        sets[key] = value
+        removes.removeAll(where: { $0 == key })
     }
 
-    private func isValid(key: String) -> Bool {
-        guard key.count >= 1 && key.count <= 1024 else {
-            AirshipLogger.error(
-                "Invalid attribute key \(key). Must be between 1-1024 characters."
-            )
-            return false
+    private func removeAttribute(_ attribute: String, instanceID: String? = nil) throws {
+        let key = try formatKey(attribute: attribute, instanceID: instanceID)
+        sets[key] = nil
+        removes.append(key)
+    }
+
+    private func trySetAttribute(_ attribute: String, instanceID: String? = nil, value: AirshipJSON) {
+        do {
+            try setAttribute(attribute, instanceID: instanceID, value: value)
+        } catch {
+            AirshipLogger.error("Failed to update attribute \(attribute): \(error)")
         }
-        return true
+    }
+
+    private func tryRemoveAttribute(_ attribute: String, instanceID: String? = nil) {
+        do {
+            try removeAttribute(attribute, instanceID: instanceID)
+        } catch {
+            AirshipLogger.error("Failed to remove attribute \(attribute): \(error)")
+        }
+    }
+
+    private func formatKey(attribute: String, instanceID: String? = nil) throws -> String {
+        guard
+            !attribute.isEmpty,
+            !attribute.contains("#")
+        else {
+            throw AirshipErrors.error(
+                "Invalid attribute \(attribute). Must not be empty or contain '#'."
+            )
+        }
+
+        if let instanceID {
+            guard
+                !instanceID.isEmpty,
+                !instanceID.contains("#")
+            else {
+                throw AirshipErrors.error(
+                    "Invalid instanceID \(instanceID). Must not be empty or contain '#'."
+                )
+            }
+            return "\(attribute)#\(instanceID)"
+        } else {
+            return attribute
+        }
     }
 }

@@ -53,7 +53,11 @@ final class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
             auth: .channelAuthToken(identifier: channelID),
             body: try encoder.encode(payload)
         )
-        return try await session.performHTTPRequest(request)
+        let result = try await session.performHTTPRequest(request)
+        AirshipLogger.debug(
+            "Updating channel finished with result \(result)"
+        )
+        return result
     }
 
     func makeURL(channelID: String) throws -> URL {

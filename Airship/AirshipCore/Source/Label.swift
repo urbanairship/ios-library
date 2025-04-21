@@ -48,7 +48,7 @@ struct Label: View {
         }
     }
 
-    private var resolveText: String {
+    private var resolvedText: String {
         let effectiveRef = ThomasPropertyOverride.resolveOptional(
             state: thomasState,
             overrides: self.info.overrides?.ref,
