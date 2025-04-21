@@ -67,6 +67,8 @@ final class RemoveTagsActionTest: XCTestCase {
 
     func testPerformSimple() async throws {
         self.channel.tags = ["foo", "bar", "tag", "another tag"]
+        
+        let updates = await self.action.tagMutations
 
         _ = try await self.action.perform(arguments:
             ActionArguments(
@@ -78,6 +80,10 @@ final class RemoveTagsActionTest: XCTestCase {
             ["foo", "bar"],
             channel.tags
         )
+        
+        var iterator = updates.makeAsyncIterator()
+        let mutation = await iterator.next()
+        XCTAssertEqual(TagActionMutation.channelTags(["tag", "another tag"]), mutation)
     }
 
     func testPerformComplex() async throws {
@@ -121,6 +127,8 @@ final class RemoveTagsActionTest: XCTestCase {
             XCTAssertEqual(Set(expected), Set(updates))
             tagGroupsSet.fulfill()
         }
+        
+        let updates = await self.action.tagMutations
 
         _ = try await self.action.perform(arguments:
             ActionArguments(
@@ -128,6 +136,20 @@ final class RemoveTagsActionTest: XCTestCase {
                 situation: .manualInvocation
             )
         )
+        
+        var expected: [TagActionMutation] = [
+            .channelTagGroups(["channel_tag_group": ["channel_tag_1", "channel_tag_2"], "other_channel_tag_group": ["other_channel_tag_1"]]),
+            .contactTagGroups(["named_user_tag_group": ["named_user_tag_1", "named_user_tag_2"], "other_named_user_tag_group": ["other_named_user_tag_1"]]),
+            .channelTags(["tag", "another_tag"])
+        ]
+        
+        for await item in updates {
+            XCTAssertEqual(expected.removeFirst(), item)
+            if expected.isEmpty {
+                break
+            }
+        }
+        
 
         XCTAssertEqual(
             ["foo", "bar"],

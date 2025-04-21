@@ -42,6 +42,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		271B38652DB2866200495D9F /* TagActionMutation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271B38642DB2866200495D9F /* TagActionMutation.swift */; };
 		320AD3A629E7FA2000D66106 /* PagerGestureMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */; };
 		3215CA9D2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		322AAB1E2B5AB65700652DAC /* AddChannelPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DDC0562AF1055300D23EBE /* AddChannelPromptView.swift */; };
@@ -1311,6 +1312,7 @@
 		03525B95280DE5F400320AA9 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		03525B96280DE60200320AA9 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
 		03525B97280DE61200320AA9 /* zu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zu; path = zu.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		271B38642DB2866200495D9F /* TagActionMutation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagActionMutation.swift; sourceTree = "<group>"; };
 		320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerGestureMap.swift; sourceTree = "<group>"; };
 		3215CA9C2739349700B7D97E /* ModalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalView.swift; sourceTree = "<group>"; };
 		322AAB1C2B5A869000652DAC /* ContactManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactManagementView.swift; sourceTree = "<group>"; };
@@ -3251,6 +3253,7 @@
 				A6D6D49C2A0260780072A5CA /* AirshipAction.swift */,
 				A6D6D49E2A02608C0072A5CA /* ActionResult.swift */,
 				6E4A4FD92A30358F0049FEFC /* TagsActionArgs.swift */,
+				271B38642DB2866200495D9F /* TagActionMutation.swift */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -5479,6 +5482,7 @@
 				6EE49C102A0C142F00AB1CF4 /* RemoteDataInfo.swift in Sources */,
 				6E15B71826CEB4190099C92D /* RemoteDataStore.swift in Sources */,
 				6E87BDBD26E01FF40005D20D /* ModuleLoader.swift in Sources */,
+				271B38652DB2866200495D9F /* TagActionMutation.swift in Sources */,
 				6E6541E02758976D009676CA /* AirshipProgressView.swift in Sources */,
 				A67EC249279B1A40009089E1 /* ScopedSubscriptionListEditor.swift in Sources */,
 				6E698DF226790AC300654DB2 /* AirshipPrivacyManager.swift in Sources */,

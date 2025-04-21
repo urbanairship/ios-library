@@ -34,6 +34,15 @@ public final class AddTagsAction: AirshipAction {
     private let channel: @Sendable () -> any AirshipChannelProtocol
     private let contact: @Sendable () -> any AirshipContactProtocol
     
+    private let tagMutationsChannel = AirshipAsyncChannel<TagActionMutation>()
+    
+    public var tagMutations: AsyncStream<TagActionMutation> {
+        get async {
+            return await tagMutationsChannel.makeStream()
+        }
+    }
+
+    
     public convenience init() {
         self.init(
             channel: Airship.componentSupplier(),
@@ -63,10 +72,12 @@ public final class AddTagsAction: AirshipAction {
             channel().editTags { editor in
                 editor.add(tag)
             }
+            sendTagMutation(.channelTags([tag]))
         } else if let tags = arguments.value.unWrap() as? [String] {
             channel().editTags { editor in
                 editor.add(tags)
             }
+            sendTagMutation(.channelTags(tags))
         } else if let args: TagsActionsArgs = try arguments.value.decode() {
             if let channelTagGroups = args.channel {
                 channel().editTagGroups { editor in
@@ -74,6 +85,8 @@ public final class AddTagsAction: AirshipAction {
                         editor.add(tags, group: group)
                     }
                 }
+                
+                sendTagMutation(.channelTagGroups(channelTagGroups))
             }
 
             if let contactTagGroups = args.namedUser {
@@ -82,15 +95,23 @@ public final class AddTagsAction: AirshipAction {
                         editor.add(tags, group: group)
                     }
                 }
+                sendTagMutation(.contactTagGroups(contactTagGroups))
             }
 
             if let deviceTags = args.device {
                 channel().editTags() { editor in
                     editor.add(deviceTags)
                 }
+                sendTagMutation(.channelTags(deviceTags))
             }
         }
         return nil
+    }
+    
+    private func sendTagMutation(_ mutation: TagActionMutation) {
+        Task { @MainActor in
+            await tagMutationsChannel.send(mutation)
+        }
     }
 }
 
