@@ -174,20 +174,34 @@ public final class UAAirshipNotifications: NSObject {
     public final class UAAirshipReady: NSObject {
         /// Notification name
         @objc
-        public static let name = NSNotification.Name(
-            "com.urbanairship.airship_ready"
-        )
+        public static let name = AirshipNotifications.AirshipReady.name
 
         /// Airship ready channel ID key. Only available if `extendedBroadcastEnabled` is true in config.
         @objc
-        public static let channelIDKey = "channel_id"
+        public static let channelIDKey = AirshipNotifications.AirshipReady.channelIDKey
 
         /// Airship ready app key. Only available if `extendedBroadcastEnabled` is true in config.
         @objc
-        public static let appKey = "app_key"
+        public static let appKey = AirshipNotifications.AirshipReady.appKey
 
         /// Airship ready payload version. Only available if `extendedBroadcastEnabled` is true in config.
         @objc
-        public static let payloadVersionKey = "payload_version"
+        public static let payloadVersionKey = AirshipNotifications.AirshipReady.payloadVersionKey
+    }
+
+    /// Notification when channel is created.
+    @objc(UAirshipNotificationChannelCreated)
+    public final class UAirshipNotificationChannelCreated: NSObject {
+        /// Notification name
+        @objc
+        public static let name = AirshipNotifications.ChannelCreated.name
+
+        /// NSNotification userInfo key to get the channel ID.
+        @objc
+        public static let channelIDKey = AirshipNotifications.ChannelCreated.channelIDKey
+
+        /// NSNotification userInfo key to get a boolean if the channel is existing or not.
+        @objc
+        public static let isExistingChannelKey = AirshipNotifications.ChannelCreated.isExistingChannelKey
     }
 }

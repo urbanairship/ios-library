@@ -26,31 +26,52 @@ public final class UAChannel: NSObject, Sendable {
     }
     
     @objc
-    public func editTagGroups() -> UATagGroupsEditor? {
+    public func editTagGroups() -> UATagGroupsEditor {
         let tagGroupsEditor = UATagGroupsEditor()
         tagGroupsEditor.editor = Airship.channel.editTagGroups()
         return tagGroupsEditor
     }
-    
+
     @objc
-    public func editSubscriptionLists() -> UASubscriptionListEditor? {
+    public func editTagGroups(_ editorBlock: (UATagGroupsEditor) -> Void) {
+        let editor = editTagGroups()
+        editorBlock(editor)
+        editor.apply()
+    }
+
+    @objc
+    public func editSubscriptionLists() -> UASubscriptionListEditor {
         let subscriptionListEditor = UASubscriptionListEditor()
         subscriptionListEditor.editor = Airship.channel.editSubscriptionLists()
         return subscriptionListEditor
     }
-    
+
+    @objc
+    public func editSubscriptionLists(_ editorBlock: (UASubscriptionListEditor) -> Void) {
+        let editor = editSubscriptionLists()
+        editorBlock(editor)
+        editor.apply()
+    }
+
     @objc
     public func fetchSubscriptionLists() async throws -> [String] {
         try await Airship.channel.fetchSubscriptionLists()
     }
     
     @objc
-    public func editAttributes() -> UAAttributesEditor? {
+    public func editAttributes() -> UAAttributesEditor {
         let attributesEditor =  UAAttributesEditor()
         attributesEditor.editor = Airship.channel.editAttributes()
         return attributesEditor
     }
-    
+
+    @objc
+    public func editAttributes(_ editorBlock: (UAAttributesEditor) -> Void) {
+        let editor = editAttributes()
+        editorBlock(editor)
+        editor.apply()
+    }
+
     @objc(enableChannelCreation)
     public func enableChannelCreation() {
         Airship.channel.enableChannelCreation()

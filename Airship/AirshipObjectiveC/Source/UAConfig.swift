@@ -406,6 +406,13 @@ public class UAConfig: NSObject {
         return UAConfig(config: AirshipConfig())
     }
 
+    /// Creates an instance using the values set in the `AirshipConfig.plist` file.
+    /// - Returns: A config with values from `AirshipConfig.plist` file.
+    @objc
+    public static func defaultConfig() throws -> UAConfig {
+        return UAConfig(config: try AirshipConfig.default())
+    }
+
     private init(config: AirshipConfig) {
         self.config = config
     }

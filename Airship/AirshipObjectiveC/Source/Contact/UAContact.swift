@@ -39,19 +39,33 @@ public final class UAContact: NSObject, Sendable {
     /// Begins a tag groups editing session.
     /// - Returns: A TagGroupsEditor
     @objc
-    public func editTagGroups() -> UATagGroupsEditor? {
+    public func editTagGroups() -> UATagGroupsEditor {
         let tagGroupsEditor = UATagGroupsEditor()
         tagGroupsEditor.editor = Airship.contact.editTagGroups()
         return tagGroupsEditor
     }
 
+    @objc
+    public func editTagGroups(_ editorBlock: (UATagGroupsEditor) -> Void) {
+        let editor = editTagGroups()
+        editorBlock(editor)
+        editor.apply()
+    }
+
     /// Begins an attribute editing session.
     /// - Returns: An AttributesEditor
     @objc
-    public func editAttributes() -> UAAttributesEditor? {
+    public func editAttributes() -> UAAttributesEditor {
         let attributesEditor =  UAAttributesEditor()
         attributesEditor.editor = Airship.contact.editAttributes()
         return attributesEditor
+    }
+
+    @objc
+    public func editAttributes(_ editorBlock: (UAAttributesEditor) -> Void) {
+        let editor = editAttributes()
+        editorBlock(editor)
+        editor.apply()
     }
 
     /**
@@ -73,6 +87,14 @@ public final class UAContact: NSObject, Sendable {
         let subscriptionListEditor = UAScopedSubscriptionListEditor()
         subscriptionListEditor.editor = Airship.contact.editSubscriptionLists()
         return subscriptionListEditor
+    }
+
+
+    @objc
+    public func editSubscriptionLists(_ editorBlock: (UAScopedSubscriptionListEditor) -> Void) {
+        let editor = editSubscriptionLists()
+        editorBlock(editor)
+        editor.apply()
     }
 }
 
