@@ -48,12 +48,20 @@ struct Label: View {
         }
     }
 
-    private var resolvedText: String {
-        return ThomasPropertyOverride.resolveRequired(
+    private var resolveText: String {
+        let effectiveRef = ThomasPropertyOverride.resolveOptional(
+            state: thomasState,
+            overrides: self.info.overrides?.ref,
+            defaultValue: self.info.properties.ref
+        )
+
+        let effectiveText = ThomasPropertyOverride.resolveRequired(
             state: thomasState,
             overrides: self.info.overrides?.text,
             defaultValue: self.info.properties.text
         )
+
+        return effectiveRef?.airshipLocalizedString(fallback: effectiveText) ?? effectiveText
     }
 
     private var resolvedStartIcon: ThomasViewInfo.Label.LabelIcon? {
