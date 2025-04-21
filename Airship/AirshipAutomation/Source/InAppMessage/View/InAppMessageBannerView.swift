@@ -216,6 +216,12 @@ struct InAppMessageBannerView: View {
 #if !os(tvOS)
             .simultaneousGesture(swipeGesture)
 #endif
+            .accessibilityElement(children: .contain)
+            .accessibilityAction(.escape) {
+                setShowing(state: false) {
+                    onDismiss()
+                }
+            }
             .onAppear {
                 setShowing(state: true)
                 timer.onAppear()
@@ -250,7 +256,7 @@ struct InAppMessageBannerView: View {
     }
 
     var body: some View {
-        InAppMessageRootView(inAppMessageEnvironment: environment) { 
+        InAppMessageRootView(inAppMessageEnvironment: environment) {
             banner
         }
     }

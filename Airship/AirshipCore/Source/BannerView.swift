@@ -128,6 +128,10 @@ struct BannerView: View {
         )
         .constraints(contentConstraints, alignment: alignment, fixedSize: true)
         .airshipApplyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all)}
+        .accessibilityElement(children: .contain)
+        .accessibilityAction(.escape) {
+            onDismiss()
+        }
     }
 
     private func resolvePlacement(

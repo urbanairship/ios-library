@@ -86,7 +86,8 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
 
         if UIAccessibility.isVoiceOverRunning {
             DispatchQueue.main.asyncAfter(deadline: .now() + InAppMessageBannerView.animationInOutDuration) {
-                UIAccessibility.post(notification: .screenChanged, argument: self)
+                self.view.accessibilityViewIsModal = true
+                UIAccessibility.post(notification: .screenChanged, argument: self.view)
             }
         }
 
