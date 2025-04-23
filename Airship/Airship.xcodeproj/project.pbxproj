@@ -1018,6 +1018,7 @@
 		A6D6D49D2A0260780072A5CA /* AirshipAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D6D49C2A0260780072A5CA /* AirshipAction.swift */; };
 		A6D6D49F2A02608C0072A5CA /* ActionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D6D49E2A02608C0072A5CA /* ActionResult.swift */; };
 		A6E9AD982D4D12D00091BBAF /* FeatureFlagUpdateStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6E9AD972D4D12C60091BBAF /* FeatureFlagUpdateStatus.swift */; };
+		A6E9ADED2D4D204B0091BBAF /* InAppAutomationUpdateStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6E9ADEC2D4D20300091BBAF /* InAppAutomationUpdateStatus.swift */; };
 		A6F0B1912B83CD9B002D10A4 /* AutomationEngineTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F0B18F2B837E36002D10A4 /* AutomationEngineTest.swift */; };
 		BD8C10832865F92200358622 /* CreateSMSChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C10762865F92200358622 /* CreateSMSChannelView.swift */; };
 		BD8C10842865F92200358622 /* AddChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C10772865F92200358622 /* AddChannelView.swift */; };
@@ -2309,6 +2310,7 @@
 		A6D6D49C2A0260780072A5CA /* AirshipAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAction.swift; sourceTree = "<group>"; };
 		A6D6D49E2A02608C0072A5CA /* ActionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionResult.swift; sourceTree = "<group>"; };
 		A6E9AD972D4D12C60091BBAF /* FeatureFlagUpdateStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagUpdateStatus.swift; sourceTree = "<group>"; };
+		A6E9ADEC2D4D20300091BBAF /* InAppAutomationUpdateStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppAutomationUpdateStatus.swift; sourceTree = "<group>"; };
 		A6F0B18F2B837E36002D10A4 /* AutomationEngineTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEngineTest.swift; sourceTree = "<group>"; };
 		BD8C10762865F92200358622 /* CreateSMSChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateSMSChannelView.swift; sourceTree = "<group>"; };
 		BD8C10772865F92200358622 /* AddChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddChannelView.swift; sourceTree = "<group>"; };
@@ -2862,6 +2864,7 @@
 				603269512BF4B12B007F7F75 /* AudienceCheck */,
 				6E1B7B112B714FED00695561 /* Actions */,
 				6E986EF82B44D41E00FBE6A0 /* InAppAutomation.swift */,
+				A6E9ADEC2D4D20300091BBAF /* InAppAutomationUpdateStatus.swift */,
 				6E986F002B44E86900FBE6A0 /* RemoteData */,
 				6E0F4BE32B32644200673CA4 /* Automation */,
 				6EDF1D912B292F8600E23BC4 /* InAppMessage */,
@@ -5936,6 +5939,7 @@
 				99E8D7DC2B55C4C20099B6F3 /* InAppMessageThemeMedia.swift in Sources */,
 				99E8D7C52B5192D40099B6F3 /* MediaView.swift in Sources */,
 				6E524D042C1A454E002CA094 /* InAppMessageThemeShadow.swift in Sources */,
+				A6E9ADED2D4D204B0091BBAF /* InAppAutomationUpdateStatus.swift in Sources */,
 				603269532BF4B141007F7F75 /* AdditionalAudienceCheckerApiClient.swift in Sources */,
 				6E4AEEBC2B6D6380008AEAC1 /* TriggerData.swift in Sources */,
 				99E8D7D82B55B0440099B6F3 /* InAppMessageThemeButton.swift in Sources */,

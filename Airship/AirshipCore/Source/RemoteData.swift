@@ -32,7 +32,8 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     private let workManager: any AirshipWorkManagerProtocol
     private let privacyManager: any PrivacyManagerProtocol
     private let appVersion: String
-    private let statusUpdates: AirshipAsyncChannel<any Sendable> = AirshipAsyncChannel()
+    private let statusUpdates: AirshipAsyncChannel<[RemoteDataSource: RemoteDataSourceStatus]> = AirshipAsyncChannel()
+    private let currentSourceStatus: AirshipAtomicValue<[RemoteDataSource: RemoteDataSourceStatus]> = .init([:])
 
     private let refreshResultSubject = PassthroughSubject<(source: RemoteDataSource, result: RemoteDataRefreshResult), Never>()
     private let refreshStatusSubjectMap: [RemoteDataSource: CurrentValueSubject<RefreshStatus, Never>]
@@ -174,20 +175,37 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     public func status(
         source: RemoteDataSource
     ) async -> RemoteDataSourceStatus {
-        for provider in self.providers {
-            if (provider.source == source) {
-                let status = await provider.status(
-                    changeToken: self.changeToken,
-                    locale: self.localeManager.currentLocale,
-                    randomeValue: self.randomValue)
-                await self.statusUpdates.send(status)
-                return status
-            }
+        let result = await sourceStatus(source: source)
+        await recordStatusFor([source])
+        return result
+    }
+    
+    private func sourceStatus(
+        source: RemoteDataSource
+    ) async -> RemoteDataSourceStatus {
+        return if let provider = providers.first(where: { $0.source == source }) {
+            await provider.status(
+                changeToken: self.changeToken,
+                locale: self.localeManager.currentLocale,
+                randomeValue: self.randomValue)
+        } else {
+            .outOfDate
         }
-
-        let status: RemoteDataSourceStatus = .outOfDate
-        await self.statusUpdates.send(status)
-        return status
+    }
+    
+    private func recordStatusFor(_ sources: [RemoteDataSource]) async {
+        var updates: [RemoteDataSource: RemoteDataSourceStatus] = self.currentSourceStatus.value
+        
+        for source in sources {
+            updates[source] = await sourceStatus(source: source)
+        }
+        
+        guard updates != self.currentSourceStatus.value else {
+            return
+        }
+        
+        self.currentSourceStatus.update(onModify: { _ in updates })
+        await statusUpdates.send(updates)
     }
 
     public func isCurrent(
@@ -216,19 +234,28 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     }
     
     @MainActor
-    public func statusUpdates<T:Sendable>(map: @escaping (@Sendable (_ status: RemoteDataSourceStatus) -> T)) async -> AsyncStream<T> {
-        return AsyncStream { [weak self, statusUpdates]
-            continuation in
-            let task = Task { [weak self, statusUpdates] in
-                let status = await self?.status(source: RemoteDataSource.app) ?? .upToDate
-                let mappedStatus = map(status)
-                continuation.yield(mappedStatus)
-             
-                let updates = await statusUpdates.makeStream()
-
-                for await item in updates {
-                    if let item = item as? RemoteDataSourceStatus {
-                        continuation.yield(map(item))
+    public func statusUpdates<T:Sendable>(
+        sources: [RemoteDataSource],
+        map: @escaping (@Sendable (_ statuses: [RemoteDataSource: RemoteDataSourceStatus]) -> T)
+    ) async -> AsyncStream<T> {
+        
+        return AsyncStream { [weak self] continuation in
+            let task = Task { [weak self] in
+                
+                await self?.recordStatusFor(sources)
+                
+                let isInSource: ((RemoteDataSource, RemoteDataSourceStatus)) -> Bool = {
+                    sources.contains($0.0)
+                }
+                
+                let current = self?.currentSourceStatus.value.filter(isInSource) ?? [:]
+                let mappedStatuses = map(current)
+                continuation.yield(mappedStatuses)
+                
+                if let updates = await self?.statusUpdates.makeStream() {
+                    for await item in updates {
+                        let filtered = item.filter(isInSource)
+                        continuation.yield(map(filtered))
                     }
                 }
                 
@@ -345,7 +372,8 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
 
             return success
         }
-
+        
+        await recordStatusFor(providers.map({ $0.source }))
 
         return success ? .success : .failure
     }

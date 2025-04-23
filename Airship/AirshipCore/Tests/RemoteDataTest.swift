@@ -43,6 +43,9 @@ final class RemoteDataTest: AirshipBaseTest {
             notificationCenter: self.notificationCenter,
             appVersion: "SomeAppVersion"
         )
+        
+        await self.appProvider.setStatusCallback { _, _, _ in return .upToDate }
+        await self.contactProvider.setStatusCallback { _, _, _ in return .upToDate }
     }
 
     func testRemoteConfigUpdatedEnqueuesRefresh() async {
@@ -442,6 +445,7 @@ final class RemoteDataTest: AirshipBaseTest {
         await self.appProvider.setRefreshCallback{ @Sendable _, locale, _ in
             return .newData
         }
+
         await self.launchRefreshTask()
         XCTAssertNotNil(changeToken.value)
 

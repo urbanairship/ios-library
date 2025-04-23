@@ -19,6 +19,7 @@ final class CancelSchedulesActionTest: XCTestCase {
             engine: automation,
             inAppMessaging: TestInAppMessaging(),
             legacyInAppMessaging: TestLegacyInAppMessaging(),
+            remoteData: TestRemoteData(),
             remoteDataSubscriber: TestRemoteDataSubscriber(),
             dataStore: dataStore,
             privacyManager: AirshipPrivacyManager(

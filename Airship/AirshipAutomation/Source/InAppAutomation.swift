@@ -24,6 +24,7 @@ public final class InAppAutomation: Sendable {
     private let notificationCenter: AirshipNotificationCenter
     private static let pausedStoreKey: String = "UAInAppMessageManagerPaused"
     private let _legacyInAppMessaging: any InternalLegacyInAppMessagingProtocol
+    private let remoteData: any RemoteDataProtocol
 
     /// In-App Messaging
     public let inAppMessaging: any InAppMessagingProtocol
@@ -44,6 +45,7 @@ public final class InAppAutomation: Sendable {
         engine: any AutomationEngineProtocol,
         inAppMessaging: any InAppMessagingProtocol,
         legacyInAppMessaging: any InternalLegacyInAppMessagingProtocol,
+        remoteData: any RemoteDataProtocol,
         remoteDataSubscriber: any AutomationRemoteDataSubscriberProtocol,
         dataStore: PreferenceDataStore,
         privacyManager: any PrivacyManagerProtocol,
@@ -57,6 +59,7 @@ public final class InAppAutomation: Sendable {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
         self.notificationCenter = notificationCenter
+        self.remoteData = remoteData
 
         if (config.airshipConfig.autoPauseInAppAutomationOnLaunch) {
             self.isPaused = true
@@ -115,6 +118,46 @@ public final class InAppAutomation: Sendable {
     /// - Returns: The in-app automation corresponding to the provided group.
     public func getSchedules(group: String) async throws -> [AutomationSchedule] {
         return try await self.engine.getSchedules(group: group)
+    }
+       
+    
+    /// Inapp Automation status updates. Possible values are upToDate, stale and outOfDate.
+    public var statusUpdates: AsyncStream<InAppAutomationUpdateStatus> {
+        get async {
+            return await self.remoteData.statusUpdates(sources: [RemoteDataSource.app, RemoteDataSource.contact], map: { statuses in
+                if statuses.values.contains(.outOfDate) {
+                    return InAppAutomationUpdateStatus.outOfDate
+                } else if statuses.values.contains(.stale) {
+                    return InAppAutomationUpdateStatus.stale
+                } else {
+                    return InAppAutomationUpdateStatus.upToDate
+                }
+            })
+        }
+    }
+    
+    /// Current inApp Automation status. Possible values are upToDate, stale and outOfDate.
+    public var status: InAppAutomationUpdateStatus {
+        get async {
+            let statuses = await self.remoteData.statusUpdates(sources: [RemoteDataSource.app, RemoteDataSource.contact], map: { statuses in
+                if statuses.values.contains(.outOfDate) {
+                    return InAppAutomationUpdateStatus.outOfDate
+                } else if statuses.values.contains(.stale) {
+                    return InAppAutomationUpdateStatus.stale
+                } else {
+                    return InAppAutomationUpdateStatus.upToDate
+                }
+            })
+            
+            return await statuses.first {_ in true } ?? .upToDate
+        }
+    }
+    
+    /// Allows to wait for the refresh of the InApp Automation rules.
+    ///  - Parameters
+    ///     - maxTime: Timeout in seconds.
+    public func waitRefresh(maxTime: TimeInterval? = nil) async {
+        await self.remoteData.waitRefresh(source: RemoteDataSource.app, maxTime: maxTime)
     }
 
     @MainActor

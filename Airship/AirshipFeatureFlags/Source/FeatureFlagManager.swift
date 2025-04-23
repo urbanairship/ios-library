@@ -44,9 +44,9 @@ public final class FeatureFlagManager: Sendable {
     /// Feature flag status updates. Possible values are upToDate, stale and outOfDate.
     public var featureFlagStatusUpdates: AsyncStream<any Sendable> {
         get async {
-            return await self.remoteData.statusUpdates { status in
-                return self.toFeatureFlagUpdateStatus(status: status)
-           }
+            return await self.remoteData.statusUpdates(sources: [RemoteDataSource.app]) { statuses in
+                return self.toFeatureFlagUpdateStatus(status: statuses.values.first ?? .upToDate)
+            }
         }
     }
     

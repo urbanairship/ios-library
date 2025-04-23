@@ -47,6 +47,6 @@ public protocol RemoteDataProtocol: AnyObject, Sendable {
     
     /// Gets the status updates using the given mapping.
     /// - Returns:a stream of status updates.
-    func statusUpdates<T:Sendable>(map: @escaping (@Sendable (_ status: RemoteDataSourceStatus) -> T)) async -> AsyncStream<T>
+    func statusUpdates<T:Sendable>(sources: [RemoteDataSource], map: @escaping (@Sendable (_ statuses: [RemoteDataSource: RemoteDataSourceStatus]) -> T)) async -> AsyncStream<T> 
 
 }

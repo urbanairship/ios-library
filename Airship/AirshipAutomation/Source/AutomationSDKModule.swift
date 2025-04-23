@@ -113,6 +113,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             engine: engine,
             inAppMessaging: inAppMessaging,
             legacyInAppMessaging: legacyInAppMessaging,
+            remoteData: args.remoteData,
             remoteDataSubscriber: remoteDataSubscriber,
             dataStore: args.dataStore,
             privacyManager: args.privacyManager,
