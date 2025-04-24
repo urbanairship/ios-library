@@ -13,7 +13,7 @@ public struct AirshipConfig: Decodable, Sendable {
 
     /// The  app key used when `inProduction` is `false`.
     ///
-    /// The development credentails are generally used to point to a Test Airship project which will send to
+    /// The development credentials are generally used to point to a Test Airship project which will send to
     /// the development  APNS sandbox.
     public var developmentAppKey: String?
 
@@ -478,11 +478,11 @@ public struct AirshipConfig: Decodable, Sendable {
             }
 
             if productionAppKey == developmentAppKey {
-                AirshipLogger.warn("Production & Developemtn app keys match")
+                AirshipLogger.warn("Production & Development app keys match")
             }
 
             if productionAppSecret == developmentAppSecret {
-                AirshipLogger.warn("Production & Developemtn app secrets match")
+                AirshipLogger.warn("Production & Development app secrets match")
             }
         }
 

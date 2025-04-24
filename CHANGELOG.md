@@ -1,6 +1,19 @@
 
 # iOS Changelog
 
+## Version 19.3.0 Apr 24, 2025
+Minor release adding branching and SMS support for Scenes.
+
+### Changes
+- Added support for branching in Scenes.
+- Added support for phone number collection and registration in Scenes.
+- Added `Airship.inAppAutomation.statusUpdates` to track rule update statuses for In-App Automation, Scenes, and Surveys.
+- Added `Airship.featureFlagManager.statusUpdates` to monitor rule update statuses.
+- Added support for setting JSON attributes for Channels and Contacts.
+- Added missing bindings for Obj-C.
+- Improved accessibility for Banner In-App messages and automations.
+- Added `TagActionMutation` stream to emit tag updates from `AddTagsAction` and `RemoveTagsAction`.
+
 ## Version 19.2.1 Apr 17, 2025
 Resolved a regression introduced in 19.2.0 where channel audience updates and In-App experiences were unintentionally blocked when the Contact privacy manager flag was disabled. 
 
