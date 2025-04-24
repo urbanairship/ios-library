@@ -226,9 +226,10 @@ struct BannerView: View {
                 return Color.airshipTappableClear
             })
         )
-        .ignoresSafeArea(safeAreasToIgnore)
-        .airshipApplyIf(ignoreSafeArea) {
-            $0.edgesIgnoringSafeArea(.all)
+        .airshipApplyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all)}
+        .accessibilityElement(children: .contain)
+        .accessibilityAction(.escape) {
+            onDismiss()
         }
     }
 
