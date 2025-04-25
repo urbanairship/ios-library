@@ -14,8 +14,10 @@ public struct EventListDebugView: View {
     @StateObject
     private var viewModel = ViewModel()
 
-    @ViewBuilder
-    public func makeList() -> some View {
+    
+    public init() {}
+    
+    public var body: some View {
         List(self.viewModel.events, id: \.identifier) { event in
             NavigationLink(
                 destination: EventDetailsView(event: event)
@@ -28,16 +30,6 @@ public struct EventListDebugView: View {
                         Text(event.date, style: .time)
                     }
                 }
-            }
-        }
-    }
-
-    public init() {}
-    
-    public var body: some View {
-        Form {
-            Section(header: Text("Events")) {
-                makeList()
             }
         }
         .navigationTitle("Events".localized())
@@ -69,6 +61,8 @@ public struct EventListDebugView: View {
         }
 
         private func refreshEvents() {
+            if !Airship.isFlying { return }
+            
             Task { @MainActor in
                 let events = await Airship.debugManager.events(
                     searchString: self.searchString
@@ -138,4 +132,8 @@ private struct EventDetailsView: View {
             duration: 1.0
         )
     }
+}
+
+#Preview {
+    EventListDebugView()
 }

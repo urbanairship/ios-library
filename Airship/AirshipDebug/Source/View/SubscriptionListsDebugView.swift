@@ -74,3 +74,7 @@ public struct SubscriptionListsDebugView: View {
         self.listID = ""
     }
 }
+
+#Preview {
+    SubscriptionListsDebugView(editorFactory: { nil })
+}

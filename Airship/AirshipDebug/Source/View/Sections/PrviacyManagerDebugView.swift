@@ -20,33 +20,36 @@ public struct PrivacyManagerDebugView: View {
     private func makeFeatureToggle(_ title: String, _ isOn: Binding<Bool>)
         -> some View
     {
-        Toggle(title.localized(), isOn: isOn)
+        Toggle(title.localized(), isOn: isOn).frame(height: CommonItems.rowHeight)
     }
 
     public var body: some View {
         Form {
-            Section(header: Text("")) {
-                makeFeatureToggle("Contacts", self.$viewModel.contactsEnabled)
-                makeFeatureToggle(
-                    "Tags & Attributes",
-                    self.$viewModel.tagsAndAttributesEnabled
-                )
-                makeFeatureToggle("Analytics", self.$viewModel.analyticsEnabled)
-                makeFeatureToggle("Push", self.$viewModel.pushEnabled)
-                makeFeatureToggle(
-                    "In App Automation",
-                    self.$viewModel.iaaEnabled
-                )
-                makeFeatureToggle(
-                    "Message Center",
-                    self.$viewModel.messageCenterEnabled
-                )
-                makeFeatureToggle(
-                    "Feature Flags",
-                    self.$viewModel.featureFlagEnabled
-                )
-            }
-
+            makeFeatureToggle("Contacts", self.$viewModel.contactsEnabled)
+            
+            makeFeatureToggle(
+                "Tags & Attributes",
+                self.$viewModel.tagsAndAttributesEnabled
+            )
+            
+            makeFeatureToggle("Analytics", self.$viewModel.analyticsEnabled)
+            
+            makeFeatureToggle("Push", self.$viewModel.pushEnabled)
+            
+            makeFeatureToggle(
+                "In App Automation",
+                self.$viewModel.iaaEnabled
+            )
+            
+            makeFeatureToggle(
+                "Message Center",
+                self.$viewModel.messageCenterEnabled
+            )
+            
+            makeFeatureToggle(
+                "Feature Flags",
+                self.$viewModel.featureFlagEnabled
+            )
         }
         .navigationTitle("Privacy Manager".localized())
     }
@@ -140,4 +143,8 @@ public struct PrivacyManagerDebugView: View {
             }
         }
     }
+}
+
+#Preview {
+    PrivacyManagerDebugView()
 }

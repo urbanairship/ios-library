@@ -31,7 +31,7 @@ struct AirshipJSONDetailsView: View {
                 }
             }
         }
-        .overlay(AirshipToast(message: self.$toastMessage))
+        .toastable($toastMessage)
     }
 
     func copyToClipboard(value: String?) {
@@ -48,10 +48,8 @@ struct AirshipJSONDetailsView: View {
     }
 }
 
-extension String {
-    func pastleboard() {
-#if !os(tvOS)
-        UIPasteboard.general.string = self
-#endif
-    }
+#Preview {
+    AirshipJSONDetailsView(
+        payload: .object(["key": .string("value")]),
+        title: "Preview")
 }

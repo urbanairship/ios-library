@@ -305,3 +305,7 @@ struct MultilineTextView: UIViewRepresentable {
         if uiView.text != text { uiView.text = text }
     }
 }
+
+#Preview {
+    AttributesDebugView(editorFactory: { nil })
+}

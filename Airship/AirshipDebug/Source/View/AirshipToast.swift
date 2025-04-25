@@ -12,6 +12,12 @@ struct AirshipToast: View {
         let id: String
         let text: String
         let duration: TimeInterval
+        
+        init(id: String = UUID().uuidString, text: String, duration: TimeInterval = 1) {
+            self.id = id
+            self.text = text
+            self.duration = duration
+        }
     }
 
     @Binding

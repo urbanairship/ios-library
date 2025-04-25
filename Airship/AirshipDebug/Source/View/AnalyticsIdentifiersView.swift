@@ -119,3 +119,7 @@ private struct AddIdentifierView: View {
 
     }
 }
+
+#Preview {
+    AnalyticsIdentifiersView()
+}

@@ -57,8 +57,13 @@ public struct NamedUserDebugView: View {
 
         init() {
             Task { @MainActor in
+                if !Airship.isFlying { return }
                 self.namedUserID = await Airship.contact.namedUserID ?? ""
             }
         }
     }
+}
+
+#Preview {
+    NamedUserDebugView()
 }

@@ -82,3 +82,7 @@ public struct TagGroupsDebugView: View {
         self.group = ""
     }
 }
+
+#Preview {
+    TagGroupsDebugView { nil }
+}

@@ -14,13 +14,6 @@ extension Binding where Value == String {
             }
         )
     }
-
-    func numbersOnly() -> Binding<String> {
-        return Binding<String>(
-            get: { self.wrappedValue },
-            set: { self.wrappedValue = $0.filter { $0.isNumber } }
-        )
-    }
 }
 
 extension View {

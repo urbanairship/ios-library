@@ -19,17 +19,15 @@ public struct PreferenceCenterListDebugView: View {
     
     public var body: some View {
         Form {
-            Section(header: Text("")) {
-                List {
-                    ForEach(self.viewModel.identifiers, id: \.self) {
-                        identifier in
-                        NavigationLink(
-                            identifier,
-                            destination: PreferenceCenterList(
-                                preferenceCenterID: identifier
-                            )
+            List {
+                ForEach(self.viewModel.identifiers, id: \.self) {
+                    identifier in
+                    NavigationLink(
+                        identifier,
+                        destination: PreferenceCenterList(
+                            preferenceCenterID: identifier
                         )
-                    }
+                    )
                 }
             }
         }
@@ -52,4 +50,8 @@ public struct PreferenceCenterListDebugView: View {
             }
         }
     }
+}
+
+#Preview {
+    PreferenceCenterListDebugView()
 }

@@ -19,14 +19,12 @@ public struct FeatureFlagDebugView: View {
 
     public var body: some View {
         Form {
-            Section(header: Text("")) {
-                List(self.viewModel.entries, id: \.name) { entry in
-                    NavigationLink(
-                        destination: FeaturFlagDetailsView(entry: entry)
-                    ) {
-                        VStack(alignment: .leading) {
-                            Text(entry.name)
-                        }
+            List(self.viewModel.entries, id: \.name) { entry in
+                NavigationLink(
+                    destination: FeaturFlagDetailsView(entry: entry)
+                ) {
+                    VStack(alignment: .leading) {
+                        Text(entry.name)
                     }
                 }
             }
@@ -237,4 +235,8 @@ struct FeatureFlagEntry {
         let payload: AirshipJSON
     }
 
+}
+
+#Preview {
+    FeatureFlagDebugView()
 }

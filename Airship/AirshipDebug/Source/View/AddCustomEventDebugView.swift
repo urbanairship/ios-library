@@ -295,3 +295,7 @@ private struct AddPropetyView: View {
 
     }
 }
+
+#Preview {
+    AddCustomEventView()
+}

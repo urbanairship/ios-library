@@ -115,3 +115,7 @@ private struct AddTagView: View {
 
     }
 }
+
+#Preview {
+    DeviceTagsDebugView()
+}

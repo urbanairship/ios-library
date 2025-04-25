@@ -111,3 +111,7 @@ fileprivate struct ObjectEntry: View {
         }
     }
 }
+
+#Preview {
+    AirshipJSONView(json: .object(["preview": .bool(true)]))
+}

@@ -59,3 +59,6 @@ public struct ExperimentsListsDebugView: View {
     }
 }
 
+#Preview {
+    ExperimentsListsDebugView()
+}

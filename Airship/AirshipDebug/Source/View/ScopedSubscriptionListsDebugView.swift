@@ -98,3 +98,7 @@ public struct ScopedSubscriptionListsDebugView: View {
         self.listID = ""
     }
 }
+
+#Preview {
+    ScopedSubscriptionListsDebugView(editorFactory: { nil })
+}

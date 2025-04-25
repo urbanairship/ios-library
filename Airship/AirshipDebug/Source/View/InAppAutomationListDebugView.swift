@@ -69,3 +69,7 @@ public struct InAppAutomationListDebugView: View {
         }
     }
 }
+
+#Preview {
+    InAppAutomationListDebugView()
+}

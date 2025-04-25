@@ -18,17 +18,15 @@ public struct ReceivedPushListDebugView: View {
     
     public var body: some View {
         Form {
-            Section(header: Text("")) {
-                List(self.viewModel.pushNotifications, id: \.self) { push in
-                    NavigationLink(destination: AirshipJSONDetailsView(
-                        payload: AirshipJSON.wrapSafe(push.description),
-                        title: push.alert ?? "Silent Push".localized()
-                    ))
-                    {
-                        HStack {
-                            Text(push.alert ?? "Silent Push".localized())
-                            Text(push.pushID)
-                        }
+            List(self.viewModel.pushNotifications, id: \.self) { push in
+                NavigationLink(destination: AirshipJSONDetailsView(
+                    payload: AirshipJSON.wrapSafe(push.description),
+                    title: push.alert ?? "Silent Push".localized()
+                ))
+                {
+                    HStack {
+                        Text(push.alert ?? "Silent Push".localized())
+                        Text(push.pushID)
                     }
                 }
             }
@@ -62,4 +60,8 @@ public struct ReceivedPushListDebugView: View {
             }
         }
     }
+}
+
+#Preview {
+    ReceivedPushListDebugView()
 }
