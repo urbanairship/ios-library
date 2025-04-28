@@ -69,10 +69,14 @@ struct AirshipButton<Label> : View  where Label : View {
         }
 
         let taps = self.eventHandlers?.filter { $0.type == .tap }
+        if let taps, !taps.isEmpty {
+            /// Tap handlers
+            taps.forEach { tap in
+                handleStateActions(tap.stateActions)
+            }
 
-        /// Tap handlers
-        taps?.forEach { tap in
-            handleStateActions(tap.stateActions)
+            // Workaround: Allows state to propagate before handling behaviors
+            await Task.yield()
         }
 
         // Button reporting
