@@ -1,6 +1,12 @@
 
 # iOS Changelog
 
+## Version 19.3.1 Apr 28, 2025
+Patch release that fixes an issue in a branching scene where a button required two presses to navigate to the next page instead of one. Apps planning on using the upcoming branching feature should update.
+
+### Changes
+- Fixed Scene button navigation with branching.
+
 ## Version 19.3.0 Apr 24, 2025
 Minor release adding branching and SMS support for Scenes.
 
