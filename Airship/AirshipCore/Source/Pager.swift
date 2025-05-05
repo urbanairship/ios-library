@@ -504,56 +504,61 @@ struct Pager: View {
         behaviors: [ThomasButtonClickBehavior]? = nil,
         actions: [ThomasActionsPayload]? = nil
     ) {
-        // Handle state first
-        if let stateActions {
-            thomasState.processStateActions(stateActions)
-        }
+        Task { @MainActor in
+            // Handle state first
+            if let stateActions {
+                thomasState.processStateActions(stateActions)
 
-        // Behaviors
-        behaviors?.sortedBehaviors.forEach { behavior in
-            switch(behavior) {
-            case .dismiss:
-                self.thomasEnvironment.dismiss(layoutState: layoutState)
-
-            case .cancel:
-                self.thomasEnvironment.dismiss(cancel: true, layoutState: layoutState)
-
-            case .pagerNext:
-                self.pagerState.process(request: .next)
-
-            case .pagerPrevious:
-                self.pagerState.process(request: .back)
-
-            case .pagerNextOrDismiss:
-                if pagerState.isLastPage {
-                    self.thomasEnvironment.dismiss()
-                } else {
-                    self.pagerState.process(request: .next)
-                }
-
-            case .pagerNextOrFirst:
-                if self.pagerState.isLastPage {
-                    self.pagerState.process(request: .first)
-                } else {
-                    self.pagerState.process(request: .next)
-                }
-
-            case .pagerPause:
-                self.pagerState.pause()
-
-            case .pagerResume:
-                self.pagerState.resume()
-
-            case .formSubmit, .formValidate:
-                // not supported
-                break
+                // Workaround: Allows state to propagate before handling behaviors
+                await Task.yield()
             }
-        }
 
-        // Actions
-        if let actions = actions {
-            actions.forEach { action in
-                self.thomasEnvironment.runActions(action, layoutState: layoutState)
+            // Behaviors
+            behaviors?.sortedBehaviors.forEach { behavior in
+                switch(behavior) {
+                case .dismiss:
+                    self.thomasEnvironment.dismiss(layoutState: layoutState)
+
+                case .cancel:
+                    self.thomasEnvironment.dismiss(cancel: true, layoutState: layoutState)
+
+                case .pagerNext:
+                    self.pagerState.process(request: .next)
+
+                case .pagerPrevious:
+                    self.pagerState.process(request: .back)
+
+                case .pagerNextOrDismiss:
+                    if pagerState.isLastPage {
+                        self.thomasEnvironment.dismiss()
+                    } else {
+                        self.pagerState.process(request: .next)
+                    }
+
+                case .pagerNextOrFirst:
+                    if self.pagerState.isLastPage {
+                        self.pagerState.process(request: .first)
+                    } else {
+                        self.pagerState.process(request: .next)
+                    }
+
+                case .pagerPause:
+                    self.pagerState.pause()
+
+                case .pagerResume:
+                    self.pagerState.resume()
+
+                case .formSubmit, .formValidate:
+                    // not supported
+                    break
+                }
+            }
+
+            // Actions
+            if let actions = actions {
+                actions.forEach { action in
+                    self.thomasEnvironment.runActions(action, layoutState: layoutState)
+                }
             }
         }
     }

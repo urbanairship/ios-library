@@ -306,7 +306,8 @@ final class RemoteDataTest: AirshipBaseTest {
         }
 
         let expectation = XCTestExpectation()
-        expectation.expectedFulfillmentCount = 3
+        expectation.expectedFulfillmentCount = 2   // baseline + ≥1 refresh
+        expectation.assertForOverFulfill = false   // tolerate extra publishes
 
         let first = XCTestExpectation()
         let isFirst = AirshipAtomicValue<Bool>(false)

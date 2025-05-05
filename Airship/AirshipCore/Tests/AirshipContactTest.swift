@@ -230,8 +230,11 @@ class AirshipContactTest: XCTestCase {
 
         let date = self.date.now
 
+        // Ensure stale age > 1 s max-age to avoid race
+        let staleDate = date.advanced(by: -2)
+
         await self.contactManager.setCurrentContactIDInfo(
-            ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil, resolveDate: date.advanced(by: -1))
+            ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil, resolveDate: staleDate)
         )
 
         let contactManager = self.contactManager
