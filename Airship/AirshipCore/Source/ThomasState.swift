@@ -11,6 +11,7 @@ class ThomasState: ObservableObject {
 
     private let formState: ThomasFormState
     private let mutableState: MutableState
+    private let onStateChange: @Sendable @MainActor (AirshipJSON) -> Void
 
     func copy(
         formState: ThomasFormState? = nil,
@@ -18,13 +19,19 @@ class ThomasState: ObservableObject {
     ) -> ThomasState {
         return .init(
             formState: formState ?? self.formState,
-            mutableState: mutableState ?? self.mutableState
+            mutableState: mutableState ?? self.mutableState,
+            onStateChange: self.onStateChange
         )
     }
 
-    init(formState: ThomasFormState, mutableState: MutableState = .init()) {
+    init(
+        formState: ThomasFormState,
+        mutableState: MutableState = .init(),
+        onStateChange: @escaping @Sendable @MainActor (AirshipJSON) -> Void
+    ) {
         self.formState = formState
         self.mutableState = mutableState
+        self.onStateChange = onStateChange
 
         self.state = ThomasStatePayload(
             formData: ThomasFormPayloadGenerator.makeFormStatePayload(
@@ -50,6 +57,7 @@ class ThomasState: ObservableObject {
             .sink { [weak self] state in
                 self?.state = state
                 AirshipLogger.trace("State updated: \(state.prettyJSONString)")
+                self?.onStateChange(state)
             }
             .store(in: &subscriptions)
     }

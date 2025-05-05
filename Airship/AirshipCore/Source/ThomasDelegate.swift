@@ -8,7 +8,10 @@ public protocol ThomasDelegate: Sendable {
 
     /// Called whenever the view appears
     @MainActor
-    func onVisbilityChanged(isVisible: Bool, isForegrounded: Bool)
+    func onVisbilityChanged(
+        isVisible: Bool,
+        isForegrounded: Bool
+    )
 
     /// Called when a form is submitted
     /// - Parameters:
@@ -114,6 +117,21 @@ public protocol ThomasDelegate: Sendable {
         to: ThomasPagerInfo,
         layoutContext: ThomasLayoutContext
     )
+
+    /// Called when the state changes.
+    /// - Parameters:
+    ///     - state: The state.
+    @MainActor
+    func onStateChanged(
+        _ state: AirshipJSON
+    )
+}
+
+public extension ThomasDelegate {
+    @MainActor
+    func onStateChanged(_ state: AirshipJSON) {
+        // no-op
+    }
 }
 
 /// - Note: for internal use only.  :nodoc:

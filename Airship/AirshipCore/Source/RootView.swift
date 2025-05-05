@@ -36,7 +36,14 @@ struct RootView<Content: View>: View {
         self.layout = layout
         self.content = content
         self.isForeground = AppStateTracker.shared.isForegrounded
-        self._thomasState = StateObject(wrappedValue: ThomasState(formState: thomasEnvironment.defaultFormState, mutableState: thomasEnvironment.defaultMutableState))
+        self._thomasState = StateObject(
+            wrappedValue: ThomasState(
+                formState: thomasEnvironment.defaultFormState,
+                mutableState: thomasEnvironment.defaultMutableState
+            ) { [weak thomasEnvironment] state in
+                thomasEnvironment?.onStateChange(state)
+            }
+        )
     }
 
     @ViewBuilder

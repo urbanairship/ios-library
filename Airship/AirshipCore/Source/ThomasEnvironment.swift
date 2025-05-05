@@ -238,6 +238,11 @@ class ThomasEnvironment: ObservableObject {
     }
 
     @MainActor
+    func onStateChange(_ state: AirshipJSON) {
+        self.delegate.onStateChanged(state)
+    }
+
+    @MainActor
     private func tryDismiss(callback: () -> Void) {
         if !self.isDismissed {
             self.isDismissed = true
