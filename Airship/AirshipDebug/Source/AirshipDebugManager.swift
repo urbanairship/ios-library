@@ -70,12 +70,9 @@ public final class AirshipDebugManager: @unchecked Sendable {
             .eraseToAnyPublisher()
     }
 
-    private let pushNotifiacitonReceivedSubject = PassthroughSubject<
-        PushNotification, Never
-    >()
-    var pushNotifiacitonReceivedPublisher: AnyPublisher<PushNotification, Never>
-    {
-        return pushNotifiacitonReceivedSubject.eraseToAnyPublisher()
+    private let pushNotificationReceivedSubject = PassthroughSubject<PushNotification, Never>()
+    var pushNotificationReceivedPublisher: AnyPublisher<PushNotification, Never> {
+        return pushNotificationReceivedSubject.eraseToAnyPublisher()
     }
 
     private let eventReceivedSubject = PassthroughSubject<AirshipEvent, Never>()
@@ -94,7 +91,7 @@ public final class AirshipDebugManager: @unchecked Sendable {
 
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
-        
+
         self.eventUpdates = analytics.eventPublisher
             .sink { incoming in
                 guard
@@ -111,15 +108,13 @@ public final class AirshipDebugManager: @unchecked Sendable {
                     date: incoming.date,
                     body: body
                 )
-                
+
                 Task { @MainActor in
                     await self.eventDataManager.saveEvent(airshipEvent)
                     self.eventReceivedSubject.send(airshipEvent)
                 }
-                
-            }
 
-        self.observePayloadEvents()
+            }
     }
 
     func pushNotifications() async -> [PushNotification] {
@@ -157,55 +152,42 @@ public final class AirshipDebugManager: @unchecked Sendable {
         self.currentDisplay = disposable
     }
 
-    func observePayloadEvents() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(receivedNotification(notification:)),
-            name: AirshipNotifications.RecievedNotification.name,
-            object: nil
-        )
-
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(receivedNotificationResponse(notification:)),
-            name: AirshipNotifications.ReceivedNotificationResponse.name,
-            object: nil
-        )
-    }
-
-    @objc func receivedNotification(notification: NSNotification) {
-        guard let userInfo = notification.userInfo?[AirshipNotifications.RecievedNotification.notificationKey] as? [AnyHashable: Any] else {
-            return
+    @MainActor
+    func receivedRemoteNotification(
+        _ notification: AirshipJSON
+    ) async -> UABackgroundFetchResult {
+        do {
+            let push = try PushNotification(userInfo: notification)
+            try await savePush(push)
+        } catch {
+            AirshipLogger.error("Failed to save push \(error)")
         }
-        savePush(userInfo: userInfo)
+        return .noData
     }
 
-
-    @objc func receivedNotificationResponse(notification: NSNotification) {
 #if !os(tvOS)
-        guard
-            let response =
-                notification.userInfo?[
-                    AirshipNotifications.ReceivedNotificationResponse.responseKey
-                ] as? UNNotificationResponse
-        else {
-            return
+    func receivedNotificationResponse(
+        _ response: UNNotificationResponse
+    ) async {
+        do {
+            let push = try PushNotification(
+                userInfo: try AirshipJSON.wrap(
+                    response.notification.request.content.userInfo
+                )
+            )
+            try await savePush(push)
+        } catch {
+            AirshipLogger.error("Failed to save push \(error)")
         }
-
-        let push = response.notification.request.content.userInfo
-        savePush(userInfo: push)
-#endif
     }
+#endif
 
-    func savePush(userInfo: [AnyHashable: Any]) {
-        guard let pushPayload = try? PushNotification(push: userInfo) else {
-            return
-        }
-
-        self.pushNotifiacitonReceivedSubject.send(pushPayload)
-        Task {
-            await self.pushDataManager.savePushNotification(pushPayload)
+    private func savePush(
+        _ push: PushNotification
+    ) async throws {
+        await self.pushDataManager.savePushNotification(push)
+        Task { @MainActor in
+            self.pushNotificationReceivedSubject.send(push)
         }
     }
 }

@@ -24,12 +24,14 @@ final class MessageCenterComponent : AirshipComponent, AirshipPushableComponent,
         return self.messageCenter.deepLink(deepLink)
     }
 
-    @MainActor
-    public func receivedRemoteNotification(
-        _ notification: AirshipJSON,
-        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
-    ) {
-        self.messageCenter.receivedRemoteNotification(notification, completionHandler: completionHandler)
+    func receivedRemoteNotification(_ notification: AirshipJSON) async -> UABackgroundFetchResult {
+        return await self.messageCenter.receivedRemoteNotification(notification)
     }
+
+#if !os(tvOS)
+    func receivedNotificationResponse(_ response: UNNotificationResponse) async {
+        // no-op
+    }
+#endif
 }
 

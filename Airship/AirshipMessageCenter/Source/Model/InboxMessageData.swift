@@ -4,7 +4,7 @@ import CoreData
 import Foundation
 
 /// CoreData class representing the backing data for a UAInboxMessage.
-/// This classs should not ordinarily be used directly.
+/// This class should not ordinarily be used directly.
 @objc(UAInboxMessageData)
 class InboxMessageData: NSManagedObject {
 

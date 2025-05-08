@@ -61,6 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
                 Airship.channel.trackLiveActivity(activity, name: activity.attributes.orderNumber)
             }
         }
+
         #endif
 
         return true

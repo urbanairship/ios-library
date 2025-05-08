@@ -1185,7 +1185,7 @@ extension AirshipPush: AirshipComponent {}
 
 public extension AirshipNotifications {
 
-    /// NSNotification info when enabled feature changed on PrivacyManager.
+    /// NSNotification info when a notification response is received.
     final class ReceivedNotificationResponse {
 
         /// NSNotification name.
@@ -1198,7 +1198,7 @@ public extension AirshipNotifications {
     }
 
 
-    /// NSNotification info when enabled feature changed on PrivacyManager.
+    /// NSNotification info when a notification is received..
     final class RecievedNotification {
 
         /// NSNotification name.

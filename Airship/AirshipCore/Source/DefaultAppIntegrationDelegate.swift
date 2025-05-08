@@ -217,7 +217,7 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
         await withTaskGroup(of: UInt.self) { taskGroup in
             for component in pushableComponents {
                 taskGroup.addTask {
-                    (await component.receivedRemoteNotification(wrappedUserInfo)).rawValue
+                    (await component.receivedRemoteNotification(wrappedUserInfo)).osFetchResult.rawValue
                 }
             }
             

@@ -191,7 +191,7 @@ extension InAppAutomation {
 
     func receivedRemoteNotification(
         _ notification: AirshipJSON // wrapped [AnyHashable: Any]
-    ) async -> UIBackgroundFetchResult {
+    ) async -> UABackgroundFetchResult {
         return await self._legacyInAppMessaging.receivedRemoteNotification(notification)
     }
 

@@ -20,7 +20,7 @@ struct AirshipJSONDetailsView: View {
     var body: some View {
         Form {
             Section(header: Text("Details".localized())) {
-                AirshipJSONView(json: try! AirshipJSON.wrap(payload))
+                AirshipJSONView(json: payload)
             }
         }
         .navigationTitle(title)

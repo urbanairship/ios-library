@@ -488,12 +488,11 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     }
 }
 
-#if !os(watchOS)
 extension RemoteData: AirshipPushableComponent {
     public func receivedRemoteNotification(
         _ notification: AirshipJSON
-    ) async -> UIBackgroundFetchResult {
-        
+    ) async -> UABackgroundFetchResult {
+
         guard
             let userInfo = notification.unwrapAsUserInfo(),
             userInfo[RemoteData.refreshRemoteDataPushPayloadKey] != nil
@@ -505,8 +504,16 @@ extension RemoteData: AirshipPushableComponent {
         self.enqueueRefreshTask()
         return .newData
     }
-}
+
+
+#if !os(tvOS)
+    public func receivedNotificationResponse(_ response: UNNotificationResponse) async {
+        // no-op
+    }
 #endif
+}
+
+
 
 
 extension Sequence where Iterator.Element == RemoteDataPayload {

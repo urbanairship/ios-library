@@ -1,6 +1,12 @@
 
 # iOS Changelog
 
+## Version 19.3.2 May 8, 2025
+Patch release that fixes Message Center listing not refreshing on push received. This issue was introduced in 19.0.0. Apps using Message Center should update.
+
+### Changes
+- Fixed Message Center behavior on push received.
+
 ## Version 19.3.1 Apr 28, 2025
 Patch release that fixes an issue in a branching scene where a button required two presses to navigate to the next page instead of one. Apps planning on using the upcoming branching feature should update.
 

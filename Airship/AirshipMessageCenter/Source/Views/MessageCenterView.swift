@@ -249,7 +249,17 @@ extension View {
     /// Sets the navigation stack for the Message Center.
     /// - Parameters:
     ///     - stack: The navigation stack
+    @available(*, deprecated, renamed: "messageCenterNavigationStack", message: "Renamed to messageCenterNavigationStack. Use messageCenterNavigationStack instead.")
     public func messageeCenterNavigationStack(
+        _ stack: MessageCenterNavigationStack
+    )-> some View {
+        environment(\.airshipMessageCenterNavigationStack, stack)
+    }
+
+    /// Sets the navigation stack for the Message Center.
+    /// - Parameters:
+    ///     - stack: The navigation stack
+    public func messageCenterNavigationStack(
         _ stack: MessageCenterNavigationStack
     )-> some View {
         environment(\.airshipMessageCenterNavigationStack, stack)

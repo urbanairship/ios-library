@@ -887,20 +887,25 @@ extension AirshipContact : InternalAirshipContactProtocol {
     }
 }
 
-#if !os(watchOS)
 extension AirshipContact: AirshipPushableComponent {
-    public func receivedRemoteNotification(_ notification: AirshipJSON) async -> UIBackgroundFetchResult {
+    public func receivedRemoteNotification(_ notification: AirshipJSON) async -> UABackgroundFetchResult {
         guard
             let userInfo = notification.unwrapAsUserInfo(),
             userInfo[Self.refreshContactPushPayloadKey] != nil else {
             return .noData
         }
-        
+
         self.contactChannelsProvider.refreshAsync()
         return .newData
     }
-}
+
+#if !os(tvOS)
+    public func receivedNotificationResponse(_ response: UNNotificationResponse) async {
+        // no-op
+    }
 #endif
+
+}
 
 
 

@@ -4,10 +4,33 @@ import Foundation
 import UIKit
 import UserNotifications
 
+public enum UABackgroundFetchResult : Sendable {
+    case newData
+    case noData
+    case failed
+
+#if !os(watchOS)
+    var osFetchResult: UIBackgroundFetchResult {
+        return switch(self) {
+        case .newData: .newData
+        case .noData: .noData
+        case .failed: .failed
+        }
+    }
+#else
+    var osFetchResult: WKBackgroundFetchResult {
+        return switch(self) {
+        case .newData: .newData
+        case .noData: .noData
+        case .failed: .failed
+        }
+    }
+#endif
+}
+
 /// Internal protocol to fan out push handling to UAComponents.
 ///  - Note: For internal use only. :nodoc:
 public protocol AirshipPushableComponent: Sendable {
-    #if !os(watchOS)
     /**
      * Called when a remote notification is received.
      *  - Parameters:
@@ -16,18 +39,7 @@ public protocol AirshipPushableComponent: Sendable {
     @MainActor
     func receivedRemoteNotification(
         _ notification: AirshipJSON // wrapped [AnyHashable: Any]
-    ) async -> UIBackgroundFetchResult
-    #else
-    /**
-     * Called when a remote notification is received.
-     *  - Parameters:
-     *    - notification: The notification.
-     */
-    @MainActor
-    func receivedRemoteNotification(
-        _ notification: AirshipJSON // wrapped [AnyHashable: Any]
-    ) async -> WKBackgroundFetchResult
-    #endif
+    ) async -> UABackgroundFetchResult
 
     #if !os(tvOS)
     /**
@@ -39,25 +51,4 @@ public protocol AirshipPushableComponent: Sendable {
     @MainActor
     func receivedNotificationResponse(_ response: UNNotificationResponse) async
     #endif
-}
-
-extension AirshipPushableComponent {
-#if !os(watchOS)
-    @MainActor
-    public func receivedRemoteNotification(_ notification: AirshipJSON) async -> UIBackgroundFetchResult {
-        return .noData
-    }
-#else
-
-    @MainActor
-    public func receivedRemoteNotification(_ notification: AirshipJSON) async -> WKBackgroundFetchResult {
-        return .noData
-    }
-#endif
-
-#if !os(tvOS)
-    @MainActor
-    public func receivedNotificationResponse(_ response: UNNotificationResponse) async {
-    }
-#endif
 }
