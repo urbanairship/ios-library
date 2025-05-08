@@ -227,7 +227,7 @@ final class TestLegacyInAppMessaging: InternalLegacyInAppMessagingProtocol, @unc
         
     }
     
-    func receivedRemoteNotification(_ notification: AirshipJSON) async -> UIBackgroundFetchResult {
+    func receivedRemoteNotification(_ notification: AirshipJSON) async -> UABackgroundFetchResult {
         return .noData
     }
     

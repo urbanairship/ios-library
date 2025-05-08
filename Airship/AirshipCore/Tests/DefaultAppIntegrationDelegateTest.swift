@@ -85,12 +85,12 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
 class TestPushableComponent: AirshipPushableComponent, @unchecked Sendable {
     
     var didReceiveRemoteNotificationCallback:(
-        ([AnyHashable: Any]) -> UIBackgroundFetchResult
+        ([AnyHashable: Any]) -> UABackgroundFetchResult
     )?
 
     public func receivedRemoteNotification(
         _ notification: AirshipJSON
-    ) async -> UIBackgroundFetchResult {
+    ) async -> UABackgroundFetchResult {
         let unwrapped = notification.unWrap() as? [AnyHashable: Any] ?? [:]
         return self.didReceiveRemoteNotificationCallback!(unwrapped)
     }

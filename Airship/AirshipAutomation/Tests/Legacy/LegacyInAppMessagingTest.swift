@@ -162,7 +162,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
         )
-        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
+        XCTAssertEqual(UABackgroundFetchResult.noData, result)
 
         let schedule = try await requireFirstSchedule()
         
@@ -232,7 +232,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
         )
-        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
+        XCTAssertEqual(UABackgroundFetchResult.noData, result)
         
         XCTAssertEqual("some-pending", self.analytics.replaced.first!.0)
         XCTAssertEqual("test-id", self.analytics.replaced.first!.1)
@@ -269,7 +269,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
         )
-        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
+        XCTAssertEqual(UABackgroundFetchResult.noData, result)
 
         let schedule = try await requireFirstSchedule()
         
@@ -359,7 +359,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
         )
-        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
+        XCTAssertEqual(UABackgroundFetchResult.noData, result)
 
         let schedule = try await requireFirstSchedule()
         
@@ -396,7 +396,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
         )
-        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
+        XCTAssertEqual(UABackgroundFetchResult.noData, result)
         
         let schedule = try await requireFirstSchedule()
         XCTAssertEqual(overridenId, schedule.identifier)
@@ -422,7 +422,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
         )
-        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
+        XCTAssertEqual(UABackgroundFetchResult.noData, result)
 
         let schedule = try await requireFirstSchedule()
         let inAppMessage: InAppMessage
@@ -455,7 +455,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
         )
-        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
+        XCTAssertEqual(UABackgroundFetchResult.noData, result)
 
         let schedule = try await requireFirstSchedule()
         XCTAssertEqual(10, schedule.limit)
@@ -471,7 +471,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap([:])
         )
-        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
+        XCTAssertEqual(UABackgroundFetchResult.noData, result)
 
         await assertLastCancalledScheduleIDEquals(nil)
         await assertEmptySchedules()
@@ -496,7 +496,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
                 "_": messageId
             ])
         )
-        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
+        XCTAssertEqual(UABackgroundFetchResult.noData, result)
 
         let schedules = await engine.schedules
         XCTAssertTrue(schedules.contains(where: { $0.identifier == messageId }))
@@ -522,7 +522,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
                 "_uamid": onClickJson.unWrap()!
             ])
         )
-        XCTAssertEqual(UIBackgroundFetchResult.noData, result)
+        XCTAssertEqual(UABackgroundFetchResult.noData, result)
         
         let schedule = try await requireFirstSchedule()
         

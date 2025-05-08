@@ -201,7 +201,7 @@ actor MessageCenterStore {
             throw MessageCenterStoreError.coreDataUnavailble
         }
 
-        AirshipLogger.trace("Mark messsages with IDs: \(messageIDs) read")
+        AirshipLogger.trace("Mark messages with IDs: \(messageIDs) read")
 
         try await coreData.perform { context in
             let request = InboxMessageData.batchUpdateRequest()
@@ -244,7 +244,7 @@ actor MessageCenterStore {
             throw MessageCenterStoreError.coreDataUnavailble
         }
 
-        AirshipLogger.trace("Mark messsages with IDs: \(messageIDs) deleted")
+        AirshipLogger.trace("Mark messages with IDs: \(messageIDs) deleted")
 
         try await coreData.perform { context in
             let request = InboxMessageData.batchUpdateRequest()
@@ -335,7 +335,7 @@ actor MessageCenterStore {
         }
 
         AirshipLogger.trace(
-            "Fetching messsage center with predicate: \(String(describing: predicate))"
+            "Fetching message center with predicate: \(String(describing: predicate))"
         )
 
         return try await coreData.performWithResult { context in

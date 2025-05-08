@@ -18,17 +18,16 @@ public struct ReceivedPushListDebugView: View {
     
     public var body: some View {
         Form {
-            Section(header: Text("")) {
-                List(self.viewModel.pushNotifications, id: \.self) { push in
-                    NavigationLink(destination: AirshipJSONDetailsView(
-                        payload: AirshipJSON.wrapSafe(push.description),
+            List(self.viewModel.pushNotifications, id: \.self) { push in
+                NavigationLink(
+                    destination: AirshipJSONDetailsView(
+                        payload: push.payload,
                         title: push.alert ?? "Silent Push".localized()
-                    ))
-                    {
-                        HStack {
-                            Text(push.alert ?? "Silent Push".localized())
-                            Text(push.pushID)
-                        }
+                    )
+                ) {
+                    VStack(alignment: .leading) {
+                        Text(push.alert ?? "Silent Push".localized())
+                        Text(push.pushID).font(.subheadline)
                     }
                 }
             }
@@ -45,7 +44,7 @@ public struct ReceivedPushListDebugView: View {
             if Airship.isFlying {
                 self.refreshPush()
                 self.cancellable = Airship.debugManager
-                    .pushNotifiacitonReceivedPublisher
+                    .pushNotificationReceivedPublisher
                     .sink { [weak self] _ in
                         self?.refreshPush()
                     }
@@ -53,12 +52,8 @@ public struct ReceivedPushListDebugView: View {
         }
 
         private func refreshPush() {
-            Task {
-                let notifications = await Airship.debugManager
-                    .pushNotifications()
-                await MainActor.run {
-                    self.pushNotifications = notifications
-                }
+            Task { @MainActor in
+                self.pushNotifications = await Airship.debugManager.pushNotifications()
             }
         }
     }

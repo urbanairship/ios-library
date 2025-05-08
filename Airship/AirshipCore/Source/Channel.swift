@@ -402,22 +402,18 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
 
 /// - Note: for internal use only.  :nodoc:
 extension AirshipChannel: AirshipPushableComponent {
-    
-    #if !os(watchOS)
-    public func receivedRemoteNotification(_ notification: AirshipJSON) async -> UIBackgroundFetchResult {
+    func receivedRemoteNotification(_ notification: AirshipJSON) async -> UABackgroundFetchResult {
         if self.identifier == nil {
             updateRegistration()
         }
         return .noData
     }
-    #else
-    public func receivedRemoteNotification(_ notification: AirshipJSON) async -> WKBackgroundFetchResult {
-        if self.identifier == nil {
-            updateRegistration()
-        }
-        return .noData
+
+#if !os(tvOS)
+    func receivedNotificationResponse(_ response: UNNotificationResponse) async {
+        // no-op
     }
-    #endif
+#endif
 
     private func processChannelUpdate(_ update: ChannelRegistrationUpdate) {
         switch(update) {

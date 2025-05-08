@@ -28,7 +28,7 @@ final class InAppAutomationComponent: AirshipComponent, AirshipPushableComponent
 
     func receivedRemoteNotification(
         _ notification: AirshipJSON
-    ) async -> UIBackgroundFetchResult {
+    ) async -> UABackgroundFetchResult {
         return await self.inAppAutomation.receivedRemoteNotification(notification)
     }
 

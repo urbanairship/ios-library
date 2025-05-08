@@ -14,7 +14,7 @@ class TestChannel: NSObject, AirshipChannelProtocol, AirshipComponent, @unchecke
                 .compactMap { $0 }
                 .removeDuplicates()
                 .sink { update in
-                    continuation.yield(update) 
+                    continuation.yield(update)
                 }
 
             continuation.onTermination = { _ in

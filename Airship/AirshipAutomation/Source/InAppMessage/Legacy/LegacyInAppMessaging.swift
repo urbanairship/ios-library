@@ -42,7 +42,7 @@ protocol InternalLegacyInAppMessagingProtocol: LegacyInAppMessagingProtocol {
 
     func receivedRemoteNotification(
         _ notification: AirshipJSON // wrapped [AnyHashable : Any]
-    ) async -> UIBackgroundFetchResult
+    ) async -> UABackgroundFetchResult
 }
 
 final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Sendable {
@@ -237,7 +237,7 @@ extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
     }
 #endif
 
-    func receivedRemoteNotification(_ notification: AirshipJSON) async -> UIBackgroundFetchResult {
+    func receivedRemoteNotification(_ notification: AirshipJSON) async -> UABackgroundFetchResult {
         guard
             let userInfo = notification.unWrap() as? [AnyHashable: Any],
             let payload = userInfo[Keys.incomingMessageKey.rawValue] as? [String: Any] else {

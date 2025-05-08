@@ -31,18 +31,15 @@ struct PushNotification: Equatable, Hashable, CustomStringConvertible {
      */
     var description: String
 
-    init(push: [AnyHashable: Any]) throws {
-        self.description =
-            String(
-                data: try JSONSerialization.data(
-                    withJSONObject: push,
-                    options: .prettyPrinted
-                ),
-                encoding: .utf8
-            ) ?? ""
+    var payload: AirshipJSON {
+        return (try? AirshipJSON.from(json: self.description)) ?? AirshipJSON.string(description)
+    }
+
+    init(userInfo: AirshipJSON) throws {
+        self.description = try userInfo.toString()
         self.time = Date().timeIntervalSince1970
-        self.alert = PushNotification.parseAlert(userInfo: push)
-        self.pushID = push[AnyHashable("_")] as? String ?? "MISSING_PUSH_ID"
+        self.alert = PushNotification.parseAlert(userInfo)
+        self.pushID = userInfo.object?["_"]?.string ?? "MISSING_PUSH_ID"
     }
 
     init(pushData: PushData) {
@@ -52,19 +49,13 @@ struct PushNotification: Equatable, Hashable, CustomStringConvertible {
         self.pushID = pushData.pushID ?? ""
     }
 
-    private static func parseAlert(userInfo: [AnyHashable: Any]) -> String? {
-        guard let aps = userInfo["aps"] as? [String: Any] else { return nil }
+    private static func parseAlert(_ push: AirshipJSON) -> String? {
+        guard let alert = push.object?["aps"]?.object?["alert"] else { return nil }
 
-        if let alert = aps["alert"] as? String {
-            return alert
+        if let string = alert.string {
+            return string
         }
 
-        if let alert = aps["alert"] as? [String: Any],
-            let body = alert["body"] as? String
-        {
-            return body
-        }
-
-        return nil
+        return alert.object?["body"]?.string
     }
 }
