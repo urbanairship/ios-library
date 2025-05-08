@@ -67,11 +67,11 @@ struct RootView<Content: View>: View {
             .environment(\.isVoiceOverRunning, isVoiceOverRunning)
             .onReceive(NotificationCenter.default.publisher(for: AppStateTracker.didTransitionToForeground)) { (_) in
                 self.isForeground = true
-                self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
+                self.thomasEnvironment.onVisibilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
             }
             .onReceive(NotificationCenter.default.publisher(for: AppStateTracker.didTransitionToBackground)) { (_) in
                 self.isForeground = false
-                self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
+                self.thomasEnvironment.onVisibilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
             }
 #if !os(watchOS)
             .onReceive(NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)) { _ in
@@ -82,11 +82,11 @@ struct RootView<Content: View>: View {
                 updateVoiceoverRunningState()
                 self.currentOrientation = RootView.resolveOrientation()
                 self.isVisible = true
-                self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
+                self.thomasEnvironment.onVisibilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
             }
             .onDisappear {
                 self.isVisible = false
-                self.thomasEnvironment.onVisbilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
+                self.thomasEnvironment.onVisibilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
             }
 #if os(iOS)
             .onReceive(

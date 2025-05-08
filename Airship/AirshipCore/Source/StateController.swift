@@ -19,6 +19,6 @@ struct StateController: View {
         ViewFactory.createView(self.info.properties.view, constraints: constraints)
             .constraints(constraints)
             .thomasCommon(self.info)
-            .environmentObject(state)
+            .environmentObject(state.copy(mutableState: mutableState))
     }
 }

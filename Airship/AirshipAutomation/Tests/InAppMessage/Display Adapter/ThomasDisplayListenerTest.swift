@@ -1,535 +1,310 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipAutomation
 import AirshipCore
 
 
-class ThomasDisplayListenerTest: XCTestCase {
+@MainActor
+struct ThomasDisplayListenerTest {
 
     private let analytics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
-    private var listener: ThomasDisplayListener!
+    private let listener: ThomasDisplayListener
     private let result: AirshipMainActorValue<DisplayResult?> = AirshipMainActorValue(nil)
-    private var timer: TestActiveTimer!
 
     private let layoutContext: ThomasLayoutContext = ThomasLayoutContext(
-        formInfo: nil,
-        pagerInfo: nil,
-        buttonInfo: .init(identifier: "button")
+        pager: nil,
+        button: .init(identifier: "button"),
+        form: nil
     )
 
-    @MainActor
-    override func setUp() {
-        self.timer = TestActiveTimer()
-        let tracker = ThomasPagerTracker { [timer] in
-            return timer!
-        }
-
-        listener = ThomasDisplayListener(
-            analytics: analytics,
-            tracker: tracker,
-            timer: timer
+    init() {
+        self.listener = ThomasDisplayListener(
+            analytics: analytics
         ) { [result] displayResult in
             result.set(displayResult)
         }
     }
 
-    @MainActor
-    func testOnVisibilityChanged() {
-        XCTAssertFalse(timer.isStarted)
-
-        listener.onVisbilityChanged(isVisible: true, isForegrounded: true)
-
-        verifyEvents([(InAppDisplayEvent(), nil)])
-        XCTAssertTrue(timer.isStarted)
-
-        listener.onVisbilityChanged(isVisible: false, isForegrounded: false)
-        verifyEvents([(InAppDisplayEvent(), nil)])
-        XCTAssertFalse(timer.isStarted)
-
-        listener.onVisbilityChanged(isVisible: true, isForegrounded: false)
-        verifyEvents([(InAppDisplayEvent(), nil)])
-        XCTAssertFalse(timer.isStarted)
-
-        listener.onVisbilityChanged(isVisible: false, isForegrounded: true)
-        verifyEvents([(InAppDisplayEvent(), nil)])
-        XCTAssertFalse(timer.isStarted)
-
-
-        listener.onVisbilityChanged(isVisible: true, isForegrounded: true)
-        verifyEvents([(InAppDisplayEvent(), nil), (InAppDisplayEvent(), nil)])
-        XCTAssertTrue(timer.isStarted)
-
-        XCTAssertNil(self.result.value)
+    @Test
+    func testDismiss() {
+        listener.onDismissed(cancel: false)
+        #expect(result.value == .finished)
     }
 
-    @MainActor
-    func testFormSubmitted() {
-        self.timer.start()
-
-        let form = ThomasFormResult(identifier: "form id", formData: try! AirshipJSON.wrap(["form": "result"]))
-        listener.onFormSubmitted(formResult: form, layoutContext: self.layoutContext)
-
-        verifyEvents(
-            [
-                (
-                    InAppFormResultEvent(forms: try! AirshipJSON.wrap(["form": "result"])),
-                    self.layoutContext
-                )
-            ]
-        )
-
-        XCTAssertTrue(timer.isStarted)
-        XCTAssertNil(self.result.value)
+    @Test
+    func testDismissAndCancel() {
+        listener.onDismissed(cancel: true)
+        #expect(result.value == .cancel)
     }
 
-    @MainActor
-    func testFormDisplayed() {
-        self.timer.start()
+    @Test("Visibility changes emits display event")
+    func testVisibilityChangesEmitsDisplayEvent() throws {
+        listener.onVisibilityChanged(isVisible: true, isForegrounded: true)
+        try verifyEvents([(InAppDisplayEvent(), nil)])
 
-        let form = ThomasFormInfo(
-            identifier: "form id",
-            submitted: true,
-            formType: "some type",
-            formResponseType: "some response type"
-        )
-        listener.onFormDisplayed(formInfo: form, layoutContext: self.layoutContext)
+        listener.onVisibilityChanged(isVisible: false, isForegrounded: false)
+        try verifyEvents([(InAppDisplayEvent(), nil)])
 
-        verifyEvents(
-            [
-                (
-                    InAppFormDisplayEvent(formInfo: form),
-                    self.layoutContext
-                )
-            ]
-        )
+        listener.onVisibilityChanged(isVisible: true, isForegrounded: false)
+        try verifyEvents([(InAppDisplayEvent(), nil)])
 
-        XCTAssertTrue(timer.isStarted)
-        XCTAssertNil(self.result.value)
+        listener.onVisibilityChanged(isVisible: false, isForegrounded: true)
+        try verifyEvents([(InAppDisplayEvent(), nil)])
+
+        listener.onVisibilityChanged(isVisible: true, isForegrounded: true)
+        try verifyEvents([(InAppDisplayEvent(), nil), (InAppDisplayEvent(), nil)])
     }
 
-    @MainActor
-    func testButtonTap() {
-        self.timer.start()
-
-        listener.onButtonTapped(
-            buttonIdentifier: "button id",
-            metadata: .string("some metadata"),
-            layoutContext: self.layoutContext
+    @Test
+    func testButtonTapEvent() throws {
+        let thomasEvent = ThomasReportingEvent.ButtonTapEvent(
+            identifier: "button id",
+            reportingMetadata: .string("some metadata")
         )
 
-        verifyEvents(
+        listener.onReportingEvent(.buttonTap(thomasEvent, layoutContext))
+
+        try verifyEvents(
             [
                 (
                     InAppButtonTapEvent(
-                        identifier: "button id",
-                        reportingMetadata: .string("some metadata")
+                        data: thomasEvent
                     ),
                     self.layoutContext
                 )
             ]
         )
-
-        XCTAssertTrue(timer.isStarted)
-        XCTAssertNil(self.result.value)
     }
 
-    @MainActor
-    func testDismissed() {
-        self.timer.start()
-        self.timer.time = 10
-
-        listener.onDismissed( cancel: false, layoutContext: nil)
-
-        verifyEvents(
-            [(InAppResolutionEvent.userDismissed(displayTime: 10), nil)]
+    @Test
+    func testFormDisplayedEvent() throws {
+        let thomasEvent = ThomasReportingEvent.FormDisplayEvent(
+            identifier: "form id",
+            formType: "some type"
         )
 
-        XCTAssertFalse(timer.isStarted)
-        XCTAssertEqual(self.result.value, .finished)
-    }
+        listener.onReportingEvent(.formDisplay(thomasEvent, layoutContext))
 
-    @MainActor
-    func testDismissedCancelled() {
-        self.timer.start()
-        self.timer.time = 10
-
-        listener.onDismissed(cancel: true, layoutContext: nil)
-
-        verifyEvents(
-            [(InAppResolutionEvent.userDismissed(displayTime: 10), nil)]
-        )
-
-        XCTAssertFalse(timer.isStarted)
-        XCTAssertEqual(self.result.value, .cancel)
-    }
-
-    @MainActor
-    func testDismissedWithContext() {
-        self.timer.start()
-        self.timer.time = 10
-
-        listener.onDismissed(cancel: false, layoutContext: self.layoutContext)
-
-        verifyEvents(
+        try verifyEvents(
             [
                 (
-                    InAppResolutionEvent.userDismissed(displayTime: 10),
-                    self.layoutContext
-                )
-            ]
-        )
-
-        XCTAssertFalse(timer.isStarted)
-        XCTAssertEqual(self.result.value, .finished)
-    }
-
-    @MainActor
-    func testButtonDismiss() {
-        self.timer.start()
-        self.timer.time = 10
-
-        listener.onDismissed(
-            buttonIdentifier: "button id",
-            buttonDescription: "button description",
-            cancel: false,
-            layoutContext: self.layoutContext
-        )
-
-        verifyEvents(
-            [
-                (
-                    InAppResolutionEvent.buttonTap(
-                        identifier: "button id",
-                        description: "button description",
-                        displayTime: 10
-                    ),
-                    self.layoutContext
-                )
-            ]
-        )
-
-        XCTAssertFalse(timer.isStarted)
-        XCTAssertEqual(self.result.value, .finished)
-    }
-
-    @MainActor
-    func testButtonCancel() {
-        self.timer.start()
-        self.timer.time = 10
-
-        listener.onDismissed(
-            buttonIdentifier: "button id",
-            buttonDescription: "button description",
-            cancel: true,
-            layoutContext: self.layoutContext
-        )
-
-        verifyEvents(
-            [
-                (
-                    InAppResolutionEvent.buttonTap(
-                        identifier: "button id",
-                        description: "button description",
-                        displayTime: 10
-                    ),
-                    self.layoutContext
-                )
-            ]
-        )
-
-        XCTAssertFalse(timer.isStarted)
-        XCTAssertEqual(self.result.value, .cancel)
-    }
-
-
-    @MainActor
-    func testOnTimeOut() {
-        self.timer.start()
-        self.timer.time = 10
-
-        listener.onTimedOut(layoutContext: nil)
-
-        verifyEvents(
-            [
-                (
-                    InAppResolutionEvent.timedOut(displayTime: 10),
-                    nil
-                )
-            ]
-        )
-
-        XCTAssertFalse(timer.isStarted)
-        XCTAssertEqual(self.result.value, .finished)
-    }
-
-    @MainActor
-    func testOnTimeOutWithContext() {
-        self.timer.start()
-        self.timer.time = 10
-
-        listener.onTimedOut(layoutContext: self.layoutContext)
-
-        verifyEvents(
-            [
-                (
-                    InAppResolutionEvent.timedOut(displayTime: 10),
-                    self.layoutContext
-                )
-            ]
-        )
-
-        XCTAssertFalse(timer.isStarted)
-        XCTAssertEqual(self.result.value, .finished)
-    }
-
-    @MainActor
-    func testPageView() {
-        self.timer.start()
-
-        let pagerInfo = makePagerInfo(pager: "foo", page: 0)
-
-        listener.onPageViewed(
-            pagerInfo: pagerInfo,
-            layoutContext: self.layoutContext
-        )
-
-        verifyEvents(
-            [
-                (
-                    InAppPageViewEvent(pagerInfo: pagerInfo, viewCount: 1),
-                    self.layoutContext
-                )
-            ]
-        )
-
-        XCTAssertTrue(timer.isStarted)
-        XCTAssertNil(self.result.value)
-    }
-
-    @MainActor
-    func testPagerCompleted() {
-
-        let pagerInfos = [
-            makePagerInfo(
-               pager: "foo",
-               page: 0,
-               pageCount: 1,
-               completed: false
-           ),
-
-            makePagerInfo(
-                pager: "foo",
-                page: 1,
-                pageCount: 1,
-                completed: true
-            ),
-
-            makePagerInfo(
-                pager: "foo",
-                page: 0,
-                pageCount: 1,
-                completed: true
-            ),
-
-            makePagerInfo(
-                pager: "foo",
-                page: 1,
-                pageCount: 1,
-                completed: true
-            )
-        ]
-
-        pagerInfos.forEach { info in
-            listener.onPageViewed(
-                pagerInfo: info,
-                layoutContext: self.layoutContext
-            )
-        }
-
-
-        verifyEvents(
-            [
-                (
-                    InAppPageViewEvent(pagerInfo: pagerInfos[0], viewCount: 1),
-                    self.layoutContext
-                ),
-                (
-                    InAppPageViewEvent(pagerInfo: pagerInfos[1], viewCount: 1),
-                    self.layoutContext
-                ),
-                (
-                    InAppPagerCompletedEvent(pagerInfo: pagerInfos[1]),
-                    self.layoutContext
-                ),
-                (
-                    InAppPageViewEvent(pagerInfo: pagerInfos[2], viewCount: 2),
-                    self.layoutContext
-                ),
-                (
-                    InAppPageViewEvent(pagerInfo: pagerInfos[3], viewCount: 2),
+                    InAppFormDisplayEvent(data: thomasEvent),
                     self.layoutContext
                 )
             ]
         )
     }
 
-    @MainActor
-    func testPageGesture() {
-        self.timer.start()
+    @Test
+    func testFormResultEvent() throws {
+        let thomasEvent = ThomasReportingEvent.FormResultEvent(
+            forms: try! AirshipJSON.wrap(["form": "result"])
+        )
 
-        listener.onPageGesture(
+        listener.onReportingEvent(.formResult(thomasEvent, layoutContext))
+
+        try verifyEvents(
+            [
+                (
+                    InAppFormResultEvent(data: thomasEvent),
+                    self.layoutContext
+                )
+            ]
+        )
+    }
+
+    @Test
+    func testGestureEvent() throws {
+        let thomasEvent = ThomasReportingEvent.GestureEvent(
             identifier: "gesture id",
-            metadata: .string("some metadata"),
-            layoutContext: self.layoutContext
+            reportingMetadata: .string("some metadata")
         )
 
-        verifyEvents(
+        listener.onReportingEvent(.gesture(thomasEvent, layoutContext))
+
+        try verifyEvents(
             [
                 (
-                    InAppGestureEvent(
-                        identifier: "gesture id",
-                        reportingMetadata: .string("some metadata")
-                    ),
+                    InAppGestureEvent(data: thomasEvent),
                     self.layoutContext
                 )
             ]
         )
-
-        XCTAssertTrue(timer.isStarted)
-        XCTAssertNil(self.result.value)
     }
 
-    @MainActor
-    func testPageAction() {
-        self.timer.start()
-
-        listener.onPageAutomatedAction(
-            identifier: "action id",
-            metadata: .string("some metadata"),
-            layoutContext: self.layoutContext
+    @Test
+    func testPageActionEvent() throws {
+        let thomasEvent = ThomasReportingEvent.PageActionEvent(
+            identifier: "page id",
+            reportingMetadata: .string("some metadata")
         )
 
-        verifyEvents(
+        listener.onReportingEvent(.pageAction(thomasEvent, layoutContext))
+
+        try verifyEvents(
             [
                 (
-                    InAppPageActionEvent(
-                        identifier: "action id",
-                        reportingMetadata: .string("some metadata")
-                    ),
+                    InAppPageActionEvent(data: thomasEvent),
                     self.layoutContext
                 )
             ]
         )
-
-        XCTAssertTrue(timer.isStarted)
-        XCTAssertNil(self.result.value)
     }
 
-    @MainActor
-    func testPageSwipe() {
-        self.timer.start()
-
-        let from = makePagerInfo(pager: "foo", page: 0)
-        let to = makePagerInfo(pager: "foo", page: 1)
-
-        listener.onPageSwiped(
-            from: from,
-            to: to,
-            layoutContext: self.layoutContext
+    @Test
+    func testPagerCompletedEvent() throws {
+        let thomasEvent = ThomasReportingEvent.PagerCompletedEvent(
+            identifier: "pager id",
+            pageIndex: 3,
+            pageCount: 3,
+            pageIdentifier: "page id"
         )
 
-        verifyEvents(
+        listener.onReportingEvent(.pagerCompleted(thomasEvent, layoutContext))
+
+        try verifyEvents(
             [
                 (
-                    InAppPageSwipeEvent(
-                        from: from,
-                        to: to
-                    ),
+                    InAppPagerCompletedEvent(data: thomasEvent),
                     self.layoutContext
                 )
             ]
         )
+    }
 
-        XCTAssertTrue(timer.isStarted)
-        XCTAssertNil(self.result.value)
+    @Test
+    func testPageSwipeEvent() throws {
+        let thomasEvent = ThomasReportingEvent.PageSwipeEvent(
+            identifier: "pager id",
+            toPageIndex: 4,
+            toPageIdentifier: "to page id",
+            fromPageIndex: 3,
+            fromPageIdentifier: "from page id"
+        )
+        listener.onReportingEvent(.pageSwipe(thomasEvent, layoutContext))
+
+        try verifyEvents(
+            [
+                (
+                    InAppPageSwipeEvent(data: thomasEvent),
+                    self.layoutContext
+                )
+            ]
+        )
+    }
+
+    @Test
+    func testPageViewEvent() throws {
+        let thomasEvent = ThomasReportingEvent.PageViewEvent(
+            identifier: "pager id",
+            pageIdentifier: "page id",
+            pageIndex: 1,
+            pageViewCount: 1,
+            pageCount: 3,
+            completed: true
+        )
+
+        listener.onReportingEvent(.pageView(thomasEvent, layoutContext))
+
+        try verifyEvents(
+            [
+                (
+                    InAppPageViewEvent(data: thomasEvent),
+                    self.layoutContext
+                )
+            ]
+        )
+    }
+
+    @Test
+    func testPagerSummaryEvent() throws {
+        let thomasEvent = ThomasReportingEvent.PagerSummaryEvent(
+            identifier: "pager id",
+            viewedPages: [
+                .init(identifier: "foo", index: 1, displayTime: 10),
+                .init(identifier: "bar", index: 2, displayTime: 10),
+            ],
+            pageCount: 3,
+            completed: true
+        )
+
+        listener.onReportingEvent(.pagerSummary(thomasEvent, layoutContext))
+
+        try verifyEvents(
+            [
+                (
+                    InAppPagerSummaryEvent(data: thomasEvent),
+                    self.layoutContext
+                )
+            ]
+        )
     }
 
     @MainActor
-    func testDismissPagerSummary() {
-        self.timer.start()
-
-        let page0 = makePagerInfo(pager: "foo", page: 0)
-        let page1 = makePagerInfo(pager: "foo", page: 1)
-
-        listener.onPageViewed(
-            pagerInfo: page0,
-            layoutContext: self.layoutContext
+    func testUserDismissedEvent() throws {
+        listener.onReportingEvent(
+            ThomasReportingEvent.dismiss(.userDismissed, 10, layoutContext)
         )
 
-        self.timer.time = 10
-        listener.onPageViewed(
-            pagerInfo: page1,
-            layoutContext: self.layoutContext
+        try verifyEvents(
+            [(InAppResolutionEvent.userDismissed(displayTime: 10), layoutContext)]
+        )
+    }
+
+
+    @MainActor
+    func testTimedOUtEvent() throws {
+        listener.onReportingEvent(
+            ThomasReportingEvent.dismiss(.timedOut, 10, layoutContext)
         )
 
-        self.timer.time = 20
-        listener.onPageViewed(
-            pagerInfo: page0,
-            layoutContext: self.layoutContext
+        try verifyEvents(
+            [(InAppResolutionEvent.timedOut(displayTime: 10), layoutContext)]
         )
+    }
 
-        self.timer.time = 30
-        listener.onDismissed(cancel: false, layoutContext: self.layoutContext)
-
-        let expectedEvents: [(any InAppEvent, ThomasLayoutContext?)] = [
-            (InAppPageViewEvent(pagerInfo: page0, viewCount: 1), self.layoutContext),
-            (InAppPageViewEvent(pagerInfo: page1, viewCount: 1), self.layoutContext),
-            (InAppPageViewEvent(pagerInfo: page0, viewCount: 2), self.layoutContext),
-            (
-                InAppPagerSummaryEvent(
-                    pagerInfo: page0,
-                    viewedPages: [
-                        PageViewSummary(identifier: "page-0", index: 0, displayTime: 10),
-                        PageViewSummary(identifier: "page-1", index: 1, displayTime: 20),
-                        PageViewSummary(identifier: "page-0", index: 0, displayTime: 30)
-                    ]
+    @MainActor
+    func testDismissedEvent() throws {
+        listener.onReportingEvent(
+            ThomasReportingEvent.dismiss(
+                .buttonTapped(
+                    identifier: "button id",
+                    description: "button description"
                 ),
-                self.layoutContext
-            ),
-            (InAppResolutionEvent.userDismissed(displayTime: 30), self.layoutContext)
-        ]
-        verifyEvents(expectedEvents)
-
-        XCTAssertFalse(timer.isStarted)
-        XCTAssertEqual(self.result.value, .finished)
+                10,
+                layoutContext
+            )
+        )
+        
+        try verifyEvents(
+            [
+                (
+                    InAppResolutionEvent.buttonTap(
+                        identifier: "button id",
+                        description: "button description",
+                        displayTime: 10),
+                    layoutContext
+                )
+            ]
+            
+        )
     }
 
+    private func verifyEvents(
+        _ expected: [(InAppEvent, ThomasLayoutContext?)],
+        sourceLocation: SourceLocation = #_sourceLocation
+    ) throws {
+        #expect(expected.count == self.analytics.events.count, sourceLocation: sourceLocation)
 
-    private func verifyEvents(_ expected: [(InAppEvent, ThomasLayoutContext?)], line: UInt = #line) {
-        XCTAssertEqual(expected.count, self.analytics.events.count, line: line)
-
-        expected.indices.forEach { index in
+        try expected.indices.forEach { index in
             let expectedEvent = expected[index]
             let actual = analytics.events[index]
-            XCTAssertEqual(actual.0.name, expectedEvent.0.name, line: line)
-            XCTAssertEqual(try! AirshipJSON.wrap(actual.0.data), try! AirshipJSON.wrap(expectedEvent.0.data), line: line)
-            XCTAssertEqual(actual.1, expectedEvent.1, line: line)
+            #expect(actual.0.name == expectedEvent.0.name, sourceLocation: sourceLocation)
+            let actualData = try AirshipJSON.wrap(actual.0.data)
+            let expectedData = try AirshipJSON.wrap(expectedEvent.0.data)
+            #expect(actualData == expectedData, sourceLocation: sourceLocation)
+            #expect(actual.1 == expectedEvent.1, sourceLocation: sourceLocation)
         }
-    }
-
-    private func makePagerInfo(
-        pager: String,
-        page: Int,
-        pageCount: Int = 100,
-        completed: Bool = false
-    ) -> ThomasPagerInfo {
-        return ThomasPagerInfo(
-           identifier: pager,
-           pageIndex: page,
-           pageIdentifier: "page-\(page)",
-           pageCount: pageCount,
-           completed: completed
-       )
     }
 }

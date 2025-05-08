@@ -1,11 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipAutomation
 @testable import AirshipCore
 
-class InAppMessageAnalyticsTest: XCTestCase {
+@MainActor
+struct InAppMessageAnalyticsTest {
 
     private let eventRecorder = EventRecorder()
     private let historyStore = TestDisplayHistoryStore()
@@ -25,7 +26,7 @@ class InAppMessageAnalyticsTest: XCTestCase {
         priority: 0
     )
 
-    @MainActor
+    @Test
     func testSource() async throws {
         let analytics = InAppMessageAnalytics(
             preparedScheduleInfo: preparedInfo,
@@ -43,17 +44,15 @@ class InAppMessageAnalyticsTest: XCTestCase {
         analytics.recordEvent(TestInAppEvent(), layoutContext: nil)
 
         let data = eventRecorder.eventData.first!
-        XCTAssertEqual(
-            data.messageID,
-            .airship(
-                identifier: self.preparedInfo.scheduleID,
-                campaigns: self.preparedInfo.campaigns
-            )
+        let expectedID = InAppEventMessageID.airship(
+            identifier: self.preparedInfo.scheduleID,
+            campaigns: self.preparedInfo.campaigns
         )
-        XCTAssertEqual(data.source, .airship)
+        #expect(data.messageID == expectedID)
+        #expect(data.source == .airship)
     }
 
-    @MainActor
+    @Test
     func testAppDefined() async throws {
         let analytics = InAppMessageAnalytics(
             preparedScheduleInfo: preparedInfo,
@@ -72,16 +71,15 @@ class InAppMessageAnalyticsTest: XCTestCase {
         analytics.recordEvent(TestInAppEvent(), layoutContext: nil)
 
         let data = eventRecorder.eventData.first!
-        XCTAssertEqual(
-            data.messageID,
-            .appDefined(
-                identifier: self.preparedInfo.scheduleID
-            )
+
+        let expectedID = InAppEventMessageID.appDefined(
+            identifier: self.preparedInfo.scheduleID
         )
-        XCTAssertEqual(data.source, .appDefined)
+        #expect(data.messageID == expectedID)
+        #expect(data.source == .appDefined)
     }
 
-    @MainActor
+    @Test
     func testLegacyMessageID() async throws {
         let analytics = InAppMessageAnalytics(
             preparedScheduleInfo: preparedInfo,
@@ -99,32 +97,30 @@ class InAppMessageAnalyticsTest: XCTestCase {
         analytics.recordEvent(TestInAppEvent(), layoutContext: nil)
 
         let data = eventRecorder.eventData.first!
-        XCTAssertEqual(
-            data.messageID,
-            .legacy(
-                identifier: self.preparedInfo.scheduleID
-            )
+        let expectedID = InAppEventMessageID.legacy(
+            identifier: self.preparedInfo.scheduleID
         )
-        XCTAssertEqual(data.source, .airship)
+        #expect(data.messageID == expectedID)
+        #expect(data.source == .airship)
     }
 
-    @MainActor
+    @Test
     func testData() async throws {
         let thomasLayoutContext  = ThomasLayoutContext(
-            formInfo: ThomasFormInfo(
+            pager: ThomasLayoutContext.Pager(
+                identifier: UUID().uuidString,
+                pageIdentifier: UUID().uuidString,
+                pageIndex: 1,
+                completed: false,
+                count: 2
+            ),
+            button: ThomasLayoutContext.Button(identifier: UUID().uuidString),
+            form: ThomasLayoutContext.Form(
             identifier: UUID().uuidString,
             submitted: true,
-            formType: UUID().uuidString,
-            formResponseType: UUID().uuidString
-            ),
-            pagerInfo: ThomasPagerInfo(
-                identifier: UUID().uuidString,
-                pageIndex: 1,
-                pageIdentifier: UUID().uuidString,
-                pageCount: 2,
-                completed: false
-            ),
-            buttonInfo: ThomasButtonInfo(identifier: UUID().uuidString)
+            type: UUID().uuidString,
+            responseType: UUID().uuidString
+            )
         )
 
         let expectedContext = InAppEventContext.makeContext(
@@ -156,12 +152,12 @@ class InAppMessageAnalyticsTest: XCTestCase {
         analytics.recordEvent(TestInAppEvent(), layoutContext: thomasLayoutContext)
 
         let data = self.eventRecorder.eventData.first!
-        XCTAssertEqual(data.context, expectedContext)
-        XCTAssertEqual(data.renderedLocale, AirshipJSON.string("rendered locale"))
-        XCTAssertEqual(data.event.name, EventType.customEvent)
+        #expect(data.context == expectedContext)
+        #expect(data.renderedLocale == AirshipJSON.string("rendered locale"))
+        #expect(data.event.name == EventType.customEvent)
     }
     
-    @MainActor
+    @Test
     func testSingleImpression() async throws {
         let date = UATestDate(offset: 0, dateOverride: Date())
         
@@ -183,26 +179,26 @@ class InAppMessageAnalyticsTest: XCTestCase {
         analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
 
         
-        let impression = try XCTUnwrap(eventRecorder.lastRecordedImpression)
-        XCTAssertEqual(preparedInfo.scheduleID, impression.entityID)
-        XCTAssertEqual(AirshipMeteredUsageType.inAppExperienceImpression, impression.usageType)
-        XCTAssertEqual(preparedInfo.productID, impression.product)
-        XCTAssertEqual(preparedInfo.reportingContext, impression.reportingContext)
-        XCTAssertEqual(date.now, impression.timestamp)
-        XCTAssertEqual(preparedInfo.contactID, impression.contactID)
+        let impression = eventRecorder.lastRecordedImpression!
+        #expect(preparedInfo.scheduleID == impression.entityID)
+        #expect(AirshipMeteredUsageType.inAppExperienceImpression == impression.usageType)
+        #expect(preparedInfo.productID == impression.product)
+        #expect(preparedInfo.reportingContext == impression.reportingContext)
+        #expect(date.now == impression.timestamp)
+        #expect(preparedInfo.contactID == impression.contactID)
 
         eventRecorder.lastRecordedImpression = nil
         analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
-        XCTAssertNil(eventRecorder.lastRecordedImpression)
+        #expect(eventRecorder.lastRecordedImpression == nil)
 
         let displayHistory = await self.historyStore.get(
             scheduleID: preparedInfo.scheduleID
         )
-        XCTAssertEqual(displayHistory.lastImpression?.date, date.now)
-        XCTAssertEqual(displayHistory.lastImpression?.triggerSessionID, preparedInfo.triggerSessionID)
+        #expect(displayHistory.lastImpression?.date == date.now)
+        #expect(displayHistory.lastImpression?.triggerSessionID == preparedInfo.triggerSessionID)
     }
 
-    @MainActor
+    @Test
     func testImpressionInterval() async throws {
         let date = UATestDate(offset: 0, dateOverride: Date())
 
@@ -223,41 +219,41 @@ class InAppMessageAnalyticsTest: XCTestCase {
 
         analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
 
-        let impression = try XCTUnwrap(eventRecorder.lastRecordedImpression)
-        XCTAssertEqual(preparedInfo.scheduleID, impression.entityID)
-        XCTAssertEqual(AirshipMeteredUsageType.inAppExperienceImpression, impression.usageType)
-        XCTAssertEqual(preparedInfo.productID, impression.product)
-        XCTAssertEqual(preparedInfo.reportingContext, impression.reportingContext)
-        XCTAssertEqual(date.now, impression.timestamp)
-        XCTAssertEqual(preparedInfo.contactID, impression.contactID)
+        let impression = eventRecorder.lastRecordedImpression!
+        #expect(preparedInfo.scheduleID == impression.entityID)
+        #expect(AirshipMeteredUsageType.inAppExperienceImpression == impression.usageType)
+        #expect(preparedInfo.productID == impression.product)
+        #expect(preparedInfo.reportingContext == impression.reportingContext)
+        #expect(date.now == impression.timestamp)
+        #expect(preparedInfo.contactID == impression.contactID)
 
         eventRecorder.lastRecordedImpression = nil
         analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
-        XCTAssertNil(eventRecorder.lastRecordedImpression)
+        #expect(eventRecorder.lastRecordedImpression == nil)
 
         var displayHistory = await self.historyStore.get(
             scheduleID: preparedInfo.scheduleID
         )
-        XCTAssertEqual(displayHistory.lastImpression?.date, date.now)
-        XCTAssertEqual(displayHistory.lastImpression?.triggerSessionID, preparedInfo.triggerSessionID)
+        #expect(displayHistory.lastImpression?.date == date.now)
+        #expect(displayHistory.lastImpression?.triggerSessionID == preparedInfo.triggerSessionID)
 
 
         date.offset += 9.9
         analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
-        XCTAssertNil(eventRecorder.lastRecordedImpression)
+        #expect(eventRecorder.lastRecordedImpression == nil)
 
         date.offset += 0.1
         analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
-        XCTAssertNotNil(eventRecorder.lastRecordedImpression)
+        assert(eventRecorder.lastRecordedImpression != nil)
 
         displayHistory = await self.historyStore.get(
             scheduleID: preparedInfo.scheduleID
         )
-        XCTAssertEqual(displayHistory.lastImpression?.date, date.now)
-        XCTAssertEqual(displayHistory.lastImpression?.triggerSessionID, preparedInfo.triggerSessionID)
+        #expect(displayHistory.lastImpression?.date == date.now)
+        #expect(displayHistory.lastImpression?.triggerSessionID == preparedInfo.triggerSessionID)
     }
 
-    @MainActor
+    @Test
     func testReportingDisabled() async throws {
         let analytics = InAppMessageAnalytics(
             preparedScheduleInfo: preparedInfo,
@@ -275,14 +271,14 @@ class InAppMessageAnalyticsTest: XCTestCase {
         )
 
         analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
-        XCTAssertTrue(self.eventRecorder.eventData.isEmpty)
+        assert(self.eventRecorder.eventData.isEmpty)
 
         // impressions are still recorded
-        XCTAssertNotNil(eventRecorder.lastRecordedImpression)
+        assert(eventRecorder.lastRecordedImpression != nil)
     }
 
 
-    @MainActor
+    @Test
     func testDisplayUpdatesHistory() async {
         let analytics = InAppMessageAnalytics(
             preparedScheduleInfo: preparedInfo,
@@ -302,7 +298,7 @@ class InAppMessageAnalyticsTest: XCTestCase {
         var displayHistory = await self.historyStore.get(
             scheduleID: preparedInfo.scheduleID
         )
-        XCTAssertNil(displayHistory.lastDisplay?.triggerSessionID)
+        #expect(displayHistory.lastDisplay?.triggerSessionID == nil)
 
 
         displayHistory = await self.historyStore.get(
@@ -311,7 +307,7 @@ class InAppMessageAnalyticsTest: XCTestCase {
         analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
     }
 
-    @MainActor
+    @Test
     func testDisplayContextNewIAA() async {
         let analytics = InAppMessageAnalytics(
             preparedScheduleInfo: preparedInfo,
@@ -361,10 +357,10 @@ class InAppMessageAnalyticsTest: XCTestCase {
         ]
 
         let displayContexts = self.eventRecorder.eventData.map { $0.context!.display }
-        XCTAssertEqual(displayContexts, expected)
+        #expect(displayContexts == expected)
     }
 
-    @MainActor
+    @Test
     func testDisplayContextPreviouslyDisplayIAX() async {
         let analytics = InAppMessageAnalytics(
             preparedScheduleInfo: preparedInfo,
@@ -415,10 +411,10 @@ class InAppMessageAnalyticsTest: XCTestCase {
         ]
 
         let displayContexts = self.eventRecorder.eventData.map { $0.context!.display }
-        XCTAssertEqual(displayContexts, expected)
+        #expect(displayContexts == expected)
     }
 
-    @MainActor
+    @Test
     func testDisplayContextSameTriggerSessionID() async {
         let analytics = InAppMessageAnalytics(
             preparedScheduleInfo: preparedInfo,
@@ -469,7 +465,7 @@ class InAppMessageAnalyticsTest: XCTestCase {
         ]
 
         let displayContexts = self.eventRecorder.eventData.map { $0.context!.display }
-        XCTAssertEqual(displayContexts, expected)
+        #expect(displayContexts == expected)
     }
 }
 

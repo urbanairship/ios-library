@@ -1,17 +1,21 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipAutomation
 @testable import AirshipCore
 
-final class InAppButtonTapEventTest: XCTestCase {
+struct InAppButtonTapEventTest {
 
+    @Test
     func testEvent() throws {
-        let event = InAppButtonTapEvent(
+        let thomasEvent = ThomasReportingEvent.ButtonTapEvent(
             identifier: "button id",
             reportingMetadata: .string("reporting metadata")
         )
+
+        let event = InAppButtonTapEvent(data: thomasEvent)
+        #expect(event.name.reportingName == "in_app_button_tap")
 
         let expectedJSON = """
         {
@@ -20,8 +24,9 @@ final class InAppButtonTapEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name.reportingName, "in_app_button_tap")
-        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
     }
 
 }

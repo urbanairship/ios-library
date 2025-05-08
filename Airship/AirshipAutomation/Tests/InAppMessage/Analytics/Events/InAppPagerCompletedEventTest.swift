@@ -1,22 +1,23 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipAutomation
 @testable import AirshipCore
 
-final class InAppPagerCompletedEventTest: XCTestCase {
+struct InAppPagerCompletedEventTest {
 
+    @Test
     func testEvent() throws {
-        let event = InAppPagerCompletedEvent(
-            pagerInfo: ThomasPagerInfo(
-                identifier: "pager identifier",
-                pageIndex: 3,
-                pageIdentifier: "page identifier",
-                pageCount: 12,
-                completed: true
-            )
+        let thomasEvent = ThomasReportingEvent.PagerCompletedEvent(
+            identifier: "pager identifier",
+            pageIndex: 3,
+            pageCount: 12,
+            pageIdentifier: "page identifier"
         )
+
+        let event = InAppPagerCompletedEvent(data: thomasEvent)
+        #expect(event.name.reportingName == "in_app_pager_completed")
 
         let expectedJSON = """
         {
@@ -27,7 +28,8 @@ final class InAppPagerCompletedEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name.reportingName, "in_app_pager_completed")
-        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
     }
 }

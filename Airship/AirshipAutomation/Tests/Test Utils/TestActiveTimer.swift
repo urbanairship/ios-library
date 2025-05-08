@@ -3,8 +3,10 @@
 import Foundation
 @testable import AirshipAutomation
 
+import AirshipCore
+
 @MainActor
-final class TestActiveTimer: ActiveTimerProtocol {
+final class TestActiveTimer: AirshipTimerProtocol {
     var time: TimeInterval = 0
     var isStarted: Bool = false
 

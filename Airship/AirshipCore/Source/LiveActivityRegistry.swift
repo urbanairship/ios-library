@@ -346,7 +346,7 @@ actor LiveActivityRegistry {
             actionTimeMS: self.date.now.millisecondsSince1970,
             token: token
         )
-        
+
         updatesContinuation.yield(update)
     }
     

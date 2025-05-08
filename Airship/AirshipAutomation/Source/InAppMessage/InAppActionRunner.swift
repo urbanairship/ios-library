@@ -100,7 +100,7 @@ final class DefaultInAppActionRunner: InternalInAppActionRunner {
     }
 
     @MainActor
-    public func runAsync(actions: AirshipJSON, layoutContext: ThomasLayoutContext?) {
+    public func runAsync(actions: AirshipJSON, layoutContext: ThomasLayoutContext) {
         var metadata: [String: any Sendable] = [:]
         self.extendMetadata(&metadata, layoutContext: layoutContext)
 
@@ -114,7 +114,7 @@ final class DefaultInAppActionRunner: InternalInAppActionRunner {
     }
 
     @MainActor
-    public func run(actionName: String, arguments: ActionArguments, layoutContext: ThomasLayoutContext?) async -> ActionResult {
+    public func run(actionName: String, arguments: ActionArguments, layoutContext: ThomasLayoutContext) async -> ActionResult {
         var args = arguments
         self.extendMetadata(&args.metadata, layoutContext: layoutContext)
         return await ActionRunner.run(actionName: actionName, arguments: arguments)

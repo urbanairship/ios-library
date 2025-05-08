@@ -1,20 +1,19 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
 @testable import AirshipAutomation
 
-final class DefaultInAppActionRunnerTest: XCTestCase {
+@MainActor
+struct DefaultInAppActionRunnerTest {
 
     private let analytics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
 
-    @MainActor
+    @Test
     func testCustomEventContext() {
         let layoutContext = ThomasLayoutContext(
-            formInfo: nil,
-            pagerInfo: nil,
-            buttonInfo: ThomasButtonInfo(identifier: "bar")
+            button: ThomasLayoutContext.Button(identifier: "bar")
         )
 
         let customEventContext = InAppCustomEventContext(
@@ -23,7 +22,7 @@ final class DefaultInAppActionRunnerTest: XCTestCase {
         )
 
         analytics.onMakeCustomEventContext = { lc in
-            XCTAssertEqual(layoutContext, lc)
+            #expect(layoutContext == lc)
             return customEventContext
         }
 
@@ -31,10 +30,10 @@ final class DefaultInAppActionRunnerTest: XCTestCase {
         var metadata: [String: Sendable] = [:]
         runner.extendMetadata(&metadata, layoutContext: layoutContext)
 
-        XCTAssertEqual(customEventContext, metadata[AddCustomEventAction._inAppMetadata] as? InAppCustomEventContext)
+        #expect(customEventContext == metadata[AddCustomEventAction._inAppMetadata] as? InAppCustomEventContext)
     }
 
-    @MainActor
+    @Test
     func testCustomEventContextNilLayoutContext() {
         let customEventContext = InAppCustomEventContext(
             id: InAppEventMessageID.appDefined(identifier: "foo"),
@@ -42,7 +41,7 @@ final class DefaultInAppActionRunnerTest: XCTestCase {
         )
 
         analytics.onMakeCustomEventContext = { lc in
-            XCTAssertNil(lc)
+            #expect(lc == nil)
             return customEventContext
         }
 
@@ -50,15 +49,13 @@ final class DefaultInAppActionRunnerTest: XCTestCase {
         var metadata: [String: Sendable] = [:]
         runner.extendMetadata(&metadata, layoutContext: nil)
 
-        XCTAssertEqual(customEventContext, metadata[AddCustomEventAction._inAppMetadata] as? InAppCustomEventContext)
+        #expect(customEventContext == metadata[AddCustomEventAction._inAppMetadata] as? InAppCustomEventContext)
     }
 
-    @MainActor
-    func testTrackPermissionResults() async {
+    @Test
+    func testTrackPermissionResults() async throws {
         let layoutContext = ThomasLayoutContext(
-            formInfo: nil,
-            pagerInfo: nil,
-            buttonInfo: ThomasButtonInfo(identifier: "bar")
+            button: ThomasLayoutContext.Button(identifier: "bar")
         )
 
         analytics.onMakeCustomEventContext = { _ in return nil }
@@ -70,7 +67,7 @@ final class DefaultInAppActionRunnerTest: XCTestCase {
         let resultReceiver = metadata[PromptPermissionAction.resultReceiverMetadataKey] as! PermissionResultReceiver
         await resultReceiver(.displayNotifications, .granted, .granted)
 
-        verifyEvents(
+        try verifyEvents(
             [
                 (
                     InAppPermissionResultEvent(
@@ -84,8 +81,8 @@ final class DefaultInAppActionRunnerTest: XCTestCase {
         )
     }
 
-    @MainActor
-    func testTrackPermissionResultsNoContext() async {
+    @Test
+    func testTrackPermissionResultsNoContext() async throws {
         analytics.onMakeCustomEventContext = { _ in return nil }
 
         let runner = DefaultInAppActionRunner(analytics: analytics, trackPermissionResults: true)
@@ -95,7 +92,7 @@ final class DefaultInAppActionRunnerTest: XCTestCase {
         let resultReceiver = metadata[PromptPermissionAction.resultReceiverMetadataKey] as! PermissionResultReceiver
         await resultReceiver(.displayNotifications, .granted, .granted)
 
-        verifyEvents(
+        try verifyEvents(
             [
                 (
                     InAppPermissionResultEvent(
@@ -109,7 +106,7 @@ final class DefaultInAppActionRunnerTest: XCTestCase {
         )
     }
 
-    @MainActor
+    @Test
     func testTrackPermissionRusultsDisabled() async {
         analytics.onMakeCustomEventContext = { _ in return nil }
 
@@ -118,19 +115,23 @@ final class DefaultInAppActionRunnerTest: XCTestCase {
         runner.extendMetadata(&metadata, layoutContext: nil)
 
         let resultReceiver = metadata[PromptPermissionAction.resultReceiverMetadataKey] as? PermissionResultReceiver
-        XCTAssertNil(resultReceiver)
+        #expect(resultReceiver == nil)
     }
 
-    private func verifyEvents(_ expected: [(InAppEvent, ThomasLayoutContext?)], line: UInt = #line) {
-           XCTAssertEqual(expected.count, self.analytics.events.count, line: line)
+    private func verifyEvents(
+        _ expected: [(InAppEvent, ThomasLayoutContext?)],
+        sourceLocation: SourceLocation = #_sourceLocation
+    ) throws {
+        #expect(expected.count == self.analytics.events.count, sourceLocation: sourceLocation)
 
-           expected.indices.forEach { index in
-               let expectedEvent = expected[index]
-               let actual = analytics.events[index]
-               XCTAssertEqual(actual.0.name, expectedEvent.0.name, line: line)
-               XCTAssertEqual(try! AirshipJSON.wrap(actual.0.data), try! AirshipJSON.wrap(expectedEvent.0.data), line: line)
-               XCTAssertEqual(actual.1, expectedEvent.1, line: line)
-           }
-       }
-
+        try expected.indices.forEach { index in
+            let expectedEvent = expected[index]
+            let actual = analytics.events[index]
+            #expect(actual.0.name == expectedEvent.0.name, sourceLocation: sourceLocation)
+            let actualData = try AirshipJSON.wrap(actual.0.data)
+            let expectedData = try AirshipJSON.wrap(expectedEvent.0.data)
+            #expect(actualData == expectedData, sourceLocation: sourceLocation)
+            #expect(actual.1 == expectedEvent.1, sourceLocation: sourceLocation)
+        }
+    }
 }

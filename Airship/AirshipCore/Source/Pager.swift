@@ -11,7 +11,7 @@ struct Pager: View {
         case gesture(identifier: String, reportingMetadata: AirshipJSON?)
         case automated(identifier: String, reportingMetadata: AirshipJSON?)
         case accessibilityAction(ThomasAccessibilityAction)
-        case defaultSwipe(from: Int, to: Int)
+        case defaultSwipe(PagerState.NavigationResult)
     }
 
     // For debugging, set to true to force legacy pager behavior on iOS 17+
@@ -62,7 +62,6 @@ struct Pager: View {
         if self.info.containsGestures([.swipe]) { return true }
         return false
     }
-
 
     init(
         info: ThomasViewInfo.Pager,
@@ -159,8 +158,10 @@ struct Pager: View {
         .scrollIndicators(.never)
         .airshipOnChangeOf(scrollPosition, initial: false) { value in
             if let position = value, position != self.pagerState.pageIndex {
-                handleEvents(.defaultSwipe(from: self.pagerState.pageIndex, to: position))
-                self.pagerState.nagivateToPage(id: self.pagerState.pageStates[position].identifier)
+                let result = self.pagerState.navigateToPage(id: self.pagerState.pageStates[position].identifier)
+                if let result {
+                    handleEvents(.defaultSwipe(result))
+                }
             }
         }
         .frame(
@@ -247,6 +248,14 @@ struct Pager: View {
                 reportPage(value)
                 withAnimation {
                     scrollPosition = value
+                }
+            }
+            .airshipOnChangeOf(pagerState.completed) { completed in
+                if completed {
+                    self.thomasEnvironment.pagerCompleted(
+                        pagerState: pagerState,
+                        layoutState: layoutState
+                    )
                 }
             }
             .onReceive(self.timer) { _ in
@@ -410,15 +419,10 @@ struct Pager: View {
                 return
             }
 
-            self.handleEvents(
-                .defaultSwipe(
-                    from: pagerState.pageIndex,
-                    to: pagerState.previousPageIndex
-                )
-            )
-
             // Treat a11y swipes as page requests so they animate
-            pagerState.process(request: .back)
+            if let result = pagerState.process(request: .back) {
+                self.handleEvents(.defaultSwipe(result))
+            }
         case .end:
             guard
                 !pagerState.isLastPage,
@@ -427,15 +431,10 @@ struct Pager: View {
                 return
             }
 
-            self.handleEvents(
-                .defaultSwipe(
-                    from: pagerState.pageIndex,
-                    to: pagerState.nextPageIndex
-                )
-            )
-
             // Treat a11y swipes as page requests so they animate
-            pagerState.process(request: .next)
+            if let result = pagerState.process(request: .next) {
+                self.handleEvents(.defaultSwipe(result))
+            }
         }
     }
 
@@ -567,23 +566,26 @@ struct Pager: View {
         AirshipLogger.debug("Processing pager event: \(event)")
 
         switch event {
-        case .defaultSwipe(let from, let to):
-            thomasEnvironment.pageSwiped(
-                self.pagerState,
-                fromIndex: from,
-                toIndex: to,
-                layoutState: layoutState
-            )
+        case .defaultSwipe(let navigationResult):
+            if let from = navigationResult.fromPage {
+                thomasEnvironment.pageSwiped(
+                    pagerState: self.pagerState,
+                    from: from,
+                    to: navigationResult.toPage,
+                    layoutState: layoutState
+                )
+            }
+
         case .gesture(let identifier, let reportingMetadata):
             thomasEnvironment.pageGesture(
                 identifier: identifier,
-                reportingMetatda: reportingMetadata,
+                reportingMetadata: reportingMetadata,
                 layoutState: layoutState
             )
         case .automated(let identifier, let reportingMetadata):
             thomasEnvironment.pageAutomated(
                 identifier: identifier,
-                reportingMetatda: reportingMetadata,
+                reportingMetadata: reportingMetadata,
                 layoutState: layoutState
             )
         case .accessibilityAction(_):
@@ -598,7 +600,8 @@ struct Pager: View {
         }
         
         self.thomasEnvironment.pageViewed(
-            self.pagerState,
+            pagerState: self.pagerState,
+            pageInfo: self.pagerState.pageInfo(index: index),
             layoutState: layoutState
         )
         self.lastReportedIndex = index

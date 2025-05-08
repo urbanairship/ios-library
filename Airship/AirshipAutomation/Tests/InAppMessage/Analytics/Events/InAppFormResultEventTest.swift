@@ -1,25 +1,29 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipAutomation
 @testable import AirshipCore
 
-final class InAppFormResultEventTest: XCTestCase {
+struct InAppFormResultEventTest {
 
+    @Test
     func testEvent() throws {
-        let event = InAppFormResultEvent(
+        let thomasEvent = ThomasReportingEvent.FormResultEvent(
             forms: .string("form result")
         )
+
+        let event = InAppFormResultEvent(data: thomasEvent)
+        #expect(event.name.reportingName == "in_app_form_result")
 
         let expectedJSON = """
         {
            "forms": "form result"
         }
         """
-
-        XCTAssertEqual(event.name.reportingName, "in_app_form_result")
-        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+        
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
     }
-
 }

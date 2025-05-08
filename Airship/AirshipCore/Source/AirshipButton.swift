@@ -82,7 +82,7 @@ struct AirshipButton<Label> : View  where Label : View {
         // Button reporting
         thomasEnvironment.buttonTapped(
             buttonIdentifier: self.identifier,
-            reportingMetatda: self.reportingMetadata,
+            reportingMetadata: self.reportingMetadata,
             layoutState: layoutState
         )
 

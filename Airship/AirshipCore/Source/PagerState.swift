@@ -45,8 +45,23 @@ enum PageRequest {
     case first
 }
 
+struct ThomasPageInfo: Sendable {
+    var identifier: String
+    var index: Int
+    var viewCount: Int
+}
+
+
+
+
 @MainActor
 class PagerState: ObservableObject {
+
+    struct NavigationResult: Sendable {
+        var fromPage: ThomasPageInfo?
+        var toPage: ThomasPageInfo
+    }
+
     @Published private(set) var pageIndex: Int = 0
 
     @Published private(set) var currentPageId: String? {
@@ -58,7 +73,8 @@ class PagerState: ObservableObject {
             else {
                 return
             }
-            
+
+            self.pageViewCounts[page] = (self.pageViewCounts[page] ?? 0) + 1
             pageIndex = index
             updateInProgress(pageId: page)
             resetExecutedActions(for: oldValue)
@@ -73,12 +89,13 @@ class PagerState: ObservableObject {
     @Published var progress: Double = 0.0
     @Published private(set) var completed: Bool = false
     @Published private(set) var isScrollingDisabled = false
-    
+
     /// Used to pause/resume a story
     @Published var inProgress: Bool = true
     
     private var isManuallyPaused = false
     private var clearPagingRequestTask: Task<Void, Never>?
+    private var pageViewCounts: [String: Int] = [:]
 
     @Published
     var isVoiceOverRunning = false
@@ -146,8 +163,7 @@ class PagerState: ObservableObject {
                     self?.reEvaluateScrollability(state: newState, selectors: selectors)
                 }
         }
-        
-        
+
         self.currentPageId = pageItems.first?.identifier
     }
 
@@ -173,44 +189,70 @@ class PagerState: ObservableObject {
         return pageIndex == pageItems.count - 1
     }
     
-    var previousPageIndex: Int {
-        guard canGoBack else { return pageIndex }
-        
-        return min(pageIndex - 1, 0)
-    }
-    
-    var nextPageIndex: Int {
-        return min(pageIndex + 1, pageItems.count - 1)
-    }
-    
     var canGoBack: Bool {
         return pageIndex > 0 && !isScrollingDisabled
     }
-    
-    func nagivateToPage(id: String) {
-        guard self.pageItems.contains(where: { $0.identifier == id }) else {
-            return
+
+    @discardableResult
+    func navigateToPage(id: String) -> NavigationResult?  {
+        guard
+            self.pageItems.contains(where: { $0.identifier == id }),
+            id != self.currentPageId
+        else {
+            return nil
         }
-        
+
+        let fromPage: ThomasPageInfo? = if let currentPageId {
+            self.pageInfo(pageIdentifier: currentPageId)
+        } else {
+            nil
+        }
+
+        let toPage = self.pageInfo(pageIdentifier: id)
+
         branchControl?.clearHistoryAfter(id: id)
-        
         self.progress = 0.0
         self.currentPageId = id
+
+        return NavigationResult(fromPage: fromPage, toPage: toPage)
     }
-    
-    func process(request: PageRequest) {
-        let currentId = self.currentPageId
-        
-        self.nagivateToPage(id: pageItems[nextIndexNoBranching(request: request)].identifier)
-        if (currentId != self.currentPageId) {
-            branchControl?.onPageRequest(request)
+
+    func pageInfo(pageIdentifier: String) -> ThomasPageInfo {
+        return ThomasPageInfo(
+            identifier: pageIdentifier,
+            index: self.pageItems.firstIndex(where: { item in
+                item.identifier == identifier
+            }) ?? -1,
+            viewCount: self.pageViewCounts[identifier] ?? 0
+        )
+    }
+
+    func pageInfo(index: Int) -> ThomasPageInfo {
+        let pageIdentifier = self.pageItems[index].identifier
+        return ThomasPageInfo(
+            identifier: pageIdentifier,
+            index: index,
+            viewCount: self.pageViewCounts[pageIdentifier] ?? 0
+        )
+    }
+
+    @discardableResult
+    func process(request: PageRequest) -> NavigationResult? {
+        let id = pageItems[nextIndexNoBranching(request: request)].identifier
+        guard
+            let result = self.navigateToPage(id: id)
+        else {
+            return nil
         }
-        
+
+        branchControl?.onPageRequest(request)
         if #available(iOS 16.0, *) {
             fixTouchDuringNavigationIssue()
         } else {
             updateScrollControl()
         }
+
+        return result
     }
     
     private func reEvaluateScrollability(

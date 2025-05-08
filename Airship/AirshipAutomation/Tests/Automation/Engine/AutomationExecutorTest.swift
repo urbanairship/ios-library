@@ -346,11 +346,11 @@ final class TestInAppActionRunner: InternalInAppActionRunner, @unchecked Sendabl
     var singleActions: [(String, ActionArguments, ThomasLayoutContext?)] = []
     var actionPayloads: [(AirshipJSON, ThomasLayoutContext?)] = []
 
-    func runAsync(actions: AirshipJSON, layoutContext: ThomasLayoutContext?) {
+    func runAsync(actions: AirshipJSON, layoutContext: ThomasLayoutContext) {
         actionPayloads.append((actions, layoutContext))
     }
 
-    func run(actionName: String, arguments: ActionArguments, layoutContext: ThomasLayoutContext?) async -> ActionResult {
+    func run(actionName: String, arguments: ActionArguments, layoutContext: ThomasLayoutContext) async -> ActionResult {
         singleActions.append((actionName, arguments, layoutContext))
         return .error(AirshipErrors.error("not implemented"))
     }

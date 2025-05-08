@@ -10,11 +10,7 @@ struct InAppFormResultEvent: InAppEvent {
     let name = EventType.inAppFormResult
     let data: (any Sendable & Encodable)?
 
-    init(forms: AirshipJSON) {
-        self.data = FormResultData(forms: forms)
-    }
-
-    private struct FormResultData: Encodable, Sendable {
-        var forms: AirshipJSON
+    init(data: ThomasReportingEvent.FormResultEvent) {
+        self.data = data
     }
 }

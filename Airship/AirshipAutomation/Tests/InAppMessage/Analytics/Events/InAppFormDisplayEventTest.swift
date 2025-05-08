@@ -1,18 +1,22 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipAutomation
 @testable import AirshipCore
 
-final class InAppFormDisplayEventTest: XCTestCase {
+struct InAppFormDisplayEventTest {
 
+    @Test
     func testEvent() throws {
-        let event = InAppFormDisplayEvent(
+        let thomasEvent = ThomasReportingEvent.FormDisplayEvent(
             identifier: "form id",
             formType: "nps",
             responseType: "user feedback"
         )
+
+        let event = InAppFormDisplayEvent(data: thomasEvent)
+        #expect(event.name.reportingName == "in_app_form_display")
 
         let expectedJSON = """
         {
@@ -22,8 +26,9 @@ final class InAppFormDisplayEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name.reportingName, "in_app_form_display")
-        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
     }
 
 }

@@ -1,23 +1,25 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipAutomation
 @testable import AirshipCore
 
-final class InAppPageViewEventTest: XCTestCase {
+struct InAppPageViewEventTest {
 
+    @Test
     func testEvent() throws {
-        let event = InAppPageViewEvent(
-            pagerInfo: ThomasPagerInfo(
-                identifier: "pager identifier",
-                pageIndex: 3,
-                pageIdentifier: "page identifier",
-                pageCount: 12,
-                completed: false
-            ),
-            viewCount: 31
+        let thomasEvent = ThomasReportingEvent.PageViewEvent(
+            identifier: "pager identifier",
+            pageIdentifier: "page identifier",
+            pageIndex: 3,
+            pageViewCount: 31,
+            pageCount: 12,
+            completed: false
         )
+
+        let event = InAppPageViewEvent(data: thomasEvent)
+        #expect(event.name.reportingName == "in_app_page_view")
 
         let expectedJSON = """
         {
@@ -30,8 +32,9 @@ final class InAppPageViewEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name.reportingName, "in_app_page_view")
-        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
     }
 
 }

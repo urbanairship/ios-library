@@ -28,13 +28,28 @@ final class LoggingInAppMessageAnalytics: InAppMessageAnalyticsProtocol {
     }
     
     func recordEvent(_ event: any InAppEvent, layoutContext: ThomasLayoutContext?) {
-        if let layoutContext = layoutContext {
-            print("Event added: \(event) context: \(layoutContext)")
-        } else {
-            print("Event added: \(event)")
+        do {
+            let body = try event.data?.prettyString ?? "nil"
+            let context = try layoutContext?.prettyString ?? "nil"
+            AirshipLogger.debug(
+                "Adding event \(event.name.reportingName):\n body: \(body),\n layoutContext: \(context)"
+            )
+        } catch {
+            AirshipLogger.error("Failed to log event \(event): \(error)")
         }
     }
 }
+
+fileprivate extension Encodable {
+    var prettyString: String? {
+        get throws {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted]
+            return String(data: try encoder.encode(self), encoding: .utf8)
+        }
+    }
+}
+
 
 final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
     private let preparedScheduleInfo: PreparedScheduleInfo

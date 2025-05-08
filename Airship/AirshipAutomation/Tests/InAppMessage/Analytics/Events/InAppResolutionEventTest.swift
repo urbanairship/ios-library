@@ -1,18 +1,20 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipAutomation
 @testable import AirshipCore
 
-final class InAppResolutionEventTest: XCTestCase {
-    
+struct InAppResolutionEventTest {
+
+    @Test
     func testButtonResolution() throws {
         let event = InAppResolutionEvent.buttonTap(
             identifier: "button id",
             description: "button description",
             displayTime: 100.0
         )
+        #expect(event.name.reportingName == "in_app_resolution")
 
         let expectedJSON = """
         {
@@ -25,12 +27,15 @@ final class InAppResolutionEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name.reportingName, "in_app_resolution")
-        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
     }
 
+    @Test
     func testMessageTap() throws {
         let event = InAppResolutionEvent.messageTap(displayTime: 100.0)
+        #expect(event.name.reportingName == "in_app_resolution")
 
         let expectedJSON = """
         {
@@ -41,12 +46,15 @@ final class InAppResolutionEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name.reportingName, "in_app_resolution")
-        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
     }
 
+    @Test
     func testUserDismissed() throws {
         let event = InAppResolutionEvent.userDismissed(displayTime: 100.0)
+        #expect(event.name.reportingName == "in_app_resolution")
 
         let expectedJSON = """
         {
@@ -57,12 +65,15 @@ final class InAppResolutionEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name.reportingName, "in_app_resolution")
-        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
     }
 
+    @Test
     func testTimedOut() throws {
         let event = InAppResolutionEvent.timedOut(displayTime: 100.0)
+        #expect(event.name.reportingName == "in_app_resolution")
 
         let expectedJSON = """
         {
@@ -73,10 +84,12 @@ final class InAppResolutionEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name.reportingName, "in_app_resolution")
-        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
     }
 
+    @Test
     func testControl() throws {
         let experimentResult = ExperimentResult(
             channelID: "channel id",
@@ -86,6 +99,7 @@ final class InAppResolutionEventTest: XCTestCase {
         )
 
         let event = InAppResolutionEvent.control(experimentResult: experimentResult)
+        #expect(event.name.reportingName == "in_app_resolution")
 
         let expectedJSON = """
         {
@@ -100,13 +114,15 @@ final class InAppResolutionEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name.reportingName, "in_app_resolution")
-        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
     }
 
+    @Test
     func testAudienceExcluded() throws {
-
         let event = InAppResolutionEvent.audienceExcluded()
+        #expect(event.name.reportingName == "in_app_resolution")
 
         let expectedJSON = """
         {
@@ -117,7 +133,8 @@ final class InAppResolutionEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name.reportingName, "in_app_resolution")
-        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
     }
 }

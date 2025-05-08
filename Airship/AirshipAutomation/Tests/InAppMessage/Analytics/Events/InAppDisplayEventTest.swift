@@ -1,14 +1,17 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipAutomation
 @testable import AirshipCore
 
-final class InAppDisplayEventTest: XCTestCase {
+struct InAppDisplayEventTest {
+
+    @Test
     func testEvent() throws {
         let event = InAppDisplayEvent()
-        XCTAssertEqual(event.name.reportingName, "in_app_display")
-        XCTAssertNil(event.data)
+        #expect(event.name.reportingName == "in_app_display")
+        #expect(event.data == nil)
     }
+
 }

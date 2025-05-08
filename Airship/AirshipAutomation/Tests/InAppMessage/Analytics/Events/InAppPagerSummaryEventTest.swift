@@ -1,38 +1,38 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipAutomation
 @testable import AirshipCore
 
-final class InAppPagerSummaryEventTest: XCTestCase {
+struct InAppPagerSummaryEventTest {
 
     func testEvent() throws {
         let event = InAppPagerSummaryEvent(
-            pagerInfo: ThomasPagerInfo(
+            data: .init(
                 identifier: "pager identifier",
-                pageIndex: 3,
-                pageIdentifier: "page identifier",
+                viewedPages: [
+                    .init(
+                        identifier: "page 1",
+                        index: 0,
+                        displayTime: 10.4
+                    ),
+                    .init(
+                        identifier: "page 2",
+                        index: 1,
+                        displayTime: 3.0
+                    ),
+                    .init(
+                        identifier: "page 3",
+                        index: 2,
+                        displayTime: 4.0
+                    )
+                ],
                 pageCount: 12,
                 completed: false
-            ), viewedPages: [
-                PageViewSummary(
-                    identifier: "page 1",
-                    index: 0,
-                    displayTime: 10.4
-                ),
-                PageViewSummary(
-                    identifier: "page 2",
-                    index: 1,
-                    displayTime: 3.0
-                ),
-                PageViewSummary(
-                    identifier: "page 3",
-                    index: 2,
-                    displayTime: 4.0
-                )
-            ]
+            )
         )
+        #expect(event.name.reportingName == "in_app_pager_summary")
 
         let expectedJSON = """
         {
@@ -59,7 +59,8 @@ final class InAppPagerSummaryEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name.reportingName, "in_app_pager_summary")
-        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
     }
 }

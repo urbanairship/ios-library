@@ -1,25 +1,27 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipAutomation
 @testable import AirshipCore
 
-final class LegacyInAppAnalyticsTest: XCTestCase {
+@MainActor
+struct LegacyInAppAnalyticsTest {
 
     private let recoder: EventRecorder = EventRecorder()
-    private var analytics: LegacyInAppAnalytics!
+    private let analytics: LegacyInAppAnalytics!
 
-    override func setUp() async throws {
+    init() {
         self.analytics = LegacyInAppAnalytics(recorder: recoder)
     }
 
-    func testDirectOpen() {
+    @Test
+    func testDirectOpen() throws {
         self.analytics.recordDirectOpenEvent(scheduleID: "some schedule")
-        let eventData = recoder.eventData.first!
-        XCTAssertNil(eventData.context)
-        XCTAssertNil(eventData.renderedLocale)
-        XCTAssertEqual(eventData.messageID, .legacy(identifier: "some schedule"))
-        XCTAssertEqual(eventData.source, .airship)
+        let eventData = try #require(recoder.eventData.first)
+        #expect(eventData.context == nil)
+        #expect(eventData.renderedLocale == nil)
+        #expect(eventData.messageID == .legacy(identifier: "some schedule"))
+        #expect(eventData.source == .airship)
 
         let expectedJSON = """
         {
@@ -27,18 +29,20 @@ final class LegacyInAppAnalyticsTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(eventData.event.name.reportingName, "in_app_resolution")
-        XCTAssertEqual(try eventData.event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
-
+        #expect(eventData.event.name.reportingName == "in_app_resolution")
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try eventData.event.bodyJSON
+        #expect(actual == expected)
     }
 
-    func testReplaced() {
+    @Test
+    func testReplaced() throws {
         self.analytics.recordReplacedEvent(scheduleID: "some schedule", replacementID: "replacement id")
-        let eventData = recoder.eventData.first!
-        XCTAssertNil(eventData.context)
-        XCTAssertNil(eventData.renderedLocale)
-        XCTAssertEqual(eventData.messageID, .legacy(identifier: "some schedule"))
-        XCTAssertEqual(eventData.source, .airship)
+        let eventData = try #require(recoder.eventData.first)
+        #expect(eventData.context == nil)
+        #expect(eventData.renderedLocale == nil)
+        #expect(eventData.messageID == .legacy(identifier: "some schedule"))
+        #expect(eventData.source == .airship)
 
         let expectedJSON = """
         {
@@ -47,7 +51,8 @@ final class LegacyInAppAnalyticsTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(eventData.event.name.reportingName, "in_app_resolution")
-        XCTAssertEqual(try eventData.event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
-    }
+        #expect(eventData.event.name.reportingName == "in_app_resolution")
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try eventData.event.bodyJSON
+        #expect(actual == expected)    }
 }

@@ -207,10 +207,10 @@ public struct ThomasExtensions {
 /// - Note: for internal use only.  :nodoc:
 public protocol ThomasActionRunner: Sendable {
     @MainActor
-    func runAsync(actions: AirshipJSON, layoutContext: ThomasLayoutContext?)
+    func runAsync(actions: AirshipJSON, layoutContext: ThomasLayoutContext)
 
     @MainActor
-    func run(actionName: String, arguments: ActionArguments, layoutContext: ThomasLayoutContext?) async -> ActionResult
+    func run(actionName: String, arguments: ActionArguments, layoutContext: ThomasLayoutContext) async -> ActionResult
 }
 
 

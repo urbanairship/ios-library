@@ -7,204 +7,105 @@ import AirshipCore
 @MainActor
 final class ThomasDisplayListener: ThomasDelegate {
     private let analytics: any InAppMessageAnalyticsProtocol
-    
-    private let timer: any ActiveTimerProtocol
-    private let tracker: ThomasPagerTracker
     private var onDismiss: (@MainActor @Sendable (DisplayResult) -> Void)?
-    private var completedPagers: Set<String> = Set()
 
     init(
         analytics: any InAppMessageAnalyticsProtocol,
-        tracker: ThomasPagerTracker? = nil,
-        timer: (any ActiveTimerProtocol)? = nil,
         onDismiss: @escaping @MainActor @Sendable (DisplayResult) -> Void
     ) {
         self.analytics = analytics
-        self.tracker = tracker ?? ThomasPagerTracker()
         self.onDismiss = onDismiss
-        self.timer = timer ?? ManualActiveTimer()
     }
 
-    func onVisbilityChanged(isVisible: Bool, isForegrounded: Bool) {
+    func onVisibilityChanged(isVisible: Bool, isForegrounded: Bool) {
         if isVisible, isForegrounded {
             analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
-            timer.start()
-        } else {
-            timer.stop()
         }
     }
 
-    func onFormSubmitted(
-        formResult: ThomasFormResult,
-        layoutContext: ThomasLayoutContext
-    ) {
-        analytics.recordEvent(
-            InAppFormResultEvent(forms: formResult.formData),
-            layoutContext: layoutContext
-        )
-    }
-    
-    func onFormDisplayed(
-        formInfo: ThomasFormInfo,
-        layoutContext: ThomasLayoutContext
-    ) {
-        analytics.recordEvent(
-            InAppFormDisplayEvent(formInfo: formInfo),
-            layoutContext: layoutContext
-        )
-    }
-    
-    func onButtonTapped(
-        buttonIdentifier: String,
-        metadata: AirshipJSON?,
-        layoutContext: ThomasLayoutContext
-    ) {
-        analytics.recordEvent(
-            InAppButtonTapEvent(
-                identifier: buttonIdentifier,
-                reportingMetadata: metadata
-            ),
-            layoutContext: layoutContext
-        )
-    }
-    
-    func onDismissed(
-        cancel: Bool,
-        layoutContext: ThomasLayoutContext?
-    ) {
-        tryDismiss(layoutContext: layoutContext) { time in
+    func onReportingEvent(_ event: ThomasReportingEvent) {
+        switch(event) {
+        case .buttonTap(let event, let layoutContext):
             analytics.recordEvent(
-                InAppResolutionEvent.userDismissed(displayTime: time),
+                InAppButtonTapEvent(data: event),
                 layoutContext: layoutContext
             )
-            return cancel ? .cancel : .finished
-        }
-    }
-    
-    func onDismissed(
-        buttonIdentifier: String,
-        buttonDescription: String,
-        cancel: Bool,
-        layoutContext: ThomasLayoutContext
-    ) {
-        tryDismiss(layoutContext: layoutContext) { time in
+        case .formDisplay(let event, let layoutContext):
             analytics.recordEvent(
-                InAppResolutionEvent.buttonTap(
-                    identifier: buttonIdentifier,
-                    description: buttonDescription,
-                    displayTime: time
-                ),
+                InAppFormDisplayEvent(data: event),
                 layoutContext: layoutContext
             )
-            return cancel ? .cancel : .finished
-        }
-
-    }
-    
-    func onTimedOut(
-        layoutContext: ThomasLayoutContext?
-    ) {
-        tryDismiss(layoutContext: layoutContext) { time in
+        case .formResult(let event, let layoutContext):
             analytics.recordEvent(
-                InAppResolutionEvent.timedOut(displayTime: time),
+                InAppFormResultEvent(data: event),
                 layoutContext: layoutContext
             )
-            return .finished
-        }
-
-    }
-    
-    func onPageViewed(
-        pagerInfo: ThomasPagerInfo,
-        layoutContext: ThomasLayoutContext
-    ) {
-        self.tracker.onPageView(pagerInfo: pagerInfo)
-        analytics.recordEvent(
-            InAppPageViewEvent(
-                pagerInfo: pagerInfo,
-                viewCount: self.tracker.viewCount(pagerInfo: pagerInfo)
-            ),
-            layoutContext: layoutContext
-        )
-
-        if pagerInfo.completed, !completedPagers.contains(pagerInfo.identifier) {
-            completedPagers.insert(pagerInfo.identifier)
+        case .gesture(let event, let layoutContext):
             analytics.recordEvent(
-                InAppPagerCompletedEvent(
-                    pagerInfo: pagerInfo
-                ),
+                InAppGestureEvent(data: event),
                 layoutContext: layoutContext
             )
-        }
-    }
-    
-    func onPageGesture(
-        identifier: String,
-        metadata: AirshipJSON?,
-        layoutContext: ThomasLayoutContext
-    ) {
-        analytics.recordEvent(
-            InAppGestureEvent(
-                identifier: identifier,
-                reportingMetadata: metadata
-            ),
-            layoutContext: layoutContext
-        )
-    }
-    
-    func onPageAutomatedAction(
-        identifier: String,
-        metadata: AirshipJSON?,
-        layoutContext: ThomasLayoutContext
-    ) {
-        analytics.recordEvent(
-            InAppPageActionEvent(
-                identifier: identifier,
-                reportingMetadata: metadata
-            ),
-            layoutContext: layoutContext
-        )
-    }
-
-    func onPageSwiped(
-        from: ThomasPagerInfo,
-        to: ThomasPagerInfo,
-        layoutContext: ThomasLayoutContext
-    ) {
-        analytics.recordEvent(
-            InAppPageSwipeEvent(
-                from: from,
-                to: to
-            ),
-            layoutContext: layoutContext
-        )
-    }
-
-    private func tryDismiss(
-        layoutContext: ThomasLayoutContext? = nil,
-        dismissBlock: (TimeInterval) -> DisplayResult
-    ) {
-        guard let onDismiss = onDismiss else {
-            AirshipLogger.error("Dismissed already called!")
-            return
-        }
-
-        self.timer.stop()
-
-        self.tracker.stopAll()
-
-        self.tracker.summary.forEach { pagerInfo, viewedPages in
+        case .pageAction(let event, let layoutContext):
             analytics.recordEvent(
-                InAppPagerSummaryEvent(
-                    pagerInfo: pagerInfo,
-                    viewedPages: viewedPages
-                ),
+                InAppPageActionEvent(data: event),
                 layoutContext: layoutContext
             )
-        }
+        case .pagerCompleted(let event, let layoutContext):
+            analytics.recordEvent(
+                InAppPagerCompletedEvent(data: event),
+                layoutContext: layoutContext
+            )
+        case .pageSwipe(let event, let layoutContext):
+            analytics.recordEvent(
+                InAppPageSwipeEvent(data: event),
+                layoutContext: layoutContext
+            )
+        case .pageView(let event, let layoutContext):
+            analytics.recordEvent(
+                InAppPageViewEvent(data: event),
+                layoutContext: layoutContext
+            )
+        case .pagerSummary(let event, let layoutContext):
+            analytics.recordEvent(
+                InAppPagerSummaryEvent(data: event),
+                layoutContext: layoutContext
+            )
+        case .dismiss(let event, let displayTime, let layoutContext):
+            switch(event) {
+            case .buttonTapped(identifier: let identifier, description: let description):
+                analytics.recordEvent(
+                    InAppResolutionEvent.buttonTap(
+                        identifier: identifier,
+                        description: description,
+                        displayTime: displayTime
+                    ),
+                    layoutContext: layoutContext
+                )
+            case .timedOut:
+                analytics.recordEvent(
+                    InAppResolutionEvent.timedOut(displayTime: displayTime),
+                    layoutContext: layoutContext
+                )
+            case .userDismissed:
+                analytics.recordEvent(
+                    InAppResolutionEvent.userDismissed(displayTime: displayTime),
+                    layoutContext: layoutContext
+                )
+            @unknown default:
+                AirshipLogger.error("Unhandled dismiss type event \(event)")
+                analytics.recordEvent(
+                    InAppResolutionEvent.userDismissed(displayTime: displayTime),
+                    layoutContext: layoutContext
+                )
+            }
 
-        let result = dismissBlock(self.timer.time)
-        onDismiss(result)
+
+        @unknown default: AirshipLogger.error("Unhandled IAX event \(event)")
+        }
+    }
+
+    func onDismissed(cancel: Bool) {
+        self.onDismiss?(cancel ? .cancel : .finished)
         self.onDismiss = nil
     }
 }

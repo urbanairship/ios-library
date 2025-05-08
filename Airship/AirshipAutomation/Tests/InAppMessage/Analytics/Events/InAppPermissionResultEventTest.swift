@@ -1,19 +1,21 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipAutomation
 @testable import AirshipCore
 
 
-final class InAppPermissionResultEventTest: XCTestCase {
+struct InAppPermissionResultEventTest {
 
+    @Test
     func testEvent() throws {
         let event = InAppPermissionResultEvent(
             permission: .displayNotifications,
             startingStatus: .denied,
             endingStatus: .granted
         )
+        #expect(event.name.reportingName == "in_app_permission_result")
 
         let expectedJSON = """
         {
@@ -23,8 +25,9 @@ final class InAppPermissionResultEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name.reportingName, "in_app_permission_result")
-        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
     }
 
 }

@@ -1,17 +1,21 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipAutomation
 @testable import AirshipCore
 
-final class InAppPageActionEventTest: XCTestCase {
+struct InAppPageActionEventTest {
 
+    @Test
     func testEvent() throws {
-        let event = InAppPageActionEvent(
+        let thomasEvent = ThomasReportingEvent.PageActionEvent(
             identifier: "action id",
             reportingMetadata: .string("reporting metadata")
         )
+
+        let event = InAppPageActionEvent(data: thomasEvent)
+        #expect(event.name.reportingName == "in_app_page_action")
 
         let expectedJSON = """
         {
@@ -20,8 +24,9 @@ final class InAppPageActionEventTest: XCTestCase {
         }
         """
 
-        XCTAssertEqual(event.name.reportingName, "in_app_page_action")
-        XCTAssertEqual(try event.bodyJSON, try! AirshipJSON.from(json: expectedJSON))
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
     }
 
 }

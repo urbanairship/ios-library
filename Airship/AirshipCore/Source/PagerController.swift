@@ -30,11 +30,11 @@ struct PagerController: View {
     struct Content: View {
         let info: ThomasViewInfo.PagerController
         let constraints: ViewConstraints
+        @Environment(\.layoutState) var layoutState
 
         @ObservedObject var pagerState: PagerState
         @StateObject var formDataCollector: ThomasFormDataCollector
 
-        @Environment(\.layoutState) var layoutState
         @Environment(\.isVoiceOverRunning) var isVoiceOverRunning
 
 

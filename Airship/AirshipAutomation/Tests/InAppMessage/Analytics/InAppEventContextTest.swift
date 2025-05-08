@@ -1,12 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipAutomation
 import AirshipCore
 
-class InAppEventContextTest: XCTestCase {
+struct InAppEventContextTest {
 
     private let campaigns = try! AirshipJSON.wrap(
         ["campaign1": "data1", "campaign2": "data2"]
@@ -14,22 +14,20 @@ class InAppEventContextTest: XCTestCase {
 
     private let scheduleID = UUID().uuidString
 
-    var reportingContext: AirshipJSON?
-    var experimentsReportingData: [AirshipJSON]?
-
+    @Test
     func testJSON() async throws {
         let context = InAppEventContext(
-            pager: .init(
+            pager: ThomasLayoutContext.Pager(
                 identifier: "pager id",
                 pageIdentifier: "page id",
                 pageIndex: 1,
                 completed: true,
                 count: 2
             ),
-            button: .init(
+            button: ThomasLayoutContext.Button(
                 identifier: "button id"
             ),
-            form: .init(
+            form: ThomasLayoutContext.Form(
                 identifier: "form id",
                 submitted: true,
                 type: "form type"
@@ -80,9 +78,12 @@ class InAppEventContextTest: XCTestCase {
 
         AirshipLogger.error("\(string)")
 
-        XCTAssertEqual(try AirshipJSON.wrap(context), try AirshipJSON.from(json: expectedJSON))
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try AirshipJSON.wrap(context)
+        #expect(actual == expected)
     }
 
+    @Test
     func testMake() throws {
         let experimentResult = ExperimentResult(
             channelID: "some channel",
@@ -93,21 +94,21 @@ class InAppEventContextTest: XCTestCase {
 
         let reportingMetadata = AirshipJSON.string("reporting info")
 
-        let thomasLayoutContext  = ThomasLayoutContext(
-            formInfo: ThomasFormInfo(
+        let thomasLayoutContext = ThomasLayoutContext(
+            pager: ThomasLayoutContext.Pager(
                 identifier: UUID().uuidString,
-                submitted: true,
-                formType: UUID().uuidString,
-                formResponseType: UUID().uuidString
-            ),
-            pagerInfo: ThomasPagerInfo(
-                identifier: UUID().uuidString,
-                pageIndex: 1,
                 pageIdentifier: UUID().uuidString,
-                pageCount: 2,
-                completed: false
+                pageIndex: 1,
+                completed: false,
+                count: 2
             ),
-            buttonInfo: ThomasButtonInfo(identifier: UUID().uuidString)
+            button: ThomasLayoutContext.Button(identifier: UUID().uuidString),
+            form: ThomasLayoutContext.Form(
+                identifier: UUID().uuidString,
+                submitted: false,
+                type: UUID().uuidString,
+                responseType: UUID().uuidString
+            )
         )
 
         let displayContext  = InAppEventContext.Display(
@@ -124,31 +125,18 @@ class InAppEventContextTest: XCTestCase {
         )
 
         let expected = InAppEventContext(
-            pager: .init(
-                identifier: thomasLayoutContext.pagerInfo!.identifier,
-                pageIdentifier: thomasLayoutContext.pagerInfo!.pageIdentifier,
-                pageIndex: thomasLayoutContext.pagerInfo!.pageIndex,
-                completed: thomasLayoutContext.pagerInfo!.completed,
-                count: thomasLayoutContext.pagerInfo!.pageCount
-            ),
-            button: .init(
-                identifier: thomasLayoutContext.buttonInfo!.identifier
-            ),
-            form: .init(
-                identifier: thomasLayoutContext.formInfo!.identifier,
-                submitted: thomasLayoutContext.formInfo!.submitted,
-                type: thomasLayoutContext.formInfo!.formType,
-                responseType: thomasLayoutContext.formInfo!.formResponseType
-
-            ),
+            pager: thomasLayoutContext.pager,
+            button: thomasLayoutContext.button,
+            form: thomasLayoutContext.form,
             display: displayContext,
             reportingContext: reportingMetadata,
             experimentsReportingData: experimentResult.reportingMetadata
         )
 
-        XCTAssertEqual(context, expected)
+        #expect(context == expected)
     }
 
+    @Test
     func testMakeEmpty() throws {
         let context = InAppEventContext.makeContext(
             reportingContext: nil,
@@ -157,7 +145,7 @@ class InAppEventContextTest: XCTestCase {
             displayContext: nil
         )
 
-        XCTAssertNil(context)
+        #expect(context == nil)
     }
 }
 
