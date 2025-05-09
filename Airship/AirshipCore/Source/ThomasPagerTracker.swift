@@ -32,6 +32,10 @@ final class ThomasPagerTracker {
         self.trackers.values.forEach { $0.stop(currentDisplayTime: currentDisplayTime) }
     }
 
+    func viewedPages(pagerIdentifier: String) -> [ThomasViewedPageInfo] {
+        return trackers[pagerIdentifier]?.viewed ?? []
+    }
+
     var summary: Set<ThomasReportingEvent.PagerSummaryEvent> {
         let summary = lastPagerPageEvent.map { id, event in
             ThomasReportingEvent.PagerSummaryEvent(
@@ -48,7 +52,7 @@ final class ThomasPagerTracker {
     @MainActor
     fileprivate final class Tracker {
         private var currentPage: Page?
-        var viewed: [ThomasReportingEvent.PagerSummaryEvent.PageView] = []
+        var viewed: [ThomasViewedPageInfo] = []
         private var startTime: TimeInterval?
 
         func start(page: Page, currentDisplayTime: TimeInterval) {
@@ -62,7 +66,7 @@ final class ThomasPagerTracker {
             guard let startTime, let currentPage else { return }
 
             viewed.append(
-                ThomasReportingEvent.PagerSummaryEvent.PageView(
+                ThomasViewedPageInfo(
                     identifier: currentPage.identifier,
                     index: currentPage.index,
                     displayTime: currentDisplayTime - startTime

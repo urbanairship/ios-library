@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Testing
+import Foundation
 
 @testable
 import AirshipAutomation
@@ -22,7 +23,8 @@ struct InAppEventContextTest {
                 pageIdentifier: "page id",
                 pageIndex: 1,
                 completed: true,
-                count: 2
+                count: 2,
+                pageHistory: [.init(identifier: "foo-0", index: 0, displayTime: 20)]
             ),
             button: ThomasLayoutContext.Button(
                 identifier: "button id"
@@ -60,7 +62,14 @@ struct InAppEventContextTest {
                  "page_index":1,
                  "identifier":"pager id",
                  "completed":true,
-                 "count":2
+                 "count":2,
+                 "page_history": [
+                    {
+                        "page_identifier": "foo-0",
+                        "page_index": 0,
+                        "display_time": "20.00"
+                    }
+                 ]
               },
               "experiments":[
                  "experiment result 1",

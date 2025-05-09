@@ -10,13 +10,22 @@ public struct ThomasLayoutContext: Encodable, Equatable, Sendable {
         public var pageIndex: Int
         public var completed: Bool
         public var count: Int
+        public var pageHistory: [ThomasViewedPageInfo] = []
 
-        public init(identifier: String, pageIdentifier: String, pageIndex: Int, completed: Bool, count: Int) {
+        public init(
+            identifier: String,
+            pageIdentifier: String,
+            pageIndex: Int,
+            completed: Bool,
+            count: Int,
+            pageHistory: [ThomasViewedPageInfo] = []
+        ) {
             self.identifier = identifier
             self.pageIdentifier = pageIdentifier
             self.pageIndex = pageIndex
             self.completed = completed
             self.count = count
+            self.pageHistory = pageHistory
         }
 
         enum CodingKeys: String, CodingKey {
@@ -25,6 +34,7 @@ public struct ThomasLayoutContext: Encodable, Equatable, Sendable {
             case pageIndex = "page_index"
             case completed
             case count
+            case pageHistory = "page_history"
         }
     }
 

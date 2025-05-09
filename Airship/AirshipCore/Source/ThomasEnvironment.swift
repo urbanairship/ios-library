@@ -384,7 +384,10 @@ class ThomasEnvironment: ObservableObject {
                 pageIdentifier: pager.currentPageId ?? "",
                 pageIndex: pager.pageIndex,
                 completed: pager.completed,
-                count: pager.reportingPageCount
+                count: pager.reportingPageCount,
+                pageHistory: pagerTracker.viewedPages(
+                    pagerIdentifier: pager.identifier
+                )
             )
         }
 

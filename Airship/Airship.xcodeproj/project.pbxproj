@@ -465,6 +465,7 @@
 		6E52146B2DCBF9BD00CF64B9 /* AirshipTimerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E52146A2DCBF9BA00CF64B9 /* AirshipTimerProtocol.swift */; };
 		6E52146D2DCBFABE00CF64B9 /* ThomasPagerTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E52146C2DCBFAB900CF64B9 /* ThomasPagerTracker.swift */; };
 		6E52146F2DCC075500CF64B9 /* ThomasPagerTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E52146E2DCC075100CF64B9 /* ThomasPagerTrackerTest.swift */; };
+		6E5215222DCEA12A00CF64B9 /* ThomasViewedPageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5215212DCEA10F00CF64B9 /* ThomasViewedPageInfo.swift */; };
 		6E524C732C126F5F002CA094 /* AirshipEventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E524C722C126F5F002CA094 /* AirshipEventType.swift */; };
 		6E524CC32C180A39002CA094 /* AirshipLogPrivacyLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E524CC22C180A39002CA094 /* AirshipLogPrivacyLevel.swift */; };
 		6E524D022C1A2CAE002CA094 /* InAppMessageThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E524D012C1A2CAE002CA094 /* InAppMessageThemeManager.swift */; };
@@ -1768,6 +1769,7 @@
 		6E52146A2DCBF9BA00CF64B9 /* AirshipTimerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipTimerProtocol.swift; sourceTree = "<group>"; };
 		6E52146C2DCBFAB900CF64B9 /* ThomasPagerTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasPagerTracker.swift; sourceTree = "<group>"; };
 		6E52146E2DCC075100CF64B9 /* ThomasPagerTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasPagerTrackerTest.swift; sourceTree = "<group>"; };
+		6E5215212DCEA10F00CF64B9 /* ThomasViewedPageInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewedPageInfo.swift; sourceTree = "<group>"; };
 		6E524C722C126F5F002CA094 /* AirshipEventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipEventType.swift; sourceTree = "<group>"; };
 		6E524CC22C180A39002CA094 /* AirshipLogPrivacyLevel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipLogPrivacyLevel.swift; sourceTree = "<group>"; };
 		6E524D012C1A2CAE002CA094 /* InAppMessageThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageThemeManager.swift; sourceTree = "<group>"; };
@@ -4323,6 +4325,7 @@
 		6EFD6D732729D84D005B26F1 /* Environment */ = {
 			isa = PBXGroup;
 			children = (
+				6E5215212DCEA10F00CF64B9 /* ThomasViewedPageInfo.swift */,
 				6E5214662DCAB03600CF64B9 /* ThomasFormResult.swift */,
 				6EBD12042DA73FD300F678AB /* ValidatableHelper.swift */,
 				6E97D6B02D84B1890001CF7F /* ThomasFormDataCollector.swift */,
@@ -5680,6 +5683,7 @@
 				6E739D6E26B9F58700BC6F6D /* TagGroupMutations.swift in Sources */,
 				6EF02DF02714EB500008B6C9 /* Thomas.swift in Sources */,
 				6E92EC90284954B10038802D /* ButtonState.swift in Sources */,
+				6E5215222DCEA12A00CF64B9 /* ThomasViewedPageInfo.swift in Sources */,
 				6E152BCA2743235800788402 /* Icons.swift in Sources */,
 				6E692AFD29E0CB2F00D96CCC /* JavaScriptCommand.swift in Sources */,
 				6E698E59267BF63B00654DB2 /* AppStateTracker.swift in Sources */,

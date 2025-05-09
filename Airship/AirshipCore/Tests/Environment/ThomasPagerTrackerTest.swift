@@ -180,6 +180,50 @@ struct ThomasPagerTrackerTest {
         )
     }
 
+    @Test
+    func testViewedPages() throws {
+        self.tracker.onPageView(
+            pageEvent: makePageViewEvent(pager: "foo", page: 0),
+            currentDisplayTime: 0
+        )
+
+        self.tracker.onPageView(
+            pageEvent: makePageViewEvent(pager: "foo", page: 1),
+            currentDisplayTime: 1
+        )
+
+        self.tracker.onPageView(
+            pageEvent: makePageViewEvent(pager: "bar", page: 0),
+            currentDisplayTime: 1
+        )
+
+        self.tracker.onPageView(
+            pageEvent: makePageViewEvent(pager: "foo", page: 2),
+            currentDisplayTime: 4
+        )
+
+        #expect(
+            self.tracker.viewedPages(pagerIdentifier: "foo") == [
+                .init(
+                    identifier: "page-0",
+                    index: 0,
+                    displayTime: 1
+                ),
+                .init(
+                    identifier: "page-1",
+                    index: 1,
+                    displayTime: 3
+                )
+            ]
+        )
+
+        // Still on page 0 so its empty
+        #expect(self.tracker.viewedPages(pagerIdentifier: "bar") == [])
+
+        // Baz does not exist
+        #expect(self.tracker.viewedPages(pagerIdentifier: "baz") == [])
+    }
+
     private func makePageViewEvent(pager: String, page: Int) -> ThomasReportingEvent.PageViewEvent {
         return ThomasReportingEvent.PageViewEvent(
            identifier: pager,
