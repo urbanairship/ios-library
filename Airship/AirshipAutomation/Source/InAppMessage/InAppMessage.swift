@@ -228,6 +228,7 @@ extension InAppMessage {
         case .image: return [.image(url: media.url, prefetch: true)]
         case .video: return [.video(url: media.url)]
         case .youtube: return [.video(url: media.url)]
+        case .vimeo: return [.video(url: media.url)]
         }
     }
 

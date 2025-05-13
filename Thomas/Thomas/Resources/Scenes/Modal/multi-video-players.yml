@@ -123,6 +123,20 @@ view:
                                                 url: https://www.youtube.com/embed/xUOQZeN8A7o
                                                 video:
                                                   aspect_ratio: 1.77777777777778
+                                                  autoplay: true
+                                                  loop: true
+                                                  muted: true
+                                                  show_controls: true
+                                            - size:
+                                                height: auto
+                                                width: 100%
+                                              view:
+                                                media_fit: center_inside
+                                                media_type: vimeo
+                                                type: media
+                                                url: https://player.vimeo.com/video/714680147?autoplay=0&loop=1&controls=1&muted=1&unmute_button=0
+                                                video:
+                                                  aspect_ratio: 1.77777777777778
                                                   autoplay: false
                                                   loop: true
                                                   muted: true
@@ -287,11 +301,11 @@ view:
                             width: 100%
                           view:
                             media_fit: center_crop
-                            media_type: youtube
+                            media_type: vimeo
                             type: media
-                            url: https://www.youtube.com/embed/xUOQZeN8A7o
+                            url: https://player.vimeo.com/video/714680147?autoplay=1&loop=1&controls=1&muted=1&unmute_button=0
                             video:
-                              aspect_ratio: 0.5625
+                              aspect_ratio: 1.7777777777777777
                               autoplay: true
                               loop: true
                               muted: true

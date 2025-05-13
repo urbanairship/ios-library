@@ -14,6 +14,8 @@ public struct InAppMessageMediaInfo: Sendable, Codable, Equatable {
 
         /// Youtube videos
         case youtube
+        /// Vimeo videos
+        case vimeo
         /// HTML video
         case video
         /// Image

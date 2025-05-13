@@ -39,7 +39,7 @@ struct Media: View {
             .constraints(constraints)
             .thomasCommon(self.info)
             .accessible(self.info.accessible, hideIfDescriptionIsMissing: true)
-        case .video, .youtube:
+        case .video, .youtube, .vimeo:
             #if !os(tvOS) && !os(watchOS)
             MediaWebView(info: self.info) {
                 pagerState.setMediaReady(

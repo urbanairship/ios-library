@@ -96,6 +96,12 @@ struct InAppMessageMediaWebView: UIViewRepresentable {
             if let url = urlComponents.url {
                 uiView.load(URLRequest(url: url))
             }
+        case .vimeo:
+            guard var urlComponents = URLComponents(string: mediaInfo.url) else { return }
+            urlComponents.query = "playsinline=1"
+            if let url = urlComponents.url {
+                uiView.load(URLRequest(url: url))
+            }
         case .image:
             break // Do nothing for images
         }
@@ -125,6 +131,6 @@ struct MediaInfo {
 }
 
 enum InAppMediaType {
-    case video, youtube, image
+    case video, youtube, image, vimeo
 }
 
