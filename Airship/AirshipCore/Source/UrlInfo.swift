@@ -48,6 +48,8 @@ extension AirshipLayout {
                 return [.image(url: info.properties.url)]
             case .youtube:
                 return [.video(url: info.properties.url)]
+            case .vimeo:
+                return [.video(url: info.properties.url)]
             case .video:
                 return [.video(url: info.properties.url)]
             }

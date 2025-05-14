@@ -144,7 +144,7 @@ struct MediaWebView: UIViewRepresentable {
             guard let mediaUrl = URL(string: url) else { return webView }
             webView.loadHTMLString(html, baseURL: mediaUrl)
         } else if self.info.properties.mediaType == .youtube {
-            if let videoID = retrieveVideoID(url: url) {
+            if let videoID = retrieveYoutubeVideoID(url: url) {
                 let html = String(
                     format: """
                     <body style="margin:0">
@@ -201,11 +201,37 @@ struct MediaWebView: UIViewRepresentable {
                 }
                 webView.load(URLRequest(url: videoUrl))
             }
+        } else if self.info.properties.mediaType == .vimeo {
+            let html = String(
+                format: """
+                <head><meta name="viewport" content="initial-scale=1,maximum-scale=1"></head>
+                <body style="margin:0">
+                  
+                    <iframe id="vimeoIframe"
+                      src="%@&playsinline=1"
+                      width="100%%" height="100%%" frameborder="0"
+                      webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                  
+                  <script src="https://player.vimeo.com/api/player.js"></script>
+                  <script>
+                    const vimeoIframe = document.querySelector('#vimeoIframe');
+                    const vimeoPlayer = new Vimeo.Player(vimeoIframe);
+                                        
+                    vimeoPlayer.ready().then(function() {
+                      webkit.messageHandlers.callback.postMessage('mediaReady');
+                    });
+                  </script>
+                </body>
+                """,
+                url
+            )
+            guard let mediaUrl = URL(string: url) else { return webView }
+            webView.loadHTMLString(html, baseURL: mediaUrl)
         }
         return webView
     }
     
-    func retrieveVideoID(url: String) -> String? {
+    func retrieveYoutubeVideoID(url: String) -> String? {
         do {
             let regex = try NSRegularExpression(pattern: "embed/([a-zA-Z0-9_-]+).*")
             let results = regex.firstMatch(in: url, range: NSRange(url.startIndex..., in: url))
@@ -239,6 +265,8 @@ struct MediaWebView: UIViewRepresentable {
             uiView.evaluateJavaScript("videoElement.pause();")
         } else if self.info.properties.mediaType == .youtube {
             uiView.evaluateJavaScript("player.pauseVideo();")
+        } else if self.info.properties.mediaType == .vimeo {
+            uiView.evaluateJavaScript("vimeoPlayer.pause();")
         }
     }
 
@@ -249,6 +277,8 @@ struct MediaWebView: UIViewRepresentable {
                 uiView.evaluateJavaScript("videoElement.currentTime = 0;")
             } else if self.info.properties.mediaType == .youtube {
                 uiView.evaluateJavaScript("player.seekTo(0);")
+            } else if self.info.properties.mediaType == .vimeo {
+                uiView.evaluateJavaScript("vimeoPlayer.setCurrentTime(0);")
             }
         }
     }
@@ -260,6 +290,8 @@ struct MediaWebView: UIViewRepresentable {
         } else if self.info.properties.mediaType == .youtube {
             uiView.evaluateJavaScript("player.playVideo();")
             uiView.evaluateJavaScript("player.addEventListener(\"onReady\", \"onPlayerReady\");")
+        } else if self.info.properties.mediaType == .vimeo {
+            uiView.evaluateJavaScript("vimeoPlayer.play();")
         }
     }
     

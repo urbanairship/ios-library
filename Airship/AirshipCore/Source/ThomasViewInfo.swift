@@ -440,6 +440,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             case image
             case video
             case youtube
+            case vimeo
         }
 
         struct Video: ThomasSerializable {
