@@ -38,12 +38,18 @@ struct DefaultDeviceAudienceChecker: DeviceAudienceChecker {
 
 
 extension Array where Element == AirshipDeviceAudienceResult {
-    var reducedResult: AirshipDeviceAudienceResult {
-        var isMatch: Bool = true
+
+    func reducedResult(reducer: (Bool, Bool) -> Bool) -> AirshipDeviceAudienceResult {
+        var isMatch: Bool?
         var reportingMetadata: [AirshipJSON]? = nil
 
         self.forEach {
-            isMatch = isMatch && $0.isMatch
+            isMatch = if let isMatch {
+                reducer(isMatch, $0.isMatch)
+            } else {
+                $0.isMatch
+            }
+
             if let reporting = $0.reportingMetadata {
                 if (reportingMetadata == nil) {
                     reportingMetadata = []
@@ -53,7 +59,7 @@ extension Array where Element == AirshipDeviceAudienceResult {
         }
 
         return AirshipDeviceAudienceResult(
-            isMatch: isMatch,
+            isMatch: isMatch ?? true,
             reportingMetadata: reportingMetadata
         )
     }
@@ -100,7 +106,7 @@ extension CompoundDeviceAudienceSelector {
                     break
                 }
             }
-            return results.reducedResult
+            return results.reducedResult { first, second in first && second }
 
         case .or(let selectors):
             guard !selectors.isEmpty else {
@@ -121,7 +127,7 @@ extension CompoundDeviceAudienceSelector {
                 }
             }
 
-            return results.reducedResult
+            return results.reducedResult { first, second in first || second }
         }
     }
 }

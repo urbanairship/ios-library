@@ -502,6 +502,21 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    func testORMatchFirstNoMatch() async throws {
+        self.testDeviceInfo.analyticsEnabled = false
+        let audience = CompoundDeviceAudienceSelector.or(
+            [
+                .atomic(DeviceAudienceSelector(requiresAnalytics: true)),
+                .atomic(DeviceAudienceSelector(requiresAnalytics: false)),
+            ]
+        )
+
+        try await self.assert(
+            compoundSelector: audience,
+            isMatch: true
+        )
+    }
+
     func testORMiss() async throws {
         self.testDeviceInfo.analyticsEnabled = false
         self.testDeviceInfo.isUserOptedInPushNotifications = false
@@ -518,6 +533,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
             isMatch: false
         )
     }
+
 
     func testEmptyOR() async throws {
         let audience = CompoundDeviceAudienceSelector.or([])
