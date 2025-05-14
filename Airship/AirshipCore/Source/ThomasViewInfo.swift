@@ -1164,27 +1164,28 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         var commonProperties: CommonViewProperties
         var commonOverrides: CommonViewOverrides?
         var properties: Properties
-
+        
         func encode(to encoder: any Encoder) throws {
             try encoder.encode(
                 properties: commonProperties, properties,
                 overrides: commonOverrides
             )
         }
-
+        
         init(from decoder: any Decoder) throws {
             self.commonProperties = try decoder.decodeProperties()
             self.properties = try decoder.decodeProperties()
             self.commonOverrides = try decoder.decodeOverrides()
         }
-
+        
         struct Properties: ThomasSerializable {
             let type: ViewType = .stateController
             var view: ThomasViewInfo
-
+            var initialState: AirshipJSON?
             enum CodingKeys: String, CodingKey {
                 case view
                 case type
+                case initialState = "initial_state"
             }
         }
     }

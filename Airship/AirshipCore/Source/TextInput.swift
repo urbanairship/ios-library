@@ -28,7 +28,10 @@ struct TextInput: View {
         )
     }
 
-    init(info: ThomasViewInfo.TextInput, constraints: ViewConstraints) {
+    init(
+        info: ThomasViewInfo.TextInput,
+        constraints: ViewConstraints
+    ) {
         self.info = info
         self.constraints = constraints
 
@@ -215,41 +218,41 @@ struct TextInput: View {
     }
 
     private func restoreFormState() {
+        let identifier = self.info.properties.identifier
         switch(self.info.properties.inputType) {
         case .email:
             guard
                 case .email(let value) = self.formState.field(
-                    identifier: self.info.properties.identifier
+                    identifier: identifier
                 )?.input,
                 let value
             else {
                 return
             }
 
-            self.viewModel.input = value
-
+            self.$viewModel.input.wrappedValue = value
         case .sms:
             guard
                 case .sms(let value) = self.formState.field(
-                    identifier: self.info.properties.identifier
+                    identifier: identifier
                 )?.input,
                 let value
             else {
                 return
             }
 
-            self.viewModel.input = value
+            self.$viewModel.input.wrappedValue = value
         case .number, .text, .textMultiline:
             guard
                 case .text(let value) = self.formState.field(
-                    identifier: self.info.properties.identifier
+                    identifier: identifier
                 )?.input,
                 let value
             else {
                 return
             }
 
-            self.viewModel.input = value
+            self.$viewModel.input.wrappedValue = value
         }
     }
 

@@ -51,9 +51,7 @@ struct RootView<Content: View>: View {
         content(currentOrientation, resolveWindowSize())
             .environmentObject(thomasEnvironment)
             .environmentObject(thomasEnvironment.defaultFormState)
-            .environmentObject(
-                self.thomasState
-            )
+            .environmentObject(self.thomasState)
             .environmentObject(thomasEnvironment.defaultPagerState)
             .environmentObject(
                 ThomasFormDataCollector(

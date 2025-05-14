@@ -87,18 +87,20 @@ class ThomasState: ObservableObject {
 
     @MainActor
     class MutableState: ObservableObject {
-        @Published private(set) var state: AirshipJSON = .object([:])
+        @Published private(set) var state: AirshipJSON
         private var appliedState: [String: AirshipJSON] = [:]
         private var tempMutations: [String: TempMutation] = [:]
 
         private let taskSleeper: any AirshipTaskSleeper
 
         init(
+            inititalState: AirshipJSON? = nil,
             taskSleeper: any AirshipTaskSleeper = DefaultAirshipTaskSleeper.shared
         ) {
+            self.state = inititalState ?? .object([:])
             self.taskSleeper = taskSleeper
         }
-
+            
         fileprivate func clearState() {
             tempMutations.removeAll()
             appliedState.removeAll()

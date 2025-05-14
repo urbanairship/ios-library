@@ -93,7 +93,11 @@ final class ThomasFormField: Sendable {
 
     /// Initializes a validator instance.
     /// - Parameter method: The method used to perform the validation.
-    private init(identifier: String, input: Value, fieldType: FieldType) {
+    private init(
+        identifier: String,
+        input: Value,
+        fieldType: FieldType
+    ) {
         self.identifier = identifier
         self.input = input
         self.fieldType = fieldType

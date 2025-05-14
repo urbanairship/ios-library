@@ -22,6 +22,8 @@ presentation:
     web: {}
 view:
   type: state_controller
+  initial_state:
+    neat: dissatisfied
   view:
     type: pager_controller
     identifier: 5ff76966-4e7e-4a5f-b3b4-3928cf7f4076

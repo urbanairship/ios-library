@@ -22,7 +22,10 @@ class ThomasEnvironment: ObservableObject {
         validationMode: .immediate
     )
 
-    let defaultPagerState = PagerState(identifier: "", branching: nil)
+    let defaultPagerState = PagerState(
+        identifier: "",
+        branching: nil
+    )
     let defaultMutableState = ThomasState.MutableState()
 
     private var state: [String: Any] = [:]
@@ -102,7 +105,9 @@ class ThomasEnvironment: ObservableObject {
         registerChannels(channels)
     }
 
-    private func registerChannels(_ channels: [ThomasFormField.Channel]) {
+    private func registerChannels(
+        _ channels: [ThomasFormField.Channel]
+    ) {
         channels.forEach { channelRegistration in
             switch(channelRegistration) {
             case .email(let address, let options):
@@ -120,7 +125,9 @@ class ThomasEnvironment: ObservableObject {
         }
     }
 
-    private func applyAttributes(_ attributes: [ThomasFormField.Attribute]) {
+    private func applyAttributes(
+        _ attributes: [ThomasFormField.Attribute]
+    ) {
         guard !attributes.isEmpty else { return }
         let channelEditor = Airship.channel.editAttributes()
         let contactEditor = Airship.contact.editAttributes()
@@ -348,7 +355,10 @@ class ThomasEnvironment: ObservableObject {
     }
 
     @MainActor
-    func runActions(_ actionsPayload: ThomasActionsPayload?, layoutState: LayoutState?) {
+    func runActions(
+        _ actionsPayload: ThomasActionsPayload?,
+        layoutState: LayoutState?
+    ) {
         guard let actionsPayload = actionsPayload?.value else { return }
         guard let runner = extensions?.actionRunner else {
             Task {
@@ -364,7 +374,11 @@ class ThomasEnvironment: ObservableObject {
     }
 
     @MainActor
-    func runAction(_ actionName: String, arguments: ActionArguments, layoutState: LayoutState?) async -> ActionResult {
+    func runAction(
+        _ actionName: String,
+        arguments: ActionArguments,
+        layoutState: LayoutState?
+    ) async -> ActionResult {
         guard let runner = extensions?.actionRunner else {
             return await ActionRunner.run(actionName: actionName, arguments: arguments)
         }
@@ -457,7 +471,10 @@ extension ThomasFormState {
 }
 
 extension AttributesEditor {
-    fileprivate func set(attributeValue: ThomasAttributeValue, attribute: String) {
+    fileprivate func set(
+        attributeValue: ThomasAttributeValue,
+        attribute: String
+    ) {
         switch attributeValue {
         case .string(let value):
             self.set(string: value, attribute: attribute)
