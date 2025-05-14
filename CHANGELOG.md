@@ -1,17 +1,24 @@
 
 # iOS Changelog
 
+## Version 18.14.3 January 31, 2025
+Patch release backported to fix landing page dismiss button default color on iOS and crash caused by banner size changes during dismissal.
+
+### Changes
+- Updated landing page dismiss button default color on iOS to black.
+- Fixed crash caused by banner size changes during dismissal.
+
 ## Version 18.14.2 January 9, 2025
 Patch release to fix extra spacing in a Banner In-App Automations if its missing the heading or body.
 
 ### Changes
-- Fix Banner In-App Automation extra spacing.
+- Fixed Banner In-App Automation extra spacing.
 
 ## Version 18.14.1 December 20, 2024
 Patch release to fix Banner In-App Automations if the image is taller than the text.
 
 ### Changes
-- Fix Banner In-App Automation sizing issue.
+- Fixed Banner In-App Automation sizing issue.
 
 ## Version 18.14.0 December 19, 2024
 Minor release that fixes issues with Banner In-App Automations, reduces power usage with In-App Automations & Scenes, and updates how Feature Flags are resolved. 

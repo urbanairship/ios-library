@@ -56,7 +56,7 @@ extension View {
         onUserDismissed: @escaping () -> Void
     ) -> some View {
         let dismissIconImage = InAppMessageTheme.dismissIcon(dismissIconResource)
-        let defaultDismissColor = Color.white
+        let defaultDismissColor = Color.black
 
         ZStack(alignment: .topTrailing) { // Align close button to the top trailing corner
             self.zIndex(0)

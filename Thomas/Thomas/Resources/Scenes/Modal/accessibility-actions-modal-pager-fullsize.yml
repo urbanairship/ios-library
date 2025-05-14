@@ -80,89 +80,16 @@ view:
                 height: auto
                 width: auto
               view:
-                type: nps_form_controller
-                identifier: page_1_nps_form
-                nps_identifier: score_identifier_1
-                submit: submit_event
-                view:
-                  type: linear_layout
-                  direction: vertical
-                  items:
-                  - size:
-                      width: auto
-                      height: auto
-                    margin:
-                      start: 8
-                      end: 8
-                    view:
-                      type: score
-                      identifier: score_identifier_1
-                      required: true
-                      style:
-                        type: number_range
-                        start: 0
-                        end: 10
-                        spacing: 0
-                        wrapping:
-                          line_spacing: 0
-                          max_items_per_line: 11
-                        spacing: 2
-                        bindings:
-                          selected:
-                            shapes:
-                            - type: ellipse
-                              color:
-                                default:
-                                  hex: "#FFFFFF"
-                                  alpha: 0
-                            text_appearance:
-                              font_size: 14
-                              color:
-                                default:
-                                  hex: "#000000"
-                                  alpha: 1
-                          unselected:
-                            shapes:
-                            - type: ellipse
-                              color:
-                                default:
-                                  hex: "#000000"
-                                  alpha: 1
-                            text_appearance:
-                              font_size: 14
-                              color:
-                                default:
-                                  hex: "#ffffff"
-                                  alpha: 1
-                      content_description: "Rate your experience from 0 to 10"
-                  - size:
-                      width: auto
-                      height: auto
-                    margin:
-                      start: 16
-                      end: 16
-                    view:
-                      type: label_button
-                      identifier: submit_button
-                      background_color:
-                        default:
-                          hex: "#ffffff"
-                          alpha: 1
-                      button_click: ["form_submit", "cancel"]
-                      enabled: ["form_validation"]
-                      display_actions:
-                        add_tags_action: 'pager-page-1-form-submit'
-                      label:
-                        type: label
-                        text: width:auto height:auto
-                        text_appearance:
-                          font_size: 14
-                          alignment: center
-                          color:
-                            default:
-                              hex: "#000000"
-                              alpha: 1
-                      content_description: "Submit button"
+                type: label
+                text: This is the first page about stuff.
+                text_appearance:
+                  alignment: center
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+                  font_size: 14
+                content_description: "First page content"
             - position:
                 horizontal: end
                 vertical: top
@@ -188,6 +115,16 @@ view:
           display_actions:
             add_tags_action: 'pager-page-2x'
           accessibility_actions:
+            - type: default
+              reporting_metadata:
+                key: "page_2_next"
+              localized_content_description:
+                fallback: "Next Page"
+                ref: "ua_next"
+              actions:
+                - add_tags_action: "page_2_next_action"
+              behaviors: 
+                - pager_next
             - type: default
               reporting_metadata:
                 key: "page_2_previous"
@@ -226,89 +163,37 @@ view:
                 height: auto
                 width: auto
               view:
-                type: nps_form_controller
-                identifier: page_2_nps_form
-                nps_identifier: score_identifier_2
-                submit: submit_event
-                view:
-                  type: linear_layout
-                  direction: vertical
-                  items:
-                  - size:
-                      width: 200
-                      height: auto
-                    margin:
-                      start: 8
-                      end: 8
-                    view:
-                      type: score
-                      identifier: score_identifier_2
-                      required: true
-                      style:
-                        type: number_range
-                        start: 0
-                        end: 10
-                        spacing: 0
-                        wrapping:
-                          line_spacing: 0
-                          max_items_per_line: 11
-                        spacing: 2
-                        bindings:
-                          selected:
-                            shapes:
-                            - type: ellipse
-                              color:
-                                default:
-                                  hex: "#FFFFFF"
-                                  alpha: 0
-                            text_appearance:
-                              font_size: 14
-                              color:
-                                default:
-                                  hex: "#000000"
-                                  alpha: 1
-                          unselected:
-                            shapes:
-                            - type: ellipse
-                              color:
-                                default:
-                                  hex: "#000000"
-                                  alpha: 1
-                            text_appearance:
-                              font_size: 14
-                              color:
-                                default:
-                                  hex: "#ffffff"
-                                  alpha: 1
-                      content_description: "Rate your experience from 0 to 10"
-                  - size:
-                      width: auto
-                      height: auto
-                    margin:
-                      start: 16
-                      end: 16
-                    view:
-                      type: label_button
-                      identifier: submit_button
-                      background_color:
-                        default:
-                          hex: "#ffffff"
-                          alpha: 1
-                      button_click: ["form_submit", "cancel"]
-                      enabled: ["form_validation"]
-                      display_actions:
-                        add_tags_action: 'pager-page-2-form-submit'
-                      label:
-                        type: label
-                        text: width:200 height:auto
-                        text_appearance:
-                          font_size: 14
-                          alignment: center
-                          color:
-                            default:
-                              hex: "#000000"
-                              alpha: 1
-                      content_description: "Submit button"
+                type: label
+                text: More stuff is here on the second page.
+                text_appearance:
+                  alignment: center
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+                  font_size: 14
+                content_description: "Second page content"
+            - position:
+                horizontal: end
+                vertical: top
+              size:
+                height: 24
+                width: 24
+              margin:
+                top: 8
+                end: 8
+              view:
+                type: image_button
+                identifier: close_button_2
+                button_click: [ dismiss ]
+                image:
+                  type: icon
+                  icon: close
+                  color:
+                    default:
+                      hex: "#000000"
+                      alpha: 1
+                content_description: "Close button"
         - identifier: "pager-page-3-id"
           display_actions:
             add_tags_action: 'pager-page-3x'
@@ -321,7 +206,7 @@ view:
                 ref: "ua_previous"
               actions:
                 - add_tags_action: "page_3_previous_action"
-              behaviors:
+              behaviors: 
                 - pager_previous
             - type: escape
               reporting_metadata:
@@ -331,7 +216,7 @@ view:
                 ref: "ua_escape"
               actions:
                 - add_tags_action: "page_3_dismiss_action"
-              behaviors:
+              behaviors: 
                 - dismiss
           automated_actions:
             - identifier: "auto_announce_page_3"
@@ -341,7 +226,7 @@ view:
             type: container
             background_color:
               default:
-                hex: "#00FFF0"
+                hex: "#0000FF"
                 alpha: 0.5
             items:
             - position:
@@ -352,31 +237,27 @@ view:
                 width: auto
               view:
                 type: nps_form_controller
-                identifier: page_2_nps_form
-                nps_identifier: score_identifier_2
+                identifier: page_3_nps_form
+                nps_identifier: score_identifier
                 submit: submit_event
                 view:
                   type: linear_layout
                   direction: vertical
                   items:
                   - size:
-                      width: 50
+                      width: 100%
                       height: auto
                     margin:
                       start: 8
                       end: 8
                     view:
                       type: score
-                      identifier: score_identifier_2
+                      identifier: score_identifier
                       required: true
                       style:
                         type: number_range
                         start: 0
                         end: 10
-                        spacing: 0
-                        wrapping:
-                          line_spacing: 0
-                          max_items_per_line: 11
                         spacing: 2
                         bindings:
                           selected:
@@ -422,10 +303,10 @@ view:
                       button_click: ["form_submit", "cancel"]
                       enabled: ["form_validation"]
                       display_actions:
-                        add_tags_action: 'pager-page-2-form-submit'
+                        add_tags_action: 'pager-page-3-form-submit'
                       label:
                         type: label
-                        text: width:50 height:auto
+                        text: SuBmIt!1!1@
                         text_appearance:
                           font_size: 14
                           alignment: center
@@ -445,7 +326,7 @@ view:
                 end: 8
               view:
                 type: image_button
-                identifier: close_button_2
+                identifier: close_button_3
                 button_click: [ dismiss ]
                 image:
                   type: icon
