@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum UAVersionMatcherConstraintType {
+enum UAVersionMatcherConstraintType: String, Codable {
     case unknown
     case exactVersion
     case subVersion
@@ -16,7 +16,7 @@ enum UAVersionMatcherRangeBoundary: Int {
 }
 
 /// Version matcher.
-public class VersionMatcher: NSObject {
+public class VersionMatcher: NSObject, Codable {
 
     private static let EXACT_VERSION_PATTERN = "^([0-9]+)(\\.([0-9]+)((\\.([0-9]+))?(.*)))?$"
     private static let START_INCLUSIVE = "["
@@ -84,6 +84,39 @@ public class VersionMatcher: NSObject {
         } else {
             return nil
         }
+    }
+    
+    private enum CodingKeys : String, CodingKey {
+        case versionConstraint
+        case constraintType
+        case parsedConstraint
+    }
+    
+    public required init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        versionConstraint = try container.decode(String.self, forKey: .versionConstraint)
+        constraintType = try container.decode(UAVersionMatcherConstraintType.self, forKey: .constraintType)
+
+        guard
+            let json = try container.decode(AirshipJSON.self, forKey: .parsedConstraint).unWrap(),
+            let unwrapped = json as? [AnyHashable: Any]
+        else {
+            throw DecodingError.typeMismatch(
+                [AnyHashable: Any].self,
+                DecodingError.Context(codingPath: container.codingPath, debugDescription: "Invalid json value", underlyingError: nil)
+            )
+        }
+        
+        parsedConstraint = unwrapped
+    }
+    
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(versionConstraint, forKey: .versionConstraint)
+        try container.encode(constraintType, forKey: .constraintType)
+        try container.encode(try AirshipJSON.wrap(parsedConstraint), forKey: .parsedConstraint)
     }
 
     /**

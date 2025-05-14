@@ -140,6 +140,8 @@ final class JSONPredicateTest: XCTestCase {
     }
 
     func testJSONPredicateArrayLength() throws {
+        // This JSON is flawed as you cant have an array of matchers for value. However it shows
+        // order of matcher parsing and its the same test on web, so we are using it.
         let json: String = """
         {
           "value": {
@@ -148,7 +150,7 @@ final class JSONPredicateTest: XCTestCase {
                   "equals": 2,
                 },
               },
-              "array_length": {
+            "array_length": {
                 "value": {
                   "equals": 1,
                 },

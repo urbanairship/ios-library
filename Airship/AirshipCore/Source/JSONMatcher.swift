@@ -3,12 +3,8 @@
 import Foundation
 
 /// Matcher for a JSON payload.
-public final class JSONMatcher: NSObject, Sendable {
+public final class JSONMatcher: NSObject, Sendable, Codable {
 
-    private static let keyKey = "key"
-    private static let scopeKey = "scope"
-    private static let valueKey = "value"
-    private static let ignoreCaseKey = "ignore_case"
     private static let errorDomainKey = "com.urbanairship.json_matcher"
 
     private let key: String?
@@ -29,6 +25,14 @@ public final class JSONMatcher: NSObject, Sendable {
         self.scope = scope
         self.ignoreCase = ignoreCase
         super.init()
+    }
+    
+    //for backward compatibility
+    private enum CodingKeys: String, CodingKey {
+        case key
+        case scope
+        case valueMatcher = "value"
+        case ignoreCase = "ignore_case"
     }
 
     /**
@@ -129,7 +133,7 @@ public final class JSONMatcher: NSObject, Sendable {
 
         /// Optional scope
         var scope: [String]?
-        if let scopeJSON = info[JSONMatcher.scopeKey] {
+        if let scopeJSON = info[CodingKeys.scope.rawValue] {
             if let value = scopeJSON as? String {
                 scope = [value]
             } else if let value = scopeJSON as? [String] {
@@ -143,7 +147,7 @@ public final class JSONMatcher: NSObject, Sendable {
 
         /// Optional key
         var key: String?
-        if let keyJSON = info[JSONMatcher.keyKey] {
+        if let keyJSON = info[CodingKeys.key.rawValue] {
             guard let value = keyJSON as? String else {
                 throw AirshipErrors.error(
                     "Key must be a string. Invalid value: \(keyJSON)"
@@ -154,7 +158,7 @@ public final class JSONMatcher: NSObject, Sendable {
 
         /// Optional case insensitivity
         var ignoreCase: Bool?
-        if let ignoreCaseJSON = info[JSONMatcher.ignoreCaseKey] {
+        if let ignoreCaseJSON = info[CodingKeys.ignoreCase.rawValue] {
             guard let value = ignoreCaseJSON as? Bool else {
                 throw AirshipErrors.error(
                     "Ignore case must be a bool. Invalid value: \(ignoreCaseJSON)"
@@ -165,7 +169,7 @@ public final class JSONMatcher: NSObject, Sendable {
 
         /// Required value
         let valueMatcher = try JSONValueMatcher.matcherWithJSON(
-            info[JSONMatcher.valueKey]
+            info[CodingKeys.valueMatcher.rawValue]
         )
         self.init(
             valueMatcher: valueMatcher,
@@ -180,10 +184,10 @@ public final class JSONMatcher: NSObject, Sendable {
      */
     public func payload() -> [String: Any] {
         var payload: [String: Any] = [:]
-        payload[JSONMatcher.valueKey] = valueMatcher.payload()
-        payload[JSONMatcher.keyKey] = key
-        payload[JSONMatcher.scopeKey] = scope
-        payload[JSONMatcher.ignoreCaseKey] = ignoreCase
+        payload[CodingKeys.valueMatcher.rawValue] = valueMatcher.payload()
+        payload[CodingKeys.key.rawValue] = key
+        payload[CodingKeys.scope.rawValue] = scope
+        payload[CodingKeys.ignoreCase.rawValue] = ignoreCase
         return payload
     }
 

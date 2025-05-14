@@ -3,27 +3,79 @@
 import Foundation
 
 /// Defines a JSON value matcher.
-public final class JSONValueMatcher: NSObject, @unchecked Sendable {
-    private static let atMostKey = "at_most"
-    private static let atLeastKey = "at_least"
-    private static let equalsKey = "equals"
-    private static let isPresentKey = "is_present"
-    private static let versionConstraintKey = "version_matches"
-    private static let alternateVersionConstraintKey = "version"
-    private static let arrayContainsKey = "array_contains"
-    private static let arrayLength = "array_length"
-    private static let arrayIndexKey = "index"
+public final class JSONValueMatcher: NSObject, @unchecked Sendable, Codable {
     private static let errorDomainKey = "com.urbanairship.json_value_matcher"
 
-    private var atLeast: NSNumber?
-    private var atMost: NSNumber?
-    private var isPresent: NSNumber?
+    private var atLeast: Double?
+    private var atMost: Double?
+    private var isPresent: Bool?
     private var equals: Any?
     private var versionConstraint: String?
     private var versionMatcher: VersionMatcher?
     private var arrayPredicate: JSONPredicate?
-    private var arrayIndex: NSNumber?
+    private var arrayIndex: Int?
     private var arrayLength: JSONPredicate?
+    
+    private enum CodingKeys: String, CodingKey {
+        case atLeast = "at_least"
+        case atMost = "at_most"
+        case isPresent = "is_present"
+        case equals
+        case versionConstraintOld = "version"
+        case versionConstraint = "version_matches"
+        case versionMatcher
+        case arrayPredicate = "array_contains"
+        case arrayIndex = "index"
+        case arrayLength = "array_length"
+    }
+    
+    override public init() {
+        super.init()
+    }
+    
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.atLeast = try container.decodeIfPresent(Double.self, forKey: .atLeast)
+        self.atMost = try container.decodeIfPresent(Double.self, forKey: .atMost)
+
+        self.isPresent = try container.decodeIfPresent(Bool.self, forKey: .isPresent)
+        self.arrayPredicate = try container.decodeIfPresent(JSONPredicate.self, forKey: .arrayPredicate)
+        self.arrayIndex = try container.decodeIfPresent(Int.self, forKey: .arrayIndex)
+        self.arrayLength = try container.decodeIfPresent(JSONPredicate.self, forKey: .arrayLength)
+        self.equals = try container.decodeIfPresent(AirshipJSON.self, forKey: .equals)?.unWrap()
+        
+        if container.contains(.versionConstraintOld) {
+            self.versionConstraint = try container.decode(String.self, forKey: .versionConstraintOld)
+        } else {
+            self.versionConstraint = try container.decodeIfPresent(String.self, forKey: .versionConstraint)
+        }
+        
+        if container.contains(.versionMatcher) {
+            self.versionMatcher = try container.decode(VersionMatcher.self, forKey: .versionMatcher)
+        } else if let versionConstraint {
+            self.versionMatcher = VersionMatcher.matcher(versionConstraint: versionConstraint)
+        } else {
+            self.versionMatcher = nil
+        }
+    }
+    
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encodeIfPresent(atLeast, forKey: .atLeast)
+        try container.encodeIfPresent(atMost, forKey: .atMost)
+        try container.encodeIfPresent(isPresent, forKey: .isPresent)
+        try container.encodeIfPresent(versionConstraint, forKey: .versionConstraint)
+        try container.encodeIfPresent(versionMatcher, forKey: .versionMatcher)
+        try container.encodeIfPresent(arrayPredicate, forKey: .arrayPredicate)
+        try container.encodeIfPresent(arrayIndex, forKey: .arrayIndex)
+        try container.encodeIfPresent(arrayLength, forKey: .arrayLength)
+        
+        if let equals {
+            try container.encodeIfPresent(try? AirshipJSON.wrap(equals), forKey: .equals)
+        }
+    }
 
     /**
      * The matcher's JSON payload.
@@ -31,14 +83,14 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
     public func payload() -> [String: Any] {
         var payload: [String: Any] = [:]
 
-        payload[JSONValueMatcher.equalsKey] = equals
-        payload[JSONValueMatcher.atLeastKey] = atLeast
-        payload[JSONValueMatcher.atMostKey] = atMost
-        payload[JSONValueMatcher.isPresentKey] = isPresent
-        payload[JSONValueMatcher.versionConstraintKey] = versionConstraint
-        payload[JSONValueMatcher.arrayIndexKey] = arrayIndex
-        payload[JSONValueMatcher.arrayContainsKey] = arrayPredicate?.payload()
-        payload[JSONValueMatcher.arrayLength] = arrayLength?.payload()
+        payload[CodingKeys.equals.rawValue] = equals
+        payload[CodingKeys.atLeast.rawValue] = atLeast
+        payload[CodingKeys.atMost.rawValue] = atMost
+        payload[CodingKeys.isPresent.rawValue] = isPresent
+        payload[CodingKeys.versionConstraint.rawValue] = versionConstraint
+        payload[CodingKeys.arrayIndex.rawValue] = arrayIndex
+        payload[CodingKeys.arrayPredicate.rawValue] = arrayPredicate?.payload()
+        payload[CodingKeys.arrayLength.rawValue] = arrayLength?.payload()
 
         return payload
     }
@@ -65,7 +117,7 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
      */
     public func evaluate(_ value: Any?, ignoreCase: Bool) -> Bool {
         if let isPresent = isPresent {
-            return isPresent.boolValue == (value != nil)
+            return isPresent == (value != nil)
         }
 
         if let equals = equals {
@@ -77,22 +129,27 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
                 return false
             }
         }
-
-        let numberValue = ((value is NSNumber) ? value : nil) as? NSNumber
+        
+        let numberValue: Double? = if value is any Numeric {
+            switch value {
+            case let intValue as Int: Double(intValue)
+            case let doubleValue as Double: doubleValue
+            default: nil
+            }
+        } else {
+            nil
+        }
+        
         let stringValue = ((value is NSString) ? value : nil) as? String
 
         if let atLeast = atLeast {
-            guard let nValue = numberValue,
-                atLeast.compare(nValue) != .orderedDescending
-            else {
+            guard let nValue = numberValue, nValue >= atLeast  else {
                 return false
             }
         }
 
         if let atMost = atMost {
-            guard let nValue = numberValue,
-                atMost.compare(nValue) != .orderedAscending
-            else {
+            guard let nValue = numberValue, nValue <= atMost else {
                 return false
             }
         }
@@ -102,6 +159,15 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
                 return false
             }
         }
+
+        if let arrayLength {
+            guard let array = value as? [AnyHashable] else {
+                return false
+            }
+
+            return arrayLength.evaluate(array.count)
+        }
+
 
         if let arrayPredicate = arrayPredicate {
             guard let array = value as? [AnyHashable] else {
@@ -116,19 +182,11 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
                 }
                 return false
             }
-            let index = arrayIndex.intValue
-            if index < 0 || index >= array.count {
+            
+            if arrayIndex < 0 || arrayIndex >= array.count {
                 return false
             }
-            return arrayPredicate.evaluate(array[index])
-        }
-
-        if let arrayLength {
-            guard let array = value as? [AnyHashable] else {
-                return false
-            }
-
-            return arrayLength.evaluate(array.count)
+            return arrayPredicate.evaluate(array[arrayIndex])
         }
 
         return true
@@ -215,7 +273,7 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         -> JSONValueMatcher
     {
         let matcher = JSONValueMatcher()
-        matcher.atLeast = number
+        matcher.atLeast = number.doubleValue
         return matcher
     }
 
@@ -233,8 +291,8 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         atMost higherNumber: NSNumber
     ) -> JSONValueMatcher {
         let matcher = JSONValueMatcher()
-        matcher.atLeast = lowerNumber
-        matcher.atMost = higherNumber
+        matcher.atLeast = lowerNumber.doubleValue
+        matcher.atMost = higherNumber.doubleValue
         return matcher
     }
 
@@ -250,7 +308,7 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         -> JSONValueMatcher
     {
         let matcher = JSONValueMatcher()
-        matcher.atMost = number
+        matcher.atMost = number.doubleValue
         return matcher
     }
 
@@ -310,7 +368,7 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         -> JSONValueMatcher
     {
         let matcher = JSONValueMatcher()
-        matcher.isPresent = NSNumber(value: present)
+        matcher.isPresent = present
         return matcher
     }
 
@@ -367,7 +425,7 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
     ) -> JSONValueMatcher? {
         let matcher = JSONValueMatcher()
         matcher.arrayPredicate = predicate
-        matcher.arrayIndex = NSNumber(value: index)
+        matcher.arrayIndex = index
         return matcher
     }
 
@@ -391,27 +449,26 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
 
         if self.isEqualMatcherExpression(parsedJson) {
             let matcher = JSONValueMatcher()
-            matcher.equals = parsedJson[JSONValueMatcher.equalsKey]
+            matcher.equals = parsedJson[CodingKeys.equals.rawValue]
             return matcher
         }
 
         if self.isNumericMatcherExpression(parsedJson) {
             let matcher = JSONValueMatcher()
-            matcher.atMost = parsedJson[JSONValueMatcher.atMostKey] as? NSNumber
-            matcher.atLeast =
-                parsedJson[JSONValueMatcher.atLeastKey] as? NSNumber
+            matcher.atMost = (parsedJson[CodingKeys.atMost.rawValue] as? NSNumber)?.doubleValue
+            matcher.atLeast = (parsedJson[CodingKeys.atLeast.rawValue] as? NSNumber)?.doubleValue
             return matcher
         }
 
         if self.isPresentExpression(parsedJson) {
             return self.matcherWhereValueIsPresent(
-                (parsedJson[JSONValueMatcher.isPresentKey] as? NSNumber)?
+                (parsedJson[CodingKeys.isPresent.rawValue] as? NSNumber)?
                     .boolValue
                     ?? false
             )
         }
 
-        if let arrayLength = parsedJson[Self.arrayLength] {
+        if let arrayLength = parsedJson[CodingKeys.arrayLength.rawValue] {
             let matcher = JSONValueMatcher()
             matcher.arrayLength = try JSONPredicate.fromJson(
                 json: arrayLength
@@ -422,14 +479,13 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         if self.isArrayMatcherExpression(parsedJson) {
             let matcher = JSONValueMatcher()
             matcher.arrayPredicate = try JSONPredicate.fromJson(
-                json: parsedJson[JSONValueMatcher.arrayContainsKey]
+                json: parsedJson[CodingKeys.arrayPredicate.rawValue]
             )
-            matcher.arrayIndex =
-                parsedJson[JSONValueMatcher.arrayIndexKey] as? NSNumber
+            matcher.arrayIndex = (parsedJson[CodingKeys.arrayIndex.rawValue] as? NSNumber)?.intValue
             return matcher
         }
 
-        if let constraint = parsedJson[JSONValueMatcher.versionConstraintKey]
+        if let constraint = parsedJson[CodingKeys.versionConstraint.rawValue]
             as? NSString
         {
             if let matcher = self.matcherWithVersionConstraint(
@@ -440,7 +496,7 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         }
 
         if let constraint =
-            parsedJson[JSONValueMatcher.alternateVersionConstraintKey]
+            parsedJson[CodingKeys.versionConstraintOld.rawValue]
             as? NSString
         {
             if let matcher = self.matcherWithVersionConstraint(
@@ -467,7 +523,7 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
             return false
         }
 
-        return expression[JSONValueMatcher.equalsKey] != nil
+        return expression[CodingKeys.equals.rawValue] != nil
     }
 
     class func isNumericMatcherExpression(_ expression: [AnyHashable: Any])
@@ -479,13 +535,13 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         }
 
         if (expression.count) == 1 {
-            return (expression[JSONValueMatcher.atLeastKey] is NSNumber)
-                || (expression[JSONValueMatcher.atMostKey] is NSNumber)
+            return (expression[CodingKeys.atLeast.rawValue] is NSNumber)
+                || (expression[CodingKeys.atMost.rawValue] is NSNumber)
         }
 
         if (expression.count) == 2 {
-            return (expression[JSONValueMatcher.atLeastKey] is NSNumber)
-                && (expression[JSONValueMatcher.atMostKey] is NSNumber)
+            return (expression[CodingKeys.atLeast.rawValue] is NSNumber)
+                && (expression[CodingKeys.atMost.rawValue] is NSNumber)
         }
 
         return false
@@ -496,7 +552,7 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
             return false
         }
 
-        let subexp = expression[JSONValueMatcher.isPresentKey]
+        let subexp = expression[CodingKeys.isPresent.rawValue]
 
         /// Note: it's not possible to reflect a pure boolean value here so this will accept non-binary numbers as well
         return subexp is NSNumber
@@ -510,13 +566,12 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         }
 
         if (expression.count) == 1 {
-            return expression[JSONValueMatcher.arrayContainsKey]
+            return expression[CodingKeys.arrayPredicate.rawValue]
                 is [AnyHashable: Any]
         }
 
-        return
-            (expression[JSONValueMatcher.arrayContainsKey] is [AnyHashable: Any])
-            && (expression[JSONValueMatcher.arrayIndexKey] is NSNumber)
+        return (expression[CodingKeys.arrayPredicate.rawValue] is [AnyHashable: Any])
+                && (expression[CodingKeys.arrayIndex.rawValue] is NSNumber)
     }
 
     /// - Note: For internal use only. :nodoc:
@@ -568,9 +623,7 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
             }
         }
         if let arrayIndex = arrayIndex {
-            if arrayIndex != matcher?.arrayIndex
-                && !arrayIndex.isEqual(matcher?.arrayIndex)
-            {
+            if arrayIndex != matcher?.arrayIndex {
                 return false
             }
         }
@@ -604,12 +657,12 @@ public final class JSONValueMatcher: NSObject, @unchecked Sendable {
         }
         
         result = 31 * result + equalsHashValue
-        result = 31 * result + (atLeast?.hash ?? 0)
-        result = 31 * result + (atMost?.hash ?? 0)
-        result = 31 * result + (isPresent?.hash ?? 0)
-        result = 31 * result + (versionConstraint?.hash ?? 0)
-        result = 31 * result + (arrayPredicate?.hash ?? 0)
-        result = 31 * result + (arrayIndex?.hash ?? 0)
+        result = 31 * result + (atLeast?.hashValue ?? 0)
+        result = 31 * result + (atMost?.hashValue ?? 0)
+        result = 31 * result + (isPresent?.hashValue ?? 0)
+        result = 31 * result + (versionConstraint?.hashValue ?? 0)
+        result = 31 * result + (arrayPredicate?.hashValue ?? 0)
+        result = 31 * result + (arrayIndex?.hashValue ?? 0)
         return result
     }
 }

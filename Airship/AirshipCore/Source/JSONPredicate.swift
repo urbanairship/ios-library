@@ -25,6 +25,12 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
         self.subpredicates = subpredicates
         super.init()
     }
+    
+    private enum CodingKeys: String, CodingKey, CaseIterable {
+        case keyAnd = "and"
+        case keyOr = "or"
+        case keyNot = "not"
+    }
 
     /**
      * Factory method to create a predicate from a JSON payload.
@@ -122,14 +128,47 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
         }
     }
 
-    public func encode(to encoder: any Encoder) throws {
-        let json = try AirshipJSON.wrap(payload())
-        try json.encode(to: encoder)
-    }
-
     public convenience init(from decoder: any Decoder) throws {
-        let json = try AirshipJSON(from: decoder)
-        try self.init(json: json.unWrap())
+        //TODO: that's all done for backward compatibility and should be rewritten in the next major release
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        if let key = CodingKeys.allCases.first(where: { container.contains($0) }) {
+            let subpredicates: [JSONPredicate]
+            
+            if key == CodingKeys.keyNot {
+                let predicate = try container.decode(JSONPredicate.self, forKey: key)
+                subpredicates = [predicate]
+            } else {
+                subpredicates = try container.decode([JSONPredicate].self, forKey: key)
+            }
+            
+            self.init(
+                type: key.rawValue,
+                jsonMatcher: nil,
+                subpredicates: subpredicates
+            )
+        } else {
+            let matcher = try decoder.singleValueContainer().decode(JSONMatcher.self)
+            self.init(jsonMatcher: matcher)
+        }
+    }
+    
+    //TODO: that's all done for backward compatibility and should be removed in the next major release
+    public func encode(to encoder: any Encoder) throws {
+        if let jsonMatcher {
+            var container = encoder.singleValueContainer()
+            try container.encode(jsonMatcher)
+            return
+        }
+        
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        let key = switch(type) {
+        case CodingKeys.keyAnd.rawValue: CodingKeys.keyAnd
+        case CodingKeys.keyOr.rawValue: CodingKeys.keyOr
+        case CodingKeys.keyNot.rawValue: CodingKeys.keyNot
+        default: throw AirshipErrors.error("Invalid predicate type \(type ?? "n\\a")")
+        }
+        
+        try container.encodeIfPresent(self.subpredicates, forKey: key)
     }
 
     /**
