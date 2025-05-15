@@ -4,6 +4,13 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.4.0 May 15, 2025
+Minor release that adds support for using Feature Flags as an audience condition for other Feature Flags and Vimeo videos in Scenes.
+
+### Changes
+- Added support for using Feature Flags as an audience condition for other Feature Flags.
+- Added support for Vimeo videos in Scenes.
+
 ## Version 19.3.2 May 8, 2025
 Patch release that fixes Message Center listing not refreshing on push received. This issue was introduced in 19.0.0. Apps using Message Center should update.
 
