@@ -338,15 +338,26 @@ class ThomasEnvironment: ObservableObject {
         self.delegate.onStateChanged(state)
     }
 
+    private func emitPagerSummaryEvents() {
+        pagerTracker.summary.forEach { summary in
+            delegate.onReportingEvent(
+                .pagerSummary(
+                    summary,
+                    makeLayoutContext(layoutState: nil)
+                )
+            )
+        }
+    }
+
     @MainActor
     private func tryDismiss(callback: (TimeInterval) -> Void) {
         if !self.isDismissed {
             self.isDismissed = true
 
             timer.stop()
+            
             pagerTracker.stopAll(currentDisplayTime: timer.time)
-
-            // Todo emit pager summary
+            emitPagerSummaryEvents()
 
             callback(timer.time)
             onDismiss?()
