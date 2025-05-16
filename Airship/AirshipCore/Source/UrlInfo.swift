@@ -90,6 +90,12 @@ extension AirshipLayout {
             return nil
         case .buttonLayout(let model):
             return extractUrlInfos(model: model.properties.view)
+        case .basicToggleLayout(let model):
+            return extractUrlInfos(model: model.properties.view)
+        case .checkboxToggleLayout(let model):
+            return extractUrlInfos(model: model.properties.view)
+        case .radioInputToggleLayout(let model):
+            return extractUrlInfos(model: model.properties.view)
         }
     }
 }

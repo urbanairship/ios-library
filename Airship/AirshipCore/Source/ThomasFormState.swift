@@ -51,7 +51,7 @@ class ThomasFormState: ObservableObject {
             )
         }
     }
-
+    
     @Published
     private(set) var activeFields: [String: ThomasFormField] = [:]
 
@@ -122,6 +122,7 @@ class ThomasFormState: ObservableObject {
         parentFormState?.markVisible()
         self.isVisible = true
     }
+
 
     func validate() async -> Bool {
         return await self.processChildren(children: self.filteredChildren())

@@ -1,0 +1,1464 @@
+---
+version: 1
+presentation:
+  type: modal
+  placement_selectors: []
+  android:
+    disable_back_button: false
+  dismiss_on_touch_outside: false
+  default_placement:
+    ignore_safe_area: false
+    size:
+      width: 100%
+      height: 100%
+    position:
+      horizontal: center
+      vertical: top
+    shade_color:
+      default:
+        type: hex
+        hex: "#ffffff"
+        alpha: 0.2
+view:
+  type: state_controller
+  background_color:
+    default:
+      type: hex
+      hex: "#FFFFFF"
+      alpha: 1
+  view:
+    type: pager_controller
+    identifier: 6b72219d-15ef-4bcf-832b-70850b419687
+    view:
+      type: linear_layout
+      direction: vertical
+      items:
+      - size:
+          width: 100%
+          height: 100%
+        view:
+          identifier: 4a560c36-28fa-452d-a2e0-f07a9e3d7521
+          type: form_controller
+          validation_mode:
+            type: on_demand
+          submit: submit_event
+          form_enabled:
+          - form_submission
+          view:
+            type: container
+            items:
+            - position:
+                horizontal: center
+                vertical: center
+              size:
+                width: 100%
+                height: 100%
+              view:
+                type: pager
+                disable_swipe: true
+                items:
+                - identifier: d2432b09-48d6-40a9-8753-72e372319121
+                  type: pager_item
+                  view:
+                    type: container
+                    items:
+                    - size:
+                        width: 100%
+                        height: 100%
+                      position:
+                        horizontal: center
+                        vertical: center
+                      ignore_safe_area: false
+                      view:
+                        type: container
+                        items:
+                        - margin:
+                            bottom: 0
+                            top: 0
+                            end: 0
+                            start: 0
+                          position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            width: 100%
+                            height: 100%
+                          view:
+                            type: linear_layout
+                            direction: vertical
+                            items:
+                            - identifier: scroll_container
+                              size:
+                                width: 100%
+                                height: 100%
+                              view:
+                                type: scroll_layout
+                                direction: vertical
+                                view:
+                                  type: linear_layout
+                                  direction: vertical
+                                  items:
+                                  - identifier: 8ce7c2d5-23f6-4eda-b840-c76ba483fb68
+                                    size:
+                                      width: 100%
+                                      height: auto
+                                    margin:
+                                      top: 48
+                                      bottom: 8
+                                      start: 16
+                                      end: 16
+                                    view:
+                                      type: label
+                                      text: Single Choice
+                                      content_description: Single Choice
+                                      text_appearance:
+                                        font_size: 20
+                                        color:
+                                          default:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        alignment: start
+                                        styles:
+                                        - bold
+                                        font_families:
+                                        - sans-serif
+                                  - identifier: edf9064c-54d5-4b29-9ac9-0000000
+                                    size:
+                                      width: 100%
+                                      height: auto
+                                    margin:
+                                      top: 8
+                                      bottom: 8
+                                      start: 16
+                                      end: 16
+                                    view:
+                                      type: linear_layout
+                                      direction: vertical
+                                      items:
+                                      - margin:
+                                          top: 0
+                                          bottom: 8
+                                        size:
+                                          width: 100%
+                                          height: auto
+                                        view:
+                                          type: label
+                                          text: "Favorite Animal"
+                                          content_description: "Favorite Animal"
+                                          text_appearance:
+                                            font_size: 20
+                                            color:
+                                              default:
+                                                type: hex
+                                                hex: "#000000"
+                                                alpha: 1
+                                            alignment: start
+                                            styles: []
+                                            font_families:
+                                            - sans-serif
+                                      - margin:
+                                          top: 0
+                                          bottom: 8
+                                        size:
+                                          width: 100%
+                                          height: auto
+                                        view:
+                                          type: radio_input_controller
+                                          identifier: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                          required: true
+                                          on_error:
+                                            state_actions:
+                                              - type: set
+                                                key: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                                value: "error"
+                                          on_valid:
+                                            state_actions:
+                                              - type: set
+                                                key: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                                value: "valid"
+                                          on_edit:
+                                            state_actions:
+                                              - type: set
+                                                key: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                                value: "editing"
+                                          view:
+                                            type: linear_layout
+                                            direction: horizontal
+                                            items:
+                                            - margin:
+                                                end: 8
+                                              size:
+                                                width: 100%
+                                                height: 100%
+                                              view:
+                                                type: radio_input_toggle_layout
+                                                identifier: cat_toggle_id
+                                                content_description: Cat
+                                                reporting_value: cat_toggle
+                                                on_toggle_on:
+                                                  state_actions:
+                                                  - type: set
+                                                    key: animal
+                                                    value: cat
+                                                on_toggle_off:
+                                                  state_actions: []
+                                                view:
+                                                  type: container
+                                                  border:
+                                                    radius: 15
+                                                    stroke_width: 1
+                                                    stroke_color:
+                                                      default:
+                                                        type: hex
+                                                        hex: "#231ebd"
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    background_color:
+                                                      - value:
+                                                          default:
+                                                            hex: "#231ebd"
+                                                            alpha: .6
+                                                        when_state_matches:
+                                                          key: animal
+                                                          value:
+                                                            equals: cat
+                                                  items:
+                                                    - size:
+                                                        width: 100%
+                                                        height: 100%
+                                                      margin:
+                                                        top: 8
+                                                        bottom: 8
+                                                        start: 8
+                                                        end: 8
+                                                      position:
+                                                        horizontal: center
+                                                        vertical: center
+                                                      view:
+                                                        type: label
+                                                        text: Cat
+                                                        content_description: Cat
+                                                        text_appearance:
+                                                          font_size: 16
+                                                          color:
+                                                            default:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          alignment: center
+                                                          styles: []
+                                                          font_families:
+                                                            - sans-serif
+                                            - margin:
+                                                end: 8
+                                              size:
+                                                width: 100%
+                                                height: 100%
+                                              view:
+                                                type: radio_input_toggle_layout
+                                                identifier: dog_toggle_id
+                                                content_description: Dog
+                                                reporting_value: dog_toggle
+                                                on_toggle_on:
+                                                  state_actions:
+                                                  - type: set
+                                                    key: animal
+                                                    value: dog
+                                                on_toggle_off:
+                                                  state_actions: []
+                                                view:
+                                                  type: container
+                                                  border:
+                                                    radius: 15
+                                                    stroke_width: 1
+                                                    stroke_color:
+                                                      default:
+                                                        type: hex
+                                                        hex: "#231ebd"
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    background_color:
+                                                      - value:
+                                                          default:
+                                                            hex: "#231ebd"
+                                                            alpha: .6
+                                                        when_state_matches:
+                                                          key: animal
+                                                          value:
+                                                            equals: dog
+                                                  items:
+                                                    - size:
+                                                        width: 100%
+                                                        height: 100%
+                                                      margin:
+                                                        top: 8
+                                                        bottom: 8
+                                                        start: 8
+                                                        end: 8
+                                                      position:
+                                                        horizontal: center
+                                                        vertical: center
+                                                      view:
+                                                        type: label
+                                                        text: Dog
+                                                        content_description: Dog
+                                                        text_appearance:
+                                                          font_size: 16
+                                                          color:
+                                                            default:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          alignment: center
+                                                          styles: []
+                                                          font_families:
+                                                            - sans-serif
+                                            - margin:
+                                                end: 8
+                                              size:
+                                                width: 100%
+                                                height: 100%
+                                              view:
+                                                type: radio_input_toggle_layout
+                                                identifier: dragon_toggle_id
+                                                content_description: Dragon
+                                                reporting_value: dragon_toggle
+                                                view_overrides:
+                                                  background_color:
+                                                    - value:
+                                                        default:
+                                                          hex: "#ffbbbb"
+                                                          alpha: 1
+                                                      when_state_matches:
+                                                          key: animal
+                                                          value:
+                                                            equals: Dragon
+                                                on_toggle_on:
+                                                  state_actions:
+                                                  - type: set
+                                                    key: animal
+                                                    value: dragon
+                                                on_toggle_off:
+                                                  state_actions: []
+                                                view:
+                                                  type: container
+                                                  border:
+                                                    radius: 15
+                                                    stroke_width: 1
+                                                    stroke_color:
+                                                      default:
+                                                        type: hex
+                                                        hex: "#231ebd"
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    background_color:
+                                                      - value:
+                                                          default:
+                                                            hex: "#231ebd"
+                                                            alpha: .6
+                                                        when_state_matches:
+                                                          key: animal
+                                                          value:
+                                                            equals: dragon
+                                                  items:
+                                                    - size:
+                                                        width: 100%
+                                                        height: 100%
+                                                      margin:
+                                                        top: 8
+                                                        bottom: 8
+                                                        start: 8
+                                                        end: 8
+                                                      position:
+                                                        horizontal: center
+                                                        vertical: center
+                                                      view:
+                                                        type: label
+                                                        text: Dragon
+                                                        content_description: Dragon
+                                                        text_appearance:
+                                                          font_size: 16
+                                                          color:
+                                                            default:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          alignment: center
+                                                          styles: []
+                                                          font_families:
+                                                            - sans-serif
+                                  - identifier: 7beb5f48-a5fe-4c56-ae31-000000
+                                    size:
+                                      width: 100%
+                                      height: auto
+                                    margin:
+                                      top: 8
+                                      bottom: 8
+                                      start: 16
+                                      end: 16
+                                    view:
+                                      type: linear_layout
+                                      direction: vertical
+                                      items:
+                                      - margin:
+                                          top: 0
+                                          bottom: 8
+                                        size:
+                                          width: 100%
+                                          height: auto
+                                        view:
+                                          type: label
+                                          text: Favorite Color
+                                          content_description: Favorite Color
+                                          text_appearance:
+                                            font_size: 20
+                                            color:
+                                              default:
+                                                type: hex
+                                                hex: "#000000"
+                                                alpha: 1
+                                            alignment: start
+                                            styles: []
+                                            font_families:
+                                            - sans-serif
+                                      - margin:
+                                          top: 0
+                                          bottom: 8
+                                        size:
+                                          width: 100%
+                                          height: auto
+                                        view:
+                                          type: radio_input_controller
+                                          identifier: 7beb5f48-a5fe-4c56-ae31-994263ffcdb2
+                                          required: false
+                                          view:
+                                            type: linear_layout
+                                            direction: vertical
+                                            items:
+                                            - margin:
+                                                end: 8
+                                                start: 8
+                                                top: 8
+                                                bottom: 8
+                                              size:
+                                                width: 100%
+                                                height: 100%
+                                              view:
+                                                type: radio_input_toggle_layout
+                                                identifier: blue_toggle_id
+                                                content_description: Blue
+                                                reporting_value: blue_toggle
+                                                on_toggle_on:
+                                                  state_actions:
+                                                  - type: set
+                                                    key: color
+                                                    value: blue
+                                                on_toggle_off:
+                                                  state_actions: []
+                                                view:
+                                                  type: container
+                                                  border:
+                                                    radius: 8
+                                                    stroke_width: 4
+                                                    stroke_color:
+                                                      default:
+                                                        type: hex
+                                                        hex: "#231ebd"
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    background_color:
+                                                      - value:
+                                                          default:
+                                                            hex: "#231ebd"
+                                                            alpha: .6
+                                                        when_state_matches:
+                                                          key: color
+                                                          value:
+                                                            equals: blue
+                                                  items:
+                                                    - size:
+                                                        width: 100%
+                                                        height: 100%
+                                                      margin:
+                                                        top: 8
+                                                        bottom: 8
+                                                        start: 8
+                                                        end: 8
+                                                      position:
+                                                        horizontal: center
+                                                        vertical: center
+                                                      view:
+                                                        type: label
+                                                        text: Blue
+                                                        view_overrides:
+                                                            icon_start:
+                                                                - value:
+                                                                    space: 8
+                                                                    type: floating
+                                                                    icon:
+                                                                      type: icon
+                                                                      icon: checkmark
+                                                                      color:
+                                                                          default:
+                                                                              hex: "#000000"
+                                                                              alpha: 1.0
+                                                                      scale: 1
+                                                                  when_state_matches:
+                                                                    key: color
+                                                                    value:
+                                                                      equals: blue
+                                                        content_description: Blue
+                                                        text_appearance:
+                                                          font_size: 16
+                                                          color:
+                                                            default:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          alignment: center
+                                                          styles: []
+                                                          font_families:
+                                                            - sans-serif
+                                            - size:
+                                                width: 100%
+                                                height: 100%
+                                              margin:
+                                                end: 8
+                                                start: 8
+                                                bottom: 8
+                                              view:
+                                                type: radio_input_toggle_layout
+                                                identifier: red_toggle_id
+                                                content_description: Red
+                                                reporting_value: red_toggle
+                                                on_toggle_on:
+                                                  state_actions:
+                                                  - type: set
+                                                    key: color
+                                                    value: red
+                                                on_toggle_off:
+                                                  state_actions: []
+                                                view:
+                                                  type: container
+                                                  border:
+                                                    radius: 8
+                                                    stroke_width: 4
+                                                    stroke_color:
+                                                      default:
+                                                        type: hex
+                                                        hex: "#bd1e1e"
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    background_color:
+                                                      - value:
+                                                          default:
+                                                            hex: "#bd1e1e"
+                                                            alpha: .6
+                                                        when_state_matches:
+                                                          key: color
+                                                          value:
+                                                            equals: red
+                                                  items:
+                                                    - size:
+                                                        width: 100%
+                                                        height: 100%
+                                                      margin:
+                                                        top: 8
+                                                        bottom: 8
+                                                      position:
+                                                        horizontal: center
+                                                        vertical: center
+                                                      view:
+                                                        type: label
+                                                        text: Red
+                                                        view_overrides:
+                                                            icon_start:
+                                                                - value:
+                                                                    space: 8
+                                                                    type: floating
+                                                                    icon:
+                                                                      type: icon
+                                                                      icon: checkmark
+                                                                      color:
+                                                                          default:
+                                                                              hex: "#000000"
+                                                                              alpha: 1.0
+                                                                      scale: 1
+                                                                  when_state_matches:
+                                                                    key: color
+                                                                    value:
+                                                                      equals: red
+                                                        content_description: Red
+                                                        text_appearance:
+                                                          font_size: 16
+                                                          color:
+                                                            default:
+                                                              type: hex
+                                                              hex: "#000000"
+                                                              alpha: 1
+                                                          alignment: center
+                                                          styles: []
+                                                          font_families:
+                                                            - sans-serif
+                                  - identifier: 413f50b9-0b78-4a42-9ca7-cf64e7125253
+                                    size:
+                                      width: 100%
+                                      height: auto
+                                    margin:
+                                      top: 8
+                                      bottom: 8
+                                      start: 16
+                                      end: 16
+                                    view:
+                                      type: label
+                                      text: Multi Choice
+                                      content_description: Multi Choice
+                                      text_appearance:
+                                        font_size: 20
+                                        color:
+                                          default:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        alignment: start
+                                        styles:
+                                        - bold
+                                        font_families:
+                                        - sans-serif
+                                  - identifier: 4e3f3d9e-a4a2-4a01-a7e4-000000000
+                                    size:
+                                      width: 100%
+                                      height: auto
+                                    margin:
+                                      top: 8
+                                      bottom: 8
+                                      start: 16
+                                      end: 16
+                                    view:
+                                      type: linear_layout
+                                      direction: vertical
+                                      items:
+                                      - margin:
+                                          top: 0
+                                          bottom: 8
+                                        size:
+                                          width: 100%
+                                          height: auto
+                                        view:
+                                          type: label
+                                          text: "What are your favorite Guy Fieri shows? (select at least 2)"
+                                          content_description: "What are your favorite Guy Fieri shows? (select at least 2)"
+                                          text_appearance:
+                                            font_size: 20
+                                            color:
+                                              default:
+                                                type: hex
+                                                hex: "#000000"
+                                                alpha: 1
+                                            alignment: start
+                                            styles: []
+                                            font_families:
+                                            - sans-serif
+                                      - margin:
+                                          top: 0
+                                          bottom: 8
+                                        size:
+                                          width: 100%
+                                          height: auto
+                                        view:
+                                          type: checkbox_controller
+                                          identifier: 4e3f3d9e-a4a2-4a01-a7e4-76654455
+                                          required: true
+                                          view:
+                                            type: linear_layout
+                                            direction: vertical
+                                            items:
+                                            - size:
+                                                width: 100%
+                                                height: auto
+                                              margin:
+                                                top: 8
+                                                bottom: 8
+                                              view:
+                                                type: checkbox_toggle_layout
+                                                identifier: grocery_games_toggle_id
+                                                content_description: Guy's
+                                                  Grocery Games
+                                                reporting_value: grocery_games_toggle
+                                                on_toggle_on:
+                                                  state_actions:
+                                                    - type: set
+                                                      key: grocery
+                                                      value: true
+                                                on_toggle_off:
+                                                  state_actions:
+                                                    - type: set
+                                                      key: grocery
+                                                      value: false
+                                                view:
+                                                  type: label
+                                                  text: Guy's Grocery Games
+                                                  content_description: Guy's
+                                                    Grocery Games
+                                                  view_overrides:
+                                                    icon_start:
+                                                    - when_state_matches:
+                                                        key: grocery
+                                                        value:
+                                                          equals: true
+                                                      value:
+                                                        space: 16
+                                                        type: floating
+                                                        icon:
+                                                          type: icon
+                                                          icon: checkmark
+                                                          color:
+                                                              default:
+                                                                  hex: "#0bb31b"
+                                                                  alpha: 1.0
+                                                          scale: .8
+                                                  text_appearance:
+                                                    font_size: 16
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: "#000000"
+                                                        alpha: 1
+                                                    alignment: start
+                                                    styles: []
+                                                    font_families:
+                                                    - sans-serif
+                                            - size:
+                                                width: 100%
+                                                height: auto
+                                              margin:
+                                                top: 8
+                                                bottom: 8
+                                              view:
+                                                type: checkbox_toggle_layout
+                                                identifier: big_bite_toggle_id
+                                                content_description: Guy's
+                                                  Big Bite
+                                                reporting_value: big_bite_toggle
+                                                on_toggle_on:
+                                                  state_actions:
+                                                  - type: set
+                                                    key: guy
+                                                    value: true
+                                                on_toggle_off:
+                                                  state_actions:
+                                                  - type: set
+                                                    key: guy
+                                                    value: false
+                                                view:
+                                                  type: label
+                                                  text: Guy's Big Bite
+                                                  content_description: Guy's
+                                                    Big Bite
+                                                  view_overrides:
+                                                    icon_start:
+                                                    - when_state_matches:
+                                                        key: guy
+                                                        value:
+                                                          equals: true
+                                                      value:
+                                                        space: 16
+                                                        type: floating
+                                                        icon:
+                                                          type: icon
+                                                          icon: checkmark
+                                                          color:
+                                                              default:
+                                                                  hex: "#0bb31b"
+                                                                  alpha: 1.0
+                                                          scale: .8
+                                                  text_appearance:
+                                                    font_size: 16
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: "#000000"
+                                                        alpha: 1
+                                                    alignment: start
+                                                    styles: []
+                                                    font_families:
+                                                    - sans-serif
+                                            - size:
+                                                width: 100%
+                                                height: auto
+                                              margin:
+                                                top: 8
+                                                bottom: 8
+                                              view:
+                                                type: checkbox_toggle_layout
+                                                identifier: family_road_trip_toggle_id
+                                                content_description: Guy's
+                                                  Family Road Trip
+                                                reporting_value: family_road_trip_toggle
+                                                on_toggle_on:
+                                                  state_actions:
+                                                  - type: set
+                                                    key: family_road_trip
+                                                    value: true
+                                                on_toggle_off:
+                                                  state_actions:
+                                                  - type: set
+                                                    key: family_road_trip
+                                                    value: false
+                                                view:
+                                                  type: label
+                                                  text: Guy's Family Road
+                                                    Trip
+                                                  content_description: Guy's
+                                                    Family Road Trip
+                                                  view_overrides:
+                                                    icon_start:
+                                                    - when_state_matches:
+                                                        key: family_road_trip
+                                                        value:
+                                                          equals: true
+                                                      value:
+                                                        space: 16
+                                                        type: floating
+                                                        icon:
+                                                          type: icon
+                                                          icon: checkmark
+                                                          color:
+                                                              default:
+                                                                  hex: "#0bb31b"
+                                                                  alpha: 1.0
+                                                          scale: .8
+                                                  text_appearance:
+                                                    font_size: 16
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: "#000000"
+                                                        alpha: 1
+                                                    alignment: start
+                                                    styles: []
+                                                    font_families:
+                                                    - sans-serif
+                                            - size:
+                                                width: 100%
+                                                height: 100%
+                                              margin:
+                                                top: 8
+                                                bottom: 8
+                                              view:
+                                                type: checkbox_toggle_layout
+                                                identifier: minute_to_win_it_toggle_id
+                                                content_description: Minute
+                                                  to Win It
+                                                reporting_value: minute_to_win_it_toggle
+                                                on_toggle_on:
+                                                  state_actions:
+                                                  - type: set
+                                                    key: minute_to_win_it
+                                                    value: true
+                                                on_toggle_off:
+                                                  state_actions:
+                                                  - type: set
+                                                    key: minute_to_win_it
+                                                    value: false
+                                                view:
+                                                  type: label
+                                                  text: Minute to Win It
+                                                  content_description: Minute
+                                                    to Win It
+                                                  view_overrides:
+                                                    icon_start:
+                                                    - when_state_matches:
+                                                        key: minute_to_win_it
+                                                        value:
+                                                          equals: true
+                                                      value:
+                                                        space: 16
+                                                        type: floating
+                                                        icon:
+                                                          type: icon
+                                                          icon: checkmark
+                                                          color:
+                                                              default:
+                                                                  hex: "#0bb31b"
+                                                                  alpha: 1.0
+                                                          scale: .8
+                                                  text_appearance:
+                                                    font_size: 16
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: "#000000"
+                                                        alpha: 1
+                                                    alignment: start
+                                                    styles: []
+                                                    font_families:
+                                                    - sans-serif
+                                  - identifier: 413f50b9-0b78-4a42-9ca7-cf64e7125253
+                                    size:
+                                      width: 100%
+                                      height: auto
+                                    margin:
+                                      top: 8
+                                      bottom: 8
+                                      start: 16
+                                      end: 16
+                                    view:
+                                      type: label
+                                      text: Standalone
+                                      content_description: Standalone
+                                      text_appearance:
+                                        font_size: 20
+                                        color:
+                                          default:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        alignment: start
+                                        styles:
+                                        - bold
+                                        font_families:
+                                        - sans-serif
+                                  - identifier: 4e3f3d9e-a4a2-4a01-a7e4-09925d5bb30F
+                                    size:
+                                      width: 100%
+                                      height: auto
+                                    margin:
+                                      top: 8
+                                      bottom: 8
+                                      start: 16
+                                      end: 16
+                                    view:
+                                      type: linear_layout
+                                      direction: vertical
+                                      items:
+                                      - margin:
+                                          top: 0
+                                          bottom: 8
+                                        size:
+                                          width: 100%
+                                          height: auto
+                                        view:
+                                          type: label
+                                          text: "What are your hobbies?"
+                                          content_description: "What are your hobbies?"
+                                          icon_start:
+                                            space: 8
+                                            type: floating
+                                            icon:
+                                              type: icon
+                                              icon: asterisk
+                                              color:
+                                                  default:
+                                                      hex: "#000000"
+                                                      alpha: 1.0
+                                              scale: .75
+                                          view_overrides:
+                                            icon_start:
+                                            - when_state_matches:
+                                                scope:
+                                                - 4e3f3d9e-a4a2-4a01-a7e4-09925d5aa30f
+                                                value:
+                                                  equals: "error"
+                                              value:
+                                                space: 8
+                                                type: floating
+                                                icon:
+                                                  type: icon
+                                                  icon: asterisk_circle_fill
+                                                  color:
+                                                      default:
+                                                          hex: "#ff0000"
+                                                          alpha: 1.0
+                                                  scale: .75
+                                          text_appearance:
+                                            font_size: 20
+                                            color:
+                                              default:
+                                                type: hex
+                                                hex: "#000000"
+                                                alpha: 1
+                                            alignment: start
+                                            styles: []
+                                            font_families:
+                                            - sans-serif
+                                      - margin:
+                                          top: 0
+                                          bottom: 8
+                                        size:
+                                          width: 100%
+                                          height: auto
+                                        view:
+                                          type: linear_layout
+                                          direction: vertical
+                                          items:
+                                          - margin:
+                                              end: 8
+                                              bottom: 8
+                                              top: 8
+                                              start: 8
+                                            size:
+                                              width: 100%
+                                              height: auto
+                                            view:
+                                              type: basic_toggle_layout
+                                              identifier: reading_toggle_id
+                                              content_description: Reading
+                                              reporting_value: reading_toggle
+                                              on_toggle_on:
+                                                state_actions:
+                                                - type: set
+                                                  key: reading
+                                                  value: true
+                                              on_toggle_off:
+                                                state_actions:
+                                                - type: set
+                                                  key: reading
+                                                  value: false
+                                              view:
+                                                type: container
+                                                border:
+                                                  radius: 2
+                                                  stroke_width: 4
+                                                  stroke_color:
+                                                    default:
+                                                      type: hex
+                                                      hex: "#bd1e90"
+                                                      alpha: 1
+                                                view_overrides:
+                                                  background_color:
+                                                    - value:
+                                                        default:
+                                                          hex: "#bd1e90"
+                                                          alpha: .6
+                                                      when_state_matches:
+                                                        key: reading
+                                                        value:
+                                                          equals: true
+                                                items:
+                                                  - size:
+                                                      width: 100%
+                                                      height: 100%
+                                                    margin:
+                                                      top: 8
+                                                      bottom: 8
+                                                      start: 8
+                                                      end: 8
+                                                    position:
+                                                      horizontal: center
+                                                      vertical: center
+                                                    view:
+                                                      type: label
+                                                      text: Reading
+                                                      content_description: Reading
+                                                      text_appearance:
+                                                        font_size: 16
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: "#000000"
+                                                            alpha: 1
+                                                        alignment: center
+                                                        styles: []
+                                                        font_families:
+                                                          - sans-serif
+                                          - size:
+                                              width: 100%
+                                              height: auto
+                                            margin:
+                                              end: 8
+                                              bottom: 8
+                                              top: 8
+                                              start: 8
+                                            view:
+                                              type: basic_toggle_layout
+                                              identifier: travelling_toggle_id
+                                              content_description: Travelling
+                                              reporting_value: travelling_toggle
+                                              on_toggle_on:
+                                                state_actions:
+                                                - type: set
+                                                  key: travelling
+                                                  value: true
+                                              on_toggle_off:
+                                                state_actions:
+                                                - type: set
+                                                  key: travelling
+                                                  value: false
+                                              view:
+                                                type: container
+                                                border:
+                                                  radius: 2
+                                                  stroke_width: 4
+                                                  stroke_color:
+                                                    default:
+                                                      type: hex
+                                                      hex: "#bd1e90"
+                                                      alpha: 1
+                                                view_overrides:
+                                                  background_color:
+                                                    - value:
+                                                        default:
+                                                          hex: "#bd1e90"
+                                                          alpha: .6
+                                                      when_state_matches:
+                                                        key: travelling
+                                                        value:
+                                                          equals: true
+                                                items:
+                                                  - size:
+                                                      width: 100%
+                                                      height: 100%
+                                                    margin:
+                                                      top: 8
+                                                      bottom: 8
+                                                      start: 8
+                                                      end: 8
+                                                    position:
+                                                      horizontal: center
+                                                      vertical: center
+                                                    view:
+                                                      type: label
+                                                      text: Travelling
+                                                      content_description: Travelling
+                                                      text_appearance:
+                                                        font_size: 16
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: "#000000"
+                                                            alpha: 1
+                                                        alignment: center
+                                                        styles: []
+                                                        font_families:
+                                                          - sans-serif
+                                          - size:
+                                              width: 100%
+                                              height: auto
+                                            margin:
+                                              end: 8
+                                              bottom: 8
+                                              top: 8
+                                              start: 8
+                                            view:
+                                              type: basic_toggle_layout
+                                              identifier: music_toggle_id
+                                              content_description: Music
+                                              reporting_value: music_toggle
+                                              on_toggle_on:
+                                                state_actions:
+                                                - type: set
+                                                  key: music
+                                                  value: true
+                                              on_toggle_off:
+                                                state_actions:
+                                                - type: set
+                                                  key: music
+                                                  value: false
+                                              view:
+                                                type: container
+                                                border:
+                                                  radius: 2
+                                                  stroke_width: 4
+                                                  stroke_color:
+                                                    default:
+                                                      type: hex
+                                                      hex: "#bd1e90"
+                                                      alpha: 1
+                                                view_overrides:
+                                                  background_color:
+                                                    - value:
+                                                        default:
+                                                          hex: "#bd1e90"
+                                                          alpha: .6
+                                                      when_state_matches:
+                                                        key: music
+                                                        value:
+                                                          equals: true
+                                                items:
+                                                  - size:
+                                                      width: 100%
+                                                      height: 100%
+                                                    margin:
+                                                      top: 8
+                                                      bottom: 8
+                                                      start: 8
+                                                      end: 8
+                                                    position:
+                                                      horizontal: center
+                                                      vertical: center
+                                                    view:
+                                                      type: label
+                                                      text: Music
+                                                      content_description: Music
+                                                      text_appearance:
+                                                        font_size: 16
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: "#000000"
+                                                            alpha: 1
+                                                        alignment: center
+                                                        styles: []
+                                                        font_families:
+                                                          - sans-serif
+                                          - size:
+                                              width: 100%
+                                              height: auto
+                                            margin:
+                                              end: 8
+                                              bottom: 8
+                                              top: 8
+                                              start: 8
+                                            view:
+                                              type: basic_toggle_layout
+                                              identifier: news_toggle_id
+                                              content_description: News
+                                              reporting_value: news_toggle
+                                              on_toggle_on:
+                                                state_actions:
+                                                - type: set
+                                                  key: news
+                                                  value: true
+                                              on_toggle_off:
+                                                state_actions:
+                                                - type: set
+                                                  key: news
+                                                  value: false
+                                              view:
+                                                type: container
+                                                border:
+                                                  radius: 2
+                                                  stroke_width: 4
+                                                  stroke_color:
+                                                    default:
+                                                      type: hex
+                                                      hex: "#bd1e90"
+                                                      alpha: 1
+                                                view_overrides:
+                                                  background_color:
+                                                    - value:
+                                                        default:
+                                                          hex: "#bd1e90"
+                                                          alpha: .6
+                                                      when_state_matches:
+                                                        key: news
+                                                        value:
+                                                          equals: true
+                                                items:
+                                                  - size:
+                                                      width: 100%
+                                                      height: 100%
+                                                    margin:
+                                                      top: 8
+                                                      bottom: 8
+                                                      start: 8
+                                                      end: 8
+                                                    position:
+                                                      horizontal: center
+                                                      vertical: center
+                                                    view:
+                                                      type: label
+                                                      text: News
+                                                      content_description: News
+                                                      text_appearance:
+                                                        font_size: 16
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: "#000000"
+                                                            alpha: 1
+                                                        alignment: center
+                                                        styles: []
+                                                        font_families:
+                                                          - sans-serif
+                                          - size:
+                                              width: 100%
+                                              height: auto
+                                            margin:
+                                              end: 8
+                                              bottom: 8
+                                              top: 8
+                                              start: 8
+                                            view:
+                                              type: basic_toggle_layout
+                                              identifier: sport_toggle_id
+                                              content_description: Sport
+                                              reporting_value: sport_toggle
+                                              on_toggle_on:
+                                                state_actions:
+                                                - type: set
+                                                  key: sport
+                                                  value: true
+                                              on_toggle_off:
+                                                state_actions:
+                                                - type: set
+                                                  key: sport
+                                                  value: false
+                                              view:
+                                                type: container
+                                                border:
+                                                  radius: 2
+                                                  stroke_width: 4
+                                                  stroke_color:
+                                                    default:
+                                                      type: hex
+                                                      hex: "#bd1e90"
+                                                      alpha: 1
+                                                view_overrides:
+                                                  background_color:
+                                                    - value:
+                                                        default:
+                                                          hex: "#bd1e90"
+                                                          alpha: .6
+                                                      when_state_matches:
+                                                        key: sport
+                                                        value:
+                                                          equals: true
+                                                items:
+                                                  - size:
+                                                      width: 100%
+                                                      height: 100%
+                                                    margin:
+                                                      top: 8
+                                                      bottom: 8
+                                                      start: 8
+                                                      end: 8
+                                                    position:
+                                                      horizontal: center
+                                                      vertical: center
+                                                    view:
+                                                      type: label
+                                                      text: Sport
+                                                      content_description: Sport
+                                                      text_appearance:
+                                                        font_size: 16
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: "#000000"
+                                                            alpha: 1
+                                                        alignment: center
+                                                        styles: []
+                                                        font_families:
+                                                          - sans-serif
+                                  - identifier: f1047936-d73a-403f-9ac8-68bf6bacb802
+                                    margin:
+                                      top: 8
+                                      bottom: 8
+                                      start: 16
+                                      end: 16
+                                    size:
+                                      width: 100%
+                                      height: auto
+                                    view:
+                                      type: label_button
+                                      identifier: submit_feedback--Submit
+                                      reporting_metadata:
+                                        trigger_link_id: f1047936-d73a-403f-9ac8-68bf6bacb802
+                                      label:
+                                        view_overrides:
+                                            icon_start:
+                                              - value:
+                                                  type: "floating"
+                                                  space: 8
+                                                  icon:
+                                                    type: icon
+                                                    icon: progress_spinner
+                                                    color:
+                                                        default:
+                                                            hex: "#FFFFFF"
+                                                            alpha: 1.0
+                                                    scale: 1
+                                                when_state_matches:
+                                                  scope:
+                                                      - $forms
+                                                      - current
+                                                      - status
+                                                      - type
+                                                  value:
+                                                    equals: "validating"
+                                            text:
+                                              - value: "Processing ..."
+                                                when_state_matches:
+                                                  scope:
+                                                      - $forms
+                                                      - current
+                                                      - status
+                                                      - type
+                                                  value:
+                                                    equals: "validating"
+                                        type: label
+                                        text: Submit
+                                        content_description: Submit
+                                        text_appearance:
+                                          font_size: 16
+                                          color:
+                                            default:
+                                              type: hex
+                                              hex: "#000000"
+                                              alpha: 1
+                                            selectors:
+                                            - platform: ios
+                                              dark_mode: false
+                                              color:
+                                                type: hex
+                                                hex: "#000000"
+                                                alpha: 1
+                                          alignment: center
+                                          styles: []
+                                          font_families:
+                                          - sans-serif
+                                      actions: {}
+                                      enabled:
+                                      - form_validation
+                                      button_click:
+                                      - form_submit
+                                      - dismiss
+                                      background_color:
+                                        default:
+                                          type: hex
+                                          hex: "#63AFF1"
+                                          alpha: 1
+                                      border:
+                                        radius: 0
+                                        stroke_width: 16
+                                        stroke_color:
+                                          default:
+                                            type: hex
+                                            hex: "#63AFF1"
+                                            alpha: 1
+                                      event_handlers:
+                                      - type: tap
+                                        state_actions:
+                                        - type: set
+                                          key: submitted
+                                          value: true
+                                  
+            - position:
+                horizontal: end
+                vertical: top
+              size:
+                width: 48
+                height: 48
+              view:
+                type: image_button
+                image:
+                  scale: 0.4
+                  type: icon
+                  icon: close
+                  color:
+                    default:
+                      type: hex
+                      hex: "#000000"
+                      alpha: 1
+                identifier: dismiss_button
+                button_click:
+                - dismiss
+
+
+
+
+
+

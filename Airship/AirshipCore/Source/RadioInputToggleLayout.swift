@@ -3,11 +3,13 @@
 import Foundation
 import SwiftUI
 
-struct RadioInput: View {
-    let info: ThomasViewInfo.RadioInput
-    let constraints: ViewConstraints
+@MainActor
+struct RadioInputToggleLayout: View {
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var radioInputState: RadioInputState
+
+    let info: ThomasViewInfo.RadioInputToggleLayout
+    let constraints: ViewConstraints
 
     private var isOnBinding: Binding<Bool> {
         return Binding<Bool>(
@@ -25,15 +27,20 @@ struct RadioInput: View {
         )
     }
 
-    @ViewBuilder
     var body: some View {
-        Toggle(isOn: self.isOnBinding.animation()) {}
-            .thomasToggleStyle(
-                self.info.properties.style,
-                constraints: self.constraints
+        ToggleLayout(
+            isOn: self.isOnBinding,
+            onToggleOn: self.info.properties.onToggleOn,
+            onToggleOff: self.info.properties.onToggleOff
+        ) {
+            ViewFactory.createView(
+                self.info.properties.view,
+                constraints: constraints
             )
-            .constraints(constraints)
-            .thomasCommon(self.info)
-            .formElement()
+        }
+        .constraints(self.constraints)
+        .thomasCommon(self.info, formInputID: self.info.properties.identifier)
+        .accessible(self.info.accessible)
+        .formElement()
     }
 }

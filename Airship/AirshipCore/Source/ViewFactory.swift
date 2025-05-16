@@ -65,6 +65,12 @@ struct ViewFactory {
             CustomView(info: info, constraints: constraints)
         case .buttonLayout(let info):
             ButtonLayout(info: info, constraints: constraints)
+        case .basicToggleLayout(let info):
+            BasicToggleLayout(info: info, constraints: constraints)
+        case .checkboxToggleLayout(let info):
+            CheckboxToggleLayout(info: info, constraints: constraints)
+        case .radioInputToggleLayout(let info):
+            RadioInputToggleLayout(info: info, constraints: constraints)
         }
     }
 }

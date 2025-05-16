@@ -25,6 +25,7 @@ extension View {
             )
         }
     }
+    
     @ViewBuilder
     public func airshipApplyIf<Content: View>(
         _ predicate: @autoclosure () -> Bool,
@@ -212,4 +213,3 @@ struct AirshipViewModifierBuilder {
         }
     }
 }
-

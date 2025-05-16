@@ -2,7 +2,6 @@
 
 import Foundation
 
-
 enum ThomasToggleStyleInfo: ThomasSerializable {
     case switchStyle(Switch)
     case checkboxStyle(Checkbox)

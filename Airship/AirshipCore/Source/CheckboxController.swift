@@ -14,7 +14,10 @@ struct CheckboxController: View {
     @StateObject var checkboxState: CheckboxState
     @EnvironmentObject var validatableHelper: ValidatableHelper
 
-    init(info: ThomasViewInfo.CheckboxController, constraints: ViewConstraints) {
+    init(
+        info: ThomasViewInfo.CheckboxController,
+        constraints: ViewConstraints
+    ) {
         self.info = info
         self.constraints = constraints
         self._checkboxState = StateObject(
@@ -68,7 +71,7 @@ struct CheckboxController: View {
         self.checkboxState.selectedItems = Set(value)
     }
 
-    private func checkValid(_ value: Set<String>) -> Bool {
+    private func checkValid(_ value: Set<AirshipJSON>) -> Bool {
         let min = info.properties.minSelection ?? 0
         let max = info.properties.maxSelection ?? Int.max
 
@@ -83,7 +86,7 @@ struct CheckboxController: View {
         return true
     }
 
-    private func updateFormState(_ value: Set<String>) {
+    private func updateFormState(_ value: Set<AirshipJSON>) {
         let formValue: ThomasFormField.Value = .multipleCheckbox(value)
         let field: ThomasFormField = if checkValid(value) {
             ThomasFormField.validField(

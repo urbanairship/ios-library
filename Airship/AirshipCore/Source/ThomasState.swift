@@ -215,8 +215,10 @@ fileprivate extension ThomasFormField.Value {
         case .toggle(let value):
             return .bool(value)
         case .multipleCheckbox(let value):
-            return .array(value.map { .string($0) })
-        case .radio(let value), .sms(let value), .email(let value), .text(let value):
+            return .array(Array(value))
+        case .radio(let value):
+            return value
+        case .sms(let value), .email(let value), .text(let value):
             guard let value else { return nil }
             return .string(value)
         case .score(let value):

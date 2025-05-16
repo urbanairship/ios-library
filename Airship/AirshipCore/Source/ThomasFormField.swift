@@ -45,8 +45,8 @@ final class ThomasFormField: Sendable {
 
     enum Value: Sendable, Equatable {
         case toggle(Bool)
-        case radio(String?)
-        case multipleCheckbox(Set<String>)
+        case radio(AirshipJSON?)
+        case multipleCheckbox(Set<AirshipJSON>)
         case form(responseType: String?, children: [String: Value])
         case npsForm(responseType: String?, scoreID: String, children: [String: Value])
         case text(String?)

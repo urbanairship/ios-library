@@ -3,44 +3,40 @@
 import Foundation
 import SwiftUI
 
-struct AirshipToggle: View {
-    let info: ThomasViewInfo.Toggle
-    let constraints: ViewConstraints
+@MainActor
+struct BasicToggleLayout: View {
 
     @Environment(\.pageIdentifier) var pageID
-    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
     @EnvironmentObject var formState: ThomasFormState
-    @State private var isOn: Bool = false
+    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
+    @State var isOn: Bool = false
+
+    let info: ThomasViewInfo.BasicToggleLayout
+    let constraints: ViewConstraints
 
     var body: some View {
-        createToggle()
-            .constraints(self.constraints)
-            .thomasCommon(self.info, formInputID: self.info.properties.identifier)
-            .accessible(self.info.accessible)
-            .formElement()
-            .onAppear {
-                restoreFormState()
-                updateValue(self.isOn)
-            }
+        ToggleLayout(
+            isOn: $isOn,
+            onToggleOn: self.info.properties.onToggleOn,
+            onToggleOff: self.info.properties.onToggleOff
+        ) {
+            ViewFactory.createView(
+                self.info.properties.view,
+                constraints: constraints
+            )
+        }
+        .constraints(self.constraints)
+        .thomasCommon(self.info, formInputID: self.info.properties.identifier)
+        .accessible(self.info.accessible)
+        .formElement()
+        .airshipOnChangeOf(self.isOn, initial: true) { value in
+            updateFormState(value)
+        }
+        .onAppear {
+            restoreFormState()
+        }
     }
 
-    @ViewBuilder
-    private func createToggle() -> some View {
-        let binding = Binding<Bool>(
-            get: { self.isOn },
-            set: {
-                self.isOn = $0
-                self.updateValue($0)
-            }
-        )
-        
-        Toggle(isOn: binding.animation()) {}
-            .thomasToggleStyle(
-                self.info.properties.style,
-                constraints: self.constraints
-            )
-    }
-    
     private var attributes: [ThomasFormField.Attribute]? {
         guard
             let name = self.info.properties.attributeName,
@@ -48,7 +44,7 @@ struct AirshipToggle: View {
         else {
             return nil
         }
-        
+
         return [
             ThomasFormField.Attribute(
                 attributeName: name,
@@ -56,12 +52,12 @@ struct AirshipToggle: View {
             )
         ]
     }
-    
+
     private func checkValid(_ isOn: Bool) -> Bool {
         return isOn || self.info.validation.isRequired != true
     }
 
-    private func updateValue(_ isOn: Bool) {
+    private func updateFormState(_ isOn: Bool) {
         let formValue: ThomasFormField.Value = .toggle(isOn)
 
         let field: ThomasFormField = if checkValid(isOn) {
@@ -89,7 +85,7 @@ struct AirshipToggle: View {
                 identifier: self.info.properties.identifier
             )?.input
         else {
-            self.updateValue(self.isOn)
+            self.updateFormState(self.isOn)
             return
         }
 

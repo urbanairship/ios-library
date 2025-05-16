@@ -85,7 +85,7 @@ struct ThomasFormPayloadGenerator {
         case .radio(let value):
             return AirshipJSON.makeObject { builder in
                 builder.set(string: "single_choice", key: Self.typeKey)
-                builder.set(string: value, key: Self.valueKey)
+                builder.set(json: value, key: Self.valueKey)
                 if let status {
                     builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)
                 }
@@ -93,7 +93,7 @@ struct ThomasFormPayloadGenerator {
         case .multipleCheckbox(let value):
             return AirshipJSON.makeObject { builder in
                 builder.set(string: "multiple_choice", key: Self.typeKey)
-                builder.set(array: value.map { .string($0) }, key: Self.valueKey)
+                builder.set(array: Array(value), key: Self.valueKey)
                 if let status {
                     builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)
                 }

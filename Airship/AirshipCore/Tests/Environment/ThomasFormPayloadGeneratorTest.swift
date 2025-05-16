@@ -13,7 +13,7 @@ struct ThomasFormPayloadGeneratorTest {
         let form: ThomasFormField.Value = .form(
                 responseType: "user_feedback",
                 children: [
-                    "some-radio-input": .radio("some-radio-input-value"),
+                    "some-radio-input": .radio(AirshipJSON.string("some-radio-input-value")),
                     "some-toggle-input": .toggle(true),
                     "some-score-input": .score(7),
                     "some-text-input": .text("neat text"),

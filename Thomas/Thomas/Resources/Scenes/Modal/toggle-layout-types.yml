@@ -1,0 +1,592 @@
+---
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: false
+  default_placement:
+    ignore_safe_area: true
+    position:
+      horizontal: center
+      vertical: center
+    size:
+      width: 100%
+      height: 100%
+    background_color:
+      default:
+        type: hex
+        hex: "#FFFFFF"
+        alpha: 1
+view:
+  type: form_controller
+  identifier: toggle_layout_showcase
+  response_type: user_feedback
+  validation_mode:
+    type: on_demand
+  view:
+    type: container
+    items:
+      - position:
+          horizontal: center
+          vertical: center
+        size:
+          width: 100%
+          height: 100%
+        view:
+          type: scroll_layout
+          direction: vertical
+          view:
+            type: linear_layout
+            direction: vertical
+            items:
+              # Header
+              - identifier: header
+                size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 16
+                  bottom: 16
+                  start: 16
+                  end: 16
+                view:
+                  type: label
+                  text: Toggle Layout Test
+                  text_appearance:
+                    font_size: 24
+                    color:
+                      default:
+                        type: hex
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: center
+                    styles:
+                      - bold
+                    font_families:
+                      - sans-serif
+              
+              # SECTION 1: Basic Toggle Layout (standalone)
+              - identifier: basic_toggle_section
+                size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 24
+                  bottom: 8
+                  start: 16
+                  end: 16
+                view:
+                  type: label
+                  text: "1. Basic Toggle Layout"
+                  text_appearance:
+                    font_size: 20
+                    color:
+                      default:
+                        type: hex
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: start
+                    styles:
+                      - bold
+                    font_families:
+                      - sans-serif
+              
+              # Basic Toggle Example
+              - identifier: basic_toggle_item
+                size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 8
+                  bottom: 24
+                  start: 16
+                  end: 16
+                view:
+                  type: basic_toggle_layout
+                  identifier: basic_toggle_1
+                  content_description: "Basic toggle example"
+                  on_toggle_on:
+                    state_actions:
+                      - type: set
+                        key: basic_toggle_1
+                        value: true
+                  on_toggle_off:
+                    state_actions:
+                      - type: set
+                        key: basic_toggle_1
+                        value: false
+                  view:
+                    type: container
+                    border:
+                      radius: 8
+                      stroke_width: 1
+                      stroke_color:
+                        default:
+                          type: hex
+                          hex: "#666666"
+                          alpha: 1
+                    view_overrides:
+                      background_color:
+                        - when_state_matches:
+                            key: basic_toggle_1
+                            value:
+                              equals: true
+                          value:
+                            default:
+                              type: hex
+                              hex: "#4285F4"
+                              alpha: 0.3
+                    items:
+                      - size:
+                          width: 100%
+                          height: auto
+                        position:
+                          horizontal: center
+                          vertical: center
+                        margin:
+                          top: 12
+                          bottom: 12
+                          start: 16
+                          end: 16
+                        view:
+                          type: label
+                          text: "Basic Toggle Layout"
+                          text_appearance:
+                            font_size: 16
+                            color:
+                              default:
+                                type: hex
+                                hex: "#000000"
+                                alpha: 1
+                            alignment: center
+                            font_families:
+                              - sans-serif
+              
+              # SECTION 2: Radio Input Toggle Layout (within controller)
+              - identifier: radio_toggle_section
+                size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 16
+                  bottom: 8
+                  start: 16
+                  end: 16
+                view:
+                  type: label
+                  text: "2. Radio Input Toggle Layouts"
+                  text_appearance:
+                    font_size: 20
+                    color:
+                      default:
+                        type: hex
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: start
+                    styles:
+                      - bold
+                    font_families:
+                      - sans-serif
+              
+              # Radio Controller
+              - identifier: radio_controller_item
+                size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 8
+                  bottom: 24
+                  start: 16
+                  end: 16
+                view:
+                  type: radio_input_controller
+                  identifier: radio_controller_1
+                  required: true
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+                      # Radio Option 1
+                      - identifier: radio_option_1
+                        size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                          bottom: 8
+                        view:
+                          type: radio_input_toggle_layout
+                          identifier: radio_toggle_1
+                          content_description: "Radio Option One"
+                          # Using "reporting_value:" to match Swift implementation
+                          reporting_value: "option_one"
+                          on_toggle_on:
+                            state_actions:
+                              - type: set
+                                key: selected_radio
+                                value: "option_one"
+                          on_toggle_off:
+                            state_actions: []
+                          view:
+                            type: container
+                            border:
+                              radius: 8
+                              stroke_width: 1
+                              stroke_color:
+                                default:
+                                  type: hex
+                                  hex: "#666666"
+                                  alpha: 1
+                            view_overrides:
+                              background_color:
+                                - when_state_matches:
+                                    key: selected_radio
+                                    value:
+                                      equals: "option_one"
+                                  value:
+                                    default:
+                                      type: hex
+                                      hex: "#FFC107"
+                                      alpha: 0.3
+                            items:
+                              - size:
+                                  width: 100%
+                                  height: auto
+                                position:
+                                  horizontal: center
+                                  vertical: center
+                                margin:
+                                  top: 12
+                                  bottom: 12
+                                  start: 16
+                                  end: 16
+                                view:
+                                  type: label
+                                  text: "Radio Option One"
+                                  text_appearance:
+                                    font_size: 16
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: 1
+                                    alignment: center
+                                    font_families:
+                                      - sans-serif
+                      
+                      # Radio Option 2
+                      - identifier: radio_option_2
+                        size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                          bottom: 8
+                        view:
+                          type: radio_input_toggle_layout
+                          identifier: radio_toggle_2
+                          content_description: "Radio Option Two"
+                          # Using "reporting_value:" to match Swift implementation
+                          reporting_value: "option_two"
+                          on_toggle_on:
+                            state_actions:
+                              - type: set
+                                key: selected_radio
+                                value: "option_two"
+                          on_toggle_off:
+                            state_actions: []
+                          view:
+                            type: container
+                            border:
+                              radius: 8
+                              stroke_width: 1
+                              stroke_color:
+                                default:
+                                  type: hex
+                                  hex: "#666666"
+                                  alpha: 1
+                            view_overrides:
+                              background_color:
+                                - when_state_matches:
+                                    key: selected_radio
+                                    value:
+                                      equals: "option_two"
+                                  value:
+                                    default:
+                                      type: hex
+                                      hex: "#FFC107"
+                                      alpha: 0.3
+                            items:
+                              - size:
+                                  width: 100%
+                                  height: auto
+                                position:
+                                  horizontal: center
+                                  vertical: center
+                                margin:
+                                  top: 12
+                                  bottom: 12
+                                  start: 16
+                                  end: 16
+                                view:
+                                  type: label
+                                  text: "Radio Option Two"
+                                  text_appearance:
+                                    font_size: 16
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: 1
+                                    alignment: center
+                                    font_families:
+                                      - sans-serif
+              
+              # SECTION 3: Checkbox Toggle Layout
+              - identifier: checkbox_toggle_section
+                size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 16
+                  bottom: 8
+                  start: 16
+                  end: 16
+                view:
+                  type: label
+                  text: "3. Checkbox Toggle Layouts"
+                  text_appearance:
+                    font_size: 20
+                    color:
+                      default:
+                        type: hex
+                        hex: "#000000"
+                        alpha: 1
+                    alignment: start
+                    styles:
+                      - bold
+                    font_families:
+                      - sans-serif
+              
+              # Checkbox Controller
+              - identifier: checkbox_controller_item
+                size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 8
+                  bottom: 24
+                  start: 16
+                  end: 16
+                view:
+                  type: checkbox_controller
+                  identifier: checkbox_controller_1
+                  required: true
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+                      # Checkbox Option 1
+                      - identifier: checkbox_option_1
+                        size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                          bottom: 8
+                        view:
+                          type: checkbox_toggle_layout
+                          identifier: checkbox_toggle_1
+                          content_description: "Checkbox Option One"
+                          # Using "reporting_value:" to match Swift implementation
+                          reporting_value: "checkbox_one"
+                          on_toggle_on:
+                            state_actions:
+                              - type: set
+                                key: checkbox_one
+                                value: true
+                          on_toggle_off:
+                            state_actions:
+                              - type: set
+                                key: checkbox_one
+                                value: false
+                          view:
+                            type: container
+                            border:
+                              radius: 8
+                              stroke_width: 1
+                              stroke_color:
+                                default:
+                                  type: hex
+                                  hex: "#666666"
+                                  alpha: 1
+                            view_overrides:
+                              background_color:
+                                - when_state_matches:
+                                    key: checkbox_one
+                                    value:
+                                      equals: true
+                                  value:
+                                    default:
+                                      type: hex
+                                      hex: "#8BC34A"
+                                      alpha: 0.3
+                            items:
+                              - size:
+                                  width: 100%
+                                  height: auto
+                                position:
+                                  horizontal: center
+                                  vertical: center
+                                margin:
+                                  top: 12
+                                  bottom: 12
+                                  start: 16
+                                  end: 16
+                                view:
+                                  type: label
+                                  text: "Checkbox Option One"
+                                  text_appearance:
+                                    font_size: 16
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: 1
+                                    alignment: center
+                                    font_families:
+                                      - sans-serif
+                      
+                      # Checkbox Option 2
+                      - identifier: checkbox_option_2
+                        size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                          bottom: 8
+                        view:
+                          type: checkbox_toggle_layout
+                          identifier: checkbox_toggle_2
+                          content_description: "Checkbox Option Two"
+                          # Using "reporting_value:" to match Swift implementation
+                          reporting_value: "checkbox_two"
+                          on_toggle_on:
+                            state_actions:
+                              - type: set
+                                key: checkbox_two
+                                value: true
+                          on_toggle_off:
+                            state_actions:
+                              - type: set
+                                key: checkbox_two
+                                value: false
+                          view:
+                            type: container
+                            border:
+                              radius: 8
+                              stroke_width: 1
+                              stroke_color:
+                                default:
+                                  type: hex
+                                  hex: "#666666"
+                                  alpha: 1
+                            view_overrides:
+                              background_color:
+                                - when_state_matches:
+                                    key: checkbox_two
+                                    value:
+                                      equals: true
+                                  value:
+                                    default:
+                                      type: hex
+                                      hex: "#8BC34A"
+                                      alpha: 0.3
+                            items:
+                              - size:
+                                  width: 100%
+                                  height: auto
+                                position:
+                                  horizontal: center
+                                  vertical: center
+                                margin:
+                                  top: 12
+                                  bottom: 12
+                                  start: 16
+                                  end: 16
+                                view:
+                                  type: label
+                                  text: "Checkbox Option Two"
+                                  text_appearance:
+                                    font_size: 16
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: 1
+                                    alignment: center
+                                    font_families:
+                                      - sans-serif
+              
+              # Submit Button
+              - identifier: submit_button
+                size:
+                  width: 100%
+                  height: auto
+                margin:
+                  top: 24
+                  bottom: 32
+                  start: 16
+                  end: 16
+                view:
+                  type: label_button
+                  identifier: submit_button
+                  border:
+                    radius: 8
+                  background_color:
+                    default:
+                      type: hex
+                      hex: "#4285F4"
+                      alpha: 1
+                  button_click:
+                    - form_submit
+                    - dismiss
+                  enabled:
+                    - form_validation
+                  label:
+                    type: label
+                    text: "Submit"
+                    content_description: "Submit"
+                    text_appearance:
+                      font_size: 16
+                      color:
+                        default:
+                          type: hex
+                          hex: "#FFFFFF"
+                          alpha: 1
+                      alignment: center
+                      styles:
+                        - bold
+                      font_families:
+                        - sans-serif
+              
+      # Close button
+      - position:
+          horizontal: end
+          vertical: top
+        size:
+          width: 48
+          height: 48
+        view:
+          type: image_button
+          identifier: close_button
+          button_click:
+            - dismiss
+          image:
+            type: icon
+            icon: close
+            color:
+              default:
+                type: hex
+                hex: "#000000"
+                alpha: 1
+            scale: 0.4

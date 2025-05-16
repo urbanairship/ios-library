@@ -4,11 +4,12 @@ import Foundation
 import SwiftUI
 
 @MainActor
-struct Checkbox: View {
-    let info: ThomasViewInfo.Checkbox
-    let constraints: ViewConstraints
+struct CheckboxToggleLayout: View {
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var checkboxState: CheckboxState
+
+    let info: ThomasViewInfo.CheckboxToggleLayout
+    let constraints: ViewConstraints
 
     private var isOnBinding: Binding<Bool> {
         return Binding<Bool>(
@@ -40,15 +41,19 @@ struct Checkbox: View {
     }
 
     var body: some View {
-        Toggle(isOn: self.isOnBinding.animation()) {}
-            .thomasToggleStyle(
-                self.info.properties.style,
-                constraints: self.constraints
+        ToggleLayout(
+            isOn: self.isOnBinding,
+            onToggleOn: self.info.properties.onToggleOn,
+            onToggleOff: self.info.properties.onToggleOff
+        ) {
+            ViewFactory.createView(
+                self.info.properties.view,
+                constraints: constraints
             )
-            .constraints(constraints)
-            .thomasCommon(self.info)
-            .accessible(self.info.accessible)
-            .formElement()
-            .disabled(!self.isEnabled)
+        }
+        .constraints(self.constraints)
+        .thomasCommon(self.info, formInputID: self.info.properties.identifier)
+        .accessible(self.info.accessible)
+        .formElement()
     }
 }

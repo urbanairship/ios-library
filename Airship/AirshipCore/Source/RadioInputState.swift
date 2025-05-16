@@ -4,12 +4,17 @@ import Foundation
 
 @MainActor
 class RadioInputState: ObservableObject {
+
     @Published
-    var selectedItem: String?
+    var selectedItem: AirshipJSON?
+
     var attributeValue: ThomasAttributeValue?
 
-    func updateSelectedItem(_ info: ThomasViewInfo.RadioInput?) {
-        self.attributeValue = info?.properties.attributeValue
-        self.selectedItem = info?.properties.reportingValue
+    func updateSelectedItem(
+        reportingValue: AirshipJSON,
+        attributeValue: ThomasAttributeValue?
+    ) {
+        self.selectedItem = reportingValue
+        self.attributeValue = attributeValue
     }
 }

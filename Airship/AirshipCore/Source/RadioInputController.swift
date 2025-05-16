@@ -59,7 +59,7 @@ struct RadioInputController: View {
         self.radioInputState.selectedItem = value
     }
 
-    private func checkValid(value: String?) -> Bool {
+    private func checkValid(value: AirshipJSON?) -> Bool {
         return value != nil || info.validation.isRequired != true
     }
 
@@ -79,7 +79,7 @@ struct RadioInputController: View {
         ]
     }
 
-    private func updateFormState(_ value: String?) {
+    private func updateFormState(_ value: AirshipJSON?) {
         let field: ThomasFormField = if checkValid(value: value) {
             ThomasFormField.validField(
                 identifier: self.info.properties.identifier,
