@@ -410,11 +410,10 @@ private class BranchControl: Sendable {
     
     func onPageRequest(_ request: PageRequest) {
         self.updateState()
-
+        
         switch request {
-        case .next: break
+        case .next, .back: break
         case .first: history.removeAll()
-        case .back: _ = history.popLast()
         }
     }
     
