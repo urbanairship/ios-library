@@ -40,7 +40,7 @@ final class DefaultAssetFileManagerTest: XCTestCase {
         XCTAssertEqual(try? assetManager.ensureCacheDirectory(identifier: testIdentifier), expectedCacheDirectory)
     }
 
-    func testClearAssetsSuccess() {
+    func testClearAssetsSuccess() throws {
         let rootPathComponent = "testCacheRoot"
         let assetManager = DefaultAssetFileManager(rootPathComponent: rootPathComponent)
         let cacheURL = FileManager.default.temporaryDirectory.appendingPathComponent("testAssets")
@@ -50,7 +50,7 @@ final class DefaultAssetFileManagerTest: XCTestCase {
         try? FileManager.default.createDirectory(at: assetsPath, withIntermediateDirectories: true)
         FileManager.default.createFile(atPath: assetsPath.appendingPathComponent("file1").path, contents: Data(), attributes: nil)
 
-        assetManager.clearAssets(identifier: identifier, cacheURL: cacheURL)
+        try assetManager.clearAssets(cacheURL: cacheURL)
 
         let directoryExists: Bool = FileManager.default.fileExists(atPath: assetsPath.path)
         XCTAssertFalse(directoryExists, "Not all assets were cleared for the identifier.")

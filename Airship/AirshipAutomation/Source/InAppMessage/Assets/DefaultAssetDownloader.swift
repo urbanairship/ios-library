@@ -53,7 +53,7 @@ struct DefaultAssetDownloader : AssetDownloader {
 
                     do {
                         let tempDirectory = FileManager.default.temporaryDirectory
-                        let tempFileURL = tempDirectory.appendingPathComponent(remoteURL.lastPathComponent)
+                        let tempFileURL = tempDirectory.appendingPathComponent(UUID().uuidString + remoteURL.lastPathComponent)
                         try data.write(to: tempFileURL)
                         continuation.resume(returning: tempFileURL)
                     } catch {
