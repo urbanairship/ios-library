@@ -35,16 +35,12 @@ final class AssetCacheManagerTest: XCTestCase {
         var onEnsureDirectory: ((_ identifier: String) -> URL)?
         var onMoveAsset: ((_ tempURL: URL, _ cacheURL: URL) -> ())?
         var onAssetItemExists: ((_ cacheURL: URL) -> Bool )?
-        var onClearAssets: ((_ identifier: String, _ cacheURL: URL) -> ())?
+        var onClearAssets: ((_ cacheURL: URL) -> ())?
 
         var rootDirectory: URL?
 
         func assetItemExists(at cacheURL: URL) -> Bool {
-            if onAssetItemExists == nil {
-                XCTFail("Testing block onAssetItemExists must be implemented and return a URL")
-            }
-
-            return self.onAssetItemExists!(cacheURL)
+            return self.onAssetItemExists?(cacheURL) ?? false
         }
 
         func ensureCacheDirectory(identifier: String) throws -> URL {
@@ -67,8 +63,8 @@ final class AssetCacheManagerTest: XCTestCase {
             self.onMoveAsset?(tempURL, cacheURL)
         }
 
-        func clearAssets(identifier: String, cacheURL: URL) throws {
-            self.onClearAssets?(identifier, cacheURL)
+        func clearAssets(cacheURL: URL) throws {
+            self.onClearAssets?(cacheURL)
         }
     }
 
