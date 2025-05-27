@@ -2,6 +2,7 @@
 
 import Foundation
 import SwiftUI
+import AVFoundation
 
 /// Media view.
 
@@ -39,8 +40,27 @@ struct Media: View {
             .constraints(constraints)
             .thomasCommon(self.info)
             .accessible(self.info.accessible, hideIfDescriptionIsMissing: true)
-        case .video, .youtube, .vimeo:
-            #if !os(tvOS) && !os(watchOS)
+        case .video:
+#if !os(watchOS)
+            VideoControlsWrapper(
+                info: self.info,
+                constraints: constraints,
+                videoAspectRatio: videoAspectRatio,
+                onMediaReady: {
+                    pagerState.setMediaReady(
+                        pageId: pageIdentifier ?? "",
+                        id: mediaID,
+                        isReady: true
+                    )
+                }
+            )
+            .onAppear {
+                pagerState.registerMedia(pageId: pageIdentifier ?? "", id: mediaID)
+            }
+            .thomasCommon(self.info)
+#endif
+        case .youtube, .vimeo:
+#if !os(tvOS) && !os(watchOS)
             MediaWebView(info: self.info) {
                 pagerState.setMediaReady(
                     pageId: pageIdentifier ?? "",
@@ -51,12 +71,8 @@ struct Media: View {
             .onAppear {
                 pagerState.registerMedia(pageId: pageIdentifier ?? "", id: mediaID)
             }
-            .airshipApplyIf(self.constraints.width == nil || self.constraints.height == nil) {
-                $0.aspectRatio(videoAspectRatio, contentMode: ContentMode.fit)
-            }
-            .constraints(constraints)
             .thomasCommon(self.info)
-            #endif
+#endif
         }
     }
 }
@@ -111,10 +127,10 @@ extension Image {
             centerInside(constraints: constraints)
         } else {
             self.resizable()
-             .scaledToFill()
-             .constraints(constraints, alignment: alignment)
-             .frame(maxWidth: constraints.maxWidth, maxHeight: constraints.maxHeight)
-             .clipped()
+                .scaledToFill()
+                .constraints(constraints, alignment: alignment)
+                .frame(maxWidth: constraints.maxWidth, maxHeight: constraints.maxHeight)
+                .clipped()
         }
     }
 
@@ -124,5 +140,65 @@ extension Image {
             .scaledToFit()
             .constraints(constraints)
             .clipped()
+    }
+}
+
+// Basically mirror the Image.fitMedia functionality
+extension View {
+    @ViewBuilder
+    @MainActor
+    func fitVideo(
+        mediaFit: ThomasMediaFit,
+        cropPosition: ThomasPosition?,
+        constraints: ViewConstraints,
+        videoAspectRatio: CGFloat
+    ) -> some View {
+        switch mediaFit {
+        case .center:
+            cropAlignedVideo(constraints: constraints, videoAspectRatio: videoAspectRatio)
+        case .fitCrop:
+            cropAlignedVideo(constraints: constraints, videoAspectRatio: videoAspectRatio, alignment: cropPosition?.alignment ?? .center)
+        case .centerCrop:
+            cropAlignedVideo(constraints: constraints, videoAspectRatio: videoAspectRatio)
+        case .centerInside:
+            centerInsideVideo(constraints: constraints, videoAspectRatio: videoAspectRatio)
+        }
+    }
+
+    private func shouldCenterInsideVideo(constraints: ViewConstraints, videoAspectRatio: CGFloat) -> Bool {
+        guard constraints.height == nil || constraints.width == nil else {
+            return false
+        }
+
+        if let height = constraints.height, let maxWidth = constraints.maxWidth {
+            let fitWidth = height * videoAspectRatio
+            return fitWidth <= maxWidth
+        }
+
+        if let width = constraints.width, let maxHeight = constraints.maxHeight {
+            let fitHeight = width / videoAspectRatio
+            return fitHeight <= maxHeight
+        }
+
+        return false
+    }
+
+    @ViewBuilder
+    @MainActor
+    private func cropAlignedVideo(constraints: ViewConstraints, videoAspectRatio: CGFloat, alignment: Alignment = .center) -> some View {
+        if shouldCenterInsideVideo(constraints: constraints, videoAspectRatio: videoAspectRatio) {
+            centerInsideVideo(constraints: constraints, videoAspectRatio: videoAspectRatio)
+        } else {
+            self.aspectRatio(videoAspectRatio, contentMode: .fill)
+                .constraints(constraints, alignment: alignment)
+                .frame(maxWidth: constraints.maxWidth, maxHeight: constraints.maxHeight)
+                .clipped()
+        }
+    }
+
+    @MainActor
+    private func centerInsideVideo(constraints: ViewConstraints, videoAspectRatio: CGFloat ) -> some View {
+        self.aspectRatio(videoAspectRatio, contentMode: .fill)
+            .constraints(constraints)
     }
 }

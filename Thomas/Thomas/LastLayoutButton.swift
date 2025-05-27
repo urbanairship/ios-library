@@ -42,10 +42,12 @@ struct LastLayoutButtonView: View {
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
+#if !os(tvOS)
             .background(
                 RoundedRectangle(cornerRadius: 8)
                     .fill(Color(UIColor.secondarySystemBackground))
             )
+#endif
         })
         .contextMenu {
             if recentLayouts.isEmpty {

@@ -3,7 +3,6 @@
 import AirshipCore
 import Foundation
 import Yams
-import WebKit
 import AirshipAutomation
 
 final class Layouts {

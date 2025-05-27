@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+#if !os(tvOS)
 import SwiftUI
 import LocalAuthentication
 
@@ -154,3 +155,4 @@ struct BiometricLoginView: View {
       )
     }
 }
+#endif

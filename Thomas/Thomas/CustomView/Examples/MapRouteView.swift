@@ -1,3 +1,4 @@
+#if !os(tvOS)
 import CoreLocation
 import MapKit
 import SwiftUI
@@ -137,3 +138,4 @@ struct MapView: UIViewRepresentable {
         }
     }
 }
+#endif

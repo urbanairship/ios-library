@@ -80,17 +80,19 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             WeatherView()
         }
 
-        AirshipCustomViewManager.shared.register(name: "map_custom_view") { args in
-            MapRouteView()
-        }
-
         AirshipCustomViewManager.shared.register(name: "camera_custom_view") { args in
             CameraView()
+        }
+
+        #if !os(tvOS)
+        AirshipCustomViewManager.shared.register(name: "map_custom_view") { args in
+            MapRouteView()
         }
 
         AirshipCustomViewManager.shared.register(name: "biometric_login_custom_view") { args in
             BiometricLoginView()
         }
+        #endif
 
         AirshipCustomViewManager.shared.fallbackBuilder = { args in
             ZStack {

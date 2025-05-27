@@ -29,8 +29,8 @@
 		991BE0D22B05684A006109EE /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0D12B05684A006109EE /* CameraView.swift */; };
 		991BE0F32B05C37C006109EE /* WeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0F22B05C37C006109EE /* WeatherViewModel.swift */; };
 		991BE0F52B05C387006109EE /* WeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0F42B05C387006109EE /* WeatherView.swift */; };
-		993FB2CE2B4B423800790877 /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9908E5C32AFDA95000DB3E2E /* AirshipAutomation.framework */; };
-		993FB2CF2B4B423800790877 /* AirshipAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9908E5C32AFDA95000DB3E2E /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		993FB2CE2B4B423800790877 /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9908E5C32AFDA95000DB3E2E /* AirshipAutomation.framework */; platformFilters = (ios, tvos, ); };
+		993FB2CF2B4B423800790877 /* AirshipAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9908E5C32AFDA95000DB3E2E /* AirshipAutomation.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9948E61A2B464F1B00C1F21E /* EmbeddedPlaygroundPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9948E6182B464F1B00C1F21E /* EmbeddedPlaygroundPicker.swift */; };
 		9948E61B2B464F1B00C1F21E /* KeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9948E6162B464F1B00C1F21E /* KeyView.swift */; };
 		9948E61C2B464F1B00C1F21E /* EmbeddedPlaygroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9948E6152B464F1B00C1F21E /* EmbeddedPlaygroundView.swift */; };
@@ -566,11 +566,19 @@
 		6E4AEE1F2B6B253C008AEAC1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipAutomationSwift;
+			platformFilters = (
+				ios,
+				tvos,
+			);
 			targetProxy = 6E4AEE1E2B6B253C008AEAC1 /* PBXContainerItemProxy */;
 		};
 		9908E5CD2AFDA9C600DB3E2E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = AirshipCore;
+			platformFilters = (
+				ios,
+				tvos,
+			);
 			targetProxy = 9908E5CC2AFDA9C600DB3E2E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -722,10 +730,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TVOS_DEPLOYMENT_TARGET = 18.0;
 			};
 			name = Debug;
 		};
@@ -758,10 +768,12 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.Thomas;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TVOS_DEPLOYMENT_TARGET = 18.0;
 			};
 			name = Release;
 		};

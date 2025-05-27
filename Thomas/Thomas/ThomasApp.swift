@@ -2,7 +2,6 @@
 
 import SwiftUI
 import AirshipCore
-import WebKit
 
 @main
 struct ThomasApp: App {

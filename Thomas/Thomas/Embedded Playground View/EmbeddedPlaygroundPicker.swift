@@ -14,7 +14,9 @@ struct EmbeddedPlaygroundPicker: View {
                     Text(id).tag(id)
                 }
             }
+#if !os(tvOS)
             .pickerStyle(WheelPickerStyle())
+#endif
         }
         .onAppear {
             if !embeddedIds.isEmpty {
