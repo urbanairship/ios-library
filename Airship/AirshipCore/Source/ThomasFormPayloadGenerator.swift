@@ -127,9 +127,7 @@ struct ThomasFormPayloadGenerator {
 
             return AirshipJSON.makeObject { builder in
                 builder.set(string: "score", key: Self.typeKey)
-                if let value {
-                    builder.set(double: Double(value), key: Self.valueKey)
-                }
+                builder.set(json: value, key: Self.valueKey)
                 if let status {
                     builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)
                 }

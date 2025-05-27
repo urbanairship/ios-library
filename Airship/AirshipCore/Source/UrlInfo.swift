@@ -96,6 +96,12 @@ extension AirshipLayout {
             return extractUrlInfos(model: model.properties.view)
         case .radioInputToggleLayout(let model):
             return extractUrlInfos(model: model.properties.view)
+        case .iconView(_):
+            return nil
+        case .scoreController(let model):
+            return extractUrlInfos(model: model.properties.view)
+        case .scoreToggleLayout(let model):
+            return extractUrlInfos(model: model.properties.view)
         }
     }
 }

@@ -12,18 +12,10 @@ struct RadioInputToggleLayout: View {
     let constraints: ViewConstraints
 
     private var isOnBinding: Binding<Bool> {
-        return Binding<Bool>(
-            get: {
-                self.radioInputState.selectedItem == self.info.properties.reportingValue
-            },
-            set: {
-                if $0 {
-                    self.radioInputState.updateSelectedItem(
-                        reportingValue: self.info.properties.reportingValue,
-                        attributeValue: self.info.properties.attributeValue
-                    )
-                }
-            }
+        return radioInputState.makeBinding(
+            identifier: info.properties.identifier,
+            reportingValue: info.properties.reportingValue,
+            attributeValue: info.properties.attributeValue
         )
     }
 

@@ -1,0 +1,1870 @@
+version: 1
+presentation:
+  type: modal
+  placement_selectors: []
+  android:
+    disable_back_button: false
+  dismiss_on_touch_outside: false
+  default_placement:
+    ignore_safe_area: false
+    size:
+      width: 100%
+      height: 100%
+    position:
+      horizontal: center
+      vertical: top
+    shade_color:
+      default:
+        type: hex
+        hex: '#000000'
+        alpha: 0.75
+    web: {}
+view:
+  type: pager_controller
+  identifier: 5ff76966-4e7e-4a5f-b3b4-3928cf7f4076
+  view:
+    type: linear_layout
+    direction: vertical
+    items:
+    - size:
+        width: 100%
+        height: 100%
+      view:
+        identifier: fa59a9dc-4f78-407e-bc89-4bb20c03c310
+        type: form_controller
+        validation_mode:
+          type: on_demand
+        form_enabled:
+        - form_submission
+        submit: submit_event
+        response_type: user_feedback
+        view:
+          type: container
+          background_color:
+            default:
+              hex: '#004bff'
+              alpha: 1
+          border:
+            radius: 20
+            stroke_width: 2
+            stroke_color:
+              default:
+                hex: '#FFFFFF'
+                alpha: 0.1
+          items:
+          - position:
+              horizontal: center
+              vertical: center
+            size:
+              width: 100%
+              height: 100%
+            view:
+              type: pager
+              disable_swipe: false
+              items:
+              - identifier: b5628f32-3da1-42ae-b76e-c20800922d47
+                type: pager_item
+                branching:
+                  next_page:
+                    selectors:
+                    - page_id: 24e09863-1dcf-40ea-8b81-b398d286d449
+                      when_state_matches:
+                        or:
+                        - scope:
+                          - $forms
+                          - current
+                          - data
+                          - children
+                          - edf9064c-54d5-4b29-9ac9-ad0997a62696
+                          value:
+                            equals: 4eb714c3-c19f-467b-8daa-0a27b5b4d9f7
+                          key: value
+                    - page_id: d495142a-38d3-482c-9f14-203501b0518a
+                      when_state_matches:
+                        and:
+                        - scope:
+                          - $forms
+                          - current
+                          - data
+                          - children
+                          - edf9064c-54d5-4b29-9ac9-ad0997a62696
+                          value:
+                            equals: 33c7f7cb-d703-4685-a0c8-0a6591cbb67d
+                          key: value
+                view:
+                  type: container
+                  background_color:
+                    default:
+                      hex: '#004bff'
+                      alpha: 1
+                  items:
+                  - size:
+                      width: 100%
+                      height: 100%
+                    position:
+                      horizontal: center
+                      vertical: center
+                    ignore_safe_area: false
+                    view:
+                      type: container
+                      items:
+                      - margin:
+                          bottom: 0
+                          top: 0
+                          end: 0
+                          start: 0
+                        position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        view:
+                          type: linear_layout
+                          direction: vertical
+                          items:
+                          - identifier: scroll_container
+                            size:
+                              width: 100%
+                              height: 100%
+                            view:
+                              type: scroll_layout
+                              direction: vertical
+                              view:
+                                type: linear_layout
+                                direction: vertical
+                                items:
+                                - identifier: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                  size:
+                                    width: 100%
+                                    height: auto
+                                  margin:
+                                    top: 40
+                                    bottom: 8
+                                    start: 24
+                                    end: 24
+                                  view:
+                                    type: linear_layout
+                                    direction: vertical
+                                    items:
+                                    - margin:
+                                        top: 0
+                                        bottom: 24
+                                      size:
+                                        width: 100%
+                                        height: auto
+                                      view:
+                                        type: label
+                                        text: "\U0001F43E Favorite Animal \U0001F43E"
+                                        content_description: Favorite Animal
+                                        text_appearance:
+                                          font_size: 30
+                                          color:
+                                            default:
+                                              hex: '#FFFFFF'
+                                              alpha: 1
+                                          alignment: center
+                                          styles:
+                                          - bold
+                                          font_families:
+                                          - sans-serif
+                                    - margin:
+                                        top: 0
+                                        bottom: 32
+                                      size:
+                                        width: 100%
+                                        height: auto
+                                      view:
+                                        type: label
+                                        text: Please select your favorite animal
+                                        text_appearance:
+                                          alignment: center
+                                          font_size: 18
+                                          color:
+                                            default:
+                                              hex: '#FFFFFF'
+                                              alpha: 0.9
+                                    - margin:
+                                        top: 0
+                                        bottom: 24
+                                      size:
+                                        width: 100%
+                                        height: auto
+                                      view:
+                                        type: radio_input_controller
+                                        identifier: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                        required: true
+                                        on_error:
+                                          state_actions:
+                                          - type: set
+                                            key: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                            value: error
+                                        on_valid:
+                                          state_actions:
+                                          - type: set
+                                            key: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                            value: valid
+                                        on_edit:
+                                          state_actions:
+                                          - type: set
+                                            key: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                            value: editing
+                                        view:
+                                          type: linear_layout
+                                          direction: vertical
+                                          items:
+                                          - size:
+                                              width: 100%
+                                              height: 100%
+                                            margin:
+                                              top: 0
+                                              bottom: 16
+                                            view:
+                                              type: linear_layout
+                                              direction: horizontal
+                                              items:
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: radio_input
+                                                  reporting_value: 4eb714c3-c19f-467b-8daa-0a27b5b4d9f7
+                                                  content_description: Cat
+                                                  style:
+                                                    type: checkbox
+                                                    bindings:
+                                                      selected:
+                                                        shapes:
+                                                        - type: ellipse
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 20
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#004bff'
+                                                              alpha: 1
+                                                        - type: ellipse
+                                                          scale: 0.6
+                                                          aspect_ratio: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#FFFFFF'
+                                                              alpha: 1
+                                                      unselected:
+                                                        shapes:
+                                                        - type: ellipse
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 20
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#004bff'
+                                                              alpha: 0
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  height: auto
+                                                  width: 100%
+                                                view:
+                                                  type: label
+                                                  text: "\U0001F431 Cat"
+                                                  content_description: Cat
+                                                  text_appearance:
+                                                    font_size: 18
+                                                    color:
+                                                      default:
+                                                        hex: '#FFFFFF'
+                                                        alpha: 1
+                                                    alignment: start
+                                                    font_families:
+                                                    - sans-serif
+                                          - size:
+                                              width: 100%
+                                              height: 100%
+                                            margin:
+                                              top: 0
+                                              bottom: 16
+                                            view:
+                                              type: linear_layout
+                                              direction: horizontal
+                                              items:
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: radio_input
+                                                  reporting_value: 33c7f7cb-d703-4685-a0c8-0a6591cbb67d
+                                                  content_description: Dog
+                                                  style:
+                                                    type: checkbox
+                                                    bindings:
+                                                      selected:
+                                                        shapes:
+                                                        - type: ellipse
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 20
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#004bff'
+                                                              alpha: 1
+                                                        - type: ellipse
+                                                          scale: 0.6
+                                                          aspect_ratio: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#FFFFFF'
+                                                              alpha: 1
+                                                      unselected:
+                                                        shapes:
+                                                        - type: ellipse
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 20
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#004bff'
+                                                              alpha: 0
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  height: auto
+                                                  width: 100%
+                                                view:
+                                                  type: label
+                                                  text: "\U0001F436 Dog"
+                                                  content_description: Dog
+                                                  text_appearance:
+                                                    font_size: 18
+                                                    color:
+                                                      default:
+                                                        hex: '#FFFFFF'
+                                                        alpha: 1
+                                                    alignment: start
+                                                    font_families:
+                                                    - sans-serif
+                                          randomize_children: false
+                                        attribute_name: {}
+                                - size:
+                                    width: 100%
+                                    height: 50
+                                  margin:
+                                    top: 24
+                                    bottom: 32
+                                    start: 24
+                                    end: 24
+                                  view:
+                                    type: label_button
+                                    identifier: next_button_animal
+                                    background_color:
+                                      default:
+                                        hex: '#f1084f'
+                                        alpha: 1
+                                    border:
+                                      radius: 25
+                                      stroke_width: 0
+                                    button_click:
+                                    - pager_next
+                                    enabled:
+                                    - form_validation
+                                    label:
+                                      type: label
+                                      text: Next
+                                      text_appearance:
+                                        font_size: 18
+                                        alignment: center
+                                        styles:
+                                        - bold
+                                        color:
+                                          default:
+                                            hex: '#FFFFFF'
+                                            alpha: 1
+              - identifier: d495142a-38d3-482c-9f14-203501b0518a
+                type: pager_item
+                branching:
+                  next_page:
+                    selectors:
+                    - page_id: 3cbc6d3e-94f2-4803-90ed-d8978b6a5573
+                view:
+                  type: container
+                  background_color:
+                    default:
+                      hex: '#004bff'
+                      alpha: 1
+                  items:
+                  - size:
+                      width: 100%
+                      height: 100%
+                    position:
+                      horizontal: center
+                      vertical: center
+                    ignore_safe_area: false
+                    view:
+                      type: container
+                      items:
+                      - margin:
+                          bottom: 0
+                          top: 0
+                          end: 0
+                          start: 0
+                        position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        view:
+                          type: linear_layout
+                          direction: vertical
+                          items:
+                          - identifier: scroll_container
+                            size:
+                              width: 100%
+                              height: 100%
+                            view:
+                              type: scroll_layout
+                              direction: vertical
+                              view:
+                                type: linear_layout
+                                direction: vertical
+                                items:
+                                - identifier: 7beb5f48-a5fe-4c56-ae31-994263ffcdb2
+                                  size:
+                                    width: 100%
+                                    height: auto
+                                  margin:
+                                    top: 40
+                                    bottom: 8
+                                    start: 24
+                                    end: 24
+                                  view:
+                                    type: linear_layout
+                                    direction: vertical
+                                    items:
+                                    - margin:
+                                        top: 0
+                                        bottom: 24
+                                      size:
+                                        width: 100%
+                                        height: auto
+                                      view:
+                                        type: label
+                                        text: "\U0001F436 Favorite Dog Collar \U0001F436"
+                                        content_description: Favorite Dog Collar Color
+                                        text_appearance:
+                                          font_size: 30
+                                          color:
+                                            default:
+                                              hex: '#FFFFFF'
+                                              alpha: 1
+                                          alignment: center
+                                          styles:
+                                          - bold
+                                          font_families:
+                                          - sans-serif
+                                    - margin:
+                                        top: 0
+                                        bottom: 32
+                                      size:
+                                        width: 100%
+                                        height: auto
+                                      view:
+                                        type: label
+                                        text: What color collar would you choose for
+                                          your dog?
+                                        text_appearance:
+                                          alignment: center
+                                          font_size: 18
+                                          color:
+                                            default:
+                                              hex: '#FFFFFF'
+                                              alpha: 0.9
+                                    - margin:
+                                        top: 0
+                                        bottom: 24
+                                      size:
+                                        width: 100%
+                                        height: auto
+                                      view:
+                                        type: radio_input_controller
+                                        identifier: 7beb5f48-a5fe-4c56-ae31-994263ffcdb2
+                                        required: false
+                                        view:
+                                          type: linear_layout
+                                          direction: vertical
+                                          items:
+                                          - size:
+                                              width: 100%
+                                              height: 100%
+                                            margin:
+                                              top: 0
+                                              bottom: 16
+                                            view:
+                                              type: linear_layout
+                                              direction: horizontal
+                                              items:
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: radio_input
+                                                  reporting_value: d0596a26-f197-48d7-96b3-c61ace2fb16b
+                                                  content_description: Blue
+                                                  style:
+                                                    type: checkbox
+                                                    bindings:
+                                                      selected:
+                                                        shapes:
+                                                        - type: ellipse
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 20
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#004bff'
+                                                              alpha: 1
+                                                        - type: ellipse
+                                                          scale: 0.6
+                                                          aspect_ratio: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#FFFFFF'
+                                                              alpha: 1
+                                                      unselected:
+                                                        shapes:
+                                                        - type: ellipse
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 20
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#004bff'
+                                                              alpha: 0
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  height: auto
+                                                  width: 100%
+                                                view:
+                                                  type: label
+                                                  text: "\U0001F535 Blue Collar"
+                                                  content_description: Blue
+                                                  text_appearance:
+                                                    font_size: 18
+                                                    color:
+                                                      default:
+                                                        hex: '#FFFFFF'
+                                                        alpha: 1
+                                                    alignment: start
+                                                    font_families:
+                                                    - sans-serif
+                                              - size:
+                                                  width: 24
+                                                  height: 24
+                                                margin:
+                                                  end: 8
+                                                view:
+                                                  type: empty_view
+                                                  background_color:
+                                                    default:
+                                                      hex: '#001f9e'
+                                                      alpha: 1
+                                                  border:
+                                                    radius: 12
+                                                    stroke_width: 0
+                                          - size:
+                                              width: 100%
+                                              height: 100%
+                                            margin:
+                                              top: 0
+                                              bottom: 16
+                                            view:
+                                              type: linear_layout
+                                              direction: horizontal
+                                              items:
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: radio_input
+                                                  reporting_value: 55ffe2a4-d851-40a8-8046-28c8349e9ace
+                                                  content_description: Red
+                                                  style:
+                                                    type: checkbox
+                                                    bindings:
+                                                      selected:
+                                                        shapes:
+                                                        - type: ellipse
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 20
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#004bff'
+                                                              alpha: 1
+                                                        - type: ellipse
+                                                          scale: 0.6
+                                                          aspect_ratio: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#FFFFFF'
+                                                              alpha: 1
+                                                      unselected:
+                                                        shapes:
+                                                        - type: ellipse
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 20
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#004bff'
+                                                              alpha: 0
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  height: auto
+                                                  width: 100%
+                                                view:
+                                                  type: label
+                                                  text: "\U0001F534 Red Collar"
+                                                  content_description: Red
+                                                  text_appearance:
+                                                    font_size: 18
+                                                    color:
+                                                      default:
+                                                        hex: '#FFFFFF'
+                                                        alpha: 1
+                                                    alignment: start
+                                                    font_families:
+                                                    - sans-serif
+                                              - size:
+                                                  width: 24
+                                                  height: 24
+                                                margin:
+                                                  end: 8
+                                                view:
+                                                  type: empty_view
+                                                  background_color:
+                                                    default:
+                                                      hex: '#f1084f'
+                                                      alpha: 1
+                                                  border:
+                                                    radius: 12
+                                                    stroke_width: 0
+                                          randomize_children: false
+                                        attribute_name: {}
+                                    - size:
+                                        width: 100%
+                                        height: auto
+                                      margin:
+                                        top: 24
+                                        bottom: 32
+                                        start: 0
+                                        end: 0
+                                      view:
+                                        type: linear_layout
+                                        direction: horizontal
+                                        items:
+                                        - size:
+                                            width: 48%
+                                            height: 50
+                                          margin:
+                                            end: 8
+                                            start: 24
+                                          view:
+                                            type: label_button
+                                            identifier: prev_button_color
+                                            background_color:
+                                              default:
+                                                hex: '#001f9e'
+                                                alpha: 1
+                                            border:
+                                              radius: 25
+                                              stroke_width: 2
+                                              stroke_color:
+                                                default:
+                                                  hex: '#FFFFFF'
+                                                  alpha: 0.3
+                                            button_click:
+                                            - pager_previous
+                                            label:
+                                              type: label
+                                              text: Previous
+                                              text_appearance:
+                                                font_size: 16
+                                                alignment: center
+                                                styles:
+                                                - bold
+                                                color:
+                                                  default:
+                                                    hex: '#FFFFFF'
+                                                    alpha: 1
+                                        - size:
+                                            width: 48%
+                                            height: 50
+                                          margin:
+                                            start: 8
+                                            end: 24
+                                          view:
+                                            type: label_button
+                                            identifier: next_button_color
+                                            background_color:
+                                              default:
+                                                hex: '#f1084f'
+                                                alpha: 1
+                                            border:
+                                              radius: 25
+                                              stroke_width: 0
+                                            button_click:
+                                            - pager_next
+                                            enabled:
+                                            - form_validation
+                                            label:
+                                              type: label
+                                              text: Next
+                                              text_appearance:
+                                                font_size: 16
+                                                alignment: center
+                                                styles:
+                                                - bold
+                                                color:
+                                                  default:
+                                                    hex: '#FFFFFF'
+                                                    alpha: 1
+                                            event_handlers:
+                                            - type: tap
+                                              state_actions:
+                                              - type: set
+                                                key: submitted
+                                                value: true
+              - identifier: 24e09863-1dcf-40ea-8b81-b398d286d449
+                type: pager_item
+                branching:
+                  next_page:
+                    selectors:
+                    - page_id: 3cbc6d3e-94f2-4803-90ed-d8978b6a5573
+                view:
+                  type: container
+                  background_color:
+                    default:
+                      hex: '#004bff'
+                      alpha: 1
+                  items:
+                  - size:
+                      width: 100%
+                      height: 100%
+                    position:
+                      horizontal: center
+                      vertical: center
+                    ignore_safe_area: false
+                    view:
+                      type: container
+                      items:
+                      - margin:
+                          bottom: 0
+                          top: 0
+                          end: 0
+                          start: 0
+                        position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        view:
+                          type: linear_layout
+                          direction: vertical
+                          items:
+                          - identifier: scroll_container
+                            size:
+                              width: 100%
+                              height: 100%
+                            view:
+                              type: scroll_layout
+                              direction: vertical
+                              view:
+                                type: linear_layout
+                                direction: vertical
+                                items:
+                                - identifier: 4e3f3d9e-a4a2-4a01-a7e4-09925d5aa30f
+                                  size:
+                                    width: 100%
+                                    height: auto
+                                  margin:
+                                    top: 40
+                                    bottom: 8
+                                    start: 24
+                                    end: 24
+                                  view:
+                                    type: linear_layout
+                                    direction: vertical
+                                    items:
+                                    - margin:
+                                        top: 0
+                                        bottom: 24
+                                      size:
+                                        width: 100%
+                                        height: auto
+                                      view:
+                                        type: label
+                                        text: "\U0001F63A Favorite Cat Shows \U0001F63A"
+                                        content_description: What are your favorite
+                                          cat shows? (select at least 2)
+                                        text_appearance:
+                                          font_size: 30
+                                          color:
+                                            default:
+                                              hex: '#FFFFFF'
+                                              alpha: 1
+                                          alignment: center
+                                          styles:
+                                          - bold
+                                          font_families:
+                                          - sans-serif
+                                    - margin:
+                                        top: 0
+                                        bottom: 32
+                                      size:
+                                        width: 100%
+                                        height: auto
+                                      view:
+                                        type: label
+                                        text: Select your favorite cat TV shows (at
+                                          least 2)
+                                        text_appearance:
+                                          alignment: center
+                                          font_size: 18
+                                          color:
+                                            default:
+                                              hex: '#FFFFFF'
+                                              alpha: 0.9
+                                    - margin:
+                                        top: 0
+                                        bottom: 8
+                                      size:
+                                        width: 100%
+                                        height: auto
+                                      view:
+                                        type: checkbox_controller
+                                        identifier: 4e3f3d9e-a4a2-4a01-a7e4-09925d5aa30f
+                                        on_error:
+                                          state_actions:
+                                          - type: set
+                                            key: 4e3f3d9e-a4a2-4a01-a7e4-09925d5aa30f
+                                            value: error
+                                        on_valid:
+                                          state_actions:
+                                          - type: set
+                                            key: 4e3f3d9e-a4a2-4a01-a7e4-09925d5aa30f
+                                            value: valid
+                                        on_edit:
+                                          state_actions:
+                                          - type: set
+                                            key: 4e3f3d9e-a4a2-4a01-a7e4-09925d5aa30f
+                                            value: editing
+                                        required: true
+                                        min_selection: 2
+                                        view:
+                                          type: linear_layout
+                                          direction: vertical
+                                          items:
+                                          - size:
+                                              width: 100%
+                                              height: 100%
+                                            margin:
+                                              top: 0
+                                              bottom: 16
+                                            view:
+                                              type: linear_layout
+                                              direction: horizontal
+                                              items:
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: checkbox
+                                                  reporting_value: 646d668e-5d50-44cf-8ddf-7fe4e2a404ab
+                                                  content_description: My Cat From
+                                                    Hell
+                                                  style:
+                                                    type: checkbox
+                                                    bindings:
+                                                      selected:
+                                                        shapes:
+                                                        - type: rectangle
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 4
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#f1084f'
+                                                              alpha: 1
+                                                        icon:
+                                                          type: icon
+                                                          icon: checkmark
+                                                          scale: 0.8
+                                                          color:
+                                                            default:
+                                                              hex: '#FFFFFF'
+                                                              alpha: 1
+                                                      unselected:
+                                                        shapes:
+                                                        - type: rectangle
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 4
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#004bff'
+                                                              alpha: 0
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  height: auto
+                                                  width: 100%
+                                                view:
+                                                  type: label
+                                                  text: My Cat From Hell
+                                                  content_description: My Cat From
+                                                    Hell
+                                                  text_appearance:
+                                                    font_size: 18
+                                                    color:
+                                                      default:
+                                                        hex: '#FFFFFF'
+                                                        alpha: 1
+                                                    alignment: start
+                                                    font_families:
+                                                    - sans-serif
+                                          - size:
+                                              width: 100%
+                                              height: 100%
+                                            margin:
+                                              top: 0
+                                              bottom: 16
+                                            view:
+                                              type: linear_layout
+                                              direction: horizontal
+                                              items:
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: checkbox
+                                                  reporting_value: 3a6f2143-968c-484e-ac2f-69efdbfaaabd
+                                                  content_description: Cat People
+                                                  style:
+                                                    type: checkbox
+                                                    bindings:
+                                                      selected:
+                                                        shapes:
+                                                        - type: rectangle
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 4
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#f1084f'
+                                                              alpha: 1
+                                                        icon:
+                                                          type: icon
+                                                          icon: checkmark
+                                                          scale: 0.8
+                                                          color:
+                                                            default:
+                                                              hex: '#FFFFFF'
+                                                              alpha: 1
+                                                      unselected:
+                                                        shapes:
+                                                        - type: rectangle
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 4
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#004bff'
+                                                              alpha: 0
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  height: auto
+                                                  width: 100%
+                                                view:
+                                                  type: label
+                                                  text: Cat People
+                                                  content_description: Cat People
+                                                  text_appearance:
+                                                    font_size: 18
+                                                    color:
+                                                      default:
+                                                        hex: '#FFFFFF'
+                                                        alpha: 1
+                                                    alignment: start
+                                                    font_families:
+                                                    - sans-serif
+                                          - size:
+                                              width: 100%
+                                              height: 100%
+                                            margin:
+                                              top: 0
+                                              bottom: 16
+                                            view:
+                                              type: linear_layout
+                                              direction: horizontal
+                                              items:
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: checkbox
+                                                  reporting_value: 86eaa518-2a24-4018-a303-4c9eb05ec2a3
+                                                  content_description: Cats 101
+                                                  style:
+                                                    type: checkbox
+                                                    bindings:
+                                                      selected:
+                                                        shapes:
+                                                        - type: rectangle
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 4
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#f1084f'
+                                                              alpha: 1
+                                                        icon:
+                                                          type: icon
+                                                          icon: checkmark
+                                                          scale: 0.8
+                                                          color:
+                                                            default:
+                                                              hex: '#FFFFFF'
+                                                              alpha: 1
+                                                      unselected:
+                                                        shapes:
+                                                        - type: rectangle
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 4
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#004bff'
+                                                              alpha: 0
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  height: auto
+                                                  width: 100%
+                                                view:
+                                                  type: label
+                                                  text: Cats 101
+                                                  content_description: Cats 101
+                                                  text_appearance:
+                                                    font_size: 18
+                                                    color:
+                                                      default:
+                                                        hex: '#FFFFFF'
+                                                        alpha: 1
+                                                    alignment: start
+                                                    font_families:
+                                                    - sans-serif
+                                          - size:
+                                              width: 100%
+                                              height: 100%
+                                            margin:
+                                              top: 0
+                                              bottom: 16
+                                            view:
+                                              type: linear_layout
+                                              direction: horizontal
+                                              items:
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: checkbox
+                                                  reporting_value: bbd19354-9728-4be6-baab-7d3779841eb2
+                                                  content_description: The Lion in
+                                                    Your Living Room
+                                                  style:
+                                                    type: checkbox
+                                                    bindings:
+                                                      selected:
+                                                        shapes:
+                                                        - type: rectangle
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 4
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#f1084f'
+                                                              alpha: 1
+                                                        icon:
+                                                          type: icon
+                                                          icon: checkmark
+                                                          scale: 0.8
+                                                          color:
+                                                            default:
+                                                              hex: '#FFFFFF'
+                                                              alpha: 1
+                                                      unselected:
+                                                        shapes:
+                                                        - type: rectangle
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 4
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#004bff'
+                                                              alpha: 0
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  height: auto
+                                                  width: 100%
+                                                view:
+                                                  type: label
+                                                  text: The Lion in Your Living Room
+                                                  content_description: The Lion in
+                                                    Your Living Room
+                                                  text_appearance:
+                                                    font_size: 18
+                                                    color:
+                                                      default:
+                                                        hex: '#FFFFFF'
+                                                        alpha: 1
+                                                    alignment: start
+                                                    font_families:
+                                                    - sans-serif
+                                          - size:
+                                              width: 100%
+                                              height: 100%
+                                            margin:
+                                              top: 0
+                                              bottom: 16
+                                            view:
+                                              type: linear_layout
+                                              direction: horizontal
+                                              items:
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: checkbox
+                                                  reporting_value: d27cc3e2-e1a9-4ed8-b013-a3b64017ee91
+                                                  content_description: Big Cat Diary
+                                                  style:
+                                                    type: checkbox
+                                                    bindings:
+                                                      selected:
+                                                        shapes:
+                                                        - type: rectangle
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 4
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#f1084f'
+                                                              alpha: 1
+                                                        icon:
+                                                          type: icon
+                                                          icon: checkmark
+                                                          scale: 0.8
+                                                          color:
+                                                            default:
+                                                              hex: '#FFFFFF'
+                                                              alpha: 1
+                                                      unselected:
+                                                        shapes:
+                                                        - type: rectangle
+                                                          scale: 1
+                                                          aspect_ratio: 1
+                                                          border:
+                                                            radius: 4
+                                                            stroke_width: 2
+                                                            stroke_color:
+                                                              default:
+                                                                hex: '#FFFFFF'
+                                                                alpha: 1
+                                                          color:
+                                                            default:
+                                                              hex: '#004bff'
+                                                              alpha: 0
+                                              - margin:
+                                                  end: 16
+                                                size:
+                                                  height: auto
+                                                  width: 100%
+                                                view:
+                                                  type: label
+                                                  text: Big Cat Diary
+                                                  content_description: Big Cat Diary
+                                                  text_appearance:
+                                                    font_size: 18
+                                                    color:
+                                                      default:
+                                                        hex: '#FFFFFF'
+                                                        alpha: 1
+                                                    alignment: start
+                                                    font_families:
+                                                    - sans-serif
+                                          randomize_children: true
+                                    - size:
+                                        width: 100%
+                                        height: auto
+                                      margin:
+                                        top: 24
+                                        bottom: 32
+                                        start: 0
+                                        end: 0
+                                      view:
+                                        type: linear_layout
+                                        direction: horizontal
+                                        items:
+                                        - size:
+                                            width: 48%
+                                            height: 50
+                                          margin:
+                                            end: 8
+                                            start: 24
+                                          view:
+                                            type: label_button
+                                            identifier: prev_button_shows
+                                            background_color:
+                                              default:
+                                                hex: '#001f9e'
+                                                alpha: 1
+                                            border:
+                                              radius: 25
+                                              stroke_width: 2
+                                              stroke_color:
+                                                default:
+                                                  hex: '#FFFFFF'
+                                                  alpha: 0.3
+                                            button_click:
+                                            - pager_previous
+                                            label:
+                                              type: label
+                                              text: Previous
+                                              text_appearance:
+                                                font_size: 16
+                                                alignment: center
+                                                styles:
+                                                - bold
+                                                color:
+                                                  default:
+                                                    hex: '#FFFFFF'
+                                                    alpha: 1
+                                        - size:
+                                            width: 48%
+                                            height: 50
+                                          margin:
+                                            start: 8
+                                            end: 24
+                                          view:
+                                            type: label_button
+                                            identifier: next_button_shows
+                                            background_color:
+                                              default:
+                                                hex: '#f1084f'
+                                                alpha: 1
+                                            border:
+                                              radius: 25
+                                              stroke_width: 0
+                                            button_click:
+                                            - pager_next
+                                            enabled:
+                                            - form_validation
+                                            label:
+                                              type: label
+                                              text: Next
+                                              text_appearance:
+                                                font_size: 16
+                                                alignment: center
+                                                styles:
+                                                - bold
+                                                color:
+                                                  default:
+                                                    hex: '#FFFFFF'
+                                                    alpha: 1
+              - identifier: 3cbc6d3e-94f2-4803-90ed-d8978b6a5573
+                type: pager_item
+                view:
+                  type: container
+                  background_color:
+                    default:
+                      hex: '#004bff'
+                      alpha: 1
+                  items:
+                  - size:
+                      width: 100%
+                      height: 100%
+                    position:
+                      horizontal: center
+                      vertical: center
+                    ignore_safe_area: false
+                    view:
+                      type: container
+                      items:
+                      - margin:
+                          bottom: 0
+                          top: 0
+                          end: 0
+                          start: 0
+                        position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        view:
+                          type: linear_layout
+                          direction: vertical
+                          items:
+                          - identifier: scroll_container
+                            size:
+                              width: 100%
+                              height: 100%
+                            view:
+                              type: scroll_layout
+                              direction: vertical
+                              view:
+                                type: linear_layout
+                                direction: vertical
+                                items:
+                                - identifier: rating_title_label
+                                  size:
+                                    width: 100%
+                                    height: auto
+                                  margin:
+                                    top: 40
+                                    bottom: 24
+                                    start: 24
+                                    end: 24
+                                  view:
+                                    type: label
+                                    text: "\u2764\uFE0F Your Information \u2764\uFE0F"
+                                    content_description: Your Information
+                                    text_appearance:
+                                      font_size: 30
+                                      color:
+                                        default:
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                      alignment: center
+                                      styles:
+                                      - bold
+                                      font_families:
+                                      - sans-serif
+                                - identifier: fe561774-93f5-4b09-bd0c-831b955042e6
+                                  size:
+                                    width: 100%
+                                    height: auto
+                                  margin:
+                                    top: 16
+                                    bottom: 8
+                                    start: 24
+                                    end: 24
+                                  view:
+                                    type: label
+                                    text: Email Address
+                                    text_appearance:
+                                      font_size: 18
+                                      color:
+                                        default:
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                      alignment: start
+                                      styles:
+                                      - bold
+                                      font_families:
+                                      - sans-serif
+                                - identifier: 2cb5fa0f-1c25-4929-b951-66ce56910901
+                                  size:
+                                    width: 100%
+                                    height: 50
+                                  margin:
+                                    top: 8
+                                    bottom: 16
+                                    start: 24
+                                    end: 24
+                                  view:
+                                    type: text_input
+                                    place_holder: email@email.com
+                                    identifier: 2cb5fa0f-1c25-4929-b951-66ce56910901
+                                    border:
+                                      radius: 8
+                                      stroke_width: 2
+                                      stroke_color:
+                                        default:
+                                          hex: '#FFFFFF'
+                                          alpha: 0.5
+                                    text_appearance:
+                                      alignment: start
+                                      font_size: 16
+                                      color:
+                                        default:
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                    input_type: email
+                                    required: true
+                                    view_overrides:
+                                      icon_end:
+                                      - when_state_matches:
+                                          scope:
+                                          - 2cb5fa0f-1c25-4929-b951-66ce56910901
+                                          value:
+                                            equals: error
+                                        value:
+                                          type: floating
+                                          icon:
+                                            type: icon
+                                            icon: exclamationmark_circle_fill
+                                            scale: 1
+                                            color:
+                                              default:
+                                                hex: '#f1084f'
+                                                alpha: 1
+                                      - when_state_matches:
+                                          scope:
+                                          - 2cb5fa0f-1c25-4929-b951-66ce56910901
+                                          value:
+                                            equals: valid
+                                        value:
+                                          type: floating
+                                          icon:
+                                            type: icon
+                                            icon: checkmark
+                                            scale: 1
+                                            color:
+                                              default:
+                                                hex: '#6ca15f'
+                                                alpha: 1
+                                      border:
+                                      - when_state_matches:
+                                          scope:
+                                          - 2cb5fa0f-1c25-4929-b951-66ce56910901
+                                          value:
+                                            equals: error
+                                        value:
+                                          radius: 8
+                                          stroke_width: 2
+                                          stroke_color:
+                                            default:
+                                              hex: '#f1084f'
+                                              alpha: 1
+                                      - when_state_matches:
+                                          scope:
+                                          - 2cb5fa0f-1c25-4929-b951-66ce56910901
+                                          value:
+                                            equals: valid
+                                        value:
+                                          radius: 8
+                                          stroke_width: 2
+                                          stroke_color:
+                                            default:
+                                              hex: '#6ca15f'
+                                              alpha: 1
+                                    on_error:
+                                      state_actions:
+                                      - type: set
+                                        key: 2cb5fa0f-1c25-4929-b951-66ce56910901
+                                        value: error
+                                    on_edit:
+                                      state_actions:
+                                      - type: set
+                                        key: 2cb5fa0f-1c25-4929-b951-66ce56910901
+                                        value: editing
+                                    on_valid:
+                                      state_actions:
+                                      - type: set
+                                        key: 2cb5fa0f-1c25-4929-b951-66ce56910901
+                                        value: valid
+                                - identifier: 26b7ddd7-f995-4a27-8fcb-e1b86d00d210
+                                  size:
+                                    width: 100%
+                                    height: auto
+                                  margin:
+                                    top: 16
+                                    bottom: 8
+                                    start: 24
+                                    end: 24
+                                  view:
+                                    type: label
+                                    text: Additional Email (Optional)
+                                    text_appearance:
+                                      font_size: 18
+                                      color:
+                                        default:
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                      alignment: start
+                                      styles:
+                                      - bold
+                                      font_families:
+                                      - sans-serif
+                                - identifier: c69a7f9f-1c7c-4e87-bee1-0301d9b7b3c5
+                                  size:
+                                    width: 100%
+                                    height: 50
+                                  margin:
+                                    top: 8
+                                    bottom: 24
+                                    start: 24
+                                    end: 24
+                                  view:
+                                    type: text_input
+                                    place_holder: Optional
+                                    identifier: c69a7f9f-1c7c-4e87-bee1-0301d9b7b3c5
+                                    border:
+                                      radius: 8
+                                      stroke_width: 2
+                                      stroke_color:
+                                        default:
+                                          hex: '#FFFFFF'
+                                          alpha: 0.5
+                                    text_appearance:
+                                      alignment: start
+                                      font_size: 16
+                                      color:
+                                        default:
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                    input_type: text
+                                    required: false
+                                    view_overrides:
+                                      icon_end:
+                                      - when_state_matches:
+                                          scope:
+                                          - c69a7f9f-1c7c-4e87-bee1-0301d9b7b3c5_error
+                                          value:
+                                            equals: true
+                                        value:
+                                          type: floating
+                                          icon:
+                                            type: icon
+                                            icon: exclamationmark_circle_fill
+                                            scale: 1
+                                            color:
+                                              default:
+                                                hex: '#f1084f'
+                                                alpha: 1
+                                      border:
+                                      - when_state_matches:
+                                          scope:
+                                          - c69a7f9f-1c7c-4e87-bee1-0301d9b7b3c5_error
+                                          value:
+                                            equals: true
+                                        value:
+                                          radius: 8
+                                          stroke_width: 2
+                                          stroke_color:
+                                            default:
+                                              hex: '#f1084f'
+                                              alpha: 1
+                                    on_error:
+                                      state_actions:
+                                      - type: set
+                                        key: c69a7f9f-1c7c-4e87-bee1-0301d9b7b3c5_error
+                                        value: true
+                                    on_edit:
+                                      state_actions:
+                                      - type: set
+                                        key: c69a7f9f-1c7c-4e87-bee1-0301d9b7b3c5_error
+                                    on_valid:
+                                      state_actions:
+                                      - type: set
+                                        key: c69a7f9f-1c7c-4e87-bee1-0301d9b7b3c5_error
+                                - size:
+                                    width: 100%
+                                    height: auto
+                                  margin:
+                                    top: 24
+                                    bottom: 32
+                                    start: 0
+                                    end: 0
+                                  view:
+                                    type: linear_layout
+                                    direction: horizontal
+                                    items:
+                                    - size:
+                                        width: 48%
+                                        height: 50
+                                      margin:
+                                        end: 8
+                                        start: 24
+                                      view:
+                                        type: label_button
+                                        identifier: prev_button_email
+                                        background_color:
+                                          default:
+                                            hex: '#001f9e'
+                                            alpha: 1
+                                        border:
+                                          radius: 25
+                                          stroke_width: 2
+                                          stroke_color:
+                                            default:
+                                              hex: '#FFFFFF'
+                                              alpha: 0.3
+                                        button_click:
+                                        - pager_previous
+                                        label:
+                                          type: label
+                                          text: Previous
+                                          text_appearance:
+                                            font_size: 16
+                                            alignment: center
+                                            styles:
+                                            - bold
+                                            color:
+                                              default:
+                                                hex: '#FFFFFF'
+                                                alpha: 1
+                                    - size:
+                                        width: 48%
+                                        height: 50
+                                      margin:
+                                        start: 8
+                                        end: 24
+                                      view:
+                                        type: label_button
+                                        identifier: submit_feedback--Submit
+                                        background_color:
+                                          default:
+                                            hex: '#f1084f'
+                                            alpha: 1
+                                        border:
+                                          radius: 25
+                                          stroke_width: 0
+                                        button_click:
+                                        - form_submit
+                                        - dismiss
+                                        enabled:
+                                        - form_validation
+                                        label:
+                                          type: label
+                                          text: Submit
+                                          text_appearance:
+                                            font_size: 16
+                                            alignment: center
+                                            styles:
+                                            - bold
+                                            color:
+                                              default:
+                                                hex: '#FFFFFF'
+                                                alpha: 1
+                                          view_overrides:
+                                            icon_start:
+                                            - value:
+                                                type: floating
+                                                space: 8
+                                                icon:
+                                                  type: icon
+                                                  icon: progress_spinner
+                                                  color:
+                                                    default:
+                                                      hex: '#FFFFFF'
+                                                      alpha: 1.0
+                                                  scale: 1
+                                              when_state_matches:
+                                                scope:
+                                                - $forms
+                                                - current
+                                                - status
+                                                - type
+                                                value:
+                                                  equals: validating
+                                            text:
+                                            - value: Processing ...
+                                              when_state_matches:
+                                                scope:
+                                                - $forms
+                                                - current
+                                                - status
+                                                - type
+                                                value:
+                                                  equals: validating
+                                        event_handlers:
+                                        - type: tap
+                                          state_actions:
+                                          - type: set
+                                            key: submitted
+                                            value: true
+          - position:
+              horizontal: end
+              vertical: top
+            margin:
+              top: 16
+              end: 16
+            size:
+              width: 32
+              height: 32
+            view:
+              type: image_button
+              identifier: dismiss_button
+              button_click:
+              - dismiss
+              image:
+                type: icon
+                icon: close
+                color:
+                  default:
+                    hex: '#FFFFFF'
+                    alpha: 0.8
+                scale: 0.7
+          - margin:
+              top: 4
+              bottom: 16
+              end: 0
+              start: 0
+            position:
+              horizontal: center
+              vertical: bottom
+            size:
+              height: 8
+              width: 100%
+            view:
+              type: pager_indicator
+              spacing: 8
+              bindings:
+                selected:
+                  shapes:
+                  - type: ellipse
+                    aspect_ratio: 1
+                    scale: 1
+                    color:
+                      default:
+                        hex: '#FFFFFF'
+                        alpha: 1
+                unselected:
+                  shapes:
+                  - type: ellipse
+                    aspect_ratio: 1
+                    scale: 1
+                    color:
+                      default:
+                        hex: '#FFFFFF'
+                        alpha: 0.3
+  branching:
+    pager_completions: []

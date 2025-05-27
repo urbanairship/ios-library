@@ -23,6 +23,7 @@
 		6E6802AC2B867B0900F4591F /* Messages in Resources */ = {isa = PBXBuildFile; fileRef = 6E6802AA2B867B0900F4591F /* Messages */; };
 		6E6802AD2B867B0900F4591F /* Scenes in Resources */ = {isa = PBXBuildFile; fileRef = 6E6802AB2B867B0900F4591F /* Scenes */; };
 		6EABB8212AB272C0008B89E3 /* SharedAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EABB8202AB272C0008B89E3 /* SharedAssets.xcassets */; };
+		6EB54C802DE63FFC00B7BB5D /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EB54C7F2DE63FFC00B7BB5D /* AirshipConfig.plist */; };
 		990D5D8F2D6FFBEA00F4D20E /* LastLayoutButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990D5D7F2D6FFBE500F4D20E /* LastLayoutButton.swift */; };
 		991BE0D02B047417006109EE /* MapRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0CF2B047417006109EE /* MapRouteView.swift */; };
 		991BE0D22B05684A006109EE /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0D12B05684A006109EE /* CameraView.swift */; };
@@ -47,6 +48,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 6E0B8729294A9C120064B7BD;
 			remoteInfo = AirshipAutomationSwift;
+		};
+		6EB54C7D2DE63FE500B7BB5D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9908E5922AFDA95000DB3E2E /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A641E1472BDBBDB400DE6FAA;
+			remoteInfo = AirshipObjectiveC;
 		};
 		9908E5A82AFDA95000DB3E2E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -139,13 +147,6 @@
 			remoteGlobalIDString = 494DD9561B0EB677009C134E;
 			remoteInfo = AirshipCore;
 		};
-		990D5D8D2D6FFBE500F4D20E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 9908E5922AFDA95000DB3E2E /* Airship.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A641E1472BDBBDB400DE6FAA;
-			remoteInfo = AirshipObjectiveC;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -181,6 +182,7 @@
 		6E6802AA2B867B0900F4591F /* Messages */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Messages; sourceTree = "<group>"; };
 		6E6802AB2B867B0900F4591F /* Scenes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scenes; sourceTree = "<group>"; };
 		6EABB8202AB272C0008B89E3 /* SharedAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SharedAssets.xcassets; sourceTree = "<group>"; };
+		6EB54C7F2DE63FFC00B7BB5D /* AirshipConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		6ED807A5273DEA1800D1F455 /* AirshipAutomation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9908E5922AFDA95000DB3E2E /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
 		990D5D7F2D6FFBE500F4D20E /* LastLayoutButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastLayoutButton.swift; sourceTree = "<group>"; };
@@ -216,6 +218,7 @@
 		324449222721667D00D108B5 = {
 			isa = PBXGroup;
 			children = (
+				6EB54C7F2DE63FFC00B7BB5D /* AirshipConfig.plist */,
 				99F662CC2B61DB4600696098 /* JurassicPark.otf */,
 				9908E5922AFDA95000DB3E2E /* Airship.xcodeproj */,
 				3244492D2721667D00D108B5 /* Thomas */,
@@ -298,7 +301,7 @@
 				9908E5C72AFDA95000DB3E2E /* AirshipFeatureFlags.framework */,
 				9908E5BB2AFDA95000DB3E2E /* AirshipMessageCenter.framework */,
 				9908E5BD2AFDA95000DB3E2E /* AirshipPreferenceCenter.framework */,
-				6EAA61AB2D52BCE7006602F7 /* AirshipObjectiveC.framework */,
+				6EB54C7E2DE63FE500B7BB5D /* AirshipObjectiveC.framework */,
 				9908E5B72AFDA95000DB3E2E /* AirshipDebug.framework */,
 				9908E5B52AFDA95000DB3E2E /* AirshipTests.xctest */,
 				9908E5C52AFDA95000DB3E2E /* AirshipAutomationTests.xctest */,
@@ -421,11 +424,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		6EAA61AB2D52BCE7006602F7 /* AirshipObjectiveC.framework */ = {
+		6EB54C7E2DE63FE500B7BB5D /* AirshipObjectiveC.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = AirshipObjectiveC.framework;
-			remoteRef = 6EAA61AA2D52BCE7006602F7 /* PBXContainerItemProxy */;
+			remoteRef = 6EB54C7D2DE63FE500B7BB5D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		9908E5A92AFDA95000DB3E2E /* AirshipBasement.framework */ = {
@@ -512,13 +515,6 @@
 			remoteRef = 9908E5C82AFDA95000DB3E2E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		990D5D8E2D6FFBE500F4D20E /* AirshipObjectiveC.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AirshipObjectiveC.framework;
-			remoteRef = 990D5D8D2D6FFBE500F4D20E /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -527,6 +523,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E6802AD2B867B0900F4591F /* Scenes in Resources */,
+				6EB54C802DE63FFC00B7BB5D /* AirshipConfig.plist in Resources */,
 				6E6802AC2B867B0900F4591F /* Messages in Resources */,
 				99F662CD2B61DB4600696098 /* JurassicPark.otf in Resources */,
 				324449362721668100D108B5 /* Preview Assets.xcassets in Resources */,

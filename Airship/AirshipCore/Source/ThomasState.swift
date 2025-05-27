@@ -222,8 +222,7 @@ fileprivate extension ThomasFormField.Value {
             guard let value else { return nil }
             return .string(value)
         case .score(let value):
-            guard let value else { return nil }
-            return .number(Double(value))
+            return value
         case .form, .npsForm:
             // not supported
             return nil

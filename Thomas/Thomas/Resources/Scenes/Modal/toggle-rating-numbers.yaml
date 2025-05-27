@@ -1,0 +1,1068 @@
+version: 1
+presentation:
+  type: modal
+  placement_selectors: []
+  android:
+    disable_back_button: false
+  dismiss_on_touch_outside: false
+  default_placement:
+    ignore_safe_area: false
+    size:
+      width: 100%
+      height: 100%
+    position:
+      horizontal: center
+      vertical: top
+    shade_color:
+      default:
+        type: hex
+        hex: '#ffffff'
+        alpha: 0.2
+view:
+  type: state_controller
+  background_color:
+    default:
+      type: hex
+      hex: '#FFFFFF'
+      alpha: 1
+  view:
+    type: pager_controller
+    identifier: 6b72219d-15ef-4bcf-832b-70850b419687
+    view:
+      type: linear_layout
+      direction: vertical
+      items:
+      - size:
+          width: 100%
+          height: 100%
+        view:
+          identifier: 4a560c36-28fa-452d-a2e0-f07a9e3d7521
+          type: form_controller
+          validation_mode:
+            type: on_demand
+          submit: submit_event
+          form_enabled:
+          - form_submission
+          view:
+            type: container
+            items:
+            - position:
+                horizontal: center
+                vertical: center
+              size:
+                width: 100%
+                height: 100%
+              view:
+                type: pager
+                disable_swipe: true
+                items:
+                - identifier: d2432b09-48d6-40a9-8753-72e372319121
+                  type: pager_item
+                  view:
+                    type: container
+                    items:
+                    - size:
+                        width: 100%
+                        height: 100%
+                      position:
+                        horizontal: center
+                        vertical: center
+                      ignore_safe_area: false
+                      view:
+                        type: container
+                        items:
+                        - margin:
+                            bottom: 0
+                            top: 0
+                            end: 0
+                            start: 0
+                          position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            width: 100%
+                            height: 100%
+                          view:
+                            type: linear_layout
+                            direction: vertical
+                            items:
+                            - identifier: scroll_container
+                              size:
+                                width: 100%
+                                height: 100%
+                              view:
+                                type: scroll_layout
+                                direction: vertical
+                                view:
+                                  type: linear_layout
+                                  direction: vertical
+                                  items:
+                                  - identifier: rating_title_label
+                                    size:
+                                      width: 100%
+                                      height: auto
+                                    margin:
+                                      top: 48
+                                      bottom: 8
+                                      start: 16
+                                      end: 16
+                                    view:
+                                      type: label
+                                      text: Rating
+                                      content_description: Rating Section Title
+                                      text_appearance:
+                                        font_size: 20
+                                        color:
+                                          default:
+                                            type: hex
+                                            hex: '#000000'
+                                            alpha: 1
+                                        alignment: start
+                                        styles:
+                                        - bold
+                                        font_families:
+                                        - sans-serif
+                                  - identifier: rating_input_section
+                                    size:
+                                      width: 100%
+                                      height: auto
+                                    margin:
+                                      top: 8
+                                      bottom: 16
+                                      start: 16
+                                      end: 16
+                                    view:
+                                      type: score_controller
+                                      identifier: score_radio_controller
+                                      required: true
+                                      view:
+                                        type: linear_layout
+                                        direction: horizontal
+                                        padding:
+                                          top: 8
+                                          bottom: 8
+                                        items:
+                                        - size:
+                                            width: auto
+                                            height: 40
+                                          margin:
+                                            end: 4
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_1
+                                            content_description: Rating 1
+                                            reporting_value: 1
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 1
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: container
+                                              border:
+                                                radius: 20
+                                                stroke_width: 1
+                                                stroke_color:
+                                                  default:
+                                                    type: hex
+                                                    hex: '#CCCCCC'
+                                                    alpha: 1
+                                              background_color:
+                                                default:
+                                                  type: hex
+                                                  hex: '#DDDDDD'
+                                                  alpha: 1
+                                              view_overrides:
+                                                background_color:
+                                                - value:
+                                                    default:
+                                                      type: hex
+                                                      hex: '#FFA500'
+                                                      alpha: 1
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 1
+                                              items:
+                                              - position:
+                                                  horizontal: center
+                                                  vertical: center
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: label
+                                                  text: '1'
+                                                  text_appearance:
+                                                    font_size: 14
+                                                    alignment: center
+                                                    styles:
+                                                    - bold
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#333333'
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    text_appearance:
+                                                    - value:
+                                                        font_size: 14
+                                                        alignment: center
+                                                        styles:
+                                                        - bold
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: '#FFFFFF'
+                                                            alpha: 1
+                                                      when_state_matches:
+                                                        key: selected_score
+                                                        value:
+                                                          at_least: 1
+                                        - size:
+                                            width: auto
+                                            height: 40
+                                          margin:
+                                            end: 4
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_2
+                                            content_description: Rating 2
+                                            reporting_value: 2
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 2
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: container
+                                              border:
+                                                radius: 20
+                                                stroke_width: 1
+                                                stroke_color:
+                                                  default:
+                                                    type: hex
+                                                    hex: '#CCCCCC'
+                                                    alpha: 1
+                                              background_color:
+                                                default:
+                                                  type: hex
+                                                  hex: '#DDDDDD'
+                                                  alpha: 1
+                                              view_overrides:
+                                                background_color:
+                                                - value:
+                                                    default:
+                                                      type: hex
+                                                      hex: '#FFA500'
+                                                      alpha: 1
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 2
+                                              items:
+                                              - position:
+                                                  horizontal: center
+                                                  vertical: center
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: label
+                                                  text: '2'
+                                                  text_appearance:
+                                                    font_size: 14
+                                                    alignment: center
+                                                    styles:
+                                                    - bold
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#333333'
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    text_appearance:
+                                                    - value:
+                                                        font_size: 14
+                                                        alignment: center
+                                                        styles:
+                                                        - bold
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: '#FFFFFF'
+                                                            alpha: 1
+                                                      when_state_matches:
+                                                        key: selected_score
+                                                        value:
+                                                          at_least: 2
+                                        - size:
+                                            width: auto
+                                            height: 40
+                                          margin:
+                                            end: 4
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_3
+                                            content_description: Rating 3
+                                            reporting_value: 3
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 3
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: container
+                                              border:
+                                                radius: 20
+                                                stroke_width: 1
+                                                stroke_color:
+                                                  default:
+                                                    type: hex
+                                                    hex: '#CCCCCC'
+                                                    alpha: 1
+                                              background_color:
+                                                default:
+                                                  type: hex
+                                                  hex: '#DDDDDD'
+                                                  alpha: 1
+                                              view_overrides:
+                                                background_color:
+                                                - value:
+                                                    default:
+                                                      type: hex
+                                                      hex: '#FFA500'
+                                                      alpha: 1
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 3
+                                              items:
+                                              - position:
+                                                  horizontal: center
+                                                  vertical: center
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: label
+                                                  text: '3'
+                                                  text_appearance:
+                                                    font_size: 14
+                                                    alignment: center
+                                                    styles:
+                                                    - bold
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#333333'
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    text_appearance:
+                                                    - value:
+                                                        font_size: 14
+                                                        alignment: center
+                                                        styles:
+                                                        - bold
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: '#FFFFFF'
+                                                            alpha: 1
+                                                      when_state_matches:
+                                                        key: selected_score
+                                                        value:
+                                                          at_least: 3
+                                        - size:
+                                            width: auto
+                                            height: 40
+                                          margin:
+                                            end: 4
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_4
+                                            content_description: Rating 4
+                                            reporting_value: 4
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 4
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: container
+                                              border:
+                                                radius: 20
+                                                stroke_width: 1
+                                                stroke_color:
+                                                  default:
+                                                    type: hex
+                                                    hex: '#CCCCCC'
+                                                    alpha: 1
+                                              background_color:
+                                                default:
+                                                  type: hex
+                                                  hex: '#DDDDDD'
+                                                  alpha: 1
+                                              view_overrides:
+                                                background_color:
+                                                - value:
+                                                    default:
+                                                      type: hex
+                                                      hex: '#FFA500'
+                                                      alpha: 1
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 4
+                                              items:
+                                              - position:
+                                                  horizontal: center
+                                                  vertical: center
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: label
+                                                  text: '4'
+                                                  text_appearance:
+                                                    font_size: 14
+                                                    alignment: center
+                                                    styles:
+                                                    - bold
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#333333'
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    text_appearance:
+                                                    - value:
+                                                        font_size: 14
+                                                        alignment: center
+                                                        styles:
+                                                        - bold
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: '#FFFFFF'
+                                                            alpha: 1
+                                                      when_state_matches:
+                                                        key: selected_score
+                                                        value:
+                                                          at_least: 4
+                                        - size:
+                                            width: auto
+                                            height: 40
+                                          margin:
+                                            end: 4
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_5
+                                            content_description: Rating 5
+                                            reporting_value: 5
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 5
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: container
+                                              border:
+                                                radius: 20
+                                                stroke_width: 1
+                                                stroke_color:
+                                                  default:
+                                                    type: hex
+                                                    hex: '#CCCCCC'
+                                                    alpha: 1
+                                              background_color:
+                                                default:
+                                                  type: hex
+                                                  hex: '#DDDDDD'
+                                                  alpha: 1
+                                              view_overrides:
+                                                background_color:
+                                                - value:
+                                                    default:
+                                                      type: hex
+                                                      hex: '#FFA500'
+                                                      alpha: 1
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 5
+                                              items:
+                                              - position:
+                                                  horizontal: center
+                                                  vertical: center
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: label
+                                                  text: '5'
+                                                  text_appearance:
+                                                    font_size: 14
+                                                    alignment: center
+                                                    styles:
+                                                    - bold
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#333333'
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    text_appearance:
+                                                    - value:
+                                                        font_size: 14
+                                                        alignment: center
+                                                        styles:
+                                                        - bold
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: '#FFFFFF'
+                                                            alpha: 1
+                                                      when_state_matches:
+                                                        key: selected_score
+                                                        value:
+                                                          at_least: 5
+                                        - size:
+                                            width: auto
+                                            height: 40
+                                          margin:
+                                            end: 4
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_6
+                                            content_description: Rating 6
+                                            reporting_value: 6
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 6
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: container
+                                              border:
+                                                radius: 20
+                                                stroke_width: 1
+                                                stroke_color:
+                                                  default:
+                                                    type: hex
+                                                    hex: '#CCCCCC'
+                                                    alpha: 1
+                                              background_color:
+                                                default:
+                                                  type: hex
+                                                  hex: '#DDDDDD'
+                                                  alpha: 1
+                                              view_overrides:
+                                                background_color:
+                                                - value:
+                                                    default:
+                                                      type: hex
+                                                      hex: '#FFA500'
+                                                      alpha: 1
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 6
+                                              items:
+                                              - position:
+                                                  horizontal: center
+                                                  vertical: center
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: label
+                                                  text: '6'
+                                                  text_appearance:
+                                                    font_size: 14
+                                                    alignment: center
+                                                    styles:
+                                                    - bold
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#333333'
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    text_appearance:
+                                                    - value:
+                                                        font_size: 14
+                                                        alignment: center
+                                                        styles:
+                                                        - bold
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: '#FFFFFF'
+                                                            alpha: 1
+                                                      when_state_matches:
+                                                        key: selected_score
+                                                        value:
+                                                          at_least: 6
+                                        - size:
+                                            width: auto
+                                            height: 40
+                                          margin:
+                                            end: 4
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_7
+                                            content_description: Rating 7
+                                            reporting_value: 7
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 7
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: container
+                                              border:
+                                                radius: 20
+                                                stroke_width: 1
+                                                stroke_color:
+                                                  default:
+                                                    type: hex
+                                                    hex: '#CCCCCC'
+                                                    alpha: 1
+                                              background_color:
+                                                default:
+                                                  type: hex
+                                                  hex: '#DDDDDD'
+                                                  alpha: 1
+                                              view_overrides:
+                                                background_color:
+                                                - value:
+                                                    default:
+                                                      type: hex
+                                                      hex: '#FFA500'
+                                                      alpha: 1
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 7
+                                              items:
+                                              - position:
+                                                  horizontal: center
+                                                  vertical: center
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: label
+                                                  text: '7'
+                                                  text_appearance:
+                                                    font_size: 14
+                                                    alignment: center
+                                                    styles:
+                                                    - bold
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#333333'
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    text_appearance:
+                                                    - value:
+                                                        font_size: 14
+                                                        alignment: center
+                                                        styles:
+                                                        - bold
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: '#FFFFFF'
+                                                            alpha: 1
+                                                      when_state_matches:
+                                                        key: selected_score
+                                                        value:
+                                                          at_least: 7
+                                        - size:
+                                            width: auto
+                                            height: 40
+                                          margin:
+                                            end: 4
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_8
+                                            content_description: Rating 8
+                                            reporting_value: 8
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 8
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: container
+                                              border:
+                                                radius: 20
+                                                stroke_width: 1
+                                                stroke_color:
+                                                  default:
+                                                    type: hex
+                                                    hex: '#CCCCCC'
+                                                    alpha: 1
+                                              background_color:
+                                                default:
+                                                  type: hex
+                                                  hex: '#DDDDDD'
+                                                  alpha: 1
+                                              view_overrides:
+                                                background_color:
+                                                - value:
+                                                    default:
+                                                      type: hex
+                                                      hex: '#FFA500'
+                                                      alpha: 1
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 8
+                                              items:
+                                              - position:
+                                                  horizontal: center
+                                                  vertical: center
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: label
+                                                  text: '8'
+                                                  text_appearance:
+                                                    font_size: 14
+                                                    alignment: center
+                                                    styles:
+                                                    - bold
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#333333'
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    text_appearance:
+                                                    - value:
+                                                        font_size: 14
+                                                        alignment: center
+                                                        styles:
+                                                        - bold
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: '#FFFFFF'
+                                                            alpha: 1
+                                                      when_state_matches:
+                                                        key: selected_score
+                                                        value:
+                                                          at_least: 8
+                                        - size:
+                                            width: auto
+                                            height: 40
+                                          margin:
+                                            end: 4
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_9
+                                            content_description: Rating 9
+                                            reporting_value: 9
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 9
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: container
+                                              border:
+                                                radius: 20
+                                                stroke_width: 1
+                                                stroke_color:
+                                                  default:
+                                                    type: hex
+                                                    hex: '#CCCCCC'
+                                                    alpha: 1
+                                              background_color:
+                                                default:
+                                                  type: hex
+                                                  hex: '#DDDDDD'
+                                                  alpha: 1
+                                              view_overrides:
+                                                background_color:
+                                                - value:
+                                                    default:
+                                                      type: hex
+                                                      hex: '#FFA500'
+                                                      alpha: 1
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 9
+                                              items:
+                                              - position:
+                                                  horizontal: center
+                                                  vertical: center
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: label
+                                                  text: '9'
+                                                  text_appearance:
+                                                    font_size: 14
+                                                    alignment: center
+                                                    styles:
+                                                    - bold
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#333333'
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    text_appearance:
+                                                    - value:
+                                                        font_size: 14
+                                                        alignment: center
+                                                        styles:
+                                                        - bold
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: '#FFFFFF'
+                                                            alpha: 1
+                                                      when_state_matches:
+                                                        key: selected_score
+                                                        value:
+                                                          at_least: 9
+                                        - size:
+                                            width: auto
+                                            height: 40
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_10
+                                            content_description: Rating 10
+                                            reporting_value: 10
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 10
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: container
+                                              border:
+                                                radius: 20
+                                                stroke_width: 1
+                                                stroke_color:
+                                                  default:
+                                                    type: hex
+                                                    hex: '#CCCCCC'
+                                                    alpha: 1
+                                              background_color:
+                                                default:
+                                                  type: hex
+                                                  hex: '#DDDDDD'
+                                                  alpha: 1
+                                              view_overrides:
+                                                background_color:
+                                                - value:
+                                                    default:
+                                                      type: hex
+                                                      hex: '#FFA500'
+                                                      alpha: 1
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 10
+                                              items:
+                                              - position:
+                                                  horizontal: center
+                                                  vertical: center
+                                                size:
+                                                  width: 24
+                                                  height: 24
+                                                view:
+                                                  type: label
+                                                  text: '10'
+                                                  text_appearance:
+                                                    font_size: 14
+                                                    alignment: center
+                                                    styles:
+                                                    - bold
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#333333'
+                                                        alpha: 1
+                                                  view_overrides:
+                                                    text_appearance:
+                                                    - value:
+                                                        font_size: 14
+                                                        alignment: center
+                                                        styles:
+                                                        - bold
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: '#FFFFFF'
+                                                            alpha: 1
+                                                      when_state_matches:
+                                                        key: selected_score
+                                                        value:
+                                                          at_least: 10
+                                  - identifier: rating_display_label
+                                    size:
+                                      width: 100%
+                                      height: auto
+                                    margin:
+                                      top: 16
+                                      bottom: 32
+                                      start: 16
+                                      end: 16
+                                    view:
+                                      type: label
+                                      text: 'Your rating: Not selected'
+                                      view_overrides:
+                                        text:
+                                        - when_state_matches:
+                                            key: selected_score
+                                            value:
+                                              equals: 1
+                                          value: 'Your rating: 1 - Poor'
+                                        - when_state_matches:
+                                            key: selected_score
+                                            value:
+                                              equals: 2
+                                          value: 'Your rating: 2 - Below Average'
+                                        - when_state_matches:
+                                            key: selected_score
+                                            value:
+                                              equals: 3
+                                          value: 'Your rating: 3 - Below Average'
+                                        - when_state_matches:
+                                            key: selected_score
+                                            value:
+                                              equals: 4
+                                          value: 'Your rating: 4 - Average'
+                                        - when_state_matches:
+                                            key: selected_score
+                                            value:
+                                              equals: 5
+                                          value: 'Your rating: 5 - Average'
+                                        - when_state_matches:
+                                            key: selected_score
+                                            value:
+                                              equals: 6
+                                          value: 'Your rating: 6 - Average'
+                                        - when_state_matches:
+                                            key: selected_score
+                                            value:
+                                              equals: 7
+                                          value: 'Your rating: 7 - Good'
+                                        - when_state_matches:
+                                            key: selected_score
+                                            value:
+                                              equals: 8
+                                          value: 'Your rating: 8 - Very Good'
+                                        - when_state_matches:
+                                            key: selected_score
+                                            value:
+                                              equals: 9
+                                          value: 'Your rating: 9 - Excellent'
+                                        - when_state_matches:
+                                            key: selected_score
+                                            value:
+                                              equals: 10
+                                          value: 'Your rating: 10 - Perfect'
+                                      text_appearance:
+                                        font_size: 18
+                                        color:
+                                          default:
+                                            type: hex
+                                            hex: '#000000'
+                                            alpha: 1
+                                        alignment: center
+                                        styles:
+                                        - bold
+                                        font_families:
+                                        - sans-serif
+                                  - identifier: submit_button
+                                    size:
+                                      width: 100%
+                                      height: auto
+                                    margin:
+                                      top: 8
+                                      bottom: 32
+                                      start: 16
+                                      end: 16
+                                    view:
+                                      type: label_button
+                                      identifier: submit_button
+                                      border:
+                                        radius: 8
+                                      background_color:
+                                        default:
+                                          type: hex
+                                          hex: '#4285F4'
+                                          alpha: 1
+                                      button_click:
+                                      - form_submit
+                                      - dismiss
+                                      enabled:
+                                      - form_validation
+                                      label:
+                                        type: label
+                                        text: Submit Rating
+                                        content_description: Submit Rating
+                                        text_appearance:
+                                          font_size: 16
+                                          color:
+                                            default:
+                                              type: hex
+                                              hex: '#FFFFFF'
+                                              alpha: 1
+                                          alignment: center
+                                          styles:
+                                          - bold
+                                          font_families:
+                                          - sans-serif
+                        - position:
+                            horizontal: end
+                            vertical: top
+                          size:
+                            width: 48
+                            height: 48
+                          view:
+                            type: image_button
+                            identifier: dismiss_button
+                            button_click:
+                            - dismiss
+                            image:
+                              scale: 0.4
+                              type: icon
+                              icon: close
+                              color:
+                                default:
+                                  type: hex
+                                  hex: '#000000'
+                                  alpha: 1

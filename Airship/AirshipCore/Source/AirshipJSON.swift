@@ -236,6 +236,11 @@ public extension AirshipJSON {
         return value
     }
 
+    var number: Double? {
+        guard case .number(let value) = self else { return nil }
+        return value
+    }
+
     var object: [String: AirshipJSON]? {
         guard case .object(let value) = self else { return nil }
         return value

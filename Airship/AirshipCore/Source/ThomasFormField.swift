@@ -52,7 +52,7 @@ final class ThomasFormField: Sendable {
         case text(String?)
         case email(String?)
         case sms(String?)
-        case score(Int?)
+        case score(AirshipJSON?)
     }
 
     private enum FieldType: Sendable {

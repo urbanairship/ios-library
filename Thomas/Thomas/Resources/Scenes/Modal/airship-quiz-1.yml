@@ -1,0 +1,1763 @@
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  default_placement:
+    size:
+      width: 90%
+      height: 85%
+    shade_color:
+      default:
+        hex: '#020202'
+        alpha: 0.75
+view:
+  type: state_controller
+  view:
+    type: pager_controller
+    identifier: airship_survey_controller
+    view:
+      type: container
+      background_color:
+        default:
+          hex: '#004bff'
+          alpha: 1
+      border:
+        radius: 20
+        stroke_width: 2
+        stroke_color:
+          default:
+            hex: '#FFFFFF'
+            alpha: 0.1
+      items:
+      - position:
+          horizontal: center
+          vertical: center
+        size:
+          width: 90%
+          height: 85%
+        view:
+          type: pager
+          disable_swipe: true
+          items:
+          - identifier: rating_page
+            type: pager_item
+            view:
+              type: form_controller
+              validation_mode:
+                type: immediate
+              identifier: rating_form
+              submit: submit_event
+              view:
+                type: container
+                background_color:
+                  default:
+                    hex: '#004bff'
+                    alpha: 1
+                border:
+                  radius: 20
+                  stroke_width: 0
+                items:
+                - position:
+                    horizontal: center
+                    vertical: center
+                  size:
+                    width: 100%
+                    height: 100%
+                  view:
+                    type: container
+                    items:
+                    - margin:
+                        bottom: 0
+                        top: 0
+                        end: 0
+                        start: 0
+                      position:
+                        horizontal: center
+                        vertical: center
+                      size:
+                        width: 100%
+                        height: 100%
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                        - identifier: scroll_container
+                          size:
+                            width: 100%
+                            height: 100%
+                          view:
+                            type: scroll_layout
+                            direction: vertical
+                            view:
+                              type: linear_layout
+                              direction: vertical
+                              items:
+                              - size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 40
+                                  bottom: 0
+                                view:
+                                  type: empty_view
+                              - identifier: rating_title_label
+                                size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 16
+                                  bottom: 24
+                                  start: 24
+                                  end: 24
+                                view:
+                                  type: label
+                                  text: "\u2728 Like Airship? \u2728"
+                                  content_description: Rating Section Title
+                                  text_appearance:
+                                    font_size: 30
+                                    color:
+                                      default:
+                                        hex: '#FFFFFF'
+                                        alpha: 1
+                                    alignment: center
+                                    styles:
+                                    - bold
+                                    font_families:
+                                    - sans-serif
+                              - size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 0
+                                  bottom: 32
+                                  start: 24
+                                  end: 24
+                                view:
+                                  type: label
+                                  text: Please tap to rate your experience
+                                  text_appearance:
+                                    alignment: center
+                                    font_size: 18
+                                    color:
+                                      default:
+                                        hex: '#FFFFFF'
+                                        alpha: 0.9
+                              - identifier: rating_input_section
+                                size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 8
+                                  bottom: 24
+                                  start: 0
+                                  end: 0
+                                view:
+                                  type: score_controller
+                                  identifier: score_radio_controller
+                                  required: true
+                                  view:
+                                    type: container
+                                    items:
+                                    - position:
+                                        horizontal: center
+                                        vertical: center
+                                      size:
+                                        width: auto
+                                        height: auto
+                                      view:
+                                        type: linear_layout
+                                        direction: horizontal
+                                        items:
+                                        - size:
+                                            width: 42
+                                            height: 42
+                                          margin:
+                                            end: 8
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_1
+                                            content_description: Rating 1
+                                            reporting_value: 1  
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 1
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: icon_view
+                                              icon:
+                                                icon: heart
+                                                scale: 1.0
+                                                color:
+                                                  default:
+                                                    hex: '#DDDDDD'
+                                                    alpha: 0.7
+                                              view_overrides:
+                                                icon:
+                                                - value:
+                                                    icon: heart_fill
+                                                    scale: 1.0
+                                                    color:
+                                                      default:
+                                                        hex: '#f1084f'
+                                                        alpha: 1.0
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 1
+                                        - size:
+                                            width: 42
+                                            height: 42
+                                          margin:
+                                            end: 8
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_2
+                                            content_description: Rating 2
+                                            reporting_value: 2
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 2
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: icon_view
+                                              icon:
+                                                icon: heart
+                                                scale: 1.0
+                                                color:
+                                                  default:
+                                                    hex: '#DDDDDD'
+                                                    alpha: 0.7
+                                              view_overrides:
+                                                icon:
+                                                - value:
+                                                    icon: heart_fill
+                                                    scale: 1.0
+                                                    color:
+                                                      default:
+                                                        hex: '#f1084f'
+                                                        alpha: 1.0
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 2
+                                        - size:
+                                            width: 42
+                                            height: 42
+                                          margin:
+                                            end: 8
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_3
+                                            content_description: Rating 3
+                                            reporting_value: 3
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 3
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: icon_view
+                                              icon:
+                                                icon: heart
+                                                scale: 1.0
+                                                color:
+                                                  default:
+                                                    hex: '#DDDDDD'
+                                                    alpha: 0.7
+                                              view_overrides:
+                                                icon:
+                                                - value:
+                                                    icon: heart_fill
+                                                    scale: 1.0
+                                                    color:
+                                                      default:
+                                                        hex: '#f1084f'
+                                                        alpha: 1.0
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 3
+                                        - size:
+                                            width: 42
+                                            height: 42
+                                          margin:
+                                            end: 8
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_4
+                                            content_description: Rating 4
+                                            reporting_value: 4
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 4
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: icon_view
+                                              icon:
+                                                icon: heart
+                                                scale: 1.0
+                                                color:
+                                                  default:
+                                                    hex: '#DDDDDD'
+                                                    alpha: 0.7
+                                              view_overrides:
+                                                icon:
+                                                - value:
+                                                    icon: heart_fill
+                                                    scale: 1.0
+                                                    color:
+                                                      default:
+                                                        hex: '#f1084f'
+                                                        alpha: 1.0
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 4
+                                        - size:
+                                            width: 42
+                                            height: 42
+                                          view:
+                                            type: score_toggle_layout
+                                            identifier: score_toggle_5
+                                            content_description: Rating 5
+                                            reporting_value: 5
+                                            on_toggle_on:
+                                              state_actions:
+                                              - type: set
+                                                key: selected_score
+                                                value: 5
+                                            on_toggle_off:
+                                              state_actions: []
+                                            view:
+                                              type: icon_view
+                                              icon:
+                                                icon: heart
+                                                scale: 1.0
+                                                color:
+                                                  default:
+                                                    hex: '#DDDDDD'
+                                                    alpha: 0.7
+                                              view_overrides:
+                                                icon:
+                                                - value:
+                                                    icon: heart_fill
+                                                    scale: 1.0
+                                                    color:
+                                                      default:
+                                                        hex: '#f1084f'
+                                                        alpha: 1.0
+                                                  when_state_matches:
+                                                    key: selected_score
+                                                    value:
+                                                      at_least: 5
+                              - size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 16
+                                  bottom: 32
+                                  start: 24
+                                  end: 24
+                                view:
+                                  type: label
+                                  text: ''
+                                  text_appearance:
+                                    alignment: center
+                                    font_size: 72
+                                    color:
+                                      default:
+                                        hex: '#FFFFFF'
+                                        alpha: 0.8
+                                  view_overrides:
+                                    text:
+                                    - value: "\U0001FAA8"
+                                      when_state_matches:
+                                        key: selected_score
+                                        value:
+                                          equals: 1
+                                    - value: "\U0001F949"
+                                      when_state_matches:
+                                        key: selected_score
+                                        value:
+                                          equals: 2
+                                    - value: "\U0001F948"
+                                      when_state_matches:
+                                        key: selected_score
+                                        value:
+                                          equals: 3
+                                    - value: "\U0001F947"
+                                      when_state_matches:
+                                        key: selected_score
+                                        value:
+                                          equals: 4
+                                    - value: "\U0001F3C6"
+                                      when_state_matches:
+                                        key: selected_score
+                                        value:
+                                          equals: 5
+                              - size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 0
+                                  start: 24
+                                  end: 24
+                                view:
+                                  type: label
+                                  text: Tell us how we can improve
+                                  text_appearance:
+                                    alignment: start
+                                    font_size: 18
+                                    color:
+                                      default:
+                                        hex: '#FFFFFF'
+                                        alpha: 1
+                                    styles:
+                                    - bold
+                                  visibility:
+                                    default: false
+                                    invert_when_state_matches:
+                                      key: selected_score
+                                      value:
+                                        at_most: 4
+                              - size:
+                                  width: 100%
+                                  height: 100
+                                margin:
+                                  top: 8
+                                  bottom: 12
+                                  start: 24
+                                  end: 12
+                                view:
+                                  type: text_input
+                                  place_holder: Please share your feedback...
+                                  identifier: feedback_field
+                                  border:
+                                    radius: 8
+                                    stroke_width: 2
+                                    stroke_color:
+                                      default:
+                                        hex: '#FFFFFF'
+                                        alpha: 0.5
+                                  text_appearance:
+                                    alignment: start
+                                    font_size: 16
+                                    color:
+                                      default:
+                                        hex: '#FFFFFF'
+                                        alpha: 1
+                                  input_type: text_multiline
+                                  required: false
+                                  visibility:
+                                    default: false
+                                    invert_when_state_matches:
+                                      key: selected_score
+                                      value:
+                                        at_most: 4
+                              - size:
+                                  width: 100%
+                                  height: 50
+                                margin:
+                                  top: 12
+                                  bottom: 32
+                                  start: 24
+                                  end: 24
+                                view:
+                                  type: label_button
+                                  identifier: next_button_rating
+                                  background_color:
+                                    default:
+                                      hex: '#f1084f'
+                                      alpha: 1
+                                  border:
+                                    radius: 25
+                                    stroke_width: 0
+                                  button_click:
+                                  - dismiss
+                                  enabled:
+                                  - form_validation
+                                  label:
+                                    type: label
+                                    text: Submit
+                                    text_appearance:
+                                      font_size: 18
+                                      alignment: center
+                                      styles:
+                                      - bold
+                                      color:
+                                        default:
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                  visibility:
+                                    default: false
+                                    invert_when_state_matches:
+                                      key: selected_score
+                                      value:
+                                        at_most: 3
+                              - size:
+                                  width: 100%
+                                  height: 50
+                                margin:
+                                  top: 12
+                                  bottom: 32
+                                  start: 24
+                                  end: 24
+                                view:
+                                  type: label_button
+                                  identifier: next_button_rating
+                                  background_color:
+                                    default:
+                                      hex: '#f1084f'
+                                      alpha: 1
+                                  border:
+                                    radius: 25
+                                    stroke_width: 0
+                                  button_click:
+                                  - pager_next
+                                  enabled:
+                                  - form_validation
+                                  label:
+                                    type: label
+                                    text: Next
+                                    text_appearance:
+                                      font_size: 18
+                                      alignment: center
+                                      styles:
+                                      - bold
+                                      color:
+                                        default:
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                  visibility:
+                                    default: false
+                                    invert_when_state_matches:
+                                      key: selected_score
+                                      value:
+                                        at_least: 4
+          - identifier: personal_info_page
+            type: pager_item
+            view:
+              type: form_controller
+              validation_mode:
+                type: immediate
+              identifier: personal_info_form
+              submit: submit_event
+              view:
+                type: container
+                background_color:
+                  default:
+                    hex: '#004bff'
+                    alpha: 1
+                items:
+                - position:
+                    horizontal: center
+                    vertical: center
+                  size:
+                    width: 100%
+                    height: 100%
+                  view:
+                    type: scroll_layout
+                    direction: vertical
+                    view:
+                      type: linear_layout
+                      direction: vertical
+                      items:
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 32
+                          bottom: 24
+                          start: 24
+                          end: 24
+                        view:
+                          type: label
+                          text: "\u2728 Airship Survey \u2728"
+                          text_appearance:
+                            alignment: center
+                            font_size: 32
+                            color:
+                              default:
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                            - bold
+                            font_families:
+                            - sans-serif
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 0
+                          bottom: 24
+                          start: 24
+                          end: 24
+                        view:
+                          type: label
+                          text: Enter your information below to get started!
+                          text_appearance:
+                            alignment: center
+                            font_size: 18
+                            color:
+                              default:
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            font_families:
+                            - sans-serif
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 16
+                          start: 24
+                          end: 24
+                        view:
+                          type: label
+                          text: Your Name
+                          text_appearance:
+                            alignment: start
+                            font_size: 18
+                            color:
+                              default:
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                            - bold
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                          bottom: 16
+                          start: 24
+                          end: 24
+                        view:
+                          type: text_input
+                          place_holder: Enter your full name
+                          identifier: name_field
+                          icon_end:
+                            type: floating
+                            icon:
+                              type: icon
+                              icon: asterisk
+                              color:
+                                default:
+                                  hex: '#f1084f'
+                                  alpha: 1.0
+                              scale: 0.75
+                          border:
+                            radius: 8
+                            stroke_width: 2
+                            stroke_color:
+                              default:
+                                hex: '#FFFFFF'
+                                alpha: 0.5
+                          view_overrides:
+                            icon_end:
+                            - value:
+                                type: floating
+                                icon:
+                                  type: icon
+                                  icon: exclamationmark_circle_fill
+                                  color:
+                                    default:
+                                      hex: '#f1084f'
+                                      alpha: 1.0
+                                  scale: 1
+                              when_state_matches:
+                                key: name_field_state
+                                value:
+                                  equals: error
+                            - value:
+                                type: floating
+                                icon:
+                                  type: icon
+                                  icon: checkmark
+                                  color:
+                                    default:
+                                      hex: '#6ca15f'
+                                      alpha: 1.0
+                                  scale: 1
+                              when_state_matches:
+                                key: name_field_state
+                                value:
+                                  equals: valid
+                            border:
+                            - value:
+                                radius: 8
+                                stroke_width: 2
+                                stroke_color:
+                                  default:
+                                    hex: '#f1084f'
+                                    alpha: 1
+                              when_state_matches:
+                                key: name_field_state
+                                value:
+                                  equals: error
+                            - value:
+                                radius: 8
+                                stroke_width: 2
+                                stroke_color:
+                                  default:
+                                    hex: '#6ca15f'
+                                    alpha: 1
+                              when_state_matches:
+                                key: name_field_state
+                                value:
+                                  equals: valid
+                          text_appearance:
+                            alignment: start
+                            font_size: 16
+                            color:
+                              default:
+                                hex: '#FFFFFF'
+                                alpha: 1
+                          input_type: text
+                          required: true
+                          on_error:
+                            state_actions:
+                            - type: set
+                              key: name_field_state
+                              value: error
+                          on_valid:
+                            state_actions:
+                            - type: set
+                              key: name_field_state
+                              value: valid
+                          on_edit:
+                            state_actions:
+                            - type: set
+                              key: name_field_state
+                              value: editing
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 16
+                          start: 24
+                          end: 24
+                        view:
+                          type: label
+                          text: Email Address
+                          text_appearance:
+                            alignment: start
+                            font_size: 18
+                            color:
+                              default:
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                            - bold
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                          bottom: 16
+                          start: 24
+                          end: 24
+                        view:
+                          type: text_input
+                          place_holder: your.email@example.com
+                          identifier: email_field
+                          icon_end:
+                            type: floating
+                            icon:
+                              type: icon
+                              icon: asterisk
+                              color:
+                                default:
+                                  hex: '#f1084f'
+                                  alpha: 1.0
+                              scale: 0.75
+                          border:
+                            radius: 8
+                            stroke_width: 2
+                            stroke_color:
+                              default:
+                                hex: '#FFFFFF'
+                                alpha: 0.5
+                          view_overrides:
+                            icon_end:
+                            - value:
+                                type: floating
+                                icon:
+                                  type: icon
+                                  icon: exclamationmark_circle_fill
+                                  color:
+                                    default:
+                                      hex: '#f1084f'
+                                      alpha: 1.0
+                                  scale: 1
+                              when_state_matches:
+                                key: email_field_state
+                                value:
+                                  equals: error
+                            - value:
+                                type: floating
+                                icon:
+                                  type: icon
+                                  icon: checkmark
+                                  color:
+                                    default:
+                                      hex: '#6ca15f'
+                                      alpha: 1.0
+                                  scale: 1
+                              when_state_matches:
+                                key: email_field_state
+                                value:
+                                  equals: valid
+                            border:
+                            - value:
+                                radius: 8
+                                stroke_width: 2
+                                stroke_color:
+                                  default:
+                                    hex: '#f1084f'
+                                    alpha: 1
+                              when_state_matches:
+                                key: email_field_state
+                                value:
+                                  equals: error
+                            - value:
+                                radius: 8
+                                stroke_width: 2
+                                stroke_color:
+                                  default:
+                                    hex: '#6ca15f'
+                                    alpha: 1
+                              when_state_matches:
+                                key: email_field_state
+                                value:
+                                  equals: valid
+                          text_appearance:
+                            alignment: start
+                            font_size: 16
+                            color:
+                              default:
+                                hex: '#FFFFFF'
+                                alpha: 1
+                          input_type: email
+                          required: true
+                          on_error:
+                            state_actions:
+                            - type: set
+                              key: email_field_state
+                              value: error
+                          on_valid:
+                            state_actions:
+                            - type: set
+                              key: email_field_state
+                              value: valid
+                          on_edit:
+                            state_actions:
+                            - type: set
+                              key: email_field_state
+                              value: editing
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 16
+                          start: 24
+                          end: 24
+                        view:
+                          type: label
+                          text: Phone Number
+                          text_appearance:
+                            alignment: start
+                            font_size: 18
+                            color:
+                              default:
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                            - bold
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 8
+                          bottom: 32
+                          start: 24
+                          end: 24
+                        view:
+                          type: text_input
+                          place_holder: Enter phone number
+                          identifier: phone_field
+                          icon_end:
+                            type: floating
+                            icon:
+                              type: icon
+                              icon: asterisk
+                              color:
+                                default:
+                                  hex: '#f1084f'
+                                  alpha: 1.0
+                              scale: 0.75
+                          border:
+                            radius: 8
+                            stroke_width: 2
+                            stroke_color:
+                              default:
+                                hex: '#FFFFFF'
+                                alpha: 0.5
+                          view_overrides:
+                            icon_end:
+                            - value:
+                                type: floating
+                                icon:
+                                  type: icon
+                                  icon: exclamationmark_circle_fill
+                                  color:
+                                    default:
+                                      hex: '#f1084f'
+                                      alpha: 1.0
+                                  scale: 1
+                              when_state_matches:
+                                key: phone_field_state
+                                value:
+                                  equals: error
+                            - value:
+                                type: floating
+                                icon:
+                                  type: icon
+                                  icon: checkmark
+                                  color:
+                                    default:
+                                      hex: '#6ca15f'
+                                      alpha: 1.0
+                                  scale: 1
+                              when_state_matches:
+                                key: phone_field_state
+                                value:
+                                  equals: valid
+                            border:
+                            - value:
+                                radius: 8
+                                stroke_width: 2
+                                stroke_color:
+                                  default:
+                                    hex: '#f1084f'
+                                    alpha: 1
+                              when_state_matches:
+                                key: phone_field_state
+                                value:
+                                  equals: error
+                            - value:
+                                radius: 8
+                                stroke_width: 2
+                                stroke_color:
+                                  default:
+                                    hex: '#6ca15f'
+                                    alpha: 1
+                              when_state_matches:
+                                key: phone_field_state
+                                value:
+                                  equals: valid
+                          text_appearance:
+                            alignment: start
+                            font_size: 16
+                            color:
+                              default:
+                                hex: '#FFFFFF'
+                                alpha: 1
+                          input_type: sms
+                          locales:
+                          - country_code: US
+                            prefix: '+1'
+                          - country_code: FR
+                            prefix: '+33'
+                          - country_code: UA
+                            prefix: '+380'
+                          required: true
+                          on_error:
+                            state_actions:
+                            - type: set
+                              key: phone_field_state
+                              value: error
+                          on_valid:
+                            state_actions:
+                            - type: set
+                              key: phone_field_state
+                              value: valid
+                          on_edit:
+                            state_actions:
+                            - type: set
+                              key: phone_field_state
+                              value: editing
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 16
+                          bottom: 32
+                          start: 24
+                          end: 24
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                          - size:
+                              width: 48%
+                              height: 50
+                            margin:
+                              end: 8
+                            view:
+                              type: label_button
+                              identifier: prev_button_personal
+                              background_color:
+                                default:
+                                  hex: '#001f9e'
+                                  alpha: 1
+                              border:
+                                radius: 25
+                                stroke_width: 2
+                                stroke_color:
+                                  default:
+                                    hex: '#FFFFFF'
+                                    alpha: 0.3
+                              button_click:
+                              - pager_previous
+                              label:
+                                type: label
+                                text: Previous
+                                text_appearance:
+                                  font_size: 16
+                                  alignment: center
+                                  styles:
+                                  - bold
+                                  color:
+                                    default:
+                                      hex: '#FFFFFF'
+                                      alpha: 1
+                          - size:
+                              width: 48%
+                              height: 50
+                            margin:
+                              start: 8
+                            view:
+                              type: label_button
+                              identifier: next_button_personal
+                              background_color:
+                                default:
+                                  hex: '#f1084f'
+                                  alpha: 1
+                              border:
+                                radius: 25
+                                stroke_width: 0
+                              button_click:
+                              - pager_next
+                              enabled:
+                              - form_validation
+                              label:
+                                type: label
+                                text: Next
+                                text_appearance:
+                                  font_size: 16
+                                  alignment: center
+                                  styles:
+                                  - bold
+                                  color:
+                                    default:
+                                      hex: '#FFFFFF'
+                                      alpha: 1
+          - identifier: color_page
+            type: pager_item
+            view:
+              type: form_controller
+              validation_mode:
+                type: immediate
+              identifier: color_form
+              submit: submit_event
+              view:
+                type: container
+                background_color:
+                  default:
+                    hex: '#004bff'
+                    alpha: 1
+                items:
+                - position:
+                    horizontal: center
+                    vertical: center
+                  size:
+                    width: 100%
+                    height: 100%
+                  view:
+                    type: scroll_layout
+                    direction: vertical
+                    view:
+                      type: linear_layout
+                      direction: vertical
+                      items:
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 32
+                          bottom: 24
+                          start: 24
+                          end: 24
+                        view:
+                          type: label
+                          text: "Color Preferences \U0001F3A8"
+                          text_appearance:
+                            alignment: center
+                            font_size: 28
+                            color:
+                              default:
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                            - bold
+                            font_families:
+                            - sans-serif
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 16
+                          start: 24
+                          end: 24
+                        view:
+                          type: label
+                          text: Select your favorite color
+                          text_appearance:
+                            alignment: start
+                            font_size: 18
+                            color:
+                              default:
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                            - bold
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 16
+                          bottom: 32
+                          start: 24
+                          end: 24
+                        view:
+                          type: radio_input_controller
+                          identifier: color_selection
+                          required: true
+                          on_error:
+                            state_actions:
+                            - type: set
+                              key: color_selection_state
+                              value: error
+                          on_valid:
+                            state_actions:
+                            - type: set
+                              key: color_selection_state
+                              value: valid
+                          on_edit:
+                            state_actions:
+                            - type: set
+                              key: color_selection_state
+                              value: editing
+                          view:
+                            type: linear_layout
+                            direction: vertical
+                            items:
+                            - size:
+                                width: 100%
+                                height: 100%
+                              margin:
+                                top: 0
+                                bottom: 16
+                              view:
+                                type: linear_layout
+                                direction: horizontal
+                                items:
+                                - margin:
+                                    end: 16
+                                  size:
+                                    width: 24
+                                    height: 24
+                                  view:
+                                    type: radio_input
+                                    reporting_value: raspberry_red
+                                    content_description: Raspberry Red
+                                    style:
+                                      type: checkbox
+                                      bindings:
+                                        selected:
+                                          shapes:
+                                          - type: ellipse
+                                            scale: 1
+                                            aspect_ratio: 1
+                                            border:
+                                              radius: 20
+                                              stroke_width: 2
+                                              stroke_color:
+                                                default:
+                                                  hex: '#FFFFFF'
+                                                  alpha: 1
+                                            color:
+                                              default:
+                                                hex: '#004bff'
+                                                alpha: 1
+                                          - type: ellipse
+                                            scale: 0.6
+                                            aspect_ratio: 1
+                                            color:
+                                              default:
+                                                hex: '#FFFFFF'
+                                                alpha: 1
+                                        unselected:
+                                          shapes:
+                                          - type: ellipse
+                                            scale: 1
+                                            aspect_ratio: 1
+                                            border:
+                                              radius: 20
+                                              stroke_width: 2
+                                              stroke_color:
+                                                default:
+                                                  hex: '#FFFFFF'
+                                                  alpha: 1
+                                            color:
+                                              default:
+                                                hex: '#004bff'
+                                                alpha: 1
+                                - margin:
+                                    end: 16
+                                  size:
+                                    height: auto
+                                    width: 100%
+                                  view:
+                                    type: label
+                                    text: Raspberry Red
+                                    content_description: Raspberry Red
+                                    text_appearance:
+                                      font_size: 16
+                                      color:
+                                        default:
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                - size:
+                                    width: 24
+                                    height: 24
+                                  margin:
+                                    end: 8
+                                  view:
+                                    type: empty_view
+                                    background_color:
+                                      default:
+                                        hex: '#f1084f'
+                                        alpha: 1
+                                    border:
+                                      radius: 12
+                                      stroke_width: 0
+                            - size:
+                                width: 100%
+                                height: 100%
+                              margin:
+                                top: 0
+                                bottom: 16
+                              view:
+                                type: linear_layout
+                                direction: horizontal
+                                items:
+                                - margin:
+                                    end: 16
+                                  size:
+                                    width: 24
+                                    height: 24
+                                  view:
+                                    type: radio_input
+                                    reporting_value: ultramarine_blue
+                                    content_description: Ultramarine Blue
+                                    style:
+                                      type: checkbox
+                                      bindings:
+                                        selected:
+                                          shapes:
+                                          - type: ellipse
+                                            scale: 1
+                                            aspect_ratio: 1
+                                            border:
+                                              radius: 20
+                                              stroke_width: 2
+                                              stroke_color:
+                                                default:
+                                                  hex: '#FFFFFF'
+                                                  alpha: 1
+                                            color:
+                                              default:
+                                                hex: '#004bff'
+                                                alpha: 1
+                                          - type: ellipse
+                                            scale: 0.6
+                                            aspect_ratio: 1
+                                            color:
+                                              default:
+                                                hex: '#FFFFFF'
+                                                alpha: 1
+                                        unselected:
+                                          shapes:
+                                          - type: ellipse
+                                            scale: 1
+                                            aspect_ratio: 1
+                                            border:
+                                              radius: 20
+                                              stroke_width: 2
+                                              stroke_color:
+                                                default:
+                                                  hex: '#FFFFFF'
+                                                  alpha: 1
+                                            color:
+                                              default:
+                                                hex: '#004bff'
+                                                alpha: 1
+                                - margin:
+                                    end: 16
+                                  size:
+                                    height: auto
+                                    width: 100%
+                                  view:
+                                    type: label
+                                    text: Ultramarine Blue
+                                    content_description: Ultramarine Blue
+                                    text_appearance:
+                                      font_size: 16
+                                      color:
+                                        default:
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                - size:
+                                    width: 24
+                                    height: 24
+                                  margin:
+                                    end: 8
+                                  view:
+                                    type: empty_view
+                                    background_color:
+                                      default:
+                                        hex: '#001f9e'
+                                        alpha: 1
+                                    border:
+                                      radius: 12
+                                      stroke_width: 0
+                            - size:
+                                width: 100%
+                                height: 100%
+                              margin:
+                                top: 0
+                                bottom: 16
+                              view:
+                                type: linear_layout
+                                direction: horizontal
+                                items:
+                                - margin:
+                                    end: 16
+                                  size:
+                                    width: 24
+                                    height: 24
+                                  view:
+                                    type: radio_input
+                                    reporting_value: royal_blue
+                                    content_description: Obsidian
+                                    style:
+                                      type: checkbox
+                                      bindings:
+                                        selected:
+                                          shapes:
+                                          - type: ellipse
+                                            scale: 1
+                                            aspect_ratio: 1
+                                            border:
+                                              radius: 20
+                                              stroke_width: 2
+                                              stroke_color:
+                                                default:
+                                                  hex: '#FFFFFF'
+                                                  alpha: 1
+                                            color:
+                                              default:
+                                                hex: '#004bff'
+                                                alpha: 1
+                                          - type: ellipse
+                                            scale: 0.6
+                                            aspect_ratio: 1
+                                            color:
+                                              default:
+                                                hex: '#FFFFFF'
+                                                alpha: 1
+                                        unselected:
+                                          shapes:
+                                          - type: ellipse
+                                            scale: 1
+                                            aspect_ratio: 1
+                                            border:
+                                              radius: 20
+                                              stroke_width: 2
+                                              stroke_color:
+                                                default:
+                                                  hex: '#FFFFFF'
+                                                  alpha: 1
+                                            color:
+                                              default:
+                                                hex: '#004bff'
+                                                alpha: 1
+                                - margin:
+                                    end: 16
+                                  size:
+                                    height: auto
+                                    width: 100%
+                                  view:
+                                    type: label
+                                    text: Obsidian
+                                    content_description: Obsidian
+                                    text_appearance:
+                                      font_size: 16
+                                      color:
+                                        default:
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                - size:
+                                    width: 24
+                                    height: 24
+                                  margin:
+                                    end: 8
+                                  view:
+                                    type: empty_view
+                                    background_color:
+                                      default:
+                                        hex: '#000000'
+                                        alpha: 1
+                                    border:
+                                      radius: 12
+                                      stroke_width: 0
+                            - size:
+                                width: 100%
+                                height: 100%
+                              margin:
+                                top: 0
+                                bottom: 16
+                              view:
+                                type: linear_layout
+                                direction: horizontal
+                                items:
+                                - margin:
+                                    end: 16
+                                  size:
+                                    width: 24
+                                    height: 24
+                                  view:
+                                    type: radio_input
+                                    reporting_value: moss_green
+                                    content_description: Moss Green
+                                    style:
+                                      type: checkbox
+                                      bindings:
+                                        selected:
+                                          shapes:
+                                          - type: ellipse
+                                            scale: 1
+                                            aspect_ratio: 1
+                                            border:
+                                              radius: 20
+                                              stroke_width: 2
+                                              stroke_color:
+                                                default:
+                                                  hex: '#FFFFFF'
+                                                  alpha: 1
+                                            color:
+                                              default:
+                                                hex: '#004bff'
+                                                alpha: 1
+                                          - type: ellipse
+                                            scale: 0.6
+                                            aspect_ratio: 1
+                                            color:
+                                              default:
+                                                hex: '#FFFFFF'
+                                                alpha: 1
+                                        unselected:
+                                          shapes:
+                                          - type: ellipse
+                                            scale: 1
+                                            aspect_ratio: 1
+                                            border:
+                                              radius: 20
+                                              stroke_width: 2
+                                              stroke_color:
+                                                default:
+                                                  hex: '#FFFFFF'
+                                                  alpha: 1
+                                            color:
+                                              default:
+                                                hex: '#004bff'
+                                                alpha: 1
+                                - margin:
+                                    end: 16
+                                  size:
+                                    height: auto
+                                    width: 100%
+                                  view:
+                                    type: label
+                                    text: Moss Green
+                                    content_description: Moss Green
+                                    text_appearance:
+                                      font_size: 16
+                                      color:
+                                        default:
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                - size:
+                                    width: 24
+                                    height: 24
+                                  margin:
+                                    end: 8
+                                  view:
+                                    type: empty_view
+                                    background_color:
+                                      default:
+                                        hex: '#6ca15f'
+                                        alpha: 1
+                                    border:
+                                      radius: 12
+                                      stroke_width: 0
+                      - size:
+                          width: 100%
+                          height: auto
+                        margin:
+                          top: 16
+                          bottom: 32
+                          start: 24
+                          end: 24
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                          - size:
+                              width: 48%
+                              height: 50
+                            margin:
+                              end: 8
+                            view:
+                              type: label_button
+                              identifier: prev_button_color
+                              background_color:
+                                default:
+                                  hex: '#001f9e'
+                                  alpha: 1
+                              border:
+                                radius: 25
+                                stroke_width: 2
+                                stroke_color:
+                                  default:
+                                    hex: '#FFFFFF'
+                                    alpha: 0.3
+                              button_click:
+                              - pager_previous
+                              label:
+                                type: label
+                                text: Previous
+                                text_appearance:
+                                  font_size: 16
+                                  alignment: center
+                                  styles:
+                                  - bold
+                                  color:
+                                    default:
+                                      hex: '#FFFFFF'
+                                      alpha: 1
+                          - size:
+                              width: 48%
+                              height: 50
+                            margin:
+                              start: 8
+                            view:
+                              type: label_button
+                              identifier: next_button_color
+                              background_color:
+                                default:
+                                  hex: '#f1084f'
+                                  alpha: 1
+                              border:
+                                radius: 25
+                                stroke_width: 0
+                              button_click:
+                              - pager_next
+                              enabled:
+                              - form_validation
+                              label:
+                                type: label
+                                text: Next
+                                text_appearance:
+                                  font_size: 16
+                                  alignment: center
+                                  styles:
+                                  - bold
+                                  color:
+                                    default:
+                                      hex: '#FFFFFF'
+                                      alpha: 1
+          - identifier: thank_you_page
+            type: pager_item
+            view:
+              type: container
+              background_color:
+                default:
+                  hex: '#004bff'
+                  alpha: 1
+              items:
+              - position:
+                  horizontal: center
+                  vertical: center
+                size:
+                  width: 100%
+                  height: 100%
+                view:
+                  type: linear_layout
+                  direction: vertical
+                  items:
+                  - size:
+                      width: 100%
+                      height: auto
+                    margin:
+                      top: 40
+                      bottom: 24
+                      start: 24
+                      end: 24
+                    view:
+                      type: label
+                      text: "Thank You! \U0001F389"
+                      text_appearance:
+                        alignment: center
+                        font_size: 32
+                        color:
+                          default:
+                            hex: '#FFFFFF'
+                            alpha: 1
+                        styles:
+                        - bold
+                        font_families:
+                        - sans-serif
+                  - size:
+                      width: 100%
+                      height: auto
+                    margin:
+                      top: 16
+                      bottom: 24
+                      start: 24
+                      end: 24
+                    view:
+                      type: label
+                      text: Your survey has been submitted successfully. We appreciate
+                        your feedback!
+                      text_appearance:
+                        alignment: center
+                        font_size: 18
+                        color:
+                          default:
+                            hex: '#FFFFFF'
+                            alpha: 1
+                        font_families:
+                        - sans-serif
+                  - size:
+                      width: 100%
+                      height: 50
+                    margin:
+                      top: 16
+                      bottom: 40
+                      start: 24
+                      end: 24
+                    view:
+                      type: label_button
+                      identifier: done_button
+                      background_color:
+                        default:
+                          hex: '#f1084f'
+                          alpha: 1
+                      border:
+                        radius: 25
+                        stroke_width: 0
+                      button_click:
+                      - dismiss
+                      label:
+                        type: label
+                        text: "Done \u2713"
+                        text_appearance:
+                          font_size: 18
+                          alignment: center
+                          styles:
+                          - bold
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+      - position:
+          horizontal: end
+          vertical: top
+        margin:
+          top: 16
+          end: 16
+        size:
+          width: 32
+          height: 32
+        view:
+          type: image_button
+          identifier: close_button
+          button_click:
+          - dismiss
+          image:
+            type: icon
+            icon: close
+            color:
+              default:
+                hex: '#FFFFFF'
+                alpha: 0.8
+            scale: 0.7
+      - position:
+          horizontal: center
+          vertical: bottom
+        margin:
+          bottom: 16
+        size:
+          height: 8
+          width: 100%
+        view:
+          type: pager_indicator
+          spacing: 8
+          bindings:
+            selected:
+              shapes:
+              - type: ellipse
+                aspect_ratio: 1
+                scale: 1
+                color:
+                  default:
+                    hex: '#FFFFFF'
+                    alpha: 1
+            unselected:
+              shapes:
+              - type: ellipse
+                aspect_ratio: 1
+                scale: 1
+                color:
+                  default:
+                    hex: '#FFFFFF'
+                    alpha: 0.3
+          visibility:
+            default: false
+            invert_when_state_matches:
+              key: selected_score
+              value:
+                at_least: 5

@@ -67,6 +67,30 @@ struct Icons {
                 resizable: resizable,
                 color: color
             )
+        case .star:
+            makeSystemImageIcon(
+                name: "star",
+                resizable: resizable,
+                color: color
+            )
+        case .starFill:
+            makeSystemImageIcon(
+                name: "star.fill",
+                resizable: resizable,
+                color: color
+            )
+        case .heart:
+            makeSystemImageIcon(
+                name: "heart",
+                resizable: resizable,
+                color: color
+            )
+        case .heartFill:
+            makeSystemImageIcon(
+                name: "heart.fill",
+                resizable: resizable,
+                color: color
+            )
         case .progressSpinner:
             ProgressView().tint(color)
         }

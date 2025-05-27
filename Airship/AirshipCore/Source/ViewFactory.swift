@@ -71,6 +71,12 @@ struct ViewFactory {
             CheckboxToggleLayout(info: info, constraints: constraints)
         case .radioInputToggleLayout(let info):
             RadioInputToggleLayout(info: info, constraints: constraints)
+        case .iconView(let info):
+            IconView(info: info, constraints: constraints)
+        case .scoreController(let info):
+            ScoreController(info: info, constraints: constraints)
+        case .scoreToggleLayout(let info):
+            ScoreToggleLayout(info: info, constraints: constraints)
         }
     }
 }

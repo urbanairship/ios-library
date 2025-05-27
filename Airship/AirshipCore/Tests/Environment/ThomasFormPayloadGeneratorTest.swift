@@ -15,11 +15,11 @@ struct ThomasFormPayloadGeneratorTest {
                 children: [
                     "some-radio-input": .radio(AirshipJSON.string("some-radio-input-value")),
                     "some-toggle-input": .toggle(true),
-                    "some-score-input": .score(7),
+                    "some-score-input": .score(AirshipJSON.number(7.0)),
                     "some-text-input": .text("neat text"),
                     "some-email-input": .email("email@email.email"),
                     "some-sms-input": .sms("123"),
-                    "some-child-score": .score(8),
+                    "some-child-score": .score(AirshipJSON.number(8.0)),
                     "some-child-form": .form(
                         responseType: "some-child-form-response",
                         children: [
@@ -30,7 +30,7 @@ struct ThomasFormPayloadGeneratorTest {
                         responseType: "some-nps-child-form-response",
                         scoreID: "some-other-child-score",
                         children: [
-                            "some-other-child-score": .score(9)
+                            "some-other-child-score": .score(AirshipJSON.number(9.0))
                         ]
                     ),
                     "text-nil": .text(nil),
@@ -57,7 +57,7 @@ struct ThomasFormPayloadGeneratorTest {
               },
               "some-score-input": {
                 "type": "score",
-                "value": 7
+                "value": 7.0
               },
               "some-text-input": {
                 "type": "text_input",
@@ -73,7 +73,7 @@ struct ThomasFormPayloadGeneratorTest {
               },
               "some-child-score": {
                 "type": "score",
-                "value": 8
+                "value": 8.0
               },
               "text-nil": {
                 "type": "text_input"
@@ -132,7 +132,7 @@ struct ThomasFormPayloadGeneratorTest {
                 children: [
                     "some-text-input": .text("neat text"),
                     "some-email-input": .email("email@email.email"),
-                    "some-child-score": .score(8),
+                    "some-child-score": .score(AirshipJSON.number(8.0)),
                 ]
         )
 
@@ -190,10 +190,18 @@ struct ThomasFormPayloadGeneratorTest {
         ]
     )
     func testStateData(formStatus: ThomasFormState.Status) async throws {
-        let errorField = ThomasFormField.asyncField(identifier: "some-async-id", input: .score(7), processDelay: 0) { .error }
+        let errorField = ThomasFormField.asyncField(
+            identifier: "some-async-id",
+            input: .score(AirshipJSON.number(7.0)),
+            processDelay: 0
+        ) { .error }
         await errorField.process() // gets the error
 
-        let pendingField = ThomasFormField.asyncField(identifier: "some-pending-async-id", input: .score(7), processDelay: 100.0) { .invalid }
+        let pendingField = ThomasFormField.asyncField(
+            identifier: "some-pending-async-id",
+            input: .score(AirshipJSON.number(7.0)),
+            processDelay: 100.0
+        ) { .invalid }
 
         let fields: [ThomasFormField] = [
             ThomasFormField.invalidField(identifier: "some-invalid-id", input: .email("neat")),

@@ -11,29 +11,15 @@ struct Checkbox: View {
     @EnvironmentObject var checkboxState: CheckboxState
 
     private var isOnBinding: Binding<Bool> {
-        return Binding<Bool>(
-            get: {
-                self.checkboxState.selectedItems.contains(
-                    self.info.properties.reportingValue
-                )
-            },
-            set: {
-                if $0 {
-                    self.checkboxState.selectedItems.insert(
-                        self.info.properties.reportingValue
-                    )
-                } else {
-                    self.checkboxState.selectedItems.remove(
-                        self.info.properties.reportingValue
-                    )
-                }
-            }
+        self.checkboxState.makeBinding(
+            identifier: nil,
+            reportingValue: info.properties.reportingValue
         )
     }
 
     private var isEnabled: Bool {
-        let isSelected = self.checkboxState.selectedItems.contains(
-            self.info.properties.reportingValue
+        let isSelected = self.checkboxState.isSelected(
+            reportingValue: info.properties.reportingValue
         )
 
         return isSelected || !self.checkboxState.isMaxSelectionReached

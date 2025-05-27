@@ -10,7 +10,10 @@ struct Score: View {
     @MainActor
     class ViewModel: ObservableObject {
         @Published
-        var score: Int?
+        var score: AirshipJSON?
+
+        @Published
+        var index: Int?
     }
 
     @Environment(\.pageIdentifier) var pageID
@@ -24,9 +27,16 @@ struct Score: View {
     @ViewBuilder
     private func makeNumberRangeScoreItems(style: ThomasViewInfo.Score.ScoreStyle.NumberRange, constraints: ViewConstraints) -> some View {
         ForEach((style.start...style.end), id: \.self) { index in
-            let isOn = Binding(
-                get: { self.viewModel.score == index },
-                set: { if $0 { self.viewModel.score = index } }
+            let isOn = Binding<Bool>(
+                get: {
+                    self.viewModel.index == index
+                },
+                set: {
+                    if $0 {
+                        self.viewModel.index = index
+                        self.viewModel.score = .number(Double(index))
+                    }
+                }
             )
             Toggle(isOn: isOn.animation()) {}
                 .toggleStyle(
@@ -128,7 +138,7 @@ struct Score: View {
         return min(remainingSpace / count, 66.0)
     }
 
-    private func attributes(value: Int?) -> [ThomasFormField.Attribute]? {
+    private func attributes(value: AirshipJSON?) -> [ThomasFormField.Attribute]? {
         guard
             let value,
             let name = info.properties.attributeName
@@ -136,19 +146,29 @@ struct Score: View {
             return nil
         }
 
+        let attributeValue: ThomasAttributeValue? = if let string = value.string {
+            .string(string)
+        } else if let number = value.number {
+            .number(number)
+        } else {
+            nil
+        }
+
+        guard let attributeValue else { return nil }
+
         return [
             ThomasFormField.Attribute(
                 attributeName: name,
-                attributeValue: .number(Double(value))
+                attributeValue: attributeValue
             )
         ]
     }
 
-    private func checkValid(_ value: Int?) -> Bool {
+    private func checkValid(_ value: AirshipJSON?) -> Bool {
         return value != nil || self.info.validation.isRequired != true
     }
 
-    private func updateScore(_ value: Int?) {
+    private func updateScore(_ value: AirshipJSON?) {
         let field: ThomasFormField = if checkValid(value) {
             ThomasFormField.validField(
                 identifier: self.info.properties.identifier,

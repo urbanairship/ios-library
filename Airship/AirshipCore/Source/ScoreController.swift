@@ -3,10 +3,10 @@
 import Foundation
 import SwiftUI
 
-struct CheckboxController: View {
-    let info: ThomasViewInfo.CheckboxController
+@MainActor
+struct ScoreController: View {
+    let info: ThomasViewInfo.ScoreController
     let constraints: ViewConstraints
-
     @EnvironmentObject var environment: ThomasEnvironment
 
     var body: some View {
@@ -20,18 +20,18 @@ struct CheckboxController: View {
 
     @MainActor
     struct Content: View {
-        let info: ThomasViewInfo.CheckboxController
+        let info: ThomasViewInfo.ScoreController
         let constraints: ViewConstraints
 
         @Environment(\.pageIdentifier) var pageID
         @EnvironmentObject var formDataCollector: ThomasFormDataCollector
         @EnvironmentObject var formState: ThomasFormState
         @EnvironmentObject var thomasState: ThomasState
-        @ObservedObject var checkboxState: CheckboxState
+        @ObservedObject var scoreState: ScoreState
         @EnvironmentObject var validatableHelper: ValidatableHelper
 
         init(
-            info: ThomasViewInfo.CheckboxController,
+            info: ThomasViewInfo.ScoreController,
             constraints: ViewConstraints,
             environment: ThomasEnvironment
         ) {
@@ -40,15 +40,13 @@ struct CheckboxController: View {
 
             // Use the environment to create or retrieve the state in case the view
             // stack changes and we lose our state.
-            let checkboxState = environment.retrieveState(identifier: info.properties.identifier) {
-                CheckboxState(
-                    minSelection: info.properties.minSelection,
-                    maxSelection: info.properties.maxSelection
-                )
+            let scoreState = environment.retrieveState(identifier: info.properties.identifier) {
+                ScoreState()
             }
 
-            self._checkboxState = ObservedObject(wrappedValue: checkboxState)
+            self._scoreState = ObservedObject(wrappedValue: scoreState)
         }
+
 
         var body: some View {
             ViewFactory.createView(self.info.properties.view, constraints: constraints)
@@ -56,62 +54,66 @@ struct CheckboxController: View {
                 .thomasCommon(self.info, formInputID: self.info.properties.identifier)
                 .accessible(self.info.accessible)
                 .formElement()
-                .environmentObject(checkboxState)
-                .airshipOnChangeOf(self.checkboxState.selected) { incoming in
+                .environmentObject(scoreState)
+                .airshipOnChangeOf(self.scoreState.selected) { incoming in
                     updateFormState(selected: incoming)
                 }
                 .onAppear {
-                    updateFormState(selected: self.checkboxState.selected)
+                    updateFormState(selected: self.scoreState.selected)
                     if self.formState.validationMode == .onDemand {
                         validatableHelper.subscribe(
                             forIdentifier: info.properties.identifier,
                             formState: formState,
-                            initialValue: checkboxState.selected,
-                            valueUpdates: checkboxState.$selected,
+                            initialValue: scoreState.selected,
+                            valueUpdates: scoreState.$selected,
                             validatables: info.validation
-                        ) { [weak thomasState, weak checkboxState] actions in
-                            guard let thomasState, let checkboxState else { return }
+                        ) { [weak thomasState, weak scoreState] actions in
+                            guard let thomasState, let scoreState else { return }
                             thomasState.processStateActions(
                                 actions,
-                                formFieldValue: .multipleCheckbox(
-                                    Set(checkboxState.selected.map { $0.reportingValue })
-                                )
+                                formFieldValue: .score(scoreState.selected?.reportingValue)
                             )
                         }
                     }
                 }
         }
 
-        private func checkValid(_ value: Set<AirshipJSON>) -> Bool {
-            let min = info.properties.minSelection ?? 0
-            let max = info.properties.maxSelection ?? Int.max
-
-            guard value.count >= min, value.count <= max else {
-                return false
-            }
-
-            guard !value.isEmpty else {
-                return info.validation.isRequired != true
-            }
-
-            return true
+        private func checkValid(value: AirshipJSON?) -> Bool {
+            return value != nil || info.validation.isRequired != true
         }
 
-        private func updateFormState(selected: Set<CheckboxState.Selected>) {
-            let value = Set(selected.map { $0.reportingValue })
-            let formValue: ThomasFormField.Value = .multipleCheckbox(value)
-            let field: ThomasFormField = if checkValid(value) {
+        private func makeAttribute(
+            selected: ScoreState.Selected?
+        ) -> [ThomasFormField.Attribute]? {
+            guard
+                let name = info.properties.attributeName,
+                let value = selected?.attributeValue
+            else {
+                return nil
+            }
+
+            return  [
+                ThomasFormField.Attribute(
+                    attributeName: name,
+                    attributeValue: value
+                )
+            ]
+        }
+
+        private func updateFormState(selected: ScoreState.Selected?) {
+            let field: ThomasFormField = if checkValid(value: selected?.reportingValue) {
                 ThomasFormField.validField(
                     identifier: self.info.properties.identifier,
-                    input: formValue,
+                    input: .score(selected?.reportingValue),
                     result: .init(
-                        value: formValue
+                        value: .score(selected?.reportingValue),
+                        attributes: makeAttribute(selected: selected)
                     )
                 )
             } else {
                 ThomasFormField.invalidField(
                     identifier: self.info.properties.identifier,
-                    input: formValue
+                    input: .score(selected?.reportingValue)
                 )
             }
 

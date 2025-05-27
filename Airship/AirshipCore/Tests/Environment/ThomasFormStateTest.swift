@@ -339,10 +339,10 @@ struct ThomasFormStateTest {
         form.updateField(
             .asyncField(
                 identifier: "bar-id",
-                input: .score(2),
+                input: .score(AirshipJSON.number(2.0)),
                 processDelay: 0.1
             ) {
-                .valid(.init(value: .score(1)))
+                .valid(.init(value: .score(AirshipJSON.number(1.0))))
             }
         ) {
             screen.value == "bar"
@@ -420,10 +420,10 @@ struct ThomasFormStateTest {
         form.updateField(
             .asyncField(
                 identifier: "bar-id",
-                input: .score(2),
+                input: .score(AirshipJSON.number(2.0)),
                 processDelay: 0.1
             ) {
-                .valid(.init(value: .score(1)))
+                .valid(.init(value: .score(AirshipJSON.number(1.0))))
             }
         ) {
             screen.value == "bar"
@@ -451,13 +451,13 @@ struct ThomasFormStateTest {
 
         await #expect(updates.next() == .pendingValidation)
 
-        form.updateField(.validField(identifier: "some-valid-id", input: .score(1), result: .init(value: .score(1))))
+        form.updateField(.validField(identifier: "some-valid-id", input: .score(AirshipJSON.number(1.0)), result: .init(value: .score(AirshipJSON.number(1.0)))))
         #expect(form.status == .pendingValidation)
 
-        form.updateField(.invalidField(identifier: "some-id", input: .score(1)))
+        form.updateField(.invalidField(identifier: "some-id", input: .score(AirshipJSON.number(1.0))))
         #expect(form.status == .pendingValidation)
 
-        form.updateField(.invalidField(identifier: "some-other-id", input: .score(2)))
+        form.updateField(.invalidField(identifier: "some-other-id", input: .score(AirshipJSON.number(2.0))))
         #expect(form.status == .pendingValidation)
 
         await #expect(form.validate() == false)
@@ -465,22 +465,22 @@ struct ThomasFormStateTest {
         await #expect(updates.next() == .invalid)
 
         // Update the invalid fields with more invalid data
-        form.updateField(.invalidField(identifier: "some-id", input: .score(1)))
+        form.updateField(.invalidField(identifier: "some-id", input: .score(AirshipJSON.number(1.0))))
         #expect(form.status == .invalid)
-        form.updateField(.invalidField(identifier: "some-other-id", input: .score(2)))
+        form.updateField(.invalidField(identifier: "some-other-id", input: .score(AirshipJSON.number(2.0))))
         #expect(form.status == .invalid)
 
         // Update the invalid fields with valid and pending fields
-        form.updateField(.validField(identifier: "some-id", input: .score(1), result: .init(value: .score(1))))
+        form.updateField(.validField(identifier: "some-id", input: .score(AirshipJSON.number(1.0)), result: .init(value: .score(AirshipJSON.number(1.0)))))
         #expect(form.status == .invalid)
 
         form.updateField(
             .asyncField(
                 identifier: "some-other-id",
-                input: .score(2),
+                input: .score(AirshipJSON.number(2.0)),
                 processDelay: 0.1
             ) {
-                .valid(.init(value: .score(1)))
+                .valid(.init(value: .score(AirshipJSON.number(1.0))))
             }
         )
         #expect(form.status == .pendingValidation)
@@ -506,32 +506,32 @@ struct ThomasFormStateTest {
 
         await #expect(updates.next() == .invalid)
 
-        form.updateField(.validField(identifier: "some-valid-id", input: .score(1), result: .init(value: .score(1))))
+        form.updateField(.validField(identifier: "some-valid-id", input: .score(AirshipJSON.number(1.0)), result: .init(value: .score(AirshipJSON.number(1.0)))))
         await #expect(updates.next() == .pendingValidation)
         await #expect(updates.next() == .validating)
         await #expect(updates.next() == .valid)
 
-        form.updateField(.invalidField(identifier: "some-id", input: .score(1)))
+        form.updateField(.invalidField(identifier: "some-id", input: .score(AirshipJSON.number(1.0))))
         await #expect(updates.next() == .pendingValidation)
         await #expect(updates.next() == .validating)
         await #expect(updates.next() == .invalid)
 
-        form.updateField(.invalidField(identifier: "some-other-id", input: .score(2)))
+        form.updateField(.invalidField(identifier: "some-other-id", input: .score(AirshipJSON.number(2.0))))
         await #expect(updates.next() == .pendingValidation)
         await #expect(updates.next() == .validating)
         await #expect(updates.next() == .invalid)
 
         // Update the invalid fields with more invalid data
-        form.updateField(.invalidField(identifier: "some-id", input: .score(1)))
-        form.updateField(.invalidField(identifier: "some-other-id", input: .score(2)))
+        form.updateField(.invalidField(identifier: "some-id", input: .score(AirshipJSON.number(1.0))))
+        form.updateField(.invalidField(identifier: "some-other-id", input: .score(AirshipJSON.number(2.0))))
 
         // Update the invalid fields with valid fields
-        form.updateField(.validField(identifier: "some-id", input: .score(1), result: .init(value: .score(1))))
+        form.updateField(.validField(identifier: "some-id", input: .score(AirshipJSON.number(1.0)), result: .init(value: .score(AirshipJSON.number(1.0)))))
         await #expect(updates.next() == .pendingValidation)
         await #expect(updates.next() == .validating)
         await #expect(updates.next() == .invalid)
 
-        form.updateField(.validField(identifier: "some-other-id", input: .score(1), result: .init(value: .score(1))))
+        form.updateField(.validField(identifier: "some-other-id", input: .score(AirshipJSON.number(1.0)), result: .init(value: .score(AirshipJSON.number(1.0)))))
         await #expect(updates.next() == .pendingValidation)
         await #expect(updates.next() == .validating)
         await #expect(updates.next() == .valid)
@@ -540,10 +540,10 @@ struct ThomasFormStateTest {
         form.updateField(
             .asyncField(
                 identifier: "some-other-id",
-                input: .score(2),
+                input: .score(AirshipJSON.number(2.0)),
                 processDelay: 0.1
             ) {
-                .valid(.init(value: .score(1)))
+                .valid(.init(value: .score(AirshipJSON.number(1.0))))
             }
         )
         await #expect(updates.next() == .pendingValidation)

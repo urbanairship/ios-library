@@ -4,26 +4,28 @@ import Foundation
 import SwiftUI
 
 @MainActor
-struct CheckboxToggleLayout: View {
+struct ScoreToggleLayout: View {
     @EnvironmentObject var formState: ThomasFormState
-    @EnvironmentObject var checkboxState: CheckboxState
+    @EnvironmentObject var scoreState: ScoreState
 
-    let info: ThomasViewInfo.CheckboxToggleLayout
+    let info: ThomasViewInfo.ScoreToggleLayout
     let constraints: ViewConstraints
 
     private var isOnBinding: Binding<Bool> {
-        self.checkboxState.makeBinding(
-            identifier: info.properties.identifier,
-            reportingValue: info.properties.reportingValue
+        return Binding<Bool>(
+            get: {
+                self.scoreState.selected?.identifier == self.info.properties.identifier
+            },
+            set: {
+                if $0 {
+                    self.scoreState.setSelected(
+                        identifier: self.info.properties.identifier,
+                        reportingValue: self.info.properties.reportingValue,
+                        attributeValue: self.info.properties.attributeValue
+                    )
+                }
+            }
         )
-    }
-
-    private var isEnabled: Bool {
-        let isSelected = self.checkboxState.isSelected(
-            identifier: info.properties.identifier
-        )
-
-        return isSelected || !self.checkboxState.isMaxSelectionReached
     }
 
     var body: some View {
