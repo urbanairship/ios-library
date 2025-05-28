@@ -135,8 +135,24 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
             let subpredicates: [JSONPredicate]
             
             if key == CodingKeys.keyNot {
-                let predicate = try container.decode(JSONPredicate.self, forKey: key)
-                subpredicates = [predicate]
+                let predicate = try? container.decode(
+                    JSONPredicate.self,
+                    forKey: key
+                )
+                if let predicate {
+                    subpredicates = [predicate]
+                } else {
+                    subpredicates = try container.decode(
+                        [JSONPredicate].self,
+                        forKey: key
+                    )
+
+                    guard subpredicates.count == 1 else {
+                        throw AirshipErrors.error(
+                            "A `not` predicate must contain a single sub predicate or matcher."
+                        )
+                    }
+                }
             } else {
                 subpredicates = try container.decode([JSONPredicate].self, forKey: key)
             }

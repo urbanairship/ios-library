@@ -139,6 +139,72 @@ final class JSONPredicateTest: XCTestCase {
         XCTAssertEqual(decoded, expected)
     }
 
+    func testJSONPredicateNotWithArray() throws {
+        let json: String = """
+        {
+           "not": [{
+             "value":{
+                "equals":"bar"
+             },
+             "scope":[
+                "foo"
+             ]
+          }]
+        }
+        """
+
+        let decoded: JSONPredicate = try JSONDecoder().decode(
+            JSONPredicate.self,
+            from: json.data(using: .utf8)!
+        )
+
+        let expected: JSONPredicate = .notPredicate(
+            subpredicate: JSONPredicate(
+                jsonMatcher: JSONMatcher(
+                    valueMatcher: JSONValueMatcher.matcherWhereStringEquals("bar"),
+                    scope: ["foo"]
+                )
+            )
+        )
+
+        XCTAssertEqual(decoded, expected)
+    }
+
+    func testJSONPredicateNotWithArrayMultipleElements() throws {
+        let json: String = """
+        {
+           "not":[
+              {
+                 "value":{
+                    "equals":"bar"
+                 },
+                 "scope":[
+                    "foo"
+                 ]
+              },
+              {
+                 "value":{
+                    "equals":"bar"
+                 },
+                 "scope":[
+                    "foo"
+                 ]
+              }
+           ]
+        }
+        """
+
+        do {
+            _  = try JSONDecoder().decode(
+                JSONPredicate.self,
+                from: json.data(using: .utf8)!
+            )
+            XCTFail("shoudl throw")
+        } catch {
+
+        }
+    }
+
     func testJSONPredicateArrayLength() throws {
         // This JSON is flawed as you cant have an array of matchers for value. However it shows
         // order of matcher parsing and its the same test on web, so we are using it.
