@@ -422,7 +422,7 @@ extension AirshipChannel: AirshipPushableComponent {
             self.audienceManager.channelID = channelID
             self.notificationCenter.post(
                 name: AirshipNotifications.ChannelCreated.name,
-                object: self,
+                object: nil,
                 userInfo: [
                     AirshipNotifications.ChannelCreated.channelIDKey: channelID,
                     AirshipNotifications.ChannelCreated.isExistingChannelKey: isExisting,
