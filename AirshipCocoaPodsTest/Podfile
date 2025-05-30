@@ -1,9 +1,10 @@
+plugin 'cocoapods-pod-linkage'
+
 platform :ios, '16.0'
-use_frameworks!
+use_frameworks! :linkage => :static
 
 target 'AirshipCocoaPodsTest' do
-  # Airship SDK - trying 18.x series which might be more stable
-  pod 'Airship', '19.4.0'
+  pod 'Airship'
 end
 
 post_install do |installer|
