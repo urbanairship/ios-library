@@ -1,4 +1,7 @@
 PODS:
+  - Adjust (4.38.4):
+    - Adjust/Core (= 4.38.4)
+  - Adjust/Core (4.38.4)
   - Airship (19.5.0):
     - Airship/Automation (= 19.5.0)
     - Airship/Basement (= 19.5.0)
@@ -17,17 +20,365 @@ PODS:
     - Airship/Core
   - Airship/PreferenceCenter (19.5.0):
     - Airship/Core
+  - AmazonPublisherServicesSDK (4.9.3)
+  - Armchair (0.3.7)
+  - ASN1Swift (1.2.7)
+  - CocoaLumberjack (3.8.0):
+    - CocoaLumberjack/Core (= 3.8.0)
+  - CocoaLumberjack/Core (3.8.0)
+  - ComScore (6.11.0):
+    - ComScore/Dynamic (= 6.11.0)
+  - ComScore/Dynamic (6.11.0)
+  - CriteoMRAID (1.0.1)
+  - CriteoPublisherSdk (6.0.0):
+    - CriteoMRAID (~> 1.0.1)
+    - CriteoPublisherSdk/Sdk (= 6.0.0)
+  - CriteoPublisherSdk/Sdk (6.0.0):
+    - CriteoMRAID (~> 1.0.1)
+  - FileMD5Hash (2.0.0)
+  - Firebase (10.22.0):
+    - Firebase/Core (= 10.22.0)
+  - Firebase/Core (10.22.0):
+    - Firebase/CoreOnly
+    - FirebaseAnalytics (~> 10.22.0)
+  - Firebase/CoreOnly (10.22.0):
+    - FirebaseCore (= 10.22.0)
+  - Firebase/InAppMessaging (10.22.0):
+    - Firebase/CoreOnly
+    - FirebaseInAppMessaging (~> 10.22.0-beta)
+  - Firebase/RemoteConfig (10.22.0):
+    - Firebase/CoreOnly
+    - FirebaseRemoteConfig (~> 10.22.0)
+  - FirebaseABTesting (10.29.0):
+    - FirebaseCore (~> 10.0)
+  - FirebaseAnalytics (10.22.0):
+    - FirebaseAnalytics/AdIdSupport (= 10.22.0)
+    - FirebaseCore (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+  - FirebaseAnalytics/AdIdSupport (10.22.0):
+    - FirebaseCore (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleAppMeasurement (= 10.22.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+  - FirebaseCore (10.22.0):
+    - FirebaseCoreInternal (~> 10.0)
+    - GoogleUtilities/Environment (~> 7.12)
+    - GoogleUtilities/Logger (~> 7.12)
+  - FirebaseCoreExtension (10.29.0):
+    - FirebaseCore (~> 10.0)
+  - FirebaseCoreInternal (10.29.0):
+    - "GoogleUtilities/NSData+zlib (~> 7.8)"
+  - FirebaseCrashlytics (10.22.0):
+    - FirebaseCore (~> 10.5)
+    - FirebaseInstallations (~> 10.0)
+    - FirebaseSessions (~> 10.5)
+    - GoogleDataTransport (~> 9.2)
+    - GoogleUtilities/Environment (~> 7.8)
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+    - PromisesObjC (~> 2.1)
+  - FirebaseDynamicLinks (10.22.0):
+    - FirebaseCore (~> 10.0)
+  - FirebaseInAppMessaging (10.22.0-beta):
+    - FirebaseABTesting (~> 10.0)
+    - FirebaseCore (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleUtilities/Environment (~> 7.8)
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+  - FirebaseInstallations (10.29.0):
+    - FirebaseCore (~> 10.0)
+    - GoogleUtilities/Environment (~> 7.8)
+    - GoogleUtilities/UserDefaults (~> 7.8)
+    - PromisesObjC (~> 2.1)
+  - FirebaseRemoteConfig (10.22.0):
+    - FirebaseABTesting (~> 10.0)
+    - FirebaseCore (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - FirebaseSharedSwift (~> 10.0)
+    - GoogleUtilities/Environment (~> 7.8)
+    - "GoogleUtilities/NSData+zlib (~> 7.8)"
+  - FirebaseSessions (10.29.0):
+    - FirebaseCore (~> 10.5)
+    - FirebaseCoreExtension (~> 10.0)
+    - FirebaseInstallations (~> 10.0)
+    - GoogleDataTransport (~> 9.2)
+    - GoogleUtilities/Environment (~> 7.13)
+    - GoogleUtilities/UserDefaults (~> 7.13)
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+    - PromisesSwift (~> 2.1)
+  - FirebaseSharedSwift (10.29.0)
+  - Flutter (1.0.0)
+  - Google-Mobile-Ads-SDK (10.11.0):
+    - GoogleAppMeasurement (< 11.0, >= 7.0)
+    - GoogleUserMessagingPlatform (>= 1.1)
+  - GoogleAds-IMA-iOS-SDK (3.20.0)
+  - GoogleAppMeasurement (10.22.0):
+    - GoogleAppMeasurement/AdIdSupport (= 10.22.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+  - GoogleAppMeasurement/AdIdSupport (10.22.0):
+    - GoogleAppMeasurement/WithoutAdIdSupport (= 10.22.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+  - GoogleAppMeasurement/WithoutAdIdSupport (10.22.0):
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+  - GoogleDataTransport (9.4.1):
+    - GoogleUtilities/Environment (~> 7.7)
+    - nanopb (< 2.30911.0, >= 2.30908.0)
+    - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUserMessagingPlatform (3.0.0)
+  - GoogleUtilities (7.13.3):
+    - GoogleUtilities/AppDelegateSwizzler (= 7.13.3)
+    - GoogleUtilities/Environment (= 7.13.3)
+    - GoogleUtilities/ISASwizzler (= 7.13.3)
+    - GoogleUtilities/Logger (= 7.13.3)
+    - GoogleUtilities/MethodSwizzler (= 7.13.3)
+    - GoogleUtilities/Network (= 7.13.3)
+    - "GoogleUtilities/NSData+zlib (= 7.13.3)"
+    - GoogleUtilities/Privacy (= 7.13.3)
+    - GoogleUtilities/Reachability (= 7.13.3)
+    - GoogleUtilities/SwizzlerTestHelpers (= 7.13.3)
+    - GoogleUtilities/UserDefaults (= 7.13.3)
+  - GoogleUtilities/AppDelegateSwizzler (7.13.3):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Environment (7.13.3):
+    - GoogleUtilities/Privacy
+    - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUtilities/ISASwizzler (7.13.3):
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Logger (7.13.3):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/MethodSwizzler (7.13.3):
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Network (7.13.3):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Privacy
+    - GoogleUtilities/Reachability
+  - "GoogleUtilities/NSData+zlib (7.13.3)":
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Privacy (7.13.3)
+  - GoogleUtilities/Reachability (7.13.3):
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/SwizzlerTestHelpers (7.13.3):
+    - GoogleUtilities/MethodSwizzler
+  - GoogleUtilities/UserDefaults (7.13.3):
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Privacy
+  - JSONModel (1.8.0)
+  - libwebp (1.5.0):
+    - libwebp/demux (= 1.5.0)
+    - libwebp/mux (= 1.5.0)
+    - libwebp/sharpyuv (= 1.5.0)
+    - libwebp/webp (= 1.5.0)
+  - libwebp/demux (1.5.0):
+    - libwebp/webp
+  - libwebp/mux (1.5.0):
+    - libwebp/demux
+  - libwebp/sharpyuv (1.5.0)
+  - libwebp/webp (1.5.0):
+    - libwebp/sharpyuv
+  - lottie-ios (4.5.2)
+  - LRAtsSDK (2.3.0)
+  - LRAtsSDKMediationAdapter (2.4.0):
+    - Google-Mobile-Ads-SDK
+    - LRAtsSDK
+  - mParticle-Apple-SDK (8.18.0):
+    - mParticle-Apple-SDK/mParticle (= 8.18.0)
+  - mParticle-Apple-SDK/mParticle (8.18.0)
+  - nanopb (2.30910.0):
+    - nanopb/decode (= 2.30910.0)
+    - nanopb/encode (= 2.30910.0)
+  - nanopb/decode (2.30910.0)
+  - nanopb/encode (2.30910.0)
+  - PrebidMobile (2.2.0):
+    - PrebidMobile/core (= 2.2.0)
+  - PrebidMobile/core (2.2.0)
+  - PromisesObjC (2.4.0)
+  - PromisesSwift (2.4.0):
+    - PromisesObjC (= 2.4.0)
+  - Realm (10.36.0):
+    - Realm/Headers (= 10.36.0)
+  - Realm/Headers (10.36.0)
+  - SDWebImage (5.11.1):
+    - SDWebImage/Core (= 5.11.1)
+  - SDWebImage/Core (5.11.1)
+  - Shimmer (1.0.2)
+  - SVProgressHUD (2.1.2)
+  - SwiftLint (0.32.0)
+  - TaboolaSDK (4.0.7)
+  - TPInAppReceipt (3.0.0):
+    - ASN1Swift (~> 1.2.2)
 
 DEPENDENCIES:
+  - Adjust (= 4.38.4)
   - Airship
+  - AmazonPublisherServicesSDK (= 4.9.3)
+  - Armchair (= 0.3.7)
+  - ASN1Swift (= 1.2.7)
+  - CocoaLumberjack (= 3.8.0)
+  - ComScore (= 6.11.0)
+  - CriteoMRAID (= 1.0.1)
+  - CriteoPublisherSdk (= 6.0.0)
+  - FileMD5Hash (= 2.0.0)
+  - Firebase (= 10.22.0)
+  - Firebase/Core (= 10.22.0)
+  - Firebase/InAppMessaging (= 10.22.0)
+  - Firebase/RemoteConfig (= 10.22.0)
+  - FirebaseAnalytics/AdIdSupport (= 10.22.0)
+  - FirebaseCoreExtension (= 10.29.0)
+  - FirebaseCrashlytics (= 10.22.0)
+  - FirebaseDynamicLinks (= 10.22.0)
+  - FirebaseSessions (= 10.29.0)
+  - FirebaseSharedSwift (= 10.29.0)
+  - Flutter (= 1.0.0)
+  - Google-Mobile-Ads-SDK (= 10.11.0)
+  - GoogleAds-IMA-iOS-SDK (= 3.20.0)
+  - GoogleAppMeasurement (= 10.22.0)
+  - GoogleDataTransport (= 9.4.1)
+  - GoogleUserMessagingPlatform (= 3.0.0)
+  - GoogleUtilities (= 7.13.3)
+  - JSONModel (= 1.8.0)
+  - libwebp (= 1.5.0)
+  - lottie-ios (= 4.5.2)
+  - LRAtsSDK (= 2.3.0)
+  - LRAtsSDKMediationAdapter (= 2.4.0)
+  - mParticle-Apple-SDK (= 8.18.0)
+  - nanopb (= 2.30910.0)
+  - PrebidMobile (= 2.2.0)
+  - PromisesObjC (= 2.4.0)
+  - PromisesSwift (= 2.4.0)
+  - Realm (= 10.36.0)
+  - SDWebImage (= 5.11.1)
+  - Shimmer (= 1.0.2)
+  - SVProgressHUD (= 2.1.2)
+  - SwiftLint (= 0.32.0)
+  - TaboolaSDK (= 4.0.7)
+  - TPInAppReceipt (= 3.0.0)
 
 SPEC REPOS:
   trunk:
+    - Adjust
     - Airship
+    - AmazonPublisherServicesSDK
+    - Armchair
+    - ASN1Swift
+    - CocoaLumberjack
+    - ComScore
+    - CriteoMRAID
+    - CriteoPublisherSdk
+    - FileMD5Hash
+    - Firebase
+    - FirebaseABTesting
+    - FirebaseAnalytics
+    - FirebaseCore
+    - FirebaseCoreExtension
+    - FirebaseCoreInternal
+    - FirebaseCrashlytics
+    - FirebaseDynamicLinks
+    - FirebaseInAppMessaging
+    - FirebaseInstallations
+    - FirebaseRemoteConfig
+    - FirebaseSessions
+    - FirebaseSharedSwift
+    - Flutter
+    - Google-Mobile-Ads-SDK
+    - GoogleAds-IMA-iOS-SDK
+    - GoogleAppMeasurement
+    - GoogleDataTransport
+    - GoogleUserMessagingPlatform
+    - GoogleUtilities
+    - JSONModel
+    - libwebp
+    - lottie-ios
+    - LRAtsSDK
+    - LRAtsSDKMediationAdapter
+    - mParticle-Apple-SDK
+    - nanopb
+    - PrebidMobile
+    - PromisesObjC
+    - PromisesSwift
+    - Realm
+    - SDWebImage
+    - Shimmer
+    - SVProgressHUD
+    - SwiftLint
+    - TaboolaSDK
+    - TPInAppReceipt
 
 SPEC CHECKSUMS:
+  Adjust: afda46df69f035fd216310fb85f399c40c61830a
   Airship: 838413fde24df760668c82524e6bdf06e5347f02
+  AmazonPublisherServicesSDK: 637a51454e0d7c37c8cb75628b30129f58908a56
+  Armchair: ea2da13f78515da627bd63d9540bd58a50e71562
+  ASN1Swift: bbd56c299b2084ba71bd7d7769c6202451598948
+  CocoaLumberjack: 78abfb691154e2a9df8ded4350d504ee19d90732
+  ComScore: 01521bf35a354f838e9bdc6ba8c435f283a4b08a
+  CriteoMRAID: a037bee17b929a8bede8a07279e01a269cd85210
+  CriteoPublisherSdk: 32a4b9dce4c78a04412b5d2b3af56e481f924c40
+  FileMD5Hash: 3ed69cc19a21ff4d30ae8833fc104275ad2c7de0
+  Firebase: 797fd7297b7e1be954432743a0b3f90038e45a71
+  FirebaseABTesting: d87f56707159bae64e269757a6e963d490f2eebe
+  FirebaseAnalytics: 8d0ff929c63b7f72260f332b86ccf569776b75d3
+  FirebaseCore: 0326ec9b05fbed8f8716cddbf0e36894a13837f7
+  FirebaseCoreExtension: 705ca5b14bf71d2564a0ddc677df1fc86ffa600f
+  FirebaseCoreInternal: df84dd300b561c27d5571684f389bf60b0a5c934
+  FirebaseCrashlytics: e568d68ce89117c80cddb04073ab9018725fbb8c
+  FirebaseDynamicLinks: 25ed0e87b0afb4769cc0ec8e942a532219abac28
+  FirebaseInAppMessaging: bff8ac490bba54c298b48847e14bd56313d2da1b
+  FirebaseInstallations: 913cf60d0400ebd5d6b63a28b290372ab44590dd
+  FirebaseRemoteConfig: e1b992a94d3674dddbcaf5d0d31a0312156ceb1c
+  FirebaseSessions: dbd14adac65ce996228652c1fc3a3f576bdf3ecc
+  FirebaseSharedSwift: 20530f495084b8d840f78a100d8c5ee613375f6e
+  Flutter: 79e6d10c26715651273ab94dfd22d7f4275b96fe
+  Google-Mobile-Ads-SDK: 58b4fda3f9758fc1ed210aa5cf7777b5eb55d47e
+  GoogleAds-IMA-iOS-SDK: f9a6bd69e34f6c3a2d6b2f7cd56814b78fc680f9
+  GoogleAppMeasurement: ccefe3eac9b0aa27f96066809fb1a7fe4b462626
+  GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
+  GoogleUserMessagingPlatform: f8d0cdad3ca835406755d0a69aa634f00e76d576
+  GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
+  JSONModel: 02ab723958366a3fd27da57ea2af2113658762e9
+  libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
+  lottie-ios: 96784afc26ea031d3e2b6cae342a4b8915072489
+  LRAtsSDK: 6d3bcfe11614da11c3623ef473cf7a7de91f9ed5
+  LRAtsSDKMediationAdapter: 79c15edb49c2996625d92e509efbbc61260fa326
+  mParticle-Apple-SDK: d1baffc6643efb44ccacc79d42721f88faba882c
+  nanopb: 438bc412db1928dac798aa6fd75726007be04262
+  PrebidMobile: 918a75b2a8a830409e468f7138253b88e23fd4e4
+  PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
+  PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
+  Realm: 3fd136cb4c83a927482a7f1612496d37beed3cf5
+  SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
+  Shimmer: c5374be1c2b0c9e292fb05b339a513cf291cac86
+  SVProgressHUD: c404a55d78acbeb7ebb78b76d3faf986475a6994
+  SwiftLint: 009a898ef2a1c851f45e1b59349bf6ff2ddc990d
+  TaboolaSDK: 60d8f6a3c63a6a83a9a370f1558980a80aee1c26
+  TPInAppReceipt: 772fec006fd2ce1a6b7b90eac6a049fa20a0ff87
 
-PODFILE CHECKSUM: 8234fb44a908a1a209ea003ac4e65ac391ccb709
+PODFILE CHECKSUM: 0e14497da8be421be70e312544511aeb5cfd7502
 
 COCOAPODS: 1.16.2
