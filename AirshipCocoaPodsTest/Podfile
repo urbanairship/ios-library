@@ -10,7 +10,6 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
-      config.build_settings['SWIFT_VERSION'] = '5.9' # or 5.10 depending on what's supported
     end
   end
 end

@@ -11,7 +11,6 @@
 		1D1234581234567890123456 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1234571234567890123456 /* SceneDelegate.swift */; };
 		1D12345A1234567890123456 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1234591234567890123456 /* ContentView.swift */; };
 		728084D7B98D711A41A9BD66 /* Pods_AirshipCocoaPodsTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8D0010FEEE8AB0E6F4D9310 /* Pods_AirshipCocoaPodsTest.framework */; };
-		99AF35332DEA51970051A7CF /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 99AF35322DEA51970051A7CF /* AirshipConfig.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,7 +21,6 @@
 		1D1234601234567890123456 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6C2447AC5072D68644EBC875 /* Pods-AirshipCocoaPodsTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipCocoaPodsTest.release.xcconfig"; path = "Target Support Files/Pods-AirshipCocoaPodsTest/Pods-AirshipCocoaPodsTest.release.xcconfig"; sourceTree = "<group>"; };
 		75107AD3B9795239128BF12B /* Pods-AirshipCocoaPodsTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AirshipCocoaPodsTest.debug.xcconfig"; path = "Target Support Files/Pods-AirshipCocoaPodsTest/Pods-AirshipCocoaPodsTest.debug.xcconfig"; sourceTree = "<group>"; };
-		99AF35322DEA51970051A7CF /* AirshipConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		E8D0010FEEE8AB0E6F4D9310 /* Pods_AirshipCocoaPodsTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AirshipCocoaPodsTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -59,7 +57,6 @@
 		1D1234541234567890123456 /* AirshipCocoaPodsTest */ = {
 			isa = PBXGroup;
 			children = (
-				99AF35322DEA51970051A7CF /* AirshipConfig.plist */,
 				1D1234551234567890123456 /* AppDelegate.swift */,
 				1D1234571234567890123456 /* SceneDelegate.swift */,
 				1D1234591234567890123456 /* ContentView.swift */,
@@ -145,7 +142,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				99AF35332DEA51970051A7CF /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -182,9 +178,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AirshipCocoaPodsTest/Pods-AirshipCocoaPodsTest-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AirshipCocoaPodsTest/Pods-AirshipCocoaPodsTest-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -329,11 +329,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = PGJV57GD94;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AirshipCocoaPodsTest/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
@@ -342,7 +344,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipCocoaPodsTest;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -358,11 +360,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = PGJV57GD94;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AirshipCocoaPodsTest/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = armv7;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
@@ -371,7 +375,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipCocoaPodsTest;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
