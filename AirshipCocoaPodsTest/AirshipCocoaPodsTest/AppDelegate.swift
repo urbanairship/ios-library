@@ -6,22 +6,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
+        var config = AirshipConfig()
+        config.defaultAppKey = "YOUR APP KEY"
+        config.defaultAppSecret = "YOUR APP SECRET"
+        
+        // Configure Airship
         do {
-            try Airship.takeOff(launchOptions: launchOptions)
-            
-            print("Airship takeOff successful")
-            
-            Task {
-                if let channelID = await Airship.channel.identifier {
-                    print("Channel ID: \(channelID)")
-                }
-
-                Airship.channel.editTags()
-                    .add("david")
-
-                // Enable user notifications
-                Airship.push.userPushNotificationsEnabled = true
-            }
+            try Airship.takeOff(config, launchOptions: launchOptions)
         } catch {
             print("ERROR: Airship takeOff failed: \(error)")
         }
