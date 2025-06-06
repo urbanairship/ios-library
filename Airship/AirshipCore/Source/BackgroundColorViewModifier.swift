@@ -138,7 +138,7 @@ fileprivate extension View {
     func clipContent(
         border: ThomasBorder?
     ) -> some View {
-        if let cornerRadius = border?.radius,
+        if let cornerRadius = border?.maxRadius,
            let width = border?.strokeWidth,
            cornerRadius > width
         {
@@ -340,5 +340,20 @@ struct CustomRoundedRectangle: InsettableShape {
             style: self.style,
             insetAmount: self.insetAmount + amount
         )
+    }
+}
+
+extension ThomasBorder {
+    var maxRadius: Double? {
+        if let cornerRadius = self.cornerRadius {
+            return [
+                cornerRadius.bottomLeft ?? 0,
+                cornerRadius.bottomRight ?? 0,
+                cornerRadius.topLeft ?? 0,
+                cornerRadius.topRight ?? 0,
+            ].max()
+        } else {
+            return self.radius
+        }
     }
 }
