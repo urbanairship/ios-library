@@ -1,0 +1,39 @@
+name: Gemini PR Review
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+concurrency: pr-${{ github.event.pull_request.number }}
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+    - name: ⬇️  Checkout
+      uses: actions/checkout@v4
+
+    - name: 🪄  Save PR diff
+      env:
+        GH_TOKEN: ${{ secrets.MOBILE_REVIEW_PAT }}
+      run: gh pr diff ${{ github.event.pull_request.number }} > diff.patch
+
+    - name: 🛠️  Set up Node 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: 🤖 Run Gemini review script
+      continue-on-error: true
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        MODEL_ID:       gemini-2.5-pro-preview-05-06
+        GITHUB_TOKEN:   ${{ secrets.MOBILE_REVIEW_PAT }}
+        PR_NUMBER:      ${{ github.event.pull_request.number }}
+        REPO:           ${{ github.repository }}
+        DEBUG:          true
+      run: node scripts/pr-review.mjs
