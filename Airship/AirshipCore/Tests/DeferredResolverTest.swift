@@ -309,6 +309,41 @@ final class DeferredResolverTest: XCTestCase {
 
         XCTAssertEqual(result, .success(body))
     }
+    
+    func testRedirectTwice() async throws {
+        let request = DeferredRequest(
+            url: exampleURL,
+            channelID: "some channel ID",
+            locale: Locale(identifier: "de-DE"),
+            notificationOptIn: true
+        )
+
+        let body = "some body".data(using: .utf8)!
+        self.client.onResolve = { url, _, _, _, _, _ in
+            if (url == self.exampleURL) {
+                return AirshipHTTPResponse(result: nil, statusCode: 307, headers: ["Location": "altexampleurl://1"])
+            } else {
+                return AirshipHTTPResponse(result: body, statusCode: 307, headers:  ["Location": "altexampleurl://2"])
+            }
+        }
+
+        var result: AirshipDeferredResult<Data> = await resolver.resolve(request: request) { data in
+            return data
+        }
+        
+        XCTAssertEqual(result, .retriableError(retryAfter: nil, statusCode: 307))
+
+        self.client.onResolve = { url, _, _, _, _, _ in
+            XCTAssertEqual(url.absoluteString, "altexampleurl://2")
+            return AirshipHTTPResponse(result: body, statusCode: 200, headers: [:])
+        }
+        
+        result = await resolver.resolve(request: request) { data in
+            return data
+        }
+
+        XCTAssertEqual(result, .success(body))
+    }
 
     func testResolve307RetryAfter() async throws {
         let request = DeferredRequest(

@@ -263,7 +263,6 @@ struct AutomationPreparer: AutomationPreparerProtocol {
 
         if let cached: AutomationSchedule.ScheduleData = await retryState.value(key: Self.deferredResultKey) {
             AirshipLogger.trace("Deferred resolved from cache \(schedule.identifier)")
-
             return try await onResult(cached)
         }
 

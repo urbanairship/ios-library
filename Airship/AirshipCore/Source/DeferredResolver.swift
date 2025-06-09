@@ -80,10 +80,6 @@ actor AirshipDeferredResolver : AirshipDeferredResolverProtocol {
         request: DeferredRequest,
         resultParser: @escaping @Sendable (Data) async throws -> T
     ) async -> AirshipDeferredResult<T> {
-        guard !outdatedURLs.contains(request.url) else {
-            return .outOfDate
-        }
-
         let audienceOverrides = await audienceOverridesProvider.channelOverrides(
             channelID: request.channelID,
             contactID: request.contactID
@@ -97,53 +93,48 @@ actor AirshipDeferredResolver : AirshipDeferredResolverProtocol {
             localeCountry: request.locale.getRegionCode()
         )
 
-        let requestURL = locationMap[request.url] ?? request.url
-
         return await resolve(
-            url: requestURL,
-            channelID: request.channelID,
-            contactID: request.contactID,
+            request: request,
             stateOverrides: stateOverrides,
             audienceOverrides: audienceOverrides,
-            triggerContext: request.triggerContext,
             resultParser: resultParser,
             allowRetry: true
         )
     }
 
     private func resolve<T: Sendable>(
-        url: URL,
-        channelID: String,
-        contactID: String?,
+        request: DeferredRequest,
         stateOverrides: AirshipStateOverrides,
         audienceOverrides: ChannelAudienceOverrides,
-        triggerContext: AirshipTriggerContext?,
         resultParser: @escaping @Sendable (Data) async throws -> T,
         allowRetry: Bool
     ) async -> AirshipDeferredResult<T> {
+        let resolvedURL = self.locationMap[request.url] ?? request.url
+        AirshipLogger.trace("Resolving deferred \(resolvedURL)")
+
+        guard !outdatedURLs.contains(resolvedURL) else {
+            AirshipLogger.trace("Deferred out of date \(resolvedURL)")
+            return .outOfDate
+        }
+        
         var result: AirshipHTTPResponse<Data>?
-
-        AirshipLogger.trace("Resolving deferred \(url)")
-
         do {
             result = try await client.resolve(
-                url: url,
-                channelID: channelID,
-                contactID: contactID,
+                url: self.locationMap[request.url] ?? request.url,
+                channelID: request.channelID,
+                contactID: request.contactID,
                 stateOverrides: stateOverrides,
                 audienceOverrides: audienceOverrides,
-                triggerContext: triggerContext
+                triggerContext: request.triggerContext
             )
         } catch {
-            AirshipLogger.trace("Failed to resolve deferred: \(url) error: \(error)")
+            AirshipLogger.trace("Failed to resolve deferred: \(resolvedURL) error: \(error)")
         }
-
 
         guard let result = result else {
-            AirshipLogger.trace("Resolving deferred timed out \(url)")
+            AirshipLogger.trace("Resolving deferred timed out \(resolvedURL)")
             return .timedOut
         }
-
         
         AirshipLogger.trace("Resolving deferred result: \(result)")
 
@@ -164,16 +155,16 @@ actor AirshipDeferredResolver : AirshipDeferredResolverProtocol {
             }
         case 404: return .notFound
         case 409:
-            outdatedURLs.insert(url)
+            outdatedURLs.insert(resolvedURL)
             return .outOfDate
         case 429:
             if let location = result.locationHeader {
-                locationMap[url] = location
+                locationMap[request.url] = location
             }
             return .retriableError(retryAfter: result.retryAfter, statusCode: result.statusCode)
         case 307:
             if let location = result.locationHeader {
-                locationMap[url] = location
+                locationMap[request.url] = location
 
                 if let retry = result.retryAfter, retry > 0 {
                     return .retriableError(retryAfter: retry, statusCode: result.statusCode)
@@ -181,18 +172,15 @@ actor AirshipDeferredResolver : AirshipDeferredResolverProtocol {
 
                 if (allowRetry) {
                     return await resolve(
-                        url: location,
-                        channelID: channelID,
-                        contactID: contactID,
+                        request: request,
                         stateOverrides: stateOverrides,
                         audienceOverrides: audienceOverrides,
-                        triggerContext: triggerContext,
                         resultParser: resultParser,
                         allowRetry: false
                     )
                 }
             }
-            return .retriableError(retryAfter: result.retryAfter ?? 0, statusCode: result.statusCode)
+            return .retriableError(statusCode: result.statusCode)
         default:
             return .retriableError(statusCode: result.statusCode)
         }
