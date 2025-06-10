@@ -2,6 +2,7 @@
 
 import Foundation
 import SwiftUI
+public import UIKit
 
 #if canImport(AirshipCore)
 public import AirshipCore
@@ -29,7 +30,18 @@ public struct InAppMessage: Codable, Equatable, Sendable {
     public var name: String
 
     /// Display content
-    public var displayContent: InAppMessageDisplayContent
+    public var displayContent: InAppMessageDisplayContent {
+        get {
+            return displayContentWrapper.displayContent
+        }
+        set {
+            displayContentWrapper = DisplayContentWrapper(displayContent: newValue, json: nil)
+        }
+    }
+
+    // Temp workaround for an iOS 26 issue. Cleanup in SDK 20 by removing
+    // encoding the display content and instead only decode it.
+    private var displayContentWrapper: DisplayContentWrapper
 
     /// Source
     var source: InAppMessageSource?
@@ -80,7 +92,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         displayBehavior: DisplayBehavior? = nil
     ) {
         self.name = name
-        self.displayContent = displayContent
+        self.displayContentWrapper = DisplayContentWrapper(displayContent: displayContent, json: nil)
         self.extras = extras
         self.actions = actions
         self.isReportingEnabled = isReportingEnabled
@@ -89,9 +101,11 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         self.source = .appDefined
     }
 
+
     init(
         name: String,
         displayContent: InAppMessageDisplayContent,
+        displayContentJSON: AirshipJSON? = nil,
         source: InAppMessageSource?,
         extras: AirshipJSON? = nil,
         actions: AirshipJSON? = nil,
@@ -100,14 +114,13 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         renderedLocale: AirshipJSON? = nil
     ) {
         self.name = name
-        self.displayContent = displayContent
+        self.displayContentWrapper = DisplayContentWrapper(displayContent: displayContent, json: displayContentJSON)
         self.source = source
         self.extras = extras
         self.actions = actions
         self.isReportingEnabled = isReportingEnabled
         self.displayBehavior = displayBehavior
         self.renderedLocale = renderedLocale
-
     }
 
     public init(from decoder: any Decoder) throws {
@@ -124,6 +137,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         let displayType = try container.decode(DisplayType.self, forKey: .displayType)
 
         var displayContent: InAppMessageDisplayContent!
+        var displayContentJSON: AirshipJSON?
 
         switch (displayType) {
         case .banner:
@@ -142,6 +156,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
             let html = try container.decode(InAppMessageDisplayContent.HTML.self, forKey: .display)
             displayContent = .html(html)
         case .layout:
+            displayContentJSON = try container.decode(AirshipJSON.self, forKey: .display)
             let wrapper = try container.decode(AirshipLayoutWrapper.self, forKey: .display)
             displayContent = .airshipLayout(wrapper.layout)
         }
@@ -149,6 +164,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         self.init(
             name: name,
             displayContent: displayContent,
+            displayContentJSON: displayContentJSON,
             source: source,
             extras: extras,
             actions: actions,
@@ -186,7 +202,11 @@ public struct InAppMessage: Codable, Equatable, Sendable {
             try container.encode(custom, forKey: .display)
             try container.encode(DisplayType.custom, forKey: .displayType)
         case .airshipLayout(let layout):
-            try container.encode(AirshipLayoutWrapper(layout: layout), forKey: .display)
+            if let json = displayContentWrapper.json {
+                try container.encode(json, forKey: .display)
+            } else {
+                try container.encode(AirshipLayoutWrapper(layout: layout), forKey: .display)
+            }
             try container.encode(DisplayType.layout, forKey: .displayType)
         }
     }
@@ -254,6 +274,20 @@ fileprivate struct AirshipLayoutWrapper: Codable {
     var layout: AirshipLayout
 }
 
+fileprivate struct DisplayContentWrapper: Equatable {
+    var displayContent: InAppMessageDisplayContent
+    var json: AirshipJSON?
+
+    init(displayContent: InAppMessageDisplayContent, json: AirshipJSON?) {
+        self.displayContent = displayContent
+        self.json = json
+    }
+
+    static func ==(lhs: DisplayContentWrapper, rhs: DisplayContentWrapper) -> Bool {
+        return lhs.displayContent == rhs.displayContent
+    }
+}
+
 /// These are just for view testing purposes
 extension InAppMessage {
     /// We return a window since we are implementing display
@@ -269,3 +303,4 @@ extension InAppMessage {
         )
     }
 }
+
