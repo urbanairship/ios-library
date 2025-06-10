@@ -453,7 +453,10 @@ struct TextInput: View {
                         return .valid(
                             .init(
                                 value: .sms(address),
-                                channels: self.makeChannels(value: address),
+                                channels: self.makeChannels(
+                                    value: address,
+                                    selectedSMSLocale: selectedSMSLocale
+                                ),
                                 attributes: self.makeAttributes(value: address)
                             )
                         )
