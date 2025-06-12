@@ -2,32 +2,39 @@
 
 import Foundation
 
-/// Matcher for a JSON payload.
+/// A matcher for evaluating a JSON payload against a set of criteria.
+///
+/// `JSONMatcher` allows you to specify conditions for a JSON value, optionally at a specific key or nested path (`scope`),
+/// and then evaluate if a given JSON object meets those conditions.
 public final class JSONMatcher: NSObject, Sendable, Codable {
 
-    private static let errorDomainKey = "com.urbanairship.json_matcher"
-
+    /// The key to look for in the JSON object.
     private let key: String?
+
+    /// The path to the value within the JSON object.
     private let scope: [String]?
+
+    /// The matcher to apply to the found JSON value.
     private let valueMatcher: JSONValueMatcher
+
+    /// If `true`, string comparisons will ignore case.
     private let ignoreCase: Bool?
 
-    private
-        init(
-            valueMatcher: JSONValueMatcher,
-            key: String?,
-            scope: [String]?,
-            ignoreCase: Bool?
-        )
-    {
+    /// Private designated initializer.
+    init(
+        valueMatcher: JSONValueMatcher,
+        key: String?,
+        scope: [String]?,
+        ignoreCase: Bool?
+    ) {
         self.valueMatcher = valueMatcher
         self.key = key
         self.scope = scope
         self.ignoreCase = ignoreCase
         super.init()
     }
-    
-    //for backward compatibility
+
+    /// Coding keys for backward compatibility.
     private enum CodingKeys: String, CodingKey {
         case key
         case scope
@@ -35,13 +42,9 @@ public final class JSONMatcher: NSObject, Sendable, Codable {
         case ignoreCase = "ignore_case"
     }
 
-    /**
-     * Factory method to create a JSON matcher.
-     *
-     * - Parameters:
-     *   -  valueMatcher Matcher to apply to the value.
-     * - Returns: A JSONMatcher instance.
-     */
+    /// Creates a new `JSONMatcher`.
+    /// - Parameter valueMatcher: The `JSONValueMatcher` to apply to the value.
+    /// - Returns: A new `JSONMatcher` instance.
     public convenience init(valueMatcher: JSONValueMatcher) {
         self.init(
             valueMatcher: valueMatcher,
@@ -51,52 +54,15 @@ public final class JSONMatcher: NSObject, Sendable, Codable {
         )
     }
 
-    /**
-     * Factory method to create a JSON matcher.
-     *
-     * - Parameters:
-     *   - valueMatcher Matcher to apply to the value.
-     *   - scope Used to path into the object before evaluating the value.
-     * - Returns: A JSONMatcher instance.
-     */
+    /// Creates a new `JSONMatcher` with a specified scope.
+    /// - Parameters:
+    ///   - valueMatcher: The `JSONValueMatcher` to apply to the value.
+    ///   - scope: An array of keys representing the path to the value.
+    /// - Returns: A new `JSONMatcher` instance.
     public convenience init(valueMatcher: JSONValueMatcher, scope: [String]) {
         self.init(
             valueMatcher: valueMatcher,
             key: nil,
-            scope: scope,
-            ignoreCase: nil
-        )
-    }
-
-    /// - Note: For internal use only. :nodoc:
-    public convenience init(valueMatcher: JSONValueMatcher, ignoreCase: Bool) {
-        self.init(
-            valueMatcher: valueMatcher,
-            key: nil,
-            scope: nil,
-            ignoreCase: ignoreCase
-        )
-    }
-
-    /// - Note: For internal use only. :nodoc:
-    public convenience init(valueMatcher: JSONValueMatcher, key: String) {
-        self.init(
-            valueMatcher: valueMatcher,
-            key: key,
-            scope: nil,
-            ignoreCase: nil
-        )
-    }
-
-    /// - Note: For internal use only. :nodoc:
-    public convenience init(
-        valueMatcher: JSONValueMatcher,
-        key: String,
-        scope: [String]
-    ) {
-        self.init(
-            valueMatcher: valueMatcher,
-            key: key,
             scope: scope,
             ignoreCase: nil
         )
@@ -116,96 +82,57 @@ public final class JSONMatcher: NSObject, Sendable, Codable {
         )
     }
 
-    /**
-     * Factory method to create a matcher from a JSON payload.
-     *
-     * - Parameters:
-     *   - json The JSON payload.
-     *   - error An NSError pointer for storing errors, if applicable.
-     * - Returns: A JSONMatcher instance or `nil` if the JSON is invalid.
-     */
-    public convenience init(json: Any?) throws {
-        guard let info = json as? [String: Any] else {
-            throw AirshipErrors.error(
-                "Attempted to deserialize invalid object: \(json ?? "")"
-            )
-        }
-
-        /// Optional scope
-        var scope: [String]?
-        if let scopeJSON = info[CodingKeys.scope.rawValue] {
-            if let value = scopeJSON as? String {
-                scope = [value]
-            } else if let value = scopeJSON as? [String] {
-                scope = value
-            } else {
-                throw AirshipErrors.error(
-                    "Scope must be either an array of strings or a string. Invalid value: \(scopeJSON)"
-                )
-            }
-        }
-
-        /// Optional key
-        var key: String?
-        if let keyJSON = info[CodingKeys.key.rawValue] {
-            guard let value = keyJSON as? String else {
-                throw AirshipErrors.error(
-                    "Key must be a string. Invalid value: \(keyJSON)"
-                )
-            }
-            key = value
-        }
-
-        /// Optional case insensitivity
-        var ignoreCase: Bool?
-        if let ignoreCaseJSON = info[CodingKeys.ignoreCase.rawValue] {
-            guard let value = ignoreCaseJSON as? Bool else {
-                throw AirshipErrors.error(
-                    "Ignore case must be a bool. Invalid value: \(ignoreCaseJSON)"
-                )
-            }
-            ignoreCase = value
-        }
-
-        /// Required value
-        let valueMatcher = try JSONValueMatcher.matcherWithJSON(
-            info[CodingKeys.valueMatcher.rawValue]
-        )
+    /// - Note: For internal use only. :nodoc:
+    public convenience init(
+        valueMatcher: JSONValueMatcher,
+        ignoreCase: Bool
+    ) {
         self.init(
             valueMatcher: valueMatcher,
-            key: key,
-            scope: scope,
+            key: nil,
+            scope: nil,
             ignoreCase: ignoreCase
         )
     }
 
-    /**
-     * The matcher's JSON payload.
-     */
+    /// Creates a new `JSONMatcher` from a JSON payload.
+    /// - Parameter json: The JSON payload to create the matcher from.
+    /// - Throws: An error if the JSON is invalid or cannot be decoded.
+    /// - Returns: A `JSONMatcher` instance.
+    @available(*, deprecated, message: "Use Codable conformance for serialization instead.")
+    public convenience init(json: Any?) throws {
+        let value: JSONMatcher = try AirshipJSON.wrap(json).decode()
+        self.init(valueMatcher: value.valueMatcher, key: value.key, scope: value.scope, ignoreCase: value.ignoreCase)
+    }
+
+    /// Returns the matcher's JSON payload representation.
+    /// - Returns: A `[String: Any]` dictionary representing the matcher.
+    @available(*, deprecated, message: "Use Codable conformance for serialization instead.")
     public func payload() -> [String: Any] {
-        var payload: [String: Any] = [:]
-        payload[CodingKeys.valueMatcher.rawValue] = valueMatcher.payload()
-        payload[CodingKeys.key.rawValue] = key
-        payload[CodingKeys.scope.rawValue] = scope
-        payload[CodingKeys.ignoreCase.rawValue] = ignoreCase
-        return payload
+        return (try? AirshipJSON.wrap(self).unWrap() as? [String: Any]) ?? [:]
     }
 
-    /**
-     * Evaluates the object with the matcher.
-     *
-     * - Parameters:
-     *   - value: The object to evaluate.
-     * - Returns: true if the matcher matches the object, otherwise false.
-     */
+    /// Evaluates the given value against the matcher's criteria.
+    /// - Parameter value: The object to evaluate. Can be any type.
+    /// - Returns: `true` if the value matches the criteria; otherwise, `false`.
+    @available(*, deprecated, message: "Use evaluate(json:) instead.")
     public func evaluate(_ value: Any?) -> Bool {
-        return evaluate(value, ignoreCase: self.ignoreCase ?? false)
+        do {
+            return try evaluate(json: .wrap(value))
+        } catch {
+            AirshipLogger.error("Failed to evaluate json: \(error)")
+            return false
+        }
     }
 
-    /// - Note: For internal use only. :nodoc:
-    public func evaluate(_ value: Any?, ignoreCase: Bool) -> Bool {
-        var object = value
-
+    /// Evaluates the given `AirshipJSON` value against the matcher's criteria.
+    ///
+    /// This method traverses the JSON object using the `scope` and `key` to find the target value,
+    /// then uses the `valueMatcher` to perform the evaluation.
+    ///
+    /// - Parameter json: The `AirshipJSON` object to evaluate.
+    /// - Returns: `true` if the value matches the criteria; otherwise, `false`.
+    public func evaluate(json: AirshipJSON) -> Bool {
         var paths: [String] = []
         if let scope = scope {
             paths.append(contentsOf: scope)
@@ -215,15 +142,16 @@ public final class JSONMatcher: NSObject, Sendable, Codable {
             paths.append(key)
         }
 
+        var object = json
         for path in paths {
-            guard let obj = object as? [String: Any]? else {
-                object = nil
+            guard let obj = object.object else {
+                object = .null
                 break
             }
-            object = obj?[path]
+            object = obj[path] ?? .null
         }
 
-        return valueMatcher.evaluate(object, ignoreCase: ignoreCase)
+        return valueMatcher.evaluate(json: object, ignoreCase: self.ignoreCase ?? false)
     }
 
     /// - Note: For internal use only. :nodoc:
@@ -242,9 +170,9 @@ public final class JSONMatcher: NSObject, Sendable, Codable {
     /// - Note: For internal use only. :nodoc:
     public func isEqual(to matcher: JSONMatcher) -> Bool {
         guard self.valueMatcher == matcher.valueMatcher,
-            self.key == matcher.key,
-            self.scope == matcher.scope,
-            self.ignoreCase ?? false == matcher.ignoreCase ?? false
+              self.key == matcher.key,
+              self.scope == matcher.scope,
+              self.ignoreCase ?? false == matcher.ignoreCase ?? false
         else {
             return false
         }
@@ -252,12 +180,13 @@ public final class JSONMatcher: NSObject, Sendable, Codable {
         return true
     }
 
-    func hash() -> Int {
-        var result = 1
-        result = 31 * result + valueMatcher.hashValue
-        result = 31 * result + (key?.hashValue ?? 0)
-        result = 31 * result + (scope?.hashValue ?? 0)
-        result = 31 * result + (ignoreCase?.hashValue ?? 0)
-        return result
+    /// - Note: For internal use only. :nodoc:
+    public override var hash: Int {
+        var hasher = Hasher()
+        hasher.combine(valueMatcher)
+        hasher.combine(key)
+        hasher.combine(scope)
+        hasher.combine(ignoreCase)
+        return hasher.finalize()
     }
 }

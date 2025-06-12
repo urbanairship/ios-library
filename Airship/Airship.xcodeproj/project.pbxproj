@@ -417,6 +417,8 @@
 		6E4326012B7C327C00A9B000 /* AirshipEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4326002B7C327C00A9B000 /* AirshipEvents.swift */; };
 		6E4326072B7C364300A9B000 /* AssociatedIdentifiersTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4326042B7C361F00A9B000 /* AssociatedIdentifiersTest.swift */; };
 		6E4326092B7C396F00A9B000 /* TestAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1726E2C5940005D20D /* TestAnalytics.swift */; };
+		6E4339EF2DFA03A3000A7741 /* JSONValueMatcherPredicates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4339EE2DFA039B000A7741 /* JSONValueMatcherPredicates.swift */; };
+		6E4339F12DFA099F000A7741 /* IvyVersionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4339F02DFA099C000A7741 /* IvyVersionMatcher.swift */; };
 		6E44626729E6813A00CB2B56 /* AsyncSerialQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E44626629E6813A00CB2B56 /* AsyncSerialQueue.swift */; };
 		6E46A273272B19760089CDE3 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E46A272272B19760089CDE3 /* ViewExtensions.swift */; };
 		6E46A27C272B63680089CDE3 /* ThomasEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E46A27B272B63680089CDE3 /* ThomasEnvironment.swift */; };
@@ -1732,6 +1734,8 @@
 		6E4325F72B7C08A600A9B000 /* AirshipAnalyticsFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAnalyticsFeed.swift; sourceTree = "<group>"; };
 		6E4326002B7C327C00A9B000 /* AirshipEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipEvents.swift; sourceTree = "<group>"; };
 		6E4326042B7C361F00A9B000 /* AssociatedIdentifiersTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssociatedIdentifiersTest.swift; sourceTree = "<group>"; };
+		6E4339EE2DFA039B000A7741 /* JSONValueMatcherPredicates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValueMatcherPredicates.swift; sourceTree = "<group>"; };
+		6E4339F02DFA099C000A7741 /* IvyVersionMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IvyVersionMatcher.swift; sourceTree = "<group>"; };
 		6E44626629E6813A00CB2B56 /* AsyncSerialQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsyncSerialQueue.swift; sourceTree = "<group>"; };
 		6E46A272272B19760089CDE3 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		6E46A27B272B63680089CDE3 /* ThomasEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasEnvironment.swift; sourceTree = "<group>"; };
@@ -3347,6 +3351,7 @@
 				8401769726C5722400373AF7 /* JSONPredicate.swift */,
 				8401769926C5725800373AF7 /* AirshipJSONUtils.swift */,
 				8401769B26C5729E00373AF7 /* JSONValueMatcher.swift */,
+				6E4339EE2DFA039B000A7741 /* JSONValueMatcherPredicates.swift */,
 				6E6C3F9D27A4C3D4007F55C7 /* AirshipJSON.swift */,
 			);
 			name = JSON;
@@ -3569,6 +3574,7 @@
 		6E411D5F2538D26200FEE4E8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				6E4339F02DFA099C000A7741 /* IvyVersionMatcher.swift */,
 				6E52146A2DCBF9BA00CF64B9 /* AirshipTimerProtocol.swift */,
 				6E916C562DB30D9E00C676FA /* AirshipWindowFactory.swift */,
 				6EAA61482D5297A2006602F7 /* SubjectExtension.swift */,
@@ -5558,6 +5564,7 @@
 				6E664BDD26C4CD8700A2C8E5 /* OpenExternalURLAction.swift in Sources */,
 				6E75F50529C4EAF600E3585A /* AudienceOverridesProvider.swift in Sources */,
 				3237D5F22B865D990055932B /* JSONValueTransformer.swift in Sources */,
+				6E4339EF2DFA03A3000A7741 /* JSONValueMatcherPredicates.swift in Sources */,
 				6EED68162CE271F80087CDCB /* ThomasFormSubmitBehavior.swift in Sources */,
 				6ECD4F6D2DD7A7060060EE72 /* RadioInputToggleLayout.swift in Sources */,
 				6EB5158328A47C7100870C5A /* ScopedSubscriptionListEdit.swift in Sources */,
@@ -5912,6 +5919,7 @@
 				6EBD12052DA73FDA00F678AB /* ValidatableHelper.swift in Sources */,
 				6E9C2BDA2D027B5F000089A9 /* AirshipAppCredentials.swift in Sources */,
 				6E887CD1272C5E8400E83363 /* CheckboxState.swift in Sources */,
+				6E4339F12DFA099F000A7741 /* IvyVersionMatcher.swift in Sources */,
 				3CA84ABA26DE257200A59685 /* AnalyticsProtocol.swift in Sources */,
 				6ED735DD26C7401D003B0A7D /* TagEditor.swift in Sources */,
 				6E698E41267BEDC300654DB2 /* TagGroupsEditor.swift in Sources */,
