@@ -29,4 +29,5 @@ test-output/
 Pods/
 Carthage/
 Airship.framework.zip
+DerivedData
 **/.claude/settings.local.json
