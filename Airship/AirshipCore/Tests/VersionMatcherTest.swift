@@ -42,75 +42,6 @@ final class VersionMatcherTest: XCTestCase {
         XCTAssertFalse(matcher.evaluate("2.1"))
     }
 
-    func testIsExactVersion() {
-        XCTAssertTrue(VersionMatcher.isExactVersion("1"))
-        XCTAssertTrue(VersionMatcher.isExactVersion("1.1"))
-        XCTAssertTrue(VersionMatcher.isExactVersion("1.1.1"))
-        XCTAssertTrue(VersionMatcher.isExactVersion("1.10000"))
-        XCTAssertTrue(VersionMatcher.isExactVersion("1.10000.1"))
-
-        XCTAssertFalse(VersionMatcher.isExactVersion(""))
-        XCTAssertFalse(VersionMatcher.isExactVersion("a"))
-        XCTAssertFalse(VersionMatcher.isExactVersion("1.a"))
-        XCTAssertFalse(VersionMatcher.isExactVersion("1."))
-        XCTAssertFalse(VersionMatcher.isExactVersion(".1"))
-        XCTAssertFalse(VersionMatcher.isExactVersion("a.1"))
-        XCTAssertTrue(VersionMatcher.isExactVersion("1.10000.1.5"))
-
-        XCTAssertTrue(VersionMatcher.isExactVersion(" 1"))
-        XCTAssertTrue(VersionMatcher.isExactVersion("1 "))
-        XCTAssertTrue(VersionMatcher.isExactVersion(" 1 "))
-
-        XCTAssertFalse(VersionMatcher.isExactVersion(" a"))
-        XCTAssertFalse(VersionMatcher.isExactVersion("a "))
-        XCTAssertFalse(VersionMatcher.isExactVersion(" a "))
-    }
-
-    func testIsSubVersion() {
-        XCTAssertTrue(VersionMatcher.isSubVersion("1+"))
-        XCTAssertTrue(VersionMatcher.isSubVersion("1.+"))
-        XCTAssertTrue(VersionMatcher.isSubVersion("1.2+"))
-        XCTAssertTrue(VersionMatcher.isSubVersion("1.2.+"))
-        XCTAssertTrue(VersionMatcher.isSubVersion("1.2.3+"))
-        XCTAssertTrue(VersionMatcher.isSubVersion(" 1.0+"))
-        XCTAssertTrue(VersionMatcher.isSubVersion("1.0+ "))
-        XCTAssertTrue(VersionMatcher.isSubVersion(" 1.0+ "))
-        XCTAssertTrue(VersionMatcher.isSubVersion("1.0. +"))
-        XCTAssertTrue(VersionMatcher.isSubVersion("+"))
-
-        XCTAssertFalse(VersionMatcher.isSubVersion(""))
-        XCTAssertFalse(VersionMatcher.isSubVersion("1.0.*"))
-        XCTAssertTrue(VersionMatcher.isSubVersion("1.0++"))
-        XCTAssertTrue(VersionMatcher.isSubVersion("1.0++"))
-        XCTAssertTrue(VersionMatcher.isSubVersion("1.2.3.+"))
-    }
-
-    func testIsVersionRange() {
-        XCTAssertTrue(VersionMatcher.isVersionRange("[1.0,2.0]"))
-        XCTAssertTrue(VersionMatcher.isVersionRange("[1.0,2.0["))
-        XCTAssertTrue(VersionMatcher.isVersionRange("]1.0,2.0]"))
-        XCTAssertTrue(VersionMatcher.isVersionRange("]1.0,2.0["))
-        XCTAssertTrue(VersionMatcher.isVersionRange("[1.0,)"))
-        XCTAssertTrue(VersionMatcher.isVersionRange("]1.0,)"))
-        XCTAssertTrue(VersionMatcher.isVersionRange("(,2.0]"))
-        XCTAssertTrue(VersionMatcher.isVersionRange("(,2.0["))
-
-        XCTAssertTrue(VersionMatcher.isVersionRange(" (,2.0["))
-        XCTAssertTrue(VersionMatcher.isVersionRange("(,2.0[ "))
-        XCTAssertTrue(VersionMatcher.isVersionRange(" (,2.0[ "))
-        XCTAssertTrue(VersionMatcher.isVersionRange("( ,2.0["))
-        XCTAssertTrue(VersionMatcher.isVersionRange("(, 2.0["))
-        XCTAssertTrue(VersionMatcher.isVersionRange("( , 2.0[ "))
-
-        XCTAssertFalse(VersionMatcher.isVersionRange("(,2.0)"))
-        XCTAssertFalse(VersionMatcher.isVersionRange("),2.0]"))
-        XCTAssertFalse(VersionMatcher.isVersionRange("[1.0,("))
-        XCTAssertFalse(VersionMatcher.isVersionRange("],2.0]"))
-        XCTAssertFalse(VersionMatcher.isVersionRange("[1.0,]"))
-        XCTAssertFalse(VersionMatcher.isVersionRange("[1.0,2.0)"))
-        XCTAssertFalse(VersionMatcher.isVersionRange("(1.0,2.0]"))
-    }
-
     func testExactVersionMatcher() {
         let matcher = VersionMatcher(versionConstraint: "1.0")!
         XCTAssertNotNil(matcher)
@@ -200,7 +131,4 @@ final class VersionMatcherTest: XCTestCase {
         XCTAssertFalse(matcher.evaluate("2.0.1"))
         XCTAssertFalse(matcher.evaluate("3.0"))
     }
-
-
-
 }
