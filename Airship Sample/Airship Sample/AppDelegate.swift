@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
         didFinishLaunchingWithOptions launchOptions: [UIApplication
             .LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-
+        _ = URLSessionConfiguration.default
         var config = try! AirshipConfig.default()
         config.productionLogLevel = .verbose
         config.developmentLogLevel = .verbose
