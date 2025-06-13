@@ -27,6 +27,38 @@ public final class UAMessageCenterMessage: NSObject, Sendable {
     }
 
     @objc
+    /// The message title.
+    public var title: String {
+        get {
+            return mcMessage.title
+        }
+    }
+
+    @objc
+    /// The message subtitle.
+    public var subtitle: String? {
+        get {
+            return mcMessage.subtitle
+        }
+    }
+
+    @objc
+    /// The message list icon.
+    public var listIcon: String? {
+        get {
+            return mcMessage.listIcon
+        }
+    }
+
+    @objc
+    /// The message expiry.
+    public var isExpired: Bool {
+        get {
+            return mcMessage.isExpired
+        }
+    }
+
+    @objc
     /// The message's extra dictionary.
     /// This dictionary can be populated with arbitrary key-value data at the time the message is composed.
     public var extra: [String: String] {
@@ -69,6 +101,15 @@ public final class UAMessageCenterMessage: NSObject, Sendable {
         get {
             return mcMessage.unread
         }
+    }
+
+    /// Parses the message ID from notification user info.
+    /// - Parameters:
+    ///     - userInfo: The notification user info.
+    /// - Returns: The message ID.
+    @objc(parseMessageIDFromUserInfo:)
+    public class func parseMessageID(userInfo: [AnyHashable: Any]) -> String? {
+        return MessageCenterMessage.parseMessageID(userInfo: userInfo)
     }
 
 }

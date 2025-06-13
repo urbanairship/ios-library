@@ -79,7 +79,7 @@ public final class UAContact: NSObject, Sendable {
         Airship.contact.associateChannel(channelID, type: UAHelpers.toAirshipChannelType(type: type))
     }
 
-    
+
     /// Begins a subscription list editing session
     /// - Returns: A Scoped subscription list editor
     @objc
@@ -95,6 +95,35 @@ public final class UAContact: NSObject, Sendable {
         let editor = editSubscriptionLists()
         editorBlock(editor)
         editor.apply()
+    }
+
+    /// Fetches subscription lists.
+    /// - Parameter completionHandler: The completion handler with the subscription lists or an error.
+    @objc
+    public func fetchSubscriptionLists(completionHandler: @escaping @Sendable ([String: [String]]?, (any Error)?) -> Void) {
+        Task {
+            do {
+                let subscriptionLists = try await Airship.contact.fetchSubscriptionLists()
+                // Convert [String: [ChannelScope]] to [String: [String]] for Objective-C
+                var result: [String: [String]] = [:]
+                for (key, scopes) in subscriptionLists {
+                    result[key] = scopes.map { $0.rawValue }
+                }
+                completionHandler(result, nil)
+            } catch {
+                completionHandler(nil, error)
+            }
+        }
+    }
+
+    /// Gets the current named user ID.
+    /// - Parameter completionHandler: The completion handler with the named user ID or an error.
+    @objc
+    public func getNamedUserID(completionHandler: @escaping @Sendable (String?, (any Error)?) -> Void) {
+        Task {
+            let namedUserID = await Airship.contact.namedUserID
+            completionHandler(namedUserID, nil)
+        }
     }
 }
 

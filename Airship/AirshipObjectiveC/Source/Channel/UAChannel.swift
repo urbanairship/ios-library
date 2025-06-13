@@ -17,14 +17,27 @@ public final class UAChannel: NSObject, Sendable {
     public var identifier: String? {
         return Airship.channel.identifier
     }
-    
+
+    /// Device tags
+    @objc
+    public var tags: [String] {
+        get {
+            return Airship.channel.tags
+        }
+
+        set {
+            Airship.channel.tags = newValue
+        }
+
+    }
+
     @objc
     public func editTags() -> UATagEditor? {
         let tagEditor = UATagEditor()
         tagEditor.editor = Airship.channel.editTags()
         return tagEditor
     }
-    
+
     @objc
     public func editTagGroups() -> UATagGroupsEditor {
         let tagGroupsEditor = UATagGroupsEditor()
@@ -57,7 +70,21 @@ public final class UAChannel: NSObject, Sendable {
     public func fetchSubscriptionLists() async throws -> [String] {
         try await Airship.channel.fetchSubscriptionLists()
     }
-    
+
+    /// Fetches current subscription lists.
+    /// - Parameter completionHandler: The completion handler with the subscription lists or an error.
+    @objc(fetchSubscriptionListsWithCompletion:)
+    public func fetchSubscriptionLists(completionHandler: @escaping @Sendable ([String]?, (any Error)?) -> Void) {
+        Task {
+            do {
+                let subscriptionLists = try await Airship.channel.fetchSubscriptionLists()
+                completionHandler(subscriptionLists, nil)
+            } catch {
+                completionHandler(nil, error)
+            }
+        }
+    }
+
     @objc
     public func editAttributes() -> UAAttributesEditor {
         let attributesEditor =  UAAttributesEditor()
@@ -76,5 +103,5 @@ public final class UAChannel: NSObject, Sendable {
     public func enableChannelCreation() {
         Airship.channel.enableChannelCreation()
     }
-    
+
 }

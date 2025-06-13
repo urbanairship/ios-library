@@ -11,7 +11,7 @@ import AirshipCore
 @objc
 public final class UAMessageCenterUser: NSObject, Sendable {
 
-    private let mcUser: MessageCenterUser
+    internal let mcUser: MessageCenterUser
 
     init(user: MessageCenterUser) {
         self.mcUser = user
@@ -30,6 +30,15 @@ public final class UAMessageCenterUser: NSObject, Sendable {
     public var username: String {
         get {
             return mcUser.username
+        }
+    }
+
+    /// The basic auth string for the user.
+    /// - Returns: An HTTP Basic Auth header string value in the form of: `Basic [Base64 Encoded "username:password"]`
+    @objc
+    public var basicAuthString: String {
+        get {
+            return mcUser.basicAuthString
         }
     }
 }
