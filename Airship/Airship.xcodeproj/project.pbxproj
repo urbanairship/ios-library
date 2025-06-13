@@ -1012,6 +1012,7 @@
 		99F662B02B5DDC2900696098 /* BeveledLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F662AF2B5DDC2900696098 /* BeveledLoadingView.swift */; };
 		99F662B22B60425E00696098 /* InAppMessageModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F662B12B60425E00696098 /* InAppMessageModalView.swift */; };
 		99F662D22B63047300696098 /* InAppMessageBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F662D12B63047300696098 /* InAppMessageBannerView.swift */; };
+		99FD20A52DEFC35900242551 /* MessageCenterUIKitAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99FD20A42DEFC35900242551 /* MessageCenterUIKitAppearance.swift */; };
 		A61517B226A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */; };
 		A61517B526AEEAAB008A41C4 /* SubscriptionListUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */; };
 		A61517C426B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */; };
@@ -2325,6 +2326,7 @@
 		99F662AF2B5DDC2900696098 /* BeveledLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeveledLoadingView.swift; sourceTree = "<group>"; };
 		99F662B12B60425E00696098 /* InAppMessageModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageModalView.swift; sourceTree = "<group>"; };
 		99F662D12B63047300696098 /* InAppMessageBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageBannerView.swift; sourceTree = "<group>"; };
+		99FD20A42DEFC35900242551 /* MessageCenterUIKitAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterUIKitAppearance.swift; sourceTree = "<group>"; };
 		A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SubscriptionListEditor.swift; path = AirshipCore/Source/SubscriptionListEditor.swift; sourceTree = SOURCE_ROOT; };
 		A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SubscriptionListUpdate.swift; path = AirshipCore/Source/SubscriptionListUpdate.swift; sourceTree = SOURCE_ROOT; };
 		A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionListAPIClient.swift; sourceTree = "<group>"; };
@@ -2618,6 +2620,7 @@
 			children = (
 				32B5BE3A28F8A7EB00F2254B /* MessageCenterController.swift */,
 				32B5BE4828F8B66500F2254B /* MessageCenterViewController.swift */,
+				99FD20A42DEFC35900242551 /* MessageCenterUIKitAppearance.swift */,
 				32B5BE2828F8A7D600F2254B /* MessageCenterView.swift */,
 				32B5BE2A28F8A7D600F2254B /* MessageCenterListView.swift */,
 				32B5BE2728F8A7D600F2254B /* MessageCenterListItemView.swift */,
@@ -5529,6 +5532,7 @@
 				32B513562B9F53A500BBE780 /* MessageCenterPredicate.swift in Sources */,
 				32B5BE3B28F8A7EB00F2254B /* MessageCenterController.swift in Sources */,
 				32F68CF328F07C2C00F7F52A /* MessageCenter.swift in Sources */,
+				99FD20A52DEFC35900242551 /* MessageCenterUIKitAppearance.swift in Sources */,
 				32F68CF528F07C4900F7F52A /* MessageCenterList.swift in Sources */,
 				32B5BE4228F8A8CA00F2254B /* MessageCenterListItemViewModel.swift in Sources */,
 				32B5BE4028F8A8C500F2254B /* MessageCenterMessageView.swift in Sources */,

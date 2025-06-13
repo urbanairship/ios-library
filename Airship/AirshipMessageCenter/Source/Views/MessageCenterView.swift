@@ -14,6 +14,9 @@ public struct MessageCenterView: View {
     @ObservedObject
     private var controller: MessageCenterController
 
+    /// Weak reference to the hosting view controller for UIKit appearance detection
+    weak private var hostingController: UIViewController?
+
     @Environment(\.colorScheme)
     private var colorScheme
 
@@ -31,8 +34,12 @@ public struct MessageCenterView: View {
 
     /// Default constructor
     /// - Parameters:
-    ///     - controller: Controls navigation within the view
-    public init(controller: MessageCenterController? = nil) {
+    ///   - controller: Controls navigation within the view
+    ///   - hostingController: The UIViewController hosting this SwiftUI view used for UIKit navigation appearance detection
+    public init(
+        controller: MessageCenterController? = nil,
+        hostingController: UIViewController? = nil
+    ) {
         self.controller = if let controller {
             controller
         } else if Airship.isFlying {
@@ -40,6 +47,8 @@ public struct MessageCenterView: View {
         } else {
             MessageCenterController()
         }
+
+        self.hostingController = hostingController
     }
 
     @ViewBuilder
@@ -61,13 +70,28 @@ public struct MessageCenterView: View {
 
         let styledContent = style.makeBody(configuration: configuration)
 
-        styledContent
-            .onAppear {
-                self.controller.isMessageCenterVisible = true
-            }
-            .onDisappear {
-                self.controller.isMessageCenterVisible = false
-            }
+        if let hostingController = hostingController {
+            styledContent
+                .modifier(
+                    MessageCenterUIKitContextModifier(
+                        hostingControllerRef: MessageCenterUIKitAppearance.WeakReference(hostingController)
+                    )
+                )
+                .onAppear {
+                    self.controller.isMessageCenterVisible = true
+                }
+                .onDisappear {
+                    self.controller.isMessageCenterVisible = false
+                }
+        } else {
+            styledContent
+                .onAppear {
+                    self.controller.isMessageCenterVisible = true
+                }
+                .onDisappear {
+                    self.controller.isMessageCenterVisible = false
+                }
+        }
     }
 }
 
@@ -242,6 +266,27 @@ extension EnvironmentValues {
     public var airshipMessageCenterNavigationStack: MessageCenterNavigationStack {
         get { self[MessageCenterNavigationStackKey.self] }
         set { self[MessageCenterNavigationStackKey.self] = newValue }
+    }
+}
+
+// MARK: UIKit Context Modifier
+
+struct MessageCenterUIKitContextModifier: ViewModifier {
+    let hostingControllerRef: MessageCenterUIKitAppearance.WeakReference<UIViewController>
+    @State private var detectedAppearance: MessageCenterUIKitAppearance.DetectedAppearance?
+
+    func body(content: Content) -> some View {
+        content
+            .environment(\.messageCenterDetectedAppearance, detectedAppearance)
+            .applyUIKitNavigationAppearance()
+            .background(
+                MessageCenterAppearanceDetector(
+                    detectedAppearance: $detectedAppearance,
+                    hostingControllerRef: hostingControllerRef
+                )
+                .frame(width: 0, height: 0)
+                .hidden()
+            )
     }
 }
 

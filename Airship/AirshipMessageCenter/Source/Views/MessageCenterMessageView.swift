@@ -69,7 +69,7 @@ extension View {
     ) -> some View where S: MessageViewStyle {
         self.environment(
             \.airshipMessageViewStyle,
-            AnyMessageViewStyle(style: style)
+             AnyMessageViewStyle(style: style)
         )
     }
 }
@@ -138,7 +138,7 @@ struct MessageCenterWebView: UIViewRepresentable {
     @Binding
     var phase: Phase
     let nativeBridgeExtension:
-        (() async throws -> MessageCenterNativeBridgeExtension)?
+    (() async throws -> MessageCenterNativeBridgeExtension)?
 
     let request: () async throws -> URLRequest
 
@@ -221,8 +221,8 @@ struct MessageCenterWebView: UIViewRepresentable {
     }
 
     class Coordinator: NSObject, AirshipWKNavigationDelegate,
-        JavaScriptCommandDelegate,
-        NativeBridgeDelegate
+                       JavaScriptCommandDelegate,
+                       NativeBridgeDelegate
     {
 
 
@@ -267,12 +267,12 @@ struct MessageCenterWebView: UIViewRepresentable {
                 await parent.pageFinished(error: error)
             }
         }
-        
+
         func webView(
             _ webView: WKWebView,
             respondTo challenge: URLAuthenticationChallenge)
         async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
-            
+
             return await challengeResolver.resolve(challenge)
         }
 
@@ -311,6 +311,9 @@ private struct MessageCenterMessageContentView: View {
     @Environment(\.airshipMessageCenterTheme)
     private var theme
 
+    @Environment(\.messageCenterDetectedAppearance)
+    private var detectedAppearance
+
 #if canImport(WebKit)
 
     @State
@@ -326,6 +329,15 @@ private struct MessageCenterMessageContentView: View {
     let messageID: String
     let title: String?
     let dismissAction: (() -> Void)?
+
+    /// Prioritizes theme values -> inherited appearance -> defaults
+    private var effectiveColors: MessageCenterEffectiveColors {
+        MessageCenterEffectiveColors(
+            detectedAppearance: detectedAppearance,
+            theme: theme,
+            colorScheme: colorScheme
+        )
+    }
 
     @MainActor
     func getMessage(_ messageID: String) async -> MessageCenterMessage? {
@@ -390,7 +402,7 @@ private struct MessageCenterMessageContentView: View {
             dark: self.theme.messageViewBackgroundColorDark
         )
 
-        let containerColor = self.colorScheme.airshipResolveColor(
+        let containerColor = effectiveColors.navigationBarBackgroundColor ?? self.colorScheme.airshipResolveColor(
             light: self.theme.messageViewContainerBackgroundColor,
             dark: self.theme.messageViewContainerBackgroundColorDark
         )
@@ -468,19 +480,29 @@ private struct MessageCenterMessageContentView: View {
                 .foregroundColor(.primary)
 #endif
         }
-        .navigationTitle(
-            Text(title ?? self.message?.title ?? "")
-        )
+        .applyUIKitNavigationAppearance()
         .navigationBarBackButtonHidden(true) // Hide the default back button
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItemGroup(placement: .navigationBarLeading) {
                 backButton
             }
+
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                // Delete button
+                deleteButton
+            }
+
+            ToolbarItemGroup(placement: .principal) {
+                // Custom title with detected color
+                Text(title ?? self.message?.title ?? "")
+                    .foregroundColor(effectiveColors.navigationTitleColor ?? Color.primary)
+                    .airshipApplyIf(detectedAppearance?.navigationTitleFont != nil) { text in
+                        text.font(detectedAppearance!.navigationTitleFont)
+                    }
+
+            }
         }
-        .toolbar {
-            deleteButton
-        }
-        .navigationBarTitleDisplayMode(.inline)
         .airshipApplyIf(containerColor != nil) { view in
             if #available(iOS 16.0, *) {
                 view.toolbarBackground(containerColor!, for: .navigationBar)
@@ -501,7 +523,7 @@ private struct MessageCenterMessageContentView: View {
                     )
                 }
                 dismiss()
-            }.foregroundColor(colorScheme.airshipResolveColor(light: theme.deleteButtonTitleColor, dark: theme.deleteButtonTitleColorDark))
+            }.foregroundColor(effectiveColors.deleteButtonColor)
         }
     }
 
@@ -513,7 +535,7 @@ private struct MessageCenterMessageContentView: View {
             Image(systemName: "chevron.backward")
                 .scaleEffect(0.68)
                 .font(Font.title.weight(.medium))
-                .foregroundColor(colorScheme.airshipResolveColor(light: theme.backButtonColor, dark: theme.backButtonColorDark))
+                .foregroundColor(effectiveColors.backButtonColor)
         }
     }
 

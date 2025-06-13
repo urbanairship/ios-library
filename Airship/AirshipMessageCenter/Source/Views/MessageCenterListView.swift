@@ -10,39 +10,42 @@ import AirshipCore
 
 /// Message Center list view
 public struct MessageCenterListView: View {
-    
+
     @State
     private var selection = Set<String>()
-    
+
     @State
     private var editButtonColor: Color?
-    
+
     @Environment(\.editMode)
     private var editMode
-    
+
     @Environment(\.colorScheme) private var colorScheme
-    
+
     @Environment(\.airshipMessageCenterTheme)
     private var theme
-    
+
     @Environment(\.airshipMessageCenterPredicate)
     private var predicate
-    
+
+    @Environment(\.messageCenterDetectedAppearance)
+    private var detectedAppearance
+
     @StateObject
     private var viewModel = MessageCenterListViewModel()
-    
+
     @ObservedObject
     public var controller: MessageCenterController
-    
+
     @State
     private var listOpacity = 0.0
 
     @State
     private var isRefreshing = false
-    
+
     @State
     private var isActive = false
-    
+
     @State
     private var messageIDs: [String] = []
 
@@ -54,22 +57,31 @@ public struct MessageCenterListView: View {
     @State
     var lastMaxEditButtonsWidth: CGFloat = 0
 
+    private var effectiveColors: MessageCenterEffectiveColors {
+        MessageCenterEffectiveColors(
+            detectedAppearance: detectedAppearance,
+            theme: theme,
+            colorScheme: colorScheme
+        )
+    }
+
     private func markRead(messages: Set<String>) {
         editMode?.animation().wrappedValue = .inactive
         viewModel.markRead(messages: messages)
     }
-    
+
     private func delete(messages: Set<String>) {
         editMode?.animation().wrappedValue = .inactive
         viewModel.delete(messages: messages)
     }
-    
+
     @ViewBuilder
     private func makeDestination(messageID: String, title: String?) -> some View {
         MessageCenterMessageView(
             messageID: messageID,
             title: title
         )
+        .environment(\.messageCenterDetectedAppearance, detectedAppearance)
         .onAppear {
             self.controller.visibleMessageID = messageID
         }
@@ -80,14 +92,14 @@ public struct MessageCenterListView: View {
         }
         .id(messageID)
     }
-    
+
     @ViewBuilder
     private func makeCell(
         item: MessageCenterListItemViewModel,
         messageID: String
     ) -> some View {
         let accessibilityLabel = String(format: item.message.unread ? "ua_message_unread_description".messageCenterLocalizedString : "ua_message_description".messageCenterLocalizedString, item.message.title,  AirshipDateFormatter.string(fromDate: item.message.sentDate, format: .relativeShortDate))
-        
+
         let cell = NavigationLink(
             destination: makeDestination(messageID: messageID, title: item.message.title)
         ) {
@@ -97,7 +109,7 @@ public struct MessageCenterListView: View {
         ).accessibilityHint(
             "ua_message_cell_description".messageCenterLocalizedString
         )
-        
+
         cell.listRowBackground(colorScheme.airshipResolveColor(light: theme.cellColor, dark: theme.cellColorDark))
             .listRowSeparator(
                 (theme.cellSeparatorStyle == SeparatorStyle.none)
@@ -105,7 +117,7 @@ public struct MessageCenterListView: View {
             )
             .listRowSeparatorTint(colorScheme.airshipResolveColor(light: theme.cellSeparatorColor, dark: theme.cellSeparatorColorDark))
     }
-    
+
     @ViewBuilder
     private func makeCell(messageID: String) -> some View {
         if let item = self.viewModel.messageItem(forID: messageID) {
@@ -115,7 +127,7 @@ public struct MessageCenterListView: View {
             EmptyView()
         }
     }
-    
+
     @ViewBuilder
     private func makeList() -> some View {
         let list = List(selection: $selection) {
@@ -145,18 +157,18 @@ public struct MessageCenterListView: View {
                 .map { $0.id }
             }
         }
-        
-        
+
+
         list.refreshable {
             await self.viewModel.refreshList()
         }
         .disabled(self.messageIDs.isEmpty)
     }
-    
+
     @ViewBuilder
     private func makeContent() -> some View {
         let listBackgroundColor = colorScheme.airshipResolveColor(light: theme.messageListBackgroundColor, dark: theme.messageListBackgroundColorDark)
-        
+
         let content = ZStack {
             makeList()
                 .opacity(self.listOpacity)
@@ -169,20 +181,20 @@ public struct MessageCenterListView: View {
                         self.listOpacity = 1.0
                     }
                 }
-            
+
             if !self.viewModel.messagesLoaded {
                 ProgressView().opacity(1.0 - self.listOpacity)
             } else if self.messageIDs.isEmpty {
                 emptyMessageListMessage()
             }
         }
-        
+
         let selected = self.controller.messageID ?? ""
         let destination = makeDestination(
             messageID: selected,
             title: self.viewModel.messageItem(forID: selected)?.message.title
         )
-        
+
         if #available(iOS 16.0, tvOS 16.0, *) {
             content.background(
                 NavigationLink("", value: selected)
@@ -227,7 +239,7 @@ public struct MessageCenterListView: View {
         .accessibilityHint("ua_delete_messages".messageCenterLocalizedString)
         .disabled(self.selection.isEmpty)
     }
-    
+
     @ViewBuilder
     private func markReadButton(maxWidth: CGFloat) -> some View {
         Button(
@@ -257,7 +269,7 @@ public struct MessageCenterListView: View {
         .disabled(self.selection.isEmpty)
         .accessibilityHint("ua_mark_messages_read".messageCenterLocalizedString)
     }
-    
+
     @ViewBuilder
     private func selectButton(maxWidth: CGFloat) -> some View {
         if self.selection.count == self.messageIDs.count {
@@ -266,7 +278,7 @@ public struct MessageCenterListView: View {
             selectAll(maxWidth: maxWidth)
         }
     }
-    
+
     private func selectAll(maxWidth: CGFloat) -> some View {
         Button {
             self.selection = Set(self.messageIDs)
@@ -279,7 +291,7 @@ public struct MessageCenterListView: View {
         }
         .accessibilityHint("ua_select_all_messages".messageCenterLocalizedString)
     }
-    
+
     private func selectNone(maxWidth: CGFloat) -> some View {
         Button {
             self.selection = Set()
@@ -303,50 +315,49 @@ public struct MessageCenterListView: View {
     private func bottomToolBar() -> some ToolbarContent {
         ToolbarItemGroup(placement: .bottomBar) {
             if self.editMode?.wrappedValue.isEditing == true {
-                    HStack {
-                        selectButton(maxWidth: maxEditButtonsWidth/3)
-                        Spacer()
-                        markReadButton(maxWidth: maxEditButtonsWidth/3)
-                        Spacer()
-                        markDeleteButton(maxWidth: maxEditButtonsWidth/3)
-                    }.background(
-                        GeometryReader(content: { geo -> Color in
-                            DispatchQueue.main.async {
-                                if lastMaxEditButtonsWidth != maxEditButtonsWidth {
-                                    self.maxEditButtonsWidth = geo.size.width
-                                }
-
-                                self.lastMaxEditButtonsWidth = geo.size.width
+                HStack {
+                    selectButton(maxWidth: maxEditButtonsWidth/3)
+                    Spacer()
+                    markReadButton(maxWidth: maxEditButtonsWidth/3)
+                    Spacer()
+                    markDeleteButton(maxWidth: maxEditButtonsWidth/3)
+                }.background(
+                    GeometryReader(content: { geo -> Color in
+                        DispatchQueue.main.async {
+                            if lastMaxEditButtonsWidth != maxEditButtonsWidth {
+                                self.maxEditButtonsWidth = geo.size.width
                             }
-                            return Color.clear
-                        })
-                    )
+
+                            self.lastMaxEditButtonsWidth = geo.size.width
+                        }
+                        return Color.clear
+                    })
+                )
             }
         }
     }
-    
+
 #if !os(tvOS)
-    
+
     private func editButton() -> some View {
         let isEditMode = self.editMode?.wrappedValue.isEditing ?? false
-        let color =
-        isEditMode
-        ? colorScheme.airshipResolveColor(light: theme.cancelButtonTitleColor, dark: theme.cancelButtonTitleColorDark) :
-        colorScheme.airshipResolveColor(light: theme.editButtonTitleColor, dark: theme.editButtonTitleColorDark)
-        
+        let color = isEditMode
+        ? colorScheme.airshipResolveColor(light: theme.cancelButtonTitleColor, dark: theme.cancelButtonTitleColorDark)
+        : effectiveColors.editButtonColor
+
         return EditButton()
             .foregroundColor(color)
             .accessibilityHint("ua_edit_messages_description".messageCenterLocalizedString)
     }
 #endif
-    
+
     @ViewBuilder
     private func emptyMessageListMessage() -> some View {
         let refreshColor = colorScheme.airshipResolveColor(
             light: theme.refreshTintColor,
             dark: theme.refreshTintColorDark
         )
-        
+
         VStack {
             Button {
                 Task { @MainActor in
@@ -355,7 +366,7 @@ public struct MessageCenterListView: View {
                     isRefreshing = false
                 }
             } label: {
-                
+
                 ZStack {
                     if isRefreshing {
                         ProgressView()
@@ -368,14 +379,14 @@ public struct MessageCenterListView: View {
                 .background(Color.airshipTappableClear)
             }
             .disabled(isRefreshing)
-            
+
             Text("ua_empty_message_list".messageCenterLocalizedString)
                 .foregroundColor(refreshColor ?? .primary)
         }
         .opacity(1.0 - self.listOpacity)
-        
+
     }
-    
+
 #if !os(tvOS)
     private func leadingToolbar() -> some ToolbarContent {
         ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -383,10 +394,11 @@ public struct MessageCenterListView: View {
         }
     }
 #endif
-    
+
     @ViewBuilder
     public var body: some View {
         makeContent()
+            .applyUIKitNavigationAppearance()
             .toolbar {
                 bottomToolBar()
             }
