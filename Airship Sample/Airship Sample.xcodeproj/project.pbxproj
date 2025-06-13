@@ -47,8 +47,6 @@
 		6EAAEA0628C7E4B4003CAE53 /* AirshipMessageCenter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6EAAEA0728C7E4B4003CAE53 /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */; platformFilters = (ios, xros, ); };
 		6EAAEA0828C7E4B4003CAE53 /* AirshipPreferenceCenter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */; platformFilters = (ios, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6EC755692A4B842600851ABB /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EC7555A2A4B83AC00851ABB /* AirshipConfig.plist */; };
-		6EC7556A2A4B842600851ABB /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EC7555A2A4B83AC00851ABB /* AirshipConfig.plist */; };
 		6EDB2B0628D4E24F00A01377 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EDB2B0528D4E24F00A01377 /* WidgetKit.framework */; };
 		6EDB2B0828D4E24F00A01377 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EDB2B0728D4E24F00A01377 /* SwiftUI.framework */; };
 		6EDB2B0B28D4E24F00A01377 /* DeliveryActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDB2B0A28D4E24F00A01377 /* DeliveryActivityWidget.swift */; };
@@ -382,7 +380,6 @@
 		6EAAE9EF28C7E417003CAE53 /* Airship Sample Service Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Airship Sample Service Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EAAE9F128C7E417003CAE53 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		6EAAE9F328C7E417003CAE53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6EC7555A2A4B83AC00851ABB /* AirshipConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		6EDB2B0428D4E24F00A01377 /* LiveActivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LiveActivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EDB2B0528D4E24F00A01377 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		6EDB2B0728D4E24F00A01377 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -531,7 +528,6 @@
 		CCDA359A1B8D233A00950AD5 = {
 			isa = PBXGroup;
 			children = (
-				6EC7555A2A4B83AC00851ABB /* AirshipConfig.plist */,
 				6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */,
 				6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */,
 				6EAAE97928C7E18B003CAE53 /* Airship Sample */,
@@ -845,7 +841,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EC755692A4B842600851ABB /* AirshipConfig.plist in Resources */,
 				6EAAE98228C7E18C003CAE53 /* Preview Assets.xcassets in Resources */,
 				6EAAE97F28C7E18C003CAE53 /* Assets.xcassets in Resources */,
 				99E6F0632B97E11E0006326A /* TestAssets.xcassets in Resources */,
@@ -857,7 +852,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EC7556A2A4B842600851ABB /* AirshipConfig.plist in Resources */,
 				6EAAE9BE28C7E31E003CAE53 /* Assets.xcassets in Resources */,
 				6EAAE9C028C7E322003CAE53 /* Preview Assets.xcassets in Resources */,
 				99E6F0642B97E11E0006326A /* TestAssets.xcassets in Resources */,
