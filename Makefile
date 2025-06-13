@@ -18,7 +18,7 @@ xcframeworks_path = ${build_path}/xcframeworks
 docs_path = ${build_path}/Documentation
 package_zip_path = ${build_path}/Airship.zip
 package_carthage_zip_path = ${build_path}/Airship.xcframeworks.zip
-
+	
 .PHONY: setup
 setup:
 	test ${DEVELOPER_DIR}
@@ -42,6 +42,10 @@ build-package: clean-package build-docs build-xcframeworks
 	 LICENSE
 	bash ./scripts/package_carthage.sh "${package_carthage_zip_path}" "${xcframeworks_path}/" 
 
+.PHONY: build-docC
+build-docC:
+	bash ./scripts/build_docCs.sh $(version)
+	
 .PHONY: build-docs
 build-docs: setup clean-docs
 	bash ./scripts/build_docs.sh "${docs_path}"
