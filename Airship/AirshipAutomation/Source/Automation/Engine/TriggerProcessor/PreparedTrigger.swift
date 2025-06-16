@@ -157,7 +157,9 @@ extension EventAutomationTrigger {
             guard
                 let versionUpdated = state.versionUpdated,
                 versionUpdated != data.lastTriggerableState?.versionUpdated,
-                isPredicateMatching(value: versionUpdated)
+                isPredicateMatching(value: AirshipJSON.object(
+                    ["ios": .object(["version": .string(versionUpdated)])]
+                ))
             else {
                 return nil
             }
