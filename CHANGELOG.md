@@ -4,10 +4,13 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
-## Version 19.6.0 - June 10, 2025
-A minor update with enhancements to the Scenes and Message Center functionalities. This version is required for Scene branching and phone number collection.
+## Version 19.6.0 - June 17, 2025
+A minor update with enhancements to Scenes and Message Center functionality and a bug fix for Automation. This version is required for Scene branching and phone number collection.
 
 ### Changes
+Automation:
+- Fixed version trigger predicate matching to properly evaluate app version conditions.
+
 Message Center:
 - Added support to automatically pick up UIKit navigation controller styling.
 
