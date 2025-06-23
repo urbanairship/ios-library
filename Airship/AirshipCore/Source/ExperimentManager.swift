@@ -89,12 +89,11 @@ final class ExperimentManager: ExperimentDataProvider {
 private extension Experiment {
     func isExcluded(info: MessageInfo) -> Bool {
         return self.exclusions?.contains { criteria in
-            let messageType = criteria.messageTypePredicate?.evaluate(info.messageType) ?? false
-            let campaigns = criteria.campaignsPredicate?.evaluate(info.campaigns?.unWrap()) ?? false
+            let messageType = criteria.messageTypePredicate?.evaluate(json: .string(info.messageType)) ?? false
+            let campaigns = criteria.campaignsPredicate?.evaluate(json: info.campaigns ?? .null) ?? false
             return messageType || campaigns
         } ?? false
     }
-
     func isActive(date: Date) -> Bool {
         return self.timeCriteria?.isActive(date: date) ?? true
     }

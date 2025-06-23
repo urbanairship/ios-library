@@ -2,7 +2,8 @@
 
 import Foundation
 
-struct IvyVersionMatcher: Sendable {
+/// NOTE: For internal use only. :nodoc:
+public struct AirshipIvyVersionMatcher: Sendable {
 
     private static let exactVersionPattern = "^([0-9]+)(\\.([0-9]+)((\\.([0-9]+))?(.*)))?$"
     private static let subVersionPattern = "^(.*)\\+$"
@@ -47,7 +48,7 @@ struct IvyVersionMatcher: Sendable {
 
     private let contraint: Constraint
 
-    init(versionConstraint: String) throws {
+    public init(versionConstraint: String) throws {
         let strippedVersionConstraint = String(versionConstraint.filter { !$0.isWhitespace })
 
         let parsed = Self.parseSubVersionConstraint(strippedVersionConstraint) ??
@@ -62,12 +63,12 @@ struct IvyVersionMatcher: Sendable {
 
     }
 
-    func evaluate(version: String) -> Bool {
+    public func evaluate(version: String) -> Bool {
         let checkVersion = version.filter { !$0.isWhitespace }
 
         return switch self.contraint {
         case .exactVersion(let exactVersion):
-            checkVersion == exactVersion
+            checkVersion.normalizeVersionString == exactVersion.normalizeVersionString
         case .subVersion(let subVersion):
             Self.evaluateSubversion(subVersion: subVersion, checkVersion: version)
         case .versionRange(let start, let end):
@@ -147,17 +148,11 @@ struct IvyVersionMatcher: Sendable {
     }
 
     private static func evaluateSubversion(subVersion: String, checkVersion: String) -> Bool {
-        let index: String.Index = subVersion.index(
-            subVersion.startIndex,
-            offsetBy: min(subVersion.count, checkVersion.count)
-        )
-        let cv = checkVersion[..<index]
-
-        /// if the version being matched is longer than the constraint, only compare its prefix
-        guard checkVersion.count > subVersion.count else {
-            return subVersion == checkVersion
+        if subVersion == "*" {
+            return true
         }
-        return subVersion == cv
+
+        return checkVersion.hasPrefix(subVersion.normalizeVersionString)
     }
 
     private static func evaluateVersionRange(start: Boundary, end: Boundary, checkVersion: String) -> Bool {
@@ -248,5 +243,27 @@ fileprivate extension String {
     // Workaround until we can drop iOS 15
     func airshipSubstring(with nsrange: NSRange) -> String {
         return (self as NSString).substring(with: nsrange)
+    }
+
+    var normalizeVersionString: String {
+        let trimmed = self.filter { !$0.isWhitespace }
+
+        // Find the first occurrence of "-"
+        if let index = trimmed.firstIndex(of: "-") {
+            // If the index is not the very first character...
+            if index > trimmed.startIndex {
+                // Get the substring before the "-"
+                let baseVersion = trimmed[..<index]
+
+                // Check for a "+" suffix and append it if it exists
+                if trimmed.hasSuffix("+") {
+                    return String(baseVersion) + "+"
+                } else {
+                    return String(baseVersion)
+                }
+            }
+        }
+
+        return trimmed
     }
 }

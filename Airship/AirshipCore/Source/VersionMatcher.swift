@@ -7,11 +7,15 @@ import Foundation
 @available(*, deprecated, message: "Marked to be removed in SDK 20")
 public class VersionMatcher: NSObject {
 
-    private let ivyVersionMatcher: IvyVersionMatcher
+    private let ivyVersionMatcher: AirshipIvyVersionMatcher
 
     /// NOTE: For internal use only. :nodoc:
     public init?(versionConstraint: String) {
-        guard let versionMatcher = try? IvyVersionMatcher(versionConstraint: versionConstraint) else {
+        guard
+            let versionMatcher = try? AirshipIvyVersionMatcher(
+                versionConstraint: versionConstraint
+            )
+        else {
             return nil
         }
         self.ivyVersionMatcher = versionMatcher

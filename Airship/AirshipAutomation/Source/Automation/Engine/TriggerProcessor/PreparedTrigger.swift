@@ -144,7 +144,7 @@ extension EventAutomationTrigger {
         case .event(let type, let eventData, let value):
             guard
                 self.type == type,
-                isPredicateMatching(value: eventData?.unWrap())
+                isPredicateMatching(value: eventData)
             else { return nil }
             
             return evaluateResults(data: &data, increment: value)
@@ -157,9 +157,13 @@ extension EventAutomationTrigger {
             guard
                 let versionUpdated = state.versionUpdated,
                 versionUpdated != data.lastTriggerableState?.versionUpdated,
-                isPredicateMatching(value: AirshipJSON.object(
-                    ["ios": .object(["version": .string(versionUpdated)])]
-                ))
+                isPredicateMatching(
+                    value: AirshipJSON.object(
+                        [
+                            "ios": .object(["version": .string(versionUpdated)])
+                        ]
+                    )
+                )
             else {
                 return nil
             }
@@ -181,9 +185,9 @@ extension EventAutomationTrigger {
         }
     }
 
-    private func isPredicateMatching(value: Any?) -> Bool {
+    private func isPredicateMatching(value: AirshipJSON?) -> Bool {
         guard let predicate = self.predicate else { return true }
-        return predicate.evaluate(value)
+        return predicate.evaluate(json: value ?? .null)
     }
 
     private func evaluateResults(
@@ -205,7 +209,7 @@ extension CompoundAutomationTrigger {
         
         var childResults = self.matchChildren(event: event, data: &data)
         
-        //resend state event if children is triggered for chain triggers
+        // Resend state event if children is triggered for chain triggers
         if
             self.type == .chain,
             let state = data.lastTriggerableState,
@@ -214,7 +218,7 @@ extension CompoundAutomationTrigger {
             
             childResults = self.matchChildren(event: .stateChanged(state: state), data: &data)
         } else if case .stateChanged(let state) = event {
-            // remember state on compound trigger level in order to be able to re-send it 
+            // Remember state on compound trigger level in order to be able to re-send it
             data.lastTriggerableState = state
         }
 

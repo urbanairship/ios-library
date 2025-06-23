@@ -2409,6 +2409,6 @@ final class ThomasViewModelTest: XCTestCase {
         let inputJson = try JSONSerialization.jsonObject(with: source.data(using: .utf8)!) as! [String: Any]
         let encodedJson = try JSONSerialization.jsonObject(with: json) as! [String: Any]
 
-        XCTAssertEqual(inputJson.toNsDictionary(), encodedJson.toNsDictionary())
+        XCTAssertEqual(try AirshipJSON.wrap(inputJson), try AirshipJSON.wrap(encodedJson))
     }
 }

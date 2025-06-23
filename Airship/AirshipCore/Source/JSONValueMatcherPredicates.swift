@@ -17,7 +17,7 @@ extension JSONValueMatcher {
             }
 
             do {
-                let versionMatcher = try IvyVersionMatcher(versionConstraint: versionConstraint)
+                let versionMatcher = try AirshipIvyVersionMatcher(versionConstraint: versionConstraint)
                 return versionMatcher.evaluate(version: version)
             } catch {
                 AirshipLogger.error("Invalid constraint \(versionConstraint)")
@@ -62,19 +62,52 @@ extension JSONValueMatcher {
         var equals: AirshipJSON
 
         func evaluate(json: AirshipJSON, ignoreCase: Bool) -> Bool {
-            if json == equals {
+            return if ignoreCase {
+                isEqualIgnoreCase(valueOne: equals, valueTwo: json)
+            } else {
+                equals == json
+            }
+        }
+
+
+        func isEqualIgnoreCase(valueOne: AirshipJSON, valueTwo: AirshipJSON) -> Bool {
+            if let string = valueOne.string, let otherString = valueTwo.string {
+                return string.normalizedIgnoreCaseComparison() == otherString.normalizedIgnoreCaseComparison()
+            }
+
+            if let array = valueOne.array, let otherArray = valueTwo.array {
+                guard array.count == otherArray.count else {
+                    return false
+                }
+
+                for (index, element) in array.enumerated() {
+                    guard isEqualIgnoreCase(valueOne: element, valueTwo: otherArray[index]) else {
+                        return false
+                    }
+                }
+
                 return true
             }
 
-            guard
-                ignoreCase,
-                let incomingString = json.string,
-                let expectedString = equals.string
-            else {
-                return false
+            if let object = valueOne.object, let otherObject = valueTwo.object {
+                guard object.count == otherObject.count else {
+                    return false
+                }
+
+                for (key, value) in object {
+                    guard
+                        let otherValue = otherObject[key],
+                        isEqualIgnoreCase(valueOne: value, valueTwo: otherValue)
+                    else {
+                        return false
+                    }
+                }
+
+                return true
             }
 
-            return expectedString.caseInsensitiveCompare(incomingString) == .orderedSame
+            // Remaining types - bool, number, mismatch types
+            return valueOne == valueTwo
         }
     }
 
@@ -162,4 +195,77 @@ extension JSONValueMatcher {
         }
     }
 
+    struct StringBeginsPredicate: Predicate {
+        var stringBegins: String
+
+        func evaluate(json: AirshipJSON, ignoreCase: Bool) -> Bool {
+            guard let string = json.string else { return false }
+
+            return if ignoreCase {
+                string.normalizedIgnoreCaseComparison().hasPrefix(
+                    stringBegins.normalizedIgnoreCaseComparison()
+                )
+            } else {
+                string.hasPrefix(stringBegins)
+            }
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case stringBegins = "string_begins"
+        }
+    }
+
+    struct StringEndsPredicate: Predicate {
+        var stringEnds: String
+
+        func evaluate(json: AirshipJSON, ignoreCase: Bool) -> Bool {
+            guard let string = json.string else { return false }
+            return if ignoreCase {
+                string.normalizedIgnoreCaseComparison().hasSuffix(
+                    stringEnds.normalizedIgnoreCaseComparison()
+                )
+            } else {
+                string.hasSuffix(stringEnds)
+            }
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case stringEnds = "string_ends"
+        }
+    }
+
+    struct StringContainsPredicate: Predicate {
+        var stringContains: String
+
+        func evaluate(json: AirshipJSON, ignoreCase: Bool) -> Bool {
+            guard let string = json.string else { return false }
+            return if ignoreCase {
+                string.normalizedIgnoreCaseComparison().contains(
+                    stringContains.normalizedIgnoreCaseComparison()
+                )
+            } else {
+                string.contains(stringContains)
+            }
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case stringContains = "string_contains"
+        }
+    }
+}
+
+fileprivate extension String {
+    /// Returns a normalized representation of the string for case- and diacritic-insensitive comparisons.
+    ///
+    /// This method "folds" the string into a simplified form by removing case distinctions (e.g., "a" vs. "A")
+    /// and diacritical marks (e.g., "é" vs. "e"). The resulting string is suitable for reliable,
+    /// locale-agnostic comparisons where variations in case or accents should be ignored.
+    ///
+    /// - Returns: A normalized string, ready for comparison.
+    func normalizedIgnoreCaseComparison() -> String {
+        return self.folding(
+            options: [.caseInsensitive, .diacriticInsensitive],
+            locale: nil
+        )
+    }
 }

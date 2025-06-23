@@ -418,7 +418,7 @@
 		6E4326072B7C364300A9B000 /* AssociatedIdentifiersTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4326042B7C361F00A9B000 /* AssociatedIdentifiersTest.swift */; };
 		6E4326092B7C396F00A9B000 /* TestAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1726E2C5940005D20D /* TestAnalytics.swift */; };
 		6E4339EF2DFA03A3000A7741 /* JSONValueMatcherPredicates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4339EE2DFA039B000A7741 /* JSONValueMatcherPredicates.swift */; };
-		6E4339F12DFA099F000A7741 /* IvyVersionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4339F02DFA099C000A7741 /* IvyVersionMatcher.swift */; };
+		6E4339F12DFA099F000A7741 /* AirshipIvyVersionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4339F02DFA099C000A7741 /* AirshipIvyVersionMatcher.swift */; };
 		6E44626729E6813A00CB2B56 /* AsyncSerialQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E44626629E6813A00CB2B56 /* AsyncSerialQueue.swift */; };
 		6E46A273272B19760089CDE3 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E46A272272B19760089CDE3 /* ViewExtensions.swift */; };
 		6E46A27C272B63680089CDE3 /* ThomasEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E46A27B272B63680089CDE3 /* ThomasEnvironment.swift */; };
@@ -775,7 +775,7 @@
 		6ED2F5252B7EE648000AFC80 /* AirshipBase64Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F5242B7EE648000AFC80 /* AirshipBase64Test.swift */; };
 		6ED2F5272B7EE82B000AFC80 /* AirshipJSONUtilsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F5262B7EE82B000AFC80 /* AirshipJSONUtilsTest.swift */; };
 		6ED2F5292B7FC59F000AFC80 /* AirshipColorUtilsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F5282B7FC59F000AFC80 /* AirshipColorUtilsTest.swift */; };
-		6ED2F52B2B7FC5C8000AFC80 /* VersionMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F52A2B7FC5C8000AFC80 /* VersionMatcherTest.swift */; };
+		6ED2F52B2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F52A2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift */; };
 		6ED2F52D2B7FD403000AFC80 /* JavaScriptCommandTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F52C2B7FD403000AFC80 /* JavaScriptCommandTest.swift */; };
 		6ED2F52F2B7FD49B000AFC80 /* URLAllowListTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F52E2B7FD49B000AFC80 /* URLAllowListTest.swift */; };
 		6ED2F5312B7FF819000AFC80 /* AirshipViewUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F5302B7FF819000AFC80 /* AirshipViewUtils.swift */; };
@@ -1736,7 +1736,7 @@
 		6E4326002B7C327C00A9B000 /* AirshipEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipEvents.swift; sourceTree = "<group>"; };
 		6E4326042B7C361F00A9B000 /* AssociatedIdentifiersTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssociatedIdentifiersTest.swift; sourceTree = "<group>"; };
 		6E4339EE2DFA039B000A7741 /* JSONValueMatcherPredicates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValueMatcherPredicates.swift; sourceTree = "<group>"; };
-		6E4339F02DFA099C000A7741 /* IvyVersionMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IvyVersionMatcher.swift; sourceTree = "<group>"; };
+		6E4339F02DFA099C000A7741 /* AirshipIvyVersionMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipIvyVersionMatcher.swift; sourceTree = "<group>"; };
 		6E44626629E6813A00CB2B56 /* AsyncSerialQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsyncSerialQueue.swift; sourceTree = "<group>"; };
 		6E46A272272B19760089CDE3 /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		6E46A27B272B63680089CDE3 /* ThomasEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasEnvironment.swift; sourceTree = "<group>"; };
@@ -2087,7 +2087,7 @@
 		6ED2F5242B7EE648000AFC80 /* AirshipBase64Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipBase64Test.swift; sourceTree = "<group>"; };
 		6ED2F5262B7EE82B000AFC80 /* AirshipJSONUtilsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipJSONUtilsTest.swift; sourceTree = "<group>"; };
 		6ED2F5282B7FC59F000AFC80 /* AirshipColorUtilsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipColorUtilsTest.swift; sourceTree = "<group>"; };
-		6ED2F52A2B7FC5C8000AFC80 /* VersionMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionMatcherTest.swift; sourceTree = "<group>"; };
+		6ED2F52A2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipIvyVersionMatcherTest.swift; sourceTree = "<group>"; };
 		6ED2F52C2B7FD403000AFC80 /* JavaScriptCommandTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptCommandTest.swift; sourceTree = "<group>"; };
 		6ED2F52E2B7FD49B000AFC80 /* URLAllowListTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLAllowListTest.swift; sourceTree = "<group>"; };
 		6ED2F5302B7FF819000AFC80 /* AirshipViewUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipViewUtils.swift; sourceTree = "<group>"; };
@@ -3577,7 +3577,7 @@
 		6E411D5F2538D26200FEE4E8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				6E4339F02DFA099C000A7741 /* IvyVersionMatcher.swift */,
+				6E4339F02DFA099C000A7741 /* AirshipIvyVersionMatcher.swift */,
 				6E52146A2DCBF9BA00CF64B9 /* AirshipTimerProtocol.swift */,
 				6E916C562DB30D9E00C676FA /* AirshipWindowFactory.swift */,
 				6EAA61482D5297A2006602F7 /* SubjectExtension.swift */,
@@ -4718,7 +4718,7 @@
 				6ED2F5242B7EE648000AFC80 /* AirshipBase64Test.swift */,
 				6ED2F5262B7EE82B000AFC80 /* AirshipJSONUtilsTest.swift */,
 				6ED2F5282B7FC59F000AFC80 /* AirshipColorUtilsTest.swift */,
-				6ED2F52A2B7FC5C8000AFC80 /* VersionMatcherTest.swift */,
+				6ED2F52A2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift */,
 				6ED2F5342B7FFCD7000AFC80 /* AirshipDateFormatterTest.swift */,
 				6EB8394D2BC8B1F4006611C4 /* AirshipAsyncChannelTest.swift */,
 				6032695A2BF75D69007F7F75 /* AirshipHTTPResponseTest.swift */,
@@ -5923,7 +5923,7 @@
 				6EBD12052DA73FDA00F678AB /* ValidatableHelper.swift in Sources */,
 				6E9C2BDA2D027B5F000089A9 /* AirshipAppCredentials.swift in Sources */,
 				6E887CD1272C5E8400E83363 /* CheckboxState.swift in Sources */,
-				6E4339F12DFA099F000A7741 /* IvyVersionMatcher.swift in Sources */,
+				6E4339F12DFA099F000A7741 /* AirshipIvyVersionMatcher.swift in Sources */,
 				3CA84ABA26DE257200A59685 /* AnalyticsProtocol.swift in Sources */,
 				6ED735DD26C7401D003B0A7D /* TagEditor.swift in Sources */,
 				6E698E41267BEDC300654DB2 /* TagGroupsEditor.swift in Sources */,
@@ -6497,7 +6497,7 @@
 				605073902B347B6400209B51 /* ThomasPresentationModelCodingTest.swift in Sources */,
 				6EFAFB78295525C3008AD187 /* ChannelAPIClientTest.swift in Sources */,
 				6E4326072B7C364300A9B000 /* AssociatedIdentifiersTest.swift in Sources */,
-				6ED2F52B2B7FC5C8000AFC80 /* VersionMatcherTest.swift in Sources */,
+				6ED2F52B2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift in Sources */,
 				9971A8852C125C0200092ED1 /* ContactChannelsProviderTest.swift in Sources */,
 				6E65244C2A4FD4270019F353 /* DeviceTagSelectorTest.swift in Sources */,
 				3299EF222949EC3E00251E70 /* AirshipBaseTest.swift in Sources */,

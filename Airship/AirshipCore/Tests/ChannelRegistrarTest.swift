@@ -304,7 +304,7 @@ class ChannelRegistrarTest: XCTestCase {
             )
         }
 
-        let payload = await payloadProvider.getPayload()
+        let _ = await payloadProvider.getPayload()
 
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(workID: workID)
@@ -824,7 +824,7 @@ class ChannelRegistrarTest: XCTestCase {
 
     private func createChannel(channelID: String) async throws {
         // Set a payload since the create flow now requires one
-        let payload = await payloadProvider.getPayload()
+        let _ = await payloadProvider.getPayload()
 
         self.client.createCallback = { _ in
             return AirshipHTTPResponse(

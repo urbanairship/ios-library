@@ -28,20 +28,26 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
     private let predicate: any Predicate
 
     public init(from decoder: any Decoder) throws {
-        // The decoding order matters and is designed to match Android/Backend implementations.
-        guard
-            let predicate: any JSONValueMatcher.Predicate =
-                (try? JSONValueMatcher.EqualsPredicate(from: decoder)) ??
-                (try? JSONValueMatcher.NumberRangePredicate(from: decoder)) ??
-                (try? JSONValueMatcher.PresencePredicate(from: decoder)) ??
-                (try? JSONValueMatcher.VersionPredicate(from: decoder)) ??
-                (try? JSONValueMatcher.ArrayLengthPredicate(from: decoder)) ??
-                (try? JSONValueMatcher.ArrayContainsPredicate(from: decoder))
-        else {
+        // Decode the predicate using a helper function to avoid compiler timeouts.
+        guard let predicate = Self.decodePredicate(from: decoder) else {
             throw AirshipErrors.parseError("Unsupported JSONValueMatcher predicate")
         }
-
         self.predicate = predicate
+    }
+
+    /// A helper function to decode one of the possible predicate types.
+    private static func decodePredicate(from decoder: any Decoder) -> (any JSONValueMatcher.Predicate)? {
+        // The decoding order matters and is designed to match Android/Backend implementations.
+        if let predicate = try? JSONValueMatcher.EqualsPredicate(from: decoder) { return predicate }
+        if let predicate = try? JSONValueMatcher.NumberRangePredicate(from: decoder) { return predicate }
+        if let predicate = try? JSONValueMatcher.PresencePredicate(from: decoder) { return predicate }
+        if let predicate = try? JSONValueMatcher.VersionPredicate(from: decoder) { return predicate }
+        if let predicate = try? JSONValueMatcher.ArrayLengthPredicate(from: decoder) { return predicate }
+        if let predicate = try? JSONValueMatcher.ArrayContainsPredicate(from: decoder) { return predicate }
+        if let predicate = try? JSONValueMatcher.StringBeginsPredicate(from: decoder) { return predicate }
+        if let predicate = try? JSONValueMatcher.StringEndsPredicate(from: decoder) { return predicate }
+        if let predicate = try? JSONValueMatcher.StringContainsPredicate(from: decoder) { return predicate }
+        return nil
     }
 
     init(predicate: any Predicate) {

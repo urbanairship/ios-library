@@ -372,7 +372,7 @@ extension AutomationSchedule {
             "[16.2.0,)"
         }
 
-        guard let matcher = VersionMatcher(versionConstraint: constraint) else { return false }
-        return matcher.evaluate(minSDKVersion)
+        guard let matcher = try? AirshipIvyVersionMatcher(versionConstraint: constraint) else { return false }
+        return matcher.evaluate(version: minSDKVersion)
     }
 }

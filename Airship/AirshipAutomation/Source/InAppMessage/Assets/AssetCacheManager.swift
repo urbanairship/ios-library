@@ -3,7 +3,7 @@
 import Foundation
 
 #if canImport(AirshipCore)
-public import AirshipCore
+import AirshipCore
 #endif
 
 /// Wrapper for the download tasks that is responsible for downloading assets

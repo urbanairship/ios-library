@@ -173,7 +173,7 @@ class ChannelTest: XCTestCase {
             "display_notifications": "denied"
         ]
 
-        await MainActor.run {
+        await MainActor.run { [expectedPayload] in
             self.channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
                 return expectedPayload
             }
@@ -212,7 +212,7 @@ class ChannelTest: XCTestCase {
         expectedPayload.channel.setTags = true
         expectedPayload.channel.permissions = nil
 
-        await MainActor.run {
+        await MainActor.run { [expectedPayload] in
             self.channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
                 return expectedPayload
             }
@@ -253,7 +253,7 @@ class ChannelTest: XCTestCase {
             "display_notifications": "denied"
         ]
 
-        await MainActor.run {
+        await MainActor.run { [expectedPayload] in
             self.channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
                 return expectedPayload
             }
@@ -270,7 +270,7 @@ class ChannelTest: XCTestCase {
             "location": "granted",
         ]
 
-        await MainActor.run {
+        await MainActor.run { [expectedMinimized] in
             self.channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
                 return expectedMinimized
             }
@@ -278,7 +278,7 @@ class ChannelTest: XCTestCase {
 
         let minimized = await self.channelRegistrar.channelPayload.minimizePayload(previous: payload)
 
-        await MainActor.run {
+        await MainActor.run { [expectedMinimized] in
             XCTAssertEqual(expectedMinimized, minimized)
         }
     }
