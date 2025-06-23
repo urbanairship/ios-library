@@ -35,12 +35,11 @@ jobs:
         run: |
           VERSION=${GITHUB_REF/refs\/tags\//}
           MAJOR_VERSION=$(echo "$VERSION" | cut -d. -f1)
-          VERSION_DIR="v$MAJOR_VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "VERSION_DIR=v$MAJOR_VERSION" >> $GITHUB_ENV
           
       - name: Check Version
-        run: bash ./scripts/check_version.sh ${{ steps.get_version.outputs.VERSION }}
+        run: bash ./scripts/check_version.sh ${{ steps.extract_version.outputs.VERSION }}
         
       - name: Build DocC
         run: make build-docC version=${{ env.VERSION_DIR }}
