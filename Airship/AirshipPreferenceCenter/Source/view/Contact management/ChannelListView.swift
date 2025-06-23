@@ -99,6 +99,7 @@ struct ChannelListView: View {
                 base: PreferenceCenterDefaults.sectionTitleAppearance,
                 colorScheme: colorScheme
             )
+            .accessibilityAddTraits(.isHeader)
     }
 
     @ViewBuilder

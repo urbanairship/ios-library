@@ -125,6 +125,7 @@ public struct DefaultLabeledSectionBreakStyle: LabeledSectionBreakStyle {
                 .padding(.vertical, PreferenceCenterDefaults.smallPadding/2)
                 .padding(.horizontal, PreferenceCenterDefaults.smallPadding)
                 .background(backgroundColor)
+                .accessibilityAddTraits(.isHeader)
         }
     }
 }

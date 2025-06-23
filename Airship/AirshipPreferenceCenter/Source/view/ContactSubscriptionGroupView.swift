@@ -144,6 +144,7 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
                             base: PreferenceCenterDefaults.titleAppearance,
                             colorScheme: colorScheme
                         )
+                        .accessibilityAddTraits(.isHeader)
                 }
 
                 if let subtitle = item.display?.subtitle {
