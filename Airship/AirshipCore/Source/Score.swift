@@ -193,13 +193,15 @@ struct Score: View {
             case .score(let value) = self.formState.field(
                 identifier: self.info.properties.identifier
             )?.input,
-            let value
+            let value,
+            let index = value.number
         else {
             self.updateScore(self.viewModel.score)
             return
         }
 
         self.viewModel.score = value
+        self.viewModel.index = Int(index)
     }
 }
 

@@ -292,7 +292,8 @@ class ThomasFormState: ObservableObject {
         let needsAsync = children.contains { child in
             child.field.status == .error || child.field.status == .pending
         }
-
+        
+        await Task.yield() // Yield to allow the UI to update before processing
         updateStatus(.validating)
         let task = Task { [weak self] in
 
