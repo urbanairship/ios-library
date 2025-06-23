@@ -16,7 +16,7 @@ struct AirshipToggle: View {
         createToggle()
             .constraints(self.constraints)
             .thomasCommon(self.info, formInputID: self.info.properties.identifier)
-            .accessible(self.info.accessible)
+            .accessible(self.info.accessible, hideIfDescriptionIsMissing: false)
             .formElement()
             .onAppear {
                 restoreFormState()

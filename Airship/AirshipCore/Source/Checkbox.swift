@@ -33,7 +33,7 @@ struct Checkbox: View {
             )
             .constraints(constraints)
             .thomasCommon(self.info)
-            .accessible(self.info.accessible)
+            .accessible(self.info.accessible, hideIfDescriptionIsMissing: false)
             .formElement()
             .disabled(!self.isEnabled)
     }

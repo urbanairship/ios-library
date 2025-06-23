@@ -26,6 +26,7 @@ struct RadioInput: View {
             )
             .constraints(constraints)
             .thomasCommon(self.info)
+            .accessible(self.info.accessible, hideIfDescriptionIsMissing: false)
             .formElement()
     }
 }

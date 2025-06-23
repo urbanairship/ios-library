@@ -52,7 +52,7 @@ struct RadioInputController: View {
             ViewFactory.createView(self.info.properties.view, constraints: constraints)
                 .constraints(constraints)
                 .thomasCommon(self.info, formInputID: self.info.properties.identifier)
-                .accessible(self.info.accessible)
+                .accessible(self.info.accessible, hideIfDescriptionIsMissing: false)
                 .formElement()
                 .environmentObject(radioInputState)
                 .airshipOnChangeOf(self.radioInputState.selected) { incoming in
