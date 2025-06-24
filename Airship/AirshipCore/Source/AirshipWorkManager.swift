@@ -140,13 +140,13 @@ private actor Workers {
     func calculateBackgroundWaitTime(
         maxTime: TimeInterval
     ) async -> TimeInterval {
-
-        let workers: [Worker] = workerMap.values.reduce([], +)
-
         var result: TimeInterval = 0.0
-        for worker in workers {
-            let workerResult = await worker.calculateBackgroundWaitTime(maxTime: maxTime)
-            result = max(result, workerResult)
+
+        for workerList in workerMap.values {
+            for worker in workerList {
+                let workerResult = await worker.calculateBackgroundWaitTime(maxTime: maxTime)
+                result = max(result, workerResult)
+            }
         }
 
         return result
