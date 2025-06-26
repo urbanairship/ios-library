@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Project Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg-light: #ffffff;
+        --bg-dark: #1e1e1e;
+        --text-light: #000000;
+        --text-dark: #f1f1f1;
+        --link-light: #0066cc;
+        --link-dark: #9ccfff;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        margin: 0;
+        padding: 2em;
+        background-color: var(--bg-light);
+        color: var(--text-light);
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      html[data-theme='dark'] body {
+        background-color: var(--bg-dark);
+        color: var(--text-dark);
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2.5em;
+        margin-bottom: 0.5em;
+      }
+
+      .logo {
+        display: block;
+        margin: 0 auto 1em;
+        width: 100px;
+        height: auto;
+      }
+
+      .container {
+        max-width: 700px;
+        margin: auto;
+        text-align: center;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      li {
+        margin: 1em 0;
+      }
+
+      a {
+        font-size: 1.2em;
+        color: var(--link-light);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      html[data-theme='dark'] a {
+        color: var(--link-dark);
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .theme-toggle {
+        margin-top: 2em;
+        font-size: 0.9em;
+        cursor: pointer;
+        background: none;
+        border: 1px solid currentColor;
+        border-radius: 8px;
+        padding: 0.5em 1em;
+        transition: background 0.3s;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img src="airship.png" alt="Project Logo" class="logo" />
+
+      <h1>📚 iOS API references</h1>
+      <p>Select a documentation module:</p>
+
+      <ul>
+          <li><a href="./v19/AirshipCore/documentation/airshipcore/">AirshipCore</a></li>
+          <li><a href="./v19/AirshipAutomation/documentation/airshipautomation/">AirshipAutomation</a></li>
+          <li><a href="./v19/AirshipMessageCenter/documentation/airshipmessagecenter/">AirshipMessageCenter</a></li>
+          <li><a href="./v19/AirshipPreferenceCenter/documentation/airshippreferencecenter/">AirshipPreferenceCenter</a></li>
+          <li><a href="./v19/AirshipFeatureFlags/documentation/airshipfeatureflags/">AirshipFeatureFlags</a></li>
+          <li><a href="./v19/AirshipObjectiveC/documentation/airshipobjectivec/">AirshipObjectiveC</a></li>
+          <li><a href="./v19/AirshipNotificationServiceExtension/documentation/airshipnotificationserviceextension/">AirshipNotificationServiceExtension</a></li>
+      </ul>
+
+      <button class="theme-toggle" onclick="toggleTheme()">🌓 Toggle Theme</button>
+    </div>
+
+    <script>
+      const root = document.documentElement;
+
+      function applyTheme(theme) {
+        root.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+      }
+
+      function toggleTheme() {
+        const current = root.getAttribute('data-theme');
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+      }
+
+      // Load saved theme preference or system default
+      (function () {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'light' || saved === 'dark') {
+          applyTheme(saved);
+        } else {
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          applyTheme(prefersDark ? 'dark' : 'light');
+        }
+      })();
+    </script>
+  </body>
+</html>
