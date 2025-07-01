@@ -62,7 +62,7 @@ view:
             bottom: 16
           view:
             type: pager
-            disable_swipe: true
+            disable_swipe: false
             items:
             - identifier: "page-1"
               view:
@@ -131,56 +131,25 @@ view:
                         default:
                           hex: "#000000"
                       font_size: 14
-        - size:
-            height: auto
-            width: auto
-          margin:
-            start: 16
-            end: 16
-            top: 16
-            bottom: 16
+        - margin:
+            bottom: 10
+            end: 0
+            start: 0
+            top: 10
+          size:
+            height: 100%
+            width: 90%
           view:
-            type: label_button
-            identifier: button1
-            background_color:
-              default:
-                hex: "#FFD600"
-            label:
-              type: label
-              text_appearance:
-                font_size: 10
-                color:
+            type: custom_view
+            name: scene_controller_test
+            properties:
+                cool: story
+            border:
+                stroke_color:
                   default:
-                    hex: "#333333"
-                alignment: center
-              text: 'Next!'
-            button_click: ["pager_next"]
-            enabled: ["pager_next"]
-        - size:
-            height: auto
-            width: auto
-          margin:
-            start: 16
-            end: 16
-            top: 16
-            bottom: 16
-          view:
-            type: label_button
-            identifier: button1
-            background_color:
-              default:
-                hex: "#FFD600"
-            label:
-              type: label
-              text_appearance:
-                font_size: 10
-                color:
-                  default:
-                    hex: "#333333"
-                alignment: center
-              text: 'Previous!'
-            button_click: ["pager_previous"]
-            enabled: ["pager_previous"]
+                    hex: "#000000"
+                stroke_width: 3
+                radius: 4
         - size:
             height: 30
             width: auto

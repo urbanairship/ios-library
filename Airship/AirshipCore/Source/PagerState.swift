@@ -111,10 +111,10 @@ class PagerState: ObservableObject {
     private let branchControl: BranchControl?
     private var thomasStateSubscription: AnyCancellable? = nil
     
-    //determin if the scrollview should be disabled based on `ThomasViewInfo.Pager.DisableSwipeSelector`
+    // Determin if the scrollview should be disabled based on `ThomasViewInfo.Pager.DisableSwipeSelector`
     private var isScrollSelectorDisabled: Bool = false
     
-    //used for reporting
+    // Used for reporting
     var reportingPageCount: Int {
         get { branchControl == nil ? pageItems.count : -1 }
     }
@@ -191,6 +191,10 @@ class PagerState: ObservableObject {
     
     var canGoBack: Bool {
         return pageIndex > 0 && !isScrollingDisabled
+    }
+
+    var canGoForward: Bool {
+        return !isScrollingDisabled && pageIndex < pageItems.count - 1
     }
 
     @discardableResult

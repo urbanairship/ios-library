@@ -14,6 +14,9 @@ struct CustomView: View {
     @EnvironmentObject
     var thomasEnvironment: ThomasEnvironment
 
+    @EnvironmentObject
+    var pagerState: PagerState
+
     @Environment(\.layoutState)
     var layoutState
 
@@ -31,5 +34,8 @@ struct CustomView: View {
             .constraints(constraints)
             .clipped() /// Clip to view frame to ensure we don't overflow when the view has an intrinsic size it's trying to enforce
             .thomasCommon(self.info)
+            .environmentObject(
+                SceneController(pagerState: pagerState, environment: thomasEnvironment)
+            )
     }
 }
