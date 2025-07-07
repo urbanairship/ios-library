@@ -19,12 +19,12 @@ public protocol AirshipSceneManagerProtocol: Sendable {
  *  Monitors scene connection and disconnection notifications and associated scenes to allow retrieving the latest scene.
  */
 /// - Note: for internal use only.  :nodoc:
-public final class AirshipSceneManager: AirshipSceneManagerProtocol, @unchecked Sendable {
+public final class AirshipSceneManager: AirshipSceneManagerProtocol, Sendable {
     public static let shared = AirshipSceneManager()
 
 #if !os(watchOS)
 
-    private var scenes: [UIWindowScene] = []
+    private let scenes = AirshipAtomicValue([UIWindowScene]())
 
     private let notificationCenter: AirshipNotificationCenter
 
@@ -42,6 +42,7 @@ public final class AirshipSceneManager: AirshipSceneManagerProtocol, @unchecked 
     public var lastActiveScene: UIWindowScene {
         get throws {
             let lastActiveMessageScene = scenes
+                .value
                 .filter { $0.activationState == .foregroundActive && $0.session.role == .windowApplication }
                 .last
 
@@ -80,7 +81,11 @@ public final class AirshipSceneManager: AirshipSceneManagerProtocol, @unchecked 
             AirshipLogger.debug("Unable to cast UIWindowScene from notification UIScene.willConnectNotification")
             return
         }
-        scenes.append(scene)
+        scenes.update { current in
+            var mutableScenes = current
+            mutableScenes.append(scene)
+            return mutableScenes
+        }
     }
 
     @objc
@@ -90,7 +95,11 @@ public final class AirshipSceneManager: AirshipSceneManagerProtocol, @unchecked 
             AirshipLogger.debug("Unable to cast UIWindowScene from notification UIScene.didDisconnectNotification")
             return
         }
-        scenes.removeAll { $0 == scene }
+        scenes.update { current in
+            var mutableScenes = current
+            mutableScenes.removeAll { $0 == scene }
+            return mutableScenes
+        }
     }
 
     @MainActor

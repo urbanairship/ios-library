@@ -3,7 +3,7 @@
 import Foundation
 
 /// Permissions manager delegate. Allows for extending permission gathering.
-public protocol AirshipPermissionDelegate {
+public protocol AirshipPermissionDelegate: Sendable {
 
     /// Called when a permission needs to be checked.
     /// - Returns: the permission status.

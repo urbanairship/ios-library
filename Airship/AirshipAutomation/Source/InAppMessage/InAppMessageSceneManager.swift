@@ -15,7 +15,7 @@ protocol InAppMessageSceneManagerProtocol: AnyObject, Sendable {
     func scene(forMessage: InAppMessage) throws -> any WindowSceneHolder
 }
 
-final class InAppMessageSceneManager: InAppMessageSceneManagerProtocol, @unchecked Sendable {
+final class InAppMessageSceneManager: InAppMessageSceneManagerProtocol, Sendable {
 
     @MainActor
     weak var delegate: (any InAppMessageSceneDelegate)?

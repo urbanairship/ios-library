@@ -14,16 +14,16 @@ public protocol AirshipMainActorCancellable: Sendable {
 }
 
 /// - Note: for internal use only.  :nodoc:
-public final class AirshipMainActorCancellableBlock: AirshipMainActorCancellable, @unchecked Sendable {
-    private var block: (@Sendable @MainActor () -> Void)?
+public final class AirshipMainActorCancellableBlock: AirshipMainActorCancellable, Sendable {
+    private let block = AirshipAtomicValue<(@Sendable @MainActor () -> Void)?>(nil)
 
     public init(block: @escaping @MainActor @Sendable () -> Void) {
-        self.block = block
+        self.block.value = block
     }
 
     @MainActor
     public func cancel() {
-        self.block?()
-        self.block = nil
+        self.block.value?()
+        self.block.value = nil
     }
 }

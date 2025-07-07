@@ -16,7 +16,7 @@ import Foundation
 /// - Opt in state (push and notifications)
 /// - SDK version
 /// - Accengage Device ID (Accengage module for migration)
-public final class AirshipPrivacyManager: PrivacyManagerProtocol, @unchecked Sendable {
+public final class AirshipPrivacyManager: PrivacyManagerProtocol, Sendable {
     private static let enabledFeaturesKey = "com.urbanairship.privacymanager.enabledfeatures"
 
     private let legacyIAAEnableFlag = "UAInAppMessageManagerEnabled"
@@ -33,7 +33,7 @@ public final class AirshipPrivacyManager: PrivacyManagerProtocol, @unchecked Sen
 
     private let lock: AirshipLock = AirshipLock()
 
-    private var lastUpdated: AirshipFeature = []
+    private let lastUpdated = AirshipAtomicValue<AirshipFeature>([])
 
     private var localEnabledFeatures: AirshipFeature {
         get {
@@ -86,7 +86,7 @@ public final class AirshipPrivacyManager: PrivacyManagerProtocol, @unchecked Sen
             self.dataStore.removeObject(forKey:  AirshipPrivacyManager.enabledFeaturesKey)
         } 
 
-        self.lastUpdated = self.enabledFeatures
+        self.lastUpdated.value = self.enabledFeatures
 
         self.migrateData()
 
@@ -186,8 +186,8 @@ public final class AirshipPrivacyManager: PrivacyManagerProtocol, @unchecked Sen
     private func notifyUpdate() {
         lock.sync {
             let enabledFeatures = self.enabledFeatures
-            guard enabledFeatures != lastUpdated else { return }
-            self.lastUpdated = enabledFeatures
+            guard enabledFeatures != lastUpdated.value else { return }
+            self.lastUpdated.value = enabledFeatures
             self.notificationCenter.postOnMain(
                 name: AirshipNotifications.PrivacyManagerUpdated.name
             )

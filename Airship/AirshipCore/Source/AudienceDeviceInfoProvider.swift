@@ -19,7 +19,7 @@ public protocol AudienceDeviceInfoProvider: AnyObject, Sendable {
 }
 
 /// NOTE: For internal use only. :nodoc:
-public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Sendable {
+public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider, Sendable {
     private let deviceInfoProvider: any AudienceDeviceInfoProvider
 
     private let cachedTags: OneTimeValue<Set<String>>
@@ -223,7 +223,7 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
 fileprivate final class OneTimeValue<T: Equatable & Sendable>: @unchecked Sendable {
     private let lock = AirshipLock()
     private var atomicValue: AirshipAtomicValue<T?> = AirshipAtomicValue(nil)
-    private var provider: () -> T
+    private let provider: () -> T
 
     var cachedValue: T? {
         get {
@@ -237,22 +237,21 @@ fileprivate final class OneTimeValue<T: Equatable & Sendable>: @unchecked Sendab
 
     var value: T {
         get {
-            var value: T!
             lock.sync {
                 if let cachedValue = atomicValue.value {
-                    value = cachedValue
-                } else {
-                    value = provider()
-                    atomicValue.value = value
+                    return cachedValue
                 }
+                
+                let value = provider()
+                atomicValue.value = value
+                return value
             }
-            return value
         }
     }
 }
 
 fileprivate actor OneTimeAsyncValue<T: Equatable & Sendable> {
-    private var provider: @Sendable () async -> T
+    private let provider: @Sendable () async -> T
     private var task: Task<T, Never>?
 
     init(provider: @Sendable @escaping () async -> T) {
@@ -260,12 +259,14 @@ fileprivate actor OneTimeAsyncValue<T: Equatable & Sendable> {
     }
 
     func getValue() async -> T {
-        if let task {
+        if let task, !task.isCancelled {
             return await task.value
         }
+        
         let newTask = Task {
             return await provider()
         }
+        
         task = newTask
         return await newTask.value
     }

@@ -39,7 +39,7 @@ protocol DisplayAdapterFactoryProtocol: Sendable {
     ) throws -> any DisplayAdapter
 }
 
-final class DisplayAdapterFactory: DisplayAdapterFactoryProtocol, @unchecked Sendable {
+final class DisplayAdapterFactory: DisplayAdapterFactoryProtocol, Sendable {
 
     @MainActor
     var customAdapters: [CustomDisplayAdapterType: @Sendable (DisplayAdapterArgs) -> (any CustomDisplayAdapter)?] = [:]

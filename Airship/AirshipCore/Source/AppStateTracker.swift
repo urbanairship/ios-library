@@ -24,7 +24,7 @@ public protocol AppStateTrackerProtocol: Sendable {
 }
 
 /// NOTE: For internal use only. :nodoc:
-public final class AppStateTracker: AppStateTrackerProtocol, @unchecked Sendable {
+public final class AppStateTracker: AppStateTrackerProtocol, Sendable {
 
 
     public static let didBecomeActiveNotification = NSNotification.Name(

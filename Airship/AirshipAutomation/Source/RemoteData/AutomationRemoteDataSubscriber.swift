@@ -17,7 +17,7 @@ protocol AutomationRemoteDataSubscriberProtocol: Sendable {
     func unsubscribe()
 }
 
-final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtocol, @unchecked Sendable {
+final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtocol, Sendable {
     private let sourceInfoStore: AutomationSourceInfoStore
     private let remoteDataAccess: any AutomationRemoteDataAccessProtocol
     private let engine: any AutomationEngineProtocol

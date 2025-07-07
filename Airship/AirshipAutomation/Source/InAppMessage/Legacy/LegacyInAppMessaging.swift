@@ -45,7 +45,7 @@ protocol InternalLegacyInAppMessagingProtocol: LegacyInAppMessagingProtocol {
     ) async -> UABackgroundFetchResult
 }
 
-final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, @unchecked Sendable {
+final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, Sendable {
 
     private let dataStore: PreferenceDataStore
     private let analytics: any LegacyInAppAnalyticsProtocol

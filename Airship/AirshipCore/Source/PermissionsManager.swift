@@ -10,18 +10,14 @@ import UIKit
 ///
 /// Airship will provide the default handling for `Permission.postNotifications`. All other permissions will need
 /// to be configured by the app by providing a `PermissionDelegate` for the given permissions.
-public final class AirshipPermissionsManager: @unchecked Sendable {
-    private let lock = AirshipLock()
-    private var delegateMap: [AirshipPermission: any AirshipPermissionDelegate] = [:]
-    private var airshipEnablers: [
-        AirshipPermission: [() async -> Void]
-    ] = [:]
+public final class AirshipPermissionsManager: Sendable {
+    private let delegateMap = AirshipAtomicValue([AirshipPermission: any AirshipPermissionDelegate]())
+    
+    private let airshipEnablers = AirshipAtomicValue([AirshipPermission: [@Sendable () async -> Void]]())
 
-    private var queue: AirshipSerialQueue = AirshipSerialQueue()
+    private let queue: AirshipSerialQueue = AirshipSerialQueue()
 
-    private var extenders: [
-        AirshipPermission: [(AirshipPermissionStatus) async -> Void]
-    ] = [:]
+    private let extenders = AirshipAtomicValue([AirshipPermission: [@Sendable (AirshipPermissionStatus) async -> Void]]())
     
     private let statusUpdates: AirshipAsyncChannel<(AirshipPermission, AirshipPermissionStatus)> = AirshipAsyncChannel()
     private let appStateTracker: any AppStateTrackerProtocol
@@ -46,11 +42,7 @@ public final class AirshipPermissionsManager: @unchecked Sendable {
     }
 
     var configuredPermissions: Set<AirshipPermission> {
-        var result: Set<AirshipPermission>!
-        lock.sync {
-            result = Set(delegateMap.keys)
-        }
-        return result
+        return Set(delegateMap.value.keys)
     }
     
     /// Returns an async stream with status updates for the given permission
@@ -102,8 +94,10 @@ public final class AirshipPermissionsManager: @unchecked Sendable {
         _ delegate: (any AirshipPermissionDelegate)?,
         permission: AirshipPermission
     ) {
-        lock.sync {
-            delegateMap[permission] = delegate
+        delegateMap.update { input in
+            var mutable = input
+            mutable[permission] = delegate
+            return mutable
         }
     }
     
@@ -220,28 +214,32 @@ public final class AirshipPermissionsManager: @unchecked Sendable {
     /// - Note: for internal use only.  :nodoc:
     func addRequestExtender(
         permission: AirshipPermission,
-        extender: @escaping (AirshipPermissionStatus) async -> Void
+        extender: @escaping @Sendable (AirshipPermissionStatus) async -> Void
     ) {
-        lock.sync {
-            if extenders[permission] == nil {
-                extenders[permission] = [extender]
+        extenders.update { current in
+            var mutable = current
+            if mutable[permission] == nil {
+                mutable[permission] = [extender]
             } else {
-                extenders[permission]?.append(extender)
+                mutable[permission]?.append(extender)
             }
+            return mutable
         }
     }
     
     /// - Note: for internal use only.  :nodoc:
     func addAirshipEnabler(
         permission: AirshipPermission,
-        onEnable: @escaping () async -> Void
+        onEnable: @escaping @Sendable () async -> Void
     ) {
-        lock.sync {
-            if airshipEnablers[permission] == nil {
-                airshipEnablers[permission] = [onEnable]
+        airshipEnablers.update { current in
+            var mutable = current
+            if mutable[permission] == nil {
+                mutable[permission] = [onEnable]
             } else {
-                airshipEnablers[permission]?.append(onEnable)
+                mutable[permission]?.append(onEnable)
             }
+            return mutable
         }
     }
     
@@ -251,10 +249,7 @@ public final class AirshipPermissionsManager: @unchecked Sendable {
     ) async {
         guard enableAirshipUsage else  { return }
 
-        var enablers: [(() async -> Void)]!
-        lock.sync {
-            enablers = self.airshipEnablers[permission] ?? []
-        }
+        let enablers = airshipEnablers.value[permission] ?? []
 
         for enabler in enablers {
             await enabler()
@@ -264,11 +259,7 @@ public final class AirshipPermissionsManager: @unchecked Sendable {
     private func permissionDelegate(
         _ permission: AirshipPermission
     ) -> (any AirshipPermissionDelegate)? {
-        var delegate: (any AirshipPermissionDelegate)?
-        lock.sync {
-            delegate = delegateMap[permission]
-        }
-        return delegate
+        return delegateMap.value[permission]
     }
     
     @MainActor
@@ -284,11 +275,8 @@ public final class AirshipPermissionsManager: @unchecked Sendable {
         permission: AirshipPermission,
         status: AirshipPermissionStatus
     ) async {
-        var extenders: [((AirshipPermissionStatus) async -> Void)]!
-        lock.sync {
-            extenders = self.extenders[permission] ?? []
-        }
-
+        let extenders = self.extenders.value[permission] ?? []
+        
         for extender in extenders {
             await extender(status)
         }

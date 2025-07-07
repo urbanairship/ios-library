@@ -2,7 +2,7 @@
 
 import Foundation
 
-protocol AppStateTrackerAdapter {
+protocol AppStateTrackerAdapter: Sendable {
     @MainActor
     var state: ApplicationState { get }
 
@@ -24,7 +24,7 @@ enum AppLifeCycleEvent: Sendable {
 #if os(watchOS)
 import WatchKit
 
-final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
+final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter {
     var state: ApplicationState {
         let appState = WKExtension.shared().applicationState
         switch appState {
@@ -97,7 +97,7 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
 #else
 import UIKit
 
-final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter, Sendable {
+final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter {
     var state: ApplicationState {
         let appState = UIApplication.shared.applicationState
         switch appState {

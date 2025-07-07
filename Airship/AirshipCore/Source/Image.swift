@@ -10,7 +10,7 @@ import UIKit
 import ImageIO
 
 /// - Note: for internal use only.  :nodoc:
-public final class AirshipImageData: @unchecked Sendable {
+public final class AirshipImageData: Sendable {
     // Image frame
     struct Frame {
         let image: UIImage

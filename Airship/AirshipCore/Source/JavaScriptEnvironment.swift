@@ -32,12 +32,11 @@ public protocol JavaScriptEnvironmentProtocol: Sendable {
 
 
 /// The JavaScript environment builder that is used by the native bridge.
-public final class JavaScriptEnvironment: JavaScriptEnvironmentProtocol, @unchecked Sendable {
+public final class JavaScriptEnvironment: JavaScriptEnvironmentProtocol, Sendable {
 
-    private var extensions: [String] = []
-    private var lock: AirshipLock = AirshipLock()
-    private let channel: () -> any AirshipChannelProtocol
-    private let contact: () -> any AirshipContactProtocol
+    private let extensions = AirshipAtomicValue([String]())
+    private let channel: @Sendable () -> any AirshipChannelProtocol
+    private let contact: @Sendable () -> any AirshipContactProtocol
 
     public convenience init() {
         self.init(
@@ -47,8 +46,8 @@ public final class JavaScriptEnvironment: JavaScriptEnvironmentProtocol, @unchec
     }
 
     init(
-        channel: @escaping () -> any AirshipChannelProtocol,
-        contact: @escaping () -> any AirshipContactProtocol
+        channel: @escaping @Sendable () -> any AirshipChannelProtocol,
+        contact: @escaping @Sendable () -> any AirshipContactProtocol
     ) {
         self.channel = channel
         self.contact = contact
@@ -75,9 +74,7 @@ public final class JavaScriptEnvironment: JavaScriptEnvironmentProtocol, @unchec
     public func build() async -> String {
         var js = "var _UAirship = {};"
         var extensions: [String] = await self.makeDefaultExtensions()
-        lock.sync {
-            extensions += self.extensions
-        }
+        extensions += self.extensions.value
 
         for ext in extensions {
             js = js.appending(ext)
@@ -134,8 +131,10 @@ public final class JavaScriptEnvironment: JavaScriptEnvironmentProtocol, @unchec
     }
 
     private func addExtension(_ ext: String) {
-        lock.sync {
-            self.extensions.append(ext)
+        self.extensions.update { current in
+            var mutable = current
+            mutable.append(ext)
+            return mutable
         }
     }
 

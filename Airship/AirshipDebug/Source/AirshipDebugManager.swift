@@ -12,6 +12,7 @@ public import AirshipKit
 
 public final class AirshipDebugManager: @unchecked Sendable {
     
+    @MainActor
     private var currentDisplay: (any AirshipMainActorCancellable)?
     private let pushDataManager: PushDataManager
     private let eventDataManager: EventDataManager

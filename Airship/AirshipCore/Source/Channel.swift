@@ -10,7 +10,7 @@ import UIKit
 
 
 /// This singleton provides an interface to the channel functionality.
-final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
+final class AirshipChannel: AirshipChannelProtocol, Sendable {
     private static let tagsDataStoreKey = "com.urbanairship.channel.tags"
     private static let legacyTagsSettingsKey = "UAPushTags"
 
@@ -35,9 +35,7 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
     private let liveActivityRegistry: LiveActivityRegistry
     #endif
 
-    private var shouldPerformChannelRegistrationOnForeground = false
-
-    private var isChannelCreationEnabled: Bool
+    private let isChannelCreationEnabled: AirshipAtomicValue<Bool>
 
     public var identifier: String? {
         return self.channelRegistrar.channelID
@@ -101,7 +99,11 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
         }
     }
 
-    public var isChannelTagRegistrationEnabled = true
+    private let isChannelTagRegistrationEnabledContainer = AirshipAtomicValue(true)
+    public var isChannelTagRegistrationEnabled: Bool {
+        get { return isChannelTagRegistrationEnabledContainer.value }
+        set { isChannelTagRegistrationEnabledContainer.value = newValue }
+    }
 
     @MainActor
     init(
@@ -137,10 +139,10 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
         if self.channelRegistrar.channelID != nil
             || !config.airshipConfig.isChannelCreationDelayEnabled
         {
-            self.isChannelCreationEnabled = true
+            self.isChannelCreationEnabled = .init(true)
         } else {
             AirshipLogger.debug("Channel creation disabled.")
-            self.isChannelCreationEnabled = false
+            self.isChannelCreationEnabled = .init(false)
         }
 
         self.migrateTags()
@@ -361,8 +363,8 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
     }
 
     public func enableChannelCreation() {
-        if !self.isChannelCreationEnabled {
-            self.isChannelCreationEnabled = true
+        if !self.isChannelCreationEnabled.value {
+            self.isChannelCreationEnabled.value = true
             self.updateRegistration()
         }
     }
@@ -372,7 +374,7 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
     }
 
     private var isRegistrationAllowed: Bool {
-        guard self.isChannelCreationEnabled else {
+        guard self.isChannelCreationEnabled.value else {
             AirshipLogger.debug(
                 "Channel creation is currently disabled, unable to update"
             )

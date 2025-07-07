@@ -6,7 +6,7 @@ import Foundation
  * Authentication challenge resolver class
  * @note For internal use only. :nodoc:
  */
-public class ChallengeResolver: NSObject, @unchecked Sendable  {
+public final class ChallengeResolver: NSObject, Sendable  {
     
     public static let shared = ChallengeResolver()
     

@@ -54,17 +54,16 @@ public protocol AirshipRequestSession: Sendable {
 
 /// Airship request session.
 /// - Note: For internal use only. :nodoc:
-final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Sendable {
+final class DefaultAirshipRequestSession: AirshipRequestSession, Sendable {
 
     private let session: any URLRequestSessionProtocol
     private let defaultHeaders: [String: String]
     private let appSecret: String
     private let appKey: String
     private let date: any AirshipDateProtocol
-    private let nonceFactory: () -> String
+    private let nonceFactory: @Sendable () -> String
 
-    private var authTasks: [AirshipRequestAuth: Task<ResolvedAuth, any Error>] = [:]
-
+    private let authTasks = AirshipAtomicValue([AirshipRequestAuth: Task<ResolvedAuth, any Error>]())
 
     @MainActor
     var channelAuthTokenProvider: (any AuthTokenProvider)?
@@ -380,13 +379,17 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
             throw AirshipErrors.error("Missing auth provider for auth \(requestAuth)")
         }
 
-        if let existingTask = self.authTasks[requestAuth] {
+        if let existingTask = self.authTasks.value[requestAuth] {
             return try await existingTask.value
         }
 
         let task = Task { @MainActor in
             defer {
-                self.authTasks[requestAuth] = nil
+                self.authTasks.update { current in
+                    var mutable = current
+                    mutable[requestAuth] = nil
+                    return mutable
+                }
             }
 
             let token = try await provider.resolveAuth(
@@ -403,7 +406,12 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, @unchecked Send
             }
         }
 
-        self.authTasks[requestAuth] = task
+        self.authTasks.update { current in
+            var mutable = current
+            mutable[requestAuth] = task
+            return mutable
+        }
+        
         return try await task.value
     }
 

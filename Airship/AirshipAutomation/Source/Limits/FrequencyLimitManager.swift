@@ -21,7 +21,7 @@ protocol FrequencyLimitManagerProtocol: Sendable {
 }
 
 /// Manager for keeping track of frequency limits and occurrence counts.
-final class FrequencyLimitManager: FrequencyLimitManagerProtocol, @unchecked Sendable {
+final class FrequencyLimitManager: FrequencyLimitManagerProtocol, Sendable {
     private let frequencyLimitStore: FrequencyLimitStore
     private let date: any AirshipDateProtocol
     private let storeQueue: AirshipSerialQueue

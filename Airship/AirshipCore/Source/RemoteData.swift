@@ -10,7 +10,7 @@ import UIKit
 
 /// NOTE: For internal use only. :nodoc:
 final class RemoteData: AirshipComponent, RemoteDataProtocol {
-    fileprivate enum RefreshStatus: @unchecked Sendable {
+    fileprivate enum RefreshStatus: Sendable {
         case none
         case success
         case failed

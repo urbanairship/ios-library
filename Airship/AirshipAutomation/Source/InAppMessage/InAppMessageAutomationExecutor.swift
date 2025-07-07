@@ -181,10 +181,9 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     }
 
     /// Delegates holder so I can keep the executor sendable
-    private final class Delegates: @unchecked Sendable {
+    private final class Delegates: Sendable {
         @MainActor
         weak var displayDelegate: (any InAppMessageDisplayDelegate)?
-
     }
 }
 

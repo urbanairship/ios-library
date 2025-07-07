@@ -3,7 +3,7 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
-public struct AirshipNotificationCenter: @unchecked Sendable {
+public struct AirshipNotificationCenter: Sendable {
 
     public static let shared = AirshipNotificationCenter()
 

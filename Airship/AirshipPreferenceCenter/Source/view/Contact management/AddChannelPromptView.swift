@@ -11,7 +11,7 @@ public enum AddChannelState {
     case loading
 }
 
-struct AddChannelPromptView: View, @unchecked Sendable {
+struct AddChannelPromptView: View, Sendable {
     @Environment(\.colorScheme)
     private var colorScheme
 

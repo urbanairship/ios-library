@@ -4,7 +4,7 @@ import Foundation
 import Combine
 
 /// Airship config needed for runtime. Generated from `AirshipConfig` during takeOff.
-public final class RuntimeConfig: @unchecked Sendable {
+public final class RuntimeConfig: Sendable {
 
     /// - NOTE: This option is reserved for internal debugging. :nodoc:
     public static let configUpdatedEvent = Notification.Name(

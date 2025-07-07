@@ -26,7 +26,7 @@ protocol AirshipInstanceProtocol: Sendable {
     func airshipReady()
 }
 
-final class AirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
+final class AirshipInstance: AirshipInstanceProtocol, Sendable {
     public let config: RuntimeConfig
     public let preferenceDataStore: PreferenceDataStore
 
@@ -55,7 +55,7 @@ final class AirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
     public let components: [any AirshipComponent]
     private let remoteConfigManager: RemoteConfigManager
     private let experimentManager: any ExperimentDataProvider
-    private var componentMap: [String: any AirshipComponent] = [:] //it's accessed with the lock below
+    private let componentMap = AirshipAtomicValue([String: any AirshipComponent]()) //it's accessed with the lock below
     private let lock = AirshipLock()
     
     @MainActor
@@ -224,13 +224,18 @@ final class AirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
         var component: E?
         lock.sync {
             let key = "Type:\(componentType)"
-            if componentMap[key] == nil {
-                self.componentMap[key] = self.components.first {
-                    ($0 as? E) != nil
+            var stored = componentMap.value[key]
+            
+            if stored == nil {
+                componentMap.update { current in
+                    var mutable = current
+                    stored = self.components.first { ($0 as? E) != nil }
+                    mutable[key] = stored
+                    return mutable
                 }
             }
             
-            component = componentMap[key] as? E
+            component = stored as? E
         }
         return component
     }
