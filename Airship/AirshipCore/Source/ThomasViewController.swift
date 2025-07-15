@@ -125,6 +125,8 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     }
     
     func handleBannerConstraints() {
+        guard self.view.window != nil else { return }
+
         if let heightConstraint = heightConstraint, let widthConstraint = widthConstraint, let centerXConstraint = centerXConstraint {
             centerXConstraint.isActive = true
             heightConstraint.isActive = true

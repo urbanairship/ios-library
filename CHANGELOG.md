@@ -5,6 +5,12 @@
 
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 18.14.4 July 15, 2025
+Patch release backported to ensure in-app views are still in the window hierarchy before updating constraints.
+
+### Changes
+- Fixed crash caused by constraints updating when in-app view isn't in the view hierarchy.
+
 ## Version 18.14.3 January 31, 2025
 Patch release backported to fix landing page dismiss button default color on iOS and crash caused by banner size changes during dismissal.
 
