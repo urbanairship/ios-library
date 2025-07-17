@@ -3,16 +3,16 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
-public struct AirshipNotificationCenter: @unchecked Sendable {
-
+public struct AirshipNotificationCenter: Sendable {
+    
     public static let shared = AirshipNotificationCenter()
-
+    
     private let notificationCenter: NotificationCenter
-
+    
     public init(notificationCenter: NotificationCenter = NotificationCenter.default) {
         self.notificationCenter = notificationCenter
     }
-
+    
     public func post(name: NSNotification.Name, object: Any? = nil, userInfo: [AnyHashable: Any]? = nil){
         self.notificationCenter.post(
             name: name,
@@ -20,7 +20,7 @@ public struct AirshipNotificationCenter: @unchecked Sendable {
             userInfo: userInfo
         )
     }
-
+    
     @discardableResult
     public func addObserver(
         forName: NSNotification.Name,
@@ -35,8 +35,7 @@ public struct AirshipNotificationCenter: @unchecked Sendable {
             using: using
         )
     }
-
-
+    
     public func postOnMain(name: NSNotification.Name, object: (any Sendable)? = nil, userInfo: [AnyHashable: Any]? = nil){
         let wrapped = try? AirshipJSON.wrap(userInfo)
         
@@ -48,8 +47,7 @@ public struct AirshipNotificationCenter: @unchecked Sendable {
             )
         }
     }
-
-
+    
     public func addObserver(_ observer: Any, selector: Selector, name: NSNotification.Name, object: Any? = nil) {
         notificationCenter.addObserver(observer, selector: selector, name: name, object: object)
     }
@@ -57,5 +55,4 @@ public struct AirshipNotificationCenter: @unchecked Sendable {
     public func removeObserver(_ observer: Any) {
         notificationCenter.removeObserver(observer)
     }
-    
 }

@@ -44,23 +44,31 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
     }
 
     public var identifierUpdates: AsyncStream<String> {
-        let publisher = self.channelRegistrar.updatesPublisher
-        return AsyncStream { [weak self] continuation in
-            let cancellable = publisher
-                .compactMap { update -> String in
-                    return switch update {
+        return AsyncStream<String> { [weak self] continuation in
+            let task = Task { [weak self] in
+                guard let stream = await self?.channelRegistrar.registrationUpdates.makeStream() else {
+                    return
+                }
+
+                var current = self?.channelRegistrar.channelID
+                if let current {
+                    continuation.yield(current)
+                }
+
+                for await update in stream {
+                    let channelID =  switch update {
                     case .created(let channelID, _): channelID
                     case .updated(channelID: let channelID): channelID
                     }
+                    if current != channelID {
+                        current = channelID
+                        continuation.yield(channelID)
+                    }
                 }
-                .prepend(self?.identifier)
-                .compactMap { $0 }
-                .removeDuplicates()
-                .sink { update in
-                    continuation.yield(update)
-                }
+            }
+
             continuation.onTermination = { _ in
-                cancellable.cancel()
+                task.cancel()
             }
         }
     }
@@ -145,12 +153,15 @@ final class AirshipChannel: AirshipChannelProtocol, @unchecked Sendable {
 
         self.migrateTags()
 
+        Task { @MainActor [weak self, weak channelRegistrar] in
+            guard let stream = await channelRegistrar?.registrationUpdates.makeStream() else {
+                return
+            }
 
-        self.subscription.value = self.channelRegistrar.updatesPublisher
-            .receive(on: RunLoop.main)
-            .sink { [weak self] update in
+            for await update in stream {
                 self?.processChannelUpdate(update)
             }
+        }
 
         self.channelRegistrar.payloadCreateBlock = { [weak self] in
             return await self?.makePayload()

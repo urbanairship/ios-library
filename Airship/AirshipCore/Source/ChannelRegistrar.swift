@@ -1,12 +1,11 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-@preconcurrency import Combine
 
 /// NOTE: For internal use only. :nodoc:
 protocol ChannelRegistrarProtocol: AnyObject, Sendable {
     var channelID: String? { get }
-    var updatesPublisher: AnyPublisher<ChannelRegistrationUpdate, Never> { get }
+    var registrationUpdates: AirshipAsyncChannel<ChannelRegistrationUpdate> { get }
 
     @MainActor
     var payloadCreateBlock: (@Sendable () async -> ChannelRegistrationPayload?)? { get set }
@@ -14,7 +13,7 @@ protocol ChannelRegistrarProtocol: AnyObject, Sendable {
     func register(forcefully: Bool)
 }
 
-enum ChannelRegistrationUpdate {
+enum ChannelRegistrationUpdate: Equatable, Sendable {
     case created(channelID: String, isExisting: Bool)
     case updated(channelID: String)
 }
@@ -35,8 +34,6 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
     private let date: any AirshipDateProtocol
     private let workManager: any AirshipWorkManagerProtocol
     private let appStateTracker: any AppStateTrackerProtocol
-
-    private let updatesSubject = CurrentValueSubject<ChannelRegistrationUpdate?, Never>(nil)
 
     @MainActor
     private var checkAppRestoreTask: Task<Void, Never>?
@@ -83,9 +80,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
         }
     }
 
-    var updatesPublisher: AnyPublisher<ChannelRegistrationUpdate, Never> {
-        return self.updatesSubject.compactMap { $0 }.eraseToAnyPublisher()
-    }
+    let registrationUpdates: AirshipAsyncChannel<ChannelRegistrationUpdate> = .init()
 
     private let privacyManager: any PrivacyManagerProtocol
 
@@ -224,11 +219,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
                 )
             )
 
-            Task { @MainActor in
-                self.updatesSubject.send(
-                    .updated(channelID: channelID)
-                )
-            }
+            await registrationUpdates.send(.updated(channelID: channelID))
 
             return .success
         } else if response.statusCode == 409 {
@@ -316,8 +307,8 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
         }
         
         self.channelID = result.channelID
-        
-        await self.updatesSubject.sendMainActor(
+
+        await registrationUpdates.send(
             .created(
                 channelID: result.channelID,
                 isExisting: response.statusCode == 200
