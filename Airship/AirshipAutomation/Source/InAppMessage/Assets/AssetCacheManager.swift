@@ -80,7 +80,14 @@ actor AssetCacheManager: AssetCacheManagerProtocol {
         let task: Task<AirshipCachedAssets, any Error> = Task {
             let startTime = Date()
 
-            let assetURLs = assets.compactMap({ URL(string:$0) })
+            // Deduplicate URLs to prevent concurrent operations on the same asset
+            let uniqueAssets = Array(Set(assets))
+            let assetURLs = uniqueAssets.compactMap({ URL(string:$0) })
+
+            // Log if duplicate URLs were found
+            if assets.count != uniqueAssets.count {
+                AirshipLogger.debug("Found duplicate asset URLs for identifier \(identifier): \(assets.count) URLs reduced to \(uniqueAssets.count) unique URLs")
+            }
 
             /// Create or get the directory for the assets corresponding to a specific identifier
             let cacheDirectory = try assetFileManager.ensureCacheDirectory(identifier: identifier)
@@ -96,6 +103,15 @@ actor AssetCacheManager: AssetCacheManagerProtocol {
                             }
 
                             let tempURL = try await self.assetDownloader.downloadAsset(remoteURL: asset)
+
+                            // Double-check after download in case another task cached it
+                            if cachedAssets.isCached(remoteURL: asset) {
+                                // Clean up temp file and return
+                                try? FileManager.default.removeItem(at: tempURL)
+                                AirshipLogger.trace("Asset was cached by another task during download, skipping: \(asset)")
+                                return
+                            }
+
                             if let cacheURL = cachedAssets.cachedURL(remoteURL: asset) {
                                 try self.assetFileManager.moveAsset(from: tempURL, to: cacheURL)
                             }
