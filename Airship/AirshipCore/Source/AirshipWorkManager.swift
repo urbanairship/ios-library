@@ -56,7 +56,7 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
             cancellable.cancel()
         }
 
-        cancellable.value = Task {  [workers, backgroundWorkRequests]  in
+        cancellable.value = Task { [workers, backgroundWorkRequests] in
             for request in backgroundWorkRequests.value {
                 await workers.dispatchWorkRequest(request)
             }
@@ -141,8 +141,8 @@ private actor Workers {
         maxTime: TimeInterval
     ) async -> TimeInterval {
         var result: TimeInterval = 0.0
-
-        for workerList in workerMap.values {
+        let workerListsCopy = Array(self.workerMap.values)
+        for workerList in workerListsCopy {
             for worker in workerList {
                 let workerResult = await worker.calculateBackgroundWaitTime(maxTime: maxTime)
                 result = max(result, workerResult)

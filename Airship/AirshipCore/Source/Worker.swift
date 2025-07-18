@@ -20,10 +20,8 @@ actor Worker {
     private let conditionsMonitor: WorkConditionsMonitor
     private let rateLimiter: WorkRateLimiter
     private let backgroundTasks: any WorkBackgroundTasksProtocol
-    private let workHandler:
-        (AirshipWorkRequest) async throws -> AirshipWorkResult
-    private let notificationCenter: NotificationCenter = NotificationCenter
-        .default
+    private let workHandler: (AirshipWorkRequest) async throws -> AirshipWorkResult
+    private let notificationCenter: NotificationCenter = NotificationCenter.default
 
     init(
         workID: String,
@@ -78,17 +76,17 @@ actor Worker {
 
     func run() async {
         for await next in self.workStream {
-            let task: Task<Void, any Error> = Task {
+            let task: Task<Void, any Error> = Task { [weak self] in
                 var attempt = 1
-                while self.isValidRequest(next) == true {
+                while await self?.isValidRequest(next) == true {
                     let cancellableValueHolder: CancellableValueHolder<Task<Void, any Error>> = CancellableValueHolder { task in
                         task.cancel()
                     }
-                    
+
                     await withTaskCancellationHandler { [attempt] in
-                        let task = Task {
+                        let task = Task { [weak self] in
                             try Task.checkCancellation()
-                            try await self.process(
+                            try await self?.process(
                                 pendingRequest: next,
                                 attempt: attempt
                             ) {
@@ -168,7 +166,7 @@ actor Worker {
                     onCancel()
                 }
 
-            try await sleep(backOff)
+            try await Self.sleep(backOff)
             cancellable.cancel()
         }
     }
@@ -216,7 +214,7 @@ actor Worker {
         if workRequest.initialDelay > 0 {
             let timeSinceRequest = Date().timeIntervalSince(pendingRequest.date)
             if timeSinceRequest < workRequest.initialDelay {
-                try await sleep(workRequest.initialDelay - timeSinceRequest)
+                try await Self.sleep(workRequest.initialDelay - timeSinceRequest)
             }
         }
 
@@ -230,9 +228,7 @@ actor Worker {
                     workRequest.rateLimitIDs
                 )
                 if rateLimit > 0 {
-                    try await Task.sleep(
-                        nanoseconds: UInt64(rateLimit * 1_000_000_000)
-                    )
+                    try await Self.sleep(rateLimit)
                 }
                 await self.conditionsMonitor.awaitConditions(
                     workRequest: workRequest
@@ -243,7 +239,8 @@ actor Worker {
         }
     }
 
-    private func sleep(_ time: TimeInterval) async throws {
+    private static func sleep(_ time: TimeInterval) async throws {
+        guard time > 0 else { return }
         let sleep = UInt64(time * 1_000_000_000)
         try await Task.sleep(nanoseconds: sleep)
     }
