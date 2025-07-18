@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, Prefere
         config.productionLogLevel = .verbose
         config.developmentLogLevel = .verbose
 
-        try! Airship.takeOff(config, launchOptions: launchOptions)
+        try! Airship.takeOff(config)
 
         Airship.channel.editTags { $0.add(["tvos"]) }
         Airship.deepLinkDelegate = self

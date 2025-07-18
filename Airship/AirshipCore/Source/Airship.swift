@@ -175,7 +175,7 @@ public final class Airship: Sendable {
 #endif
         }
     }
-#else
+#endif
 
     /// Initializes Airship. If any errors are found with the config or if Airship is already intiialized it will throw with
     /// the error.
@@ -187,8 +187,6 @@ public final class Airship: Sendable {
     ) throws {
         try commonTakeOff(config)
     }
-
-#endif
 
     /// On ready callback gets called immediately when ready otherwise gets called immediately after takeoff
     /// - Parameter callback: callback closure that's called when Airship is ready

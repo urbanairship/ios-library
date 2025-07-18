@@ -4,6 +4,15 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.7.0 - July 18, 2025
+A minor release that simplifies takeOff by deprecating methods with launchOptions, adds flexibility for initialization, and includes several bug fixes.
+
+### Changes
+- Deprecated `Airship.takeOff` methods that include launchOptions. The takeOff method still needs to be called before `application(_:didFinishLaunchingWithOptions:)` finishes to ensure proper notification delegate is set up.
+- Updated `Airship.takeOff` to allow it to be called from `MainApp.init` before the application delegate is set, even with automatic setup enabled.
+- Fixed a stack overflow exception when using Scenes in the iOS 26 beta.
+- Added a potential workaround for reported crashes within `AirshipWorkManager` and `AirshipChannel`.
+
 ## Version 19.6.1 - June 24, 2025
 Patch release with bug fixes for memory management, survey interactions, and accessibility improvements.
 

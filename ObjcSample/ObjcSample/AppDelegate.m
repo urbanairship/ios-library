@@ -20,7 +20,7 @@
     cfg.developmentLogLevel = UAAirshipLogLevelVerbose;
     cfg.productionLogLevel = UAAirshipLogLevelVerbose;
 
-    [UAirship takeOff:cfg launchOptions:launchOptions error: nil];
+    [UAirship takeOff:cfg error: nil];
     UAirship.deepLinkDelegate = self;
     UAirship.messageCenter.displayDelegate = self;
 
