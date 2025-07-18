@@ -12,6 +12,7 @@ A minor release that simplifies takeOff by deprecating methods with launchOption
 - Updated `Airship.takeOff` to allow it to be called from `MainApp.init` before the application delegate is set, even with automatic setup enabled.
 - Fixed a stack overflow exception when using Scenes in the iOS 26 beta.
 - Added a potential workaround for reported crashes within `AirshipWorkManager` and `AirshipChannel`.
+- Fixed a race condition in Scene asset file operations and improved file management.
 
 ## Version 19.6.1 - June 24, 2025
 Patch release with bug fixes for memory management, survey interactions, and accessibility improvements.
