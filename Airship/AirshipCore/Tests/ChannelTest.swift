@@ -342,7 +342,8 @@ class ChannelTest: XCTestCase {
         XCTAssertTrue(self.channelRegistrar.registerCalled)
     }
 
-    func testExistingChannelCreatedNotification() throws {
+    @MainActor
+    func testExistingChannelCreatedNotification() async throws {
         self.privacyManager.enableFeatures(.all)
 
         let expectedUserInfo: [String: Any] = [
@@ -363,17 +364,18 @@ class ChannelTest: XCTestCase {
             expectation.fulfill()
         }
 
-        self.channelRegistrar.updatesSubject.send(
+        await self.channelRegistrar.registrationUpdates.send(
             .created(
                 channelID: "someChannelID",
                 isExisting: true
             )
         )
 
-        self.waitForExpectations(timeout: 10)
+        await self.fulfillment(of: [expectation], timeout: 10.0)
     }
 
-    func testNewChannelCreatedNotification() throws {
+    @MainActor
+    func testNewChannelCreatedNotification() async throws {
         self.privacyManager.enableFeatures(.all)
 
         let expectedUserInfo: [String: Any] = [
@@ -394,30 +396,32 @@ class ChannelTest: XCTestCase {
             expectation.fulfill()
         }
 
-        self.channelRegistrar.updatesSubject.send(
+        await self.channelRegistrar.registrationUpdates.send(
             .created(
                 channelID: "someChannelID",
                 isExisting: false
             )
         )
 
-        self.waitForExpectations(timeout: 10)
+        await self.fulfillment(of: [expectation], timeout: 10.0)
     }
 
+    @MainActor
     func testIdentifierUpdates() async throws {
         var updates = self.channel.identifierUpdates.makeAsyncIterator()
 
         self.privacyManager.enableFeatures(.all)
 
 
-        self.channelRegistrar.updatesSubject.send(
+        await self.channelRegistrar.registrationUpdates.send(
             .created(
                 channelID: "someChannelID",
                 isExisting: false
             )
         )
 
-        self.channelRegistrar.updatesSubject.send(
+
+        await self.channelRegistrar.registrationUpdates.send(
             .created(
                 channelID: "someOtherChannelID",
                 isExisting: false
@@ -430,6 +434,7 @@ class ChannelTest: XCTestCase {
         XCTAssertEqual("someOtherChannelID", value)
     }
 
+    @MainActor
     func testIdentifierUpdatesDeduping() async throws {
         self.channelRegistrar.channelID = "someChannelID"
 
@@ -438,21 +443,7 @@ class ChannelTest: XCTestCase {
         self.privacyManager.enableFeatures(.all)
 
 
-        self.channelRegistrar.updatesSubject.send(
-            .created(
-                channelID: "someChannelID",
-                isExisting: false
-            )
-        )
-
-        self.channelRegistrar.updatesSubject.send(
-            .created(
-                channelID: "someChannelID",
-                isExisting: false
-            )
-        )
-
-        self.channelRegistrar.updatesSubject.send(
+        await self.channelRegistrar.registrationUpdates.send(
             .created(
                 channelID: "someChannelID",
                 isExisting: false
@@ -460,7 +451,20 @@ class ChannelTest: XCTestCase {
         )
 
 
-        self.channelRegistrar.updatesSubject.send(
+        await self.channelRegistrar.registrationUpdates.send(
+            .created(
+                channelID: "someChannelID",
+                isExisting: false
+            )
+        )
+
+        await self.channelRegistrar.registrationUpdates.send(
+            .created(
+                channelID: "someChannelID",
+                isExisting: false
+            )
+        )
+        await self.channelRegistrar.registrationUpdates.send(
             .created(
                 channelID: "someOtherChannelID",
                 isExisting: false
@@ -474,35 +478,29 @@ class ChannelTest: XCTestCase {
     }
 
     func testIdentifierUpdateAlreadyCreated() async throws {
+        self.privacyManager.enableFeatures(.all)
+
         self.channelRegistrar.channelID = "someChannelID"
         var updates = self.channel.identifierUpdates.makeAsyncIterator()
 
-        self.privacyManager.enableFeatures(.all)
 
-        self.channelRegistrar.updatesSubject.send(
+        var value = await updates.next()
+        XCTAssertEqual("someChannelID", value)
+
+        await self.channelRegistrar.registrationUpdates.send(
             .created(
                 channelID: "someOtherChannelID",
                 isExisting: false
             )
         )
-
-        var value = await updates.next()
-        XCTAssertEqual("someChannelID", value)
         value = await updates.next()
         XCTAssertEqual("someOtherChannelID", value)
     }
 
 
-    func testCreatedIdentifierPassedToAudienceManager() throws {
-        self.channelRegistrar.updatesSubject.send(
-            .created(
-                channelID: "foo",
-                isExisting: true
-            )
-        )
-
+    @MainActor
+    func testCreatedIdentifierPassedToAudienceManager() async throws {
         let expectation = self.expectation(description: "Notification received")
-
         self.notificationCenter.addObserver(
             forName: AirshipNotifications.ChannelCreated.name,
             object: nil,
@@ -511,7 +509,14 @@ class ChannelTest: XCTestCase {
             expectation.fulfill()
         }
 
-        self.waitForExpectations(timeout: 10)
+        await self.channelRegistrar.registrationUpdates.send(
+            .created(
+                channelID: "foo",
+                isExisting: true
+            )
+        )
+
+        await self.fulfillment(of: [expectation], timeout: 10.0)
         XCTAssertEqual("foo", self.audienceManager.channelID)
     }
 

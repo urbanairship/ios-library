@@ -119,6 +119,7 @@ public final class UAirship: NSObject, Sendable {
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
     @objc
     @MainActor
+    @available(*, deprecated, message: "Use Airship.takeOff() instead")
     public class func takeOff(
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) throws {
@@ -131,6 +132,7 @@ public final class UAirship: NSObject, Sendable {
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
     @objc
     @MainActor
+    @available(*, deprecated, message: "Use Airship.takeOff(_:) instead")
     public class func takeOff(
         _ config: UAConfig?,
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -138,13 +140,13 @@ public final class UAirship: NSObject, Sendable {
         try Airship.takeOff(config?.config, launchOptions: launchOptions)
     }
 
-#else
+#endif
 
     /// Initializes Airship. Config will be read from `AirshipConfig.plist`.
     @objc
     @MainActor
     public class func takeOff() throws {
-        try Airship.takeOff(nil)
+        try Airship.takeOff()
     }
 
     /// Initializes Airship.
@@ -155,8 +157,6 @@ public final class UAirship: NSObject, Sendable {
     public class func takeOff(_ config: UAConfig?) throws {
         try Airship.takeOff(config?.config)
     }
-    
-#endif
 
     @MainActor
     fileprivate final class Storage  {

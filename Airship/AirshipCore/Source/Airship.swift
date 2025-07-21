@@ -153,6 +153,7 @@ public final class Airship: Sendable {
     ///     - config: The Airship config. If nil, config will be loading from a plist.
     ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
     @MainActor
+    @available(*, deprecated, message: "Use Airship.takeOff(_:) instead")
     public class func takeOff(
         _ config: AirshipConfig? = nil,
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -174,7 +175,7 @@ public final class Airship: Sendable {
 #endif
         }
     }
-#else
+#endif
 
     /// Initializes Airship. If any errors are found with the config or if Airship is already intiialized it will throw with
     /// the error.
@@ -186,8 +187,6 @@ public final class Airship: Sendable {
     ) throws {
         try commonTakeOff(config)
     }
-
-#endif
 
     /// On ready callback gets called immediately when ready otherwise gets called immediately after takeoff
     /// - Parameter callback: callback closure that's called when Airship is ready
@@ -281,7 +280,34 @@ public final class Airship: Sendable {
                     function: function
                 )
             }
+            #if !os(tvOS) && !os(watchOS)
+            // Check if app delegate is available for swizzling
+            if UIApplication.shared.delegate == nil {
+                AirshipLogger.info("App delegate not set, deferring automatic integration until didFinishLaunching.")
+
+                // Defer swizzling until app delegate is available (SwiftUI App.init() case)
+                NotificationCenter.default.addObserver(
+                    forName: UIApplication.didFinishLaunchingNotification,
+                    object: nil,
+                    queue: .main
+                ) { _ in
+                    Task { @MainActor in
+                        if UIApplication.shared.delegate != nil {
+                            AirshipLogger.info("App delegate now available via didFinishLaunching, performing automatic integration.")
+                            UAAutoIntegration.integrate(with: integrationDelegate)
+                        } else {
+                            AirshipLogger.error("App delegate still not set after didFinishLaunching. Automatic setup skipped.")
+                        }
+                    }
+                }
+            } else {
+                // App delegate is available, integrate immediately
+                UAAutoIntegration.integrate(with: integrationDelegate)
+            }
+            #else
+            // watchOS and tvOS always integrate immediately
             UAAutoIntegration.integrate(with: integrationDelegate)
+            #endif
         } else {
             AppIntegration.integrationDelegate = integrationDelegate
         }
@@ -481,3 +507,4 @@ public final class AirshipNotifications {
         public static let payloadVersionKey = "payload_version"
     }
 }
+

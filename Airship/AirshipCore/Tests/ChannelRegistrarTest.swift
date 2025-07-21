@@ -78,6 +78,7 @@ class ChannelRegistrarTest: XCTestCase {
 
     func testCreateChannel() async throws {
         await makeRegistrar()
+        var stream = await self.channelRegistrar.registrationUpdates.makeStream().makeAsyncIterator()
 
         let payload = await payloadProvider.getPayload()
 
@@ -100,31 +101,22 @@ class ChannelRegistrarTest: XCTestCase {
                 headers: [:])
         }
 
-        let channelUpdated = self.expectation(description: "channel updated")
-        self.channelRegistrar.updatesPublisher.sink { update in
-            guard case let .created(channelID, isExisting) = update else {
-                XCTFail("Unexpected update")
-                return
-            }
-            XCTAssertEqual("some-channel-id", channelID)
-            XCTAssertFalse(isExisting)
-            channelUpdated.fulfill()
-        }.store(in: &self.subscriptions)
-
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(workID: workID)
         )
 
         XCTAssertEqual(.success, result)
 
-        await self.fulfillment(of: [channelUpdated], timeout: 10.0)
+        let update = await stream.next()
+        XCTAssertEqual(.created(channelID: "some-channel-id", isExisting: false), update)
     }
 
     func testCreateChannelRestores() async throws {
         let restoredUUID = UUID().uuidString
         self.channelCreateMethod = .restore(channelID: restoredUUID)
         await makeRegistrar()
-        
+        var stream = await self.channelRegistrar.registrationUpdates.makeStream().makeAsyncIterator()
+
         let payload = await payloadProvider.getPayload()
 
         await MainActor.run {
@@ -137,22 +129,6 @@ class ChannelRegistrarTest: XCTestCase {
             XCTFail()
             throw AirshipErrors.error("")
         }
-
-        let channelUpdated = self.expectation(description: "channel updated")
-        var updateCounter = 0
-        self.channelRegistrar.updatesPublisher.sink { update in
-            switch update {
-            case .created(let channelID, let isExisting):
-                XCTAssertEqual(restoredUUID, channelID)
-                XCTAssertTrue(isExisting)
-            case .updated(let channelID):
-                XCTAssertEqual(restoredUUID, channelID)
-            }
-            updateCounter += 1
-            if updateCounter > 1 {
-                channelUpdated.fulfill()
-            }
-        }.store(in: &self.subscriptions)
         
         self.client.updateCallback = { channelID, channelPayload in
             XCTAssertEqual(restoredUUID, channelID)
@@ -162,7 +138,7 @@ class ChannelRegistrarTest: XCTestCase {
                 result: ChannelAPIResponse(
                     channelID: restoredUUID,
                     location: try self.client.makeChannelLocation(
-                        channelID: "some-channel-id"
+                        channelID: restoredUUID
                     )
                 ),
                 statusCode: 200,
@@ -174,9 +150,13 @@ class ChannelRegistrarTest: XCTestCase {
             request: AirshipWorkRequest(workID: workID)
         )
 
-        XCTAssertEqual(.success, result)
+        var update = await stream.next()
+        XCTAssertEqual(.created(channelID: restoredUUID, isExisting: true), update)
 
-        await self.fulfillment(of: [channelUpdated], timeout: 10.0)
+        update = await stream.next()
+        XCTAssertEqual(.updated(channelID: restoredUUID), update)
+
+        XCTAssertEqual(.success, result)
     }
 
     func testRestoreFallBackToCreateOnInvalidID() async throws {
@@ -217,6 +197,7 @@ class ChannelRegistrarTest: XCTestCase {
 
     func testCreateChannelExisting() async throws {
         await makeRegistrar()
+        var stream = await self.channelRegistrar.registrationUpdates.makeStream().makeAsyncIterator()
 
         let payload = await payloadProvider.getPayload()
         
@@ -234,24 +215,13 @@ class ChannelRegistrarTest: XCTestCase {
             )
         }
 
-        let channelUpdated = self.expectation(description: "channel updated")
-        self.channelRegistrar.updatesPublisher.sink { update in
-            guard case let .created(channelID, isExisting) = update else {
-                XCTFail("Unexpected update")
-                return
-            }
-            XCTAssertEqual("some-channel-id", channelID)
-            XCTAssertTrue(isExisting)
-            channelUpdated.fulfill()
-        }.store(in: &self.subscriptions)
-
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(workID: workID)
         )
-
         XCTAssertEqual(.success, result)
 
-        await self.fulfillment(of: [channelUpdated], timeout: 10.0)
+        let update = await stream.next()
+        XCTAssertEqual(.created(channelID: "some-channel-id", isExisting: true), update)
     }
 
     func testCreateChannelError() async throws {
@@ -352,6 +322,8 @@ class ChannelRegistrarTest: XCTestCase {
 
     func testUpdateChannel() async throws {
         await makeRegistrar()
+        var stream = await self.channelRegistrar.registrationUpdates.makeStream().makeAsyncIterator()
+
         let someChannelID = UUID().uuidString
 
         try await createChannel(channelID: someChannelID)
@@ -361,7 +333,6 @@ class ChannelRegistrarTest: XCTestCase {
         }
 
         let payload = await payloadProvider.getPayload()
-
 
         self.client.updateCallback = { channelID, channelPayload in
             XCTAssertEqual(someChannelID, channelID)
@@ -373,7 +344,7 @@ class ChannelRegistrarTest: XCTestCase {
                 result: ChannelAPIResponse(
                     channelID: someChannelID,
                     location: try self.client.makeChannelLocation(
-                        channelID: "some-channel-id"
+                        channelID: someChannelID
                     )
                 ),
                 statusCode: 200,
@@ -381,22 +352,15 @@ class ChannelRegistrarTest: XCTestCase {
             )
         }
 
-        let channelUpdated = self.expectation(description: "channel updated")
-        self.channelRegistrar.updatesPublisher.dropFirst().sink { update in
-            guard case let .updated(channelID) = update else {
-                XCTFail("Unexpected update")
-                return
-            }
-            XCTAssertEqual(someChannelID, channelID)
-            channelUpdated.fulfill()
-        }.store(in: &self.subscriptions)
-
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(workID: workID)
         )
-
         XCTAssertEqual(.success, result)
-        await self.fulfillment(of: [channelUpdated], timeout: 10)
+
+        var update = await stream.next()
+        XCTAssertEqual(.created(channelID: someChannelID, isExisting: true), update)
+        update = await stream.next()
+        XCTAssertEqual(.updated(channelID: someChannelID), update)
     }
 
     func testUpdateChannelError() async throws {
@@ -520,6 +484,8 @@ class ChannelRegistrarTest: XCTestCase {
 
     func testUpdateForcefully() async throws {
         await makeRegistrar()
+        var stream = await self.channelRegistrar.registrationUpdates.makeStream().makeAsyncIterator()
+
         let someChannelID = UUID().uuidString
         try await createChannel(channelID: someChannelID)
 
@@ -536,16 +502,6 @@ class ChannelRegistrarTest: XCTestCase {
             )
         }
 
-        let channelUpdated = self.expectation(description: "channel updated")
-        self.channelRegistrar.updatesPublisher.dropFirst().sink { update in
-            guard case let .updated(channelID) = update else {
-                XCTFail("Unexpected update")
-                return
-            }
-            XCTAssertEqual(someChannelID, channelID)
-            channelUpdated.fulfill()
-        }.store(in: &self.subscriptions)
-
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
                 workID: workID,
@@ -554,11 +510,17 @@ class ChannelRegistrarTest: XCTestCase {
         )
 
         XCTAssertEqual(.success, result)
-        await self.fulfillment(of: [channelUpdated], timeout: 10)
+
+        var update = await stream.next()
+        XCTAssertEqual(.created(channelID: someChannelID, isExisting: true), update)
+        update = await stream.next()
+        XCTAssertEqual(.updated(channelID: someChannelID), update)
     }
 
     func testUpdateLocationChanged() async throws {
         await makeRegistrar()
+        var stream = await self.channelRegistrar.registrationUpdates.makeStream().makeAsyncIterator()
+
         let someChannelID = UUID().uuidString
 
         let payload = await payloadProvider.getPayload()
@@ -584,28 +546,23 @@ class ChannelRegistrarTest: XCTestCase {
             )
         }
 
-        let channelUpdated = self.expectation(description: "channel updated")
-        self.channelRegistrar.updatesPublisher.dropFirst().sink { update in
-            guard case let .updated(channelID) = update else {
-                XCTFail("Unexpected update")
-                return
-            }
-            XCTAssertEqual(someChannelID, channelID)
-            channelUpdated.fulfill()
-        }.store(in: &self.subscriptions)
-
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
                 workID: workID
             )
         )
-
         XCTAssertEqual(.success, result)
-        await self.fulfillment(of: [channelUpdated], timeout: 10)
+
+        var update = await stream.next()
+        XCTAssertEqual(.created(channelID: someChannelID, isExisting: true), update)
+        update = await stream.next()
+        XCTAssertEqual(.updated(channelID: someChannelID), update)
     }
 
     func testUpdateMinPayload() async throws {
         await makeRegistrar()
+        var stream = await self.channelRegistrar.registrationUpdates.makeStream().makeAsyncIterator()
+
         let someChannelID = UUID().uuidString
 
         let firstPayload = await self.payloadProvider.getPayload()
@@ -638,16 +595,6 @@ class ChannelRegistrarTest: XCTestCase {
             )
         }
 
-        let channelUpdated = self.expectation(description: "channel updated")
-        self.channelRegistrar.updatesPublisher.dropFirst().sink { update in
-            guard case let .updated(channelID) = update else {
-                XCTFail("Unexpected update")
-                return
-            }
-            XCTAssertEqual(someChannelID, channelID)
-            channelUpdated.fulfill()
-        }.store(in: &self.subscriptions)
-
         let result = try await self.workManager.launchTask(
             request: AirshipWorkRequest(
                 workID: workID
@@ -655,7 +602,11 @@ class ChannelRegistrarTest: XCTestCase {
         )
 
         XCTAssertEqual(.success, result)
-        await self.fulfillment(of: [channelUpdated], timeout: 10)
+
+        var update = await stream.next()
+        XCTAssertEqual(.created(channelID: someChannelID, isExisting: true), update)
+        update = await stream.next()
+        XCTAssertEqual(.updated(channelID: someChannelID), update)
     }
 
     @MainActor

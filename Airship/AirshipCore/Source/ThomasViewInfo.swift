@@ -249,6 +249,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var size: ThomasSize
             var margin: ThomasMargin?
             var view: ThomasViewInfo
+            var position: ThomasPosition?
         }
     }
 

@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
         config.productionLogLevel = .verbose
         config.developmentLogLevel = .verbose
 
-        try! Airship.takeOff(config, launchOptions: launchOptions)
+        try! Airship.takeOff(config)
 
         Airship.push.autobadgeEnabled = true
         Airship.push.notificationOptions = [.alert, .badge, .sound, .carPlay]

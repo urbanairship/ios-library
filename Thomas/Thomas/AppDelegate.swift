@@ -20,7 +20,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             config.isWebViewInspectionEnabled = true
             config.developmentLogLevel = .verbose
             config.productionLogLevel = .verbose
-            try Airship.takeOff(config, launchOptions: launchOptions)
+            try Airship.takeOff(config)
         } catch {
             showInvalidConfigAlert()
             return true

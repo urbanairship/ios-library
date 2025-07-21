@@ -13,95 +13,90 @@ public enum URLInfo: Sendable, Equatable {
 extension AirshipLayout {
 
     public var urlInfos: [URLInfo] {
-        return extractUrlInfos(model: self.view) ?? []
+        return extract { info in
+            switch info {
+            case .media(let info):
+                switch info.properties.mediaType {
+                case .image:
+                    return [.image(url: info.properties.url)]
+                case .youtube:
+                    return [.video(url: info.properties.url)]
+                case .vimeo:
+                    return [.video(url: info.properties.url)]
+                case .video:
+                    return [.video(url: info.properties.url)]
+                }
+            #if !os(tvOS) && !os(watchOS)
+            case .webView(let info):
+                return [.web(url: info.properties.url)]
+            #endif
+            case .imageButton(let info):
+                switch info.properties.image {
+                case .url(let imageModel):
+                    return [.image(url: imageModel.url)]
+                case .icon(_):
+                    return nil
+                }
+            default: return nil
+            }
+        }
+    }
+    
+    private func extract<T>(extractor: (ThomasViewInfo) -> [T]?) -> [T] {
+        var infos: [ThomasViewInfo] = [self.view]
+        var result: [T] = []
+        while (!infos.isEmpty) {
+            let info = infos.removeFirst()
+            if let children = immediateChildren(info: info) {
+                infos.append(contentsOf: children)
+            }
+
+            if let value = extractor(info) {
+                result.append(contentsOf: value)
+            }
+        }
+
+        return result
     }
 
-    private func extractUrlInfos(model: ThomasViewInfo) -> [URLInfo]? {
-        switch model {
-        case .container(let info):
-            return info.properties.items
-                .compactMap { extractUrlInfos(model: $0.view) }
-                .reduce([], +)
-        case .linearLayout(let model):
-            return model.properties.items
-                .compactMap { extractUrlInfos(model: $0.view) }
-                .reduce([], +)
-        case .pager(let model):
-            return model.properties.items
-                .compactMap { extractUrlInfos(model: $0.view) }
-                .reduce([], +)
-        case .scrollLayout(let model):
-            return extractUrlInfos(model: model.properties.view)
-        case .checkboxController(let model):
-            return extractUrlInfos(model: model.properties.view)
-        case .radioInputController(let model):
-            return extractUrlInfos(model: model.properties.view)
-        case .formController(let model):
-            return extractUrlInfos(model: model.properties.view)
-        case .npsController(let model):
-            return extractUrlInfos(model: model.properties.view)
-        case .pagerController(let model):
-            return extractUrlInfos(model: model.properties.view)
-        case .media(let info):
-            switch info.properties.mediaType {
-            case .image:
-                return [.image(url: info.properties.url)]
-            case .youtube:
-                return [.video(url: info.properties.url)]
-            case .vimeo:
-                return [.video(url: info.properties.url)]
-            case .video:
-                return [.video(url: info.properties.url)]
-            }
+
+    private func immediateChildren(info: ThomasViewInfo) -> [ThomasViewInfo]? {
+        return switch info {
+        case .container(let info): info.properties.items.map { $0.view }
+        case .linearLayout(let info): info.properties.items.map { $0.view }
+        case .pager(let info): info.properties.items.map { $0.view }
+        case .scrollLayout(let info): [info.properties.view]
+        case .checkboxController(let info): [info.properties.view]
+        case .radioInputController(let info): [info.properties.view]
+        case .formController(let info): [info.properties.view]
+        case .npsController(let info): [info.properties.view]
+        case .pagerController(let info): [info.properties.view]
+        case .media: nil
+        case .imageButton: nil
         #if !os(tvOS) && !os(watchOS)
-        case .webView(let info):
-            return [.web(url: info.properties.url)]
+        case .webView: nil
         #endif
-        case .imageButton(let model):
-            switch model.properties.image {
-            case .url(let imageModel):
-                return [.image(url: imageModel.url)]
-            case .icon(_):
-                return nil
-            }
-        case .label(_):
-            return nil
-        case .labelButton(_):
-            return nil
-        case .emptyView(_):
-            return nil
-        case .pagerIndicator(_):
-            return nil
-        case .storyIndicator(_):
-            return nil
-        case .checkbox(_):
-            return nil
-        case .radioInput(_):
-            return nil
-        case .textInput(_):
-            return nil
-        case .score(_):
-            return nil
-        case .toggle(_):
-            return nil
-        case .stateController(_):
-            return nil
-        case .customView(_):
-            return nil
-        case .buttonLayout(let model):
-            return extractUrlInfos(model: model.properties.view)
-        case .basicToggleLayout(let model):
-            return extractUrlInfos(model: model.properties.view)
-        case .checkboxToggleLayout(let model):
-            return extractUrlInfos(model: model.properties.view)
-        case .radioInputToggleLayout(let model):
-            return extractUrlInfos(model: model.properties.view)
-        case .iconView(_):
-            return nil
-        case .scoreController(let model):
-            return extractUrlInfos(model: model.properties.view)
-        case .scoreToggleLayout(let model):
-            return extractUrlInfos(model: model.properties.view)
+        case .label: nil
+        case .labelButton: nil
+        case .emptyView: nil
+        case .pagerIndicator(_): nil
+        case .storyIndicator(_): nil
+        case .checkbox(_): nil
+        case .radioInput(_): nil
+        case .textInput(_): nil
+        case .score(_): nil
+        case .toggle(_): nil
+        case .stateController(let info): [info.properties.view]
+        case .customView: nil
+        case .buttonLayout(let info): [info.properties.view]
+        case .basicToggleLayout(let info): [info.properties.view]
+        case .checkboxToggleLayout(let info): [info.properties.view]
+        case .radioInputToggleLayout(let info): [info.properties.view]
+        case .iconView: nil
+        case .scoreController(let info): [info.properties.view]
+        case .scoreToggleLayout(let info): [info.properties.view]
         }
     }
 }
+
+

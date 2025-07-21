@@ -4,6 +4,26 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.7.0 - July 18, 2025
+A minor release that simplifies takeOff by deprecating methods with launchOptions, adds flexibility for initialization, and includes several bug fixes.
+
+### Changes
+- Deprecated `Airship.takeOff` methods that include launchOptions. The takeOff method still needs to be called before `application(_:didFinishLaunchingWithOptions:)` finishes to ensure proper notification delegate is set up.
+- Updated `Airship.takeOff` to allow it to be called from `MainApp.init` before the application delegate is set, even with automatic setup enabled.
+- Fixed a stack overflow exception when using Scenes in the iOS 26 beta.
+- Added a potential workaround for reported crashes within `AirshipWorkManager` and `AirshipChannel`.
+- Fixed a race condition in Scene asset file operations and improved file management.
+
+## Version 19.6.1 - June 24, 2025
+Patch release with bug fixes for memory management, survey interactions, and accessibility improvements.
+
+### Changes
+- Fixed a memory issue in `AirshipWorkManager` where temporary arrays were being created unnecessarily when calculating background wait times.
+- Fixed an issue where NPS survey score selection required double-tapping by properly restoring both the score value and index when loading from form state.
+- Fixed a potential crash when updating constraints for banner views that have been removed from the view hierarchy.
+- Improved VoiceOver accessibility by ensuring toggles, checkboxes, and radio inputs remain accessible even without explicit accessibility descriptions.
+- Added accessibility header traits to section titles in Message Center, Preference Center, and other UI components for better VoiceOver navigation.
+
 ## Version 19.6.0 - June 17, 2025
 A minor update with enhancements to Scenes and Message Center functionality and a bug fix for Automation. This version is required for Scene branching and phone number collection.
 

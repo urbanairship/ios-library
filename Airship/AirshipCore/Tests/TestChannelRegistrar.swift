@@ -3,12 +3,9 @@ import Combine
 @testable import AirshipCore
 
 class TestChannelRegistrar:  ChannelRegistrarProtocol, @unchecked Sendable {
-    var payloadCreateBlock: (@Sendable () async -> AirshipCore.ChannelRegistrationPayload?)?
+    let registrationUpdates: AirshipAsyncChannel<ChannelRegistrationUpdate> = .init()
 
-    let updatesSubject = PassthroughSubject<ChannelRegistrationUpdate, Never>()
-    public var updatesPublisher: AnyPublisher<ChannelRegistrationUpdate, Never> {
-        return updatesSubject.eraseToAnyPublisher()
-    }
+    var payloadCreateBlock: (@Sendable () async -> AirshipCore.ChannelRegistrationPayload?)?
 
     private var extenders: [@Sendable (inout ChannelRegistrationPayload) async -> Void] = []
 

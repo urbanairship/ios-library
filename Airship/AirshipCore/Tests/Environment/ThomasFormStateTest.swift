@@ -359,7 +359,6 @@ struct ThomasFormStateTest {
 
     @Test("Test data change for immediate mode.")
     func testDataChangeImmediate() async throws {
-        print("start")
         let screen = AirshipMainActorValue("foo")
 
         let form = ThomasFormState(
@@ -385,26 +384,32 @@ struct ThomasFormStateTest {
             input: .email(nil)
         )
 
-        form.updateField(fooField) {
-            screen.value == "foo"
-        }
-        #expect(form.activeFields.count == 1)
-
         form.updateField(barField) {
             screen.value == "bar"
         }
+
+        await #expect(updates.next() == .valid)
+
+        form.updateField(fooField) {
+            screen.value == "foo"
+        }
+
         #expect(form.activeFields.count == 1)
+        await #expect(updates.next() == .pendingValidation)
+        await #expect(updates.next() == .validating)
+        await #expect(updates.next() == .valid)
 
         await #expect(form.validate() == true)
-        await #expect(updates.next() == .pendingValidation)
         await #expect(updates.next() == .validating)
         await #expect(updates.next() == .valid)
 
         screen.update { $0 = "bar" }
         form.dataChanged()
+        await #expect(updates.next() == .pendingValidation)
+        await #expect(updates.next() == .validating)
+        await #expect(updates.next() == .invalid)
 
         await #expect(form.validate() == false)
-        await #expect(updates.next() == .pendingValidation)
         await #expect(updates.next() == .validating)
         await #expect(updates.next() == .invalid)
 
