@@ -22,6 +22,7 @@ struct LinearLayout: View {
         items: [ThomasViewInfo.LinearLayout.Item],
         parentConstraints: ViewConstraints
     ) -> some View {
+
         VStack(alignment: .center, spacing: 0) {
             ForEach(0..<items.count, id: \.self) { index in
 #if os(tvOS)
@@ -30,14 +31,32 @@ struct LinearLayout: View {
                 }
                 .frame(maxWidth: .infinity)
                 .focusSection()
+                .airshipApplyIf(
+                    items[index].hasPerItemAlignment(stackDirection: .vertical)
+                ) {
+                    $0.frame(
+                        maxWidth: .infinity,
+                        alignment: items[index].position?.alignment ?? .center
+                    )
+                }
 #else
                 childItem(items[index], parentConstraints: parentConstraints)
+                    .airshipApplyIf(
+                        items[index].hasPerItemAlignment(stackDirection: .vertical)
+                    ) {
+                        $0.frame(
+                            maxWidth: .infinity,
+                            alignment: items[index].position?.alignment ?? .center
+                        )
+                    }
 #endif
             }
         }
         .airshipGeometryGroupCompat()
         .constraints(self.constraints, alignment: .top)
+        .applyFixedSizeForAlignment(info: self.info, constraints: constraints)
     }
+
 
     @ViewBuilder
     @MainActor
@@ -45,7 +64,8 @@ struct LinearLayout: View {
         items: [ThomasViewInfo.LinearLayout.Item],
         parentConstraints: ViewConstraints
     ) -> some View {
-        HStack(spacing: 0) {
+
+        HStack(alignment: .center, spacing: 0) {
             ForEach(0..<items.count, id: \.self) { index in
 #if os(tvOS)
                 VStack {
@@ -53,13 +73,31 @@ struct LinearLayout: View {
                 }
                 .frame(maxHeight: .infinity)
                 .focusSection()
+                .airshipApplyIf(
+                    items[index].hasPerItemAlignment(stackDirection: .horizontal)
+                ) {
+                    $0.frame(
+                        maxHeight: .infinity,
+                        alignment: items[index].position?.alignment ?? .center
+                    )
+                }
 #else
                 childItem(items[index], parentConstraints: parentConstraints)
+                    .airshipApplyIf(
+                        items[index].hasPerItemAlignment(stackDirection: .horizontal)
+                    ) {
+                        $0.frame(
+                            maxHeight: .infinity,
+                            alignment: items[index].position?.alignment ?? .center
+                        )
+                    }
 #endif
             }
         }
         .constraints(constraints, alignment: .leading)
+        .applyFixedSizeForAlignment(info: self.info, constraints: constraints)
     }
+
 
     @ViewBuilder
     @MainActor
@@ -145,5 +183,45 @@ class RepeatableNumberGenerator: RandomNumberGenerator {
 
     func repeatNumbers() {
         index = 0
+    }
+}
+
+fileprivate extension ThomasViewInfo.LinearLayout.Item {
+    func hasPerItemAlignment(stackDirection: ThomasDirection) -> Bool {
+        guard let position = self.position else { return false }
+        switch(stackDirection) {
+        case .horizontal: return position.vertical != .center
+        case .vertical: return position.horizontal != .center
+        }
+    }
+}
+
+fileprivate extension View {
+    @ViewBuilder
+    func applyFixedSizeForAlignment(
+        info: ThomasViewInfo.LinearLayout,
+        constraints: ViewConstraints
+    ) -> some View {
+        if info.properties.direction == .horizontal {
+            let hasPerItemAlignment = info.properties.items.contains {
+                $0.hasPerItemAlignment(stackDirection: .horizontal)
+            }
+
+            if hasPerItemAlignment, constraints.width == nil {
+                self.fixedSize(horizontal: false, vertical: true)
+            } else {
+                self
+            }
+        } else {
+            let hasPerItemAlignment = info.properties.items.contains {
+                $0.hasPerItemAlignment(stackDirection: .vertical)
+            }
+
+            if hasPerItemAlignment, constraints.height == nil {
+                self.fixedSize(horizontal: true, vertical: false)
+            } else {
+                self
+            }
+        }
     }
 }
