@@ -159,11 +159,16 @@ view:
                                                     type: ellipse
                                             type: checkbox
                                           type: radio_input
+                                          identifier: first_one
                                       - size:
                                           height: 100%
                                           width: 100%
                                         view:
                                           text: 🔥`satisfied`🔥
+                                          labels:
+                                            type: labels
+                                            view_type: radio_input
+                                            view_id: first_one
                                           text_appearance:
                                             alignment: start
                                             color:

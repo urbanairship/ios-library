@@ -9,7 +9,17 @@ struct LabelButton : View {
     let info: ThomasViewInfo.LabelButton
     let constraints: ViewConstraints
     @Environment(\.layoutState) var layoutState
-    
+    @EnvironmentObject var thomasState: ThomasState
+    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+
+    private var associatedLabel: String? {
+        associatedLabelResolver?.labelFor(
+            identifier: info.properties.identifier,
+            viewType: .labelButton,
+            thomasState: thomasState
+        )
+    }
+
     init(info: ThomasViewInfo.LabelButton, constraints: ViewConstraints) {
         self.info = info
         self.constraints = constraints
@@ -38,7 +48,11 @@ struct LabelButton : View {
                     border: self.info.commonProperties.border,
                     borderOverrides: self.info.commonOverrides?.border
                 )
-                .accessible(self.info.accessible)
+                .accessible(
+                    self.info.accessible,
+                    associatedLabel: associatedLabel,
+                    hideIfDescriptionIsMissing: false
+                )
                 .background(Color.airshipTappableClear)
         }
         .thomasEnableBehaviors(self.info.commonProperties.enabled)

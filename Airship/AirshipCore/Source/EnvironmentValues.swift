@@ -27,6 +27,9 @@ private struct PageIdentifierKey: EnvironmentKey {
     static let defaultValue: String? = nil
 }
 
+private struct ThomasAssociatedLabelResolverKey: EnvironmentKey {
+    static let defaultValue: ThomasAssociatedLabelResolver? = nil
+}
 
 private struct LayoutStateEnvironmentKey: EnvironmentKey {
     static let defaultValue: LayoutState = LayoutState.empty
@@ -62,6 +65,12 @@ extension EnvironmentValues {
         get { self[PageIdentifierKey.self] }
         set { self[PageIdentifierKey.self] = newValue }
     }
+
+    var thomasAssociatedLabelResolver: ThomasAssociatedLabelResolver? {
+        get { self[ThomasAssociatedLabelResolverKey.self] }
+        set { self[ThomasAssociatedLabelResolverKey.self] = newValue }
+    }
+
 
     internal var layoutState: LayoutState {
         get { self[LayoutStateEnvironmentKey.self] }

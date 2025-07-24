@@ -7,6 +7,16 @@ import SwiftUI
 struct ScoreToggleLayout: View {
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var scoreState: ScoreState
+    @EnvironmentObject var thomasState: ThomasState
+    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+
+    private var associatedLabel: String? {
+        associatedLabelResolver?.labelFor(
+            identifier: info.properties.identifier,
+            viewType: .scoreToggleLayout,
+            thomasState: thomasState
+        )
+    }
 
     let info: ThomasViewInfo.ScoreToggleLayout
     let constraints: ViewConstraints
@@ -41,7 +51,11 @@ struct ScoreToggleLayout: View {
         }
         .constraints(self.constraints)
         .thomasCommon(self.info, formInputID: self.info.properties.identifier)
-        .accessible(self.info.accessible)
+        .accessible(
+            self.info.accessible,
+            associatedLabel: associatedLabel,
+            hideIfDescriptionIsMissing: false
+        )
         .formElement()
     }
 }

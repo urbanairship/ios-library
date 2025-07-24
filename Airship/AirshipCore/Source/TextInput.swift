@@ -19,8 +19,19 @@ struct TextInput: View {
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject private var thomasState: ThomasState
     @EnvironmentObject var validatableHelper: ValidatableHelper
+    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+
     @State private var isEditing: Bool = false
     @StateObject private var viewModel: ViewModel
+
+    private var associatedLabel: String? {
+        associatedLabelResolver?.labelFor(
+            identifier: info.properties.identifier,
+            viewType: .textInput,
+            thomasState: thomasState
+        )
+    }
+
 
     private var scaledFontSize: Double {
         UIFontMetrics.default.scaledValue(
@@ -178,7 +189,11 @@ struct TextInput: View {
         }
 #endif
         .thomasCommon(self.info)
-        .accessible(self.info.accessible)
+        .accessible(
+            self.info.accessible,
+            associatedLabel: associatedLabel,
+            hideIfDescriptionIsMissing: false
+        )
         .formElement()
         .onAppear {
             restoreFormState()

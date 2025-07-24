@@ -8,7 +8,17 @@ struct RadioInput: View {
     let constraints: ViewConstraints
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var radioInputState: RadioInputState
+    @EnvironmentObject var thomasState: ThomasState
 
+    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+
+    private var associatedLabel: String? {
+        associatedLabelResolver?.labelFor(
+            identifier: info.properties.identifier,
+            viewType: .radioInput,
+            thomasState: thomasState
+        )
+    }
     private var isOnBinding: Binding<Bool> {
         return radioInputState.makeBinding(
             identifier: nil,
@@ -26,7 +36,11 @@ struct RadioInput: View {
             )
             .constraints(constraints)
             .thomasCommon(self.info)
-            .accessible(self.info.accessible, hideIfDescriptionIsMissing: false)
+            .accessible(
+                self.info.accessible,
+                associatedLabel: associatedLabel,
+                hideIfDescriptionIsMissing: false
+            )
             .formElement()
     }
 }

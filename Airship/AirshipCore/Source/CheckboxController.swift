@@ -29,6 +29,15 @@ struct CheckboxController: View {
         @EnvironmentObject var thomasState: ThomasState
         @ObservedObject var checkboxState: CheckboxState
         @EnvironmentObject var validatableHelper: ValidatableHelper
+        @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+
+        private var associatedLabel: String? {
+            associatedLabelResolver?.labelFor(
+                identifier: info.properties.identifier,
+                viewType: .checkboxController,
+                thomasState: thomasState
+            )
+        }
 
         init(
             info: ThomasViewInfo.CheckboxController,
@@ -54,7 +63,11 @@ struct CheckboxController: View {
             ViewFactory.createView(self.info.properties.view, constraints: constraints)
                 .constraints(constraints)
                 .thomasCommon(self.info, formInputID: self.info.properties.identifier)
-                .accessible(self.info.accessible, hideIfDescriptionIsMissing: false)
+                .accessible(
+                    self.info.accessible,
+                    associatedLabel: associatedLabel,
+                    hideIfDescriptionIsMissing: false
+                )
                 .formElement()
                 .environmentObject(checkboxState)
                 .airshipOnChangeOf(self.checkboxState.selected) { incoming in

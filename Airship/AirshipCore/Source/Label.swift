@@ -24,7 +24,7 @@ struct Label: View {
     private var markdownText: Text {
         get throws {
             var text = try AttributedString(
-                markdown: resolvedText,
+                markdown: info.resolveLabelString(thomasState: thomasState),
                 options: .init(
                     interpretedSyntax: .inlineOnlyPreservingWhitespace
                 )
@@ -48,21 +48,7 @@ struct Label: View {
         }
     }
 
-    private var resolvedText: String {
-        let effectiveRef = ThomasPropertyOverride.resolveOptional(
-            state: thomasState,
-            overrides: self.info.overrides?.ref,
-            defaultValue: self.info.properties.ref
-        )
 
-        let effectiveText = ThomasPropertyOverride.resolveRequired(
-            state: thomasState,
-            overrides: self.info.overrides?.text,
-            defaultValue: self.info.properties.text
-        )
-
-        return effectiveRef?.airshipLocalizedString(fallback: effectiveText) ?? effectiveText
-    }
 
     private var resolvedStartIcon: ThomasViewInfo.Label.LabelIcon? {
         return ThomasPropertyOverride.resolveOptional(
@@ -77,14 +63,15 @@ struct Label: View {
         guard
             self.info.properties.markdown?.disabled != true
         else {
-            return Text(verbatim: resolvedText)
+            return Text(verbatim: info.resolveLabelString(thomasState: thomasState))
         }
 
         do {
             return try markdownText
         } catch {
-            AirshipLogger.error("Failed to parse markdown text \(error) text \(resolvedText)")
-            return Text(verbatim: resolvedText)
+            let resolved = info.resolveLabelString(thomasState: thomasState)
+            AirshipLogger.error("Failed to parse markdown text \(error) text \(resolved)")
+            return Text(verbatim: resolved)
         }
     }
 
@@ -113,7 +100,7 @@ struct Label: View {
             vertical: self.constraints.height == nil
         )
         .thomasCommon(self.info)
-        .accessible(self.info.accessible)
+        .accessible(self.info.accessible, associatedLabel: nil, hideIfDescriptionIsMissing: true)
         .accessibilityRole(self.info.properties.accessibilityRole)
     }
 }
@@ -182,5 +169,24 @@ extension View {
         case .none:
             self
         }
+    }
+}
+
+extension ThomasViewInfo.Label {
+    @MainActor
+    func resolveLabelString(thomasState: ThomasState) -> String {
+        let effectiveRef = ThomasPropertyOverride.resolveOptional(
+            state: thomasState,
+            overrides: overrides?.ref,
+            defaultValue: properties.ref
+        )
+
+        let effectiveText = ThomasPropertyOverride.resolveRequired(
+            state: thomasState,
+            overrides: overrides?.text,
+            defaultValue: properties.text
+        )
+
+        return effectiveRef?.airshipLocalizedString(fallback: effectiveText) ?? effectiveText
     }
 }

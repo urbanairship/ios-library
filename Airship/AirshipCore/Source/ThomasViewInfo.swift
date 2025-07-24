@@ -390,6 +390,23 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var space: Double
         }
 
+        struct LabelAssociation: ThomasSerializable {
+            enum LabelAssociationTypes: String, ThomasSerializable {
+                case labels
+                case describes
+            }
+
+            var viewID: String
+            var type: LabelAssociationTypes
+            var viewType: ViewType
+
+            enum CodingKeys: String, CodingKey {
+                case viewID = "view_id"
+                case type
+                case viewType = "view_type"
+            }
+        }
+
         struct Properties: ThomasSerializable {
             let type: ViewType = .label
             var text: String
@@ -398,6 +415,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var markdown: ThomasMarkDownOptions?
             var accessibilityRole: AccessibilityRole?
             var iconStart: LabelIcon?
+            var labels: LabelAssociation?
 
             private enum CodingKeys: String, CodingKey {
                 case type
@@ -407,6 +425,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case markdown
                 case accessibilityRole = "accessibility_role"
                 case iconStart = "icon_start"
+                case labels
             }
         }
 
@@ -1683,11 +1702,13 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             let type: ViewType = .checkbox
             var reportingValue: AirshipJSON
             var style: ThomasToggleStyleInfo
+            var identifier: String? // Added later so its treated as optional.
 
             enum CodingKeys: String, CodingKey {
                 case style
                 case reportingValue = "reporting_value"
                 case type
+                case identifier
             }
         }
     }
@@ -1717,9 +1738,11 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var reportingValue: AirshipJSON
             var style: ThomasToggleStyleInfo
             var attributeValue: ThomasAttributeValue?
+            var identifier: String? // Added later so its treated as optional.
 
             enum CodingKeys: String, CodingKey {
                 case style
+                case identifier
                 case reportingValue = "reporting_value"
                 case attributeValue = "attribute_value"
                 case type
