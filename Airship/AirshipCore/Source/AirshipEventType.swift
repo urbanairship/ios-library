@@ -13,8 +13,6 @@ public enum EventType: CaseIterable, Sendable, Equatable, Hashable {
     case associateIdentifiers
     case installAttribution
     case interactiveNotificationAction
-    case pushReceived
-    case deviceRegistration
     case regionEnter
     case regionExit
     case customEvent
@@ -49,10 +47,6 @@ public enum EventType: CaseIterable, Sendable, Equatable, Hashable {
             return "install_attribution"
         case .interactiveNotificationAction:
             return "interactive_notification_action"
-        case .pushReceived:
-            return "push_received"
-        case .deviceRegistration:
-            return "device_registration"
         case .regionEnter, .regionExit:
             return "region_event"
         case .customEvent:

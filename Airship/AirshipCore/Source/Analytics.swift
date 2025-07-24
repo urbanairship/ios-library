@@ -620,14 +620,6 @@ extension AirshipAnalytics: AirshipComponent, InternalAnalyticsProtocol {
         }
     }
 
-    public func onDeviceRegistration(token: String) {
-        recordEvent(
-            AirshipEvents.deviceRegistrationEvent(
-                channelID: self.channel.identifier,
-                deviceToken: token
-            )
-        )
-    }
 
     @available(tvOS, unavailable)
     @MainActor

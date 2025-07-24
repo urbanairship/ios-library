@@ -166,7 +166,6 @@ class ChannelTest: XCTestCase {
         expectedPayload.channel.sdkVersion = AirshipVersion.version
         expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
         expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
-        expectedPayload.channel.carrier = AirshipUtils.carrierName()
         expectedPayload.channel.setTags = true
         expectedPayload.channel.permissions = [
             "location": "granted",
@@ -208,7 +207,6 @@ class ChannelTest: XCTestCase {
         expectedPayload.channel.sdkVersion = AirshipVersion.version
         expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
         expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
-        expectedPayload.channel.carrier = AirshipUtils.carrierName()
         expectedPayload.channel.setTags = true
         expectedPayload.channel.permissions = nil
 
@@ -246,7 +244,6 @@ class ChannelTest: XCTestCase {
         expectedPayload.channel.sdkVersion = AirshipVersion.version
         expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
         expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
-        expectedPayload.channel.carrier = AirshipUtils.carrierName()
         expectedPayload.channel.setTags = true
         expectedPayload.channel.permissions = [
             "location": "granted",
@@ -298,7 +295,6 @@ class ChannelTest: XCTestCase {
         expectedPayload.channel.sdkVersion = AirshipVersion.version
         expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
         expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
-        expectedPayload.channel.carrier = AirshipUtils.carrierName()
         expectedPayload.channel.setTags = false
         expectedPayload.channel.permissions = [:]
 

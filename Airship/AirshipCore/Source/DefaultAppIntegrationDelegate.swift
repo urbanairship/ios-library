@@ -49,7 +49,6 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
         )
     
         self.push.didRegisterForRemoteNotifications(deviceToken)
-        self.analytics.onDeviceRegistration(token: tokenString)
     }
 
     @MainActor

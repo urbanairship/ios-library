@@ -38,7 +38,6 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
         delegate.didRegisterForRemoteNotifications(deviceToken: data)
         let token = push.deviceToken?.data(using: .utf8)
         XCTAssertEqual(data, token)
-        XCTAssertTrue(self.analytics.onDeviceRegistrationCalled)
     }
 
     @MainActor

@@ -80,8 +80,6 @@ public protocol InternalAnalyticsProtocol: AirshipAnalyticsProtocol {
 
     func recordEvent(_ event: AirshipEvent)
 
-    func onDeviceRegistration(token: String)
-
     #if !os(tvOS)
     @MainActor
     func onNotificationResponse(

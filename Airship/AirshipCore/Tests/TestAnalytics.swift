@@ -67,12 +67,6 @@ public class TestAnalytics: InternalAnalyticsProtocol, AirshipComponent, @unchec
         return self.regions.value
     }
 
-    var onDeviceRegistrationCalled = false
-
-    public func onDeviceRegistration(token: String) {
-        onDeviceRegistrationCalled = true
-    }
-
     public func onNotificationResponse(response: UNNotificationResponse, action: UNNotificationAction?) {
 
     }

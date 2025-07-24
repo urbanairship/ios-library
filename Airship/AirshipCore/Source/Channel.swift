@@ -474,7 +474,6 @@ extension AirshipChannel: AirshipPushableComponent {
 
         if self.privacyManager.isEnabled(.analytics) {
             payload.channel.deviceModel = AirshipUtils.deviceModelName()
-            payload.channel.carrier = AirshipUtils.carrierName()
             payload.channel.appVersion = AirshipUtils.bundleShortVersionString()
 #if !os(watchOS)
             payload.channel.deviceOS = await UIDevice.current.systemVersion

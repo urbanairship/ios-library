@@ -78,8 +78,6 @@ public struct ChannelRegistrationPayload: Codable, Equatable, Sendable {
         /// The device OS.
         public var deviceOS: String?
 
-        /// The carrier.
-        public var carrier: String?
         public var contactID: String?
         public var iOSChannelSettings: iOSChannelSettings?
         public var permissions: [String: String]?
@@ -99,7 +97,6 @@ public struct ChannelRegistrationPayload: Codable, Equatable, Sendable {
             case sdkVersion = "sdk_version"
             case deviceModel = "device_model"
             case deviceOS = "device_os"
-            case carrier = "carrier"
             case contactID = "contact_id"
             case iOSChannelSettings = "ios"
             case isActive = "is_activity"
@@ -144,9 +141,6 @@ public struct ChannelRegistrationPayload: Codable, Equatable, Sendable {
                 }
                 if channel.deviceOS == previous.deviceOS {
                     channel.deviceOS = nil
-                }
-                if channel.carrier == previous.carrier {
-                    channel.carrier = nil
                 }
             }
             

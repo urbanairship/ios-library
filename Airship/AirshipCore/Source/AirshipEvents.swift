@@ -8,36 +8,7 @@ import UIKit
 #endif
 
 struct AirshipEvents {
-    static func deviceRegistrationEvent(
-        channelID: String?,
-        deviceToken: String
-    ) -> AirshipEvent {
-        return AirshipEvent(
-            priority: .normal,
-            eventType: .deviceRegistration,
-            eventData: AirshipJSON.makeObject { object in
-                object.set(string: channelID, key: "channel_id")
-                object.set(string: deviceToken, key: "device_token")
-            }
-        )
-    }
-
-    static func pushReceivedEvent(
-        notification: [AnyHashable: Any]
-    ) -> AirshipEvent {
-        let metadata = notification["com.urbanairship.metadata"] as? String
-        let pushID = notification["_"] as? String
-
-        return AirshipEvent(
-            priority: .normal,
-            eventType: .pushReceived,
-            eventData: AirshipJSON.makeObject { object in
-                object.set(string: metadata, key: "metadata")
-                object.set(string: pushID ?? "MISSING_SEND_ID", key: "push_id")
-            }
-        )
-    }
-
+    
 #if !os(tvOS)
     static func interactiveNotificationEvent(
         action: UNNotificationAction,
@@ -214,10 +185,6 @@ fileprivate extension SessionEvent {
             object.set(string: sessionState.conversionSendID, key: "push_id")
             object.set(string: sessionState.conversionMetadata, key: "metadata")
 
-#if !os(watchOS)
-            object.set(string: AirshipUtils.connectionType(), key: "connection_type")
-#endif
-
             /// App init
             if self.isAppInit {
                 let isForeground = self.type == .foregroundInit
@@ -227,7 +194,6 @@ fileprivate extension SessionEvent {
 
             /// App init or foreground
             if self.isAppInit || self.type == .foreground {
-                object.set(string: AirshipUtils.carrierName(), key: "carrier")
                 object.set(string: AirshipVersion.version, key: "lib_version")
                 object.set(string: AirshipUtils.bundleShortVersionString() ?? "", key: "package_version")
 

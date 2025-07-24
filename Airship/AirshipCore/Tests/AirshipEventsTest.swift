@@ -20,7 +20,6 @@ class AirshipEventsTest: XCTestCase {
 
         let expectedBody = """
         {
-           "connection_type": "wifi",
            "notification_types": [],
            "notification_authorization": "not_determined",
            "time_zone": \(TimeZone.current.secondsFromGMT()),
@@ -57,7 +56,6 @@ class AirshipEventsTest: XCTestCase {
 
         let expectedBody = """
         {
-           "connection_type": "wifi",
            "notification_types": [],
            "notification_authorization": "not_determined",
            "time_zone": \(TimeZone.current.secondsFromGMT()),
@@ -94,7 +92,6 @@ class AirshipEventsTest: XCTestCase {
 
         let expectedBody = """
         {
-           "connection_type": "wifi",
            "notification_types": [],
            "notification_authorization": "not_determined",
            "time_zone": \(TimeZone.current.secondsFromGMT()),
@@ -130,7 +127,6 @@ class AirshipEventsTest: XCTestCase {
 
         let expectedBody = """
         {
-           "connection_type": "wifi",
            "push_id": "\(sessionEvent.sessionState.conversionSendID!)",
            "metadata": "\(sessionEvent.sessionState.conversionMetadata!)"
         }
@@ -142,63 +138,6 @@ class AirshipEventsTest: XCTestCase {
         )
 
         XCTAssertEqual(event.eventType.reportingName, "app_background")
-        XCTAssertEqual(event.priority, .normal)
-        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
-    }
-
-    func testDeviceRegistrationEvent() throws {
-        let expectedBody = """
-        {
-           "channel_id": "some-channel",
-           "device_token": "some-token"
-        }
-        """
-
-        let event = AirshipEvents.deviceRegistrationEvent(
-            channelID: "some-channel",
-            deviceToken: "some-token"
-        )
-
-        XCTAssertEqual(event.eventType.reportingName, "device_registration")
-        XCTAssertEqual(event.priority, .normal)
-        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
-    }
-
-    func testPushReceived() throws {
-        let notification: [AnyHashable: Any] = [
-            "_": "push ID",
-            "_uamid": "rich push ID",
-            "com.urbanairship.metadata": "base64metadataString",
-        ]
-
-        let expectedBody = """
-        {
-           "metadata": "\(notification["com.urbanairship.metadata"]!)",
-           "push_id": "\(notification["_"]!)"
-        }
-        """
-
-        let event = AirshipEvents.pushReceivedEvent(notification: notification)
-
-        XCTAssertEqual(event.eventType.reportingName, "push_received")
-        XCTAssertEqual(event.priority, .normal)
-        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
-    }
-
-    func testPushReceivedMissingSendID() throws {
-        let notification: [AnyHashable: Any] = [
-            "_uamid": "rich push ID",
-        ]
-
-        let expectedBody = """
-        {
-           "push_id": "MISSING_SEND_ID"
-        }
-        """
-
-        let event = AirshipEvents.pushReceivedEvent(notification: notification)
-
-        XCTAssertEqual(event.eventType.reportingName, "push_received")
         XCTAssertEqual(event.priority, .normal)
         XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
     }

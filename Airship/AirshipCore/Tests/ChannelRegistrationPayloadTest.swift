@@ -34,7 +34,6 @@ final class ChannelRegistrationPayloadTest: XCTestCase {
         fullPayload.channel.appVersion = "appVersion"
         fullPayload.channel.deviceModel = "deviceModel"
         fullPayload.channel.deviceOS = "deviceOS"
-        fullPayload.channel.carrier = "carrier"
 
         return fullPayload
     }()
@@ -49,7 +48,6 @@ final class ChannelRegistrationPayloadTest: XCTestCase {
         expected.channel.deviceModel = nil
         expected.channel.setTags = false
         expected.channel.tags = nil
-        expected.channel.carrier = nil
         expected.channel.country = nil
         expected.channel.language = nil
         expected.channel.deviceOS = nil
@@ -67,7 +65,6 @@ final class ChannelRegistrationPayloadTest: XCTestCase {
         otherPayload.channel.appVersion = UUID().uuidString
         otherPayload.channel.deviceModel = UUID().uuidString
         otherPayload.channel.tags = ["some other tag"]
-        otherPayload.channel.carrier = UUID().uuidString
         otherPayload.channel.country = UUID().uuidString
         otherPayload.channel.language = UUID().uuidString
         otherPayload.channel.deviceOS = UUID().uuidString

@@ -7,12 +7,6 @@ import AirshipCore
 
 final class AirshipUtilsTest: XCTestCase {
 
-    func testConnectionType() {
-        let possibleConnectionTypes = ["cell", "wifi", "none"]
-        let connectionType = AirshipUtils.connectionType()
-        XCTAssertTrue(possibleConnectionTypes.contains(connectionType))
-    }
-
     func testDeviceModelName() {
         let deviceModelName = AirshipUtils.deviceModelName()!
         XCTAssertNotNil(deviceModelName)

@@ -12,15 +12,6 @@ import SystemConfiguration
 import CoreTelephony
 #endif
 
-/// Representations of various device connection types.
-public class ConnectionType: NSObject {
-    /// Network is unreachable.
-    public static let none = "none"
-    /// Network is a cellular or mobile network.
-    public static let cell = "cell"
-    /// Network is a WiFi network.
-    public static let wifi = "wifi"
-}
 
 /// The `Utils` object provides an interface for utility methods.
 public final class AirshipUtils {
@@ -59,24 +50,12 @@ public final class AirshipUtils {
             as? String
     }
 
-    /// Gets the current carrier name.
-    ///
-    /// - Returns: The current carrier name.
-    public class func carrierName() -> String? {
-        #if os(iOS) && !targetEnvironment(macCatalyst)
-        let info = CTTelephonyNetworkInfo()
-        return info.serviceSubscriberCellularProviders?.values.first?
-            .carrierName
-        #else
-        return nil
-        #endif
-    }
 
     #if !os(watchOS)
-    /// Gets the current connection type.
+    /// Checks if the device has network connection.
     ///
-    /// - Returns: The current connection type as a `String`.
-    public class func connectionType() -> String {
+    /// - Returns: The true if it has connection, false otherwise.
+    public class func hasNetworkConnection() -> Bool {
         var zeroAddress = sockaddr_in()
         zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
         zeroAddress.sin_family = sa_family_t(AF_INET)
@@ -94,36 +73,14 @@ public final class AirshipUtils {
                 }
             )
         else {
-            return ConnectionType.none
+            return false
         }
 
         var flags = SCNetworkReachabilityFlags()
         let isSuccess = SCNetworkReachabilityGetFlags(reachability, &flags)
-
-        var connectionType: String = ConnectionType.none
-
-        guard isSuccess && flags.contains(.reachable) else {
-            return ConnectionType.none
-        }
-
-        if !flags.contains(.connectionRequired) {
-            connectionType = ConnectionType.wifi
-        }
-
-        if flags.contains(.connectionOnDemand)
-            || flags.contains(.connectionOnTraffic)
-        {
-            if !flags.contains(.interventionRequired) {
-                connectionType = ConnectionType.wifi
-            }
-        }
-
-        if flags.contains(.isWWAN) {
-            connectionType = ConnectionType.cell
-        }
-
-        return connectionType
+        return isSuccess && flags.contains(.reachable)
     }
+
     #endif
 
     /// Compares two version strings and determines their order.
