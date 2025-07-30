@@ -11,6 +11,17 @@ struct BasicToggleLayout: View {
     @EnvironmentObject var formDataCollector: ThomasFormDataCollector
     @State var isOn: Bool = false
 
+    @EnvironmentObject var thomasState: ThomasState
+    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+
+    private var associatedLabel: String? {
+        associatedLabelResolver?.labelFor(
+            identifier: info.properties.identifier,
+            viewType: .basicToggleLayout,
+            thomasState: thomasState
+        )
+    }
+
     let info: ThomasViewInfo.BasicToggleLayout
     let constraints: ViewConstraints
 
@@ -27,7 +38,11 @@ struct BasicToggleLayout: View {
         }
         .constraints(self.constraints)
         .thomasCommon(self.info, formInputID: self.info.properties.identifier)
-        .accessible(self.info.accessible)
+        .accessible(
+            self.info.accessible,
+            associatedLabel: self.associatedLabel,
+            hideIfDescriptionIsMissing: false
+        )
         .formElement()
         .airshipOnChangeOf(self.isOn, initial: true) { value in
             updateFormState(value)

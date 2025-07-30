@@ -9,6 +9,17 @@ struct Checkbox: View {
     let constraints: ViewConstraints
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var checkboxState: CheckboxState
+    @EnvironmentObject var thomasState: ThomasState
+
+    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+
+    private var associatedLabel: String? {
+        associatedLabelResolver?.labelFor(
+            identifier: info.properties.identifier,
+            viewType: .checkbox,
+            thomasState: thomasState
+        )
+    }
 
     private var isOnBinding: Binding<Bool> {
         self.checkboxState.makeBinding(
@@ -33,7 +44,11 @@ struct Checkbox: View {
             )
             .constraints(constraints)
             .thomasCommon(self.info)
-            .accessible(self.info.accessible, hideIfDescriptionIsMissing: false)
+            .accessible(
+                self.info.accessible,
+                associatedLabel: associatedLabel,
+                hideIfDescriptionIsMissing: false
+            )
             .formElement()
             .disabled(!self.isEnabled)
     }

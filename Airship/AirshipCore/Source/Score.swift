@@ -22,6 +22,15 @@ struct Score: View {
     @EnvironmentObject var thomasState: ThomasState
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var validatableHelper: ValidatableHelper
+    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+
+    private var associatedLabel: String? {
+        associatedLabelResolver?.labelFor(
+            identifier: info.properties.identifier,
+            viewType: .score,
+            thomasState: thomasState
+        )
+    }
     @StateObject var viewModel: ViewModel = ViewModel()
 
     @ViewBuilder
@@ -81,7 +90,11 @@ struct Score: View {
         let constraints = modifiedConstraints()
         createScore(constraints)
             .thomasCommon(self.info, formInputID: self.info.properties.identifier)
-            .accessible(self.info.accessible, hideIfDescriptionIsMissing: false)
+            .accessible(
+                self.info.accessible,
+                associatedLabel: associatedLabel,
+                hideIfDescriptionIsMissing: false
+            )
             .formElement()
             .airshipOnChangeOf(self.viewModel.score) { score in
                 self.updateScore(score)

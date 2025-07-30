@@ -10,13 +10,29 @@ struct AirshipToggle: View {
     @Environment(\.pageIdentifier) var pageID
     @EnvironmentObject var formDataCollector: ThomasFormDataCollector
     @EnvironmentObject var formState: ThomasFormState
+    @EnvironmentObject var thomasState: ThomasState
+    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+
     @State private var isOn: Bool = false
+
+    private var associatedLabel: String? {
+        associatedLabelResolver?.labelFor(
+            identifier: info.properties.identifier,
+            viewType: .toggle,
+            thomasState: thomasState
+        )
+    }
+
 
     var body: some View {
         createToggle()
             .constraints(self.constraints)
             .thomasCommon(self.info, formInputID: self.info.properties.identifier)
-            .accessible(self.info.accessible, hideIfDescriptionIsMissing: false)
+            .accessible(
+                self.info.accessible,
+                associatedLabel: associatedLabel,
+                hideIfDescriptionIsMissing: false
+            )
             .formElement()
             .onAppear {
                 restoreFormState()

@@ -4,6 +4,14 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.8.0 - July 24, 2025
+A minor release with improvements to Scenes and a new `dismiss` command for the JS interface.
+
+### Changes
+- Added support in Scenes for linking form inputs to a label for better accessibility.
+- Added container item alignment to Scenes to change the natural alignment within a container.
+- Added a new `dismiss` command to the JavaScript interface for parity with Android. The new `UAirship.dismiss()` method behaves the same as `UAirship.cancel()`.
+
 ## Version 19.7.0 - July 18, 2025
 A minor release that simplifies takeOff by deprecating methods with launchOptions, adds flexibility for initialization, and includes several bug fixes.
 

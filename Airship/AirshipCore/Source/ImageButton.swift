@@ -16,6 +16,16 @@ struct ImageButton : View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.layoutState) var layoutState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @EnvironmentObject var thomasState: ThomasState
+    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+
+    private var associatedLabel: String? {
+        associatedLabelResolver?.labelFor(
+            identifier: info.properties.identifier,
+            viewType: .imageButton,
+            thomasState: thomasState
+        )
+    }
 
     @ViewBuilder
     var body: some View {
@@ -36,7 +46,11 @@ struct ImageButton : View {
                     border: self.info.commonProperties.border,
                     borderOverrides: self.info.commonOverrides?.border
                 )
-                .accessible(self.info.accessible)
+                .accessible(
+                    self.info.accessible,
+                    associatedLabel: self.associatedLabel,
+                    hideIfDescriptionIsMissing: false
+                )
                 .background(Color.airshipTappableClear)
         }
         .thomasEnableBehaviors(self.info.commonProperties.enabled)

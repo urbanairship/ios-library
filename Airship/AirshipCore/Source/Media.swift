@@ -39,7 +39,11 @@ struct Media: View {
             }
             .constraints(constraints)
             .thomasCommon(self.info)
-            .accessible(self.info.accessible, hideIfDescriptionIsMissing: true)
+            .accessible(
+                self.info.accessible,
+                associatedLabel: nil,
+                hideIfDescriptionIsMissing: true
+            )
         case .video:
 #if !os(watchOS)
             VideoControlsWrapper(

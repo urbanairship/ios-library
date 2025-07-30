@@ -16,6 +16,7 @@ public final class NativeBridge: NSObject, WKNavigationDelegate {
 
     static let airshipScheme = "uairship"
     private static let closeCommand = "close"
+    private static let dismissCommand = "dismiss"
     private static let setNamedUserCommand = "named_user"
     private static let multiCommand = "multi"
 
@@ -377,6 +378,9 @@ public final class NativeBridge: NSObject, WKNavigationDelegate {
     ) async {
         switch command.name {
         case NativeBridge.closeCommand:
+            self.nativeBridgeDelegate?.close()
+
+        case NativeBridge.dismissCommand:
             self.nativeBridgeDelegate?.close()
 
         case NativeBridge.setNamedUserCommand:

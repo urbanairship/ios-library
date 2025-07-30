@@ -29,7 +29,16 @@ struct ScoreController: View {
         @EnvironmentObject var thomasState: ThomasState
         @ObservedObject var scoreState: ScoreState
         @EnvironmentObject var validatableHelper: ValidatableHelper
+        @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
 
+        private var associatedLabel: String? {
+            associatedLabelResolver?.labelFor(
+                identifier: info.properties.identifier,
+                viewType: .scoreController,
+                thomasState: thomasState
+            )
+        }
+        
         init(
             info: ThomasViewInfo.ScoreController,
             constraints: ViewConstraints,
@@ -52,7 +61,11 @@ struct ScoreController: View {
             ViewFactory.createView(self.info.properties.view, constraints: constraints)
                 .constraints(constraints)
                 .thomasCommon(self.info, formInputID: self.info.properties.identifier)
-                .accessible(self.info.accessible)
+                .accessible(
+                    self.info.accessible,
+                    associatedLabel: associatedLabel,
+                    hideIfDescriptionIsMissing: true
+                )
                 .formElement()
                 .environmentObject(scoreState)
                 .airshipOnChangeOf(self.scoreState.selected) { incoming in

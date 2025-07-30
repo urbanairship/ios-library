@@ -27,6 +27,8 @@ struct RootView<Content: View>: View {
     let layout: AirshipLayout
     let content: (ThomasOrientation, ThomasWindowSize) -> Content
 
+    let associatedLabelResolver: ThomasAssociatedLabelResolver
+
     init(
         thomasEnvironment: ThomasEnvironment,
         layout: AirshipLayout,
@@ -44,6 +46,7 @@ struct RootView<Content: View>: View {
                 thomasEnvironment?.onStateChange(state)
             }
         )
+        self.associatedLabelResolver = ThomasAssociatedLabelResolver(layout: layout)
     }
 
     @ViewBuilder
@@ -63,6 +66,7 @@ struct RootView<Content: View>: View {
             .environment(\.windowSize, resolveWindowSize())
             .environment(\.isVisible, isVisible)
             .environment(\.isVoiceOverRunning, isVoiceOverRunning)
+            .environment(\.thomasAssociatedLabelResolver, associatedLabelResolver)
             .onReceive(NotificationCenter.default.publisher(for: AppStateTracker.didTransitionToForeground)) { (_) in
                 self.isForeground = true
                 self.thomasEnvironment.onVisibilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)

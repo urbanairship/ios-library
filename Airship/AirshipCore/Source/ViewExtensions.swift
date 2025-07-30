@@ -61,15 +61,21 @@ extension View {
     @ViewBuilder
     internal func accessible(
         _ accessible: ThomasAccessibleInfo?,
+        associatedLabel: String?,
         fallbackContentDescription: String? = nil,
-        hideIfDescriptionIsMissing: Bool = true
+        hideIfDescriptionIsMissing: Bool
     ) -> some View {
-        let label = accessible?.resolveContentDescription ?? fallbackContentDescription
+        let contentDescription = accessible?.resolveContentDescription ?? fallbackContentDescription
         if accessible?.accessibilityHidden == true {
             self.accessibilityHidden(true)
-        } else if let label {
-            self.accessibility(label: Text(label))
-        } else if hideIfDescriptionIsMissing {
+        } else if let contentDescription, let associatedLabel {
+            self.accessibilityLabel(associatedLabel)
+                .accessibilityHint(contentDescription)
+        } else if let contentDescription {
+            self.accessibilityLabel(contentDescription)
+        } else if let associatedLabel {
+            self.accessibilityLabel(associatedLabel)
+        }else if hideIfDescriptionIsMissing {
             self.accessibilityHidden(true)
         } else {
             self

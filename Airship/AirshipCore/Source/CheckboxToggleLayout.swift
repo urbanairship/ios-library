@@ -7,6 +7,16 @@ import SwiftUI
 struct CheckboxToggleLayout: View {
     @EnvironmentObject var formState: ThomasFormState
     @EnvironmentObject var checkboxState: CheckboxState
+    @EnvironmentObject var thomasState: ThomasState
+    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+
+    private var associatedLabel: String? {
+        associatedLabelResolver?.labelFor(
+            identifier: info.properties.identifier,
+            viewType: .checkboxToggleLayout,
+            thomasState: thomasState
+        )
+    }
 
     let info: ThomasViewInfo.CheckboxToggleLayout
     let constraints: ViewConstraints
@@ -39,7 +49,11 @@ struct CheckboxToggleLayout: View {
         }
         .constraints(self.constraints)
         .thomasCommon(self.info, formInputID: self.info.properties.identifier)
-        .accessible(self.info.accessible, hideIfDescriptionIsMissing: false)
+        .accessible(
+            self.info.accessible,
+            associatedLabel: associatedLabel,
+            hideIfDescriptionIsMissing: false
+        )
         .formElement()
     }
 }
