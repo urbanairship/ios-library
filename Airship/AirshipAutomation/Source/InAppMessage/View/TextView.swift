@@ -35,6 +35,8 @@ extension View {
 }
 
 struct TextStyleViewModifier: ViewModifier {
+    // Needed for dynamic font size
+    @Environment(\.sizeCategory) var sizeCategory
     let textInfo: InAppMessageTextInfo
 
     @ViewBuilder
@@ -48,14 +50,14 @@ fileprivate extension UIFont {
         _ textInfo: InAppMessageTextInfo
     ) -> Font {
         var font: Font
-        let scaledSize = UIFontMetrics.default.scaledValue(for: textInfo.size ?? 0)
+        let scaledSize = UIFontMetrics.default.scaledValue(for: textInfo.size ?? 14)
 
         if let fontFamily = resolveFamily(
             families: textInfo.fontFamilies
         ) {
             font = Font.custom(
                 fontFamily,
-                size: scaledSize
+                fixedSize: scaledSize
             )
         } else {
             font = Font.system(size: scaledSize)
