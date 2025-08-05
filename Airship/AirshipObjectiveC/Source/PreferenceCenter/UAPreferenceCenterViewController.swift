@@ -8,7 +8,7 @@ import AirshipPreferenceCenter
 import AirshipCore
 #endif
 
-import SwiftUICore
+import SwiftUI
 
 /// Preference Center view controller factory
 @objc

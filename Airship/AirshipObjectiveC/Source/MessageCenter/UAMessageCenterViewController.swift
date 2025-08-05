@@ -8,7 +8,7 @@ import AirshipMessageCenter
 import AirshipCore
 #endif
 
-import SwiftUICore
+import SwiftUI
 
 /// Message Center view controller factory
 @objc
