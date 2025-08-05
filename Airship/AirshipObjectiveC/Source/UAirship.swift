@@ -24,7 +24,6 @@ public final class UAirship: NSObject, Sendable {
     private static let _preferenceCenter: UAPreferenceCenter = UAPreferenceCenter()
     private static let _analytics: UAAnalytics = UAAnalytics()
     private static let _inAppAutomation: UAInAppAutomation = UAInAppAutomation()
-    private static let _permissionsManager: UAPermissionsManager = UAPermissionsManager()
 
     /// Asserts that Airship is flying (initalized)
     public static func assertAirshipIsFlying() {
@@ -87,13 +86,6 @@ public final class UAirship: NSObject, Sendable {
     public static var inAppAutomation: UAInAppAutomation {
         assertAirshipIsFlying()
         return _inAppAutomation
-    }
-
-    /// Permissions Manager
-    @objc
-    public static var permissionsManager: UAPermissionsManager {
-        assertAirshipIsFlying()
-        return _permissionsManager
     }
 
     /// A user configurable deep link delegate
