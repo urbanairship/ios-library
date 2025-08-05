@@ -16,20 +16,41 @@ public struct AirshipImageLoader {
 
     func load(url: String) -> AnyPublisher<AirshipImageData, any Error> {
         guard let url = URL(string: url) else {
-            return Fail(error: AirshipErrors.error("failed to fetch message"))
+            return Fail(error: AirshipErrors.error("Invalid URL"))
                 .eraseToAnyPublisher()
         }
 
         return Deferred { () -> AnyPublisher<AirshipImageData, any Error> in
-            guard let imageData = self.imageProvider?.get(url: url) else {
-                return fetchImage(url: url)
+            // First, check the image provider (cache)
+            if let imageData = self.imageProvider?.get(url: url) {
+                return Just(imageData)
+                    .setFailureType(to: (any Error).self)
+                    .eraseToAnyPublisher()
             }
-            return Just(imageData)
-                .setFailureType(to: (any Error).self)
-                .eraseToAnyPublisher()
+
+            // If not cached, check if it's a local file URL
+            if url.isFileURL {
+                return self.loadImageFromFile(url: url)
+            } else {
+                // Otherwise, fetch from the network
+                return self.fetchImage(url: url)
+            }
         }
         .subscribe(on: DispatchQueue.global(qos: .userInteractive))
         .eraseToAnyPublisher()
+    }
+
+    private func loadImageFromFile(url: URL) -> AnyPublisher<AirshipImageData, any Error> {
+        do {
+            let data = try Data(contentsOf: url)
+            let imageData = try AirshipImageData(data: data)
+            return Just(imageData)
+                .setFailureType(to: (any Error).self)
+                .eraseToAnyPublisher()
+        } catch {
+            return Fail(error: AirshipErrors.error("failed to fetch message"))
+                .eraseToAnyPublisher()
+        }
     }
 
     private func fetchImage(url: URL) -> AnyPublisher<AirshipImageData, any Error> {
@@ -37,7 +58,7 @@ public struct AirshipImageLoader {
             .mapError { AirshipErrors.error("URL error \($0)") }
             .map { response -> AnyPublisher<AirshipImageData, any Error> in
                 guard let httpResponse = response.response as? HTTPURLResponse,
-                    httpResponse.statusCode == 200
+                      httpResponse.statusCode == 200
                 else {
                     return Fail(
                         error: AirshipErrors.error("failed to fetch message")
