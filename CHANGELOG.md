@@ -4,6 +4,14 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.8.1 - August 6, 2025
+A patch release with improved Xcode 26 support, a fix for custom font scaling in scenes, and internal improvements to image loading.
+
+### Changes
+- Fixed issues affecting custom font scaling.
+- Improved image loading support.
+- Fixed a compilation error caused by SwiftUICore import exposed by Xcode 26 beta 4.
+
 ## Version 19.8.0 - July 24, 2025
 A minor release with improvements to Scenes and a new `dismiss` command for the JS interface.
 
