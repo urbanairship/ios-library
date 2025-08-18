@@ -10,6 +10,6 @@ public extension AsyncStream {
         let stream = Self(type) { continuation in
             escapee = continuation
         }
-        return (stream, escapee)
+        return (stream, escapee!)
     }
 }

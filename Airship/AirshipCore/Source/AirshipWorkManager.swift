@@ -90,9 +90,8 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
         )
 
         queue.enqueue { [workers = self.workers] in
-            await workers.addWorker(worker, workID: workID)
+            await workers.addWorker(worker)
         }
-
     }
 
     public func setRateLimit(
@@ -121,50 +120,53 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
 }
 
 private actor Workers {
-    private var workerMap: [String: [Worker]] = [:]
-    private var workerContinuation: AsyncStream<Worker>.Continuation?
-    private var workerStream: AsyncStream<Worker>
+    private var workers: [Worker] = []
+    private let workerContinuation: AsyncStream<Worker>.Continuation
+    private let workerStream: AsyncStream<Worker>
+    private var isRunning: Bool = false
 
     init() {
         (self.workerStream, self.workerContinuation) = AsyncStream<Worker>.airshipMakeStreamWithContinuation()
     }
 
-    func addWorker(_ worker: Worker, workID: String) {
-        if workerMap[workID] == nil {
-            workerMap[workID] = []
-        }
-        workerMap[workID]?.append(worker)
-        workerContinuation?.yield(worker)
+    deinit {
+        workerContinuation.finish()
+    }
+
+    func addWorker(_ worker: Worker) {
+        workers.append(worker)
+        workerContinuation.yield(worker)
     }
 
     func calculateBackgroundWaitTime(
         maxTime: TimeInterval
     ) async -> TimeInterval {
         var result: TimeInterval = 0.0
-        let workerListsCopy = Array(self.workerMap.values)
-        for workerList in workerListsCopy {
-            for worker in workerList {
-                let workerResult = await worker.calculateBackgroundWaitTime(maxTime: maxTime)
-                result = max(result, workerResult)
-            }
+        let workersCopy = self.workers
+        for worker in workersCopy {
+            let workerResult = await worker.calculateBackgroundWaitTime(maxTime: maxTime)
+            result = max(result, workerResult)
         }
 
         return result
     }
 
     func dispatchWorkRequest(_ request: AirshipWorkRequest) async {
-        guard let workers = self.workerMap[request.workID] else {
-            return
-        }
-
-        for worker in workers {
-            await worker.addWork(request: request)
+        let workersCopy = self.workers
+        for worker in workersCopy {
+            if worker.workID == request.workID {
+                await worker.addWork(request: request)
+            }
         }
     }
 
     func run() async {
+        guard !isRunning else { return }
+        isRunning = true
+        defer { isRunning = false }
         await withTaskGroup(of: Void.self) { group in
             for await worker in self.workerStream {
+                guard !Task.isCancelled else { break }
                 group.addTask {
                     await worker.run()
                 }

@@ -5,8 +5,8 @@ import Foundation
 
 /// Worker that handles queuing tasks and performing the actual work
 actor Worker {
-    private var workContinuation: AsyncStream<PendingRequest>.Continuation?
-    private var workStream: AsyncStream<PendingRequest>
+    private let workContinuation: AsyncStream<PendingRequest>.Continuation
+    private let workStream: AsyncStream<PendingRequest>
     private var pending: [PendingRequest] = []
     private var inProgress: Set<PendingRequest> = Set()
 
@@ -37,11 +37,13 @@ actor Worker {
         self.backgroundTasks = backgroundTasks
         self.workHandler = workHandler
 
-        var escapee: AsyncStream<PendingRequest>.Continuation? = nil
-        self.workStream = AsyncStream { continuation in
-            escapee = continuation
-        }
-        self.workContinuation = escapee
+        (self.workStream, self.workContinuation) = AsyncStream<PendingRequest>.airshipMakeStreamWithContinuation()
+    }
+
+    deinit {
+        workContinuation.finish()
+        tasks.forEach { $0.cancel() }
+        tasks.removeAll()
     }
 
     func addWork(request: AirshipWorkRequest) {
@@ -70,7 +72,7 @@ actor Worker {
             nextPendingID += 1
             let pendingRequest = PendingRequest(id: pendingID, request: request)
             pending.append(pendingRequest)
-            workContinuation?.yield(pendingRequest)
+            workContinuation.yield(pendingRequest)
         }
     }
 
