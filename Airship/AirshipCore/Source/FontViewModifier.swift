@@ -24,7 +24,7 @@ struct TextAppearanceViewModifier: ViewModifier
         ) {
             font = Font.custom(
                 fontFamily,
-                size: scaledSize
+                fixedSize: scaledSize
             )
         } else {
             font = Font.system(size: scaledSize)
