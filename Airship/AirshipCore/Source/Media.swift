@@ -72,6 +72,10 @@ struct Media: View {
                     isReady: true
                 )
             }
+            .airshipApplyIf(self.constraints.width == nil || self.constraints.height == nil) {
+                $0.aspectRatio(videoAspectRatio, contentMode: ContentMode.fit)
+            }
+            .constraints(constraints)
             .onAppear {
                 pagerState.registerMedia(pageId: pageIdentifier ?? "", id: mediaID)
             }
