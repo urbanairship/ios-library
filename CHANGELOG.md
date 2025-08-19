@@ -4,6 +4,13 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.8.2 - August 19, 2025
+A patch release with bug fixes for video in scenes and Swift interoperability crashes. Users that have upgraded to SDK 19.6.0+ and display Youtube or Vimeo videos in Scenes or In-app Messages or are experiencing crashes like those outlined in GH-434 are encouraged to update. 
+
+### Changes
+- Fixed bug preventing proper rendering of youtube and vimeo videos in Scenes and In-app Messages.
+- Fixed Swift 5-6 interop issues causing crashes in Workers.calculateBackgroundWaitTime(maxTime:) outlined in github issue 434.
+
 ## Version 19.8.1 - August 6, 2025
 A patch release with improved Xcode 26 support, a fix for custom font scaling in scenes, and internal improvements to image loading.
 
