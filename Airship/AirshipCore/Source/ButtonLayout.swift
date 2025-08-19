@@ -41,7 +41,15 @@ struct ButtonLayout : View {
                 )
                 .accessibilityHidden(info.accessible.accessibilityHidden ?? false)
         } else {
-            ZStack {
+            AirshipButton(
+                identifier: self.info.properties.identifier,
+                reportingMetadata: self.info.properties.reportingMetadata,
+                description: self.info.accessible.resolveContentDescription,
+                clickBehaviors: self.info.properties.clickBehaviors,
+                eventHandlers: self.info.commonProperties.eventHandlers,
+                actions: self.info.properties.actions,
+                tapEffect: self.info.properties.tapEffect
+            ) {
                 ViewFactory.createView(self.info.properties.view, constraints: constraints)
                     .thomasBackground(
                         color: self.info.commonProperties.backgroundColor,
@@ -49,32 +57,17 @@ struct ButtonLayout : View {
                         border: self.info.commonProperties.border,
                         borderOverrides: self.info.commonOverrides?.border
                     )
-                    .accessibilityHidden(info.accessible.accessibilityHidden ?? false)
                     .background(Color.airshipTappableClear)
-                AirshipButton(
-                    identifier: self.info.properties.identifier,
-                    reportingMetadata: self.info.properties.reportingMetadata,
-                    description: self.info.accessible.resolveContentDescription,
-                    clickBehaviors: self.info.properties.clickBehaviors,
-                    eventHandlers: self.info.commonProperties.eventHandlers,
-                    actions: self.info.properties.actions,
-                    tapEffect: self.info.properties.tapEffect
-                ) {
-                    Rectangle()
-                        .foregroundColor(Color.airshipTappableClear)
-                }
-                .thomasEnableBehaviors(self.info.commonProperties.enabled)
-                .thomasVisibility(self.info.commonProperties.visibility)
-                .accessibilityHidden(info.accessible.accessibilityHidden ?? false)
-                .environment(
-                    \.layoutState,
-                     layoutState.override(
-                        buttonState: ButtonState(identifier: self.info.properties.identifier)
-                     )
-                )
             }
-            .background(Color.airshipTappableClear)
-
+            .thomasEnableBehaviors(self.info.commonProperties.enabled)
+            .thomasVisibility(self.info.commonProperties.visibility)
+            .environment(
+                \.layoutState,
+                 layoutState.override(
+                    buttonState: ButtonState(identifier: self.info.properties.identifier)
+                 )
+            )
+            .accessibilityHidden(info.accessible.accessibilityHidden ?? false)
         }
     }
 }
