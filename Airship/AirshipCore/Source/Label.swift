@@ -148,7 +148,7 @@ extension View {
         case 2:
             return .h2
         case 3:
-            return .h1
+            return .h3
         case 4:
             return .h4
         case 5:
