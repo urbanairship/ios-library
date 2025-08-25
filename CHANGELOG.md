@@ -4,6 +4,15 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+### Version 19.8.3 - August 25, 2025
+
+A patch release that includes a targeted fix for the ongoing Swift interoperability crashes outlined in GH-434.
+
+### Changes
+- Updated the concurrency pattern in the background task scheduler, replacing a `for-await` loop with a `TaskGroup`. This change targets a suspected instability in Swift's concurrency runtime and is expected to mitigate the crashes seen in mixed Swift 5/6 environments.
+- Fixed a Scene issue where labels marked as H3 were being treated as H1.
+- Improved accessibility of embedded Scenes by announcing screen changes when an embedded view is displayed.
+
 ## Version 19.8.2 - August 19, 2025
 A patch release with bug fixes for video in scenes and Swift interoperability crashes. Users that have upgraded to SDK 19.6.0+ and display Youtube or Vimeo videos in Scenes or In-app Messages or are experiencing crashes like those outlined in GH-434 are encouraged to update. 
 
