@@ -107,7 +107,7 @@ struct EmbeddedView: View {
                 orientation: orientation,
                 windowSize: windowSize
             )
-
+            
             if #available(iOS 16, tvOS 16, watchOS 9.0, *) {
                 AdoptLayout(placement: placement, viewConstraints: $viewConstraints, embeddedSize: embeddedSize) {
                     if let constraints = viewConstraints {
@@ -121,16 +121,17 @@ struct EmbeddedView: View {
                     width: placement.size.width.calculateSize(self.embeddedSize?.parentWidth),
                     height: placement.size.height.calculateSize(self.embeddedSize?.parentHeight)
                 )
-
+                
                 let contentConstraints = constraints.contentConstraints(
                     placement.size,
                     contentSize: nil,
                     margin: placement.margin
                 )
-
+                
                 createView(constraints: contentConstraints, placement: placement)
             }
         }
+#if !os(watchOS)
         .onAppear {
             // Announce to VoiceOver when embedded view appears
             if isVoiceOverRunning {
@@ -139,6 +140,7 @@ struct EmbeddedView: View {
                 }
             }
         }
+#endif
     }
 
     @MainActor

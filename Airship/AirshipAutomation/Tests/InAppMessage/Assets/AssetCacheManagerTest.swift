@@ -285,7 +285,7 @@ final class AssetCacheManagerTest: XCTestCase {
 
         let fileManager = TestAssetFileManager()
         var moveAttempts = 0
-        let moveAttemptsSemaphore = NSLock()
+        let moveAttemptsSemaphore = AirshipLock()
 
         fileManager.rootDirectory = URL(fileURLWithPath: "/test-cache")
 

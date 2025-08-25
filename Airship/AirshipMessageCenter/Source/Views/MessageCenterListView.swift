@@ -174,7 +174,7 @@ public struct MessageCenterListView: View {
                 .opacity(self.listOpacity)
                 .listBackground(listBackgroundColor)
                 .animation(.easeInOut(duration: 0.5), value: self.listOpacity)
-                .onChange(of: self.messageIDs) { ids in
+                .airshipOnChangeOf(self.messageIDs) { ids in
                     if ids.isEmpty {
                         self.listOpacity = 0.0
                     } else {

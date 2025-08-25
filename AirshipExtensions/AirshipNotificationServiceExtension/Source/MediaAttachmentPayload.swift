@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-#if !TARGET_OS_TV
+
+#if !os(tvOS)
 import UserNotifications
 
 struct MediaAttachmentPayload: Sendable, Decodable {
