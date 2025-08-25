@@ -99,6 +99,7 @@ struct EmbeddedView: View {
 
     let embeddedSize: AirshipEmbeddedSize?
     @State var viewConstraints: ViewConstraints?
+    @Environment(\.isVoiceOverRunning) var isVoiceOverRunning
 
     var body: some View {
         RootView(thomasEnvironment: thomasEnvironment, layout: layout) { orientation, windowSize in
@@ -128,6 +129,14 @@ struct EmbeddedView: View {
                 )
 
                 createView(constraints: contentConstraints, placement: placement)
+            }
+        }
+        .onAppear {
+            // Announce to VoiceOver when embedded view appears
+            if isVoiceOverRunning {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    UIAccessibility.post(notification: .screenChanged, argument: nil)
+                }
             }
         }
     }
