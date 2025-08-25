@@ -1,0 +1,36 @@
+name: CI Pull Request
+
+#on: [pull_request]
+
+env:
+  BUNDLE_PATH: vendor/bundle
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+ 
+  framework-size:
+    runs-on: macos-15-xlarge
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore Size
+        uses: actions/cache@v4
+        with:
+            path: build/previous-size.txt
+            key: size-cache-${{ github.head_ref }}
+            restore-keys: |
+             size-cache-
+      - name: Install Apple Certificate
+        uses: apple-actions/import-codesign-certs@v3
+        with:
+          p12-file-base64: ${{ secrets.CERTIFICATEXC }}
+          p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
+      - name: Framework size
+        run: make compare-framework-size
+      - name: Save Size
+        uses: actions/cache@v4
+        with:
+           path: build/previous-size.txt
+           key: size-cache-${{ github.head_ref }}-${{ github.run_id }}

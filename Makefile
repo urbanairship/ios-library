@@ -18,7 +18,9 @@ xcframeworks_path = ${build_path}/xcframeworks
 docs_path = ${build_path}/Documentation
 package_zip_path = ${build_path}/Airship.zip
 package_carthage_zip_path = ${build_path}/Airship.xcframeworks.zip
-	
+file_size=${build_path}/size.txt
+previous_file_size=${build_path}/previous-size.txt
+
 .PHONY: setup
 setup:
 	test ${DEVELOPER_DIR}
@@ -149,3 +151,11 @@ clean-package:
 .PHONY: clean-xcframeworks
 clean-xcframeworks:
 	# rm -rf "${xcframeworks_path}"
+	
+.PHONY: compare-framework-size
+compare-framework-size: build-xcframeworks check-size
+
+.PHONY: check-size
+check-size:
+	bash ./scripts/check_size.sh "${xcframeworks_path}" "${file_size}" "${previous_file_size}"
+	
