@@ -5,7 +5,7 @@ import Foundation
 @preconcurrency
 import UserNotifications
 
-#if !TARGET_OS_TV
+#if !os(tvOS)
 @objc
 open class UANotificationServiceExtension: UNNotificationServiceExtension {
     open var airshipConfig: AirshipExtensionConfig { .init() }

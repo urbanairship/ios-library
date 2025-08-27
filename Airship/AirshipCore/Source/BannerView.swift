@@ -112,7 +112,7 @@ struct BannerView: View {
                     }
                 }
                 // Invalidate cached content size on orientation change
-                .onChange(of: orientation) { _ in
+                .airshipOnChangeOf(orientation) { _ in
                     self.contentSize = nil
                 }
             }

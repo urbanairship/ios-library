@@ -116,7 +116,7 @@ public struct AttributesDebugView: View {
                             : Color.red
                         )
                 )
-                .onChange(of: jsonText) { newValue in
+                .airshipOnChangeOf(jsonText) { newValue in
                     guard let data = newValue.data(using: .utf8) else { return }
                     do {
                         let obj = try JSONSerialization.jsonObject(with: data)

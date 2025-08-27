@@ -138,17 +138,28 @@ private actor Workers {
         workerContinuation.yield(worker)
     }
 
-    func calculateBackgroundWaitTime(
-        maxTime: TimeInterval
-    ) async -> TimeInterval {
-        var result: TimeInterval = 0.0
-        let workersCopy = self.workers
-        for worker in workersCopy {
-            let workerResult = await worker.calculateBackgroundWaitTime(maxTime: maxTime)
-            result = max(result, workerResult)
+    func calculateBackgroundWaitTime(maxTime: TimeInterval) async -> TimeInterval {
+        let workersToProcess = self.workers
+        guard !workersToProcess.isEmpty else { return 0.0 }
+
+        let maxWaitTime = await withTaskGroup(
+            of: TimeInterval.self,
+            returning: TimeInterval.self
+        ) { group in
+            for worker in workersToProcess {
+                group.addTask {
+                    return await worker.calculateBackgroundWaitTime(maxTime: maxTime)
+                }
+            }
+
+            var currentMax: TimeInterval = 0.0
+            for await result in group {
+                currentMax = max(currentMax, result)
+            }
+            return currentMax
         }
 
-        return result
+        return maxWaitTime
     }
 
     func dispatchWorkRequest(_ request: AirshipWorkRequest) async {

@@ -99,6 +99,7 @@ struct EmbeddedView: View {
 
     let embeddedSize: AirshipEmbeddedSize?
     @State var viewConstraints: ViewConstraints?
+    @Environment(\.isVoiceOverRunning) var isVoiceOverRunning
 
     var body: some View {
         RootView(thomasEnvironment: thomasEnvironment, layout: layout) { orientation, windowSize in
@@ -106,7 +107,7 @@ struct EmbeddedView: View {
                 orientation: orientation,
                 windowSize: windowSize
             )
-
+            
             if #available(iOS 16, tvOS 16, watchOS 9.0, *) {
                 AdoptLayout(placement: placement, viewConstraints: $viewConstraints, embeddedSize: embeddedSize) {
                     if let constraints = viewConstraints {
@@ -120,16 +121,26 @@ struct EmbeddedView: View {
                     width: placement.size.width.calculateSize(self.embeddedSize?.parentWidth),
                     height: placement.size.height.calculateSize(self.embeddedSize?.parentHeight)
                 )
-
+                
                 let contentConstraints = constraints.contentConstraints(
                     placement.size,
                     contentSize: nil,
                     margin: placement.margin
                 )
-
+                
                 createView(constraints: contentConstraints, placement: placement)
             }
         }
+#if !os(watchOS)
+        .onAppear {
+            // Announce to VoiceOver when embedded view appears
+            if isVoiceOverRunning {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    UIAccessibility.post(notification: .screenChanged, argument: nil)
+                }
+            }
+        }
+#endif
     }
 
     @MainActor

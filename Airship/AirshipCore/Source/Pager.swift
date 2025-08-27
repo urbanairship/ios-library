@@ -605,6 +605,16 @@ struct Pager: View {
             layoutState: layoutState
         )
         self.lastReportedIndex = index
+        
+#if !os(watchOS)
+        // Announce page change to VoiceOver
+        if isVoiceOverRunning && lastReportedIndex >= 0 {
+            // Use layoutChanged to force VoiceOver to re-scan the page for focusable elements
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                UIAccessibility.post(notification: .screenChanged, argument: nil)
+            }
+        }
+#endif
 
         // Run any actions set on the current page
         let page = pagerState.pageItems[index]
