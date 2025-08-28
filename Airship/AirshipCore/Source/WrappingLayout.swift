@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 import SwiftUI
 
 /// Wrapping layout will attempt to wrap items with a specified max items per line when parent width

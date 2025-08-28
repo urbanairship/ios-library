@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 final class CachedValue<Value>: @unchecked Sendable where Value: Any {
     private let date: any AirshipDateProtocol

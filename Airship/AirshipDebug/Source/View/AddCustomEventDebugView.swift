@@ -1,5 +1,5 @@
 import AirshipCore
-import Foundation
+
 public import SwiftUI
 
 public struct AddCustomEventView: View {

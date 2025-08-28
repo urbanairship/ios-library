@@ -1,8 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
-
-
 /// Delegate for overriding the default SMS validation.
 /// Deprecated, app should use `AirshipConfig.inputValidationOverrides` instead.
 public protocol SMSValidatorDelegate: Sendable {

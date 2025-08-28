@@ -2,7 +2,7 @@
 
 #if canImport(ActivityKit)
 
-import Foundation
+
 import ActivityKit
 import SwiftUI
 import WidgetKit

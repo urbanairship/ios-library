@@ -1,7 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
-
 /// NOTE: For internal use only. :nodoc:
 public struct AirshipIvyVersionMatcher: Sendable {
 
@@ -242,9 +240,12 @@ public struct AirshipIvyVersionMatcher: Sendable {
 fileprivate extension String {
     // Workaround until we can drop iOS 15
     func airshipSubstring(with nsrange: NSRange) -> String {
-        return (self as NSString).substring(with: nsrange)
+        guard let range = Range(nsrange, in: self) else {
+            return ""
+        }
+        return String(self[range])
     }
-
+    
     var normalizeVersionString: String {
         let trimmed = self.filter { !$0.isWhitespace }
 

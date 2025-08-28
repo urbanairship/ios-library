@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 /**
  * Airship JSON.
  */
@@ -135,10 +135,6 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
 
         if let number = value as? Double {
             return .number(number)
-        }
-
-        if let number = value as? NSNumber {
-            return .number(number.doubleValue)
         }
 
         if let array = value as? [Any?] {

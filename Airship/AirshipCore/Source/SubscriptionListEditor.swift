@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Subscription list editor.
 public class SubscriptionListEditor {

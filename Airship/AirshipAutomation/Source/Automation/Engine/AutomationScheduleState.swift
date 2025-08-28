@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 enum AutomationScheduleState: String, Equatable, Sendable {
 

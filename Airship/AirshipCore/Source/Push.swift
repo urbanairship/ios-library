@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Combine
-import Foundation
+
 
 @preconcurrency
 import UserNotifications
@@ -350,7 +350,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         set {
             let previous = self.notificationOptions
             self.dataStore.setObject(
-                NSNumber(value: newValue.rawValue),
+                newValue.rawValue,
                 forKey: AirshipPush.pushNotificationsOptionsKey
             )
             if previous != newValue {
@@ -362,7 +362,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
             guard
                 let value = self.dataStore.object(
                     forKey: AirshipPush.pushNotificationsOptionsKey
-                ) as? NSNumber
+                ) as? UInt
             else {
                 #if os(tvOS)
                 return .badge
@@ -374,7 +374,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
                 #endif
             }
 
-            return UNAuthorizationOptions(rawValue: value.uintValue)
+            return UNAuthorizationOptions(rawValue: value)
         }
     }
 
@@ -436,12 +436,12 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
                 let value = self.dataStore.object(
                     forKey: AirshipPush.typesAuthorizedKey
                 )
-                    as? NSNumber
+                    as? Int
             else {
                 return []
             }
 
-            return AirshipAuthorizedNotificationSettings(rawValue: value.uintValue)
+            return AirshipAuthorizedNotificationSettings(rawValue: UInt(value))
         }
     }
 
@@ -458,12 +458,12 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
                 let value = self.dataStore.object(
                     forKey: AirshipPush.authorizationStatusKey
                 )
-                    as? NSNumber
+                    as? Int
             else {
                 return .notDetermined
             }
 
-            return UNAuthorizationStatus(rawValue: Int(value.uintValue))
+            return UNAuthorizationStatus(rawValue: Int(value))
                 ?? .notDetermined
         }
     }

@@ -1,7 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
-
 /// Image provider to extend image loading.
 /// - Note: for internal use only.  :nodoc:
 public protocol AirshipImageProvider {

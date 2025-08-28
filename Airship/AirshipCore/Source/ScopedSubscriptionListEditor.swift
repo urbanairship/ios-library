@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Scoped subscription list editor.
 public class ScopedSubscriptionListEditor {

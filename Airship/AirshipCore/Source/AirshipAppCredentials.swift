@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// App credentails
 public struct AirshipAppCredentials: Sendable {

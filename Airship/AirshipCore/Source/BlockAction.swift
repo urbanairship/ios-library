@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Action that runs a block.
 public final class BlockAction: AirshipAction {

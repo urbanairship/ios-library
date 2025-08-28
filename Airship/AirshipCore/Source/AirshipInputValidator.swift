@@ -1,7 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
-
 /// A struct that encapsulates input validation logic for different request types such as email and SMS.
 public struct AirshipInputValidation {
 

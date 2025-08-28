@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Airship extension config. Can be supplied with the property `airshipExtensionConfig` in `UANotificationServiceExtension`.
 public struct AirshipExtensionConfig {

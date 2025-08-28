@@ -1,7 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
-
 protocol MeteredUsageAPIClientProtocol: Sendable {
     func uploadEvents(
         _ events: [AirshipMeteredUsageEvent],

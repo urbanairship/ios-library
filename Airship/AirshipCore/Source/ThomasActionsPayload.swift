@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 struct ThomasActionsPayload: ThomasSerializable, Hashable {
     static let keyActionOverride = "platform_action_overrides"

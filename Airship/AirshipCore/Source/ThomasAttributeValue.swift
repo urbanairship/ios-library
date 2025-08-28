@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 enum ThomasAttributeValue: ThomasSerializable, Hashable {
     case string(String)

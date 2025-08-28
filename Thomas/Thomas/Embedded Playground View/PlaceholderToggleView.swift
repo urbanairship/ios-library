@@ -1,6 +1,6 @@
 /* Copyright Urban Airship and Contributors */
 
-import Foundation
+
 import SwiftUI
 
 struct EmbeddedToggleModifier: ViewModifier {

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Airship action. Actions can be registered in the `ActionRegistry` and ran through the `ActionRunner`.
 public protocol AirshipAction: AnyObject, Sendable {

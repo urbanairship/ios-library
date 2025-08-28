@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 // An actor that will run a task with a result in order.
 /// NOTE: For internal use only. :nodoc:

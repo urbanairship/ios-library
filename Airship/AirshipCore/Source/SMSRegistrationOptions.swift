@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// SMS registration options
 public struct SMSRegistrationOptions: Codable, Sendable, Equatable, Hashable {

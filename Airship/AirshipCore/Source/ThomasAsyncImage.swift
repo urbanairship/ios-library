@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Combine
-import Foundation
+
 public import SwiftUI
 
 public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {

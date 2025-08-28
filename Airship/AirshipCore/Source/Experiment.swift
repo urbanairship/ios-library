@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 enum ExperimentType: String, Codable, Sendable, Equatable {
     case holdoutGroup = "holdout"

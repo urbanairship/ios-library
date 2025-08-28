@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 import SwiftUI
 
 /// Linear Layout - either a VStack or HStack depending on the direction.

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 protocol SessionTrackerProtocol: Sendable {
     var sessionState: SessionState { get }

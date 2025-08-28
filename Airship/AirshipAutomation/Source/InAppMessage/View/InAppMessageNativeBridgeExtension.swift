@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 #if !os(tvOS)
-import Foundation
+
 public import WebKit
 
 #if canImport(AirshipCore)

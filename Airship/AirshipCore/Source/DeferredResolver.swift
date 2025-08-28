@@ -1,7 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
-
 /// NOTE: For internal use only. :nodoc:
 public enum AirshipDeferredResult<T : Sendable&Equatable>: Sendable, Equatable {
     case success(T)

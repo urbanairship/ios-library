@@ -3,7 +3,7 @@
 
 #if !os(tvOS) && !os(watchOS)
 
-import Foundation
+
 public import WebKit
 
 /// Delegate to extend the native bridge.

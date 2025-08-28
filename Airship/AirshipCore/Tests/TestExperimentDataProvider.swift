@@ -3,7 +3,7 @@
 @testable
 import AirshipCore
 
-import Foundation
+
 
 final class TestExperimentDataProvider: ExperimentDataProvider, @unchecked Sendable {
     var onEvaluate: ((MessageInfo, AudienceDeviceInfoProvider) async throws -> ExperimentResult?)? = nil

@@ -1,4 +1,4 @@
-import Foundation
+
 
 struct ThomasStateTriggers: ThomasSerializable {
     var id: String

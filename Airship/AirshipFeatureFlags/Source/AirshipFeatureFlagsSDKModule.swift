@@ -4,7 +4,7 @@
 public import AirshipCore
 #endif
 
-import Foundation
+
 
 /// AirshipFeatureFlags module loader.
 /// @note For internal use only. :nodoc:

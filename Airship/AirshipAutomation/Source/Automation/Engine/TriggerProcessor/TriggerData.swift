@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 struct TriggerData: Sendable, Equatable, Codable {
     var scheduleID: String

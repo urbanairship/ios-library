@@ -80,7 +80,7 @@ final class JsonValueMatcherTest: XCTestCase {
     }
 
     func testEqualsNumber() throws {
-        let matcher = JSONValueMatcher.matcherWhereNumberEquals(123.35)
+        let matcher = JSONValueMatcher.matcherWhereNumberEquals(to: 123.35)
         XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.35)))
         XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.350)))
         XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.350), ignoreCase:true))
@@ -102,14 +102,14 @@ final class JsonValueMatcherTest: XCTestCase {
             "equals": 123.456
         }
         """
-        let match = JSONValueMatcher.matcherWhereNumberEquals(123.456)
+        let match = JSONValueMatcher.matcherWhereNumberEquals(to: 123.456)
 
         // Verify the JSONValue recreates the expected matcher
         XCTAssertEqual(match, try AirshipJSON.from(json: json).decode())
     }
 
     func testAtLeast() throws {
-        let matcher = JSONValueMatcher.matcherWhereNumberAtLeast(atLeast: 123.35)
+        let matcher = JSONValueMatcher.matcherWhereNumberAtLeast(123.35)
         XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.35)))
         XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.36)))
         XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.36), ignoreCase:true))
@@ -132,14 +132,14 @@ final class JsonValueMatcherTest: XCTestCase {
         }
         """
 
-        let matcher = JSONValueMatcher.matcherWhereNumberAtLeast(atLeast: 100)
+        let matcher = JSONValueMatcher.matcherWhereNumberAtLeast(100)
 
         // Verify the JSONValue recreates the expected matcher
         XCTAssertEqual(matcher, try AirshipJSON.from(json: json).decode())
     }
 
     func testAtMost() throws {
-        let matcher = JSONValueMatcher.matcherWhereNumberAtMost(atMost: 123.35)
+        let matcher = JSONValueMatcher.matcherWhereNumberAtMost(123.35)
         XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.35)))
         XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.34)))
         XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.34), ignoreCase:true))
@@ -161,14 +161,14 @@ final class JsonValueMatcherTest: XCTestCase {
         }
         """
 
-        let matcher = JSONValueMatcher.matcherWhereNumberAtMost(atMost: 100)
+        let matcher = JSONValueMatcher.matcherWhereNumberAtMost(100)
 
         // Verify the JSONValue recreates the expected matcher
         XCTAssertEqual(matcher, try AirshipJSON.from(json: json).decode())
     }
 
     func testAtLeastAtMost() throws {
-        let matcher = JSONValueMatcher.matcherWhereNumberAtLeast(atLeast: 100, atMost: 150)
+        let matcher = JSONValueMatcher.matcherWhereNumberAtLeast(100, atMost: 150)
         XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(100)))
         XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(150)))
         XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.456)))
@@ -191,7 +191,7 @@ final class JsonValueMatcherTest: XCTestCase {
             "at_most": 100
         }
         """
-        let matcher = JSONValueMatcher.matcherWhereNumberAtLeast(atLeast: 1, atMost: 100)
+        let matcher = JSONValueMatcher.matcherWhereNumberAtLeast(1, atMost: 100)
 
         // Verify the JSONValue recreates the expected matcher
         XCTAssertEqual(matcher, try AirshipJSON.from(json: json).decode())

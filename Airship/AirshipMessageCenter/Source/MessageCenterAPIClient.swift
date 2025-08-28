@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -35,7 +35,7 @@ protocol MessageCenterAPIClientProtocol: Sendable {
 
     /// Performs a batch mark-as-read request on the server.
     /// - Parameters:
-    ///   - messages: An NSArray of messages be marked as read.
+    ///   - messages: An Array of messages be marked as read.
     ///   - user: The user credentials
     ///   - channelID: The channel ID.
     /// - Returns: Returns an AirshipHTTPResponse

@@ -2,7 +2,7 @@
 
 #if canImport(ActivityKit)
 
-import Foundation
+
 import SwiftUI
 import Combine
 import AirshipCore

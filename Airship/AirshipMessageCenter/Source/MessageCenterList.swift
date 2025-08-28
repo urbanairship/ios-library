@@ -2,7 +2,7 @@
 
 public import Combine
 
-import Foundation
+
 
 #if canImport(AirshipCore)
 public import AirshipCore

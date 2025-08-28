@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import SwiftUI
-import Foundation
+
 
 // MARK: - UserDefaults Extension for Recent Layouts
 extension UserDefaults {

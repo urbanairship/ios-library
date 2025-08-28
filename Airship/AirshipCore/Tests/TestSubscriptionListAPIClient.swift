@@ -1,4 +1,4 @@
-import Foundation
+
 
 @testable public import AirshipCore
 

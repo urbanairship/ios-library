@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 import Combine
-import Foundation
 import SwiftUI
 
 public struct AirshipImageLoader {

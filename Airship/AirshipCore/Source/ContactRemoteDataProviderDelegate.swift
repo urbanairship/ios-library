@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 struct ContactRemoteDataProviderDelegate: RemoteDataProviderDelegate {
     let source: RemoteDataSource = .contact

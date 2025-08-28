@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 import CommonCrypto
-import Foundation
 
 #if canImport(AirshipBasement)
 import AirshipBasement

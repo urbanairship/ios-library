@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import SwiftUI
-import Foundation
+
 
 
 #if canImport(AirshipCore)

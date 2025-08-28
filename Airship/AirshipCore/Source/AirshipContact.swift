@@ -2,7 +2,7 @@
 
 @preconcurrency
 public import Combine
-import Foundation
+
 
 #if canImport(UIKit)
 import UIKit

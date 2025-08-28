@@ -1,7 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
-
 /// Defines a predicate for evaluating a JSON payload.
 ///
 /// `JSONPredicate` can be used to build complex logical conditions (`AND`, `OR`, `NOT`)

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
     case doubleOptIn(DoubleOptIn)

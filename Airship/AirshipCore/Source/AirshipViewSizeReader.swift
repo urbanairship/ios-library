@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import SwiftUI
-import Foundation
+
 
 
 /// A view that wraps the view and returns the size without causing the view to expand.

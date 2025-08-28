@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import CoreData
-import Foundation
+
 
 /// NOTE: For internal use only. :nodoc:
 @objc(UARemoteDataStorePayload)

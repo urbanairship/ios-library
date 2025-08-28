@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Schedule prepare result
 enum SchedulePrepareResult: Sendable, CustomStringConvertible {

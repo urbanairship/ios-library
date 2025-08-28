@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Email registration options
 public struct EmailRegistrationOptions: Codable, Sendable, Equatable, Hashable {

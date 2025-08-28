@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import CommonCrypto
-import Foundation
+
 public import SwiftUI
 
 #if !os(watchOS)

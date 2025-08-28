@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Represents the possible sites.
 public enum CloudSite: String, Sendable, Decodable {

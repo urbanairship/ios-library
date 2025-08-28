@@ -1,7 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
-
 /// Compound audience selector
 public indirect enum CompoundDeviceAudienceSelector: Sendable, Codable, Equatable {
     /// Atomic selector. Defines an actual audience selector.

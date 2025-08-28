@@ -1,4 +1,4 @@
-import Foundation
+
 
 /// NOTE: For internal use only. :nodoc:
 public struct RemoteDataInfo: Sendable, Codable, Equatable, Hashable {

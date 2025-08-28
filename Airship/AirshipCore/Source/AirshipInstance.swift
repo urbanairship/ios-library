@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 protocol AirshipInstanceProtocol: Sendable {
     var config: RuntimeConfig { get }

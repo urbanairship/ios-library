@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// The Config object provides an interface for passing common configurable values to `Airship`.
 public struct AirshipConfig: Decodable, Sendable {

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 import SwiftUI
 
 // The notification we'll send when a shake gesture happens.

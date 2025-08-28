@@ -2,7 +2,7 @@
 
 #if canImport(ActivityKit)
 
-import Foundation
+
 
 @preconcurrency
 import Combine

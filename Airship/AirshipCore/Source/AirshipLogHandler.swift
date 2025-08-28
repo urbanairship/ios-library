@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Protocol used by Airship to log all log messages within the SDK.
 /// A custom log handlers should be set on `AirshipConfig.logHandler`.

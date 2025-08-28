@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 import SwiftUI
 
 // Icon view that can be used to display icons inside a toggle layout

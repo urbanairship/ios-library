@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import CoreData
-import Foundation
+
 
 actor EventStore {
     private static let eventDataEntityName = "UAEventData"

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 public import Combine
 
 /// Simple implementation of a `channel` that allows multiple AsyncStreams of the same data.

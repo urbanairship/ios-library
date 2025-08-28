@@ -66,7 +66,7 @@ fileprivate final class TestJSProtocol: JavaScriptEnvironmentProtocol, @unchecke
         getters[getter] = try! AirshipJSON.wrap(string)
     }
     
-    func add(_ getter: String, number: NSNumber?) {
+    func add(_ getter: String, number: Double?) {
         getters[getter] = try! AirshipJSON.wrap(number)
     }
     

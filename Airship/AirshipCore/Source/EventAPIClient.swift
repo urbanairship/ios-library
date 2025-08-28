@@ -1,5 +1,5 @@
 /* Copyright Airship and Contributors */
-import Foundation
+
 
 protocol EventAPIClientProtocol: Sendable {
     func uploadEvents(

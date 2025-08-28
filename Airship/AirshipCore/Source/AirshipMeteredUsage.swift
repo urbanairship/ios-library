@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
 import Combine
 
 /// NOTE: For internal use only. :nodoc:

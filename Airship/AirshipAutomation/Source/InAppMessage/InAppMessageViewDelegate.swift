@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 
 /// Delegate for receiving callback pertaining to in-app message lifecycle state

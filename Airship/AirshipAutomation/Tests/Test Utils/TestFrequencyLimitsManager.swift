@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 @testable import AirshipAutomation
 @testable import AirshipCore

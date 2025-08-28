@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// AsyncSequence of `LiveActivityRegistrationStatus` updates.
 public struct LiveActivityRegistrationStatusUpdates: AsyncSequence {

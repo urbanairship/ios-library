@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Combine
-import Foundation
+
 
 /// Manages work for the Airship SDK
 final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {

@@ -12,7 +12,7 @@ import WatchKit
 import AirshipBasement
 #endif
 
-import Foundation
+
 @preconcurrency
 import UserNotifications
 

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import SwiftUI
-import Foundation
+
 
 indirect enum ThomasViewInfo: ThomasSerializable {
     case container(Container)

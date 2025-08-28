@@ -1,7 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
-
 /// NOTE: For internal use only. :nodoc:
 public struct AirshipTriggerContext: Codable, Sendable, Equatable {
     let type: String

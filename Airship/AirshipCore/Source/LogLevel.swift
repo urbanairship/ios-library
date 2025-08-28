@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Represents the possible log levels.
 public enum AirshipLogLevel: String, Sendable, Decodable {

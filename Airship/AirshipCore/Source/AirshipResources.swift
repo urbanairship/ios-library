@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 class AirshipResources {
     static let bundle: Bundle? = findBundle()

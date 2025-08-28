@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Message display delegate
 public protocol InAppMessageDisplayDelegate: AnyObject, Sendable{

@@ -1,6 +1,6 @@
 // Copyright Airship and Contributors
 
-import Foundation
+
 import UserNotifications
 
 protocol NotificationRegistrar: Sendable {

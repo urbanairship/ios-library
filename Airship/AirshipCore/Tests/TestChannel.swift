@@ -1,4 +1,4 @@
-import Foundation
+
 import ActivityKit
 
 @testable

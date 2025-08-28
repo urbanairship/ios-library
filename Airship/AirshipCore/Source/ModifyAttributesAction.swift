@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Modifies attributes.
 ///
@@ -104,7 +104,7 @@ public final class ModifyAttributesAction: AirshipAction {
                 if let string = value as? String {
                     editor?.set(string: string, attribute: key)
                 } else if let number = value as? NSNumber {
-                    editor?.set(number: number, attribute: key)
+                    editor?.set(number: number.doubleValue, attribute: key)
                 } else if let date = value as? Date {
                     editor?.set(date: date, attribute: key)
                 } else {

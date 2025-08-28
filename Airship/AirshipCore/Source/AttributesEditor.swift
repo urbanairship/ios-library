@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Attributes editor.
 public final class AttributesEditor {
@@ -56,8 +56,19 @@ public final class AttributesEditor {
      *   - number: The value.
      *   - attribute: The attribute.
      */
+    @available(*, deprecated, message: "Use set(number:number) with Double type instead")
     public func set(number: NSNumber, attribute: String) {
         trySetAttribute(attribute, value: .number(number.doubleValue))
+    }
+    
+    /**
+     * Sets the attribute.
+     * - Parameters:
+     *   - number: The value.
+     *   - attribute: The attribute.
+     */
+    public func set(number: Double, attribute: String) {
+        trySetAttribute(attribute, value: .number(number))
     }
 
     /**

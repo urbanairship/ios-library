@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import AirshipCore
-import Foundation
+
 import UserNotifications
 import WatchKit
 

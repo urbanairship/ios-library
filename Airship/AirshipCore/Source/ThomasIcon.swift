@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 struct ThomasIconInfo: ThomasSerializable {
     let type: String = "icon"

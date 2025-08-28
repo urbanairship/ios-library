@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 import SwiftUI
 
 class ChannelListViewHostingController<Content>: UIHostingController<Content> where Content: View {

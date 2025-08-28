@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 import os
 
 /// Default log handler. Logs to either os.Logger or just prints depending on OS version.

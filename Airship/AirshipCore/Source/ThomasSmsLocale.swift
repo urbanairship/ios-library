@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Locale configuration for a phone number
 struct ThomasSMSLocale: ThomasSerializable {

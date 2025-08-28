@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 struct ThomasPropertyOverride<T: Codable&Sendable&Equatable>: ThomasSerializable {
     let whenStateMatches: JSONPredicate?

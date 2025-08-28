@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Airship live activity registration status.
 public enum LiveActivityRegistrationStatus: String, Codable, Sendable {

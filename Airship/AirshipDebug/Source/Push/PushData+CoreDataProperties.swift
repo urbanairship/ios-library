@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 public import CoreData
 
 //Had to generate it manually as coredata codegen doesn't work well with swift 6

@@ -1,7 +1,5 @@
 // Copyright Airship and Contributors
 
-import Foundation
-
 /// A `JSONValueMatcher` is used to match a JSON value against a set of constraints.
 ///
 /// This class provides a flexible way to define conditions for JSON values, such as checking for equality,
@@ -53,15 +51,15 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
     init(predicate: any Predicate) {
         self.predicate = predicate
     }
-
+    
     /// Creates a matcher that requires a number to be at least a minimum value.
     /// - Parameter atLeast: The minimum acceptable value.
     /// - Returns: A `JSONValueMatcher` for the specified condition.
     public class func matcherWhereNumberAtLeast(
-        atLeast: NSNumber
+        _ atLeast: Double
     )-> JSONValueMatcher {
         return .init(
-            predicate: NumberRangePredicate(atLeast: atLeast.doubleValue)
+            predicate: NumberRangePredicate(atLeast: atLeast)
         )
     }
 
@@ -71,26 +69,26 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
     ///   - atMost: The maximum acceptable value (inclusive).
     /// - Returns: A `JSONValueMatcher` for the specified condition.
     public class func matcherWhereNumberAtLeast(
-        atLeast: NSNumber,
-        atMost: NSNumber
+        _ atLeast: Double,
+        atMost: Double
     ) -> JSONValueMatcher {
         return .init(
             predicate: NumberRangePredicate(
-                atLeast: atLeast.doubleValue,
-                atMost: atMost.doubleValue
+                atLeast: atLeast,
+                atMost: atMost
             )
         )
     }
-
+    
     /// Creates a matcher that requires a number to be at most a maximum value.
     /// - Parameter atMost: The maximum acceptable value.
     /// - Returns: A `JSONValueMatcher` for the specified condition.
     public class func matcherWhereNumberAtMost(
-        atMost: NSNumber
+        _ atMost: Double
     ) -> JSONValueMatcher {
         return .init(
             predicate: NumberRangePredicate(
-                atMost: atMost.doubleValue
+                atMost: atMost
             )
         )
     }
@@ -99,15 +97,15 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
     /// - Parameter number: The exact number to match.
     /// - Returns: A `JSONValueMatcher` for the specified condition.
     public class func matcherWhereNumberEquals(
-        _ number: NSNumber
+        to number: Double
     ) -> JSONValueMatcher {
         return .init(
             predicate: EqualsPredicate(
-                equals: .number(number.doubleValue)
+                equals: .number(number)
             )
         )
     }
-
+    
     /// Creates a matcher for an exact boolean value.
     /// - Parameter boolean: The exact boolean to match.
     /// - Returns: A `JSONValueMatcher` for the specified condition.

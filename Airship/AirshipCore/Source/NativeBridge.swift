@@ -6,7 +6,7 @@ import AirshipBasement
 
 #if !os(tvOS) && !os(watchOS)
 
-import Foundation
+
 @preconcurrency
 public import WebKit
 

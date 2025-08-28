@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #if !os(tvOS)
-import Foundation
+
 public import WebKit
 
 #if canImport(AirshipCore)
@@ -41,7 +41,6 @@ public final class MessageCenterNativeBridgeExtension: NSObject, NativeBridgeExt
             "getMessageSentDateMS",
             number: (self.message.sentDate.timeIntervalSince1970 * 1000.0)
                 .rounded()
-                as NSNumber
         )
         js.add(
             "getMessageSentDate",

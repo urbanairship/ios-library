@@ -3,10 +3,8 @@
 #if !os(tvOS) && !os(watchOS)
 
 import UIKit
-import Foundation
 
 public protocol JavaScriptEnvironmentProtocol: Sendable {
-
 
     /// Adds a string getter to the Airship JavaScript environment.
     /// - Parameter getter: The getter's name.
@@ -16,8 +14,8 @@ public protocol JavaScriptEnvironmentProtocol: Sendable {
     /// Adds a number getter to the Airship JavaScript environment.
     /// - Parameter getter: The getter's name.
     /// - Parameter number: The getter's value.
-    func add(_ getter: String, number: NSNumber?)
-
+    func add(_ getter: String, number: Double?)
+    
     /// Adds a dictionary getter to the Airship JavaScript environment.
     /// - Parameter getter: The getter's name.
     /// - Parameter dictionary: The getter's value.
@@ -58,8 +56,8 @@ public final class JavaScriptEnvironment: JavaScriptEnvironmentProtocol, Sendabl
             makeGetter(name: getter, string: string)
         )
     }
-
-    public func add(_ getter: String, number: NSNumber?) {
+    
+    public func add(_ getter: String, number: Double?) {
         self.addExtension(
             makeGetter(name: getter, number: number)
         )
@@ -162,12 +160,12 @@ public final class JavaScriptEnvironment: JavaScriptEnvironmentProtocol, Sendabl
 
     private func makeGetter(
         name: String,
-        number: NSNumber?
+        number: Double?
     ) -> String {
         String(
             format: "_UAirship.%@ = function() {return %@;};",
             name,
-            number ?? -1
+            String(number ?? -1)
         )
     }
 

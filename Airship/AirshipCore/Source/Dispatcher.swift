@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 protocol UADispatcher: AnyObject, Sendable {
     func doSync(_ block: @Sendable @escaping () -> Void)

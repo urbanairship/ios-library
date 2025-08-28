@@ -1,7 +1,7 @@
 
 
 @testable import AirshipCore
-import Foundation
+
 
 class TestPrivacyManager: PrivacyManagerProtocol, @unchecked Sendable {
     private static let enabledFeaturesKey = "com.urbanairship.privacymanager.enabledfeatures"

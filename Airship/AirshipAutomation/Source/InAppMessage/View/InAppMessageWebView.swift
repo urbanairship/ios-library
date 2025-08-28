@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #if !os(tvOS)
-import Foundation
+
 import SwiftUI
 import WebKit
 #if canImport(AirshipCore)

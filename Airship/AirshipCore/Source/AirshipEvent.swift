@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// - Note: For Internal use only :nodoc:
 public enum AirshipEventPriority: Sendable {

@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
 import SwiftUI
 
 struct Score: View {
@@ -309,7 +308,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
         }
 
         let font = UIFont.resolveUIFont(appearance)
-        return (text as NSString).size(withAttributes: [.font: font])
+        return (text as String).size(withAttributes: [.font: font])
     }
 
     private func measureTextHeight(_ text: String, with appearance: ThomasTextAppearance?) -> CGFloat {
@@ -318,7 +317,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
         }
 
         let font = UIFont.resolveUIFont(appearance)
-        return (text as NSString).size(withAttributes: [.font: font]).height
+        return (text as String).size(withAttributes: [.font: font]).height
     }
 
 

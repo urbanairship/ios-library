@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// A class that manages a list of cached values, where each value has its own expiry.
 final class CachedList<Value> where Value: Any {

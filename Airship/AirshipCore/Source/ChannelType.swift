@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Channel type
 public enum ChannelType: String, Codable, Sendable, Equatable {

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Preference data store.
 /// - Note: For internal use only. :nodoc:

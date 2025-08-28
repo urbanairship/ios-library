@@ -2,7 +2,7 @@
 
 #if !os(watchOS)
 
-import Foundation
+
 import SwiftUI
 import AVKit
 import AVFoundation

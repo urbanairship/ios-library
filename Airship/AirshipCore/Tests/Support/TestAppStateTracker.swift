@@ -1,5 +1,5 @@
 public import AirshipCore
-import Foundation
+
 import Combine
 
 public final class TestAppStateTracker: AppStateTrackerProtocol, @unchecked Sendable {

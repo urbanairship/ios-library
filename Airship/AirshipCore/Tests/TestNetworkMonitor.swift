@@ -1,5 +1,5 @@
 import AirshipCore
-import Foundation
+
 
 actor TestNetworkChecker: AirshipNetworkCheckerProtocol {
     private let _isConnected = AirshipMainActorValue(false)

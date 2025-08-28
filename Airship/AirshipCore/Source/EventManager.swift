@@ -1,4 +1,4 @@
-import Foundation
+
 
 protocol EventManagerProtocol: AnyObject, Sendable {
     var uploadsEnabled: Bool { get set }

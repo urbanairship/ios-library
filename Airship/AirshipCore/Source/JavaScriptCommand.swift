@@ -2,7 +2,7 @@
 
 #if !os(tvOS) && !os(watchOS)
 
-import Foundation
+
 
 // Model object for holding data associated with JS delegate calls
 public struct JavaScriptCommand: Sendable, CustomDebugStringConvertible {

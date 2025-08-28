@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+
 
 /// Allowed SDK extension types.
 /// - Note: For internal use only. :nodoc:

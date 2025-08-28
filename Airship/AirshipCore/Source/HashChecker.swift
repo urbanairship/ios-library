@@ -1,7 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
-
 struct HashChecker {
     private let queue = AirshipSerialQueue()
     private let cache: any AirshipCache
