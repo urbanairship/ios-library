@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 
+public import Foundation
 
 /**
  * Authentication challenge resolver class
