@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-
 public import Foundation
 
 /**
@@ -16,7 +15,9 @@ public final class ChallengeResolver: NSObject, Sendable  {
     
     private override init() {}
     
-    public func resolve(_ challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+    public func resolve(
+        _ challenge: URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
         guard
             let resolver = await self.resolver,
             challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
@@ -31,17 +32,19 @@ public final class ChallengeResolver: NSObject, Sendable  {
 
 extension ChallengeResolver: URLSessionTaskDelegate {
     
-    public func urlSession(_ session: URLSession,
-                    didReceive challenge: URLAuthenticationChallenge)
-    async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
-        
+    public func urlSession(
+        _ session: URLSession,
+        didReceive challenge: URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+
         return await self.resolve(challenge)
     }
     
-    public func urlSession(_ session: URLSession,
-                             task: URLSessionTask,
-                             didReceive challenge: URLAuthenticationChallenge)
-    async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+    public func urlSession(
+        _ session: URLSession,
+        task: URLSessionTask,
+        didReceive challenge: URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
         return await self.resolve(challenge)
     }
     

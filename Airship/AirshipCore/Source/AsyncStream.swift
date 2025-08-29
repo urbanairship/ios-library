@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 public extension AsyncStream {
     static func airshipMakeStreamWithContinuation(

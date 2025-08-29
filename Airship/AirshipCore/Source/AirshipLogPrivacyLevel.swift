@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 import os
 
 /// Represents the possible log privacy level.

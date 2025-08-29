@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 public import SwiftUI
 
 /// Preference Center view style configuration

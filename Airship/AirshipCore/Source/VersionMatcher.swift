@@ -1,5 +1,8 @@
 // Copyright Airship and Contributors
 
+import Foundation
+
+
 /// Version matcher.
 @available(*, deprecated, message: "Marked to be removed in SDK 20")
 public class VersionMatcher: NSObject {

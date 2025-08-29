@@ -1,5 +1,7 @@
 // Copyright Airship and Contributors
 
+import Foundation
+
 /// A `JSONValueMatcher` is used to match a JSON value against a set of constraints.
 ///
 /// This class provides a flexible way to define conditions for JSON values, such as checking for equality,

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 struct AppRemoteDataProviderDelegate: RemoteDataProviderDelegate {
     let source: RemoteDataSource = .app

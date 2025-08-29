@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// Channel scope.
 public enum ChannelScope: String, Codable, Sendable, Equatable {

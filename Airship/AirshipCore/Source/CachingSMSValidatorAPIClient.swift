@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 actor CachingSMSValidatorAPIClient: SMSValidatorAPIClientProtocol {
     private struct CacheEntry: Sendable, Equatable{
         let msisdn: String

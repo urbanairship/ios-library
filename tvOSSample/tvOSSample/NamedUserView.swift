@@ -2,7 +2,7 @@
 
 import AirshipCore
 import AirshipPreferenceCenter
-
+import Foundation
 import SwiftUI
 
 struct NamedUserView: View {

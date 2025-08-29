@@ -4,7 +4,7 @@
 // Do not use these anymore, its almost always a better idea to use Codables
 // instead.
 
-
+import Foundation
 
 /// NOTE: For internal use only. :nodoc:
 public class JSONValueTransformer: ValueTransformer {

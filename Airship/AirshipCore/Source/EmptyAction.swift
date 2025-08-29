@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// Action that produces an empty result.
 public final class EmptyAction: AirshipAction {

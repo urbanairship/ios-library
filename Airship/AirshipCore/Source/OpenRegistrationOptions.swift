@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// Open registration options
 public struct OpenRegistrationOptions: Codable, Sendable, Equatable, Hashable {

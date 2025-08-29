@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import SwiftUI
-
+import Foundation
 
 /// NOTE: For internal use only. :nodoc:
 public struct AirshipEmbeddedInfo: Equatable, Hashable, Sendable {

@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// A collection of properties defining an automation audience
 public struct DeviceAudienceSelector: Sendable, Codable, Equatable {
     var newUser: Bool?

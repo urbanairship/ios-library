@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// /// NOTE: For internal use only. :nodoc:
 public enum SMSValidatorAPIClientResult: Decodable, Equatable, Sendable {
     case valid(String)

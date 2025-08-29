@@ -1,12 +1,10 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 #if canImport(AirshipCore)
 import AirshipCore
 #endif
-
-
 
 struct MessageDisplayHistory: Codable, Equatable, Sendable {
     var lastImpression: LastImpression?

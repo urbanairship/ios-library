@@ -1,6 +1,6 @@
 /* Copyright Urban Airship and Contributors */
 
-
+import Foundation
 import SwiftUI
 
 extension Binding where Value == String {

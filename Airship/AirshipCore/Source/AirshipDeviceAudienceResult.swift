@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// NOTE: For internal use only. :nodoc:
 public struct AirshipDeviceAudienceResult: Sendable, Codable, Equatable {
     public var isMatch: Bool

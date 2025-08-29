@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// Attributes editor.
 public final class AttributesEditor {

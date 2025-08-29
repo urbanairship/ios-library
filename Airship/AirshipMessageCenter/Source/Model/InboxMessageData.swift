@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import CoreData
-
+import Foundation
 
 /// CoreData class representing the backing data for a UAInboxMessage.
 /// This class should not ordinarily be used directly.

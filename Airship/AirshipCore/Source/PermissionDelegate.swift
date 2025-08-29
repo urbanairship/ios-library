@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// Permissions manager delegate. Allows for extending permission gathering.
 public protocol AirshipPermissionDelegate: Sendable {

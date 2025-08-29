@@ -4,7 +4,7 @@
 import AirshipCore
 #endif
 
-
+import Foundation
 
 struct AutomationScheduleData: Sendable, Equatable, CustomDebugStringConvertible {
     var schedule: AutomationSchedule

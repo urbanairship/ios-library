@@ -2,7 +2,7 @@
 public import AirshipCore
 #endif
 
-
+import Foundation
 
 /// Action runner for in-app experiences. Must be used in order to properly attribute custom events to the message.
 public protocol InAppActionRunner: Sendable {

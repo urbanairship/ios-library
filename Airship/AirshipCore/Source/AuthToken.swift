@@ -1,4 +1,4 @@
-
+import Foundation
 
 struct AuthToken {
     let identifier: String

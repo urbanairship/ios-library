@@ -1,5 +1,5 @@
 
-
+import Foundation
 
 
 /// NOTE: For internal use only. :nodoc:

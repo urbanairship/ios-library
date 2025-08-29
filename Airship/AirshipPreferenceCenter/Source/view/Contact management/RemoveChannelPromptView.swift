@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 import SwiftUI
 
 /// Prompt that appears when a opt-out button tap occurs.

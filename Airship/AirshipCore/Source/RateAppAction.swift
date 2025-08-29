@@ -2,7 +2,7 @@
 
 #if !os(tvOS) && !os(watchOS)
 
-
+import Foundation
 import StoreKit
 
 /// Links directly to app store review page or opens an app rating prompt.

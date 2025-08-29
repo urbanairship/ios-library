@@ -1,4 +1,4 @@
-
+import Foundation
 
 /// NOTE: For internal use only. :nodoc:
 enum SubscriptionListUpdateType: Int, Codable, Equatable, Sendable {

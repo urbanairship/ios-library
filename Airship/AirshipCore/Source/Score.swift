@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
 import SwiftUI
 
 struct Score: View {

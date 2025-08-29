@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Combine
-
+import Foundation
 
 struct WorkConditionsMonitor: @unchecked Sendable {
     private let cancellable: AnyCancellable

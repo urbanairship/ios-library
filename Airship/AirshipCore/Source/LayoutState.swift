@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 struct LayoutState: Sendable {
     static let empty = LayoutState(

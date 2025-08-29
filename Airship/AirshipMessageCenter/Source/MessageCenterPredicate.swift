@@ -1,6 +1,6 @@
 /* Copyright Urban Airship and Contributors */
 
-
+import Foundation
 public import SwiftUI
 import UIKit
 

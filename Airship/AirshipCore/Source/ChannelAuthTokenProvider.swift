@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 final class ChannelAuthTokenProvider: AuthTokenProvider {
     private let cachedAuthToken: CachedValue<AuthToken>

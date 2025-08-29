@@ -3,7 +3,7 @@
 #if canImport(ActivityKit)
 
 import ActivityKit
-
+import Foundation
 
 struct DeliveryAttributes: ActivityAttributes {
     public typealias PizzaDeliveryStatus = ContentState

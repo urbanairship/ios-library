@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// Subscribes to/unsubscribes from a subscription list.
 ///

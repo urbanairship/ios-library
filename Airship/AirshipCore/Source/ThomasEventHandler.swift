@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 struct ThomasEventHandler: ThomasSerializable {
     let type: EventType

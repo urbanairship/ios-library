@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import Combine
-
+import Foundation
 
 #if canImport(ActivityKit) && !targetEnvironment(macCatalyst)
 public import ActivityKit

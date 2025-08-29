@@ -1,4 +1,4 @@
-
+import Foundation
 
 actor ContactManager: ContactManagerProtocol {
     private static let operationsKey = "Contact.operationEntries"

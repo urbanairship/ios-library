@@ -3,8 +3,10 @@
 #if !os(tvOS) && !os(watchOS)
 
 import UIKit
+import Foundation
 
 public protocol JavaScriptEnvironmentProtocol: Sendable {
+
 
     /// Adds a string getter to the Airship JavaScript environment.
     /// - Parameter getter: The getter's name.

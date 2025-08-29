@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// Action situations
 public enum ActionSituation: Int, Sendable {

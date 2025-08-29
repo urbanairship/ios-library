@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 struct ThomasBorder: Codable, Equatable, Sendable {
     struct CornerRadius: Codable, Equatable, Sendable {

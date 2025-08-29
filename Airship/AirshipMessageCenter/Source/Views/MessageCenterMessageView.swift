@@ -1,7 +1,7 @@
 /* Copyright Urban Airship and Contributors */
 
 import Combine
-
+import Foundation
 public import SwiftUI
 
 #if canImport(WebKit)

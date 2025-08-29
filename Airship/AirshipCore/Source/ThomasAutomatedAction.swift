@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 struct ThomasAutomatedAction: Codable, Equatable, Sendable {
     var identifier: String

@@ -6,7 +6,7 @@ import AirshipCore
 import AirshipKit
 #endif
 
-
+import Foundation
 
 /// A wrapper for representing an Airship push in the Debug UI
 struct PushNotification: Equatable, Hashable, CustomStringConvertible {

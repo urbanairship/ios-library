@@ -5,7 +5,7 @@ import AirshipCore
 
 import UserNotifications
 import UIKit
-
+import Foundation
 import Combine
 
 final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, AirshipComponent, @unchecked Sendable {

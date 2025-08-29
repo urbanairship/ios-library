@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// NOTE: For internal use only. :nodoc:
 public struct AirshipStateOverrides: Encodable, Equatable, Sendable {
     let appVersion: String

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 @testable import AirshipCore
-
+import Foundation
 
 // Test keychain that performs its in the same queueing as the real AirshipKeyChainAccess
 final class TestKeyChainAccess: AirshipKeychainAccessProtocol, @unchecked Sendable {

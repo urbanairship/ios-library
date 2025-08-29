@@ -1,7 +1,7 @@
 /* Copyright Urban Airship and Contributors */
 
 import AirshipCore
-
+import Foundation
 import SwiftUI
 
 struct NamedUserView: View {

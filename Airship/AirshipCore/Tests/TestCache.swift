@@ -1,7 +1,7 @@
 
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 @testable
 import AirshipCore

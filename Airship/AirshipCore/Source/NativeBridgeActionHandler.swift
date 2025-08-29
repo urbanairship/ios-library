@@ -2,7 +2,7 @@
 
 #if !os(tvOS) && !os(watchOS)
 
-
+import Foundation
 import WebKit
 
 protocol NativeBridgeActionHandlerProtocol: Sendable {

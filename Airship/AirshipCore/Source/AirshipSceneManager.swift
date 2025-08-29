@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 #if !os(watchOS)
 import UIKit
 #endif

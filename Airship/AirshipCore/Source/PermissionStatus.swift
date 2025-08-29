@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// Permission status
 public enum AirshipPermissionStatus: String, Sendable, Codable {

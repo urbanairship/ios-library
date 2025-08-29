@@ -1,4 +1,4 @@
-
+import Foundation
 
 protocol EventUploadSchedulerProtocol: Sendable {
     func scheduleUpload(

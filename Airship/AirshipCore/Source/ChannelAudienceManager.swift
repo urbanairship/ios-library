@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 @preconcurrency import Combine
-
+import Foundation
 
 protocol ChannelAudienceManagerProtocol: AnyObject, Sendable {
     var channelID: String? { get set }

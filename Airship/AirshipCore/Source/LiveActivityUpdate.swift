@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// An update to a live activity
 struct LiveActivityUpdate: Codable, Equatable {

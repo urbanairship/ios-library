@@ -1,3 +1,4 @@
+import Foundation
 
 /// Used to migrate data to TagGroupUpdate in contact and channels.
 @objc(UATagGroupsMutation)

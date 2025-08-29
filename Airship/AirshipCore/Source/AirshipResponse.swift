@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// AirshipHTTPResponse when using AirshipRequestSession
 /// - Note: For internal use only. :nodoc:

@@ -1,4 +1,4 @@
-
+import Foundation
 
 #if canImport(AirshipCore)
 import AirshipCore

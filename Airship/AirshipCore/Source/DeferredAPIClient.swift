@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 protocol DeferredAPIClientProtocol: Sendable {
     func resolve(
         url: URL,

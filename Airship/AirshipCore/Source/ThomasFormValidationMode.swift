@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// Represents the validation modes for a form.
 enum ThomasFormValidationMode: ThomasSerializable {

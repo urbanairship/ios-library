@@ -3,7 +3,7 @@
 @testable
 import AirshipCore
 
-
+import Foundation
 
 final class TestDeferredResolver: AirshipDeferredResolverProtocol, @unchecked Sendable {
     var onData: ((DeferredRequest) async -> AirshipDeferredResult<Data>)?

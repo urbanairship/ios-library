@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /*
  * <tag_selector>   := <tag> | <not> | <and> | <or>
  * <tag>            := { "tag": string }

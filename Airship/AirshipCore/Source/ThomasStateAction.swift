@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 enum ThomasStateAction: ThomasSerializable {
     case setState(SetState)

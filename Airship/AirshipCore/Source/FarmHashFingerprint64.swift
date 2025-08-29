@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /**
  * Implementation of FarmHash Fingerprint64, an open-source fingerprinting algorithm for strings.

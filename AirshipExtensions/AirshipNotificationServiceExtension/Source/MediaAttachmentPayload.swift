@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 #if !os(tvOS)
 import UserNotifications
 

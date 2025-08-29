@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// Tag groups editor.
 public class TagGroupsEditor {

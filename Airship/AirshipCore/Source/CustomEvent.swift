@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// CustomEvent captures information regarding a custom event for
 /// Analytics.

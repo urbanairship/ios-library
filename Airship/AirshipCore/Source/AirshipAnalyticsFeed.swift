@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// For internal use only. :nodoc:
 public final class AirshipAnalyticsFeed: Sendable {

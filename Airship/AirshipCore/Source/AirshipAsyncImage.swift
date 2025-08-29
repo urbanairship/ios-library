@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Combine
+import Foundation
 public import SwiftUI
 
 /// - Note: for internal use only.  :nodoc:

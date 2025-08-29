@@ -1,6 +1,6 @@
 // Copyright Airship and Contributors
 
-
+import Foundation
 
 /// A matcher for evaluating a JSON payload against a set of criteria.
 ///

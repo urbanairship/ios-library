@@ -1,7 +1,7 @@
 /* Copyright Urban Airship and Contributors */
 
 import SwiftUI
-
+import Foundation
 
 struct EmbeddedPlaygroundPicker: View {
     @Binding var selectedID: String

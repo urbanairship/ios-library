@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 public import SwiftUI
 
 /// Type alias for the CustomView builder block

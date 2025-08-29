@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// Url Info
 /// - Note: for internal use only.  :nodoc:

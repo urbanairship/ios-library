@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 
 /// Representation of a channel and its registration state after being associated to a contact

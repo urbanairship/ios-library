@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// Full airship event data
 public struct AirshipEventData: Sendable, Equatable {

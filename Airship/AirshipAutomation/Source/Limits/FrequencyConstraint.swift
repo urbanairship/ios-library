@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// Represents a constraint on occurrences within a given time period.
 struct FrequencyConstraint: Equatable, Hashable, Sendable, Decodable {

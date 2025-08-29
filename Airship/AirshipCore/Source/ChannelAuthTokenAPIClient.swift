@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 final class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol, Sendable {
     private let tokenPath = "/api/auth/device"

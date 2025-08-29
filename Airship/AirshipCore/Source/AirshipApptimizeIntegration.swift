@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /**
  * This class provides handy access for Airship method for the integration with Apptimize SDK

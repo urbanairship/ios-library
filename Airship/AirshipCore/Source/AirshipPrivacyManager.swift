@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-
+import Foundation
 
 /// The privacy manager allow enabling/disabling features in the SDK.
 /// The SDK will not make any network requests or collect data if all features are disabled, with

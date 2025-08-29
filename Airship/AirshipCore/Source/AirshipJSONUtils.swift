@@ -1,6 +1,6 @@
 // Copyright Airship and Contributors
 
-
+import Foundation
 
 /// - NOTE: Internal use only :nodoc:
 public class AirshipJSONUtils: NSObject {

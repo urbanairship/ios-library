@@ -1,4 +1,4 @@
-
+import Foundation
 
 protocol ContactManagerProtocol: Actor, AuthTokenProvider {
 

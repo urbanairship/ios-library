@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Combine
-
+import Foundation
 
 /// Worker that handles queuing tasks and performing the actual work
 actor Worker {
