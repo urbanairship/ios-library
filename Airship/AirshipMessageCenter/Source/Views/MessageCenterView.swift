@@ -113,10 +113,16 @@ public struct MessageCenterStyleConfiguration: Sendable {
 
         @State
         var editMode: EditMode = .inactive
+        
+        @State
+        var selectedMessageID: String? = nil
 
         public var body: some View {
-            MessageCenterListView(controller: controller)
-                .environment(\.editMode, $editMode)
+            MessageCenterListView(
+                controller: controller,
+                selectedMessageID: $selectedMessageID
+            )
+            .environment(\.editMode, $editMode)
         }
     }
 
@@ -173,6 +179,11 @@ struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
             }
 
             switch (configuration.navigationStack) {
+            
+            case .split:
+                MessageCenterNavigationSplitView(
+                    configuration: configuration
+                )
             case .default:
                 NavigationStack {
                     themedContent
@@ -183,7 +194,7 @@ struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
 
         } else {
             switch (configuration.navigationStack) {
-            case .default:
+            case .default, .split:
                 NavigationView {
                     content.background(containerBackgroundColor)
                 }
@@ -193,6 +204,80 @@ struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
             }
         }
 
+    }
+}
+
+@available(iOS 16.0, *)
+struct MessageCenterNavigationSplitView: View {
+    
+    let configuration: MessageCenterStyleConfiguration
+        
+    @State
+    private var selectedMessageID: String?
+    
+    @Environment(\.messageCenterDetectedAppearance)
+    private var detectedAppearance
+    
+    private var controller: MessageCenterController
+    
+    init(
+        configuration: MessageCenterStyleConfiguration
+    ) {
+        self.configuration = configuration
+        self.controller = configuration.content.controller
+    }
+    
+    @State
+    private var columnVisibility: NavigationSplitViewVisibility = .doubleColumn
+        
+    var body: some View {
+        
+        let containerBackgroundColor: Color? = configuration.colorScheme.airshipResolveColor(
+            light: configuration.theme.messageListContainerBackgroundColor,
+            dark: configuration.theme.messageListContainerBackgroundColorDark
+        )
+
+        NavigationSplitView(columnVisibility: $columnVisibility) {
+            NavigationStack(path: Binding {
+                return self.controller.path
+            } set: { path in
+                self.controller.path = path
+            }) {
+                MessageCenterListView(
+                    controller: controller,
+                    selectedMessageID: $selectedMessageID
+                )
+                .navigationTitle(
+                    configuration.theme.navigationBarTitle ?? "ua_message_center_title".messageCenterLocalizedString
+                )
+                .airshipApplyIf(containerBackgroundColor != nil) { view in
+                    view.toolbarBackground(containerBackgroundColor!, for: .navigationBar)
+                        .toolbarBackground(.visible, for: .navigationBar)
+                }
+            }
+        } detail: {
+            if let selectedMessageID {
+                MessageCenterMessageView(
+                    messageID: selectedMessageID,
+                    title: nil,
+                    dismissAction: {
+                        self.selectedMessageID = nil
+                    }
+                )
+                .environment(\.messageCenterDetectedAppearance, detectedAppearance)
+                .onAppear {
+                    self.controller.visibleMessageID = selectedMessageID
+                }
+                .onDisappear {
+                    if (selectedMessageID == self.controller.visibleMessageID) {
+                        self.controller.visibleMessageID = nil
+                    }
+                }
+                .id(selectedMessageID)
+            } else {
+                Text("ua_message_not_selected".messageCenterLocalizedString)
+            }
+        }
     }
 }
 
@@ -253,6 +338,9 @@ public enum MessageCenterNavigationStack: Sendable {
     /// The Message Center will not be wrapped in a navigation stack
     case none
 
+    ///The Message Center will be wrapped in NavigationSplitView on  iOS 16+, or a NavigationView.
+    case split
+    
     /// The Message Center will be wrapped in either a NavigationStack on iOS 16+, or a NavigationView.
     case `default`
 }

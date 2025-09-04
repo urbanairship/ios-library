@@ -26,6 +26,11 @@ public class MessageCenterController: ObservableObject {
     @Published
     var isMessageCenterVisible: Bool = false
 
+    //TODO: Use NavigationPath() instead once deployment target is 16+
+    @Published
+    var path: [String] = []
+    
+    
     private var subscriptions: Set<AnyCancellable> = Set()
 
     private let updateSubject = PassthroughSubject<MessageCenterState, Never>()
@@ -41,6 +46,13 @@ public class MessageCenterController: ObservableObject {
     /// - Parameters:
     ///     - messageID: The message ID to navigate to.
     public func navigate(messageID: String?) {
+        if #available(iOS 16.0, *) {
+            guard let messageID = messageID else {
+                self.path = []
+                return
+            }
+            self.path.append(messageID)
+        }
         self.messageID = messageID
     }
 

@@ -56,6 +56,9 @@ public struct MessageCenterListView: View {
 
     @State
     var lastMaxEditButtonsWidth: CGFloat = 0
+    
+    @Binding
+    var selectedMessageID: String?
 
     private var effectiveColors: MessageCenterEffectiveColors {
         MessageCenterEffectiveColors(
@@ -92,23 +95,42 @@ public struct MessageCenterListView: View {
         }
         .id(messageID)
     }
-
+    
+    @ViewBuilder
+    func makeCellContent(
+        item: MessageCenterListItemViewModel,
+        messageID: String
+    ) -> some View {
+        
+        if #available(iOS 16.0, *) {
+            NavigationLink(value: messageID) {
+                MessageCenterListItemView(viewModel: item)
+            }
+        } else {
+            NavigationLink(
+                destination: makeDestination(
+                    messageID: messageID,
+                    title: item.message.title
+                )
+            ) {
+                MessageCenterListItemView(viewModel: item)
+            }
+        }
+    }
+    
     @ViewBuilder
     private func makeCell(
         item: MessageCenterListItemViewModel,
         messageID: String
     ) -> some View {
         let accessibilityLabel = String(format: item.message.unread ? "ua_message_unread_description".messageCenterLocalizedString : "ua_message_description".messageCenterLocalizedString, item.message.title,  AirshipDateFormatter.string(fromDate: item.message.sentDate, format: .relativeShortDate))
-
-        let cell = NavigationLink(
-            destination: makeDestination(messageID: messageID, title: item.message.title)
-        ) {
-            MessageCenterListItemView(viewModel: item)
-        }.accessibilityLabel(
-            accessibilityLabel
-        ).accessibilityHint(
-            "ua_message_cell_description".messageCenterLocalizedString
-        )
+        
+        let cell = makeCellContent(item: item, messageID: messageID)
+            .accessibilityLabel(
+                accessibilityLabel
+            ).accessibilityHint(
+                "ua_message_cell_description".messageCenterLocalizedString
+            )
 
         cell.listRowBackground(colorScheme.airshipResolveColor(light: theme.cellColor, dark: theme.cellColorDark))
             .listRowSeparator(
@@ -130,7 +152,27 @@ public struct MessageCenterListView: View {
 
     @ViewBuilder
     private func makeList() -> some View {
-        let list = List(selection: $selection) {
+        
+        let listSelectionBinding: Binding<Set<String>> = {
+            if editMode?.wrappedValue == .active {
+                return $selection
+            } else {
+                // For non-edit mode, bind to a single selected ID
+                return Binding<Set<String>>(
+                    get: {
+                        if let selectedID = selectedMessageID {
+                            return [selectedID]
+                        }
+                        return []
+                    },
+                    set: {
+                        selectedMessageID = $0.first
+                    }
+                )
+            }
+        }()
+        
+        List(selection: listSelectionBinding) {
             ForEach(self.messageIDs, id: \.self) { messageID in
                 makeCell(messageID: messageID)
             }
@@ -147,6 +189,9 @@ public struct MessageCenterListView: View {
             .onReceive(self.controller.$messageID) { messageID in
                 isActive = (messageID != nil)
             }
+            .onReceive(self.controller.$path) { path in
+                isActive = !path.isEmpty
+            }
             .onReceive(self.viewModel.$messages) { messages in
                 self.messageIDs = messages.filter { message in
                     if let predicate = self.predicate {
@@ -157,9 +202,7 @@ public struct MessageCenterListView: View {
                 .map { $0.id }
             }
         }
-
-
-        list.refreshable {
+        .refreshable {
             await self.viewModel.refreshList()
         }
         .disabled(self.messageIDs.isEmpty)
@@ -167,7 +210,10 @@ public struct MessageCenterListView: View {
 
     @ViewBuilder
     private func makeContent() -> some View {
-        let listBackgroundColor = colorScheme.airshipResolveColor(light: theme.messageListBackgroundColor, dark: theme.messageListBackgroundColorDark)
+        let listBackgroundColor = colorScheme.airshipResolveColor(
+            light: theme.messageListBackgroundColor,
+            dark: theme.messageListBackgroundColorDark
+        )
 
         let content = ZStack {
             makeList()
@@ -205,8 +251,12 @@ public struct MessageCenterListView: View {
             )
         } else {
             content.background(
-                NavigationLink("", destination: destination, isActive: $isActive)
-                    .accessibilityHidden(true)
+                NavigationLink(
+                    "",
+                    destination: destination,
+                    isActive: $isActive
+                )
+                .accessibilityHidden(true)
             )
         }
     }

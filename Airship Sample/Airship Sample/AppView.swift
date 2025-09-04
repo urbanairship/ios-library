@@ -7,14 +7,14 @@ import AirshipDebug
 import SwiftUI
 
 struct AppView: View {
-
+    
     @EnvironmentObject var appState: AppState
-
+    
     @State var shakeCount: Int = 0
-
+    
     var body: some View {
         TabView(selection: $appState.selectedTab) {
-
+            
             HomeView()
                 .tabItem {
                     Label(
@@ -26,28 +26,28 @@ struct AppView: View {
                     Airship.analytics.trackScreen("home")
                 }
                 .tag(SampleTabs.home)
-
+            
             MessageCenterView()
-            .messageCenterTheme(
-                try! MessageCenterTheme.fromPlist("SampleMessageCenterTheme")
-            )
-            .tabItem {
-                Label(
-                    "Message Center",
-                    systemImage: "tray.fill"
+                .messageCenterTheme(
+                    try! MessageCenterTheme.fromPlist("SampleMessageCenterTheme")
                 )
-            }
-            .badge(self.appState.unreadCount)
-            .onAppear {
-                Airship.analytics.trackScreen("message_center")
-            }
-            .tag(SampleTabs.messageCenter)
-
-
+                .messageCenterNavigationStack(.split)
+                .tabItem {
+                    Label(
+                        "Message Center",
+                        systemImage: "tray.fill"
+                    )
+                }
+                .badge(self.appState.unreadCount)
+                .onAppear {
+                    Airship.analytics.trackScreen("message_center")
+                }
+                .tag(SampleTabs.messageCenter)
+            
+            
             PreferenceCenterView(
                 preferenceCenterID: MainApp.preferenceCenterID
             )
-
             .navigationViewStyle(.stack)
             .tabItem {
                 Label(
@@ -62,24 +62,24 @@ struct AppView: View {
 
 
 #if canImport(AirshipDebug)
-           debug.tabItem {
-               Label(
-                   "Debug",
-                   systemImage: "gear"
-               )
-           }
-           .onAppear {
-               Airship.analytics.trackScreen("debug")
-           }
-           .tag(SampleTabs.debug)
+            debug.tabItem {
+                Label(
+                    "Debug",
+                    systemImage: "gear"
+                )
+            }
+            .onAppear {
+                Airship.analytics.trackScreen("debug")
+            }
+            .tag(SampleTabs.debug)
 #endif
         }
         .onShake {
             shakeCount += 1
-
+            
             let event = CustomEvent(name: "shake_event", value: Double(shakeCount))
             event.track()
-
+            
             AppState.shared.toastMessage = Toast.Message(
                 text: "Tracked custom event: shake_event",
                 duration: 2.0
@@ -87,7 +87,7 @@ struct AppView: View {
         }
         .overlay(makeToastView())
     }
-
+    
     @ViewBuilder
     private func makeToastView() -> some View {
         Toast(message: self.$appState.toastMessage)
