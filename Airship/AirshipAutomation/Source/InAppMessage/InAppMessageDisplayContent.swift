@@ -376,6 +376,9 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
         /// If the html can be displayed as fullscreen on small devices
         public var allowFullscreen: Bool?
 
+        // If the html should always display as fullscreen
+        public var forceFullscreen: Bool?
+
         enum CodingKeys: String, CodingKey {
             case url
             case height
@@ -386,6 +389,7 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
             case dismissButtonColor = "dismiss_button_color"
             case borderRadius = "border_radius"
             case allowFullscreen = "allow_fullscreen_display"
+            case forceFullscreen = "force_fullscreen_display"
         }
 
 
@@ -409,7 +413,8 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
             dismissButtonColor: InAppMessageColor? = nil,
             backgroundColor: InAppMessageColor? = nil,
             borderRadius: Double? = nil,
-            allowFullscreen: Bool? = nil
+            allowFullscreen: Bool? = nil,
+            forceFullscreen: Bool? = nil
         ) {
             self.url = url
             self.height = height
@@ -420,7 +425,8 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
             self.dismissButtonColor = dismissButtonColor
             self.borderRadius = borderRadius
             self.allowFullscreen = allowFullscreen
-        } 
+            self.forceFullscreen = forceFullscreen
+        }
     }
 }
 
