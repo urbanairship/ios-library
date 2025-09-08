@@ -73,6 +73,10 @@ struct HTMLView: View {
     }
 
     var isModal: Bool {
+        guard displayContent.forceFullscreen != true else {
+            return false
+        }
+
         guard displayContent.allowFullscreen == true else {
             return true
         }

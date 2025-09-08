@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.9.0 - September 4, 2025
+Minor release that adds a new flag to HTML In-App message content to force full screen on all devices.
+
+### Changes
+- Added `forceFullScreen` to HTML In-App message content
+
 ### Version 19.8.3 - August 25, 2025
 
 A patch release that includes a targeted fix for the ongoing Swift interoperability crashes outlined in GH-434.
