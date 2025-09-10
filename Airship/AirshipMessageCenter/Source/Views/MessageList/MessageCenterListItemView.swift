@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import Foundation
 public import SwiftUI
@@ -8,7 +8,6 @@ import AirshipCore
 #endif
 
 struct MessageCenterListItemView: View {
-
     @Environment(\.airshipMessageCenterListItemStyle)
     private var itemStyle
 
@@ -25,9 +24,9 @@ struct MessageCenterListItemView: View {
 }
 
 extension View {
-    /// Sets the list item style
+    /// Sets the list item style for the Message Center.
     /// - Parameters:
-    ///     - style: The style
+    ///     - style: The style to apply.
     public func messageCenterItemViewStyle<S>(
         _ style: S
     ) -> some View where S: MessageCenterListItemViewStyle {
@@ -38,31 +37,39 @@ extension View {
     }
 }
 
-/// Message center list item view style configuration
+/// The configuration for a Message Center list item view.
 public struct ListItemViewStyleConfiguration {
+    /// The message associated with the list item.
     public let message: MessageCenterMessage
 }
 
+/// A protocol that defines the style for a Message Center list item view.
 public protocol MessageCenterListItemViewStyle: Sendable {
     associatedtype Body: View
 
     typealias Configuration = ListItemViewStyleConfiguration
 
+    /// Creates the view body for the list item.
+    /// - Parameters:
+    ///   - configuration: The configuration for the list item.
+    /// - Returns: The view body.
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-extension MessageCenterListItemViewStyle
-where Self == DefaultListItemViewStyle {
-
-    /// Default style
+extension MessageCenterListItemViewStyle where Self == DefaultListItemViewStyle {
+    /// The default list item style.
     public static var defaultStyle: Self {
         return .init()
     }
 }
 
-/// The default list item view style
+/// The default style for a Message Center list item view.
 public struct DefaultListItemViewStyle: MessageCenterListItemViewStyle {
     @ViewBuilder
+    /// Creates the view body for the list item.
+    /// - Parameters:
+    ///   - configuration: The configuration for the list item.
+    /// - Returns: The view body.
     public func makeBody(configuration: Configuration) -> some View {
         MessageCenterListContentView(message: configuration.message)
     }

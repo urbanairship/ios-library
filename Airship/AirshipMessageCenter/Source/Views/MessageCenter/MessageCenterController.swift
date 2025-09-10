@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import SwiftUI
 public import Combine
@@ -7,18 +7,23 @@ public import Combine
 import AirshipCore
 #endif
 
-/// The message center controller possible states
+/// The message center controller's possible states.
 public enum MessageCenterState: Equatable, Sendable {
+    /// The message center is visible, with an optional message ID.
     case visible(messageID: String?)
+    /// The message center is not visible.
     case notVisible
 }
 
-/// Controller for the Message Center View.
+/// Controller for the Message Center.
 @MainActor
 public class MessageCenterController: ObservableObject {
 
-    @Published
-    var messageID: String? = nil
+    /// The routes available in the message center.
+    public enum Route: Sendable, Hashable {
+        /// The message route, with the message ID.
+        case message(String)
+    }
 
     @Published
     var visibleMessageID: String? = nil
@@ -26,11 +31,10 @@ public class MessageCenterController: ObservableObject {
     @Published
     var isMessageCenterVisible: Bool = false
 
-    //TODO: Use NavigationPath() instead once deployment target is 16+
+    /// The navigation path.
     @Published
-    var path: [String] = []
-    
-    
+    public var path: [Route] = []
+
     private var subscriptions: Set<AnyCancellable> = Set()
 
     private let updateSubject = PassthroughSubject<MessageCenterState, Never>()
@@ -42,20 +46,28 @@ public class MessageCenterController: ObservableObject {
             .eraseToAnyPublisher()
     }
 
-    /// Navigates to the message ID.
+    /// Navigates to a message.
     /// - Parameters:
-    ///     - messageID: The message ID to navigate to.
+    ///     - messageID: The message ID to navigate to. A `nil` value will pop to the root view.
     public func navigate(messageID: String?) {
-        if #available(iOS 16.0, *) {
-            guard let messageID = messageID else {
-                self.path = []
-                return
-            }
-            self.path.append(messageID)
+        guard self.currentMessageID != messageID else {
+            return
         }
-        self.messageID = messageID
+        guard let messageID else {
+            self.path = []
+            return
+        }
+        self.path = [.message(messageID)]
     }
 
+    var currentMessageID: String? {
+        guard case .message(let messageID) = self.path.last else {
+            return nil
+        }
+        return messageID
+    }
+
+    /// Default initializer.
     public init() {
         Publishers
             .CombineLatest($visibleMessageID, $isMessageCenterVisible)

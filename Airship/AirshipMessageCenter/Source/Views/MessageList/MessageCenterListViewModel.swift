@@ -1,27 +1,39 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
-import Combine
-import Foundation
-import SwiftUI
+public import Combine
 
 #if canImport(AirshipCore)
 import AirshipCore
 #endif
 
+/// A view model for the message center list.
 @MainActor
-class MessageCenterListViewModel: ObservableObject {
+public class MessageCenterMessageListViewModel: ObservableObject {
 
+    /// The list of messages.
     @Published
-    var messages: [MessageCenterMessage] = []
+    public private(set) var messages: [MessageCenterMessage] = []
 
+    /// The set of selected message IDs in edit mode.
     @Published
-    var messagesLoaded: Bool = false
-    
+    public var editModeSelection: Set<String> = []
+
+    /// The selected message ID.
+    @Published
+    public var selectedMessageID: String? = nil
+
+    /// A flag indicating if the messages have been loaded.
+    @Published
+    public private(set) var messagesLoaded: Bool = false
+
     private var messageItems: [String: MessageCenterListItemViewModel] = [:]
     private var updates = Set<AnyCancellable>()
     private let messageCenter: MessageCenter?
 
-    init() {
+    /// Initializer.
+    /// - Parameters:
+    ///   - predicate: A predicate to filter messages.
+    public init(predicate: (any MessageCenterPredicate)? = nil) {
         if Airship.isFlying {
             messageCenter = Airship.messageCenter
         } else {
@@ -37,7 +49,10 @@ class MessageCenterListViewModel: ObservableObject {
                 self.messagesLoaded = true
 
                 var incomings: [MessageCenterMessage] = []
-                incoming.forEach { message in
+                incoming.filter {
+                    predicate?.evaluate(message: $0) ?? true
+                }
+                .forEach { message in
                     incomings.append(message)
                     if self.messageItems[message.id] == nil {
                         self.messageItems[message.id] =
@@ -58,7 +73,7 @@ class MessageCenterListViewModel: ObservableObject {
             .store(in: &self.updates)
 
         Task {
-            await self.refreshList()
+            await self.refresh()
         }
     }
 
@@ -66,11 +81,15 @@ class MessageCenterListViewModel: ObservableObject {
         return self.messageItems[forID]
     }
 
-    func refreshList() async {
+    /// Refreshes the list of messages.
+    public func refresh() async {
         await self.messageCenter?.inbox.refreshMessages()
     }
 
-    func markRead(messages: Set<String>) {
+    /// Marks a set of messages as read.
+    /// - Parameters:
+    ///   - messages: A set of message IDs to mark as read.
+    public func markRead(messages: Set<String>) {
         Task {
             await self.messageCenter?.inbox
                 .markRead(
@@ -79,7 +98,10 @@ class MessageCenterListViewModel: ObservableObject {
         }
     }
 
-    func delete(messages: Set<String>) {
+    /// Deletes a set of messages.
+    /// - Parameters:
+    ///   - messages: A set of message IDs to delete.
+    public func delete(messages: Set<String>) {
         Task {
             await self.messageCenter?.inbox
                 .delete(
@@ -88,4 +110,13 @@ class MessageCenterListViewModel: ObservableObject {
         }
     }
 
+    /// Selects all messages in edit mode.
+    public func editModeSelectAll() {
+        editModeSelection = Set(messages.map { $0.id })
+    }
+
+    /// Clears the selection in edit mode.
+    public func editModeClearAll() {
+        editModeSelection.removeAll()
+    }
 }

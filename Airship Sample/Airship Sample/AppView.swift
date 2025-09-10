@@ -28,10 +28,9 @@ struct AppView: View {
                 .tag(SampleTabs.home)
             
             MessageCenterView()
-                .messageCenterTheme(
-                    try! MessageCenterTheme.fromPlist("SampleMessageCenterTheme")
-                )
-                .messageCenterNavigationStack(.split)
+//                .messageCenterTheme(
+//                    try! MessageCenterTheme.fromPlist("SampleMessageCenterTheme")
+//                )
                 .tabItem {
                     Label(
                         "Message Center",

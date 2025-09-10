@@ -7,7 +7,7 @@ import PackageDescription
 let package = Package(
     name: "Airship",
     defaultLocalization: "en",
-    platforms: [.macOS(.v10_15), .iOS(.v15), .tvOS(.v18), .visionOS(.v1)],
+    platforms: [.macOS(.v10_15), .iOS(.v16), .tvOS(.v18), .visionOS(.v1)],
     products: [
         .library(
             name: "AirshipCore",

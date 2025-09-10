@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import Foundation
 public import SwiftUI
@@ -134,7 +134,6 @@ public struct MessageCenterTheme: Sendable {
 
     /// The dark mode background of the message list container.
     public var messageListContainerBackgroundColorDark: Color? = nil
-
 
     /// The background of the message view.
     public var messageViewBackgroundColor: Color? = nil

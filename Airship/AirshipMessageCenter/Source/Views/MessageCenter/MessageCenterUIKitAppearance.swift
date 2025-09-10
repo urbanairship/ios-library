@@ -219,12 +219,8 @@ internal struct MessageCenterApplyDetectedAppearance: ViewModifier {
                 }
             // Apply navigation bar background color
                 .airshipApplyIf(appearance.navigationBarBackgroundColor != nil) { view in
-                    if #available(iOS 16.0, *) {
-                        view.toolbarBackground(appearance.navigationBarBackgroundColor!, for: .navigationBar)
-                            .toolbarBackground(.visible, for: .navigationBar)
-                    } else {
-                        view
-                    }
+                    view.toolbarBackground(appearance.navigationBarBackgroundColor!, for: .navigationBar)
+                        .toolbarBackground(.visible, for: .navigationBar)
                 }
             // Apply large title setting
                 .navigationBarTitleDisplayMode(appearance.prefersLargeTitles ? .large : .inline)

@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
    s.source                     = { :git => "https://github.com/urbanairship/ios-library.git", :tag => s.version.to_s }
    s.module_name                = "AirshipKit"
    s.header_dir                 = "AirshipKit"
-   s.ios.deployment_target      = "15.0"
+   s.ios.deployment_target      = "16.0"
    s.tvos.deployment_target     = "18.0"
    s.watchos.deployment_target  = "11.0"
    s.swift_versions             = "6.0"
