@@ -1,9 +1,10 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import Combine
 
 @MainActor
-class ScoreState: ObservableObject {
+final class ScoreState: ObservableObject {
 
     @Published
     private(set) var selected: Selected?

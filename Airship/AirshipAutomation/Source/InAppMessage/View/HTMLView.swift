@@ -8,6 +8,8 @@ import SwiftUI
 import AirshipCore
 #endif
 
+import Combine
+
 struct HTMLView: View {
 
 #if !os(tvOS) && !os(watchOS)

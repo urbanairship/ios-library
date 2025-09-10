@@ -4,6 +4,7 @@ import Testing
 import Foundation
 
 @testable import AirshipCore
+import Combine
 
 @MainActor
 struct ThomasFormStateTest {

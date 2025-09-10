@@ -2,6 +2,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 struct Score: View {
     let info: ThomasViewInfo.Score
@@ -65,23 +66,16 @@ struct Score: View {
     private func createScore(_ constraints: ViewConstraints) -> some View {
         switch self.info.properties.style {
         case .numberRange(let style):
-            if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *), style.wrapping != nil {
-                let itemSpacing = CGFloat(style.spacing ?? 0)
-                let lineSpacing = CGFloat(style.wrapping?.lineSpacing ?? 0)
-                let maxItemsPerLine = style.wrapping?.maxItemsPerLine
-                WrappingLayout(
-                    viewConstraints: constraints,
-                    itemSpacing: itemSpacing,
-                    lineSpacing: lineSpacing,
-                    maxItemsPerLine: maxItemsPerLine
-                ) {
-                    makeNumberRangeScoreItems(style: style, constraints: constraints)
-                }
-            } else {
-                HStack(spacing: style.spacing ?? 0) {
-                    makeNumberRangeScoreItems(style: style, constraints: constraints)
-                }
-                .constraints(constraints)
+            let itemSpacing = CGFloat(style.spacing ?? 0)
+            let lineSpacing = CGFloat(style.wrapping?.lineSpacing ?? 0)
+            let maxItemsPerLine = style.wrapping?.maxItemsPerLine
+            WrappingLayout(
+                viewConstraints: constraints,
+                itemSpacing: itemSpacing,
+                lineSpacing: lineSpacing,
+                maxItemsPerLine: maxItemsPerLine
+            ) {
+                makeNumberRangeScoreItems(style: style, constraints: constraints)
             }
         }
     }

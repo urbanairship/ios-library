@@ -343,13 +343,7 @@ struct SystemSettingsNavigator: SystemSettingsNavigatorProtocol {
     private func systemSettingURLForPermission(_ permission: AirshipPermission) -> URL? {
         let string = switch(permission) {
         case .displayNotifications:
-            if #available(iOS 16.0, macCatalyst 16.0, *) {
-                UIApplication.openNotificationSettingsURLString
-            } else if #available(iOS 15.4, macCatalyst 15.4, *) {
-                UIApplicationOpenNotificationSettingsURLString
-            } else {
-                UIApplication.openSettingsURLString
-            }
+            UIApplication.openNotificationSettingsURLString
         case .location:
             UIApplication.openSettingsURLString
         }

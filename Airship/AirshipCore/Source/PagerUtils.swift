@@ -64,21 +64,15 @@ extension View {
 #if !os(tvOS)
     @ViewBuilder
     func addPagerTapGesture(onTouch: @escaping (Bool) -> Void, onTap: @escaping (CGPoint) -> Void) -> some View {
-        if #available(iOS 16.0, macOS 13.0, watchOS 9.0, visionOS 1.0, *) {
-            self.onTouch { isPressed in
-                onTouch(isPressed)
-            }
-            .simultaneousGesture(
-                SpatialTapGesture()
-                    .onEnded { event in
-                        onTap(event.location)
-                    }
-                )
-        } else {
-            self.onTouch { isPressed in
-                onTouch(isPressed)
-            }
+        self.onTouch { isPressed in
+            onTouch(isPressed)
         }
+        .simultaneousGesture(
+            SpatialTapGesture()
+                .onEnded { event in
+                    onTap(event.location)
+                }
+            )
     }
 #endif
 }

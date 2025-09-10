@@ -73,29 +73,13 @@ struct TextInput: View {
 
     @ViewBuilder
     private func makeTextEditor() -> some View {
-        if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
-            AirshipTextField(
-                info: self.info,
-                constraints: constraints,
-                alignment: self.textFieldAlignment,
-                binding: self.$viewModel.input,
-                isEditing: $isEditing
-            )
-        } else {
-#if !os(watchOS)
-            AirshipTextView(
-                textAppearance: self.info.properties.textAppearance,
-                text: self.$viewModel.input,
-                isEditing: $isEditing
-            )
-            .constraints(constraints, alignment: self.textFieldAlignment)
-            .airshipOnChangeOf(self.isEditing) { newValue in
-                let focusedID = newValue ? self.info.properties.identifier : nil
-                self.thomasEnvironment.focusedID = focusedID
-            }
-
-#endif
-        }
+        AirshipTextField(
+            info: self.info,
+            constraints: constraints,
+            alignment: self.textFieldAlignment,
+            binding: self.$viewModel.input,
+            isEditing: $isEditing
+        )
     }
 
     var showSMSPicker: Bool {
@@ -499,7 +483,6 @@ struct TextInput: View {
 
 }
 
-@available(iOS 16.0, tvOS 16, watchOS 9.0, *)
 struct AirshipTextField: View {
 
     let info: ThomasViewInfo.TextInput

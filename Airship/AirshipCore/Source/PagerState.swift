@@ -246,12 +246,7 @@ class PagerState: ObservableObject {
         }
 
         branchControl?.onPageRequest(request)
-        if #available(iOS 16.0, *) {
-            fixTouchDuringNavigationIssue()
-        } else {
-            updateScrollControl()
-        }
-
+        fixTouchDuringNavigationIssue()
         return result
     }
     
@@ -286,7 +281,6 @@ class PagerState: ObservableObject {
         self.isScrollingDisabled = isScrollSelectorDisabled
     }
     
-    @available(iOS 16.0, *)
     private func fixTouchDuringNavigationIssue() {
         // This workarounds an issue that I found with scrollPosition(id:)
         // where if you animate the scrollPosition and touch fast enough

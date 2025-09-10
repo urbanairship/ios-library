@@ -2,6 +2,10 @@
 
 import SwiftUI
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
 struct FooterView: View {
     @Environment(\.colorScheme)
     private var colorScheme

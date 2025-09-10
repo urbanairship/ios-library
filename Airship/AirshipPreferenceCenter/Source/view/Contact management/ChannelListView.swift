@@ -73,12 +73,7 @@ struct ChannelListView: View {
             }
         }
         .sheet(isPresented: $showAddChannelSheet) {
-            addChannelPromptView
-                .airshipApplyIf(true) { view in
-                    if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
-                        view.presentationDetents([.medium])
-                    }
-                }
+            addChannelPromptView.presentationDetents([.medium])
         }
         .alert(
             removeAlertTitle,

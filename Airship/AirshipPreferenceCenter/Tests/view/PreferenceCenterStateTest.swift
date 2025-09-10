@@ -3,6 +3,7 @@
 import AirshipCore
 import Combine
 import XCTest
+import SwiftUI
 
 @testable import AirshipPreferenceCenter
 

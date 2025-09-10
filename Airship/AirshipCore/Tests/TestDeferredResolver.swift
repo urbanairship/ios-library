@@ -5,14 +5,18 @@ import AirshipCore
 
 import Foundation
 
-final class TestDeferredResolver: AirshipDeferredResolverProtocol, @unchecked Sendable {
-    var onData: ((DeferredRequest) async -> AirshipDeferredResult<Data>)?
+final actor TestDeferredResolver: AirshipDeferredResolverProtocol {
+    var dataCallback: ((DeferredRequest) async -> AirshipDeferredResult<Data>)?
+
+    func onData(_ onData: @escaping (DeferredRequest) async -> AirshipDeferredResult<Data>) {
+        self.dataCallback = onData
+    }
 
     func resolve<T>(
         request: DeferredRequest,
         resultParser: @escaping @Sendable (Data) async throws -> T
     ) async -> AirshipDeferredResult<T> where T : Sendable {
-        switch(await onData?(request) ?? .timedOut) {
+        switch(await dataCallback?(request) ?? .timedOut) {
         case .success(let data):
             do {
                 let value = try await resultParser(data)

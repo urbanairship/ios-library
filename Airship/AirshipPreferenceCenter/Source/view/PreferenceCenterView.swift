@@ -159,38 +159,24 @@ public struct PreferenceCenterView: View {
                 }
             }
 
-        if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *) {
-            let resolvedNavigationBarColor = colorScheme.airshipResolveColor(
-                light: theme.viewController?.navigationBar?.backgroundColor,
-                dark: theme.viewController?.navigationBar?.backgroundColorDark
-            )
+        let resolvedNavigationBarColor = colorScheme.airshipResolveColor(
+            light: theme.viewController?.navigationBar?.backgroundColor,
+            dark: theme.viewController?.navigationBar?.backgroundColorDark
+        )
 
-            let themedContent = content.airshipApplyIf(resolvedNavigationBarColor != nil) { view in
-                view.toolbarBackground(resolvedNavigationBarColor!, for: .navigationBar)
-                    .toolbarBackground(.visible, for: .navigationBar)
-            }
+        let themedContent = content.airshipApplyIf(resolvedNavigationBarColor != nil) { view in
+            view.toolbarBackground(resolvedNavigationBarColor!, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
+        }
 
-            switch (navigationStack) {
-            case .default:
-                NavigationStack {
-                    themedContent
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-            case .none:
+        switch (navigationStack) {
+        case .default:
+            NavigationStack {
                 themedContent
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-
-        } else {
-            switch (navigationStack) {
-            case .default:
-                NavigationView {
-                    content
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-                .navigationViewStyle(.stack)
-            case .none:
-                content
-            }
+        case .none:
+            themedContent
         }
     }
 }

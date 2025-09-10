@@ -710,7 +710,7 @@ final class AutomationPreparerTest: XCTestCase {
             return checker
         }
 
-        self.deferredResolver.onData = { request in
+        await self.deferredResolver.onData { request in
             let data = try! AirshipJSON.wrap([
                 "audience_match": true,
                 "actions": actions
@@ -801,7 +801,7 @@ final class AutomationPreparerTest: XCTestCase {
             notificationOptIn: deviceInfoProvider.isUserOptedInPushNotifications
         )
 
-        self.deferredResolver.onData = { request in
+        await self.deferredResolver.onData { request in
             XCTAssertEqual(request, expectedRequest)
             let data = try! AirshipJSON.wrap([
                 "audience_match": true,
@@ -870,7 +870,7 @@ final class AutomationPreparerTest: XCTestCase {
             return .match
         }
 
-        self.deferredResolver.onData = { request in
+        await self.deferredResolver.onData { request in
             let data = try! AirshipJSON.wrap([
                 "audience_match": false
             ]).toData()

@@ -49,13 +49,8 @@ extension View {
 
     @ViewBuilder
     internal func addTapGesture(action: @escaping () -> Void) -> some View {
-        if #available(iOS 13.0, macOS 10.15, tvOS 16.0, watchOS 6.0, *) {
-            self.onTapGesture(perform: action)
-                .accessibilityAction(.default, action)
-        } else {
-            // Tap gesture is unavailable on tvOS versions prior to tvOS 16 for now
-            self.accessibilityAction(.default, action)
-        }
+        self.onTapGesture(perform: action)
+            .accessibilityAction(.default, action)
     }
 
     @ViewBuilder
@@ -88,15 +83,6 @@ extension View {
     ) -> some View {
         if isSelected {
             self.accessibilityAddTraits(.isSelected)
-        } else {
-            self
-        }
-    }
-
-    @ViewBuilder
-    internal func accessibilityActionsCompat<Content>(@ViewBuilder _ content: () -> Content) -> some View where Content : View {
-        if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
-            self.accessibilityActions(content)
         } else {
             self
         }

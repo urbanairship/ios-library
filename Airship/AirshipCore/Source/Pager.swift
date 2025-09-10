@@ -196,7 +196,7 @@ struct Pager: View {
                     \.pageIdentifier,
                      pagerState.pageItems[index].identifier
                 )
-                .accessibilityActionsCompat {
+                .accessibilityActions {
                     makeAccessibilityActions(
                         pageItem: pagerState.pageItems[index]
                     )

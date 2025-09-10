@@ -311,14 +311,7 @@ fileprivate extension ExecutionWindow.TimeZone {
     func resolve(currentTimeZone: TimeZone) -> TimeZoneResult {
         switch(self) {
         case .utc:
-            if #available(macOS 13, iOS 16, tvOS 16, watchOS 9, *) {
-                return .resolved(.gmt)
-            } else {
-                guard let utc = TimeZone(secondsFromGMT: 0) else  {
-                    return .error(.error)
-                }
-                return .resolved(utc)
-            }
+            return .resolved(.gmt)
 
         case .local:
             return .resolved(currentTimeZone)

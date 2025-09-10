@@ -160,20 +160,19 @@ private struct FeaturFlagDetailsView: View {
 
     @ViewBuilder
     func makeShareLink(_ string: String) -> some View {
-        if #available(iOS 16.0, *) {
 #if !os(tvOS)
-            ShareLink(item: string) {
-                Image(systemName: "square.and.arrow.up")
-            }
-#endif
-        } else {
-            Button {
-                copyToClipboard(value: string)
-            } label: {
-                Image(systemName: "doc.on.clipboard.fill")
-            }
+        ShareLink(item: string) {
+            Image(systemName: "square.and.arrow.up")
         }
+#else
+        Button {
+            copyToClipboard(value: string)
+        } label: {
+            Image(systemName: "doc.on.clipboard.fill")
+        }
+#endif
     }
+
     @ViewBuilder
     func makeInfoItem(_ title: String, _ value: String?) -> some View {
         HStack {

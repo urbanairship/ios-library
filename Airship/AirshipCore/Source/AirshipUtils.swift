@@ -402,39 +402,15 @@ public extension String {
 
 extension Locale {
     func getLanguageCode() -> String {
-        let localeLanguage: String
-
-        if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *) {
-            localeLanguage = self.language.languageCode?.identifier ?? ""
-        } else {
-            localeLanguage = self.languageCode ?? ""
-        }
-
-        return localeLanguage
+        return self.language.languageCode?.identifier ?? ""
     }
 
     func getRegionCode() -> String {
-        let localeRegion: String
-
-        if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *) {
-            localeRegion = self.region?.identifier ?? ""
-        } else {
-            localeRegion = self.regionCode ?? ""
-        }
-
-        return localeRegion
+        return self.region?.identifier ?? ""
     }
 
     func getVariantCode() -> String {
-        let variantCode: String
-
-        if #available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *) {
-            variantCode = self.variant?.identifier ?? ""
-        } else {
-            variantCode = self.variantCode ?? ""
-        }
-
-        return variantCode
+        return self.variant?.identifier ?? ""
     }
 }
 

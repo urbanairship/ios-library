@@ -5,6 +5,7 @@
 import SwiftUI
 import AVFoundation
 import AVKit
+import Combine
 
 @MainActor
 private class VideoControlsObserver: ObservableObject {

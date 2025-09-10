@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#if !os(tvOS) && !os(watchOS)
+#if !os(tvOS) && !os(watchOS) && !os(macOS)
 
 import Foundation
 import StoreKit
@@ -110,14 +110,7 @@ private struct DefaultAppRater: AppRaterProtocol {
             )
         }
         
-        if #available(iOS 16.0, visionOS 1.0, *) {
-            AppStore.requestReview(in: scene)
-        } else {
-#if !os(visionOS)
-            /// Deprecated - remove when no longer needed
-            SKStoreReviewController.requestReview(in: scene)
-#endif
-        }
+        AppStore.requestReview(in: scene)
     }
     
     @MainActor

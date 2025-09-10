@@ -2,6 +2,7 @@
 
 import Testing
 import Foundation
+import Combine
 
 @testable import AirshipCore
 

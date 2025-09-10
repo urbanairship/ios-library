@@ -9,6 +9,8 @@ public import AirshipCore
 import AirshipKit
 #endif
 
+import Combine
+
 public struct TagGroupsDebugView: View {
     enum TagAction: String, Equatable, CaseIterable {
         case add = "Add"

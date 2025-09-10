@@ -3,6 +3,10 @@
 import Foundation
 public import SwiftUI
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
 /// Preference Center view style configuration
 public struct PreferenceCenterViewStyleConfiguration: Sendable {
     /// The view's phase

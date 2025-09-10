@@ -6,6 +6,7 @@ import SwiftUI
 import AirshipCore
 #endif
 
+import Combine
 
 @MainActor
 class ChannelListCellViewModel: ObservableObject {

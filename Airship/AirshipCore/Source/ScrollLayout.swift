@@ -27,32 +27,25 @@ struct ScrollLayout: View {
     
     @ViewBuilder
     private func makeScrollView(axis: Axis.Set) -> some View {
-        
-        if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
-            ScrollView(axis) {
-                makeContent()
-                    .background(
-                        GeometryReader(content: { contentMetrics -> Color in
-                            let size = contentMetrics.size
-                            DispatchQueue.main.async {
-                                if (self.contentSize != size) {
-                                    self.contentSize = size
-                                }
+        ScrollView(axis) {
+            makeContent()
+                .background(
+                    GeometryReader(content: { contentMetrics -> Color in
+                        let size = contentMetrics.size
+                        DispatchQueue.main.async {
+                            if (self.contentSize != size) {
+                                self.contentSize = size
                             }
-                            return Color.clear
-                        })
-                    )
-            }
-#if os(iOS)
-            .scrollDismissesKeyboard(
-                self.thomasEnvironment.focusedID != nil ? .immediately : .never
-            )
-#endif
-        } else {
-            ScrollView(axis) {
-                makeContent()
-            }
+                        }
+                        return Color.clear
+                    })
+                )
         }
+#if os(iOS)
+        .scrollDismissesKeyboard(
+            self.thomasEnvironment.focusedID != nil ? .immediately : .never
+        )
+#endif
     }
     
     @ViewBuilder
@@ -64,27 +57,25 @@ struct ScrollLayout: View {
             makeScrollView(axis: axis)
                 .clipped()
                 .airshipOnChangeOf(self.thomasEnvironment.keyboardState) { [weak thomasEnvironment] newValue in
-                    if #available(iOS 16.0, tvOS 16.0, macOS 12.0, *) {
-                        if let focusedID = thomasEnvironment?.focusedID {
-                            switch newValue {
-                            case .hidden:
-                                scrollTask?.1.cancel()
-                            case .displaying(let duration):
-                                let task = Task {
-                                    await self.startScrolling(
-                                        scrollID: focusedID,
-                                        proxy: proxy,
-                                        duration: duration
-                                    )
-                                }
-                                self.scrollTask = (focusedID, task)
-                            case .visible:
-                                scrollTask?.1.cancel()
-                                proxy.scrollTo(focusedID)
-                            }
-                        } else {
+                    if let focusedID = thomasEnvironment?.focusedID {
+                        switch newValue {
+                        case .hidden:
                             scrollTask?.1.cancel()
+                        case .displaying(let duration):
+                            let task = Task {
+                                await self.startScrolling(
+                                    scrollID: focusedID,
+                                    proxy: proxy,
+                                    duration: duration
+                                )
+                            }
+                            self.scrollTask = (focusedID, task)
+                        case .visible:
+                            scrollTask?.1.cancel()
+                            proxy.scrollTo(focusedID)
                         }
+                    } else {
+                        scrollTask?.1.cancel()
                     }
                 }
         }

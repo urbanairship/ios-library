@@ -3,6 +3,7 @@
 import XCTest
 
 @testable import AirshipCore
+import Combine
 
 class ChannelAudienceManagerTest: XCTestCase {
 

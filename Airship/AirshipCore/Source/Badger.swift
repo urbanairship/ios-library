@@ -22,13 +22,7 @@ final class Badger: Sendable, BadgerProtocol {
             "Updating badge \(newBadgeNumber)"
         )
         
-        if #available(iOS 16.0, tvOS 16.0, visionOS 1.0, *) {
-            try await UNUserNotificationCenter.current().setBadgeCount(newBadgeNumber)
-        } else {
-            await Task { @MainActor in
-                UIApplication.shared.applicationIconBadgeNumber = newBadgeNumber
-            }.value
-        }
+        try await UNUserNotificationCenter.current().setBadgeCount(newBadgeNumber)
 #endif
     }
 

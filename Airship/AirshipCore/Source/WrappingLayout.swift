@@ -6,7 +6,6 @@ import SwiftUI
 /// Wrapping layout will attempt to wrap items with a specified max items per line when parent width
 /// is constrained. Display can break when parent height is exceeded - especially in landscape or when excessive
 /// item padding is specified.
-@available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *)
 internal struct WrappingLayout: Layout {
     /// View constraints to apply
     var viewConstraints: ViewConstraints

@@ -8,6 +8,8 @@ import AirshipCore
 import AirshipKit
 #endif
 
+import Combine
+
 struct CreateOpenChannelView: View {
 
     @StateObject

@@ -111,24 +111,6 @@ extension ThomasColor {
     }
 
     func toUIColor(_ colorScheme: ColorScheme) -> UIColor {
-        guard #available(iOS 14.0.0, tvOS 14.0.0, *) else {
-            let darkMode = colorScheme == .dark
-            for selector in selectors ?? [] {
-                if let platform = selector.platform, platform != .ios {
-                    continue
-                }
-
-                if let selectorDarkMode = selector.darkMode,
-                    darkMode != selectorDarkMode
-                {
-                    continue
-                }
-
-                return selector.color.toUIColor()
-            }
-
-            return defaultColor.toUIColor()
-        }
         return UIColor(toColor(colorScheme))
     }
 }

@@ -3,7 +3,7 @@
 import XCTest
 
 @testable import AirshipCore
-
+import Combine
 
 class PushTest: XCTestCase {
 
@@ -1055,9 +1055,7 @@ class PushTest: XCTestCase {
 
         let payload = await Task {
             Task { @MainActor in
-                if #available(iOS 16.0, *) {
-                    try await Task.sleep(for: .milliseconds(100))
-                }
+                try await Task.sleep(for: .milliseconds(100))
                 startedCRATask.fulfill()
             }
             return await self.channel.channelPayload

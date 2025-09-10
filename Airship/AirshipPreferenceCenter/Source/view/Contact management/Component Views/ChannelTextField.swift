@@ -3,6 +3,10 @@
 public import SwiftUI
 import Combine
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
 // MARK: Channel text field
 public struct ChannelTextField: View {
     // MARK: - Constants

@@ -2,6 +2,10 @@
 
 import SwiftUI
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
 struct PreferenceCloseButton: View {
     internal init(dismissIconColor: Color, dismissIconResource:String, onTap: @escaping () -> ()) {
         self.dismissIconColor = dismissIconColor

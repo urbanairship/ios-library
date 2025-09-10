@@ -153,22 +153,14 @@ struct HomeView: View {
     }
 
     var body: some View {
-        Group {
-            if #available(iOS 16.0, *) {
-                NavigationStack {
-                    content
-                }
-            } else {
-                NavigationView {
-                    content
-                }
-                .navigationViewStyle(.stack)
-            }
+        NavigationStack {
+            content
+                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .navigationBarTitle("")
+                .navigationBarHidden(true)
         }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .navigationBarTitle("")
-        .navigationBarHidden(true)
+
     }
 
     @MainActor

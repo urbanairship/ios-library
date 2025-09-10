@@ -96,17 +96,10 @@ struct AppView: View {
 #if canImport(AirshipDebug)
     @ViewBuilder
     var debug: some View {
-        if #available(iOS 16.0, *) {
-            NavigationStack {
-                ZStack{
-                    AirshipDebugView()
-                }
-            }
-        } else {
-            NavigationView {
+        NavigationStack {
+            ZStack{
                 AirshipDebugView()
             }
-            .navigationViewStyle(.stack)
         }
     }
 #endif

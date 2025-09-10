@@ -4,6 +4,7 @@ import XCTest
 
 @testable
 import AirshipCore
+import Combine
 
 final class RemoteDataTest: AirshipBaseTest {
 

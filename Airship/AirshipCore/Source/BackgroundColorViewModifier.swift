@@ -305,26 +305,13 @@ struct CustomRoundedRectangle: InsettableShape {
 
     func path(in rect: CGRect) -> Path {
         let insetRect = rect.insetBy(dx: insetAmount, dy: insetAmount)
-        if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
-
-            return UnevenRoundedRectangle(
-                topLeadingRadius: cornerRadii.topLeading,
-                bottomLeadingRadius: cornerRadii.bottomLeading,
-                bottomTrailingRadius: cornerRadii.bottomTrailing,
-                topTrailingRadius: cornerRadii.topTrailing,
-                style: .continuous
-            ).path(in: insetRect)
-        } else {
-            /// Not supporting this currently but we could draw a shape here instead of iOS 15
-            let maxRadius = max(
-                cornerRadii.topLeading,
-                cornerRadii.topTrailing,
-                cornerRadii.bottomTrailing,
-                cornerRadii.bottomLeading
-            )
-            return RoundedRectangle(cornerRadius: maxRadius, style: style)
-                .path(in: insetRect)
-        }
+        return UnevenRoundedRectangle(
+            topLeadingRadius: cornerRadii.topLeading,
+            bottomLeadingRadius: cornerRadii.bottomLeading,
+            bottomTrailingRadius: cornerRadii.bottomTrailing,
+            topTrailingRadius: cornerRadii.topTrailing,
+            style: .continuous
+        ).path(in: insetRect)
     }
 
     func inset(by amount: CGFloat) -> CustomRoundedRectangle {
