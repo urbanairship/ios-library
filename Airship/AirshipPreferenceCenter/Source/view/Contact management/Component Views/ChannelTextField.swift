@@ -5,30 +5,38 @@ import Combine
 
 // MARK: Channel text field
 public struct ChannelTextField: View {
+    // MARK: - Constants
+    private enum Layout {
+        #if os(tvOS)
+        static let fieldHeight: CGFloat = 66  // tvOS needs taller fields for focus
+        static let fieldPadding: CGFloat = 12
+        #else
+        static let fieldHeight: CGFloat = 52
+        static let fieldPadding: CGFloat = 10
+        #endif
+        static let fieldCornerRadius: CGFloat = 4
+        static let stackSpacing: CGFloat = 2
+        static let standardSpacing: CGFloat = 12
+        static let placeHolderPadding = EdgeInsets(top: 4, leading: 15, bottom: 4, trailing: 4)
+    }
+
+    // MARK: - Environment
     @Environment(\.colorScheme) var colorScheme
 
-    private let placeHolderPadding = EdgeInsets(top: 4, leading: 15, bottom: 4, trailing: 4)
-
+    // MARK: - Properties
     private var senders: [PreferenceCenterConfig.ContactManagementItem.SMSSenderInfo]?
-
     private var platform: PreferenceCenterConfig.ContactManagementItem.Platform?
+    private var smsOptions: PreferenceCenterConfig.ContactManagementItem.SMS?
+    private var emailOptions: PreferenceCenterConfig.ContactManagementItem.Email?
 
+    // MARK: - State
     @Binding var selectedSender: PreferenceCenterConfig.ContactManagementItem.SMSSenderInfo
-
     @State var selectedSenderID: String = ""
-
     @Binding var inputText: String
-
-    @State
-    private var placeholder: String = ""
-
-    private let fieldCornerRadius: CGFloat = 4
+    @State private var placeholder: String = ""
 
     /// The preference center theme
     var theme: PreferenceCenterTheme.ContactManagement?
-
-    private var smsOptions: PreferenceCenterConfig.ContactManagementItem.SMS?
-    private var emailOptions: PreferenceCenterConfig.ContactManagementItem.Email?
 
     public init(
         platform: PreferenceCenterConfig.ContactManagementItem.Platform?,
@@ -56,15 +64,20 @@ public struct ChannelTextField: View {
     }
 
     public var body: some View {
-        countryPicker
-        VStack {
-            HStack(spacing:2) {
-                textFieldLabel
-                textField
+        VStack(spacing: Layout.standardSpacing) {
+            countryPicker
+            
+            VStack {
+                HStack(spacing: Layout.stackSpacing) {
+                    textFieldLabel
+                    textField
+                }
+                .padding(Layout.fieldPadding)
+                .background(backgroundView)
             }
-            .padding(10)
-            .background(backgroundView)
+            .frame(height: Layout.fieldHeight)
         }
+        .frame(maxWidth: .infinity)
     }
 
     @ViewBuilder
@@ -106,7 +119,8 @@ public struct ChannelTextField: View {
                     }
                 }
             }
-            .padding()
+            .padding(.horizontal)
+            .frame(height: Layout.fieldHeight)
             .background(backgroundView)
         }
     }
@@ -120,7 +134,7 @@ public struct ChannelTextField: View {
 
         TextField(makePlaceholder(), text: $inputText)
             .foregroundColor(textColor)
-            .padding(self.placeHolderPadding)
+            .padding(Layout.placeHolderPadding)
             .keyboardType(keyboardType)
     }
 
@@ -136,10 +150,10 @@ public struct ChannelTextField: View {
         } else if let emailOptions = emailOptions {
             Text(emailOptions.addressLabel)
                 .textAppearance(
-                theme?.textFieldPlaceholderAppearance,
-                base: PreferenceCenterDefaults.textFieldTextAppearance,
-                colorScheme: colorScheme
-            )
+                    theme?.textFieldPlaceholderAppearance,
+                    base: PreferenceCenterDefaults.textFieldTextAppearance,
+                    colorScheme: colorScheme
+                )
         }
     }
 
@@ -150,7 +164,7 @@ public struct ChannelTextField: View {
             dark: theme?.backgroundColorDark
         ) ?? AirshipSystemColors.background
 
-        RoundedRectangle(cornerRadius: fieldCornerRadius)
+        RoundedRectangle(cornerRadius: Layout.fieldCornerRadius)
             .foregroundColor(backgroundColor.secondaryVariant(for: colorScheme).opacity(0.2))
     }
 

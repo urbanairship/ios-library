@@ -7,83 +7,45 @@ import Combine
 import AirshipCore
 #endif
 
-// MARK: Channel list view for a given section
 struct ChannelListView: View {
-    @Environment(\.colorScheme)
-    private var colorScheme
+    // MARK: - Constants
+    private enum Layout {
+        static let presentationDetentHeight: CGFloat = 0.5 // medium detent as fraction
+    }
 
+    // MARK: - Environment
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.airshipPreferenceCenterTheme) private var theme: PreferenceCenterTheme
+
+    // MARK: - Properties
     let item: PreferenceCenterConfig.ContactManagementItem
+    @ObservedObject var state: PreferenceCenterState
 
-    @ObservedObject
-    var state: PreferenceCenterState
+    // MARK: - State
+    @State private var selectedChannel: ContactChannel?
+    @State private var showAddChannelSheet = false
+    @State private var showRemoveChannelAlert = false
+    @State private var showResendSuccessAlert = false
 
-    @Environment(\.airshipPreferenceCenterTheme)
-    private var theme: PreferenceCenterTheme
-
-    @State
-    private var hideView: Bool = false
-
-    @State
-    private var disposable: AirshipMainActorCancellableBlock?
-
-    @State
-    private var subscriptions: Set<AnyCancellable> = []
-
-    @State
-    private var selectedChannel: ContactChannel?
-
-    @State
-    private var pendingShowFlags:[String: Bool] = [:]
-    private func pendingFlagsBinding(for key: String) -> Binding<Bool> {
-        return .init(
-            get: { self.pendingShowFlags[key, default: false] },
-            set: { self.pendingShowFlags[key] = $0 })
+    // MARK: - Computed Properties
+    private var channels: [ContactChannel] {
+        state.channelsList.filter(with: item.platform.channelType)
     }
 
-    @State
-    private var resendShowFlags:[String: Bool] = [:]
-    private func resendFlagsBinding(for key: String) -> Binding<Bool> {
-        return .init(
-            get: { self.resendShowFlags[key, default: true] },
-            set: { self.resendShowFlags[key] = $0 })
+    private var isChannelListEmpty: Bool {
+        channels.isEmpty
     }
 
-    @ViewBuilder
-    private var removePromptView: some View {
-        if let view = self.item.removeChannel {
-            RemoveChannelPromptView(
-                item: view,
-                theme: self.theme.contactManagement) {
-                    dismissPrompt()
-                } optOutAction: {
-                    if let channel = self.selectedChannel {
-                        Airship.contact.disassociateChannel(channel)
-                        self.selectedChannel = nil
-                    }
-                    dismissPrompt()
-                }
-        }
+    private var removeAlertTitle: String {
+        item.removeChannel?.view.display.title ?? "Remove Channel"
     }
 
-    @ViewBuilder
-    private func makeAddButton(model: PreferenceCenterConfig.ContactManagementItem.LabeledButton) -> some View {
-        LabeledButton(
-            type: .outlineType,
-            item: model,
-            theme: self.theme.contactManagement
-        ) {
-            /// Avoid displaying if no view is supplied
-            if self.item.addChannel?.view != nil {
-                self.disposable = ChannelListView.showModalView(
-                    rootView: addChannelPromptView,
-                    theme: self.theme.contactManagement
-                )
-            }
-        }
+    private var resendAlertTitle: String {
+        pendingLabelModel?.resendSuccessPrompt?.title ?? "Verification Sent"
     }
 
-    private func pendingLabelModelForType(type: PreferenceCenterConfig.ContactManagementItem.Platform) -> PreferenceCenterConfig.ContactManagementItem.PendingLabel? {
-        switch type {
+    private var pendingLabelModel: PreferenceCenterConfig.ContactManagementItem.PendingLabel? {
+        switch item.platform {
         case .sms(let options):
             return options.pendingLabel
         case .email(let options):
@@ -91,70 +53,89 @@ struct ChannelListView: View {
         }
     }
 
-    @ViewBuilder
-    private var headerTitleView: some View {
-        Text(self.item.display.title)
-            .textAppearance(
-                theme.contactManagement?.titleAppearance,
-                base: PreferenceCenterDefaults.sectionTitleAppearance,
-                colorScheme: colorScheme
-            )
-            .accessibilityAddTraits(.isHeader)
-    }
+    // MARK: - Body
+    var body: some View {
+        VStack(alignment: .leading) {
+            Section {
+                VStack(alignment: .leading) {
+                    if isChannelListEmpty {
+                        EmptySectionLabel(label: item.emptyMessage)
+                    } else {
+                        channelListView
+                    }
 
-    @ViewBuilder
-    private var headerSubtitleView: some View {
-        if let subtitle = self.item.display.subtitle {
-            Text(subtitle)
-                .textAppearance(
-                    theme.contactManagement?.subtitleAppearance,
-                    base: PreferenceCenterDefaults.sectionSubtitleAppearance,
-                    colorScheme: colorScheme
-                )
+                    if let buttonModel = item.addChannel?.button {
+                        addChannelButton(model: buttonModel)
+                    }
+                }
+            } header: {
+                headerView
+            }
+        }
+        .sheet(isPresented: $showAddChannelSheet) {
+            addChannelPromptView
+                .airshipApplyIf(true) { view in
+                    if #available(iOS 16.0, tvOS 16.0, watchOS 9.0, *) {
+                        view.presentationDetents([.medium])
+                    }
+                }
+        }
+        .alert(
+            removeAlertTitle,
+            isPresented: $showRemoveChannelAlert,
+            presenting: selectedChannel
+        ) { channel in
+            removeAlertButtons(for: channel)
+        } message: { _ in
+            removeAlertMessage
+        }
+        .alert(
+            resendAlertTitle,
+            isPresented: $showResendSuccessAlert,
+            presenting: selectedChannel
+        ) { _ in
+            resendAlertButton
+        } message: { _ in
+            resendAlertMessage
         }
     }
 
+    // MARK: - View Components
     @ViewBuilder
     private var headerView: some View {
         HStack {
             VStack(alignment: .leading) {
-                headerTitleView
-                headerSubtitleView
+                Text(item.display.title)
+                    .textAppearance(
+                        theme.contactManagement?.titleAppearance,
+                        base: PreferenceCenterDefaults.sectionTitleAppearance,
+                        colorScheme: colorScheme
+                    )
+                    .accessibilityAddTraits(.isHeader)
+
+                if let subtitle = item.display.subtitle {
+                    Text(subtitle)
+                        .textAppearance(
+                            theme.contactManagement?.subtitleAppearance,
+                            base: PreferenceCenterDefaults.sectionSubtitleAppearance,
+                            colorScheme: colorScheme
+                        )
+                }
             }
             Spacer()
         }
-    }
-
-    private func resend(_ channel: ContactChannel) {
-        self.disposable = ChannelListView.showModalView(
-            rootView: resendPromptView,
-            theme: self.theme.contactManagement
-        )
-        self.selectedChannel = channel
-    }
-
-    private func remove(_ channel: ContactChannel) {
-        self.disposable = ChannelListView.showModalView(
-            rootView: removePromptView,
-            theme: self.theme.contactManagement
-        )
-        self.selectedChannel = channel
+        .accessibilityAddTraits(.isHeader)
     }
 
     @ViewBuilder
-    private var channelListView:some View {
-        ForEach(Array(self.$state.channelsList.wrappedValue.filter(with: self.item.platform.channelType)), id: \.self) { channel in
+    private var channelListView: some View {
+        ForEach(channels, id: \.self) { channel in
             ChannelListViewCell(
                 viewModel: ChannelListCellViewModel(
                     channel: channel,
-                    pendingLabelModel: pendingLabelModelForType(type: item.platform),
-                    onResend: {
-                        resend(channel)
-                    },
-                    onRemove: {
-                        remove(channel)
-                    },
-                    onDismiss: dismissPrompt
+                    pendingLabelModel: pendingLabelModel,
+                    onResend: { resend(channel) },
+                    onRemove: { remove(channel) }
                 )
             )
 #if os(tvOS)
@@ -163,137 +144,117 @@ struct ChannelListView: View {
         }
     }
 
-    internal init(item: PreferenceCenterConfig.ContactManagementItem, state: PreferenceCenterState) {
-        self.item = item
-        self.state = state
-    }
-
-    var body: some View {
-        if !self.hideView {
-            VStack(alignment: .leading) {
-                Section {
-                    VStack(alignment: .leading) {
-                        if self.$state.channelsList.wrappedValue.filter(with: self.item.platform.channelType).isEmpty {
-                            EmptySectionLabel(label: item.emptyMessage)
-                        } else {
-                            channelListView
-                        }
-                        if let model = self.item.addChannel?.button {
-                            HStack {
-                                makeAddButton(model: model)
-                                Spacer()
-                            }
-#if os(tvOS)
-                            .focusSection()
-#endif
-                        }
-                    }
-                } header: {
-                    headerView
-                        .accessibilityAddTraits(.isHeader)
-                }
-            }
-        }
-    }
-}
-
-extension ChannelListView {
-    // MARK: Prompt functions
-
-    private func registerSMS(msisdn: String, sender: String) {
-        let options = SMSRegistrationOptions.optIn(
-            senderID: sender
-        )
-
-        Airship.contact.registerSMS(msisdn, options: options)
-
-        dismissPrompt()
-    }
-
-    private func registerEmail(email: String) {
-        let options = EmailRegistrationOptions.options(properties: nil, doubleOptIn: true)
-
-        Airship.contact.registerEmail(email, options: options)
-
-        dismissPrompt()
-    }
-
-    // MARK: Prompt Views
-
     @ViewBuilder
-    private var resendPromptView: some View {
-        /// When we have submitted successfully users see a follow up prompt telling them to check their messaging app, email inbox, etc.
-        ResultPromptView(
-            item: pendingLabelModelForType(type: item.platform)?.resendSuccessPrompt,
-            theme: theme.contactManagement
-        ) {
-            if let channel = self.selectedChannel {
-                Airship.contact.resend(channel)
-                self.selectedChannel = nil
+    private func addChannelButton(model: PreferenceCenterConfig.ContactManagementItem.LabeledButton) -> some View {
+        HStack {
+            Button {
+                if item.addChannel?.view != nil {
+                    showAddChannelSheet = true
+                }
+            } label: {
+                Text(model.text)
+                    .textAppearance(
+                        theme.contactManagement?.buttonLabelAppearance,
+                        colorScheme: colorScheme
+                    )
             }
-            dismissPrompt()
+#if !os(tvOS)
+            .controlSize(.regular)
+#endif
+
+
+            Spacer()
         }
-        .transition(.opacity)
+#if os(tvOS)
+        .focusSection()
+#endif
     }
 
     @ViewBuilder
     private var addChannelPromptView: some View {
-        if let view = self.item.addChannel?.view {
-            let viewModel = AddChannelPromptViewModel(
-                item: view,
-                theme: self.theme.contactManagement,
-                registrationOptions: self.item.platform,
-                onCancel: dismissPrompt,
-                onRegisterSMS: registerSMS,
-                onRegisterEmail: registerEmail
+        if let view = item.addChannel?.view {
+            AddChannelPromptView(
+                viewModel: AddChannelPromptViewModel(
+                    item: view,
+                    theme: theme.contactManagement,
+                    registrationOptions: item.platform,
+                    onCancel: { showAddChannelSheet = false },
+                    onRegisterSMS: registerSMS,
+                    onRegisterEmail: registerEmail
+                )
             )
-
-
-            AddChannelPromptView(viewModel: viewModel)
-                .transition(.opacity)
         }
     }
 
-    /// Pretty sure we use this extra window because creating the shadow view in the way we like is a pain since this isn't the top level view
-    /// Can probably improve on this and keep this more self-contained.
-    @MainActor
-    static func showModalView(
-        rootView: some View,
-        theme: PreferenceCenterTheme.ContactManagement?
-    ) -> AirshipMainActorCancellableBlock? {
-
-        guard let scene = try? AirshipSceneManager.shared.lastActiveScene else {
-            AirshipLogger.error("Unable to display, missing scene.")
-            return nil
+    // MARK: - Alert Components
+    @ViewBuilder
+    private func removeAlertButtons(for channel: ContactChannel) -> some View {
+        Button(role: .destructive) {
+            AirshipLogger.info("Removing channel: \(channel.channelType)")
+            Airship.contact.disassociateChannel(channel)
+            selectedChannel = nil
+        } label: {
+            Text(item.removeChannel?.view.submitButton?.text ?? "Remove")
         }
 
-        let window: UIWindow? = AirshipWindowFactory.shared.makeWindow(windowScene: scene)
-
-        let disposable = AirshipMainActorCancellableBlock {
-            DispatchQueue.main.async {
-                window?.animateOut()
-            }
+        Button(role: .cancel) {
+            selectedChannel = nil
+        } label: {
+            Text(item.removeChannel?.view.cancelButton?.text ?? "Cancel")
         }
-
-        let viewController = ChannelListViewHostingController(
-            rootView: rootView,
-            backgroundColor: .clear.withAlphaComponent(0.5)
-        )
-
-        window?.rootViewController = viewController
-        window?.alpha = 0
-        window?.animateIn()
-#if os(visionOS)
-        window?.layer.opacity = 0.9
-#endif
-        return disposable
     }
 
-    private func dismissPrompt() {
-        self.disposable?.cancel()
+    @ViewBuilder
+    private var removeAlertMessage: some View {
+        if let body = item.removeChannel?.view.display.body {
+            Text(body)
+        }
+    }
+
+    @ViewBuilder
+    private var resendAlertButton: some View {
+        Button {
+            selectedChannel = nil
+        } label: {
+            Text(pendingLabelModel?.resendSuccessPrompt?.button.text ?? "OK")
+        }
+    }
+
+    @ViewBuilder
+    private var resendAlertMessage: some View {
+        if let body = pendingLabelModel?.resendSuccessPrompt?.body {
+            Text(body)
+        }
+    }
+
+    // MARK: - Actions
+    private func resend(_ channel: ContactChannel) {
+        selectedChannel = channel
+        Airship.contact.resend(channel)
+        AirshipLogger.info("Resending verification for channel: \(channel.channelType)")
+        showResendSuccessAlert = true
+    }
+
+    private func remove(_ channel: ContactChannel) {
+        selectedChannel = channel
+        AirshipLogger.info("Showing remove confirmation for channel: \(channel.channelType)")
+        showRemoveChannelAlert = true
+    }
+
+    private func registerSMS(msisdn: String, sender: String) {
+        let options = SMSRegistrationOptions.optIn(senderID: sender)
+        Airship.contact.registerSMS(msisdn, options: options)
+        AirshipLogger.info("Registered SMS channel: \(msisdn)")
+    }
+
+    private func registerEmail(email: String) {
+        let options = EmailRegistrationOptions.options(properties: nil, doubleOptIn: true)
+        Airship.contact.registerEmail(email, options: options)
+        AirshipLogger.info("Registered email channel: \(email)")
     }
 }
 
+// MARK: - Extensions
 extension PreferenceCenterConfig.ContactManagementItem.Platform {
     var channelType: ChannelType {
         switch self {

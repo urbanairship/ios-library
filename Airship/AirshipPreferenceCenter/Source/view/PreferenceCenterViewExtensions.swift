@@ -12,7 +12,7 @@ extension View {
     ) -> some View {
         let overridesColor = colorScheme.airshipResolveColor(light: overrides?.color, dark: overrides?.colorDark)
         self.font(overrides?.font ?? base?.font)
-            .foregroundColor(overridesColor ?? base?.color ?? AirshipSystemColors.label)
+            .foregroundColor(overridesColor ?? base?.color)
     }
 
     @ViewBuilder

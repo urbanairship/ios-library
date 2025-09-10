@@ -529,7 +529,7 @@ struct PreferenceCenterDefaults {
 #if os(tvOS)
     static let promptMaxWidth: Double = 800.0
     static let promptMinWidth: Double = 270.0
-    static let chipSpacing: Double = 24.0
+    static let chipSpacing: Double = 36.0
     static let smallPadding: Double = 5
 #elseif os(visionOS)
     static let promptMaxWidth: Double = 420.0
@@ -605,7 +605,6 @@ struct PreferenceCenterDefaults {
 
     static let textFieldTextAppearance = PreferenceCenterTheme.TextAppearance(
         font: .body,
-        color: AirshipSystemColors.label
     )
 
     static let textFieldPlaceholderAppearance = PreferenceCenterTheme.TextAppearance(
@@ -615,35 +614,19 @@ struct PreferenceCenterDefaults {
 
     static let chipLabelAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline.weight(.bold),
-        color: AirshipSystemColors.label
     )
 
     static let resendButtonTitleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .caption.weight(.bold),
         color: AirshipSystemColors.link
     )
-
-    static let buttonLabelAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .headline.weight(.bold),
-        color: AirshipSystemColors.background
-    )
-
-    static let buttonLabelDestructiveAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .headline.weight(.bold),
-        color: .white
-    )
-
-    static let buttonLabelOutlineAppearance = PreferenceCenterTheme.TextAppearance(
-        font: .headline.weight(.bold),
-        color: AirshipSystemColors.label
-    )
 }
 
 
 internal struct AirshipSystemColors {
     static let placeholder = Color(UIColor.placeholderText)
-    static let label = Color(UIColor.label)
-    static let secondaryLabel = Color(UIColor.secondaryLabel)
+    static let label = Color.primary
+    static let secondaryLabel = Color.secondary
     static let tertiaryLabel = Color(UIColor.tertiaryLabel)
 #if os(tvOS)
     static let background = Color.black

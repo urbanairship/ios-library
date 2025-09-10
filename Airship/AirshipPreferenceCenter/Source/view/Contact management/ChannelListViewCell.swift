@@ -20,7 +20,6 @@ class ChannelListCellViewModel: ObservableObject {
 
     let onResend: () -> Void
     let onRemove: () -> Void
-    let onDismiss: () -> Void
 
     private var resendLabelHideDelaySeconds: Double { Double(pendingLabelModel?.intervalInSeconds ?? 15) }
 
@@ -30,14 +29,12 @@ class ChannelListCellViewModel: ObservableObject {
     init(channel: ContactChannel,
          pendingLabelModel: PreferenceCenterConfig.ContactManagementItem.PendingLabel?,
          onResend: @escaping () -> (),
-         onRemove: @escaping () -> Void,
-         onDismiss: @escaping () -> Void) {
+         onRemove: @escaping () -> Void
+    ) {
         self.channel = channel
         self.pendingLabelModel = pendingLabelModel
         self.onResend = onResend
         self.onRemove = onRemove
-        self.onDismiss = onDismiss
-
         initializePendingLabel()
     }
 

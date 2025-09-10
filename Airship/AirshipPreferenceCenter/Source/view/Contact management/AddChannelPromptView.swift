@@ -12,80 +12,161 @@ public enum AddChannelState {
 }
 
 struct AddChannelPromptView: View, Sendable {
-    @Environment(\.colorScheme)
-    private var colorScheme
-
-    @StateObject
-    private var viewModel: AddChannelPromptViewModel
-
-    init(viewModel: AddChannelPromptViewModel) {
-        _viewModel = StateObject(
-            wrappedValue: viewModel
-        )
+    // MARK: - Constants
+    private enum Layout {
+        static let standardSpacing: CGFloat = 20
+        static let buttonTopPadding: CGFloat = 10
+        static let maxWidth: CGFloat = 500  // Consistent max width for sheets
     }
 
+    // MARK: - Environment
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.dismiss) private var dismiss
+
+    // MARK: - State
+    @StateObject private var viewModel: AddChannelPromptViewModel
+    @State private var showSuccessAlert = false
+
+    // MARK: - Initialization
+    init(viewModel: AddChannelPromptViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
+
+    // MARK: - Computed Properties
     private var errorMessage: String? {
-        switch self.viewModel.state {
+        switch viewModel.state {
         case .failedInvalid:
-            return self.viewModel.platform?.errorMessages?.invalidMessage
+            return viewModel.platform?.errorMessages?.invalidMessage
         case .failedDefault:
-            return self.viewModel.platform?.errorMessages?.defaultMessage
+            return viewModel.platform?.errorMessages?.defaultMessage
         default:
             return nil
         }
     }
 
-    @ViewBuilder
-    var foregroundContent: some View {
-        switch self.viewModel.state {
-        case .succeeded:
-            if self.viewModel.item.onSubmit != nil {
-                /// When we have submitted successfully users see a follow up prompt telling them to check their messaging app, email inbox, etc.
-                ResultPromptView(
-                    item: self.viewModel.item.onSubmit,
-                    theme: viewModel.theme
-                ) {
-                    viewModel.onSubmit()
-                }
-                .transition(.opacity)
-            } else {
-                Rectangle()
-                    .foregroundColor(Color.clear)
-                    .onAppear {
-                        viewModel.onSubmit()
-                    }
-            }
-        case .ready, .loading, .failedInvalid, .failedDefault:
-            promptView
-        }
+    private var isLoading: Bool {
+        viewModel.state == .loading
     }
 
-    @ViewBuilder
+    private var isInputValid: Bool {
+        !viewModel.inputText.isEmpty
+    }
+
+    private var hasError: Bool {
+        viewModel.state == .failedInvalid || viewModel.state == .failedDefault
+    }
+
+    private var successAlertTitle: String {
+        viewModel.item.onSubmit?.title ?? "Success"
+    }
+
+    // MARK: - Body
     var body: some View {
-        foregroundContent.backgroundWithCloseAction {
-            self.viewModel.onCancel()
+        #if os(tvOS)
+        // On tvOS, use a simpler structure without NavigationView
+        promptContentView
+            .interactiveDismissDisabled(isLoading)
+            .airshipOnChangeOf(viewModel.state) { newState in
+                handleStateChange(newState)
+            }
+            .alert(
+                successAlertTitle,
+                isPresented: $showSuccessAlert,
+                presenting: viewModel.item.onSubmit
+            ) { successPrompt in
+                successAlertButton(for: successPrompt)
+            } message: { successPrompt in
+                successAlertMessage(for: successPrompt)
+            }
+        #else
+        NavigationView {
+            promptContentView
+                .frame(maxWidth: Layout.maxWidth)
         }
-        .frame(
-            minWidth: PreferenceCenterDefaults.promptMinWidth,
-            maxWidth: PreferenceCenterDefaults.promptMaxWidth
-        )
+        .navigationViewStyle(.stack)
+        .interactiveDismissDisabled(isLoading)
+        .airshipOnChangeOf(viewModel.state) { newState in
+            handleStateChange(newState)
+        }
+        .alert(
+            successAlertTitle,
+            isPresented: $showSuccessAlert,
+            presenting: viewModel.item.onSubmit
+        ) { successPrompt in
+            successAlertButton(for: successPrompt)
+        } message: { successPrompt in
+            successAlertMessage(for: successPrompt)
+        }
+        #endif
     }
 
-    // MARK: Prompt view
+    // MARK: - View Components
+
     @ViewBuilder
-    private var titleText: some View {
-        Text(self.viewModel.item.display.title)
-            .textAppearance(
-                viewModel.theme?.titleAppearance,
-                base: PreferenceCenterDefaults.sectionTitleAppearance,
-                colorScheme: colorScheme
-            )
-            .accessibilityAddTraits(.isHeader)
+    private var promptContentView: some View {
+        #if os(tvOS)
+        // tvOS: Custom header with title and cancel button
+        VStack(spacing: 0) {
+            // Custom header bar
+            HStack {
+                Text(viewModel.item.display.title)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                Spacer()
+                Button("ua_cancel_edit_messages".preferenceCenterLocalizedString) {
+                    handleCancellation()
+                }
+                .buttonStyle(.bordered)
+            }
+            .padding()
+            
+            ScrollView {
+                VStack(alignment: .leading, spacing: Layout.standardSpacing) {
+                    descriptionSection
+                    inputSection
+                    errorSection
+                    submitButtonSection
+                    footerSection
+                    
+                    Spacer(minLength: Layout.standardSpacing)
+                }
+                .padding()
+            }
+        }
+        .airshipOnChangeOf(viewModel.inputText) { _ in
+            resetErrorStateIfNeeded()
+        }
+        #else
+        // iOS and other platforms: Use navigation bar
+        ScrollView {
+            VStack(alignment: .leading, spacing: Layout.standardSpacing) {
+                descriptionSection
+                inputSection
+                errorSection
+                submitButtonSection
+                footerSection
+
+                Spacer(minLength: Layout.standardSpacing)
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+        }
+        .navigationTitle(viewModel.item.display.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                cancelButton
+            }
+        }
+        .airshipOnChangeOf(viewModel.inputText) { _ in
+            resetErrorStateIfNeeded()
+        }
+        #endif
     }
 
     @ViewBuilder
-    private var bodyText: some View {
-        if let bodyText = self.viewModel.item.display.body {
+    private var descriptionSection: some View {
+        if let bodyText = viewModel.item.display.body {
             Text(bodyText)
                 .textAppearance(
                     viewModel.theme?.subtitleAppearance,
@@ -96,102 +177,135 @@ struct AddChannelPromptView: View, Sendable {
     }
 
     @ViewBuilder
-    private var errorText: some View {
-        if self.viewModel.state == .failedDefault || self.viewModel.state == .failedInvalid,
-           let errorMessage = errorMessage {
+    private var inputSection: some View {
+        ChannelTextField(
+            platform: viewModel.platform,
+            selectedSender: $viewModel.selectedSender,
+            inputText: $viewModel.inputText,
+            theme: viewModel.theme
+        )
+    }
+
+    @ViewBuilder
+    private var errorSection: some View {
+        if let errorMessage = errorMessage {
             ErrorLabel(
                 message: errorMessage,
                 theme: viewModel.theme
             )
-            .transition(.opacity)
+        }
+    }
+
+    @ViewBuilder
+    private var submitButtonSection: some View {
+        submitButton
+            .padding(.top, Layout.buttonTopPadding)
+    }
+
+    @ViewBuilder
+    private var footerSection: some View {
+        if let footer = viewModel.item.display.footer {
+            FooterView(
+                text: footer,
+                textAppearance: viewModel.theme?.subtitleAppearance ?? PreferenceCenterDefaults.subtitleAppearance
+            )
+            .padding(.top, Layout.standardSpacing)
         }
     }
 
     @ViewBuilder
     private var submitButton: some View {
-        let isLoading = viewModel.state == .loading
-        HStack {
-            Spacer()
+        Button(action: handleSubmission) {
+            HStack {
+                Spacer()
 
-            /// Submit button
-            LabeledButton(
-                item: viewModel.item.submitButton,
-                isEnabled: true,
-                isLoading: viewModel.state == .loading,
-                theme: viewModel.theme
-            ) {
-                viewModel.attemptSubmission()
-            }
-            .disabled(isLoading)
-            .airshipApplyIf(isLoading) { content in
-                content.overlay(
-                    ProgressView(),
-                    alignment: .center
-                )
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var footer: some View {
-        /// Footer
-        if let footer = self.viewModel.item.display.footer {
-            FooterView(text: footer, textAppearance: viewModel.theme?.subtitleAppearance ?? PreferenceCenterDefaults.subtitleAppearance)
-        }
-    }
-
-    @ViewBuilder
-    private var promptViewContent: some View {
-        VStack(alignment: .leading) {
-            titleText
-                .padding(.bottom)
-                .padding(.trailing) // Pad out to prevent aliasing with the close button
-
-            bodyText
-            ChannelTextField(
-                platform: viewModel.platform,
-                selectedSender: $viewModel.selectedSender,
-                inputText: $viewModel.inputText,
-                theme: viewModel.theme
-            )
-            errorText
-            submitButton
-            footer
-        }
-    }
-
-    @ViewBuilder
-    private var promptView: some View {
-        let dismissButtonColor = colorScheme.airshipResolveColor(
-            light: viewModel.theme?.buttonLabelAppearance?.color,
-            dark: viewModel.theme?.buttonLabelAppearance?.colorDark
-        )
-
-        GeometryReader { proxy in
-            promptViewContent
-                .padding()
-                .addPromptBackground(
-                    theme: viewModel.theme,
-                    colorScheme: colorScheme
-                )
-                .addPreferenceCloseButton(
-                    dismissButtonColor: dismissButtonColor ?? .primary,
-                    dismissIconResource: "xmark",
-                    contentDescription: nil,
-                    onUserDismissed: {
-                        self.viewModel.onCancel()
-                    }
-                )
-                .padding()
-                .position(x: proxy.frame(in: .local).midX, y: proxy.frame(in: .local).midY)
-                .transition(.opacity)
-                .airshipOnChangeOf(viewModel.inputText) { newValue in
-                    /// Resets the text to valid ready state since user is trying
-                    withAnimation {
-                        self.viewModel.state = .ready
-                    }
+                if isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                } else {
+                    Text(viewModel.item.submitButton.text)
                 }
+
+                Spacer()
+            }
         }
-        .accessibilityAddTraits(.isModal)
+        .buttonStyle(.borderedProminent)
+#if !os(tvOS)
+        .controlSize(.large)
+#endif
+        .disabled(isLoading || !isInputValid)
+        .optAccessibilityLabel(
+            string: viewModel.item.submitButton.contentDescription
+        )
+    }
+
+    @ViewBuilder
+    private var cancelButton: some View {
+        Button("ua_cancel_edit_messages".preferenceCenterLocalizedString) {
+            handleCancellation()
+        }
+        .disabled(isLoading)
+    }
+
+    // MARK: - Alert Components
+    @ViewBuilder
+    private func successAlertButton(for successPrompt: PreferenceCenterConfig.ContactManagementItem.ActionableMessage) -> some View {
+        Button {
+            handleSuccessCompletion()
+        } label: {
+            Text(successPrompt.button.text)
+        }
+    }
+
+    @ViewBuilder
+    private func successAlertMessage(for successPrompt: PreferenceCenterConfig.ContactManagementItem.ActionableMessage) -> some View {
+        if let body = successPrompt.body {
+            Text(body)
+        }
+    }
+
+    // MARK: - Actions
+    private func handleStateChange(_ newState: AddChannelState) {
+        guard newState == .succeeded else { return }
+
+        if viewModel.item.onSubmit != nil {
+            showSuccessAlert = true
+        } else {
+            handleSuccessCompletion()
+        }
+    }
+
+    private func handleSubmission() {
+        viewModel.attemptSubmission()
+    }
+
+    private func handleCancellation() {
+        viewModel.onCancel()
+        dismiss()
+    }
+
+    private func handleSuccessCompletion() {
+        viewModel.onSubmit()
+        dismiss()
+    }
+
+    private func resetErrorStateIfNeeded() {
+        guard hasError else { return }
+
+        withAnimation {
+            viewModel.state = .ready
+        }
+    }
+}
+
+// MARK: - Extensions
+extension PreferenceCenterConfig.ContactManagementItem.Platform {
+    var inputLabel: String {
+        switch self {
+        case .sms:
+            return "Phone Number"
+        case .email:
+            return "Email Address"
+        }
     }
 }

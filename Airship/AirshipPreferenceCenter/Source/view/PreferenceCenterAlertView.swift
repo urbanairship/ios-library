@@ -164,37 +164,15 @@ public struct DefaultPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
                                     Text(button.text)
                                         .textAppearance(
                                             itemTheme?.buttonLabelAppearance,
-                                            base: PreferenceCenterDefaults.buttonLabelAppearance,
                                             colorScheme: colorScheme
                                         )
-                                        .padding(.horizontal)
-                                        .padding(.vertical, PreferenceCenterDefaults.smallPadding)
-#if !os(tvOS)
-
-                                        .background(
-                                            Capsule()
-                                                .fill(
-                                                    colorScheme.airshipResolveColor(
-                                                        light: itemTheme?.buttonBackgroundColor,
-                                                        dark: itemTheme?.buttonBackgroundColorDark
-                                                    ) ?? Color.blue
-                                                )
-                                        )
-                                        .frame(minHeight: 44)
-
-#endif
                                 }
                             )
-#if os(tvOS)
-                            .tint(colorScheme.airshipResolveColor(
-                                light: itemTheme?.buttonBackgroundColor,
-                                dark: itemTheme?.buttonBackgroundColorDark
-                            ) ?? Color.blue)
                             .buttonStyle(.borderedProminent)
+                            #if !os(tvOS)
+                            .controlSize(.large)
+                            #endif
                             .buttonBorderShape(.capsule)
-#else
-                            .clipShape(Capsule())
-#endif
                             .optAccessibilityLabel(
                                 string: button.contentDescription
                             )

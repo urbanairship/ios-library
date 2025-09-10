@@ -179,7 +179,7 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
             let dx = AirshipAtomicValue(CGFloat.zero)
             let dy = AirshipAtomicValue(CGFloat.zero)
 
-            let hSpacing = PreferenceCenterDefaults.chipSpacing
+            let chipSpacing = PreferenceCenterDefaults.chipSpacing
 
             GeometryReader { geometry in
                 ZStack(alignment: .topLeading) {
@@ -203,10 +203,10 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
                                 {
                                     offSet = 0
                                     dx.value = 0
-                                    dy.value -= viewDimensions.height
+                                    dy.value -= viewDimensions.height + chipSpacing
                                 }
 
-                                dx.value -= (viewDimensions.width + hSpacing)
+                                dx.value -= (viewDimensions.width + chipSpacing)
                                 return offSet
                             }
                             .alignmentGuide(VerticalAlignment.top) {
@@ -236,56 +236,21 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
         ) -> some View {
             let onColor: Color = colorScheme.airshipResolveColor(light: chipTheme?.checkColor, dark: chipTheme?.checkColorDark) ?? .green
             let offColor: Color = colorScheme.airshipResolveColor(light: chipTheme?.borderColor, dark: chipTheme?.borderColorDark) ?? .secondary
-            let chipBackground = Capsule().strokeBorder(
-                colorScheme.airshipResolveColor(light: chipTheme?.borderColor, dark: chipTheme?.borderColorDark) ?? .secondary,
-                lineWidth: 1
-            )
+            let borderColor: Color = colorScheme.airshipResolveColor(light: chipTheme?.borderColor, dark: chipTheme?.borderColorDark) ?? .secondary
 
-            Button(action: {
-                isOn.wrappedValue.toggle()
-            }) {
-                HStack(spacing: 0) {
-                    if isOn.wrappedValue {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 24))
-                            .foregroundColor(onColor)
-                    } else {
-                        Image(systemName: "circle")
-                            .font(.system(size: 24))
-                            .foregroundColor(offColor)
-                    }
-                    Text(component.display?.title ?? "")
-                        .textAppearance(
-                            chipTheme?.labelAppearance,
-                            base: PreferenceCenterDefaults.chipLabelAppearance,
-                            colorScheme: colorScheme
-                        )
-                        .padding(.horizontal, 8)
-                }
-                .padding(2)
-#if os(tvOS)
-                .frame(minHeight: 44)
-                .background(chipBackground)
-#else
-                .background(chipBackground)
-                .frame(minHeight: 44)
+            Toggle(isOn: isOn) {
+                Text(component.display?.title ?? "")
+            }.toggleStyle(
+                ChipToggleStyle(onColor: onColor, offColor: offColor, borderColor: borderColor)
+            )
+#if !os(tvOS)
+            .controlSize(.regular)
 #endif
-            }
-#if os(tvOS)
-            .buttonBorderShape(.capsule)
-            .buttonStyle(.card)
-#elseif os(visionOS)
-            .buttonBorderShape(.capsule)
-            .buttonStyle(.plain)
-            .padding(.vertical)
-#endif
-            .airshipApplyIf(true) { view in
-                if #available(macOS 14.0, iOS 17.0, tvOS 17.0, watchOS 10.0, *) {
-                    view.accessibilityAddTraits(isOn.wrappedValue ? [.isToggle, .isSelected] : .isToggle)
-                } else {
-                    view.accessibilityAddTraits(isOn.wrappedValue ? [.isButton, .isSelected] : .isButton)
-                }
-            }
+            .textAppearance(
+                chipTheme?.labelAppearance,
+                base: PreferenceCenterDefaults.chipLabelAppearance,
+                colorScheme: colorScheme
+            )
         }
     }
 }
@@ -316,5 +281,58 @@ extension EnvironmentValues {
     var airshipContactSubscriptionGroupStyle: AnyContactSubscriptionGroupStyle {
         get { self[ContactSubscriptionGroupStyleKey.self] }
         set { self[ContactSubscriptionGroupStyleKey.self] = newValue }
+    }
+}
+
+struct ChipToggleStyle: ToggleStyle {
+    // Custom colors can be passed in during initialization.
+    var onColor: Color
+    var offColor: Color
+    var borderColor: Color
+
+    func makeBody(configuration: Configuration) -> some View {
+#if os(tvOS)
+        Button(action: { configuration.isOn.toggle() }) {
+            HStack(spacing: 10) {
+                Image(systemName: configuration.isOn ? "checkmark.circle.fill" : "circle")
+                    .foregroundColor(configuration.isOn ? onColor : offColor)
+
+                configuration.label
+                    .foregroundColor(.primary)
+            }
+        }
+        .buttonStyle(.bordered)
+        .tint(configuration.isOn ? onColor.opacity(0.2) : nil)
+        .animation(.easeInOut(duration: 0.2), value: configuration.isOn)
+#elseif os(visionOS)
+        Button(action: { configuration.isOn.toggle() }) {
+            HStack {
+                Image(systemName: configuration.isOn ? "checkmark.circle.fill" : "circle")
+                    .font(.title2)
+                    .foregroundColor(configuration.isOn ? onColor : offColor)
+
+                configuration.label
+                    .foregroundColor(.primary)
+            }
+            .frame(minHeight: 44)
+        }
+        .buttonStyle(.bordered)
+        .tint(configuration.isOn ? onColor.opacity(0.2) : nil)
+        .animation(.easeInOut(duration: 0.2), value: configuration.isOn)
+#else
+        Button(action: { configuration.isOn.toggle() }) {
+            HStack {
+                Image(systemName: configuration.isOn ? "checkmark.circle.fill" : "circle")
+                    .font(.title2)
+                    .foregroundColor(configuration.isOn ? onColor : offColor)
+
+                configuration.label
+                    .foregroundColor(.primary)
+            }
+        }
+        .buttonStyle(.bordered)
+        .tint(configuration.isOn ? onColor.opacity(0.4) : offColor.opacity(0.4))
+        .animation(.easeInOut(duration: 0.2), value: configuration.isOn)
+#endif
     }
 }
