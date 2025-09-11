@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.9.1 - September 10, 2025
+Minor release that fixes backwards Swift 5 compatibility. Users that plan to use the 19.9.1-swift5 branch are encouraged to update.
+
+### Changes
+- Fixed default parameter initialization by moving @MainActor object creation from parameter defaults to method bodies in ThomasEnvironment, ThomasState, and ThomasFormField.
+
 ## Version 19.9.0 - September 4, 2025
 Minor release that adds a new flag to HTML In-App message content to force full screen on all devices.
 
