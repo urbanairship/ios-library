@@ -44,7 +44,7 @@ struct MessageCenterNavigationSplitView: View {
             NavigationStack {
                 Group {
                     if let messageID = self.controller.currentMessageID {
-                        MessageCenterMessageViewWithNavigation(messageID: messageID, title: nil) {
+                        MessageCenterMessageViewWithNavigation(messageID: messageID) {
                             self.controller.path.removeAll { $0 == .message(messageID) }
                         }
                         .id(messageID)

@@ -245,7 +245,10 @@ struct AddChannelPromptView: View, Sendable {
 
     @ViewBuilder
     private var cancelButton: some View {
-        Button("ua_cancel_edit_messages".preferenceCenterLocalizedString) {
+        Button(
+            "ua_cancel_edit_messages".preferenceCenterLocalizedString,
+            systemImage: "xmark"
+        ) {
             handleCancellation()
         }
         .disabled(isLoading)
@@ -253,7 +256,9 @@ struct AddChannelPromptView: View, Sendable {
 
     // MARK: - Alert Components
     @ViewBuilder
-    private func successAlertButton(for successPrompt: PreferenceCenterConfig.ContactManagementItem.ActionableMessage) -> some View {
+    private func successAlertButton(
+        for successPrompt: PreferenceCenterConfig.ContactManagementItem.ActionableMessage
+    ) -> some View {
         Button {
             handleSuccessCompletion()
         } label: {
@@ -262,7 +267,9 @@ struct AddChannelPromptView: View, Sendable {
     }
 
     @ViewBuilder
-    private func successAlertMessage(for successPrompt: PreferenceCenterConfig.ContactManagementItem.ActionableMessage) -> some View {
+    private func successAlertMessage(
+        for successPrompt: PreferenceCenterConfig.ContactManagementItem.ActionableMessage
+    ) -> some View {
         if let body = successPrompt.body {
             Text(body)
         }

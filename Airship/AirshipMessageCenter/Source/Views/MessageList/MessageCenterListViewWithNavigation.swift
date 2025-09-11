@@ -52,14 +52,6 @@ public struct MessageCenterListViewWithNavigation: View {
         )
     }
 
-    private let buttonTextMinScaleFactor: CGFloat = 0.65
-
-    @State
-    private var maxEditButtonsWidth: CGFloat = .infinity
-
-    @State
-    private var lastMaxEditButtonsWidth: CGFloat = 0
-
     private var isEditMode: Bool {
         self.editMode?.wrappedValue.isEditing ?? false
     }
@@ -72,23 +64,6 @@ public struct MessageCenterListViewWithNavigation: View {
         return EditButton()
             .foregroundColor(color)
             .accessibilityHint("ua_edit_messages_description".messageCenterLocalizedString)
-    }
-
-#if !os(tvOS)
-    private func leadingToolbar() -> some ToolbarContent {
-        ToolbarItemGroup(placement: .navigationBarTrailing) {
-            editButton()
-        }
-    }
-#endif
-
-    private func bottomToolBar() -> some ToolbarContent {
-        ToolbarItemGroup(placement: .bottomBar) {
-            selectButton(maxWidth: maxEditButtonsWidth/3)
-            Spacer()
-            markReadButton(maxWidth: maxEditButtonsWidth/3)
-            markDeleteButton(maxWidth: maxEditButtonsWidth/3)
-        }
     }
 
     private func markRead(messages: Set<String>) {
@@ -105,89 +80,78 @@ public struct MessageCenterListViewWithNavigation: View {
         self.viewModel.delete(messages: messages)
     }
 
-    private func markDeleteButton(maxWidth: CGFloat) -> some View {
+    private func markDeleteButton() -> some View {
         Button(
-            action: {
-                self.viewModel.delete(messages: self.viewModel.editModeSelection)
-            },
-            label: {
-                if self.viewModel.editModeSelection.count > 0 {
-                    Text(
-                        "\("ua_delete_messages".messageCenterLocalizedString) (\(self.viewModel.editModeSelection.count))"
-                    )
-                    .lineLimit(1)
-                    .foregroundColor(colorScheme.airshipResolveColor(light: theme.deleteButtonTitleColor, dark: theme.deleteButtonTitleColorDark))
-
-                } else {
-                    Text("ua_delete_messages".messageCenterLocalizedString)
-                        .lineLimit(1)
-                        .foregroundColor(colorScheme.airshipResolveColor(light: theme.deleteButtonTitleColor, dark: theme.deleteButtonTitleColorDark))
-                }
-            }
+            "ua_mark_messages_read".messageCenterLocalizedString,
+            systemImage: "trash",
+            role: .destructive
+        ) {
+            self.viewModel.delete(messages: self.viewModel.editModeSelection)
+        }
+        .tint(
+            colorScheme.airshipResolveColor(
+                light: theme.deleteButtonTitleColor,
+                dark: theme.deleteButtonTitleColorDark
+            )
         )
         .accessibilityHint("ua_delete_messages".messageCenterLocalizedString)
         .disabled(self.viewModel.editModeSelection.isEmpty)
     }
 
     @ViewBuilder
-    private func markReadButton(maxWidth: CGFloat) -> some View {
+    private func markReadButton() -> some View {
         Button(
-            action: {
-                markRead(messages: self.viewModel.editModeSelection)
-            },
-            label: {
-                if self.viewModel.editModeSelection.count > 0 {
-                    Text(
-                        "\("ua_mark_messages_read".messageCenterLocalizedString) (\(self.viewModel.editModeSelection.count))"
-                    )
-                    .lineLimit(1)
-                    .foregroundColor(colorScheme.airshipResolveColor(light: theme.markAsReadButtonTitleColor, dark: theme.markAsReadButtonTitleColorDark))
-
-                } else {
-                    Text("ua_mark_messages_read".messageCenterLocalizedString)
-                        .lineLimit(1)
-                        .foregroundColor(colorScheme.airshipResolveColor(light: theme.markAsReadButtonTitleColor, dark: theme.markAsReadButtonTitleColorDark))
-
-                }
-            }
+            "ua_mark_messages_read".messageCenterLocalizedString,
+            systemImage: "envelope.open"
+        ) {
+            markRead(messages: self.viewModel.editModeSelection)
+        }
+        .tint(
+            colorScheme.airshipResolveColor(
+                light: theme.markAsReadButtonTitleColor,
+                dark: theme.markAsReadButtonTitleColorDark
+            )
         )
         .disabled(self.viewModel.editModeSelection.isEmpty)
         .accessibilityHint("ua_mark_messages_read".messageCenterLocalizedString)
     }
 
     @ViewBuilder
-    private func selectButton(maxWidth: CGFloat) -> some View {
+    private func selectButton() -> some View {
         if self.viewModel.editModeSelection.count == self.viewModel.messages.count {
-            selectNone(maxWidth: maxWidth)
+            selectNone()
         } else {
-            selectAll(maxWidth: maxWidth)
+            selectAll()
         }
     }
 
-    private func selectAll(maxWidth: CGFloat) -> some View {
-        Button {
+    private func selectAll() -> some View {
+        Button(
+            "ua_select_all_messages".messageCenterLocalizedString
+        ) {
             self.viewModel.editModeSelectAll()
-        } label: {
-            Text("ua_select_all_messages".messageCenterLocalizedString)
-                .lineLimit(1)
-                .foregroundColor(colorScheme.airshipResolveColor(light: theme.selectAllButtonTitleColor, dark: theme.selectAllButtonTitleColorDark))
         }
+        .tint(
+            colorScheme.airshipResolveColor(
+                light: theme.selectAllButtonTitleColor,
+                dark: theme.selectAllButtonTitleColorDark
+            )
+        )
         .accessibilityHint("ua_select_all_messages".messageCenterLocalizedString)
     }
 
-    private func selectNone(maxWidth: CGFloat) -> some View {
-        Button {
+    private func selectNone() -> some View {
+        Button(
+            "ua_select_none_messages".messageCenterLocalizedString
+        ) {
             self.viewModel.editModeClearAll()
-        } label: {
-            Text("ua_select_none_messages".messageCenterLocalizedString)
-                .lineLimit(1)
-                .foregroundColor(
-                    colorScheme.airshipResolveColor(
-                        light: theme.selectAllButtonTitleColor,
-                        dark: theme.selectAllButtonTitleColorDark
-                    )
-                )
         }
+        .tint(
+            colorScheme.airshipResolveColor(
+                light: theme.selectAllButtonTitleColor,
+                dark: theme.selectAllButtonTitleColorDark
+            )
+        )
         .accessibilityHint("ua_select_none_messages".messageCenterLocalizedString)
     }
 
@@ -202,8 +166,35 @@ public struct MessageCenterListViewWithNavigation: View {
             .frame(maxHeight: .infinity)
             .applyUIKitNavigationAppearance()
             .toolbar {
-                leadingToolbar()
-                bottomToolBar()
+#if os(iOS)
+                if #available(iOS 26.0, *) {
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        editButton()
+                    }
+                } else {
+                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                        editButton()
+                    }
+                }
+
+                ToolbarItemGroup(placement: .bottomBar) {
+                    selectButton()
+                    Spacer()
+                    markReadButton()
+                    markDeleteButton()
+                }
+#else
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    editButton()
+                }
+                ToolbarItemGroup(placement: .bottomBar) {
+                    selectButton()
+                    Spacer()
+                    markReadButton()
+                    Spacer()
+                    markDeleteButton()
+                }
+#endif
             }
             .toolbar(isEditMode ? .visible : .hidden, for: .bottomBar)
             .airshipApplyIf(containerBackgroundColor != nil) { view in

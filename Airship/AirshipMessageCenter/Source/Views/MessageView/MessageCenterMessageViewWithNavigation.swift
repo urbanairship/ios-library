@@ -30,6 +30,7 @@ public struct MessageCenterMessageViewWithNavigation: View {
     @StateObject
     private var messageViewModel: MessageCenterMessageViewModel
 
+    private let showBackButton: Bool?
     private let title: String?
     private let dismissAction: (@MainActor () -> Void)?
 
@@ -37,14 +38,17 @@ public struct MessageCenterMessageViewWithNavigation: View {
     /// - Parameters:
     ///   - messageID: The message ID.
     ///   - title: The title to use until the message is loaded.
+    ///   - showBackButton: Flag to show or hide the back button. If not set, back button will be displayed if it has a presentationMode.
     ///   - dismissAction: A dismiss action.
     public init(
         messageID: String,
         title: String? = nil,
+        showBackButton: Bool? = nil,
         dismissAction: (@MainActor () -> Void)? = nil
     ) {
         _messageViewModel = .init(wrappedValue: .init(messageID: messageID))
         self.title = title
+        self.showBackButton = showBackButton
         self.dismissAction = dismissAction
     }
 
@@ -52,14 +56,17 @@ public struct MessageCenterMessageViewWithNavigation: View {
     /// - Parameters:
     ///   - viewModel: The message center message view model.
     ///   - title: The title to use until the message is loaded.
+    ///   - showBackButton: Flag to show or hide the back button. If not set, back button will be displayed if it has a presentationMode.
     ///   - dismissAction: A dismiss action.
     public init(
         viewModel: MessageCenterMessageViewModel,
         title: String? = nil,
+        showBackButton: Bool? = nil,
         dismissAction: (@MainActor () -> Void)? = nil
     ) {
         _messageViewModel = .init(wrappedValue: viewModel)
         self.title = title
+        self.showBackButton = showBackButton
         self.dismissAction = dismissAction
     }
 
@@ -70,6 +77,14 @@ public struct MessageCenterMessageViewWithNavigation: View {
             theme: theme,
             colorScheme: colorScheme
         )
+    }
+
+    private var shouldShowBackButton: Bool {
+        if let showBackButton {
+            return showBackButton
+        }
+
+        return showBackButton ?? self.presentationMode.wrappedValue.isPresented
     }
 
     /// The body of the view.
@@ -85,20 +100,27 @@ public struct MessageCenterMessageViewWithNavigation: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle(self.messageViewModel.message?.title ?? self.title ?? "")
             .toolbar {
-
-                // TODO, should we show back button always or only when presented?
-                if self.presentationMode.wrappedValue.isPresented {
+                if shouldShowBackButton {
                     ToolbarItemGroup(placement: .navigationBarLeading) {
                         MessageCenterBackButton(dismissAction: dismiss)
                     }
                 }
 
+#if os(iOS)
+                if #available(iOS 26.0, *) {
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        deleteButton
+                    }
+                } else {
+                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                        deleteButton
+                    }
+                }
+#else
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    // Delete button
                     deleteButton
                 }
-
-
+#endif
                 // TODO: Fix this. Its not working on iOS 26 and should it be the same on the list view?
 //
 //                ToolbarItemGroup(placement: .principal) {
@@ -119,12 +141,17 @@ public struct MessageCenterMessageViewWithNavigation: View {
     @ViewBuilder
     private var deleteButton: some View {
         if theme.hideDeleteButton != true {
-            Button("ua_delete_message".messageCenterLocalizedString) {
+            Button(
+                "ua_delete_message".messageCenterLocalizedString,
+                systemImage: "trash",
+                role: .destructive
+            ) {
                 Task {
                     await messageViewModel.delete()
                 }
                 dismiss()
-            }.foregroundColor(effectiveColors.deleteButtonColor)
+            }
+            .tint(effectiveColors.deleteButtonColor)
         }
     }
 
