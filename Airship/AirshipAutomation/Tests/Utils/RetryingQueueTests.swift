@@ -11,7 +11,10 @@ final class RetryingQueueTests: XCTestCase {
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
 
     func testState() async throws {
-        let queue = RetryingQueue<Int>(taskSleeper: taskSleeper)
+        let queue = RetryingQueue<Int>(
+            id: "test",
+            taskSleeper: taskSleeper
+        )
 
         let result = await queue.run(name: "testState") { state in
             let runCount: Int = await state.value(key: "runCount") ?? 1
@@ -30,6 +33,7 @@ final class RetryingQueueTests: XCTestCase {
     func testExecutionOrderPriorities() async throws {
         
         let queue = RetryingQueue<Int>(
+            id: "test",
             maxConcurrentOperations: 1
         )
         
@@ -67,6 +71,7 @@ final class RetryingQueueTests: XCTestCase {
 
     func testRetryAfter0() async throws {
         let queue = RetryingQueue<Int>(
+            id: "test",
             initialBackOff: 10,
             maxBackOff: 60,
             taskSleeper: taskSleeper
@@ -94,6 +99,7 @@ final class RetryingQueueTests: XCTestCase {
 
     func testBackOff() async throws {
         let queue = RetryingQueue<Int>(
+            id: "test",
             initialBackOff: 10,
             maxBackOff: 60,
             taskSleeper: taskSleeper
@@ -117,6 +123,7 @@ final class RetryingQueueTests: XCTestCase {
 
     func testRetryAfterCanExceedMaxBackOff() async throws {
         let queue = RetryingQueue<Int>(
+            id: "test",
             initialBackOff: 10,
             maxBackOff: 60,
             taskSleeper: taskSleeper
@@ -143,6 +150,7 @@ final class RetryingQueueTests: XCTestCase {
 
     func testThrowsRetries() async throws {
         let queue = RetryingQueue<Int>(
+            id: "test",
             initialBackOff: 10,
             maxBackOff: 60,
             taskSleeper: taskSleeper
@@ -163,9 +171,48 @@ final class RetryingQueueTests: XCTestCase {
         XCTAssertEqual([10], self.taskSleeper.sleeps)
     }
 
+    func testDeadLock() async throws {
+           let queue = RetryingQueue<String>(
+            id: "test",
+               maxConcurrentOperations: 1,
+               maxPendingResults: 1
+           )
+
+           let coordinator = DeadlockTestCoordinator()
+
+           let expectationA = XCTestExpectation(description: "Task A completed")
+           let expectationB = XCTestExpectation(description: "Task B completed")
+
+           Task {
+               let result = await queue.run(name: "Task A", priority: 10) { _ in
+                   print("\(Date()): Task A: Started work.")
+                   await coordinator.signalTaskBShouldBeAdded()
+                   await coordinator.waitForTaskAFinishWork()
+                   return .success(result: "A")
+               }
+               XCTAssertEqual(result, "A")
+               expectationA.fulfill()
+           }
+
+           await coordinator.waitForTaskBToBeAdded()
+
+           Task {
+               let result = await queue.run(name: "Task B", priority: 0) { _ in
+                   return .success(result: "B")
+               }
+               XCTAssertEqual(result, "B")
+               expectationB.fulfill()
+           }
+
+           await coordinator.signalTaskAFinishWork()
+
+           await fulfillment(of: [expectationA, expectationB], timeout: 2.0)
+       }
+
     func testRetryDoesNotBlock() async throws {
 
         let queue = RetryingQueue<Int>(
+            id: "test",
             maxConcurrentOperations: 3,
             initialBackOff: 10
         )
@@ -226,26 +273,26 @@ final class RetryingQueueTests: XCTestCase {
 
 actor ActorValue<T: Sendable> {
     private var value: T
-
+    
     init(_ value: T) {
         self.value = value
     }
-
+    
     func set(_ value: T) {
         self.value = value
     }
-
+    
     func get() -> T {
         return value
     }
-
+    
     func getAndUpdate(block: @Sendable (T) -> T) -> T {
         let value = value
         self.value = block(self.value)
         return value
     }
-
-
+    
+    
     func update(block: @Sendable (T) -> T) {
         self.value = block(self.value)
     }
@@ -262,3 +309,29 @@ final class TestTaskSleeper : AirshipTaskSleeper, @unchecked Sendable {
 
     var onSleep: (([TimeInterval]) async throws -> Void)?
 }
+
+private actor DeadlockTestCoordinator {
+    private var taskBShouldBeAddedContinuation: CheckedContinuation<Void, Never>?
+    private var taskAFinishWorkContinuation: CheckedContinuation<Void, Never>?
+
+    func waitForTaskBToBeAdded() async {
+        await withCheckedContinuation { continuation in
+            self.taskBShouldBeAddedContinuation = continuation
+        }
+    }
+
+    func signalTaskBShouldBeAdded() {
+        taskBShouldBeAddedContinuation?.resume()
+    }
+
+    func waitForTaskAFinishWork() async {
+        await withCheckedContinuation { continuation in
+            self.taskAFinishWorkContinuation = continuation
+        }
+    }
+
+    func signalTaskAFinishWork() {
+        taskAFinishWorkContinuation?.resume()
+    }
+}
+

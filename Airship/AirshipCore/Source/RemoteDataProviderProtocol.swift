@@ -22,7 +22,7 @@ protocol RemoteDataProviderProtocol: Actor {
     /// Checks if the source is current.
     /// - Parameter locale: The current locale.
     /// - Parameter randomeValue: The remote-data random value.
-    func isCurrent(locale: Locale, randomeValue: Int) async -> Bool
+    func isCurrent(locale: Locale, randomeValue: Int, remoteDataInfo: RemoteDataInfo) async -> Bool
 
 
     /// Checks if the source update status.

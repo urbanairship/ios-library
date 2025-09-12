@@ -25,7 +25,7 @@ struct AppRemoteDataProviderDelegate: RemoteDataProviderDelegate {
         )
     }
 
-    func isRemoteDataInfoUpToDate( _  remoteDataInfo: RemoteDataInfo, locale: Locale, randomValue: Int) async -> Bool {
+    func isRemoteDataInfoUpToDate(_  remoteDataInfo: RemoteDataInfo, locale: Locale, randomValue: Int) async -> Bool {
         let url = try? makeURL(locale: locale, randomValue: randomValue)
         return remoteDataInfo.url == url
     }

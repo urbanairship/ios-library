@@ -545,7 +545,7 @@ fileprivate extension AutomationEngine {
         guard await self.executor.isValid(
             schedule: prepared.scheduleData.schedule
         ) else {
-            AirshipLogger.trace("Prepared schedule no longer \(prepared.scheduleData)")
+            AirshipLogger.trace("Prepared schedule no longer valid \(prepared.scheduleData)")
             return false
         }
 

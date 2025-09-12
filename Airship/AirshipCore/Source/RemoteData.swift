@@ -160,6 +160,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
         config.addRemoteConfigListener(notifyCurrent: false) { [weak self] _, new in
             self?.onConfigUpdated(new, isUpdate: true)
         }
+        updateChangeToken()
     }
 
     private func onConfigUpdated(_ remoteConfig: RemoteConfig?, isUpdate: Bool) {
@@ -187,7 +188,8 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
             await provider.status(
                 changeToken: self.changeToken,
                 locale: self.localeManager.currentLocale,
-                randomeValue: self.randomValue)
+                randomeValue: self.randomValue
+            )
         } else {
             .outOfDate
         }
@@ -214,7 +216,11 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
         let locale = localeManager.currentLocale
         for provider in self.providers {
             if (provider.source == remoteDataInfo.source) {
-                return await provider.isCurrent(locale: locale, randomeValue: randomValue)
+                return await provider.isCurrent(
+                    locale: locale,
+                    randomeValue: randomValue,
+                    remoteDataInfo: remoteDataInfo
+                )
             }
         }
 

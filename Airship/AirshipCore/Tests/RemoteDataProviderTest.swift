@@ -446,15 +446,20 @@ class RemoteDataProviderTest: XCTestCase {
     }
 
     func testIsCurrent() async throws {
-        // No data
-        var isCurrent = await self.provider.isCurrent(locale: Locale.current, randomeValue: 100)
-        XCTAssertFalse(isCurrent)
-
         let remoteDataInfo = RemoteDataInfo(
             url: URL(string: "example://")!,
             lastModifiedTime: "some last modified",
             source: self.delegate.source
         )
+
+        // No data
+        var isCurrent = await self.provider.isCurrent(
+            locale: Locale.current,
+            randomeValue: 100,
+            remoteDataInfo: remoteDataInfo
+        )
+        XCTAssertFalse(isCurrent)
+
 
         self.delegate.fetchRemoteDataCallback = { _, _, _ in
             let refreshResult = RemoteDataResult(
@@ -479,14 +484,54 @@ class RemoteDataProviderTest: XCTestCase {
             return true
         }
 
-        isCurrent = await self.provider.isCurrent(locale: Locale.current, randomeValue: 0)
+        isCurrent = await self.provider.isCurrent(locale: Locale.current, randomeValue: 0, remoteDataInfo: remoteDataInfo)
         XCTAssertTrue(isCurrent)
 
         self.delegate.isRemoteDataInfoUpToDateCallback = { _, _, _ in
             return false
         }
 
-        isCurrent = await self.provider.isCurrent(locale: Locale.current, randomeValue: 0)
+        isCurrent = await self.provider.isCurrent(locale: Locale.current, randomeValue: 0, remoteDataInfo: remoteDataInfo)
+        XCTAssertFalse(isCurrent)
+    }
+
+    func testIsCurrentDifferentRemoteDataInfo() async throws {
+        let remoteDataInfo = RemoteDataInfo(
+            url: URL(string: "example://")!,
+            lastModifiedTime: "some last modified",
+            source: self.delegate.source
+        )
+
+        self.delegate.fetchRemoteDataCallback = { _, _, _ in
+            let refreshResult = RemoteDataResult(
+                payloads: [],
+                remoteDataInfo: remoteDataInfo
+            )
+
+            return AirshipHTTPResponse(result: refreshResult, statusCode: 200, headers: [:])
+        }
+
+        // Load data
+        _ = await self.provider.refresh(
+            changeToken: "change",
+            locale: Locale.current,
+            randomeValue: 0
+        )
+
+        self.delegate.isRemoteDataInfoUpToDateCallback = { currentInfo, locale, randomValue in
+            return true
+        }
+
+        var isCurrent = await self.provider.isCurrent(locale: Locale.current, randomeValue: 0, remoteDataInfo: remoteDataInfo)
+        XCTAssertTrue(isCurrent)
+
+        let updatedRemoteDataInfo = RemoteDataInfo(
+            url: URL(string: "example://")!,
+            lastModifiedTime: "some other last modified",
+            source: self.delegate.source
+        )
+
+        isCurrent = await self.provider.isCurrent(locale: Locale.current, randomeValue: 0, remoteDataInfo: updatedRemoteDataInfo)
         XCTAssertFalse(isCurrent)
     }
 }

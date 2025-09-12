@@ -88,7 +88,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
     ) async -> SchedulePrepareResult {
         AirshipLogger.trace("Preparing \(schedule.identifier)")
 
-        let queue = await self.queues.queue(name: schedule.queue)
+        let queue = await self.queues.queue(id: schedule.queue)
         
         return await queue.run(name: "schedule: \(schedule.identifier)") { retryState in
             guard await !self.remoteDataAccess.requiresUpdate(schedule: schedule) else {
@@ -341,7 +341,10 @@ fileprivate extension AutomationSchedule {
 fileprivate actor Queues {
     var queues: [String: RetryingQueue<SchedulePrepareResult>] = [:]
     lazy var defaultQueue: RetryingQueue<SchedulePrepareResult>  = {
-        return RetryingQueue(config: config.remoteConfig.iaaConfig?.retryingQueue)
+        return RetryingQueue(
+            id: "default",
+            config: config.remoteConfig.iaaConfig?.retryingQueue
+        )
     }()
     private let config: RuntimeConfig
 
@@ -350,17 +353,20 @@ fileprivate actor Queues {
         self.config = config
     }
     
-    func queue(name: String?) -> RetryingQueue<SchedulePrepareResult> {
-        guard let name = name, !name.isEmpty else {
+    func queue(id: String?) -> RetryingQueue<SchedulePrepareResult> {
+        guard let id, !id.isEmpty else {
             return defaultQueue
         }
 
-        if let queue = queues[name] {
+        if let queue = queues[id] {
             return queue
         }
 
-        let queue: RetryingQueue<SchedulePrepareResult> = RetryingQueue(config: config.remoteConfig.iaaConfig?.retryingQueue)       
-        queues[name] = queue
+        let queue: RetryingQueue<SchedulePrepareResult> = RetryingQueue(
+            id: id,
+            config: config.remoteConfig.iaaConfig?.retryingQueue
+        )
+        queues[id] = queue
         return queue
     }
 }

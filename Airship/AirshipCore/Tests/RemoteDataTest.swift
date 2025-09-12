@@ -170,7 +170,7 @@ final class RemoteDataTest: AirshipBaseTest {
 
         let expectation = XCTestExpectation()
         let testLocaleManager = self.testLocaleManager
-        await self.contactProvider.setIsCurrentCallback { @Sendable locale, _ in
+        await self.contactProvider.setIsCurrentCallback { @Sendable locale, _, _ in
             XCTAssertEqual(testLocaleManager.currentLocale, locale)
             expectation.fulfill()
             return false
@@ -191,7 +191,7 @@ final class RemoteDataTest: AirshipBaseTest {
 
         let expectation = XCTestExpectation()
         let testLocaleManager = self.testLocaleManager
-        await self.appProvider.setIsCurrentCallback { @Sendable locale, _ in
+        await self.appProvider.setIsCurrentCallback { @Sendable locale, _, _ in
             XCTAssertEqual(testLocaleManager.currentLocale, locale)
             expectation.fulfill()
             return true
@@ -539,8 +539,8 @@ fileprivate actor TestRemoteDataProvider: RemoteDataProviderProtocol {
         self.notifyOutdatedCallback = callback
     }
 
-    private var isCurrentCallback: ((Locale, Int) async -> Bool)?
-    func setIsCurrentCallback(callback: @escaping (Locale, Int) async -> Bool) {
+    private var isCurrentCallback: ((Locale, Int, RemoteDataInfo) async -> Bool)?
+    func setIsCurrentCallback(callback: @escaping (Locale, Int, RemoteDataInfo) async -> Bool) {
         self.isCurrentCallback = callback
     }
 
@@ -566,8 +566,8 @@ fileprivate actor TestRemoteDataProvider: RemoteDataProviderProtocol {
         return self.notifyOutdatedCallback!(remoteDataInfo)
     }
 
-    func isCurrent(locale: Locale, randomeValue: Int) async -> Bool {
-       return await self.isCurrentCallback!(locale, randomeValue)
+    func isCurrent(locale: Locale, randomeValue: Int, remoteDataInfo: RemoteDataInfo) async -> Bool {
+       return await self.isCurrentCallback!(locale, randomeValue, remoteDataInfo)
     }
 
     func refresh(changeToken: String, locale: Locale, randomeValue: Int) async -> RemoteDataRefreshResult {
