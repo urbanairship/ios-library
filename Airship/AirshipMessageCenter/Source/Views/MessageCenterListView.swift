@@ -57,6 +57,10 @@ public struct MessageCenterListView: View {
     @State
     var lastMaxEditButtonsWidth: CGFloat = 0
 
+    private var isEditMode: Bool {
+        self.editMode?.wrappedValue.isEditing ?? false
+    }
+
     private var effectiveColors: MessageCenterEffectiveColors {
         MessageCenterEffectiveColors(
             detectedAppearance: detectedAppearance,
@@ -397,14 +401,25 @@ public struct MessageCenterListView: View {
 
     @ViewBuilder
     public var body: some View {
-        makeContent()
+        let content = makeContent()
             .applyUIKitNavigationAppearance()
             .toolbar {
                 bottomToolBar()
-            }
-            .toolbar {
                 leadingToolbar()
             }
+
+        if #available(iOS 26.0, *) {
+            content
+                .toolbar(isEditMode ? .visible : .hidden, for: .bottomBar)
+                .toolbar(isEditMode ? .hidden : .automatic, for: .tabBar)
+        } else if #available(iOS 16.0, *) {
+            content
+                .toolbar(isEditMode ? .visible : .hidden, for: .bottomBar)
+        } else {
+            // The bottomBar hides its options in `bottomToolBar()` if not in edit mode. Hiding the
+            // full toolbar results in better animations but is not avialable for iOS 15.
+            content
+        }
     }
 }
 
