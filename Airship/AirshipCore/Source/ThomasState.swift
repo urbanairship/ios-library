@@ -26,11 +26,11 @@ class ThomasState: ObservableObject {
 
     init(
         formState: ThomasFormState,
-        mutableState: MutableState = .init(),
+        mutableState: MutableState? = nil,
         onStateChange: @escaping @Sendable @MainActor (AirshipJSON) -> Void
     ) {
         self.formState = formState
-        self.mutableState = mutableState
+        self.mutableState = mutableState ?? MutableState()
         self.onStateChange = onStateChange
 
         self.state = ThomasStatePayload(
@@ -39,10 +39,10 @@ class ThomasState: ObservableObject {
                 fields: formState.activeFields.map { $0.value },
                 formType: formState.formType
             ),
-            mutableState: mutableState.state
+            mutableState: self.mutableState.state
         ).json
 
-        Publishers.CombineLatest3(formState.$status, formState.$activeFields, mutableState.$state)
+        Publishers.CombineLatest3(formState.$status, formState.$activeFields, self.mutableState.$state)
             .map { formStatus, activeFields, mutableState in
                 ThomasStatePayload(
                     formData: ThomasFormPayloadGenerator.makeFormStatePayload(

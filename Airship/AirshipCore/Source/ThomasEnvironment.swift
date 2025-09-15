@@ -56,14 +56,14 @@ class ThomasEnvironment: ObservableObject {
     init(
         delegate: any ThomasDelegate,
         extensions: ThomasExtensions?,
-        pagerTracker: ThomasPagerTracker = ThomasPagerTracker(),
-        timer: any AirshipTimerProtocol = AirshipTimer(),
+        pagerTracker: ThomasPagerTracker? = nil,
+        timer: (any AirshipTimerProtocol)? = nil,
         onDismiss: (() -> Void)? = nil
     ) {
         self.delegate = delegate
         self.extensions = extensions
-        self.pagerTracker = pagerTracker
-        self.timer = timer
+        self.pagerTracker = pagerTracker ?? ThomasPagerTracker()
+        self.timer = timer ?? AirshipTimer()
         self.onDismiss = onDismiss
         self.imageLoader = AirshipImageLoader(
             imageProvider: extensions?.imageProvider

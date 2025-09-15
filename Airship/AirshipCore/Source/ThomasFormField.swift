@@ -107,14 +107,15 @@ final class ThomasFormField: Sendable {
         identifier: String,
         input: Value,
         processDelay: TimeInterval = 1.0,
-        processor: any ThomasFormFieldProcessor = DefaultThomasFormFieldProcessor(),
+        processor: (any ThomasFormFieldProcessor)? = nil,
         resultBlock: @escaping @MainActor @Sendable () async throws -> ThomasFormFieldPendingResult
     ) -> Self {
-        .init(
+        let actualProcessor = processor ?? DefaultThomasFormFieldProcessor()
+        return .init(
             identifier: identifier,
             input: input,
             fieldType: .async(
-                processor.submit(
+                actualProcessor.submit(
                     processDelay: processDelay,
                     resultBlock: resultBlock
                 )

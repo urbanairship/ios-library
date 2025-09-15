@@ -126,13 +126,17 @@ actor RemoteDataProvider: RemoteDataProviderProtocol {
         return true
     }
 
-    func isCurrent(locale: Locale, randomeValue: Int) async -> Bool {
+    func isCurrent(locale: Locale, randomeValue: Int, remoteDataInfo: RemoteDataInfo) async -> Bool {
         guard self.isEnabled else {
             return false
         }
 
         guard let refreshState = self.refreshState else {
              return false
+        }
+
+        guard remoteDataInfo == refreshState.remoteDataInfo else {
+            return false
         }
 
         return await self.delegate.isRemoteDataInfoUpToDate(
