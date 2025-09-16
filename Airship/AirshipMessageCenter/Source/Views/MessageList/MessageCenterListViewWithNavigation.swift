@@ -157,7 +157,7 @@ public struct MessageCenterListViewWithNavigation: View {
 
     /// The body of the view.
     public var body: some View {
-        let containerBackgroundColor: Color? = colorScheme.airshipResolveColor(
+        let containerColor: Color? = colorScheme.airshipResolveColor(
             light: theme.messageListContainerBackgroundColor,
             dark: theme.messageListContainerBackgroundColorDark
         )
@@ -165,6 +165,9 @@ public struct MessageCenterListViewWithNavigation: View {
         let content = MessageCenterListView(viewModel: self.viewModel)
             .frame(maxHeight: .infinity)
             .applyUIKitNavigationAppearance()
+            .navigationTitle(
+                theme.navigationBarTitle ?? "ua_message_center_title".messageCenterLocalizedString
+            )
             .toolbar {
 #if os(iOS)
                 if #available(iOS 26.0, *) {
@@ -195,11 +198,28 @@ public struct MessageCenterListViewWithNavigation: View {
                     markDeleteButton()
                 }
 #endif
+
+                if effectiveColors.navigationTitleColor != nil || detectedAppearance?.navigationTitleFont != nil {
+                    ToolbarItemGroup(placement: .principal) {
+                        // Custom title with detected color
+                        Text(theme.navigationBarTitle ?? "ua_message_center_title".messageCenterLocalizedString)
+                            .foregroundColor(effectiveColors.navigationTitleColor)
+                            .airshipApplyIf(detectedAppearance?.navigationTitleFont != nil) { text in
+                                text.font(detectedAppearance!.navigationTitleFont)
+                            }
+                    }
+                }
             }
+        
             .toolbar(isEditMode ? .visible : .hidden, for: .bottomBar)
-            .airshipApplyIf(containerBackgroundColor != nil) { view in
-                view.toolbarBackground(containerBackgroundColor!, for: .navigationBar)
-                    .toolbarBackground(.visible, for: .navigationBar)
+            .airshipApplyIf(containerColor != nil) { view in
+                let visibility: Visibility = if #available(iOS 26.0, *) {
+                    .automatic
+                } else {
+                    .visible
+                }
+                view.toolbarBackground(containerColor!, for: .navigationBar)
+                    .toolbarBackground(visibility, for: .navigationBar)
             }
             .airshipApplyIf(dismissAction != nil) { view in
                 view.toolbar {
@@ -208,9 +228,6 @@ public struct MessageCenterListViewWithNavigation: View {
                     }
                 }
             }
-            .navigationTitle(
-                theme.navigationBarTitle ?? "ua_message_center_title".messageCenterLocalizedString
-            )
 
         if #available(iOS 26.0, *) {
             content.toolbar(

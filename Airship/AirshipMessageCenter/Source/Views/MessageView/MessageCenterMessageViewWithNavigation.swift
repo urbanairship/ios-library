@@ -121,20 +121,26 @@ public struct MessageCenterMessageViewWithNavigation: View {
                     deleteButton
                 }
 #endif
-                // TODO: Fix this. Its not working on iOS 26 and should it be the same on the list view?
-//
-//                ToolbarItemGroup(placement: .principal) {
-//                    // Custom title with detected color
-//                    Text(self.messageViewModel.message?.title ?? self.title ?? "")
-//                        .foregroundColor(effectiveColors.navigationTitleColor ?? Color.primary)
-//                        .airshipApplyIf(detectedAppearance?.navigationTitleFont != nil) { text in
-//                            text.font(detectedAppearance!.navigationTitleFont)
-//                        }
-//                }
+
+                if effectiveColors.navigationTitleColor != nil || detectedAppearance?.navigationTitleFont != nil {
+                    ToolbarItemGroup(placement: .principal) {
+                        // Custom title with detected color
+                        Text(self.messageViewModel.message?.title ?? self.title ?? "")
+                            .foregroundColor(effectiveColors.navigationTitleColor)
+                            .airshipApplyIf(detectedAppearance?.navigationTitleFont != nil) { text in
+                                text.font(detectedAppearance!.navigationTitleFont)
+                            }
+                    }
+                }
             }
             .airshipApplyIf(containerColor != nil) { view in
+                let visibility: Visibility = if #available(iOS 26.0, *) {
+                    .automatic
+                } else {
+                    .visible
+                }
                 view.toolbarBackground(containerColor!, for: .navigationBar)
-                    .toolbarBackground(.visible, for: .navigationBar)
+                    .toolbarBackground(visibility, for: .navigationBar)
             }
     }
 
