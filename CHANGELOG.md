@@ -4,8 +4,18 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.9.2 - September 15, 2025
+Patch release that resolves a crash eminating from the Thomas video player, fixes a bug that causes Scenes to sometimes display after being stopped, and fixes some UI bugs exposed by iOS 26.
+
+### Changes
+- Fixed refreshing out of date In-App Automations and Scenes before displaying.  
+- Fixed KVO in ThomasVideoPlayer to use modern patterns and properly release observers.
+- Fixed Message Center title bar theming in iOS 26.
+- Improved tab bar UI in iOS 26.
+
+
 ## Version 19.9.1 - September 10, 2025
-Minor release that fixes backwards Swift 5 compatibility. Users that plan to use the 19.9.1-swift5 branch are encouraged to update.
+Patch release that fixes backwards Swift 5 compatibility. Users that plan to use the 19.9.1-swift5 branch are encouraged to update.
 
 ### Changes
 - Fixed default parameter initialization by moving @MainActor object creation from parameter defaults to method bodies in ThomasEnvironment, ThomasState, and ThomasFormField.

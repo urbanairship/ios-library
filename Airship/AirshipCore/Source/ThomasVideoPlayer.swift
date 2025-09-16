@@ -98,15 +98,16 @@ struct ThomasVideoPlayer: UIViewRepresentable {
 
     @MainActor
     private func setupObservers(container: VideoPlayerContainer, context: Context) {
-        // Register for playback status notifications
+        context.coordinator.cleanup()
+
         let shouldLoop = container.shouldLoop
         let player = container.player
 
-        NotificationCenter.default.addObserver(
+        context.coordinator.endTimeObserver = NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
             object: player?.currentItem,
             queue: .main
-        ) { _ in
+        ) { [weak player] _ in
             Task { @MainActor in
                 if shouldLoop {
                     player?.seek(to: CMTime.zero)
@@ -115,15 +116,29 @@ struct ThomasVideoPlayer: UIViewRepresentable {
             }
         }
 
-        // Monitor readiness
-        container.player?.currentItem?.addObserver(
-            context.coordinator,
-            forKeyPath: "status",
-            options: [.new],
-            context: nil
-        )
+        if let playerItem = container.player?.currentItem {
+            let isLoaded = context.coordinator.isLoaded
+            let hasError = context.coordinator.hasError
+            let onReady = context.coordinator.onMediaReady
 
-        // Save references for coordinator
+            context.coordinator.statusObserver = playerItem.observe(\.status, options: [.new]) { item, _ in
+                Task { @MainActor in
+                    switch item.status {
+                    case .readyToPlay:
+                        isLoaded.wrappedValue = true
+                        hasError.wrappedValue = false
+                        onReady?()
+                    case .failed:
+                        hasError.wrappedValue = true
+                    case .unknown:
+                        break
+                    @unknown default:
+                        break
+                    }
+                }
+            }
+        }
+
         context.coordinator.playerContainer = container
         context.coordinator.onMediaReady = onMediaReady
     }
@@ -165,6 +180,8 @@ struct ThomasVideoPlayer: UIViewRepresentable {
         var hasError: Binding<Bool>
         var playerContainer: VideoPlayerContainer?
         var onMediaReady: (@MainActor () -> Void)?
+        var endTimeObserver: (any NSObjectProtocol)?
+        var statusObserver: NSKeyValueObservation?
 
         init(isLoaded: Binding<Bool>, hasError: Binding<Bool>) {
             self.isLoaded = isLoaded
@@ -172,34 +189,17 @@ struct ThomasVideoPlayer: UIViewRepresentable {
             super.init()
         }
 
-        override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-            guard keyPath == "status",
-                  let playerItem = object as? AVPlayerItem else {
-                return
-            }
-
-            switch playerItem.status {
-            case .readyToPlay:
-                let onReady = self.onMediaReady
-                let isLoaded = self.isLoaded
-                let hasError = self.hasError
-
-                Task { @MainActor in
-                    isLoaded.wrappedValue = true
-                    hasError.wrappedValue = false
-                    onReady?()
-                }
-            case .failed:
-                let hasError = self.hasError
-                Task { @MainActor in
-                    hasError.wrappedValue = true
-                }
-            case .unknown:
-                break
-            @unknown default:
-                break
+        func cleanup() {
+            if let observer = endTimeObserver {
+                NotificationCenter.default.removeObserver(observer)
+                endTimeObserver = nil
             }
         }
+
+        deinit {
+            cleanup()
+        }
+
     }
 
     // MARK: - VideoPlayerContainer

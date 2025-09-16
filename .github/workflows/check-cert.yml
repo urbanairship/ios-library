@@ -1,0 +1,26 @@
+name: Check Certificate Expiration
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check-cert:
+    runs-on: macos-latest
+    steps:
+      - name: Check Certificate Details
+        env:
+          CERT_BASE64: ${{ secrets.CERTIFICATEXC }}
+          CERT_PASS: ${{ secrets.CERTIFICATEXC_PASS }}
+        run: |
+          # Decode the certificate from base64
+          echo "$CERT_BASE64" | base64 --decode > cert.p12
+
+          # Extract certificate info without importing to keychain
+          # This will show expiration date and other details
+          openssl pkcs12 -in cert.p12 -passin pass:"$CERT_PASS" -nokeys -clcerts | openssl x509 -noout -subject -issuer -dates -fingerprint
+
+          # Also show the certificate name as it appears for codesigning
+          openssl pkcs12 -in cert.p12 -passin pass:"$CERT_PASS" -nokeys -clcerts | openssl x509 -noout -subject | sed 's/subject=//'
+
+          # Clean up
+          rm cert.p12
