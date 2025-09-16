@@ -167,12 +167,20 @@ struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
             )
 
         if #available(iOS 16.0, *) {
+            let visibility: Visibility = {
+                if #available(iOS 26.0, *) {
+                    return .automatic
+                } else {
+                    return .visible
+                }
+            }()
+
             let themedContent = content.airshipApplyIf(containerBackgroundColor != nil) { view in
                 view.toolbarBackground(containerBackgroundColor!, for: .navigationBar)
-                    .toolbarBackground(.visible, for: .navigationBar)
+                    .toolbarBackground(visibility, for: .navigationBar)
             }
 
-            switch (configuration.navigationStack) {
+            switch configuration.navigationStack {
             case .default:
                 NavigationStack {
                     themedContent
@@ -182,7 +190,7 @@ struct DefaultMessageCenterViewStyle: MessageCenterViewStyle {
             }
 
         } else {
-            switch (configuration.navigationStack) {
+            switch configuration.navigationStack {
             case .default:
                 NavigationView {
                     content.background(containerBackgroundColor)
