@@ -8,9 +8,9 @@ import AirshipCore
 #endif
 
 /// Preference Center view style configuration
-public struct PreferenceCenterViewStyleConfiguration: Sendable {
+public struct PreferenceCenterContentStyleConfiguration: Sendable {
     /// The view's phase
-    public let phase: PreferenceCenterViewPhase
+    public let phase: PreferenceCenterContentPhase
 
     /// The preference center theme
     public let preferenceCenterTheme: PreferenceCenterTheme
@@ -23,15 +23,15 @@ public struct PreferenceCenterViewStyleConfiguration: Sendable {
 }
 
 /// Preference Center view style
-public protocol PreferenceCenterViewStyle: Sendable {
+public protocol PreferenceCenterContentStyle: Sendable {
     associatedtype Body: View
-    typealias Configuration = PreferenceCenterViewStyleConfiguration
+    typealias Configuration = PreferenceCenterContentStyleConfiguration
     
     @preconcurrency @MainActor
     func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
-extension PreferenceCenterViewStyle
+extension PreferenceCenterContentStyle
 where Self == DefaultPreferenceCenterViewStyle {
     /// Default style
     public static var defaultStyle: Self {
@@ -41,32 +41,12 @@ where Self == DefaultPreferenceCenterViewStyle {
 
 /// The default Preference Center view style
 @MainActor @preconcurrency 
-public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
-
-    private func navigationBarTitle(
-        configuration: Configuration,
-        state: PreferenceCenterState? = nil
-    ) -> String {
-
-        var title: String?
-        if let state = state {
-            title = state.config.display?.title?.nullIfEmpty()
-        }
-
-        let theme = configuration.preferenceCenterTheme
-        if let overrideConfigTitle = theme.viewController?.navigationBar?.overrideConfigTitle, overrideConfigTitle {
-            title = configuration.preferenceCenterTheme.viewController?
-                .navigationBar?
-                .title
-        }
-        return title ?? "ua_preference_center_title".preferenceCenterLocalizedString
-    }
+public struct DefaultPreferenceCenterViewStyle: PreferenceCenterContentStyle {
 
     @ViewBuilder
     private func makeProgressView(configuration: Configuration) -> some View {
         ProgressView()
             .frame(alignment: .center)
-            .navigationTitle(navigationBarTitle(configuration: configuration))
     }
 
     @ViewBuilder
@@ -117,7 +97,6 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
                 }
             )
         }
-        .navigationTitle(navigationBarTitle(configuration: configuration))
     }
 
     @ViewBuilder
@@ -151,7 +130,6 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
             .padding()
             Spacer()
         }
-        .navigationTitle(navigationBarTitle(configuration: configuration, state: state))
     }
 
     @ViewBuilder
@@ -201,11 +179,11 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterViewStyle {
     }
 }
 
-struct AnyPreferenceCenterViewStyle: PreferenceCenterViewStyle {
+struct AnyPreferenceCenterViewStyle: PreferenceCenterContentStyle {
     @ViewBuilder
     private var _makeBody: @MainActor @Sendable (Configuration) -> AnyView
 
-    init<S: PreferenceCenterViewStyle>(style: S) {
+    init<S: PreferenceCenterContentStyle>(style: S) {
         _makeBody = { @MainActor configuration in
             AnyView(style.makeBody(configuration: configuration))
         }

@@ -9,16 +9,16 @@ import AirshipCore
 #endif
 
 @MainActor
-final class PreferenceCenterViewLoader: ObservableObject {
+final class PreferenceCenterContentLoader: ObservableObject {
 
     @Published
-    public private(set) var phase: PreferenceCenterViewPhase = .loading
+    public private(set) var phase: PreferenceCenterContentPhase = .loading
 
     private var task: Task<Void, Never>?
 
     public func load(
         preferenceCenterID: String,
-        onLoad: (@Sendable (String) async -> PreferenceCenterViewPhase)? = nil
+        onLoad: (@Sendable (String) async -> PreferenceCenterContentPhase)? = nil
     ) {
         self.task?.cancel()
         self.task = Task { @MainActor in
@@ -32,7 +32,7 @@ final class PreferenceCenterViewLoader: ObservableObject {
     @MainActor
     private func loadAsync(
         preferenceCenterID: String,
-        onLoad: (@Sendable @MainActor (String) async -> PreferenceCenterViewPhase)? = nil
+        onLoad: (@Sendable @MainActor (String) async -> PreferenceCenterContentPhase)? = nil
     ) async {
         self.phase = .loading
 

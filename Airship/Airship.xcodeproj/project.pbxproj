@@ -343,7 +343,7 @@
 		6E2486EC2894901E00657CE4 /* ConditionsViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486EB2894901E00657CE4 /* ConditionsViewModifier.swift */; };
 		6E2486F22898341400657CE4 /* ConditionsMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486F02898341400657CE4 /* ConditionsMonitor.swift */; };
 		6E2486F728984D0D00657CE4 /* PreferenceCenterTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486F628984D0D00657CE4 /* PreferenceCenterTheme.swift */; };
-		6E2486FD2899C06100657CE4 /* PreferenceCenterViewLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486FC2899C06100657CE4 /* PreferenceCenterViewLoader.swift */; };
+		6E2486FD2899C06100657CE4 /* PreferenceCenterContentLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486FC2899C06100657CE4 /* PreferenceCenterContentLoader.swift */; };
 		6E25DD052D515F33009CF1A4 /* ThomasEmailRegistrationOptionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2FA28B2D515C5A005893E2 /* ThomasEmailRegistrationOptionsTest.swift */; };
 		6E2811682BE406A50040D928 /* FeatureFlagDeferredResolverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7EACD22AF4220E00DA286B /* FeatureFlagDeferredResolverTest.swift */; };
 		6E28116C2BE40E860040D928 /* FeatureFlagVariablesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E28116B2BE40E860040D928 /* FeatureFlagVariablesTest.swift */; };
@@ -629,6 +629,7 @@
 		6E887CD1272C5E8400E83363 /* CheckboxState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD0272C5E8400E83363 /* CheckboxState.swift */; };
 		6E887CD3272C5F5000E83363 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD2272C5F5000E83363 /* Checkbox.swift */; };
 		6E887CD5272C5F5A00E83363 /* CheckboxController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD4272C5F5A00E83363 /* CheckboxController.swift */; };
+		6E892F2E2E7A193E00FB0EC4 /* PreferenceCenterContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E892F2D2E7A193200FB0EC4 /* PreferenceCenterContent.swift */; };
 		6E8B4BF12888606D00AA336E /* ChannelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8B4BEF2888606400AA336E /* ChannelTest.swift */; };
 		6E8BDA172B62EC9F00711DB8 /* AutomationRemoteDataSubscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BDA162B62EC9F00711DB8 /* AutomationRemoteDataSubscriber.swift */; };
 		6E8BDEFE2A67938200F816D9 /* FeatureFlagInfoTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BDEFC2A67937E00F816D9 /* FeatureFlagInfoTest.swift */; };
@@ -1017,7 +1018,7 @@
 		99E8D7DA2B55B05D0099B6F3 /* InAppMessageThemeText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7D92B55B05D0099B6F3 /* InAppMessageThemeText.swift */; };
 		99E8D7DC2B55C4C20099B6F3 /* InAppMessageThemeMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7DB2B55C4C20099B6F3 /* InAppMessageThemeMedia.swift */; };
 		99E8D7DE2B55C73B0099B6F3 /* ThemeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99E8D7DD2B55C73B0099B6F3 /* ThemeExtensions.swift */; };
-		99F4FE5B2BC36A6700754F0F /* PreferenceCenterViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F4FE5A2BC36A6700754F0F /* PreferenceCenterViewStyle.swift */; };
+		99F4FE5B2BC36A6700754F0F /* PreferenceCenterContentStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F4FE5A2BC36A6700754F0F /* PreferenceCenterContentStyle.swift */; };
 		99F662B02B5DDC2900696098 /* BeveledLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F662AF2B5DDC2900696098 /* BeveledLoadingView.swift */; };
 		99F662B22B60425E00696098 /* InAppMessageModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F662B12B60425E00696098 /* InAppMessageModalView.swift */; };
 		99F662D22B63047300696098 /* InAppMessageBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99F662D12B63047300696098 /* InAppMessageBannerView.swift */; };
@@ -1648,7 +1649,7 @@
 		6E2486EB2894901E00657CE4 /* ConditionsViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionsViewModifier.swift; sourceTree = "<group>"; };
 		6E2486F02898341400657CE4 /* ConditionsMonitor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConditionsMonitor.swift; sourceTree = "<group>"; };
 		6E2486F628984D0D00657CE4 /* PreferenceCenterTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterTheme.swift; sourceTree = "<group>"; };
-		6E2486FC2899C06100657CE4 /* PreferenceCenterViewLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterViewLoader.swift; sourceTree = "<group>"; };
+		6E2486FC2899C06100657CE4 /* PreferenceCenterContentLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterContentLoader.swift; sourceTree = "<group>"; };
 		6E28116B2BE40E860040D928 /* FeatureFlagVariablesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagVariablesTest.swift; sourceTree = "<group>"; };
 		6E29474C2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityRegistrationStatus.swift; sourceTree = "<group>"; };
 		6E2947502AD5DB5A009EC6DD /* LiveActivityRegistrationStatusUpdates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityRegistrationStatusUpdates.swift; sourceTree = "<group>"; };
@@ -1961,6 +1962,7 @@
 		6E887CD0272C5E8400E83363 /* CheckboxState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxState.swift; sourceTree = "<group>"; };
 		6E887CD2272C5F5000E83363 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
 		6E887CD4272C5F5A00E83363 /* CheckboxController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxController.swift; sourceTree = "<group>"; };
+		6E892F2D2E7A193200FB0EC4 /* PreferenceCenterContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterContent.swift; sourceTree = "<group>"; };
 		6E8B4BEF2888606400AA336E /* ChannelTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelTest.swift; sourceTree = "<group>"; };
 		6E8BDA162B62EC9F00711DB8 /* AutomationRemoteDataSubscriber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomationRemoteDataSubscriber.swift; sourceTree = "<group>"; };
 		6E8BDEFC2A67937E00F816D9 /* FeatureFlagInfoTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagInfoTest.swift; sourceTree = "<group>"; };
@@ -2340,7 +2342,7 @@
 		99E8D7D92B55B05D0099B6F3 /* InAppMessageThemeText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageThemeText.swift; sourceTree = "<group>"; };
 		99E8D7DB2B55C4C20099B6F3 /* InAppMessageThemeMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageThemeMedia.swift; sourceTree = "<group>"; };
 		99E8D7DD2B55C73B0099B6F3 /* ThemeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeExtensions.swift; sourceTree = "<group>"; };
-		99F4FE5A2BC36A6700754F0F /* PreferenceCenterViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterViewStyle.swift; sourceTree = "<group>"; };
+		99F4FE5A2BC36A6700754F0F /* PreferenceCenterContentStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterContentStyle.swift; sourceTree = "<group>"; };
 		99F662AF2B5DDC2900696098 /* BeveledLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeveledLoadingView.swift; sourceTree = "<group>"; };
 		99F662B12B60425E00696098 /* InAppMessageModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageModalView.swift; sourceTree = "<group>"; };
 		99F662D12B63047300696098 /* InAppMessageBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageBannerView.swift; sourceTree = "<group>"; };
@@ -3263,9 +3265,10 @@
 				6E9B48962891B6BF00C905B1 /* ContactSubscriptionGroupView.swift */,
 				6E9B48922891B6A700C905B1 /* ChannelSubscriptionView.swift */,
 				6E9B48942891B6B400C905B1 /* ContactSubscriptionView.swift */,
+				99F4FE5A2BC36A6700754F0F /* PreferenceCenterContentStyle.swift */,
 				6E9B488A2891962000C905B1 /* PreferenceCenterView.swift */,
-				99F4FE5A2BC36A6700754F0F /* PreferenceCenterViewStyle.swift */,
-				6E2486FC2899C06100657CE4 /* PreferenceCenterViewLoader.swift */,
+				6E2486FC2899C06100657CE4 /* PreferenceCenterContentLoader.swift */,
+				6E892F2D2E7A193200FB0EC4 /* PreferenceCenterContent.swift */,
 				6E2486DE28945D3900657CE4 /* PreferenceCenterState.swift */,
 				6E3B231228A32EC30005D46E /* PreferenceCenterViewExtensions.swift */,
 				6EB5157028A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift */,
@@ -6314,6 +6317,7 @@
 				6E2486F728984D0D00657CE4 /* PreferenceCenterTheme.swift in Sources */,
 				993F91FB2CA37874001B1C2E /* FooterView.swift in Sources */,
 				99104DF32BA6689A0040C0FD /* PreferenceCloseButton.swift in Sources */,
+				6E892F2E2E7A193E00FB0EC4 /* PreferenceCenterContent.swift in Sources */,
 				6E9B48932891B6A700C905B1 /* ChannelSubscriptionView.swift in Sources */,
 				6E9B48952891B6B400C905B1 /* ContactSubscriptionView.swift in Sources */,
 				6EB5157128A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift in Sources */,
@@ -6332,11 +6336,11 @@
 				993AFDFE2C1B2D9A00AA875B /* PreferenceCenterConfig+ContactManagement.swift in Sources */,
 				99CC0D952BC87868001D93D0 /* AddChannelPromptViewModel.swift in Sources */,
 				322AAB1E2B5AB65700652DAC /* AddChannelPromptView.swift in Sources */,
-				99F4FE5B2BC36A6700754F0F /* PreferenceCenterViewStyle.swift in Sources */,
+				99F4FE5B2BC36A6700754F0F /* PreferenceCenterContentStyle.swift in Sources */,
 				322AAB222B5FCB6B00652DAC /* ContactManagementView.swift in Sources */,
 				99560C1E2BAE2FFA00F28BDC /* ChannelTextField.swift in Sources */,
 				6E6802922B86732200F4591F /* PreferenceCenterComponent.swift in Sources */,
-				6E2486FD2899C06100657CE4 /* PreferenceCenterViewLoader.swift in Sources */,
+				6E2486FD2899C06100657CE4 /* PreferenceCenterContentLoader.swift in Sources */,
 				84483A68267CF0C000D0DA7D /* PreferenceCenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

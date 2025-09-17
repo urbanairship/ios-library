@@ -8,105 +8,8 @@ import Combine
 import AirshipCore
 #endif
 
-/// Preference center view phase
-public enum PreferenceCenterViewPhase: Sendable {
-    /// The view is loading
-    case loading
-    /// The view failed to load the config
-    case error(any Error)
-    /// The view is loaded with the state
-    case loaded(PreferenceCenterState)
-}
-
-/// Preference center view
-@MainActor
-public struct PreferenceCenterList: View {
-
-    @StateObject
-    private var loader: PreferenceCenterViewLoader = PreferenceCenterViewLoader()
-
-    @State
-    private var initialLoadCalled = false
-
-    @State
-    private var namedUser: String?
-
-    @Environment(\.airshipPreferenceCenterStyle)
-    private var style
-
-    @Environment(\.airshipPreferenceCenterTheme)
-    private var preferenceCenterTheme
-
-    @Environment(\.colorScheme)
-    private var colorScheme
-
-    private let preferenceCenterID: String
-    private let onLoad: (@Sendable (String) async -> PreferenceCenterViewPhase)?
-    private let onPhaseChange: ((PreferenceCenterViewPhase) -> Void)?
-
-    /// The default constructor
-    /// - Parameters:
-    ///   - preferenceCenterID: The preference center ID
-    ///   - onLoad: An optional load block to load the view phase
-    ///   - onPhaseChange: A callback when the phase changed
-    public init(
-        preferenceCenterID: String,
-        onLoad: (@Sendable (String) async -> PreferenceCenterViewPhase)? = nil,
-        onPhaseChange: ((PreferenceCenterViewPhase) -> Void)? = nil
-    ) {
-        self.preferenceCenterID = preferenceCenterID
-        self.onLoad = onLoad
-        self.onPhaseChange = onPhaseChange
-    }
-
-    @ViewBuilder
-    public var body: some View {
-        let phase = self.loader.phase
-
-        let refresh: @MainActor @Sendable () -> Void = { @MainActor in
-            self.loader.load(
-                preferenceCenterID: preferenceCenterID,
-                onLoad: onLoad
-            )
-        }
-
-        let configuration = PreferenceCenterViewStyleConfiguration(
-            phase: phase,
-            preferenceCenterTheme: self.preferenceCenterTheme,
-            colorScheme: self.colorScheme,
-            refresh: refresh
-        )
-
-        style.makeBody(configuration: configuration)
-            .onReceive(makeNamedUserIDPublisher()) { identifier in
-                if (self.namedUser != identifier) {
-                    self.namedUser = identifier
-                    refresh()
-                }
-            }
-            .onReceive(self.loader.$phase) {
-                self.onPhaseChange?($0)
-
-                if !self.initialLoadCalled {
-                    refresh()
-                    self.initialLoadCalled = true
-                }
-            }
-    }
-
-    private func makeNamedUserIDPublisher() -> AnyPublisher<String?, Never> {
-        guard Airship.isFlying else {
-            return Just(nil).eraseToAnyPublisher()
-        }
-
-        return Airship.contact.namedUserIDPublisher
-            .receive(on: RunLoop.main)
-            .dropFirst()
-            .eraseToAnyPublisher()
-    }
-}
-
-/// Preference Center View
+/// The main view for the Airship Preference Center. This view provides a navigation stack.
+/// If you wish to provide your own navigation, see `PreferenceCenterContent`.
 public struct PreferenceCenterView: View {
 
     @Environment(\.preferenceCenterDismissAction)
@@ -118,10 +21,9 @@ public struct PreferenceCenterView: View {
     @Environment(\.colorScheme)
     private var colorScheme
 
-    @Environment(\.airshipPreferenceCenterNavigationStack)
-    private var navigationStack
-
     private let preferenceCenterID: String
+
+    @State private var title: String? = nil
 
     /// Default constructor
     /// - Parameters:
@@ -148,35 +50,57 @@ public struct PreferenceCenterView: View {
         }
     }
 
+    private var navigationBarTitle: String? {
+        var title: String? = self.title
+
+        if theme.viewController?.navigationBar?.overrideConfigTitle == true {
+            title = theme.viewController?.navigationBar?.title ?? title
+        }
+
+        return title
+    }
+
+
     @ViewBuilder
     public var body: some View {
-        let content = PreferenceCenterList(preferenceCenterID: preferenceCenterID)
-            .airshipApplyIf(self.dismissAction != nil) { view in
-                view.toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        makeBackButton()
-                    }
-                }
-            }
-
         let resolvedNavigationBarColor = colorScheme.airshipResolveColor(
             light: theme.viewController?.navigationBar?.backgroundColor,
             dark: theme.viewController?.navigationBar?.backgroundColorDark
         )
 
-        let themedContent = content.airshipApplyIf(resolvedNavigationBarColor != nil) { view in
-            view.toolbarBackground(resolvedNavigationBarColor!, for: .navigationBar)
-                .toolbarBackground(.visible, for: .navigationBar)
-        }
+        NavigationStack {
+            PreferenceCenterContent(
+                preferenceCenterID: preferenceCenterID,
+                onPhaseChange: { phase in
+                    guard case .loaded(let state) = phase else { return }
 
-        switch (navigationStack) {
-        case .default:
-            NavigationStack {
-                themedContent
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    let title = state.config.display?.title
+                    if let title, title.isEmpty == false {
+                        self.title = title
+                    } else {
+                        self.title = "ua_preference_center_title".preferenceCenterLocalizedString
+                    }
+                }
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .airshipApplyIf(resolvedNavigationBarColor != nil) { view in
+                let visibility: Visibility = if #available(iOS 26.0, *) {
+                    .automatic
+                } else {
+                    .visible
+                }
+
+                view.toolbarBackground(resolvedNavigationBarColor!, for: .navigationBar)
+                    .toolbarBackground(visibility, for: .navigationBar)
             }
-        case .none:
-            themedContent
+            .toolbar {
+                if self.dismissAction != nil {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        makeBackButton()
+                    }
+                }
+            }
+            .navigationTitle(navigationBarTitle ?? "")
         }
     }
 }
@@ -193,41 +117,13 @@ extension EnvironmentValues {
     }
 }
 
-extension View {
+public extension View {
+    
+    /// Sets a dismiss action on the preference center.
+    /// - Parameters:
+    ///     - action: The dismiss action.
     func addPreferenceCenterDismissAction(action: (@MainActor @Sendable () -> Void)?) -> some View {
         environment(\.preferenceCenterDismissAction, action)
-    }
-}
-
-/// Preference Center Navigation stack
-public enum PreferenceCenterNavigationStack: Sendable {
-    /// The Preference Center will not be wrapped in a navigation stack
-    case none
-
-    /// The Preference Center will be wrapped in either a NavigationStack on iOS 16+, or a NavigationView.
-    case `default`
-}
-
-struct PreferenceCenterNavigationStackKey: EnvironmentKey {
-    static let defaultValue: PreferenceCenterNavigationStack = .default
-}
-
-extension EnvironmentValues {
-    /// Airship preference theme environment value
-    public var airshipPreferenceCenterNavigationStack: PreferenceCenterNavigationStack {
-        get { self[PreferenceCenterNavigationStackKey.self] }
-        set { self[PreferenceCenterNavigationStackKey.self] = newValue }
-    }
-}
-
-extension View {
-    /// Sets the navigation stack for the Preference Center.
-    /// - Parameters:
-    ///     - stack: The navigation stack
-    public func preferenceCenterNavigationStack(
-        _ stack: PreferenceCenterNavigationStack
-    )-> some View {
-        environment(\.airshipPreferenceCenterNavigationStack, stack)
     }
 }
 
@@ -308,7 +204,7 @@ struct PreferenceCenterView_Previews: PreviewProvider {
             ]
         )
 
-        PreferenceCenterList(preferenceCenterID: "PREVIEW") {
+        PreferenceCenterContent(preferenceCenterID: "PREVIEW") {
             preferenceCenterID in
             return await .loaded(PreferenceCenterState(config: config))
         }

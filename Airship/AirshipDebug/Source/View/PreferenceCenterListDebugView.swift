@@ -24,7 +24,7 @@ public struct PreferenceCenterListDebugView: View {
                     identifier in
                     NavigationLink(
                         identifier,
-                        destination: PreferenceCenterList(
+                        destination: PreferenceCenterContent(
                             preferenceCenterID: identifier
                         )
                     )
