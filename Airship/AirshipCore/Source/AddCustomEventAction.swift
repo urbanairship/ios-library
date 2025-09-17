@@ -13,9 +13,11 @@ import Foundation
 ///
 /// Result value: nil
 public final class AddCustomEventAction: AirshipAction {
+    private static let eventNameKey = "name"
+    private static let eventValue = "value"
 
     /// Default names - "add_custom_event_action"
-    public static let defaultNames = ["add_custom_event_action"]
+    public static let defaultNames = ["add_custom_event_action", "^+ce"]
     
     /// Default predicate - rejects foreground pushes with visible display options and `ActionSituation.backgroundPush`
     public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in
@@ -34,13 +36,15 @@ public final class AddCustomEventAction: AirshipAction {
     }
 
     public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
-        guard let dict = arguments.value.unWrap() as? [AnyHashable: Any],
-              let eventName = parseString(dict, key: CustomEvent.eventNameKey)
+        guard
+            let dict = arguments.value.unWrap() as? [AnyHashable: Any],
+            let eventName = getEventName(dict)
         else {
-            throw AirshipErrors.error("Invalid custom event argument: \(arguments.value)")
+            throw AirshipErrors
+                .error("Invalid custom event argument: \(arguments.value)")
         }
 
-        let eventValue = parseDouble(dict, key: CustomEvent.eventValueKey)
+        let eventValue = getEventValue(dict)
         let interactionID = parseString(
             dict,
             key: CustomEvent.eventInteractionIDKey
@@ -96,8 +100,8 @@ public final class AddCustomEventAction: AirshipAction {
         return nil
     }
 
-    func parseString(_ dict: [AnyHashable: Any]?, key: String) -> String? {
-        guard let value = dict?[key] else {
+    func parseString(_ dict: [AnyHashable: Any], key: String) -> String? {
+        guard let value = dict[key] else {
             return nil
         }
 
@@ -107,8 +111,8 @@ public final class AddCustomEventAction: AirshipAction {
         return value as? String
     }
 
-    func parseDouble(_ dict: [AnyHashable: Any]?, key: String) -> Double? {
-        guard let value = dict?[key] else {
+    func parseDouble(_ dict: [AnyHashable: Any], key: String) -> Double? {
+        guard let value = dict[key] else {
             return nil
         }
 
@@ -119,5 +123,15 @@ public final class AddCustomEventAction: AirshipAction {
             return nil
         }
         return value
+    }
+    
+    private func getEventName(_ dict: [AnyHashable: Any]) -> String? {
+        return parseString(dict, key: Self.eventNameKey)
+        ?? parseString(dict, key: CustomEvent.eventNameKey)
+    }
+    
+    private func getEventValue(_ dict: [AnyHashable: Any]) -> Double? {
+        return parseDouble(dict, key: Self.eventValue)
+        ?? parseDouble(dict, key: CustomEvent.eventValueKey)
     }
 }
