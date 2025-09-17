@@ -149,6 +149,13 @@ struct DefaultActionsManifest: ActionsManifest {
                     predicate: RemoveTagsAction.defaultPredicate
                 )
             },
+            
+            ModifyTagsAction.defaultNames: {
+                return ActionEntry(
+                    action: ModifyTagsAction(),
+                    predicate: ModifyTagsAction.defaultPredicate
+                )
+            },
 
             DeepLinkAction.defaultNames: {
                 return ActionEntry(

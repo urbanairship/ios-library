@@ -50,6 +50,8 @@
 		271C19032DBA557B00214E10 /* DeviceInfoDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271C19022DBA557B00214E10 /* DeviceInfoDebugView.swift */; };
 		271C19052DBA5C9C00214E10 /* ContactsDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271C19042DBA5C9C00214E10 /* ContactsDebugView.swift */; };
 		271C1A002DBA9DE400214E10 /* AppInfoDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271C19FF2DBA9DE400214E10 /* AppInfoDebugView.swift */; };
+		27AFE70F2E733F4400767044 /* ModifyTagsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFE70E2E733F4400767044 /* ModifyTagsAction.swift */; };
+		27AFE7112E73477200767044 /* ModifyTagsActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFE7102E73477200767044 /* ModifyTagsActionTest.swift */; };
 		320AD3A629E7FA2000D66106 /* PagerGestureMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */; };
 		3215CA9D2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		322AAB1E2B5AB65700652DAC /* AddChannelPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DDC0562AF1055300D23EBE /* AddChannelPromptView.swift */; };
@@ -1355,6 +1357,8 @@
 		271C19022DBA557B00214E10 /* DeviceInfoDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoDebugView.swift; sourceTree = "<group>"; };
 		271C19042DBA5C9C00214E10 /* ContactsDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsDebugView.swift; sourceTree = "<group>"; };
 		271C19FF2DBA9DE400214E10 /* AppInfoDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfoDebugView.swift; sourceTree = "<group>"; };
+		27AFE70E2E733F4400767044 /* ModifyTagsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyTagsAction.swift; sourceTree = "<group>"; };
+		27AFE7102E73477200767044 /* ModifyTagsActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyTagsActionTest.swift; sourceTree = "<group>"; };
 		320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerGestureMap.swift; sourceTree = "<group>"; };
 		3215CA9C2739349700B7D97E /* ModalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalView.swift; sourceTree = "<group>"; };
 		322AAB1C2B5A869000652DAC /* ContactManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactManagementView.swift; sourceTree = "<group>"; };
@@ -3343,6 +3347,7 @@
 				A6D6D49E2A02608C0072A5CA /* ActionResult.swift */,
 				6E4A4FD92A30358F0049FEFC /* TagsActionArgs.swift */,
 				271B38642DB2866200495D9F /* TagActionMutation.swift */,
+				27AFE70E2E733F4400767044 /* ModifyTagsAction.swift */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -4713,6 +4718,7 @@
 				A62C3353299FD509004DB0DA /* ShareActionTest.swift */,
 				6ECB627B2A369F5B0095C85C /* OpenExternalURLActionTest.swift */,
 				6ECB62832A36A7510095C85C /* DeepLinkActionTest.swift */,
+				27AFE7102E73477200767044 /* ModifyTagsActionTest.swift */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -5979,6 +5985,7 @@
 				A61517B526AEEAAB008A41C4 /* SubscriptionListUpdate.swift in Sources */,
 				6E952926268B8F6600398B54 /* AssociatedIdentifiers.swift in Sources */,
 				6EB11C872697ACBF00DC698F /* ContactOperation.swift in Sources */,
+				27AFE70F2E733F4400767044 /* ModifyTagsAction.swift in Sources */,
 				8401769A26C5725800373AF7 /* AirshipJSONUtils.swift in Sources */,
 				6E0031AB2D08CC920004F53E /* AirshipAuthorizedNotificationSettings.swift in Sources */,
 				6ED2F5392B7FFF68000AFC80 /* AirshipSceneManager.swift in Sources */,
@@ -6433,6 +6440,7 @@
 				6E6363EA29DCECA1009C358A /* TestContactSubscriptionListAPIClient.swift in Sources */,
 				6E6ED172268448EC00A2CBD0 /* TestNetworkMonitor.swift in Sources */,
 				6058771D2AC73C940021628E /* AirshipMeteredUsageTest.swift in Sources */,
+				27AFE7112E73477200767044 /* ModifyTagsActionTest.swift in Sources */,
 				6E15B70326CDE40E0099C92D /* RemoteConfigManagerTest.swift in Sources */,
 				6E6524502A4FD8D30019F353 /* JSONPredicateTest.swift in Sources */,
 				6E97D6AF2D84B17D0001CF7F /* ThomasFormDataCollectorTest.swift in Sources */,
