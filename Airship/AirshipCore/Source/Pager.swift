@@ -36,7 +36,7 @@ struct Pager: View {
     @State private var lastReportedIndex = -1
     @GestureState private var translation: CGFloat = 0
     @State private var size: CGSize?
-    @State private var scrollPosition: Int?
+    @State private var scrollPosition: String?
     private let timer: Publishers.Autoconnect<Timer.TimerPublisher>
 
     private var isLegacyPageSwipeEnabled: Bool {
@@ -146,7 +146,7 @@ struct Pager: View {
     @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
     @ViewBuilder
     func makeScrollViewPager(childConstraints: ViewConstraints, metrics: GeometryProxy) -> some View {
-        ScrollView (.horizontal) {
+        ScrollView(.horizontal) {
             LazyHStack(spacing: 0) {
                 makePageViews(childConstraints: childConstraints, metrics: metrics)
             }
@@ -156,12 +156,14 @@ struct Pager: View {
         .scrollTargetBehavior(.paging)
         .scrollPosition(id: $scrollPosition)
         .scrollIndicators(.never)
-        .airshipOnChangeOf(scrollPosition, initial: false) { value in
-            if let position = value, position != self.pagerState.pageIndex {
-                let result = self.pagerState.navigateToPage(id: self.pagerState.pageStates[position].identifier)
-                if let result {
-                    handleEvents(.defaultSwipe(result))
-                }
+        .airshipOnChangeOf(scrollPosition ?? "", initial: false) { value in
+            guard !value.isEmpty, value != self.pagerState.currentPageId else {
+                return
+            }
+
+            let result = self.pagerState.navigateToPage(id: value)
+            if let result {
+                handleEvents(.defaultSwipe(result))
             }
         }
         .frame(
@@ -206,7 +208,6 @@ struct Pager: View {
                         self.isVisible && pagerState.pageItems[index].identifier == pagerState.currentPageId
                     )
                 )
-                .id(pagerState.pageItems[index].identifier)
             }
             .frame(
                 width: metrics.size.width,
@@ -216,6 +217,7 @@ struct Pager: View {
                 \.isButtonActionsEnabled,
                  (!self.isLegacyPageSwipeEnabled || self.translation == 0)
             )
+            .id(pagerState.pageItems[index].identifier)
         }
     }
 
@@ -245,18 +247,25 @@ struct Pager: View {
         makePager()
             .onAppear(perform: attachToPagerState)
             .airshipOnChangeOf(pagerState.pageIndex, initial: true) { value in
+                guard value >= 0, value < pagerState.pageItems.count else {
+                    return
+                }
+
                 reportPage(value)
+
+                let newIdentifier = pagerState.pageItems[value].identifier
+                guard newIdentifier != scrollPosition else { return }
+
                 withAnimation {
-                    scrollPosition = value
+                    scrollPosition = newIdentifier
                 }
             }
             .airshipOnChangeOf(pagerState.completed) { completed in
-                if completed {
-                    self.thomasEnvironment.pagerCompleted(
-                        pagerState: pagerState,
-                        layoutState: layoutState
-                    )
-                }
+                guard completed else { return }
+                self.thomasEnvironment.pagerCompleted(
+                    pagerState: pagerState,
+                    layoutState: layoutState
+                )
             }
             .onReceive(self.timer) { _ in
                 onTimer()
@@ -645,3 +654,4 @@ struct Pager: View {
         return dragOffSet
     }
 }
+
