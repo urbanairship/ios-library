@@ -61,6 +61,50 @@ final class ModifyAttributesActionTest: XCTestCase {
             XCTAssertFalse(result)
         }
     }
+    
+    func testAcceptReturnsFalseForInvalidJsonValue() async throws {
+        let jsons = [
+            [[
+                "action": "set",
+                "type": "channel",
+                "name": "another name",
+                "value": [
+                    "json_test": [
+                        "exp": 1012,
+                        "nested": [ "foo": "bar" ]
+                    ]
+                ]
+            ]],
+            [[
+                "action": "set",
+                "type": "channel",
+                "name": "another name",
+                "value": [
+                    "json#te#st#": [
+                        "exp": 1012,
+                        "nested": [ "foo": "bar" ]
+                    ]
+                ]
+            ]],
+            [[
+                "action": "set",
+                "type": "channel",
+                "name": "another name",
+                "value": [
+                    "json_test#": [
+                        "exp": 1012,
+                        "nested": [ "foo": "bar" ]
+                    ]
+                ]
+            ]]
+        ]
+        
+        for item in jsons {
+            let args = ActionArguments(value: try AirshipJSON.wrap(item), situation: .manualInvocation)
+            let result = await self.action.accepts(arguments: args)
+            XCTAssertFalse(result)
+        }
+    }
 
     func testPerform() async throws {
         let value: [String: Any] = [
@@ -132,5 +176,102 @@ final class ModifyAttributesActionTest: XCTestCase {
 
         await fulfillment(of: [attributesSet])
 
+    }
+    
+    func testJsonValue() async throws {
+        let value = [
+            [
+                "action": "set",
+                "type": "channel",
+                "name": "another name",
+                "value": [
+                    "json#test": [
+                        "exp": 1234567890,
+                        "nested": ["foo": "bar"]
+                    ]
+                ]
+            ]
+        ]
+        
+        let expectedAttributes = [
+            AttributeUpdate(
+                attribute: "json#test",
+                type: .set,
+                jsonValue: try AirshipJSON.wrap(["nested": ["foo": "bar"], "exp": 1234567890]),
+                date: self.date.now
+            )
+        ]
+        
+        let attributesSet = self.expectation(description: "attributes")
+        
+        self.contact.attributeEditor = AttributesEditor(
+            date: self.date
+        ) { attributes in
+            XCTFail("shouldn't be called")
+        }
+
+        self.channel.attributeEditor = AttributesEditor(
+            date: self.date
+        ) { attributes in
+            XCTAssertEqual(expectedAttributes, attributes)
+            attributesSet.fulfill()
+        }
+        
+        let _ = try await self.action.perform(arguments:
+            ActionArguments(
+                value: try AirshipJSON.wrap(value),
+                situation: .manualInvocation
+            )
+        )
+
+        await fulfillment(of: [attributesSet])
+    }
+    
+    func testJsonValueNoExpiration() async throws {
+        let value = [
+            [
+                "action": "set",
+                "type": "channel",
+                "name": "another name",
+                "value": [
+                    "json#test": [
+                        "nested": ["foo": "bar"]
+                    ]
+                ]
+            ]
+        ]
+        
+        let expectedAttributes = [
+            AttributeUpdate(
+                attribute: "json#test",
+                type: .set,
+                jsonValue: try AirshipJSON.wrap(["nested": ["foo": "bar"]]),
+                date: self.date.now
+            )
+        ]
+        
+        let attributesSet = self.expectation(description: "attributes")
+        
+        self.contact.attributeEditor = AttributesEditor(
+            date: self.date
+        ) { attributes in
+            XCTFail("shouldn't be called")
+        }
+
+        self.channel.attributeEditor = AttributesEditor(
+            date: self.date
+        ) { attributes in
+            XCTAssertEqual(expectedAttributes, attributes)
+            attributesSet.fulfill()
+        }
+        
+        let _ = try await self.action.perform(arguments:
+            ActionArguments(
+                value: try AirshipJSON.wrap(value),
+                situation: .manualInvocation
+            )
+        )
+
+        await fulfillment(of: [attributesSet])
     }
 }
