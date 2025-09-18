@@ -5,7 +5,6 @@ import XCTest
 
 @testable import AirshipPreferenceCenter
 
-
 class PreferenceCenterTest: XCTestCase {
 
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
@@ -106,14 +105,33 @@ class PreferenceCenterTest: XCTestCase {
     }
 
     @MainActor
-    func testOpenDelegate() async throws {
-        let delegate = MockPreferenceCenterOpenDelegate()
-        self.preferenceCenter.openDelegate = delegate
-        self.preferenceCenter.open("some-form")
-        
-        let openedId = await delegate.getLastOpenId()
-        XCTAssertEqual("some-form", openedId)
-    }
+      func testOnDisplay() async throws {
+          let delegate = MockPreferenceCenterOpenDelegate()
+          self.preferenceCenter.openDelegate = delegate
+
+          let expectation = self.expectation(description: "onDisplay called")
+          self.preferenceCenter.onDisplay = { identifier in
+              XCTAssertEqual("some-form", identifier)
+              expectation.fulfill()
+              return true // Handle the display
+          }
+
+          self.preferenceCenter.display(identifier: "some-form")
+
+          await self.fulfillment(of: [expectation], timeout: 1.0)
+
+          XCTAssertFalse(delegate.openCalled)
+      }
+
+      @MainActor
+      func testOnDisplayNilFallback() async throws {
+          let delegate = MockPreferenceCenterOpenDelegate()
+          self.preferenceCenter.openDelegate = delegate
+          self.preferenceCenter.onDisplay = nil
+
+          self.preferenceCenter.display(identifier: "some-form")
+          XCTAssertEqual("some-form", delegate.lastOpenID)
+      }
 
     @MainActor
     func testDeepLink() async throws {
@@ -123,16 +141,14 @@ class PreferenceCenterTest: XCTestCase {
         let valid = URL(string: "uairship://preferences/some-id")!
         XCTAssertTrue(self.preferenceCenter.deepLink(valid))
         
-        var openedId = await delegate.getLastOpenId()
-        XCTAssertEqual("some-id", openedId)
+        XCTAssertEqual("some-id", delegate.lastOpenID)
 
         let trailingSlash = URL(
             string: "uairship://preferences/some-other-id/"
         )!
         XCTAssertTrue(self.preferenceCenter.deepLink(trailingSlash))
         
-        openedId = await delegate.getLastOpenId()
-        XCTAssertEqual("some-other-id", openedId)
+        XCTAssertEqual("some-other-id", delegate.lastOpenID)
     }
 
     @MainActor
@@ -164,8 +180,21 @@ class PreferenceCenterTest: XCTestCase {
 
 fileprivate final class TestInputValidator: AirshipInputValidation.Validator {
     var legacySMSDelegate: (any AirshipCore.SMSValidatorDelegate)?
-    
+
     func validateRequest(_ request: AirshipCore.AirshipInputValidation.Request) async throws -> AirshipCore.AirshipInputValidation.Result {
         return .invalid
+    }
+}
+
+
+@MainActor
+fileprivate class MockPreferenceCenterOpenDelegate: PreferenceCenterOpenDelegate {
+    var lastOpenID: String?
+    var openCalled: Bool = false
+
+    func openPreferenceCenter(_ preferenceCenterID: String) -> Bool {
+        self.lastOpenID = preferenceCenterID
+        self.openCalled = true
+        return true
     }
 }

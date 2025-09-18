@@ -11,16 +11,14 @@ public import AirshipCore
 @MainActor
 public protocol PreferenceCenterOpenDelegate {
 
-    /**
-     * Opens the Preference Center with the given ID.
-     * - Parameters:
-     *   - preferenceCenterID: The preference center ID.
-     * - Returns: `true` if the preference center was opened, otherwise `false` to fallback to OOTB UI.
-     */
+    /// Opens the Preference Center with the given ID.
+    /// - Parameters:
+    ///   - preferenceCenterID: The preference center ID.
+    /// - Returns: `true` if the preference center was opened, otherwise `false` to fallback to OOTB UI.
     func openPreferenceCenter(_ preferenceCenterID: String) -> Bool
 }
 
-/// Airship PreferenceCenter module.
+/// Airship Preference Center module. This module is used to display preference centers that are configured in the Airship dashboard.
 public final class PreferenceCenter: Sendable {
 
     /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
@@ -36,12 +34,14 @@ public final class PreferenceCenter: Sendable {
 
     @MainActor
     private let delegates: Delegates = Delegates()
-    /**
-     * Open delegate.
-     *
-     * If set, the delegate will be called instead of launching the OOTB preference center screen. Must be set
-     * on the main actor.
-     */
+
+    /// If set, this block will be called when the Preference Center is requested to be displayed.
+    /// This will be called in place of the `PreferenceCenterOpenDelegate` delegate.
+    /// The block should return `true` if the display was handled, or `false` to fall back to the default SDK behavior.
+    @MainActor
+    public var onDisplay: (@MainActor @Sendable (_ preferenceCenterID: String) -> Bool)?
+
+    /// Open delegate.
     @MainActor
     public var openDelegate: (any PreferenceCenterOpenDelegate)? {
         get {
@@ -60,9 +60,7 @@ public final class PreferenceCenter: Sendable {
     private let currentDisplay: AirshipMainActorValue<(any AirshipMainActorCancellable)?> = AirshipMainActorValue(nil)
 
     private let _theme: AirshipMainActorValue<PreferenceCenterTheme?> = AirshipMainActorValue(nil)
-    /**
-     * Preference center theme
-     */
+    /// The theme for the Preference Center.
     @MainActor
     public var theme: PreferenceCenterTheme? {
         get {
@@ -73,6 +71,9 @@ public final class PreferenceCenter: Sendable {
         }
     }
 
+    /// Loads a Preference center theme from a plist file.
+    /// - Parameters:
+    ///     - plist: The name of the plist in the bundle.
     @MainActor
     public func setThemeFromPlist(_ plist: String) throws {
         self.theme = try PreferenceCenterThemeLoader.fromPlist(plist)
@@ -93,29 +94,43 @@ public final class PreferenceCenter: Sendable {
         AirshipLogger.info("PreferenceCenter initialized")
     }
 
-    /**
-     * Opens the Preference Center with the given ID.
-     * - Parameters:
-     *   - preferenceCenterID: The preference center ID.
-     */
+
+    /// Displays the Preference Center with the given ID.
+    /// - Parameters:
+    ///   - identifier: The preference center ID.
     @MainActor
-    public func open(_ preferenceCenterID: String) {
-        if self.openDelegate?.openPreferenceCenter(preferenceCenterID) == true {
-            AirshipLogger.trace(
-                "Preference center \(preferenceCenterID) opened through delegate"
-            )
+    public func display(identifier: String) {
+        let handled: Bool = if let onDisplay {
+            onDisplay(identifier)
+        } else if let openDelegate {
+            openDelegate.openPreferenceCenter(identifier)
         } else {
-            AirshipLogger.trace("Launching OOTB preference center")
-            Task {
-                await openDefaultPreferenceCenter(
-                    preferenceCenterID: preferenceCenterID
-                )
-            }
+            false
+        }
+
+        guard !handled else {
+            AirshipLogger.trace(
+                "Preference center \(identifier) display request handled by the app."
+            )
+            return
+        }
+
+        Task {
+            await displayDefaultPreferenceCenter(preferenceCenterID: identifier)
         }
     }
 
+    /// Opens the Preference Center with the given ID.
+    /// - Parameters:
+    ///   - preferenceCenterID: The preference center ID.
     @MainActor
-    private func openDefaultPreferenceCenter(preferenceCenterID: String) async {
+    @available(*, deprecated, renamed: "display(identifier:)")
+    public func open(_ preferenceCenterID: String) {
+        self.display(identifier: preferenceCenterID)
+    }
+
+    @MainActor
+    private func displayDefaultPreferenceCenter(preferenceCenterID: String) async {
         guard let scene = try? AirshipSceneManager.shared.lastActiveScene else {
             AirshipLogger.error("Unable to display, missing scene.")
             return
@@ -126,7 +141,7 @@ public final class PreferenceCenter: Sendable {
         AirshipLogger.debug("Opening default preference center UI")
 
         self.currentDisplay.set(
-            showPreferenceCenter(
+            displayPreferenceCenter(
                 preferenceCenterID,
                 scene: scene,
                 theme: theme
@@ -134,21 +149,17 @@ public final class PreferenceCenter: Sendable {
         )
     }
 
-    /**
-     * Returns the configuration of the Preference Center with the given ID.
-     * - Parameters:
-     *   - preferenceCenterID: The preference center ID.
-     */
+    /// Returns the configuration of the Preference Center with the given ID.
+    /// - Parameters:
+    ///   - preferenceCenterID: The preference center ID.
     public func config(preferenceCenterID: String) async throws -> PreferenceCenterConfig {
         let data = try await jsonConfig(preferenceCenterID: preferenceCenterID)
         return try PreferenceCenterDecoder.decodeConfig(data: data)
     }
 
-    /**
-     * Returns the configuration of the Preference Center as JSON data with the given ID.
-     * - Parameters:
-     *   - preferenceCenterID: The preference center ID.
-     */
+    /// Returns the configuration of the Preference Center as JSON data with the given ID.
+    /// - Parameters:
+    ///   - preferenceCenterID: The preference center ID.
     public func jsonConfig(preferenceCenterID: String) async throws -> Data {
         let payloads = await self.remoteData.payloads(types: ["preference_forms"])
 
@@ -180,7 +191,7 @@ private final class Delegates {
 extension PreferenceCenter {
 
     @MainActor
-    fileprivate func showPreferenceCenter(
+    fileprivate func displayPreferenceCenter(
         _ preferenceCenterID: String,
         scene: UIWindowScene,
         theme: PreferenceCenterTheme?

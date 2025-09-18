@@ -10,9 +10,7 @@ import ActivityKit
 #endif
 
 @MainActor
-class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
-    MessageCenterDisplayDelegate, PreferenceCenterOpenDelegate
-{
+class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, MessageCenterDisplayDelegate {
 
     func application(
         _ application: UIApplication,
@@ -32,7 +30,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
 
         Airship.deepLinkDelegate = self
         Airship.messageCenter.displayDelegate = self
-        Airship.preferenceCenter.openDelegate = self
+
+        Airship.preferenceCenter.onDisplay = { identifier in
+            guard identifier == MainApp.preferenceCenterID else {
+                return false
+            }
+
+            AppState.shared.selectedTab = .preferenceCenter
+            return true
+        }
 
         NotificationCenter.default.addObserver(
             forName: AppStateTracker.didBecomeActiveNotification,
@@ -109,16 +115,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate,
     }
 
     func dismissMessageCenter() {
-    }
-
-    func openPreferenceCenter(_ preferenceCenterID: String) -> Bool {
-        guard preferenceCenterID == MainApp.preferenceCenterID else {
-            return false
-        }
-
-        DispatchQueue.main.async {
-            AppState.shared.selectedTab = .preferenceCenter
-        }
-        return true
     }
 }
