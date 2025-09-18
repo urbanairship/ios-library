@@ -279,29 +279,40 @@ extension MessageCenter {
 
     @MainActor
     func deepLink(_ deepLink: URL) -> Bool {
-        if !(deepLink.scheme == Airship.deepLinkScheme) {
+        
+        // Ensure the scheme matches Airship deeplLink scheme
+        guard deepLink.scheme == Airship.deepLinkScheme else {
             return false
         }
 
-        if !(deepLink.host == "message_center") {
+        // Ensure the host matches
+        guard deepLink.host == "message_center" else {
             return false
         }
-
-        if deepLink.path.hasPrefix("/message/") {
-            if deepLink.pathComponents.count != 3 {
-                return false
-            }
-            let messageID: String = deepLink.pathComponents[2]
-            self.display(messageID: messageID)
-        } else {
-            if (deepLink.path.count != 0) && !(deepLink.path == "/") {
-                return false
-            }
-
-            self.display()
+        
+        let components = deepLink.pathComponents
+        let path = deepLink.path
+        
+        // Case 1: No path -> open message center
+        if path.isEmpty || path == "/" {
+            display()
+            return true
         }
-
-        return true
+        
+        // Case 2: /message/<id>
+        if components.count == 3, components[1] == "message" {
+            display(messageID: components[2])
+            return true
+        }
+        
+        // Case 3: /<id>
+        if components.count == 2 {
+            display(messageID: components[1])
+            return true
+        }
+        
+        // Anything else is unsupported
+        return false
     }
 
     @MainActor
