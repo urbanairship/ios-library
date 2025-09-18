@@ -144,7 +144,7 @@ fileprivate final class UAMessageCenterDisplayDelegateWrapper: NSObject, Message
     }
     
     public func displayMessageCenter() {
-        self.forwardDelegate?.dismissMessageCenter()
+        self.forwardDelegate?.displayMessageCenter()
     }
     
     public func dismissMessageCenter() {

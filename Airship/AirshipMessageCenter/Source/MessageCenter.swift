@@ -33,6 +33,18 @@ public protocol MessageCenterDisplayDelegate {
 
 /// Airship Message Center module.
 public final class MessageCenter: Sendable {
+
+    /// If set, this block will be called when the Message Center is requested to be displayed.
+    /// This will be called in place of the `displayMessageCenter` delegate method.
+    /// The block should return `true` if the display was handled, or `false` to fall back to the default SDK behavior.
+    @MainActor
+    public var onDisplay: (@MainActor @Sendable (_ messageID: String?) -> Bool)?
+
+    /// If set, this block will be called when the Message Center is requested to be dismissed.
+    /// This will be called in place of the `dismissMessageCenter` delegate method.
+    @MainActor
+    public var onDismissDisplay: (@MainActor @Sendable () -> Void)?
+
     /// Message center display delegate.
     @MainActor
     public var displayDelegate: (any MessageCenterDisplayDelegate)? {
@@ -170,15 +182,26 @@ public final class MessageCenter: Sendable {
             return
         }
 
-        guard let displayDelegate = self.displayDelegate else {
-            AirshipLogger.trace("Launching OOTB message center")
-            showDefaultMessageCenter()
-            self.controller.navigate(messageID: nil)
+        let handled: Bool
+        if let onDisplay {
+            handled = onDisplay(nil)
+        } else if let displayDelegate {
+            displayDelegate.displayMessageCenter()
+            handled = true
+        } else {
+            handled = false
+        }
+
+        guard !handled else {
+            AirshipLogger.trace(
+                "Message center display request handled by the app."
+            )
             return
         }
 
-        AirshipLogger.trace("Message center opened through delegate")
-        displayDelegate.displayMessageCenter()
+        AirshipLogger.trace("Launching OOTB message center")
+        showDefaultMessageCenter()
+        self.controller.navigate(messageID: nil)
     }
 
     /// Display the given message with animation.
@@ -191,23 +214,34 @@ public final class MessageCenter: Sendable {
             return
         }
 
-        guard let displayDelegate = self.displayDelegate else {
-            AirshipLogger.trace("Launching OOTB message center")
-            showDefaultMessageCenter()
-            self.controller.navigate(messageID: messageID)
+        let handled: Bool
+        if let onDisplay {
+            handled = onDisplay(messageID)
+        } else if let displayDelegate {
+            displayDelegate.displayMessageCenter(messageID: messageID)
+            handled = true
+        } else {
+            handled = false
+        }
+
+        guard !handled else {
+            AirshipLogger.trace(
+                "Message center display request for message \(messageID) handled by the app."
+            )
             return
         }
 
-        displayDelegate.displayMessageCenter(
-            messageID: messageID
-        )
-
+        AirshipLogger.trace("Launching OOTB message center")
+        showDefaultMessageCenter()
+        self.controller.navigate(messageID: messageID)
     }
 
     /// Dismiss the message center.
     @MainActor
     public func dismiss() {
-        if let displayDelegate = self.displayDelegate {
+        if let onDismissDisplay {
+            onDismissDisplay()
+        } else if let displayDelegate {
             displayDelegate.dismissMessageCenter()
         } else {
             Task { @MainActor in
