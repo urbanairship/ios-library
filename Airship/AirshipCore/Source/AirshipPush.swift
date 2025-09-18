@@ -85,6 +85,15 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
 
     private let serialQueue: AirshipAsyncSerialQueue
 
+    @MainActor
+    public var onAPNSRegistrationFinished: (@MainActor @Sendable (APNSRegistrationResult) -> Void)?
+
+    @MainActor
+    public var onNotificationRegistrationFinished: (@MainActor @Sendable (NotificationRegistrationResult) -> Void)?
+
+    @MainActor
+    public var onNotificationAuthorizedSettingsDidChange: (@MainActor @Sendable (AirshipAuthorizedNotificationSettings) -> Void)?
+
 
     @MainActor
     private var isRegisteredForRemoteNotifications: Bool {
@@ -148,7 +157,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         self.permissionsManager.addRequestExtender(
             permission: .displayNotifications
         ) { status in
-            await self.onNotificationRegistrationFinished()
+            await self.notificationRegistrationFinished()
         }
 
         self.permissionsManager.addAirshipEnabler(
@@ -509,9 +518,15 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
 
             if self.authorizedNotificationSettings != settings {
                 self.authorizedNotificationSettings = settings
-                self.registrationDelegate?.notificationAuthorizedSettingsDidChange(
-                    settings
-                )
+
+                if let onNotificationAuthorizedSettingsDidChange {
+                    onNotificationAuthorizedSettingsDidChange(settings)
+                } else {
+                    self.registrationDelegate?.notificationAuthorizedSettingsDidChange(
+                        settings
+                    )
+                }
+
                 settingsChanged = true
             }
         }
@@ -681,7 +696,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
     }
 
     @MainActor
-    private func onNotificationRegistrationFinished() async {
+    private func notificationRegistrationFinished() async {
         guard self.privacyManager.isEnabled(.push) else {
             return
         }
@@ -695,19 +710,37 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         )
 
         #if !os(tvOS)
-        self.registrationDelegate?
-            .notificationRegistrationFinished(
-                withAuthorizedSettings: settings,
-                categories: self.combinedCategories,
-                status: status
+        if let onNotificationRegistrationFinished {
+            onNotificationRegistrationFinished(
+                NotificationRegistrationResult(
+                    authorizedSettings: settings,
+                    status: status,
+                    categories: self.combinedCategories
+                )
             )
-
+        } else {
+            self.registrationDelegate?
+                .notificationRegistrationFinished(
+                    withAuthorizedSettings: settings,
+                    categories: self.combinedCategories,
+                    status: status
+                )
+        }
         #else
-        self.registrationDelegate?
-            .notificationRegistrationFinished(
-                withAuthorizedSettings: settings,
-                status: status
+        if let onNotificationRegistrationFinished {
+            onNotificationRegistrationFinished(
+                NotificationRegistrationResult(
+                    authorizedSettings: settings,
+                    status: status
+                )
             )
+        } else {
+            self.registrationDelegate?
+                .notificationRegistrationFinished(
+                    withAuthorizedSettings: settings,
+                    status: status
+                )
+        }
         #endif
     }
 
@@ -873,7 +906,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
                 skipIfEphemeral: true
             )
 
-            await self.onNotificationRegistrationFinished()
+            await self.notificationRegistrationFinished()
         }
     }
 
@@ -1011,9 +1044,14 @@ extension AirshipPush: InternalPushProtocol {
         AirshipLogger.info("Device token string: \(tokenString)")
         self.deviceToken = tokenString
         self.channel.updateRegistration()
-        self.registrationDelegate?.apnsRegistrationSucceeded(
-            withDeviceToken: deviceToken
-        )
+
+        if let onAPNSRegistrationFinished {
+            onAPNSRegistrationFinished(.success(deviceToken: tokenString))
+        } else {
+            self.registrationDelegate?.apnsRegistrationSucceeded(
+                withDeviceToken: deviceToken
+            )
+        }
     }
 
     public func didFailToRegisterForRemoteNotifications(_ error: any Error) {
@@ -1021,7 +1059,11 @@ extension AirshipPush: InternalPushProtocol {
             return
         }
 
-        self.registrationDelegate?.apnsRegistrationFailedWithError(error)
+        if let onAPNSRegistrationFinished {
+            onAPNSRegistrationFinished(.failure(error: error))
+        } else {
+            self.registrationDelegate?.apnsRegistrationFailedWithError(error)
+        }
     }
 
     public func presentationOptionsForNotification(_ notification: UNNotification) async -> UNNotificationPresentationOptions {

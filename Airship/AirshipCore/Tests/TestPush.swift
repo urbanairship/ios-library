@@ -9,6 +9,12 @@ import Foundation
 import Combine
 
 final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, AirshipComponent, @unchecked Sendable {
+    var onAPNSRegistrationFinished: (@MainActor @Sendable (AirshipCore.APNSRegistrationResult) -> Void)?
+    
+    var onNotificationRegistrationFinished: (@MainActor @Sendable (AirshipCore.NotificationRegistrationResult) -> Void)?
+    
+    var onNotificationAuthorizedSettingsDidChange: (@MainActor @Sendable (AirshipCore.AirshipAuthorizedNotificationSettings) -> Void)?
+    
     func enableUserPushNotifications(fallback: AirshipCore.PromptPermissionFallback) async -> Bool {
         return true
     }

@@ -36,7 +36,7 @@ class PushTest: XCTestCase {
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
         )
-        
+
         self.push = await createPush()
         await self.serialQueue.waitForCurrentOperations()
         self.channel.updateRegistrationCalled = false
@@ -134,7 +134,7 @@ class PushTest: XCTestCase {
         await self.fulfillment(of: [completed], timeout: 10.0)
         XCTAssertFalse(self.push.userPromptedForNotifications)
     }
-    
+
     @MainActor
     func testNotificationsStatusPropogation() async throws {
         XCTAssertFalse(self.push.userPromptedForNotifications)
@@ -144,20 +144,20 @@ class PushTest: XCTestCase {
         }
 
         let completed = self.expectation(description: "Completed")
-        
+
         let _ = await self.permissionsManager.requestPermission(.displayNotifications)
-        
+
         let cancellable = self.push.notificationStatusPublisher.sink { status in
             XCTAssertEqual(true, status.areNotificationsAllowed)
             completed.fulfill()
         }
-        
+
         let status = await self.push.notificationStatus
         XCTAssertEqual(true, status.areNotificationsAllowed)
 
         await self.fulfillment(of: [completed], timeout: 10.0)
         XCTAssertTrue(self.push.userPromptedForNotifications)
-        
+
         cancellable.cancel()
     }
 
@@ -376,7 +376,7 @@ class PushTest: XCTestCase {
         let expected = try QuietTimeSettings(startHour: 12, startMinute: 30, endHour: 14, endMinute: 58)
         XCTAssertEqual(expected, self.push.quietTime)
     }
-    
+
 
     func testSetQuietTimeInvalid() throws {
         XCTAssertNil(self.push.quietTime)
@@ -780,7 +780,7 @@ class PushTest: XCTestCase {
     func testForwardAuthorizedSettingsChanges() {
         self.push.registrationDelegate = self.registrationDelegate
         self.notificationRegistrar.onCheckStatus = {
-           return(.provisional, [.alert])
+            return(.provisional, [.alert])
         }
 
         let called = self.expectation(description: "Delegate called")
@@ -859,7 +859,7 @@ class PushTest: XCTestCase {
             expected,
             isForeground: true
         )
-        
+
         let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
         XCTAssertEqual(UIBackgroundFetchResult.noData, res)
     }
@@ -878,7 +878,7 @@ class PushTest: XCTestCase {
         }
 
         let result = await self.push.didReceiveRemoteNotification(expected, isForeground: true)
-        
+
         let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
         XCTAssertEqual(UIBackgroundFetchResult.noData, res)
     }
@@ -891,7 +891,7 @@ class PushTest: XCTestCase {
             expected,
             isForeground: false
         )
-        
+
         let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
         XCTAssertEqual(UIBackgroundFetchResult.noData, res)
     }
@@ -914,7 +914,7 @@ class PushTest: XCTestCase {
             expected,
             isForeground: false
         )
-        
+
         let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
         XCTAssertEqual(UIBackgroundFetchResult.newData, res)
     }
@@ -1063,6 +1063,114 @@ class PushTest: XCTestCase {
 
 
         XCTAssertNotNil(payload.channel.pushAddress)
+    }
+
+    @MainActor
+    func testAPNSRegistrationFinishedDelegateFallbackSuccess() async {
+        let expectedToken = "some-token"
+        let delegate = TestRegistraitonDelegate()
+        let expectation = self.expectation(description: "Delegate called")
+        delegate.onAPNSRegistrationSucceeded = { tokenData in
+            XCTAssertEqual(expectedToken.hexData, tokenData)
+            expectation.fulfill()
+        }
+
+        self.push.registrationDelegate = delegate
+        self.push.onAPNSRegistrationFinished = nil
+
+        self.push.didRegisterForRemoteNotifications(expectedToken.hexData)
+        await self.fulfillment(of: [expectation], timeout: 10.0)
+    }
+
+    @MainActor
+    func testAPNSRegistrationFinishedDelegateFallbackFailure() async {
+        let expectedError = AirshipErrors.error("some error")
+        let delegate = TestRegistraitonDelegate()
+        let expectation = self.expectation(description: "Delegate called")
+        delegate.onAPNSRegistrationFailed = { error in
+            XCTAssertEqual(expectedError.localizedDescription, error.localizedDescription)
+            expectation.fulfill()
+        }
+
+        self.push.registrationDelegate = delegate
+        self.push.onAPNSRegistrationFinished = nil
+
+        self.push.didFailToRegisterForRemoteNotifications(expectedError)
+        await self.fulfillment(of: [expectation], timeout: 10.0)
+    }
+
+    @MainActor
+    func testNotificationRegistrationFinishedCallback() async {
+        let expectation = self.expectation(description: "Callback called")
+        self.notificationRegistrar.onCheckStatus = {
+            return (.authorized, [.alert])
+        }
+
+        self.push.onNotificationRegistrationFinished = { result in
+            XCTAssertEqual(.authorized, result.status)
+            XCTAssertEqual([.alert], result.authorizedSettings)
+            XCTAssertEqual(self.push.combinedCategories, result.categories)
+            expectation.fulfill()
+        }
+
+        let _ = await self.permissionsManager.requestPermission(.displayNotifications)
+        await self.fulfillment(of: [expectation], timeout: 10.0)
+    }
+
+    @MainActor
+    func testNotificationRegistrationFinishedDelegateFallback() async {
+        let delegate = TestRegistraitonDelegate()
+        let expectation = self.expectation(description: "Delegate called")
+        self.notificationRegistrar.onCheckStatus = {
+            return (.authorized, [.alert])
+        }
+
+        delegate.onNotificationRegistrationFinished = { settings, categories, status in
+            XCTAssertEqual(.authorized, status)
+            XCTAssertEqual([.alert], settings)
+            XCTAssertEqual(self.push.combinedCategories, categories)
+            expectation.fulfill()
+        }
+        self.push.registrationDelegate = delegate
+        self.push.onNotificationRegistrationFinished = nil
+
+        let _ = await self.permissionsManager.requestPermission(.displayNotifications)
+        await self.fulfillment(of: [expectation], timeout: 10.0)
+    }
+
+    @MainActor
+    func testAuthorizedSettingsDidChangeCallback() async {
+        let expectation = self.expectation(description: "Callback called")
+        self.notificationRegistrar.onCheckStatus = {
+            return (.authorized, [.sound])
+        }
+
+        self.push.onNotificationAuthorizedSettingsDidChange = { settings in
+            XCTAssertEqual([.sound], settings)
+            expectation.fulfill()
+        }
+
+        let _ = await self.permissionsManager.requestPermission(.displayNotifications)
+        await self.fulfillment(of: [expectation], timeout: 10.0)
+    }
+
+    @MainActor
+    func testAuthorizedSettingsDidChangeDelegateFallback() async {
+        let delegate = TestRegistraitonDelegate()
+        let expectation = self.expectation(description: "Delegate called")
+        self.notificationRegistrar.onCheckStatus = {
+            return (.authorized, [.sound])
+        }
+
+        delegate.onNotificationAuthorizedSettingsDidChange = { settings in
+            XCTAssertEqual([.sound], settings)
+            expectation.fulfill()
+        }
+        self.push.registrationDelegate = delegate
+        self.push.onNotificationAuthorizedSettingsDidChange = nil
+
+        let _ = await self.permissionsManager.requestPermission(.displayNotifications)
+        await self.fulfillment(of: [expectation], timeout: 10.0)
     }
 }
 

@@ -113,7 +113,7 @@
 		32FD4C782D8079910056D141 /* BasicToggleLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32FD4C772D8079910056D141 /* BasicToggleLayout.swift */; };
 		3C13BFBD2384AE050071E80C /* AirshipMessageCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C13BFBC2384AE050071E80C /* AirshipMessageCenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C39D3092384C8BE003C50D4 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CA0E423237E4A7B00EE76CF /* AirshipMessageCenter.framework */; platformFilters = (ios, maccatalyst, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
-		3C63556026CDD4F8006E9916 /* PushProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C63555F26CDD4F8006E9916 /* PushProtocol.swift */; };
+		3C63556026CDD4F8006E9916 /* AirshipPushProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C63555F26CDD4F8006E9916 /* AirshipPushProtocol.swift */; };
 		3C693E4E25141CAC00EBFB88 /* AirshipDebugEventData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3CA0E222237CCBA600EE76CF /* AirshipDebugEventData.xcdatamodeld */; };
 		3C693E4F25141CAC00EBFB88 /* AirshipDebugPushData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 83A674F623AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodeld */; };
 		3CA0E2A0237CCE2600EE76CF /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -126,7 +126,7 @@
 		3CA84AB826DE257200A59685 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA84AB626DE257200A59685 /* Analytics.swift */; };
 		3CA84ABA26DE257200A59685 /* AnalyticsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA84AB726DE257200A59685 /* AnalyticsProtocol.swift */; };
 		3CB37A1E251151A400E60392 /* DebugResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB37A1D251151A400E60392 /* DebugResources.swift */; };
-		3CC8AA0626BB3C7900405614 /* Push.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC8AA0526BB3C7900405614 /* Push.swift */; };
+		3CC8AA0626BB3C7900405614 /* AirshipPush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC8AA0526BB3C7900405614 /* AirshipPush.swift */; };
 		3CC95B1F268E785900FE2ACD /* NotificationCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B1E268E785900FE2ACD /* NotificationCategories.swift */; };
 		3CC95B2B2696549B00FE2ACD /* AirshipPushableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B2A2696549B00FE2ACD /* AirshipPushableComponent.swift */; };
 		45A8ADF023134B38004AD8CA /* testMCColorsCatalog.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 45A8ADD123133E51004AD8CA /* testMCColorsCatalog.xcassets */; };
@@ -629,6 +629,8 @@
 		6E887CD3272C5F5000E83363 /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD2272C5F5000E83363 /* Checkbox.swift */; };
 		6E887CD5272C5F5A00E83363 /* CheckboxController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E887CD4272C5F5A00E83363 /* CheckboxController.swift */; };
 		6E892F2E2E7A193E00FB0EC4 /* PreferenceCenterContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E892F2D2E7A193200FB0EC4 /* PreferenceCenterContent.swift */; };
+		6E8932982E7B666000FB0EC4 /* APNSRegistrationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8932972E7B665200FB0EC4 /* APNSRegistrationResult.swift */; };
+		6E89329A2E7B66C300FB0EC4 /* NotificationRegistrationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8932992E7B66B600FB0EC4 /* NotificationRegistrationResult.swift */; };
 		6E8B4BF12888606D00AA336E /* ChannelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8B4BEF2888606400AA336E /* ChannelTest.swift */; };
 		6E8BDA172B62EC9F00711DB8 /* AutomationRemoteDataSubscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BDA162B62EC9F00711DB8 /* AutomationRemoteDataSubscriber.swift */; };
 		6E8BDEFE2A67938200F816D9 /* FeatureFlagInfoTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8BDEFC2A67937E00F816D9 /* FeatureFlagInfoTest.swift */; };
@@ -1416,7 +1418,7 @@
 		32F97AC029E5986B00FED65F /* StoryIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryIndicator.swift; sourceTree = "<group>"; };
 		32FD4C772D8079910056D141 /* BasicToggleLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicToggleLayout.swift; sourceTree = "<group>"; };
 		3C13BFBC2384AE050071E80C /* AirshipMessageCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipMessageCenter.h; sourceTree = "<group>"; };
-		3C63555F26CDD4F8006E9916 /* PushProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushProtocol.swift; sourceTree = "<group>"; };
+		3C63555F26CDD4F8006E9916 /* AirshipPushProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipPushProtocol.swift; sourceTree = "<group>"; };
 		3CA0E223237CCBA600EE76CF /* AirshipEventData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipEventData.xcdatamodel; sourceTree = "<group>"; };
 		3CA0E228237CCBA600EE76CF /* AirshipDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipDebug.h; sourceTree = "<group>"; };
 		3CA0E233237CCBA600EE76CF /* AirshipDebugManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipDebugManager.swift; sourceTree = "<group>"; };
@@ -1431,7 +1433,7 @@
 		3CA84AB626DE257200A59685 /* Analytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 		3CA84AB726DE257200A59685 /* AnalyticsProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalyticsProtocol.swift; sourceTree = "<group>"; };
 		3CB37A1D251151A400E60392 /* DebugResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugResources.swift; sourceTree = "<group>"; };
-		3CC8AA0526BB3C7900405614 /* Push.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Push.swift; sourceTree = "<group>"; };
+		3CC8AA0526BB3C7900405614 /* AirshipPush.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipPush.swift; sourceTree = "<group>"; };
 		3CC95B1E268E785900FE2ACD /* NotificationCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCategories.swift; sourceTree = "<group>"; };
 		3CC95B2A2696549B00FE2ACD /* AirshipPushableComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipPushableComponent.swift; sourceTree = "<group>"; };
 		459D4049208FE64D00C40E2D /* Valid-UAInAppMessageFullScreenStyle.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Valid-UAInAppMessageFullScreenStyle.plist"; sourceTree = "<group>"; };
@@ -1961,6 +1963,8 @@
 		6E887CD2272C5F5000E83363 /* Checkbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
 		6E887CD4272C5F5A00E83363 /* CheckboxController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxController.swift; sourceTree = "<group>"; };
 		6E892F2D2E7A193200FB0EC4 /* PreferenceCenterContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterContent.swift; sourceTree = "<group>"; };
+		6E8932972E7B665200FB0EC4 /* APNSRegistrationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNSRegistrationResult.swift; sourceTree = "<group>"; };
+		6E8932992E7B66B600FB0EC4 /* NotificationRegistrationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRegistrationResult.swift; sourceTree = "<group>"; };
 		6E8B4BEF2888606400AA336E /* ChannelTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelTest.swift; sourceTree = "<group>"; };
 		6E8BDA162B62EC9F00711DB8 /* AutomationRemoteDataSubscriber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomationRemoteDataSubscriber.swift; sourceTree = "<group>"; };
 		6E8BDEFC2A67937E00F816D9 /* FeatureFlagInfoTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagInfoTest.swift; sourceTree = "<group>"; };
@@ -3516,12 +3520,14 @@
 		6E411D362538CF3900FEE4E8 /* Push */ = {
 			isa = PBXGroup;
 			children = (
+				6E8932992E7B66B600FB0EC4 /* NotificationRegistrationResult.swift */,
+				6E8932972E7B665200FB0EC4 /* APNSRegistrationResult.swift */,
 				6E0031AA2D08CC8A0004F53E /* AirshipAuthorizedNotificationSettings.swift */,
 				6E8CE760284136BF00CF4B11 /* Registration */,
 				6E49D7AF28401D2E00C7BB9D /* PushNotificationDelegate.swift */,
 				6E49D7AC28401D2D00C7BB9D /* RegistrationDelegate.swift */,
-				3CC8AA0526BB3C7900405614 /* Push.swift */,
-				3C63555F26CDD4F8006E9916 /* PushProtocol.swift */,
+				3CC8AA0526BB3C7900405614 /* AirshipPush.swift */,
+				3C63555F26CDD4F8006E9916 /* AirshipPushProtocol.swift */,
 				6EE49BDC2A09AD3600AB1CF4 /* AirshipNotificationStatus.swift */,
 			);
 			name = Push;
@@ -5705,6 +5711,7 @@
 				6E9D529B26C1A77C004EA16B /* ActionRegistry.swift in Sources */,
 				6E87BE0726E283850005D20D /* DeepLinkDelegate.swift in Sources */,
 				6E0105032DDFA719009D651F /* ScoreToggleLayout.swift in Sources */,
+				6E8932982E7B666000FB0EC4 /* APNSRegistrationResult.swift in Sources */,
 				6E60EF6A29DF542B003F7A8D /* AnonContactData.swift in Sources */,
 				6E6363EC29DDF84B009C358A /* SerialQueue.swift in Sources */,
 				6E40868E2B8D036600435E2C /* AirshipEmbeddedSize.swift in Sources */,
@@ -5907,7 +5914,7 @@
 				3CA84AAE26DE255200A59685 /* EventStore.swift in Sources */,
 				6E5A64C42AAB7D5C00574085 /* AirshipMeteredUsage.swift in Sources */,
 				6E6BD2462AEAFE7E00B9DFC9 /* DeferredAPIClient.swift in Sources */,
-				3CC8AA0626BB3C7900405614 /* Push.swift in Sources */,
+				3CC8AA0626BB3C7900405614 /* AirshipPush.swift in Sources */,
 				60EACF542B7BF2EA00CAFDBB /* AirshipApptimizeIntegration.swift in Sources */,
 				60D3BCCE2A15471C00E07524 /* AudienceHashSelector.swift in Sources */,
 				6E40868C2B8931C900435E2C /* AirshipViewSizeReader.swift in Sources */,
@@ -5917,6 +5924,7 @@
 				6ED735DA26C73DC5003B0A7D /* Channel.swift in Sources */,
 				6E1BACDB2719ED7D0038399E /* ScrollLayout.swift in Sources */,
 				6EF1E9282CD005E4005EAA07 /* PagerUtils.swift in Sources */,
+				6E89329A2E7B66C300FB0EC4 /* NotificationRegistrationResult.swift in Sources */,
 				6EED67C32CE1B5890087CDCB /* ThomasIcon.swift in Sources */,
 				6E49D7C028401D2E00C7BB9D /* UNNotificationRegistrar.swift in Sources */,
 				6EE49BE12A0AADC900AB1CF4 /* AppRemoteDataProviderDelegate.swift in Sources */,
@@ -6006,7 +6014,7 @@
 				6E2FA2892D51519B005893E2 /* ThomasEmailRegistrationOptions.swift in Sources */,
 				6EED68042CE26E1A0087CDCB /* ThomasMargin.swift in Sources */,
 				6E664BDF26C4CD8700A2C8E5 /* FetchDeviceInfoAction.swift in Sources */,
-				3C63556026CDD4F8006E9916 /* PushProtocol.swift in Sources */,
+				3C63556026CDD4F8006E9916 /* AirshipPushProtocol.swift in Sources */,
 				A6A5531326D548FF002B20F6 /* NativeBridgeActionHandler.swift in Sources */,
 				6E698E57267BF63B00654DB2 /* AppStateTrackerAdapter.swift in Sources */,
 				6EED676E2CDEE7EB0087CDCB /* ThomasPresentationInfo.swift in Sources */,

@@ -281,6 +281,12 @@ class AirshipEventsTest: XCTestCase {
 }
 
 private final class EventTestPush: AirshipPushProtocol, @unchecked Sendable {
+    var onAPNSRegistrationFinished: (@MainActor @Sendable (AirshipCore.APNSRegistrationResult) -> Void)?
+    
+    var onNotificationRegistrationFinished: (@MainActor @Sendable (AirshipCore.NotificationRegistrationResult) -> Void)?
+    
+    var onNotificationAuthorizedSettingsDidChange: (@MainActor @Sendable (AirshipCore.AirshipAuthorizedNotificationSettings) -> Void)?
+    
 
     var quietTime: QuietTimeSettings?
     

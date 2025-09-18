@@ -8,6 +8,22 @@ public import Combine
 /// Airship Push protocol.
 public protocol AirshipPushProtocol: AnyObject, Sendable {
 
+    /// If set, this block will be called when APNs registration succeeds or fails.
+    /// This will be called in place of the `RegistrationDelegate` delegates `apnsRegistrationSucceeded`
+    /// and `apnsRegistrationFailedWithError` methods.
+    @MainActor
+    var onAPNSRegistrationFinished: (@MainActor @Sendable (APNSRegistrationResult) -> Void)? { get set }
+
+    /// If set, this block will be called when the user notifications registration finishes.
+    /// This will be called in place of the `RegistrationDelegate` delegates `notificationRegistrationFinished` method.
+    @MainActor
+    var onNotificationRegistrationFinished: (@MainActor @Sendable (NotificationRegistrationResult) -> Void)? { get set }
+
+    /// If set, this block will be called when the notification authorization settings change.
+    /// This will be called in place of the of the `RegistrationDelegate` delegates  `notificationAuthorizedSettingsDidChange` method.
+    @MainActor
+    var onNotificationAuthorizedSettingsDidChange: (@MainActor @Sendable (AirshipAuthorizedNotificationSettings) -> Void)? { get set }
+
     /// Checks to see if push notifications are opted in.
     @MainActor
     var isPushNotificationsOptedIn: Bool { get }

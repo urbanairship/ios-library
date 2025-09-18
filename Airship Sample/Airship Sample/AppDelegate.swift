@@ -40,6 +40,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate, DeepLinkDelegate, Message
             return true
         }
 
+        Airship.push.onAPNSRegistrationFinished = { result in
+            switch(result) {
+            case .success(deviceToken: let deviceToken):
+                print("APNS registration succeeded :) \(deviceToken)")
+            case .failure(error: let error):
+                print("APNS registration failed :( \(error)")
+            @unknown default:
+                fatalError()
+            }
+        }
+
+        Airship.push.onNotificationRegistrationFinished = { result in
+            print("Notification registration finished \(result.status)")
+        }
+
+        Airship.push.onNotificationAuthorizedSettingsDidChange = { settings in
+            print("Authorized notification settings changed \(settings)")
+        }
+
         NotificationCenter.default.addObserver(
             forName: AppStateTracker.didBecomeActiveNotification,
             object: nil,
