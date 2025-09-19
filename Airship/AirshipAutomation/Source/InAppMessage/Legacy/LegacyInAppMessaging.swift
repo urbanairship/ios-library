@@ -16,7 +16,7 @@ public typealias MessageExtender = @Sendable (inout InAppMessage) -> Void
 public typealias ScheduleExtender = @Sendable (inout AutomationSchedule) -> Void
 
 /// Legacy in-app messaging protocol 
-public protocol LegacyInAppMessagingProtocol: AnyObject, Sendable {
+public protocol AirshipLegacyInAppMessaging: AnyObject, Sendable {
     /// Optional message converter from a `LegacyInAppMessage` to an `AutomationSchedule`
     @MainActor
     var customMessageConverter: MessageConvertor? { get set }
@@ -35,7 +35,7 @@ public protocol LegacyInAppMessagingProtocol: AnyObject, Sendable {
     var displayASAPEnabled: Bool  { get set }
 }
 
-protocol InternalLegacyInAppMessagingProtocol: LegacyInAppMessagingProtocol {
+protocol InternalAirshipLegacyInAppMessaging: AirshipLegacyInAppMessaging {
 #if !os(tvOS)
     func receivedNotificationResponse(_ response: UNNotificationResponse) async
 #endif
@@ -45,7 +45,7 @@ protocol InternalLegacyInAppMessagingProtocol: LegacyInAppMessagingProtocol {
     ) async -> UABackgroundFetchResult
 }
 
-final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, Sendable {
+final class DefaultAirshipLegacyInAppMessaging: AirshipLegacyInAppMessaging, Sendable {
 
     private let dataStore: PreferenceDataStore
     private let analytics: any LegacyInAppAnalyticsProtocol
@@ -212,7 +212,7 @@ final class LegacyInAppMessaging: LegacyInAppMessagingProtocol, Sendable {
     }
 }
 
-extension LegacyInAppMessaging: InternalLegacyInAppMessagingProtocol {
+extension DefaultAirshipLegacyInAppMessaging: InternalAirshipLegacyInAppMessaging {
 
 #if !os(tvOS)
     func receivedNotificationResponse(_ response: UNNotificationResponse) async {

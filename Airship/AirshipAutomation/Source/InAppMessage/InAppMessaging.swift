@@ -7,7 +7,7 @@ import AirshipCore
 #endif
 
 /// In-app messaging
-public protocol InAppMessagingProtocol: AnyObject, Sendable {
+public protocol AirshipInAppMessaging: AnyObject, Sendable {
 
     /// Theme manager
     @MainActor
@@ -43,7 +43,7 @@ public protocol InAppMessagingProtocol: AnyObject, Sendable {
     func notifyDisplayConditionsChanged()
 }
 
-final class InAppMessaging: InAppMessagingProtocol {
+final class DefaultAirshipInAppMessaging: AirshipInAppMessaging {
     let executor: InAppMessageAutomationExecutor
     let preparer: InAppMessageAutomationPreparer
 

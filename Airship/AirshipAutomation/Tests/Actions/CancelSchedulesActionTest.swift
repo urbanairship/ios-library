@@ -15,7 +15,7 @@ final class CancelSchedulesActionTest: XCTestCase {
         let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         let config = RuntimeConfig.testConfig()
         
-        let inAppAutomation = await InAppAutomation(
+        let inAppAutomation = await DefaultAirshipInAppAutomation(
             engine: automation,
             inAppMessaging: TestInAppMessaging(),
             legacyInAppMessaging: TestLegacyInAppMessaging(),
@@ -185,7 +185,7 @@ final class CancelSchedulesActionTest: XCTestCase {
     }
 }
 
-final class TestInAppMessaging: InAppMessagingProtocol, @unchecked Sendable {
+final class TestInAppMessaging: AirshipInAppMessaging, @unchecked Sendable {
     @MainActor
     var themeManager: InAppAutomationThemeManager = InAppAutomationThemeManager()
 
@@ -214,7 +214,7 @@ final class TestInAppMessaging: InAppMessagingProtocol, @unchecked Sendable {
     }
 }
 
-final class TestLegacyInAppMessaging: InternalLegacyInAppMessagingProtocol, @unchecked Sendable {
+final class TestLegacyInAppMessaging: InternalAirshipLegacyInAppMessaging, @unchecked Sendable {
     
     init(customMessageConverter: AirshipAutomation.MessageConvertor? = nil, messageExtender: AirshipAutomation.MessageExtender? = nil, scheduleExtender: AirshipAutomation.ScheduleExtender? = nil, displayASAPEnabled: Bool = true) {
         self.customMessageConverter = customMessageConverter

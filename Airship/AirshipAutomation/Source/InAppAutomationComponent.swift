@@ -15,9 +15,9 @@ import AirshipCore
 
 /// Actual airship component for InAppAutomation. Used to hide AirshipComponent methods.
 final class InAppAutomationComponent: AirshipComponent, AirshipPushableComponent {
-    let inAppAutomation: InAppAutomation
+    let inAppAutomation: DefaultAirshipInAppAutomation
 
-    init(inAppAutomation: InAppAutomation) {
+    init(inAppAutomation: DefaultAirshipInAppAutomation) {
         self.inAppAutomation = inAppAutomation
     }
 
