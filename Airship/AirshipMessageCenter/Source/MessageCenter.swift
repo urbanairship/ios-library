@@ -31,21 +31,61 @@ public protocol MessageCenterDisplayDelegate {
     func dismissMessageCenter()
 }
 
-/// Airship Message Center module.
-public final class MessageCenter: Sendable {
+/// Airship Message Center Protocol.
+@MainActor
+public protocol MessageCenterProtocol: AnyObject, Sendable {
+    
+    /// Called when the Message Center is requested to be displayed.
+    /// Return `true` if the display was handled, `false` to fall back to default SDK behavior.
+    var onDisplay: (@MainActor @Sendable (_ messageID: String?) -> Bool)? { get set }
 
-    /// If set, this block will be called when the Message Center is requested to be displayed.
-    /// This will be called in place of the `displayMessageCenter` delegate method.
-    /// The block should return `true` if the display was handled, or `false` to fall back to the default SDK behavior.
+    /// Called when the Message Center is requested to be dismissed.
+    var onDismissDisplay: (@MainActor @Sendable () -> Void)? { get set }
+
+    /// Message center display delegate.
+    var displayDelegate: (any MessageCenterDisplayDelegate)? { get set }
+
+    /// Message center inbox.
+    var inbox: any MessageCenterInboxProtocol { get }
+
+    /// The message center controller.
+    var controller: MessageCenterController { get set }
+
+    /// Default message center theme.
+    var theme: MessageCenterTheme? { get set }
+
+    /// Default message center predicate. Only applies to the OOTB Message Center. If you are embedding the MessageCenterView directly
+    ///  you should pass the predicate in through the view extension `.messageCenterPredicate(_:)`.
+    var predicate: (any MessageCenterPredicate)? { get set }
+
+    /// Loads a Message center theme from a plist file. If you are embedding the MessageCenterView directly
+    ///  you should pass the theme in through the view extension `.messageCenterTheme(_:)`.
+    /// - Parameters:
+    ///     - plist: The name of the plist in the bundle.
+    func setThemeFromPlist(_ plist: String) throws
+
+    /// Display the message center.
+    func display()
+
+    /// Display the given message with animation.
+    /// - Parameters:
+    ///     - messageID:  The messageID of the message.
+    func display(messageID: String)
+
+    /// Dismiss the message center.
+    func dismiss()
+}
+
+
+/// Airship Message Center module.
+final class MessageCenter: MessageCenterProtocol {
+
     @MainActor
     public var onDisplay: (@MainActor @Sendable (_ messageID: String?) -> Bool)?
 
-    /// If set, this block will be called when the Message Center is requested to be dismissed.
-    /// This will be called in place of the `dismissMessageCenter` delegate method.
     @MainActor
     public var onDismissDisplay: (@MainActor @Sendable () -> Void)?
 
-    /// Message center display delegate.
     @MainActor
     public var displayDelegate: (any MessageCenterDisplayDelegate)? {
         get {
@@ -59,10 +99,8 @@ public final class MessageCenter: Sendable {
     private let mutable: MutableValues
     private let privacyManager: any PrivacyManagerProtocol
 
-    /// Message center inbox.
     public let inbox: any MessageCenterInboxProtocol
 
-    /// The message center controller.
     @MainActor
     public var controller: MessageCenterController {
         get {
@@ -73,8 +111,6 @@ public final class MessageCenter: Sendable {
         }
     }
 
-    /// Default message center theme. Only applies to the OOTB Message Center. If you are embedding the MessageCenterView directly
-    ///  you should pass the theme in through the view extension `.messageCenterTheme(_:)`.
     @MainActor
     public var theme: MessageCenterTheme? {
         get {
@@ -85,17 +121,11 @@ public final class MessageCenter: Sendable {
         }
     }
 
-    /// Loads a Message center theme from a plist file. If you are embedding the MessageCenterView directly
-    ///  you should pass the theme in through the view extension `.messageCenterTheme(_:)`.
-    /// - Parameters:
-    ///     - plist: The name of the plist in the bundle.
     @MainActor
     public func setThemeFromPlist(_ plist: String) throws {
         self.theme = try MessageCenterTheme.fromPlist(plist)
     }
 
-    /// Default message center predicate. Only applies to the OOTB Message Center. If you are embedding the MessageCenterView directly
-    ///  you should pass the predicate in through the view extension `.messageCenterPredicate(_:)`.
     @MainActor
     public var predicate: (any MessageCenterPredicate)? {
         get {
@@ -112,7 +142,7 @@ public final class MessageCenter: Sendable {
 
     /// The shared MessageCenter instance. `Airship.takeOff` must be called before accessing this instance.
     @available(*, deprecated, message: "Use Airship.messageCenter instead")
-    public static var shared: MessageCenter {
+    public static var shared: any MessageCenterProtocol {
         return Airship.messageCenter
     }
     
@@ -142,7 +172,9 @@ public final class MessageCenter: Sendable {
             object: nil,
             queue: nil
         ) { [weak self, inbox] _ in
-            inbox.enabled = self?.enabled ?? false
+            Task { @MainActor in
+                inbox.enabled = self?.enabled ?? false
+            }
         }
 
         inbox.enabled = self.enabled
@@ -174,7 +206,6 @@ public final class MessageCenter: Sendable {
         )
     }
 
-    /// Display the message center.
     @MainActor
     public func display() {
         guard self.enabled else {
@@ -204,9 +235,6 @@ public final class MessageCenter: Sendable {
         self.controller.navigate(messageID: nil)
     }
 
-    /// Display the given message with animation.
-    /// - Parameters:
-    ///     - messageID:  The messageID of the message.
     @MainActor
     public func display(messageID: String) {
         guard self.enabled else {
@@ -236,7 +264,6 @@ public final class MessageCenter: Sendable {
         self.controller.navigate(messageID: messageID)
     }
 
-    /// Dismiss the message center.
     @MainActor
     public func dismiss() {
         if let onDismissDisplay {
@@ -388,7 +415,10 @@ extension MessageCenter {
 
 public extension Airship {
     /// The shared MessageCenter instance. `Airship.takeOff` must be called before accessing this instance.
-    static var messageCenter: MessageCenter {
-        return Airship.requireComponent(ofType: MessageCenterComponent.self).messageCenter
-    }
+    @MainActor
+    static var messageCenter: any MessageCenterProtocol  {
+            Airship.requireComponent(
+               ofType: MessageCenterComponent.self
+           ).messageCenter
+        }
 }
