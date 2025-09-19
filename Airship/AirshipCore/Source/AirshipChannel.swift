@@ -8,7 +8,7 @@ public import ActivityKit
 #endif
 
 /// Airship Channel protocol.
-public protocol AirshipChannelProtocol: AnyObject, Sendable {
+public protocol AirshipChannel: AnyObject, Sendable {
     /**
      * The Channel ID.
      */
@@ -150,7 +150,7 @@ public protocol AirshipChannelProtocol: AnyObject, Sendable {
 }
 
 /// NOTE: For internal use only. :nodoc:
-public protocol InternalAirshipChannelProtocol: AirshipChannelProtocol {
+public protocol InternalAirshipChannel: AirshipChannel {
     @MainActor
     func addRegistrationExtender(
         _ extender: @Sendable @escaping (inout ChannelRegistrationPayload) async -> Void

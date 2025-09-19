@@ -14,7 +14,7 @@ class ChannelTest: XCTestCase {
     private var config = AirshipConfig()
     private var privacyManager: TestPrivacyManager!
     private var permissionsManager: AirshipPermissionsManager!
-    private var channel: AirshipChannel!
+    private var channel: DefaultAirshipChannel!
 
     override func setUp() async throws {
         self.privacyManager = TestPrivacyManager(
@@ -30,8 +30,8 @@ class ChannelTest: XCTestCase {
     }
 
     @MainActor
-    private func createChannel() -> AirshipChannel {
-        return AirshipChannel(
+    private func createChannel() -> DefaultAirshipChannel {
+        return DefaultAirshipChannel(
             dataStore: self.dataStore,
             config: .testConfig(airshipConfig: self.config),
             privacyManager: self.privacyManager,

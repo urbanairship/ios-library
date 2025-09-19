@@ -11,7 +11,7 @@ public struct AirshipNotificationStatus: Sendable, Equatable {
     /// If notifications are either  ephemeral or granted and has at least one authorized type.
     public let areNotificationsAllowed: Bool
 
-    /// If the push feature is enabled on AirshipPrivacyManager.
+    /// If the push feature is enabled on `AirshipPrivacyManager`.
     public let isPushPrivacyFeatureEnabled: Bool
 
     /// If a push token is generated.

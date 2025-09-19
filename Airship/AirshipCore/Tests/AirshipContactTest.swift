@@ -18,13 +18,13 @@ class AirshipContactTest: XCTestCase {
     private let audienceOverridesProvider: DefaultAudienceOverridesProvider = DefaultAudienceOverridesProvider()
     private let contactManager: TestContactManager = TestContactManager()
     private var contactQueue: AirshipAsyncSerialQueue!
-    private var contact: AirshipContact!
-    private var privacyManager: AirshipPrivacyManager!
+    private var contact: DefaultAirshipContact!
+    private var privacyManager: DefaultAirshipPrivacyManager!
     private var config: RuntimeConfig = RuntimeConfig.testConfig()
     private var subscriptionProvider: SubscriptionListProviderProtocol!
 
     override func setUp() async throws {
-        self.privacyManager = await AirshipPrivacyManager(
+        self.privacyManager = await DefaultAirshipPrivacyManager(
             dataStore: self.dataStore,
             config: self.config,
             defaultEnabledFeatures: .all,
@@ -47,7 +47,7 @@ class AirshipContactTest: XCTestCase {
     func setupContact()  {
         contactQueue = AirshipAsyncSerialQueue(priority: .high)
 
-        self.contact =  AirshipContact(
+        self.contact =  DefaultAirshipContact(
             dataStore: self.dataStore,
             config: config,
             channel: self.channel,
@@ -83,7 +83,7 @@ class AirshipContactTest: XCTestCase {
 
         dataStore.setObject(
             attributeData,
-            forKey: AirshipContact.legacyPendingAttributesKey
+            forKey: DefaultAirshipContact.legacyPendingAttributesKey
         )
 
         let tagMutation = TagGroupsMutation(
@@ -95,11 +95,11 @@ class AirshipContactTest: XCTestCase {
             withRootObject: [tagMutation],
             requiringSecureCoding: true
         )
-        dataStore.setObject(tagData, forKey: AirshipContact.legacyPendingTagGroupsKey)
+        dataStore.setObject(tagData, forKey: DefaultAirshipContact.legacyPendingTagGroupsKey)
 
         self.dataStore.setObject(
             "named-user",
-            forKey: AirshipContact.legacyNamedUserKey
+            forKey: DefaultAirshipContact.legacyNamedUserKey
         )
 
         await setupContact()
@@ -127,11 +127,11 @@ class AirshipContactTest: XCTestCase {
             withRootObject: [tagMutation],
             requiringSecureCoding: true
         )
-        dataStore.setObject(tagData, forKey: AirshipContact.legacyPendingTagGroupsKey)
+        dataStore.setObject(tagData, forKey: DefaultAirshipContact.legacyPendingTagGroupsKey)
 
         self.dataStore.setObject(
             "named-user",
-            forKey: AirshipContact.legacyNamedUserKey
+            forKey: DefaultAirshipContact.legacyNamedUserKey
         )
 
         await self.contactManager.setCurrentContactIDInfo(
@@ -184,7 +184,7 @@ class AirshipContactTest: XCTestCase {
                 contactID: "some-other-contact-id",
                 isStable: false,
                 namedUserID: nil,
-                resolveDate: date.advanced(by: -AirshipContact.defaultVerifiedContactIDAge)
+                resolveDate: date.advanced(by: -DefaultAirshipContact.defaultVerifiedContactIDAge)
             )
         )
 
@@ -193,7 +193,7 @@ class AirshipContactTest: XCTestCase {
                 contactID: "some-stable-contact-id",
                 isStable: true,
                 namedUserID: nil,
-                resolveDate: date.advanced(by: -AirshipContact.defaultVerifiedContactIDAge)
+                resolveDate: date.advanced(by: -DefaultAirshipContact.defaultVerifiedContactIDAge)
             )
         )
         await contactManager.setCurrentContactIDInfo(
@@ -315,7 +315,7 @@ class AirshipContactTest: XCTestCase {
         await verifyOperations([.resolve])
 
         // Default is 60 seconds
-        self.date.offset += AirshipContact.defaultForegroundResolveInterval - 1.0
+        self.date.offset += DefaultAirshipContact.defaultForegroundResolveInterval - 1.0
 
         notificationCenter.post(
             name: AppStateTracker.didBecomeActiveNotification

@@ -83,7 +83,7 @@ public final class AirshipDebugManager: @unchecked Sendable {
 
     init(
         config: RuntimeConfig,
-        analytics: any AirshipAnalyticsProtocol,
+        analytics: any AirshipAnalytics,
         remoteData: any RemoteDataProtocol
     ) {
         self.remoteData = remoteData

@@ -2,7 +2,7 @@ import Foundation
 
 @testable public import AirshipCore
 
-public class TestLocaleManager: AirshipLocaleManagerProtocol, @unchecked Sendable {
+public class TestLocaleManager: AirshipLocaleManager, @unchecked Sendable {
 
     public var _locale: Locale? = nil
 

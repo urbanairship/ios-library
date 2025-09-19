@@ -20,13 +20,13 @@ import UserNotifications
 // NOTE: For internal use only. :nodoc:
 final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sendable {
 
-    let push: any InternalPushProtocol
-    let analytics: any InternalAnalyticsProtocol
+    let push: any InternalAirshipPush
+    let analytics: any InternalAirshipAnalytics
     let pushableComponents: [any AirshipPushableComponent]
 
     init(
-        push: any InternalPushProtocol,
-        analytics: any InternalAnalyticsProtocol,
+        push: any InternalAirshipPush,
+        analytics: any InternalAirshipAnalytics,
         pushableComponents: [any AirshipPushableComponent]
     ) {
         self.push = push

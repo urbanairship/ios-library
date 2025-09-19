@@ -3,7 +3,7 @@ import Combine
 
 @testable import AirshipCore
 
-class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked Sendable {
+class TestContact: InternalAirshipContact, AirshipComponent, @unchecked Sendable {
     var contactChannelUpdates: AsyncStream<AirshipCore.ContactChannelsResult> = AsyncStream<ContactChannelsResult>.init { _ in }
 
     var contactChannelPublisher: AnyPublisher<AirshipCore.ContactChannelsResult, Never> = Just(.success([])).eraseToAnyPublisher()

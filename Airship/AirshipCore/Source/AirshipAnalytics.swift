@@ -8,7 +8,7 @@ import UserNotifications
 #endif
 
 /// Analytics protocol
-public protocol AirshipAnalyticsProtocol: AnyObject, Sendable {
+public protocol AirshipAnalytics: AnyObject, Sendable {
 
     /// The conversion send ID. :nodoc:
     var conversionSendID: String? { get }
@@ -63,7 +63,7 @@ public protocol AirshipAnalyticsProtocol: AnyObject, Sendable {
 
 /// Internal Analytics protocol
 /// For internal use only. :nodoc:
-public protocol InternalAnalyticsProtocol: AirshipAnalyticsProtocol {
+public protocol InternalAirshipAnalytics: AirshipAnalytics {
     var eventFeed: AirshipAnalyticsFeed { get }
 
     @MainActor

@@ -20,7 +20,7 @@ protocol AutomationDelayProcessorProtocol: Sendable {
 }
 
 final class AutomationDelayProcessor: AutomationDelayProcessorProtocol {
-    private let analytics: any InternalAnalyticsProtocol
+    private let analytics: any InternalAirshipAnalytics
     private let appStateTracker: any AppStateTrackerProtocol
     private let taskSleeper: any AirshipTaskSleeper
     private let date: any AirshipDateProtocol
@@ -31,7 +31,7 @@ final class AutomationDelayProcessor: AutomationDelayProcessorProtocol {
 
     @MainActor
     init(
-        analytics: any InternalAnalyticsProtocol,
+        analytics: any InternalAirshipAnalytics,
         appStateTracker: (any AppStateTrackerProtocol)? = nil,
         taskSleeper: any AirshipTaskSleeper = .shared,
         date: any AirshipDateProtocol = AirshipDate.shared,

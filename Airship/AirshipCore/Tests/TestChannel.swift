@@ -5,7 +5,7 @@ import ActivityKit
 import AirshipCore
 import Combine
 
-class TestChannel: NSObject, AirshipChannelProtocol, AirshipComponent, @unchecked Sendable {
+class TestChannel: NSObject, AirshipChannel, AirshipComponent, @unchecked Sendable {
     private var identifierSubject: CurrentValueSubject<String?, Never> = CurrentValueSubject(nil)
 
     var identifierUpdates: AsyncStream<String> {
@@ -172,7 +172,7 @@ class TestChannel: NSObject, AirshipChannelProtocol, AirshipComponent, @unchecke
 
 }
 
-extension TestChannel: InternalAirshipChannelProtocol {
+extension TestChannel: InternalAirshipChannel {
     func clearSubscriptionListsCache() {
 
     }

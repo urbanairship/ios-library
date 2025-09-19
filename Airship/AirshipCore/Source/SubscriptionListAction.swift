@@ -20,8 +20,8 @@ public final class SubscriptionListAction: AirshipAction {
         return args.metadata[ActionArguments.isForegroundPresentationMetadataKey] as? Bool != true
     }
 
-    private let channel: @Sendable () -> any AirshipChannelProtocol
-    private let contact: @Sendable () -> any AirshipContactProtocol
+    private let channel: @Sendable () -> any AirshipChannel
+    private let contact: @Sendable () -> any AirshipContact
   
     private var decoder: JSONDecoder {
         let decoder = JSONDecoder()
@@ -42,8 +42,8 @@ public final class SubscriptionListAction: AirshipAction {
 
 
     init(
-        channel: @escaping @Sendable () -> any AirshipChannelProtocol,
-        contact: @escaping @Sendable () -> any AirshipContactProtocol
+        channel: @escaping @Sendable () -> any AirshipChannel,
+        contact: @escaping @Sendable () -> any AirshipContact
     ) {
         self.channel = channel
         self.contact = contact

@@ -6,7 +6,7 @@ import UserNotifications
 public import Combine
 
 /// Airship Push protocol.
-public protocol AirshipPushProtocol: AnyObject, Sendable {
+public protocol AirshipPush: AnyObject, Sendable {
 
     /// If set, this block will be called when APNs registration succeeds or fails.
     /// This will be called in place of the `RegistrationDelegate` delegates `apnsRegistrationSucceeded`
@@ -218,7 +218,7 @@ public protocol AirshipPushProtocol: AnyObject, Sendable {
     var onExtendPresentationOptions: (@MainActor @Sendable (UNNotificationPresentationOptions, UNNotification) async -> UNNotificationPresentationOptions)? { get set }
 }
 
-protocol InternalPushProtocol: Sendable {
+protocol InternalAirshipPush: Sendable {
     @MainActor
     var deviceToken: String? { get }
     

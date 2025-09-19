@@ -82,7 +82,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
 
     let registrationUpdates: AirshipAsyncChannel<ChannelRegistrationUpdate> = .init()
 
-    private let privacyManager: any AirshipPrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManager
 
     @MainActor
     init(
@@ -92,7 +92,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
         workManager: any AirshipWorkManagerProtocol = AirshipWorkManager.shared,
         appStateTracker: (any AppStateTrackerProtocol)? = nil,
         channelCreateMethod: AirshipChannelCreateOptionClosure? = nil,
-        privacyManager: any AirshipPrivacyManagerProtocol
+        privacyManager: any AirshipPrivacyManager
     ) {
         self.dataStore = dataStore
         self.channelAPIClient = channelAPIClient
@@ -122,7 +122,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        privacyManager: any AirshipPrivacyManagerProtocol
+        privacyManager: any AirshipPrivacyManager
     ) {
         self.init(
             dataStore: dataStore,

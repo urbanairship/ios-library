@@ -5,8 +5,8 @@ import Foundation
 @testable
 import AirshipCore
 
-final class TestAirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
-    var inputValidator: any AirshipCore.AirshipInputValidation.Validator {
+final class TestAirshipInstance: AirshipInstance, @unchecked Sendable {
+    var inputValidator: any AirshipInputValidation.Validator {
         fatalError("Not implemented")
     }
 
@@ -47,8 +47,8 @@ final class TestAirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
         }
     }
 
-    private var _urlAllowList: URLAllowListProtocol?
-    public var urlAllowList: URLAllowListProtocol {
+    private var _urlAllowList: (any AirshipURLAllowList)?
+    public var urlAllowList: any AirshipURLAllowList {
         get {
             return _urlAllowList!
         }
@@ -57,7 +57,7 @@ final class TestAirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
         }
     }
 
-    private var _localeManager: AirshipLocaleManager?
+    private var _localeManager: (any AirshipLocaleManager)?
     public var localeManager: AirshipLocaleManager {
         get {
             return _localeManager!
@@ -67,8 +67,8 @@ final class TestAirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
         }
     }
 
-    private var _privacyManager: AirshipPrivacyManager?
-    public var privacyManager: AirshipPrivacyManager {
+    private var _privacyManager: (any InternalAirshipPrivacyManager)?
+    public var privacyManager: any InternalAirshipPrivacyManager {
         get {
             return _privacyManager!
         }
@@ -82,7 +82,7 @@ final class TestAirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
     public var deepLinkDelegate: DeepLinkDelegate?
 
     @MainActor
-    public var deepLinkHandler: (@MainActor @Sendable (URL) async -> Void)?
+    public var onDeepLink: (@MainActor @Sendable (URL) async -> Void)?
 
     public var components: [AirshipComponent] = []
 

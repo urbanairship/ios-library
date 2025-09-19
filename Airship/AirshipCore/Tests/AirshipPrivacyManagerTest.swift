@@ -3,15 +3,15 @@ import XCTest
 @testable
 import AirshipCore
 
-class AirshipPrivacyManagerTest: XCTestCase {
+class DefaultAirshipPrivacyManagerTest: XCTestCase {
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
 
     private var config: RuntimeConfig = RuntimeConfig.testConfig()
 
-    private var privacyManager: AirshipPrivacyManager!
+    private var privacyManager: DefaultAirshipPrivacyManager!
     override func setUp() async throws {
-        self.privacyManager = await AirshipPrivacyManager(
+        self.privacyManager = await DefaultAirshipPrivacyManager(
             dataStore: dataStore,
             config: self.config,
             defaultEnabledFeatures: .all,
@@ -22,7 +22,7 @@ class AirshipPrivacyManagerTest: XCTestCase {
     func testDefaultFeatures() async {
         XCTAssertEqual(self.privacyManager.enabledFeatures, .all)
 
-        self.privacyManager = await AirshipPrivacyManager(
+        self.privacyManager = await DefaultAirshipPrivacyManager(
             dataStore: dataStore,
             config: self.config,
             defaultEnabledFeatures: [],

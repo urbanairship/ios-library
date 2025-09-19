@@ -15,7 +15,7 @@ import Foundation
 /// - Platform
 /// - Opt in state (push and notifications)
 /// - SDK version
-public protocol AirshipPrivacyManagerProtocol: AnyObject, Sendable {
+public protocol AirshipPrivacyManager: AnyObject, Sendable {
     /// The current set of enabled features.
     var enabledFeatures: AirshipFeature { get set }
 
@@ -41,7 +41,7 @@ public protocol AirshipPrivacyManagerProtocol: AnyObject, Sendable {
 }
 
 
-protocol InternalAirshipPrivacyManagerProtocol: AirshipPrivacyManagerProtocol {
+protocol InternalAirshipPrivacyManager: AirshipPrivacyManager {
     /// Checks if any feature is enabled.
     /// - Parameters:
     ///     - ignoringRemoteConfig: true to ignore any remotely disable features, false to include them.
@@ -50,7 +50,7 @@ protocol InternalAirshipPrivacyManagerProtocol: AirshipPrivacyManagerProtocol {
     func isAnyFeatureEnabled(ignoringRemoteConfig: Bool) -> Bool
 }
 
-final class AirshipPrivacyManager: InternalAirshipPrivacyManagerProtocol {
+final class DefaultAirshipPrivacyManager: InternalAirshipPrivacyManager {
     private static let enabledFeaturesKey = "com.urbanairship.privacymanager.enabledfeatures"
 
     private let legacyIAAEnableFlag = "UAInAppMessageManagerEnabled"
@@ -71,7 +71,7 @@ final class AirshipPrivacyManager: InternalAirshipPrivacyManagerProtocol {
 
     private var localEnabledFeatures: AirshipFeature {
         get {
-            guard let fromStore = self.dataStore.unsignedInteger(forKey: AirshipPrivacyManager.enabledFeaturesKey) else {
+            guard let fromStore = self.dataStore.unsignedInteger(forKey: DefaultAirshipPrivacyManager.enabledFeaturesKey) else {
                 return self.defaultEnabledFeatures
             }
             
@@ -82,7 +82,7 @@ final class AirshipPrivacyManager: InternalAirshipPrivacyManagerProtocol {
         set {
             self.dataStore.setValue(
                 newValue.rawValue,
-                forKey: AirshipPrivacyManager.enabledFeaturesKey
+                forKey: DefaultAirshipPrivacyManager.enabledFeaturesKey
             )
         }
     }
@@ -113,7 +113,7 @@ final class AirshipPrivacyManager: InternalAirshipPrivacyManagerProtocol {
         self.notificationCenter = notificationCenter
 
         if config.airshipConfig.resetEnabledFeatures {
-            self.dataStore.removeObject(forKey:  AirshipPrivacyManager.enabledFeaturesKey)
+            self.dataStore.removeObject(forKey:  DefaultAirshipPrivacyManager.enabledFeaturesKey)
         } 
 
         self.lastUpdated.value = self.enabledFeatures

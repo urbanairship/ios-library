@@ -16,7 +16,7 @@ import UIKit
 
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
-final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
+final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
 
     private let pushTokenChannel = AirshipAsyncChannel<String>()
 
@@ -69,8 +69,8 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
 
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
-    private let channel: any InternalAirshipChannelProtocol
-    private let privacyManager: any AirshipPrivacyManagerProtocol
+    private let channel: any InternalAirshipChannel
+    private let privacyManager: any AirshipPrivacyManager
     private let permissionsManager: AirshipPermissionsManager
     private let notificationCenter: AirshipNotificationCenter
     private let notificationRegistrar: any NotificationRegistrar
@@ -134,9 +134,9 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: any InternalAirshipChannelProtocol,
-        analytics: any InternalAnalyticsProtocol,
-        privacyManager: any AirshipPrivacyManagerProtocol,
+        channel: any InternalAirshipChannel,
+        analytics: any InternalAirshipAnalytics,
+        privacyManager: any AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         notificationRegistrar: any NotificationRegistrar =
@@ -184,7 +184,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         ) {
             self.dataStore.setBool(
                 true,
-                forKey: AirshipPush.userPushNotificationsEnabledKey
+                forKey: DefaultAirshipPush.userPushNotificationsEnabledKey
             )
             self.privacyManager.enableFeatures(.push)
             self.channel.updateRegistration()
@@ -259,7 +259,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
             let previous = self.backgroundPushNotificationsEnabled
             self.dataStore.setBool(
                 newValue,
-                forKey: AirshipPush.backgroundPushNotificationsEnabledKey
+                forKey: DefaultAirshipPush.backgroundPushNotificationsEnabledKey
             )
             if !previous == newValue {
                 self.channel.updateRegistration()
@@ -267,7 +267,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         }
         get {
             return self.dataStore.bool(
-                forKey: AirshipPush.backgroundPushNotificationsEnabledKey,
+                forKey: DefaultAirshipPush.backgroundPushNotificationsEnabledKey,
                 defaultValue: true
             )
         }
@@ -280,7 +280,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
             let previous = self.userPushNotificationsEnabled
             self.dataStore.setBool(
                 newValue,
-                forKey: AirshipPush.userPushNotificationsEnabledKey
+                forKey: DefaultAirshipPush.userPushNotificationsEnabledKey
             )
             if previous != newValue {
                 self.dispatchUpdateNotifications()
@@ -291,7 +291,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
 
         get {
             return self.dataStore.bool(
-                forKey: AirshipPush.userPushNotificationsEnabledKey
+                forKey: DefaultAirshipPush.userPushNotificationsEnabledKey
             )
         }
     }
@@ -305,14 +305,14 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
             if previous != newValue {
                 self.dataStore.setBool(
                     newValue,
-                    forKey: AirshipPush.requestExplicitPermissionWhenEphemeralKey
+                    forKey: DefaultAirshipPush.requestExplicitPermissionWhenEphemeralKey
                 )
                 self.dispatchUpdateNotifications()
             }
         }
         get {
             return self.dataStore.bool(
-                forKey: AirshipPush.requestExplicitPermissionWhenEphemeralKey
+                forKey: DefaultAirshipPush.requestExplicitPermissionWhenEphemeralKey
             )
         }
     }
@@ -322,7 +322,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
     public private(set) var deviceToken: String? {
         set {
             guard let deviceToken = newValue else {
-                self.dataStore.removeObject(forKey: AirshipPush.deviceTokenKey)
+                self.dataStore.removeObject(forKey: DefaultAirshipPush.deviceTokenKey)
                 self.updateNotificationStatus()
                 return
             }
@@ -351,7 +351,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
 
                 self.dataStore.setObject(
                     deviceToken,
-                    forKey: AirshipPush.deviceTokenKey
+                    forKey: DefaultAirshipPush.deviceTokenKey
                 )
                 AirshipLogger.importantInfo("Device token: \(deviceToken)")
                 Task {
@@ -365,7 +365,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         }
 
         get {
-            return self.dataStore.string(forKey: AirshipPush.deviceTokenKey)
+            return self.dataStore.string(forKey: DefaultAirshipPush.deviceTokenKey)
         }
     }
 
@@ -379,7 +379,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
             let previous = self.notificationOptions
             self.dataStore.setObject(
                 newValue.rawValue,
-                forKey: AirshipPush.pushNotificationsOptionsKey
+                forKey: DefaultAirshipPush.pushNotificationsOptionsKey
             )
             if previous != newValue {
                 self.dispatchUpdateNotifications()
@@ -389,7 +389,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         get {
             guard
                 let value = self.dataStore.object(
-                    forKey: AirshipPush.pushNotificationsOptionsKey
+                    forKey: DefaultAirshipPush.pushNotificationsOptionsKey
                 ) as? UInt
             else {
                 #if os(tvOS)
@@ -455,14 +455,14 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         set {
             self.dataStore.setInteger(
                 Int(newValue.rawValue),
-                forKey: AirshipPush.typesAuthorizedKey
+                forKey: DefaultAirshipPush.typesAuthorizedKey
             )
         }
 
         get {
             guard
                 let value = self.dataStore.object(
-                    forKey: AirshipPush.typesAuthorizedKey
+                    forKey: DefaultAirshipPush.typesAuthorizedKey
                 )
                     as? Int
             else {
@@ -477,14 +477,14 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         set {
             self.dataStore.setInteger(
                 newValue.rawValue,
-                forKey: AirshipPush.authorizationStatusKey
+                forKey: DefaultAirshipPush.authorizationStatusKey
             )
         }
 
         get {
             guard
                 let value = self.dataStore.object(
-                    forKey: AirshipPush.authorizationStatusKey
+                    forKey: DefaultAirshipPush.authorizationStatusKey
                 )
                     as? Int
             else {
@@ -500,12 +500,12 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         set {
             self.dataStore.setBool(
                 newValue,
-                forKey: AirshipPush.userPromptedForNotificationsKey
+                forKey: DefaultAirshipPush.userPromptedForNotificationsKey
             )
         }
         get {
             return self.dataStore.bool(
-                forKey: AirshipPush.userPromptedForNotificationsKey
+                forKey: DefaultAirshipPush.userPromptedForNotificationsKey
             )
         }
     }
@@ -580,7 +580,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
 
         self.dataStore.setBool(
             true,
-            forKey: AirshipPush.userPushNotificationsEnabledKey
+            forKey: DefaultAirshipPush.userPushNotificationsEnabledKey
         )
 
         let result = await self.permissionsManager.requestPermission(
@@ -616,7 +616,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
 
         let cancelTask = Task { @MainActor in
             try await Task.sleep(
-                nanoseconds: UInt64(AirshipPush.deviceTokenRegistrationWaitTime * 1_000_000_000)
+                nanoseconds: UInt64(DefaultAirshipPush.deviceTokenRegistrationWaitTime * 1_000_000_000)
             )
             try Task.checkCancellation()
             waitTask.cancel()
@@ -785,7 +785,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
             if self.autobadgeEnabled != newValue {
                 self.dataStore.setBool(
                     newValue,
-                    forKey: AirshipPush.badgeSettingsKey
+                    forKey: DefaultAirshipPush.badgeSettingsKey
                 )
 
                 if privacyManager.isEnabled(.push) {
@@ -795,7 +795,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         }
 
         get {
-            return self.dataStore.bool(forKey: AirshipPush.badgeSettingsKey)
+            return self.dataStore.bool(forKey: DefaultAirshipPush.badgeSettingsKey)
         }
     }
 
@@ -832,13 +832,13 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         set {
             self.dataStore.setObject(
                 newValue?.name ?? nil,
-                forKey: AirshipPush.timeZoneSettingsKey
+                forKey: DefaultAirshipPush.timeZoneSettingsKey
             )
         }
 
         get {
             let timeZoneName =
-                self.dataStore.string(forKey: AirshipPush.timeZoneSettingsKey) ?? ""
+                self.dataStore.string(forKey: DefaultAirshipPush.timeZoneSettingsKey) ?? ""
             return NSTimeZone(name: timeZoneName) ?? NSTimeZone.default
                 as NSTimeZone
         }
@@ -849,12 +849,12 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         set {
             self.dataStore.setBool(
                 newValue,
-                forKey: AirshipPush.quietTimeEnabledSettingsKey
+                forKey: DefaultAirshipPush.quietTimeEnabledSettingsKey
             )
         }
 
         get {
-            return self.dataStore.bool(forKey: AirshipPush.quietTimeEnabledSettingsKey)
+            return self.dataStore.bool(forKey: DefaultAirshipPush.quietTimeEnabledSettingsKey)
         }
     }
 
@@ -1045,7 +1045,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
 }
 
 /// - Note: For internal use only. :nodoc:
-extension AirshipPush: InternalPushProtocol {
+extension DefaultAirshipPush: InternalAirshipPush {
     
     public func dispatchUpdateAuthorizedNotificationTypes() {
         self.serialQueue.enqueue {
@@ -1100,16 +1100,16 @@ extension AirshipPush: InternalPushProtocol {
                 // build the options bitmask from the array
                 for presentationOption in payloadPresentationOptions {
                     switch presentationOption {
-                    case AirshipPush.presentationOptionBadge:
+                    case DefaultAirshipPush.presentationOptionBadge:
                         options.insert(.badge)
-                    case AirshipPush.presentationOptionAlert:
+                    case DefaultAirshipPush.presentationOptionAlert:
                         options.insert(.list)
                         options.insert(.banner)
-                    case AirshipPush.presentationOptionSound:
+                    case DefaultAirshipPush.presentationOptionSound:
                         options.insert(.sound)
-                    case AirshipPush.presentationOptionList:
+                    case DefaultAirshipPush.presentationOptionList:
                         options.insert(.list)
-                    case AirshipPush.presentationOptionBanner:
+                    case DefaultAirshipPush.presentationOptionBanner:
                         options.insert(.banner)
                     default:
                         break
@@ -1219,14 +1219,14 @@ extension AirshipPush: InternalPushProtocol {
         // get the presentation options from the the notification
         presentationOptions =
         notification.request.content.userInfo[
-            AirshipPush.ForegroundPresentationkey
+            DefaultAirshipPush.ForegroundPresentationkey
         ]
         as? [String]
 
         if presentationOptions == nil {
             presentationOptions =
             notification.request.content.userInfo[
-                AirshipPush.ForegroundPresentationLegacykey
+                DefaultAirshipPush.ForegroundPresentationLegacykey
             ] as? [String]
         }
         #endif
@@ -1253,7 +1253,7 @@ extension UNNotification {
 #endif
 
 
-extension AirshipPush: AirshipComponent {}
+extension DefaultAirshipPush: AirshipComponent {}
 
 
 public extension AirshipNotifications {

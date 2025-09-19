@@ -3,7 +3,7 @@
 @testable import AirshipCore
 import Foundation
 
-final class TestPrivacyManager: InternalAirshipPrivacyManagerProtocol, @unchecked Sendable {
+final class TestPrivacyManager: InternalAirshipPrivacyManager, @unchecked Sendable {
     func isAnyFeatureEnabled() -> Bool {
         return isAnyFeatureEnabled(ignoringRemoteConfig: false)
     }

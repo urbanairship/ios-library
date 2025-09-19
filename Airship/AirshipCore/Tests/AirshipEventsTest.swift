@@ -280,7 +280,7 @@ class AirshipEventsTest: XCTestCase {
     }
 }
 
-private final class EventTestPush: AirshipPushProtocol, @unchecked Sendable {
+private final class EventTestPush: AirshipPush, @unchecked Sendable {
     var onAPNSRegistrationFinished: (@MainActor @Sendable (AirshipCore.APNSRegistrationResult) -> Void)?
     
     var onNotificationRegistrationFinished: (@MainActor @Sendable (AirshipCore.NotificationRegistrationResult) -> Void)?
@@ -389,7 +389,7 @@ private final class EventTestPush: AirshipPushProtocol, @unchecked Sendable {
     }
 }
 
-private final class InternalPush: InternalPushProtocol {
+private final class InternalPush: InternalAirshipPush {
     
     var deviceToken: String? = "a12312ad"
 

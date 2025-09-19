@@ -13,8 +13,8 @@ final class AirshipLocaleManagerTest: XCTestCase {
 
     private func makeLocaleManager(
         useUserPreferredLocale: Bool = false
-    ) -> AirshipLocaleManager {
-        return AirshipLocaleManager(
+    ) -> DefaultAirshipLocaleManager {
+        return DefaultAirshipLocaleManager(
             dataStore: PreferenceDataStore(
                 appKey: UUID().uuidString
             ),

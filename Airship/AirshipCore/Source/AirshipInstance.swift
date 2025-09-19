@@ -2,7 +2,7 @@
 
 import Foundation
 
-protocol AirshipInstanceProtocol: Sendable {
+protocol AirshipInstance: Sendable {
     var config: RuntimeConfig { get }
     var preferenceDataStore: PreferenceDataStore { get }
     var actionRegistry: ActionRegistry { get }
@@ -16,12 +16,12 @@ protocol AirshipInstanceProtocol: Sendable {
     var deepLinkDelegate: (any DeepLinkDelegate)? { get set }
 
     @MainActor
-    var deepLinkHandler: (@MainActor @Sendable (URL) async -> Void)? { get set }
+    var onDeepLink: (@MainActor @Sendable (URL) async -> Void)? { get set }
 
-    var urlAllowList: any URLAllowListProtocol { get }
-    var localeManager: AirshipLocaleManager { get }
+    var urlAllowList: any AirshipURLAllowList { get }
+    var localeManager: any AirshipLocaleManager { get }
     var inputValidator: any AirshipInputValidation.Validator { get }
-    var privacyManager: AirshipPrivacyManager { get }
+    var privacyManager: any InternalAirshipPrivacyManager { get }
     var components: [any AirshipComponent] { get }
 
     func component<E>(ofType componentType: E.Type) -> E?
@@ -30,7 +30,7 @@ protocol AirshipInstanceProtocol: Sendable {
     func airshipReady()
 }
 
-final class AirshipInstance: AirshipInstanceProtocol, Sendable {
+final class DefaultAirshipInstance: AirshipInstance {
 
     public let config: RuntimeConfig
     public let preferenceDataStore: PreferenceDataStore
@@ -56,11 +56,11 @@ final class AirshipInstance: AirshipInstanceProtocol, Sendable {
     }
 
     @MainActor
-    public var deepLinkHandler: (@MainActor @Sendable (URL) async -> Void)?
+    public var onDeepLink: (@MainActor @Sendable (URL) async -> Void)?
 
-    public let urlAllowList: any URLAllowListProtocol
-    public let localeManager: AirshipLocaleManager
-    public let privacyManager: AirshipPrivacyManager
+    public let urlAllowList: any AirshipURLAllowList
+    public let localeManager: any AirshipLocaleManager
+    public let privacyManager: any InternalAirshipPrivacyManager
     public let components: [any AirshipComponent]
     private let remoteConfigManager: RemoteConfigManager
     private let experimentManager: any ExperimentDataProvider
@@ -88,15 +88,15 @@ final class AirshipInstance: AirshipInstanceProtocol, Sendable {
             config: config
         )
 
-        self.privacyManager = AirshipPrivacyManager(
+        self.privacyManager = DefaultAirshipPrivacyManager(
             dataStore: dataStore,
             config: self.config,
             defaultEnabledFeatures: airshipConfig.enabledFeatures
         )
         
         self.actionRegistry = ActionRegistry()
-        self.urlAllowList = URLAllowList(airshipConfig: airshipConfig)
-        self.localeManager = AirshipLocaleManager(
+        self.urlAllowList = DefaultAirshipURLAllowList(airshipConfig: airshipConfig)
+        self.localeManager = DefaultAirshipLocaleManager(
             dataStore: dataStore,
             config: self.config
         )
@@ -110,7 +110,7 @@ final class AirshipInstance: AirshipInstanceProtocol, Sendable {
         let audienceOverridesProvider = DefaultAudienceOverridesProvider()
         
         
-        let channel = AirshipChannel(
+        let channel = DefaultAirshipChannel(
             dataStore: dataStore,
             config: self.config,
             privacyManager: self.privacyManager,
@@ -128,7 +128,7 @@ final class AirshipInstance: AirshipInstanceProtocol, Sendable {
         let audienceChecker = DefaultDeviceAudienceChecker(cache: cache)
 
         
-        let analytics = AirshipAnalytics(
+        let analytics = DefaultAirshipAnalytics(
             config: self.config,
             dataStore: dataStore,
             channel: channel,
@@ -137,7 +137,7 @@ final class AirshipInstance: AirshipInstanceProtocol, Sendable {
             permissionsManager: permissionsManager
         )
         
-        let push = AirshipPush(
+        let push = DefaultAirshipPush(
             config: self.config,
             dataStore: dataStore,
             channel: channel,
@@ -148,7 +148,7 @@ final class AirshipInstance: AirshipInstanceProtocol, Sendable {
             badger: Badger.shared
         )
         
-        let contact = AirshipContact(
+        let contact = DefaultAirshipContact(
             dataStore: dataStore,
             config: self.config,
             channel: channel,

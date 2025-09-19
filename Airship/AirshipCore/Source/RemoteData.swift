@@ -28,9 +28,9 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     private let providers: [any RemoteDataProviderProtocol]
     private let dataStore: PreferenceDataStore
     private let date: any AirshipDateProtocol
-    private let localeManager: any AirshipLocaleManagerProtocol
+    private let localeManager: any AirshipLocaleManager
     private let workManager: any AirshipWorkManagerProtocol
-    private let privacyManager: any InternalAirshipPrivacyManagerProtocol
+    private let privacyManager: any InternalAirshipPrivacyManager
     private let appVersion: String
     private let statusUpdates: AirshipAsyncChannel<[RemoteDataSource: RemoteDataSourceStatus]> = AirshipAsyncChannel()
     private let currentSourceStatus: AirshipAtomicValue<[RemoteDataSource: RemoteDataSourceStatus]> = .init([:])
@@ -57,9 +57,9 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        localeManager: any AirshipLocaleManagerProtocol,
-        privacyManager: any InternalAirshipPrivacyManagerProtocol,
-        contact: any InternalAirshipContactProtocol
+        localeManager: any AirshipLocaleManager,
+        privacyManager: any InternalAirshipPrivacyManager,
+        contact: any InternalAirshipContact
     ) {
         let client = RemoteDataAPIClient(config: config)
         self.init(
@@ -97,9 +97,9 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        localeManager: any AirshipLocaleManagerProtocol,
-        privacyManager: any InternalAirshipPrivacyManagerProtocol,
-        contact: any InternalAirshipContactProtocol,
+        localeManager: any AirshipLocaleManager,
+        privacyManager: any InternalAirshipPrivacyManager,
+        contact: any InternalAirshipContact,
         providers: [any RemoteDataProviderProtocol],
         workManager: any AirshipWorkManagerProtocol = AirshipWorkManager.shared,
         date: any AirshipDateProtocol = AirshipDate.shared,

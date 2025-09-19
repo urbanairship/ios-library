@@ -13,13 +13,13 @@ actor ContactManager: ContactManagerProtocol {
     private let cachedAuthToken: CachedValue<AuthToken> = CachedValue()
     private var dataStore: PreferenceDataStore
     private let identifySerialQueue: AirshipSerialQueue = AirshipSerialQueue()
-    private let channel: any AirshipChannelProtocol
+    private let channel: any AirshipChannel
     private let apiClient: any ContactsAPIClientProtocol
     private let workManager: any AirshipWorkManagerProtocol
     private let date: any AirshipDateProtocol
     private let internalIdentifyRateLimit: TimeInterval
 
-    private let localeManager: any AirshipLocaleManagerProtocol
+    private let localeManager: any AirshipLocaleManager
     private var onAudienceUpdatedCallback: ((ContactAudienceUpdate) async -> Void)?
     private var lastContactIDUpdate: ContactIDInfo?
     private var lastNamedUserUpdate: String?
@@ -87,8 +87,8 @@ actor ContactManager: ContactManagerProtocol {
 
     init(
         dataStore: PreferenceDataStore,
-        channel: any AirshipChannelProtocol,
-        localeManager: any AirshipLocaleManagerProtocol,
+        channel: any AirshipChannel,
+        localeManager: any AirshipLocaleManager,
         apiClient: any ContactsAPIClientProtocol,
         date: any AirshipDateProtocol = AirshipDate.shared,
         workManager: any AirshipWorkManagerProtocol = AirshipWorkManager.shared,

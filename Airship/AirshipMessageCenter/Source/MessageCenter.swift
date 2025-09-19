@@ -97,7 +97,7 @@ final class MessageCenter: MessageCenterProtocol {
     }
 
     private let mutable: MutableValues
-    private let privacyManager: any AirshipPrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManager
 
     public let inbox: any MessageCenterInboxProtocol
 
@@ -144,7 +144,7 @@ final class MessageCenter: MessageCenterProtocol {
     init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        privacyManager: any AirshipPrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManager,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         inbox: MessageCenterInbox,
         controller: MessageCenterController
@@ -178,8 +178,8 @@ final class MessageCenter: MessageCenterProtocol {
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        channel: any InternalAirshipChannelProtocol,
-        privacyManager: any AirshipPrivacyManagerProtocol,
+        channel: any InternalAirshipChannel,
+        privacyManager: any AirshipPrivacyManager,
         workManager: any AirshipWorkManagerProtocol
     ) {
 

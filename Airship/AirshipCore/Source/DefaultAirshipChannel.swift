@@ -10,15 +10,15 @@ import UIKit
 
 
 /// This singleton provides an interface to the channel functionality.
-final class AirshipChannel: AirshipChannelProtocol, Sendable {
+final class DefaultAirshipChannel: AirshipChannel, Sendable {
     private static let tagsDataStoreKey = "com.urbanairship.channel.tags"
     private static let legacyTagsSettingsKey = "UAPushTags"
 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
-    private let privacyManager: any AirshipPrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManager
     private let permissionsManager: AirshipPermissionsManager
-    private let localeManager: any AirshipLocaleManagerProtocol
+    private let localeManager: any AirshipLocaleManager
     private let audienceManager: any ChannelAudienceManagerProtocol
     private let channelRegistrar: any ChannelRegistrarProtocol
     private let notificationCenter: AirshipNotificationCenter
@@ -81,7 +81,7 @@ final class AirshipChannel: AirshipChannelProtocol, Sendable {
             var result: [String]?
             tagsLock.sync {
                 result =
-                    self.dataStore.array(forKey: AirshipChannel.tagsDataStoreKey)
+                    self.dataStore.array(forKey: DefaultAirshipChannel.tagsDataStoreKey)
                     as? [String]
             }
             return result ?? []
@@ -99,7 +99,7 @@ final class AirshipChannel: AirshipChannelProtocol, Sendable {
                 let normalized = AudienceUtils.normalizeTags(newValue)
                 self.dataStore.setObject(
                     normalized,
-                    forKey: AirshipChannel.tagsDataStoreKey
+                    forKey: DefaultAirshipChannel.tagsDataStoreKey
                 )
             }
 
@@ -117,9 +117,9 @@ final class AirshipChannel: AirshipChannelProtocol, Sendable {
     init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        privacyManager: any AirshipPrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
-        localeManager: any AirshipLocaleManagerProtocol,
+        localeManager: any AirshipLocaleManager,
         audienceManager: any ChannelAudienceManagerProtocol,
         channelRegistrar: any ChannelRegistrarProtocol,
         notificationCenter: AirshipNotificationCenter,
@@ -204,9 +204,9 @@ final class AirshipChannel: AirshipChannelProtocol, Sendable {
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        privacyManager: any AirshipPrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
-        localeManager: any AirshipLocaleManagerProtocol,
+        localeManager: any AirshipLocaleManager,
         audienceOverridesProvider: any AudienceOverridesProvider
     ) {
         self.init(
@@ -232,14 +232,14 @@ final class AirshipChannel: AirshipChannelProtocol, Sendable {
     }
 
     private func migrateTags() {
-        guard self.dataStore.keyExists(AirshipChannel.legacyTagsSettingsKey) else {
+        guard self.dataStore.keyExists(DefaultAirshipChannel.legacyTagsSettingsKey) else {
             // Nothing to migrate
             return
         }
 
         // Normalize tags for older SDK versions, and migrate to UAChannel as necessary
         if let existingPushTags = self.dataStore.object(
-            forKey: AirshipChannel.legacyTagsSettingsKey
+            forKey: DefaultAirshipChannel.legacyTagsSettingsKey
         ) as? [String] {
             let existingChannelTags = self.tags
             if existingChannelTags.count > 0 {
@@ -253,7 +253,7 @@ final class AirshipChannel: AirshipChannelProtocol, Sendable {
             }
         }
 
-        self.dataStore.removeObject(forKey: AirshipChannel.legacyTagsSettingsKey)
+        self.dataStore.removeObject(forKey: DefaultAirshipChannel.legacyTagsSettingsKey)
     }
 
     private func observeNotificationCenterEvents() {
@@ -299,7 +299,7 @@ final class AirshipChannel: AirshipChannelProtocol, Sendable {
     @objc
     private func onEnableFeaturesChanged() {
         if !self.privacyManager.isEnabled(.tagsAndAttributes) {
-            self.dataStore.removeObject(forKey: AirshipChannel.tagsDataStoreKey)
+            self.dataStore.removeObject(forKey: DefaultAirshipChannel.tagsDataStoreKey)
         }
 
         self.updateRegistration()
@@ -414,7 +414,7 @@ final class AirshipChannel: AirshipChannelProtocol, Sendable {
 }
 
 /// - Note: for internal use only.  :nodoc:
-extension AirshipChannel: AirshipPushableComponent {
+extension DefaultAirshipChannel: AirshipPushableComponent {
     func receivedRemoteNotification(_ notification: AirshipJSON) async -> UABackgroundFetchResult {
         if self.identifier == nil {
             updateRegistration()
@@ -506,7 +506,7 @@ extension AirshipChannel: AirshipPushableComponent {
     }
 }
 
-extension AirshipChannel: InternalAirshipChannelProtocol {
+extension DefaultAirshipChannel: InternalAirshipChannel {
     @MainActor
     public func addRegistrationExtender(
         _ extender: @Sendable @escaping (inout ChannelRegistrationPayload) async -> Void
@@ -522,7 +522,7 @@ extension AirshipChannel: InternalAirshipChannelProtocol {
 #if canImport(ActivityKit) && !targetEnvironment(macCatalyst)
 import ActivityKit
 @available(iOS 16.1, *)
-extension AirshipChannel {
+extension DefaultAirshipChannel {
 
     /// Gets an AsyncSequence of `LiveActivityRegistrationStatus` updates for a given live acitvity name.
     /// - Parameters:
@@ -590,7 +590,7 @@ extension AirshipChannel {
 
 #endif
 
-extension AirshipChannel: AirshipComponent {}
+extension DefaultAirshipChannel: AirshipComponent {}
 
 
 public extension AirshipNotifications {

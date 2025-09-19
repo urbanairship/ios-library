@@ -117,7 +117,7 @@ struct AirshipEvents {
     @MainActor
     static func sessionEvent(
         sessionEvent: SessionEvent,
-        push: any AirshipPushProtocol
+        push: any AirshipPush
     ) -> AirshipEvent {
         return AirshipEvent(
             priority: .normal,
@@ -178,7 +178,7 @@ fileprivate extension SessionEvent {
 
     @MainActor
     func eventData(
-        push: any AirshipPushProtocol
+        push: any AirshipPush
     ) -> AirshipJSON {
         return AirshipJSON.makeObject { object in
             /// Common

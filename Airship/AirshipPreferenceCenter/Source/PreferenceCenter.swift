@@ -75,7 +75,7 @@ final class PreferenceCenter: PreferenceCenterProtocol {
     }
 
     private let dataStore: PreferenceDataStore
-    private let privacyManager: any AirshipPrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManager
     private let remoteData: any RemoteDataProtocol
 
     private let currentDisplay: AirshipMainActorValue<(any AirshipMainActorCancellable)?> = AirshipMainActorValue(nil)
@@ -97,7 +97,7 @@ final class PreferenceCenter: PreferenceCenterProtocol {
 
     init(
         dataStore: PreferenceDataStore,
-        privacyManager: any AirshipPrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManager,
         remoteData: any RemoteDataProtocol,
         inputValidator: any AirshipInputValidation.Validator
     ) {

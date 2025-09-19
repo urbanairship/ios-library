@@ -3,7 +3,7 @@
 import Foundation
 
 /// Airship locale manager.
-public protocol AirshipLocaleManagerProtocol: AnyObject, Sendable {
+public protocol AirshipLocaleManager: AnyObject, Sendable {
     /**
      * Resets the current locale.
      */
@@ -17,7 +17,7 @@ public protocol AirshipLocaleManagerProtocol: AnyObject, Sendable {
 }
 
 
-final class AirshipLocaleManager: AirshipLocaleManagerProtocol {
+final class DefaultAirshipLocaleManager: AirshipLocaleManager {
 
     fileprivate static let storeKey = "com.urbanairship.locale.locale"
 
@@ -91,7 +91,7 @@ fileprivate extension PreferenceDataStore {
     var localeOverride: Locale? {
         get {
             guard
-                let encodedLocale = object(forKey: AirshipLocaleManager.storeKey) as? Data
+                let encodedLocale = object(forKey: DefaultAirshipLocaleManager.storeKey) as? Data
             else {
                 return nil
             }
@@ -100,7 +100,7 @@ fileprivate extension PreferenceDataStore {
         }
         set {
             guard let locale = newValue else {
-                removeObject(forKey: AirshipLocaleManager.storeKey)
+                removeObject(forKey: DefaultAirshipLocaleManager.storeKey)
                 return
             }
 
@@ -116,7 +116,7 @@ fileprivate extension PreferenceDataStore {
 
             setValue(
                 encodedLocale,
-                forKey: AirshipLocaleManager.storeKey
+                forKey: DefaultAirshipLocaleManager.storeKey
             )
         }
     }

@@ -18,7 +18,7 @@ final public class ChannelCapture: Sendable {
     private static let pasteboardExpirationSeconds: TimeInterval = 60
 
     private let config: RuntimeConfig
-    private let channel: any AirshipChannelProtocol
+    private let channel: any AirshipChannel
     private let notificationCenter: NotificationCenter
     private let date: any AirshipDateProtocol
     private let pasteboard: any AirshipPasteboardProtocol
@@ -39,7 +39,7 @@ final public class ChannelCapture: Sendable {
 
     init(
         config: RuntimeConfig,
-        channel: any AirshipChannelProtocol,
+        channel: any AirshipChannel,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         date: any AirshipDateProtocol = AirshipDate.shared,
         pasteboard: any AirshipPasteboardProtocol = UIPasteboard.general

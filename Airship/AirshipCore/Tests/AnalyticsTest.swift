@@ -20,7 +20,7 @@ class AnalyticsTest: XCTestCase {
     private let sessionTracker = TestSessionTracker()
 
     private var privacyManager: TestPrivacyManager!
-    private var analytics: AirshipAnalytics!
+    private var analytics: DefaultAirshipAnalytics!
     private var testAirship: TestAirshipInstance!
 
 
@@ -40,8 +40,8 @@ class AnalyticsTest: XCTestCase {
     }
 
     @MainActor
-    func makeAnalytics() -> AirshipAnalytics {
-        return AirshipAnalytics(
+    func makeAnalytics() -> DefaultAirshipAnalytics {
+        return DefaultAirshipAnalytics(
             config: config,
             dataStore: dataStore,
             channel: channel,

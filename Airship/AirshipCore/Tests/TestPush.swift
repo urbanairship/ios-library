@@ -8,7 +8,7 @@ import UIKit
 import Foundation
 import Combine
 
-final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, AirshipComponent, @unchecked Sendable {
+final class TestPush: NSObject, InternalAirshipPush, AirshipPush, AirshipComponent, @unchecked Sendable {
     var onAPNSRegistrationFinished: (@MainActor @Sendable (AirshipCore.APNSRegistrationResult) -> Void)?
     
     var onNotificationRegistrationFinished: (@MainActor @Sendable (AirshipCore.NotificationRegistrationResult) -> Void)?

@@ -39,12 +39,12 @@ public final class ModifyAttributesAction: AirshipAction {
     private static let removeActionKey = "remove"
 
 
-    private let channel: @Sendable () -> any AirshipChannelProtocol
-    private let contact: @Sendable () -> any AirshipContactProtocol
+    private let channel: @Sendable () -> any AirshipChannel
+    private let contact: @Sendable () -> any AirshipContact
 
     init(
-        channel: @escaping @Sendable () -> any AirshipChannelProtocol,
-        contact: @escaping @Sendable () -> any AirshipContactProtocol
+        channel: @escaping @Sendable () -> any AirshipChannel,
+        contact: @escaping @Sendable () -> any AirshipContact
     ) {
         self.channel = channel
         self.contact = contact

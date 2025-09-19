@@ -6,12 +6,12 @@ import Foundation
 public struct AirshiopModuleLoaderArgs {
     public let config: RuntimeConfig
     public let dataStore: PreferenceDataStore
-    public let channel: any InternalAirshipChannelProtocol&AirshipChannelProtocol
-    public let contact: any AirshipContactProtocol
-    public let push: any AirshipPushProtocol
+    public let channel: any InternalAirshipChannel
+    public let contact: any AirshipContact
+    public let push: any AirshipPush
     public let remoteData: any RemoteDataProtocol
-    public let analytics: any InternalAnalyticsProtocol&AirshipAnalyticsProtocol
-    public let privacyManager: any AirshipPrivacyManagerProtocol
+    public let analytics: any InternalAirshipAnalytics
+    public let privacyManager: any AirshipPrivacyManager
     public let permissionsManager: AirshipPermissionsManager
     public let experimentsManager: any ExperimentDataProvider
     public let meteredUsage: AirshipMeteredUsage
@@ -43,12 +43,12 @@ class ModuleLoader {
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: AirshipChannel,
-        contact: AirshipContact,
-        push: AirshipPush,
+        channel: any InternalAirshipChannel,
+        contact: any AirshipContact,
+        push: any AirshipPush,
         remoteData: any RemoteDataProtocol,
-        analytics: AirshipAnalytics,
-        privacyManager: any AirshipPrivacyManagerProtocol,
+        analytics: any InternalAirshipAnalytics,
+        privacyManager: any AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
         audienceOverrides: any AudienceOverridesProvider,
         experimentsManager: any ExperimentDataProvider,

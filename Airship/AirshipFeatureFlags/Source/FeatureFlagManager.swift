@@ -20,7 +20,7 @@ final class FeatureFlagManager: FeatureFlagManagerProtocol {
     private let deviceInfoProviderFactory: @Sendable () -> any AudienceDeviceInfoProvider
     private let deferredResolver: any FeatureFlagDeferredResolverProtocol
     private let remoteData: any RemoteDataProtocol
-    private let privacyManager: any AirshipPrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManager
 
     let resultCache: any FeatureFlagResultCacheProtocol
 
@@ -50,7 +50,7 @@ final class FeatureFlagManager: FeatureFlagManagerProtocol {
         audienceChecker: any DeviceAudienceChecker,
         deviceInfoProviderFactory: @escaping @Sendable () -> any AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() },
         deferredResolver: any FeatureFlagDeferredResolverProtocol,
-        privacyManager: any AirshipPrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManager,
         resultCache: any FeatureFlagResultCacheProtocol
     ) {
         self.remoteDataAccess = remoteDataAccess

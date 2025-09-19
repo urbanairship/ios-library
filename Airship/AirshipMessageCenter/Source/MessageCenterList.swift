@@ -89,7 +89,7 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
     private let updateWorkID = "Airship.MessageCenterInbox#update"
 
     private let store: MessageCenterStore
-    private let channel: any InternalAirshipChannelProtocol
+    private let channel: any InternalAirshipChannel
     private let client: any MessageCenterAPIClientProtocol
     private let config: RuntimeConfig
     private let notificationCenter: NotificationCenter
@@ -178,7 +178,7 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
 
     @MainActor
     init(
-        channel: any InternalAirshipChannelProtocol,
+        channel: any InternalAirshipChannel,
         client: any MessageCenterAPIClientProtocol,
         config: RuntimeConfig,
         store: MessageCenterStore,
@@ -280,7 +280,7 @@ final class MessageCenterInbox: MessageCenterInboxProtocol, Sendable {
     convenience init(
         with config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: any InternalAirshipChannelProtocol,
+        channel: any InternalAirshipChannel,
         workManager: any AirshipWorkManagerProtocol
     ) {
         self.init(

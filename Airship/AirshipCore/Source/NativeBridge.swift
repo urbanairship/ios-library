@@ -387,7 +387,7 @@ public final class NativeBridge: NSObject, WKNavigationDelegate {
             let idArgs = command.options["id"]
             let argument = idArgs?.first
 
-            let contact: any AirshipContactProtocol = Airship.contact
+            let contact: any AirshipContact = Airship.contact
             if let identifier = argument, !identifier.isEmpty {
                 contact.identify(identifier)
             } else {

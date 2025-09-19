@@ -10,7 +10,7 @@ import UIKit
 
 /// Airship contact. A contact is distinct from a channel and  represents a "user"
 /// within Airship. Contacts may be named and have channels associated with it.
-public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
+public final class DefaultAirshipContact: AirshipContact, @unchecked Sendable {
     static let refreshContactPushPayloadKey = "com.urbanairship.contact.update"
 
     public var contactChannelUpdates: AsyncStream<ContactChannelsResult> {
@@ -71,7 +71,7 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
-    private let privacyManager: any AirshipPrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManager
     private let contactChannelsProvider: any ContactChannelsProviderProtocol
     private let subscriptionListProvider: any SubscriptionListProviderProtocol
     private let date: any AirshipDateProtocol
@@ -84,11 +84,11 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
 
     private var lastResolveDate: Date {
          get {
-             let date = self.dataStore.object(forKey: AirshipContact.resolveDateKey) as? Date
+             let date = self.dataStore.object(forKey: DefaultAirshipContact.resolveDateKey) as? Date
              return date ?? Date.distantPast
          }
          set {
-             self.dataStore.setObject(newValue, forKey: AirshipContact.resolveDateKey)
+             self.dataStore.setObject(newValue, forKey: DefaultAirshipContact.resolveDateKey)
          }
      }
 
@@ -98,7 +98,7 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
     public var subscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> {
         subscriptionListEditsSubject.eraseToAnyPublisher()
     }
-    
+
     private let conflictEventSubject = PassthroughSubject<ContactConflictEvent, Never>()
     public var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> {
         conflictEventSubject.eraseToAnyPublisher()
@@ -145,8 +145,8 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
     init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        channel: any InternalAirshipChannelProtocol,
-        privacyManager: any AirshipPrivacyManagerProtocol,
+        channel: any InternalAirshipChannel,
+        privacyManager: any AirshipPrivacyManager,
         contactChannelsProvider: any ContactChannelsProviderProtocol,
         subscriptionListProvider: any SubscriptionListProviderProtocol,
         date: any AirshipDateProtocol = AirshipDate.shared,
@@ -195,10 +195,10 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
                     channels: update.contactChannels
                 )
             }
-            
+
             await self.contactManager.setEnabled(enabled: true)
         }
-        
+
         self.serialQueue.enqueue {
             await self.setupTask?.value
         }
@@ -304,10 +304,10 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        channel: AirshipChannel,
-        privacyManager: any AirshipPrivacyManagerProtocol,
+        channel: any InternalAirshipChannel,
+        privacyManager: any AirshipPrivacyManager,
         audienceOverridesProvider: any AudienceOverridesProvider,
-        localeManager: any AirshipLocaleManagerProtocol
+        localeManager: any AirshipLocaleManager
     ) {
         self.init(
             dataStore: dataStore,
@@ -639,7 +639,7 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
             update.isStable
         }.contactID
     }
-    
+
     public func getStableContactInfo() async -> StableContactInfo {
         let info = await waitForContactIDInfo(filter: { $0.isStable })
         return StableContactInfo(
@@ -725,12 +725,12 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
 
     private func migrateNamedUser() async {
         defer {
-            self.dataStore.removeObject(forKey: AirshipContact.legacyNamedUserKey)
+            self.dataStore.removeObject(forKey: DefaultAirshipContact.legacyNamedUserKey)
             self.dataStore.removeObject(
-                forKey: AirshipContact.legacyPendingTagGroupsKey
+                forKey: DefaultAirshipContact.legacyPendingTagGroupsKey
             )
             self.dataStore.removeObject(
-                forKey: AirshipContact.legacyPendingAttributesKey
+                forKey: DefaultAirshipContact.legacyPendingAttributesKey
             )
         }
 
@@ -740,7 +740,7 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
 
         guard
             let legacyNamedUserID = try? self.dataStore.string(
-                forKey: AirshipContact.legacyNamedUserKey
+                forKey: DefaultAirshipContact.legacyNamedUserKey
             )?.normalizedNamedUserID
         else {
             await self.contactManager.generateDefaultContactIDIfNotSet()
@@ -757,7 +757,7 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
             var pendingAttributeUpdates: [AttributeUpdate]?
 
             if let pendingTagGroupsData = self.dataStore.data(
-                forKey: AirshipContact.legacyPendingTagGroupsKey
+                forKey: DefaultAirshipContact.legacyPendingTagGroupsKey
             ) {
                 let classes = [NSArray.self, TagGroupsMutation.self]
                 let pendingTagGroups = try? NSKeyedUnarchiver.unarchivedObject(
@@ -775,7 +775,7 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
             }
 
             if let pendingAttributesData = self.dataStore.data(
-                forKey: AirshipContact.legacyPendingAttributesKey
+                forKey: DefaultAirshipContact.legacyPendingAttributesKey
             ) {
 
                 let classes = [NSArray.self, AttributePendingMutations.self]
@@ -819,9 +819,9 @@ extension String {
 
             guard
                 trimmedID.count > 0,
-                trimmedID.count <= AirshipContact.maxNamedUserIDLength
+                trimmedID.count <= DefaultAirshipContact.maxNamedUserIDLength
             else {
-                throw AirshipErrors.error("Invalid named user ID \(trimmedID). IDs must be between 1 and \(AirshipContact.maxNamedUserIDLength) characters.")
+                throw AirshipErrors.error("Invalid named user ID \(trimmedID). IDs must be between 1 and \(DefaultAirshipContact.maxNamedUserIDLength) characters.")
             }
 
             return trimmedID
@@ -829,7 +829,7 @@ extension String {
     }
 }
 
-extension AirshipContact : InternalAirshipContactProtocol {
+extension DefaultAirshipContact : InternalAirshipContact {
     var contactIDInfo: ContactIDInfo? {
         get async {
             return await self.contactManager.currentContactIDInfo()
@@ -848,7 +848,7 @@ extension AirshipContact : InternalAirshipContactProtocol {
     }
 }
 
-extension AirshipContact: AirshipPushableComponent {
+extension DefaultAirshipContact: AirshipPushableComponent {
     public func receivedRemoteNotification(_ notification: AirshipJSON) async -> UABackgroundFetchResult {
         guard
             let userInfo = notification.unwrapAsUserInfo(),
@@ -870,7 +870,7 @@ extension AirshipContact: AirshipPushableComponent {
 
 
 
-extension AirshipContact: AirshipComponent {}
+extension DefaultAirshipContact: AirshipComponent {}
 
 
 public extension AirshipNotifications {

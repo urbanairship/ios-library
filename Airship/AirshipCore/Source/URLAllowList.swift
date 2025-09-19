@@ -20,22 +20,6 @@ public protocol URLAllowListDelegate: Sendable {
     func allowURL(_ url: URL, scope: URLAllowListScope) -> Bool
 }
 
-/// NOTE: For internal use only. :nodoc:
-public protocol URLAllowListProtocol: Sendable {
-    @MainActor
-    func isAllowed(_ url: URL?) -> Bool
-
-    @MainActor
-    func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool
-
-    @discardableResult
-    @MainActor
-    func addEntry(_ patternString: String, scope: URLAllowListScope) -> Bool
-
-    @discardableResult
-    @MainActor
-    func addEntry(_ patternString: String) -> Bool
-}
 
 /// Class for accepting and verifying webview URLs.
 ///
@@ -59,8 +43,61 @@ public protocol URLAllowListProtocol: Sendable {
 /// Note that NSURL does not support internationalized domains containing non-ASCII characters.
 /// All URL allow list entries for internationalized domains must be in ASCII IDNA format as
 /// specified in https://tools.ietf.org/html/rfc3490
+public protocol AirshipURLAllowList: Sendable {
+
+    /// The URL allow list delegate.
+    ///
+    /// - note: The delegate is not retained.
+    @MainActor
+    var delegate: (any URLAllowListDelegate)? { get set }
+
+    /// If set, this block will be called when a URL is checked to override if it should be allowed or not.
+    /// This will be called in place of the `URLAllowListDelegate` delegate.
+    @MainActor
+    var onAllowURL: (@MainActor @Sendable (URL, URLAllowListScope) -> Bool)? { get set }
+
+    /// Determines whether a given URL is allowed, with the implicit scope `URLAllowListScope.all`.
+    ///
+    /// - Parameters:
+    ///   - url: The URL under consideration.
+    ///
+    /// - Returns: `true` if the URL is allowed, `false` otherwise.
+    @MainActor
+    func isAllowed(_ url: URL?) -> Bool
+
+    /// Determines whether a given URL is allowed.
+    ///
+    /// - Parameters:
+    ///   - url: The URL under consideration.
+    ///   - scope: The scope of the desired match.
+    ///
+    /// - Returns: `true` if the URL is allowed, `false` otherwise.
+    @MainActor
+    func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool
+
+    /// Add an entry to the URL allow list.
+    ///
+    /// - Parameters:
+    ///   - patternString: A URL allow list pattern string.
+    ///   - scope: The scope of the pattern.
+    ///
+    /// - Returns: `true` if the URL allow list pattern was validated and added, `false` otherwise.
+    @discardableResult
+    @MainActor
+    func addEntry(_ patternString: String, scope: URLAllowListScope) -> Bool
+
+    /// Add an entry to the URL allow list, with the implicit scope `URLAllowListScope.all`.
+    ///
+    /// - Parameter patternString: A URL allow list pattern string.
+    ///
+    /// - Returns: `true` if the URL allow list pattern was validated and added, `false` otherwise.
+    @discardableResult
+    @MainActor
+    func addEntry(_ patternString: String) -> Bool
+}
+
 @MainActor
-public final class URLAllowList: URLAllowListProtocol {
+final class DefaultAirshipURLAllowList: AirshipURLAllowList {
     /// `<scheme> := <any chars (no spaces), '*' will match 0 or more characters>`
     private static let schemeRegex = "^([^\\s]*)$"
 
@@ -132,33 +169,21 @@ public final class URLAllowList: URLAllowListProtocol {
     }
 
 
-    /// The URL allow list delegate.
-    ///
-    /// - note: The delegate is not retained.
     @MainActor
-    public var delegate: (any URLAllowListDelegate)? = nil
+    var delegate: (any URLAllowListDelegate)? = nil
 
-    /// Add an entry to the URL allow list, with the implicit scope `URLAllowListScope.all`.
-    ///
-    /// - Parameter patternString: A URL allow list pattern string.
-    ///
-    /// - Returns: `true` if the URL allow list pattern was validated and added, `false` otherwise.
+    @MainActor
+    var onAllowURL: (@MainActor @Sendable (URL, URLAllowListScope) -> Bool)? = nil
+
     @discardableResult
     @MainActor
-    public func addEntry(_ patternString: String) -> Bool {
+    func addEntry(_ patternString: String) -> Bool {
         return addEntry(patternString, scope: .all)
     }
 
-    /// Add an entry to the URL allow list.
-    ///
-    /// - Parameters:
-    ///   - patternString: A URL allow list pattern string.
-    ///   - scope: The scope of the pattern.
-    ///
-    /// - Returns: `true` if the URL allow list pattern was validated and added, `false` otherwise.
     @discardableResult
     @MainActor
-    public func addEntry(
+    func addEntry(
         _ patternString: String,
         scope: URLAllowListScope
     ) -> Bool {
@@ -169,7 +194,7 @@ public final class URLAllowList: URLAllowListProtocol {
             return false
         }
 
-        let escapedPattern = URLAllowList.escapeSchemeWildcard(patternString)
+        let escapedPattern = Self.escapeSchemeWildcard(patternString)
 
         if patternString == "*" {
             let entry = AllowListEntry.entryWithMatcher(
@@ -192,7 +217,7 @@ public final class URLAllowList: URLAllowListProtocol {
         let scheme =
             url.scheme?.replacingOccurrences(of: "WILDCARD", with: "*") ?? ""
         if scheme.isEmpty
-            || !URLAllowList.validatePattern(
+            || !Self.validatePattern(
                 scheme,
                 expression: schemePatternValidator
             )
@@ -205,7 +230,7 @@ public final class URLAllowList: URLAllowListProtocol {
 
         let host = url.host ?? ""
         if !host.isEmpty
-            && !URLAllowList.validatePattern(
+            && !Self.validatePattern(
                 host,
                 expression: hostPatternValidator
             )
@@ -216,9 +241,9 @@ public final class URLAllowList: URLAllowListProtocol {
             return false
         }
 
-        let path = URLAllowList.pathForUrl(url) ?? ""
+        let path = Self.pathForUrl(url) ?? ""
         if !path.isEmpty
-            && !URLAllowList.validatePattern(
+            && !Self.validatePattern(
                 path,
                 expression: pathPatternValidator
             )
@@ -239,26 +264,13 @@ public final class URLAllowList: URLAllowListProtocol {
         return true
     }
 
-    /// Determines whether a given URL is allowed, with the implicit scope `URLAllowListScope.all`.
-    ///
-    /// - Parameters:
-    ///   - url: The URL under consideration.
-    ///
-    /// - Returns: `true` if the URL is allowed, `false` otherwise.
     @MainActor
-    public func isAllowed(_ url: URL?) -> Bool {
+    func isAllowed(_ url: URL?) -> Bool {
         return isAllowed(url, scope: .all)
     }
 
-    /// Determines whether a given URL is allowed.
-    ///
-    /// - Parameters:
-    ///   - url: The URL under consideration.
-    ///   - scope: The scope of the desired match.
-    ///
-    /// - Returns: `true` if the URL is allowed, `false` otherwise.
     @MainActor
-    public func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool {
+    func isAllowed(_ url: URL?, scope: URLAllowListScope) -> Bool {
         guard let url = url else {
             return false
         }
@@ -270,15 +282,20 @@ public final class URLAllowList: URLAllowListProtocol {
         for entry in entries {
             if entry.matcher(url) {
                 matchedScope.formUnion(entry.scope)
-                // matchedScope |= entry.scope
             }
         }
 
-        match = matchedScope.contains(scope)  //(matchedScope & scope) == scope
+        match = matchedScope.contains(scope)
 
-        // If the url is allowed, allow the delegate to reject the url
+        // If the url is allowed, allow the delegate or block to reject the url
         if match {
-            match = delegate?.allowURL(url, scope: scope) ?? match
+            match = if let onAllowURL {
+                onAllowURL(url, scope)
+            } else if let delegate {
+                delegate.allowURL(url, scope: scope)
+            } else {
+                match
+            }
         }
 
         return match
@@ -369,8 +386,8 @@ public final class URLAllowList: URLAllowListProtocol {
         if scheme.isEmpty || scheme == "*" {
             schemeRegex = nil
         } else {
-            schemeRegex = URLAllowList.compilePattern(
-                URLAllowList.escapeRegexString(scheme, escapingWildcards: false)
+            schemeRegex = Self.compilePattern(
+                Self.escapeRegexString(scheme, escapingWildcards: false)
             )
         }
 
@@ -379,20 +396,20 @@ public final class URLAllowList: URLAllowListProtocol {
             hostRegex = nil
         } else if host.hasPrefix("*.") {
             let substring = host[host.index(host.startIndex, offsetBy: 2)...]
-            hostRegex = URLAllowList.compilePattern(
+            hostRegex = Self.compilePattern(
                 "(.*\\.)?"
                     .appending(
-                        URLAllowList.escapeRegexString(
+                        Self.escapeRegexString(
                             String(substring),
                             escapingWildcards: true
                         )
                     )
             )
         } else {
-            hostRegex = URLAllowList.compilePattern(
+            hostRegex = Self.compilePattern(
                 "(.*\\.)?"
                     .appending(
-                        URLAllowList.escapeRegexString(
+                        Self.escapeRegexString(
                             host,
                             escapingWildcards: true
                         )
@@ -404,8 +421,8 @@ public final class URLAllowList: URLAllowListProtocol {
         if path.isEmpty || path == "/*" || path == "*" {
             pathRegex = nil
         } else {
-            pathRegex = URLAllowList.compilePattern(
-                URLAllowList.escapeRegexString(path, escapingWildcards: false)
+            pathRegex = Self.compilePattern(
+                Self.escapeRegexString(path, escapingWildcards: false)
             )
         }
 
@@ -413,7 +430,7 @@ public final class URLAllowList: URLAllowListProtocol {
             let scheme = url.scheme ?? ""
             if let expression = schemeRegex,
                 scheme.isEmpty
-                    || !URLAllowList.validatePattern(
+                    || !Self.validatePattern(
                         scheme,
                         expression: expression
                     )
@@ -424,7 +441,7 @@ public final class URLAllowList: URLAllowListProtocol {
             let host = url.host ?? ""
             if let expression = hostRegex,
                 host.isEmpty
-                    || !URLAllowList.validatePattern(
+                    || !Self.validatePattern(
                         host,
                         expression: expression
                     )
@@ -432,10 +449,10 @@ public final class URLAllowList: URLAllowListProtocol {
                 return false
             }
 
-            let path = URLAllowList.pathForUrl(url) ?? ""
+            let path = Self.pathForUrl(url) ?? ""
             if let expression = pathRegex,
                 path.isEmpty
-                    || !URLAllowList.validatePattern(
+                    || !Self.validatePattern(
                         path,
                         expression: expression
                     )
@@ -470,8 +487,8 @@ public final class URLAllowList: URLAllowListProtocol {
         }
 
         static func == (
-            lhs: URLAllowList.AllowListEntry,
-            rhs: URLAllowList.AllowListEntry
+            lhs: DefaultAirshipURLAllowList.AllowListEntry,
+            rhs: DefaultAirshipURLAllowList.AllowListEntry
         ) -> Bool {
             lhs.scope == rhs.scope && lhs.pattern == rhs.pattern
         }

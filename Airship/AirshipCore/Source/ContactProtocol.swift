@@ -4,7 +4,7 @@ public import Combine
 
 /// Airship contact. A contact is distinct from a channel and  represents a "user"
 /// within Airship. Contacts may be named and have channels associated with it.
-public protocol AirshipContactProtocol: AnyObject, Sendable {
+public protocol AirshipContact: AnyObject, Sendable {
 
     /// Current named user ID
     var namedUserID: String? { get async }
@@ -133,7 +133,7 @@ public protocol AirshipContactProtocol: AnyObject, Sendable {
 }
 
 
-protocol InternalAirshipContactProtocol: AirshipContactProtocol {
+protocol InternalAirshipContact: AirshipContact {
     var contactID: String? { get async }
     var authTokenProvider: any AuthTokenProvider { get }
 

@@ -6,16 +6,16 @@ import XCTest
 import AirshipCore
 
 @MainActor
-class UAURLAllowListTest: XCTestCase {
+class AirshipURLAllowListTest: XCTestCase {
 
-    private var allowList: URLAllowList = URLAllowList()
+    private var allowList: DefaultAirshipURLAllowList = DefaultAirshipURLAllowList()
     private let scopes: [URLAllowListScope] = [.javaScriptInterface, .openURL, .all]
 
     func testDefaultURLAllowList() {
         var airshipConfig = AirshipConfig()
         airshipConfig.urlAllowListScopeOpenURL = []
 
-        allowList = URLAllowList(airshipConfig: airshipConfig)
+        allowList = DefaultAirshipURLAllowList(airshipConfig: airshipConfig)
 
         for scope in scopes {
             XCTAssertTrue(allowList.isAllowed(URL(string: "https://device-api.urbanairship.com/api/user/")!, scope: scope))
@@ -45,7 +45,7 @@ class UAURLAllowListTest: XCTestCase {
 
     @MainActor
     func testDefaultURLAllowListNoOpenScopeSet() {
-        allowList = URLAllowList(airshipConfig: .init())
+        allowList = DefaultAirshipURLAllowList(airshipConfig: .init())
 
         for scope in scopes {
             XCTAssertTrue(allowList.isAllowed(URL(string: "https://device-api.urbanairship.com/api/user/")!, scope: scope))
@@ -352,6 +352,61 @@ class UAURLAllowListTest: XCTestCase {
 
         // Disable URL allow list delegate
         allowList.delegate = nil
+
+        // Should go back to original state when delegate was off
+        XCTAssertTrue(allowList.isAllowed(matchingURLToReject, scope: scope))
+        XCTAssertTrue(allowList.isAllowed(matchingURLToAccept, scope: scope))
+        XCTAssertFalse(allowList.isAllowed(nonMatchingURL, scope: scope))
+    }
+
+    func testOnAllowBlock() {
+        // set up a simple URL allow list
+        allowList.addEntry("https://*.urbanairship.com")
+        allowList.addEntry("https://*.youtube.com", scope: .openURL)
+
+        // Matching URL to be checked
+        let matchingURLToReject = URL(string: "https://www.youtube.com/watch?v=sYd_-pAfbBw")!
+        let matchingURLToAccept = URL(string: "https://device-api.urbanairship.com/api/user")!
+        let nonMatchingURL = URL(string: "https://maps.google.com")!
+
+        let scope: URLAllowListScope = .openURL
+
+        // Allow listing when delegate is off
+        XCTAssertTrue(allowList.isAllowed(matchingURLToReject, scope: scope))
+        XCTAssertTrue(allowList.isAllowed(matchingURLToAccept, scope: scope))
+        XCTAssertFalse(allowList.isAllowed(nonMatchingURL, scope: scope))
+
+        // Delegate should be ignored
+        let delegate = TestDelegate()
+        delegate.onAllow = { url, scope in
+            XCTFail()
+            return false
+        }
+
+        allowList.delegate = delegate
+
+        allowList.onAllowURL = { url, scope in
+            if (url == matchingURLToAccept) {
+                return true
+            }
+
+            if (url == matchingURLToReject) {
+                return false
+            }
+
+            XCTFail()
+            return false
+        }
+
+
+        // rejected URL should now fail URL allow list test, others should be unchanged
+        XCTAssertFalse(allowList.isAllowed(matchingURLToReject, scope: scope))
+        XCTAssertTrue(allowList.isAllowed(matchingURLToAccept, scope: scope))
+        XCTAssertFalse(allowList.isAllowed(nonMatchingURL, scope: scope))
+
+        // Disable URL allow list delegate
+        allowList.delegate = nil
+        allowList.onAllowURL = nil
 
         // Should go back to original state when delegate was off
         XCTAssertTrue(allowList.isAllowed(matchingURLToReject, scope: scope))

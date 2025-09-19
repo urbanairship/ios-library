@@ -5,7 +5,7 @@ import XCTest
 @testable import AirshipCore
 import Combine
 
-class PushTest: XCTestCase {
+class AirshipPushTest: XCTestCase {
 
     private static let validDeviceToken = "0123456789abcdef0123456789abcdef"
 
@@ -23,7 +23,7 @@ class PushTest: XCTestCase {
 
     private var config = AirshipConfig()
     private var privacyManager: TestPrivacyManager!
-    private var push: AirshipPush!
+    private var push: DefaultAirshipPush!
     private var serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue(priority: .high)
 
     override func setUp() async throws {
@@ -47,8 +47,8 @@ class PushTest: XCTestCase {
     }
 
     @MainActor
-    func createPush() -> AirshipPush {
-        return AirshipPush(
+    func createPush() -> DefaultAirshipPush {
+        return DefaultAirshipPush(
             config: .testConfig(airshipConfig: self.config),
             dataStore: dataStore,
             channel: channel,
@@ -352,9 +352,9 @@ class PushTest: XCTestCase {
     @MainActor
     func testDeviceToken() throws {
         push.didRegisterForRemoteNotifications(
-            PushTest.validDeviceToken.hexData
+            AirshipPushTest.validDeviceToken.hexData
         )
-        XCTAssertEqual(PushTest.validDeviceToken, self.push.deviceToken)
+        XCTAssertEqual(AirshipPushTest.validDeviceToken, self.push.deviceToken)
     }
 
     func testSetQuietTime() throws {
@@ -408,12 +408,12 @@ class PushTest: XCTestCase {
     @MainActor
     func testChannelPayloadRegistered() async throws {
         self.push.didRegisterForRemoteNotifications(
-            PushTest.validDeviceToken.hexData
+            AirshipPushTest.validDeviceToken.hexData
         )
 
         let payload = await self.channel.channelPayload
 
-        XCTAssertEqual(PushTest.validDeviceToken, payload.channel.pushAddress)
+        XCTAssertEqual(AirshipPushTest.validDeviceToken, payload.channel.pushAddress)
         XCTAssertTrue(
             payload.channel.iOSChannelSettings?.isTimeSensitive == false
         )
@@ -442,7 +442,7 @@ class PushTest: XCTestCase {
     @MainActor
     func testChannelPayloadNotificationsEnabled() async throws {
         self.push.didRegisterForRemoteNotifications(
-            PushTest.validDeviceToken.hexData
+            AirshipPushTest.validDeviceToken.hexData
         )
         apnsRegistrar.isRegisteredForRemoteNotifications = true
         apnsRegistrar.isRemoteNotificationBackgroundModeEnabled = true
@@ -467,7 +467,7 @@ class PushTest: XCTestCase {
 
         let payload = await self.channel.channelPayload
 
-        XCTAssertEqual(PushTest.validDeviceToken, payload.channel.pushAddress)
+        XCTAssertEqual(AirshipPushTest.validDeviceToken, payload.channel.pushAddress)
         XCTAssertTrue(payload.channel.isOptedIn)
         XCTAssertTrue(payload.channel.isBackgroundEnabled)
         XCTAssertTrue(
@@ -543,7 +543,7 @@ class PushTest: XCTestCase {
     @MainActor
     func testAnalyticsHeadersOptedIn() async throws {
         self.push.didRegisterForRemoteNotifications(
-            PushTest.validDeviceToken.hexData
+            AirshipPushTest.validDeviceToken.hexData
         )
         apnsRegistrar.isRegisteredForRemoteNotifications = true
         apnsRegistrar.isRemoteNotificationBackgroundModeEnabled = true
@@ -569,7 +569,7 @@ class PushTest: XCTestCase {
             "X-UA-Channel-Opted-In": "true",
             "X-UA-Notification-Prompted": "true",
             "X-UA-Channel-Background-Enabled": "true",
-            "X-UA-Push-Address": PushTest.validDeviceToken,
+            "X-UA-Push-Address": AirshipPushTest.validDeviceToken,
         ]
 
         let headers = await self.analtyics.headers
@@ -578,7 +578,7 @@ class PushTest: XCTestCase {
 
     func testAnalyticsHeadersPushDisabled() async throws {
         await self.push.didRegisterForRemoteNotifications(
-            PushTest.validDeviceToken.hexData
+            AirshipPushTest.validDeviceToken.hexData
         )
         self.privacyManager.disableFeatures(.push)
         let expected = [
@@ -818,7 +818,7 @@ class PushTest: XCTestCase {
 
     @MainActor
     func testForwardAPNSRegistrationSucceeded() {
-        let expectedToken = PushTest.validDeviceToken.hexData
+        let expectedToken = AirshipPushTest.validDeviceToken.hexData
 
         self.push.registrationDelegate = self.registrationDelegate
 
@@ -946,7 +946,7 @@ class PushTest: XCTestCase {
     @MainActor
     func testNotificationStatus() async {
         self.push.didRegisterForRemoteNotifications(
-            PushTest.validDeviceToken.hexData
+            AirshipPushTest.validDeviceToken.hexData
         )
         self.push.userPushNotificationsEnabled = true
 
@@ -974,7 +974,7 @@ class PushTest: XCTestCase {
     @MainActor
     func testNotificationStatusNoTokenRegistration() async {
         self.push.didRegisterForRemoteNotifications(
-            PushTest.validDeviceToken.hexData
+            AirshipPushTest.validDeviceToken.hexData
         )
 
         var status = await self.push.notificationStatus
@@ -1049,7 +1049,7 @@ class PushTest: XCTestCase {
         Task {
             await fulfillment(of: [startedCRATask])
             push.didRegisterForRemoteNotifications(
-                PushTest.validDeviceToken.hexData
+                AirshipPushTest.validDeviceToken.hexData
             )
         }
 

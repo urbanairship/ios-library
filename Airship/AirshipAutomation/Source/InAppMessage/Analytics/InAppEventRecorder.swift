@@ -20,10 +20,10 @@ protocol InAppEventRecorderProtocol: Sendable {
 }
 
 struct InAppEventRecorder: InAppEventRecorderProtocol {
-    private let airshipAnalytics: any InternalAnalyticsProtocol
+    private let airshipAnalytics: any InternalAirshipAnalytics
     private let meteredUsage: any AirshipMeteredUsageProtocol
 
-    init(airshipAnalytics: any InternalAnalyticsProtocol, meteredUsage: any AirshipMeteredUsageProtocol) {
+    init(airshipAnalytics: any InternalAirshipAnalytics, meteredUsage: any AirshipMeteredUsageProtocol) {
         self.airshipAnalytics = airshipAnalytics
         self.meteredUsage = meteredUsage
     }

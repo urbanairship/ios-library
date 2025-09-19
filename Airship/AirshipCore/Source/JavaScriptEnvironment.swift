@@ -35,8 +35,8 @@ public protocol JavaScriptEnvironmentProtocol: Sendable {
 public final class JavaScriptEnvironment: JavaScriptEnvironmentProtocol, Sendable {
 
     private let extensions = AirshipAtomicValue([String]())
-    private let channel: @Sendable () -> any AirshipChannelProtocol
-    private let contact: @Sendable () -> any AirshipContactProtocol
+    private let channel: @Sendable () -> any AirshipChannel
+    private let contact: @Sendable () -> any AirshipContact
 
     public convenience init() {
         self.init(
@@ -46,8 +46,8 @@ public final class JavaScriptEnvironment: JavaScriptEnvironmentProtocol, Sendabl
     }
 
     init(
-        channel: @escaping @Sendable () -> any AirshipChannelProtocol,
-        contact: @escaping @Sendable () -> any AirshipContactProtocol
+        channel: @escaping @Sendable () -> any AirshipChannel,
+        contact: @escaping @Sendable () -> any AirshipContact
     ) {
         self.channel = channel
         self.contact = contact

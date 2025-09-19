@@ -73,7 +73,7 @@ final class InAppAutomation: InternalInAppAutomationProtocol, Sendable {
     private let engine: any AutomationEngineProtocol
     private let remoteDataSubscriber: any AutomationRemoteDataSubscriberProtocol
     private let dataStore: PreferenceDataStore
-    private let privacyManager: any AirshipPrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManager
     private let notificationCenter: AirshipNotificationCenter
     private static let pausedStoreKey: String = "UAInAppMessageManagerPaused"
     private let _legacyInAppMessaging: any InternalLegacyInAppMessagingProtocol
@@ -95,7 +95,7 @@ final class InAppAutomation: InternalInAppAutomationProtocol, Sendable {
         remoteData: any RemoteDataProtocol,
         remoteDataSubscriber: any AutomationRemoteDataSubscriberProtocol,
         dataStore: PreferenceDataStore,
-        privacyManager: any AirshipPrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManager,
         config: RuntimeConfig,
         notificationCenter: AirshipNotificationCenter = .shared
     ) {

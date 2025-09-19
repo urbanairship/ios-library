@@ -5,12 +5,12 @@ import Foundation
 final class ChannelAuthTokenProvider: AuthTokenProvider {
     private let cachedAuthToken: CachedValue<AuthToken>
 
-    private let channel: any AirshipChannelProtocol
+    private let channel: any AirshipChannel
     private let apiClient: any ChannelAuthTokenAPIClientProtocol
     private let date: any AirshipDateProtocol
 
     init(
-        channel: any AirshipChannelProtocol,
+        channel: any AirshipChannel,
         apiClient: any ChannelAuthTokenAPIClientProtocol,
         date: any AirshipDateProtocol = AirshipDate.shared
     ) {
@@ -21,7 +21,7 @@ final class ChannelAuthTokenProvider: AuthTokenProvider {
     }
 
     convenience init(
-        channel: any AirshipChannelProtocol,
+        channel: any AirshipChannel,
         runtimeConfig: RuntimeConfig
     ) {
         self.init(channel: channel, apiClient: ChannelAuthTokenAPIClient(config: runtimeConfig))

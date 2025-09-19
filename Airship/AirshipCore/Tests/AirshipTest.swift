@@ -156,7 +156,7 @@ class UAirshipTest: XCTestCase {
         }
 
         var handlerCalled = false
-        self.airshipInstance.deepLinkHandler = { url in
+        self.airshipInstance.onDeepLink = { url in
             XCTAssertEqual(url.absoluteString, "some-other://some-deep-link")
             handlerCalled = true
         }
@@ -181,7 +181,7 @@ class UAirshipTest: XCTestCase {
         }
 
         var handlerCalled = false
-        self.airshipInstance.deepLinkHandler = { url in
+        self.airshipInstance.onDeepLink = { url in
             XCTAssertEqual(url.absoluteString, "some-other://some-deep-link")
             handlerCalled = true
         }
@@ -206,7 +206,7 @@ class UAirshipTest: XCTestCase {
         }
 
         var handlerCalled = false
-        self.airshipInstance.deepLinkHandler = { url in
+        self.airshipInstance.onDeepLink = { url in
             XCTAssertEqual(url.absoluteString, "some-other://some-deep-link")
             handlerCalled = true
         }
@@ -228,7 +228,7 @@ class UAirshipTest: XCTestCase {
         }
 
         var handlerCalled = false
-        self.airshipInstance.deepLinkHandler = { url in
+        self.airshipInstance.onDeepLink = { url in
             XCTAssertEqual(url.absoluteString, "uairship://some-deep-link")
             handlerCalled = true
         }

@@ -34,8 +34,8 @@ public final class Airship: Sendable {
         return Airship._shared != nil
     }
 
-    private let _airshipInstanceHolder: AirshipAtomicValue<any AirshipInstanceProtocol>
-    var airshipInstance: any AirshipInstanceProtocol {
+    private let _airshipInstanceHolder: AirshipAtomicValue<any AirshipInstance>
+    var airshipInstance: any AirshipInstance {
         _airshipInstanceHolder.value
     }
 
@@ -85,29 +85,29 @@ public final class Airship: Sendable {
     /// A user configurable deep link handler.
     /// Takes precedence over `deepLinkDelegate` when set.
     @MainActor
-    public static var deepLinkHandler: (@Sendable (URL) async -> Void)? {
+    public static var onDeepLink: (@Sendable (URL) async -> Void)? {
         get {
-            return shared.airshipInstance.deepLinkHandler
+            return shared.airshipInstance.onDeepLink
         }
         set {
-            shared._airshipInstanceHolder.value.deepLinkHandler = newValue
+            shared._airshipInstanceHolder.value.onDeepLink = newValue
         }
     }
 
     /// The URL allow list used for validating URLs for landing pages,
     /// wallet action, open external URL action, deep link
     /// action (if delegate is not set), and HTML in-app messages.
-    public static var urlAllowList: any URLAllowListProtocol {
+    public static var urlAllowList: any AirshipURLAllowList {
         return shared.airshipInstance.urlAllowList
     }
 
     /// The locale manager.
-    public static var localeManager: any AirshipLocaleManagerProtocol {
+    public static var localeManager: any AirshipLocaleManager {
         return shared.airshipInstance.localeManager
     }
 
     /// The privacy manager
-    public static var privacyManager: any AirshipPrivacyManagerProtocol {
+    public static var privacyManager: any AirshipPrivacyManager {
         return shared.airshipInstance.privacyManager
     }
 
@@ -132,29 +132,29 @@ public final class Airship: Sendable {
     }
 
     /// Shared Push instance.
-    public static var push: any AirshipPushProtocol {
-        return requireComponent(ofType: (any AirshipPushProtocol).self)
+    public static var push: any AirshipPush {
+        return requireComponent(ofType: (any AirshipPush).self)
     }
 
     /// Shared Contact instance.
-    public static var contact: any AirshipContactProtocol {
-        return requireComponent(ofType: (any AirshipContactProtocol).self)
+    public static var contact: any AirshipContact {
+        return requireComponent(ofType: (any AirshipContact).self)
     }
 
     /// Shared Analytics instance.
-    public static var analytics: any AirshipAnalyticsProtocol {
-        return requireComponent(ofType: (any AirshipAnalyticsProtocol).self)
+    public static var analytics: any AirshipAnalytics {
+        return requireComponent(ofType: (any AirshipAnalytics).self)
     }
 
     /// Shared Channel instance.
-    public static var channel: any AirshipChannelProtocol {
-        return requireComponent(ofType: (any AirshipChannelProtocol).self)
+    public static var channel: any AirshipChannel {
+        return requireComponent(ofType: (any AirshipChannel).self)
     }
 
     @MainActor
     private static var onReadyCallbacks: [@MainActor @Sendable () -> Void] = []
 
-    init(instance: any AirshipInstanceProtocol) {
+    init(instance: any AirshipInstance) {
         self._airshipInstanceHolder = AirshipAtomicValue(instance)
     }
 
@@ -179,7 +179,7 @@ public final class Airship: Sendable {
                 as? [AnyHashable: Any]
             {
                 if AppStateTracker.shared.state != .background {
-                    self.requireComponent(ofType: (any InternalAnalyticsProtocol).self).launched(
+                    self.requireComponent(ofType: (any InternalAirshipAnalytics).self).launched(
                         fromNotification: remoteNotification
                     )
                 }
@@ -267,15 +267,15 @@ public final class Airship: Sendable {
         ChallengeResolver.shared.resolver = resolvedConfig.connectionChallengeResolver
 
         _shared = Airship(
-            instance: AirshipInstance(
+            instance: DefaultAirshipInstance(
                 airshipConfig: resolvedConfig,
                 appCredentials: credentials
             )
         )
 
         let integrationDelegate = DefaultAppIntegrationDelegate(
-            push: requireComponent(ofType: (any InternalPushProtocol).self),
-            analytics: requireComponent(ofType: (any InternalAnalyticsProtocol).self),
+            push: requireComponent(ofType: (any InternalAirshipPush).self),
+            analytics: requireComponent(ofType: (any InternalAirshipAnalytics).self),
             pushableComponents: _shared?.components.compactMap {
                 return $0 as? (any AirshipPushableComponent)
             } ?? []
@@ -394,9 +394,9 @@ public final class Airship: Sendable {
                 }
 
                 // Try handler first, then delegate
-                if let deepLinkHandler = self.airshipInstance.deepLinkHandler {
-                    AirshipLogger.debug("Handling deep link via handler: \(deepLink)")
-                    await deepLinkHandler(deepLink)
+                if let onDeepLink = self.airshipInstance.onDeepLink {
+                    AirshipLogger.debug("Handling deep link via onDeepLink closure: \(deepLink)")
+                    await onDeepLink(deepLink)
                     return true
                 } else if let deepLinkDelegate = self.airshipInstance.deepLinkDelegate {
                     AirshipLogger.debug("Handling deep link by receivedDeepLink: \(deepLink) on delegate: \(deepLinkDelegate)")
@@ -411,8 +411,8 @@ public final class Airship: Sendable {
         }
 
         // Try handler first, then delegate
-        if let deepLinkHandler = self.airshipInstance.deepLinkHandler {
-            AirshipLogger.debug("Handling deep link via handler: \(deepLink)")
+        if let deepLinkHandler = self.airshipInstance.onDeepLink {
+            AirshipLogger.debug("Handling deep link via onDeepLink closure: \(deepLink)")
             await deepLinkHandler(deepLink)
             return true
         } else if let deepLinkDelegate = self.airshipInstance.deepLinkDelegate {
@@ -499,7 +499,7 @@ public final class Airship: Sendable {
         {
             date = installDate
         } else {
-            date = self.airshipInstance.component(ofType: AirshipChannel.self)?.identifier != nil ? Date.distantPast : Date()
+            date = self.airshipInstance.component(ofType: (any AirshipChannel).self)?.identifier != nil ? Date.distantPast : Date()
         }
 
         self.airshipInstance.preferenceDataStore.setObject(date, forKey: Airship.newUserCutOffDateKey)

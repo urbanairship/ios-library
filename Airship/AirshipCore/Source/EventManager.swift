@@ -30,13 +30,13 @@ final class EventManager: EventManagerProtocol {
     private let eventAPIClient: any EventAPIClientProtocol
     private let eventScheduler: any EventUploadSchedulerProtocol
     private let state: EventManagerState
-    private let channel: any AirshipChannelProtocol
+    private let channel: any AirshipChannel
 
     @MainActor
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: any AirshipChannelProtocol
+        channel: any AirshipChannel
     ) {
         self.init(
             dataStore: dataStore,
@@ -49,7 +49,7 @@ final class EventManager: EventManagerProtocol {
     @MainActor
     init(
         dataStore: PreferenceDataStore,
-        channel: any AirshipChannelProtocol,
+        channel: any AirshipChannel,
         eventStore: EventStore,
         eventAPIClient: any EventAPIClientProtocol,
         eventScheduler: (any EventUploadSchedulerProtocol)? = nil

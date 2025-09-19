@@ -152,7 +152,7 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
     public var stableContactInfo: StableContactInfo {
         get async {
             let stableInfo = await Airship.requireComponent(
-                ofType: (any InternalAirshipContactProtocol).self
+                ofType: (any InternalAirshipContact).self
             ).getStableContactInfo()
 
             if let contactID {

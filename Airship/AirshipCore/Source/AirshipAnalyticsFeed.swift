@@ -10,7 +10,7 @@ public final class AirshipAnalyticsFeed: Sendable {
         self.isEnabled = isEnabled
     }
 
-    public convenience init(privacyManager: any AirshipPrivacyManagerProtocol, isAnalyticsEnabled: Bool) {
+    public convenience init(privacyManager: any AirshipPrivacyManager, isAnalyticsEnabled: Bool) {
         self.init(
             isEnabled: { [weak privacyManager] in
                 return privacyManager?.isEnabled(.analytics) == true && isAnalyticsEnabled

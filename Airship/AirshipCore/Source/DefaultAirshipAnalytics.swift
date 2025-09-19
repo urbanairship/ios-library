@@ -10,7 +10,7 @@ import UIKit
 
 
 /// The Analytics object provides an interface to the Airship Analytics API.
-final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
+final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
     private static let associatedIdentifiers = "UAAssociatedIdentifiers"
 
     static let missingSendID = "MISSING_SEND_ID"
@@ -19,12 +19,12 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
 
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
-    private let channel: any AirshipChannelProtocol
-    private let privacyManager: any AirshipPrivacyManagerProtocol
+    private let channel: any AirshipChannel
+    private let privacyManager: any AirshipPrivacyManager
     private let notificationCenter: AirshipNotificationCenter
     private let date: any AirshipDateProtocol
     private let eventManager: any EventManagerProtocol
-    private let localeManager: any AirshipLocaleManagerProtocol
+    private let localeManager: any AirshipLocaleManager
     private let permissionsManager: AirshipPermissionsManager
     private let sessionTracker: any SessionTrackerProtocol
     private let serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
@@ -73,9 +73,9 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: any AirshipChannelProtocol,
-        localeManager: any AirshipLocaleManagerProtocol,
-        privacyManager: any AirshipPrivacyManagerProtocol,
+        channel: any AirshipChannel,
+        localeManager: any AirshipLocaleManager,
+        privacyManager: any AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager
     ) {
         self.init(
@@ -97,11 +97,11 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        channel: any AirshipChannelProtocol,
+        channel: any AirshipChannel,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         date: any AirshipDateProtocol = AirshipDate.shared,
-        localeManager: any AirshipLocaleManagerProtocol,
-        privacyManager: any AirshipPrivacyManagerProtocol,
+        localeManager: any AirshipLocaleManager,
+        privacyManager: any AirshipPrivacyManager,
         permissionsManager: AirshipPermissionsManager,
         eventManager: any EventManagerProtocol,
         sessionTracker: (any SessionTrackerProtocol)? = nil,
@@ -439,7 +439,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
         }
 
         if let previous = self.dataStore.object(
-            forKey: AirshipAnalytics.associatedIdentifiers
+            forKey: DefaultAirshipAnalytics.associatedIdentifiers
         ) as? [String: String] {
             if previous == associatedIdentifiers.allIDs {
                 AirshipLogger.info(
@@ -456,7 +456,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
             self.recordEvent(event)
             self.dataStore.setObject(
                 associatedIdentifiers.allIDs,
-                forKey: AirshipAnalytics.associatedIdentifiers
+                forKey: DefaultAirshipAnalytics.associatedIdentifiers
             )
         } catch {
             AirshipLogger.error("Failed to add associated idenfiers event \(error)")
@@ -467,7 +467,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
     /// - Returns: The device's current associated identifiers.
     public func currentAssociatedDeviceIdentifiers() -> AssociatedIdentifiers {
         let storedIDs =
-            self.dataStore.object(forKey: AirshipAnalytics.associatedIdentifiers)
+            self.dataStore.object(forKey: DefaultAirshipAnalytics.associatedIdentifiers)
             as? [String: String]
         return AssociatedIdentifiers(
             identifiers: storedIDs ?? [:]
@@ -564,7 +564,7 @@ final class AirshipAnalytics: AirshipAnalyticsProtocol, @unchecked Sendable {
 }
 
 
-extension AirshipAnalytics: AirshipComponent, InternalAnalyticsProtocol {
+extension DefaultAirshipAnalytics: AirshipComponent, InternalAirshipAnalytics {
     @MainActor
     public func airshipReady() {
         self.isAirshipReady = true
@@ -610,11 +610,11 @@ extension AirshipAnalytics: AirshipComponent, InternalAnalyticsProtocol {
     @MainActor
     public func launched(fromNotification notification: [AnyHashable: Any]) {
         if AirshipUtils.isAlertingPush(notification) {
-            let sendID = notification[AirshipAnalytics.pushSendID] as? String
-            let metadata = notification[AirshipAnalytics.pushMetadata] as? String
+            let sendID = notification[DefaultAirshipAnalytics.pushSendID] as? String
+            let metadata = notification[DefaultAirshipAnalytics.pushMetadata] as? String
 
             self.sessionTracker.launchedFromPush(
-                sendID: sendID ?? AirshipAnalytics.missingSendID,
+                sendID: sendID ?? DefaultAirshipAnalytics.missingSendID,
                 metadata: metadata
             )
         }

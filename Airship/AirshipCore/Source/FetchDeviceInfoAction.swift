@@ -42,9 +42,9 @@ public final class FetchDeviceInfoAction: AirshipAction {
     // Push opt-in key
     public static let pushOptIn = "push_opt_in"
 
-    private let channel: @Sendable () -> any AirshipChannelProtocol
-    private let contact: @Sendable () -> any AirshipContactProtocol
-    private let push: @Sendable () -> any AirshipPushProtocol
+    private let channel: @Sendable () -> any AirshipChannel
+    private let contact: @Sendable () -> any AirshipContact
+    private let push: @Sendable () -> any AirshipPush
 
     public convenience init() {
         self.init(
@@ -55,9 +55,9 @@ public final class FetchDeviceInfoAction: AirshipAction {
     }
 
     init(
-        channel: @escaping @Sendable () -> any AirshipChannelProtocol,
-        contact: @escaping @Sendable () -> any AirshipContactProtocol,
-        push: @escaping @Sendable () -> any AirshipPushProtocol
+        channel: @escaping @Sendable () -> any AirshipChannel,
+        contact: @escaping @Sendable () -> any AirshipContact,
+        push: @escaping @Sendable () -> any AirshipPush
     ) {
         self.channel = channel
         self.contact = contact
