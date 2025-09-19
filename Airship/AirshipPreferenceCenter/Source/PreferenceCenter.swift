@@ -20,7 +20,7 @@ public protocol PreferenceCenterOpenDelegate {
 
 /// An interface for interacting with Airship's Preference Center.
 @MainActor
-public protocol PreferenceCenterProtocol: Sendable {
+public protocol PreferenceCenterProtocol: AnyObject, Sendable {
     
     /// Called when the Preference Center is requested to be displayed.
     /// Return `true` if the display was handled, `false` to fall back to default SDK behavior.
@@ -250,8 +250,9 @@ extension PreferenceCenter {
 public extension Airship {
     /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
     @MainActor
-    static var preferenceCenter: any PreferenceCenterProtocol = Airship.requireComponent(
-        ofType: PreferenceCenterComponent.self
-    )
-        .preferenceCenter
+    static var preferenceCenter: any PreferenceCenterProtocol  {
+        Airship.requireComponent(
+           ofType: PreferenceCenterComponent.self
+       ).preferenceCenter
+    }
 }
