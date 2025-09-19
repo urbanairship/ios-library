@@ -14,6 +14,10 @@ protocol AirshipInstanceProtocol: Sendable {
     #endif
 
     var deepLinkDelegate: (any DeepLinkDelegate)? { get set }
+
+    @MainActor
+    var deepLinkHandler: (@MainActor @Sendable (URL) async -> Void)? { get set }
+
     var urlAllowList: any URLAllowListProtocol { get }
     var localeManager: AirshipLocaleManager { get }
     var inputValidator: any AirshipInputValidation.Validator { get }
@@ -27,6 +31,7 @@ protocol AirshipInstanceProtocol: Sendable {
 }
 
 final class AirshipInstance: AirshipInstanceProtocol, Sendable {
+
     public let config: RuntimeConfig
     public let preferenceDataStore: PreferenceDataStore
 
@@ -43,12 +48,16 @@ final class AirshipInstance: AirshipInstanceProtocol, Sendable {
     }
     public let channelCapture: ChannelCapture
 #endif
-    
+
     private let _deeplinkDelegateHolder = AirshipAtomicValue<(any DeepLinkDelegate)?>(nil)
     public var deepLinkDelegate: (any DeepLinkDelegate)? {
         get { _deeplinkDelegateHolder.value }
         set { _deeplinkDelegateHolder.value = newValue }
     }
+
+    @MainActor
+    public var deepLinkHandler: (@MainActor @Sendable (URL) async -> Void)?
+
     public let urlAllowList: any URLAllowListProtocol
     public let localeManager: AirshipLocaleManager
     public let privacyManager: AirshipPrivacyManager

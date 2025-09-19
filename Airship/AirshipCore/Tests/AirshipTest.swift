@@ -146,6 +146,103 @@ class UAirshipTest: XCTestCase {
         XCTAssertNil(component.deepLink)
         XCTAssertEqual(deepLink, deepLinkHandler.deepLink)
     }
+
+    @MainActor
+    func testDeepLinkHandlerReturnsTrue() async {
+        let component = TestAirshipComponent()
+        component.onDeepLink = { _ in
+            XCTFail()
+            return false
+        }
+
+        var handlerCalled = false
+        self.airshipInstance.deepLinkHandler = { url in
+            XCTAssertEqual(url.absoluteString, "some-other://some-deep-link")
+            handlerCalled = true
+        }
+
+        self.airshipInstance.deepLinkDelegate = deepLinkHandler
+        self.airshipInstance.components = [component]
+
+        let deepLink = URL(string: "some-other://some-deep-link")!
+        let result = await Airship.shared.deepLink(deepLink)
+        XCTAssertTrue(result)
+        XCTAssertTrue(handlerCalled)
+        XCTAssertNil(component.deepLink)
+        XCTAssertNil(deepLinkHandler.deepLink) // Delegate should not be called
+    }
+
+    @MainActor
+    func testDeepLinkHandlerPreventsDelegate() async {
+        let component = TestAirshipComponent()
+        component.onDeepLink = { _ in
+            XCTFail()
+            return false
+        }
+
+        var handlerCalled = false
+        self.airshipInstance.deepLinkHandler = { url in
+            XCTAssertEqual(url.absoluteString, "some-other://some-deep-link")
+            handlerCalled = true
+        }
+
+        self.airshipInstance.deepLinkDelegate = deepLinkHandler
+        self.airshipInstance.components = [component]
+
+        let deepLink = URL(string: "some-other://some-deep-link")!
+        let result = await Airship.shared.deepLink(deepLink)
+        XCTAssertTrue(result)
+        XCTAssertTrue(handlerCalled)
+        XCTAssertNil(component.deepLink)
+        XCTAssertNil(deepLinkHandler.deepLink) // Delegate should NOT be called when handler is set
+    }
+
+    @MainActor
+    func testDeepLinkHandlerWithNoDelegate() async {
+        let component = TestAirshipComponent()
+        component.onDeepLink = { _ in
+            XCTFail()
+            return false
+        }
+
+        var handlerCalled = false
+        self.airshipInstance.deepLinkHandler = { url in
+            XCTAssertEqual(url.absoluteString, "some-other://some-deep-link")
+            handlerCalled = true
+        }
+
+        self.airshipInstance.components = [component]
+
+        let deepLink = URL(string: "some-other://some-deep-link")!
+        let result = await Airship.shared.deepLink(deepLink)
+        XCTAssertTrue(result) // Should return true since handler is set
+        XCTAssertTrue(handlerCalled)
+        XCTAssertNil(component.deepLink)
+    }
+
+    @MainActor
+    func testUAirshipDeepLinkHandlerIntercepts() async {
+        let component = TestAirshipComponent()
+        component.onDeepLink = { _ in
+            return false
+        }
+
+        var handlerCalled = false
+        self.airshipInstance.deepLinkHandler = { url in
+            XCTAssertEqual(url.absoluteString, "uairship://some-deep-link")
+            handlerCalled = true
+        }
+
+        self.airshipInstance.deepLinkDelegate = deepLinkHandler
+        self.airshipInstance.components = [component]
+
+        let deepLink = URL(string: "uairship://some-deep-link")!
+        let result = await Airship.shared.deepLink(deepLink)
+        XCTAssertTrue(result)
+        XCTAssertTrue(handlerCalled)
+        XCTAssertEqual(deepLink, component.deepLink) // Component still gets called for uairship:// URLs
+        XCTAssertNil(deepLinkHandler.deepLink) // Delegate should NOT be called when handler is set
+    }
 }
 
 

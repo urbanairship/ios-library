@@ -82,6 +82,18 @@ public final class Airship: Sendable {
         }
     }
 
+    /// A user configurable deep link handler.
+    /// Takes precedence over `deepLinkDelegate` when set.
+    @MainActor
+    public static var deepLinkHandler: (@Sendable (URL) async -> Void)? {
+        get {
+            return shared.airshipInstance.deepLinkHandler
+        }
+        set {
+            shared._airshipInstanceHolder.value.deepLinkHandler = newValue
+        }
+    }
+
     /// The URL allow list used for validating URLs for landing pages,
     /// wallet action, open external URL action, deep link
     /// action (if delegate is not set), and HTML in-app messages.
@@ -147,7 +159,7 @@ public final class Airship: Sendable {
     }
 
 #if !os(watchOS)
-    /// Initializes Airship. If any errors are found with the config or if Airship is already intiialized it will throw with
+    /// Initializes Airship. If any errors are found with the config or if Airship is already initialized it will throw with
     /// the error.
     /// - Parameters:
     ///     - config: The Airship config. If nil, config will be loading from a plist.
@@ -361,7 +373,8 @@ public final class Airship: Sendable {
 
     /// Processes a deep link.
     /// - Note: For internal use only. :nodoc:
-    /// `uairship://` deep links will be handled internally. All other deep links will be forwarded to the deep link delegate.
+    /// `uairship://` deep links will be handled internally. All other deep links will be forwarded to the deep link handler or delegate
+    ///  in that order.
     /// - Parameters:
     ///     - deepLink: The deep link.
     ///     - completionHandler: The result. `true` if the link was able to be processed, otherwise `false`.
@@ -380,7 +393,12 @@ public final class Airship: Sendable {
                     return true
                 }
 
-                if let deepLinkDelegate = self.airshipInstance.deepLinkDelegate {
+                // Try handler first, then delegate
+                if let deepLinkHandler = self.airshipInstance.deepLinkHandler {
+                    AirshipLogger.debug("Handling deep link via handler: \(deepLink)")
+                    await deepLinkHandler(deepLink)
+                    return true
+                } else if let deepLinkDelegate = self.airshipInstance.deepLinkDelegate {
                     AirshipLogger.debug("Handling deep link by receivedDeepLink: \(deepLink) on delegate: \(deepLinkDelegate)")
                     await deepLinkDelegate.receivedDeepLink(deepLink)
                     return true
@@ -392,17 +410,19 @@ public final class Airship: Sendable {
            return true
         }
 
-        guard
-            let deepLinkDelegate = self.airshipInstance.deepLinkDelegate
-        else {
-            AirshipLogger.debug("Unhandled deep link \(deepLink)")
-            return  false
+        // Try handler first, then delegate
+        if let deepLinkHandler = self.airshipInstance.deepLinkHandler {
+            AirshipLogger.debug("Handling deep link via handler: \(deepLink)")
+            await deepLinkHandler(deepLink)
+            return true
+        } else if let deepLinkDelegate = self.airshipInstance.deepLinkDelegate {
+            AirshipLogger.debug("Handling deep link via receivedDeepLink: \(deepLink) on delegate: \(deepLinkDelegate)")
+            await deepLinkDelegate.receivedDeepLink(deepLink)
+            return true
         }
 
-        AirshipLogger.debug("Handling deep link via receivedDeepLink: \(deepLink) on delegate: \(deepLinkDelegate)")
-        await deepLinkDelegate.receivedDeepLink(deepLink)
-
-        return true
+        AirshipLogger.debug("Unhandled deep link \(deepLink)")
+        return false
     }
 
     /// Handle the Airship deep links for app_settings and app_store.

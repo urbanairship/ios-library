@@ -81,10 +81,12 @@ final class TestAirshipInstance: AirshipInstanceProtocol, @unchecked Sendable {
 
     public var deepLinkDelegate: DeepLinkDelegate?
 
+    @MainActor
+    public var deepLinkHandler: (@MainActor @Sendable (URL) async -> Void)?
+
     public var components: [AirshipComponent] = []
 
     private var componentMap: [String: AirshipComponent] = [:]
-
 
     public func component<E>(ofType componentType: E.Type) -> E? {
         let key = "Type:\(componentType)"
