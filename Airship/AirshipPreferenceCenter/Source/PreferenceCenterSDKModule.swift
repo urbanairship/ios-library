@@ -23,7 +23,6 @@ public class PreferenceCenterSDKModule: NSObject, AirshipSDKModule {
         return PreferenceCenterSDKModule(preferenceCenter)
     }
 
-
     private init(_ preferenceCenter: PreferenceCenter) {
         self.components = [
             PreferenceCenterComponent(preferenceCenter: preferenceCenter)

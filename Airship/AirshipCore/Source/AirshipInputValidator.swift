@@ -87,9 +87,6 @@ public struct AirshipInputValidation {
     /// Protocol for validators that perform validation of input requests.
     /// NOTE: For internal use only. :nodoc:
     public protocol Validator: AnyObject, Sendable {
-        @MainActor
-        var legacySMSDelegate: (any SMSValidatorDelegate)? { get set }
-
         /// Validates the provided request and returns a result.
         /// - Parameter request: The request to be validated (either SMS or Email).
         /// - Throws: Can throw errors if validation fails.
@@ -103,21 +100,8 @@ extension AirshipInputValidation {
     /// /// NOTE: For internal use only. :nodoc:
     final class DefaultValidator: Validator {
 
-        @MainActor
-        public var legacySMSDelegate: (any SMSValidatorDelegate)? {
-            get {
-                self.storage.smsDelegate
-            }
-            set {
-                self.storage.smsDelegate = newValue
-            }
-        }
-
         // Regular expression for validating email addresses.
         private static let emailRegex = #"^[^@\s]+@[^@\s]+\.[^@\s.]+$"#
-
-        // Internal storage for delegates and configurations.
-        private let storage = Storage()
 
         private let overrides: OverridesClosure?
         private let smsValidatorAPIClient: any SMSValidatorAPIClientProtocol
@@ -206,17 +190,6 @@ extension AirshipInputValidation {
                 return .invalid
             }
 
-            // Legacy delegate validation
-            if case let .sender(senderID, prefix) = sms.validationOptions, let delegate = await self.legacySMSDelegate {
-                AirshipLogger.trace("Using deprecated SMSValidatorDelegate for \(request)")
-                return try await legacySMSValidation(
-                    address: sms.rawInput,
-                    senderID: senderID,
-                    prefix: prefix,
-                    delegate: delegate
-                )
-            }
-
             // Airship SMS validation
             let result = switch(sms.validationOptions) {
             case .sender(let sender, _):
@@ -238,44 +211,6 @@ extension AirshipInputValidation {
             case .invalid: .invalid
             case .valid(let address): .valid(address: address)
             }
-        }
-
-        /// Performs legacy SMS validation using a deprecated delegate.
-        /// - Parameters:
-        ///   - address: The phone number to be validated.
-        ///   - senderID: The sender ID for validation.
-        ///   - prefix: An optional prefix for the validation.
-        ///   - delegate: The legacy delegate that will handle the SMS validation.
-        /// - Throws: Can throw errors if validation fails.
-        /// - Returns: The result of the validation, either valid or invalid.
-        private func legacySMSValidation(
-            address: String,
-            senderID: String,
-            prefix: String?,
-            delegate: any SMSValidatorDelegate
-        ) async throws -> Result {
-            let trimmed = address.trimmingCharacters(in: .whitespacesAndNewlines)
-            var cleanedNumber = trimmed.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
-
-            if let prefix {
-                let cleanedCountryCode = prefix.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
-                if cleanedNumber.hasPrefix(cleanedCountryCode) {
-                    cleanedNumber = String(cleanedNumber.dropFirst(cleanedCountryCode.count))
-                }
-                cleanedNumber =  cleanedCountryCode + cleanedNumber
-            }
-
-            guard try await delegate.validateSMS(msisdn: cleanedNumber, sender: senderID) else {
-                return .invalid
-            }
-
-            return .valid(address: cleanedNumber)
-        }
-
-        /// Internal storage for SMS delegate.
-        private final class Storage: Sendable  {
-            @MainActor
-            var smsDelegate: (any SMSValidatorDelegate)?
         }
     }
 }

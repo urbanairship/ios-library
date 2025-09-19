@@ -112,7 +112,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
     #endif
 
     @MainActor
-    public var onPresentationOptionsExtension: (@MainActor @Sendable (UNNotificationPresentationOptions, UNNotification) async -> UNNotificationPresentationOptions)?
+    public var onExtendPresentationOptions: (@MainActor @Sendable (UNNotificationPresentationOptions, UNNotification) async -> UNNotificationPresentationOptions)?
 
     @MainActor
     private var isRegisteredForRemoteNotifications: Bool {
@@ -1122,8 +1122,8 @@ extension AirshipPush: InternalPushProtocol {
             options = self.defaultPresentationOptions
         }
         
-        if let onPresentationOptionsExtension = self.onPresentationOptionsExtension {
-            options = await onPresentationOptionsExtension(options, notification)
+        if let onExtendPresentationOptions = self.onExtendPresentationOptions {
+            options = await onExtendPresentationOptions(options, notification)
         } else if let delegate = self.pushNotificationDelegate {
             options = await delegate.extendPresentationOptions(options, notification: notification)
         }

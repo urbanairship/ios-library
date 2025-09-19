@@ -179,8 +179,6 @@ class PreferenceCenterTest: XCTestCase {
 }
 
 fileprivate final class TestInputValidator: AirshipInputValidation.Validator {
-    var legacySMSDelegate: (any AirshipCore.SMSValidatorDelegate)?
-
     func validateRequest(_ request: AirshipCore.AirshipInputValidation.Request) async throws -> AirshipCore.AirshipInputValidation.Result {
         return .invalid
     }

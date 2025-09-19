@@ -382,7 +382,7 @@ private final class EventTestPush: AirshipPushProtocol, @unchecked Sendable {
     var onNotificationResponseReceived: (@MainActor @Sendable (UNNotificationResponse) async -> Void)?
 #endif
 
-    var onPresentationOptionsExtension: (@MainActor @Sendable (UNNotificationPresentationOptions, UNNotification) async -> UNNotificationPresentationOptions)?
+    var onExtendPresentationOptions: (@MainActor @Sendable (UNNotificationPresentationOptions, UNNotification) async -> UNNotificationPresentationOptions)?
 
     init() {
         (self.notificationStatusUpdates, self.statusUpdateContinuation) = AsyncStream<AirshipNotificationStatus>.airshipMakeStreamWithContinuation()

@@ -95,36 +95,6 @@ public final class JSONMatcher: NSObject, Sendable, Codable {
         )
     }
 
-    /// Creates a new `JSONMatcher` from a JSON payload.
-    /// - Parameter json: The JSON payload to create the matcher from.
-    /// - Throws: An error if the JSON is invalid or cannot be decoded.
-    /// - Returns: A `JSONMatcher` instance.
-    @available(*, deprecated, message: "Use Codable conformance for serialization instead.")
-    public convenience init(json: Any?) throws {
-        let value: JSONMatcher = try AirshipJSON.wrap(json).decode()
-        self.init(valueMatcher: value.valueMatcher, key: value.key, scope: value.scope, ignoreCase: value.ignoreCase)
-    }
-
-    /// Returns the matcher's JSON payload representation.
-    /// - Returns: A `[String: Any]` dictionary representing the matcher.
-    @available(*, deprecated, message: "Use Codable conformance for serialization instead.")
-    public func payload() -> [String: Any] {
-        return (try? AirshipJSON.wrap(self).unWrap() as? [String: Any]) ?? [:]
-    }
-
-    /// Evaluates the given value against the matcher's criteria.
-    /// - Parameter value: The object to evaluate. Can be any type.
-    /// - Returns: `true` if the value matches the criteria; otherwise, `false`.
-    @available(*, deprecated, message: "Use evaluate(json:) instead.")
-    public func evaluate(_ value: Any?) -> Bool {
-        do {
-            return try evaluate(json: .wrap(value))
-        } catch {
-            AirshipLogger.error("Failed to evaluate json: \(error)")
-            return false
-        }
-    }
-
     /// Evaluates the given `AirshipJSON` value against the matcher's criteria.
     ///
     /// This method traverses the JSON object using the `scope` and `key` to find the target value,

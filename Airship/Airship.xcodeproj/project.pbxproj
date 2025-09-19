@@ -598,7 +598,6 @@
 		6E75F50529C4EAF600E3585A /* AudienceOverridesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E75F50429C4EAF600E3585A /* AudienceOverridesProvider.swift */; };
 		6E77CD4A2D8A225E0057A52C /* SMSValidatorAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E77CD492D8A225E0057A52C /* SMSValidatorAPIClient.swift */; };
 		6E77CD4B2D8A225E0057A52C /* AirshipInputValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E77CD472D8A225E0057A52C /* AirshipInputValidator.swift */; };
-		6E77CD4C2D8A225E0057A52C /* SMSValidatorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E77CD482D8A225E0057A52C /* SMSValidatorDelegate.swift */; };
 		6E77CE472D8A28B90057A52C /* CachingSMSValidatorAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E77CE462D8A28B10057A52C /* CachingSMSValidatorAPIClient.swift */; };
 		6E78848F29B9643C00ACAE45 /* ContactProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E78848E29B9643C00ACAE45 /* ContactProtocol.swift */; };
 		6E7DB38328ECDC41002725F6 /* LiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB38228ECDC41002725F6 /* LiveActivity.swift */; };
@@ -1930,7 +1929,6 @@
 		6E739D8126BB33A200BC6F6D /* ChannelBulkUpdateAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelBulkUpdateAPIClientTest.swift; sourceTree = "<group>"; };
 		6E75F50429C4EAF600E3585A /* AudienceOverridesProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudienceOverridesProvider.swift; sourceTree = "<group>"; };
 		6E77CD472D8A225E0057A52C /* AirshipInputValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipInputValidator.swift; sourceTree = "<group>"; };
-		6E77CD482D8A225E0057A52C /* SMSValidatorDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSValidatorDelegate.swift; sourceTree = "<group>"; };
 		6E77CD492D8A225E0057A52C /* SMSValidatorAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSValidatorAPIClient.swift; sourceTree = "<group>"; };
 		6E77CE462D8A28B10057A52C /* CachingSMSValidatorAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachingSMSValidatorAPIClient.swift; sourceTree = "<group>"; };
 		6E78848E29B9643C00ACAE45 /* ContactProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactProtocol.swift; sourceTree = "<group>"; };
@@ -3890,7 +3888,6 @@
 			isa = PBXGroup;
 			children = (
 				6E77CD472D8A225E0057A52C /* AirshipInputValidator.swift */,
-				6E77CD482D8A225E0057A52C /* SMSValidatorDelegate.swift */,
 				6E77CD492D8A225E0057A52C /* SMSValidatorAPIClient.swift */,
 				6E77CE462D8A28B10057A52C /* CachingSMSValidatorAPIClient.swift */,
 			);
@@ -5797,7 +5794,6 @@
 				6E1C9C49271F77F2009EF9EF /* ForegroundColorViewModifier.swift in Sources */,
 				6E77CD4A2D8A225E0057A52C /* SMSValidatorAPIClient.swift in Sources */,
 				6E77CD4B2D8A225E0057A52C /* AirshipInputValidator.swift in Sources */,
-				6E77CD4C2D8A225E0057A52C /* SMSValidatorDelegate.swift in Sources */,
 				6E952920268A6C1500398B54 /* SearchEventTemplate.swift in Sources */,
 				6E739D6E26B9F58700BC6F6D /* TagGroupMutations.swift in Sources */,
 				6EF02DF02714EB500008B6C9 /* Thomas.swift in Sources */,

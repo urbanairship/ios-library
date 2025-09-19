@@ -82,18 +82,6 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
     private var subscriptions: Set<AnyCancellable> = Set()
     private let serialQueue: AirshipAsyncSerialQueue
 
-    /// Publishes all edits made to the subscription lists through the  SDK
-    @MainActor
-    public var smsValidatorDelegate: (any SMSValidatorDelegate)? {
-        set {
-            Airship.inputValidator.legacySMSDelegate = newValue
-        }
-
-        get {
-            Airship.inputValidator.legacySMSDelegate
-        }
-    }
-
     private var lastResolveDate: Date {
          get {
              let date = self.dataStore.object(forKey: AirshipContact.resolveDateKey) as? Date
@@ -494,33 +482,6 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
 
         self.addOperation(.registerSMS(msisdn: msisdn, options: options))
         self.notifyOverridesChanged()
-    }
-
-    /**
-     * Validates MSISDN
-     * - Parameters:
-     *   - msisdn: The mobile phone number to validate.
-     *   - sender: The identifier given to the sender of the SMS message.
-     *   - Returns: Async boolean indicating validity of msisdn
-     */
-    public func validateSMS(
-        _ msisdn: String,
-        sender: String
-    ) async throws -> Bool {
-        AirshipLogger.trace("Using depreacted validateSMS call \(msisdn), \(sender).")
-        
-        let request: AirshipInputValidation.Request = .sms(
-            AirshipInputValidation.Request.SMS(
-                rawInput: msisdn,
-                validationOptions: .sender(senderID: sender, prefix: nil),
-                validationHints: .init(minDigits: 4)
-            )
-        )
-
-        return switch(try await Airship.inputValidator.validateRequest(request)) {
-        case .valid: true
-        case .invalid: false
-        }
     }
 
     /// Associates an open channel to the contact.

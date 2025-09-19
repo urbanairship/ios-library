@@ -189,46 +189,8 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
         )
     }
 
-    /// Creates a matcher from a JSON payload.
-    /// - Parameter json: The JSON object to decode into a `JSONValueMatcher`.
-    /// - Returns: A `JSONValueMatcher` instance.
-    /// - Throws: An error if decoding fails.
-    @available(*, deprecated, message: "Use Codable conformance for serialization instead.")
-    public class func matcherWithJSON(_ json: Any?) throws -> JSONValueMatcher {
-        return try AirshipJSON.wrap(json).decode()
-    }
-
     public func encode(to encoder: any Encoder) throws {
         try self.predicate.encode(to: encoder)
-    }
-
-    /// The matcher's JSON payload.
-    @available(*, deprecated, message: "Use Codable conformance for serialization instead.")
-    public func payload() -> [String: Any] {
-        return (try? AirshipJSON.wrap(self.predicate).unWrap() as? [String: Any]) ?? [:]
-    }
-
-    /// Evaluates the given value against the matcher.
-    /// - Parameter value: The value to evaluate.
-    /// - Returns: `true` if the value matches, otherwise `false`.
-    @available(*, deprecated, message: "Use evaluate(json:ignoreCase:) instead.")
-    public func evaluate(_ value: Any?) -> Bool {
-        return evaluate(value, ignoreCase: false)
-    }
-
-    /// Evaluates the given value against the matcher.
-    /// - Parameters:
-    ///   - value: The value to evaluate.
-    ///   - ignoreCase: If `true`, string comparisons will be case-insensitive.
-    /// - Returns: `true` if the value matches, otherwise `false`.
-    @available(*, deprecated, message: "Use evaluate(json:ignoreCase:) instead.")
-    public func evaluate(_ value: Any?, ignoreCase: Bool) -> Bool {
-        do {
-            return try evaluate(json: .wrap(value), ignoreCase: ignoreCase)
-        } catch {
-            AirshipLogger.error("Failed to evaluate json: \(error)")
-            return false
-        }
     }
 
     /// Evaluates the given `AirshipJSON` value against the matcher.

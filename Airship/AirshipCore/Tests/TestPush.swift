@@ -117,7 +117,7 @@ final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, Airsh
     var onNotificationResponseReceived: (@MainActor @Sendable (UNNotificationResponse) async -> Void)?
 #endif
 
-    var onPresentationOptionsExtension: (@MainActor @Sendable (UNNotificationPresentationOptions, UNNotification) async -> UNNotificationPresentationOptions)?
+    var onExtendPresentationOptions: (@MainActor @Sendable (UNNotificationPresentationOptions, UNNotification) async -> UNNotificationPresentationOptions)?
 
     var updateAuthorizedNotificationTypesCalled = false
     var registrationError: Error?

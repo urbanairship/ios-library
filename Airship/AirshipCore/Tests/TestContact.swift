@@ -25,9 +25,7 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
     func registerOpen(_ address: String, options: AirshipCore.OpenRegistrationOptions) {
 
     }
-    
-    var smsValidatorDelegate: (any AirshipCore.SMSValidatorDelegate)?
-    
+
     func resend(_ channel: AirshipCore.ContactChannel) {
 
     }
@@ -40,10 +38,6 @@ class TestContact: InternalAirshipContactProtocol, AirshipComponent, @unchecked 
 
     }
 
-    var SMSValidatorDelegate: SMSValidatorDelegate?
-    func validateSMS(_ msisdn: String, sender: String) async throws -> Bool {
-        true
-    }
 
     func notifyRemoteLogin() {
     }

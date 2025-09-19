@@ -215,7 +215,7 @@ public protocol AirshipPushProtocol: AnyObject, Sendable {
     /// Callback to extend presentation options for foreground notifications.
     /// This callback takes precedence over the delegate method if both are set.
     @MainActor
-    var onPresentationOptionsExtension: (@MainActor @Sendable (UNNotificationPresentationOptions, UNNotification) async -> UNNotificationPresentationOptions)? { get set }
+    var onExtendPresentationOptions: (@MainActor @Sendable (UNNotificationPresentationOptions, UNNotification) async -> UNNotificationPresentationOptions)? { get set }
 }
 
 protocol InternalPushProtocol: Sendable {

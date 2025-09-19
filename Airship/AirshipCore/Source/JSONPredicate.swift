@@ -104,13 +104,6 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
         try container.encodeIfPresent(self.subpredicates, forKey: key)
     }
 
-    /// Returns the predicate's JSON payload representation.
-    /// - Returns: A `[String: Any]` dictionary representing the predicate.
-    @available(*, deprecated, message: "Use Codable conformance for serialization instead.")
-    public func payload() -> [String: Any] {
-        return (try? AirshipJSON.wrap(self).unWrap() as? [String: Any]) ?? [:]
-    }
-
     /// Evaluates the given `AirshipJSON` value against the predicate.
     /// - Parameter json: The `AirshipJSON` object to evaluate.
     /// - Returns: `true` if the value matches the predicate; otherwise, `false`.
@@ -128,19 +121,6 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
         default:
             // Evaluate using the JSON matcher
             return jsonMatcher?.evaluate(json: json) ?? false
-        }
-    }
-
-    /// Evaluates the given object against the predicate.
-    /// - Parameter object: The object to evaluate.
-    /// - Returns: `true` if the predicate matches the object; otherwise, `false`.
-    @available(*, deprecated, message: "Use evaluate(json:) instead")
-    public func evaluate(_ object: Any?) -> Bool {
-        do {
-            return evaluate(json: try .wrap(object))
-        } catch {
-            AirshipLogger.error("Failed to evaluate json: \(error)")
-            return false
         }
     }
 
