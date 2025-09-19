@@ -97,7 +97,7 @@ final class MessageCenter: MessageCenterProtocol {
     }
 
     private let mutable: MutableValues
-    private let privacyManager: any PrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManagerProtocol
 
     public let inbox: any MessageCenterInboxProtocol
 
@@ -140,17 +140,11 @@ final class MessageCenter: MessageCenterProtocol {
         return self.privacyManager.isEnabled(.messageCenter)
     }
 
-    /// The shared MessageCenter instance. `Airship.takeOff` must be called before accessing this instance.
-    @available(*, deprecated, message: "Use Airship.messageCenter instead")
-    public static var shared: any MessageCenterProtocol {
-        return Airship.messageCenter
-    }
-    
     @MainActor
     init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        privacyManager: any PrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManagerProtocol,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         inbox: MessageCenterInbox,
         controller: MessageCenterController
@@ -185,7 +179,7 @@ final class MessageCenter: MessageCenterProtocol {
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         channel: any InternalAirshipChannelProtocol,
-        privacyManager: any PrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManagerProtocol,
         workManager: any AirshipWorkManagerProtocol
     ) {
 
@@ -416,9 +410,9 @@ extension MessageCenter {
 public extension Airship {
     /// The shared MessageCenter instance. `Airship.takeOff` must be called before accessing this instance.
     @MainActor
-    static var messageCenter: any MessageCenterProtocol  {
-            Airship.requireComponent(
-               ofType: MessageCenterComponent.self
-           ).messageCenter
-        }
+    static var messageCenter: any MessageCenterProtocol {
+        Airship.requireComponent(
+            ofType: MessageCenterComponent.self
+        ).messageCenter
+    }
 }

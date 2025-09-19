@@ -1,14 +1,13 @@
 public import AirshipCore
 import Foundation
-import Combine
+@preconcurrency import Combine
 
-public final class TestAppStateTracker: AppStateTrackerProtocol, @unchecked Sendable {
+public final class TestAppStateTracker: AppStateTrackerProtocol, Sendable {
     private let stateValue: AirshipMainActorValue<ApplicationState> = AirshipMainActorValue(.background)
 
     public var stateUpdates: AsyncStream<ApplicationState> {
         stateValue.updates
     }
-
 
     private let stateSubject: PassthroughSubject<ApplicationState, Never> = PassthroughSubject()
 

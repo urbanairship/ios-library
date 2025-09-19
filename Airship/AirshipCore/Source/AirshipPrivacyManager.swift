@@ -15,8 +15,42 @@ import Foundation
 /// - Platform
 /// - Opt in state (push and notifications)
 /// - SDK version
-/// - Accengage Device ID (Accengage module for migration)
-public final class AirshipPrivacyManager: PrivacyManagerProtocol, Sendable {
+public protocol AirshipPrivacyManagerProtocol: AnyObject, Sendable {
+    /// The current set of enabled features.
+    var enabledFeatures: AirshipFeature { get set }
+
+    /// Enables features.
+    /// This will append any features to the `enabledFeatures` property.
+    /// - Parameter features: The features to enable.
+    func enableFeatures(_ features: AirshipFeature)
+
+    /// Disables features.
+    /// This will remove any features to the `enabledFeatures` property.
+    /// - Parameter features: The features to disable.
+    func disableFeatures(_ features: AirshipFeature)
+
+    /// Checks if a given feature is enabled.
+    ///
+    /// - Parameter feature: The features to check.
+    /// - Returns: True if the provided features are enabled, otherwise false.
+    func isEnabled(_ feature: AirshipFeature) -> Bool
+
+    /// Checks if any feature is enabled.
+    /// - Returns: `true` if a feature is enabled, otherwise `false`.
+    func isAnyFeatureEnabled() -> Bool
+}
+
+
+protocol InternalAirshipPrivacyManagerProtocol: AirshipPrivacyManagerProtocol {
+    /// Checks if any feature is enabled.
+    /// - Parameters:
+    ///     - ignoringRemoteConfig: true to ignore any remotely disable features, false to include them.
+    /// - Returns: `true` if a feature is enabled, otherwise `false`.
+    /// * - Note: For internal use only. :nodoc:
+    func isAnyFeatureEnabled(ignoringRemoteConfig: Bool) -> Bool
+}
+
+final class AirshipPrivacyManager: InternalAirshipPrivacyManagerProtocol {
     private static let enabledFeaturesKey = "com.urbanairship.privacymanager.enabledfeatures"
 
     private let legacyIAAEnableFlag = "UAInAppMessageManagerEnabled"
@@ -53,7 +87,6 @@ public final class AirshipPrivacyManager: PrivacyManagerProtocol, Sendable {
         }
     }
 
-    /// The current set of enabled features.
     public var enabledFeatures: AirshipFeature {
         get {
             self.localEnabledFeatures.subtracting(self.config.remoteConfig.disabledFeatures ?? [])
@@ -66,11 +99,8 @@ public final class AirshipPrivacyManager: PrivacyManagerProtocol, Sendable {
         }
     }
 
-    /*
-     * - Note: For internal use only. :nodoc:
-     */
     @MainActor
-    public init(
+    init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         defaultEnabledFeatures: AirshipFeature,
@@ -95,45 +125,26 @@ public final class AirshipPrivacyManager: PrivacyManagerProtocol, Sendable {
         }
     }
 
-    /// Enables features.
-    /// This will append any features to the `enabledFeatures` property.
-    /// - Parameter features: The features to enable.
-    public func enableFeatures(_ features: AirshipFeature) {
+    func enableFeatures(_ features: AirshipFeature) {
         self.enabledFeatures.insert(features)
     }
 
-    /// Disables features.
-    /// This will remove any features to the `enabledFeatures` property.
-    /// - Parameter features: The features to disable.
-    public func disableFeatures(_ features: AirshipFeature) {
+    func disableFeatures(_ features: AirshipFeature) {
         self.enabledFeatures.remove(features)
     }
 
-    /**
-    * Checks if a given feature is enabled.
-    *
-    * - Parameter feature: The features to check.
-    * - Returns: True if the provided features are enabled, otherwise false.
-    */
-    public func isEnabled(_ feature: AirshipFeature) -> Bool {
+    func isEnabled(_ feature: AirshipFeature) -> Bool {
         guard feature == [] else {
             return (enabledFeatures.rawValue & feature.rawValue) == feature.rawValue
         }
         return enabledFeatures == []
     }
 
-    /// Checks if any feature is enabled.
-    /// - Returns: `true` if a feature is enabled, otherwise `false`.
-    public func isAnyFeatureEnabled() -> Bool {
+    func isAnyFeatureEnabled() -> Bool {
         return isAnyFeatureEnabled(ignoringRemoteConfig: false)
     }
 
-    /// Checks if any feature is enabled.
-    /// - Parameters:
-    ///     - ignoringRemoteConfig: true to ignore any remotely disable features, false to include them.
-    /// - Returns: `true` if a feature is enabled, otherwise `false`.
-    /// * - Note: For internal use only. :nodoc:
-    public func isAnyFeatureEnabled(ignoringRemoteConfig: Bool) -> Bool {
+    func isAnyFeatureEnabled(ignoringRemoteConfig: Bool) -> Bool {
         if ignoringRemoteConfig {
             return localEnabledFeatures != []
         } else {
@@ -336,19 +347,6 @@ extension AirshipFeature: Codable {
             throw AirshipErrors.error("Failed to parse features")
         }
     }
-}
-
-/// - Note: For internal use only. :nodoc:
-public protocol PrivacyManagerProtocol: AnyObject, Sendable {
-    var enabledFeatures: AirshipFeature { get set }
-
-    func enableFeatures(_ features: AirshipFeature)
-
-    func disableFeatures(_ features: AirshipFeature)
-
-    func isEnabled(_ feature: AirshipFeature) -> Bool
-
-    func isAnyFeatureEnabled(ignoringRemoteConfig: Bool) -> Bool
 }
 
 public extension AirshipNotifications {

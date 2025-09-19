@@ -22,7 +22,7 @@ final class ScheduleActionTest: XCTestCase {
             remoteData: TestRemoteData(),
             remoteDataSubscriber: TestRemoteDataSubscriber(),
             dataStore: dataStore,
-            privacyManager: AirshipPrivacyManager(
+            privacyManager: TestPrivacyManager(
                 dataStore: dataStore,
                 config: config,
                 defaultEnabledFeatures: .all),

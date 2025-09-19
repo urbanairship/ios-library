@@ -15,12 +15,65 @@ public import AirshipCore
 /**
  * Provides a control interface for creating, canceling and executing in-app automations.
  */
-public final class InAppAutomation: Sendable {
+public protocol InAppAutomationProtocol: Sendable {
+    /// In-App Messaging
+    var inAppMessaging: any InAppMessagingProtocol { get }
+
+    /// Legacy In-App Messaging
+    var legacyInAppMessaging: any LegacyInAppMessagingProtocol { get }
+
+    /// Paused state of in-app automation.
+    @MainActor
+    var isPaused: Bool { get set }
+
+    /// Creates the provided schedules or updates them if they already exist.
+    /// - Parameter schedules: The schedules to create or update.
+    func upsertSchedules(_ schedules: [AutomationSchedule]) async throws
+
+    /// Cancels an in-app automation via its schedule identifier.
+    /// - Parameter identifier: The schedule identifier to cancel.
+    func cancelSchedule(identifier: String) async throws
+
+    /// Cancels multiple in-app automations via their schedule identifiers.
+    /// - Parameter identifiers: The schedule identifiers to cancel.
+    func cancelSchedule(identifiers: [String]) async throws
+
+    /// Cancels multiple in-app automations via their group.
+    /// - Parameter group: The group to cancel.
+    func cancelSchedules(group: String) async throws
+
+    /// Gets the in-app automation with the provided schedule identifier.
+    /// - Parameter identifier: The schedule identifier.
+    /// - Returns: The in-app automation corresponding to the provided schedule identifier.
+    func getSchedule(identifier: String) async throws -> AutomationSchedule?
+
+    /// Gets the in-app automation with the provided group.
+    /// - Parameter identifier: The group to get.
+    /// - Returns: The in-app automation corresponding to the provided group.
+    func getSchedules(group: String) async throws -> [AutomationSchedule]
+    
+    /// Inapp Automation status updates. Possible values are upToDate, stale and outOfDate.
+    var statusUpdates: AsyncStream<InAppAutomationUpdateStatus> { get async }
+    
+    /// Current inApp Automation status. Possible values are upToDate, stale and outOfDate.
+    var status: InAppAutomationUpdateStatus { get async }
+    
+    /// Allows to wait for the refresh of the InApp Automation rules.
+    ///  - Parameters
+    ///     - maxTime: Timeout in seconds.
+    func waitRefresh(maxTime: TimeInterval?) async
+}
+
+internal protocol InternalInAppAutomationProtocol: InAppAutomationProtocol {
+    func cancelSchedulesWith(type: AutomationSchedule.ScheduleType) async throws
+}
+
+final class InAppAutomation: InternalInAppAutomationProtocol, Sendable {
 
     private let engine: any AutomationEngineProtocol
     private let remoteDataSubscriber: any AutomationRemoteDataSubscriberProtocol
     private let dataStore: PreferenceDataStore
-    private let privacyManager: any PrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManagerProtocol
     private let notificationCenter: AirshipNotificationCenter
     private static let pausedStoreKey: String = "UAInAppMessageManagerPaused"
     private let _legacyInAppMessaging: any InternalLegacyInAppMessagingProtocol
@@ -34,12 +87,6 @@ public final class InAppAutomation: Sendable {
         return _legacyInAppMessaging
     }
 
-    /// The shared InAppAutomation instance. `Airship.takeOff` must be called before accessing this instance.
-    @available(*, deprecated, message: "Use Airship.inAppAutomation instead")
-    public static var shared: InAppAutomation {
-        return Airship.inAppAutomation
-    }
-
     @MainActor
     init(
         engine: any AutomationEngineProtocol,
@@ -48,7 +95,7 @@ public final class InAppAutomation: Sendable {
         remoteData: any RemoteDataProtocol,
         remoteDataSubscriber: any AutomationRemoteDataSubscriberProtocol,
         dataStore: PreferenceDataStore,
-        privacyManager: any PrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManagerProtocol,
         config: RuntimeConfig,
         notificationCenter: AirshipNotificationCenter = .shared
     ) {
@@ -80,25 +127,25 @@ public final class InAppAutomation: Sendable {
 
     /// Creates the provided schedules or updates them if they already exist.
     /// - Parameter schedules: The schedules to create or update.
-    public func upsertSchedules(_ schedules: [AutomationSchedule]) async throws {
+    func upsertSchedules(_ schedules: [AutomationSchedule]) async throws {
         try await self.engine.upsertSchedules(schedules)
     }
 
     /// Cancels an in-app automation via its schedule identifier.
     /// - Parameter identifier: The schedule identifier to cancel.
-    public func cancelSchedule(identifier: String) async throws {
+    func cancelSchedule(identifier: String) async throws {
         try await self.engine.cancelSchedules(identifiers: [identifier])
     }
 
     /// Cancels multiple in-app automations via their schedule identifiers.
     /// - Parameter identifiers: The schedule identifiers to cancel.
-    public func cancelSchedule(identifiers: [String]) async throws {
+    func cancelSchedule(identifiers: [String]) async throws {
         try await self.engine.cancelSchedules(identifiers: identifiers)
     }
 
     /// Cancels multiple in-app automations via their group.
     /// - Parameter group: The group to cancel.
-    public func cancelSchedules(group: String) async throws {
+    func cancelSchedules(group: String) async throws {
         try await self.engine.cancelSchedules(group: group)
     }
 
@@ -119,8 +166,7 @@ public final class InAppAutomation: Sendable {
     public func getSchedules(group: String) async throws -> [AutomationSchedule] {
         return try await self.engine.getSchedules(group: group)
     }
-       
-    
+
     /// Inapp Automation status updates. Possible values are upToDate, stale and outOfDate.
     public var statusUpdates: AsyncStream<InAppAutomationUpdateStatus> {
         get async {
@@ -205,7 +251,9 @@ extension InAppAutomation {
 
 public extension Airship {
     /// The shared InAppAutomation instance. `Airship.takeOff` must be called before accessing this instance.
-    static var inAppAutomation: InAppAutomation {
+    static var inAppAutomation: any InAppAutomationProtocol {
         return Airship.requireComponent(ofType: InAppAutomationComponent.self).inAppAutomation
     }
 }
+
+

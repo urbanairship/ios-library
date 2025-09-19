@@ -82,7 +82,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
 
     let registrationUpdates: AirshipAsyncChannel<ChannelRegistrationUpdate> = .init()
 
-    private let privacyManager: any PrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManagerProtocol
 
     @MainActor
     init(
@@ -92,7 +92,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
         workManager: any AirshipWorkManagerProtocol = AirshipWorkManager.shared,
         appStateTracker: (any AppStateTrackerProtocol)? = nil,
         channelCreateMethod: AirshipChannelCreateOptionClosure? = nil,
-        privacyManager: any PrivacyManagerProtocol
+        privacyManager: any AirshipPrivacyManagerProtocol
     ) {
         self.dataStore = dataStore
         self.channelAPIClient = channelAPIClient
@@ -122,7 +122,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
     convenience init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        privacyManager: any PrivacyManagerProtocol
+        privacyManager: any AirshipPrivacyManagerProtocol
     ) {
         self.init(
             dataStore: dataStore,
@@ -369,7 +369,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
         )
 
         // If no channel registrations are enabled - skip the cadence check
-        guard privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false) else {
+        guard privacyManager.isAnyFeatureEnabled() else {
             return if lastRegistrationInfo?.location != currentLocation || lastRegistrationInfo?.payload != payload {
                 payload.minimizePayload(previous: lastRegistrationInfo?.payload)
             } else {

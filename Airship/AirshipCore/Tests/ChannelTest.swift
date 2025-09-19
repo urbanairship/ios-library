@@ -142,6 +142,7 @@ class ChannelTest: XCTestCase {
         XCTAssertTrue(self.channelRegistrar.registerCalled)
     }
 
+    @MainActor
     func testCRAPayload() async throws {
         self.privacyManager.enableFeatures(.all)
 
@@ -158,13 +159,13 @@ class ChannelTest: XCTestCase {
         var expectedPayload = ChannelRegistrationPayload()
         expectedPayload.channel.language =
         Locale.autoupdatingCurrent.getLanguageCode()
-        expectedPayload.channel.country = Locale.autoupdatingCurrent.regionCode
+        expectedPayload.channel.country = Locale.autoupdatingCurrent.region?.identifier
         expectedPayload.channel.timeZone =
         TimeZone.autoupdatingCurrent.identifier
         expectedPayload.channel.tags = ["foo", "bar"]
         expectedPayload.channel.appVersion = AirshipUtils.bundleShortVersionString()
         expectedPayload.channel.sdkVersion = AirshipVersion.version
-        expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
+        expectedPayload.channel.deviceOS = UIDevice.current.systemVersion
         expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
         expectedPayload.channel.setTags = true
         expectedPayload.channel.permissions = [
@@ -182,6 +183,7 @@ class ChannelTest: XCTestCase {
         XCTAssertEqual(expectedPayload, payload)
     }
 
+    @MainActor
     func testCRAPayloadPermissionOnNoFeature() async throws {
         self.privacyManager.enableFeatures(.all)
         self.privacyManager.disableFeatures(.tagsAndAttributes)
@@ -199,13 +201,13 @@ class ChannelTest: XCTestCase {
         var expectedPayload = ChannelRegistrationPayload()
         expectedPayload.channel.language =
         Locale.autoupdatingCurrent.getLanguageCode()
-        expectedPayload.channel.country = Locale.autoupdatingCurrent.regionCode
+        expectedPayload.channel.country = Locale.autoupdatingCurrent.region?.identifier
         expectedPayload.channel.timeZone =
         TimeZone.autoupdatingCurrent.identifier
         expectedPayload.channel.tags = []
         expectedPayload.channel.appVersion = AirshipUtils.bundleShortVersionString()
         expectedPayload.channel.sdkVersion = AirshipVersion.version
-        expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
+        expectedPayload.channel.deviceOS = UIDevice.current.systemVersion
         expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
         expectedPayload.channel.setTags = true
         expectedPayload.channel.permissions = nil
@@ -220,6 +222,7 @@ class ChannelTest: XCTestCase {
         XCTAssertEqual(expectedPayload, payload)
     }
 
+    @MainActor
     func testCRAPayloadMinify() async throws {
         self.privacyManager.enableFeatures(.all)
 
@@ -236,13 +239,13 @@ class ChannelTest: XCTestCase {
         var expectedPayload = ChannelRegistrationPayload()
         expectedPayload.channel.language =
         Locale.autoupdatingCurrent.getLanguageCode()
-        expectedPayload.channel.country = Locale.autoupdatingCurrent.regionCode
+        expectedPayload.channel.country = Locale.autoupdatingCurrent.region?.identifier
         expectedPayload.channel.timeZone =
         TimeZone.autoupdatingCurrent.identifier
         expectedPayload.channel.tags = ["foo", "bar"]
         expectedPayload.channel.appVersion = AirshipUtils.bundleShortVersionString()
         expectedPayload.channel.sdkVersion = AirshipVersion.version
-        expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
+        expectedPayload.channel.deviceOS = UIDevice.current.systemVersion
         expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
         expectedPayload.channel.setTags = true
         expectedPayload.channel.permissions = [
@@ -288,7 +291,7 @@ class ChannelTest: XCTestCase {
         var expectedPayload = ChannelRegistrationPayload()
         expectedPayload.channel.language =
         Locale.autoupdatingCurrent.getLanguageCode()
-        expectedPayload.channel.country = Locale.autoupdatingCurrent.regionCode
+        expectedPayload.channel.country = Locale.autoupdatingCurrent.region?.identifier
         expectedPayload.channel.timeZone =
         TimeZone.autoupdatingCurrent.identifier
         expectedPayload.channel.appVersion = AirshipUtils.bundleShortVersionString()

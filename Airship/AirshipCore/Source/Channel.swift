@@ -16,7 +16,7 @@ final class AirshipChannel: AirshipChannelProtocol, Sendable {
 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
-    private let privacyManager: any PrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManagerProtocol
     private let permissionsManager: AirshipPermissionsManager
     private let localeManager: any AirshipLocaleManagerProtocol
     private let audienceManager: any ChannelAudienceManagerProtocol
@@ -117,7 +117,7 @@ final class AirshipChannel: AirshipChannelProtocol, Sendable {
     init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        privacyManager: any PrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManagerProtocol,
         permissionsManager: AirshipPermissionsManager,
         localeManager: any AirshipLocaleManagerProtocol,
         audienceManager: any ChannelAudienceManagerProtocol,
@@ -204,7 +204,7 @@ final class AirshipChannel: AirshipChannelProtocol, Sendable {
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        privacyManager: any PrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManagerProtocol,
         permissionsManager: AirshipPermissionsManager,
         localeManager: any AirshipLocaleManagerProtocol,
         audienceOverridesProvider: any AudienceOverridesProvider
@@ -307,7 +307,7 @@ final class AirshipChannel: AirshipChannelProtocol, Sendable {
 
     @objc
     private func applicationDidTransitionToForeground() {
-        if self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false) {
+        if self.privacyManager.isAnyFeatureEnabled() {
             AirshipLogger.trace(
                 "Application did become active. Updating registration."
             )
@@ -393,7 +393,7 @@ final class AirshipChannel: AirshipChannelProtocol, Sendable {
         }
 
         guard
-            self.identifier != nil || self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false)
+            self.identifier != nil || self.privacyManager.isAnyFeatureEnabled()
         else {
             AirshipLogger.trace(
                 "Skipping channel create. All features are disabled."
@@ -449,7 +449,7 @@ extension AirshipChannel: AirshipPushableComponent {
     private func makePayload() async -> ChannelRegistrationPayload {
         var payload = ChannelRegistrationPayload()
 
-        guard privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false) else {
+        guard privacyManager.isAnyFeatureEnabled() else {
             payload.channel.tags = []
             payload.channel.setTags = true
             payload.channel.isOptedIn = false
@@ -480,7 +480,7 @@ extension AirshipChannel: AirshipPushableComponent {
 #endif
         }
 
-        if self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false) {
+        if self.privacyManager.isAnyFeatureEnabled() {
             let currentLocale = self.localeManager.currentLocale
             payload.channel.language = currentLocale.getLanguageCode()
             payload.channel.country = currentLocale.getRegionCode()

@@ -38,7 +38,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     static let maxCacheTime: TimeInterval = 600  // 10 minutes
 
     private let dataStore: PreferenceDataStore
-    private let privacyManager: any PrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManagerProtocol
     private let workManager: any AirshipWorkManagerProtocol
     private let subscriptionListProvider: any ChannelSubscriptionListProviderProtocol
     private let updateClient: any ChannelBulkUpdateAPIClientProtocol
@@ -89,7 +89,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         workManager: any AirshipWorkManagerProtocol,
         subscriptionListProvider: any ChannelSubscriptionListProviderProtocol,
         updateClient: any ChannelBulkUpdateAPIClientProtocol,
-        privacyManager: any PrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManagerProtocol,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         date: any AirshipDateProtocol = AirshipDate.shared,
         audienceOverridesProvider: any AudienceOverridesProvider
@@ -142,7 +142,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
-        privacyManager: any PrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManagerProtocol,
         audienceOverridesProvider: any AudienceOverridesProvider
     ) {
         self.init(

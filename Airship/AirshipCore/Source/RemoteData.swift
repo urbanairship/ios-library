@@ -30,7 +30,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     private let date: any AirshipDateProtocol
     private let localeManager: any AirshipLocaleManagerProtocol
     private let workManager: any AirshipWorkManagerProtocol
-    private let privacyManager: any PrivacyManagerProtocol
+    private let privacyManager: any InternalAirshipPrivacyManagerProtocol
     private let appVersion: String
     private let statusUpdates: AirshipAsyncChannel<[RemoteDataSource: RemoteDataSourceStatus]> = AirshipAsyncChannel()
     private let currentSourceStatus: AirshipAtomicValue<[RemoteDataSource: RemoteDataSourceStatus]> = .init([:])
@@ -58,7 +58,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         localeManager: any AirshipLocaleManagerProtocol,
-        privacyManager: any PrivacyManagerProtocol,
+        privacyManager: any InternalAirshipPrivacyManagerProtocol,
         contact: any InternalAirshipContactProtocol
     ) {
         let client = RemoteDataAPIClient(config: config)
@@ -98,7 +98,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         localeManager: any AirshipLocaleManagerProtocol,
-        privacyManager: any PrivacyManagerProtocol,
+        privacyManager: any InternalAirshipPrivacyManagerProtocol,
         contact: any InternalAirshipContactProtocol,
         providers: [any RemoteDataProviderProtocol],
         workManager: any AirshipWorkManagerProtocol = AirshipWorkManager.shared,

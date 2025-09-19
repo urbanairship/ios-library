@@ -7,7 +7,26 @@ import AirshipCore
 #endif
 
 /// Feature Flag result cache
-public actor FeatureFlagResultCache {
+public protocol FeatureFlagResultCacheProtocol: Actor {
+    /// Caches a flag for the given cachTTL.
+    /// - Parameters:
+    ///     - flag: The flag to cache
+    ///     - ttl: The time to cache the value for.
+    func cache(flag: FeatureFlag, ttl: TimeInterval) async
+
+    /// Gets a flag from the cache.
+    /// - Parameters:
+    ///     - name: The flag name.
+    /// - Returns: The flag if its in the cache, otherwise nil.
+    func flag(name: String) async -> FeatureFlag?
+
+    /// Removes a flag from the cache.
+    /// - Parameters:
+    ///     - name: The flag name.
+    func removeCachedFlag(name: String) async
+}
+
+actor FeatureFlagResultCache: FeatureFlagResultCacheProtocol {
     private static let cacheKeyPrefix: String = "FeatureFlagResultCache:"
     private let airshipCache: any AirshipCache
 
@@ -15,11 +34,7 @@ public actor FeatureFlagResultCache {
         self.airshipCache = cache
     }
 
-    /// Caches a flag for the given cachTTL.
-    /// - Parameters:
-    ///     - flag: The flag to cache
-    ///     - ttl: The time to cache the value for.
-    public func cache(flag: FeatureFlag, ttl: TimeInterval) async {
+    func cache(flag: FeatureFlag, ttl: TimeInterval) async {
         guard let key = Self.makeKey(flag.name) else {
             return
         }
@@ -27,21 +42,14 @@ public actor FeatureFlagResultCache {
         await airshipCache.setCachedValue(flag, key: key, ttl: ttl)
     }
 
-    /// Gets a flag from the cache.
-    /// - Parameters:
-    ///     - name: The flag name.
-    /// - Returns: The flag if its in the cache, otherwise nil.
-    public func flag(name: String) async -> FeatureFlag? {
+    func flag(name: String) async -> FeatureFlag? {
         guard let key = Self.makeKey(name) else {
             return nil
         }
         return await airshipCache.getCachedValue(key: key)
     }
 
-    /// Removes a flag from the cache.
-    /// - Parameters:
-    ///     - name: The flag name.
-    public func removeCachedFlag(name: String) async {
+    func removeCachedFlag(name: String) async {
         guard let key = Self.makeKey(name) else {
             return
         }

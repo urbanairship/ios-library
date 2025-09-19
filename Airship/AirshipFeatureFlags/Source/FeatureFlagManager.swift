@@ -3,17 +3,8 @@
 import Foundation
 
 #if canImport(AirshipCore)
-public import AirshipCore
+import AirshipCore
 #endif
-
-
-/// Feature flag errors
-public enum FeatureFlagError: Error, Equatable {
-    case failedToFetchData
-    case staleData
-    case outOfDate
-    case connectionError(errorMessage: String)
-}
 
 enum FeatureFlagEvaluationError: Error, Equatable {
     case outOfDate
@@ -21,13 +12,7 @@ enum FeatureFlagEvaluationError: Error, Equatable {
 }
 
 /// Airship feature flag manager
-public final class FeatureFlagManager: Sendable {
-
-    /// The shared FeatureFlagManager instance. `Airship.takeOff` must be called before accessing this instance.
-    @available(*, deprecated, message: "Use Airship.featureFlagManager instead")
-    public static var shared: FeatureFlagManager {
-        return Airship.featureFlagManager
-    }
+final class FeatureFlagManager: FeatureFlagManagerProtocol {
 
     private let remoteDataAccess: any FeatureFlagRemoteDataAccessProtocol
     private let audienceChecker: any DeviceAudienceChecker
@@ -35,14 +20,11 @@ public final class FeatureFlagManager: Sendable {
     private let deviceInfoProviderFactory: @Sendable () -> any AudienceDeviceInfoProvider
     private let deferredResolver: any FeatureFlagDeferredResolverProtocol
     private let remoteData: any RemoteDataProtocol
-    private let privacyManager: any PrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManagerProtocol
 
-    /// Feature flag result cache. This can be used to return a cached result for `flag(name:useResultCache:)`
-    /// if the flag fails to resolve or it does not exist.
-    public let resultCache: FeatureFlagResultCache
+    let resultCache: any FeatureFlagResultCacheProtocol
 
-    /// Feature flag status updates. Possible values are upToDate, stale and outOfDate.
-    public var featureFlagStatusUpdates: AsyncStream<any Sendable> {
+    var featureFlagStatusUpdates: AsyncStream<any Sendable> {
         get async {
             return await self.remoteData.statusUpdates(sources: [RemoteDataSource.app]) { statuses in
                 return self.toFeatureFlagUpdateStatus(status: statuses.values.first ?? .upToDate)
@@ -50,8 +32,7 @@ public final class FeatureFlagManager: Sendable {
         }
     }
     
-    /// Current feature flag status. Possible values are upToDate, stale and outOfDate.
-    public var featureFlagStatus: FeatureFlagUpdateStatus {
+    var featureFlagStatus: FeatureFlagUpdateStatus {
         get async {
             return await self.toFeatureFlagUpdateStatus(status: self.remoteDataAccess.status)
         }
@@ -69,8 +50,8 @@ public final class FeatureFlagManager: Sendable {
         audienceChecker: any DeviceAudienceChecker,
         deviceInfoProviderFactory: @escaping @Sendable () -> any AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() },
         deferredResolver: any FeatureFlagDeferredResolverProtocol,
-        privacyManager: any PrivacyManagerProtocol,
-        resultCache: FeatureFlagResultCache
+        privacyManager: any AirshipPrivacyManagerProtocol,
+        resultCache: any FeatureFlagResultCacheProtocol
     ) {
         self.remoteDataAccess = remoteDataAccess
         self.audienceChecker = audienceChecker
@@ -82,9 +63,7 @@ public final class FeatureFlagManager: Sendable {
         self.remoteData = remoteData
     }
 
-    /// Tracks a feature flag interaction event.
-    /// - Parameter flag: The flag.
-    public func trackInteraction(flag: FeatureFlag) {
+    func trackInteraction(flag: FeatureFlag) {
         guard self.enabled else {
             AirshipLogger.warn("Feature flags disabled.")
             return
@@ -92,14 +71,11 @@ public final class FeatureFlagManager: Sendable {
         analytics.trackInteraction(flag: flag)
     }
 
+    func flag(name: String) async throws -> FeatureFlag {
+        try await self.flag(name: name, useResultCache: true)
+    }
 
-    /// Gets and evaluates  a feature flag
-    /// - Parameters
-    ///     - name: The flag name
-    ///     - useResultCache: `true` to use the `FeatureFlagResultCache` if the flag fails to resolve or if the resolved flag does not exist,`false` to ignore the result cache.
-    /// - Returns: The feature flag.
-    /// - Throws: Throws `FeatureFlagError` if the flag fails to resolve.
-    public func flag(name: String, useResultCache: Bool = true) async throws -> FeatureFlag {
+    func flag(name: String, useResultCache: Bool) async throws -> FeatureFlag {
         guard self.enabled else {
             throw AirshipErrors.error("Feature flags disabled.")
         }
@@ -123,11 +99,12 @@ public final class FeatureFlagManager: Sendable {
         }
     }
 
-    /// Allows to wait for the refresh of the Feature Flag rules.
-    /// /// - Parameters
-    ///     - maxTime: Timeout in seconds.
-    public func waitRefresh(maxTime: TimeInterval? = nil) async {
+    func waitRefresh(maxTime: TimeInterval) async {
         await self.remoteData.waitRefresh(source: RemoteDataSource.app, maxTime: maxTime)
+    }
+
+    func waitRefresh() async {
+        await self.remoteData.waitRefresh(source: RemoteDataSource.app, maxTime: nil)
     }
 
     func resolveFlag(name: String) async throws -> FeatureFlag {
@@ -446,7 +423,6 @@ public final class FeatureFlagManager: Sendable {
     }
 }
 
-
 fileprivate struct VariableResult {
     let data: AirshipJSON?
     let reportingMetadata: AirshipJSON?
@@ -481,12 +457,5 @@ fileprivate extension FeatureFlag {
                 channelID: try await deviceInfoProvider.channelID
             )
         )
-    }
-}
-
-public extension Airship {
-    /// The shared MessageCenter instance. `Airship.takeOff` must be called before accessing this instance.
-    static var featureFlagManager: FeatureFlagManager {
-        return Airship.requireComponent(ofType: FeatureFlagComponent.self).featureFlagManager
     }
 }

@@ -8,7 +8,10 @@ import AirshipCore
 final class AirshipCacheTest: XCTestCase {
 
     private let date = UATestDate(offset: 0, dateOverride: Date())
-    private let coreData: UACoreData = CoreDataAirshipCache.makeCoreData(appKey: "some-app-key")!
+    private let coreData: UACoreData = CoreDataAirshipCache.makeCoreData(
+        appKey: UUID().uuidString,
+        inMemory: true
+    )!
     private var cache: CoreDataAirshipCache!
 
     override func setUpWithError() throws {

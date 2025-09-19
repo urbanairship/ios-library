@@ -71,7 +71,7 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
-    private let privacyManager: any PrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManagerProtocol
     private let contactChannelsProvider: any ContactChannelsProviderProtocol
     private let subscriptionListProvider: any SubscriptionListProviderProtocol
     private let date: any AirshipDateProtocol
@@ -146,7 +146,7 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         channel: any InternalAirshipChannelProtocol,
-        privacyManager: any PrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManagerProtocol,
         contactChannelsProvider: any ContactChannelsProviderProtocol,
         subscriptionListProvider: any SubscriptionListProviderProtocol,
         date: any AirshipDateProtocol = AirshipDate.shared,
@@ -305,7 +305,7 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         channel: AirshipChannel,
-        privacyManager: any PrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManagerProtocol,
         audienceOverridesProvider: any AudienceOverridesProvider,
         localeManager: any AirshipLocaleManagerProtocol
     ) {
@@ -674,7 +674,7 @@ public final class AirshipContact: AirshipContactProtocol, @unchecked Sendable {
     @objc
     private func checkPrivacyManager() {
         self.serialQueue.enqueue {
-            if self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false) {
+            if self.privacyManager.isAnyFeatureEnabled() {
                 await self.contactManager.generateDefaultContactIDIfNotSet()
             }
 

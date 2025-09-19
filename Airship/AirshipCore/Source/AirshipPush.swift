@@ -70,7 +70,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
     private let channel: any InternalAirshipChannelProtocol
-    private let privacyManager: any PrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManagerProtocol
     private let permissionsManager: AirshipPermissionsManager
     private let notificationCenter: AirshipNotificationCenter
     private let notificationRegistrar: any NotificationRegistrar
@@ -136,7 +136,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         dataStore: PreferenceDataStore,
         channel: any InternalAirshipChannelProtocol,
         analytics: any InternalAnalyticsProtocol,
-        privacyManager: any PrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManagerProtocol,
         permissionsManager: AirshipPermissionsManager,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         notificationRegistrar: any NotificationRegistrar =

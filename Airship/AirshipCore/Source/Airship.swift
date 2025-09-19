@@ -107,7 +107,7 @@ public final class Airship: Sendable {
     }
 
     /// The privacy manager
-    public static var privacyManager: AirshipPrivacyManager {
+    public static var privacyManager: any AirshipPrivacyManagerProtocol {
         return shared.airshipInstance.privacyManager
     }
 

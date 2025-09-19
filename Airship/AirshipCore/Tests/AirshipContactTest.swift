@@ -219,8 +219,9 @@ class AirshipContactTest: XCTestCase {
         await verifyOperations([])
     }
 
+    @MainActor
     func testMaxAgeStableVerifiedContactID() async throws {
-        await self.config.updateRemoteConfig(
+        self.config.updateRemoteConfig(
             RemoteConfig(
                 contactConfig: .init(
                     foregroundIntervalMilliseconds: nil,
@@ -243,7 +244,7 @@ class AirshipContactTest: XCTestCase {
 
         let payloadTaskStarted = self.expectation(description: "payload task started")
 
-        let payloadTask = Task {
+        let payloadTask = Task { @MainActor in
             payloadTaskStarted.fulfill()
             return await channel.channelPayload
         }

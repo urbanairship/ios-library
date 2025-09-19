@@ -16,7 +16,7 @@ actor CoreDataAirshipCache: AirshipCache {
 
 
 
-    static func makeCoreData(appKey: String) -> UACoreData? {
+    static func makeCoreData(appKey: String, inMemory: Bool = false) -> UACoreData? {
         let modelURL = AirshipCoreResources.bundle.url(
             forResource: "UAirshipCache",
             withExtension: "momd"
@@ -26,7 +26,7 @@ actor CoreDataAirshipCache: AirshipCache {
             return UACoreData(
                 name: "UAirshipCache",
                 modelURL: modelURL,
-                inMemory: false,
+                inMemory: inMemory,
                 stores: ["AirshipCache-\(appKey).sqlite"]
             )
         }

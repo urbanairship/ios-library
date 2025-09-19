@@ -719,6 +719,7 @@
 		6EB11C8B2697AFC700DC698F /* AttributeUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */; };
 		6EB11C8D2698C50F00DC698F /* AudienceUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */; };
 		6EB1B3F326EAA4D6000421B9 /* ChannelAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E698E11267A98AB00654DB2 /* ChannelAPIClient.swift */; };
+		6EB214D22E7DBA61001A5660 /* FeatureFlagManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB214D12E7DBA5E001A5660 /* FeatureFlagManagerProtocol.swift */; };
 		6EB3FCEF2ABCFA680018594E /* RemoteDataProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */; };
 		6EB41B9A28B3DD6C003631C5 /* AirshipDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB41B9928B3DD6C003631C5 /* AirshipDebugView.swift */; };
 		6EB5156E28A42B5800870C5A /* PreferenceCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5156D28A42B5800870C5A /* PreferenceCenterResources.swift */; };
@@ -2045,6 +2046,7 @@
 		6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagGroupUpdate.swift; sourceTree = "<group>"; };
 		6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeUpdate.swift; sourceTree = "<group>"; };
 		6EB11C8C2698C50F00DC698F /* AudienceUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudienceUtils.swift; sourceTree = "<group>"; };
+		6EB214D12E7DBA5E001A5660 /* FeatureFlagManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagManagerProtocol.swift; sourceTree = "<group>"; };
 		6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDataProtocol.swift; sourceTree = "<group>"; };
 		6EB41B9928B3DD6C003631C5 /* AirshipDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugView.swift; sourceTree = "<group>"; };
 		6EB4E4A32549F95200E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
@@ -4562,6 +4564,7 @@
 		A620587F2A5841FA0041FBF9 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6EB214D12E7DBA5E001A5660 /* FeatureFlagManagerProtocol.swift */,
 				6ED7BE622D13D9FE00B6A124 /* FeatureFlagResultCache.swift */,
 				A620586B2A5841330041FBF9 /* AirshipFeatureFlags.h */,
 				A62058802A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift */,
@@ -6369,6 +6372,7 @@
 				A6E9AD982D4D12D00091BBAF /* FeatureFlagUpdateStatus.swift in Sources */,
 				6E6802942B8673F900F4591F /* FeatureFlagComponent.swift in Sources */,
 				6E2F5ABA2A675D3600CABD3D /* FeatureFlagsRemoteDataAccess.swift in Sources */,
+				6EB214D22E7DBA61001A5660 /* FeatureFlagManagerProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -444,7 +444,8 @@ class AnalyticsTest: XCTestCase {
             headers["neat"]
         )
     }
-
+    
+    @MainActor
     func testPermissionHeaders() async throws {
         let testPushDelegate = TestPermissionsDelegate()
         testPushDelegate.permissionStatus = .denied

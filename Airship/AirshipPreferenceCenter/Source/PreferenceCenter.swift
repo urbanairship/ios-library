@@ -53,15 +53,8 @@ public protocol PreferenceCenterProtocol: AnyObject, Sendable {
     func jsonConfig(preferenceCenterID: String) async throws -> Data
 }
 
-
 @MainActor
 final class PreferenceCenter: PreferenceCenterProtocol {
-
-    /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
-    @available(*, deprecated, message: "Use Airship.preferenceCenter instead")
-    public static var shared: any PreferenceCenterProtocol {
-        return Airship.preferenceCenter
-    }
 
     let inputValidator: any AirshipInputValidation.Validator
 
@@ -82,7 +75,7 @@ final class PreferenceCenter: PreferenceCenterProtocol {
     }
 
     private let dataStore: PreferenceDataStore
-    private let privacyManager: any PrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManagerProtocol
     private let remoteData: any RemoteDataProtocol
 
     private let currentDisplay: AirshipMainActorValue<(any AirshipMainActorCancellable)?> = AirshipMainActorValue(nil)
@@ -104,7 +97,7 @@ final class PreferenceCenter: PreferenceCenterProtocol {
 
     init(
         dataStore: PreferenceDataStore,
-        privacyManager: any PrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManagerProtocol,
         remoteData: any RemoteDataProtocol,
         inputValidator: any AirshipInputValidation.Validator
     ) {

@@ -20,7 +20,7 @@ jobs:
 
   run-tests-message-center:
     runs-on: macos-15-xlarge
-    timeout-minutes: 15
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - name: Test
@@ -28,7 +28,7 @@ jobs:
 
   run-tests-preference-center:
     runs-on: macos-15-xlarge
-    timeout-minutes: 15
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - name: Test
@@ -36,7 +36,7 @@ jobs:
 
   run-tests-feature-flags:
     runs-on: macos-15-xlarge
-    timeout-minutes: 15
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - name: Test
@@ -44,7 +44,7 @@ jobs:
 
   run-tests-automation:
     runs-on: macos-15-xlarge
-    timeout-minutes: 15
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - name: Test
@@ -52,7 +52,7 @@ jobs:
 
   run-tests-extensions:
     runs-on: macos-15-xlarge
-    timeout-minutes: 15
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - name: Test

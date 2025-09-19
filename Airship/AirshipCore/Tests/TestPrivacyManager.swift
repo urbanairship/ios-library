@@ -3,7 +3,11 @@
 @testable import AirshipCore
 import Foundation
 
-class TestPrivacyManager: PrivacyManagerProtocol, @unchecked Sendable {
+final class TestPrivacyManager: InternalAirshipPrivacyManagerProtocol, @unchecked Sendable {
+    func isAnyFeatureEnabled() -> Bool {
+        return isAnyFeatureEnabled(ignoringRemoteConfig: false)
+    }
+
     private static let enabledFeaturesKey = "com.urbanairship.privacymanager.enabledfeatures"
 
     private let dataStore: PreferenceDataStore

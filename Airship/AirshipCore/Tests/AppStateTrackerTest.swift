@@ -117,10 +117,13 @@ final class AppStateTrackerTest: XCTestCase {
 }
 
 
-class TestAppStateAdapter: AppStateTrackerAdapter {
+final class TestAppStateAdapter: AppStateTrackerAdapter {
+    @MainActor
     var state: AirshipCore.ApplicationState = .inactive
+    @MainActor
     var eventHandlers: [@MainActor @Sendable (AppLifeCycleEvent) -> Void] = []
 
+    @MainActor
     func watchAppLifeCycleEvents(
         eventHandler: @escaping @MainActor @Sendable (AirshipCore.AppLifeCycleEvent) -> Void) {
             eventHandlers.append(eventHandler)

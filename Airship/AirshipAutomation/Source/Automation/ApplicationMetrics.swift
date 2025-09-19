@@ -18,7 +18,7 @@ final class ApplicationMetrics: ApplicationMetricsProtocol {
     private static let lastAppVersionKey = "UAApplicationMetricsLastAppVersion"
 
     private let dataStore: PreferenceDataStore
-    private let privacyManager: any PrivacyManagerProtocol
+    private let privacyManager: any AirshipPrivacyManagerProtocol
 
     /**
      * Determines whether the application's short version string has been updated.
@@ -49,7 +49,7 @@ final class ApplicationMetrics: ApplicationMetricsProtocol {
 
     public init(
         dataStore: PreferenceDataStore,
-        privacyManager: any PrivacyManagerProtocol,
+        privacyManager: any AirshipPrivacyManagerProtocol,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         appVersion: String? = AirshipUtils.bundleShortVersionString()
     ) {
@@ -101,7 +101,7 @@ final class ApplicationMetrics: ApplicationMetricsProtocol {
 }
 
 
-fileprivate extension PrivacyManagerProtocol {
+fileprivate extension AirshipPrivacyManagerProtocol {
     var isApplicationMetricsEnabled: Bool {
         self.isEnabled(.inAppAutomation) || self.isEnabled(.analytics)
     }
