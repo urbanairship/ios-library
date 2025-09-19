@@ -45,7 +45,7 @@ internal class AddChannelPromptViewModel: ObservableObject {
         self.onRegisterEmail = onRegisterEmail
         self.selectedSender = .none
         self.inputValidator = if Airship.isFlying {
-            validator ?? Airship.preferenceCenter.inputValidator
+            validator ?? (Airship.preferenceCenter as? PreferenceCenter)?.inputValidator
         } else {
             validator
         }

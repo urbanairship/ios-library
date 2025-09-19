@@ -18,12 +18,48 @@ public protocol PreferenceCenterOpenDelegate {
     func openPreferenceCenter(_ preferenceCenterID: String) -> Bool
 }
 
-/// Airship Preference Center module. This module is used to display preference centers that are configured in the Airship dashboard.
-public final class PreferenceCenter: Sendable {
+/// An interface for interacting with Airship's Preference Center.
+@MainActor
+public protocol PreferenceCenterProtocol: Sendable {
+    
+    /// Called when the Preference Center is requested to be displayed.
+    /// Return `true` if the display was handled, `false` to fall back to default SDK behavior.
+    var onDisplay: (@MainActor @Sendable (_ preferenceCenterID: String) -> Bool)? { get set }
+
+    /// Open delegate for the Preference Center.
+    var openDelegate: (any PreferenceCenterOpenDelegate)? { get set }
+
+    /// The theme for the Preference Center.
+    var theme: PreferenceCenterTheme? { get set }
+
+    /// Loads a Preference Center theme from a plist file.
+    /// - Parameter plist: The name of the plist in the bundle.
+    func setThemeFromPlist(_ plist: String) throws
+
+    /// Displays the Preference Center with the given ID.
+    /// - Parameter identifier: The preference center ID.
+    func display(identifier: String)
+
+    /// Opens the Preference Center with the given ID. (Deprecated)
+    @available(*, deprecated, renamed: "display(identifier:)")
+    func open(_ preferenceCenterID: String)
+
+    /// Returns the configuration of the Preference Center with the given ID.
+    /// - Parameter preferenceCenterID: The preference center ID.
+    func config(preferenceCenterID: String) async throws -> PreferenceCenterConfig
+
+    /// Returns the configuration of the Preference Center as JSON data with the given ID.
+    /// - Parameter preferenceCenterID: The preference center ID.
+    func jsonConfig(preferenceCenterID: String) async throws -> Data
+}
+
+
+@MainActor
+final class PreferenceCenter: PreferenceCenterProtocol {
 
     /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
     @available(*, deprecated, message: "Use Airship.preferenceCenter instead")
-    public static var shared: PreferenceCenter {
+    public static var shared: any PreferenceCenterProtocol {
         return Airship.preferenceCenter
     }
 
@@ -32,17 +68,10 @@ public final class PreferenceCenter: Sendable {
     private static let payloadType = "preference_forms"
     private static let preferenceFormsKey = "preference_forms"
 
-    @MainActor
     private let delegates: Delegates = Delegates()
 
-    /// If set, this block will be called when the Preference Center is requested to be displayed.
-    /// This will be called in place of the `PreferenceCenterOpenDelegate` delegate.
-    /// The block should return `true` if the display was handled, or `false` to fall back to the default SDK behavior.
-    @MainActor
     public var onDisplay: (@MainActor @Sendable (_ preferenceCenterID: String) -> Bool)?
 
-    /// Open delegate.
-    @MainActor
     public var openDelegate: (any PreferenceCenterOpenDelegate)? {
         get {
             self.delegates.openDelegate
@@ -56,12 +85,10 @@ public final class PreferenceCenter: Sendable {
     private let privacyManager: any PrivacyManagerProtocol
     private let remoteData: any RemoteDataProtocol
 
-    @MainActor
     private let currentDisplay: AirshipMainActorValue<(any AirshipMainActorCancellable)?> = AirshipMainActorValue(nil)
 
     private let _theme: AirshipMainActorValue<PreferenceCenterTheme?> = AirshipMainActorValue(nil)
-    /// The theme for the Preference Center.
-    @MainActor
+
     public var theme: PreferenceCenterTheme? {
         get {
             self._theme.value
@@ -71,15 +98,10 @@ public final class PreferenceCenter: Sendable {
         }
     }
 
-    /// Loads a Preference center theme from a plist file.
-    /// - Parameters:
-    ///     - plist: The name of the plist in the bundle.
-    @MainActor
     public func setThemeFromPlist(_ plist: String) throws {
         self.theme = try PreferenceCenterThemeLoader.fromPlist(plist)
     }
 
-    @MainActor
     init(
         dataStore: PreferenceDataStore,
         privacyManager: any PrivacyManagerProtocol,
@@ -95,10 +117,6 @@ public final class PreferenceCenter: Sendable {
     }
 
 
-    /// Displays the Preference Center with the given ID.
-    /// - Parameters:
-    ///   - identifier: The preference center ID.
-    @MainActor
     public func display(identifier: String) {
         let handled: Bool = if let onDisplay {
             onDisplay(identifier)
@@ -120,16 +138,11 @@ public final class PreferenceCenter: Sendable {
         }
     }
 
-    /// Opens the Preference Center with the given ID.
-    /// - Parameters:
-    ///   - preferenceCenterID: The preference center ID.
-    @MainActor
     @available(*, deprecated, renamed: "display(identifier:)")
     public func open(_ preferenceCenterID: String) {
         self.display(identifier: preferenceCenterID)
     }
 
-    @MainActor
     private func displayDefaultPreferenceCenter(preferenceCenterID: String) async {
         guard let scene = try? AirshipSceneManager.shared.lastActiveScene else {
             AirshipLogger.error("Unable to display, missing scene.")
@@ -149,17 +162,11 @@ public final class PreferenceCenter: Sendable {
         )
     }
 
-    /// Returns the configuration of the Preference Center with the given ID.
-    /// - Parameters:
-    ///   - preferenceCenterID: The preference center ID.
     public func config(preferenceCenterID: String) async throws -> PreferenceCenterConfig {
         let data = try await jsonConfig(preferenceCenterID: preferenceCenterID)
         return try PreferenceCenterDecoder.decodeConfig(data: data)
     }
 
-    /// Returns the configuration of the Preference Center as JSON data with the given ID.
-    /// - Parameters:
-    ///   - preferenceCenterID: The preference center ID.
     public func jsonConfig(preferenceCenterID: String) async throws -> Data {
         let payloads = await self.remoteData.payloads(types: ["preference_forms"])
 
@@ -235,14 +242,16 @@ extension PreferenceCenter {
         }
 
         let preferenceCenterID = deepLink.pathComponents[1]
-        self.open(preferenceCenterID)
+        self.display(identifier: preferenceCenterID)
         return true
     }
 }
 
 public extension Airship {
     /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
-    static var preferenceCenter: PreferenceCenter {
-        return Airship.requireComponent(ofType: PreferenceCenterComponent.self).preferenceCenter
-    }
+    @MainActor
+    static var preferenceCenter: any PreferenceCenterProtocol = Airship.requireComponent(
+        ofType: PreferenceCenterComponent.self
+    )
+        .preferenceCenter
 }
