@@ -10,10 +10,10 @@ import AirshipFeatureFlags
 
 final class FeatureFlagResultCacheTest: XCTestCase {
     private let airshipCache: TestCache = TestCache()
-    private var resultCache: FeatureFlagResultCache!
+    private var resultCache: DefaultFeatureFlagResultCache!
 
     override func setUp() {
-        self.resultCache = FeatureFlagResultCache(cache: self.airshipCache)
+        self.resultCache = DefaultFeatureFlagResultCache(cache: self.airshipCache)
     }
 
     public func testSet() async {

@@ -33,8 +33,8 @@ public protocol MessageCenterDisplayDelegate {
 
 /// Airship Message Center Protocol.
 @MainActor
-public protocol MessageCenterProtocol: AnyObject, Sendable {
-    
+public protocol AirshipMessageCenter: AnyObject, Sendable {
+
     /// Called when the Message Center is requested to be displayed.
     /// Return `true` if the display was handled, `false` to fall back to default SDK behavior.
     var onDisplay: (@MainActor @Sendable (_ messageID: String?) -> Bool)? { get set }
@@ -46,7 +46,7 @@ public protocol MessageCenterProtocol: AnyObject, Sendable {
     var displayDelegate: (any MessageCenterDisplayDelegate)? { get set }
 
     /// Message center inbox.
-    var inbox: any MessageCenterInboxProtocol { get }
+    var inbox: any AirshipMessageCenterInbox { get }
 
     /// The message center controller.
     var controller: MessageCenterController { get set }
@@ -78,7 +78,7 @@ public protocol MessageCenterProtocol: AnyObject, Sendable {
 
 
 /// Airship Message Center module.
-final class MessageCenter: MessageCenterProtocol {
+final class DefaultAirshipMessageCenter: AirshipMessageCenter {
 
     @MainActor
     public var onDisplay: (@MainActor @Sendable (_ messageID: String?) -> Bool)?
@@ -99,7 +99,7 @@ final class MessageCenter: MessageCenterProtocol {
     private let mutable: MutableValues
     private let privacyManager: any AirshipPrivacyManager
 
-    public let inbox: any MessageCenterInboxProtocol
+    public let inbox: any AirshipMessageCenterInbox
 
     @MainActor
     public var controller: MessageCenterController {
@@ -146,7 +146,7 @@ final class MessageCenter: MessageCenterProtocol {
         config: RuntimeConfig,
         privacyManager: any AirshipPrivacyManager,
         notificationCenter: NotificationCenter = NotificationCenter.default,
-        inbox: MessageCenterInbox,
+        inbox: DefaultAirshipMessageCenterInbox,
         controller: MessageCenterController
     ) {
         self.inbox = inbox
@@ -184,7 +184,7 @@ final class MessageCenter: MessageCenterProtocol {
     ) {
 
         let controller = MessageCenterController()
-        let inbox = MessageCenterInbox(
+        let inbox = DefaultAirshipMessageCenterInbox(
             with: config,
             dataStore: dataStore,
             channel: channel,
@@ -295,7 +295,7 @@ final class MessageCenter: MessageCenterProtocol {
     }
 }
 
-extension MessageCenter {
+extension DefaultAirshipMessageCenter {
     private static let kUARichPushMessageIDKey = "_uamid"
 
     @MainActor
@@ -410,7 +410,7 @@ extension MessageCenter {
 public extension Airship {
     /// The shared MessageCenter instance. `Airship.takeOff` must be called before accessing this instance.
     @MainActor
-    static var messageCenter: any MessageCenterProtocol {
+    static var messageCenter: any AirshipMessageCenter {
         Airship.requireComponent(
             ofType: MessageCenterComponent.self
         ).messageCenter

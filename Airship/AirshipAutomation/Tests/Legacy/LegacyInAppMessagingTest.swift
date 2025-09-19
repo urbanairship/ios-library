@@ -12,7 +12,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
     private let date = UATestDate(offset: 0, dateOverride: Date())
     private var airshipTestInstance: TestAirshipInstance!
 
-    private var subject: DefaultAirshipLegacyInAppMessaging!
+    private var subject: DefaultLegacyInAppMessaging!
 
     @MainActor
     override func setUp() async throws {
@@ -31,7 +31,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
     }
 
     private func createSubject() {
-        subject = DefaultAirshipLegacyInAppMessaging(
+        subject = DefaultLegacyInAppMessaging(
             analytics: analytics,
             dataStore: datastore,
             automationEngine: engine,

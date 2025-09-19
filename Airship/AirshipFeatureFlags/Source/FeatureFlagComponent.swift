@@ -8,9 +8,9 @@ import AirshipCore
 
 /// Actual airship component for FeatureFlags. Used to hide AirshipComponent methods.
 final class FeatureFlagComponent : AirshipComponent {
-    final let featureFlagManager: FeatureFlagManager
+    final let featureFlagManager: DefaultFeatureFlagManager
 
-    init(featureFlagManager: FeatureFlagManager) {
+    init(featureFlagManager: DefaultFeatureFlagManager) {
         self.featureFlagManager = featureFlagManager
     }
 }

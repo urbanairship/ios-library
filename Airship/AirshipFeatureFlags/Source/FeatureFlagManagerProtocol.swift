@@ -15,11 +15,11 @@ public enum FeatureFlagError: Error, Equatable {
 }
 
 /// Airship feature flag manager
-public protocol FeatureFlagManagerProtocol: AnyObject, Sendable {
+public protocol FeatureFlagManager: AnyObject, Sendable {
 
     /// Feature flag result cache. This can be used to return a cached result for `flag(name:useResultCache:)`
     /// if the flag fails to resolve or it does not exist.
-    var resultCache: any FeatureFlagResultCacheProtocol { get }
+    var resultCache: any FeatureFlagResultCache { get }
 
     /// Feature flag status updates. Possible values are upToDate, stale and outOfDate.
     var featureFlagStatusUpdates: AsyncStream<any Sendable> { get async }
@@ -56,8 +56,8 @@ public protocol FeatureFlagManagerProtocol: AnyObject, Sendable {
 }
 
 public extension Airship {
-    /// The shared MessageCenter instance. `Airship.takeOff` must be called before accessing this instance.
-    static var featureFlagManager: any FeatureFlagManagerProtocol {
+    /// The shared `FeatureFlagManager` instance. `Airship.takeOff` must be called before accessing this instance.
+    static var featureFlagManager: any FeatureFlagManager {
         return Airship.requireComponent(ofType: FeatureFlagComponent.self).featureFlagManager
     }
 }

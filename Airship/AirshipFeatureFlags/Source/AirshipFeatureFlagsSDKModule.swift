@@ -16,7 +16,7 @@ public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
     public let components: [any AirshipComponent]
 
     public static func load(_ args: AirshiopModuleLoaderArgs) -> (any AirshipSDKModule)? {
-        let manager = FeatureFlagManager(
+        let manager = DefaultFeatureFlagManager(
             dataStore: args.dataStore,
             remoteDataAccess: FeatureFlagRemoteDataAccess(remoteData: args.remoteData),
             remoteData: args.remoteData,
@@ -27,7 +27,7 @@ public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
                 deferredResolver: args.deferredResolver
             ),
             privacyManager: args.privacyManager,
-            resultCache: FeatureFlagResultCache(cache: args.cache)
+            resultCache: DefaultFeatureFlagResultCache(cache: args.cache)
         )
 
         let component = FeatureFlagComponent(featureFlagManager: manager)

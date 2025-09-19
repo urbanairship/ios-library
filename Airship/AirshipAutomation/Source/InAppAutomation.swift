@@ -15,12 +15,12 @@ public import AirshipCore
 /**
  * Provides a control interface for creating, canceling and executing in-app automations.
  */
-public protocol AirshipInAppAutomation: Sendable {
+public protocol InAppAutomation: Sendable {
     /// In-App Messaging
-    var inAppMessaging: any AirshipInAppMessaging { get }
+    var inAppMessaging: any InAppMessaging { get }
 
     /// Legacy In-App Messaging
-    var legacyInAppMessaging: any AirshipLegacyInAppMessaging { get }
+    var legacyInAppMessaging: any LegacyInAppMessaging { get }
 
     /// Paused state of in-app automation.
     @MainActor
@@ -64,11 +64,11 @@ public protocol AirshipInAppAutomation: Sendable {
     func waitRefresh(maxTime: TimeInterval?) async
 }
 
-internal protocol InternalAirshipInAppAutomation: AirshipInAppAutomation {
+internal protocol InternalInAppAutomation: InAppAutomation {
     func cancelSchedulesWith(type: AutomationSchedule.ScheduleType) async throws
 }
 
-final class DefaultAirshipInAppAutomation: InternalAirshipInAppAutomation, Sendable {
+final class DefaultInAppAutomation: InternalInAppAutomation, Sendable {
 
     private let engine: any AutomationEngineProtocol
     private let remoteDataSubscriber: any AutomationRemoteDataSubscriberProtocol
@@ -76,22 +76,22 @@ final class DefaultAirshipInAppAutomation: InternalAirshipInAppAutomation, Senda
     private let privacyManager: any AirshipPrivacyManager
     private let notificationCenter: AirshipNotificationCenter
     private static let pausedStoreKey: String = "UAInAppMessageManagerPaused"
-    private let _legacyInAppMessaging: any InternalAirshipLegacyInAppMessaging
+    private let _legacyInAppMessaging: any InternalLegacyInAppMessaging
     private let remoteData: any RemoteDataProtocol
 
     /// In-App Messaging
-    let inAppMessaging: any AirshipInAppMessaging
+    let inAppMessaging: any InAppMessaging
 
     /// Legacy In-App Messaging
-    var legacyInAppMessaging: any AirshipLegacyInAppMessaging {
+    var legacyInAppMessaging: any LegacyInAppMessaging {
         return _legacyInAppMessaging
     }
 
     @MainActor
     init(
         engine: any AutomationEngineProtocol,
-        inAppMessaging: any AirshipInAppMessaging,
-        legacyInAppMessaging: any InternalAirshipLegacyInAppMessaging,
+        inAppMessaging: any InAppMessaging,
+        legacyInAppMessaging: any InternalLegacyInAppMessaging,
         remoteData: any RemoteDataProtocol,
         remoteDataSubscriber: any AutomationRemoteDataSubscriberProtocol,
         dataStore: PreferenceDataStore,
@@ -218,7 +218,7 @@ final class DefaultAirshipInAppAutomation: InternalAirshipInAppAutomation, Senda
     }
 }
 
-extension DefaultAirshipInAppAutomation {
+extension DefaultInAppAutomation {
     @MainActor
     func airshipReady() {
         self.engine.setExecutionPaused(self.isPaused)
@@ -250,8 +250,8 @@ extension DefaultAirshipInAppAutomation {
 
 
 public extension Airship {
-    /// The shared InAppAutomation instance. `Airship.takeOff` must be called before accessing this instance.
-    static var inAppAutomation: any AirshipInAppAutomation {
+    /// The shared `InAppAutomation` instance. `Airship.takeOff` must be called before accessing this instance.
+    static var inAppAutomation: any InAppAutomation {
         return Airship.requireComponent(ofType: InAppAutomationComponent.self).inAppAutomation
     }
 }

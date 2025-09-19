@@ -14,7 +14,7 @@ public class PreferenceCenterSDKModule: NSObject, AirshipSDKModule {
     public let components: [any AirshipComponent]
 
     public static func load(_ args: AirshiopModuleLoaderArgs) -> (any AirshipSDKModule)? {
-        let preferenceCenter = PreferenceCenter(
+        let preferenceCenter = DefaultAirshipPreferenceCenter(
             dataStore: args.dataStore,
             privacyManager: args.privacyManager,
             remoteData: args.remoteData,
@@ -23,7 +23,7 @@ public class PreferenceCenterSDKModule: NSObject, AirshipSDKModule {
         return PreferenceCenterSDKModule(preferenceCenter)
     }
 
-    private init(_ preferenceCenter: PreferenceCenter) {
+    private init(_ preferenceCenter: DefaultAirshipPreferenceCenter) {
         self.components = [
             PreferenceCenterComponent(preferenceCenter: preferenceCenter)
         ]

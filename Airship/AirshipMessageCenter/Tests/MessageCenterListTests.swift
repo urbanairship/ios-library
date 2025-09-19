@@ -52,7 +52,7 @@ final class MessageCenterListTest: XCTestCase {
     private let date = UATestDate(offset: 0, dateOverride: Date())
 
 
-    private lazy var inbox = MessageCenterInbox(
+    private lazy var inbox = DefaultAirshipMessageCenterInbox(
         channel: channel,
         client: client,
         config: config,
@@ -119,7 +119,7 @@ final class MessageCenterListTest: XCTestCase {
         // Save user
         await store.saveUser(user, channelID: "987654433")
 
-        let inbox = MessageCenterInbox(
+        let inbox = DefaultAirshipMessageCenterInbox(
             channel: channel,
             client: client,
             config: .testConfig(airshipConfig: airshipConfig),
@@ -147,7 +147,7 @@ final class MessageCenterListTest: XCTestCase {
         // Save user
         await store.saveUser(user, channelID: "987654433")
 
-        let inbox = MessageCenterInbox(
+        let inbox = DefaultAirshipMessageCenterInbox(
             channel: channel,
             client: client,
             config: .testConfig(airshipConfig: airshipConfig),

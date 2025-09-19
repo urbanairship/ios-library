@@ -98,18 +98,18 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             frequencyLimitManager: frequencyLimits
         )
 
-        let inAppMessaging = DefaultAirshipInAppMessaging(
+        let inAppMessaging = DefaultInAppMessaging(
             executor: messageExecutor,
             preparer: messagePreparer
         )
 
-        let legacyInAppMessaging = DefaultAirshipLegacyInAppMessaging(
+        let legacyInAppMessaging = DefaultLegacyInAppMessaging(
             analytics: LegacyInAppAnalytics(recorder: eventRecorder),
             dataStore: args.dataStore,
             automationEngine: engine
         )
 
-        let inAppAutomation = DefaultAirshipInAppAutomation(
+        let inAppAutomation = DefaultInAppAutomation(
             engine: engine,
             inAppMessaging: inAppMessaging,
             legacyInAppMessaging: legacyInAppMessaging,

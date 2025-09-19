@@ -7,7 +7,7 @@ import AirshipCore
 #endif
 
 /// Feature Flag result cache
-public protocol FeatureFlagResultCacheProtocol: Actor {
+public protocol FeatureFlagResultCache: Actor {
     /// Caches a flag for the given cachTTL.
     /// - Parameters:
     ///     - flag: The flag to cache
@@ -26,7 +26,7 @@ public protocol FeatureFlagResultCacheProtocol: Actor {
     func removeCachedFlag(name: String) async
 }
 
-actor FeatureFlagResultCache: FeatureFlagResultCacheProtocol {
+actor DefaultFeatureFlagResultCache: FeatureFlagResultCache {
     private static let cacheKeyPrefix: String = "FeatureFlagResultCache:"
     private let airshipCache: any AirshipCache
 

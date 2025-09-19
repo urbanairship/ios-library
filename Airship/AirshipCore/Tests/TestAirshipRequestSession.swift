@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+public import Foundation
 
 @testable
 public import AirshipCore
@@ -10,7 +10,7 @@ public final class TestAirshipRequestSession: AirshipRequestSession, @unchecked 
     public var previousRequest: AirshipRequest?
     public var lastRequest: AirshipRequest?
     public var response: HTTPURLResponse?
-    public var error: Error?
+    public var error: (any Error)?
     public var data: Data?
 
     

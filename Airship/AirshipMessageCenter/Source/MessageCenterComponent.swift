@@ -13,9 +13,9 @@ import UIKit
 
 /// Actual airship component for MessageCenter. Used to hide AirshipComponent methods.
 final class MessageCenterComponent : AirshipComponent, AirshipPushableComponent, Sendable {
-    final let messageCenter: MessageCenter
+    final let messageCenter: DefaultAirshipMessageCenter
 
-    init(messageCenter: MessageCenter) {
+    init(messageCenter: DefaultAirshipMessageCenter) {
         self.messageCenter = messageCenter
     }
     

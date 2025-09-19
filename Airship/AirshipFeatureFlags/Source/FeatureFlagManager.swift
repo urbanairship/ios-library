@@ -12,7 +12,7 @@ enum FeatureFlagEvaluationError: Error, Equatable {
 }
 
 /// Airship feature flag manager
-final class FeatureFlagManager: FeatureFlagManagerProtocol {
+final class DefaultFeatureFlagManager: FeatureFlagManager {
 
     private let remoteDataAccess: any FeatureFlagRemoteDataAccessProtocol
     private let audienceChecker: any DeviceAudienceChecker
@@ -22,7 +22,7 @@ final class FeatureFlagManager: FeatureFlagManagerProtocol {
     private let remoteData: any RemoteDataProtocol
     private let privacyManager: any AirshipPrivacyManager
 
-    let resultCache: any FeatureFlagResultCacheProtocol
+    let resultCache: any FeatureFlagResultCache
 
     var featureFlagStatusUpdates: AsyncStream<any Sendable> {
         get async {
@@ -51,7 +51,7 @@ final class FeatureFlagManager: FeatureFlagManagerProtocol {
         deviceInfoProviderFactory: @escaping @Sendable () -> any AudienceDeviceInfoProvider = { CachingAudienceDeviceInfoProvider() },
         deferredResolver: any FeatureFlagDeferredResolverProtocol,
         privacyManager: any AirshipPrivacyManager,
-        resultCache: any FeatureFlagResultCacheProtocol
+        resultCache: any FeatureFlagResultCache
     ) {
         self.remoteDataAccess = remoteDataAccess
         self.audienceChecker = audienceChecker

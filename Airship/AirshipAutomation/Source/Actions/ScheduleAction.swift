@@ -21,17 +21,17 @@ public import AirshipCore
 public final class ScheduleAction: AirshipAction {
     
     //used for tests
-    private let overrideAutomation: (any AirshipInAppAutomation)?
+    private let overrideAutomation: (any InAppAutomation)?
 
     /// Cancel schedules action names.
     public static let defaultNames: [String] = ["schedule_actions", "^sa"]
     
-    init(overrideAutomation: (any AirshipInAppAutomation)? = nil) {
+    init(overrideAutomation: (any InAppAutomation)? = nil) {
         self.overrideAutomation = overrideAutomation
     }
     
-    var automation: any AirshipInAppAutomation {
-        return overrideAutomation ??  Airship.inAppAutomation
+    var automation: any InAppAutomation {
+        return overrideAutomation ?? Airship.inAppAutomation
     }
     
     public func accepts(arguments: ActionArguments) async -> Bool {

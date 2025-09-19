@@ -20,8 +20,8 @@ public protocol PreferenceCenterOpenDelegate {
 
 /// An interface for interacting with Airship's Preference Center.
 @MainActor
-public protocol PreferenceCenterProtocol: AnyObject, Sendable {
-    
+public protocol AirshipPreferenceCenter: AnyObject, Sendable {
+
     /// Called when the Preference Center is requested to be displayed.
     /// Return `true` if the display was handled, `false` to fall back to default SDK behavior.
     var onDisplay: (@MainActor @Sendable (_ preferenceCenterID: String) -> Bool)? { get set }
@@ -54,7 +54,7 @@ public protocol PreferenceCenterProtocol: AnyObject, Sendable {
 }
 
 @MainActor
-final class PreferenceCenter: PreferenceCenterProtocol {
+final class DefaultAirshipPreferenceCenter: AirshipPreferenceCenter {
 
     let inputValidator: any AirshipInputValidation.Validator
 
@@ -108,7 +108,6 @@ final class PreferenceCenter: PreferenceCenterProtocol {
         self._theme.set(PreferenceCenterThemeLoader.defaultPlist())
         AirshipLogger.info("PreferenceCenter initialized")
     }
-
 
     public func display(identifier: String) {
         let handled: Bool = if let onDisplay {
@@ -188,7 +187,7 @@ private final class Delegates {
     var openDelegate: (any PreferenceCenterOpenDelegate)?
 }
 
-extension PreferenceCenter {
+extension DefaultAirshipPreferenceCenter {
 
     @MainActor
     fileprivate func displayPreferenceCenter(
@@ -224,7 +223,7 @@ extension PreferenceCenter {
     }
 }
 
-extension PreferenceCenter {
+extension DefaultAirshipPreferenceCenter {
     @MainActor
     func deepLink(_ deepLink: URL) -> Bool {
         guard deepLink.scheme == Airship.deepLinkScheme,
@@ -243,7 +242,7 @@ extension PreferenceCenter {
 public extension Airship {
     /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
     @MainActor
-    static var preferenceCenter: any PreferenceCenterProtocol  {
+    static var preferenceCenter: any AirshipPreferenceCenter  {
         Airship.requireComponent(
            ofType: PreferenceCenterComponent.self
        ).preferenceCenter

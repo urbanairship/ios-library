@@ -15,7 +15,7 @@ final class ScheduleActionTest: XCTestCase {
         let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         let config = RuntimeConfig.testConfig()
         
-        let inAppAutomation = await DefaultAirshipInAppAutomation(
+        let inAppAutomation = await DefaultInAppAutomation(
             engine: automation,
             inAppMessaging: TestInAppMessaging(),
             legacyInAppMessaging: TestLegacyInAppMessaging(),
