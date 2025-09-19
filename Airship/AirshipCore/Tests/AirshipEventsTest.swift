@@ -368,7 +368,22 @@ private final class EventTestPush: AirshipPushProtocol, @unchecked Sendable {
     ]
 
     var badgeNumber: Int = 0
-    
+
+    // Notification callbacks
+    var onForegroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> Void)?
+
+#if !os(watchOS)
+    var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> UIBackgroundFetchResult)?
+#else
+    var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> WKBackgroundFetchResult)?
+#endif
+
+#if !os(tvOS)
+    var onNotificationResponseReceived: (@MainActor @Sendable (UNNotificationResponse) async -> Void)?
+#endif
+
+    var onPresentationOptionsExtension: (@MainActor @Sendable (UNNotificationPresentationOptions, UNNotification) async -> UNNotificationPresentationOptions)?
+
     init() {
         (self.notificationStatusUpdates, self.statusUpdateContinuation) = AsyncStream<AirshipNotificationStatus>.airshipMakeStreamWithContinuation()
     }

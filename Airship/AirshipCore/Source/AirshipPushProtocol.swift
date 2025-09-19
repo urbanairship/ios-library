@@ -185,6 +185,37 @@ public protocol AirshipPushProtocol: AnyObject, Sendable {
     /// - Returns: `true` if user notifications are enabled at the system level,  otherwise`false`.
     @discardableResult
     func enableUserPushNotifications(fallback: PromptPermissionFallback) async -> Bool
+
+    // MARK: Block-based notification callbacks
+
+    /// Callback to be called when a notification is received in the foreground.
+    /// This callback takes precedence over the delegate method if both are set.
+    @MainActor
+    var onForegroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> Void)? { get set }
+
+#if !os(watchOS)
+    /// Callback to be called when a notification is received in the background.
+    /// This callback takes precedence over the delegate method if both are set.
+    @MainActor
+    var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> UIBackgroundFetchResult)? { get set }
+#else
+    /// Callback to be called when a notification is received in the background.
+    /// This callback takes precedence over the delegate method if both are set.
+    @MainActor
+    var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> WKBackgroundFetchResult)? { get set }
+#endif
+
+#if !os(tvOS)
+    /// Callback to be called when a notification response is received.
+    /// This callback takes precedence over the delegate method if both are set.
+    @MainActor
+    var onNotificationResponseReceived: (@MainActor @Sendable (UNNotificationResponse) async -> Void)? { get set }
+#endif
+
+    /// Callback to extend presentation options for foreground notifications.
+    /// This callback takes precedence over the delegate method if both are set.
+    @MainActor
+    var onPresentationOptionsExtension: (@MainActor @Sendable (UNNotificationPresentationOptions, UNNotification) async -> UNNotificationPresentationOptions)? { get set }
 }
 
 protocol InternalPushProtocol: Sendable {

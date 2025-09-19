@@ -103,6 +103,22 @@ final class TestPush: NSObject, InternalPushProtocol, AirshipPushProtocol, Airsh
     var badgeNumber: Int = 0
 
     var deviceToken: String?
+
+    // Notification callbacks
+    var onForegroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> Void)?
+
+#if !os(watchOS)
+    var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> UIBackgroundFetchResult)?
+#else
+    var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> WKBackgroundFetchResult)?
+#endif
+
+#if !os(tvOS)
+    var onNotificationResponseReceived: (@MainActor @Sendable (UNNotificationResponse) async -> Void)?
+#endif
+
+    var onPresentationOptionsExtension: (@MainActor @Sendable (UNNotificationPresentationOptions, UNNotification) async -> UNNotificationPresentationOptions)?
+
     var updateAuthorizedNotificationTypesCalled = false
     var registrationError: Error?
     var didReceiveRemoteNotificationCallback: (

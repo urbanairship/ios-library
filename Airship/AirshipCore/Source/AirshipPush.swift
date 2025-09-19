@@ -94,6 +94,25 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
     @MainActor
     public var onNotificationAuthorizedSettingsDidChange: (@MainActor @Sendable (AirshipAuthorizedNotificationSettings) -> Void)?
 
+    // Notification callbacks
+    @MainActor
+    public var onForegroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> Void)?
+
+#if !os(watchOS)
+    @MainActor
+    public var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> UIBackgroundFetchResult)?
+#else
+    @MainActor
+    public var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> WKBackgroundFetchResult)?
+#endif
+
+    #if !os(tvOS)
+    @MainActor
+    public var onNotificationResponseReceived: (@MainActor @Sendable (UNNotificationResponse) async -> Void)?
+    #endif
+
+    @MainActor
+    public var onPresentationOptionsExtension: (@MainActor @Sendable (UNNotificationPresentationOptions, UNNotification) async -> UNNotificationPresentationOptions)?
 
     @MainActor
     private var isRegisteredForRemoteNotifications: Bool {
@@ -121,7 +140,7 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         permissionsManager: AirshipPermissionsManager,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         notificationRegistrar: any NotificationRegistrar =
-            UNNotificationRegistrar(),
+        UNNotificationRegistrar(),
         apnsRegistrar: any APNSRegistrar,
         badger: any BadgerProtocol,
         serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
@@ -503,13 +522,13 @@ final class AirshipPush: AirshipPushProtocol, @unchecked Sendable {
         var settingsChanged = false
         if self.privacyManager.isEnabled(.push) {
             if !self.userPromptedForNotifications {
-#if os(tvOS) || os(watchOS)
+                #if os(tvOS) || os(watchOS)
                 self.userPromptedForNotifications = status != .notDetermined
-#else
+                #else
                 if status != .notDetermined && status != .ephemeral {
                     self.userPromptedForNotifications = true
                 }
-#endif
+                #endif
             }
             if status != self.authorizationStatus {
                 self.authorizationStatus = status
@@ -1103,11 +1122,12 @@ extension AirshipPush: InternalPushProtocol {
             options = self.defaultPresentationOptions
         }
         
-        if let delegate = self.pushNotificationDelegate {
+        if let onPresentationOptionsExtension = self.onPresentationOptionsExtension {
+            options = await onPresentationOptionsExtension(options, notification)
+        } else if let delegate = self.pushNotificationDelegate {
             options = await delegate.extendPresentationOptions(options, notification: notification)
         }
-        
-        
+
         return options
     }
 
@@ -1130,7 +1150,11 @@ extension AirshipPush: InternalPushProtocol {
             ]
         )
 
-        await self.pushNotificationDelegate?.receivedNotificationResponse(response)
+        if let onNotificationResponseReceived = self.onNotificationResponseReceived {
+            await onNotificationResponseReceived(response)
+        } else {
+            await self.pushNotificationDelegate?.receivedNotificationResponse(response)
+        }
     }
 
     #endif
@@ -1161,22 +1185,29 @@ extension AirshipPush: InternalPushProtocol {
         )
 
         if isForeground {
-            await delegate?.receivedForegroundNotification(notification)
+            if let onForegroundNotificationReceived = self.onForegroundNotificationReceived {
+                await onForegroundNotificationReceived(notification)
+            } else {
+                await delegate?.receivedForegroundNotification(notification)
+            }
+
             #if !os(watchOS)
             return UIBackgroundFetchResult.noData
             #else
             return WKBackgroundFetchResult.noData
             #endif
         } else {
-            guard let result = await delegate?.receivedBackgroundNotification(notification) else {
+            if let onBackgroundNotificationReceived = self.onBackgroundNotificationReceived {
+                return await onBackgroundNotificationReceived(notification)
+            } else if let result = await delegate?.receivedBackgroundNotification(notification) {
+                return result
+            } else {
                 #if !os(watchOS)
                 return UIBackgroundFetchResult.noData
                 #else
                 return WKBackgroundFetchResult.noData
                 #endif
             }
-            
-            return result
         }
     }
 
@@ -1187,16 +1218,16 @@ extension AirshipPush: InternalPushProtocol {
         #if !os(tvOS)
         // get the presentation options from the the notification
         presentationOptions =
-            notification.request.content.userInfo[
-                AirshipPush.ForegroundPresentationkey
-            ]
-            as? [String]
+        notification.request.content.userInfo[
+            AirshipPush.ForegroundPresentationkey
+        ]
+        as? [String]
 
         if presentationOptions == nil {
             presentationOptions =
-                notification.request.content.userInfo[
-                    AirshipPush.ForegroundPresentationLegacykey
-                ] as? [String]
+            notification.request.content.userInfo[
+                AirshipPush.ForegroundPresentationLegacykey
+            ] as? [String]
         }
         #endif
         return presentationOptions
