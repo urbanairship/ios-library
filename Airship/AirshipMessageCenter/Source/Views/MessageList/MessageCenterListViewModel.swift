@@ -28,7 +28,7 @@ public class MessageCenterMessageListViewModel: ObservableObject {
 
     private var messageItems: [String: MessageCenterListItemViewModel] = [:]
     private var updates = Set<AnyCancellable>()
-    private let messageCenter: (any AirshipMessageCenter)?
+    private let messageCenter: (any MessageCenter)?
 
     /// Initializer.
     /// - Parameters:

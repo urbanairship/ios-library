@@ -8,9 +8,9 @@ import AirshipCore
 
 /// Actual airship component for PreferenceCenter. Used to hide AirshipComponent methods.
 final class PreferenceCenterComponent: AirshipComponent {
-    final let preferenceCenter: DefaultAirshipPreferenceCenter
+    final let preferenceCenter: DefaultPreferenceCenter
 
-    init(preferenceCenter: DefaultAirshipPreferenceCenter) {
+    init(preferenceCenter: DefaultPreferenceCenter) {
         self.preferenceCenter = preferenceCenter
     }
 

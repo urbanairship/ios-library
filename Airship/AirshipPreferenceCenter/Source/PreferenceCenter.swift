@@ -20,7 +20,7 @@ public protocol PreferenceCenterOpenDelegate {
 
 /// An interface for interacting with Airship's Preference Center.
 @MainActor
-public protocol AirshipPreferenceCenter: AnyObject, Sendable {
+public protocol PreferenceCenter: AnyObject, Sendable {
 
     /// Called when the Preference Center is requested to be displayed.
     /// Return `true` if the display was handled, `false` to fall back to default SDK behavior.
@@ -54,7 +54,7 @@ public protocol AirshipPreferenceCenter: AnyObject, Sendable {
 }
 
 @MainActor
-final class DefaultAirshipPreferenceCenter: AirshipPreferenceCenter {
+final class DefaultPreferenceCenter: PreferenceCenter {
 
     let inputValidator: any AirshipInputValidation.Validator
 
@@ -187,7 +187,7 @@ private final class Delegates {
     var openDelegate: (any PreferenceCenterOpenDelegate)?
 }
 
-extension DefaultAirshipPreferenceCenter {
+extension DefaultPreferenceCenter {
 
     @MainActor
     fileprivate func displayPreferenceCenter(
@@ -223,7 +223,7 @@ extension DefaultAirshipPreferenceCenter {
     }
 }
 
-extension DefaultAirshipPreferenceCenter {
+extension DefaultPreferenceCenter {
     @MainActor
     func deepLink(_ deepLink: URL) -> Bool {
         guard deepLink.scheme == Airship.deepLinkScheme,
@@ -240,9 +240,9 @@ extension DefaultAirshipPreferenceCenter {
 }
 
 public extension Airship {
-    /// The shared PreferenceCenter instance. `Airship.takeOff` must be called before accessing this instance.
+    /// The shared `PreferenceCenter` instance. `Airship.takeOff` must be called before accessing this instance.
     @MainActor
-    static var preferenceCenter: any AirshipPreferenceCenter  {
+    static var preferenceCenter: any PreferenceCenter  {
         Airship.requireComponent(
            ofType: PreferenceCenterComponent.self
        ).preferenceCenter

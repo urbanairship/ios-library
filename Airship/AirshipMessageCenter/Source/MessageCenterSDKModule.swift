@@ -14,12 +14,12 @@ public class MessageCenterSDKModule: NSObject, AirshipSDKModule {
     public let actionsManifest: (any ActionsManifest)? = MessageCenterActionsManifest()
     public let components: [any AirshipComponent]
 
-    init(messageCenter: DefaultAirshipMessageCenter) {
+    init(messageCenter: DefaultMessageCenter) {
         self.components = [MessageCenterComponent(messageCenter: messageCenter)]
     }
 
     public static func load(_ args: AirshiopModuleLoaderArgs) -> (any AirshipSDKModule)? {
-        let messageCenter = DefaultAirshipMessageCenter(
+        let messageCenter = DefaultMessageCenter(
             dataStore: args.dataStore,
             config: args.config,
             channel: args.channel,

@@ -9,7 +9,7 @@ public import AirshipCore
 #endif
 
 /// Airship Message Center inbox protocol.
-public protocol AirshipMessageCenterInbox: AnyObject, Sendable {
+public protocol MessageCenterInbox: AnyObject, Sendable {
 
     /// Refreshes the list of messages in the inbox.
     /// - Returns: `true` if the messages was refreshed, otherwise `false`.
@@ -78,7 +78,7 @@ public protocol AirshipMessageCenterInbox: AnyObject, Sendable {
 }
 
 /// Airship Message Center inbox.
-final class DefaultAirshipMessageCenterInbox: AirshipMessageCenterInbox, Sendable {
+final class DefaultMessageCenterInbox: MessageCenterInbox, Sendable {
 
     private enum UpdateType: Sendable {
         case local
