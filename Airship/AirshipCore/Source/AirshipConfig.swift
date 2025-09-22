@@ -169,7 +169,25 @@ public struct AirshipConfig: Decodable, Sendable {
     ///
     /// Defaults to `true`.
     public var requireInitialRemoteConfigEnabled: Bool = true
-    
+
+    /// **For apps using the Swift 5 language mode:** It is **strongly recommended** to leave
+    /// this value as `false` (the default).
+    ///
+    /// A suspected compiler bug in **Xcode 16.1 and newer** can cause fatal runtime crashes
+    /// in this specific configuration. This flag disables the problematic code path.
+    /// For more details, see: https://github.com/urbanairship/ios-library/issues/434.
+    ///
+    /// ---
+    ///
+    /// **For apps using Swift 6 or newer:** You can set this to `true` to enable dynamic
+    /// background wait time calculation. This helps the SDK send off pending operations
+    /// before the app is fully backgrounded.
+    ///
+    /// If `false`, the SDK will wait a short, fixed amount of time.
+    ///
+    /// Defaults to `false`.
+    public var isDynamicBackgroundWaitTimeEnabled: Bool = false
+
     /// The Airship URL used to pull the initial config. This should only be set if you are using custom domains
     /// that forward to Airship.
     public var initialConfigURL: String?
@@ -223,7 +241,8 @@ public struct AirshipConfig: Decodable, Sendable {
         case remoteDataAPIURL
         case useUserPreferredLocale
         case restoreMessageCenterOnReinstall
-        
+        case isDynamicBackgroundWaitTimeEnabled
+
         // legacy keys
         
         case LOG_LEVEL
@@ -454,6 +473,11 @@ public struct AirshipConfig: Decodable, Sendable {
             Bool.self,
             forKey: .useUserPreferredLocale
         ) ?? self.useUserPreferredLocale
+
+        self.isDynamicBackgroundWaitTimeEnabled = try container.decodeIfPresent(
+            Bool.self,
+            forKey: .isDynamicBackgroundWaitTimeEnabled
+        ) ?? self.isDynamicBackgroundWaitTimeEnabled
     }
 
     /// Validates credentails

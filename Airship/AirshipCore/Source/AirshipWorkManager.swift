@@ -48,6 +48,10 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
     private func applicationDidEnterBackground() {
         backgroundWaitTask.value?.cancel()
 
+        guard Airship.isFlying else {
+            return
+        }
+
         let cancellable: CancellableValueHolder<Task<Void, Never>> = CancellableValueHolder { task in
             task.cancel()
         }
@@ -56,9 +60,17 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
             cancellable.cancel()
         }
 
+        let isDynamicBackgroundWaitTimeEnabled = Airship.config.airshipConfig.isDynamicBackgroundWaitTimeEnabled
+
         cancellable.value = Task { [workers, backgroundWorkRequests] in
             for request in backgroundWorkRequests.value {
                 await workers.dispatchWorkRequest(request)
+            }
+
+            guard isDynamicBackgroundWaitTimeEnabled else {
+                try? await Task.sleep(nanoseconds: UInt64(5.0 * 1_000_000_000))
+                background?.cancel()
+                return
             }
 
             let sleep = await workers.calculateBackgroundWaitTime(maxTime: 15.0)

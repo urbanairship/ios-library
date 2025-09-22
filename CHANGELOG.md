@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.10.0 - September 22, 2025
+Minor release that adds a new flag to work around the critical crash (GH-434) affecting Swift 5 apps on Xcode 16.1+. The problematic feature is now disabled by default.
+
+### Changes
+- Added `isDynamicBackgroundWaitTimeEnabled` flag. This defaults to `false` to avoid the crash. It is strongly recommended to keep this `false` for Swift 5 apps. Swift 6 apps can safely set this to `true` to restore previous behaviors.
+
 ## Version 19.9.2 - September 15, 2025
 Patch release that resolves a crash eminating from the Thomas video player, fixes a bug that causes Scenes to sometimes display after being stopped, and fixes some UI bugs exposed by iOS 26.
 
