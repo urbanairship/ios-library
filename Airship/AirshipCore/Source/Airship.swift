@@ -43,7 +43,7 @@ public final class Airship: Sendable {
     public static var config: RuntimeConfig { return shared.airshipInstance.config }
 
     /// Action registry.
-    public static var actionRegistry: ActionRegistry {
+    public static var actionRegistry: any AirshipActionRegistry {
         return shared.airshipInstance.actionRegistry
     }
 

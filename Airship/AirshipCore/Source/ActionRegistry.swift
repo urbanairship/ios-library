@@ -1,9 +1,40 @@
 /* Copyright Airship and Contributors */
 
-/// This class is responsible for runtime-persisting actions and associating
+/// This protocol is responsible for runtime-persisting actions and associating
 /// them with names and predicates.
 @MainActor
-public class ActionRegistry {
+public protocol AirshipActionRegistry: Sendable {
+
+    func registerEntry(
+        names: [String],
+        entry:  @escaping () -> ActionEntry
+    )
+
+    func registerEntry(
+        names: [String],
+        entry:  ActionEntry
+    )
+
+    @discardableResult
+    func removeEntry(name: String) -> Bool
+
+    @discardableResult
+    func updateEntry(name: String, action: any AirshipAction) -> Bool
+
+    @discardableResult
+    func updateEntry(name: String, predicate: (@Sendable (ActionArguments) async -> Bool)?) -> Bool
+
+    @discardableResult
+    func updateEntry(name: String, situation: ActionSituation, action: any AirshipAction) -> Bool
+
+    func entry(name: String) -> ActionEntry?
+
+    func registerActions(actionsManifests: [any ActionsManifest])
+}
+
+
+@MainActor
+public class DefaultAirshipActionRegistry: AirshipActionRegistry {
     private var entries: [String: EntryHolder] = [:]
 
 

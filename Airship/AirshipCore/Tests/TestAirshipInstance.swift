@@ -27,8 +27,8 @@ final class TestAirshipInstance: AirshipInstance, @unchecked Sendable {
         }
     }
 
-    private var _actionRegistry: ActionRegistry?
-    public var actionRegistry: ActionRegistry {
+    private var _actionRegistry: (any AirshipActionRegistry)?
+    public var actionRegistry: any AirshipActionRegistry {
         get {
             return _actionRegistry!
         }

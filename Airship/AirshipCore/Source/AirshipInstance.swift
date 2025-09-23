@@ -5,7 +5,7 @@ import Foundation
 protocol AirshipInstance: Sendable {
     var config: RuntimeConfig { get }
     var preferenceDataStore: PreferenceDataStore { get }
-    var actionRegistry: ActionRegistry { get }
+    var actionRegistry: any AirshipActionRegistry { get }
     var permissionsManager: AirshipPermissionsManager { get }
 
     #if !os(tvOS) && !os(watchOS)
@@ -36,7 +36,7 @@ final class DefaultAirshipInstance: AirshipInstance {
     public let preferenceDataStore: PreferenceDataStore
 
     let inputValidator: any AirshipInputValidation.Validator
-    public let actionRegistry: ActionRegistry
+    public let actionRegistry: any AirshipActionRegistry
     public let permissionsManager: AirshipPermissionsManager
     
 #if !os(tvOS) && !os(watchOS)
@@ -94,7 +94,7 @@ final class DefaultAirshipInstance: AirshipInstance {
             defaultEnabledFeatures: airshipConfig.enabledFeatures
         )
         
-        self.actionRegistry = ActionRegistry()
+        self.actionRegistry = DefaultAirshipActionRegistry()
         self.urlAllowList = DefaultAirshipURLAllowList(airshipConfig: airshipConfig)
         self.localeManager = DefaultAirshipLocaleManager(
             dataStore: dataStore,

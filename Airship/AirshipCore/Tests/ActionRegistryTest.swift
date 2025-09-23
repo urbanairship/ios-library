@@ -6,12 +6,12 @@ import XCTest
 
 class ActionRegistryTest: AirshipBaseTest {
 
-    private var registry: ActionRegistry!
+    private var registry: DefaultAirshipActionRegistry!
 
     @MainActor
     override func setUpWithError() throws {
         try super.setUpWithError()
-        self.registry = ActionRegistry()
+        self.registry = DefaultAirshipActionRegistry()
     }
 
     @MainActor

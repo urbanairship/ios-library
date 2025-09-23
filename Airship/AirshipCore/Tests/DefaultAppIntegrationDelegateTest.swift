@@ -16,7 +16,7 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
     @MainActor
     override func setUp() async throws {
         airshipInstance = TestAirshipInstance()
-        self.airshipInstance.actionRegistry = ActionRegistry()
+        self.airshipInstance.actionRegistry = DefaultAirshipActionRegistry()
         self.airshipInstance.makeShared()
 
         self.delegate = DefaultAppIntegrationDelegate(
