@@ -71,7 +71,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
     private let dataStore: PreferenceDataStore
     private let channel: any InternalAirshipChannel
     private let privacyManager: any AirshipPrivacyManager
-    private let permissionsManager: AirshipPermissionsManager
+    private let permissionsManager: any AirshipPermissionsManager
     private let notificationCenter: AirshipNotificationCenter
     private let notificationRegistrar: any NotificationRegistrar
     private let apnsRegistrar: any APNSRegistrar
@@ -137,7 +137,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
         channel: any InternalAirshipChannel,
         analytics: any InternalAirshipAnalytics,
         privacyManager: any AirshipPrivacyManager,
-        permissionsManager: AirshipPermissionsManager,
+        permissionsManager: any AirshipPermissionsManager,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
         notificationRegistrar: any NotificationRegistrar =
         UNNotificationRegistrar(),
@@ -168,11 +168,12 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
                 skipIfEphemeral: skipIfEphemeral
             )
         }
-
+        
         self.permissionsManager.setDelegate(
             permissionDelegate,
             permission: .displayNotifications
         )
+        
         self.permissionsManager.addRequestExtender(
             permission: .displayNotifications
         ) { status in

@@ -17,7 +17,7 @@ final class DefaultAirshipChannel: AirshipChannel, Sendable {
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
     private let privacyManager: any AirshipPrivacyManager
-    private let permissionsManager: AirshipPermissionsManager
+    private let permissionsManager: any AirshipPermissionsManager
     private let localeManager: any AirshipLocaleManager
     private let audienceManager: any ChannelAudienceManagerProtocol
     private let channelRegistrar: any ChannelRegistrarProtocol
@@ -118,7 +118,7 @@ final class DefaultAirshipChannel: AirshipChannel, Sendable {
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         privacyManager: any AirshipPrivacyManager,
-        permissionsManager: AirshipPermissionsManager,
+        permissionsManager: any AirshipPermissionsManager,
         localeManager: any AirshipLocaleManager,
         audienceManager: any ChannelAudienceManagerProtocol,
         channelRegistrar: any ChannelRegistrarProtocol,
@@ -205,7 +205,7 @@ final class DefaultAirshipChannel: AirshipChannel, Sendable {
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,
         privacyManager: any AirshipPrivacyManager,
-        permissionsManager: AirshipPermissionsManager,
+        permissionsManager: any AirshipPermissionsManager,
         localeManager: any AirshipLocaleManager,
         audienceOverridesProvider: any AudienceOverridesProvider
     ) {

@@ -25,7 +25,7 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
     private let date: any AirshipDateProtocol
     private let eventManager: any EventManagerProtocol
     private let localeManager: any AirshipLocaleManager
-    private let permissionsManager: AirshipPermissionsManager
+    private let permissionsManager: any AirshipPermissionsManager
     private let sessionTracker: any SessionTrackerProtocol
     private let serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
 
@@ -76,7 +76,7 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
         channel: any AirshipChannel,
         localeManager: any AirshipLocaleManager,
         privacyManager: any AirshipPrivacyManager,
-        permissionsManager: AirshipPermissionsManager
+        permissionsManager: any AirshipPermissionsManager
     ) {
         self.init(
             config: config,
@@ -102,7 +102,7 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
         date: any AirshipDateProtocol = AirshipDate.shared,
         localeManager: any AirshipLocaleManager,
         privacyManager: any AirshipPrivacyManager,
-        permissionsManager: AirshipPermissionsManager,
+        permissionsManager: any AirshipPermissionsManager,
         eventManager: any EventManagerProtocol,
         sessionTracker: (any SessionTrackerProtocol)? = nil,
         sessionEventFactory: any SessionEventFactoryProtocol = SessionEventFactory()

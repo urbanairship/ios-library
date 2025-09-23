@@ -12,7 +12,7 @@ class AnalyticsTest: XCTestCase {
     private let config = RuntimeConfig.testConfig()
     private let channel = TestChannel()
     private let locale = TestLocaleManager()
-    private var permissionsManager: AirshipPermissionsManager!
+    private var permissionsManager: DefaultAirshipPermissionsManager!
     private let notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let date = UATestDate()
     private let eventManager = TestEventManager()
@@ -27,7 +27,7 @@ class AnalyticsTest: XCTestCase {
     @MainActor
     override func setUp() async throws {
         testAirship = TestAirshipInstance()
-        self.permissionsManager = AirshipPermissionsManager()
+        self.permissionsManager = DefaultAirshipPermissionsManager()
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: RuntimeConfig.testConfig(),

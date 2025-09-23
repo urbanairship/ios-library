@@ -201,9 +201,11 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
     public var permissions: [AirshipPermission : AirshipPermissionStatus] {
         get async {
             var results: [AirshipPermission : AirshipPermissionStatus] = [:]
+            
             for permission in Airship.permissionsManager.configuredPermissions {
                 results[permission] = await Airship.permissionsManager.checkPermissionStatus(permission)
             }
+            
             return results
         }
     }

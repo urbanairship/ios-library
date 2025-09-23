@@ -10,8 +10,8 @@ final class TestAirshipInstance: AirshipInstance, @unchecked Sendable {
         fatalError("Not implemented")
     }
 
-    var _permissionsManager: AirshipPermissionsManager?
-    var permissionsManager: AirshipPermissionsManager {
+    var _permissionsManager: DefaultAirshipPermissionsManager?
+    var permissionsManager: any AirshipPermissionsManager {
         return _permissionsManager!
     }
 
@@ -110,6 +110,6 @@ final class TestAirshipInstance: AirshipInstance, @unchecked Sendable {
     
     @MainActor
     init() {
-        _permissionsManager = AirshipPermissionsManager()
+        _permissionsManager = DefaultAirshipPermissionsManager()
     }
 }

@@ -13,7 +13,7 @@ class ChannelTest: XCTestCase {
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private var config = AirshipConfig()
     private var privacyManager: TestPrivacyManager!
-    private var permissionsManager: AirshipPermissionsManager!
+    private var permissionsManager: DefaultAirshipPermissionsManager!
     private var channel: DefaultAirshipChannel!
 
     override func setUp() async throws {
@@ -24,7 +24,7 @@ class ChannelTest: XCTestCase {
             notificationCenter: self.notificationCenter
         )
 
-        self.permissionsManager = await AirshipPermissionsManager()
+        self.permissionsManager = await DefaultAirshipPermissionsManager()
 
         self.channel = await createChannel()
     }

@@ -12,7 +12,7 @@ class AirshipPushTest: XCTestCase {
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let channel = TestChannel()
     private let analtyics = TestAnalytics()
-    private var permissionsManager: AirshipPermissionsManager!
+    private var permissionsManager: DefaultAirshipPermissionsManager!
 
     private let notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let notificationRegistrar = TestNotificationRegistrar()
@@ -29,7 +29,7 @@ class AirshipPushTest: XCTestCase {
     override func setUp() async throws {
         self.pushDelegate = await TestPushNotificationDelegate()
         self.apnsRegistrar = await TestAPNSRegistrar()
-        self.permissionsManager = await AirshipPermissionsManager()
+        self.permissionsManager = await DefaultAirshipPermissionsManager()
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: .testConfig(),

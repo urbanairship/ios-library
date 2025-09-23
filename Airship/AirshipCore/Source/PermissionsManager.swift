@@ -10,7 +10,98 @@ import UIKit
 ///
 /// Airship will provide the default handling for `Permission.postNotifications`. All other permissions will need
 /// to be configured by the app by providing a `PermissionDelegate` for the given permissions.
-public final class AirshipPermissionsManager: Sendable {
+public protocol AirshipPermissionsManager: Sendable {
+    
+    /// The set of permissions that have a configured delegate.
+    var configuredPermissions: Set<AirshipPermission> { get }
+    
+    /// Returns an async stream with status updates for the given permission
+    ///
+    /// - Parameters:
+    ///     - permission: The permission.
+    func statusUpdate(
+        for permission: AirshipPermission
+    ) -> AsyncStream<AirshipPermissionStatus>
+    
+    /// - Note: For internal use only. :nodoc:
+    func permissionStatusMap() async -> [String: String]
+    
+    /// Sets a permission delegate.
+    ///
+    /// - Note: The delegate will be strongly retained.
+    ///
+    /// - Parameters:
+    ///     - delegate: The delegate.
+    ///     - permission: The permission.
+    func setDelegate(
+        _ delegate: (any AirshipPermissionDelegate)?,
+        permission: AirshipPermission
+    )
+    
+    /// Checks a permission status.
+    ///
+    /// - Note: If no delegate is set for the given permission this will always return `.notDetermined`.
+    ///
+    /// - Parameters:
+    ///     - permission: The permission.
+    @MainActor
+    func checkPermissionStatus(
+        _ permission: AirshipPermission
+    ) async -> AirshipPermissionStatus
+    
+    /// Requests a permission.
+    ///
+    /// - Note: If no permission delegate is set for the given permission this will always return `.notDetermined`
+    ///
+    /// - Parameters:
+    ///     - permission: The permission.
+    @MainActor
+    func requestPermission(
+        _ permission: AirshipPermission
+    ) async -> AirshipPermissionStatus
+    
+    /// Requests a permission.
+    ///
+    /// - Note: If no permission delegate is set for the given permission this will always return `.notDetermined`
+    ///
+    /// - Parameters:
+    ///     - permission: The permission.
+    ///     - enableAirshipUsageOnGrant: `true` to allow any Airship features that need the permission to be enabled as well, e.g., enabling push privacy manager feature and user notifications if `.displayNotifications` is granted.
+    @MainActor
+    func requestPermission(
+        _ permission: AirshipPermission,
+        enableAirshipUsageOnGrant: Bool
+    ) async -> AirshipPermissionStatus
+    
+    /// Requests a permission.
+    ///
+    /// - Parameters:
+    ///     - permission: The permission.
+    ///     - enableAirshipUsageOnGrant: `true` to allow any Airship features that need the permission to be enabled as well, e.g., enabling push privacy manager feature and user notifications if `.displayNotifications` is granted.
+    ///     - fallback: The fallback behavior if the permission is alreay denied.
+    /// - Returns: A `AirshipPermissionResult` with the starting and ending status If no permission delegate is
+    /// set for the given permission the status will be `.notDetermined`
+    @MainActor
+    func requestPermission(
+        _ permission: AirshipPermission,
+        enableAirshipUsageOnGrant: Bool,
+        fallback: PromptPermissionFallback
+    ) async -> AirshipPermissionResult
+    
+    /// - Note: for internal use only.  :nodoc:
+    func addRequestExtender(
+        permission: AirshipPermission,
+        extender: @escaping @Sendable (AirshipPermissionStatus) async -> Void
+    )
+    
+    /// - Note: for internal use only.  :nodoc:
+    func addAirshipEnabler(
+        permission: AirshipPermission,
+        onEnable: @escaping @Sendable () async -> Void
+    )
+}
+
+final class DefaultAirshipPermissionsManager: AirshipPermissionsManager {
     private let delegateMap = AirshipAtomicValue([AirshipPermission: any AirshipPermissionDelegate]())
     
     private let airshipEnablers = AirshipAtomicValue([AirshipPermission: [@Sendable () async -> Void]]())
@@ -41,14 +132,10 @@ public final class AirshipPermissionsManager: Sendable {
         }
     }
 
-    var configuredPermissions: Set<AirshipPermission> {
+    public var configuredPermissions: Set<AirshipPermission> {
         return Set(delegateMap.value.keys)
     }
     
-    /// Returns an async stream with status updates for the given permission
-    ///
-    /// - Parameters:
-    ///     - permission: The permission.
     public func statusUpdate(for permission: AirshipPermission) -> AsyncStream<AirshipPermissionStatus> {
 
         return AsyncStream<AirshipPermissionStatus> { [weak self, statusUpdates] continuation in
@@ -83,13 +170,6 @@ public final class AirshipPermissionsManager: Sendable {
         return map
     }
     
-    /// Sets a permission delegate.
-    ///
-    /// - Note: The delegate will be strongly retained.
-    ///
-    /// - Parameters:
-    ///     - delegate: The delegate.
-    ///     - permission: The permission.
     public func setDelegate(
         _ delegate: (any AirshipPermissionDelegate)?,
         permission: AirshipPermission
@@ -101,12 +181,6 @@ public final class AirshipPermissionsManager: Sendable {
         }
     }
     
-    /// Checks a permission status.
-    ///
-    /// - Note: If no delegate is set for the given permission this will always return `.notDetermined`.
-    ///
-    /// - Parameters:
-    ///     - permission: The permission.
     @MainActor
     public func checkPermissionStatus(
         _ permission: AirshipPermission
@@ -118,12 +192,6 @@ public final class AirshipPermissionsManager: Sendable {
         return await delegate.checkPermissionStatus()
     }
 
-    /// Requests a permission.
-    ///
-    /// - Note: If no permission delegate is set for the given permission this will always return `.notDetermined`
-    ///
-    /// - Parameters:
-    ///     - permission: The permission.
     @MainActor
     public func requestPermission(
         _ permission: AirshipPermission
@@ -134,13 +202,6 @@ public final class AirshipPermissionsManager: Sendable {
         )
     }
     
-    /// Requests a permission.
-    ///
-    /// - Note: If no permission delegate is set for the given permission this will always return `.notDetermined`
-    ///
-    /// - Parameters:
-    ///     - permission: The permission.
-    ///     - enableAirshipUsageOnGrant: `true` to allow any Airship features that need the permission to be enabled as well, e.g., enabling push privacy manager feature and user notifications if `.displayNotifications` is granted.
     @MainActor
     public func requestPermission(
         _ permission: AirshipPermission,
@@ -153,14 +214,6 @@ public final class AirshipPermissionsManager: Sendable {
         ).endStatus
     }
 
-    /// Requests a permission.
-    ///
-    /// - Parameters:
-    ///     - permission: The permission.
-    ///     - enableAirshipUsageOnGrant: `true` to allow any Airship features that need the permission to be enabled as well, e.g., enabling push privacy manager feature and user notifications if `.displayNotifications` is granted.
-    ///     - fallback: The fallback behavior if the permission is alreay denied.
-    /// - Returns: A `AirshipPermissionResult` with the starting and ending status If no permission delegate is
-    /// set for the given permission the status will be `.notDetermined`
     @MainActor
     public func requestPermission(
         _ permission: AirshipPermission,
@@ -211,8 +264,7 @@ public final class AirshipPermissionsManager: Sendable {
         return result
     }
 
-    /// - Note: for internal use only.  :nodoc:
-    func addRequestExtender(
+    public func addRequestExtender(
         permission: AirshipPermission,
         extender: @escaping @Sendable (AirshipPermissionStatus) async -> Void
     ) {
@@ -227,8 +279,7 @@ public final class AirshipPermissionsManager: Sendable {
         }
     }
     
-    /// - Note: for internal use only.  :nodoc:
-    func addAirshipEnabler(
+    public func addAirshipEnabler(
         permission: AirshipPermission,
         onEnable: @escaping @Sendable () async -> Void
     ) {

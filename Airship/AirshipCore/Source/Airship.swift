@@ -48,7 +48,7 @@ public final class Airship: Sendable {
     }
 
     /// The Airship permissions manager.
-    public static var permissionsManager: AirshipPermissionsManager {
+    public static var permissionsManager: any AirshipPermissionsManager {
         return shared.airshipInstance.permissionsManager
     }
 
