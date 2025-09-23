@@ -37,8 +37,8 @@ public protocol PreferenceCenter: AnyObject, Sendable {
     func setThemeFromPlist(_ plist: String) throws
 
     /// Displays the Preference Center with the given ID.
-    /// - Parameter identifier: The preference center ID.
-    func display(identifier: String)
+    /// - Parameter preferenceCenterID: The preference center ID.
+    func display(_ preferenceCenterID: String)
 
     /// Opens the Preference Center with the given ID. (Deprecated)
     @available(*, deprecated, renamed: "display(identifier:)")
@@ -109,33 +109,33 @@ final class DefaultPreferenceCenter: PreferenceCenter {
         AirshipLogger.info("PreferenceCenter initialized")
     }
 
-    public func display(identifier: String) {
+    public func display(_ preferenceCenterID: String) {
         let handled: Bool = if let onDisplay {
-            onDisplay(identifier)
+            onDisplay(preferenceCenterID)
         } else if let openDelegate {
-            openDelegate.openPreferenceCenter(identifier)
+            openDelegate.openPreferenceCenter(preferenceCenterID)
         } else {
             false
         }
 
         guard !handled else {
             AirshipLogger.trace(
-                "Preference center \(identifier) display request handled by the app."
+                "Preference center \(preferenceCenterID) display request handled by the app."
             )
             return
         }
 
         Task {
-            await displayDefaultPreferenceCenter(preferenceCenterID: identifier)
+            await displayDefaultPreferenceCenter(preferenceCenterID)
         }
     }
 
-    @available(*, deprecated, renamed: "display(identifier:)")
+    @available(*, deprecated, renamed: "display(_:)")
     public func open(_ preferenceCenterID: String) {
-        self.display(identifier: preferenceCenterID)
+        self.display(preferenceCenterID)
     }
 
-    private func displayDefaultPreferenceCenter(preferenceCenterID: String) async {
+    private func displayDefaultPreferenceCenter(_ preferenceCenterID: String) async {
         guard let scene = try? AirshipSceneManager.shared.lastActiveScene else {
             AirshipLogger.error("Unable to display, missing scene.")
             return
@@ -234,7 +234,7 @@ extension DefaultPreferenceCenter {
         }
 
         let preferenceCenterID = deepLink.pathComponents[1]
-        self.display(identifier: preferenceCenterID)
+        self.display(preferenceCenterID)
         return true
     }
 }

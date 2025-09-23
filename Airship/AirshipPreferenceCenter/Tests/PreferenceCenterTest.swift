@@ -116,7 +116,7 @@ class PreferenceCenterTest: XCTestCase {
               return true // Handle the display
           }
 
-          self.preferenceCenter.display(identifier: "some-form")
+          self.preferenceCenter.display("some-form")
 
           await self.fulfillment(of: [expectation], timeout: 1.0)
 
@@ -129,7 +129,7 @@ class PreferenceCenterTest: XCTestCase {
           self.preferenceCenter.openDelegate = delegate
           self.preferenceCenter.onDisplay = nil
 
-          self.preferenceCenter.display(identifier: "some-form")
+          self.preferenceCenter.display("some-form")
           XCTAssertEqual("some-form", delegate.lastOpenID)
       }
 
