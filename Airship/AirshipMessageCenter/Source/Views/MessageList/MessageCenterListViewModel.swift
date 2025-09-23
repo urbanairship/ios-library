@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import Combine
+import Foundation
 
 #if canImport(AirshipCore)
 import AirshipCore

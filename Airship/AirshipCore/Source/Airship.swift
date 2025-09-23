@@ -85,7 +85,7 @@ public final class Airship: Sendable {
     /// A user configurable deep link handler.
     /// Takes precedence over `deepLinkDelegate` when set.
     @MainActor
-    public static var onDeepLink: (@Sendable (URL) async -> Void)? {
+    public static var onDeepLink: (@Sendable @MainActor (URL) async -> Void)? {
         get {
             return shared.airshipInstance.onDeepLink
         }
@@ -526,5 +526,45 @@ public final class AirshipNotifications {
         /// Airship ready payload version. Only available if `extendedBroadcastEnabled` is true in config.
         public static let payloadVersionKey = "payload_version"
     }
+}
+
+
+public extension Airship {
+
+    /// Waits for Airship to be ready using async/await.
+    ///
+    /// This method provides a modern async/await interface for waiting until Airship
+    /// has finished initializing. It's particularly useful when you need to ensure
+    /// Airship is ready before performing operations that depend on it.
+    ///
+    /// ## Usage
+    ///
+    /// ```swift
+    /// // Wait for Airship to be ready
+    /// await Airship.waitForReady()
+    ///
+    /// // Now safe to use Airship components
+    /// Airship.push.enableUserNotifications()
+    /// ```
+    ///
+    /// ## Behavior
+    ///
+    /// - If Airship is already initialized (`isFlying` is `true`), this method returns immediately
+    /// - If Airship is not yet initialized, this method suspends until initialization completes
+    /// - The method will not throw or fail - it simply waits for the ready state
+    ///
+    /// - Note: This method must be called from the main thread.
+    /// - Important: This method assumes `Airship.takeOff` has been called. If `takeOff`
+    ///   is never called, this method will suspend indefinitely.
+    @MainActor
+    static func waitForReady() async {
+        guard !Airship.isFlying else { return }
+        await withCheckedContinuation { continuation in
+            Airship.onReady {
+                continuation.resume()
+            }
+        }
+    }
+    
 }
 

@@ -1,17 +1,54 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
-import AirshipMessageCenter
 import SwiftUI
+import AirshipCore
+
+#if DEBUG && canImport(AirshipDebug)
+import AirshipDebug
+#endif
 
 @main
 struct MainApp: App {
-    static let preferenceCenterID = "app_default"
+    
+    let appRouter: AppRouter = AppRouter()
+    let toast: Toast = Toast()
 
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @Environment(\.scenePhase) private var scenePhase
+
+    init() {
+        do {
+            // Initialize Airship
+            try AirshipInitializer.initialize()
+
+            // Setup optional features
+            LiveActivityHandler.setup()
+            PushNotificationHandler.setup()
+            DeepLinkHandler.setup(router: appRouter) { [weak toast] error in
+                toast?.message = .init(text: "Invalid deepLink \(error)", duration: 2.0)
+            }
+        } catch {
+            toast.message = .init(text: "Failed to initialize airship \(error)", duration: 2.0)
+        }
+    }
+
     var body: some Scene {
         WindowGroup {
             AppView()
-                .environmentObject(AppState.shared)
+                .environmentObject(appRouter)
+                .environmentObject(toast)
+                .airshipOnChangeOf(scenePhase) { phase in
+                    if phase == .active {
+                        print("App became active!")
+
+                        // Clear the badge on active
+                        Task {
+                            try await Airship.push.resetBadge()
+                        }
+                    }
+                }
+#if DEBUG && canImport(AirshipDebug)
+                .airshipDebugOnShake()
+#endif
         }
     }
 }

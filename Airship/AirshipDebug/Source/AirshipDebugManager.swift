@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Combine
+@preconcurrency import Combine
 import SwiftUI
 import UIKit
 
@@ -10,13 +10,95 @@ public import AirshipCore
 public import AirshipKit
 #endif
 
-public final class AirshipDebugManager: @unchecked Sendable {
-    
+
+/// A protocol that provides access to Airship's debug interface functionality.
+///
+/// The `AirshipDebugManager` allows developers to display a comprehensive debug interface
+/// that provides insights into various Airship SDK components including push notifications,
+/// analytics events, channel information, contact data, and more.
+///
+/// ## Usage
+///
+/// ```swift
+/// // Display the debug interface
+/// Airship.debugManager.display()
+/// ```
+///
+/// The debug interface will be presented as an overlay window that can be dismissed
+/// by the user. It provides real-time monitoring and debugging capabilities for:
+/// - Push notification history and details
+/// - Analytics events and associated identifiers
+/// - Channel tags, attributes, and subscription lists
+/// - Contact information and channel management
+/// - In-app experiences and automations
+/// - Feature flags and experiments
+/// - Preference centers
+/// - App and SDK information
+/// - Privacy manager settings
+///
+/// - Note: This protocol is thread-safe and can be called from any thread.
+/// - Important: `Airship.takeOff` must be called before accessing the debug manager.
+public protocol AirshipDebugManager: Sendable {
+    /// Displays the Airship debug interface as an overlay window.
+    ///
+    /// This method presents a comprehensive debug interface that allows developers
+    /// to inspect and monitor various aspects of the Airship SDK in real-time.
+    /// The interface includes navigation to different debug sections and provides
+    /// detailed information about push notifications, analytics events, channel
+    /// data, and other SDK components.
+    ///
+    /// The debug interface will be displayed as a modal overlay window that can
+    /// be dismissed by the user. If a debug interface is already displayed,
+    /// calling this method will replace the current interface.
+    ///
+    /// - Note: This method must be called from the main thread.
+    /// - Important: The debug interface requires an active scene to display properly.
+    ///   If no active scene is available, an error will be logged and the interface
+    ///   will not be displayed.
+    @MainActor
+    func display()
+}
+
+protocol InternalAirshipDebugManager: AirshipDebugManager {
+    var preferenceFormsPublisher: AnyPublisher<[String], Never>  { get }
+
+    var inAppAutomationsPublisher: AnyPublisher<[[String: AnyHashable]], Never> { get }
+
+    var experimentsPublisher: AnyPublisher<[[String: AnyHashable]], Never> { get }
+
+    var featureFlagPublisher: AnyPublisher<[[String: AnyHashable]], Never> { get }
+
+    var pushNotificationReceivedPublisher: AnyPublisher<PushNotification, Never> { get }
+
+    var eventReceivedPublisher: AnyPublisher<AirshipEvent, Never> { get }
+
+
+    func pushNotifications() async -> [PushNotification]
+    func events(searchString: String?) async -> [AirshipEvent]
+    func events() async -> [AirshipEvent]
+
+    @MainActor
+    func receivedRemoteNotification(
+        _ notification: AirshipJSON
+    ) async -> UABackgroundFetchResult
+
+#if !os(tvOS)
+    func receivedNotificationResponse(
+        _ response: UNNotificationResponse
+    ) async
+#endif
+
+}
+
+final class DefaultAirshipDebugManager: InternalAirshipDebugManager {
+
     @MainActor
     private var currentDisplay: (any AirshipMainActorCancellable)?
     private let pushDataManager: PushDataManager
     private let eventDataManager: EventDataManager
     private let remoteData: any RemoteDataProtocol
+
+    @MainActor
     private var eventUpdates: AnyCancellable? = nil
 
     var preferenceFormsPublisher: AnyPublisher<[String], Never> {
@@ -35,8 +117,7 @@ public final class AirshipDebugManager: @unchecked Sendable {
             .eraseToAnyPublisher()
     }
 
-    var inAppAutomationsPublisher: AnyPublisher<[[String: AnyHashable]], Never>
-    {
+    var inAppAutomationsPublisher: AnyPublisher<[[String: AnyHashable]], Never> {
         self.remoteData.publisher(types: ["in_app_messages"])
             .map { payloads -> [[String: AnyHashable]] in
                 return payloads.compactMap { payload in
@@ -47,8 +128,7 @@ public final class AirshipDebugManager: @unchecked Sendable {
             .eraseToAnyPublisher()
     }
 
-    var experimentsPublisher: AnyPublisher<[[String: AnyHashable]], Never>
-    {
+    var experimentsPublisher: AnyPublisher<[[String: AnyHashable]], Never> {
         self.remoteData.publisher(types: ["experiments"])
             .map { payloads -> [[String: AnyHashable]] in
                 return payloads.compactMap { payload in
@@ -59,8 +139,7 @@ public final class AirshipDebugManager: @unchecked Sendable {
             .eraseToAnyPublisher()
     }
 
-    var featureFlagPublisher: AnyPublisher<[[String: AnyHashable]], Never>
-    {
+    var featureFlagPublisher: AnyPublisher<[[String: AnyHashable]], Never> {
         self.remoteData.publisher(types: ["feature_flags"])
             .map { payloads -> [[String: AnyHashable]] in
                 return payloads.compactMap { payload in
@@ -81,6 +160,9 @@ public final class AirshipDebugManager: @unchecked Sendable {
         return eventReceivedSubject.eraseToAnyPublisher()
     }
 
+    private let isEnabled: Bool
+
+    @MainActor
     init(
         config: RuntimeConfig,
         analytics: any AirshipAnalytics,
@@ -89,12 +171,15 @@ public final class AirshipDebugManager: @unchecked Sendable {
         self.remoteData = remoteData
         self.pushDataManager = PushDataManager(appKey: config.appCredentials.appKey)
         self.eventDataManager = EventDataManager(appKey: config.appCredentials.appKey)
+        self.isEnabled = config.airshipConfig.isAirshipDebugEnabled
 
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted
+        guard self.isEnabled else { return }
 
         self.eventUpdates = analytics.eventPublisher
             .sink { incoming in
+                let encoder = JSONEncoder()
+                encoder.outputFormatting = .prettyPrinted
+
                 guard
                     let body = try? incoming.body.toString(
                         encoder: encoder
@@ -114,7 +199,6 @@ public final class AirshipDebugManager: @unchecked Sendable {
                     await self.eventDataManager.saveEvent(airshipEvent)
                     self.eventReceivedSubject.send(airshipEvent)
                 }
-
             }
     }
 
@@ -122,12 +206,16 @@ public final class AirshipDebugManager: @unchecked Sendable {
         return await self.pushDataManager.pushNotifications()
     }
 
-    func events(searchString: String? = nil) async -> [AirshipEvent] {
+    func events(searchString: String?) async -> [AirshipEvent] {
         return await self.eventDataManager.events(searchString: searchString)
     }
 
+    func events() async -> [AirshipEvent] {
+        return await events(searchString: nil)
+    }
+
     @MainActor
-    public func open() {
+    public func display() {
         guard let scene = try? AirshipSceneManager.shared.lastActiveScene else {
             AirshipLogger.error("Unable to display, missing scene.")
             return
@@ -143,7 +231,9 @@ public final class AirshipDebugManager: @unchecked Sendable {
         }
 
         let viewController: UIViewController = UIHostingController(
-            rootView: DebugRootView(disposable: disposable)
+            rootView: AirshipDebugView {
+                disposable.cancel()
+            }
         )
 
         window?.windowLevel = .alert
@@ -157,6 +247,11 @@ public final class AirshipDebugManager: @unchecked Sendable {
     func receivedRemoteNotification(
         _ notification: AirshipJSON
     ) async -> UABackgroundFetchResult {
+
+        guard self.isEnabled else {
+            return .noData
+        }
+
         do {
             let push = try PushNotification(userInfo: notification)
             try await savePush(push)
@@ -170,6 +265,10 @@ public final class AirshipDebugManager: @unchecked Sendable {
     func receivedNotificationResponse(
         _ response: UNNotificationResponse
     ) async {
+        guard self.isEnabled else {
+            return
+        }
+
         do {
             let push = try PushNotification(
                 userInfo: try AirshipJSON.wrap(
@@ -193,80 +292,42 @@ public final class AirshipDebugManager: @unchecked Sendable {
     }
 }
 
-/// Adds IBInspectable to UILabel for use in storyboards.
-///
-/// Designer can enter a localization key in the storyboard attributes
-/// inspector for the UILabel. This key will be used to localize the
-/// UILabel's text when the storyboard is loaded.
-extension UILabel {
-    @IBInspectable var keyForLocalization: String? {
-        // Don't need to ever get the key.
-        get { return nil }
-        // When the key is set by the storyboard, localize it
-        // and set the localized text as the text of the UILabel
-        set(key) {
-            text = key?.localized()
-        }
-    }
-}
-
-/// Adds IBInspectable to UINavigationItem for use in storyboards.
-///
-/// Designer can enter a localization key in the storyboard attributes
-/// inspector for the UINavigationItem. This key will be used to localize the
-/// UINavigationItem's title when the storyboard is loaded.
-extension UINavigationItem {
-    @IBInspectable var keyForLocalization: String? {
-        // Don't need to ever get the key.
-        get { return nil }
-        set(key) {
-            // When the key is set by the storyboard, localize it
-            // and set the localized text as the title of the UINavigationItem
-            title = key?.localized()
-        }
-    }
-}
-
-/// Adds IBInspectable to UITextField for use in storyboards.
-///
-/// Designer can enter a localization key in the storyboard attributes
-/// inspector for the UITextField. This key will be used to localize the
-/// UITextField's placeholder when the storyboard is loaded.
-extension UITextField {
-    @IBInspectable var keyForLocalization: String? {
-        // Don't need to ever get the key.
-        get { return nil }
-        set(key) {
-            // When the key is set by the storyboard, localize it
-            // and set the localized text as the placeholder of the UITextField
-            placeholder = key?.localized()
-        }
-    }
-}
-
-private struct DebugRootView: View {
-    let disposable: any AirshipMainActorCancellable
-
-    @ViewBuilder
-    var body: some View {
-        NavigationView {
-            AirshipDebugView()
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Done") {
-                            self.disposable.cancel()
-                        }
-                    }
-                }
-        }
-        .navigationViewStyle(.stack)
-    }
-}
-
 
 public extension Airship {
-    /// The shared InAppAutomation instance. `Airship.takeOff` must be called before accessing this instance.
-    static var debugManager: AirshipDebugManager {
+    /// The shared AirshipDebugManager instance.
+    ///
+    /// This property provides access to the Airship debug interface functionality,
+    /// allowing developers to display a comprehensive debug UI for monitoring
+    /// and debugging various aspects of the Airship SDK.
+    ///
+    /// ## Usage
+    ///
+    /// ```swift
+    /// // Display the debug interface
+    /// Airship.debugManager.display()
+    /// ```
+    ///
+    /// The debug manager provides access to:
+    /// - Push notification history and details
+    /// - Analytics events and associated identifiers  
+    /// - Channel tags, attributes, and subscription lists
+    /// - Contact information and channel management
+    /// - In-app experiences and automations
+    /// - Feature flags and experiments
+    /// - Preference centers
+    /// - App and SDK information
+    /// - Privacy manager settings
+    ///
+    /// - Note: `Airship.takeOff` must be called before accessing this instance.
+    /// - Important: This property will crash if accessed before Airship initialization.
+    static var debugManager: any AirshipDebugManager {
+        return Airship.requireComponent(ofType: DebugComponent.self).debugManager
+    }
+}
+
+
+extension Airship {
+    static var internalDebugManager: any InternalAirshipDebugManager {
         return Airship.requireComponent(ofType: DebugComponent.self).debugManager
     }
 }

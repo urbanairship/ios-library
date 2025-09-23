@@ -410,7 +410,9 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
                 AirshipLogger.debug("Adding event with type \(eventData.type)")
                 AirshipLogger.trace("Adding event \(eventData)")
                 try await self.eventManager.addEvent(eventData)
-                self.eventSubject.send(eventData)
+                await Task { @MainActor in
+                    self.eventSubject.send(eventData)
+                }.value
                 await self.eventManager.scheduleUpload(
                     eventPriority: event.priority
                 )

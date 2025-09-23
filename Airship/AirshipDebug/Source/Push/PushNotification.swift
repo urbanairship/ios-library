@@ -8,28 +8,36 @@ import AirshipKit
 
 import Foundation
 
-/// A wrapper for representing an Airship push in the Debug UI
-struct PushNotification: Equatable, Hashable, CustomStringConvertible {
+/// A wrapper for representing an Airship push notification in the Debug UI.
+///
+/// `PushNotification` encapsulates push notification data for display in the debug interface.
+/// It provides a simplified representation of push notifications with the essential
+/// information needed for debugging and monitoring.
+///
+/// ## Usage
+///
+/// ```swift
+/// // Access push notifications through the debug manager
+/// let pushes = await Airship.internalDebugManager.pushNotifications()
+/// for push in pushes {
+///     print("Push: \(push.alert ?? "No alert") at \(Date(timeIntervalSince1970: push.time))")
+/// }
+/// ```
+///
+/// - Note: This struct is thread-safe and can be used across different threads.
+struct PushNotification: Equatable, Hashable, CustomStringConvertible, Sendable {
 
-    /**
-     * The unique push ID.
-     */
+    /// The unique push ID.
     var pushID: String
 
-    /**
-     * The push alert.
-     */
+    /// The push alert message.
     var alert: String?
 
-    /**
-     * The time the push was created.
-     */
+    /// The time the push was created (as a TimeInterval since 1970).
     var time: TimeInterval
 
-    /**
-     * The push data description.
-     */
-    var description: String
+    /// The push data description as a JSON string.
+    public var description: String
 
     var payload: AirshipJSON {
         return (try? AirshipJSON.from(json: self.description)) ?? AirshipJSON.string(description)

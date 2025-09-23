@@ -9,9 +9,9 @@ import AirshipCore
 
 /// Actual airship component for AirshipDebugManager. Used to hide AirshipComponent methods.
 final class DebugComponent : AirshipComponent, AirshipPushableComponent {
-    final let debugManager: AirshipDebugManager
+    final let debugManager: any InternalAirshipDebugManager
 
-    init(debugManager: AirshipDebugManager) {
+    init(debugManager: any InternalAirshipDebugManager) {
         self.debugManager = debugManager
     }
 

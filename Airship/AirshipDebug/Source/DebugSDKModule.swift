@@ -16,7 +16,7 @@ public class DebugSDKModule: NSObject, AirshipSDKModule {
     public let components: [any AirshipComponent]
 
     public static func load(_ args: AirshiopModuleLoaderArgs) -> (any AirshipSDKModule)? {
-        let debugManager = AirshipDebugManager(
+        let debugManager = DefaultAirshipDebugManager(
             config: args.config,
             analytics: args.analytics,
             remoteData: args.remoteData
@@ -24,7 +24,7 @@ public class DebugSDKModule: NSObject, AirshipSDKModule {
         return DebugSDKModule(debugManager)
     }
 
-    private init(_ debugManager: AirshipDebugManager) {
+    private init(_ debugManager: any InternalAirshipDebugManager) {
         self.components = [DebugComponent(debugManager: debugManager)]
     }
 }

@@ -186,6 +186,8 @@ public struct AirshipConfig: Decodable, Sendable {
     /// Defaults to `true`.
     public var restoreMessageCenterOnReinstall: Bool = true
 
+    public var isAirshipDebugEnabled: Bool = false
+
     enum CodingKeys: String, CodingKey {
         case defaultAppKey
         case defaultAppSecret
@@ -223,7 +225,8 @@ public struct AirshipConfig: Decodable, Sendable {
         case remoteDataAPIURL
         case useUserPreferredLocale
         case restoreMessageCenterOnReinstall
-        
+        case isAirshipDebugEnabled
+
         // legacy keys
         
         case LOG_LEVEL
@@ -454,6 +457,11 @@ public struct AirshipConfig: Decodable, Sendable {
             Bool.self,
             forKey: .useUserPreferredLocale
         ) ?? self.useUserPreferredLocale
+
+        self.isAirshipDebugEnabled = try container.decodeIfPresent(
+            Bool.self,
+            forKey: .isAirshipDebugEnabled
+        ) ?? self.isAirshipDebugEnabled
     }
 
     /// Validates credentails

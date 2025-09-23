@@ -1,6 +1,9 @@
+/* Copyright Airship and Contributors */
+
 public import CoreData
 import Foundation
 
+/// - Note: For internal use only. :nodoc:
 @objc(EventData)
 public class EventData: NSManagedObject {
 
