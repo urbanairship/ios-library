@@ -52,6 +52,8 @@
 		271C1A002DBA9DE400214E10 /* AppInfoDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271C19FF2DBA9DE400214E10 /* AppInfoDebugView.swift */; };
 		27AFE70F2E733F4400767044 /* ModifyTagsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFE70E2E733F4400767044 /* ModifyTagsAction.swift */; };
 		27AFE7112E73477200767044 /* ModifyTagsActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFE7102E73477200767044 /* ModifyTagsActionTest.swift */; };
+		27264FB32E81B064000B6FA3 /* AirshipSceneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27264FB22E81B064000B6FA3 /* AirshipSceneController.swift */; };
+		2726505B2E81B80E000B6FA3 /* PagerControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2726505A2E81B80E000B6FA3 /* PagerControllerTest.swift */; };
 		320AD3A629E7FA2000D66106 /* PagerGestureMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */; };
 		3215CA9D2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		322AAB1E2B5AB65700652DAC /* AddChannelPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DDC0562AF1055300D23EBE /* AddChannelPromptView.swift */; };
@@ -1361,6 +1363,8 @@
 		271C19FF2DBA9DE400214E10 /* AppInfoDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfoDebugView.swift; sourceTree = "<group>"; };
 		27AFE70E2E733F4400767044 /* ModifyTagsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyTagsAction.swift; sourceTree = "<group>"; };
 		27AFE7102E73477200767044 /* ModifyTagsActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyTagsActionTest.swift; sourceTree = "<group>"; };
+		27264FB22E81B064000B6FA3 /* AirshipSceneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSceneController.swift; sourceTree = "<group>"; };
+		2726505A2E81B80E000B6FA3 /* PagerControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerControllerTest.swift; sourceTree = "<group>"; };
 		320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerGestureMap.swift; sourceTree = "<group>"; };
 		3215CA9C2739349700B7D97E /* ModalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalView.swift; sourceTree = "<group>"; };
 		322AAB1C2B5A869000652DAC /* ContactManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactManagementView.swift; sourceTree = "<group>"; };
@@ -3157,6 +3161,7 @@
 				6E382C20276D3E990091A351 /* ThomasValidationTests.swift */,
 				605073892B32F85100209B51 /* ThomasViewModelTest.swift */,
 				6050738F2B347B6400209B51 /* ThomasPresentationModelCodingTest.swift */,
+				2726505A2E81B80E000B6FA3 /* PagerControllerTest.swift */,
 			);
 			name = Thomas;
 			sourceTree = "<group>";
@@ -4477,6 +4482,7 @@
 			children = (
 				9908E60D2B000DBA00DB3E2E /* CustomView.swift */,
 				9908E6112B0189F800DB3E2E /* ArishipCustomViewManager.swift */,
+				27264FB22E81B064000B6FA3 /* AirshipSceneController.swift */,
 			);
 			name = Custom;
 			sourceTree = "<group>";
@@ -5910,6 +5916,7 @@
 				6E887CD5272C5F5A00E83363 /* CheckboxController.swift in Sources */,
 				6E49D7C428401D2E00C7BB9D /* PushNotificationDelegate.swift in Sources */,
 				6E97D6B12D84B18E0001CF7F /* ThomasFormDataCollector.swift in Sources */,
+				27264FB32E81B064000B6FA3 /* AirshipSceneController.swift in Sources */,
 				3CA84AAE26DE255200A59685 /* EventStore.swift in Sources */,
 				6E5A64C42AAB7D5C00574085 /* AirshipMeteredUsage.swift in Sources */,
 				6E6BD2462AEAFE7E00B9DFC9 /* DeferredAPIClient.swift in Sources */,
@@ -6482,6 +6489,7 @@
 				6E87BE1626E29BC90005D20D /* TestAirshipInstance.swift in Sources */,
 				6EB8394E2BC8B1F4006611C4 /* AirshipAsyncChannelTest.swift in Sources */,
 				6068E0082B2A2A6700349E82 /* AccountEventTemplateTest.swift in Sources */,
+				2726505B2E81B80E000B6FA3 /* PagerControllerTest.swift in Sources */,
 				6068E0322B2B785A00349E82 /* MediaEventTemplateTest.swift in Sources */,
 				6E032A502B210E6000404630 /* RemoteConfigTest.swift in Sources */,
 				A63A567828F457FE004B8951 /* TestWorkRateLimiterActor.swift in Sources */,

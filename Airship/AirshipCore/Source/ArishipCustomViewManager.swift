@@ -6,6 +6,7 @@ public import SwiftUI
 /// Type alias for the CustomView builder block
 public typealias AirshipCustomViewBuilder = @MainActor @Sendable (AirshipCustomViewArguments)  -> any View
 
+
 /// Custom view arguments
 public struct AirshipCustomViewArguments: Sendable {
     /// The view's name.
