@@ -172,7 +172,7 @@ final class DefaultAirshipInstance: AirshipInstance {
             audienceChecker: audienceChecker
         )
         
-        let meteredUsage = AirshipMeteredUsage(
+        let meteredUsage = DefaultAirshipMeteredUsage(
             config: self.config,
             dataStore: dataStore,
             channel: channel,

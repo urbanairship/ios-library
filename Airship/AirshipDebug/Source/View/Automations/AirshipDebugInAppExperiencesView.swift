@@ -60,14 +60,12 @@ struct AirshipDebugInAppExperiencesView: View {
             )
 #endif
         }
-        
     }
-
 
     @MainActor
     fileprivate final class ViewModel: ObservableObject {
         @Published
-        var displayInterval: TimeInterval {
+        var displayInterval: TimeInterval = 0.0 {
             didSet {
                 guard Airship.isFlying else { return }
                 Airship.inAppAutomation.inAppMessaging.displayInterval = self.displayInterval
@@ -76,13 +74,8 @@ struct AirshipDebugInAppExperiencesView: View {
         
         @MainActor
         init() {
-            if Airship.isFlying {
-                self.displayInterval = Airship.inAppAutomation.inAppMessaging.displayInterval
-            } else {
-                self.displayInterval = 0.0
-                Airship.onReady { [weak self] in
-                    self?.displayInterval = Airship.inAppAutomation.inAppMessaging.displayInterval
-                }
+            Airship.onReady { [weak self] in
+                self?.displayInterval = Airship.inAppAutomation.inAppMessaging.displayInterval
             }
         }
     }

@@ -12,9 +12,9 @@ public struct AirshiopModuleLoaderArgs {
     public let remoteData: any RemoteDataProtocol
     public let analytics: any InternalAirshipAnalytics
     public let privacyManager: any AirshipPrivacyManager
-    public let permissionsManager: AirshipPermissionsManager
+    public let permissionsManager: any AirshipPermissionsManager
     public let experimentsManager: any ExperimentDataProvider
-    public let meteredUsage: AirshipMeteredUsage
+    public let meteredUsage: any AirshipMeteredUsage
     public let deferredResolver: any AirshipDeferredResolverProtocol
     public let cache: any AirshipCache
     public let audienceChecker: any DeviceAudienceChecker
@@ -49,10 +49,10 @@ class ModuleLoader {
         remoteData: any RemoteDataProtocol,
         analytics: any InternalAirshipAnalytics,
         privacyManager: any AirshipPrivacyManager,
-        permissionsManager: AirshipPermissionsManager,
+        permissionsManager: any AirshipPermissionsManager,
         audienceOverrides: any AudienceOverridesProvider,
         experimentsManager: any ExperimentDataProvider,
-        meteredUsage: AirshipMeteredUsage,
+        meteredUsage: any AirshipMeteredUsage,
         deferredResolver: any AirshipDeferredResolverProtocol,
         cache: any AirshipCache,
         audienceChecker: any DeviceAudienceChecker,

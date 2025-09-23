@@ -184,7 +184,7 @@ fileprivate struct ErrorData: Encodable, Sendable {
 }
 
 
-actor TestMeteredUsage: AirshipMeteredUsageProtocol {
+actor TestMeteredUsage: AirshipMeteredUsage {
     var events: [AirshipMeteredUsageEvent] = []
     func addEvent(_ event: AirshipCore.AirshipMeteredUsageEvent) async throws {
         events.append(event)

@@ -17,11 +17,6 @@ struct AirshipDebugTagGroupsEditorView: View {
         case remove = "Remove"
     }
 
-    public enum Subject {
-        case channel
-        case contact
-    }
-
     @State
     private var tag: String = ""
 
@@ -31,13 +26,13 @@ struct AirshipDebugTagGroupsEditorView: View {
     @State
     private var action: TagAction = .add
 
-    private let subject: Subject?
+    private let subject: AirshipDebugAudienceSubject?
 
     init() {
         self.subject = nil
     }
 
-    init(for subject: Subject) {
+    init(for subject: AirshipDebugAudienceSubject) {
         self.subject = subject
     }
 
@@ -88,18 +83,14 @@ struct AirshipDebugTagGroupsEditorView: View {
 
         guard Airship.isFlying, let subject else { return }
 
-        let editor = if subject == .channel {
-            Airship.channel.editTagGroups()
-        } else {
-            Airship.contact.editTagGroups()
+        subject.editTagGroups { editor in
+            switch self.action {
+            case .add:
+                editor.add([tag], group: group)
+            case .remove:
+                editor.remove([tag], group: group)
+            }
         }
-        switch self.action {
-        case .add:
-            editor.add([tag], group: group)
-        case .remove:
-            editor.remove([tag], group: group)
-        }
-        editor.apply()
     }
 }
 

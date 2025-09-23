@@ -18,10 +18,10 @@ protocol PermissionPrompter: Sendable {
 
 struct AirshipPermissionPrompter: PermissionPrompter {
 
-    private let permissionsManager: AirshipPermissionsManager
+    private let permissionsManager: any AirshipPermissionsManager
 
     init(
-        permissionsManager: AirshipPermissionsManager
+        permissionsManager: any AirshipPermissionsManager
     ) {
         self.permissionsManager = permissionsManager
     }

@@ -14,7 +14,6 @@ struct AirshipDebugAutomationsView: View {
     @StateObject
     private var viewModel = ViewModel()
 
-
     var body: some View {
         Form {
             Section(header: Text("")) {
@@ -45,17 +44,16 @@ struct AirshipDebugAutomationsView: View {
 
     @MainActor
     class ViewModel: ObservableObject {
-        @Published private(set) var messagePayloads: [[String: AnyHashable]] =
-            []
+        @Published private(set) var messagePayloads: [[String: AnyHashable]] = []
         private var cancellable: AnyCancellable? = nil
 
         init() {
-            if Airship.isFlying {
-                self.cancellable = Airship.internalDebugManager
+            Airship.onReady { [weak self] in
+                self?.cancellable = Airship.internalDebugManager
                     .inAppAutomationsPublisher
                     .receive(on: RunLoop.main)
                     .sink { incoming in
-                        self.messagePayloads = incoming
+                        self?.messagePayloads = incoming
                     }
             }
         }

@@ -1,4 +1,4 @@
-/* Copyright Urban Airship and Contributors */
+/* Copyright Airship and Contributors */
 
 import AirshipCore
 import AirshipMessageCenter
@@ -77,7 +77,7 @@ struct AppView: View {
             self.task = Task { [weak self] in
                 await Airship.waitForReady()
                 for await unreadCount in Airship.messageCenter.inbox.unreadCountUpdates {
-                    self?.update(messageCenterUnreadcount: unreadCount)
+                    self?.messageCenterUnreadcount = unreadCount
                 }
             }
         }
@@ -85,21 +85,11 @@ struct AppView: View {
         deinit {
             task?.cancel()
         }
-
-        private func update(messageCenterUnreadcount: Int) {
-            if self.messageCenterUnreadcount != messageCenterUnreadcount {
-                self.messageCenterUnreadcount = messageCenterUnreadcount
-            }
-        }
     }
 }
 
-
-struct AppView_Previews: PreviewProvider {
-    static var previews: some View {
-        AppView()
-            .environmentObject(AppRouter())
-            .environmentObject(Toast())
-
-    }
+#Preview {
+    AppView()
+        .environmentObject(AppRouter())
+        .environmentObject(Toast())
 }

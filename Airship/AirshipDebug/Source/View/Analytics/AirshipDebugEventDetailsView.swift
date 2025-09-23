@@ -84,7 +84,7 @@ struct AirshipDebugEventDetailsView: View {
         @Published private(set) var event: AirshipEvent?
 
         init(identifier: String) {
-            Task { [weak self] in
+            Task { @MainActor [weak self] in
                 self?.event = await Airship.internalDebugManager.events().first(
                     where: { event in
                         event.identifier == identifier

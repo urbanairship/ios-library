@@ -23,18 +23,14 @@ struct AirshipDebugAttributesEditorView: View {
         case json = "JSON"
     }
 
-    private let subject: Subject?
+    private let subject: AirshipDebugAudienceSubject?
 
-    enum Subject {
-        case channel
-        case contact
-    }
 
     init() {
         self.subject = nil
     }
 
-    public init(for subject: Subject) {
+    public init(for subject: AirshipDebugAudienceSubject) {
         self.subject = subject
     }
 
@@ -243,51 +239,46 @@ struct AirshipDebugAttributesEditorView: View {
 
         guard Airship.isFlying, let subject else { return }
 
-        let editor = if subject == .channel {
-            Airship.channel.editAttributes()
-        } else {
-            Airship.contact.editAttributes()
-        }
+        subject.editAttributes { editor in
+            switch self.action {
+            case .add:
+                switch self.type {
+                case .number:
+                    editor.set(double: self.number, attribute: self.attribute)
+                case .text:
+                    editor.set(string: self.text, attribute: self.attribute)
+                case .date:
+                    editor.set(date: self.date, attribute: self.attribute)
+                case .json:
+                    do {
+                        let root = try AirshipJSON.from(json: jsonText)
 
-        switch self.action {
-        case .add:
-            switch self.type {
-            case .number:
-                editor.set(double: self.number, attribute: self.attribute)
-            case .text:
-                editor.set(string: self.text, attribute: self.attribute)
-            case .date:
-                editor.set(date: self.date, attribute: self.attribute)
-            case .json:
-                do {
-                    let root = try AirshipJSON.from(json: jsonText)
+                        guard case let .object(dict) = root else {
+                            throw AirshipErrors.error("Top‑level JSON must be an object")
+                        }
 
-                    guard case let .object(dict) = root else {
-                        throw AirshipErrors.error("Top‑level JSON must be an object")
+                        if expiryEnabled {
+                            try editor.set(
+                                json: dict,
+                                attribute: attribute,
+                                instanceID: instanceID,
+                                expiration: expiryDate
+                            )
+                        } else {
+                            try editor.set(
+                                json: dict,
+                                attribute: attribute,
+                                instanceID: instanceID
+                            )
+                        }
+                    } catch {
+                        AirshipLogger.error("JSON attribute error: \(error)")
                     }
-
-                    if expiryEnabled {
-                        try editor.set(
-                            json: dict,
-                            attribute: attribute,
-                            instanceID: instanceID,
-                            expiration: expiryDate
-                        )
-                    } else {
-                        try editor.set(
-                            json: dict,
-                            attribute: attribute,
-                            instanceID: instanceID
-                        )
-                    }
-                } catch {
-                    AirshipLogger.error("JSON attribute error: \(error)")
                 }
+            case .remove:
+                editor.remove(self.attribute)
             }
-        case .remove:
-            editor.remove(self.attribute)
         }
-        editor.apply()
     }
 
     private var jsonIsValid: Bool {

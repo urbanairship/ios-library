@@ -15,7 +15,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
     private let storage = MeteredUsageStore(appKey: "test.app.key", inMemory: true)
     private let workManager = TestWorkManager()
     private var config: RuntimeConfig = RuntimeConfig.testConfig()
-    private var target: AirshipMeteredUsage!
+    private var target: DefaultAirshipMeteredUsage!
 
     @MainActor
     override func setUp() async throws {
@@ -25,7 +25,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
             defaultEnabledFeatures:[]
         )
 
-        self.target = AirshipMeteredUsage(
+        self.target = DefaultAirshipMeteredUsage(
             config: config,
             dataStore: dataStore,
             channel: channel,

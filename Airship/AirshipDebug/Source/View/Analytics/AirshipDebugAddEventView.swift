@@ -107,7 +107,7 @@ struct AirshipDebugAddEventView: View {
                 } label: {
                     Text("Create".localized())
                 }
-                .disabled(self.viewModel.eventName.isEmpty)
+                .disabled(!self.viewModel.isEnabled)
             }
         }
         .navigationTitle("Custom Event".localized())
@@ -120,6 +120,10 @@ struct AirshipDebugAddEventView: View {
         @Published var interactionID: String = ""
         @Published var interactionType: String = ""
         @Published var transactionID: String = ""
+
+        var isEnabled: Bool {
+            return !self.eventName.isEmpty && Airship.isFlying
+        }
 
         var properties: [String: AirshipJSON] = [:]
 

@@ -43,10 +43,10 @@
 
 /* Begin PBXBuildFile section */
 		271B38652DB2866200495D9F /* TagActionMutation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271B38642DB2866200495D9F /* TagActionMutation.swift */; };
-		27AFE70F2E733F4400767044 /* ModifyTagsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFE70E2E733F4400767044 /* ModifyTagsAction.swift */; };
-		27AFE7112E73477200767044 /* ModifyTagsActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFE7102E73477200767044 /* ModifyTagsActionTest.swift */; };
 		27264FB32E81B064000B6FA3 /* AirshipSceneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27264FB22E81B064000B6FA3 /* AirshipSceneController.swift */; };
 		2726505B2E81B80E000B6FA3 /* PagerControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2726505A2E81B80E000B6FA3 /* PagerControllerTest.swift */; };
+		27AFE70F2E733F4400767044 /* ModifyTagsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFE70E2E733F4400767044 /* ModifyTagsAction.swift */; };
+		27AFE7112E73477200767044 /* ModifyTagsActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFE7102E73477200767044 /* ModifyTagsActionTest.swift */; };
 		320AD3A629E7FA2000D66106 /* PagerGestureMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */; };
 		3215CA9D2739349800B7D97E /* ModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3215CA9C2739349700B7D97E /* ModalView.swift */; };
 		322AAB1E2B5AB65700652DAC /* AddChannelPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DDC0562AF1055300D23EBE /* AddChannelPromptView.swift */; };
@@ -735,6 +735,7 @@
 		6EB21A912E81BFC1001A5660 /* AirshipDebugAddPropertyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21A902E81BFB9001A5660 /* AirshipDebugAddPropertyView.swift */; };
 		6EB21A932E81C7AB001A5660 /* AirshipDebugAddStringPropertyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21A922E81C7A2001A5660 /* AirshipDebugAddStringPropertyView.swift */; };
 		6EB21AFC2E8216A4001A5660 /* AirshipDebugShakeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21AFB2E82169F001A5660 /* AirshipDebugShakeModifier.swift */; };
+		6EB21B5F2E82FE9F001A5660 /* AirshipDebugAudienceSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21B5E2E82FE98001A5660 /* AirshipDebugAudienceSubject.swift */; };
 		6EB3FCEF2ABCFA680018594E /* RemoteDataProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */; };
 		6EB5156E28A42B5800870C5A /* PreferenceCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5156D28A42B5800870C5A /* PreferenceCenterResources.swift */; };
 		6EB5157128A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5157028A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift */; };
@@ -1362,10 +1363,10 @@
 		03525B96280DE60200320AA9 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
 		03525B97280DE61200320AA9 /* zu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zu; path = zu.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		271B38642DB2866200495D9F /* TagActionMutation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagActionMutation.swift; sourceTree = "<group>"; };
-		27AFE70E2E733F4400767044 /* ModifyTagsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyTagsAction.swift; sourceTree = "<group>"; };
-		27AFE7102E73477200767044 /* ModifyTagsActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyTagsActionTest.swift; sourceTree = "<group>"; };
 		27264FB22E81B064000B6FA3 /* AirshipSceneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSceneController.swift; sourceTree = "<group>"; };
 		2726505A2E81B80E000B6FA3 /* PagerControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerControllerTest.swift; sourceTree = "<group>"; };
+		27AFE70E2E733F4400767044 /* ModifyTagsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyTagsAction.swift; sourceTree = "<group>"; };
+		27AFE7102E73477200767044 /* ModifyTagsActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyTagsActionTest.swift; sourceTree = "<group>"; };
 		320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerGestureMap.swift; sourceTree = "<group>"; };
 		3215CA9C2739349700B7D97E /* ModalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalView.swift; sourceTree = "<group>"; };
 		322AAB1C2B5A869000652DAC /* ContactManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactManagementView.swift; sourceTree = "<group>"; };
@@ -2072,6 +2073,7 @@
 		6EB21A902E81BFB9001A5660 /* AirshipDebugAddPropertyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAddPropertyView.swift; sourceTree = "<group>"; };
 		6EB21A922E81C7A2001A5660 /* AirshipDebugAddStringPropertyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAddStringPropertyView.swift; sourceTree = "<group>"; };
 		6EB21AFB2E82169F001A5660 /* AirshipDebugShakeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugShakeModifier.swift; sourceTree = "<group>"; };
+		6EB21B5E2E82FE98001A5660 /* AirshipDebugAudienceSubject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAudienceSubject.swift; sourceTree = "<group>"; };
 		6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDataProtocol.swift; sourceTree = "<group>"; };
 		6EB4E4A32549F95200E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
 		6EB4E4BE2549F9B900E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS14.0.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
@@ -4072,6 +4074,7 @@
 				6EB21A482E81BB6E001A5660 /* AirshipJSONView.swift */,
 				6EB21A492E81BB6E001A5660 /* AirshipToast.swift */,
 				6EB21A4A2E81BB6E001A5660 /* Extensions.swift */,
+				6EB21B5E2E82FE98001A5660 /* AirshipDebugAudienceSubject.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -5661,6 +5664,7 @@
 				6EB21A8C2E81BB6E001A5660 /* TVDatePicker.swift in Sources */,
 				6EB21A8D2E81BB6E001A5660 /* AirshipDebugChannelView.swift in Sources */,
 				6EB21A8E2E81BB6E001A5660 /* AirshipDebugContactView.swift in Sources */,
+				6EB21B5F2E82FE9F001A5660 /* AirshipDebugAudienceSubject.swift in Sources */,
 				6EB21A8F2E81BB6E001A5660 /* AirshipDebugAddOpenChannelView.swift in Sources */,
 				6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */,
 			);

@@ -166,7 +166,7 @@ class TestChannel: NSObject, AirshipChannel, AirshipComponent, @unchecked Sendab
     }
 
     @available(iOS 16.1, *)
-    func restoreLiveActivityTracking(callback: @escaping @Sendable (AirshipCore.LiveActivityRestorer) async -> Void) {
+    func restoreLiveActivityTracking(callback: @escaping @Sendable (any LiveActivityRestorer) async -> Void) {
 
     }
 

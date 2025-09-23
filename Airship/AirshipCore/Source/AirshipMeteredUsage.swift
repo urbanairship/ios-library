@@ -4,12 +4,12 @@ import Foundation
 import Combine
 
 /// NOTE: For internal use only. :nodoc:
-public protocol AirshipMeteredUsageProtocol: Sendable {
+public protocol AirshipMeteredUsage: Sendable {
     func addEvent(_ event: AirshipMeteredUsageEvent) async throws
 }
 
 /// NOTE: For internal use only. :nodoc:
-public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
+final class DefaultAirshipMeteredUsage: AirshipMeteredUsage {
 
     private static let workID: String = "MeteredUsage.upload"
     private static let configKey: String = "MeteredUsage.config"
@@ -68,7 +68,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
         self.workManager = workManager
         
         self.workManager.registerWorker(
-            AirshipMeteredUsage.workID
+            Self.workID
         ) { [weak self] _ in
             guard let self else {
                 return .success
@@ -78,7 +78,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
 
         self.workManager.autoDispatchWorkRequestOnBackground(
             AirshipWorkRequest(
-                workID: AirshipMeteredUsage.workID,
+                workID: Self.workID,
                 requiresNetwork: true,
                 conflictPolicy: .replace
             )
@@ -95,14 +95,14 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
     @MainActor
     private func updateConfig(old: RemoteConfig.MeteredUsageConfig?, new: RemoteConfig.MeteredUsageConfig?) {
         self.workManager.setRateLimit(
-            AirshipMeteredUsage.rateLimitID,
+            Self.rateLimitID,
             rate: 1,
-            timeInterval: new?.interval ?? AirshipMeteredUsage.defaultRateLimit
+            timeInterval: new?.interval ?? Self.defaultRateLimit
         )
 
         if old?.isEnabled != true && new?.isEnabled == true {
             self.scheduleWork(
-                initialDelay: new?.intialDelay ?? AirshipMeteredUsage.defaultInitialDelay
+                initialDelay: new?.intialDelay ?? Self.defaultInitialDelay
             )
         }
     }
@@ -153,7 +153,7 @@ public final class AirshipMeteredUsage: AirshipMeteredUsageProtocol {
 
         self.workManager.dispatchWorkRequest(
             AirshipWorkRequest(
-                workID: AirshipMeteredUsage.workID,
+                workID: Self.workID,
                 initialDelay: initialDelay,
                 requiresNetwork: true,
                 conflictPolicy: .keepIfNotStarted
