@@ -66,7 +66,7 @@ public final class Airship: Sendable {
     }
 
     /// The channel capture utility.
-    public static var channelCapture: ChannelCapture {
+    public static var channelCapture: any AirshipChannelCapture {
         return shared.airshipInstance.channelCapture
     }
     #endif

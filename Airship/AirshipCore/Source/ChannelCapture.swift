@@ -8,11 +8,22 @@ import UIKit
 
 #if !os(watchOS)
 
+@available(tvOS, unavailable)
+@MainActor
+public protocol AirshipChannelCapture: Sendable {
+    
+    /**
+     * Flag indicating whether channel capture is enabled. Clear to disable. Set to enable.
+     * Note: Does not persist through app launches.
+     */
+    var enabled: Bool { get set }
+}
+
 /// Channel Capture copies the channelId to the device clipboard after a specific number of
 /// knocks (app foregrounds) within a specific timeframe. Channel Capture can be enabled
 /// or disabled in Airship Config.
 @available(tvOS, unavailable)
-final public class ChannelCapture: Sendable {
+final public class DefaultAirshipChannelCapture: AirshipChannelCapture {
     private static let knocksToTriggerChannelCapture = 6
     private static let knocksMaxTimeSeconds: TimeInterval = 30
     private static let pasteboardExpirationSeconds: TimeInterval = 60
@@ -26,10 +37,6 @@ final public class ChannelCapture: Sendable {
     @MainActor
     private var knockTimes: [Date] = []
 
-    /**
-     * Flag indicating whether channel capture is enabled. Clear to disable. Set to enable.
-     * Note: Does not persist through app launches.
-     */
     @MainActor
     public var enabled: Bool {
         didSet {
@@ -71,7 +78,7 @@ final public class ChannelCapture: Sendable {
         }
 
         // Save time of transition
-        if knockTimes.count >= ChannelCapture.knocksToTriggerChannelCapture {
+        if knockTimes.count >= DefaultAirshipChannelCapture.knocksToTriggerChannelCapture {
             knockTimes.remove(at: 0)
         }
 
@@ -80,16 +87,16 @@ final public class ChannelCapture: Sendable {
         )
         knockTimes.append(date.now)
 
-        if knockTimes.count < ChannelCapture.knocksToTriggerChannelCapture {
+        if knockTimes.count < DefaultAirshipChannelCapture.knocksToTriggerChannelCapture {
             return
         }
 
         let firstKnock = knockTimes[0]
         let lastKnock = knockTimes[
-            ChannelCapture.knocksToTriggerChannelCapture - 1
+            DefaultAirshipChannelCapture.knocksToTriggerChannelCapture - 1
         ]
         if lastKnock.timeIntervalSince(firstKnock)
-            > ChannelCapture.knocksMaxTimeSeconds
+            > DefaultAirshipChannelCapture.knocksMaxTimeSeconds
         {
             return
         }
@@ -103,7 +110,7 @@ final public class ChannelCapture: Sendable {
 
         self.pasteboard.copy(
             value: identifier,
-            expiry: ChannelCapture.pasteboardExpirationSeconds
+            expiry: DefaultAirshipChannelCapture.pasteboardExpirationSeconds
         )
     }
 }

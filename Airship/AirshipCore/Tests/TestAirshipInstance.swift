@@ -37,8 +37,8 @@ final class TestAirshipInstance: AirshipInstance, @unchecked Sendable {
         }
     }
     
-    private var _channelCapture: ChannelCapture?
-    public var channelCapture: ChannelCapture {
+    private var _channelCapture: (any AirshipChannelCapture)?
+    public var channelCapture: any AirshipChannelCapture {
         get {
             return _channelCapture!
         }

@@ -12,14 +12,15 @@ final class ChannelCaptureTest: XCTestCase {
     private let pasteboard: TestPasteboard = TestPasteboard()
     private let notificationCenter: NotificationCenter = NotificationCenter()
     private let date: UATestDate = UATestDate()
-    private var channelCapture: ChannelCapture!
+    private var channelCapture: (any AirshipChannelCapture)!
 
+    @MainActor
     override func setUpWithError() throws {
         self.date.dateOverride = Date()
         self.config.isChannelCaptureEnabled = true
         self.channel.identifier = UUID().uuidString
 
-        self.channelCapture = ChannelCapture(
+        self.channelCapture = DefaultAirshipChannelCapture(
             config: .testConfig(),
             channel: channel,
             notificationCenter: notificationCenter,
