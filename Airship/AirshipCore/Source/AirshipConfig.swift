@@ -169,7 +169,25 @@ public struct AirshipConfig: Decodable, Sendable {
     ///
     /// Defaults to `true`.
     public var requireInitialRemoteConfigEnabled: Bool = true
-    
+
+    /// **For apps using the Swift 5 language mode:** It is **strongly recommended** to leave
+    /// this value as `false` (the default).
+    ///
+    /// A suspected compiler bug in **Xcode 16.1 and newer** can cause fatal runtime crashes
+    /// in this specific configuration. This flag disables the problematic code path.
+    /// For more details, see: https://github.com/urbanairship/ios-library/issues/434.
+    ///
+    /// ---
+    ///
+    /// **For apps using Swift 6 or newer:** You can set this to `true` to enable dynamic
+    /// background wait time calculation. This helps the SDK send off pending operations
+    /// before the app is fully backgrounded.
+    ///
+    /// If `false`, the SDK will wait a short, fixed amount of time.
+    ///
+    /// Defaults to `false`.
+    public var isDynamicBackgroundWaitTimeEnabled: Bool = false
+
     /// The Airship URL used to pull the initial config. This should only be set if you are using custom domains
     /// that forward to Airship.
     public var initialConfigURL: String?
@@ -186,6 +204,17 @@ public struct AirshipConfig: Decodable, Sendable {
     /// Defaults to `true`.
     public var restoreMessageCenterOnReinstall: Bool = true
 
+    /// Enables Airship Debug features. When enabled, the debug manager becomes available
+    /// for programmatic access to the Airship Debug view which provides insights into
+    /// channel information, events, and other debugging data.
+    ///
+    /// - Note: This flag alone does not enable shake-to-debug functionality. You must also
+    ///   add shake detection to your views using `.airshipDebugOnShake()` (SwiftUI) or
+    ///   implement shake gesture handling in UIKit.
+    /// - Note: This should typically be disabled in production builds for security reasons.
+    /// - Note: Requires the AirshipDebug module to be included in your app.
+    ///
+    /// Defaults to `false`.
     public var isAirshipDebugEnabled: Bool = false
 
     enum CodingKeys: String, CodingKey {
@@ -226,6 +255,7 @@ public struct AirshipConfig: Decodable, Sendable {
         case useUserPreferredLocale
         case restoreMessageCenterOnReinstall
         case isAirshipDebugEnabled
+        case isDynamicBackgroundWaitTimeEnabled
 
         // legacy keys
         
@@ -462,6 +492,11 @@ public struct AirshipConfig: Decodable, Sendable {
             Bool.self,
             forKey: .isAirshipDebugEnabled
         ) ?? self.isAirshipDebugEnabled
+
+        self.isDynamicBackgroundWaitTimeEnabled = try container.decodeIfPresent(
+            Bool.self,
+            forKey: .isDynamicBackgroundWaitTimeEnabled
+        ) ?? self.isDynamicBackgroundWaitTimeEnabled
     }
 
     /// Validates credentails
