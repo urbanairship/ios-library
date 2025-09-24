@@ -1,12 +1,8 @@
 /* Copyright Airship and Contributors */
-public import SwiftUI
 
-#if canImport(AirshipCore)
+public import SwiftUI
 import AirshipCore
 import AirshipPreferenceCenter
-#elseif canImport(AirshipKit)
-import AirshipKit
-#endif
 
 
 /// An enum that defines all possible navigation routes within the Airship debug interface.

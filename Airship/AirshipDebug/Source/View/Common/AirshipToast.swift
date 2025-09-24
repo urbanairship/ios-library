@@ -1,11 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import SwiftUI
-
-#if canImport(AirshipCore)
-/// Import AirshipCore for utilities
 import AirshipCore
-#endif
 
 struct AirshipToast: View {
     struct Message: Equatable {

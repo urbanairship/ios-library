@@ -1,11 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#if canImport(AirshipCore)
 import AirshipCore
-#elseif canImport(AirshipKit)
-import AirshipKit
-#endif
-
 import Foundation
 
 /// A wrapper for representing an Airship push notification in the Debug UI.

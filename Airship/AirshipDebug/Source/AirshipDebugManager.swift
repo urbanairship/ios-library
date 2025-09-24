@@ -3,12 +3,7 @@
 @preconcurrency import Combine
 import SwiftUI
 import UIKit
-
-#if canImport(AirshipCore)
 public import AirshipCore
-#elseif canImport(AirshipKit)
-public import AirshipKit
-#endif
 
 
 /// A protocol that provides access to Airship's debug interface functionality.

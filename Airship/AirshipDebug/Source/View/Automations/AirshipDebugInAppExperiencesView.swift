@@ -2,13 +2,8 @@
 
 import SwiftUI
 import Combine
-
-#if canImport(AirshipCore)
 import AirshipCore
 import AirshipAutomation
-#elseif canImport(AirshipKit)
-import AirshipKit
-#endif
 
 struct AirshipDebugInAppExperiencesView: View {
 

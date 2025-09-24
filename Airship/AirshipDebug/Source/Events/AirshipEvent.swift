@@ -1,13 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-
-#if canImport(AirshipCore)
 import AirshipCore
-#elseif canImport(AirshipKit)
-import AirshipKit
-#endif
-
 
 struct AirshipEvent: Equatable, Hashable, Sendable {
     /// The unique identifier of the event.

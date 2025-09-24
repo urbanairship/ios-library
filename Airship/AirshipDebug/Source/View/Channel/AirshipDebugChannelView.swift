@@ -2,12 +2,7 @@
 
 import SwiftUI
 import Combine
-
-#if canImport(AirshipCore)
 import AirshipCore
-#elseif canImport(AirshipKit)
-import AirshipKit
-#endif
 
 struct AirshipDebugChannelView: View {
 
@@ -56,7 +51,6 @@ struct AirshipDebugChannelView: View {
         channelId.pastleboard()
         self.toastMessage = .init(text: "Channel ID copied to clipboard")
     }
-
 
     @MainActor
     fileprivate final class ViewModel: ObservableObject {

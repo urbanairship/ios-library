@@ -2,10 +2,7 @@
 
 import Foundation
 @preconcurrency import UserNotifications
-
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Actual airship component for AirshipDebugManager. Used to hide AirshipComponent methods.
 final class DebugComponent : AirshipComponent, AirshipPushableComponent {

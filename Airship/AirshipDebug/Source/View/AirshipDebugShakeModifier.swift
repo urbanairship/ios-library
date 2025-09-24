@@ -2,12 +2,8 @@
 
 public import SwiftUI
 import UIKit
-
-#if canImport(AirshipCore)
 import AirshipCore
-#elseif canImport(AirshipKit)
-import AirshipKit
-#endif
+
 
 /// A view modifier that detects device shake gestures and displays the Airship debug interface.
 ///

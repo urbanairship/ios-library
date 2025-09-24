@@ -1,11 +1,6 @@
 /* Copyright Airship and Contributors */
 import Foundation
-
-#if canImport(AirshipCore)
 public import AirshipCore
-#elseif canImport(AirshipKit)
-import AirshipKit
-#endif
 
 /// - Note: For internal use only. :nodoc:
 @objc(UADebugSDKModule)

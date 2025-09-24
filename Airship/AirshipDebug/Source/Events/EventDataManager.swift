@@ -2,12 +2,7 @@
 
 import CoreData
 import UIKit
-
-#if canImport(AirshipCore)
 import AirshipCore
-#elseif canImport(AirshipKit)
-import AirshipKit
-#endif
 
 final class EventDataManager: Sendable {
 

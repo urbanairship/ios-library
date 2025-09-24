@@ -2,13 +2,8 @@
 
 import Combine
 import SwiftUI
-
-#if canImport(AirshipCore)
 import AirshipCore
 import AirshipFeatureFlags
-#elseif canImport(AirshipKit)
-import AirshipKit
-#endif
 
 struct AirshipDebugFeatureFlagView: View {
 

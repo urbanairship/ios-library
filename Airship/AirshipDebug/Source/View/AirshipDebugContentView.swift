@@ -3,13 +3,8 @@
 import Combine
 import Foundation
 public import SwiftUI
-
-#if canImport(AirshipCore)
 import AirshipCore
 import AirshipAutomation
-#elseif canImport(AirshipKit)
-import AirshipKit
-#endif
 
 /// A SwiftUI view that provides the main content of the Airship debug interface.
 ///

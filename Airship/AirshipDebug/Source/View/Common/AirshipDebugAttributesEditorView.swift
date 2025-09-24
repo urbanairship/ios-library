@@ -2,12 +2,7 @@
 
 import Foundation
 import SwiftUI
-
-#if canImport(AirshipCore)
 import AirshipCore
-#elseif canImport(AirshipKit)
-import AirshipKit
-#endif
 
 struct AirshipDebugAttributesEditorView: View {
 

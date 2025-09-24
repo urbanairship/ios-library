@@ -2,13 +2,7 @@
 
 import SwiftUI
 import Foundation
-
-
-#if canImport(AirshipCore)
 import AirshipCore
-#elseif canImport(AirshipKit)
-import AirshipKit
-#endif
 
 struct AirshipJSONView: View {
     let json: AirshipJSON
