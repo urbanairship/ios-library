@@ -144,6 +144,7 @@ struct TextInput: View {
                         .constraints(constraints, alignment: self.placeHolderAlignment)
                         .opacity(self.viewModel.input.isEmpty && !isEditing ? 1 : 0)
                         .animation(.linear(duration: 0.1), value: self.info.properties.placeholder)
+                        .accessibilityHidden(true)
                 }
                 HStack {
                     makeTextEditor()
