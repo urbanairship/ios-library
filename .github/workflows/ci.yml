@@ -12,7 +12,7 @@ concurrency:
 jobs:
   run-tests-core:
     runs-on: macos-15-xlarge
-    timeout-minutes: 15
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - name: Test
