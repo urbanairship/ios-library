@@ -66,16 +66,23 @@ struct Score: View {
     private func createScore(_ constraints: ViewConstraints) -> some View {
         switch self.info.properties.style {
         case .numberRange(let style):
-            let itemSpacing = CGFloat(style.spacing ?? 0)
-            let lineSpacing = CGFloat(style.wrapping?.lineSpacing ?? 0)
-            let maxItemsPerLine = style.wrapping?.maxItemsPerLine
-            WrappingLayout(
-                viewConstraints: constraints,
-                itemSpacing: itemSpacing,
-                lineSpacing: lineSpacing,
-                maxItemsPerLine: maxItemsPerLine
-            ) {
-                makeNumberRangeScoreItems(style: style, constraints: constraints)
+            if style.wrapping != nil {
+                let itemSpacing = CGFloat(style.spacing ?? 0)
+                let lineSpacing = CGFloat(style.wrapping?.lineSpacing ?? 0)
+                let maxItemsPerLine = style.wrapping?.maxItemsPerLine
+                WrappingLayout(
+                    viewConstraints: constraints,
+                    itemSpacing: itemSpacing,
+                    lineSpacing: lineSpacing,
+                    maxItemsPerLine: maxItemsPerLine
+                ) {
+                    makeNumberRangeScoreItems(style: style, constraints: constraints)
+                }
+            } else {
+                HStack(spacing: style.spacing ?? 0) {
+                    makeNumberRangeScoreItems(style: style, constraints: constraints)
+                }
+                .constraints(constraints)
             }
         }
     }

@@ -12,9 +12,6 @@ struct Container: View {
     /// View constraints.
     let constraints: ViewConstraints
 
-    /// Quick setting to use legacy container on iOS 16+
-    private static let forceLegacyContainer: Bool = false
-
     var body: some View {
         NewContainer(info: self.info, constraints: self.constraints)
     }
