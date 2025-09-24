@@ -122,9 +122,13 @@
                                                 height: auto
                                               view:
                                                 type: label
-                                                text: "* How likely is it that you
+                                                text: "How likely is it that you
                                                   would recommend [your company, product,
                                                   etc.] to a friend or colleague?"
+                                                labels:
+                                                    type: labels
+                                                    view_type: "score"
+                                                    view_id: "221acead-707d-4927-90ae-cffc09636871"
                                                 text_appearance:
                                                   font_size: 20
                                                   color:
@@ -258,15 +262,19 @@
                                                 direction: horizontal
                                                 items:
                                                 - size:
-                                                    height: 50
+                                                    height: auto
                                                     width: 100%
                                                   view:
                                                     type: score
+                                                    content_description: "0 means not likely and 10 means very likely"
                                                     style:
                                                       type: number_range
                                                       start: 0
                                                       end: 10
                                                       spacing: 2
+                                                      wrapping:
+                                                        line_spacing: 10
+                                                        max_items_per_line: 6a
                                                       bindings:
                                                         selected:
                                                           shapes:

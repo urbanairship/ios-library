@@ -17,14 +17,13 @@
 		3244495F2721A63400D108B5 /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3244495D2721A63400D108B5 /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		32FC34EC2729AF10002D3F2C /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32FC34EB2729AF10002D3F2C /* AirshipBasement.framework */; };
 		32FC34ED2729AF10002D3F2C /* AirshipBasement.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 32FC34EB2729AF10002D3F2C /* AirshipBasement.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		606137042A82ACEA0064E62A /* HomeView23Grande.swift in Sources */ = {isa = PBXBuildFile; fileRef = 606137032A82ACEA0064E62A /* HomeView23Grande.swift */; };
 		6E3C66FA2AB3770A000E1057 /* Layouts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3C66F92AB3770A000E1057 /* Layouts.swift */; };
 		6E3C67062AB37B72000E1057 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3C67052AB37B72000E1057 /* AppView.swift */; };
 		6E6802AC2B867B0900F4591F /* Messages in Resources */ = {isa = PBXBuildFile; fileRef = 6E6802AA2B867B0900F4591F /* Messages */; };
 		6E6802AD2B867B0900F4591F /* Scenes in Resources */ = {isa = PBXBuildFile; fileRef = 6E6802AB2B867B0900F4591F /* Scenes */; };
+		6E7ED9522E848CDD0040BCD0 /* LayoutViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7ED9512E848CD80040BCD0 /* LayoutViewModel.swift */; };
 		6EABB8212AB272C0008B89E3 /* SharedAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EABB8202AB272C0008B89E3 /* SharedAssets.xcassets */; };
 		6EB54C802DE63FFC00B7BB5D /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EB54C7F2DE63FFC00B7BB5D /* AirshipConfig.plist */; };
-		990D5D8F2D6FFBEA00F4D20E /* LastLayoutButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990D5D7F2D6FFBE500F4D20E /* LastLayoutButton.swift */; };
 		991BE0D02B047417006109EE /* MapRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0CF2B047417006109EE /* MapRouteView.swift */; };
 		991BE0D22B05684A006109EE /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0D12B05684A006109EE /* CameraView.swift */; };
 		991BE0F32B05C37C006109EE /* WeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 991BE0F22B05C37C006109EE /* WeatherViewModel.swift */; };
@@ -176,16 +175,15 @@
 		3244495627219D1800D108B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3244495D2721A63400D108B5 /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		32FC34EB2729AF10002D3F2C /* AirshipBasement.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipBasement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		606137032A82ACEA0064E62A /* HomeView23Grande.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView23Grande.swift; sourceTree = "<group>"; };
 		6E3C66F92AB3770A000E1057 /* Layouts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layouts.swift; sourceTree = "<group>"; };
 		6E3C67052AB37B72000E1057 /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		6E6802AA2B867B0900F4591F /* Messages */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Messages; sourceTree = "<group>"; };
 		6E6802AB2B867B0900F4591F /* Scenes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scenes; sourceTree = "<group>"; };
+		6E7ED9512E848CD80040BCD0 /* LayoutViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutViewModel.swift; sourceTree = "<group>"; };
 		6EABB8202AB272C0008B89E3 /* SharedAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SharedAssets.xcassets; sourceTree = "<group>"; };
 		6EB54C7F2DE63FFC00B7BB5D /* AirshipConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		6ED807A5273DEA1800D1F455 /* AirshipAutomation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AirshipAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9908E5922AFDA95000DB3E2E /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
-		990D5D7F2D6FFBE500F4D20E /* LastLayoutButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastLayoutButton.swift; sourceTree = "<group>"; };
 		991BE0CF2B047417006109EE /* MapRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRouteView.swift; sourceTree = "<group>"; };
 		991BE0D12B05684A006109EE /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		991BE0F22B05C37C006109EE /* WeatherViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherViewModel.swift; sourceTree = "<group>"; };
@@ -238,8 +236,8 @@
 		3244492D2721667D00D108B5 /* Thomas */ = {
 			isa = PBXGroup;
 			children = (
+				6E7ED9512E848CD80040BCD0 /* LayoutViewModel.swift */,
 				995902F32B02C69E001614AF /* CustomView */,
-				6006FC142A8A24DF00956B73 /* EmbeddedView */,
 				9948E61F2B464F2600C1F21E /* Embedded Playground View */,
 				3244495627219D1800D108B5 /* Info.plist */,
 				3244495527219D0300D108B5 /* Thomas.entitlements */,
@@ -248,7 +246,6 @@
 				3244492E2721667D00D108B5 /* ThomasApp.swift */,
 				324449302721667D00D108B5 /* LayoutsList.swift */,
 				6E3C67052AB37B72000E1057 /* AppView.swift */,
-				990D5D7F2D6FFBE500F4D20E /* LastLayoutButton.swift */,
 				324449322721668100D108B5 /* Assets.xcassets */,
 				6EABB8202AB272C0008B89E3 /* SharedAssets.xcassets */,
 				3244495B2721A5CB00D108B5 /* Resources */,
@@ -282,14 +279,6 @@
 				3244495D2721A63400D108B5 /* AirshipCore.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		6006FC142A8A24DF00956B73 /* EmbeddedView */ = {
-			isa = PBXGroup;
-			children = (
-				606137032A82ACEA0064E62A /* HomeView23Grande.swift */,
-			);
-			path = EmbeddedView;
 			sourceTree = "<group>";
 		};
 		9908E5932AFDA95000DB3E2E /* Products */ = {
@@ -539,8 +528,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				990D5D8F2D6FFBEA00F4D20E /* LastLayoutButton.swift in Sources */,
-				606137042A82ACEA0064E62A /* HomeView23Grande.swift in Sources */,
+				6E7ED9522E848CDD0040BCD0 /* LayoutViewModel.swift in Sources */,
 				9948E61C2B464F1B00C1F21E /* EmbeddedPlaygroundView.swift in Sources */,
 				9948E61B2B464F1B00C1F21E /* KeyView.swift in Sources */,
 				6E3C66FA2AB3770A000E1057 /* Layouts.swift in Sources */,
