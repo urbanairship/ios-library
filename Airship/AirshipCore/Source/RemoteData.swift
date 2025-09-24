@@ -466,7 +466,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     private func payloadsFuture(types: [String]) -> Future<[RemoteDataPayload], Never> {
         return Future { promise in
             let wrapped = SendablePromise(promise: promise)
-            Task {
+            Task { @MainActor in
                 let payloads = await self.payloads(types: types)
                 wrapped.promise(.success(payloads))
             }
