@@ -145,7 +145,6 @@ public struct MessageCenterListView: View {
                     isRefreshing = false
                 }
             } label: {
-
                 ZStack {
                     if isRefreshing {
                         ProgressView()
@@ -173,26 +172,26 @@ public struct MessageCenterListView: View {
             dark: theme.messageListBackgroundColorDark
         )
 
-        let content = ZStack {
-            makeList()
-                .opacity(self.listOpacity)
-                .listBackground(listBackgroundColor)
-                .animation(.easeInOut(duration: 0.5), value: self.listOpacity)
-                .airshipOnChangeOf(self.viewModel.messages) { messages in
-                    if messages.isEmpty {
-                        self.listOpacity = 0.0
-                    } else {
-                        self.listOpacity = 1.0
-                    }
-                }
-
+        ZStack {
             if !self.viewModel.messagesLoaded {
                 ProgressView().opacity(1.0 - self.listOpacity)
-            } else if self.viewModel.messages.isEmpty {
+            } else if viewModel.messages.isEmpty {
                 emptyMessageListMessage()
+            } else {
+                makeList()
+                    .opacity(self.listOpacity)
+                    .listBackground(listBackgroundColor)
+                    .animation(.easeInOut(duration: 0.5), value: self.listOpacity)
+                    .padding(.bottom, 60) // small spacing at bottom to avoid tab bars
             }
         }
-        content
+        .airshipOnChangeOf(self.viewModel.messages) { messages in
+            if messages.isEmpty {
+                self.listOpacity = 0.0
+            } else {
+                self.listOpacity = 1.0
+            }
+        }
     }
 }
 

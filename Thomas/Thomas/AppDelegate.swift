@@ -142,7 +142,7 @@ struct SceneControllerTestView: View {
                 }
             }
             .padding()
-            .background(Color(.secondarySystemBackground))
+            .background(.regularMaterial)
             .cornerRadius(10)
 
             // MARK: - Navigation Controls

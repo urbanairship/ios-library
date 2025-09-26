@@ -136,7 +136,7 @@ struct HomeView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             GeometryReader { formSize in
                 Form {
                     makeEmbeddedSection(parentHeight: formSize.size.height)

@@ -67,7 +67,7 @@ struct AddChannelPromptView: View, Sendable {
     // MARK: - Body
     var body: some View {
         #if os(tvOS)
-        // On tvOS, use a simpler structure without NavigationView
+        // On tvOS, use a simpler structure without NavigationStack
         promptContentView
             .interactiveDismissDisabled(isLoading)
             .airshipOnChangeOf(viewModel.state) { newState in
@@ -83,11 +83,10 @@ struct AddChannelPromptView: View, Sendable {
                 successAlertMessage(for: successPrompt)
             }
         #else
-        NavigationView {
+        NavigationStack {
             promptContentView
                 .frame(maxWidth: Layout.maxWidth)
         }
-        .navigationViewStyle(.stack)
         .interactiveDismissDisabled(isLoading)
         .airshipOnChangeOf(viewModel.state) { newState in
             handleStateChange(newState)

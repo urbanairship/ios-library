@@ -108,7 +108,7 @@ struct TVDatePicker: View {
                     onDismiss: {
                         isSheetPresented = false
                     }) {
-                    NavigationView {
+                    NavigationStack {
                         VStack(
                             alignment: .leading,
                             content: content

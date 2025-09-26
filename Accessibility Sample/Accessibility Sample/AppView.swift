@@ -26,9 +26,7 @@ struct AppView: View {
 
     @ViewBuilder
     private var messageCenterTab: some View {
-        MessageCenterView(
-            controller: Airship.messageCenter.controller
-        )
+        MessageCenterView()
         .tabItem {
             Label(
                 "Message Center",
@@ -47,7 +45,6 @@ struct AppView: View {
         PreferenceCenterView(
             preferenceCenterID: MainApp.preferenceCenterID
         )
-        .navigationViewStyle(.stack)
         .tabItem {
             Label(
                 "Preferences",
