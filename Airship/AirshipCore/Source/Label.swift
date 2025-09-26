@@ -48,13 +48,27 @@ struct Label: View {
         }
     }
 
-
+    private var resolvedEndIcon: ThomasViewInfo.Label.LabelIcon? {
+        return ThomasPropertyOverride.resolveOptional(
+            state: thomasState,
+            overrides: self.info.overrides?.iconEnd,
+            defaultValue: self.info.properties.iconEnd
+        )
+    }
 
     private var resolvedStartIcon: ThomasViewInfo.Label.LabelIcon? {
         return ThomasPropertyOverride.resolveOptional(
             state: thomasState,
             overrides: self.info.overrides?.iconStart,
             defaultValue: self.info.properties.iconStart
+        )
+    }
+
+    private var resolvedTextAppearance: ThomasTextAppearance {
+        return ThomasPropertyOverride.resolveRequired(
+            state: thomasState,
+            overrides: self.info.overrides?.textAppearance,
+            defaultValue: self.info.properties.textAppearance
         )
     }
 
@@ -86,8 +100,22 @@ struct Label: View {
             }
 
             self.textView
-                .textAppearance(self.info.properties.textAppearance)
+                .textAppearance(resolvedTextAppearance)
                 .truncationMode(.tail)
+
+
+            if let icon = resolvedEndIcon {
+                // Add a spacer if we are not auto to push the icon to the edge
+                if constraints.width != nil {
+                    Spacer()
+                }
+
+                let size = scaledFontSize
+                Icons.icon(info: icon.icon, colorScheme: colorScheme)
+                    .frame(width: size, height: size)
+                    .padding(.leading, icon.space)
+                    .accessibilityHidden(true)
+            }
         }
         .constraints(
             constraints,

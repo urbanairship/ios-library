@@ -35,25 +35,29 @@ struct LabelButton : View {
             actions: self.info.properties.actions,
             tapEffect: self.info.properties.tapEffect
         ) {
-            Label(info: self.info.properties.label, constraints: constraints)
-                .airshipApplyIf(self.constraints.height == nil) { view in
-                    view.padding([.bottom, .top], 12)
-                }
-                .airshipApplyIf(self.constraints.width == nil) { view in
-                    view.padding([.leading, .trailing], 12)
-                }
-                .thomasBackground(
-                    color: self.info.commonProperties.backgroundColor,
-                    colorOverrides: self.info.commonOverrides?.backgroundColor,
-                    border: self.info.commonProperties.border,
-                    borderOverrides: self.info.commonOverrides?.border
-                )
-                .accessible(
-                    self.info.accessible,
-                    associatedLabel: associatedLabel,
-                    hideIfDescriptionIsMissing: false
-                )
-                .background(Color.airshipTappableClear)
+            Label(
+                info: self.info.properties.label,
+                constraints: ViewConstraints()
+            )
+            .airshipApplyIf(self.constraints.height == nil) { view in
+                view.padding([.bottom, .top], 12)
+            }
+            .airshipApplyIf(self.constraints.width == nil) { view in
+                view.padding([.leading, .trailing], 12)
+            }
+            .constraints(constraints)
+            .thomasBackground(
+                color: self.info.commonProperties.backgroundColor,
+                colorOverrides: self.info.commonOverrides?.backgroundColor,
+                border: self.info.commonProperties.border,
+                borderOverrides: self.info.commonOverrides?.border
+            )
+            .accessible(
+                self.info.accessible,
+                associatedLabel: associatedLabel,
+                hideIfDescriptionIsMissing: false
+            )
+            .background(Color.airshipTappableClear)
         }
         .thomasEnableBehaviors(self.info.commonProperties.enabled)
         .thomasVisibility(self.info.commonProperties.visibility)
