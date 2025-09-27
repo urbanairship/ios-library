@@ -203,18 +203,34 @@ extension View {
 extension ThomasViewInfo.Label {
     @MainActor
     func resolveLabelString(thomasState: ThomasState) -> String {
-        let effectiveRef = ThomasPropertyOverride.resolveOptional(
+        let resolvedRefs = ThomasPropertyOverride.resolveOptional(
+            state: thomasState,
+            overrides: overrides?.refs,
+            defaultValue: properties.refs
+        )
+
+        let resolvedRef = ThomasPropertyOverride.resolveOptional(
             state: thomasState,
             overrides: overrides?.ref,
             defaultValue: properties.ref
         )
 
-        let effectiveText = ThomasPropertyOverride.resolveRequired(
+        if let refs = resolvedRefs {
+            for ref in refs {
+                if let string = AirshipResources.localizedString(key: ref) {
+                    return string
+                }
+            }
+        } else if let ref = resolvedRef {
+            if let string = AirshipResources.localizedString(key: ref) {
+                return string
+            }
+        }
+
+        return ThomasPropertyOverride.resolveRequired(
             state: thomasState,
             overrides: overrides?.text,
             defaultValue: properties.text
         )
-
-        return effectiveRef?.airshipLocalizedString(fallback: effectiveText) ?? effectiveText
     }
 }

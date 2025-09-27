@@ -6,13 +6,9 @@ struct ThomasAccessibleInfo: ThomasSerializable {
     var accessibilityHidden: Bool?
 
     struct Localized: ThomasSerializable {
-        var descriptionKey: String?
-        var fallbackDescription: String
-
-        enum CodingKeys: String, CodingKey {
-            case descriptionKey = "ref"
-            case fallbackDescription = "fallback"
-        }
+        var ref: String?
+        var refs: [String]?
+        var fallback: String
     }
 
     enum CodingKeys: String, CodingKey {
@@ -28,8 +24,22 @@ extension ThomasAccessibleInfo {
             return contentDescription
         }
 
-        return self.localizedContentDescription?.descriptionKey?.airshipLocalizedString(
-            fallback: self.localizedContentDescription?.fallbackDescription
-        )
+        guard let localizedContentDescription else {
+            return nil
+        }
+
+        if let refs = localizedContentDescription.refs {
+            for ref in refs {
+                if let string = AirshipResources.localizedString(key: ref) {
+                    return string
+                }
+            }
+        } else if let ref = localizedContentDescription.ref {
+            if let string = AirshipResources.localizedString(key: ref) {
+                return string
+            }
+        }
+
+        return localizedContentDescription.fallback
     }
 }

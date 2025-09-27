@@ -72,7 +72,9 @@ struct PagerIndicator: View {
         .constraints(constraints)
         .thomasCommon(self.info)
         .airshipApplyIf(announcePage(info: self.info), transform: { view in
-            view.accessibilityLabel(String(format: "ua_pager_progress".airshipLocalizedString(), (self.pagerState.pageIndex + 1).airshipLocalizedForVoiceOver(), self.pagerState.pageStates.count.airshipLocalizedForVoiceOver()))
+            view.accessibilityLabel(String(format: "ua_pager_progress".airshipLocalizedString(
+                fallback: "Page %@ of %@"
+            ), (self.pagerState.pageIndex + 1).airshipLocalizedForVoiceOver(), self.pagerState.pageStates.count.airshipLocalizedForVoiceOver()))
         })
     }
 }

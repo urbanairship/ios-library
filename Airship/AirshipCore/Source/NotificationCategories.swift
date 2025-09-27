@@ -219,26 +219,11 @@ public final class NotificationCategories {
             return nil
         }
         if let titleResource = actionDefinition["title_resource"] as? String {
-            let localizedTitle = AirshipLocalizationUtils.localizedString(
+            return AirshipLocalizationUtils.localizedString(
                 titleResource,
                 withTable: "UrbanAirship",
                 moduleBundle: AirshipCoreResources.bundle,
-                defaultValue: title
-            )
-
-            if localizedTitle == title {
-                return AirshipLocalizationUtils.localizedString(
-                    titleResource,
-                    withTable: "AirshipAccengage",
-                    moduleBundle: AirshipCoreResources.bundle,
-                    defaultValue: title
-                )
-            }
-            if let localizedTitle = localizedTitle,
-                !localizedTitle.isEmpty
-            {
-                return localizedTitle
-            }
+            ) ?? title
         }
 
         return title
