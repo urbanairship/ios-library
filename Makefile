@@ -57,11 +57,7 @@ build-xcframeworks: setup clean-xcframeworks
 	bash ./scripts/build_xcframeworks.sh "${xcframeworks_path}" "${derived_data_path}" "${archive_path}"
 
 .PHONY: build-samples
-build-samples: build-sample-tvos build-sample-ios
-
-.PHONY: build-sample-tvos
-build-sample-tvos: setup
-	bash ./scripts/build_sample.sh "tvOSSample" "${derived_data_path}"
+build-samples: build-sample-ios
 
 .PHONY: build-sample-ios
 build-sample-ios: setup
@@ -70,10 +66,6 @@ build-sample-ios: setup
 .PHONY: build-sample-watchos
 build-sample-watchos: setup
 	bash ./scripts/build_sample_watchos.sh "watchOSSample_WatchKit_Extension" "${derived_data_path}"
-
-.PHONY: build-sample-objective-c
-build-sample-objective-c: setup
-	bash ./scripts/build_sample.sh "ObjcSample" "${derived_data_path}"
 	
 
 .PHONY: test
