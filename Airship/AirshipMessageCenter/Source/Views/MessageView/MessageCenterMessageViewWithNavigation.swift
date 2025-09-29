@@ -97,7 +97,9 @@ public struct MessageCenterMessageViewWithNavigation: View {
         MessageCenterMessageView(viewModel: self.messageViewModel, dismissAction: dismissAction)
             .applyUIKitNavigationAppearance()
             .navigationBarBackButtonHidden(true) // Hide the default back button
+#if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .navigationTitle(self.messageViewModel.message?.title ?? self.title ?? "")
             .toolbar {
                 if shouldShowBackButton {

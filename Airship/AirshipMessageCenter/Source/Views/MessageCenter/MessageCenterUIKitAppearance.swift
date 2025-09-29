@@ -74,8 +74,9 @@ internal struct MessageCenterUIKitAppearance {
 
             // Extract other properties
             appearance.navigationBarIsTranslucent = navigationBar?.isTranslucent ?? true
+#if !os(tvOS)
             appearance.prefersLargeTitles = navigationBar?.prefersLargeTitles ?? false
-
+#endif
             // Extract title from navigation item
             appearance.navigationTitle = navigationItem?.title
 
@@ -212,18 +213,19 @@ internal struct MessageCenterApplyDetectedAppearance: ViewModifier {
     func body(content: Content) -> some View {
         if let appearance = detectedAppearance {
             content
-            // Apply navigation bar tint color (affects back button and bar items)
                 .airshipApplyIf(appearance.navigationBarTintColor != nil) { view in
+                    // Apply navigation bar tint color (affects back button and bar items)
                     view.accentColor(appearance.navigationBarTintColor)
                         .tint(appearance.navigationBarTintColor)
                 }
-            // Apply navigation bar background color
                 .airshipApplyIf(appearance.navigationBarBackgroundColor != nil) { view in
+                    // Apply navigation bar background color
                     view.toolbarBackground(appearance.navigationBarBackgroundColor!, for: .navigationBar)
                         .toolbarBackground(.visible, for: .navigationBar)
                 }
-            // Apply large title setting
+#if !os(tvOS)
                 .navigationBarTitleDisplayMode(appearance.prefersLargeTitles ? .large : .inline)
+#endif
         } else {
             content
         }

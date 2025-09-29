@@ -56,6 +56,7 @@ public struct MessageCenterListViewWithNavigation: View {
         self.editMode?.wrappedValue.isEditing ?? false
     }
 
+#if !os(tvOS)
     private func editButton() -> some View {
         let color = isEditMode
         ? colorScheme.airshipResolveColor(light: theme.cancelButtonTitleColor, dark: theme.cancelButtonTitleColorDark)
@@ -65,6 +66,7 @@ public struct MessageCenterListViewWithNavigation: View {
             .foregroundColor(color)
             .accessibilityHint("ua_edit_messages_description".messageCenterLocalizedString)
     }
+#endif
 
     private func markRead(messages: Set<String>) {
         withAnimation {
@@ -186,7 +188,7 @@ public struct MessageCenterListViewWithNavigation: View {
                     markReadButton()
                     markDeleteButton()
                 }
-#else
+#elseif !os(tvOS)
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     editButton()
                 }
@@ -210,8 +212,9 @@ public struct MessageCenterListViewWithNavigation: View {
                     }
                 }
             }
-        
+ #if !os(tvOS)
             .toolbar(isEditMode ? .visible : .hidden, for: .bottomBar)
+#endif
             .airshipApplyIf(containerColor != nil) { view in
                 let visibility: Visibility = if #available(iOS 26.0, *) {
                     .automatic

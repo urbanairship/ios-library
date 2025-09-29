@@ -51,7 +51,7 @@ public struct MessageCenterView: View {
             return false
         case .auto:
 #if canImport(UIKit)
-            return UIDevice.current.userInterfaceIdiom == .pad || UIDevice.current.userInterfaceIdiom == .tv
+            return UIDevice.current.userInterfaceIdiom == .pad
 #else
             return true // fallback for macOS, etc.
 #endif

@@ -104,15 +104,22 @@ extension EnvironmentValues {
 
 private struct MessageCenterListContentView: View {
 
+#if os(tvOS)
+    private static let iconWidth: Double = 100.0
+    private static let noIconSpacerWidth: Double = 30.0
+#else
     private static let iconWidth: Double = 60.0
+    private static let noIconSpacerWidth: Double = 20.0
+#endif
+
+    private static let unreadIndicatorSize: Double = 8.0
     private static let placeHolderImageName: String = "photo"
     private static let unreadIndicatorImageName: String = "circle.fill"
-    private static let unreadIndicatorSize: Double = 8.0
-    private static let noIconSpacerWidth: Double = 20.0
+
 
     @Environment(\.colorScheme)
     private var colorScheme
-    
+
     @Environment(\.airshipMessageCenterTheme)
     private var theme
 
@@ -147,23 +154,27 @@ private struct MessageCenterListContentView: View {
 
     @ViewBuilder
     func makeUnreadIndicator() -> some View {
-        let foregroundColor = colorScheme.airshipResolveColor(light: theme.unreadIndicatorColor, dark: theme.unreadIndicatorColorDark) ?? colorScheme.airshipResolveColor(light: theme.cellTintColor, dark: theme.cellTintColorDark)
+        let foregroundColor = colorScheme.airshipResolveColor(
+            light: theme.unreadIndicatorColor,
+            dark: theme.unreadIndicatorColorDark
+        ) ?? colorScheme.airshipResolveColor(
+            light: theme.cellTintColor,
+            dark: theme.cellTintColorDark
+        )
 
-        if self.message.unread {
-            Image(systemName: MessageCenterListContentView.unreadIndicatorImageName)
-                .foregroundColor(
-                    foregroundColor
-                )
-                .frame(
-                    width: MessageCenterListContentView.unreadIndicatorSize,
-                    height: MessageCenterListContentView.unreadIndicatorSize
-                )
-        }
+        Image(systemName: MessageCenterListContentView.unreadIndicatorImageName)
+            .foregroundColor(
+                foregroundColor
+            )
+            .frame(
+                width: MessageCenterListContentView.unreadIndicatorSize,
+                height: MessageCenterListContentView.unreadIndicatorSize
+            )
     }
 
     @ViewBuilder
     func makeMessageInfo() -> some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading) {
             Text(self.message.title)
                 .font(theme.cellTitleFont)
                 .foregroundColor(colorScheme.airshipResolveColor(light: theme.cellTitleColor, dark: theme.cellTitleColorDark))
@@ -185,20 +196,27 @@ private struct MessageCenterListContentView: View {
 
     @ViewBuilder
     var body: some View {
-        HStack(alignment: .top, spacing: 5) {
-            if (theme.iconsEnabled) {
+        HStack(alignment: .top) {
+            if (!theme.iconsEnabled) {
                 makeIcon()
+#if !os(tvOS)
                     .padding(.trailing)
-                makeMessageInfo()
+#endif
+                    .overlay(makeUnreadIndicator(), alignment: .topLeading)
             } else {
                 Spacer().frame(
                     width: MessageCenterListContentView.noIconSpacerWidth
                 )
-                makeMessageInfo()
+                .overlay(makeUnreadIndicator(), alignment: .topLeading)
             }
+
+            makeMessageInfo()
             Spacer()
         }
-        .overlay(makeUnreadIndicator(), alignment: .topLeading)
+#if os(tvOS)
+        .padding()
+#else
         .padding(8)
+#endif
     }
 }

@@ -10,7 +10,7 @@
 
     NSError *error = nil;
     UIView *preferenceCenterView = [UAPreferenceCenterViewControllerFactory
-                                    embedWithPreferenceCenterID:@"MY_PREFERENCE_CENTER_ID"
+                                    embedWithPreferenceCenterID:@"app_default"
                                     preferenceCenterThemePlist:nil
                                     in:self
                                     error:&error];

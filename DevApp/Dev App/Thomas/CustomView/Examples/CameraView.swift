@@ -1,3 +1,4 @@
+#if !os(visionOS)
 /* Copyright Airship and Contributors */
 
 import SwiftUI
@@ -32,3 +33,4 @@ class CameraViewController : UIViewController {
         cameraPreview.videoGravity = .resizeAspectFill
     }
 }
+#endif

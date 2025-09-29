@@ -71,17 +71,32 @@ public struct MessageCenterListView: View {
         cell.listRowBackground(
             colorScheme.airshipResolveColor(light: theme.cellColor, dark: theme.cellColorDark)
         )
+#if !os(tvOS)
         .listRowSeparator(
             (theme.cellSeparatorStyle == SeparatorStyle.none)
             ? .hidden : .automatic
         )
         .listRowSeparatorTint(colorScheme.airshipResolveColor(light: theme.cellSeparatorColor, dark: theme.cellSeparatorColorDark))
+#endif
     }
 
     @ViewBuilder
     private func makeCell(messageID: String) -> some View {
         if let item = self.viewModel.messageItem(forID: messageID) {
+#if !os(tvOS)
             makeCell(item: item, messageID: messageID)
+#else
+            /**
+             * List items are not selectable by tvOS without a focusable element
+             */
+            Button(
+                action: {
+                    self.viewModel.selectedMessageID = messageID
+                }) {
+                    makeCell(item: item, messageID: messageID)
+                }
+                .buttonStyle(.plain)
+#endif
         } else {
             EmptyView()
         }

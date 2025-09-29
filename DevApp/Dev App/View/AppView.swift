@@ -37,7 +37,9 @@ struct AppView: View {
                         systemImage: "tray.fill"
                     )
                 }
+            #if !os(tvOS)
                 .badge(self.viewModel.messageCenterUnreadcount)
+            #endif
                 .onAppear {
                     Airship.analytics.trackScreen("message_center")
                 }

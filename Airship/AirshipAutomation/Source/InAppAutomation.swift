@@ -15,7 +15,7 @@ public import AirshipCore
 /**
  * Provides a control interface for creating, canceling and executing in-app automations.
  */
-public protocol InAppAutomation: Sendable {
+public protocol InAppAutomation: AnyObject, Sendable {
     /// In-App Messaging
     var inAppMessaging: any InAppMessaging { get }
 

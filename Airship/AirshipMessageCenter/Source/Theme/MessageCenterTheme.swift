@@ -30,7 +30,7 @@ public struct MessageCenterTheme: Sendable {
     /// The dark mode tint color of the "pull to refresh" control
     public var refreshTintColorDark: Color? = nil
 
-    /// Whether icons are enabled. Defaults to `NO`.
+    /// Whether icons are enabled. Defaults to `false`.
     public var iconsEnabled: Bool = false
 
     /// An optional placeholder image to use when icons haven't fully loaded.
@@ -99,7 +99,7 @@ public struct MessageCenterTheme: Sendable {
     /// The dark mode title color for the "Mark Read" button.
     public var markAsReadButtonTitleColorDark: Color? = nil
 
-    /// Whether the delete message button from the message view is enabled. Defaults to `NO`.
+    /// Whether the delete message button from the message view is enabled. Defaults to `false`.
     public var hideDeleteButton: Bool? = false
 
     /// The title color for the "Edit" button.

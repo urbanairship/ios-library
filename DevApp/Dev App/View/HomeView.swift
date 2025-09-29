@@ -48,11 +48,13 @@ struct HomeView: View {
             VStack {
                 Button(
                     action: {
+                        #if !os(tvOS)
                         self.viewModel.copyChannel()
                         self.toast.message = Toast.Message(
                             text: "Channel copied to pasteboard",
                             duration: 2.0
                         )
+                        #endif
                     }
                 ) {
                     makeQuickSettingItem(
@@ -224,10 +226,12 @@ struct HomeView: View {
         deinit {
             task?.cancel()
         }
-
+        
+#if !os(tvOS)
         func copyChannel() {
             UIPasteboard.general.string = Airship.channel.identifier
         }
+#endif
 
 #if canImport(ActivityKit)
         func startLiveActivity() throws {
