@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		99AF54BA2C24B1DC007952F2 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 99AF54B92C24B1DC007952F2 /* AirshipConfig.plist */; };
+		279DCEC92E858367008B5542 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 279DCEC82E858367008B5542 /* AirshipConfig.plist */; };
 		99AF54EF2C26065D007952F2 /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E524D362C25FA51002CA094 /* AirshipAutomation.framework */; };
 		99AF54F02C26065D007952F2 /* AirshipAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E524D362C25FA51002CA094 /* AirshipAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		99AF54FF2C26065E007952F2 /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E524D1E2C25FA51002CA094 /* AirshipBasement.framework */; };
@@ -179,9 +179,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		279DCEC82E858367008B5542 /* AirshipConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = AirshipConfig.plist; path = ../DevApp/AirshipConfig.plist; sourceTree = SOURCE_ROOT; };
 		6E524D072C25FA51002CA094 /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
 		999A806D2D8A025200999A3F /* Accessibility-Sample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Accessibility-Sample-Info.plist"; sourceTree = SOURCE_ROOT; };
-		99AF54B92C24B1DC007952F2 /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		99DFF4362B76DC6700EDFB52 /* a11y.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = a11y.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		99DFF4392B76DC6700EDFB52 /* MainApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainApp.swift; sourceTree = "<group>"; };
 		99DFF43B2B76DC6700EDFB52 /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
@@ -235,10 +235,10 @@
 			isa = PBXGroup;
 			children = (
 				6E524D072C25FA51002CA094 /* Airship.xcodeproj */,
-				99AF54B92C24B1DC007952F2 /* AirshipConfig.plist */,
 				99DFF4382B76DC6700EDFB52 /* Accessibility Sample */,
 				99DFF4372B76DC6700EDFB52 /* Products */,
 				99DFF4932B7949B500EDFB52 /* Frameworks */,
+				279DCEC82E858367008B5542 /* AirshipConfig.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -451,9 +451,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				279DCEC92E858367008B5542 /* AirshipConfig.plist in Resources */,
 				99DFF4412B76DC6900EDFB52 /* Preview Assets.xcassets in Resources */,
 				99DFF43E2B76DC6900EDFB52 /* Assets.xcassets in Resources */,
-				99AF54BA2C24B1DC007952F2 /* AirshipConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

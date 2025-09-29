@@ -65,7 +65,7 @@ build-sample-tvos: setup
 
 .PHONY: build-sample-ios
 build-sample-ios: setup
-	bash ./scripts/build_sample.sh "Airship Sample" "${derived_data_path}"
+	bash ./scripts/build_sample.sh "DevApp" "${derived_data_path}"
 	
 .PHONY: build-sample-watchos
 build-sample-watchos: setup
