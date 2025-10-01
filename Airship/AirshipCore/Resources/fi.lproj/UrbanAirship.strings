@@ -68,3 +68,8 @@
 "ua_pause" = "Tauko";
 "ua_stop" = "Pysäytä";
 "ua_form_processing_error" = "Virhe lomakkeen käsittelyssä. Yritä uudelleen";
+"ua_close" = "Sulje";
+"ua_mute" = "Mykistä";
+"ua_unmute" = "Poista mykistys";
+"ua_required_field" = "* Pakollinen";
+"ua_invalid_form_message" = "Korjaa virheelliset kentät jatkaaksesi";

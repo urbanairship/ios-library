@@ -68,3 +68,8 @@
 "ua_pause" = "Pauză";
 "ua_stop" = "Oprire";
 "ua_form_processing_error" = "Eroare la procesarea formularului. Vă rugăm să încercați din nou";
+"ua_close" = "Închide";
+"ua_mute" = "Oprește sunetul";
+"ua_unmute" = "Pornește sunetul";
+"ua_required_field" = "* Obligatoriu";
+"ua_invalid_form_message" = "Vă rugăm să corectați câmpurile nevalide pentru a continua";

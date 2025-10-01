@@ -88,3 +88,8 @@
 "ua_pause" = "Pause";
 "ua_stop" = "Stop";
 "ua_form_processing_error" = "Error processing form. Please try again";
+"ua_close" = "Close";
+"ua_mute" = "Mute";
+"ua_unmute" = "Unmute";
+"ua_required_field" = "* Required";
+"ua_invalid_form_message" = "Please fix the invalid fields to continue";

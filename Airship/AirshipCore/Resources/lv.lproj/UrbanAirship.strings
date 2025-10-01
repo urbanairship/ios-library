@@ -68,3 +68,8 @@
 "ua_pause" = "Pauze";
 "ua_stop" = "Apturēt";
 "ua_form_processing_error" = "Kļūda, apstrādājot veidlapu. Lūdzu, mēģiniet vēlreiz";
+"ua_close" = "Aizvērt";
+"ua_mute" = "Izslēgt skaņu";
+"ua_unmute" = "Ieslēgt skaņu";
+"ua_required_field" = "* Obligāts";
+"ua_invalid_form_message" = "Lūdzu, labojiet nederīgos laukus, lai turpinātu";

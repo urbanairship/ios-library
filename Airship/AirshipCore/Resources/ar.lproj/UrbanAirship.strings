@@ -68,3 +68,8 @@
 "ua_pause" = "إيقاف مؤقت";
 "ua_stop" = "إيقاف";
 "ua_form_processing_error" = "خطأ في معالجة النموذج. يرجى المحاولة مرة أخرى";
+"ua_close" = "إغلاق";
+"ua_mute" = "كتم الصوت";
+"ua_unmute" = "إلغاء كتم الصوت";
+"ua_required_field" = "* مطلوب";
+"ua_invalid_form_message" = "يرجى تصحيح الحقول غير الصالحة للمتابعة";

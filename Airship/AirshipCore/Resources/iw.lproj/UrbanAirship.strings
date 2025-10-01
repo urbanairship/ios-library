@@ -68,3 +68,8 @@
 "ua_pause" = "להפסיק";
 "ua_stop" = "לעצור";
 "ua_form_processing_error" = "שגיאה בעיבוד הטופס. אנא נסה שוב";
+"ua_close" = "סגור";
+"ua_mute" = "השתק";
+"ua_unmute" = "בטל השתקה";
+"ua_required_field" = "* נדרש";
+"ua_invalid_form_message" = "אנא תקן את השדות הלא תקינים כדי להמשיך";

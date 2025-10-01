@@ -68,3 +68,8 @@
 "ua_pause" = "Pristabdyti";
 "ua_stop" = "Sustabdyti";
 "ua_form_processing_error" = "Klaida apdorojant formą. Bandykite dar kartą";
+"ua_close" = "Uždaryti";
+"ua_mute" = "Nutildyti";
+"ua_unmute" = "Įjungti garsą";
+"ua_required_field" = "* Privaloma";
+"ua_invalid_form_message" = "Prašome ištaisyti netinkamus laukus, kad galėtumėte tęsti";

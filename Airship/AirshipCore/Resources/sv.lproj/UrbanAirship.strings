@@ -68,3 +68,8 @@
 "ua_pause" = "Pausa";
 "ua_stop" = "Stoppa";
 "ua_form_processing_error" = "Fel vid bearbetning av formulär. Försök igen";
+"ua_close" = "Stäng";
+"ua_mute" = "Tysta";
+"ua_unmute" = "Avtysta";
+"ua_required_field" = "* Obligatoriskt";
+"ua_invalid_form_message" = "Vänligen åtgärda de ogiltiga fälten för att fortsätta";

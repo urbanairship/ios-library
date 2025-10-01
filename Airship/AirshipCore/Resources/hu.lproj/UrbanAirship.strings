@@ -68,3 +68,8 @@
 "ua_pause" = "Szünet";
 "ua_stop" = "Leállítás";
 "ua_form_processing_error" = "Hiba az űrlap feldolgozása során. Kérjük, próbálja újra";
+"ua_close" = "Bezárás";
+"ua_mute" = "Némítás";
+"ua_unmute" = "Némítás feloldása";
+"ua_required_field" = "* Kötelező";
+"ua_invalid_form_message" = "Kérjük, javítsa ki az érvénytelen mezőket a folytatáshoz";

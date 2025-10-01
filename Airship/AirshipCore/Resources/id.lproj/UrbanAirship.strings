@@ -68,3 +68,8 @@
 "ua_pause" = "Jeda";
 "ua_stop" = "Berhenti";
 "ua_form_processing_error" = "Kesalahan memproses formulir. Silakan coba lagi";
+"ua_close" = "Tutup";
+"ua_mute" = "Bisukan";
+"ua_unmute" = "Bunyikan";
+"ua_required_field" = "* Wajib diisi";
+"ua_invalid_form_message" = "Silakan perbaiki kolom yang tidak valid untuk melanjutkan";
