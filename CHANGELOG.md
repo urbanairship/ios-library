@@ -4,6 +4,18 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.11.0 - September 30, 2025
+
+This is an important update for apps using manual push notification integration (automaticSetup = false). We are addressing a lifecycle issue caused by Apple's async notification delegate being called on a background thread, unlike the main-thread-guaranteed completionHandler version. To align with the correct lifecycle, we are deprecating our async handler and introducing a new completionHandler method. Using the async version can cause
+direct open counts to be lower than expected.
+
+### Changes
+- Added a new synchronous `AppIntegration.userNotificationCenter(_:didReceive:withCompletionHandler:)` method. Apps must use this and the corresponding synchronous delegate method to ensure notification responses are handled before the app becomes active.
+- The async `AppIntegration.userNotificationCenter(_:didReceive:)` method is now deprecated.
+- Landing pages no longer display for push notifications received when the app is in the foreground.
+
+
+
 ## Version 19.10.0 - September 22, 2025
 Minor release that adds a new flag to work around the critical crash (GH-434) affecting Swift 5 apps on Xcode 16.1+. The problematic feature is now disabled by default.
 
