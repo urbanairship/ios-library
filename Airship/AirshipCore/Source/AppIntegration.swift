@@ -192,7 +192,6 @@ public class AppIntegration {
     }
 #endif
 
-
     /**
      * Must be called by the UNUserNotificationDelegate's
      * userNotificationCenter:willPresentNotification:withCompletionHandler.
@@ -216,15 +215,61 @@ public class AppIntegration {
         return presentationOptions
     }
 
-    #if !os(tvOS)
     /**
      * Must be called by the UNUserNotificationDelegate's
-     * userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler.
+     * userNotificationCenter:willPresentNotification:withCompletionHandler.
      *
      * - Parameters:
      *   - center: The notification center.
-     *   - response: The notification response.
+     *   - notification: The notification.
+     *   - completionHandler: The completion handler.
      */
+    @MainActor
+    public class func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping @Sendable (UNNotificationPresentationOptions) -> Void
+    ) {
+        // This one does not depend on any lifecycle events so we can just do the async underneath
+        Task { @MainActor in
+            let options = await self.userNotificationCenter(center, willPresent: notification)
+            completionHandler(options)
+        }
+    }
+
+
+    #if !os(tvOS)
+    /**
+     * Processes a user's response to a notification.
+     *
+     * - Warning: ⚠️ **Deprecated**. This asynchronous method is deprecated and will be removed in a future release.
+     * It can cause critical application lifecycle issues due to changes in how Apple's modern User Notification
+     * delegates operate.
+     *
+     * ### Lifecycle Issues Explained
+     *
+     * Apple's modern `async` notification delegate methods execute on a **background thread** by default instead of a the main
+     * thread. This creates a race condition during app launch:
+     *
+     * 1.  **Main Thread:** Proceeds with the standard launch sequence, making the app's UI active and visible.
+     * 2.  **Background Thread:** Runs this notification code. By the time it can switch back to the main
+     * thread, the app is often already active.
+     *
+     * This breaks the critical assumption that code for a "direct open" notification runs *before* the app is fully
+     * interactive. This can lead to incorrect direct open counts.
+     *
+     * ### Migration
+     *
+     * To fix this, you must migrate to the synchronous version of this method, which accepts and forwards a `completionHandler`.
+     * This guarantees your code runs on the main thread at the correct point in the lifecycle, before the app becomes active.
+     *
+     * - SeeAlso: `userNotificationCenter(_:didReceive:withCompletionHandler:)`
+
+     * - Parameters:
+     * - center: The notification center that delivered the notification.
+     * - response: The user's response to the notification.
+     */
+    @available(*, deprecated, message: "Use the synchronous version with a completionHandler to avoid lifecycle issues.")
     @MainActor
     public class func userNotificationCenter(
         _ center: UNUserNotificationCenter,
@@ -237,6 +282,33 @@ public class AppIntegration {
 
         await delegate.didReceiveNotificationResponse(
             response: response
+        )
+    }
+
+    /**
+     * Must be called by the UNUserNotificationDelegate's
+     * userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler.
+     *
+     * - Parameters:
+     *   - center: The notification center.
+     *   - response: The notification response.
+     *   - completionHandler: The completion handler
+     */
+    @MainActor
+    public class func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping @Sendable () -> Void
+    ) {
+        guard let delegate = integrationDelegate else {
+            logIgnoringCall()
+            completionHandler()
+            return
+        }
+
+        delegate.didReceive(
+            response,
+            completionHandler: completionHandler
         )
     }
     #endif
