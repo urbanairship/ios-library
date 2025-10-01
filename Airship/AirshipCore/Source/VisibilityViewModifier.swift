@@ -23,17 +23,3 @@ internal struct VisibilityViewModifier: ViewModifier {
     }
 }
 
-
-extension View {
-
-    @ViewBuilder
-    func thomasVisibility(_ visibilityInfo: ThomasVisibilityInfo?) -> some View {
-        if let visibilityInfo = visibilityInfo {
-            self.modifier(
-                VisibilityViewModifier(visibilityInfo: visibilityInfo)
-            )
-        } else {
-            self
-        }
-    }
-}

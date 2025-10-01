@@ -106,7 +106,7 @@ public final class ModifyAttributesAction: AirshipAction {
             }
         }
         
-        let editors = Set(actions.compactMap { $0.editor })
+        let editors: Set<AttributeActionArgs.TargetEditor> = Set(actions.compactMap { $0.editor })
         if editors.contains(.channel) {
             channelEditor.apply()
         }

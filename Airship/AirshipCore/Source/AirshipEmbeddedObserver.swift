@@ -27,7 +27,7 @@ public final class AirshipEmbeddedObserver : ObservableObject {
     /// - Parameters:
     ///   - embeddedID: An array of embedded IDs to filter the embeddedInfos on.
     public convenience init(embeddedIDs: [String]) {
-        let set = Set(embeddedIDs)
+        let set: Set<String> = Set(embeddedIDs)
         self.init { info in
             set.contains(info.embeddedID)
         }

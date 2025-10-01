@@ -64,8 +64,8 @@ final class DefaultAirshipInstance: AirshipInstance {
     public let components: [any AirshipComponent]
     private let remoteConfigManager: RemoteConfigManager
     private let experimentManager: any ExperimentDataProvider
-    private let componentMap = AirshipAtomicValue([String: any AirshipComponent]()) //it's accessed with the lock below
-    private let lock = AirshipLock()
+    private let componentMap: AirshipAtomicValue<[String: any AirshipComponent]> = AirshipAtomicValue([String: any AirshipComponent]()) //it's accessed with the lock below
+    private let lock: AirshipLock = AirshipLock()
     
     @MainActor
     init(airshipConfig: AirshipConfig, appCredentials: AirshipAppCredentials) {

@@ -63,7 +63,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, Sendable {
     private let date: any AirshipDateProtocol
     private let nonceFactory: @Sendable () -> String
 
-    private let authTasks = AirshipAtomicValue([AirshipRequestAuth: Task<ResolvedAuth, any Error>]())
+    private let authTasks: AirshipAtomicValue<[AirshipRequestAuth: Task<ResolvedAuth, any Error>]> = AirshipAtomicValue([AirshipRequestAuth: Task<ResolvedAuth, any Error>]())
 
     @MainActor
     var channelAuthTokenProvider: (any AuthTokenProvider)?

@@ -297,10 +297,7 @@
 		6E1BACDB2719ED7D0038399E /* ScrollLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACDA2719ED7D0038399E /* ScrollLayout.swift */; };
 		6E1BACDD2719FC0A0038399E /* ViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1BACDC2719FC0A0038399E /* ViewFactory.swift */; };
 		6E1C9C3A271E90EB009EF9EF /* LayoutModelsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C39271E90EB009EF9EF /* LayoutModelsTest.swift */; };
-		6E1C9C47271F76E9009EF9EF /* ViewConstraintsViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C46271F76E9009EF9EF /* ViewConstraintsViewModifier.swift */; };
-		6E1C9C49271F77F2009EF9EF /* ForegroundColorViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C48271F77F2009EF9EF /* ForegroundColorViewModifier.swift */; };
 		6E1C9C4B271F7878009EF9EF /* BackgroundColorViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C4A271F7878009EF9EF /* BackgroundColorViewModifier.swift */; };
-		6E1C9C4D271F78AE009EF9EF /* MarginViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C4C271F78AE009EF9EF /* MarginViewModifier.swift */; };
 		6E1CBD812BA3A30300519D9C /* AirshipEmbeddedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CBD802BA3A30300519D9C /* AirshipEmbeddedInfo.swift */; };
 		6E1CBDB62BA4CF0C00519D9C /* MessageDisplayHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CBDB52BA4CF0C00519D9C /* MessageDisplayHistory.swift */; };
 		6E1CBDE32BA51ED100519D9C /* InAppDisplayImpressionRuleProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CBDE22BA51ED100519D9C /* InAppDisplayImpressionRuleProvider.swift */; };
@@ -1614,10 +1611,7 @@
 		6E1BACDA2719ED7D0038399E /* ScrollLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollLayout.swift; sourceTree = "<group>"; };
 		6E1BACDC2719FC0A0038399E /* ViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewFactory.swift; sourceTree = "<group>"; };
 		6E1C9C39271E90EB009EF9EF /* LayoutModelsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutModelsTest.swift; sourceTree = "<group>"; };
-		6E1C9C46271F76E9009EF9EF /* ViewConstraintsViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewConstraintsViewModifier.swift; sourceTree = "<group>"; };
-		6E1C9C48271F77F2009EF9EF /* ForegroundColorViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForegroundColorViewModifier.swift; sourceTree = "<group>"; };
 		6E1C9C4A271F7878009EF9EF /* BackgroundColorViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundColorViewModifier.swift; sourceTree = "<group>"; };
-		6E1C9C4C271F78AE009EF9EF /* MarginViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarginViewModifier.swift; sourceTree = "<group>"; };
 		6E1CBD802BA3A30300519D9C /* AirshipEmbeddedInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipEmbeddedInfo.swift; sourceTree = "<group>"; };
 		6E1CBDB52BA4CF0C00519D9C /* MessageDisplayHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDisplayHistory.swift; sourceTree = "<group>"; };
 		6E1CBDE22BA51ED100519D9C /* InAppDisplayImpressionRuleProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppDisplayImpressionRuleProvider.swift; sourceTree = "<group>"; };
@@ -3184,10 +3178,7 @@
 				6E7112992880DACB004942E4 /* VisibilityViewModifier.swift */,
 				6E3B32CB27559D8B00B89C7B /* FormInputViewModifier.swift */,
 				A684939C273436370021675E /* FontViewModifier.swift */,
-				6E1C9C46271F76E9009EF9EF /* ViewConstraintsViewModifier.swift */,
-				6E1C9C48271F77F2009EF9EF /* ForegroundColorViewModifier.swift */,
 				6E1C9C4A271F7878009EF9EF /* BackgroundColorViewModifier.swift */,
-				6E1C9C4C271F78AE009EF9EF /* MarginViewModifier.swift */,
 				6EDE5F4E2BA248FF00E33D04 /* TouchViewModifier.swift */,
 			);
 			name = ViewModifiers;
@@ -5752,7 +5743,6 @@
 				6EB11C8D2698C50F00DC698F /* AudienceUtils.swift in Sources */,
 				6EED682D2CE28CC10087CDCB /* ThomasValidationInfo.swift in Sources */,
 				6E4A4FDA2A30358F0049FEFC /* TagsActionArgs.swift in Sources */,
-				6E1C9C47271F76E9009EF9EF /* ViewConstraintsViewModifier.swift in Sources */,
 				6E57CE3728DBBD9A00287601 /* LiveActivityRegistry.swift in Sources */,
 				6EBFA9AD2D15DA73002BA3E9 /* HashChecker.swift in Sources */,
 				6E96ED0A294135500053CC91 /* EventManager.swift in Sources */,
@@ -5900,7 +5890,6 @@
 				6E664BCA26C4852B00A2C8E5 /* AddCustomEventAction.swift in Sources */,
 				6EC922E32D838DFF000A3A59 /* ThomasFormPayloadGenerator.swift in Sources */,
 				6ECDDE7929B804FB009D79DB /* ChannelAuthTokenAPIClient.swift in Sources */,
-				6E1C9C49271F77F2009EF9EF /* ForegroundColorViewModifier.swift in Sources */,
 				6E77CD4A2D8A225E0057A52C /* SMSValidatorAPIClient.swift in Sources */,
 				6E77CD4B2D8A225E0057A52C /* AirshipInputValidator.swift in Sources */,
 				6E952920268A6C1500398B54 /* SearchEventTemplate.swift in Sources */,
@@ -6048,7 +6037,6 @@
 				6EC755992A4E115400851ABB /* DeviceAudienceSelector.swift in Sources */,
 				6E44626729E6813A00CB2B56 /* AsyncSerialQueue.swift in Sources */,
 				6EF1E92A2CD0069B005EAA07 /* PagerSwipeDirection.swift in Sources */,
-				6E1C9C4D271F78AE009EF9EF /* MarginViewModifier.swift in Sources */,
 				6E6ED1692683DBC300A2CBD0 /* AirshipNetworkChecker.swift in Sources */,
 				6E29474D2AD5DA3B009EC6DD /* LiveActivityRegistrationStatus.swift in Sources */,
 				6E4E5B3D26E7F91600198175 /* Attributes.swift in Sources */,

@@ -156,20 +156,16 @@ extension View {
     @ViewBuilder
     func thomasEnableBehaviors(
         _ behaviors: [ThomasEnableBehavior]?,
-        onApply: ((Bool) -> Void)? = nil
+        onApply: @escaping (Bool) -> Void
     ) -> some View {
 
         if let behaviors = behaviors {
-            if let onApply = onApply {
-                self.modifier(
-                    AggregateEnableBehavior(
-                        behaviors: behaviors,
-                        onApply: onApply
-                    )
+            self.modifier(
+                AggregateEnableBehavior(
+                    behaviors: behaviors,
+                    onApply: onApply
                 )
-            } else {
-                self.addBehaviorModifiers(behaviors)
-            }
+            )
         } else {
             self
         }

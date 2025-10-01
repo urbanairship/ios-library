@@ -34,7 +34,7 @@ public protocol JavaScriptEnvironmentProtocol: Sendable {
 /// The JavaScript environment builder that is used by the native bridge.
 public final class JavaScriptEnvironment: JavaScriptEnvironmentProtocol, Sendable {
 
-    private let extensions = AirshipAtomicValue([String]())
+    private let extensions: AirshipAtomicValue<[String]> = AirshipAtomicValue([String]())
     private let channel: @Sendable () -> any AirshipChannel
     private let contact: @Sendable () -> any AirshipContact
 

@@ -111,7 +111,7 @@ struct CheckboxController: View {
         }
 
         private func updateFormState(selected: Set<CheckboxState.Selected>) {
-            let value = Set(selected.map { $0.reportingValue })
+            let value: Set<AirshipJSON> = Set(selected.map { $0.reportingValue })
             let formValue: ThomasFormField.Value = .multipleCheckbox(value)
             let field: ThomasFormField = if checkValid(value) {
                 ThomasFormField.validField(

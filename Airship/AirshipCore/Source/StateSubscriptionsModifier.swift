@@ -28,22 +28,3 @@ internal struct StateTriggerModifier: ViewModifier {
         }
     }
 }
-
-
-extension View {
-
-    @ViewBuilder
-    func thomasStateTriggers(
-        _ triggers: [ThomasStateTriggers]?
-    ) -> some View {
-        if let triggers = triggers, !triggers.isEmpty {
-            self.modifier(
-                StateTriggerModifier(
-                    triggers: triggers
-                )
-            )
-        } else {
-            self
-        }
-    }
-}

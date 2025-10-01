@@ -335,8 +335,8 @@ class ThomasFormState: ObservableObject {
     }
 
     private func updateActiveFields(children: [Child]) {
-        let currentKeys = Set(self.activeFields.values.map { $0.identifier })
-        let incomingKeys = Set(children.map { $0.field.identifier })
+        let currentKeys: Set<String> = Set(self.activeFields.values.map { $0.identifier })
+        let incomingKeys: Set<String> = Set(children.map { $0.field.identifier })
         guard currentKeys != incomingKeys else { return }
 
         self.activeFields = Dictionary(

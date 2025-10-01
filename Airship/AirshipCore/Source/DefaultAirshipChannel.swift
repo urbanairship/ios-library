@@ -23,7 +23,7 @@ final class DefaultAirshipChannel: AirshipChannel, Sendable {
     private let channelRegistrar: any ChannelRegistrarProtocol
     private let notificationCenter: AirshipNotificationCenter
     private let appStateTracker: any AppStateTrackerProtocol
-    private let tagsLock = AirshipLock()
+    private let tagsLock: AirshipLock = AirshipLock()
     private let subscription: AirshipUnsafeSendableWrapper<AnyCancellable?> = AirshipUnsafeSendableWrapper(nil)
 
     private let liveActivityQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
@@ -107,7 +107,7 @@ final class DefaultAirshipChannel: AirshipChannel, Sendable {
         }
     }
 
-    private let isChannelTagRegistrationEnabledContainer = AirshipAtomicValue(true)
+    private let isChannelTagRegistrationEnabledContainer: AirshipAtomicValue<Bool> = AirshipAtomicValue(true)
     public var isChannelTagRegistrationEnabled: Bool {
         get { return isChannelTagRegistrationEnabledContainer.value }
         set { isChannelTagRegistrationEnabledContainer.value = newValue }
@@ -243,7 +243,7 @@ final class DefaultAirshipChannel: AirshipChannel, Sendable {
         ) as? [String] {
             let existingChannelTags = self.tags
             if existingChannelTags.count > 0 {
-                let combinedTagsSet = Set(existingPushTags)
+                let combinedTagsSet: Set<String> = Set(existingPushTags)
                     .union(
                         Set(existingChannelTags)
                     )

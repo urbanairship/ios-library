@@ -1090,10 +1090,10 @@ actor ContactManager: ContactManagerProtocol {
 
         if contactInfo.isAnonymous {
             let data = self.anonData
-            var tags = data?.tags ?? [:]
-            var attributes = data?.attributes ?? [:]
-            var channels = Set(data?.channels ?? [])
-            var subscriptionLists = data?.subscriptionLists ?? [:]
+            var tags: [String: [String]] = data?.tags ?? [:]
+            var attributes: [String: AirshipJSON] = data?.attributes ?? [:]
+            var channels: Set<AnonContactData.Channel> = Set(data?.channels ?? [])
+            var subscriptionLists: [String: [ChannelScope]] = data?.subscriptionLists ?? [:]
 
             tags = AudienceUtils.applyTagUpdates(
                 data?.tags,

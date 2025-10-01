@@ -223,7 +223,7 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
 
 
 fileprivate final class OneTimeValue<T: Equatable & Sendable>: @unchecked Sendable {
-    private let lock = AirshipLock()
+    private let lock: AirshipLock = AirshipLock()
     private var atomicValue: AirshipAtomicValue<T?> = AirshipAtomicValue(nil)
     private let provider: () -> T
 

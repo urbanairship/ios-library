@@ -46,12 +46,7 @@ struct LabelButton : View {
                 view.padding([.leading, .trailing], 12)
             }
             .constraints(constraints)
-            .thomasBackground(
-                color: self.info.commonProperties.backgroundColor,
-                colorOverrides: self.info.commonOverrides?.backgroundColor,
-                border: self.info.commonProperties.border,
-                borderOverrides: self.info.commonOverrides?.border
-            )
+            .thomasCommon(info, scope: [.background])
             .accessible(
                 self.info.accessible,
                 associatedLabel: associatedLabel,
@@ -59,8 +54,7 @@ struct LabelButton : View {
             )
             .background(Color.airshipTappableClear)
         }
-        .thomasEnableBehaviors(self.info.commonProperties.enabled)
-        .thomasVisibility(self.info.commonProperties.visibility)
+        .thomasCommon(info, scope: [.enableBehaviors, .visibility])
         .environment(
             \.layoutState,
              layoutState.override(

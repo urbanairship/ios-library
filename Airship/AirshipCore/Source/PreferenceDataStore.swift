@@ -11,7 +11,7 @@ public final class PreferenceDataStore: @unchecked Sendable {
     
     private var pending: [String: [Any?]] = [:]
     private var cache: [String: Cached] = [:]
-    private let lock = AirshipLock()
+    private let lock: AirshipLock = AirshipLock()
     private let dispatcher: any UADispatcher
     private var deviceID: any AirshipDeviceIDProtocol
 

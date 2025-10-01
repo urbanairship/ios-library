@@ -258,7 +258,7 @@ public extension AirshipJSON {
     }
 
     static func makeObject(builderBlock: (inout AirshipJSONObjectBuilder) -> Void) -> AirshipJSON {
-        var builder = AirshipJSONObjectBuilder()
+        var builder: AirshipJSONObjectBuilder = AirshipJSONObjectBuilder()
         builderBlock(&builder)
         return builder.build()
     }

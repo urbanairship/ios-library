@@ -5,7 +5,7 @@ import Foundation
 /// A class that manages a list of cached values, where each value has its own expiry.
 final class CachedList<Value> where Value: Any {
     private let date: any AirshipDateProtocol
-    private let lock = AirshipLock()
+    private let lock: AirshipLock = AirshipLock()
     private var cachedValues: [(Value, Date)] = []
 
     var values: [Value] {

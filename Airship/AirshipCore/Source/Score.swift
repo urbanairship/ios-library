@@ -272,7 +272,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                         .opacity(isOn ? 1 : 0)
                     }
                     Text(String(self.value))
-                        .textAppearance(style.bindings.selected.textAppearance)
+                        .textAppearance(style.bindings.selected.textAppearance, colorScheme: colorScheme)
                 }
                 .opacity(isOn ? 1 : 0)
                 .airshipApplyIf(disabled) { view in
@@ -290,9 +290,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                         }
                     }
                     Text(String(self.value))
-                        .textAppearance(
-                            style.bindings.unselected.textAppearance
-                        )
+                        .textAppearance(style.bindings.unselected.textAppearance, colorScheme: colorScheme)
                 }
                 .opacity(isOn ? 0 : 1)
             }

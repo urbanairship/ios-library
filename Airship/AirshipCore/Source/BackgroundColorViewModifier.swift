@@ -268,10 +268,11 @@ struct CustomCornerRadii: Equatable, Animatable {
         }
     }
 
-    init(topLeading: CGFloat = 0,
-                 topTrailing: CGFloat = 0,
-                 bottomLeading: CGFloat = 0,
-                 bottomTrailing: CGFloat = 0
+    init(
+        topLeading: CGFloat = 0,
+        topTrailing: CGFloat = 0,
+        bottomLeading: CGFloat = 0,
+        bottomTrailing: CGFloat = 0
     ) {
         self.topLeading = topLeading
         self.topTrailing = topTrailing

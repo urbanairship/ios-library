@@ -14,7 +14,7 @@ struct LinearLayout: View {
     let constraints: ViewConstraints
 
     @State
-    private var numberGenerator = RepeatableNumberGenerator()
+    private var numberGenerator: RepeatableNumberGenerator = RepeatableNumberGenerator()
 
     @ViewBuilder
     @MainActor
@@ -166,7 +166,7 @@ struct LinearLayout: View {
 class RepeatableNumberGenerator: RandomNumberGenerator {
     private var numbers: [UInt64] = []
     private var index = 0
-    private var numberGenerator = SystemRandomNumberGenerator()
+    private var numberGenerator: SystemRandomNumberGenerator = SystemRandomNumberGenerator()
 
     func next() -> UInt64 {
         defer {

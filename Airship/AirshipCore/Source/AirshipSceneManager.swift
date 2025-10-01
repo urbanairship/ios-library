@@ -24,7 +24,7 @@ public final class AirshipSceneManager: AirshipSceneManagerProtocol, Sendable {
 
 #if !os(watchOS)
 
-    private let scenes = AirshipAtomicValue([UIWindowScene]())
+    private let scenes: AirshipAtomicValue<[UIWindowScene]> = AirshipAtomicValue([UIWindowScene]())
 
     private let notificationCenter: AirshipNotificationCenter
 

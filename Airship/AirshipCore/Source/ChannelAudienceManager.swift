@@ -45,7 +45,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     private let audienceOverridesProvider: any AudienceOverridesProvider
 
     private let date: any AirshipDateProtocol
-    private let updateLock = AirshipLock()
+    private let updateLock: AirshipLock = AirshipLock()
 
     private let cachedSubscriptionLists: CachedValue<[String]>
 

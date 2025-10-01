@@ -33,12 +33,7 @@ struct ButtonLayout : View {
     var body: some View {
         if isVoiceOverRunning, !isButtonForAccessibility {
             ViewFactory.createView(self.info.properties.view, constraints: constraints)
-                .thomasBackground(
-                    color: self.info.commonProperties.backgroundColor,
-                    colorOverrides: self.info.commonOverrides?.backgroundColor,
-                    border: self.info.commonProperties.border,
-                    borderOverrides: self.info.commonOverrides?.border
-                )
+                .thomasCommon(self.info, scope: [.background, .visibility])
                 .accessibilityHidden(info.accessible.accessibilityHidden ?? false)
         } else {
             AirshipButton(
@@ -51,16 +46,10 @@ struct ButtonLayout : View {
                 tapEffect: self.info.properties.tapEffect
             ) {
                 ViewFactory.createView(self.info.properties.view, constraints: constraints)
-                    .thomasBackground(
-                        color: self.info.commonProperties.backgroundColor,
-                        colorOverrides: self.info.commonOverrides?.backgroundColor,
-                        border: self.info.commonProperties.border,
-                        borderOverrides: self.info.commonOverrides?.border
-                    )
+                    .thomasCommon(self.info, scope: [.background])
                     .background(Color.airshipTappableClear)
             }
-            .thomasEnableBehaviors(self.info.commonProperties.enabled)
-            .thomasVisibility(self.info.commonProperties.visibility)
+            .thomasCommon(self.info, scope: [.enableBehaviors, .visibility])
             .environment(
                 \.layoutState,
                  layoutState.override(

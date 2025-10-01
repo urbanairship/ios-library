@@ -102,13 +102,13 @@ public protocol AirshipPermissionsManager: Sendable {
 }
 
 final class DefaultAirshipPermissionsManager: AirshipPermissionsManager {
-    private let delegateMap = AirshipAtomicValue([AirshipPermission: any AirshipPermissionDelegate]())
+    private let delegateMap: AirshipAtomicValue<[AirshipPermission: any AirshipPermissionDelegate]> = AirshipAtomicValue([AirshipPermission: any AirshipPermissionDelegate]())
     
-    private let airshipEnablers = AirshipAtomicValue([AirshipPermission: [@Sendable () async -> Void]]())
+    private let airshipEnablers: AirshipAtomicValue<[AirshipPermission: [@Sendable () async -> Void]]> = AirshipAtomicValue([AirshipPermission: [@Sendable () async -> Void]]())
 
     private let queue: AirshipSerialQueue = AirshipSerialQueue()
 
-    private let extenders = AirshipAtomicValue([AirshipPermission: [@Sendable (AirshipPermissionStatus) async -> Void]]())
+    private let extenders: AirshipAtomicValue<[AirshipPermission: [@Sendable (AirshipPermissionStatus) async -> Void]]> = AirshipAtomicValue([AirshipPermission: [@Sendable (AirshipPermissionStatus) async -> Void]]())
     
     private let statusUpdates: AirshipAsyncChannel<(AirshipPermission, AirshipPermissionStatus)> = AirshipAsyncChannel()
     private let appStateTracker: any AppStateTrackerProtocol

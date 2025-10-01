@@ -4,7 +4,7 @@ import Foundation
 
 final class CachedValue<Value>: @unchecked Sendable where Value: Any {
     private let date: any AirshipDateProtocol
-    private let lock = AirshipLock()
+    private let lock: AirshipLock = AirshipLock()
     private var expiration: Date?
 
     private var _value: Value?

@@ -85,7 +85,8 @@ extension Text {
     @ViewBuilder
     @MainActor
     func textAppearance(
-        _ textAppearance: ThomasTextAppearance?
+        _ textAppearance: ThomasTextAppearance?,
+        colorScheme: ColorScheme
     ) -> some View {
         if let textAppearance = textAppearance {
             self.applyTextStyles(styles: textAppearance.styles)
@@ -95,7 +96,7 @@ extension Text {
                 .modifier(
                     TextAppearanceViewModifier(textAppearance: textAppearance)
                 )
-                .foreground(textAppearance.color)
+                .foreground(textAppearance.color, colorScheme: colorScheme)
         } else {
             self
         }
@@ -106,7 +107,8 @@ extension View {
     
     @ViewBuilder
     func applyViewAppearance(
-        _ textAppearance: ThomasTextAppearance?
+        _ textAppearance: ThomasTextAppearance?,
+        colorScheme: ColorScheme
     ) -> some View {
         if let textAppearance = textAppearance {
             self
@@ -116,7 +118,7 @@ extension View {
                 .modifier(
                     TextAppearanceViewModifier(textAppearance: textAppearance)
                 )
-                .foreground(textAppearance.color)
+                .foreground(textAppearance.color, colorScheme: colorScheme)
         } else {
             self
         }

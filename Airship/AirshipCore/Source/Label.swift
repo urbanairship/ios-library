@@ -100,7 +100,7 @@ struct Label: View {
             }
 
             self.textView
-                .textAppearance(resolvedTextAppearance)
+                .textAppearance(resolvedTextAppearance, colorScheme: colorScheme)
                 .truncationMode(.tail)
 
 

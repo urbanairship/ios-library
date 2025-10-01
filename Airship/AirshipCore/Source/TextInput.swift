@@ -139,7 +139,7 @@ struct TextInput: View {
             ZStack {
                 if let hint = self.info.properties.placeholder ?? self.viewModel.selectedSMSLocale?.prefix {
                     Text(hint)
-                        .textAppearance(placeHolderTextAppearance())
+                        .textAppearance(placeHolderTextAppearance(), colorScheme: colorScheme)
                         .padding(5)
                         .constraints(constraints, alignment: self.placeHolderAlignment)
                         .opacity(self.viewModel.input.isEmpty && !isEditing ? 1 : 0)
@@ -514,7 +514,7 @@ struct AirshipTextField: View {
             .onTapGesture {
                 self.focused = true
             }
-            .applyViewAppearance(self.info.properties.textAppearance)
+            .applyViewAppearance(self.info.properties.textAppearance, colorScheme: colorScheme)
             .airshipApplyIf(isUnderlined, transform: { content in
                 content.underline()
             })

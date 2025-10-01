@@ -56,25 +56,3 @@ internal struct EventHandlerViewModifier: ViewModifier {
 }
 
 
-extension View {
-
-    @ViewBuilder
-    func thomasEventHandlers(
-        _ eventHandlers: [ThomasEventHandler]?,
-        formInputID: String? = nil
-    ) -> some View {
-
-        if let handlers = eventHandlers {
-            self.modifier(
-                EventHandlerViewModifier(
-                    eventHandlers: handlers,
-                    formInputID: formInputID
-                )
-            )
-        } else {
-            self
-        }
-    }
-}
-
-

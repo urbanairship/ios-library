@@ -22,14 +22,7 @@ struct IconView: View {
     var body: some View {
         Icons.icon(info: resolvedIcon, colorScheme: colorScheme)
             .constraints(constraints, fixedSize: true)
-            .thomasBackground(
-                color: self.info.commonProperties.backgroundColor,
-                colorOverrides: self.info.commonOverrides?.backgroundColor,
-                border: self.info.commonProperties.border,
-                borderOverrides: self.info.commonOverrides?.border
-            )
             .background(Color.airshipTappableClear)
-            .thomasEnableBehaviors(self.info.commonProperties.enabled)
-            .thomasVisibility(self.info.commonProperties.visibility)
+            .thomasCommon(self.info)
     }
 }

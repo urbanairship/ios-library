@@ -111,7 +111,7 @@ struct ModalView: View {
                 }
 
                 Rectangle()
-                    .foreground(placement.shade)
+                    .foreground(placement.shade, colorScheme: colorScheme)
                     .ignoresSafeArea(.all)
                     .airshipApplyIf(self.presentation.dismissOnTouchOutside == true) {
                         view in

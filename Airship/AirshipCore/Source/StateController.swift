@@ -5,10 +5,15 @@ import SwiftUI
 
 @MainActor
 struct StateController: View {
-    let info: ThomasViewInfo.StateController
-    let constraints: ViewConstraints
-    @EnvironmentObject var state: ThomasState
-    @StateObject var mutableState: ThomasState.MutableState
+    private let info: ThomasViewInfo.StateController
+    private let constraints: ViewConstraints
+
+    @EnvironmentObject
+    private var state: ThomasState
+
+    @StateObject
+    private var mutableState: ThomasState.MutableState
+
     init(
         info: ThomasViewInfo.StateController,
         constraints: ViewConstraints
