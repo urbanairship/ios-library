@@ -68,3 +68,8 @@
 "ua_pause" = "Pausar";
 "ua_stop" = "Aturar";
 "ua_form_processing_error" = "Error en processar el formulari. Si us plau, torneu-ho a provar";
+"ua_close" = "Tancar";
+"ua_mute" = "Silenciar";
+"ua_unmute" = "Activar so";
+"ua_required_field" = "* Obligatori";
+"ua_invalid_form_message" = "Si us plau, corregiu els camps no vàlids per continuar";

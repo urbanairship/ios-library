@@ -68,3 +68,8 @@
 "ua_pause" = "Laat wag";
 "ua_stop" = "Hou op";
 "ua_form_processing_error" = "Fout met die verwerking van vorm. Probeer asseblief weer";
+"ua_close" = "Sluit";
+"ua_mute" = "Demp";
+"ua_unmute" = "Ontdemp";
+"ua_required_field" = "* Verplig";
+"ua_invalid_form_message" = "Herstel asseblief die ongeldige velde om voort te gaan";

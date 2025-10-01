@@ -11,9 +11,14 @@ public final class LandingPageAction: AirshipAction {
 
     private static let productID: String = "landing_page"
     private static let queue: String = "landing_page"
-    
+
     /// Landing page action names.
     public static let defaultNames: [String] = ["landing_page_action", "^p"]
+
+    /// Default predicate - rejects `ActionSituation.foregroundPush`
+    public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in
+        return args.situation != .foregroundPush
+    }
 
     /// Schedule extender block.
     public typealias ScheduleExtender = @Sendable (ActionArguments, inout AutomationSchedule) -> Void

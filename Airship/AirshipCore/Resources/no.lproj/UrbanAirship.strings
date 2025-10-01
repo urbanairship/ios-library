@@ -68,3 +68,8 @@
 "ua_pause" = "Pause";
 "ua_stop" = "Stopp";
 "ua_form_processing_error" = "Feil ved behandling av skjema. Vennligst prøv igjen";
+"ua_close" = "Lukk";
+"ua_mute" = "Demp";
+"ua_unmute" = "Opphev demping";
+"ua_required_field" = "* Påkrevd";
+"ua_invalid_form_message" = "Vennligst rett opp de ugyldige feltene for å fortsette";

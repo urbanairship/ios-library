@@ -68,3 +68,8 @@
 "ua_pause" = "Premor";
 "ua_stop" = "Ustavi";
 "ua_form_processing_error" = "Napaka pri obdelavi obrazca. Poskusite znova";
+"ua_close" = "Zapri";
+"ua_mute" = "Utišaj";
+"ua_unmute" = "Prekliči utišanje";
+"ua_required_field" = "* Obvezno";
+"ua_invalid_form_message" = "Prosimo, popravite neveljavna polja za nadaljevanje";

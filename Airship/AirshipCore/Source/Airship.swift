@@ -301,9 +301,9 @@ public final class Airship: Sendable {
                 NotificationCenter.default.addObserver(
                     forName: UIApplication.didFinishLaunchingNotification,
                     object: nil,
-                    queue: .main
+                    queue: nil
                 ) { _ in
-                    Task { @MainActor in
+                    MainActor.assumeIsolated {
                         if UIApplication.shared.delegate != nil {
                             AirshipLogger.info("App delegate now available via didFinishLaunching, performing automatic integration.")
                             UAAutoIntegration.integrate(with: integrationDelegate)

@@ -68,3 +68,8 @@
 "ua_pause" = "ለአጭር ጊዜ ቆም";
 "ua_stop" = "አቁም";
 "ua_form_processing_error" = "ቅጹን በማስኬድ ላይ ስህተት። እባክዎ እንደገና ይሞክሩ";
+"ua_close" = "ዝጋ";
+"ua_mute" = "ድምፅ አጥፋ";
+"ua_unmute" = "ድምፅ አብራ";
+"ua_required_field" = "* አስፈላጊ";
+"ua_invalid_form_message" = "ለመቀጠል እባክዎን ልክ ያልሆኑ መስኮችን ያስተካክሉ";

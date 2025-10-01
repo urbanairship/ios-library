@@ -68,3 +68,8 @@
 "ua_pause" = "Pauziraj";
 "ua_stop" = "Zaustavi";
 "ua_form_processing_error" = "Pogreška u obradi obrasca. Molimo pokušajte ponovno";
+"ua_close" = "Zatvori";
+"ua_mute" = "Isključi zvuk";
+"ua_unmute" = "Uključi zvuk";
+"ua_required_field" = "* Obavezno";
+"ua_invalid_form_message" = "Molimo ispravite nevažeća polja za nastavak";

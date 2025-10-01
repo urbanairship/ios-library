@@ -68,3 +68,8 @@
 "ua_pause" = "مکث";
 "ua_stop" = "توقف";
 "ua_form_processing_error" = "خطا در پردازش فرم. لطفا دوباره تلاش کنید";
+"ua_close" = "بستن";
+"ua_mute" = "بی‌صدا کردن";
+"ua_unmute" = "صدادار کردن";
+"ua_required_field" = "* الزامی";
+"ua_invalid_form_message" = "لطفاً فیلدهای نامعتبر را برای ادامه اصلاح کنید";

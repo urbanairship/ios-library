@@ -68,3 +68,8 @@
 "ua_pause" = "विराम";
 "ua_stop" = "रोकें";
 "ua_form_processing_error" = "फॉर्म प्रोसेसिंग में त्रुटि। कृपया पुनः प्रयास करें";
+"ua_close" = "बंद करें";
+"ua_mute" = "म्यूट करें";
+"ua_unmute" = "अनम्यूट करें";
+"ua_required_field" = "* आवश्यक";
+"ua_invalid_form_message" = "कृपया जारी रखने के लिए अमान्य फ़ील्ड को ठीक करें";

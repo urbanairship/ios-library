@@ -68,3 +68,8 @@
 "ua_pause" = "Sitisha";
 "ua_stop" = "Simamisha";
 "ua_form_processing_error" = "Hitilafu ya kusindika fomu. Tafadhali jaribu tena";
+"ua_close" = "Funga";
+"ua_mute" = "Nyamazisha";
+"ua_unmute" = "Ondoa unyamavishi";
+"ua_required_field" = "* Inahitajika";
+"ua_invalid_form_message" = "Tafadhali sahihisha sehemu zisizo sahihi ili kuendelea";

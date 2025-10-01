@@ -68,3 +68,8 @@
 "ua_pause" = "Jeda";
 "ua_stop" = "Berhenti";
 "ua_form_processing_error" = "Ralat memproses borang. Sila cuba lagi";
+"ua_close" = "Tutup";
+"ua_mute" = "Bisukan";
+"ua_unmute" = "Nyahbisu";
+"ua_required_field" = "* Wajib";
+"ua_invalid_form_message" = "Sila betulkan medan yang tidak sah untuk meneruskan";

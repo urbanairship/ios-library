@@ -132,7 +132,8 @@ fileprivate struct AutomationActionManifest : ActionsManifest {
     var manifest: [[String] : () -> ActionEntry] = [
         LandingPageAction.defaultNames: {
             return ActionEntry(
-                action: LandingPageAction()
+                action: LandingPageAction(),
+                predicate: LandingPageAction.defaultPredicate
             )
         }
     ]

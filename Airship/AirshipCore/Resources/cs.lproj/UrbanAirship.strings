@@ -68,3 +68,8 @@
 "ua_pause" = "Pozastavit";
 "ua_stop" = "Zastavit";
 "ua_form_processing_error" = "Chyba při zpracování formuláře. Zkuste to prosím znovu";
+"ua_close" = "Zavřít";
+"ua_mute" = "Ztlumit";
+"ua_unmute" = "Zrušit ztlumení";
+"ua_required_field" = "* Povinné";
+"ua_invalid_form_message" = "Opravte prosím neplatná pole a pokračujte";

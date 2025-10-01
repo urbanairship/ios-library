@@ -68,3 +68,8 @@
 "ua_pause" = "Misa";
 "ua_stop" = "Yeka";
 "ua_form_processing_error" = "Iphutha ekucubunguleni ifomu. Sicela uzame futhi";
+"ua_close" = "Vala";
+"ua_mute" = "Thulisa";
+"ua_unmute" = "Susa ukuthula";
+"ua_required_field" = "* Kuyadingeka";
+"ua_invalid_form_message" = "Sicela ulungise izinkambu ezingavumelekile ukuze uqhubeke";

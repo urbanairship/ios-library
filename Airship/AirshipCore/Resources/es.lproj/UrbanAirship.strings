@@ -68,3 +68,8 @@
 "ua_pause" = "Pausar";
 "ua_stop" = "Detener";
 "ua_form_processing_error" = "Error al procesar el formulario. Por favor, inténtelo de nuevo";
+"ua_close" = "Cerrar";
+"ua_mute" = "Silenciar";
+"ua_unmute" = "Activar sonido";
+"ua_required_field" = "* Obligatorio";
+"ua_invalid_form_message" = "Por favor, corrija los campos no válidos para continuar";

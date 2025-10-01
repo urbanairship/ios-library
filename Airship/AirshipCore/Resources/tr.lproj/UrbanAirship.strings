@@ -68,3 +68,8 @@
 "ua_pause" = "Duraklat";
 "ua_stop" = "Durdur";
 "ua_form_processing_error" = "Form işlenirken hata oluştu. Lütfen tekrar deneyin";
+"ua_close" = "Kapat";
+"ua_mute" = "Sessiz";
+"ua_unmute" = "Sesi Aç";
+"ua_required_field" = "* Zorunlu";
+"ua_invalid_form_message" = "Devam etmek için lütfen geçersiz alanları düzeltin";

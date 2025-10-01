@@ -68,3 +68,8 @@
 "ua_pause" = "Pausieren";
 "ua_stop" = "Stoppen";
 "ua_form_processing_error" = "Fehler bei der Verarbeitung des Formulars. Bitte versuchen Sie es erneut";
+"ua_close" = "Schließen";
+"ua_mute" = "Stumm schalten";
+"ua_unmute" = "Stummschaltung aufheben";
+"ua_required_field" = "* Erforderlich";
+"ua_invalid_form_message" = "Bitte beheben Sie die ungültigen Felder, um fortzufahren";

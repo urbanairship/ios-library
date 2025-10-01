@@ -68,3 +68,8 @@
 "ua_pause" = "暂停";
 "ua_stop" = "停止";
 "ua_form_processing_error" = "处理表单时出错。请重试";
+"ua_close" = "关闭";
+"ua_mute" = "静音";
+"ua_unmute" = "取消静音";
+"ua_required_field" = "* 必填";
+"ua_invalid_form_message" = "请修正无效字段以继续";

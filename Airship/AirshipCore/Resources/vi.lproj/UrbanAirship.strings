@@ -68,3 +68,8 @@
 "ua_pause" = "Tạm dừng";
 "ua_stop" = "Dừng";
 "ua_form_processing_error" = "Lỗi xử lý biểu mẫu. Vui lòng thử lại";
+"ua_close" = "Đóng";
+"ua_mute" = "Tắt tiếng";
+"ua_unmute" = "Bật tiếng";
+"ua_required_field" = "* Bắt buộc";
+"ua_invalid_form_message" = "Vui lòng sửa các trường không hợp lệ để tiếp tục";
