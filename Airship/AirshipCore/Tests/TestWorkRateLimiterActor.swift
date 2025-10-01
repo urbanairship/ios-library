@@ -33,14 +33,20 @@ actor TestWorkRateLimiter {
     }
 
     func nextAvailable(_ keys: [String]) -> TimeInterval {
-        return
-            keys.map { key in
-                guard case .overLimit(let delay) = status(key) else {
-                    return 0.0
-                }
-                return delay
+        
+        func maxDelay(between a: String, b: String) -> Bool {
+            let statusA = self.status(a)
+            let statusB = self.status(b)
+            if case .overLimit(let delayA) = statusA, case .overLimit(let delayB) = statusB {
+                return delayA > delayB
             }
-            .max() ?? 0.0
+            return false
+        }
+
+        guard let maxKey = keys.max(by: { maxDelay(between: $0, b: $1) }), case .overLimit(let delay) = self.status(maxKey) else {
+            return 0.0
+        }
+        return delay
     }
 
     func trackIfWithinLimit(_ keys: [String]) -> Bool {
