@@ -2,84 +2,103 @@
 
 The Airship SDK 20.0 introduces major architectural changes including UI refactors for Message Center and Preference Center, a protocol-first architecture for core components, and modern block-based callback alternatives to delegate patterns. The minimum deployment target is raised to iOS 16+. This guide outlines the necessary changes for migrating your app from SDK 19.x to SDK 20.0.
 
----
+**Required Migration Tasks:**
+- Update Xcode to 26+
+- Update deployment target to iOS 16+
+- Update SwiftUI view calls for Message Center/Preference Center
 
-## SDK 20 requirements
+**Optional Migration Tasks:**
+- Migrate delegate patterns to block-based callbacks
+- Update deprecated API calls to new APIs
 
-- **Xcode 26 or newer**
-- iOS 16+
-- tvOS 18+
-- visionOS 1+
+## Table of Contents
 
----
+- [Breaking Changes](#breaking-changes)
+  - [Preference Center Refactor](#preference-center-refactor)
+  - [Message Center Refactor](#message-center-refactor)
+  - [Protocol Architecture Changes](#protocol-architecture-changes)
+- [Deprecated APIs](#deprecated-apis)
+  - [Attribute Management](#attribute-management)
+  - [Preference Center Display](#preference-center-display)
+- [Block-Based Callbacks](#block-based-callbacks)
+  - [Push Notifications](#push-notifications)
+  - [Registration](#registration)
+  - [Deep Links](#deep-links)
+  - [URL Allow List](#url-allow-list)
+  - [Displaying the Message Center](#displaying-the-message-center)
+  - [Displaying the Preference Center](#displaying-the-preference-center)
+  - [In-App Messaging Display Control](#in-app-messaging-display-control)
+- [Troubleshooting](#troubleshooting)
 
-## Preference Center Refactor
+## Breaking Changes
 
-The Preference Center has been refactored to provide a clearer separation between content and navigation, and to simplify customization.
+### Preference Center Refactor
 
-### View Hierarchy Changes
+The Preference Center has been refactored to provide clearer separation between content and navigation, and to simplify customization.
 
-The main view `PreferenceCenterView` is now a wrapper that provides a `NavigationStack`. The core content, previously known as `PreferenceCenterList`, has been renamed to `PreferenceCenterContent`.
+#### View Hierarchy Changes
 
-- `PreferenceCenterView`: Use this view for a standard Preference Center implementation with navigation.
-- `PreferenceCenterContent`: Use this view if you want to provide your own navigation or embed the Preference Center within another view.
+The Preference Center now follows a "Container vs. Content" architecture that separates navigation from content. The main view `PreferenceCenterView` is now a wrapper that provides a `NavigationStack`. The core content, previously known as `PreferenceCenterList`, has been renamed to `PreferenceCenterContent`.
 
-### API Updates
+- **`PreferenceCenterView`**: This is the container view. It sets up the `NavigationStack` and is responsible for the navigation bar's title and back button. Use this view for a standard Preference Center implementation with navigation.
+- **`PreferenceCenterContent`**: This is the content view. It loads and displays the list of preferences. Use this view if you want to provide your own navigation or embed the Preference Center within another view.
+
+#### API Updates
 
 Several types and protocols have been renamed for clarity:
 
-| SDK 19.x API | SDK 20.x API |
-| --- | --- |
-| `PreferenceCenterList` | `PreferenceCenterContent` |
-| `PreferenceCenterViewPhase` | `PreferenceCenterContentPhase` |
-| `PreferenceCenterViewLoader` | `PreferenceCenterContentLoader` |
-| `PreferenceCenterViewStyle` | `PreferenceCenterContentStyle` |
-| `PreferenceCenterViewStyleConfiguration` | `PreferenceCenterContentStyleConfiguration` |
+- `PreferenceCenterList` → `PreferenceCenterContent`
+- `PreferenceCenterViewPhase` → `PreferenceCenterContentPhase`
+- `PreferenceCenterViewLoader` → `PreferenceCenterContentLoader`
+- `PreferenceCenterViewStyle` → `PreferenceCenterContentStyle`
+- `PreferenceCenterViewStyleConfiguration` → `PreferenceCenterContentStyleConfiguration`
 
 
-### Navigation Changes
+#### Navigation Changes
 
 The `PreferenceCenterNavigationStack` enum and the `preferenceCenterNavigationStack()` view modifier have been removed. `PreferenceCenterView` now always uses a `NavigationStack`. If you were previously using `.none`, you should switch to using `PreferenceCenterContent` directly.
 
-**Before (SDK 19.x):**
+**Before:**
 ```swift
 // To provide custom navigation
 PreferenceCenterView(preferenceCenterID: "your_id")
     .preferenceCenterNavigationStack(.none)
 ```
 
-**After (SDK 20.x):**
+**After:**
 ```swift
 // Use PreferenceCenterContent directly
 PreferenceCenterContent(preferenceCenterID: "your_id")
 ```
 
----
-
-## Message Center Refactor
+### Message Center Refactor
 
 The Message Center UI has been refactored for greater flexibility and clearer API boundaries, separating navigation from content.
 
-### View Hierarchy Changes
+#### View Hierarchy Changes
 
-The top-level `MessageCenterView` is now a navigation container. The actual content is rendered by `MessageCenterContent`.
+The Message Center now follows a "Container vs. Content" architecture that separates navigation from content. The top-level `MessageCenterView` is now a navigation container. The actual content is rendered by `MessageCenterContent`.
 
-- `MessageCenterView`: Use this view for a standard Message Center implementation. It provides either a `NavigationStack` or a `NavigationSplitView`, which can be controlled via the new `navigationStyle` parameter.
-- `MessageCenterContent`: Use this view if you need to provide your own navigation or embed the Message Center within a custom view hierarchy.
+The Message Center UI is broken down into several public components that can be used to build a custom experience:
 
-### API Updates
+- **`MessageCenterView`**: The top-level container that provides a `NavigationStack` or `NavigationSplitView`. Use this view for a standard Message Center implementation. It provides either a `NavigationStack` or a `NavigationSplitView`, which can be controlled via the new `navigationStyle` parameter.
+- **`MessageCenterContent`**: The core content view that coordinates the message list. Use this view if you need to provide your own navigation or embed the Message Center within a custom view hierarchy.
+- **`MessageCenterListViewWithNavigation`**: This view displays the list of messages and **is responsible for the navigation bar content**, including the title and the edit/toolbar buttons.
+- **`MessageCenterListView`**: A simpler view that only displays the list of messages, without any navigation bar items.
+- **`MessageCenterMessageViewWithNavigation`**: Displays a single message and manages its navigation bar.
+- **`MessageCenterMessageView`**: Displays a single message without a navigation bar.
 
-| SDK 19.x API | SDK 20.x API |
-| --- | --- |
-| `MessageCenterViewStyle` | `MessageCenterContentStyle` |
-| `messageCenterViewStyle()` | `messageCenterContentStyle()` |
-| `MessageCenterStyleConfiguration` | `MessageCenterContentStyleConfiguration` |
+#### API Updates
 
-### Navigation Changes
+- `MessageCenterViewStyle` → `MessageCenterContentStyle`
+- `messageCenterViewStyle()` → `messageCenterContentStyle()`
+- `MessageCenterStyleConfiguration` → `MessageCenterContentStyleConfiguration`
+
+#### Navigation Changes
 
 The `MessageCenterNavigationStack` enum and the `messageCenterNavigationStack()` view modifier have been removed. Navigation is now controlled by the `navigationStyle` parameter on `MessageCenterView`.
 
-**Before (SDK 19.x):**
+**Before:**
 ```swift
 // Basic Message Center
 MessageCenterView()
@@ -89,7 +108,7 @@ MessageCenterView()
     .messageCenterNavigationStack(.none)
 ```
 
-**After (SDK 20.x):**
+**After:**
 ```swift
 // Stack-based navigation (default on iPhone)
 MessageCenterView(navigationStyle: .stack)
@@ -101,67 +120,40 @@ MessageCenterView(navigationStyle: .split)
 MessageCenterContent()
 ```
 
----
-
-## UI Architecture Changes
-
-Both the Message Center and Preference Center now follow a "Container vs. Content" architecture. This pattern separates the views responsible for navigation from the views responsible for displaying content.
-
-### Preference Center
-
--   **`PreferenceCenterView`**: This is the container view. It sets up the `NavigationStack` and is responsible for the navigation bar's title and back button.
--   **`PreferenceCenterContent`**: This is the content view. It loads and displays the list of preferences. Use this directly if you want to provide your own navigation.
-
-### Message Center
-
-The Message Center UI is broken down into several public components that can be used to build a custom experience:
-
--   **`MessageCenterView`**: The top-level container that provides a `NavigationStack` or `NavigationSplitView`.
--   **`MessageCenterContent`**: The core content view that coordinates the message list. Use this view if you need to provide your own navigation.
--   **`MessageCenterListViewWithNavigation`**: This view displays the list of messages and **is responsible for the navigation bar content**, including the title and the edit/toolbar buttons.
--   **`MessageCenterListView`**: A simpler view that only displays the list of messages, without any navigation bar items.
--   **`MessageCenterMessageViewWithNavigation`**: Displays a single message and manages its navigation bar.
--   **`MessageCenterMessageView`**: Displays a single message without a navigation bar.
----
-
-## Protocol-First Architecture
+### Protocol Architecture Changes
 
 SDK 20.0 refactors core Airship components to use protocols instead of concrete classes. The existing functionality remains the same, but the implementation is now hidden behind protocol interfaces. This change provides better testability, modularity, and allows for easier customization and mocking.
 
-### Class-to-Protocol Conversions
+#### Class-to-Protocol Conversions
 
 Several core Airship classes have been converted to protocols (with the same functionality):
 
-| SDK 19.x Class | SDK 20.x Protocol |
-| --- | --- |
-| `AirshipPrivacyManager` | `AirshipPrivacyManager` |
-| `AirshipPermissionsManager` | `AirshipPermissionsManager` |
-| `MessageCenter` | `MessageCenter` |
-| `InAppAutomation` | `InAppAutomation` |
-| `PreferenceCenter` | `PreferenceCenter` |
-| `InAppMessaging` | `InAppMessaging` |
-| `LegacyInAppMessaging` | `LegacyInAppMessaging` |
-| `AirshipActionRegistry` | `AirshipActionRegistry`  |
-| `AirshipChannelCapture` | `AirshipChannelCapture` |
-| `FeatureFlagManager` | `FeatureFlagManager` |
+- `AirshipPrivacyManager`
+- `AirshipPermissionsManager`
+- `MessageCenter`
+- `InAppAutomation`
+- `PreferenceCenter`
+- `InAppMessaging`
+- `LegacyInAppMessaging`
+- `AirshipActionRegistry`
+- `AirshipChannelCapture`
+- `FeatureFlagManager`
 
-### Protocol Renames
+#### Protocol Renames
 
 Several protocols have been renamed to remove the "Protocol" suffix:
 
-| SDK 19.x Protocol | SDK 20.x Protocol |
-| --- | --- |
-| `AirshipAnalyticsProtocol` | `AirshipAnalytics` |
-| `AirshipChannelProtocol` | `AirshipChannel` |
-| `AirshipContactProtocol` | `AirshipContact` |
-| `AirshipPushProtocol` | `AirshipPush` |
-| `PrivacyManagerProtocol` | `AirshipPrivacyManager` |
-| `URLAllowListProtocol` | `AirshipURLAllowList` |
-| `AirshipLocaleManagerProtocol` | `AirshipLocaleManager` |
-| `InAppMessagingProtocol` | `InAppMessaging` |
-| `LegacyInAppMessagingProtocol` | `LegacyInAppMessaging` |
+- `AirshipAnalyticsProtocol` → `AirshipAnalytics`
+- `AirshipChannelProtocol` → `AirshipChannel`
+- `AirshipContactProtocol` → `AirshipContact`
+- `AirshipPushProtocol` → `AirshipPush`
+- `PrivacyManagerProtocol` → `AirshipPrivacyManager`
+- `URLAllowListProtocol` → `AirshipURLAllowList`
+- `AirshipLocaleManagerProtocol` → `AirshipLocaleManager`
+- `InAppMessagingProtocol` → `InAppMessaging`
+- `LegacyInAppMessagingProtocol` → `LegacyInAppMessaging`
 
-### Migration Impact
+#### Migration Impact
 
 **For most developers:** These changes are primarily internal and won't affect your code. The public APIs remain the same - you can continue using `Airship.contact`, `Airship.privacyManager`, `Airship.messageCenter`, `Airship.inAppAutomation`, `Airship.preferenceCenter`, etc. as before.
 
@@ -173,37 +165,35 @@ Several APIs have been deprecated in SDK 20.0 and will be removed in future vers
 
 ### Attribute Management
 
-**Before (SDK 19.x):**
+The `set(number:attribute:)` method now accepts Swift numeric types directly instead of `NSNumber`. This change is **backward compatible** - existing code using `Int` or `UInt` literals will continue to work without modification.
+
+**Before:**
 ```swift
-// Old method using Int
+// Old method using NSNumber
 Airship.contact.editAttributes { editor in
-    editor.set(number: 42, attribute: "age")
-}
-Airship.channel.editAttributes { editor in
-    editor.set(number: 100, attribute: "score")
+    editor.set(number: NSNumber(value: 42), attribute: "age")
 }
 ```
 
-**After (SDK 20.x):**
+**After:**
 ```swift
-// New method using Double
+// Use Swift types - Int, Uint, or Double
 Airship.contact.editAttributes { editor in
+    editor.set(number: 42, attribute: "age")
     editor.set(number: 42.0, attribute: "age")
-}
-Airship.channel.editAttributes { editor in
-    editor.set(number: 100.0, attribute: "score")
+    editor.set(number: UInt(42), attribute: "age")
 }
 ```
 
 ### Preference Center Display
 
-**Before (SDK 19.x):**
+**Before:**
 ```swift
 // Old method
 Airship.preferenceCenter.openPreferenceCenter(preferenceCenterID: "my_id")
 ```
 
-**After (SDK 20.x):**
+**After:**
 ```swift
 // New method
 Airship.preferenceCenter.display("my_id")
@@ -211,7 +201,7 @@ Airship.preferenceCenter.display("my_id")
 
 ---
 
-## Block-Based Callback Alternatives
+## Block-Based Callbacks
 
 To provide a more modern and convenient Swift API, SDK 20 introduces block-based (closure) callbacks as an alternative to several common delegate protocols. These new callbacks improve code locality and can reduce boilerplate for simple event handling.
 
@@ -356,7 +346,7 @@ public struct NotificationRegistrationResult: Sendable {
 
 ### Deep Links
 
-Instead of conforming to `DeepLinkDelegate`, you can now set a closures on `Airship`. If the `onDeepLink` block is set, the `DeepLinkDelegate` will be ignored.
+Instead of conforming to `DeepLinkDelegate`, you can now set closures on `Airship`. If the `onDeepLink` block is set, the `DeepLinkDelegate` will be ignored.
 
 **Before:**
 ```swift
@@ -491,3 +481,70 @@ Airship.preferenceCenter.onDisplay = { preferenceCenterID in
     return true
 }
 ```
+
+**New API on `Airship.preferenceCenter`:**
+- `onDisplay`
+
+### In-App Messaging Display Control
+
+Instead of implementing `InAppMessagingDisplayDelegate`, you can now use the `onIsReadyToDisplay` closure on `Airship.inAppMessaging`. This closure allows you to control when in-app messages are ready to be displayed. If the `onIsReadyToDisplay` block is set, the delegate will be ignored.
+
+**Before:**
+```swift
+class MyDisplayDelegate: InAppMessagingDisplayDelegate {
+    func isMessageReadyToDisplay(_ message: InAppMessage, scheduleID: String) -> Bool {
+        // Custom logic to determine if message should be displayed
+        return someCondition
+    }
+}
+
+// Store a strong reference
+private let displayDelegate = MyDisplayDelegate()
+
+// In your app's startup code
+Airship.inAppMessaging.displayDelegate = displayDelegate
+```
+
+**After:**
+```swift
+Airship.inAppMessaging.onIsReadyToDisplay = { message, scheduleID in
+    // Custom logic to determine if message should be displayed
+    return someCondition
+}
+```
+
+**New API on `Airship.inAppMessaging`:**
+- `onIsReadyToDisplay`
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+**Build Errors After Migration**
+- Ensure you're using Xcode 26+ and have updated your deployment target to iOS 16+
+- Clean your build folder (Product → Clean Build Folder) and rebuild
+- Check that all SwiftUI view calls have been updated to use the new API names
+
+**Message Center/Preference Center Not Displaying**
+- Verify you're using the correct view names (`MessageCenterView` vs `MessageCenterContent`)
+- Check that navigation style parameters are set correctly
+- Ensure you're not mixing old and new API calls
+
+**Delegate Methods Not Being Called**
+- If you've migrated to block-based callbacks, ensure you're not setting both delegates and blocks
+- Block-based callbacks take precedence over delegate methods
+- Check that your delegate objects are retained (not deallocated)
+
+**Attribute Setting Issues**
+- The `set(number:attribute:)` method now accepts Swift types directly
+- `Int` and `UInt` values are automatically bridged to `Double`
+- If you're still using `NSNumber`, consider migrating to Swift types
+
+### Getting Help
+
+If you encounter issues not covered in this guide:
+- Check the [Airship Documentation](https://docs.airship.com/)
+- Review the [SDK API Reference](https://docs.airship.com/reference/libraries/ios/)
+- Contact [Airship Support](https://support.airship.com/)

@@ -74,6 +74,26 @@ public final class AttributesEditor {
     /**
      * Sets the attribute.
      * - Parameters:
+     *   - number: The value.
+     *   - attribute: The attribute.
+     */
+    public func set(number: Int, attribute: String) {
+        trySetAttribute(attribute, value: .number(Double(number)))
+    }
+
+    /**
+     * Sets the attribute.
+     * - Parameters:
+     *   - number: The value.
+     *   - attribute: The attribute.
+     */
+    public func set(number: UInt, attribute: String) {
+        trySetAttribute(attribute, value: .number(Double(number)))
+    }
+
+    /**
+     * Sets the attribute.
+     * - Parameters:
      *   - string: The value.
      *   - attribute: The attribute.
      */

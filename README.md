@@ -1,14 +1,100 @@
 # Airship iOS SDK
 
-The Airship SDK for iOS provides a simple way to integrate Airship services into your iOS, tvOS, and visionOS applications.
+[![Swift Package Manager](https://img.shields.io/badge/SPM-supported-DE5C43.svg)](https://swift.org/package-manager/)
+[![CocoaPods](https://img.shields.io/cocoapods/v/Airship.svg)](https://cocoapods.org/pods/Airship)
+[![Carthage](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg)](https://github.com/Carthage/Carthage)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-## Resources
+The Airship SDK for iOS provides a comprehensive way to integrate Airship's customer engagement platform into your iOS, tvOS, and visionOS applications.
 
-- [Getting started guide](https://docs.airship.com/platform/mobile/setup/sdk/ios/)
-- [API Reference Docs](https://docs.airship.com/platform/mobile/resources/api-references/#ios-api-references)
-- [Migration Guides](Documentation/Migration/README.md)
+## Features
 
-## Sample Apps
+- **Push Notifications** - Rich, interactive push notifications with deep linking
+- **In-App Experiences** - Contextual messaging and automation
+- **Message Center** - Inbox for push notifications and messages
+- **Preference Center** - User preference management
+- **Feature Flags** - Dynamic feature toggles and experimentation
+- **Analytics** - Comprehensive user behavior tracking
+- **SwiftUI Support** - Modern SwiftUI components and views
 
-Sample applications demonstrating Airship SDK integration are available in a separate repository:
-- [Apple Sample Apps](https://github.com/urbanairship/apple-sample-apps)
+## Installation
+
+Add the Airship iOS SDK to your project using Swift Package Manager:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/urbanairship/ios-library.git", from: "20.0.0")
+]
+```
+
+In Xcode, add the following products to your target dependencies:
+- `AirshipCore` (required)
+- `AirshipMessageCenter` (for Message Center - iOS only)
+- `AirshipPreferenceCenter` (for Preference Center)
+- `AirshipAutomation` (for In-App Messaging)
+- `AirshipFeatureFlags` (for Feature Flags)
+- `AirshipNotificationServiceExtension` (for rich push notifications - iOS only)
+- `AirshipDebug` (for debugging tools)
+
+## Quick Start
+
+1. **Configure and Initialize Airship** in your `AppDelegate` or `App`:
+```swift
+import AirshipCore
+
+// In AppDelegate
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    var config = AirshipConfig()
+    config.defaultAppKey = "YOUR_APP_KEY"
+    config.defaultAppSecret = "YOUR_APP_SECRET"
+    
+    Airship.takeOff(config)
+    return true
+}
+
+// Or in SwiftUI App
+@main
+struct MyApp: App {
+    init() {
+        var config = AirshipConfig()
+        config.defaultAppKey = "YOUR_APP_KEY"
+        config.defaultAppSecret = "YOUR_APP_SECRET"
+        
+        Airship.takeOff(config)
+    }
+    
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
+```
+
+2. **Enable & Request User Notifications**:
+```swift
+await Airship.push.enableUserPushNotifications()
+```
+
+## Requirements
+
+- iOS 16.0+
+- tvOS 18.0+
+- visionOS 1.0+
+- Xcode 26.0+
+
+## Documentation
+
+- **[Getting Started](https://docs.airship.com/platform/mobile/setup/sdk/ios/)** - Complete setup guide
+- **[API Reference](https://docs.airship.com/platform/mobile/resources/api-references/#ios-api-references)** - Full API documentation
+- **[Migration Guides](Documentation/Migration/README.md)** - Comprehensive migration documentation
+- **[Sample Apps](https://github.com/urbanairship/apple-sample-apps)** - Example implementations
+
+## Support
+
+- 📚 [Documentation](https://docs.airship.com/)
+- 🐛 [Report Issues](https://github.com/urbanairship/ios-library/issues)
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
