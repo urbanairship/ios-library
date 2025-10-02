@@ -64,6 +64,7 @@
 "ua_submit" = "提交";
 "ua_loading" = "正在載入";
 "ua_pager_progress" = "第%@頁，共%@頁";
+"ua_x_of_y" = "%@ / %@";
 "ua_play" = "播放";
 "ua_pause" = "暫停";
 "ua_stop" = "停止";

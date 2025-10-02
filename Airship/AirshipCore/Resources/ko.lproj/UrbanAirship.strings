@@ -64,6 +64,7 @@
 "ua_submit" = "제출";
 "ua_loading" = "불러오는 중";
 "ua_pager_progress" = "페이지 %@/%@";
+"ua_x_of_y" = "%@ / %@";
 "ua_play" = "재생";
 "ua_pause" = "일시정지";
 "ua_stop" = "정지";

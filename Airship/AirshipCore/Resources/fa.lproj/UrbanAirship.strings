@@ -64,6 +64,7 @@
 "ua_submit" = "ارسال";
 "ua_loading" = "در حال بارگذاری";
 "ua_pager_progress" = "صفحه %@ از %@";
+"ua_x_of_y" = "%@ از %@";
 "ua_play" = "پخش";
 "ua_pause" = "مکث";
 "ua_stop" = "توقف";

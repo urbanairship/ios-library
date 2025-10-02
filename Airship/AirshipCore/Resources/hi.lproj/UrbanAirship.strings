@@ -64,6 +64,7 @@
 "ua_submit" = "जमा करें";
 "ua_loading" = "लोड हो रहा है";
 "ua_pager_progress" = "पृष्ठ %@ का %@";
+"ua_x_of_y" = "%@ में से %@";
 "ua_play" = "चलाएं";
 "ua_pause" = "विराम";
 "ua_stop" = "रोकें";

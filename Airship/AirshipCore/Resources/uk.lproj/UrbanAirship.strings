@@ -64,6 +64,7 @@
 "ua_submit" = "Подати";
 "ua_loading" = "Завантаження";
 "ua_pager_progress" = "Сторінка %@ з %@";
+"ua_x_of_y" = "%@ з %@";
 "ua_play" = "Грати";
 "ua_pause" = "Пауза";
 "ua_stop" = "Стоп";

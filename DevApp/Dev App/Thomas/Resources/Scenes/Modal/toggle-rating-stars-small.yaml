@@ -131,6 +131,10 @@ view:
                                     view:
                                       type: label
                                       text: 'Please rate your experience:'
+                                      labels:
+                                        type: "labels"
+                                        view_id: score_radio_controller
+                                        view_type: score_controller
                                       text_appearance:
                                         font_size: 16
                                         color:
@@ -153,6 +157,7 @@ view:
                                     view:
                                       type: score_controller
                                       identifier: score_radio_controller
+                                      content_description: "0 means a bad experience and 5 means a great experience"
                                       required: true
                                       view:
                                         type: linear_layout

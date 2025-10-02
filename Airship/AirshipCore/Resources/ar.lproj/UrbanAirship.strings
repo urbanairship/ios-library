@@ -64,6 +64,7 @@
 "ua_submit" = "إرسال";
 "ua_loading" = "تحميل";
 "ua_pager_progress" = "الصفحة %@ من %@";
+"ua_x_of_y" = "%@ من %@";
 "ua_play" = "تشغيل";
 "ua_pause" = "إيقاف مؤقت";
 "ua_stop" = "إيقاف";

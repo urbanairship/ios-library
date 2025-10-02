@@ -64,6 +64,7 @@
 "ua_submit" = "は提出します";
 "ua_loading" = "ロード中";
 "ua_pager_progress" = "ページ%@/%@";
+"ua_x_of_y" = "%@ / %@";
 "ua_play" = "再生";
 "ua_pause" = "一時停止";
 "ua_stop" = "止める";

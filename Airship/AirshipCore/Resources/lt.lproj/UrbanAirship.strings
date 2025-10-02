@@ -64,6 +64,7 @@
 "ua_submit" = "Pateikti";
 "ua_loading" = "Įkeliama";
 "ua_pager_progress" = "Puslapis %@ iš %@";
+"ua_x_of_y" = "%@ iš %@";
 "ua_play" = "Groti";
 "ua_pause" = "Pristabdyti";
 "ua_stop" = "Sustabdyti";

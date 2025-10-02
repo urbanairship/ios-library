@@ -64,6 +64,7 @@
 "ua_submit" = "Send inn";
 "ua_loading" = "Laster";
 "ua_pager_progress" = "Side %@ av %@";
+"ua_x_of_y" = "%@ av %@";
 "ua_play" = "Spill av";
 "ua_pause" = "Pause";
 "ua_stop" = "Stopp";

@@ -64,6 +64,7 @@
 "ua_submit" = "Gönder";
 "ua_loading" = "Yükleniyor";
 "ua_pager_progress" = "%@ / %@ Sayfa";
+"ua_x_of_y" = "%@ / %@";
 "ua_play" = "Oynat";
 "ua_pause" = "Duraklat";
 "ua_stop" = "Durdur";

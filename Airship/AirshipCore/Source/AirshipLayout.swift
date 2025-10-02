@@ -22,28 +22,13 @@ public struct AirshipLayout: ThomasSerializable {
     }
 }
 
-
-extension AirshipLayout {
-    static let minLayoutVersion = 1
-    static let maxLayoutVersion = 2
-
-    public func validate() -> Bool
-    {
-        guard
-            self.version >= Self.minLayoutVersion
-                && self.version <= Self.maxLayoutVersion else {
-            return false
-        }
-
-        return true
-    }
-
-    func extract<T>(extractor: (ThomasViewInfo) -> T?) -> [T] {
-        var infos: [ThomasViewInfo] = [self.view]
+extension ThomasViewInfo {
+    func extractDescendants<T>(extractor: (ThomasViewInfo) -> T?) -> [T] {
+        var infos: [ThomasViewInfo] = [self]
         var result: [T] = []
         while (!infos.isEmpty) {
             let info = infos.removeFirst()
-            if let children = immediateChildren(info: info) {
+            if let children = info.immediateChildren {
                 infos.append(contentsOf: children)
             }
 
@@ -55,9 +40,8 @@ extension AirshipLayout {
         return result
     }
 
-
-    private func immediateChildren(info: ThomasViewInfo) -> [ThomasViewInfo]? {
-        return switch info {
+    var immediateChildren: [ThomasViewInfo]? {
+        return switch self {
         case .container(let info): info.properties.items.map { $0.view }
         case .linearLayout(let info): info.properties.items.map { $0.view }
         case .pager(let info): info.properties.items.map { $0.view }
@@ -92,6 +76,26 @@ extension AirshipLayout {
         case .scoreController(let info): [info.properties.view]
         case .scoreToggleLayout(let info): [info.properties.view]
         }
+    }
+}
+
+extension AirshipLayout {
+    static let minLayoutVersion = 1
+    static let maxLayoutVersion = 2
+
+    public func validate() -> Bool
+    {
+        guard
+            self.version >= Self.minLayoutVersion
+                && self.version <= Self.maxLayoutVersion else {
+            return false
+        }
+
+        return true
+    }
+
+    func extract<T>(extractor: (ThomasViewInfo) -> T?) -> [T] {
+        return self.view.extractDescendants(extractor: extractor)
     }
 }
 

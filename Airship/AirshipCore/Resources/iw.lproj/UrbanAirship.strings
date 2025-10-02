@@ -64,6 +64,7 @@
 "ua_submit" = "להגיש";
 "ua_loading" = "טוען";
 "ua_pager_progress" = "עמוד %@ מתוך %@";
+"ua_x_of_y" = "%@ מתוך %@";
 "ua_play" = "לנגן";
 "ua_pause" = "להפסיק";
 "ua_stop" = "לעצור";

@@ -64,6 +64,7 @@
 "ua_submit" = "Soumettre";
 "ua_loading" = "Chargement";
 "ua_pager_progress" = "Page %@ sur %@";
+"ua_x_of_y" = "%@ sur %@";
 "ua_play" = "Jouer";
 "ua_pause" = "Pause";
 "ua_stop" = "Arrêter";

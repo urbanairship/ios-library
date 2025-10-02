@@ -64,6 +64,7 @@
 "ua_submit" = "Beküldés";
 "ua_loading" = "Betöltés";
 "ua_pager_progress" = "%@. oldal a %@-ból";
+"ua_x_of_y" = "%@ / %@";
 "ua_play" = "Lejátszás";
 "ua_pause" = "Szünet";
 "ua_stop" = "Leállítás";

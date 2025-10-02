@@ -64,6 +64,7 @@
 "ua_submit" = "Odeslat";
 "ua_loading" = "Načítání";
 "ua_pager_progress" = "Strana %@ z %@";
+"ua_x_of_y" = "%@ z %@";
 "ua_play" = "Přehrát";
 "ua_pause" = "Pozastavit";
 "ua_stop" = "Zastavit";

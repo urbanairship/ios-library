@@ -64,6 +64,7 @@
 "ua_submit" = "Υποβολή";
 "ua_loading" = "Φόρτωση";
 "ua_pager_progress" = "Σελίδα %@ από %@";
+"ua_x_of_y" = "%@ από %@";
 "ua_play" = "Αναπαραγωγή";
 "ua_pause" = "Παύση";
 "ua_stop" = "Διακοπή";

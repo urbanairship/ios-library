@@ -225,6 +225,10 @@
                                                       content_description: How likely
                                                         are you to recommend Airship
                                                         to a friend or colleague?
+                                                      labels:
+                                                        type: labels
+                                                        view_id: 2d6a001d-254d-4211-8dd3-074a2d43c7e5
+                                                        view_type: score
                                                       text_appearance:
                                                         font_size: 20
                                                         color:
@@ -299,8 +303,9 @@
                                                           bottom: 4
                                                         view:
                                                           type: label
-                                                          text: " "
-                                                          content_description: " "
+                                                          text: "Not Likely"
+                                                          accessibility:
+                                                            accessibility_hidden: true
                                                           text_appearance:
                                                             font_size: 18
                                                             color:
@@ -357,8 +362,9 @@
                                                           bottom: 4
                                                         view:
                                                           type: label
-                                                          text: " "
-                                                          content_description: " "
+                                                          text: "Extremly Likely"
+                                                          accessibility:
+                                                            accessibility_hidden: true
                                                           text_appearance:
                                                             font_size: 18
                                                             color:
@@ -418,6 +424,7 @@
                                                           height: auto
                                                           width: 100%
                                                         view:
+                                                          content_description: "0 is not at all likely, 10 means extremely likely"
                                                           type: score
                                                           style:
                                                             type: number_range

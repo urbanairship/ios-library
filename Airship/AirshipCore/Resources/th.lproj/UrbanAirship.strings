@@ -64,6 +64,7 @@
 "ua_submit" = "ส่ง";
 "ua_loading" = "กำลังโหลด";
 "ua_pager_progress" = "หน้า %@ จาก %@";
+"ua_x_of_y" = "%@ จาก %@";
 "ua_play" = "เล่น";
 "ua_pause" = "หยุดชั่วคราว";
 "ua_stop" = "หยุด";

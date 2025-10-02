@@ -64,6 +64,7 @@
 "ua_submit" = "Skicka";
 "ua_loading" = "Laddar";
 "ua_pager_progress" = "Sida %@ av %@";
+"ua_x_of_y" = "%@ av %@";
 "ua_play" = "Spela";
 "ua_pause" = "Pausa";
 "ua_stop" = "Stoppa";

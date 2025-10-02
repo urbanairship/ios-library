@@ -64,6 +64,7 @@
 "ua_submit" = "Отправить";
 "ua_loading" = "Загрузка";
 "ua_pager_progress" = "Страница %@ из %@";
+"ua_x_of_y" = "%@ из %@";
 "ua_play" = "Воспроизвести";
 "ua_pause" = "Пауза";
 "ua_stop" = "Стоп";

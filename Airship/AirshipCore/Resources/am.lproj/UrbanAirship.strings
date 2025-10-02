@@ -64,6 +64,7 @@
 "ua_submit" = "አስገባ";
 "ua_loading" = "በመጫን ላይ";
 "ua_pager_progress" = "ገጽ %@ ከ %@";
+"ua_x_of_y" = "%@ ከ %@";
 "ua_play" = "አጫውት";
 "ua_pause" = "ለአጭር ጊዜ ቆም";
 "ua_stop" = "አቁም";

@@ -64,6 +64,7 @@
 "ua_submit" = "Podnesi";
 "ua_loading" = "Učitavanje";
 "ua_pager_progress" = "Strana %@ od %@";
+"ua_x_of_y" = "%@ од %@";
 "ua_play" = "Pusti";
 "ua_pause" = "Pauziraj";
 "ua_stop" = "Zaustavi";

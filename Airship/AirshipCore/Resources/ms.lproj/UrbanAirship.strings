@@ -64,6 +64,7 @@
 "ua_submit" = "Serahkan";
 "ua_loading" = "Memuat";
 "ua_pager_progress" = "Halaman %@ daripada %@";
+"ua_x_of_y" = "%@ daripada %@";
 "ua_play" = "Mainkan";
 "ua_pause" = "Jeda";
 "ua_stop" = "Berhenti";

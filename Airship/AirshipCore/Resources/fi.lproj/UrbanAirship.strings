@@ -64,6 +64,7 @@
 "ua_submit" = "Lähetä";
 "ua_loading" = "Lataus";
 "ua_pager_progress" = "Sivu %@ / %@";
+"ua_x_of_y" = "%@ / %@";
 "ua_play" = "Toista";
 "ua_pause" = "Tauko";
 "ua_stop" = "Pysäytä";

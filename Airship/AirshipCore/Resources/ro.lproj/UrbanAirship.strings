@@ -64,6 +64,7 @@
 "ua_submit" = "Trimite";
 "ua_loading" = "Se încarcă";
 "ua_pager_progress" = "Pagina %@ din %@";
+"ua_x_of_y" = "%@ din %@";
 "ua_play" = "Redă";
 "ua_pause" = "Pauză";
 "ua_stop" = "Oprire";

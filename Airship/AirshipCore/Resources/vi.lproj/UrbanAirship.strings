@@ -64,6 +64,7 @@
 "ua_submit" = "Gửi";
 "ua_loading" = "Đang tải";
 "ua_pager_progress" = "Trang %@ của %@";
+"ua_x_of_y" = "%@ / %@";
 "ua_play" = "Phát";
 "ua_pause" = "Tạm dừng";
 "ua_stop" = "Dừng";

@@ -5,25 +5,88 @@ import SwiftUI
 import Combine
 
 struct Score: View {
-    let info: ThomasViewInfo.Score
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.Score
+    private let constraints: ViewConstraints
 
     @MainActor
-    class ViewModel: ObservableObject {
+    fileprivate class ViewModel: ObservableObject {
+
+        let style: ThomasViewInfo.Score.ScoreStyle
+
+        init(style: ThomasViewInfo.Score.ScoreStyle) {
+            self.style = style
+        }
+
         @Published
         var score: AirshipJSON?
 
         @Published
         var index: Int?
+
+        var accessibilityValue: String? {
+            guard let index else { return nil }
+            switch(style) {
+            case .numberRange(let rangeStyle):
+                let totalItems = rangeStyle.end - rangeStyle.start + 1
+                return String(format: "ua_x_of_y".airshipLocalizedString(fallback: "%@ of %@"), index.airshipLocalizedForVoiceOver(), totalItems.airshipLocalizedForVoiceOver())
+            }
+        }
+
+        func incrementScore() {
+            switch(style) {
+            case .numberRange(let rangeStyle):
+                guard var index else {
+                    self.index = rangeStyle.start
+                    self.score = .number(Double(rangeStyle.start))
+                    return
+                }
+
+                index = min(rangeStyle.end, index + 1)
+                if self.index != index {
+                    self.index = index
+                    self.score = .number(Double(index))
+                }
+            }
+        }
+
+        func decrementScore() {
+            switch(style) {
+            case .numberRange(let rangeStyle):
+                guard var index else {
+                    self.index = rangeStyle.start
+                    self.score = .number(Double(rangeStyle.start))
+                    return
+                }
+
+                index = max(rangeStyle.start, index - 1)
+                if self.index != index {
+                    self.index = index
+                    self.score = .number(Double(index))
+                }
+            }
+        }
     }
 
-    @Environment(\.pageIdentifier) var pageID
-    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
-    @EnvironmentObject var formState: ThomasFormState
-    @EnvironmentObject var thomasState: ThomasState
-    @Environment(\.colorScheme) var colorScheme
-    @EnvironmentObject var validatableHelper: ValidatableHelper
-    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+    @Environment(\.pageIdentifier)
+    private var pageID
+
+    @EnvironmentObject
+    private var formDataCollector: ThomasFormDataCollector
+
+    @EnvironmentObject
+    private var formState: ThomasFormState
+
+    @EnvironmentObject
+    private var thomasState: ThomasState
+
+    @Environment(\.colorScheme)
+    private var colorScheme
+
+    @EnvironmentObject
+    private var validatableHelper: ValidatableHelper
+
+    @Environment(\.thomasAssociatedLabelResolver)
+    private var associatedLabelResolver
 
     private var associatedLabel: String? {
         associatedLabelResolver?.labelFor(
@@ -32,7 +95,15 @@ struct Score: View {
             thomasState: thomasState
         )
     }
-    @StateObject var viewModel: ViewModel = ViewModel()
+
+    @StateObject
+    private var viewModel: ViewModel
+
+    init(info: ThomasViewInfo.Score, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+        _viewModel = .init(wrappedValue: ViewModel(style: info.properties.style))
+    }
 
     @ViewBuilder
     private func makeNumberRangeScoreItems(style: ThomasViewInfo.Score.ScoreStyle.NumberRange, constraints: ViewConstraints) -> some View {
@@ -91,11 +162,23 @@ struct Score: View {
         let constraints = modifiedConstraints()
         createScore(constraints)
             .thomasCommon(self.info, formInputID: self.info.properties.identifier)
+            .accessibilityElement(children: .ignore)
             .accessible(
                 self.info.accessible,
                 associatedLabel: associatedLabel,
                 hideIfDescriptionIsMissing: false
             )
+            .accessibilityAdjustableAction { direction in
+                switch(direction) {
+                case .increment:
+                    viewModel.incrementScore()
+                case .decrement:
+                    viewModel.decrementScore()
+                @unknown default:
+                    break
+                }
+            }
+            .accessibilityValue(self.viewModel.accessibilityValue ?? "")
             .formElement()
             .airshipOnChangeOf(self.viewModel.score) { score in
                 self.updateScore(score)

@@ -50,7 +50,7 @@ struct ScoreController: View {
             // Use the environment to create or retrieve the state in case the view
             // stack changes and we lose our state.
             let scoreState = environment.retrieveState(identifier: info.properties.identifier) {
-                ScoreState()
+                ScoreState(info: info)
             }
 
             self._scoreState = ObservedObject(wrappedValue: scoreState)
@@ -67,6 +67,23 @@ struct ScoreController: View {
                     hideIfDescriptionIsMissing: true
                 )
                 .formElement()
+                .accessibilityElement(children: .ignore)
+                .accessible(
+                    self.info.accessible,
+                    associatedLabel: associatedLabel,
+                    hideIfDescriptionIsMissing: false
+                )
+                .accessibilityAdjustableAction { direction in
+                    switch(direction) {
+                    case .increment:
+                        self.scoreState.incrementScore()
+                    case .decrement:
+                        self.scoreState.decrementScore()
+                    @unknown default:
+                        break
+                    }
+                }
+                .accessibilityValue(self.scoreState.accessibilityValue ?? "")
                 .environmentObject(scoreState)
                 .airshipOnChangeOf(self.scoreState.selected) { incoming in
                     updateFormState(selected: incoming)

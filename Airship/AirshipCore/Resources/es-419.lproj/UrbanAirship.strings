@@ -64,6 +64,7 @@
 "ua_submit" = "Enviar";
 "ua_loading" = "Cargando";
 "ua_pager_progress" = "Página %@ de %@";
+"ua_x_of_y" = "%@ de %@";
 "ua_play" = "Reproducir";
 "ua_pause" = "Pausar";
 "ua_stop" = "Detener";

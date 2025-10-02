@@ -84,6 +84,7 @@
 "ua_submit" = "Submit";
 "ua_loading" = "Loading";
 "ua_pager_progress" = "Page %@ of %@";
+"ua_x_of_y" = "%@ of %@";
 "ua_play" = "Play";
 "ua_pause" = "Pause";
 "ua_stop" = "Stop";
