@@ -15,7 +15,7 @@ struct FooterView: View {
 
     var body: some View {
         /// Footer
-        Text(LocalizedStringKey(text)) /// Markdown parsing in iOS15+
+        Text(LocalizedStringKey(text))
             .textAppearance(
                 textAppearance,
                 colorScheme: colorScheme

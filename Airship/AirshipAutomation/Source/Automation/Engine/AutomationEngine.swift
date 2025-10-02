@@ -719,9 +719,9 @@ fileprivate extension AutomationEngine {
         return result
     }
 
-    /// Same as updateState(identifier:block) but will try to skip parsing the schedule if the last modified time
-    /// for it is the same. Temp fix to reduce energy usage until we move star/end to the top level of the schedule
-    /// so we can mutate just the state without the full schedule.
+    /// Same as updateState(identifier:block) but optimized to skip parsing the schedule if last modified time
+    /// is unchanged. This reduces energy usage by avoiding unnecessary schedule parsing.
+    /// TODO: Move start/end to top level of schedule to allow state-only mutations without full parsing.
     @discardableResult
     func updateState(
         data: AutomationScheduleData,

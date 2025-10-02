@@ -971,7 +971,6 @@
 		6EFD6D8B272A53FB005B26F1 /* PagerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EFD6D86272A53FB005B26F1 /* PagerController.swift */; };
 		6EFE7E3F2A97ED660064AC31 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6EFE7E3E2A97ED600064AC31 /* PrivacyInfo.xcprivacy */; };
 		8401769426C5671100373AF7 /* JSONMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769326C5671100373AF7 /* JSONMatcher.swift */; };
-		8401769626C5715E00373AF7 /* VersionMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769526C5715E00373AF7 /* VersionMatcher.swift */; };
 		8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769726C5722400373AF7 /* JSONPredicate.swift */; };
 		8401769A26C5725800373AF7 /* AirshipJSONUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769926C5725800373AF7 /* AirshipJSONUtils.swift */; };
 		8401769C26C5729E00373AF7 /* JSONValueMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769B26C5729E00373AF7 /* JSONValueMatcher.swift */; };
@@ -2303,7 +2302,6 @@
 		6EFE7E3E2A97ED600064AC31 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipDebugPushData.xcdatamodel; sourceTree = "<group>"; };
 		8401769326C5671100373AF7 /* JSONMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONMatcher.swift; sourceTree = "<group>"; };
-		8401769526C5715E00373AF7 /* VersionMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionMatcher.swift; sourceTree = "<group>"; };
 		8401769726C5722400373AF7 /* JSONPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONPredicate.swift; sourceTree = "<group>"; };
 		8401769926C5725800373AF7 /* AirshipJSONUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipJSONUtils.swift; sourceTree = "<group>"; };
 		8401769B26C5729E00373AF7 /* JSONValueMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValueMatcher.swift; sourceTree = "<group>"; };
@@ -3321,7 +3319,6 @@
 			isa = PBXGroup;
 			children = (
 				8401769326C5671100373AF7 /* JSONMatcher.swift */,
-				8401769526C5715E00373AF7 /* VersionMatcher.swift */,
 				8401769726C5722400373AF7 /* JSONPredicate.swift */,
 				8401769926C5725800373AF7 /* AirshipJSONUtils.swift */,
 				8401769B26C5729E00373AF7 /* JSONValueMatcher.swift */,
@@ -5996,7 +5993,6 @@
 				6E55A4D72E1DB4F700B07DF8 /* ThomasAssociatedLabelResolver.swift in Sources */,
 				6E49D7B428401D2E00C7BB9D /* PermissionDelegate.swift in Sources */,
 				6E524C732C126F5F002CA094 /* AirshipEventType.swift in Sources */,
-				8401769626C5715E00373AF7 /* VersionMatcher.swift in Sources */,
 				6E91E44028EF423400B6F25E /* Worker.swift in Sources */,
 				6E91B44226868C3400DDB1A8 /* ProximityRegion.swift in Sources */,
 				6E0105012DDFA5E9009D651F /* ScoreController.swift in Sources */,

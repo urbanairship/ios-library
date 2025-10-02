@@ -105,8 +105,11 @@ public struct AirshipIvyVersionMatcher: Sendable {
             return nil
         }
 
-        let range = matches[0].range(at: 1)
-        let versionNumberPart: String = versionConstraint.airshipSubstring(with: range)
+        let nsRange = matches[0].range(at: 1)
+        guard let range = Range(nsRange, in: versionConstraint) else {
+            return nil
+        }
+        let versionNumberPart: String = String(versionConstraint[range])
 
         return .subVersion(versionNumberPart)
     }
@@ -131,8 +134,11 @@ public struct AirshipIvyVersionMatcher: Sendable {
 
         var tokens: [String] = []
         for index in 1...numberOfTokens {
-            let range = match.range(at: index)
-            tokens.append(versionConstraint.airshipSubstring(with: range))
+            let nsRange = match.range(at: index)
+            guard let range = Range(nsRange, in: versionConstraint) else {
+                return nil
+            }
+            tokens.append(String(versionConstraint[range]))
         }
 
         guard
@@ -240,14 +246,6 @@ public struct AirshipIvyVersionMatcher: Sendable {
 }
 
 fileprivate extension String {
-    // Workaround until we can drop iOS 15
-    func airshipSubstring(with nsrange: NSRange) -> String {
-        guard let range = Range(nsrange, in: self) else {
-            return ""
-        }
-        return String(self[range])
-    }
-    
     var normalizeVersionString: String {
         let trimmed = self.filter { !$0.isWhitespace }
 

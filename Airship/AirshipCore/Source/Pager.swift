@@ -517,7 +517,9 @@ struct Pager: View {
             if let stateActions {
                 thomasState.processStateActions(stateActions)
 
-                // Workaround: Allows state to propagate before handling behaviors
+                // WORKAROUND: SwiftUI state updates are not immediately available to child views.
+                // Yielding allows the state changes to propagate through the view hierarchy
+                // before executing behaviors that may depend on the updated state.
                 await Task.yield()
             }
 

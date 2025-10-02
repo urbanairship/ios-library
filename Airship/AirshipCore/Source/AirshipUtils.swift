@@ -160,7 +160,6 @@ public final class AirshipUtils {
     ///
     /// - Returns: The main window, or `nil` if the window cannot be found.
     @MainActor
-    @available(iOS 13.0, tvOS 13.0, *)
     public class func mainWindow(scene: UIWindowScene) -> UIWindow? {
         for w in scene.windows {
             if !w.isHidden {

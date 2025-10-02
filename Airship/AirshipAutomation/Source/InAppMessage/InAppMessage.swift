@@ -39,8 +39,9 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         }
     }
 
-    // Temp workaround for an iOS 26 issue. Cleanup in SDK 20 by removing
-    // encoding the display content and instead only decode it.
+    // Workaround for iOS 26.0 encoding crash (FB#3472, June 2025).
+    // TODO: Test and remove in SDK 21 if iOS 26.x SDKs have fixed the encoding issue.
+    // The workaround avoids re-encoding AirshipLayout by caching the original JSON.
     private var displayContentWrapper: DisplayContentWrapper
 
     /// Source

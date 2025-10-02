@@ -582,7 +582,9 @@ fileprivate extension WKWebView {
     }
 }
 
-// a workaround for WebKit framework evaluateJavaScriptAsync to pass Any? to a closure.
+// WORKAROUND: WKWebView's evaluateJavaScript async API requires Sendable closures,
+// but returns non-Sendable Any? values. This wrapper uses @unchecked Sendable to
+// bridge the JavaScript evaluation result safely across async boundaries.
 fileprivate struct AnySendable: @unchecked Sendable {
     let value: Any?
 }

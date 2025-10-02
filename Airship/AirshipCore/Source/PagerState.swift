@@ -286,14 +286,11 @@ class PagerState: ObservableObject {
     }
     
     private func fixTouchDuringNavigationIssue() {
-        // This workarounds an issue that I found with scrollPosition(id:)
-        // where if you animate the scrollPosition and touch fast enough
-        // to interrupt the scroll behavior, the scrollPosition will
-        // think its on the other page, but in reality its not. To prevent
-        // this, we are disabling touch while we have a `self.pagerState.pageRequest`
-        // and enabling it after 250 ms. And yes, I tried using the completion handler
-        // on the animation but it was being called immediately no matter what I
-        // did, probably due to some config on the scroll view.
+        // WORKAROUND: SwiftUI's scrollPosition(id:) has a race condition where rapid touch
+        // during scroll animation causes scrollPosition state to desync from actual position.
+        // The animation completion handler fires immediately (likely due to ScrollView config),
+        // so we disable touch during pageRequest and re-enable after 250ms delay.
+        // This prevents users from interrupting the scroll animation and causing state desync.
         self.isScrollingDisabled = true
         self.clearPagingRequestTask?.cancel()
         self.clearPagingRequestTask = Task { @MainActor in

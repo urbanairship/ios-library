@@ -6,7 +6,6 @@ import Combine
 
 #if !os(watchOS)
 
-@available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasViewController<Content> : UIHostingController<Content> where Content : View {
     
     var options: ThomasViewControllerOptions
