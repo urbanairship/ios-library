@@ -9,6 +9,11 @@ import AirshipCore
 /// In-app messaging
 public protocol InAppMessaging: AnyObject, Sendable {
 
+    /// Called when the Message  is requested to be displayed.
+    /// Return `true` if the message is ready to display,  `false`  otherwise.
+    @MainActor
+    var onIsReadyToDisplay: (@MainActor @Sendable (_ message: InAppMessage, _ scheduleID: String) -> Bool)? { get set }
+    
     /// Theme manager
     @MainActor
     var themeManager: InAppAutomationThemeManager { get }
@@ -44,12 +49,13 @@ public protocol InAppMessaging: AnyObject, Sendable {
 }
 
 final class DefaultInAppMessaging: InAppMessaging {
+    
     let executor: InAppMessageAutomationExecutor
     let preparer: InAppMessageAutomationPreparer
 
     @MainActor
     let themeManager: InAppAutomationThemeManager = InAppAutomationThemeManager()
-
+    
     @MainActor
     var displayInterval: TimeInterval {
         get {
@@ -60,6 +66,16 @@ final class DefaultInAppMessaging: InAppMessaging {
         }
     }
 
+    @MainActor
+    var onIsReadyToDisplay: (@MainActor @Sendable (InAppMessage, String) -> Bool)? {
+        get {
+            return executor.onIsReadyToDisplay
+        }
+        set {
+            executor.onIsReadyToDisplay = newValue
+        }
+    }
+    
     @MainActor
     weak var displayDelegate: (any InAppMessageDisplayDelegate)? {
         get {

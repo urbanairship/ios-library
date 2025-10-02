@@ -38,6 +38,17 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     }
 
     @MainActor
+    var onIsReadyToDisplay: (@MainActor @Sendable (InAppMessage, String) -> Bool)? {
+        get {
+            return delegates.onIsReadyToDisplay
+        }
+        set {
+            delegates.onIsReadyToDisplay = newValue
+        }
+    }
+    
+    
+    @MainActor
     weak var sceneDelegate: (any InAppMessageSceneDelegate)? {
         get {
             return sceneManager.delegate
@@ -70,11 +81,19 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             return .notReady
         }
 
-        let isReady = self.delegates.displayDelegate?.isMessageReadyToDisplay(
-            data.message,
-            scheduleID: preparedScheduleInfo.scheduleID
-        )
-
+        var isReady: Bool?
+        if let onDisplay = self.onIsReadyToDisplay {
+            isReady = onDisplay(
+                data.message,
+                preparedScheduleInfo.scheduleID
+            )
+        } else if let displayDelegate = self.displayDelegate {
+            isReady = displayDelegate.isMessageReadyToDisplay(
+                data.message,
+                scheduleID: preparedScheduleInfo.scheduleID
+            )
+        }
+        
         guard isReady != false else {
             AirshipLogger.info("Schedule \(preparedScheduleInfo.scheduleID) InAppMessageDisplayDelegate not ready")
             return .notReady
@@ -184,6 +203,9 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     private final class Delegates: Sendable {
         @MainActor
         weak var displayDelegate: (any InAppMessageDisplayDelegate)?
+        
+        @MainActor
+        var onIsReadyToDisplay: (@MainActor @Sendable (InAppMessage, String) -> Bool)?
     }
 }
 

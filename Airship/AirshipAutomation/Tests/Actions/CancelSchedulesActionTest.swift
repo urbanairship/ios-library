@@ -186,6 +186,10 @@ final class CancelSchedulesActionTest: XCTestCase {
 }
 
 final class TestInAppMessaging: InAppMessaging, @unchecked Sendable {
+    
+    @MainActor
+    var onIsReadyToDisplay: (@MainActor @Sendable (AirshipAutomation.InAppMessage, String) -> Bool)?
+    
     @MainActor
     var themeManager: InAppAutomationThemeManager = InAppAutomationThemeManager()
 

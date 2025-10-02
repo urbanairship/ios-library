@@ -4,7 +4,7 @@ import Foundation
 
 /// Message display delegate
 public protocol InAppMessageDisplayDelegate: AnyObject, Sendable{
-
+    
     /// Called to check if the message is ready to be displayed. This method will be called for
     /// every message that is pending display whenever a display condition changes. Use `notifyDisplayConditionsChanged`
     /// to notify whenever a condition changes to reevaluate the pending In-App messages.
@@ -12,7 +12,7 @@ public protocol InAppMessageDisplayDelegate: AnyObject, Sendable{
     /// - Parameters:
     ///     - message: The message
     ///     - scheduleID: The schedule ID
-    /// - Returns: true if the message is ready to display, false otherwise.
+    /// - Returns: `true` if the message is ready to display, `false` otherwise.
     @MainActor
     func isMessageReadyToDisplay(_ message: InAppMessage, scheduleID: String) -> Bool
 
