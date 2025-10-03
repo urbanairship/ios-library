@@ -416,6 +416,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var accessibilityRole: AccessibilityRole?
             var iconStart: LabelIcon?
             var labels: LabelAssociation?
+            var isAccessibilityAlert: Bool?
 
             private enum CodingKeys: String, CodingKey {
                 case type
@@ -426,6 +427,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case accessibilityRole = "accessibility_role"
                 case iconStart = "icon_start"
                 case labels
+                case isAccessibilityAlert = "is_accessibility_alert"
             }
         }
 

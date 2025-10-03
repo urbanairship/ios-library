@@ -102,6 +102,14 @@ struct Label: View {
         .thomasCommon(self.info)
         .accessible(self.info.accessible, associatedLabel: nil, hideIfDescriptionIsMissing: true)
         .accessibilityRole(self.info.properties.accessibilityRole)
+        .onAppear {
+            if self.info.properties.isAccessibilityAlert == true {
+                let message = self.info.resolveLabelString(thomasState: self.thomasState)
+                #if !os(watchOS)
+                UIAccessibility.post(notification: .announcement, argument: message)
+                #endif
+            }
+        }
     }
 }
 
