@@ -1,0 +1,800 @@
+---
+version: 1
+presentation:
+  type: modal
+  placement_selectors: []
+  android:
+    disable_back_button: false
+  dismiss_on_touch_outside: false
+  default_placement:
+    ignore_safe_area: false
+    size:
+      width: 100%
+      height: 100%
+    position:
+      horizontal: center
+      vertical: top
+    shade_color:
+      default:
+        type: hex
+        hex: "#000000"
+        alpha: 0.2
+    web:
+      ignore_shade: true
+view:
+  type: state_controller
+  view:
+    type: pager_controller
+    identifier: 6b72219d-15ef-4bcf-832b-70850b419687
+    view:
+      type: linear_layout
+      direction: vertical
+      items:
+        - size:
+            width: 100%
+            height: 100%
+          view:
+            identifier: 4a560c36-28fa-452d-a2e0-f07a9e3d7521
+            nps_identifier: b395410d-af24-4d9a-801e-c99e5833abf3
+            type: nps_form_controller
+            validation_mode:
+              type: on_demand
+            submit: submit_event
+            form_enabled:
+              - form_submission
+            state_triggers:
+              - identifier: toast_trigger
+                trigger_when_state_matches:
+                  scope:
+                    - $forms
+                    - current
+                    - status
+                    - type
+                  value:
+                    equals: "invalid"
+                reset_when_state_matches:
+                  not:
+                    scope:
+                      - $forms
+                      - current
+                      - status
+                      - type
+                    value:
+                      equals: "invalid"
+                on_trigger:
+                  state_actions:
+                    - type: set
+                      key: show_toast
+                      ttl_seconds: 3.0
+                      value: true
+            response_type: nps
+            view:
+              type: container
+              items:
+                - position:
+                    horizontal: center
+                    vertical: center
+                  size:
+                    width: 100%
+                    height: 100%
+                  view:
+                    type: pager
+                    disable_swipe: true
+                    items:
+                      - identifier: d2432b09-48d6-40a9-8753-72e372319121
+                        type: pager_item
+                        view:
+                          type: container
+                          items:
+                            - size:
+                                width: 100%
+                                height: 100%
+                              position:
+                                horizontal: center
+                                vertical: center
+                              ignore_safe_area: false
+                              view:
+                                type: container
+                                items:
+                                  - margin:
+                                      bottom: 0
+                                      top: 0
+                                      end: 0
+                                      start: 0
+                                    position:
+                                      horizontal: center
+                                      vertical: center
+                                    size:
+                                      width: 100%
+                                      height: 100%
+                                    view:
+                                      type: linear_layout
+                                      direction: vertical
+                                      items:
+                                        - identifier: scroll_container
+                                          size:
+                                            width: 100%
+                                            height: 100%
+                                          view:
+                                            type: scroll_layout
+                                            direction: vertical
+                                            view:
+                                              type: linear_layout
+                                              direction: vertical
+                                              items:
+                                                - identifier: 8ce7c2d5-23f6-4eda-b840-c76ba483fb68
+                                                  size:
+                                                    width: 100%
+                                                    height: auto
+                                                  margin:
+                                                    top: 48
+                                                    bottom: 8
+                                                    start: 16
+                                                    end: 16
+                                                  view:
+                                                    type: label
+                                                    text: Single Choice
+                                                    content_description: Single Choice
+                                                    text_appearance:
+                                                      font_size: 20
+                                                      color:
+                                                        default:
+                                                          type: hex
+                                                          hex: "#000000"
+                                                          alpha: 1
+                                                      alignment: start
+                                                      styles:
+                                                        - bold
+                                                      font_families:
+                                                        - sans-serif
+                                                - identifier: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                                  size:
+                                                    width: 100%
+                                                    height: auto
+                                                  margin:
+                                                    top: 8
+                                                    bottom: 0
+                                                    start: 16
+                                                    end: 16
+                                                  view:
+                                                    type: linear_layout
+                                                    direction: vertical
+                                                    items:
+                                                      - margin:
+                                                          top: 0
+                                                          bottom: 8
+                                                        size:
+                                                          width: 100%
+                                                          height: auto
+                                                        view:
+                                                          type: label
+                                                          text: "Favorite Animal"
+                                                          content_description: "Favorite Animal"
+                                                          text_appearance:
+                                                            font_size: 20
+                                                            color:
+                                                              default:
+                                                                type: hex
+                                                                hex: "#000000"
+                                                                alpha: 1
+                                                            alignment: start
+                                                            styles: []
+                                                            font_families:
+                                                              - sans-serif
+                                                      - margin:
+                                                          top: 0
+                                                          bottom: 8
+                                                        size:
+                                                          width: 100%
+                                                          height: auto
+                                                        view:
+                                                          type: radio_input_controller
+                                                          identifier: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                                          required: true
+                                                          on_error:
+                                                            state_actions:
+                                                              - type: set
+                                                                key: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                                                value: "error"
+                                                          on_valid:
+                                                            state_actions:
+                                                              - type: set
+                                                                key: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                                                value: "valid"
+                                                          on_edit:
+                                                            state_actions:
+                                                              - type: set
+                                                                key: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                                                value: "editing"
+                                                          view:
+                                                            type: linear_layout
+                                                            direction: vertical
+                                                            items:
+                                                              - size:
+                                                                  width: 100%
+                                                                  height: 100%
+                                                                margin:
+                                                                  top: 0
+                                                                  bottom: 8
+                                                                view:
+                                                                  type: linear_layout
+                                                                  direction: horizontal
+                                                                  items:
+                                                                    - margin:
+                                                                        end: 8
+                                                                      size:
+                                                                        width: 20
+                                                                        height: 20
+                                                                      view:
+                                                                        type: radio_input
+                                                                        reporting_value: 4eb714c3-c19f-467b-8daa-0a27b5b4d9f7
+                                                                        content_description: Cat
+                                                                        style:
+                                                                          type: checkbox
+                                                                          bindings:
+                                                                            selected:
+                                                                              shapes:
+                                                                                - type: ellipse
+                                                                                  scale: 1
+                                                                                  aspect_ratio: 1
+                                                                                  border:
+                                                                                    radius: 20
+                                                                                    stroke_width: 2
+                                                                                    stroke_color:
+                                                                                      default:
+                                                                                        type: hex
+                                                                                        hex: "#000000"
+                                                                                        alpha: 1
+                                                                                  color:
+                                                                                    default:
+                                                                                      type: hex
+                                                                                      hex: "#FFFFFF"
+                                                                                      alpha: 1
+                                                                                - type: ellipse
+                                                                                  scale: 0.6
+                                                                                  aspect_ratio: 1
+                                                                                  color:
+                                                                                    default:
+                                                                                      type: hex
+                                                                                      hex: "#000000"
+                                                                                      alpha: 1
+                                                                            unselected:
+                                                                              shapes:
+                                                                                - type: ellipse
+                                                                                  scale: 1
+                                                                                  aspect_ratio: 1
+                                                                                  border:
+                                                                                    radius: 20
+                                                                                    stroke_width: 2
+                                                                                    stroke_color:
+                                                                                      default:
+                                                                                        type: hex
+                                                                                        hex: "#000000"
+                                                                                        alpha: 1
+                                                                                  color:
+                                                                                    default:
+                                                                                      type: hex
+                                                                                      hex: "#FFFFFF"
+                                                                                      alpha: 1
+                                                                    - margin:
+                                                                        end: 16
+                                                                      size:
+                                                                        height: auto
+                                                                        width: 100%
+                                                                      view:
+                                                                        type: label
+                                                                        text: Cat
+                                                                        content_description: Cat
+                                                                        text_appearance:
+                                                                          font_size: 16
+                                                                          color:
+                                                                            default:
+                                                                              type: hex
+                                                                              hex: "#000000"
+                                                                              alpha: 1
+                                                                          alignment: start
+                                                                          styles: []
+                                                                          font_families:
+                                                                            - sans-serif
+                                                              - size:
+                                                                  width: 100%
+                                                                  height: 100%
+                                                                margin:
+                                                                  top: 0
+                                                                  bottom: 8
+                                                                view:
+                                                                  type: linear_layout
+                                                                  direction: horizontal
+                                                                  items:
+                                                                    - margin:
+                                                                        end: 8
+                                                                      size:
+                                                                        width: 20
+                                                                        height: 20
+                                                                      view:
+                                                                        type: radio_input
+                                                                        reporting_value: 33c7f7cb-d703-4685-a0c8-0a6591cbb67d
+                                                                        content_description: Dog
+                                                                        style:
+                                                                          type: checkbox
+                                                                          bindings:
+                                                                            selected:
+                                                                              shapes:
+                                                                                - type: ellipse
+                                                                                  scale: 1
+                                                                                  aspect_ratio: 1
+                                                                                  border:
+                                                                                    radius: 20
+                                                                                    stroke_width: 2
+                                                                                    stroke_color:
+                                                                                      default:
+                                                                                        type: hex
+                                                                                        hex: "#000000"
+                                                                                        alpha: 1
+                                                                                  color:
+                                                                                    default:
+                                                                                      type: hex
+                                                                                      hex: "#FFFFFF"
+                                                                                      alpha: 1
+                                                                                - type: ellipse
+                                                                                  scale: 0.6
+                                                                                  aspect_ratio: 1
+                                                                                  color:
+                                                                                    default:
+                                                                                      type: hex
+                                                                                      hex: "#000000"
+                                                                                      alpha: 1
+                                                                            unselected:
+                                                                              shapes:
+                                                                                - type: ellipse
+                                                                                  scale: 1
+                                                                                  aspect_ratio: 1
+                                                                                  border:
+                                                                                    radius: 20
+                                                                                    stroke_width: 2
+                                                                                    stroke_color:
+                                                                                      default:
+                                                                                        type: hex
+                                                                                        hex: "#000000"
+                                                                                        alpha: 1
+                                                                                  color:
+                                                                                    default:
+                                                                                      type: hex
+                                                                                      hex: "#FFFFFF"
+                                                                                      alpha: 1
+                                                                    - margin:
+                                                                        end: 16
+                                                                      size:
+                                                                        height: auto
+                                                                        width: 100%
+                                                                      view:
+                                                                        type: label
+                                                                        text: Dog
+                                                                        content_description: Dog
+                                                                        text_appearance:
+                                                                          font_size: 16
+                                                                          color:
+                                                                            default:
+                                                                              type: hex
+                                                                              hex: "#000000"
+                                                                              alpha: 1
+                                                                          alignment: start
+                                                                          styles: []
+                                                                          font_families:
+                                                                            - sans-serif
+                                                              - size:
+                                                                  width: 100%
+                                                                  height: 100%
+                                                                margin:
+                                                                  top: 0
+                                                                  bottom: 8
+                                                                view:
+                                                                  type: linear_layout
+                                                                  direction: horizontal
+                                                                  items:
+                                                                    - margin:
+                                                                        end: 8
+                                                                      size:
+                                                                        width: 20
+                                                                        height: 20
+                                                                      view:
+                                                                        type: radio_input
+                                                                        reporting_value: 8df9abde-f0fc-4b37-afe0-70ee8aff0c00
+                                                                        content_description: Dragon
+                                                                        style:
+                                                                          type: checkbox
+                                                                          bindings:
+                                                                            selected:
+                                                                              shapes:
+                                                                                - type: ellipse
+                                                                                  scale: 1
+                                                                                  aspect_ratio: 1
+                                                                                  border:
+                                                                                    radius: 20
+                                                                                    stroke_width: 2
+                                                                                    stroke_color:
+                                                                                      default:
+                                                                                        type: hex
+                                                                                        hex: "#000000"
+                                                                                        alpha: 1
+                                                                                  color:
+                                                                                    default:
+                                                                                      type: hex
+                                                                                      hex: "#FFFFFF"
+                                                                                      alpha: 1
+                                                                                - type: ellipse
+                                                                                  scale: 0.6
+                                                                                  aspect_ratio: 1
+                                                                                  color:
+                                                                                    default:
+                                                                                      type: hex
+                                                                                      hex: "#000000"
+                                                                                      alpha: 1
+                                                                            unselected:
+                                                                              shapes:
+                                                                                - type: ellipse
+                                                                                  scale: 1
+                                                                                  aspect_ratio: 1
+                                                                                  border:
+                                                                                    radius: 20
+                                                                                    stroke_width: 2
+                                                                                    stroke_color:
+                                                                                      default:
+                                                                                        type: hex
+                                                                                        hex: "#000000"
+                                                                                        alpha: 1
+                                                                                  color:
+                                                                                    default:
+                                                                                      type: hex
+                                                                                      hex: "#FFFFFF"
+                                                                                      alpha: 1
+                                                                    - margin:
+                                                                        end: 16
+                                                                      size:
+                                                                        height: auto
+                                                                        width: 100%
+                                                                      view:
+                                                                        type: label
+                                                                        text: Dragon
+                                                                        content_description: Dragon
+                                                                        text_appearance:
+                                                                          font_size: 16
+                                                                          color:
+                                                                            default:
+                                                                              type: hex
+                                                                              hex: "#000000"
+                                                                              alpha: 1
+                                                                          alignment: start
+                                                                          styles: []
+                                                                          font_families:
+                                                                            - sans-serif
+                                                            randomize_children: true
+                                                          attribute_name: {}
+                                                - identifier: "some-required-label"
+                                                  size:
+                                                    width: auto
+                                                    height: auto
+                                                  margin:
+                                                    top: 0
+                                                    bottom: 8
+                                                    start: 16
+                                                    end: 16
+                                                  position:
+                                                    vertical: center
+                                                    horizontal: start
+                                                  view:
+                                                    type: label
+                                                    refs:
+                                                      - ua_required_field
+                                                    text: "* Required"
+                                                    text_appearance:
+                                                      font_size: 16
+                                                      color:
+                                                        default:
+                                                          type: hex
+                                                          hex: "#000000"
+                                                          alpha: 1
+                                                      alignment: start
+                                                      styles: []
+                                                      font_families:
+                                                        - sans-serif
+                                                    view_overrides:
+                                                      icon_end:
+                                                        - value:
+                                                            space: 8
+                                                            type: floating
+                                                            icon:
+                                                              type: icon
+                                                              icon: exclamationmark_circle_fill
+                                                              color:
+                                                                default:
+                                                                  hex: "#ff0000"
+                                                                  alpha: 1.0
+                                                              scale: 1
+                                                          when_state_matches:
+                                                            key: edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                                            value:
+                                                              equals: "error"
+                                                      text_appearance:
+                                                        - when_state_matches:
+                                                            scope:
+                                                              - edf9064c-54d5-4b29-9ac9-ad0997a62696
+                                                            value:
+                                                              equals: "error"
+                                                          value:
+                                                            font_size: 16
+                                                            color:
+                                                              default:
+                                                                type: hex
+                                                                hex: "#ff0000"
+                                                                alpha: 1
+                                                            alignment: start
+                                                            styles: []
+                                                            font_families:
+                                                              - sans-serif
+                                                - identifier: f1047936-d73a-403f-9ac8-68bf6bacb802
+                                                  margin:
+                                                    top: 8
+                                                    bottom: 8
+                                                    start: 16
+                                                    end: 16
+                                                  size:
+                                                    width: 100%
+                                                    height: auto
+                                                  view:
+                                                    type: label_button
+                                                    identifier: submit_feedback--Submit
+                                                    reporting_metadata:
+                                                      trigger_link_id: f1047936-d73a-403f-9ac8-68bf6bacb802
+                                                    label:
+                                                      view_overrides:
+                                                        text:
+                                                          - value: "Processing ..."
+                                                            when_state_matches:
+                                                              scope:
+                                                                - $forms
+                                                                - current
+                                                                - status
+                                                                - type
+                                                              value:
+                                                                equals: "validating"
+                                                        icon_start:
+                                                          - value:
+                                                            type: "floating"
+                                                            space: 8
+                                                            icon:
+                                                              type: icon
+                                                              icon: progress_spinner
+                                                              color:
+                                                                default:
+                                                                  hex: "#00ff00"
+                                                                  alpha: 1.0
+                                                              scale: 1
+                                                      type: label
+                                                      text: Submit
+                                                      content_description: Submit
+                                                      text_appearance:
+                                                        font_size: 16
+                                                        color:
+                                                          default:
+                                                            type: hex
+                                                            hex: "#000000"
+                                                            alpha: 1
+                                                        alignment: center
+                                                        styles: []
+                                                        font_families:
+                                                          - sans-serif
+                                                    actions: {}
+                                                    enabled:
+                                                      - form_validation
+                                                    button_click:
+                                                      - form_submit
+                                                      - dismiss
+                                                    background_color:
+                                                      default:
+                                                        type: hex
+                                                        hex: "#63AFF1"
+                                                        alpha: 1
+                                                    border:
+                                                      radius: 0
+                                                      stroke_width: 16
+                                                      stroke_color:
+                                                        default:
+                                                          type: hex
+                                                          hex: "#63AFF1"
+                                                          alpha: 1
+                                                    event_handlers:
+                                                      - type: tap
+                                                        state_actions:
+                                                          - type: set
+                                                            key: submitted
+                                                            value: true
+                                                - size:
+                                                    width: 100%
+                                                    height: 100%
+                                                  view:
+                                                    type: linear_layout
+                                                    direction: horizontal
+                                                    items: []
+                                visibility:
+                                  default: true
+                                  invert_when_state_matches:
+                                    key: submitted
+                                    value:
+                                      equals: true
+                            - ignore_safe_area: true
+                              size:
+                                width: 100%
+                                height: 100%
+                              position:
+                                horizontal: center
+                                vertical: center
+                              view:
+                                type: container
+                                items:
+                                  - margin:
+                                      start: 0
+                                      end: 0
+                                    position:
+                                      horizontal: center
+                                      vertical: center
+                                    size:
+                                      width: 100%
+                                      height: 100%
+                                    view:
+                                      type: linear_layout
+                                      direction: horizontal
+                                      items: []
+                                    ignore_safe_area: true
+                                  - margin:
+                                      bottom: 0
+                                      top: 0
+                                      end: 0
+                                      start: 0
+                                    position:
+                                      horizontal: center
+                                      vertical: center
+                                    size:
+                                      width: 100%
+                                      height: 100%
+                                    view:
+                                      type: linear_layout
+                                      direction: vertical
+                                      items:
+                                        - identifier: layout_container
+                                          size:
+                                            width: 100%
+                                            height: 100%
+                                          view:
+                                            type: linear_layout
+                                            direction: vertical
+                                            items:
+                                              - identifier: 9c9b4565-c8e3-41bf-a211-90af3665b38b
+                                                size:
+                                                  width: 100%
+                                                  height: auto
+                                                margin:
+                                                  top: 48
+                                                  bottom: 8
+                                                  start: 16
+                                                  end: 16
+                                                view:
+                                                  type: label
+                                                  text: Nice
+                                                  content_description: Nice
+                                                  text_appearance:
+                                                    font_size: 20
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: "#000000"
+                                                        alpha: 1
+                                                    alignment: start
+                                                    styles: []
+                                                    font_families:
+                                                      - sans-serif
+                                    ignore_safe_area: false
+                                background_color:
+                                  default:
+                                    type: hex
+                                    hex: "#FFFFFF"
+                                    alpha: 1
+                                visibility:
+                                  default: false
+                                  invert_when_state_matches:
+                                    key: submitted
+                                    value:
+                                      equals: true
+                          background_color:
+                            default:
+                              type: hex
+                              hex: "#FFFFFF"
+                              alpha: 1
+                          visibility:
+                            default: true
+                            invert_when_state_matches:
+                              key: confirmation_screen_container
+                              value:
+                                equals: true
+                  ignore_safe_area: false
+                - position:
+                    horizontal: end
+                    vertical: top
+                  size:
+                    width: 48
+                    height: 48
+                  view:
+                    type: image_button
+                    image:
+                      scale: 0.4
+                      type: icon
+                      icon: close
+                      color:
+                        default:
+                          type: hex
+                          hex: "#000000"
+                          alpha: 1
+                    identifier: dismiss_button
+                    button_click:
+                      - dismiss
+                -   position:
+                      horizontal: center
+                      vertical: bottom
+                    size:
+                      width: auto
+                      height: auto
+                    margin:
+                      top: 20
+                      start: 20
+                      bottom: 20
+                      end: 20
+                    view:
+                      visibility:
+                        invert_when_state_matches:
+                          scope:
+                            - show_toast
+                          value:
+                            equals: true
+                        default: false
+                      type: container
+                      background_color:
+                        default:
+                          type: hex
+                          hex: "#3d4047"
+                          alpha: 0.8
+                      border:
+                        radius: 20
+                        stroke_width: 1
+                        stroke_color:
+                          default:
+                            type: hex
+                            hex: "#3d4047"
+                            alpha: 0.8
+                      items:
+                        - position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            width: auto
+                            height: auto
+                          margin:
+                            top: 10
+                            start: 20
+                            bottom: 10
+                            end: 20
+                          view:
+                            type: label
+                            is_accessibility_alert: true
+                            refs:
+                              - ua_invalid_form_message
+                            text: Please fix the invalid fields to continue
+                            text_appearance:
+                              font_size: 16
+                              color:
+                                default:
+                                  type: hex
+                                  hex: "#FFFFFF"
+                                  alpha: 1
+                              alignment: center
+                              font_families:
+                                - sans-serif

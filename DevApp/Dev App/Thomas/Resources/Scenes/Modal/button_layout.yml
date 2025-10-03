@@ -416,6 +416,8 @@ view:
                     view:
                       type: button_layout
                       identifier: page_2_button_layout
+                      accessibility_role:
+                        type: container
                       content_description: Page 2 Button Layout
                       actions:
                         toast_action: Page 2 tapped!
