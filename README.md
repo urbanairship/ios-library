@@ -10,11 +10,15 @@ The Airship SDK for iOS provides a comprehensive way to integrate Airship's cust
 ## Features
 
 - **Push Notifications** - Rich, interactive push notifications with deep linking
+- **Live Activities** - Real-time updates for iOS 16.1+ Dynamic Island and Lock Screen widgets
 - **In-App Experiences** - Contextual messaging and automation
 - **Message Center** - Inbox for push notifications and messages
 - **Preference Center** - User preference management
 - **Feature Flags** - Dynamic feature toggles and experimentation
 - **Analytics** - Comprehensive user behavior tracking
+- **Contacts** - User identification and contact management
+- **Tags, Attributes & Subscription Lists** - User segmentation, personalization, and subscription management
+- **Privacy Controls** - Granular data collection and feature management
 - **SwiftUI Support** - Modern SwiftUI components and views
 
 ## Installation
@@ -34,6 +38,7 @@ In Xcode, add the following products to your target dependencies:
 - `AirshipAutomation` (for In-App Messaging)
 - `AirshipFeatureFlags` (for Feature Flags)
 - `AirshipNotificationServiceExtension` (for rich push notifications - iOS only)
+- `AirshipObjectiveC` (for Objective-C compatibility)
 - `AirshipDebug` (for debugging tools)
 
 ## Quick Start

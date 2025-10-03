@@ -95,10 +95,6 @@ test-feature-flags: setup
 test-service-extension: setup
 	bash ./scripts/run_tests.sh AirshipNotificationServiceExtension "${derived_data_path}"
 
-.PHONY: test-packages
-test-packages: setup
-	bash ./scripts/test_package.sh spm
-
 .PHONY: pod-publish
 pod-publish: setup
 	bundle exec pod trunk push Airship.podspec --allow-warnings

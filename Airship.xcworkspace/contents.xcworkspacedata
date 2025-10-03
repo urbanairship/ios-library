@@ -11,6 +11,6 @@
       location = "group:DevApp/DevApp.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:AirshipWatchOS Sample/DevApp watchOS.xcodeproj">
+      location = "group:DevApp watchOS/DevApp watchOS.xcodeproj">
    </FileRef>
 </Workspace>

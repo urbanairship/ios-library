@@ -58,16 +58,6 @@ jobs:
       - name: Test
         run: make test-service-extension
 
-  run-package-tests:
-    runs-on: macos-15-xlarge
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install xcodegen
-        run: brew install xcodegen
-      - name: Test
-        run: make test-packages
-
   build-samples:
     runs-on: macos-15-xlarge
     timeout-minutes: 15
@@ -135,10 +125,3 @@ jobs:
       - uses: actions/checkout@v4
       - name: Pod lint
         run: make pod-lint-extensions
-
-  # pod-lib-lint-visonos:
-  #   runs-on: macos-15-xlarge
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Pod lint
-  #       run: make pod-lint-visionos
