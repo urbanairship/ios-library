@@ -1,5 +1,5 @@
 
-XCODE ?= 26.0
+XCODE ?= 26.0.1
 
 export XCBEAUTIY_RENDERER ?= github-actions
 export TEST_DESTINATION ?= platform=iOS Simulator,OS=26.0,name=iPhone 16 Pro Max

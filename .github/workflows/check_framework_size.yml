@@ -1,6 +1,7 @@
 name: CI Pull Request
 
-#on: [pull_request]
+on:
+  workflow_dispatch:
 
 env:
   BUNDLE_PATH: vendor/bundle
