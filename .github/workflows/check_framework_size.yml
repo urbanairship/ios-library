@@ -1,14 +1,10 @@
-name: CI Pull Request
+name: Check Framework Size
 
 on:
   workflow_dispatch:
 
 env:
   BUNDLE_PATH: vendor/bundle
-
-concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: false
 
 jobs:
  

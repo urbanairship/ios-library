@@ -1,8 +1,9 @@
 #!/bin/bash
-# build_xcframeworks.sh OUTPUT DERIVED_DATA_PATH ARCHIVE_PATH
+# build_xcframeworks.sh OUTPUT DERIVED_DATA_PATH ARCHIVE_PATH [SKIP_SIGNING]
 #  - OUTPUT: The output directory.
 #  - DERIVED_DATA_PATH: The derived data path
 #  - ARCHIVE_PATH: The archive path
+#  - SKIP_SIGNING: Optional. Set to "true" to skip code signing (useful for size checks)
 
 set -o pipefail
 set -ex
@@ -12,6 +13,7 @@ ROOT_PATH=`dirname "${0}"`/..
 OUTPUT="$1"
 DERIVED_DATA="$2"
 ARCHIVE_PATH="$3"
+SKIP_SIGNING="$4"
 FULL_ARCHIVE_PATH="$(pwd -P)/$ARCHIVE_PATH"
 
 mkdir -p "$OUTPUT"
@@ -227,12 +229,17 @@ xcrun xcodebuild -create-xcframework \
   -output "$OUTPUT/AirshipNotificationServiceExtension.xcframework"
 
 
-# Sign the frameworks
-codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipBasement.xcframework"
-codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipCore.xcframework"
-codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipMessageCenter.xcframework"
-codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipPreferenceCenter.xcframework"
-codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipNotificationServiceExtension.xcframework"
-codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipFeatureFlags.xcframework"
-codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipAutomation.xcframework"
-codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipObjectiveC.xcframework"
+# Sign the frameworks (unless SKIP_SIGNING is set to "true")
+if [ "$SKIP_SIGNING" != "true" ]; then
+  echo "Signing frameworks..."
+  codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipBasement.xcframework"
+  codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipCore.xcframework"
+  codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipMessageCenter.xcframework"
+  codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipPreferenceCenter.xcframework"
+  codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipNotificationServiceExtension.xcframework"
+  codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipFeatureFlags.xcframework"
+  codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipAutomation.xcframework"
+  codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipObjectiveC.xcframework"
+else
+  echo "Skipping code signing as requested..."
+fi

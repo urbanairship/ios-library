@@ -56,6 +56,10 @@ build-docs: setup clean-docs
 build-xcframeworks: setup clean-xcframeworks
 	bash ./scripts/build_xcframeworks.sh "${xcframeworks_path}" "${derived_data_path}" "${archive_path}"
 
+.PHONY: build-xcframeworks-no-sign
+build-xcframeworks-no-sign: setup clean-xcframeworks
+	bash ./scripts/build_xcframeworks.sh "${xcframeworks_path}" "${derived_data_path}" "${archive_path}" "true"
+
 .PHONY: build-samples
 build-samples: build-sample-ios
 
@@ -141,7 +145,7 @@ clean-xcframeworks:
 	# rm -rf "${xcframeworks_path}"
 	
 .PHONY: compare-framework-size
-compare-framework-size: build-xcframeworks check-size
+compare-framework-size: build-xcframeworks-no-sign check-size
 
 .PHONY: check-size
 check-size:
