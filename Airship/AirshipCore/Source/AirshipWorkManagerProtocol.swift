@@ -20,6 +20,7 @@ public protocol AirshipWorkManagerProtocol: Sendable {
         _ request: AirshipWorkRequest
     )
 
+    @MainActor
     func autoDispatchWorkRequestOnBackground(
         _ request: AirshipWorkRequest
     )

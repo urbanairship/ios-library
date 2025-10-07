@@ -6,14 +6,14 @@ import Foundation
 /// Manages work for the Airship SDK
 final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
 
-    private let rateLimitor = WorkRateLimiter()
+    private let rateLimiter = WorkRateLimiter()
     private let conditionsMonitor = WorkConditionsMonitor()
     private let backgroundTasks = WorkBackgroundTasks()
     private let workers: Workers = Workers()
     private let startTask: Task<Void, Never>
     private let backgroundWaitTask: AirshipMainActorValue<(any AirshipCancellable)?> = AirshipMainActorValue(nil)
     private let queue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
-    private let backgroundWorkRequests: AirshipAtomicValue<[AirshipWorkRequest]> = AirshipAtomicValue([])
+    private let backgroundWorkRequests: AirshipMainActorValue<[AirshipWorkRequest]> = AirshipMainActorValue([])
 
     /// Shared instance
     static let shared = AirshipWorkManager()
@@ -61,21 +61,27 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
         }
 
         let isDynamicBackgroundWaitTimeEnabled = Airship.config.airshipConfig.isDynamicBackgroundWaitTimeEnabled
+        let pending = backgroundWorkRequests.value
 
-        cancellable.value = Task { [workers, backgroundWorkRequests] in
-            for request in backgroundWorkRequests.value {
-                await workers.dispatchWorkRequest(request)
-            }
+        cancellable.value = Task { [workers, pending] in
+            await withTaskCancellationHandler {
 
-            guard isDynamicBackgroundWaitTimeEnabled else {
-                try? await Task.sleep(nanoseconds: UInt64(5.0 * 1_000_000_000))
+                for request in pending {
+                    await workers.dispatchWorkRequest(request)
+                }
+
+                guard isDynamicBackgroundWaitTimeEnabled else {
+                    try? await Task.sleep(nanoseconds: UInt64(5.0 * 1_000_000_000))
+                    background?.cancel()
+                    return
+                }
+
+                let sleep = await workers.calculateBackgroundWaitTime(maxTime: 15.0)
+                try? await Task.sleep(nanoseconds: UInt64(max(sleep, 5.0) * 1_000_000_000))
                 background?.cancel()
-                return
+            } onCancel: {
+                background?.cancel()
             }
-
-            let sleep = await workers.calculateBackgroundWaitTime(maxTime: 15.0)
-            try? await Task.sleep(nanoseconds: UInt64(max(sleep, 5.0) * 1_000_000_000))
-            background?.cancel()
         }
 
         backgroundWaitTask.set(cancellable)
@@ -96,7 +102,7 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
         let worker = Worker(
             workID: workID,
             conditionsMonitor: conditionsMonitor,
-            rateLimiter: rateLimitor,
+            rateLimiter: rateLimiter,
             backgroundTasks: backgroundTasks,
             workHandler: workHandler
         )
@@ -111,8 +117,8 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
         rate: Int,
         timeInterval: TimeInterval
     ) {
-        Task { [rateLimitor = self.rateLimitor] in
-            try? await rateLimitor.set(
+        Task { [rateLimiter = self.rateLimiter] in
+            try? await rateLimiter.set(
                 rateLimitID,
                 rate: rate,
                 timeInterval: timeInterval
@@ -126,8 +132,9 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
         }
     }
 
+    @MainActor
     func autoDispatchWorkRequestOnBackground(_ request: AirshipWorkRequest) {
-        backgroundWorkRequests.value.append(request)
+        backgroundWorkRequests.update { $0.append(request) }
     }
 }
 
@@ -175,11 +182,8 @@ private actor Workers {
     }
 
     func dispatchWorkRequest(_ request: AirshipWorkRequest) async {
-        let workersCopy = self.workers
-        for worker in workersCopy {
-            if worker.workID == request.workID {
-                await worker.addWork(request: request)
-            }
+        for worker in workers where worker.workID == request.workID {
+            await worker.addWork(request: request)
         }
     }
 

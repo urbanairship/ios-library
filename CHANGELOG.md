@@ -4,6 +4,13 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+Version 19.11.1 – October 7, 2025
+Patch release addressing the longstanding Swift concurrency crash (GH-434) and improving the internal rate-limiting system for better stability and efficiency.
+
+Changes
+- Refactored WorkRateLimiter to improve efficiency and reliability, reduce memory overhead, and eliminate unnecessary temporary allocations.
+- Added stronger safeguards to WorkRateLimiter prevent rare edge-case crashes in rate-limiting logic.
+
 ## Version 19.11.0 - September 30, 2025
 
 This is an important update for apps using manual push notification integration (automaticSetup = false). We are addressing a lifecycle issue caused by Apple's async notification delegate being called on a background thread, unlike the main-thread-guaranteed completionHandler version. To align with the correct lifecycle, we are deprecating our async handler and introducing a new completionHandler method. Using the async version can cause

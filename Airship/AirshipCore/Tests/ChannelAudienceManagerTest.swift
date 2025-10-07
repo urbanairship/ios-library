@@ -18,6 +18,7 @@ class ChannelAudienceManagerTest: XCTestCase {
     private var privacyManager: TestPrivacyManager!
     private var audienceManager: ChannelAudienceManager!
 
+    @MainActor
     override func setUp() async throws {
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,

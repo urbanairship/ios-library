@@ -331,7 +331,7 @@ actor ContactManager: ContactManagerProtocol {
             AirshipWorkRequest(
                 workID: ContactManager.updateTaskID,
                 requiresNetwork: true,
-                rateLimitIDs: rateLimitIDs
+                rateLimitIDs: Set(rateLimitIDs)
             )
         )
     }

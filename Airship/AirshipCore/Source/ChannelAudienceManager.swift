@@ -84,6 +84,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
     let liveActivityUpdates: AsyncStream<[LiveActivityUpdate]>
     private let liveActivityUpdatesContinuation: AsyncStream<[LiveActivityUpdate]>.Continuation
 
+    @MainActor
     init(
         dataStore: PreferenceDataStore,
         workManager: any AirshipWorkManagerProtocol,
@@ -139,6 +140,7 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         }
     }
 
+    @MainActor
     convenience init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,

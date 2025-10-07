@@ -3,18 +3,28 @@
 import Foundation
 
 actor WorkRateLimiter {
-    private struct RateLimitRule {
+
+    private struct RateLimiterState: Sendable {
         let rate: Int
         let timeInterval: TimeInterval
+        var hits: [Date] = []
+
+        mutating func prune(now: Date) {
+            let cutoff = now.addingTimeInterval(-timeInterval)
+            hits.removeAll { $0 <= cutoff }
+
+            if hits.count > rate {
+                hits.removeFirst(hits.count - rate)
+            }
+        }
     }
 
-    enum Status {
+    enum Status: Sendable {
         case overLimit(TimeInterval)
         case withinLimit(Int)
     }
 
-    private var hits: [String: [Date]] = [:]
-    private var rules: [String: RateLimitRule] = [:]
+    private var limiters: [String: RateLimiterState] = [:]
     private let date: any AirshipDateProtocol
 
     init(date: any AirshipDateProtocol = AirshipDate()) {
@@ -23,81 +33,85 @@ actor WorkRateLimiter {
 
     func set(_ key: String, rate: Int, timeInterval: TimeInterval) throws {
         guard rate > 0, timeInterval > 0 else {
-            throw AirshipErrors.error(
-                "Rate and time interval must be greater than 0"
-            )
+            throw AirshipErrors.error("Rate and time interval must be greater than 0")
         }
 
-        self.rules[key] = RateLimitRule(rate: rate, timeInterval: timeInterval)
-        self.hits[key] = []
+        var newState = RateLimiterState(
+            rate: rate,
+            timeInterval: timeInterval,
+            hits: []
+        )
+        // Reserve rate + 1 capacity. We prune after adding a value so it should only ever grow by 1 more than the rate.
+        newState.hits.reserveCapacity(rate + 1)
+        self.limiters[key] = newState
     }
 
-    func nextAvailable(_ keys: [String]) -> TimeInterval {
-        return
-            keys.map { key in
-                guard case .overLimit(let delay) = status(key) else {
-                    return 0.0
-                }
-                return delay
+    func nextAvailable(_ keys: Set<String>) -> TimeInterval {
+        keys.reduce(0.0) { maxDelay, key in
+            guard case let .overLimit(delay)? = status(key) else {
+                return maxDelay
             }
-            .max() ?? 0.0
+            return max(maxDelay, delay)
+        }
     }
 
-    func trackIfWithinLimit(_ keys: [String]) -> Bool {
-        let overLimit = keys.contains {
-            if let status = status($0) {
-                if case .overLimit(_) = status {
-                    return true
-                }
+    func trackIfWithinLimit(_ keys: Set<String>) -> Bool {
+        guard !keys.isEmpty else {
+            return true
+        }
+
+        // Check first
+        for key in keys {
+            if case .overLimit? = status(key) {
+                return false
             }
-
-            return false
         }
 
-        guard !overLimit else {
-            return false
-        }
-        keys.forEach { track($0) }
+        let now = date.now
+        keys.forEach { track($0, now: now) }
         return true
     }
 
     private func status(_ key: String) -> Status? {
-        guard let rule = rules[key] else {
+        guard var limiter = self.limiters[key] else {
             AirshipLogger.debug("No rule for key \(key)")
             return nil
         }
 
-        let date = date.now
+        let now = date.now
 
-        let filtered = filter(self.hits[key], rule: rule, date: date) ?? []
-        let count = filtered.count
+        // Save the struct back with pruned hits
+        limiter.prune(now: now)
+        self.limiters[key] = limiter
 
-        guard count >= rule.rate else {
-            return .withinLimit(rule.rate - count)
+        let count = limiter.hits.count
+        guard count >= limiter.rate else {
+            return .withinLimit(limiter.rate - count)
         }
-        let nextAvailable =
-            rule.timeInterval
-            - date.timeIntervalSince(filtered[count - rule.rate])
-        return .overLimit(nextAvailable)
+
+        let oldestHitIndex = count - limiter.rate
+
+        guard oldestHitIndex >= 0, oldestHitIndex < limiter.hits.count else {
+            AirshipLogger.error("Rate limiter index check failed for key \(key). Count: \(count), Rate: \(limiter.rate)")
+            return .overLimit(limiter.timeInterval)
+        }
+
+        let gate = limiter.hits[oldestHitIndex]
+        let wait = limiter.timeInterval - now.timeIntervalSince(gate)
+        return .overLimit(max(wait, 0))
     }
 
-    private func track(_ key: String) {
-        guard let rule = rules[key] else {
+    private func track(_ key: String, now: Date) {
+        guard var limiter = self.limiters[key] else {
             AirshipLogger.debug("No rule for key \(key)")
             return
         }
 
-        var keyHits = hits[key] ?? []
-        keyHits.append(self.date.now)
-        hits[key] = filter(keyHits, rule: rule, date: self.date.now)
-    }
+        // Append and then prune the state
+        limiter.hits.append(now)
+        limiter.prune(now: now)
 
-    private func filter(_ hits: [Date]?, rule: RateLimitRule, date: Date)
-        -> [Date]?
-    {
-        guard let hits = hits else { return nil }
-        return hits.filter { hit in
-            return hit.advanced(by: rule.timeInterval) > date
-        }
+        // Save the updated struct back
+        self.limiters[key] = limiter
     }
 }
