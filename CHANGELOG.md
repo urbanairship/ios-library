@@ -19,3 +19,4 @@ Major SDK release with several breaking changes. See the [Migration Guide](Docum
 - Fixed Package.swift to remove macOS as a supported platform.
 - CustomViews within a Scene can now programmatically control their parent Scene, enabling more dynamic and interactive custom content.
 - Accessibility updates for Scenes.
+- New AirshipDebug package that exposes insights and debugging capabilities into the Airship SDK for development builds, providing enhanced visibility into SDK behavior and performance.

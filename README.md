@@ -5,10 +5,9 @@
 [![Carthage](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg)](https://github.com/Carthage/Carthage)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-The Airship SDK for iOS provides a comprehensive way to integrate Airship's customer engagement platform into your iOS, tvOS, and visionOS applications.
+The Airship SDK for iOS provides a comprehensive way to integrate Airship's customer experience platform into your iOS, tvOS, and visionOS applications.
 
 ## Features
-
 - **Push Notifications** - Rich, interactive push notifications with deep linking
 - **Live Activities** - Real-time updates for iOS 16.1+ Dynamic Island and Lock Screen widgets
 - **In-App Experiences** - Contextual messaging and automation
@@ -20,6 +19,22 @@ The Airship SDK for iOS provides a comprehensive way to integrate Airship's cust
 - **Tags, Attributes & Subscription Lists** - User segmentation, personalization, and subscription management
 - **Privacy Controls** - Granular data collection and feature management
 - **SwiftUI Support** - Modern SwiftUI components and views
+
+## Platform Support
+
+| Feature                                | iOS | tvOS | visionOS |
+|----------------------------------------|-----|------|----------|
+| Push Notifications                     | ✅  | ✅   | ✅        |
+| Live Activities                        | ✅  | ❌   | ❌        |
+| In-App Experiences                     | ✅  | ❌   | ✅        |
+| Message Center                         | ✅  | ❌   | ✅        |
+| Preference Center                      | ✅  | ✅   | ✅        |
+| Feature Flags                          | ✅  | ✅   | ✅        |
+| Analytics                              | ✅  | ✅   | ✅        |
+| Contacts                               | ✅  | ✅   | ✅        |
+| Tags, Attributes & Subscription Lists  | ✅  | ✅   | ✅        |
+| Privacy Controls                       | ✅  | ✅   | ✅        |
+| SwiftUI Support                        | ✅  | ✅   | ✅        |
 
 ## Installation
 
@@ -33,11 +48,11 @@ dependencies: [
 
 In Xcode, add the following products to your target dependencies:
 - `AirshipCore` (required)
-- `AirshipMessageCenter` (for Message Center - iOS only)
+- `AirshipMessageCenter` (for Message Center)
 - `AirshipPreferenceCenter` (for Preference Center)
-- `AirshipAutomation` (for In-App Messaging)
+- `AirshipAutomation` (for In-App Experiences, including Scenes, In-App Automation, and Landing Pages)
 - `AirshipFeatureFlags` (for Feature Flags)
-- `AirshipNotificationServiceExtension` (for rich push notifications - iOS only)
+- `AirshipNotificationServiceExtension` (for rich push notifications)
 - `AirshipObjectiveC` (for Objective-C compatibility)
 - `AirshipDebug` (for debugging tools)
 

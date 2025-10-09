@@ -217,6 +217,19 @@ xcrun xcodebuild -create-xcframework \
   -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipObjectiveC.framework" \
   -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/dSYMs/AirshipObjectiveC.framework.dSYM" \
   -output "$OUTPUT/AirshipObjectiveC.xcframework"
+
+xcrun xcodebuild -create-xcframework \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/Products/Library/Frameworks/AirshipDebug.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphoneos.xcarchive/dSYMs/AirshipDebug.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/Products/Library/Frameworks/AirshipDebug.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/iphonesimulator.xcarchive/dSYMs/AirshipDebug.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/Products/Library/Frameworks/AirshipDebug.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xros.xcarchive/dSYMs/AirshipDebug.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/Products/Library/Frameworks/AirshipDebug.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/xrsimulator.xcarchive/dSYMs/AirshipDebug.framework.dSYM" \
+  -framework "$ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/Products/Library/Frameworks/AirshipDebug.framework" \
+  -debug-symbols "$FULL_ARCHIVE_PATH/xcarchive/AirshipRelease/mac.xcarchive/dSYMs/AirshipDebug.framework.dSYM" \
+  -output "$OUTPUT/AirshipDebug.xcframework"
   
 # Package AirshipNotificationServiceExtension
 xcrun xcodebuild -create-xcframework \
@@ -240,6 +253,7 @@ if [ "$SKIP_SIGNING" != "true" ]; then
   codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipFeatureFlags.xcframework"
   codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipAutomation.xcframework"
   codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipObjectiveC.xcframework"
+  codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" "$OUTPUT/AirshipDebug.xcframework"
 else
   echo "Skipping code signing as requested..."
 fi
