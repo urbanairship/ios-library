@@ -195,14 +195,13 @@ actor Worker {
             await self.conditionsMonitor.checkConditions(
                 workRequest: workRequest
             ),
-            !workRequest.rateLimitIDs.isEmpty
+            let rateLimitIDs = workRequest.rateLimitIDs,
+            !rateLimitIDs.isEmpty
         else {
             return 0.0
         }
 
-        let wait = await self.rateLimiter.nextAvailable(
-            workRequest.rateLimitIDs
-        )
+        let wait = await self.rateLimiter.nextAvailable(rateLimitIDs)
 
         if wait > maxTime {
             return 0.0
@@ -220,25 +219,24 @@ actor Worker {
             }
         }
 
-        if workRequest.rateLimitIDs.isEmpty {
+        guard let rateLimitIDs = workRequest.rateLimitIDs, !rateLimitIDs.isEmpty else {
             await self.conditionsMonitor.awaitConditions(
                 workRequest: workRequest
             )
-        } else {
-            repeat {
-                let rateLimit = await rateLimiter.nextAvailable(
-                    workRequest.rateLimitIDs
-                )
-                if rateLimit > 0 {
-                    try await Self.sleep(rateLimit)
-                }
-                await self.conditionsMonitor.awaitConditions(
-                    workRequest: workRequest
-                )
-            } while await !rateLimiter.trackIfWithinLimit(
-                workRequest.rateLimitIDs
-            )
+            return
         }
+
+        repeat {
+            let rateLimit = await rateLimiter.nextAvailable(
+                rateLimitIDs
+            )
+            if rateLimit > 0 {
+                try await Self.sleep(rateLimit)
+            }
+            await self.conditionsMonitor.awaitConditions(
+                workRequest: workRequest
+            )
+        } while await !rateLimiter.trackIfWithinLimit(rateLimitIDs)
     }
 
     private static func sleep(_ time: TimeInterval) async throws {

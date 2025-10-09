@@ -16,7 +16,7 @@ public struct AirshipWorkRequest: Equatable, Sendable, Hashable {
     public let extras: [String: String]?
     public let initialDelay: TimeInterval
     public let requiresNetwork: Bool
-    public let rateLimitIDs: [String]
+    public let rateLimitIDs: Set<String>?
     public let conflictPolicy: AirshipWorkRequestConflictPolicy
 
     public init(
@@ -24,7 +24,7 @@ public struct AirshipWorkRequest: Equatable, Sendable, Hashable {
         extras: [String: String]? = nil,
         initialDelay: TimeInterval = 0.0,
         requiresNetwork: Bool = true,
-        rateLimitIDs: [String] = [],
+        rateLimitIDs: Set<String>? = nil,
         conflictPolicy: AirshipWorkRequestConflictPolicy = .replace
     ) {
         self.workID = workID
