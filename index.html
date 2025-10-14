@@ -9,19 +9,35 @@
         color-scheme: light dark;
         --bg-light: #ffffff;
         --bg-dark: #1e1e1e;
-        --text-light: #000000;
+        --text-light: #333333;
         --text-dark: #f1f1f1;
+        --text-secondary-light: #666666;
+        --text-secondary-dark: #cccccc;
         --link-light: #0066cc;
         --link-dark: #9ccfff;
+        --card-bg-light: #f8f9fa;
+        --card-bg-dark: #2a2a2a;
+        --card-hover-light: #e9ecef;
+        --card-hover-dark: #3a3a3a;
+        --border-light: #dee2e6;
+        --border-dark: #404040;
+        --shadow-light: rgba(0, 0, 0, 0.1);
+        --shadow-dark: rgba(0, 0, 0, 0.3);
+      }
+
+      * {
+        box-sizing: border-box;
       }
 
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         margin: 0;
-        padding: 2em;
+        padding: 2rem;
         background-color: var(--bg-light);
         color: var(--text-light);
-        transition: background-color 0.3s, color 0.3s;
+        transition: background-color 0.3s ease, color 0.3s ease;
+        line-height: 1.6;
+        min-height: 100vh;
       }
 
       html[data-theme='dark'] body {
@@ -29,91 +45,271 @@
         color: var(--text-dark);
       }
 
-      h1 {
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
         text-align: center;
-        font-size: 2.5em;
-        margin-bottom: 0.5em;
       }
 
       .logo {
         display: block;
-        margin: 0 auto 1em;
-        width: 100px;
+        margin: 0 auto 1.5rem;
+        width: 120px;
         height: auto;
+        filter: drop-shadow(0 4px 8px var(--shadow-light));
+        transition: transform 0.3s ease;
       }
 
-      .container {
-        max-width: 700px;
-        margin: auto;
-        text-align: center;
+      .logo:hover {
+        transform: scale(1.05);
       }
 
-      ul {
-        list-style: none;
+      html[data-theme='dark'] .logo {
+        filter: drop-shadow(0 4px 8px var(--shadow-dark));
+      }
+
+      h1 {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 700;
+        margin: 0 0 0.5rem;
+        background: linear-gradient(135deg, var(--link-light), #4a90e2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      html[data-theme='dark'] h1 {
+        background: linear-gradient(135deg, var(--link-dark), #7db4ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subtitle {
+        font-size: 1.1rem;
+        color: var(--text-secondary-light);
+        margin-bottom: 2.5rem;
+        font-weight: 400;
+      }
+
+      html[data-theme='dark'] .subtitle {
+        color: var(--text-secondary-dark);
+      }
+
+      .modules-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
         padding: 0;
+        list-style: none;
       }
 
-      li {
-        margin: 1em 0;
+      .module-card {
+        background: var(--card-bg-light);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px var(--shadow-light);
       }
 
-      a {
-        font-size: 1.2em;
-        color: var(--link-light);
+      html[data-theme='dark'] .module-card {
+        background: var(--card-bg-dark);
+        border-color: var(--border-dark);
+        box-shadow: 0 2px 8px var(--shadow-dark);
+      }
+
+      .module-card:hover {
+        background: var(--card-hover-light);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px var(--shadow-light);
+      }
+
+      html[data-theme='dark'] .module-card:hover {
+        background: var(--card-hover-dark);
+        box-shadow: 0 4px 16px var(--shadow-dark);
+      }
+
+      .module-link {
+        display: block;
+        color: var(--text-light);
         text-decoration: none;
-        transition: color 0.2s;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: color 0.2s ease;
       }
 
-      html[data-theme='dark'] a {
+      html[data-theme='dark'] .module-link {
+        color: var(--text-dark);
+      }
+
+      .module-link:hover {
+        color: var(--link-light);
+      }
+
+      html[data-theme='dark'] .module-link:hover {
         color: var(--link-dark);
       }
 
-      a:hover {
-        text-decoration: underline;
+      .module-description {
+        font-size: 0.9rem;
+        color: var(--text-secondary-light);
+        margin-top: 0.5rem;
+      }
+
+      html[data-theme='dark'] .module-description {
+        color: var(--text-secondary-dark);
       }
 
       .theme-toggle {
-        margin-top: 2em;
-        font-size: 0.9em;
+        margin-top: 3rem;
+        font-size: 0.95rem;
+        font-weight: 500;
         cursor: pointer;
-        background: none;
-        border: 1px solid currentColor;
-        border-radius: 8px;
-        padding: 0.5em 1em;
-        transition: background 0.3s;
+        background: var(--card-bg-light);
+        color: var(--text-light);
+        border: 1px solid var(--border-light);
+        border-radius: 25px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px var(--shadow-light);
+      }
+
+      html[data-theme='dark'] .theme-toggle {
+        background: var(--card-bg-dark);
+        color: var(--text-dark);
+        border-color: var(--border-dark);
+        box-shadow: 0 2px 4px var(--shadow-dark);
       }
 
       .theme-toggle:hover {
-        background: rgba(0, 0, 0, 0.05);
+        background: var(--card-hover-light);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px var(--shadow-light);
+      }
+
+      html[data-theme='dark'] .theme-toggle:hover {
+        background: var(--card-hover-dark);
+        box-shadow: 0 4px 8px var(--shadow-dark);
+      }
+
+      .theme-toggle:focus {
+        outline: 2px solid var(--link-light);
+        outline-offset: 2px;
+      }
+
+      html[data-theme='dark'] .theme-toggle:focus {
+        outline-color: var(--link-dark);
+      }
+
+      /* Mobile responsiveness */
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+        }
+        
+        .modules-grid {
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+        }
+        
+        .module-card {
+          padding: 1.25rem;
+        }
+      }
+
+      /* Reduced motion for accessibility */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <img src="airship.png" alt="Project Logo" class="logo" />
+      <img src="airship.png" alt="Airship SDK Logo" class="logo" />
 
-      <h1>📚 iOS API references</h1>
-      <p>Select a documentation module:</p>
+      <h1> 📚 Airship iOS SDK API References </h1>
+      <p class="subtitle">Comprehensive documentation for all Airship iOS SDK modules</p>
 
-      <ul>
-          <li><a href="./v19/AirshipCore/documentation/airshipcore/">AirshipCore</a></li>
-          <li><a href="./v19/AirshipAutomation/documentation/airshipautomation/">AirshipAutomation</a></li>
-          <li><a href="./v19/AirshipMessageCenter/documentation/airshipmessagecenter/">AirshipMessageCenter</a></li>
-          <li><a href="./v19/AirshipPreferenceCenter/documentation/airshippreferencecenter/">AirshipPreferenceCenter</a></li>
-          <li><a href="./v19/AirshipFeatureFlags/documentation/airshipfeatureflags/">AirshipFeatureFlags</a></li>
-          <li><a href="./v19/AirshipObjectiveC/documentation/airshipobjectivec/">AirshipObjectiveC</a></li>
-          <li><a href="./v19/AirshipNotificationServiceExtension/documentation/airshipnotificationserviceextension/">AirshipNotificationServiceExtension</a></li>
+      <ul class="modules-grid" role="list">
+        <li class="module-card" role="listitem">
+          <a href="./v20/AirshipCore/documentation/airshipcore/" class="module-link">
+            AirshipCore
+          </a>
+          <p class="module-description">Core SDK functionality including push notifications, analytics, and user management</p>
+        </li>
+        
+        <li class="module-card" role="listitem">
+          <a href="./v20/AirshipAutomation/documentation/airshipautomation/" class="module-link">
+            AirshipAutomation
+          </a>
+          <p class="module-description">Automated messaging and in-app experience orchestration</p>
+        </li>
+        
+        <li class="module-card" role="listitem">
+          <a href="./v20/AirshipMessageCenter/documentation/airshipmessagecenter/" class="module-link">
+            AirshipMessageCenter
+          </a>
+          <p class="module-description">Rich message inbox for storing and displaying user messages</p>
+        </li>
+        
+        <li class="module-card" role="listitem">
+          <a href="./v20/AirshipPreferenceCenter/documentation/airshippreferencecenter/" class="module-link">
+            AirshipPreferenceCenter
+          </a>
+          <p class="module-description">User preference management and subscription controls</p>
+        </li>
+        
+        <li class="module-card" role="listitem">
+          <a href="./v20/AirshipFeatureFlags/documentation/airshipfeatureflags/" class="module-link">
+            AirshipFeatureFlags
+          </a>
+          <p class="module-description">Feature flag management and remote configuration</p>
+        </li>
+        
+        <li class="module-card" role="listitem">
+          <a href="./v20/AirshipObjectiveC/documentation/airshipobjectivec/" class="module-link">
+            AirshipObjectiveC
+          </a>
+          <p class="module-description">Objective-C compatibility layer and legacy support</p>
+        </li>
+        
+        <li class="module-card" role="listitem">
+          <a href="./v20/AirshipNotificationServiceExtension/documentation/airshipnotificationserviceextension/" class="module-link">
+            AirshipNotificationServiceExtension
+          </a>
+          <p class="module-description">Enhanced push notification processing and rich media support</p>
+        </li>
       </ul>
 
-      <button class="theme-toggle" onclick="toggleTheme()">🌓 Toggle Theme</button>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle between light and dark theme">
+        🌓 Toggle Theme
+      </button>
     </div>
 
     <script>
       const root = document.documentElement;
 
       function applyTheme(theme) {
-        root.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
+        try {
+          root.setAttribute('data-theme', theme);
+          localStorage.setItem('theme', theme);
+          
+          // Update button text to reflect current theme
+          const button = document.querySelector('.theme-toggle');
+          if (button) {
+            button.setAttribute('aria-label',
+              `Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`
+            );
+          }
+        } catch (error) {
+          console.warn('Failed to apply theme:', error);
+        }
       }
 
       function toggleTheme() {
@@ -121,16 +317,85 @@
         applyTheme(current === 'dark' ? 'light' : 'dark');
       }
 
+      // Enhanced keyboard navigation
+      function handleKeyboardNavigation(event) {
+        // Allow Enter or Space to activate theme toggle
+        if ((event.key === 'Enter' || event.key === ' ') &&
+            event.target.classList.contains('theme-toggle')) {
+          event.preventDefault();
+          toggleTheme();
+        }
+      }
+
+      // Error handling for missing logo image
+      function handleImageError(img) {
+        img.style.display = 'none';
+        console.warn('Logo image not found:', img.src);
+      }
+
       // Load saved theme preference or system default
-      (function () {
-        const saved = localStorage.getItem('theme');
-        if (saved === 'light' || saved === 'dark') {
-          applyTheme(saved);
-        } else {
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          applyTheme(prefersDark ? 'dark' : 'light');
+      (function initializeTheme() {
+        try {
+          const saved = localStorage.getItem('theme');
+          if (saved === 'light' || saved === 'dark') {
+            applyTheme(saved);
+          } else {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(prefersDark ? 'dark' : 'light');
+          }
+
+          // Listen for system theme changes
+          const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+          mediaQuery.addEventListener('change', (e) => {
+            const saved = localStorage.getItem('theme');
+            if (!saved || (saved !== 'light' && saved !== 'dark')) {
+              applyTheme(e.matches ? 'dark' : 'light');
+            }
+          });
+        } catch (error) {
+          console.warn('Failed to initialize theme:', error);
+          // Fallback to light theme
+          root.setAttribute('data-theme', 'light');
         }
       })();
+
+      // Add event listeners when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        // Add keyboard support
+        document.addEventListener('keydown', handleKeyboardNavigation);
+        
+        // Add error handling for logo image
+        const logo = document.querySelector('.logo');
+        if (logo) {
+          logo.addEventListener('error', () => handleImageError(logo));
+          
+          // Preload check - if image fails to load immediately
+          if (logo.complete && !logo.naturalWidth) {
+            handleImageError(logo);
+          }
+        }
+
+        // Add focus management for better accessibility
+        const cards = document.querySelectorAll('.module-card');
+        cards.forEach((card, index) => {
+          const link = card.querySelector('.module-link');
+          if (link) {
+            // Add tab index for keyboard navigation
+            link.setAttribute('tabindex', '0');
+            
+            // Add focus styles
+            link.addEventListener('focus', () => {
+              card.style.outline = '2px solid var(--link-light)';
+              card.style.outlineOffset = '2px';
+            });
+            
+            link.addEventListener('blur', () => {
+              card.style.outline = 'none';
+            });
+          }
+        });
+      });
     </script>
   </body>
 </html>
+
