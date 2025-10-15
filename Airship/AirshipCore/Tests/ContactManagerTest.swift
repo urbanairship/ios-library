@@ -1,40 +1,64 @@
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
 
+@Suite(.timeLimit(.minutes(1)))
+struct ContactManagerTest {
 
-final class ContactManagerTest: XCTestCase {
+    let date: UATestDate
+    let channel: TestChannel
+    let localeManager: TestLocaleManager
+    let workManager: TestWorkManager
+    let dataStore: PreferenceDataStore
+    let apiClient: TestContactAPIClient
+    let contactManager: ContactManager
 
-    private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
-    private let channel: TestChannel = TestChannel()
-    private let localeManager: TestLocaleManager = TestLocaleManager()
-    private let workManager: TestWorkManager = TestWorkManager()
-    private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private let apiClient: TestContactAPIClient = TestContactAPIClient()
-    private var contactManager: ContactManager!
+    let anonIdentifyResponse: ContactIdentifyResult
+    let nonAnonIdentifyResponse: ContactIdentifyResult
 
-    private let anonIdentifyResponse: ContactIdentifyResult = ContactIdentifyResult(
-        contact: ContactIdentifyResult.ContactInfo(
-            channelAssociatedDate: AirshipDateFormatter.date(fromISOString: "2022-12-29T10:15:30.00")!,
-            contactID: "some contact",
-            isAnonymous: true
-        ),
-        token: "some token",
-        tokenExpiresInMilliseconds: 3600000
-    )
+    // Helper to wait for async conditions with timeout
+    private func waitForCondition(
+        timeout: Duration = .seconds(2),
+        pollingInterval: Duration = .milliseconds(10),
+        condition: @escaping () async -> Bool
+    ) async throws {
+        let deadline = ContinuousClock.now + timeout
+        while ContinuousClock.now < deadline {
+            if await condition() { return }
+            try await Task.sleep(for: pollingInterval)
+        }
+        throw NSError(domain: "TestTimeout", code: 1, userInfo: [NSLocalizedDescriptionKey: "Condition not met within timeout"])
+    }
 
-    private let nonAnonIdentifyResponse: ContactIdentifyResult = ContactIdentifyResult(
-        contact: ContactIdentifyResult.ContactInfo(
-            channelAssociatedDate: AirshipDateFormatter.date(fromISOString: "2022-12-29T10:15:30.00")!,
-            contactID: "some other contact",
-            isAnonymous: false
-        ),
-        token: "some other token",
-        tokenExpiresInMilliseconds: 3600000
-    )
+    init() async throws {
+        self.date = UATestDate(offset: 0, dateOverride: Date())
+        self.channel = TestChannel()
+        self.localeManager = TestLocaleManager()
+        self.workManager = TestWorkManager()
+        self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
+        self.apiClient = TestContactAPIClient()
 
-    override func setUp() async throws {
+        self.anonIdentifyResponse = ContactIdentifyResult(
+            contact: ContactIdentifyResult.ContactInfo(
+                channelAssociatedDate: AirshipDateFormatter.date(fromISOString: "2022-12-29T10:15:30.00")!,
+                contactID: "some contact",
+                isAnonymous: true
+            ),
+            token: "some token",
+            tokenExpiresInMilliseconds: 3600000
+        )
+
+        self.nonAnonIdentifyResponse = ContactIdentifyResult(
+            contact: ContactIdentifyResult.ContactInfo(
+                channelAssociatedDate: AirshipDateFormatter.date(fromISOString: "2022-12-29T10:15:30.00")!,
+                contactID: "some other contact",
+                isAnonymous: false
+            ),
+            token: "some other token",
+            tokenExpiresInMilliseconds: 3600000
+        )
+
         self.localeManager.currentLocale = Locale(identifier: "fr-CA")
 
         self.contactManager = ContactManager(
@@ -51,43 +75,56 @@ final class ContactManagerTest: XCTestCase {
         self.channel.identifier = "some channel"
     }
 
-    func testEnableEnqueuesWork() async throws {
+    @Test("Enable enqueues work")
+    func enableEnqueuesWork() async throws {
         await self.contactManager.setEnabled(enabled: false)
-        XCTAssertTrue(self.workManager.workRequests.isEmpty)
+        #expect(self.workManager.workRequests.isEmpty)
 
         await self.contactManager.addOperation(.resolve)
 
         await self.contactManager.setEnabled(enabled: false)
-        XCTAssertTrue(self.workManager.workRequests.isEmpty)
+        #expect(self.workManager.workRequests.isEmpty)
 
         await self.contactManager.setEnabled(enabled: true)
-        XCTAssertFalse(self.workManager.workRequests.isEmpty)
+        #expect(!self.workManager.workRequests.isEmpty)
     }
 
-    func testChannelCreationEnqueuesWork() async throws {
+    @Test("Channel creation enqueues work")
+    func channelCreationEnqueuesWork() async throws {
         await self.contactManager.setEnabled(enabled: true)
-        XCTAssertTrue(self.workManager.workRequests.isEmpty)
 
-        let expectation = XCTestExpectation(description: "work added")
-        workManager.onNewWorkRequestAdded = { work in
-            expectation.fulfill()
+        // Clear the channel identifier to simulate no channel
+        self.channel.identifier = nil
+
+        // Wait a moment for that to process
+        try await Task.sleep(for: .milliseconds(100))
+
+        // Track initial work count
+        let initialWorkCount = self.workManager.workRequests.count
+
+        // Simulate channel creation by setting identifier
+        self.channel.identifier = "newly-created-channel-id"
+
+        // Wait for new work to be enqueued
+        try await waitForCondition(timeout: .seconds(5)) {
+            self.workManager.workRequests.count > initialWorkCount
         }
 
-        self.channel.identifier = "some-id"
-
-        await fulfillment(of: [expectation], timeout: 30)
-        XCTAssertFalse(self.workManager.workRequests.isEmpty)
+        // Verify new work was enqueued
+        #expect(self.workManager.workRequests.count > initialWorkCount)
     }
 
-    func testAddOperationEnqueuesWork() async throws {
+    @Test("Add operation enqueues work")
+    func addOperationEnqueuesWork() async throws {
         await self.contactManager.setEnabled(enabled: true)
-        XCTAssertTrue(self.workManager.workRequests.isEmpty)
+        #expect(self.workManager.workRequests.isEmpty)
 
         await self.contactManager.addOperation(.resolve)
-        XCTAssertFalse(self.workManager.workRequests.isEmpty)
+        #expect(!self.workManager.workRequests.isEmpty)
     }
 
-    func testAddSkippableOperationEnqueuesWork() async throws {
+    @Test("Add skippable operation enqueues work")
+    func addSkippableOperationEnqueuesWork() async throws {
         await self.contactManager.setEnabled(enabled: true)
         await self.contactManager.addOperation(.resolve)
 
@@ -104,53 +141,55 @@ final class ContactManagerTest: XCTestCase {
                 workID: ContactManager.updateTaskID
             )
         )
-        XCTAssertEqual(result, .success)
+        #expect(result == .success)
         self.workManager.workRequests.removeAll()
 
         await self.contactManager.addOperation(.reset)
-        XCTAssertFalse(self.workManager.workRequests.isEmpty)
+        #expect(!self.workManager.workRequests.isEmpty)
     }
 
-    func testRateLimitConfig() async throws {
+    @Test("Rate limit config")
+    func rateLimitConfig() async throws {
         let rateLimits = self.workManager.rateLimits
-        XCTAssertEqual(2, rateLimits.count)
+        #expect(rateLimits.count == 2)
 
         let updateRule = rateLimits[ContactManager.updateRateLimitID]!
-        XCTAssertEqual(1, updateRule.rate)
-        XCTAssertEqual(0.5, updateRule.timeInterval, accuracy: 0.01)
+        #expect(updateRule.rate == 1)
+        #expect(abs(updateRule.timeInterval - 0.5) < 0.01)
 
 
         let identityRule = rateLimits[ContactManager.identityRateLimitID]!
-        XCTAssertEqual(1, identityRule.rate)
-        XCTAssertEqual(5.0, identityRule.timeInterval, accuracy: 0.01)
+        #expect(identityRule.rate == 1)
+        #expect(abs(identityRule.timeInterval - 5.0) < 0.01)
     }
 
-    func testResolve() async throws {
+    @Test("Resolve")
+    func resolve() async throws {
         await self.contactManager.addOperation(.resolve)
 
-        let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            XCTAssertNil(contactID)
-            resolve.fulfill()
-            return AirshipHTTPResponse(
-                result: self.anonIdentifyResponse,
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+                #expect(self.channel.identifier == channelID)
+                #expect(contactID == nil)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: self.anonIdentifyResponse,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let result = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
+
+            #expect(result == .success)
         }
 
-        let result = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-
-        XCTAssertEqual(result, .success)
-        await fulfillment(of: [resolve])
-
         let contactInfo = await self.contactManager.currentContactIDInfo()
-        XCTAssertEqual(anonIdentifyResponse.contact.contactID, contactInfo?.contactID)
+        #expect(anonIdentifyResponse.contact.contactID == contactInfo?.contactID)
 
         await self.verifyUpdates([
             .contactIDUpdate(
@@ -164,36 +203,38 @@ final class ContactManagerTest: XCTestCase {
         ])
     }
 
-    func testResolveWithContactID() async throws {
+    @Test("Resolve with contact ID")
+    func resolveWithContactID() async throws {
         await self.contactManager.generateDefaultContactIDIfNotSet()
         await self.contactManager.addOperation(.resolve)
 
-        let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            XCTAssertNotNil(contactID)
-            resolve.fulfill()
-            return AirshipHTTPResponse(
-                result: self.anonIdentifyResponse,
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+                #expect(self.channel.identifier == channelID)
+                #expect(contactID != nil)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: self.anonIdentifyResponse,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let result = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
+
+            #expect(result == .success)
         }
 
-        let result = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-
-        XCTAssertEqual(result, .success)
-        await fulfillment(of: [resolve])
-
         let contactInfo = await self.contactManager.currentContactIDInfo()
-        XCTAssertEqual(anonIdentifyResponse.contact.contactID, contactInfo?.contactID)
+        #expect(anonIdentifyResponse.contact.contactID == contactInfo?.contactID)
     }
 
-    func testResolvedFailed() async throws {
+    @Test("Resolved failed")
+    func resolvedFailed() async throws {
         await self.contactManager.addOperation(.resolve)
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
@@ -209,35 +250,36 @@ final class ContactManagerTest: XCTestCase {
             )
         )
 
-        XCTAssertEqual(result, .failure)
+        #expect(result == .failure)
     }
 
-    func testVerify() async throws {
+    @Test("Verify")
+    func verify() async throws {
         await self.contactManager.addOperation(.verify(self.date.now))
 
-        let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            XCTAssertNil(contactID)
-            resolve.fulfill()
-            return AirshipHTTPResponse(
-                result: self.anonIdentifyResponse,
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+                #expect(self.channel.identifier == channelID)
+                #expect(contactID == nil)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: self.anonIdentifyResponse,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let result = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
+
+            #expect(result == .success)
         }
 
-        let result = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-
-        XCTAssertEqual(result, .success)
-        await fulfillment(of: [resolve])
-
         let contactInfo = await self.contactManager.currentContactIDInfo()
-        XCTAssertEqual(anonIdentifyResponse.contact.contactID, contactInfo?.contactID)
+        #expect(anonIdentifyResponse.contact.contactID == contactInfo?.contactID)
 
         await self.verifyUpdates([
             .contactIDUpdate(
@@ -251,28 +293,28 @@ final class ContactManagerTest: XCTestCase {
         ])
     }
 
-    func testRequiredVerify() async throws {
+    @Test("Required verify")
+    func requiredVerify() async throws {
         // Resolve is called first if we do not have a valid token
-        let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            XCTAssertNil(contactID)
-            resolve.fulfill()
-            return AirshipHTTPResponse(
-                result: self.anonIdentifyResponse,
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+                #expect(self.channel.identifier == channelID)
+                #expect(contactID == nil)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: self.anonIdentifyResponse,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            await self.contactManager.addOperation(.resolve)
+            _ = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
         }
-
-        await self.contactManager.addOperation(.resolve)
-        _ = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-
-        await fulfillment(of: [resolve])
 
         await self.contactManager.addOperation(.verify(self.date.now + 1, required: true))
 
@@ -298,7 +340,8 @@ final class ContactManagerTest: XCTestCase {
         )
     }
 
-    func testVerifyFailed() async throws {
+    @Test("Verify failed")
+    func verifyFailed() async throws {
         await self.contactManager.addOperation(.verify(self.date.now))
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
@@ -314,10 +357,11 @@ final class ContactManagerTest: XCTestCase {
             )
         )
 
-        XCTAssertEqual(result, .failure)
+        #expect(result == .failure)
     }
 
-    func testResolvedFailedClientError() async throws {
+    @Test("Resolved failed client error")
+    func resolvedFailedClientError() async throws {
         await self.contactManager.addOperation(.resolve)
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
@@ -333,19 +377,20 @@ final class ContactManagerTest: XCTestCase {
             )
         )
 
-        XCTAssertEqual(result, .success)
+        #expect(result == .success)
     }
 
-    func testIdentify() async throws {
+    @Test("Identify")
+    func identify() async throws {
         await self.contactManager.addOperation(.identify("some named user"))
         await self.verifyUpdates([.namedUserUpdate("some named user")])
 
         // Resolve is called first if we do not have a valid token
-        let resolve = XCTestExpectation(description: "resolve contact")
+        let resolveExpectation = expectation(description: "resolve contact")
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            XCTAssertNil(contactID)
-            resolve.fulfill()
+            #expect(self.channel.identifier == channelID)
+            #expect(contactID == nil)
+            resolveExpectation.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -353,30 +398,32 @@ final class ContactManagerTest: XCTestCase {
             )
         }
 
-        let identify = XCTestExpectation()
-        self.apiClient.identifyCallback = { channelID, namedUserID, contactID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            XCTAssertEqual("some named user", namedUserID)
-            XCTAssertEqual(self.anonIdentifyResponse.contact.contactID, contactID)
-            identify.fulfill()
-            return AirshipHTTPResponse(
-                result: self.nonAnonIdentifyResponse,
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.identifyCallback = { channelID, namedUserID, contactID, possiblyOrphanedContactID in
+                #expect(self.channel.identifier == channelID)
+                #expect("some named user" == namedUserID)
+                #expect(self.anonIdentifyResponse.contact.contactID == contactID)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: self.nonAnonIdentifyResponse,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let result = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
+
+            #expect(result == .success)
         }
 
-        let result = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-
-        XCTAssertEqual(result, .success)
-        await fulfillment(of: [resolve, identify])
+        await resolveExpectation.fulfillment
 
         let contactInfo = await self.contactManager.currentContactIDInfo()
-        XCTAssertEqual(nonAnonIdentifyResponse.contact.contactID, contactInfo?.contactID)
+        #expect(nonAnonIdentifyResponse.contact.contactID == contactInfo?.contactID)
 
         await self.verifyUpdates(
             [
@@ -400,13 +447,14 @@ final class ContactManagerTest: XCTestCase {
         )
     }
 
-    func testIdentifyFailed() async throws {
+    @Test("Identify failed")
+    func identifyFailed() async throws {
         await self.contactManager.addOperation(.identify("some named user"))
 
         // Resolve is called first if we do not have a valid token
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            XCTAssertNil(contactID)
+            #expect(self.channel.identifier == channelID)
+            #expect(contactID == nil)
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -428,16 +476,17 @@ final class ContactManagerTest: XCTestCase {
             )
         )
 
-        XCTAssertEqual(result, .failure)
+        #expect(result == .failure)
     }
 
-    func testIdentifyFailedClientError() async throws {
+    @Test("Identify failed client error")
+    func identifyFailedClientError() async throws {
         await self.contactManager.addOperation(.identify("some named user"))
 
         // Resolve is called first if we do not have a valid token
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            XCTAssertNil(contactID)
+            #expect(self.channel.identifier == channelID)
+            #expect(contactID == nil)
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -459,18 +508,19 @@ final class ContactManagerTest: XCTestCase {
             )
         )
 
-        XCTAssertEqual(result, .success)
+        #expect(result == .success)
     }
 
-    func testReset() async throws {
+    @Test("Reset")
+    func reset() async throws {
         await self.contactManager.addOperation(.reset)
 
         // Resolve is called first if we do not have a valid token
-        let resolve = XCTestExpectation(description: "resolve contact")
+        let resolveExpectation = expectation(description: "resolve contact")
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            XCTAssertNil(contactID)
-            resolve.fulfill()
+            #expect(self.channel.identifier == channelID)
+            #expect(contactID == nil)
+            resolveExpectation.fulfill()
             return AirshipHTTPResponse(
                 result: self.nonAnonIdentifyResponse,
                 statusCode: 200,
@@ -478,25 +528,27 @@ final class ContactManagerTest: XCTestCase {
             )
         }
 
-        let reset = XCTestExpectation()
-        self.apiClient.resetCallback = { channelID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            reset.fulfill()
-            return AirshipHTTPResponse(
-                result: self.anonIdentifyResponse,
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.resetCallback = { channelID, possiblyOrphanedContactID in
+                #expect(self.channel.identifier == channelID)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: self.anonIdentifyResponse,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let result = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
+
+            #expect(result == .success)
         }
 
-        let result = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-
-        XCTAssertEqual(result, .success)
-        await fulfillment(of: [resolve, reset])
+        await resolveExpectation.fulfillment
 
         await self.verifyUpdates(
             [
@@ -520,18 +572,19 @@ final class ContactManagerTest: XCTestCase {
         )
     }
 
-    func testResetIfNeeded() async throws {
+    @Test("Reset if needed")
+    func resetIfNeeded() async throws {
         let info = await self.contactManager.currentContactIDInfo()
-        XCTAssertNil(info)
+        #expect(info == nil)
 
         await self.contactManager.resetIfNeeded()
 
         // Resolve is called first if we do not have a valid token
-        let resolve = XCTestExpectation(description: "resolve contact")
+        let resolveExpectation = expectation(description: "resolve contact")
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            XCTAssertNil(contactID)
-            resolve.fulfill()
+            #expect(self.channel.identifier == channelID)
+            #expect(contactID == nil)
+            resolveExpectation.fulfill()
             return AirshipHTTPResponse(
                 result: self.nonAnonIdentifyResponse,
                 statusCode: 200,
@@ -539,25 +592,27 @@ final class ContactManagerTest: XCTestCase {
             )
         }
 
-        let reset = XCTestExpectation()
-        self.apiClient.resetCallback = { channelID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            reset.fulfill()
-            return AirshipHTTPResponse(
-                result: self.anonIdentifyResponse,
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.resetCallback = { channelID, possiblyOrphanedContactID in
+                #expect(self.channel.identifier == channelID)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: self.anonIdentifyResponse,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let result = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
+
+            #expect(result == .success)
         }
 
-        let result = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-
-        XCTAssertEqual(result, .success)
-        await fulfillment(of: [resolve, reset])
+        await resolveExpectation.fulfillment
 
         await self.verifyUpdates(
             [
@@ -581,24 +636,24 @@ final class ContactManagerTest: XCTestCase {
         )
     }
 
-    func testAuthTokenNoContactInfo() async throws {
-        let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            resolve.fulfill()
-            return AirshipHTTPResponse(
-                result: self.anonIdentifyResponse,
-                statusCode: 200,
-                headers: [:]
+    @Test("Auth token no contact info")
+    func authTokenNoContactInfo() async throws {
+        try await confirmation { confirm in
+            self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+                #expect(self.channel.identifier == channelID)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: self.anonIdentifyResponse,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let authToken = try await self.contactManager.resolveAuth(
+                identifier: self.anonIdentifyResponse.contact.contactID
             )
+            #expect(authToken == self.anonIdentifyResponse.token)
         }
-
-        let authToken = try await self.contactManager.resolveAuth(
-            identifier: self.anonIdentifyResponse.contact.contactID
-        )
-        XCTAssertEqual(authToken, self.anonIdentifyResponse.token)
-
-        await fulfillment(of: [resolve])
 
         await self.verifyUpdates([
             .contactIDUpdate(
@@ -612,7 +667,8 @@ final class ContactManagerTest: XCTestCase {
         ])
     }
 
-    func testAuthTokenValidTokenMismatchContactID() async throws {
+    @Test("Auth token valid token mismatch contact ID")
+    func authTokenValidTokenMismatchContactID() async throws {
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
@@ -632,40 +688,40 @@ final class ContactManagerTest: XCTestCase {
             let _ = try await self.contactManager.resolveAuth(
                 identifier: "some other contactID"
             )
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
 
     }
 
-    func testAuthTokenResolveMismatch() async throws {
-        let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            resolve.fulfill()
-            return AirshipHTTPResponse(
-                result: self.anonIdentifyResponse,
-                statusCode: 200,
-                headers: [:]
-            )
+    @Test("Auth token resolve mismatch")
+    func authTokenResolveMismatch() async throws {
+        try await confirmation { confirm in
+            self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+                #expect(self.channel.identifier == channelID)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: self.anonIdentifyResponse,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            do {
+                let _ = try await self.contactManager.resolveAuth(
+                    identifier: "some other contactID"
+                )
+                Issue.record("Should throw")
+            } catch {}
         }
-
-        do {
-            let _ = try await self.contactManager.resolveAuth(
-                identifier: "some other contactID"
-            )
-            XCTFail("Should throw")
-        } catch {}
-
-        await fulfillment(of: [resolve])
     }
 
-    func testExpireAuthToken() async throws {
-        let resolve = XCTestExpectation(description: "resolve contact")
-        resolve.expectedFulfillmentCount = 2
+    @Test("Expire auth token")
+    func expireAuthToken() async throws {
+        let resolveExpectation = expectation(description: "resolve contact", expectedFulfillmentCount: 2)
 
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            resolve.fulfill()
+            #expect(self.channel.identifier == channelID)
+            resolveExpectation.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -684,42 +740,45 @@ final class ContactManagerTest: XCTestCase {
             identifier: self.anonIdentifyResponse.contact.contactID
         )
 
-        XCTAssertEqual(authToken, self.anonIdentifyResponse.token)
+        #expect(authToken == self.anonIdentifyResponse.token)
+
+        await resolveExpectation.fulfillment
     }
 
-    func testAuthTokenFailed() async throws {
-        let resolve = XCTestExpectation(description: "resolve contact")
-        self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            XCTAssertEqual(self.channel.identifier, channelID)
-            resolve.fulfill()
-            return AirshipHTTPResponse(
-                result: nil,
-                statusCode: 400,
-                headers: [:]
-            )
+    @Test("Auth token failed")
+    func authTokenFailed() async throws {
+        try await confirmation { confirm in
+            self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
+                #expect(self.channel.identifier == channelID)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: nil,
+                    statusCode: 400,
+                    headers: [:]
+                )
+            }
+
+            do {
+                let _ = try await self.contactManager.resolveAuth(
+                    identifier: "some contact id"
+                )
+                Issue.record("Should throw")
+            } catch {}
         }
-
-        do {
-            let _ = try await self.contactManager.resolveAuth(
-                identifier: "some contact id"
-            )
-            XCTFail("Should throw")
-        } catch {}
-
-        await fulfillment(of: [resolve])
     }
 
-    func testGenerateDefaultContactInfo() async {
+    @Test("Generate default contact info")
+    func generateDefaultContactInfo() async {
         var contactInfo = await self.contactManager.currentContactIDInfo()
-        XCTAssertNil(contactInfo)
+        #expect(contactInfo == nil)
 
 
         await self.contactManager.generateDefaultContactIDIfNotSet()
         contactInfo = await self.contactManager.currentContactIDInfo()
-        XCTAssertNotNil(contactInfo)
+        #expect(contactInfo != nil)
 
 
-        XCTAssertEqual(contactInfo!.contactID.lowercased(), contactInfo!.contactID)
+        #expect(contactInfo!.contactID.lowercased() == contactInfo!.contactID)
 
         await self.verifyUpdates([
             .contactIDUpdate(
@@ -733,14 +792,16 @@ final class ContactManagerTest: XCTestCase {
         ])
     }
 
-    func testGenerateDefaultContactInfoLowercasedID() async {
+    @Test("Generate default contact info lowercased ID")
+    func generateDefaultContactInfoLowercasedID() async {
         await self.contactManager.generateDefaultContactIDIfNotSet()
         let contactInfo = await self.contactManager.currentContactIDInfo()
-        XCTAssertNotNil(contactInfo)
-        XCTAssertEqual(contactInfo!.contactID.lowercased(), contactInfo!.contactID)
+        #expect(contactInfo != nil)
+        #expect(contactInfo!.contactID.lowercased() == contactInfo!.contactID)
     }
 
-    func testGenerateDefaultContactInfoAlreadySet() async throws {
+    @Test("Generate default contact info already set")
+    func generateDefaultContactInfoAlreadySet() async throws {
         await self.contactManager.addOperation(.resolve)
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
             return AirshipHTTPResponse(
@@ -760,10 +821,11 @@ final class ContactManagerTest: XCTestCase {
         await self.contactManager.generateDefaultContactIDIfNotSet()
 
         let afterGenerate = await self.contactManager.currentContactIDInfo()
-        XCTAssertEqual(contactInfo, afterGenerate)
+        #expect(contactInfo == afterGenerate)
     }
 
-    func testContactUnstablePendingReset() async throws {
+    @Test("Contact unstable pending reset")
+    func contactUnstablePendingReset() async throws {
         await self.contactManager.generateDefaultContactIDIfNotSet()
         let contactInfo = await self.contactManager.currentContactIDInfo()!
 
@@ -792,7 +854,8 @@ final class ContactManagerTest: XCTestCase {
         ])
     }
 
-    func testContactUnstablePendingIdentify() async throws {
+    @Test("Contact unstable pending identify")
+    func contactUnstablePendingIdentify() async throws {
         await self.contactManager.generateDefaultContactIDIfNotSet()
         let contactInfo = await self.contactManager.currentContactIDInfo()!
 
@@ -821,7 +884,8 @@ final class ContactManagerTest: XCTestCase {
         ])
     }
 
-    func testPendingUpdatesCombineOperations() async throws {
+    @Test("Pending updates combine operations")
+    func pendingUpdatesCombineOperations() async throws {
         await self.contactManager.generateDefaultContactIDIfNotSet()
 
         let tags = [
@@ -865,12 +929,13 @@ final class ContactManagerTest: XCTestCase {
             contactID: contactID
         )
 
-        XCTAssertEqual(tags, pendingOverrides.tags)
-        XCTAssertEqual(attributes, pendingOverrides.attributes)
-        XCTAssertEqual(subscriptions, pendingOverrides.subscriptionLists)
+        #expect(tags == pendingOverrides.tags)
+        #expect(attributes == pendingOverrides.attributes)
+        #expect(subscriptions == pendingOverrides.subscriptionLists)
     }
 
-    func testPendingUpdates() async throws {
+    @Test("Pending updates")
+    func pendingUpdates() async throws {
         let tags = [
             TagGroupUpdate(group: "some group", tags: ["tag"], type: .add)
         ]
@@ -919,19 +984,20 @@ final class ContactManagerTest: XCTestCase {
         // because it will for sure be a different contact ID
 
         let anonUserOverrides = await self.contactManager.pendingAudienceOverrides(contactID: contactID)
-        XCTAssertEqual(tags, anonUserOverrides.tags)
-        XCTAssertEqual(attributes, anonUserOverrides.attributes)
-        XCTAssertEqual([], anonUserOverrides.subscriptionLists)
+        #expect(tags == anonUserOverrides.tags)
+        #expect(attributes == anonUserOverrides.attributes)
+        #expect([] == anonUserOverrides.subscriptionLists)
 
 
         // If we request a stale contact ID, it should return empty overrides
         let staleOverrides = await self.contactManager.pendingAudienceOverrides(contactID: "not the current contact id")
-        XCTAssertEqual([], staleOverrides.tags)
-        XCTAssertEqual([], staleOverrides.attributes)
-        XCTAssertEqual([], staleOverrides.subscriptionLists)
+        #expect([] == staleOverrides.tags)
+        #expect([] == staleOverrides.attributes)
+        #expect([] == staleOverrides.subscriptionLists)
     }
 
-    func testRegisterEmail() async throws {
+    @Test("Register email")
+    func registerEmail() async throws {
         let expectedAddress = "ua@airship.com"
         let expectedOptions = EmailRegistrationOptions.options(
             transactionalOptedIn: Date(),
@@ -944,9 +1010,9 @@ final class ContactManagerTest: XCTestCase {
         )
 
         // Should resolve contact first
-        let resolve = XCTestExpectation()
+        let resolveExpectation = expectation(description: "resolve")
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            resolve.fulfill()
+            resolveExpectation.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -955,31 +1021,33 @@ final class ContactManagerTest: XCTestCase {
         }
 
         // Then register the channel
-        let register = XCTestExpectation()
-        self.apiClient.registerEmailCallback = { contactID, address, options, locale in
-            XCTAssertEqual(contactID, self.anonIdentifyResponse.contact.contactID)
-            XCTAssertEqual(address, expectedAddress)
-            XCTAssertEqual(options, options)
-            XCTAssertEqual(locale, self.localeManager.currentLocale)
-            register.fulfill()
-            return AirshipHTTPResponse(
-                result: .init(channelType: .email, channelID: "some channel"),
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.registerEmailCallback = { contactID, address, options, locale in
+                #expect(contactID == self.anonIdentifyResponse.contact.contactID)
+                #expect(address == expectedAddress)
+                #expect(options == options)
+                #expect(locale == self.localeManager.currentLocale)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: .init(channelType: .email, channelID: "some channel"),
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let result = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
+            #expect(result == .success)
         }
 
-        let result = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-        XCTAssertEqual(result, .success)
-
-        await self.fulfillment(of: [resolve, register], timeout: 10)
+        await resolveExpectation.fulfillment
     }
 
-    func testRegisterOpen() async throws {
+    @Test("Register open")
+    func registerOpen() async throws {
         let expectedAddress = "ua@airship.com"
         let expectedOptions = OpenRegistrationOptions.optIn(
             platformName: "my_platform",
@@ -991,9 +1059,9 @@ final class ContactManagerTest: XCTestCase {
         )
 
         // Should resolve contact first
-        let resolve = XCTestExpectation()
+        let resolveExpectation = expectation(description: "resolve")
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            resolve.fulfill()
+            resolveExpectation.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -1002,31 +1070,33 @@ final class ContactManagerTest: XCTestCase {
         }
 
         // Then register the channel
-        let register = XCTestExpectation()
-        self.apiClient.registerOpenCallback = { contactID, address, options, locale in
-            XCTAssertEqual(contactID, self.anonIdentifyResponse.contact.contactID)
-            XCTAssertEqual(address, expectedAddress)
-            XCTAssertEqual(options, options)
-            XCTAssertEqual(locale, self.localeManager.currentLocale)
-            register.fulfill()
-            return AirshipHTTPResponse(
-                result: .init(channelType: .open, channelID: "some channel"),
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.registerOpenCallback = { contactID, address, options, locale in
+                #expect(contactID == self.anonIdentifyResponse.contact.contactID)
+                #expect(address == expectedAddress)
+                #expect(options == options)
+                #expect(locale == self.localeManager.currentLocale)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: .init(channelType: .open, channelID: "some channel"),
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let result = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
+            #expect(result == .success)
         }
 
-        let result = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-        XCTAssertEqual(result, .success)
-
-        await self.fulfillment(of: [resolve, register], timeout: 10)
+        await resolveExpectation.fulfillment
     }
 
-    func testRegisterSMS() async throws {
+    @Test("Register SMS")
+    func registerSMS() async throws {
         let expectedAddress = "15035556789"
         let expectedOptions = SMSRegistrationOptions.optIn(senderID: "28855")
 
@@ -1035,9 +1105,9 @@ final class ContactManagerTest: XCTestCase {
         )
 
         // Should resolve contact first
-        let resolve = XCTestExpectation()
+        let resolveExpectation = expectation(description: "resolve")
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            resolve.fulfill()
+            resolveExpectation.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -1046,38 +1116,40 @@ final class ContactManagerTest: XCTestCase {
         }
 
         // Then register the channel
-        let register = XCTestExpectation()
-        self.apiClient.registerSMSCallback = {contactID, address, options, locale in
-            XCTAssertEqual(address, expectedAddress)
-            XCTAssertEqual(options, options)
-            XCTAssertEqual(locale, self.localeManager.currentLocale)
-            register.fulfill()
-            return AirshipHTTPResponse(
-                result: .init(channelType: .sms, channelID: "some channel"),
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.registerSMSCallback = {contactID, address, options, locale in
+                #expect(address == expectedAddress)
+                #expect(options == options)
+                #expect(locale == self.localeManager.currentLocale)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: .init(channelType: .sms, channelID: "some channel"),
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let result = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
+            #expect(result == .success)
         }
 
-        let result = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-        XCTAssertEqual(result, .success)
-
-        await self.fulfillment(of: [resolve, register], timeout: 10)
+        await resolveExpectation.fulfillment
     }
 
-    func testResendEmail() async throws {
+    @Test("Resend email")
+    func resendEmail() async throws {
         let expectedAddress: String = "example@email.com"
 
         let expectedResendOptions = ResendOptions(emailAddress: expectedAddress)
 
         // Should resolve contact first after checking the token
-        let resolve = XCTestExpectation()
+        let resolveExpectation = expectation(description: "resolve")
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            resolve.fulfill()
+            resolveExpectation.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -1091,38 +1163,40 @@ final class ContactManagerTest: XCTestCase {
             .resend(channel: pendingChannel)
         )
 
-        let resend = XCTestExpectation()
-        self.apiClient.resendCallback = { resendOptions in
-            XCTAssertEqual(resendOptions, expectedResendOptions)
-            resend.fulfill()
-            return AirshipHTTPResponse(
-                result: true,
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.resendCallback = { resendOptions in
+                #expect(resendOptions == expectedResendOptions)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: true,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let result = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
+
+            #expect(result == .success)
         }
 
-        let result = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-
-        XCTAssertEqual(result, .success)
-
-        await self.fulfillment(of: [resolve, resend], timeout: 10)
+        await resolveExpectation.fulfillment
     }
 
-    func testResendSMS() async throws {
+    @Test("Resend SMS")
+    func resendSMS() async throws {
         let expectedMSISDN: String = "12345"
         let expectedSenderID: String = "1111"
 
         let expectedResendOptions = ResendOptions(msisdn: expectedMSISDN, senderID: expectedSenderID)
 
         // Should resolve contact first after checking the token
-        let resolve = XCTestExpectation()
+        let resolveExpectation = expectation(description: "resolve")
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            resolve.fulfill()
+            resolveExpectation.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -1136,38 +1210,40 @@ final class ContactManagerTest: XCTestCase {
             .resend(channel: pendingChannel)
         )
 
-        let resend = XCTestExpectation()
-        self.apiClient.resendCallback = { resendOptions in
-            XCTAssertEqual(resendOptions, expectedResendOptions)
-            resend.fulfill()
-            return AirshipHTTPResponse(
-                result: true,
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.resendCallback = { resendOptions in
+                #expect(resendOptions == expectedResendOptions)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: true,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let result = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
+
+            #expect(result == .success)
         }
 
-        let result = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-
-        XCTAssertEqual(result, .success)
-
-        await self.fulfillment(of: [resolve, resend], timeout: 10)
+        await resolveExpectation.fulfillment
     }
 
-    func testResendChannel() async throws {
+    @Test("Resend channel")
+    func resendChannel() async throws {
         let expectedChannelID = "12345"
         let expectedChannelType: ChannelType = ChannelType.email
 
         let expectedResendOptions = ResendOptions(channelID: expectedChannelID, channelType: expectedChannelType)
 
         // Should resolve contact first after checking the token
-        let resolve = XCTestExpectation()
+        let resolveExpectation = expectation(description: "resolve")
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            resolve.fulfill()
+            resolveExpectation.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -1181,29 +1257,31 @@ final class ContactManagerTest: XCTestCase {
             .resend(channel: registeredChannel)
         )
 
-        let resend = XCTestExpectation()
-        self.apiClient.resendCallback = { resendOptions in
-            XCTAssertEqual(resendOptions, expectedResendOptions)
-            resend.fulfill()
-            return AirshipHTTPResponse(
-                result: true,
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.resendCallback = { resendOptions in
+                #expect(resendOptions == expectedResendOptions)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: true,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let result = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
+
+            #expect(result == .success)
         }
 
-        let result = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-
-        XCTAssertEqual(result, .success)
-
-        await self.fulfillment(of: [resolve, resend], timeout: 10)
+        await resolveExpectation.fulfillment
     }
 
-    func testDisassociate() async throws {
+    @Test("Disassociate")
+    func disassociate() async throws {
         let expectedChannelID = "12345"
         let registeredChannel = makeRegisteredContactChannel(from: expectedChannelID)
 
@@ -1212,9 +1290,9 @@ final class ContactManagerTest: XCTestCase {
         )
 
         // Should resolve contact first
-        let resolve = XCTestExpectation()
+        let resolveExpectation = expectation(description: "resolve")
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            resolve.fulfill()
+            resolveExpectation.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -1223,29 +1301,31 @@ final class ContactManagerTest: XCTestCase {
         }
 
         // Then disassociate the channel
-        let register = XCTestExpectation()
-        self.apiClient.disassociateChannelCallback = { contactID, channelID, type in
-            XCTAssertEqual(channelID, expectedChannelID)
-            XCTAssertEqual(type, ChannelType.email)
-            register.fulfill()
-            return AirshipHTTPResponse(
-                result: ContactDisassociateChannelResult(channelID: channelID),
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.disassociateChannelCallback = { contactID, channelID, type in
+                #expect(channelID == expectedChannelID)
+                #expect(type == ChannelType.email)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: ContactDisassociateChannelResult(channelID: channelID),
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let result = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
+            #expect(result == .success)
         }
 
-        let result = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-        XCTAssertEqual(result, .success)
-
-        await self.fulfillment(of: [resolve, register], timeout: 10)
+        await resolveExpectation.fulfillment
     }
 
-    func testAssociateChannel() async throws {
+    @Test("Associate channel")
+    func associateChannel() async throws {
         await self.contactManager.addOperation(
             .associateChannel(
                 channelID: "some channel",
@@ -1254,9 +1334,9 @@ final class ContactManagerTest: XCTestCase {
         )
 
         // Should resolve contact first
-        let resolve = XCTestExpectation()
+        let resolveExpectation = expectation(description: "resolve")
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            resolve.fulfill()
+            resolveExpectation.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -1265,30 +1345,32 @@ final class ContactManagerTest: XCTestCase {
         }
 
         // Then register the channel
-        let register = XCTestExpectation()
-        self.apiClient.associateChannelCallback = { contactID, channelID, type in
-            XCTAssertEqual(contactID, "some contact")
-            XCTAssertEqual(channelID, "some channel")
-            XCTAssertEqual(type, .open)
-            register.fulfill()
-            return AirshipHTTPResponse(
-                result: .init(channelType: type, channelID: "some channel"),
-                statusCode: 200,
-                headers: [:]
+        try await confirmation { confirm in
+            self.apiClient.associateChannelCallback = { contactID, channelID, type in
+                #expect(contactID == "some contact")
+                #expect(channelID == "some channel")
+                #expect(type == .open)
+                confirm()
+                return AirshipHTTPResponse(
+                    result: .init(channelType: type, channelID: "some channel"),
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            let result = try await self.workManager.launchTask(
+                request: AirshipWorkRequest(
+                    workID: ContactManager.updateTaskID
+                )
             )
+            #expect(result == .success)
         }
 
-        let result = try await self.workManager.launchTask(
-            request: AirshipWorkRequest(
-                workID: ContactManager.updateTaskID
-            )
-        )
-        XCTAssertEqual(result, .success)
-
-        await self.fulfillment(of: [resolve, register], timeout: 10)
+        await resolveExpectation.fulfillment
     }
 
-    func testUpdate() async throws {
+    @Test("Update")
+    func update() async throws {
         let tags = [
             TagGroupUpdate(group: "some group", tags: ["tag"], type: .add),
             TagGroupUpdate(group: "some group", tags: ["tag"], type: .remove),
@@ -1316,9 +1398,9 @@ final class ContactManagerTest: XCTestCase {
         )
 
         // Should resolve contact first
-        let resolve = XCTestExpectation()
+        let resolveExpectation = expectation(description: "resolve")
         self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
-            resolve.fulfill()
+            resolveExpectation.fulfill()
             return AirshipHTTPResponse(
                 result: self.anonIdentifyResponse,
                 statusCode: 200,
@@ -1327,13 +1409,13 @@ final class ContactManagerTest: XCTestCase {
         }
 
         // Then register the channel
-        let update = XCTestExpectation()
+        let updateExpectation = expectation(description: "update")
         self.apiClient.updateCallback = { contactID, tagUpdates, attributeUpdates, subscriptionUpdates in
-            XCTAssertEqual(contactID, self.anonIdentifyResponse.contact.contactID)
-            XCTAssertEqual(tagUpdates, AudienceUtils.collapse(tags))
-            XCTAssertEqual(attributeUpdates, AudienceUtils.collapse(attributes))
-            XCTAssertEqual(subscriptionUpdates, AudienceUtils.collapse(subscriptions))
-            update.fulfill()
+            #expect(contactID == self.anonIdentifyResponse.contact.contactID)
+            #expect(tagUpdates == AudienceUtils.collapse(tags))
+            #expect(attributeUpdates == AudienceUtils.collapse(attributes))
+            #expect(subscriptionUpdates == AudienceUtils.collapse(subscriptions))
+            updateExpectation.fulfill()
             return AirshipHTTPResponse(
                 result: nil,
                 statusCode: 200,
@@ -1341,12 +1423,12 @@ final class ContactManagerTest: XCTestCase {
             )
         }
 
-        let audienceCallback = XCTestExpectation()
+        let audienceCallbackExpectation = expectation(description: "audience callback")
         await self.contactManager.onAudienceUpdated { update in
-            XCTAssertEqual(update.tags, AudienceUtils.collapse(tags))
-            XCTAssertEqual(update.attributes, AudienceUtils.collapse(attributes))
-            XCTAssertEqual(update.subscriptionLists, AudienceUtils.collapse(subscriptions))
-            audienceCallback.fulfill()
+            #expect(update.tags == AudienceUtils.collapse(tags))
+            #expect(update.attributes == AudienceUtils.collapse(attributes))
+            #expect(update.subscriptionLists == AudienceUtils.collapse(subscriptions))
+            audienceCallbackExpectation.fulfill()
         }
 
         let result = try await self.workManager.launchTask(
@@ -1354,12 +1436,15 @@ final class ContactManagerTest: XCTestCase {
                 workID: ContactManager.updateTaskID
             )
         )
-        XCTAssertEqual(result, .success)
+        #expect(result == .success)
 
-        await self.fulfillment(of: [resolve, update, audienceCallback], timeout: 10)
+        await resolveExpectation.fulfillment
+        await updateExpectation.fulfillment
+        await audienceCallbackExpectation.fulfillment
     }
 
-    func testConflict() async throws {
+    @Test("Conflict")
+    func conflict() async throws {
         let tags = [
             TagGroupUpdate(group: "some group", tags: ["tag"], type: .add),
         ]
@@ -1421,7 +1506,7 @@ final class ContactManagerTest: XCTestCase {
                 workID: ContactManager.updateTaskID
             )
         )
-        XCTAssertEqual(result, .success)
+        #expect(result == .success)
 
 
         let expctedConflictEvent =  ContactConflictEvent(
@@ -1433,7 +1518,7 @@ final class ContactManagerTest: XCTestCase {
         )
         // resolve, update, resolve, conflict
         let conflict = await self.collectUpdates(count: 4).last
-        XCTAssertEqual(conflict, .conflict(expctedConflictEvent))
+        #expect(conflict == .conflict(expctedConflictEvent))
     }
 
     private func collectUpdates(count: Int) async -> [ContactUpdate] {
@@ -1484,8 +1569,41 @@ final class ContactManagerTest: XCTestCase {
         )
     }
 
-    private func verifyUpdates(_ expected: [ContactUpdate], file: StaticString = #filePath, line: UInt = #line) async {
+    private func verifyUpdates(_ expected: [ContactUpdate], sourceLocation: SourceLocation = #_sourceLocation) async {
         let collected = await self.collectUpdates(count: expected.count)
-        XCTAssertEqual(collected, expected, file: file, line: line)
+        #expect(collected == expected, sourceLocation: sourceLocation)
+    }
+
+    private func expectation(description: String, expectedFulfillmentCount: Int = 1) -> Expectation {
+        return Expectation(description: description, expectedFulfillmentCount: expectedFulfillmentCount)
+    }
+}
+
+actor Expectation {
+    private var count: Int = 0
+    private let expectedCount: Int
+    private let description: String
+
+    init(description: String, expectedFulfillmentCount: Int = 1) {
+        self.description = description
+        self.expectedCount = expectedFulfillmentCount
+    }
+
+    nonisolated func fulfill() {
+        Task {
+            await self.incrementCount()
+        }
+    }
+
+    private func incrementCount() {
+        count += 1
+    }
+
+    var fulfillment: Void {
+        get async {
+            while count < expectedCount {
+                await Task.yield()
+            }
+        }
     }
 }

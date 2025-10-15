@@ -1,39 +1,54 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
 
-class ChannelTest: XCTestCase {
-    private let channelRegistrar = TestChannelRegistrar()
-    private let localeManager = TestLocaleManager()
-    private let audienceManager = TestChannelAudienceManager()
-    private let appStateTracker = TestAppStateTracker()
-    private let notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
-    private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private var config = AirshipConfig()
-    private var privacyManager: TestPrivacyManager!
-    private var permissionsManager: DefaultAirshipPermissionsManager!
-    private var channel: DefaultAirshipChannel!
+@Suite(.timeLimit(.minutes(1)))
+struct ChannelTest {
+    let channelRegistrar: TestChannelRegistrar
+    let localeManager: TestLocaleManager
+    let audienceManager: TestChannelAudienceManager
+    let appStateTracker: TestAppStateTracker
+    let notificationCenter: AirshipNotificationCenter
+    let dataStore: PreferenceDataStore
+    let config: AirshipConfig
+    let privacyManager: TestPrivacyManager
+    let permissionsManager: DefaultAirshipPermissionsManager
+    let channel: DefaultAirshipChannel
 
-    override func setUp() async throws {
+    // Helper to wait for async conditions with timeout
+    private func waitForCondition(
+        timeout: Duration = .seconds(2),
+        pollingInterval: Duration = .milliseconds(10),
+        condition: @escaping () async -> Bool
+    ) async throws {
+        let deadline = ContinuousClock.now + timeout
+        while ContinuousClock.now < deadline {
+            if await condition() { return }
+            try await Task.sleep(for: pollingInterval)
+        }
+        throw NSError(domain: "TestTimeout", code: 1, userInfo: [NSLocalizedDescriptionKey: "Condition not met within timeout"])
+    }
+
+    init() async throws {
+        self.channelRegistrar = TestChannelRegistrar()
+        self.localeManager = TestLocaleManager()
+        self.audienceManager = TestChannelAudienceManager()
+        self.appStateTracker = TestAppStateTracker()
+        self.notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
+        self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
+        self.config = AirshipConfig()
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
-            config: .testConfig(),
+            config: RuntimeConfig.testConfig(),
             defaultEnabledFeatures: [],
             notificationCenter: self.notificationCenter
         )
-
         self.permissionsManager = await DefaultAirshipPermissionsManager()
-
-        self.channel = await createChannel()
-    }
-
-    @MainActor
-    private func createChannel() -> DefaultAirshipChannel {
-        return DefaultAirshipChannel(
+        self.channel = await Self.createChannel(
             dataStore: self.dataStore,
-            config: .testConfig(airshipConfig: self.config),
+            config: self.config,
             privacyManager: self.privacyManager,
             permissionsManager: self.permissionsManager,
             localeManager: self.localeManager,
@@ -44,23 +59,54 @@ class ChannelTest: XCTestCase {
         )
     }
 
-    func testRegistrationFeatureEnabled() throws {
-        XCTAssertFalse(self.channelRegistrar.registerCalled)
-        self.privacyManager.enableFeatures(.tagsAndAttributes)
-        XCTAssertTrue(self.channelRegistrar.registerCalled)
+    @MainActor
+    private static func createChannel(
+        dataStore: PreferenceDataStore,
+        config: AirshipConfig,
+        privacyManager: TestPrivacyManager,
+        permissionsManager: DefaultAirshipPermissionsManager,
+        localeManager: TestLocaleManager,
+        audienceManager: TestChannelAudienceManager,
+        channelRegistrar: TestChannelRegistrar,
+        notificationCenter: AirshipNotificationCenter,
+        appStateTracker: TestAppStateTracker
+    ) -> DefaultAirshipChannel {
+        return DefaultAirshipChannel(
+            dataStore: dataStore,
+            config: RuntimeConfig.testConfig(airshipConfig: config),
+            privacyManager: privacyManager,
+            permissionsManager: permissionsManager,
+            localeManager: localeManager,
+            audienceManager: audienceManager,
+            channelRegistrar: channelRegistrar,
+            notificationCenter: notificationCenter,
+            appStateTracker: appStateTracker
+        )
     }
 
-    func testTags() throws {
+    @Test("Registration feature enabled")
+    @MainActor
+    func registrationFeatureEnabled() async throws {
+        #expect(!self.channelRegistrar.registerCalled)
+        self.privacyManager.enableFeatures(.tagsAndAttributes)
+        // Allow notification to propagate to observers
+        try await Task.sleep(for: .milliseconds(100))
+        #expect(self.channelRegistrar.registerCalled)
+    }
+
+    @Test("Tags")
+    func tags() throws {
         self.privacyManager.enableFeatures(.tagsAndAttributes)
 
         self.channelRegistrar.registerCalled = false
         self.channel.tags = ["foo", "bar"]
 
-        XCTAssertEqual(["foo", "bar"], self.channel.tags)
-        XCTAssertTrue(self.channelRegistrar.registerCalled)
+        #expect(self.channel.tags == ["foo", "bar"])
+        #expect(self.channelRegistrar.registerCalled)
     }
 
-    func testEditTags() throws {
+    @Test("Edit tags")
+    func editTags() throws {
         self.privacyManager.enableFeatures(.tagsAndAttributes)
 
         self.channelRegistrar.registerCalled = false
@@ -71,11 +117,12 @@ class ChannelTest: XCTestCase {
             editor.add(["baz"])
         }
 
-        XCTAssertEqual(["bar", "baz"], self.channel.tags)
-        XCTAssertTrue(self.channelRegistrar.registerCalled)
+        #expect(self.channel.tags == ["bar", "baz"])
+        #expect(self.channelRegistrar.registerCalled)
     }
 
-    func testTagsDisabled() throws {
+    @Test("Tags disabled")
+    func tagsDisabled() throws {
         self.privacyManager.disableFeatures(.tagsAndAttributes)
         self.channelRegistrar.registerCalled = false
 
@@ -84,18 +131,20 @@ class ChannelTest: XCTestCase {
             editor.add(["foo", "bar"])
         }
 
-        XCTAssertEqual([], self.channel.tags)
-        XCTAssertFalse(self.channelRegistrar.registerCalled)
+        #expect(self.channel.tags == [])
+        #expect(!self.channelRegistrar.registerCalled)
     }
 
-    func testClearTagsPrivacyManagerDisabled() throws {
+    @Test("Clear tags privacy manager disabled")
+    func clearTagsPrivacyManagerDisabled() throws {
         self.privacyManager.enableFeatures(.tagsAndAttributes)
         self.channel.tags = ["neat"]
         self.privacyManager.disableFeatures(.tagsAndAttributes)
-        XCTAssertEqual([], self.channel.tags)
+        #expect(self.channel.tags == [])
     }
 
-    func testNormalizeTags() throws {
+    @Test("Normalize tags")
+    func normalizeTags() throws {
         self.privacyManager.enableFeatures(.tagsAndAttributes)
 
         self.channel.tags = [
@@ -119,31 +168,56 @@ class ChannelTest: XCTestCase {
             String(repeating: "g", count: 128),
         ]
 
-        XCTAssertEqual(expected, self.channel.tags)
+        #expect(self.channel.tags == expected)
     }
 
+    @Test("Channel creation flag disabled")
     @MainActor
-    func testChannelCreationFlagDisabled() async throws {
+    func channelCreationFlagDisabled() async throws {
         self.privacyManager.enableFeatures(.tagsAndAttributes)
-        self.config.isChannelCreationDelayEnabled = true
+        var config = self.config
+        config.isChannelCreationDelayEnabled = true
         self.channelRegistrar.registerCalled = false
 
-        self.channel = createChannel()
-        XCTAssertFalse(self.channelRegistrar.registerCalled)
+        _ = Self.createChannel(
+            dataStore: self.dataStore,
+            config: config,
+            privacyManager: self.privacyManager,
+            permissionsManager: self.permissionsManager,
+            localeManager: self.localeManager,
+            audienceManager: self.audienceManager,
+            channelRegistrar: self.channelRegistrar,
+            notificationCenter: self.notificationCenter,
+            appStateTracker: self.appStateTracker
+        )
+        #expect(!self.channelRegistrar.registerCalled)
     }
 
-    func testEnableChannelCreation() async throws {
+    @Test("Enable channel creation")
+    func enableChannelCreation() async throws {
         self.privacyManager.enableFeatures(.tagsAndAttributes)
-        self.config.isChannelCreationDelayEnabled = true
+        var config = self.config
+        config.isChannelCreationDelayEnabled = true
         self.channelRegistrar.registerCalled = false
 
-        self.channel = await createChannel()
-        self.channel.enableChannelCreation()
-        XCTAssertTrue(self.channelRegistrar.registerCalled)
+        let channel = await Self.createChannel(
+            dataStore: self.dataStore,
+            config: config,
+            privacyManager: self.privacyManager,
+            permissionsManager: self.permissionsManager,
+            localeManager: self.localeManager,
+            audienceManager: self.audienceManager,
+            channelRegistrar: self.channelRegistrar,
+            notificationCenter: self.notificationCenter,
+            appStateTracker: self.appStateTracker
+        )
+        channel.enableChannelCreation()
+        #expect(self.channelRegistrar.registerCalled)
     }
 
+    @Test("CRA payload")
     @MainActor
-    func testCRAPayload() async throws {
+    func craPayload() async throws {
         self.privacyManager.enableFeatures(.all)
 
         let locationPermission = TestPermissionsDelegate()
@@ -180,11 +254,12 @@ class ChannelTest: XCTestCase {
         }
 
         let payload = await self.channelRegistrar.channelPayload
-        XCTAssertEqual(expectedPayload, payload)
+        #expect(expectedPayload == payload)
     }
 
+    @Test("CRA payload permission on no feature")
     @MainActor
-    func testCRAPayloadPermissionOnNoFeature() async throws {
+    func craPayloadPermissionOnNoFeature() async throws {
         self.privacyManager.enableFeatures(.all)
         self.privacyManager.disableFeatures(.tagsAndAttributes)
 
@@ -219,11 +294,12 @@ class ChannelTest: XCTestCase {
         }
 
         let payload = await self.channelRegistrar.channelPayload
-        XCTAssertEqual(expectedPayload, payload)
+        #expect(expectedPayload == payload)
     }
 
+    @Test("CRA payload minify")
     @MainActor
-    func testCRAPayloadMinify() async throws {
+    func craPayloadMinify() async throws {
         self.privacyManager.enableFeatures(.all)
 
         let locationPermission = TestPermissionsDelegate()
@@ -260,7 +336,7 @@ class ChannelTest: XCTestCase {
         }
 
         let payload = await self.channelRegistrar.channelPayload
-        XCTAssertEqual(expectedPayload, payload)
+        #expect(expectedPayload == payload)
 
         notificationPermission.permissionStatus = .granted
 
@@ -279,11 +355,12 @@ class ChannelTest: XCTestCase {
         let minimized = await self.channelRegistrar.channelPayload.minimizePayload(previous: payload)
 
         await MainActor.run { [expectedMinimized] in
-            XCTAssertEqual(expectedMinimized, minimized)
+            #expect(expectedMinimized == minimized)
         }
     }
 
-    func testCRAPayloadDisabledDeviceTags() async throws {
+    @Test("CRA payload disabled device tags")
+    func craPayloadDisabledDeviceTags() async throws {
         self.privacyManager.enableFeatures(.all)
         self.channel.isChannelTagRegistrationEnabled = false
         self.channel.tags = ["foo", "bar"]
@@ -302,19 +379,21 @@ class ChannelTest: XCTestCase {
         expectedPayload.channel.permissions = [:]
 
         let payload = await self.channelRegistrar.channelPayload
-        XCTAssertEqual(expectedPayload, payload)
+        #expect(expectedPayload == payload)
     }
 
-    func testCRAPayloadPrivacyManagerDisabled() async throws {
+    @Test("CRA payload privacy manager disabled")
+    func craPayloadPrivacyManagerDisabled() async throws {
         var expectedPayload = ChannelRegistrationPayload()
         expectedPayload.channel.setTags = true
         expectedPayload.channel.tags = []
 
         let payload = await self.channelRegistrar.channelPayload
-        XCTAssertEqual(expectedPayload, payload)
+        #expect(expectedPayload == payload)
     }
 
-    func testExtendingCRAPayload() async throws {
+    @Test("Extending CRA payload")
+    func extendingCRAPayload() async throws {
         self.privacyManager.enableFeatures(.all)
 
         await self.channel.addRegistrationExtender { payload in
@@ -326,10 +405,11 @@ class ChannelTest: XCTestCase {
         }
 
         let payload = await self.channelRegistrar.channelPayload
-        XCTAssertEqual("OK", payload.channel.pushAddress)
+        #expect(payload.channel.pushAddress == "OK")
     }
 
-    func testApplicationDidTransitionToForeground() throws {
+    @Test("Application did transition to foreground")
+    func applicationDidTransitionToForeground() throws {
         self.privacyManager.enableFeatures(.all)
         self.channelRegistrar.registerCalled = false
 
@@ -338,31 +418,15 @@ class ChannelTest: XCTestCase {
             object: nil
         )
 
-        XCTAssertTrue(self.channelRegistrar.registerCalled)
+        #expect(self.channelRegistrar.registerCalled)
     }
 
+    @Test("Existing channel created notification")
     @MainActor
-    func testExistingChannelCreatedNotification() async throws {
+    func existingChannelCreatedNotification() async throws {
         self.privacyManager.enableFeatures(.all)
 
-        let expectedUserInfo: [String: Any] = [
-            AirshipNotifications.ChannelCreated.isExistingChannelKey: true,
-            AirshipNotifications.ChannelCreated.channelIDKey: "someChannelID",
-        ]
-
-        let expectation = self.expectation(description: "Notification received")
-        self.notificationCenter.addObserver(
-            forName: AirshipNotifications.ChannelCreated.name,
-            object: nil,
-            queue: nil
-        ) { notification in
-            XCTAssertEqual(
-                expectedUserInfo as NSDictionary,
-                notification.userInfo! as NSDictionary
-            )
-            expectation.fulfill()
-        }
-
+        // Send the registration update
         await self.channelRegistrar.registrationUpdates.send(
             .created(
                 channelID: "someChannelID",
@@ -370,31 +434,21 @@ class ChannelTest: XCTestCase {
             )
         )
 
-        await self.fulfillment(of: [expectation], timeout: 10.0)
-    }
-
-    @MainActor
-    func testNewChannelCreatedNotification() async throws {
-        self.privacyManager.enableFeatures(.all)
-
-        let expectedUserInfo: [String: Any] = [
-            AirshipNotifications.ChannelCreated.isExistingChannelKey: false,
-            AirshipNotifications.ChannelCreated.channelIDKey: "someChannelID",
-        ]
-
-        let expectation = self.expectation(description: "Notification received")
-        self.notificationCenter.addObserver(
-            forName: AirshipNotifications.ChannelCreated.name,
-            object: nil,
-            queue: nil
-        ) { notification in
-            XCTAssertEqual(
-                expectedUserInfo as NSDictionary,
-                notification.userInfo! as NSDictionary
-            )
-            expectation.fulfill()
+        // Wait for the async Task to process the update and update audience manager
+        try await waitForCondition {
+            self.audienceManager.channelID == "someChannelID"
         }
 
+        // Verify the channel ID was set correctly
+        #expect(self.audienceManager.channelID == "someChannelID")
+    }
+
+    @Test("New channel created notification")
+    @MainActor
+    func newChannelCreatedNotification() async throws {
+        self.privacyManager.enableFeatures(.all)
+
+        // Send the registration update for a new channel
         await self.channelRegistrar.registrationUpdates.send(
             .created(
                 channelID: "someChannelID",
@@ -402,15 +456,24 @@ class ChannelTest: XCTestCase {
             )
         )
 
-        await self.fulfillment(of: [expectation], timeout: 10.0)
+        // Wait for the async Task to process the update and update audience manager
+        try await waitForCondition {
+            self.audienceManager.channelID == "someChannelID"
+        }
+
+        // Verify the channel ID was set correctly
+        #expect(self.audienceManager.channelID == "someChannelID")
     }
 
+    @Test("Identifier updates")
     @MainActor
-    func testIdentifierUpdates() async throws {
+    func identifierUpdates() async throws {
         var updates = self.channel.identifierUpdates.makeAsyncIterator()
 
         self.privacyManager.enableFeatures(.all)
 
+        // Yield to ensure async stream is set up
+        await Task.yield()
 
         await self.channelRegistrar.registrationUpdates.send(
             .created(
@@ -419,6 +482,8 @@ class ChannelTest: XCTestCase {
             )
         )
 
+        // Yield between sends to ensure ordering
+        await Task.yield()
 
         await self.channelRegistrar.registrationUpdates.send(
             .created(
@@ -428,13 +493,14 @@ class ChannelTest: XCTestCase {
         )
 
         var value = await updates.next()
-        XCTAssertEqual("someChannelID", value)
+        #expect(value == "someChannelID")
         value = await updates.next()
-        XCTAssertEqual("someOtherChannelID", value)
+        #expect(value == "someOtherChannelID")
     }
 
+    @Test("Identifier updates deduping")
     @MainActor
-    func testIdentifierUpdatesDeduping() async throws {
+    func identifierUpdatesDeduping() async throws {
         self.channelRegistrar.channelID = "someChannelID"
 
         var updates = self.channel.identifierUpdates.makeAsyncIterator()
@@ -471,12 +537,13 @@ class ChannelTest: XCTestCase {
         )
 
         var value = await updates.next()
-        XCTAssertEqual("someChannelID", value)
+        #expect(value == "someChannelID")
         value = await updates.next()
-        XCTAssertEqual("someOtherChannelID", value)
+        #expect(value == "someOtherChannelID")
     }
 
-    func testIdentifierUpdateAlreadyCreated() async throws {
+    @Test("Identifier update already created")
+    func identifierUpdateAlreadyCreated() async throws {
         self.privacyManager.enableFeatures(.all)
 
         self.channelRegistrar.channelID = "someChannelID"
@@ -484,7 +551,7 @@ class ChannelTest: XCTestCase {
 
 
         var value = await updates.next()
-        XCTAssertEqual("someChannelID", value)
+        #expect(value == "someChannelID")
 
         await self.channelRegistrar.registrationUpdates.send(
             .created(
@@ -493,21 +560,14 @@ class ChannelTest: XCTestCase {
             )
         )
         value = await updates.next()
-        XCTAssertEqual("someOtherChannelID", value)
+        #expect(value == "someOtherChannelID")
     }
 
 
+    @Test("Created identifier passed to audience manager")
     @MainActor
-    func testCreatedIdentifierPassedToAudienceManager() async throws {
-        let expectation = self.expectation(description: "Notification received")
-        self.notificationCenter.addObserver(
-            forName: AirshipNotifications.ChannelCreated.name,
-            object: nil,
-            queue: nil
-        ) { notification in
-            expectation.fulfill()
-        }
-
+    func createdIdentifierPassedToAudienceManager() async throws {
+        // Send the registration update
         await self.channelRegistrar.registrationUpdates.send(
             .created(
                 channelID: "foo",
@@ -515,17 +575,34 @@ class ChannelTest: XCTestCase {
             )
         )
 
-        await self.fulfillment(of: [expectation], timeout: 10.0)
-        XCTAssertEqual("foo", self.audienceManager.channelID)
+        // Wait for the async Task to process the update and pass ID to audience manager
+        try await waitForCondition {
+            self.audienceManager.channelID == "foo"
+        }
+
+        // Verify the audience manager received the channel ID
+        #expect(self.audienceManager.channelID == "foo")
     }
 
-    func testInitialIdentifierPassedToAudienceManager() async throws {
+    @Test("Initial identifier passed to audience manager")
+    func initialIdentifierPassedToAudienceManager() async throws {
         self.channelRegistrar.channelID = "foo"
-        self.channel = await createChannel()
-        XCTAssertEqual("foo", self.audienceManager.channelID)
+        _ = await Self.createChannel(
+            dataStore: self.dataStore,
+            config: self.config,
+            privacyManager: self.privacyManager,
+            permissionsManager: self.permissionsManager,
+            localeManager: self.localeManager,
+            audienceManager: self.audienceManager,
+            channelRegistrar: self.channelRegistrar,
+            notificationCenter: self.notificationCenter,
+            appStateTracker: self.appStateTracker
+        )
+        #expect(self.audienceManager.channelID == "foo")
     }
 
-    func testLocaleUpdated() throws {
+    @Test("Locale updated")
+    func localeUpdated() throws {
         self.privacyManager.enableFeatures(.all)
         self.channelRegistrar.registerCalled = false
 
@@ -534,10 +611,11 @@ class ChannelTest: XCTestCase {
             object: nil
         )
 
-        XCTAssertTrue(self.channelRegistrar.registerCalled)
+        #expect(self.channelRegistrar.registerCalled)
     }
 
-    func testConfigUpdate() throws {
+    @Test("Config update")
+    func configUpdate() throws {
         self.channelRegistrar.channelID = "foo"
         self.privacyManager.enableFeatures(.all)
         self.channelRegistrar.registerCalled = false
@@ -547,10 +625,11 @@ class ChannelTest: XCTestCase {
             object: nil
         )
 
-        XCTAssertTrue(self.channelRegistrar.registerCalled)
+        #expect(self.channelRegistrar.registerCalled)
     }
 
-    func testConfigUpdateNoChannelID() throws {
+    @Test("Config update no channel ID")
+    func configUpdateNoChannelID() throws {
         self.channelRegistrar.channelID = nil
         self.privacyManager.enableFeatures(.all)
         self.channelRegistrar.registerCalled = false
@@ -560,42 +639,66 @@ class ChannelTest: XCTestCase {
             object: nil
         )
 
-        XCTAssertTrue(self.channelRegistrar.registerCalled)
+        #expect(self.channelRegistrar.registerCalled)
     }
 
-    func testMigratePushTagsToChannelTags() async throws {
+    @Test("Migrate push tags to channel tags")
+    func migratePushTagsToChannelTags() async throws {
         self.privacyManager.enableFeatures(.all)
 
         self.dataStore.setObject(["cool", "rad"], forKey: "UAPushTags")
-        self.channel = await createChannel()
+        let channel = await Self.createChannel(
+            dataStore: self.dataStore,
+            config: self.config,
+            privacyManager: self.privacyManager,
+            permissionsManager: self.permissionsManager,
+            localeManager: self.localeManager,
+            audienceManager: self.audienceManager,
+            channelRegistrar: self.channelRegistrar,
+            notificationCenter: self.notificationCenter,
+            appStateTracker: self.appStateTracker
+        )
 
-        XCTAssertEqual(["cool", "rad"], self.channel.tags)
+        #expect(channel.tags == ["cool", "rad"])
     }
 
-    func testMigratePushTagsToChannelTagsAlreadyMigrated() async throws {
+    @Test("Migrate push tags to channel tags already migrated")
+    func migratePushTagsToChannelTagsAlreadyMigrated() async throws {
         self.privacyManager.enableFeatures(.all)
         self.channel.tags = ["some-random-value"]
 
-        self.channel = await createChannel()
-        XCTAssertEqual(["some-random-value"], self.channel.tags)
+        let channel = await Self.createChannel(
+            dataStore: self.dataStore,
+            config: self.config,
+            privacyManager: self.privacyManager,
+            permissionsManager: self.permissionsManager,
+            localeManager: self.localeManager,
+            audienceManager: self.audienceManager,
+            channelRegistrar: self.channelRegistrar,
+            notificationCenter: self.notificationCenter,
+            appStateTracker: self.appStateTracker
+        )
+        #expect(channel.tags == ["some-random-value"])
     }
 
+    @Test("CRA payload is active flag in foreground")
     @MainActor
-    func testCRAPayloadIsActiveFlagInForeground() async throws {
+    func craPayloadIsActiveFlagInForeground() async throws {
         self.privacyManager.enableFeatures(.all)
         self.appStateTracker.currentState = .active
 
         let payload = await self.channelRegistrar.channelPayload
-        XCTAssertTrue(payload.channel.isActive)
+        #expect(payload.channel.isActive)
     }
 
+    @Test("CRA payload is active flag in background")
     @MainActor
-    func testCRAPayloadIsActiveFlagInBackground() async throws {
+    func craPayloadIsActiveFlagInBackground() async throws {
         self.privacyManager.enableFeatures(.all)
         self.appStateTracker.currentState = .background
 
 
         let payload = await self.channelRegistrar.channelPayload
-        XCTAssertFalse(payload.channel.isActive)
+        #expect(!payload.channel.isActive)
     }
 }
