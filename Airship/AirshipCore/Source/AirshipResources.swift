@@ -19,8 +19,11 @@ class AirshipResources {
     }
 }
 
+/**
+ * @note For internal use only. :nodoc:
+ */
 extension String {
-    func airshipLocalizedString(fallback: String) -> String {
+    public func airshipLocalizedString(fallback: String) -> String {
         return AirshipResources.localizedString(key: self) ?? fallback
     }
 }

@@ -32,6 +32,15 @@ struct InAppMessageBannerView: View {
     private static let mediaMaxHeight: CGFloat = 480
     static let animationInOutDuration = 0.2
 
+    @ViewBuilder
+    private var dissmisActionButton: some View {
+        Button("ua_dismiss".airshipLocalizedString(fallback: "Dismiss")) {
+            setShowing(state: false) {
+                onDismiss()
+            }
+        }
+        .accessibilityRemoveTraits(.isButton)
+    }
 
     @ViewBuilder
     private var headerView: some View {
@@ -41,6 +50,10 @@ struct InAppMessageBannerView: View {
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityAddTraits(.isStaticText)
                 .applyAlignment(placement: heading.alignment ?? .left)
+                .accessibilityActions {
+                    dissmisActionButton
+                }
+
         }
     }
 
@@ -51,6 +64,9 @@ struct InAppMessageBannerView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isStaticText)
                 .applyAlignment(placement: body.alignment ?? .left)
+                .accessibilityActions {
+                    dissmisActionButton
+                }
         }
     }
 
@@ -117,6 +133,9 @@ struct InAppMessageBannerView: View {
                     bodyView
                 }
             }
+            .accessibilityActions {
+                dissmisActionButton
+            }
         case .mediaRight:
             HStack(alignment: .top, spacing: 16) {
                 VStack(alignment: .center, spacing: 16) {
@@ -124,6 +143,9 @@ struct InAppMessageBannerView: View {
                     bodyView
                 }
                 mediaView
+            }
+            .accessibilityActions {
+                dissmisActionButton
             }
         }
     }
@@ -137,6 +159,10 @@ struct InAppMessageBannerView: View {
         Capsule()
             .frame(width: tabWidth, height: tabHeight)
             .foregroundColor(tabColor)
+            .accessibilityElement()
+            .accessibilityActions {
+                dissmisActionButton
+            }
     }
 
     @ViewBuilder
