@@ -58,6 +58,14 @@ jobs:
       - name: Test
         run: make test-service-extension
 
+  build-airship-objectiveC:
+    runs-on: macos-15-xlarge
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build AirshipObjectiveC target
+        run: make build-airship-objectiveC
+        
   build-samples:
     runs-on: macos-15-xlarge
     timeout-minutes: 15
