@@ -197,7 +197,7 @@ private struct MessageCenterListContentView: View {
     @ViewBuilder
     var body: some View {
         HStack(alignment: .top) {
-            if (!theme.iconsEnabled) {
+            if (theme.iconsEnabled) {
                 makeIcon()
 #if !os(tvOS)
                     .padding(.trailing)
