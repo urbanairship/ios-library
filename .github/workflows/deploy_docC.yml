@@ -33,23 +33,33 @@ jobs:
       - name: Extract version
         id: extract_version
         run: |
-          VERSION=${GITHUB_REF/refs\/tags\//}
+          set -euo pipefail
+          VERSION="${GITHUB_REF#refs/tags/}"
           MAJOR_VERSION=$(echo "$VERSION" | cut -d. -f1)
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION_DIR=v$MAJOR_VERSION" >> $GITHUB_OUTPUT
           echo "VERSION_DIR=v$MAJOR_VERSION" >> $GITHUB_ENV
-          
+
       - name: Check Version
-        run: bash ./scripts/check_version.sh ${{ steps.extract_version.outputs.VERSION }}
-        
+        run: |
+          set -euo pipefail
+          bash ./scripts/check_version.sh "${{ steps.extract_version.outputs.VERSION }}"
+
       - name: Build DocC
-        run: make build-docC version=${{ env.VERSION_DIR }}
-          
+        env:
+          VERSION_DIR: ${{ steps.extract_version.outputs.VERSION_DIR }}
+        run: |
+          set -euo pipefail
+          make build-docC version="$VERSION_DIR"
+
       - name: Deploy to GitHub Pages
+        env:
+          VERSION_DIR: ${{ steps.extract_version.outputs.VERSION_DIR }}
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: ./docs
-          destination_dir: ${{ env.VERSION_DIR }}
+          destination_dir: $VERSION_DIR
           keep_files: true
           enable_jekyll: false
