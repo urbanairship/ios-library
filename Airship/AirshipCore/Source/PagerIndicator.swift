@@ -76,5 +76,6 @@ struct PagerIndicator: View {
                 fallback: "Page %@ of %@"
             ), (self.pagerState.pageIndex + 1).airshipLocalizedForVoiceOver(), self.pagerState.pageStates.count.airshipLocalizedForVoiceOver()))
         })
+        .accessibilityHidden(true)
     }
 }
