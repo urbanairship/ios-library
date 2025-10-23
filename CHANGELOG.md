@@ -6,7 +6,7 @@
 
 
 ## Version 20.0.0 - October 9, 2025
-Major SDK release with several breaking changes. See the [Migration Guide](Documentation/Migration/migration-guide-19-20.md) for more info.
+Major SDK release with several breaking changes. See the [Migration Guide](https://github.com/urbanairship/ios-library/blob/main/Documentation/Migration/migration-guide-19-20.md) for more info.
 
 ### Changes
 - Xcode 26+ is now required.
