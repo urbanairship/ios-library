@@ -1,10 +1,11 @@
 
+VERSION ?= 26.0.1
 XCODE ?= 26.0.1
 
 export XCBEAUTIY_RENDERER ?= github-actions
-export TEST_DESTINATION ?= platform=iOS Simulator,OS=26.0,name=iPhone 16 Pro Max
-export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=26.0,name=Apple TV
-export TEST_DESTINATION_VISIONOS ?= platform=visionOS Simulator,OS=2.0,name=Apple Vision Pro
+export TEST_DESTINATION ?= platform=iOS Simulator,OS=${VERSION},name=iPhone 16 Pro Max
+export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=${VERSION},name=Apple TV
+export TEST_DESTINATION_VISIONOS ?= platform=visionOS Simulator,OS=${VERSION},name=Apple Vision Pro
 
 export DEVELOPER_DIR = $(shell bash ./scripts/get_xcode_path.sh ${XCODE} $(XCODE_PATH))
 export AIRSHIP_VERSION = $(shell bash "./scripts/airship_version.sh")
