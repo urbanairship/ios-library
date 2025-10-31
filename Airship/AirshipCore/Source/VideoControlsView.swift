@@ -52,6 +52,10 @@ struct VideoControlsWrapper: View {
         info.properties.video?.showControls ?? true
     }
 
+    private var shouldLoop: Bool {
+        info.properties.video?.loop ?? false
+    }
+
     var body: some View {
         ThomasVideoPlayer(
             info: info,
@@ -71,6 +75,7 @@ struct VideoControlsWrapper: View {
         .modifier(VideoControls(
             hasError: hasError,
             showControls: showControls,
+            shouldLoop: shouldLoop,
             player: player,
             isPlaying: $isPlaying,
             currentTime: $currentTime,
@@ -86,6 +91,7 @@ struct VideoControlsWrapper: View {
 internal struct VideoControls: ViewModifier {
     let hasError: Bool
     let showControls: Bool
+    let shouldLoop: Bool
     let player: AVPlayer?
     @Binding var isPlaying: Bool
     @Binding var currentTime: Double
@@ -188,14 +194,18 @@ internal struct VideoControls: ViewModifier {
         let durationBinding = _duration
         let isDraggingBinding = _isDraggingSlider
 
-        observer.endTimeObserver = NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemDidPlayToEndTime,
-            object: player.currentItem,
-            queue: .main
-        ) { _ in
-            Task { @MainActor in
-                isPlayingBinding.wrappedValue = false
-                player.seek(to: .zero)
+        // Only handle video end for non-looping videos.
+        // For looping videos, ThomasVideoPlayer manages the seek+play cycle.
+        if !shouldLoop {
+            observer.endTimeObserver = NotificationCenter.default.addObserver(
+                forName: .AVPlayerItemDidPlayToEndTime,
+                object: player.currentItem,
+                queue: .main
+            ) { _ in
+                Task { @MainActor in
+                    isPlayingBinding.wrappedValue = false
+                    player.seek(to: .zero)
+                }
             }
         }
         let interval = CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))

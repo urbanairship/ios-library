@@ -143,7 +143,20 @@ extension LayoutFile {
 
     @MainActor
     private func displayMessage(_ data: Data) throws {
-        let message = try JSONDecoder().decode(InAppMessage.self, from: data)
+        let message: InAppMessage
+
+        // Try to unwrap server-formatted JSON with in_app_message wrapper
+        if let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+           let inAppMessage = jsonObject["in_app_message"] as? [String: Any],
+           let messageObject = inAppMessage["message"] as? [String: Any] {
+            // Extract just the message object and decode it
+            let messageData = try JSONSerialization.data(withJSONObject: messageObject)
+            message = try JSONDecoder().decode(InAppMessage.self, from: messageData)
+        } else {
+            // Fall back to direct InAppMessage decoding (for legacy format)
+            message = try JSONDecoder().decode(InAppMessage.self, from: data)
+        }
+
         let scene = try AirshipSceneManager.shared.lastActiveScene
 
         Task { @MainActor in
