@@ -13,6 +13,17 @@ public struct NotificationRegistrationResult: Sendable {
 
     #if !os(tvOS)
     /// Set of the categories that were most recently registered.
-    public let categories: Set<UNNotificationCategory>
+    private let _categories: AirshipUnsafeSendableWrapper<Set<UNNotificationCategory>>
+    public var categories: Set<UNNotificationCategory> {
+        return _categories.value
+    }
+
+    init(authorizedSettings: AirshipAuthorizedNotificationSettings, status: UNAuthorizationStatus, categories: Set<UNNotificationCategory>) {
+        self.authorizedSettings = authorizedSettings
+        self.status = status
+        self._categories = .init(categories)
+    }
     #endif
 }
+
+
