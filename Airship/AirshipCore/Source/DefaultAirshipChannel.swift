@@ -568,7 +568,12 @@ extension DefaultAirshipChannel {
 
         let liveActivity = LiveActivity(activity: activity)
         liveActivityQueue.enqueue { [liveActivityRegistry] in
-            await liveActivityRegistry.addLiveActivity(liveActivity, name: name)
+            // This nested function is a workaround for a Swift compiler Sendable warning.
+            // It avoids the Task's @Sendable closure from directly capturing the generic type.
+            func run() async {
+                await liveActivityRegistry.addLiveActivity(liveActivity, name: name)
+            }
+            await run()
         }
     }
 

@@ -111,21 +111,27 @@ struct LiveActivity<T: ActivityAttributes>: LiveActivityProtocol {
         )
 
         let task = Task {
-            guard let activity = provider.getActivity(),
-                  activity.activityState.isStaleOrActive
-            else {
-                return
-            }
-
-            for await token in activity.pushTokenUpdates {
-                if Task.isCancelled {
-                    await backgroundTask.stop()
-                    try Task.checkCancellation()
+            // This nested function is a workaround for a Swift compiler Sendable warning.
+            // It avoids the Task's @Sendable closure from directly capturing the generic type.
+            func run() async throws {
+                guard let activity = provider.getActivity(),
+                      activity.activityState.isStaleOrActive
+                else {
+                    return
                 }
 
-                await tokenUpdates(token.tokenString)
-                await backgroundTask.stop()
+                for await token in activity.pushTokenUpdates {
+                    if Task.isCancelled {
+                        await backgroundTask.stop()
+                        try Task.checkCancellation()
+                    }
+
+                    await tokenUpdates(token.tokenString)
+                    await backgroundTask.stop()
+                }
             }
+
+            try await run()
         }
 
         /// If the push token is already created it does not cause an update above,
@@ -176,7 +182,9 @@ fileprivate class AirshipBackgroundTask {
         self.name = name
 
         taskID = UIApplication.shared.beginBackgroundTask(withName: name) {
-            self.stop()
+            Task { @MainActor [weak self] in
+                self?.stop()
+            }
         }
 
         if (taskID != UIBackgroundTaskIdentifier.invalid) {
@@ -221,12 +229,17 @@ extension Activity where Attributes : ActivityAttributes {
     ///     - activityBlock: Block that is called with the activity
     public class func airshipWatchActivities(activityBlock: @escaping @Sendable (Activity<Attributes>) -> Void) {
         Task {
-            _airshipCheckActivities(activityBlock: activityBlock)
-            if #available(iOS 17.2, *) {
-                for await _ in Activity<Attributes>.pushToStartTokenUpdates {
-                    _airshipCheckActivities(activityBlock: activityBlock)
+            // This nested function is a workaround for a Swift compiler Sendable warning.
+            // It avoids the Task's @Sendable closure from directly capturing the generic type.
+            func run() async {
+                _airshipCheckActivities(activityBlock: activityBlock)
+                if #available(iOS 17.2, *) {
+                    for await _ in Activity<Attributes>.pushToStartTokenUpdates {
+                        _airshipCheckActivities(activityBlock: activityBlock)
+                    }
                 }
             }
+            await run()
         }
     }
 }
