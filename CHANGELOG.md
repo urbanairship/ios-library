@@ -4,10 +4,18 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
-Version 19.11.1 – October 7, 2025
+## Version 19.11.2 - November 14, 2025
+Patch release that fixes YouTube video playback in In-App Automation and Scenes. Applications that use YouTube videos in Scenes and non-html In-App Automations (IAA) must update to resolve playback errors.
+
+
+### Changes
+- Fixed YouTube video embedding to comply with YouTube API Client identification requirements.
+
+
+## Version 19.11.1 – October 7, 2025
 Patch release addressing the longstanding Swift concurrency crash (GH-434) and improving the internal rate-limiting system for better stability and efficiency.
 
-Changes
+### Changes
 - Refactored WorkRateLimiter to improve efficiency and reliability, reduce memory overhead, and eliminate unnecessary temporary allocations.
 - Added stronger safeguards to WorkRateLimiter prevent rare edge-case crashes in rate-limiting logic.
 

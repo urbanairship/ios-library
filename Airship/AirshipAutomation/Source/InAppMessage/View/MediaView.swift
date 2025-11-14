@@ -64,6 +64,11 @@ struct MediaView: View {
 struct InAppMessageMediaWebView: UIViewRepresentable {
     let mediaInfo: InAppMessageMediaInfo
 
+    private var baseURL: URL? {
+        let bundleIdentifier = Bundle.main.bundleIdentifier ?? "com.airship.sdk"
+        return URL(string: "https://\(bundleIdentifier)")
+    }
+
     func makeUIView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = true
@@ -89,7 +94,7 @@ struct InAppMessageMediaWebView: UIViewRepresentable {
         switch mediaInfo.type {
         case .video:
             let htmlString = "<body style=\"margin:0\"><video playsinline controls height=\"100%\" width=\"100%\" src=\"\(mediaInfo.url)\"></video></body>"
-            uiView.loadHTMLString(htmlString, baseURL: URL(string: mediaInfo.url))
+            uiView.loadHTMLString(htmlString, baseURL: baseURL)
         case .youtube:
             guard var urlComponents = URLComponents(string: mediaInfo.url) else { return }
             urlComponents.query = "playsinline=1"

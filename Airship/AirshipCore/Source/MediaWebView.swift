@@ -71,6 +71,11 @@ struct MediaWebView: UIViewRepresentable {
         }
     }
 
+    private var baseURL: URL? {
+        let bundleIdentifier = Bundle.main.bundleIdentifier ?? "com.airship.sdk"
+        return URL(string: "https://\(bundleIdentifier)")
+    }
+
 
     @MainActor
     func makeUIView(context: Context) -> WKWebView {
@@ -141,8 +146,7 @@ struct MediaWebView: UIViewRepresentable {
                 url,
                 styleForVideo
             )
-            guard let mediaUrl = URL(string: url) else { return webView }
-            webView.loadHTMLString(html, baseURL: mediaUrl)
+            webView.loadHTMLString(html, baseURL: baseURL)
         } else if self.info.properties.mediaType == .youtube {
             if let videoID = retrieveYoutubeVideoID(url: url) {
                 let html = String(
@@ -193,8 +197,7 @@ struct MediaWebView: UIViewRepresentable {
                     video?.muted ?? false ? "1" : "0",
                     video?.loop ?? false ? "1, \'playlist\': \'\(videoID)\'" : "0"
                 )
-                guard let mediaUrl = URL(string: url) else { return webView }
-                webView.loadHTMLString(html, baseURL: mediaUrl)
+                webView.loadHTMLString(html, baseURL: baseURL)
             } else {
                 guard let videoUrl = URL(string: String(format: "%@%@", url, "?playsinline=1")) else {
                     return webView
@@ -225,8 +228,7 @@ struct MediaWebView: UIViewRepresentable {
                 """,
                 url
             )
-            guard let mediaUrl = URL(string: url) else { return webView }
-            webView.loadHTMLString(html, baseURL: mediaUrl)
+            webView.loadHTMLString(html, baseURL: baseURL)
         }
         return webView
     }
