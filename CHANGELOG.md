@@ -20,3 +20,4 @@ Major SDK release with several breaking changes. See the [Migration Guide](https
 - CustomViews within a Scene can now programmatically control their parent Scene, enabling more dynamic and interactive custom content.
 - Accessibility updates for Scenes.
 - New AirshipDebug package that exposes insights and debugging capabilities into the Airship SDK for development builds, providing enhanced visibility into SDK behavior and performance.
+- Removed automatic collection of `connection_type` and `carrier` device properties
