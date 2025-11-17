@@ -1,8 +1,9 @@
 /* Copyright Airship and Contributors */
+#if !os(macOS)
 
 import Foundation
-
 import UIKit
+
 #if canImport(AirshipCore)
 import AirshipCore
 #endif
@@ -42,3 +43,5 @@ protocol WindowSceneHolder: Sendable {
 struct DefaultWindowSceneHolder: WindowSceneHolder {
     var scene: UIWindowScene
 }
+
+#endif

@@ -46,49 +46,6 @@ internal extension String {
     }
 }
 
-internal extension UIWindow {
-    static func makeModalReadyWindow(
-        scene: UIWindowScene
-    ) -> UIWindow {
-        let window: UIWindow = AirshipWindowFactory.shared.makeWindow(windowScene: scene)
-        window.accessibilityViewIsModal = false
-        window.alpha = 0
-        window.makeKeyAndVisible()
-        window.isUserInteractionEnabled = false
-
-        return window
-    }
-
-    func animateIn() {
-        self.windowLevel = .alert
-        self.makeKeyAndVisible()
-        self.isUserInteractionEnabled = true
-
-        UIView.animate(
-            withDuration: 0.3,
-            animations: {
-                self.alpha = 1
-            },
-            completion: { _ in
-            }
-        )
-    }
-
-    func animateOut() {
-        UIView.animate(
-            withDuration: 0.3,
-            animations: {
-                self.alpha = 0
-            },
-            completion: { _ in
-                self.isHidden = true
-                self.isUserInteractionEnabled = false
-                self.removeFromSuperview()
-            }
-        )
-    }
-}
-
 let countryPhoneCodeToEmoji: [String: String] = [
     "+1": "🇺🇸", // USA
     "+44": "🇬🇧", // United Kingdom

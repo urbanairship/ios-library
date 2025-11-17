@@ -16,7 +16,7 @@ protocol DisplayAdapter: Sendable {
 
     @MainActor
     func display(
-        scene: any WindowSceneHolder,
+        displayTarget: AirshipDisplayTarget,
         analytics: any InAppMessageAnalyticsProtocol
     ) async throws -> DisplayResult
 }

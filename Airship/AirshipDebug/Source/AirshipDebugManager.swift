@@ -211,31 +211,24 @@ final class DefaultAirshipDebugManager: InternalAirshipDebugManager {
 
     @MainActor
     public func display() {
-        guard let scene = try? AirshipSceneManager.shared.lastActiveScene else {
-            AirshipLogger.error("Unable to display, missing scene.")
-            return
-        }
+        let displayable = AirshipDisplayTarget().prepareDisplay(for: .modal)
 
         currentDisplay?.cancel()
 
-        var window: UIWindow? = AirshipWindowFactory.shared.makeWindow(windowScene: scene)
-        let disposable = AirshipMainActorCancellableBlock {
-            window?.windowLevel = .normal
-            window?.isHidden = true
-            window = nil
+        let rootView = AirshipDebugView {
+            displayable.dismiss()
         }
 
-        let viewController: UIViewController = UIHostingController(
-            rootView: AirshipDebugView {
-                disposable.cancel()
+        do {
+            try displayable.display { _ in
+                return UIHostingController(rootView: rootView)
             }
-        )
-
-        window?.windowLevel = .alert
-        window?.makeKeyAndVisible()
-        window?.rootViewController = viewController
-
-        self.currentDisplay = disposable
+            self.currentDisplay = AirshipMainActorCancellableBlock(block: {
+                displayable.dismiss()
+            })
+        } catch {
+            AirshipLogger.error("Unable to display AirshipDebug \(error)")
+        }
     }
 
     @MainActor

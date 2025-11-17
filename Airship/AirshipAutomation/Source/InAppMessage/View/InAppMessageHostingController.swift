@@ -61,16 +61,14 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
     private let placement: InAppMessageDisplayContent.Banner.Placement?
 
     private var subscription: AnyCancellable?
-    private weak var window: UIWindow?
 
-    init(window: UIWindow,
+    init(
          rootView: InAppMessageBannerView,
          placement: InAppMessageDisplayContent.Banner.Placement?,
          bannerConstraints: InAppMessageBannerConstraints
     ) {
         self.bannerConstraints = bannerConstraints
         self.placement = placement
-        self.window = window
         super.init(rootView: rootView)
     }
 
@@ -103,7 +101,7 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
 
     func createBannerConstraints() {
         self.view.translatesAutoresizingMaskIntoConstraints = false
-        if let window = self.window {
+        if let window = self.view.window {
             centerXConstraint = self.view.centerXAnchor.constraint(equalTo: window.centerXAnchor)
             topConstraint = self.view.topAnchor.constraint(equalTo: window.topAnchor)
             bottomConstraint = self.view.bottomAnchor.constraint(equalTo: window.bottomAnchor)

@@ -134,10 +134,9 @@ extension LayoutFile {
         let layout = try JSONDecoder().decode(AirshipLayout.self, from: data)
 
         let message = InAppMessage(name: "thomas", displayContent: .airshipLayout(layout))
-        let scene = try AirshipSceneManager.shared.lastActiveScene
 
         Task { @MainActor in
-            try await message._display(scene: scene)
+            try await message._display()
         }
     }
 
@@ -157,10 +156,8 @@ extension LayoutFile {
             message = try JSONDecoder().decode(InAppMessage.self, from: data)
         }
 
-        let scene = try AirshipSceneManager.shared.lastActiveScene
-
         Task { @MainActor in
-            try await message._display(scene: scene)
+            try await message._display()
         }
     }
 }

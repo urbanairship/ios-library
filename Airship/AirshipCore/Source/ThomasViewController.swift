@@ -89,16 +89,14 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     private let position: ThomasPresentationInfo.Banner.Position?
 
     private var subscription: AnyCancellable?
-    private weak var window: UIWindow?
 
-    init(window: UIWindow,
+    init(
         rootView: BannerView,
         position: ThomasPresentationInfo.Banner.Position,
         options: ThomasViewControllerOptions,
         constraints: ThomasBannerConstraints
     ) {
         self.thomasBannerConstraints = constraints
-        self.window = window
         self.position = position
         super.init(rootView: rootView, options: options)
     }
@@ -131,7 +129,7 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
 
     func createBannerConstraints() {
         self.view.translatesAutoresizingMaskIntoConstraints = false
-        if let window = self.window {
+        if let window = self.view.window {
             centerXConstraint = self.view.centerXAnchor.constraint(equalTo: window.centerXAnchor)
             topConstraint = self.view.topAnchor.constraint(equalTo: window.topAnchor)
             bottomConstraint = self.view.bottomAnchor.constraint(equalTo: window.bottomAnchor)
@@ -170,6 +168,7 @@ class ThomasModalViewController : ThomasViewController<ModalView> {
 
     override init(rootView: ModalView, options: ThomasViewControllerOptions) {
         super.init(rootView: rootView, options: options)
+        self.modalPresentationStyle = .currentContext
     }
 
     @objc required dynamic init?(coder aDecoder: NSCoder) {

@@ -355,6 +355,7 @@
 		6E3B231328A32EC30005D46E /* PreferenceCenterViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B231228A32EC30005D46E /* PreferenceCenterViewExtensions.swift */; };
 		6E3B32CC27559D8B00B89C7B /* FormInputViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B32CB27559D8B00B89C7B /* FormInputViewModifier.swift */; };
 		6E3B32CF2755D8C700B89C7B /* LayoutState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3B32CE2755D8C700B89C7B /* LayoutState.swift */; };
+		6E3CA5412ECB9B7900210C32 /* AirshipDisplayTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3CA5402ECB9B7400210C32 /* AirshipDisplayTarget.swift */; };
 		6E4007142A153AB20013C2DE /* AppRemoteDataProviderDelegateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4007132A153AB20013C2DE /* AppRemoteDataProviderDelegateTest.swift */; };
 		6E4007162A153ABE0013C2DE /* ContactRemoteDataProviderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4007152A153ABE0013C2DE /* ContactRemoteDataProviderTest.swift */; };
 		6E4007182A153AFE0013C2DE /* RemoteDataURLFactoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4007172A153AFE0013C2DE /* RemoteDataURLFactoryTest.swift */; };
@@ -1663,6 +1664,7 @@
 		6E3B231228A32EC30005D46E /* PreferenceCenterViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterViewExtensions.swift; sourceTree = "<group>"; };
 		6E3B32CB27559D8B00B89C7B /* FormInputViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormInputViewModifier.swift; sourceTree = "<group>"; };
 		6E3B32CE2755D8C700B89C7B /* LayoutState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutState.swift; sourceTree = "<group>"; };
+		6E3CA5402ECB9B7400210C32 /* AirshipDisplayTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDisplayTarget.swift; sourceTree = "<group>"; };
 		6E4007132A153AB20013C2DE /* AppRemoteDataProviderDelegateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRemoteDataProviderDelegateTest.swift; sourceTree = "<group>"; };
 		6E4007152A153ABE0013C2DE /* ContactRemoteDataProviderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactRemoteDataProviderTest.swift; sourceTree = "<group>"; };
 		6E4007172A153AFE0013C2DE /* RemoteDataURLFactoryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataURLFactoryTest.swift; sourceTree = "<group>"; };
@@ -3549,6 +3551,7 @@
 		6E411D5F2538D26200FEE4E8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				6E3CA5402ECB9B7400210C32 /* AirshipDisplayTarget.swift */,
 				6E4339F02DFA099C000A7741 /* AirshipIvyVersionMatcher.swift */,
 				6E52146A2DCBF9BA00CF64B9 /* AirshipTimerProtocol.swift */,
 				6E916C562DB30D9E00C676FA /* AirshipWindowFactory.swift */,
@@ -5987,6 +5990,7 @@
 				6E68203228EDE3E200A4F90B /* LiveActivityRestorer.swift in Sources */,
 				6E92EC8D2849378E0038802D /* PermissionPrompter.swift in Sources */,
 				6EDE5F4F2BA248FF00E33D04 /* TouchViewModifier.swift in Sources */,
+				6E3CA5412ECB9B7900210C32 /* AirshipDisplayTarget.swift in Sources */,
 				609843562D6F518900690371 /* SmsLocalePicker.swift in Sources */,
 				6E1892DE2694F1C100417887 /* ChannelRegistrar.swift in Sources */,
 				6E2F5A8E2A66FE8900CABD3D /* AirshipTimeCriteria.swift in Sources */,

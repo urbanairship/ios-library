@@ -80,38 +80,38 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     }
 
     func display(
-        scene: any WindowSceneHolder,
+        displayTarget: AirshipDisplayTarget,
         analytics: any InAppMessageAnalyticsProtocol
     ) async throws -> DisplayResult {
         switch (message.displayContent) {
         case .banner(let banner):
             return try await displayBanner(
                 banner,
-                scene: scene.scene,
+                displayTarget: displayTarget,
                 analytics: analytics
             )
         case .modal(let modal):
-            return await displayModal(
+            return try await displayModal(
                 modal,
-                scene: scene.scene,
+                displayTarget: displayTarget,
                 analytics: analytics
             )
         case .fullscreen(let fullscreen):
-            return await displayFullscreen(
+            return try await displayFullscreen(
                 fullscreen,
-                scene: scene.scene,
+                displayTarget: displayTarget,
                 analytics: analytics
             )
         case .html(let html):
-            return await displayHTML(
+            return try await displayHTML(
                 html,
-                scene: scene.scene,
+                displayTarget: displayTarget,
                 analytics: analytics
             )
         case .airshipLayout(let layout):
             return try await displayThomasLayout(
                 layout,
-                scene: scene.scene,
+                displayTarget: displayTarget,
                 analytics: analytics
             )
         case .custom(_):
@@ -159,27 +159,15 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     @MainActor
     private func displayBanner(
         _ banner: InAppMessageDisplayContent.Banner,
-        scene: UIWindowScene,
+        displayTarget: AirshipDisplayTarget,
         analytics: any InAppMessageAnalyticsProtocol
     ) async throws -> DisplayResult {
         return try await withCheckedThrowingContinuation { continuation in
+            let displayable = displayTarget.prepareDisplay(for: .banner)
 
-            guard let window = AirshipUtils.mainWindow(scene: scene)
-            else {
-                continuation.resume(
-                    throwing: AirshipErrors.error("Failed to find window to display in-app banner")
-                )
-                return
-            }
-
-            let holder = AirshipStrongValueHolder<UIViewController>()
             let dismissViewController = {
-                holder.value?.view.removeFromSuperview()
-                holder.value?.removeFromParent()
-                holder.value = nil
+                displayable.dismiss()
             }
-
-            var viewController: InAppMessageBannerViewController?
 
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
@@ -195,31 +183,30 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 extensions: makeInAppExtensions()
             )
 
-            let bannerConstraints = InAppMessageBannerConstraints(
-                size: Self.windowSize(window)
-            )
+            do {
+                try displayable.display { windowInfo in
+                    let bannerConstraints = InAppMessageBannerConstraints(
+                        size: windowInfo.size
+                    )
 
-            let rootView = InAppMessageBannerView(
-                environment: environment,
-                displayContent: banner,
-                bannerConstraints: bannerConstraints,
-                theme: theme,
-                onDismiss: dismissViewController
-            )
+                    let rootView = InAppMessageBannerView(
+                        environment: environment,
+                        displayContent: banner,
+                        bannerConstraints: bannerConstraints,
+                        theme: theme,
+                        onDismiss: dismissViewController
+                    )
 
-            viewController = InAppMessageBannerViewController(
-                window: window,
-                rootView: rootView,
-                placement: banner.placement,
-                bannerConstraints: bannerConstraints
-            )
-
-            holder.value = viewController
-
-            if let view = viewController?.view {
-                view.willMove(toWindow: window)
-                window.addSubview(view)
-                view.didMoveToWindow()
+                    return InAppMessageBannerViewController(
+                        rootView: rootView,
+                        placement: banner.placement,
+                        bannerConstraints: bannerConstraints
+                    )
+                }
+            } catch {
+                continuation.resume(
+                    throwing: AirshipErrors.error("Failed to find window to display in-app banner \(error)")
+                )
             }
         }
     }
@@ -227,16 +214,16 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     @MainActor
     private func displayModal(
         _ modal: InAppMessageDisplayContent.Modal,
-        scene: UIWindowScene,
+        displayTarget: AirshipDisplayTarget,
         analytics: any InAppMessageAnalyticsProtocol
-    ) async -> DisplayResult {
-        return await withCheckedContinuation { continuation in
-            let window = UIWindow.airshipMakeModalReadyWindow(scene: scene)
+    ) async throws -> DisplayResult {
+        return try await withCheckedThrowingContinuation { continuation in
+            let displayable = displayTarget.prepareDisplay(for: .modal)
 
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
             ) { result in
-                window.airshipAnimateOut()
+                displayable.dismiss()
                 continuation.resume(returning: result)
             }
 
@@ -251,27 +238,33 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 InAppMessageModalView(displayContent: modal, theme: theme)
             }
 
-            let viewController = InAppMessageHostingController(rootView: rootView)
-            viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
-            window.rootViewController = viewController
-
-            window.airshipAnimateIn()
+            do {
+                try displayable.display { _ in
+                    let viewController = InAppMessageHostingController(rootView: rootView)
+                    viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+                    return viewController
+                }
+            } catch {
+                continuation.resume(
+                    throwing: AirshipErrors.error("Failed to find window to display in-app banner \(error)")
+                )
+            }
         }
     }
 
     @MainActor
     private func displayFullscreen(
         _ fullscreen: InAppMessageDisplayContent.Fullscreen,
-        scene: UIWindowScene,
+        displayTarget: AirshipDisplayTarget,
         analytics: any InAppMessageAnalyticsProtocol
-    ) async -> DisplayResult {
-        return await withCheckedContinuation { continuation in
-            let window = UIWindow.airshipMakeModalReadyWindow(scene: scene)
+    ) async throws -> DisplayResult {
+        return try await withCheckedThrowingContinuation { continuation in
+            let displayable = displayTarget.prepareDisplay(for: .modal)
 
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
             ) { result in
-                window.airshipAnimateOut()
+                displayable.dismiss()
                 continuation.resume(returning: result)
             }
 
@@ -286,28 +279,34 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 FullscreenView(displayContent: fullscreen, theme: theme)
             }
 
-            let viewController = InAppMessageHostingController(rootView: rootView)
-            viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
-            window.rootViewController = viewController
-
-            window.airshipAnimateIn()
+            do {
+                try displayable.display { _ in
+                    let viewController = InAppMessageHostingController(rootView: rootView)
+                    viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+                    return viewController
+                }
+            } catch {
+                continuation.resume(
+                    throwing: AirshipErrors.error("Failed to find window to display in-app banner \(error)")
+                )
+            }
         }
     }
 
     @MainActor
     private func displayHTML(
         _ html: InAppMessageDisplayContent.HTML,
-        scene: UIWindowScene,
+        displayTarget: AirshipDisplayTarget,
         analytics: any InAppMessageAnalyticsProtocol
-    ) async -> DisplayResult {
+    ) async throws -> DisplayResult {
 #if !os(tvOS)
-        return await withCheckedContinuation { continuation in
-            let window = UIWindow.airshipMakeModalReadyWindow(scene: scene)
+        return try await withCheckedThrowingContinuation { continuation in
+            let displayable = displayTarget.prepareDisplay(for: .modal)
 
             let listener = InAppMessageDisplayListener(
                 analytics: analytics
             ) { result in
-                window.airshipAnimateOut()
+                displayable.dismiss()
                 continuation.resume(returning: result)
             }
 
@@ -322,11 +321,17 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 HTMLView(displayContent: html, theme: theme)
             }
 
-            let viewController = InAppMessageHostingController(rootView: rootView)
-            viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
-            window.rootViewController = viewController
-
-            window.airshipAnimateIn()
+            do {
+                try displayable.display { _ in
+                    let viewController = InAppMessageHostingController(rootView: rootView)
+                    viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+                    return viewController
+                }
+            } catch {
+                continuation.resume(
+                    throwing: AirshipErrors.error("Failed to find window to display in-app banner \(error)")
+                )
+            }
         }
 #else
         return .cancel
@@ -336,7 +341,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     @MainActor
     private func displayThomasLayout(
         _ layout: AirshipLayout,
-        scene: UIWindowScene,
+        displayTarget: AirshipDisplayTarget,
         analytics: any InAppMessageAnalyticsProtocol
     ) async throws -> DisplayResult {
         return try await withCheckedThrowingContinuation { continuation in
@@ -362,7 +367,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             do {
                 try Thomas.display(
                     layout: layout,
-                    scene: scene,
+                    displayTarget: displayTarget,
                     extensions: extensions,
                     delegate: listener,
                     extras: message.extras,

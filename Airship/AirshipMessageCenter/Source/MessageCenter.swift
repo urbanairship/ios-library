@@ -370,23 +370,10 @@ extension DefaultMessageCenter {
             return
         }
 
-        guard let scene = try? AirshipSceneManager.shared.lastActiveScene else {
-            AirshipLogger.error(
-                "Unable to display message center, missing scene."
-            )
-            return
-        }
+        let displayable = AirshipDisplayTarget().prepareDisplay(for: .modal)
 
-        var window: UIWindow? = AirshipWindowFactory.shared.makeWindow(windowScene: scene)
-
-        self.mutable.currentDisplay = AirshipMainActorCancellableBlock {
-            window?.windowLevel = .normal
-            window?.isHidden = true
-            window = nil
-        }
-
-        let viewController = MessageCenterViewControllerFactory.make(
-            theme: theme, 
+        let controller = MessageCenterViewControllerFactory.make(
+            theme: theme,
             predicate: predicate,
             controller: self.controller
         ) {
@@ -394,10 +381,16 @@ extension DefaultMessageCenter {
             self.mutable.currentDisplay = nil
         }
 
-        window?.isHidden = false
-        window?.windowLevel = .alert
-        window?.makeKeyAndVisible()
-        window?.rootViewController = viewController
+        do {
+            try displayable.display { _ in
+                return controller
+            }
+            self.mutable.currentDisplay = AirshipMainActorCancellableBlock {
+                displayable.dismiss()
+            }
+        } catch {
+            AirshipLogger.error("Unable to display message center \(error)")
+        }
     }
 
     @MainActor

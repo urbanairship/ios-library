@@ -133,14 +133,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
 
     @MainActor
     func testExecute() async throws  {
-        let scene = TestScene()
-        self.sceneManager.onScene = { [preparedData] message in
-            XCTAssertEqual(message, preparedData!.message)
-            return scene
-        }
-
-        self.displayAdapter.onDisplay = { [preparedData] incomingScene, incomingAnalytics in
-            XCTAssertTrue(scene === (incomingScene as? TestScene))
+        self.displayAdapter.onDisplay = { [preparedData] displayTarget, incomingAnalytics in
             XCTAssertTrue(preparedData!.analytics === incomingAnalytics)
             return .finished
         }
@@ -254,34 +247,24 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
     }
 
     @MainActor
-    func testExecuteNoScene() async throws  {
+    func testDisplayTargetNoScene() async throws  {
         self.sceneManager.onScene = { _ in
             throw AirshipErrors.error("Fail")
         }
 
-        self.displayAdapter.onDisplay = { _, _ in
-            XCTFail()
+        self.displayAdapter.onDisplay = { displayTarget, _ in
+            _ = try displayTarget.sceneProvider()
             return .cancel
         }
 
-        do {
-            _ = try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
-            XCTFail("should throw")
-        } catch {}
-
-        XCTAssertTrue(self.actionRunner.actionPayloads.isEmpty)
+        let result = try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
+        XCTAssertEqual(result, .retry)
     }
 
     @MainActor
     func testExecuteCancel() async throws  {
-        let scene = TestScene()
-        self.sceneManager.onScene = { [preparedData] message in
-            XCTAssertEqual(message, preparedData!.message)
-            return scene
-        }
 
-        self.displayAdapter.onDisplay = { [preparedData] incomingScene, incomingAnalytics in
-            XCTAssertTrue(scene === (incomingScene as? TestScene))
+        self.displayAdapter.onDisplay = { [preparedData] displayTarget, incomingAnalytics in
             XCTAssertTrue(preparedData!.analytics === incomingAnalytics)
             return .cancel
         }

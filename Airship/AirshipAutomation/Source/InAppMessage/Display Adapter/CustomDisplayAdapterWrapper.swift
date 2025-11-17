@@ -25,12 +25,12 @@ final class CustomDisplayAdapterWrapper: DisplayAdapter {
     }
 
     @MainActor
-    func display(scene: any WindowSceneHolder, analytics: any InAppMessageAnalyticsProtocol) async -> DisplayResult {
+    func display(displayTarget: AirshipDisplayTarget, analytics: any InAppMessageAnalyticsProtocol) async throws -> DisplayResult {
         analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
-
+        let scene = try displayTarget.sceneProvider()
         let timer = ActiveTimer()
         timer.start()
-        let result = await self.adapter.display(scene: scene.scene)
+        let result = await self.adapter.display(scene: scene)
         timer.stop()
 
         switch(result) {

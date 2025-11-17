@@ -12,7 +12,7 @@ public final class Thomas {
     @discardableResult
     public class func display(
         layout: AirshipLayout,
-        scene: UIWindowScene,
+        displayTarget: AirshipDisplayTarget,
         extensions: ThomasExtensions? = nil,
         delegate: any ThomasDelegate,
         extras: AirshipJSON?,
@@ -22,15 +22,15 @@ public final class Thomas {
         case .banner(let presentation):
             return try displayBanner(
                 presentation,
-                scene: scene,
+                displayTarget: displayTarget,
                 layout: layout,
                 extensions: extensions,
                 delegate: delegate
             )
         case .modal(let presentation):
-            return displayModal(
+            return try displayModal(
                 presentation,
-                scene: scene,
+                displayTarget: displayTarget,
                 layout: layout,
                 extensions: extensions,
                 delegate: delegate
@@ -50,25 +50,12 @@ public final class Thomas {
     @MainActor
     private class func displayBanner(
         _ presentation: ThomasPresentationInfo.Banner,
-        scene: UIWindowScene,
+        displayTarget: AirshipDisplayTarget,
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: any ThomasDelegate
     ) throws -> any AirshipMainActorCancellable {
-        guard let window = AirshipUtils.mainWindow(scene: scene),
-            window.rootViewController != nil
-        else {
-            throw AirshipErrors.error("Failed to find window")
-        }
-
-        var viewController: ThomasBannerViewController?
-        let holder = AirshipStrongValueHolder<UIViewController>()
-
-        let dismissController = {
-            holder.value?.view.removeFromSuperview()
-            holder.value?.removeFromParent()
-            holder.value = nil
-        }
+        let displayable = displayTarget.prepareDisplay(for: .banner)
 
         let options = ThomasViewControllerOptions()
         let environment = ThomasEnvironment(
@@ -76,33 +63,27 @@ public final class Thomas {
             extensions: extensions
         )
 
-        let bannerConstraints = ThomasBannerConstraints(
-            size: windowSize(window)
-        )
+        try displayable.display { windowInfo in
+            let bannerConstraints = ThomasBannerConstraints(
+                size: windowInfo.size
+            )
 
-        let rootView = BannerView(
-            viewControllerOptions: options,
-            presentation: presentation,
-            layout: layout,
-            thomasEnvironment: environment,
-            bannerConstraints: bannerConstraints,
-            onDismiss: dismissController
-        )
+            let rootView = BannerView(
+                viewControllerOptions: options,
+                presentation: presentation,
+                layout: layout,
+                thomasEnvironment: environment,
+                bannerConstraints: bannerConstraints,
+            ) {
+                displayable.dismiss()
+            }
 
-        viewController = ThomasBannerViewController(
-            window: window,
-            rootView: rootView,
-            position: presentation.defaultPlacement.position,
-            options: options,
-            constraints: bannerConstraints
-        )
-
-        holder.value = viewController
-        
-        if let view = viewController?.view {
-            view.willMove(toWindow: window)
-            window.addSubview(view)
-            view.didMoveToWindow()
+            return ThomasBannerViewController(
+                rootView: rootView,
+                position: presentation.defaultPlacement.position,
+                options: options,
+                constraints: bannerConstraints
+            )
         }
 
         return AirshipMainActorCancellableBlock { [weak environment] in
@@ -113,13 +94,12 @@ public final class Thomas {
     @MainActor
     private class func displayModal(
         _ presentation: ThomasPresentationInfo.Modal,
-        scene: UIWindowScene,
+        displayTarget: AirshipDisplayTarget,
         layout: AirshipLayout,
         extensions: ThomasExtensions?,
         delegate: any ThomasDelegate
-    ) -> any AirshipMainActorCancellable {
-        let window: UIWindow = UIWindow.airshipMakeModalReadyWindow(scene: scene)
-        var viewController: ThomasModalViewController?
+    ) throws -> any AirshipMainActorCancellable {
+        let displayable = displayTarget.prepareDisplay(for: .modal)
 
         let options = ThomasViewControllerOptions()
         options.orientation = presentation.defaultPlacement.device?.orientationLock
@@ -128,7 +108,7 @@ public final class Thomas {
             delegate: delegate,
             extensions: extensions
         ) {
-            window.airshipAnimateOut()
+            displayable.dismiss()
         }
 
         let rootView = ModalView(
@@ -137,36 +117,19 @@ public final class Thomas {
             thomasEnvironment: environment,
             viewControllerOptions: options
         )
-        viewController = ThomasModalViewController(
-            rootView: rootView,
-            options: options
-        )
-        viewController?.modalPresentationStyle = .currentContext
-        window.rootViewController = viewController
-        window.airshipAnimateIn()
+
+        try displayable.display { window in
+            return ThomasModalViewController(
+                rootView: rootView,
+                options: options
+            )
+        }
 
         return AirshipMainActorCancellableBlock { [weak environment] in
             environment?.dismiss()
         }
     }
 
-    @MainActor
-    private class func windowSize(_ window: UIWindow) -> CGSize {
-        #if os(iOS) || os(tvOS)
-        return window.screen.bounds.size
-        #elseif os(visionOS)
-        // https://developer.apple.com/design/human-interface-guidelines/windows#visionOS
-        return CGSize(
-            width: 1280,
-            height: 720
-        )
-        #elseif os(watchOS)
-        return CGSize(
-            width: WKInterfaceDevice.current().screenBounds.width,
-            height: WKInterfaceDevice.current().screenBounds.height
-        )
-        #endif
-    }
     #endif
 }
 

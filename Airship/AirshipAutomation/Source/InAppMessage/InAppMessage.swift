@@ -2,7 +2,6 @@
 
 import Foundation
 import SwiftUI
-public import UIKit
 
 #if canImport(AirshipCore)
 public import AirshipCore
@@ -294,12 +293,14 @@ extension InAppMessage {
     /// We return a window since we are implementing display
     /// - Note: for internal use only.  :nodoc:
     @MainActor
-    public func _display(
-        scene: UIWindowScene
-    ) async throws {
+    public func _display() async throws {
         let adapter = try AirshipLayoutDisplayAdapter(message: self, priority: 0, assets: EmptyAirshipCachedAssets())
+        let displayTarget = AirshipDisplayTarget {
+            try AirshipSceneManager.shared.lastActiveScene
+        }
+
         _ = try await adapter.display(
-            scene: DefaultWindowSceneHolder(scene: scene),
+            displayTarget: displayTarget,
             analytics: LoggingInAppMessageAnalytics()
         )
     }

@@ -136,22 +136,20 @@ final class DefaultPreferenceCenter: PreferenceCenter {
     }
 
     private func displayDefaultPreferenceCenter(_ preferenceCenterID: String) async {
-        guard let scene = try? AirshipSceneManager.shared.lastActiveScene else {
-            AirshipLogger.error("Unable to display, missing scene.")
-            return
-        }
-
         currentDisplay.value?.cancel()
 
         AirshipLogger.debug("Opening default preference center UI")
 
-        self.currentDisplay.set(
-            displayPreferenceCenter(
+        do {
+            let display = try displayPreferenceCenter(
                 preferenceCenterID,
-                scene: scene,
                 theme: theme
             )
-        )
+            self.currentDisplay.set(display)
+        } catch {
+            AirshipLogger.error("Unable to display preference center \(error)")
+        }
+
     }
 
     public func config(preferenceCenterID: String) async throws -> PreferenceCenterConfig {
@@ -192,34 +190,25 @@ extension DefaultPreferenceCenter {
     @MainActor
     fileprivate func displayPreferenceCenter(
         _ preferenceCenterID: String,
-        scene: UIWindowScene,
         theme: PreferenceCenterTheme?
-    ) -> any AirshipMainActorCancellable {
+    ) throws -> any AirshipMainActorCancellable {
+        let displayable = AirshipDisplayTarget().prepareDisplay(for: .modal)
 
-        var window: UIWindow? = AirshipWindowFactory.shared.makeWindow(windowScene: scene)
-
-        let cancellable = AirshipMainActorCancellableBlock {
-            window?.windowLevel = .normal
-            window?.isHidden = true
-            window = nil
+        try displayable.display { _ in
+            return PreferenceCenterViewControllerFactory.makeViewController(
+                view: PreferenceCenterView(
+                    preferenceCenterID: preferenceCenterID
+                ),
+                preferenceCenterTheme: theme,
+                dismissAction: {
+                    displayable.dismiss()
+                }
+            )
         }
 
-        var viewController: UIViewController!
-
-        viewController = PreferenceCenterViewControllerFactory.makeViewController(
-            view: PreferenceCenterView(
-                preferenceCenterID: preferenceCenterID
-            ),
-            preferenceCenterTheme: theme,
-            dismissAction: {
-                cancellable.cancel()
-            })
-
-        window?.windowLevel = .alert
-        window?.makeKeyAndVisible()
-        window?.rootViewController = viewController
-
-        return cancellable
+        return AirshipMainActorCancellableBlock {
+            displayable.dismiss()
+        }
     }
 }
 

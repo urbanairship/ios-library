@@ -116,7 +116,9 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             return .finished
         }
 
-        let scene = try self.sceneManager.scene(forMessage: data.message)
+        let displayTarget = AirshipDisplayTarget {
+            try self.sceneManager.scene(forMessage: data.message).scene
+        }
 
         // Display
         self.delegates.displayDelegate?.messageWillDisplay(
@@ -138,7 +140,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             do {
                 AirshipLogger.info("Displaying message \(preparedScheduleInfo.scheduleID)")
 
-                let displayResult = try await data.displayAdapter.display(scene: scene, analytics: data.analytics)
+                let displayResult = try await data.displayAdapter.display(displayTarget: displayTarget, analytics: data.analytics)
                 switch (displayResult) {
                 case .cancel:
                     result = .cancel
