@@ -4,13 +4,17 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.11.3 - November 18, 2025
+Patch release that further addresses the direct open attribution race condition introduced in 19.0.0. While 19.11.0 attempted to fix this issue by introducing a synchronous completion handler method, the implementation still executed work asynchronously, which could cause direct open events to be missed in some edge cases.
+
+### Changes
+- Fixed a potential race condition that could result in missed direct open attributions by ensuring notification response handling completes synchronously before the app becomes active. 
+
 ## Version 19.11.2 - November 14, 2025
 Patch release that fixes YouTube video playback in In-App Automation and Scenes. Applications that use YouTube videos in Scenes and non-html In-App Automations (IAA) must update to resolve playback errors.
 
-
 ### Changes
 - Fixed YouTube video embedding to comply with YouTube API Client identification requirements.
-
 
 ## Version 19.11.1 – October 7, 2025
 Patch release addressing the longstanding Swift concurrency crash (GH-434) and improving the internal rate-limiting system for better stability and efficiency.
