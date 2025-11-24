@@ -809,6 +809,7 @@
 		6ED2F5312B7FF819000AFC80 /* AirshipViewUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F5302B7FF819000AFC80 /* AirshipViewUtils.swift */; };
 		6ED2F5382B7FFCEB000AFC80 /* AirshipDateFormatterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F5342B7FFCD7000AFC80 /* AirshipDateFormatterTest.swift */; };
 		6ED2F5392B7FFF68000AFC80 /* AirshipSceneManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99D1B3272B44F08900447840 /* AirshipSceneManager.swift */; };
+		6ED562A02EA9434B00C20B55 /* StackImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED5629F2EA9434900C20B55 /* StackImageButton.swift */; };
 		6ED6ECA426ADCA6F00973364 /* BlockAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED6ECA326ADCA6F00973364 /* BlockAction.swift */; };
 		6ED6ECA726AE05B700973364 /* EmptyAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED6ECA626AE05B700973364 /* EmptyAction.swift */; };
 		6ED735DA26C73DC5003B0A7D /* DefaultAirshipChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED735D926C73DC5003B0A7D /* DefaultAirshipChannel.swift */; };
@@ -2140,6 +2141,7 @@
 		6ED2F52E2B7FD49B000AFC80 /* AirshipURLAllowListTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipURLAllowListTest.swift; sourceTree = "<group>"; };
 		6ED2F5302B7FF819000AFC80 /* AirshipViewUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipViewUtils.swift; sourceTree = "<group>"; };
 		6ED2F5342B7FFCD7000AFC80 /* AirshipDateFormatterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDateFormatterTest.swift; sourceTree = "<group>"; };
+		6ED5629F2EA9434900C20B55 /* StackImageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackImageButton.swift; sourceTree = "<group>"; };
 		6ED6ECA326ADCA6F00973364 /* BlockAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockAction.swift; sourceTree = "<group>"; };
 		6ED6ECA626AE05B700973364 /* EmptyAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyAction.swift; sourceTree = "<group>"; };
 		6ED735D926C73DC5003B0A7D /* DefaultAirshipChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAirshipChannel.swift; sourceTree = "<group>"; };
@@ -3130,6 +3132,7 @@
 		6E1C9C42271F744E009EF9EF /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				6ED5629F2EA9434900C20B55 /* StackImageButton.swift */,
 				6E0104FE2DDF9B26009D651F /* IconView.swift */,
 				6E66BA7E2D14B61A0083A9FD /* WrappingLayout.swift */,
 				6EF1E9292CD00698005EAA07 /* PagerSwipeDirection.swift */,
@@ -5823,6 +5826,7 @@
 				6E6363EC29DDF84B009C358A /* SerialQueue.swift in Sources */,
 				6E40868E2B8D036600435E2C /* AirshipEmbeddedSize.swift in Sources */,
 				6E92ECB1284ECE590038802D /* CachedList.swift in Sources */,
+				6ED562A02EA9434B00C20B55 /* StackImageButton.swift in Sources */,
 				6E952923268B812000398B54 /* AccountEventTemplate.swift in Sources */,
 				A658DE2B272AFB0400007672 /* AirshipImageLoader.swift in Sources */,
 				6EA5202327D1364E003011CA /* AirshipDateFormatter.swift in Sources */,

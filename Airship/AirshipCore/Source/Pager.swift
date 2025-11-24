@@ -558,6 +558,9 @@ struct Pager: View {
                 case .pagerResume:
                     self.pagerState.resume()
 
+                case .pagerPauseToggle:
+                    pagerState.togglePause()
+
                 case .formSubmit, .formValidate:
                     // not supported
                     break

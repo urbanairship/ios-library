@@ -54,6 +54,7 @@ extension Array where Element == ThomasAutomatedAction {
                 case .formSubmit: false
                 case .pagerPause: false
                 case .pagerResume: false
+                case .pagerPauseToggle: false
                 }
             }.isEmpty == false
         }

@@ -41,6 +41,7 @@ struct RootView<Content: View>: View {
         self._thomasState = StateObject(
             wrappedValue: ThomasState(
                 formState: thomasEnvironment.defaultFormState,
+                pagerState: thomasEnvironment.defaultPagerState,
                 mutableState: thomasEnvironment.defaultMutableState
             ) { [weak thomasEnvironment] state in
                 thomasEnvironment?.onStateChange(state)

@@ -12,33 +12,64 @@ public enum URLInfo: Sendable, Equatable {
 
 extension AirshipLayout {
     public var urlInfos: [URLInfo] {
-        return extract { info in
+        let urls: [[URLInfo]?] = extract { info in
             switch info {
             case .media(let info):
-                switch info.properties.mediaType {
+                return switch info.properties.mediaType {
                 case .image:
-                    return .image(url: info.properties.url)
+                    [.image(url: info.properties.url)]
                 case .youtube:
-                    return .video(url: info.properties.url)
+                    [.video(url: info.properties.url)]
                 case .vimeo:
-                    return .video(url: info.properties.url)
+                    [.video(url: info.properties.url)]
                 case .video:
-                    return .video(url: info.properties.url)
+                    [.video(url: info.properties.url)]
                 }
             #if !os(tvOS) && !os(watchOS)
             case .webView(let info):
-                return .web(url: info.properties.url)
+                return [.web(url: info.properties.url)]
             #endif
             case .imageButton(let info):
-                switch info.properties.image {
+                return switch info.properties.image {
                 case .url(let imageModel):
-                    return .image(url: imageModel.url)
-                case .icon(_):
-                    return nil
+                    [.image(url: imageModel.url)]
+                case .icon:
+                    nil
                 }
+            case .stackImageButton(let info):
+                var images: [URLInfo] = []
+                for item in info.properties.items {
+                    switch item {
+                    case .imageURL(let info):
+                        images.append(.image(url: info.url))
+                    case .icon, .shape:
+                        break
+                    }
+                }
+
+                if let overrides = info.overrides?.items {
+                    for override in overrides {
+                        guard let item = override.value else { continue }
+                        for value in item {
+                            switch value {
+                            case .imageURL(let info):
+                                images.append(.image(url: info.url))
+                            case .icon, .shape:
+                                break
+                            }
+                        }
+                    }
+                }
+
+                return images
+
             default: return nil
             }
         }
+
+        return urls.compactMap { $0 }.reduce(into: []) { result, urlArray in
+              result.append(contentsOf: urlArray)
+          }
     }
 }
 

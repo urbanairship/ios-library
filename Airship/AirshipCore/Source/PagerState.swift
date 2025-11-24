@@ -174,6 +174,15 @@ class PagerState: ObservableObject {
         }
     }
 
+    func togglePause() {
+        if self.isManuallyPaused {
+            resume()
+        } else {
+            pause()
+        }
+    }
+
+
     func resume() {
         self.isManuallyPaused = false
         if let currentPageId {

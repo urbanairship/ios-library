@@ -147,6 +147,9 @@ struct AirshipButton<Label> : View  where Label : View {
             case .pagerResume:
                 pagerState.resume()
 
+            case .pagerPauseToggle:
+                pagerState.togglePause()
+
             case .formValidate:
                 // Already handled above
                 break

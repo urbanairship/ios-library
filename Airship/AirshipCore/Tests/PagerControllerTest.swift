@@ -72,7 +72,9 @@ extension ThomasState {
                 identifier: "empty",
                 formType: .form,
                 formResponseType: "none",
-                validationMode: .immediate),
+                validationMode: .immediate,
+            ),
+            pagerState: .init(identifier: "", branching: nil),
             onStateChange: { _ in }
         )
     }

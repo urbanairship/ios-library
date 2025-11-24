@@ -61,6 +61,30 @@ struct Icons {
                 resizable: resizable,
                 color: color
             )
+        case .chevronForward:
+            makeSystemImageIcon(
+                name: "chevron.forward",
+                resizable: resizable,
+                color: color
+            )
+        case .chevronBackward:
+            makeSystemImageIcon(
+                name: "chevron.backward",
+                resizable: resizable,
+                color: color
+            )
+        case .play:
+            makeSystemImageIcon(
+                name: "play.fill",
+                resizable: resizable,
+                color: color
+            )
+        case .pause:
+            makeSystemImageIcon(
+                name: "pause",
+                resizable: resizable,
+                color: color
+            )
         case .exclamationmarkCircleFill:
             makeSystemImageIcon(
                 name: "exclamationmark.circle.fill",

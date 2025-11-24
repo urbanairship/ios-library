@@ -47,6 +47,8 @@ struct ViewFactory {
         #endif
         case .imageButton(let info):
             ImageButton(info: info, constraints: constraints)
+        case .stackImageButton(let info):
+            StackImageButton(info: info, constraints: constraints)
         case .checkbox(let info):
             Checkbox(info: info, constraints: constraints)
         case .checkboxController(let info):

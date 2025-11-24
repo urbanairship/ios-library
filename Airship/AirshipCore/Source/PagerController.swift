@@ -8,6 +8,7 @@ struct PagerController: View {
 
     @EnvironmentObject var formDataCollector: ThomasFormDataCollector
     @EnvironmentObject var environment: ThomasEnvironment
+    @EnvironmentObject var state: ThomasState
 
     init(
         info: ThomasViewInfo.PagerController,
@@ -22,7 +23,8 @@ struct PagerController: View {
             info: self.info,
             constraints: constraints,
             environment: environment,
-            parentFormDataCollector: self.formDataCollector
+            parentFormDataCollector: formDataCollector,
+            parentState: state
         )
     }
 
@@ -30,19 +32,22 @@ struct PagerController: View {
     struct Content: View {
         let info: ThomasViewInfo.PagerController
         let constraints: ViewConstraints
+
         @Environment(\.layoutState) var layoutState
 
         @ObservedObject var pagerState: PagerState
         @StateObject var formDataCollector: ThomasFormDataCollector
 
         @Environment(\.isVoiceOverRunning) var isVoiceOverRunning
+        @StateObject var state: ThomasState
 
 
         init(
             info: ThomasViewInfo.PagerController,
             constraints: ViewConstraints,
             environment: ThomasEnvironment,
-            parentFormDataCollector: ThomasFormDataCollector
+            parentFormDataCollector: ThomasFormDataCollector,
+            parentState: ThomasState
         ) {
             self.info = info
             self.constraints = constraints
@@ -61,6 +66,10 @@ struct PagerController: View {
             self._formDataCollector = StateObject(
                 wrappedValue: parentFormDataCollector.copy(pagerState: pagerState)
             )
+
+            self._state = StateObject(
+                wrappedValue: parentState.copy(pagerState: pagerState)
+            )
         }
 
         var body: some View {
@@ -75,6 +84,7 @@ struct PagerController: View {
                 .thomasCommon(self.info)
                 .environmentObject(pagerState)
                 .environmentObject(self.formDataCollector)
+                .environmentObject(state)
                 .environment(\.layoutState, layoutState.override(pagerState: pagerState))
         }
     }

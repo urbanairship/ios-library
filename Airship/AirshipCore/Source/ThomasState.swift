@@ -10,15 +10,18 @@ class ThomasState: ObservableObject {
     private var subscriptions: Set<AnyCancellable> = []
 
     private let formState: ThomasFormState
+    private let pagerState: PagerState
     private let mutableState: MutableState
     private let onStateChange: @Sendable @MainActor (AirshipJSON) -> Void
 
     func copy(
         formState: ThomasFormState? = nil,
+        pagerState: PagerState? = nil,
         mutableState: MutableState? = nil
     ) -> ThomasState {
         return .init(
             formState: formState ?? self.formState,
+            pagerState: pagerState ?? self.pagerState,
             mutableState: mutableState ?? self.mutableState,
             onStateChange: self.onStateChange
         )
@@ -26,10 +29,12 @@ class ThomasState: ObservableObject {
 
     init(
         formState: ThomasFormState,
+        pagerState: PagerState,
         mutableState: MutableState? = nil,
         onStateChange: @escaping @Sendable @MainActor (AirshipJSON) -> Void
     ) {
         self.formState = formState
+        self.pagerState = pagerState
         self.mutableState = mutableState ?? MutableState()
         self.onStateChange = onStateChange
 
@@ -39,28 +44,35 @@ class ThomasState: ObservableObject {
                 fields: formState.activeFields.map { $0.value },
                 formType: formState.formType
             ),
+            isPagerPaused: !pagerState.inProgress,
             mutableState: self.mutableState.state
         ).json
 
-        Publishers.CombineLatest3(formState.$status, formState.$activeFields, self.mutableState.$state)
-            .map { formStatus, activeFields, mutableState in
-                ThomasStatePayload(
-                    formData: ThomasFormPayloadGenerator.makeFormStatePayload(
-                        status: formStatus,
-                        fields: activeFields.map { $0.value },
-                        formType: formState.formType
-                    ),
-                    mutableState: mutableState
-                ).json
-            }
-            .removeDuplicates()
-            .sink { [weak self] state in
-                self?.state = state
-                AirshipLogger.trace("State updated: \(state.prettyJSONString)")
-                self?.onStateChange(state)
-            }
-            .store(in: &subscriptions)
-    }
+        Publishers.CombineLatest4(
+            formState.$status,
+            formState.$activeFields,
+            pagerState.$inProgress,
+            self.mutableState.$state
+        )
+        .map { formStatus, activeFields, pagerInProgress, mutableState in
+            ThomasStatePayload(
+                formData: ThomasFormPayloadGenerator.makeFormStatePayload(
+                    status: formStatus,
+                    fields: activeFields.map { $0.value },
+                    formType: formState.formType
+                ),
+                isPagerPaused: !pagerInProgress,
+                mutableState: mutableState
+            ).json
+        }
+        .removeDuplicates()
+        .sink { [weak self] state in
+            self?.state = state
+            AirshipLogger.trace("State updated: \(state.prettyJSONString)")
+            self?.onStateChange(state)
+        }
+        .store(in: &subscriptions)
+}
 
     func processStateActions(
         _ stateActions: [ThomasStateAction],
@@ -163,10 +175,12 @@ class ThomasState: ObservableObject {
 fileprivate struct ThomasStatePayload: Encodable, Sendable, Equatable {
     private let state: AirshipJSON?
     private let forms: FormsHolder
+    private let pager: PagersHolder
 
     @MainActor
     init(
         formData: AirshipJSON,
+        isPagerPaused: Bool,
         mutableState: AirshipJSON
     ) {
         self.state = mutableState
@@ -175,15 +189,37 @@ fileprivate struct ThomasStatePayload: Encodable, Sendable, Equatable {
                 current: formData
             )
         )
+        self.pager = PagersHolder(
+            pagers: Pagers(
+                current: .init(paused: isPagerPaused)
+            )
+        )
     }
 
     func encode(to encoder: any Encoder) throws {
         do {
             try state?.encode(to: encoder)
             try forms.encode(to: encoder)
+            try pager.encode(to: encoder)
         } catch {
             throw error
         }
+    }
+
+    struct PagersHolder: Encodable, Sendable, Equatable {
+        let pagers: Pagers
+
+        enum CodingKeys: String, CodingKey {
+            case pagers = "$pager"
+        }
+    }
+
+    struct Pagers: Encodable, Sendable, Equatable {
+        let current: PagerData
+    }
+
+    struct PagerData: Encodable, Sendable, Equatable {
+        let paused: Bool
     }
 
     struct FormsHolder: Encodable, Sendable, Equatable {
@@ -193,6 +229,7 @@ fileprivate struct ThomasStatePayload: Encodable, Sendable, Equatable {
             case forms = "$forms"
         }
     }
+    
 
     struct Forms: Encodable, Sendable, Equatable {
         let current: AirshipJSON
