@@ -41,7 +41,7 @@ NS_SWIFT_UI_ACTOR
               completionHandler:(NS_SWIFT_SENDABLE void (^)(void))completionHandler NS_SWIFT_ASYNC_NAME(willPresentNotification(notification:presentationOptions:)) NS_SWIFT_ASYNC(3);
 
 
-- (void)didReceiveNotificationResponse:(UNNotificationResponse *)response completionHandler:(NS_SWIFT_SENDABLE void (^)(void))completionHandler API_UNAVAILABLE(tvos) NS_SWIFT_ASYNC_NAME(didReceiveNotificationResponse(response:)) NS_SWIFT_ASYNC(2);
+- (void)didReceiveNotificationResponse:(UNNotificationResponse *)response completionHandler:(NS_SWIFT_SENDABLE void (^)(void))completionHandler API_UNAVAILABLE(tvos) NS_SWIFT_NAME(didReceiveNotificationResponse(response:completionHandler:));
 
 - (void)presentationOptionsForNotification:(UNNotification *)notification completionHandler:(NS_SWIFT_SENDABLE void (^)(UNNotificationPresentationOptions))completionHandler
 NS_SWIFT_ASYNC_NAME(presentationOptionsForNotification(_:)) NS_SWIFT_ASYNC(2);
