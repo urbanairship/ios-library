@@ -122,7 +122,7 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
 
     #if !os(tvOS)
     @MainActor
-    public func didReceiveNotificationResponse(response: UNNotificationResponse) async {
+    public func didReceiveNotificationResponse(response: UNNotificationResponse, completionHandler: @Sendable @escaping () -> Void) {
         AirshipLogger.info(
             "Application received notification response: \(response)"
         )
@@ -150,32 +150,35 @@ final class DefaultAppIntegrationDelegate: NSObject, AppIntegrationDelegate, Sen
             action: action
         )
 
-        // Pushable components
-        for component in pushableComponents {
-            await component.receivedNotificationResponse(response)
-        }
+        Task { @MainActor in
+            // Pushable components
+            for component in pushableComponents {
+                await component.receivedNotificationResponse(response)
+            }
 
-        if let actionsPayload = actionsPayload {
-            let action = self.notificationAction(
-                categoryID: categoryID,
-                actionID: actionID
-            )
-            
-            let situation = self.situationFromAction(action) ?? .launchedFromPush
-            let metadata: [String: any Sendable] = [
-                ActionArguments.userNotificationActionIDMetadataKey: actionID,
-                ActionArguments.pushPayloadJSONMetadataKey: wrappedUserInfo,
-                ActionArguments.responseInfoMetadataKey: responseText
-            ]
-            
-            await ActionRunner.run(
-                actionsPayload: actionsPayload,
-                situation: situation,
-                metadata: metadata
-            )
-        }
+            if let actionsPayload = actionsPayload {
+                let action = self.notificationAction(
+                    categoryID: categoryID,
+                    actionID: actionID
+                )
 
-        await self.push.didReceiveNotificationResponse(response)
+                let situation = self.situationFromAction(action) ?? .launchedFromPush
+                let metadata: [String: any Sendable] = [
+                    ActionArguments.userNotificationActionIDMetadataKey: actionID,
+                    ActionArguments.pushPayloadJSONMetadataKey: wrappedUserInfo,
+                    ActionArguments.responseInfoMetadataKey: responseText
+                ]
+
+                await ActionRunner.run(
+                    actionsPayload: actionsPayload,
+                    situation: situation,
+                    metadata: metadata
+                )
+            }
+
+            await self.push.didReceiveNotificationResponse(response)
+            completionHandler()
+        }
     }
     #endif
     

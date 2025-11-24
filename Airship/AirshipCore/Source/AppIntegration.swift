@@ -274,7 +274,7 @@ public class AppIntegration {
     public class func userNotificationCenter(
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse
-    ) async  {
+    ) async {
         guard let delegate = integrationDelegate else {
             logIgnoringCall()
             return
@@ -306,8 +306,8 @@ public class AppIntegration {
             return
         }
 
-        delegate.didReceive(
-            response,
+        delegate.didReceiveNotificationResponse(
+            response: response,
             completionHandler: completionHandler
         )
     }
