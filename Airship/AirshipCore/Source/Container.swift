@@ -28,7 +28,6 @@ fileprivate struct NewContainer: View {
 
     var body: some View {
         ContainerLayout(
-            items: self.info.properties.items,
             constraints: self.constraints,
             layoutDirection: layoutDirection
         ) {
@@ -66,16 +65,19 @@ fileprivate struct NewContainer: View {
         .frame(
             alignment: item.position.alignment
         )
-
+        .layoutValue(key: ContainerLayout.ContainerItemPositionKey.self, value: item.position)
     }
 }
 
 fileprivate struct ContainerLayout: Layout {
+    struct ContainerItemPositionKey: LayoutValueKey {
+        static let defaultValue = ThomasPosition(horizontal: .center, vertical: .center)
+    }
+    
     struct Cache {
         var childSizes: [CGSize]
     }
 
-    let items: [ThomasViewInfo.Container.Item]
     let constraints: ViewConstraints
     let layoutDirection: LayoutDirection
 
@@ -110,11 +112,12 @@ fileprivate struct ContainerLayout: Layout {
         subviews: Subviews,
         cache: inout Cache
     ) {
-        for (index, subview) in subviews.enumerated() {
-            let item = items[index]
-            let childSize = cache.childSizes[index]
+        for (subviewIndex, subview) in subviews.enumerated() {
+            // Get the position from the layout value
+            let position = subview[ContainerItemPositionKey.self]
+            let childSize = cache.childSizes[subviewIndex]
 
-            let x: CGFloat = switch item.position.horizontal {
+            let x: CGFloat = switch position.horizontal {
             case .start:
                 layoutDirection == .leftToRight ? bounds.minX : bounds.maxX - childSize.width
             case .end:
@@ -123,7 +126,7 @@ fileprivate struct ContainerLayout: Layout {
                 bounds.midX - (childSize.width / 2)
             }
 
-            let y: CGFloat = switch item.position.vertical {
+            let y: CGFloat = switch position.vertical {
             case .top:
                 bounds.minY
             case .bottom:
