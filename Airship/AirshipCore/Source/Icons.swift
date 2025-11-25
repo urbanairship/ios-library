@@ -116,7 +116,10 @@ struct Icons {
                 color: color
             )
         case .progressSpinner:
-            ProgressView().tint(color)
+            ProgressSpinnerIconView(
+                resizable: resizable,
+                color: color
+            )
         }
     }
 
@@ -136,5 +139,34 @@ struct Icons {
         .airshipApplyIf(info.scale != nil) { view in
             view.scaleEffect(info.scale ?? 1)
         }
+    }
+}
+
+@MainActor
+private struct ProgressSpinnerIconView: View {
+    let resizable: Bool
+    let color: Color
+    
+    var body: some View {
+        if #available(iOS 18.0, *) {
+            makeSystemImageIcon(
+                name: "progress.indicator",
+                resizable: resizable,
+                color: color
+            )
+            .symbolEffect(.variableColor.iterative, options: .repeat(.continuous))
+        } else {
+            // Fallback on earlier versions
+        }
+    }
+    
+    private func makeSystemImageIcon(
+        name: String,
+        resizable: Bool,
+        color: Color
+    ) -> some View {
+        Image(systemName: name)
+            .airshipApplyIf(resizable) { view in view.resizable() }
+            .foregroundColor(color)
     }
 }

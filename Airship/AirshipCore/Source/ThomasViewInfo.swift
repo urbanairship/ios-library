@@ -2019,7 +2019,13 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         }
 
         struct Properties: ThomasSerializable {
+            let type: ViewType = .iconView
             var icon: ThomasIconInfo
+
+            private enum CodingKeys: String, CodingKey {
+                case type
+                case icon
+            }
         }
 
         struct Overrides: ThomasSerializable {
