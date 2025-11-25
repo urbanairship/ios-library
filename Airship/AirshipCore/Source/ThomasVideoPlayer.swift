@@ -99,6 +99,8 @@ struct ThomasVideoPlayer: UIViewRepresentable {
     @MainActor
     private func setupObservers(container: VideoPlayerContainer, context: Context) {
         context.coordinator.cleanup()
+        context.coordinator.playerContainer = container
+        context.coordinator.onMediaReady = onMediaReady
 
         let shouldLoop = container.shouldLoop
         let player = container.player
@@ -139,8 +141,7 @@ struct ThomasVideoPlayer: UIViewRepresentable {
             }
         }
 
-        context.coordinator.playerContainer = container
-        context.coordinator.onMediaReady = onMediaReady
+
     }
 
     @MainActor
