@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.11.4 - November 24, 2025
+Patch release that fixes an issue with delayed video playback in Scenes when initially loading or paging. Applications that use videos in Scenes must update to resolve the playback delays.
+
+### Changes
+- Fixed an issue where the video ready callback was not assigned before observers were set up, causing the pager to miss the ready signal and advance before the loaded completely.
+
 ## Version 19.11.3 - November 18, 2025
 Patch release that further addresses the direct open attribution race condition introduced in 19.0.0. While 19.11.0 attempted to fix this issue by introducing a synchronous completion handler method, the implementation still executed work asynchronously, which could cause direct open events to be missed in some edge cases.
 

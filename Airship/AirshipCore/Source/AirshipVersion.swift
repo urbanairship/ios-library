@@ -3,7 +3,7 @@
 import Foundation
 
 public struct AirshipVersion {
-    public static let version = "19.11.3"
+    public static let version = "19.11.4"
     public static func get() -> String {
         return version
     }
