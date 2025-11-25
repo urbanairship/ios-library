@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.0.2 - November 24, 2025
+Patch release that fixes an issue with delayed video playback in Scenes when initially loading or paging and addresses a direct open attribution race condition which could cause direct open events to be missed in some edge cases.
+
+### Changes
+- Fixed an issue where the video ready callback was not assigned before observers were set up, causing the pager to miss the ready signal and advance before they loaded completely.
+- Fixed a potential race condition that could result in missed direct open attributions by ensuring notification response handling completes synchronously before the app becomes active.
 
 ## Version 20.0.1 - November 14, 2025
 Patch release that fixes several minor bugs and adds accessibility improvements.

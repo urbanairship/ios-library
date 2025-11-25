@@ -331,6 +331,7 @@ class PagerState: ObservableObject {
         let key = MediaKey(pageId: pageId, id: id)
         guard mediaReadyState[key] == nil else { return }
         mediaReadyState[key] = false
+        updateInProgress(pageId: pageId)
     }
 
     func setMediaReady(pageId: String, id: UUID, isReady: Bool) {
