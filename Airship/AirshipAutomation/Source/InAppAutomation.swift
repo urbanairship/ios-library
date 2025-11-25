@@ -252,7 +252,9 @@ extension DefaultInAppAutomation {
 public extension Airship {
     /// The shared `InAppAutomation` instance. `Airship.takeOff` must be called before accessing this instance.
     static var inAppAutomation: any InAppAutomation {
-        return Airship.requireComponent(ofType: InAppAutomationComponent.self).inAppAutomation
+        return Airship.requireComponent(
+            ofType: InAppAutomationComponent.self
+        ).inAppAutomation
     }
 }
 

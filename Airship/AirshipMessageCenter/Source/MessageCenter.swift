@@ -402,7 +402,6 @@ extension DefaultMessageCenter {
 
 public extension Airship {
     /// The shared `MessageCenter` instance. `Airship.takeOff` must be called before accessing this instance.
-    @MainActor
     static var messageCenter: any MessageCenter {
         Airship.requireComponent(
             ofType: MessageCenterComponent.self

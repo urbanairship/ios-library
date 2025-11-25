@@ -230,7 +230,6 @@ extension DefaultPreferenceCenter {
 
 public extension Airship {
     /// The shared `PreferenceCenter` instance. `Airship.takeOff` must be called before accessing this instance.
-    @MainActor
     static var preferenceCenter: any PreferenceCenter  {
         Airship.requireComponent(
            ofType: PreferenceCenterComponent.self

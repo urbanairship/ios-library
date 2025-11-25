@@ -58,6 +58,8 @@ public protocol FeatureFlagManager: AnyObject, Sendable {
 public extension Airship {
     /// The shared `FeatureFlagManager` instance. `Airship.takeOff` must be called before accessing this instance.
     static var featureFlagManager: any FeatureFlagManager {
-        return Airship.requireComponent(ofType: FeatureFlagComponent.self).featureFlagManager
+        return Airship.requireComponent(
+            ofType: FeatureFlagComponent.self
+        ).featureFlagManager
     }
 }
