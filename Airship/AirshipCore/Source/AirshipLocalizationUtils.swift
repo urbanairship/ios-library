@@ -56,7 +56,7 @@ public final class AirshipLocalizationUtils {
     public static func localizedString(
         _ string: String,
         withTable table: String,
-        moduleBundle: Bundle?,
+        moduleBundle: Bundle?
     ) -> String? {
 
         let mainBundle = Bundle.main
