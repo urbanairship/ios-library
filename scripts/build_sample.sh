@@ -20,10 +20,18 @@ echo -ne "\n\n *********** BUILDING SAMPLE $SAMPLE *********** \n\n"
 # Make sure AirshipConfig.plist exists
 cp -np "${ROOT_PATH}/$SAMPLE/AirshipConfig.plist.sample" "${ROOT_PATH}/$SAMPLE/AirshipConfig.plist" || true
 
+# DevApp has its own project, other samples use the main workspace
+if [ $SAMPLE == "DevApp" ]
+then
+  PROJECT_ARG="-project ${ROOT_PATH}/DevApp/DevApp.xcodeproj"
+else
+  PROJECT_ARG="-workspace ${ROOT_PATH}/Airship.xcworkspace"
+fi
+
 # Use Debug configurations and a simulator SDK so the build process doesn't attempt to sign the output
 xcrun xcodebuild \
 -configuration Debug \
--workspace "${ROOT_PATH}/Airship.xcworkspace" \
+$PROJECT_ARG \
 -scheme "${SAMPLE}" \
 -sdk $TARGET_SDK \
 -derivedDataPath "$DERIVED_DATA" | xcbeautify --renderer $XCBEAUTIY_RENDERER
