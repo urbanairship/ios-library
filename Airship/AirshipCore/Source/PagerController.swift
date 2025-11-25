@@ -23,7 +23,7 @@ struct PagerController: View {
             info: self.info,
             constraints: constraints,
             environment: environment,
-            parentFormDataCollector: formDataCollector,
+            formDataCollector: formDataCollector,
             parentState: state
         )
     }
@@ -46,7 +46,7 @@ struct PagerController: View {
             info: ThomasViewInfo.PagerController,
             constraints: ViewConstraints,
             environment: ThomasEnvironment,
-            parentFormDataCollector: ThomasFormDataCollector,
+            formDataCollector: ThomasFormDataCollector,
             parentState: ThomasState
         ) {
             self.info = info
@@ -64,11 +64,11 @@ struct PagerController: View {
             self._pagerState = ObservedObject(wrappedValue: pagerState)
 
             self._formDataCollector = StateObject(
-                wrappedValue: parentFormDataCollector.copy(pagerState: pagerState)
+                wrappedValue: formDataCollector.with(pagerState: pagerState)
             )
 
             self._state = StateObject(
-                wrappedValue: parentState.copy(pagerState: pagerState)
+                wrappedValue: parentState.with(pagerState: pagerState)
             )
         }
 
@@ -82,9 +82,9 @@ struct PagerController: View {
                     pagerState.isVoiceOverRunning = isVoiceOverRunning
                 }
                 .thomasCommon(self.info)
-                .environmentObject(pagerState)
+                .environmentObject(self.pagerState)
                 .environmentObject(self.formDataCollector)
-                .environmentObject(state)
+                .environmentObject(self.state)
                 .environment(\.layoutState, layoutState.override(pagerState: pagerState))
         }
     }

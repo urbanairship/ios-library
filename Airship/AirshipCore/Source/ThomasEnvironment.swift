@@ -15,19 +15,6 @@ class ThomasEnvironment: ObservableObject {
     let extensions: ThomasExtensions?
     let imageLoader: AirshipImageLoader
 
-    let defaultFormState = ThomasFormState(
-        identifier: "",
-        formType: .form,
-        formResponseType: "",
-        validationMode: .immediate
-    )
-
-    let defaultPagerState = PagerState(
-        identifier: "",
-        branching: nil
-    )
-    let defaultMutableState = ThomasState.MutableState()
-
     private var state: [String: Any] = [:]
 
     func retrieveState<T: ObservableObject>(identifier: String, create: () -> T) -> T {

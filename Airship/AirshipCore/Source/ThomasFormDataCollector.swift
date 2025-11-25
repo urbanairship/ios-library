@@ -5,8 +5,8 @@ import Combine
 
 @MainActor
 class ThomasFormDataCollector: ObservableObject {
-    let formState: ThomasFormState?
-    let pagerState: PagerState?
+    private let formState: ThomasFormState?
+    private let pagerState: PagerState?
 
     private var subscriptions: Set<AnyCancellable> = Set()
 
@@ -25,13 +25,20 @@ class ThomasFormDataCollector: ObservableObject {
             .store(in: &subscriptions)
     }
 
-    func copy(
+    func with(
         formState: ThomasFormState? = nil,
         pagerState: PagerState? = nil
     ) -> ThomasFormDataCollector {
+        let newFormState = formState ?? self.formState
+        let newPagerState = pagerState ?? self.pagerState
+
+        if newFormState === self.formState, newPagerState === self.pagerState {
+            return self
+        }
+
         return .init(
-            formState: formState ?? self.formState,
-            pagerState: pagerState ?? self.pagerState
+            formState: newFormState,
+            pagerState: newPagerState
         )
     }
 

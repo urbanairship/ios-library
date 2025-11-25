@@ -21,7 +21,6 @@ struct PagerControllerTest {
     @MainActor
     @Test
     func controllerDisplaysCorrectStateOnNavigation() async throws {
-        
         let pagerState = PagerState(identifier: "test", branching: nil)
         pagerState.setPagesAndListenForUpdates(
             pages: [
@@ -29,8 +28,9 @@ struct PagerControllerTest {
                 makePageItem(id: "page-2")
             ],
             thomasState: .empty,
-            swipeDisableSelectors: nil)
-        
+            swipeDisableSelectors: nil
+        )
+
         let controller = AirshipSceneController.PagerController(pagerState: pagerState)
         #expect(controller.canGoBack == false)
         #expect(controller.canGoNext == true)
@@ -46,7 +46,7 @@ struct PagerControllerTest {
         #expect(controller.navigate(request: .next) == false)
         #expect(controller.navigate(request: .back) == true)
         
-        try await Task.sleep(nanoseconds: 300_000_000) //300 ms for disable swipe fix
+        try await Task.sleep(nanoseconds: 300_000_000) // 300 ms for disable swipe fix
         
         #expect(controller.canGoBack == false)
         #expect(controller.canGoNext == true)

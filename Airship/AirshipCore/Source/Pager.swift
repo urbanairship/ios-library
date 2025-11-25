@@ -21,10 +21,11 @@ struct Pager: View {
     private static let minDragDistance: CGFloat = 60.0
     static let animationSpeed: TimeInterval = 0.75
 
-    @EnvironmentObject var formState: ThomasFormState
-    @EnvironmentObject var pagerState: PagerState
-    @EnvironmentObject var thomasState: ThomasState
-    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @EnvironmentObject private var formState: ThomasFormState
+    @EnvironmentObject private var pagerState: PagerState
+    @EnvironmentObject private var thomasState: ThomasState
+    @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
+
     @Environment(\.isVisible) var isVisible
     @Environment(\.layoutState) var layoutState
     @Environment(\.layoutDirection) var layoutDirection
