@@ -6,7 +6,6 @@ import SwiftUI
 import UIKit
 #endif
 
-
 struct BannerView: View {
     @Environment(\.layoutState) var layoutState
     @Environment(\.windowSize) private var windowSize
@@ -28,14 +27,13 @@ struct BannerView: View {
     @StateObject
     private var timer: AirshipObservableTimer
 
-    /// The dimiss action callback
+    /// The dismiss action callback
     let onDismiss: () -> Void
 
     @State private var isShowing: Bool = false
     @State private var swipeOffset: CGFloat = 0
     @State private var isButtonTapsDisabled: Bool = false
-    @State private var contentSize: (ViewConstraints, CGSize)? = nil
-    @State private var lastSize: CGSize?
+    @State private var contentSize: CGSize? = nil
 
     init(
         viewControllerOptions: ThomasViewControllerOptions,
@@ -74,12 +72,6 @@ struct BannerView: View {
                         placement: placement,
                         metrics: metrics
                     )
-                        .offset(x: 0, y: swipeOffset)
-#if !os(tvOS)
-                        .simultaneousGesture(swipeGesture(placement: placement))
-#endif
-                        .frame(maxWidth: .infinity)
-
                     Group {
                         if isShowing {
                             banner
@@ -87,7 +79,7 @@ struct BannerView: View {
                             banner.opacity(0)
                         }
                     }
-                    .airshipApplyTransitioningPlacement(
+                    .airshipApplyTransition(
                         isTopPlacement: placement.position == .top
                     )
                 }
@@ -100,7 +92,14 @@ struct BannerView: View {
                 }
                 .onAppear {
                     timer.onAppear()
-                    setShowing(state: true)
+                    if contentSize != nil {
+                        setShowing(state: true)
+                    }
+                }
+                .airshipOnChangeOf(contentSize) { size in
+                    if size != nil && !isShowing {
+                        setShowing(state: true)
+                    }
                 }
                 .airshipOnChangeOf(swipeOffset) { value in
                     self.isButtonTapsDisabled = value != 0
@@ -142,7 +141,6 @@ struct BannerView: View {
         }
     }
 
-
     private func createBanner(
         placement: ThomasPresentationInfo.Banner.Placement,
         metrics: GeometryProxy
@@ -152,49 +150,23 @@ struct BannerView: View {
             vertical: placement.position == .top ? .top : .bottom
         )
 
-        let ignoreSafeArea = placement.ignoreSafeArea == true
-        var safeAreaInsets = ViewConstraints.emptyEdgeSet
-        var safeAreasToIgnore: SafeAreaRegions = []
-
-        if ignoreKeyboardSafeArea {
-            safeAreasToIgnore.insert(.keyboard)
-        }
-
-        if ignoreSafeArea {
-            if placement.position == .top {
-                safeAreaInsets = EdgeInsets(
-                    top: metrics.safeAreaInsets.top,
-                    leading: metrics.safeAreaInsets.leading,
-                    bottom: 0,
-                    trailing: metrics.safeAreaInsets.trailing
-                )
-            } else {
-                safeAreaInsets = EdgeInsets(
-                    top: 0,
-                    leading: metrics.safeAreaInsets.leading,
-                    bottom: metrics.safeAreaInsets.bottom,
-                    trailing: metrics.safeAreaInsets.trailing
-                )
-            }
-        }
-
         let constraints = ViewConstraints(
-            size: self.bannerConstraints.size,
-            safeAreaInsets: safeAreaInsets
+            size: self.bannerConstraints.windowSize,
+            safeAreaInsets: placement.ignoreSafeArea != true ? EdgeInsets() : metrics.safeAreaInsets
         )
-
-        // Reuse cached size if constraints are identical
-        var existingSize: CGSize?
-        if constraints == self.contentSize?.0 {
-            existingSize = self.contentSize?.1
-        }
 
         let contentConstraints = constraints.contentConstraints(
             placement.size,
-            contentSize: existingSize,
+            contentSize: self.contentSize,
             margin: placement.margin
         )
 
+        /**
+         * Banners rely on the viewController to reduce the parent view to avoid blocking the underlying view from recieving taps outside of the
+         * banner. When we adjust the view controller size, it also adjusts the GeometryReader metrics making them inaccurate. We still use the metrics to get safe area insets,
+         * but when calculating the size we need to use the window size in the shared bannerConstraints. Placement margins are also handled by the
+         * viewController to avoid margins being touchable dead areas.
+         */
         return VStack {
             ViewFactory.createView(
                 layout.view,
@@ -209,24 +181,31 @@ struct BannerView: View {
                 color: placement.backgroundColor,
                 border: placement.border
             )
-            .margin(placement.margin)
+            .offset(x: 0, y: swipeOffset)
+#if !os(tvOS)
+            .simultaneousGesture(swipeGesture(placement: placement))
+#endif
+            .background(
+                GeometryReader(content: { contentMetrics -> Color in
+                    let size = contentMetrics.size
+                    DispatchQueue.main.async {
+                        self.bannerConstraints.updateContentSize(
+                            size,
+                            constraints: contentConstraints,
+                            placement: placement
+                        )
+                        if self.contentSize != size {
+                            // Update cached size if constraints match
+                            self.contentSize = size
+                        }
+                    }
+                    return Color.airshipTappableClear
+                })
+            )
+           
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
-        .background(
-            GeometryReader(content: { contentMetrics -> Color in
-                let size = contentMetrics.size
-                DispatchQueue.main.async {
-                    if self.lastSize != size {
-                        self.bannerConstraints.size = size
-                        self.lastSize = size
-                        // Update cached size if constraints match
-                        self.contentSize = (constraints, size)
-                    }
-                }
-                return Color.airshipTappableClear
-            })
-        )
-        .airshipApplyIf(ignoreSafeArea) { $0.edgesIgnoringSafeArea(.all)}
+        .edgesIgnoringSafeArea(.all)
         .accessibilityElement(children: .contain)
         .accessibilityAction(.escape) {
             onDismiss()
@@ -272,9 +251,11 @@ struct BannerView: View {
 
 #if !os(tvOS)
     private func swipeGesture(placement: ThomasPresentationInfo.Banner.Placement) -> some Gesture {
-        let minSwipeDistance: CGFloat = bannerConstraints.size.height > 0
-        ? min(100.0, bannerConstraints.size.height * 0.5)
-        : 100.0
+        let minSwipeDistance: CGFloat = if let height = self.contentSize?.height, height > 0 {
+            min(100.0, height * 0.5)
+        } else {
+            100.0
+        }
 
         return DragGesture(minimumDistance: 10)
             .onChanged { gesture in

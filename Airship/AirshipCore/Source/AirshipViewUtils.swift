@@ -56,7 +56,7 @@ public extension View {
     }
 
     @ViewBuilder
-    private func airshipApplyTransition(
+    func airshipApplyTransition(
         isTopPlacement: Bool
     ) -> some View {
         if isTopPlacement {

@@ -8,9 +8,9 @@ presentation:
       width: 100%
       height: auto
     margin:
-      top: 16
+      top: 32
       bottom: 0
-      start: 16
+      start: 40
       end: 16
     corner_radius:
       bottom_left: 24
@@ -25,8 +25,7 @@ presentation:
           hex: "#00FF00"
           alpha: 0.09
     border:
-      corner_radius:
-        bottom_left: 24
+      border_radius: 24
       stroke_width: 10
       stroke_color:
         default:
