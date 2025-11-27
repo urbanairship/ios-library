@@ -5,8 +5,8 @@
 import UIKit
 import Foundation
 
+/// Protocol for building the Airship JavaScript environment injected into web views.
 public protocol JavaScriptEnvironmentProtocol: Sendable {
-
 
     /// Adds a string getter to the Airship JavaScript environment.
     /// - Parameter getter: The getter's name.

@@ -334,6 +334,7 @@ final class DefaultAirshipPermissionsManager: AirshipPermissionsManager {
     }
 }
 
+/// Permission request result.
 public struct AirshipPermissionResult: Sendable {
     /// Starting status
     public var startStatus: AirshipPermissionStatus

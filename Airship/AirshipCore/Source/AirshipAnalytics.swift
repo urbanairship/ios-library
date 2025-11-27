@@ -27,6 +27,10 @@ public protocol AirshipAnalytics: AnyObject, Sendable {
     /// - Parameter event: The event.
     func recordRegionEvent(_ event: RegionEvent)
 
+    /// Tracks install attribution data.
+    /// - Parameters:
+    ///   - appPurchaseDate: The app purchase date.
+    ///   - iAdImpressionDate: The iAd impression date.
     func trackInstallAttribution(appPurchaseDate: Date?, iAdImpressionDate: Date?)
 
     /// Associates identifiers with the device. This call will add a special event
