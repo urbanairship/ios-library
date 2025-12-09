@@ -48,6 +48,7 @@ final class AutomationEngineTest: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
+        let history = DefaultAutomationEventsHistory(clock: UATestDate())
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: runtimeConfig,
@@ -71,7 +72,7 @@ final class AutomationEngineTest: XCTestCase {
         let actionExecutor = ActionAutomationExecutor()
         let messageExecutor = TestInAppMessageAutomationExecutor()
         let executor = AutomationExecutor(actionExecutor: actionExecutor, messageExecutor: messageExecutor, remoteDataAccess: remoteDataAccess)
-        let triggersProcessor = AutomationTriggerProcessor(store: automationStore)
+        let triggersProcessor = AutomationTriggerProcessor(store: automationStore, history: history)
         
         self.metrics = ApplicationMetrics(
             dataStore: dataStore,
@@ -93,7 +94,8 @@ final class AutomationEngineTest: XCTestCase {
             scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier,
             eventFeed: eventFeed,
             triggersProcessor: triggersProcessor,
-            delayProcessor: delayProcessor
+            delayProcessor: delayProcessor,
+            eventsHistory: history
         )
     }
     

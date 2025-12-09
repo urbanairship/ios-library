@@ -28,6 +28,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let metrics = ApplicationMetrics(dataStore: args.dataStore, privacyManager: args.privacyManager)
 
         let automationStore = AutomationStore(config: args.config)
+        let history = DefaultAutomationEventsHistory()
 
         let analyticsFactory = InAppMessageAnalyticsFactory(
             eventRecorder: eventRecorder,
@@ -87,8 +88,12 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             preparer: automationPreparer,
             scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier,
             eventFeed: feed,
-            triggersProcessor: AutomationTriggerProcessor(store: automationStore),
-            delayProcessor: AutomationDelayProcessor(analytics: args.analytics)
+            triggersProcessor: AutomationTriggerProcessor(
+                store: automationStore,
+                history: history
+            ),
+            delayProcessor: AutomationDelayProcessor(analytics: args.analytics),
+            eventsHistory: history,
         )
 
         let remoteDataSubscriber = AutomationRemoteDataSubscriber(

@@ -42,6 +42,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		27051CD72EE75E3300C770D5 /* AutomationEventsHistoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27051CD62EE75E3300C770D5 /* AutomationEventsHistoryTest.swift */; };
+		27077E4C2EE7531C0027A282 /* AutomationEventsHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27077E4B2EE7531C0027A282 /* AutomationEventsHistory.swift */; };
 		271B38652DB2866200495D9F /* TagActionMutation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271B38642DB2866200495D9F /* TagActionMutation.swift */; };
 		27264FB32E81B064000B6FA3 /* AirshipSceneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27264FB22E81B064000B6FA3 /* AirshipSceneController.swift */; };
 		2726505B2E81B80E000B6FA3 /* PagerControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2726505A2E81B80E000B6FA3 /* PagerControllerTest.swift */; };
@@ -1361,6 +1363,8 @@
 		03525B95280DE5F400320AA9 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		03525B96280DE60200320AA9 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
 		03525B97280DE61200320AA9 /* zu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zu; path = zu.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
+		27051CD62EE75E3300C770D5 /* AutomationEventsHistoryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEventsHistoryTest.swift; sourceTree = "<group>"; };
+		27077E4B2EE7531C0027A282 /* AutomationEventsHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEventsHistory.swift; sourceTree = "<group>"; };
 		271B38642DB2866200495D9F /* TagActionMutation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagActionMutation.swift; sourceTree = "<group>"; };
 		27264FB22E81B064000B6FA3 /* AirshipSceneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSceneController.swift; sourceTree = "<group>"; };
 		2726505A2E81B80E000B6FA3 /* PagerControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerControllerTest.swift; sourceTree = "<group>"; };
@@ -4236,6 +4240,7 @@
 				6E1A9BD42B5EE97000A6489B /* TriggeringInfo.swift */,
 				6E1A9BF62B606CF200A6489B /* AutomationDelayProcessor.swift */,
 				6E34C4B02C7D4B6400B00506 /* ExecutionWindowProcessor.swift */,
+				27077E4B2EE7531C0027A282 /* AutomationEventsHistory.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -4253,6 +4258,7 @@
 				A6F0B18F2B837E36002D10A4 /* AutomationEngineTest.swift */,
 				6EDE5FC12BADDD96003ADF55 /* PreparedScheduleInfoTest.swift */,
 				6E34C4B22C7D4C6600B00506 /* ExecutionWindowProcessorTest.swift */,
+				27051CD62EE75E3300C770D5 /* AutomationEventsHistoryTest.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -6251,6 +6257,7 @@
 				6E7E770D2DDFD0D80042086D /* AirshipAsyncSemaphore.swift in Sources */,
 				99E0BD0D2B4DD4AB00465B37 /* FullscreenView.swift in Sources */,
 				6E6802902B8671E700F4591F /* InAppAutomationComponent.swift in Sources */,
+				27077E4C2EE7531C0027A282 /* AutomationEventsHistory.swift in Sources */,
 				6E1528262B4DC64B00DF1377 /* DisplayAdapterFactory.swift in Sources */,
 				6EE6AAC42B58A947002FEA75 /* InAppResolutionEvent.swift in Sources */,
 				6EE6AAD12B58A947002FEA75 /* InAppDisplayEvent.swift in Sources */,
@@ -6373,6 +6380,7 @@
 				325D53FB2964885B003421B4 /* AirshipBaseTest.swift in Sources */,
 				6032695C2BF75E39007F7F75 /* AirshipHTTPResponseTest.swift in Sources */,
 				6E1528422B4F156200DF1377 /* TestDisplayCoordinator.swift in Sources */,
+				27051CD72EE75E3300C770D5 /* AutomationEventsHistoryTest.swift in Sources */,
 				6EE6AAE82B58A9D5002FEA75 /* InAppDisplayEventTest.swift in Sources */,
 				6EE6AAF52B58A9D5002FEA75 /* InAppFormDisplayEventTest.swift in Sources */,
 				6EE6AA282B50C91E002FEA75 /* AutomationRemoteDataSubscriberTest.swift in Sources */,
