@@ -481,10 +481,10 @@ struct TextInput: View {
             }
         }
     }
-
 }
 
 struct AirshipTextField: View {
+    @Environment(\.sizeCategory) var sizeCategory
 
     let info: ThomasViewInfo.TextInput
     let constraints: ViewConstraints
@@ -553,134 +553,6 @@ struct AirshipTextField: View {
     }
     
 }
-
-
-#if !os(watchOS)
-/// TextView
-
-internal struct AirshipTextView: UIViewRepresentable {
-    let textAppearance: ThomasTextAppearance
-    @Binding var text: String
-    @Binding var isEditing: Bool
-
-    @Environment(\.colorScheme) var colorScheme
-    func makeUIView(context: Context) -> UITextView {
-        let textView = UITextView()
-        /// Set textView background color to clear to can set the parent background color instead
-        textView.backgroundColor = .clear
-        textView.delegate = context.coordinator
-
-#if os(iOS)
-        let toolbar = UIToolbar()
-        toolbar.sizeToFit()
-        let done = UIBarButtonItem(
-            barButtonSystemItem: .done,
-            target: textView,
-            action: #selector(textView.resignFirstResponder)
-        )
-
-        let flexSpace = UIBarButtonItem(
-            barButtonSystemItem: .flexibleSpace,
-            target: nil,
-            action: nil
-        )
-
-        toolbar.items = [flexSpace, done]
-        textView.inputAccessoryView = toolbar
-#endif
-
-        textView.applyTextAppearance(self.textAppearance, colorScheme)
-        return textView
-    }
-
-    func updateUIView(_ uiView: UITextView, context: Context) {
-        uiView.applyTextAppearance(self.textAppearance, colorScheme)
-        uiView.textModifyAppearance(self.textAppearance)
-        if uiView.text.isEmpty && !self.text.isEmpty {
-            uiView.text = self.text
-        }
-    }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator($text, isEditing: $isEditing)
-    }
-
-    class Coordinator: NSObject, UITextViewDelegate {
-        var text: Binding<String>
-        var isEditing: Binding<Bool>
-
-        let subject = PassthroughSubject<String, Never>()
-        let cancellable: any Cancellable
-
-        init(_ text: Binding<String>, isEditing: Binding<Bool>) {
-            self.text = text
-            self.isEditing = isEditing
-            self.cancellable =
-            subject
-                .debounce(for: .seconds(0.2), scheduler: RunLoop.main)
-                .sink {
-                    text.wrappedValue = $0
-                }
-        }
-
-        func textViewDidChange(_ textView: UITextView) {
-            subject.send(textView.text)
-        }
-
-        func textViewDidBeginEditing(_ textView: UITextView) {
-            self.isEditing.wrappedValue = true
-        }
-
-        func textViewDidEndEditing(_ textView: UITextView) {
-            self.isEditing.wrappedValue = false
-        }
-    }
-}
-
-extension UITextView {
-    func applyTextAppearance(
-        _ textAppearance: ThomasTextAppearance?,
-        _ colorScheme: ColorScheme
-    ) {
-        if let textAppearance = textAppearance {
-            self.textAlignment =
-            textAppearance.alignment?.toNSTextAlignment() ?? .center
-            self.textColor =
-            textAppearance.color.toUIColor(colorScheme)
-            self.font = UIFont.resolveUIFont(textAppearance)
-        }
-    }
-
-    func textModifyAppearance(
-        _ textAppearance: ThomasTextAppearance
-    ) {
-        underlineText(textAppearance)
-    }
-
-    func underlineText(
-        _ textAppearance: ThomasTextAppearance
-    ) {
-        if let styles = textAppearance.styles {
-            if styles.contains(.underlined) {
-                let textRange = NSRange(
-                    location: 0,
-                    length: self.text.count
-                )
-                let attributeString = NSMutableAttributedString(
-                    attributedString:
-                        self.attributedText
-                )
-                attributeString.addAttribute(
-                    .underlineStyle,
-                    value: NSUnderlineStyle.single.rawValue,
-                    range: textRange
-                )
-                self.attributedText = attributeString
-            }
-        }
-    }
-}
-#endif
 
 
 fileprivate extension String {
