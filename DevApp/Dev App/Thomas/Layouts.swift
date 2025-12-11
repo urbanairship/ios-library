@@ -96,6 +96,68 @@ extension LayoutFile {
         return try getJsonContentFromYmlContent(ymlContent: stringContent)
     }
 
+    /// Extracts a layout object from a potentially wrapped JSON payload.
+    ///
+    /// Supports multiple wrapper formats by traversing known key paths:
+    /// - `in_app_message.message.display.layout`
+    /// - `message.display.layout`
+    /// - `display.layout`
+    /// - `layout`
+    ///
+    /// If the payload is already a raw layout (has version, presentation, view), returns it as-is.
+    private func extractLayoutFromPayload(_ data: Data) throws -> Data {
+        guard let jsonObject = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return data
+        }
+
+        if let layout = extractLayout(from: jsonObject) {
+            return try JSONSerialization.data(withJSONObject: layout, options: .prettyPrinted)
+        }
+
+        return data
+    }
+
+    /// Traverses the JSON structure to find the layout object.
+    private func extractLayout(from json: [String: Any]) -> [String: Any]? {
+        // Check if this is already a valid layout
+        if isValidLayout(json) {
+            return json
+        }
+
+        // Define the possible key paths to the layout, from most to least nested
+        let keyPaths: [[String]] = [
+            ["in_app_message", "message", "display", "layout"],
+            ["message", "display", "layout"],
+            ["display", "layout"],
+            ["layout"]
+        ]
+
+        for keyPath in keyPaths {
+            if let layout = traverse(json: json, keyPath: keyPath), isValidLayout(layout) {
+                return layout
+            }
+        }
+
+        return nil
+    }
+
+    /// Traverses a JSON dictionary along a key path.
+    private func traverse(json: [String: Any], keyPath: [String]) -> [String: Any]? {
+        var current: [String: Any] = json
+        for key in keyPath {
+            guard let next = current[key] as? [String: Any] else {
+                return nil
+            }
+            current = next
+        }
+        return current
+    }
+
+    /// Checks if a dictionary contains the required layout keys.
+    private func isValidLayout(_ json: [String: Any]) -> Bool {
+        json["version"] != nil && json["presentation"] != nil && json["view"] != nil
+    }
+
     /// Check if a string is JSON
     func isJSONString(_ jsonString: String) -> Bool {
         if let jsonData = jsonString.data(using: .utf8) {
@@ -130,8 +192,9 @@ extension LayoutFile {
 
     @MainActor
     private func displayScene(_ data: Data) throws {
-        /// TODO clean this up to be a message?
-        let layout = try JSONDecoder().decode(AirshipLayout.self, from: data)
+        // Extract layout from potentially wrapped payload (in_app_message.message.display.layout)
+        let layoutData = try extractLayoutFromPayload(data)
+        let layout = try JSONDecoder().decode(AirshipLayout.self, from: layoutData)
 
         let message = InAppMessage(name: "thomas", displayContent: .airshipLayout(layout))
 
