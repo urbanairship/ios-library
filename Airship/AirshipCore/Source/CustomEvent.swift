@@ -161,6 +161,8 @@ public struct CustomEvent: Sendable {
 }
 
 extension CustomEvent {
+    /// Validates the event.
+    /// - Returns: `true` if the event is valid, otherwise `false`.
     public func isValid() -> Bool {
         let areFieldsValid = validateFields()
         let isValueValid = validateValue()
@@ -197,9 +199,7 @@ extension CustomEvent {
         }
     }
 
-    /**
-     * Adds the event to analytics. A wrapper arou
-     */
+    /// Adds the event to analytics.
     public func track() {
         Airship.analytics.recordCustomEvent(self)
     }
