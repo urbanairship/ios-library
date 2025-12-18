@@ -62,13 +62,10 @@ struct ModalView: View {
             margin: placement.margin
         )
 
-        var safeAreasToIgnore: SafeAreaRegions = []
-        if ignoreKeyboardSafeArea {
-            safeAreasToIgnore.insert(.keyboard)
-        }
-
-        if ignoreSafeArea {
-            safeAreasToIgnore.insert(.container)
+        let safeAreasToIgnore: SafeAreaRegions = if ignoreSafeArea {
+            [.container, .keyboard]
+        } else {
+            []
         }
         
         return VStack {
