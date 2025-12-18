@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.0.3 - December 17, 2025
+Patch release that fixes keyboard safe area with Scenes.
+
+### Changes
+- Fixed safe area handling during keyboard presentation in Scenes.
+
 ## Version 20.0.2 - November 24, 2025
 Patch release that fixes an issue with delayed video playback in Scenes when initially loading or paging and addresses a direct open attribution race condition which could cause direct open events to be missed in some edge cases.
 
