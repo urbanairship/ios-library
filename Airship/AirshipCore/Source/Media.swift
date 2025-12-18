@@ -147,6 +147,7 @@ extension Image {
         self.resizable()
             .scaledToFit()
             .constraints(constraints)
+            .ignoresSafeArea()
             .clipped()
     }
 }
