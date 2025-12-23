@@ -48,7 +48,7 @@ enum ThomasPresentationInfo: ThomasSerializable {
         /// Slide keyboard over the top
         case overTheTop = "over_the_top"
         /// Treat it as safe area
-        case safeArea = "sare_area"
+        case safeArea = "safe_area"
     }
 
     struct iOS: ThomasSerializable {
