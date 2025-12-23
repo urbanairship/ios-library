@@ -19,13 +19,48 @@ struct StackImageButton : View {
     @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
 
     private var resolveItems: [ThomasViewInfo.StackImageButton.Item] {
-        return ThomasPropertyOverride.resolveRequired(
+        ThomasPropertyOverride.resolveRequired(
             state: thomasState,
-            overrides: self.info.overrides?.items,
-            defaultValue: self.info.properties.items
+            overrides: info.overrides?.items,
+            defaultValue: info.properties.items
         )
     }
 
+    private var resolvedLocalizedContentDescription: ThomasAccessibleInfo.Localized? {
+        ThomasPropertyOverride.resolveOptional(
+            state: thomasState,
+            overrides: info.overrides?.localizedContentDescription,
+            defaultValue: info.accessible.localizedContentDescription
+        )
+    }
+
+    private var resolvedContentDescription: String? {
+        if let contentDescription = ThomasPropertyOverride.resolveOptional(
+            state: thomasState,
+            overrides: info.overrides?.contentDescription,
+            defaultValue: info.accessible.contentDescription
+        ) {
+            return contentDescription
+        }
+
+        guard let localized = resolvedLocalizedContentDescription else {
+            return nil
+        }
+
+        if let refs = localized.refs {
+            for ref in refs {
+                if let string = AirshipResources.localizedString(key: ref) {
+                    return string
+                }
+            }
+        } else if let ref = localized.ref {
+            if let string = AirshipResources.localizedString(key: ref) {
+                return string
+            }
+        }
+
+        return localized.fallback
+    }
 
     private var associatedLabel: String? {
         associatedLabelResolver?.labelFor(
@@ -40,7 +75,7 @@ struct StackImageButton : View {
         AirshipButton(
             identifier: self.info.properties.identifier,
             reportingMetadata: self.info.properties.reportingMetadata,
-            description: self.info.accessible.resolveContentDescription,
+            description: self.resolvedContentDescription,
             clickBehaviors: self.info.properties.clickBehaviors,
             eventHandlers: self.info.commonProperties.eventHandlers,
             actions: self.info.properties.actions,

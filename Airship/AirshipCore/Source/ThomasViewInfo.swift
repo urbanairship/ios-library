@@ -701,9 +701,13 @@ indirect enum ThomasViewInfo: ThomasSerializable {
 
         struct Overrides: ThomasSerializable {
             var items: [ThomasPropertyOverride<[Item]>]?
+            var contentDescription: [ThomasPropertyOverride<String>]?
+            var localizedContentDescription: [ThomasPropertyOverride<ThomasAccessibleInfo.Localized>]?
 
             enum CodingKeys: String, CodingKey {
                 case items
+                case contentDescription = "content_description"
+                case localizedContentDescription = "localized_content_description"
             }
         }
 
