@@ -13,10 +13,8 @@ enum ThomasButtonClickBehavior: String, ThomasSerializable {
     case formValidate = "form_validate"
     case pagerPause = "pager_pause"
     case pagerResume = "pager_resume"
-    case pagerPauseToggle = "pager_pause_toggle"
+    case pagerPauseToggle = "pager_toggle_pause"
 }
-
-
 
 extension ThomasButtonClickBehavior {
     fileprivate var sortOrder: Int {

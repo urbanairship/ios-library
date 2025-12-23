@@ -483,7 +483,7 @@ view:
           type: stack_image_button
           identifier: play/pause button
           button_click:
-            - pager_pause_toggle
+            - pager_toggle_pause
           items:
             - type: shape
               shape:
