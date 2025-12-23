@@ -41,9 +41,9 @@ class ThomasState: ObservableObject {
                 ])
             }
 
-            // Add $pager
+            // Add $pagers
             if let pagerInProgress {
-                result["$pager"] = .object([
+                result["$pagers"] = .object([
                     "current": .object([
                         "paused": .bool(!pagerInProgress)
                     ])

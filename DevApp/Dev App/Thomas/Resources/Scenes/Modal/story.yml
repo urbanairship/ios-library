@@ -564,7 +564,7 @@ view:
                       scale: 0.35
                 when_state_matches:
                   scope:
-                    - $pager
+                    - $pagers
                     - current
                     - paused
                   value:
