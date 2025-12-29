@@ -98,6 +98,7 @@ final class DefaultMessageCenter: MessageCenter {
 
     private let mutable: MutableValues
     private let privacyManager: any AirshipPrivacyManager
+    private let meteredUsage: any AirshipMeteredUsage
 
     public let inbox: any MessageCenterInbox
 
@@ -147,11 +148,13 @@ final class DefaultMessageCenter: MessageCenter {
         privacyManager: any AirshipPrivacyManager,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         inbox: DefaultMessageCenterInbox,
-        controller: MessageCenterController
+        controller: MessageCenterController,
+        meteredUsage: any AirshipMeteredUsage
     ) {
         self.inbox = inbox
         self.privacyManager = privacyManager
         self.mutable = MutableValues(controller: controller, theme: MessageCenterThemeLoader.defaultPlist())
+        self.meteredUsage = meteredUsage
 
         if let plist = config.airshipConfig.messageCenterStyleConfig {
             do {
@@ -180,7 +183,8 @@ final class DefaultMessageCenter: MessageCenter {
         config: RuntimeConfig,
         channel: any InternalAirshipChannel,
         privacyManager: any AirshipPrivacyManager,
-        workManager: any AirshipWorkManagerProtocol
+        workManager: any AirshipWorkManagerProtocol,
+        meteredUsage: any AirshipMeteredUsage
     ) {
 
         let controller = MessageCenterController()
@@ -196,7 +200,8 @@ final class DefaultMessageCenter: MessageCenter {
             config: config,
             privacyManager: privacyManager,
             inbox: inbox,
-            controller: controller
+            controller: controller,
+            meteredUsage: meteredUsage
         )
     }
 

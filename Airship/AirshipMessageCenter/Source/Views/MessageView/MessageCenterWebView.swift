@@ -14,14 +14,8 @@ import AirshipCore
 struct MessageCenterWebView: UIViewRepresentable {
     typealias UIViewType = WKWebView
 
-    enum Phase {
-        case loading
-        case error(any Error)
-        case loaded
-    }
-
     @Binding
-    var phase: Phase
+    var phase: MessageCenterMessageView.DisplayPhase
     let nativeBridgeExtension:
     (() async throws -> MessageCenterNativeBridgeExtension)?
 

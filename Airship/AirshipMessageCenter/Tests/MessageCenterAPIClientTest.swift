@@ -18,6 +18,7 @@ final class MessageCenterAPIClientTest: XCTestCase {
         MessageCenterMessage(
             title: "Foo message",
             id: "foo",
+            contentType: .html,
             extra: [:],
             bodyURL: URL(string: "anyurl.com")!,
             expirationDate: nil,

@@ -60,6 +60,12 @@ public struct MessageCenterMessageView: View {
 
         style.makeBody(configuration: configuration)
     }
+    
+    enum DisplayPhase {
+        case loading
+        case error(any Error)
+        case loaded
+    }
 }
 
 extension View {
@@ -148,25 +154,36 @@ extension EnvironmentValues {
 }
 
 private struct MessageCenterMessageContentView: View {
-
     @Environment(\.colorScheme)
     private var colorScheme
 
     @Environment(\.airshipMessageCenterTheme)
     private var theme
 
-#if canImport(WebKit)
-
     @State
-    private var webViewPhase: MessageCenterWebView.Phase = .loading
-#endif
-
+    private var messageLoadingPhase: MessageCenterMessageView.DisplayPhase = .loading
+    
     @State
     private var opacity = 0.0
+    
+    @State
+    private var contentType: MessageCenterMessage.ContentType? = nil
 
     @ObservedObject
     var viewModel: MessageCenterMessageViewModel
     let dismissAction: (@MainActor @Sendable () -> Void)?
+    
+    private var thomasLoadableLayout: LoadableLayout!
+    
+    init(
+        viewModel: MessageCenterMessageViewModel,
+        dismissAction: (@MainActor @Sendable () -> Void)?
+    ) {
+        self.viewModel = viewModel
+        self.dismissAction = dismissAction
+        self.contentType = viewModel.message?.contentType
+        self.thomasLoadableLayout = LoadableLayout(request: self.makeRequest)
+    }
 
     @MainActor
     private func makeRequest() async throws -> URLRequest {
@@ -213,46 +230,42 @@ private struct MessageCenterMessageContentView: View {
             if let backgroundColor {
                 backgroundColor.ignoresSafeArea()
             }
-
-#if canImport(WebKit)
-
-            MessageCenterWebView(
-                phase: self.$webViewPhase,
-                nativeBridgeExtension: {
-                    try await makeExtensionDelegate(messageID: viewModel.messageID)
-                },
-                request: {
-                    try await makeRequest()
-                },
-                dismiss: {
-                    await MainActor.run {
-                        dismiss()
-                    }
-                }
-            )
-            .opacity(self.opacity)
-            .onReceive(Just(webViewPhase)) { _ in
-                if case .loaded = self.webViewPhase {
-                    self.opacity = 1.0
-                    if Airship.isFlying {
-                        Task {
-                            await viewModel.markRead()
-                        }
+            
+            if self.contentType == nil {
+                ProgressView().onAppear {
+                    Task {
+                        let message = await viewModel.fetchMessage()
+                        self.contentType = message?.contentType
                     }
                 }
             }
-            .animation(.easeInOut(duration: 0.5), value: self.opacity)
-
-            if case .loading = self.webViewPhase {
+            
+            messageContent()
+                .opacity(self.opacity)
+                .onReceive(Just(messageLoadingPhase)) { _ in
+                    if case .loaded = self.messageLoadingPhase {
+                        self.opacity = 1.0
+                        if Airship.isFlying {
+                            Task {
+                                await viewModel.markRead()
+                            }
+                        }
+                    }
+                }
+                .animation(.easeInOut(duration: 0.5), value: self.opacity)
+            
+            if case .loading = self.messageLoadingPhase {
                 ProgressView()
-            } else if case .error(let error) = self.webViewPhase {
+            } else if case .error(let error) = self.messageLoadingPhase {
                 if let error = error as? MessageCenterMessageError,
                    error == .messageGone
                 {
                     VStack {
-                        Text("ua_mc_no_longer_available".messageCenterLocalizedString)
-                            .font(.headline)
-                            .foregroundColor(.primary)
+                        Text(
+                            "ua_mc_no_longer_available".messageCenterLocalizedString
+                        )
+                        .font(.headline)
+                        .foregroundColor(.primary)
                     }
                 } else {
                     VStack {
@@ -261,17 +274,60 @@ private struct MessageCenterMessageContentView: View {
                             .foregroundColor(.primary)
 
                         Button("ua_retry_button".messageCenterLocalizedString) {
-                            self.webViewPhase = .loading
+                            self.messageLoadingPhase = .loading
                         }
                     }
                 }
             }
-#else
-            Text("ua_mc_failed_to_load".messageCenterLocalizedString)
-                .font(.headline)
-                .foregroundColor(.primary)
-#endif
         }
+    }
+    
+    @ViewBuilder
+    private func messageContent() -> some View {
+        switch self.contentType {
+        case .html:
+            webBasedMessageView()
+        case .thomas:
+            thomasMessageView()
+        case nil: EmptyView()
+        }
+    }
+    
+    @ViewBuilder
+    private func webBasedMessageView() -> some View {
+#if canImport(WebKit)
+        MessageCenterWebView(
+            phase: self.$messageLoadingPhase,
+            nativeBridgeExtension: {
+                try await makeExtensionDelegate(messageID: viewModel.messageID)
+            },
+            request: {
+                try await makeRequest()
+            },
+            dismiss: {
+                await MainActor.run {
+                    dismiss()
+                }
+            }
+        )
+#else
+        Text("ua_mc_failed_to_load".messageCenterLocalizedString)
+            .font(.headline)
+            .foregroundColor(.primary)
+#endif
+    }
+    
+    @ViewBuilder
+    private func thomasMessageView() -> some View {
+        MessageCenterThomasView(
+            phase: self.$messageLoadingPhase,
+            layout: self.thomasLoadableLayout,
+            dismiss: {
+                await MainActor.run {
+                    dismiss()
+                }
+            }
+        )
     }
 
     private func dismiss() {
