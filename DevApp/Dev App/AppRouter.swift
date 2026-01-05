@@ -2,6 +2,7 @@
 
 import Combine
 import SwiftUI
+import AirshipMessageCenter
 
 @MainActor
 final class AppRouter: ObservableObject {
@@ -27,6 +28,13 @@ final class AppRouter: ObservableObject {
     enum ThomasRoute: Hashable {
         case home
         case layoutList(LayoutType)
+    }
+
+    let messageCenterController: MessageCenterController = MessageCenterController()
+
+    public func navigateMessagCenter(messageID: String? = nil) {
+        messageCenterController.navigate(messageID: messageID)
+        selectedTab = .messageCenter
     }
 }
 

@@ -64,8 +64,8 @@ struct DeepLinkHandler {
         }
 
         // Message Center routing
-        Airship.messageCenter.onDisplay = { [weak router] _ in
-            router?.selectedTab = .messageCenter
+        Airship.messageCenter.onDisplay = { [weak router] messageID in
+            router?.navigateMessagCenter(messageID: messageID)
             return true
         }
     }

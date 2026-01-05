@@ -30,13 +30,15 @@ struct AppView: View {
                 }
                 .tag(AppRouter.Tabs.home)
 
-            MessageCenterView()
-                .tabItem {
-                    Label(
-                        "Message Center",
-                        systemImage: "tray.fill"
-                    )
-                }
+            MessageCenterView(
+                controller: router.messageCenterController
+            )
+            .tabItem {
+                Label(
+                    "Message Center",
+                    systemImage: "tray.fill"
+                )
+            }
             #if !os(tvOS)
                 .badge(self.viewModel.messageCenterUnreadcount)
             #endif
