@@ -265,6 +265,32 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
     }
     
     
+    // MARK: - KeyboardAvoidanceMethod Tests
+    func testModalPresentationWithKeyboardAvoidanceSafeArea() throws {
+        let json = """
+        {
+          "default_placement": {
+            "size": {
+              "width": "100%",
+              "height": "100%"
+            }
+          },
+          "type": "modal",
+          "ios": {
+            "keyboard_avoidance": "safe_area"
+          }
+        }
+        """
+        try decodeEncodeCompare(source: json, type: ThomasPresentationInfo.self)
+        
+        let decoded = try JSONDecoder().decode(ThomasPresentationInfo.self, from: json.data(using: .utf8)!)
+        if case .modal(let modal) = decoded {
+            XCTAssertEqual(modal.ios?.keyboardAvoidance, .safeArea)
+        } else {
+            XCTFail("Expected modal presentation")
+        }
+    }
+    
     private func decodeEncodeCompare<T: Codable & Equatable>(source: String, type: T.Type) throws {
         let decoder = JSONDecoder()
         let encoder = JSONEncoder()
