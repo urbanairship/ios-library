@@ -1,4 +1,3 @@
----
 version: 1
 presentation:
   type: modal
@@ -13,7 +12,7 @@ presentation:
     ignore_safe_area: true
 view:
   type: pager_controller
-  identifier: "pager-controller-id"
+  identifier: pager-controller-id
   view:
     type: container
     border:
@@ -21,335 +20,552 @@ view:
       stroke_width: 2
       stroke_color:
         default:
-          hex: "#333333"
+          hex: '#333333'
           alpha: 0.8
     background_color:
       default:
-        hex: "#ffffff"
+        hex: '#ffffff'
         alpha: 1
     items:
-    - position:
-        horizontal: center
-        vertical: center
-      size:
-        width: 100%
-        height: 100%
-      margin:
-        top: 0
-        bottom: 0
-        start: 0
-        end: 0
-      size:
-        width: 100%
-        height: 100%
-      view:
+      - position:
+          horizontal: center
+          vertical: center
+        size:
+          width: 100%
+          height: 100%
+        margin:
+          top: 0
+          bottom: 0
+          start: 0
+          end: 0
+        view:
+          border:
+            stroke_width: 1
+          media_fit: center_crop
+          media_type: image
+          type: media
+          url: >-
+            https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/bc692c5f-09ce-4ea4-bb55-108b1b5d28a8
+      - position:
+          vertical: center
+          horizontal: center
+        size:
+          height: 100%
+          width: 100%
         border:
-          stroke_width: 1
-        media_fit: center_crop
-        media_type: image
-        type: media
-        url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/bc692c5f-09ce-4ea4-bb55-108b1b5d28a8
-    - position:
-        vertical: center
-        horizontal: center
-      size:
-        height: 100%
-        width: 100%
-      border:
-        radius: 25
-      view:
-        type: pager
-        gestures:
-        - behavior:
-            behaviors:
-              - dismiss
-          direction: up
-          identifier: 7f67898a-5576-4f9d-af73-ff4d9568117a_swipe_up
-          type: swipe
-        - type: tap
-          identifier: "tap-gesture-start-id"
-          location: start
-          behavior:
-            behaviors:
-            - pager_previous
-        - type: tap
-          identifier: "tap-gesture-end-id"
-          location: end
-          behavior:
-            behaviors:
-            - pager_next
-        - type: hold
-          identifier: "hold-gesture-any-id"
-          press_behavior:
-            behaviors:
-            - pager_pause
-          release_behavior:
-            behaviors:
-            - pager_resume
-        items:
-        - identifier: "pager-page-1-id"
-          automated_actions:
-          - delay: 0
-            identifier: "automated-action-1-delay0-id"
-            actions:
-            - add_tags_action: 'pager-page-1x-automated'
-            - add_tags_action: 'pager-page-1y-automated'
-          - delay: 4
-            identifier: "automated-action-1-delay4-id"
-            reporting_metadata:
-              "key1": "value1"
-              "key2": "value2"
-            behaviors:
-            - pager_next
-          display_actions:
-            add_tags_action: 'pager-page-1x'
-          view:
-            type: container
-            background_color:
-              default:
-                hex: "#FF0000"
-                alpha: 0.5
-            items:
-            - position:
-                vertical: center
-                horizontal: center
-              size:
-                height: auto
-                width: auto
+          radius: 25
+        view:
+          type: pager
+          gestures:
+            - behavior:
+                behaviors:
+                  - dismiss
+              direction: up
+              identifier: 7f67898a-5576-4f9d-af73-ff4d9568117a_swipe_up
+              type: swipe
+            - type: tap
+              identifier: tap-gesture-start-id
+              location: start
+              behavior:
+                behaviors:
+                  - pager_previous
+            - type: tap
+              identifier: tap-gesture-end-id
+              location: end
+              behavior:
+                behaviors:
+                  - pager_next
+            - type: hold
+              identifier: hold-gesture-any-id
+              press_behavior:
+                behaviors:
+                  - pager_pause
+              release_behavior:
+                behaviors:
+                  - pager_resume
+          items:
+            - identifier: pager-page-1-id
+              automated_actions:
+                - delay: 0
+                  identifier: automated-action-1-delay0-id
+                  actions:
+                    - add_tags_action: pager-page-1x-automated
+                    - add_tags_action: pager-page-1y-automated
+                - delay: 4
+                  identifier: automated-action-1-delay4-id
+                  reporting_metadata:
+                    key1: value1
+                    key2: value2
+                  behaviors:
+                    - pager_next
+              display_actions:
+                add_tags_action: pager-page-1x
               view:
-                type: label
-                text: This is the first page about stuff.
-                text_appearance:
-                  alignment: center
-                  color:
-                    default:
-                      hex: "#000000"
-                      alpha: 1
-                  font_size: 14
-            - position:
-                horizontal: end
-                vertical: top
-              size:
-                height: 24
-                width: 24
-              margin:
-                top: 8
-                end: 8
-              view:
-                type: image_button
-                identifier: close_button_1
-                button_click: [ dismiss ]
-                image:
-                  type: icon
-                  icon: close
-                  color:
-                    default:
-                      hex: "#000000"
-                      alpha: 1
-        - identifier: "pager-page-2-id"
-          automated_actions:
-          - delay: 1.03
-            identifier: "automated-action-2-delay1-id"
-            actions:
-            - add_tags_action: 'pager-page-2x-automated'
-          - delay: 6
-            identifier: "automated-action-2-delay6-id"
-            behaviors:
-            - pager_next
-          display_actions:
-            add_tags_action: 'pager-page-2x'
-          view:
-            type: container
-            background_color:
-              default:
-                hex: "#00FF00"
-                alpha: 0.5
-            items:
-            - position:
-                vertical: center
-                horizontal: center
-              size:
-                height: auto
-                width: auto
-              view:
-                type: label
-                text: More stuff is here on the second page.
-                text_appearance:
-                  alignment: center
-                  color:
-                    default:
-                      hex: "#000000"
-                      alpha: 1
-                  font_size: 14
-
-            - position:
-                horizontal: end
-                vertical: top
-              size:
-                height: 24
-                width: 24
-              margin:
-                top: 8
-                end: 8
-              view:
-                type: image_button
-                identifier: close_button_2
-                button_click: [ dismiss ]
-                image:
-                  type: icon
-                  icon: close
-                  color:
-                    default:
-                      hex: "#000000"
-                      alpha: 1
-        - identifier: "pager-page-3-id"
-          automated_actions:
-          - delay: 4.01
-            identifier: "automated-action-3-delay4-id"
-            actions:
-            - add_tags_action: 'pager-page-3x-automated'
-          - delay: 8
-            identifier: "automated-action-3-delay8-id"
-            behaviors:
-            - pager_next_or_first
-            - form_submit
-          display_actions:
-            add_tags_action: 'pager-page-3x'
-          view:
-            type: container
-            background_color:
-              default:
-                hex: "#0000FF"
-                alpha: 0.5
-            items:
-            - position:
-                vertical: center
-                horizontal: center
-              size:
-                height: auto
-                width: auto
-              view:
-                type: nps_form_controller
-                identifier: page_3_nps_form
-                nps_identifier: score_identifier
-                submit: submit_event
-                view:
-                  type: linear_layout
-                  direction: vertical
-                  items:
-                  - size:
-                      width: 100%
+                type: container
+                background_color:
+                  default:
+                    hex: '#FF0000'
+                    alpha: 0.5
+                items:
+                  - position:
+                      vertical: center
+                      horizontal: center
+                    size:
                       height: auto
+                      width: auto
+                    view:
+                      type: label
+                      text: This is the first page about stuff.
+                      text_appearance:
+                        alignment: center
+                        color:
+                          default:
+                            hex: '#000000'
+                            alpha: 1
+                        font_size: 14
+                  - position:
+                      horizontal: end
+                      vertical: top
+                    size:
+                      height: 24
+                      width: 24
                     margin:
-                      start: 8
+                      top: 8
                       end: 8
                     view:
-                      type: score
-                      identifier: score_identifier
-                      required: true
-                      style:
-                        type: number_range
-                        start: 0
-                        end: 10
-                        spacing: 2
-                        bindings:
-                          selected:
-                            shapes:
-                            - type: ellipse
-                              color:
-                                default:
-                                  hex: "#FFFFFF"
-                                  alpha: 0
-                            text_appearance:
-                              font_size: 14
-                              color:
-                                default:
-                                  hex: "#000000"
-                                  alpha: 1
-                          unselected:
-                            shapes:
-                            - type: ellipse
-                              color:
-                                default:
-                                  hex: "#000000"
-                                  alpha: 1
-                            text_appearance:
-                              font_size: 14
-                              color:
-                                default:
-                                  hex: "#ffffff"
-                                  alpha: 1
-                  - size:
-                      width: auto
-                      height: auto
-                    margin:
-                      start: 16
-                      end: 16
-                    view:
-                      type: label_button
-                      identifier: submit_button
-                      background_color:
-                        default:
-                          hex: "#ffffff"
-                          alpha: 1
-                      button_click: ["form_submit", "cancel"]
-                      enabled: ["form_validation"]
-                      display_actions:
-                        add_tags_action: 'pager-page-3-form-submit'
-                      label:
-                        type: label
-                        text: SuBmIt!1!1@
-                        text_appearance:
-                          font_size: 14
-                          alignment: center
-                          color:
-                            default:
-                              hex: "#000000"
-                              alpha: 1
-
-            - position:
-                horizontal: end
-                vertical: top
-              size:
-                height: 24
-                width: 24
-              margin:
-                top: 8
-                end: 8
+                      type: image_button
+                      identifier: close_button_1
+                      button_click:
+                        - dismiss
+                      image:
+                        type: icon
+                        icon: close
+                        color:
+                          default:
+                            hex: '#000000'
+                            alpha: 1
+            - identifier: pager-page-2-id
+              automated_actions:
+                - delay: 1.03
+                  identifier: automated-action-2-delay1-id
+                  actions:
+                    - add_tags_action: pager-page-2x-automated
+                - delay: 6
+                  identifier: automated-action-2-delay6-id
+                  behaviors:
+                    - pager_next
+              display_actions:
+                add_tags_action: pager-page-2x
               view:
-                type: image_button
-                identifier: close_button_3
-                button_click: [ dismiss ]
-                image:
-                  type: icon
-                  icon: close
-                  color:
-                    default:
-                      hex: "#000000"
-                      alpha: 1
-
-    - size:
-        height: 5
-        width: 80%
-      position:
-        vertical: top
-        horizontal: center
-      margin:
-        bottom: 8
-      view:
-        type: story_indicator
-        source:
-          type: pager
-        style:
-          type: linear_progress
-          direction: horizontal
-          sizing: equal
-          spacing: 4
-          progress_color:
-            default:
-              hex: "#E6E6FA"
-              alpha: 1
-          track_color:
-            default:
-              hex: "#E6E6FA"
-              alpha: 0.7
+                type: container
+                background_color:
+                  default:
+                    hex: '#00FF00'
+                    alpha: 0.5
+                items:
+                  - position:
+                      vertical: center
+                      horizontal: center
+                    size:
+                      height: auto
+                      width: auto
+                    view:
+                      type: label
+                      text: More stuff is here on the second page.
+                      text_appearance:
+                        alignment: center
+                        color:
+                          default:
+                            hex: '#000000'
+                            alpha: 1
+                        font_size: 14
+                  - position:
+                      horizontal: end
+                      vertical: top
+                    size:
+                      height: 24
+                      width: 24
+                    margin:
+                      top: 8
+                      end: 8
+                    view:
+                      type: image_button
+                      identifier: close_button_2
+                      button_click:
+                        - dismiss
+                      image:
+                        type: icon
+                        icon: close
+                        color:
+                          default:
+                            hex: '#000000'
+                            alpha: 1
+            - identifier: pager-page-3-id
+              automated_actions:
+                - delay: 4.01
+                  identifier: automated-action-3-delay4-id
+                  actions:
+                    - add_tags_action: pager-page-3x-automated
+                - delay: 8
+                  identifier: automated-action-3-delay8-id
+                  behaviors:
+                    - pager_next_or_first
+                    - form_submit
+              display_actions:
+                add_tags_action: pager-page-3x
+              view:
+                type: container
+                background_color:
+                  default:
+                    hex: '#0000FF'
+                    alpha: 0.5
+                items:
+                  - position:
+                      vertical: center
+                      horizontal: center
+                    size:
+                      height: auto
+                      width: auto
+                    view:
+                      type: nps_form_controller
+                      identifier: page_3_nps_form
+                      nps_identifier: score_identifier
+                      submit: submit_event
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                          - size:
+                              width: 100%
+                              height: auto
+                            margin:
+                              start: 8
+                              end: 8
+                            view:
+                              type: score
+                              identifier: score_identifier
+                              required: true
+                              style:
+                                type: number_range
+                                start: 0
+                                end: 10
+                                spacing: 2
+                                bindings:
+                                  selected:
+                                    shapes:
+                                      - type: ellipse
+                                        color:
+                                          default:
+                                            hex: '#FFFFFF'
+                                            alpha: 0
+                                    text_appearance:
+                                      font_size: 14
+                                      color:
+                                        default:
+                                          hex: '#000000'
+                                          alpha: 1
+                                  unselected:
+                                    shapes:
+                                      - type: ellipse
+                                        color:
+                                          default:
+                                            hex: '#000000'
+                                            alpha: 1
+                                    text_appearance:
+                                      font_size: 14
+                                      color:
+                                        default:
+                                          hex: '#ffffff'
+                                          alpha: 1
+                          - size:
+                              width: auto
+                              height: auto
+                            margin:
+                              start: 16
+                              end: 16
+                            view:
+                              type: label_button
+                              identifier: submit_button
+                              background_color:
+                                default:
+                                  hex: '#ffffff'
+                                  alpha: 1
+                              button_click:
+                                - form_submit
+                                - cancel
+                              enabled:
+                                - form_validation
+                              display_actions:
+                                add_tags_action: pager-page-3-form-submit
+                              label:
+                                type: label
+                                text: SuBmIt!1!1@
+                                text_appearance:
+                                  font_size: 14
+                                  alignment: center
+                                  color:
+                                    default:
+                                      hex: '#000000'
+                                      alpha: 1
+                  - position:
+                      horizontal: end
+                      vertical: top
+                    size:
+                      height: 24
+                      width: 24
+                    margin:
+                      top: 8
+                      end: 8
+                    view:
+                      type: image_button
+                      identifier: close_button_3
+                      button_click:
+                        - dismiss
+                      image:
+                        type: icon
+                        icon: close
+                        color:
+                          default:
+                            hex: '#000000'
+                            alpha: 1
+      - size:
+          height: 5
+          width: 80%
+        position:
+          vertical: top
+          horizontal: center
+        margin:
+          bottom: 8
+        view:
+          type: story_indicator
+          source:
+            type: pager
+          style:
+            type: linear_progress
+            direction: horizontal
+            sizing: equal
+            spacing: 4
+            progress_color:
+              default:
+                hex: '#E6E6FA'
+                alpha: 1
+            track_color:
+              default:
+                hex: '#E6E6FA'
+                alpha: 0.7
+      - ignore_safe_area: false
+        position:
+          horizontal: start
+          vertical: center
+        size:
+          height: 48
+          width: 48
+        margin:
+          bottom: 0
+          end: 4
+          start: 4
+          top: 0
+        view:
+          type: stack_image_button
+          identifier: back button
+          button_click:
+            - pager_previous
+          enabled:
+            - pager_previous
+          items:
+            - type: shape
+              shape:
+                type: ellipse
+                aspect_ratio: 1
+                color:
+                  default:
+                    alpha: 1
+                    type: hex
+                    hex: '#FFFFFF'
+                  selectors:
+                    - color:
+                        hex: '#000000'
+                        alpha: 1
+                        type: hex
+                      dark_mode: true
+                scale: 0.7
+            - type: icon
+              icon:
+                type: icon
+                color:
+                  default:
+                    hex: '#000000'
+                    alpha: 1
+                    type: hex
+                  selectors:
+                    - color:
+                        hex: '#000000'
+                        alpha: 1
+                        type: hex
+                      dark_mode: false
+                    - color:
+                        hex: '#FFFFFF'
+                        alpha: 1
+                        type: hex
+                      dark_mode: true
+                icon: chevron_backward
+                scale: 0.35
+      - ignore_safe_area: false
+        position:
+          horizontal: end
+          vertical: center
+        size:
+          height: 48
+          width: 48
+        margin:
+          bottom: 0
+          end: 4
+          start: 4
+          top: 0
+        view:
+          type: stack_image_button
+          identifier: forward button
+          button_click:
+            - pager_next
+          enabled:
+            - pager_next
+          items:
+            - type: shape
+              shape:
+                type: ellipse
+                aspect_ratio: 1
+                color:
+                  default:
+                    alpha: 1
+                    type: hex
+                    hex: '#FFFFFF'
+                  selectors:
+                    - color:
+                        hex: '#000000'
+                        alpha: 1
+                        type: hex
+                      dark_mode: true
+                scale: 0.7
+            - type: icon
+              icon:
+                type: icon
+                color:
+                  default:
+                    hex: '#000000'
+                    alpha: 1
+                    type: hex
+                  selectors:
+                    - color:
+                        hex: '#000000'
+                        alpha: 1
+                        type: hex
+                      dark_mode: false
+                    - color:
+                        hex: '#FFFFFF'
+                        alpha: 1
+                        type: hex
+                      dark_mode: true
+                icon: chevron_forward
+                scale: 0.35
+      - ignore_safe_area: false
+        position:
+          horizontal: center
+          vertical: bottom
+        size:
+          height: 48
+          width: 48
+        margin:
+          bottom: 0
+          end: 4
+          start: 4
+          top: 0
+        view:
+          type: stack_image_button
+          identifier: play/pause button
+          button_click:
+            - pager_toggle_pause
+          items:
+            - type: shape
+              shape:
+                type: ellipse
+                aspect_ratio: 1
+                color:
+                  default:
+                    alpha: 1
+                    type: hex
+                    hex: '#FFFFFF'
+                  selectors:
+                    - color:
+                        hex: '#000000'
+                        alpha: 1
+                        type: hex
+                      dark_mode: true
+                scale: 0.7
+            - type: icon
+              icon:
+                type: icon
+                color:
+                  default:
+                    hex: '#000000'
+                    alpha: 1
+                    type: hex
+                  selectors:
+                    - color:
+                        hex: '#000000'
+                        alpha: 1
+                        type: hex
+                      dark_mode: false
+                    - color:
+                        hex: '#FFFFFF'
+                        alpha: 1
+                        type: hex
+                      dark_mode: true
+                icon: pause
+                scale: 0.35
+          view_overrides:
+            items:
+              - value:
+                  - type: shape
+                    shape:
+                      type: ellipse
+                      aspect_ratio: 1
+                      color:
+                        default:
+                          alpha: 1
+                          type: hex
+                          hex: '#FFFFFF'
+                        selectors:
+                          - color:
+                              hex: '#000000'
+                              alpha: 1
+                              type: hex
+                            dark_mode: true
+                      scale: 0.7
+                  - type: icon
+                    icon:
+                      type: icon
+                      color:
+                        default:
+                          hex: '#000000'
+                          alpha: 1
+                          type: hex
+                        selectors:
+                          - color:
+                              hex: '#000000'
+                              alpha: 1
+                              type: hex
+                            dark_mode: false
+                          - color:
+                              hex: '#FFFFFF'
+                              alpha: 1
+                              type: hex
+                            dark_mode: true
+                      icon: play
+                      scale: 0.35
+                when_state_matches:
+                  scope:
+                    - $pagers
+                    - current
+                    - paused
+                  value:
+                    equals: true

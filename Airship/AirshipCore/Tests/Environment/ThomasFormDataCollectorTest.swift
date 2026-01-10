@@ -53,7 +53,7 @@ struct ThomasFormDataCollectorTest {
     init() {
         pagerState.setPagesAndListenForUpdates(
             pages: self.pages,
-            thomasState: .init(formState: self.formState) { _ in },
+            thomasState: .init(formState: self.formState, pagerState: .init(identifier: "", branching: nil)) { _ in },
             swipeDisableSelectors: nil
         )
     }

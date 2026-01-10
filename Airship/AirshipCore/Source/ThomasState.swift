@@ -5,61 +5,136 @@ import Combine
 
 @MainActor
 class ThomasState: ObservableObject {
-    @Published private(set) var state: AirshipJSON
+    @Published private(set) var state: AirshipJSON = .object([:])
 
     private var subscriptions: Set<AnyCancellable> = []
 
-    private let formState: ThomasFormState
-    private let mutableState: MutableState
+    // Child State Objects
+    private let formState: ThomasFormState?
+    private let pagerState: PagerState?
+    private let mutableState: MutableState?
+
     private let onStateChange: @Sendable @MainActor (AirshipJSON) -> Void
 
-    func copy(
-        formState: ThomasFormState? = nil,
-        mutableState: MutableState? = nil
-    ) -> ThomasState {
-        return .init(
-            formState: formState ?? self.formState,
-            mutableState: mutableState ?? self.mutableState,
-            onStateChange: self.onStateChange
-        )
+    // Internal state snapshot that tracks current values
+    @MainActor
+    private struct StateSnapshot {
+        var formStatus: ThomasFormState.Status?
+        var formActiveFields: [String: ThomasFormField] = [:]
+        var formType: ThomasFormState.FormType?
+        var pagerInProgress: Bool?
+        var mutableStateValue: AirshipJSON?
+
+        /// Generates the final AirshipJSON based strictly on this snapshot data
+        func toAirshipJSON() -> AirshipJSON {
+            // Start with the base mutable state object
+            var result: [String: AirshipJSON] = mutableStateValue?.object ?? [:]
+
+            // Add $forms
+            if let formStatus, let formType {
+                result["$forms"] = .object([
+                    "current": ThomasFormPayloadGenerator.makeFormStatePayload(
+                        status: formStatus,
+                        fields: formActiveFields.map { $0.value },
+                        formType: formType
+                    )
+                ])
+            }
+
+            // Add $pagers
+            if let pagerInProgress {
+                result["$pagers"] = .object([
+                    "current": .object([
+                        "paused": .bool(!pagerInProgress)
+                    ])
+                ])
+            }
+
+            return .object(result)
+        }
     }
 
+    private var stateSnapshot = StateSnapshot()
+    private var lastOutput: AirshipJSON = .object([:])
+
     init(
-        formState: ThomasFormState,
+        formState: ThomasFormState? = nil,
+        pagerState: PagerState? = nil,
         mutableState: MutableState? = nil,
         onStateChange: @escaping @Sendable @MainActor (AirshipJSON) -> Void
     ) {
         self.formState = formState
-        self.mutableState = mutableState ?? MutableState()
+        self.pagerState = pagerState
+        self.mutableState = mutableState
         self.onStateChange = onStateChange
 
-        self.state = ThomasStatePayload(
-            formData: ThomasFormPayloadGenerator.makeFormStatePayload(
-                status: formState.status,
-                fields: formState.activeFields.map { $0.value },
-                formType: formState.formType
-            ),
-            mutableState: self.mutableState.state
-        ).json
+        setupSubscriptions()
 
-        Publishers.CombineLatest3(formState.$status, formState.$activeFields, self.mutableState.$state)
-            .map { formStatus, activeFields, mutableState in
-                ThomasStatePayload(
-                    formData: ThomasFormPayloadGenerator.makeFormStatePayload(
-                        status: formStatus,
-                        fields: activeFields.map { $0.value },
-                        formType: formState.formType
-                    ),
-                    mutableState: mutableState
-                ).json
-            }
-            .removeDuplicates()
-            .sink { [weak self] state in
-                self?.state = state
-                AirshipLogger.trace("State updated: \(state.prettyJSONString)")
-                self?.onStateChange(state)
-            }
-            .store(in: &subscriptions)
+        // Initialize snapshot with current values from the passed objects
+        self.updateSnapshot(
+            formStatus: formState?.status,
+            formActiveFields: formState?.activeFields,
+            formType: formState?.formType,
+            pagerInProgress: pagerState?.inProgress,
+            mutableStateValue: mutableState?.state,
+        )
+    }
+
+    private func setupSubscriptions() {
+        formState?.$status.sink { [weak self] in self?.updateSnapshot(formStatus: $0) }.store(in: &subscriptions)
+        formState?.$activeFields.sink { [weak self] in self?.updateSnapshot(formActiveFields: $0) }.store(in: &subscriptions)
+        pagerState?.$inProgress.sink { [weak self] in self?.updateSnapshot(pagerInProgress: $0) }.store(in: &subscriptions)
+        mutableState?.$state.sink { [weak self] in self?.updateSnapshot(mutableStateValue: $0) }.store(in: &subscriptions)
+    }
+
+    private func updateSnapshot(
+        formStatus: ThomasFormState.Status? = nil,
+        formActiveFields: [String: ThomasFormField]? = nil,
+        formType: ThomasFormState.FormType? = nil,
+        pagerInProgress: Bool? = nil,
+        mutableStateValue: AirshipJSON? = nil,
+    ) {
+        // Update the snapshot with provided values
+        if let val = formStatus { stateSnapshot.formStatus = val }
+        if let val = formActiveFields { stateSnapshot.formActiveFields = val }
+        if let val = formType { stateSnapshot.formType = val }
+        if let val = pagerInProgress { stateSnapshot.pagerInProgress = val }
+        if let val = mutableStateValue { stateSnapshot.mutableStateValue = val }
+
+        // Compute new output directly from the snapshot
+        let newOutput = stateSnapshot.toAirshipJSON()
+
+        // Only update if output actually changed
+        if newOutput != lastOutput {
+            AirshipLogger.trace("State updated: \(newOutput.prettyJSONString) old: \(lastOutput.prettyJSONString)")
+            self.state = newOutput
+            self.lastOutput = newOutput
+            self.onStateChange(newOutput)
+        }
+    }
+
+    func with(
+        formState: ThomasFormState? = nil,
+        pagerState: PagerState? = nil,
+        mutableState: MutableState? = nil,
+    ) -> ThomasState {
+        let newFormState = formState ?? self.formState
+        let newPagerState = pagerState ?? self.pagerState
+        let newMutableState = mutableState ?? self.mutableState
+
+        // Return self if nothing changed to avoid redundant copies
+        if newFormState === self.formState,
+           newPagerState === self.pagerState,
+           newMutableState === self.mutableState {
+            return self
+        }
+
+        return .init(
+            formState: newFormState,
+            pagerState: newPagerState,
+            mutableState: newMutableState,
+            onStateChange: self.onStateChange
+        )
     }
 
     func processStateActions(
@@ -69,18 +144,11 @@ class ThomasState: ObservableObject {
         stateActions.forEach { action in
             switch action {
             case .setState(let details):
-                self.mutableState.set(
-                    key: details.key,
-                    value: details.value,
-                    ttl: details.ttl
-                )
+                self.mutableState?.set(key: details.key, value: details.value, ttl: details.ttl)
             case .clearState:
-                self.mutableState.clearState()
+                self.mutableState?.clearState()
             case .formValue(let details):
-                self.mutableState.set(
-                    key: details.key,
-                    value: formFieldValue?.stateFormValue
-                )
+                self.mutableState?.set(key: details.key, value: formFieldValue?.stateFormValue)
             }
         }
     }
@@ -90,7 +158,6 @@ class ThomasState: ObservableObject {
         @Published private(set) var state: AirshipJSON
         private var appliedState: [String: AirshipJSON] = [:]
         private var tempMutations: [String: TempMutation] = [:]
-
         private let taskSleeper: any AirshipTaskSleeper
 
         init(
@@ -100,7 +167,7 @@ class ThomasState: ObservableObject {
             self.state = inititalState ?? .object([:])
             self.taskSleeper = taskSleeper
         }
-            
+
         fileprivate func clearState() {
             tempMutations.removeAll()
             appliedState.removeAll()
@@ -121,28 +188,15 @@ class ThomasState: ObservableObject {
             self.updateState()
         }
 
-        fileprivate func set(
-            key: String,
-            value: AirshipJSON?,
-            ttl: TimeInterval? = nil
-        ) {
+        fileprivate func set(key: String, value: AirshipJSON?, ttl: TimeInterval? = nil) {
             if let ttl = ttl {
-                let mutation = TempMutation(
-                    id: UUID().uuidString,
-                    key: key,
-                    value: value
-                )
-
+                let mutation = TempMutation(id: UUID().uuidString, key: key, value: value)
                 tempMutations[key] = mutation
                 appliedState[key] = nil
                 updateState()
 
                 Task { [weak self] in
-                    do {
-                        try await self?.taskSleeper.sleep(timeInterval: ttl)
-                    } catch {
-                        AirshipLogger.warn("Failed to sleep for ttl: \(error)")
-                    }
+                    try? await self?.taskSleeper.sleep(timeInterval: ttl)
                     self?.removeTempMutation(mutation)
                 }
             } else {
@@ -160,74 +214,18 @@ class ThomasState: ObservableObject {
     }
 }
 
-fileprivate struct ThomasStatePayload: Encodable, Sendable, Equatable {
-    private let state: AirshipJSON?
-    private let forms: FormsHolder
-
-    @MainActor
-    init(
-        formData: AirshipJSON,
-        mutableState: AirshipJSON
-    ) {
-        self.state = mutableState
-        self.forms = FormsHolder(
-            forms: Forms(
-                current: formData
-            )
-        )
-    }
-
-    func encode(to encoder: any Encoder) throws {
-        do {
-            try state?.encode(to: encoder)
-            try forms.encode(to: encoder)
-        } catch {
-            throw error
-        }
-    }
-
-    struct FormsHolder: Encodable, Sendable, Equatable {
-        let forms: Forms
-
-        enum CodingKeys: String, CodingKey {
-            case forms = "$forms"
-        }
-    }
-
-    struct Forms: Encodable, Sendable, Equatable {
-        let current: AirshipJSON
-    }
-
-    var json: AirshipJSON {
-        do {
-            return try AirshipJSON.wrap(self)
-        } catch {
-            AirshipLogger.error("Failed to wrap state \(error)")
-            return .null
-        }
-    }
-}
-
-
 fileprivate extension ThomasFormField.Value {
     var stateFormValue: AirshipJSON? {
         switch(self) {
-        case .toggle(let value):
-            return .bool(value)
-        case .multipleCheckbox(let value):
-            return .array(Array(value))
-        case .radio(let value):
-            return value
+        case .toggle(let value): return .bool(value)
+        case .multipleCheckbox(let value): return .array(Array(value))
+        case .radio(let value): return value
         case .sms(let value), .email(let value), .text(let value):
             guard let value else { return nil }
             return .string(value)
-        case .score(let value):
-            return value
-        case .form, .npsForm:
-            // not supported
-            return nil
+        case .score(let value): return value
+        case .form, .npsForm: return nil
         }
-
     }
 }
 
@@ -235,10 +233,22 @@ fileprivate extension AirshipJSON {
     var prettyJSONString: String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted]
-        do {
-            return try self.toString(encoder: encoder)
-        } catch {
-            return "Error: \(error)"
-        }
+        return (try? self.toString(encoder: encoder)) ?? "Invalid JSON"
+    }
+}
+
+@MainActor
+final class ScopedStateCache: ObservableObject {
+    private var cachedState: ThomasState?
+
+    func getOrCreate(_ createState: () -> ThomasState) -> ThomasState {
+        if let cached = cachedState { return cached }
+        let scoped = createState()
+        cachedState = scoped
+        return scoped
+    }
+
+    func invalidate() {
+        cachedState = nil
     }
 }

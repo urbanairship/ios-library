@@ -15,7 +15,7 @@ view:
   type: container
   background_color:
     default:
-      hex: "#ffffff"
+      hex: "#FFFFFF"
       alpha: 1
   items:
     - position:
@@ -41,17 +41,25 @@ view:
               height: auto
             view:
               type: label
-              text: Markdown Support
+              text: "==\u00A0Some really long\u00A0\n\u00A0TITLE!\u00A0=="
               text_appearance:
                 alignment: start
                 styles:
                   - bold
-                  - underlined
-                font_size: 18
+                font_size: 24
+                line_height_multiplier: 1.4
                 color:
                   default:
                     hex: "#000000"
                     alpha: 1
+              markdown:
+                appearance:
+                  highlight:
+                    corner_radius: 12
+                    color:
+                      default:
+                        hex: "#FFFF00"
+                        alpha: 1
           #
           # Styles
           #
@@ -85,7 +93,7 @@ view:
               height: auto
             view:
               type: label
-              text: Normal, **Bold**, *Italic*, ***Bold + Italic***
+              text: Normal, **Bold**, *Italic*, ==Highlighted==, ==***Highlighted + Bold + Italic***==
               text_appearance:
                 alignment: start
                 font_size: 14
@@ -121,7 +129,7 @@ view:
               height: auto
             view:
               type: label
-              text: "__Label with line breaks:__\nNormal\n__Bold__\n_Italic_\n___Bold + Italic___"
+              text: "__Label with line breaks:__==\nNormal\n__Bold__\n_Italic_\n___Bold + Italic___=="
               text_appearance:
                 alignment: start
                 font_size: 14
@@ -139,7 +147,7 @@ view:
               height: auto
             view:
               type: label
-              text: "Markdown formatting will *preserve* **symbols**, **punctuation**, & **newlines** in the original text:\n\n!@#$%^&*()_+-=[]{}|;':,.<>"
+              text: "==Markdown formatting will *preserve* **symbols**, **punctuation**, & **newlines** in the original text:\n\n!@#$%^&*()_+-=[]{}|;':,.<>=="
               text_appearance:
                 alignment: start
                 font_size: 14
@@ -175,7 +183,7 @@ view:
               height: auto
             view:
               type: label
-              text: Disabled Normal, **Bold**, *Italic*, ***Bold + Italic*** [link](https://www.airship.com) https://www.airship.com
+              text: ==Disabled Normal, **Bold**, *Italic*, ***Bold + Italic*** [link](https://www.airship.com) https://www.airship.com==
               text_appearance:
                 alignment: start
                 font_size: 14
@@ -261,12 +269,12 @@ view:
               markdown:
                 appearance:
                   anchor:
-                      color:
-                        default:
-                          hex: "#00ff00"
-                          alpha: 1
-                      styles:
-                        - underlined
+                    color:
+                      default:
+                        hex: "#00ff00"
+                        alpha: 1
+                    styles:
+                      - underlined
 
           - margin:
               top: 0

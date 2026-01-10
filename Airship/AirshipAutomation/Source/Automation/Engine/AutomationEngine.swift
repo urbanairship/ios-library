@@ -23,6 +23,7 @@ actor AutomationEngine : AutomationEngineProtocol {
     private let delayProcessor: any AutomationDelayProcessorProtocol
     private let date: any AirshipDateProtocol
     private let taskSleeper: any AirshipTaskSleeper
+    private let eventsHistory: any AutomationEventsHistory
 
     private var processPendingExecutionTask: Task<Void, Never>?
     private var pendingExecution: [String: PreparedData] = [:]
@@ -37,6 +38,7 @@ actor AutomationEngine : AutomationEngineProtocol {
         eventFeed: any AutomationEventFeedProtocol,
         triggersProcessor: any AutomationTriggerProcessorProtocol,
         delayProcessor: any AutomationDelayProcessorProtocol,
+        eventsHistory: any AutomationEventsHistory,
         date: any AirshipDateProtocol = AirshipDate.shared,
         taskSleeper: any AirshipTaskSleeper = .shared
     ) {
@@ -49,6 +51,7 @@ actor AutomationEngine : AutomationEngineProtocol {
         self.delayProcessor = delayProcessor
         self.date = date
         self.taskSleeper = taskSleeper
+        self.eventsHistory = eventsHistory
     }
 
     @MainActor
@@ -108,6 +111,7 @@ actor AutomationEngine : AutomationEngineProtocol {
                     for await event in eventsFeed {
                         guard !Task.isCancelled else { return }
                         await self?.triggersProcessor.processEvent(event)
+                        await self?.eventsHistory.add(event)
                     }
                 }
             }

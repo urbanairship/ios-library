@@ -24,6 +24,24 @@ struct RootView<Content: View>: View {
     @ObservedObject var thomasEnvironment: ThomasEnvironment
     @StateObject var thomasState: ThomasState
     @StateObject var validatableHelper: ValidatableHelper = ValidatableHelper()
+    @StateObject var formInputCollector: ThomasFormDataCollector = ThomasFormDataCollector()
+
+    // Default form state so @EnvironmentObject does not crash
+    @StateObject
+    private var defaultFormState: ThomasFormState = ThomasFormState(
+        identifier: "",
+        formType: .form,
+        formResponseType: nil,
+        validationMode: .onDemand
+    )
+
+    // Default pager state so @EnvironmentObject does not crash
+    @StateObject
+    private var defaultPagerState: PagerState = PagerState(
+        identifier: "",
+        branching: nil
+    )
+
     let layout: AirshipLayout
     let content: (ThomasOrientation, ThomasWindowSize) -> Content
 
@@ -39,10 +57,7 @@ struct RootView<Content: View>: View {
         self.content = content
         self.isForeground = AppStateTracker.shared.isForegrounded
         self._thomasState = StateObject(
-            wrappedValue: ThomasState(
-                formState: thomasEnvironment.defaultFormState,
-                mutableState: thomasEnvironment.defaultMutableState
-            ) { [weak thomasEnvironment] state in
+            wrappedValue: ThomasState() { [weak thomasEnvironment] state in
                 thomasEnvironment?.onStateChange(state)
             }
         )
@@ -52,16 +67,12 @@ struct RootView<Content: View>: View {
     @ViewBuilder
     var body: some View {
         content(currentOrientation, resolveWindowSize())
-            .environmentObject(thomasEnvironment)
-            .environmentObject(thomasEnvironment.defaultFormState)
+            .environmentObject(self.thomasEnvironment)
             .environmentObject(self.thomasState)
-            .environmentObject(thomasEnvironment.defaultPagerState)
-            .environmentObject(
-                ThomasFormDataCollector(
-                    formState: thomasEnvironment.defaultFormState
-                )
-            )
-            .environmentObject(validatableHelper)
+            .environmentObject(self.formInputCollector)
+            .environmentObject(self.validatableHelper)
+            .environmentObject(self.defaultPagerState)
+            .environmentObject(self.defaultFormState)
             .environment(\.orientation, currentOrientation)
             .environment(\.windowSize, resolveWindowSize())
             .environment(\.isVisible, isVisible)

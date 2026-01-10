@@ -93,10 +93,10 @@ struct FormController: View {
 
             self._formState = ObservedObject(wrappedValue: formState)
             self._formDataCollector = StateObject(
-                wrappedValue: parentFormDataCollector.copy(formState: formState)
+                wrappedValue: parentFormDataCollector.with(formState: formState)
             )
             self._state = StateObject(
-                wrappedValue: parentState.copy(formState: formState)
+                wrappedValue: parentState.with(formState: formState)
             )
         }
 

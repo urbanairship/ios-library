@@ -39,6 +39,7 @@ protocol AutomationTriggerProcessorProtocol: Sendable {
 final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
     let store: any TriggerStoreProtocol
     private let date: any AirshipDateProtocol
+    private let eventsHistory: any AutomationEventsHistory
     private let stream: AsyncStream<TriggerResult>
     private let continuation: AsyncStream<TriggerResult>.Continuation
     
@@ -54,10 +55,12 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
     
     init(
         store: any TriggerStoreProtocol,
+        history: any AutomationEventsHistory,
         date: any AirshipDateProtocol = AirshipDate.shared
     ) {
         self.store = store
         self.date = date
+        self.eventsHistory = history
         (self.stream, self.continuation) = AsyncStream<TriggerResult>.airshipMakeStreamWithContinuation()
     }
 
@@ -72,34 +75,38 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
 
     // check triggers for events
     func processEvent(_ event: AutomationEvent) async {
-        //save current app state
-        self.trackStateChange(event: event)
-
+        await ingest(event: event, triggers: preparedTriggers.values.flatMap(\.self))
+    }
+    
+    private func ingest(event: AutomationEvent, triggers: [PreparedTrigger], isReplay: Bool = false) async {
+        if !isReplay {
+            //save current app state
+            self.trackStateChange(event: event)
+        }
+        
         guard await self.isPaused == false else { return }
-
-        var results: [PreparedTrigger.EventProcessResult] = []
-        self.preparedTriggers.values
-            .forEach { triggers in
-                results.append(
-                    contentsOf: triggers.compactMap { $0.process(event: event) }
-                )
-            }
-
+        
+        var results = triggers.compactMap { item in
+            item.process(event: event)
+        }
+        
         results.sort { left, right in
             left.priority < right.priority
         }
-
+        
         results.forEach { result in
             if let triggerResult = result.triggerResult {
                 self.continuation.yield(triggerResult)
             }
         }
-
+        
         let triggerDatas = results.map { $0.triggerData }
         do {
             try await self.store.upsertTriggers(triggerDatas)
         } catch {
-            AirshipLogger.error("Failed to save tigger data \(triggerDatas) error \(error)")
+            AirshipLogger.error(
+                "Failed to save tigger data \(triggerDatas) error \(error)"
+            )
         }
     }
     
@@ -118,6 +125,8 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
                 (l.schedule.priority ?? 0) < (r.schedule.priority ?? 0)
             }
         )
+        
+        var allNewTriggers: [PreparedTrigger] = []
 
         for data in sorted {
             let schedule = data.schedule
@@ -147,6 +156,7 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
                         type: .execution
                     )
                     new.append(prepared)
+                    allNewTriggers.append(prepared)
                 }
             }
 
@@ -170,6 +180,7 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
                         type: .delayCancellation
                     )
                     new.append(prepared)
+                    allNewTriggers.append(prepared)
                 }
             }
 
@@ -192,6 +203,13 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
                 scheduleID: schedule.identifier,
                 state: data.scheduleState
             )
+        }
+        
+        if !allNewTriggers.isEmpty {
+            let history = await self.eventsHistory.events
+            for event in history {
+                await self.ingest(event: event, triggers: allNewTriggers, isReplay: true)
+            }
         }
     }
 

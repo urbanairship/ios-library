@@ -1,0 +1,146 @@
+---
+version: 1
+presentation:
+  type: banner
+  default_placement:
+    position: bottom
+    size:
+      width: 100%
+      height: 80%
+view:
+    type: state_controller
+    view:
+      type: async_view_controller
+      identifier: "async_view"
+      request:
+        type: content
+        url: https://hangar-dl.urbanairship.com/binary/public/VWDwdOFjRTKLRxCeXTVP6g/6b0620eb-9d11-4196-9e1f-14595b0713a3
+      placeholder:
+        type: container
+        background_color:
+          default:
+            alpha: 1
+            hex: "#004bff"
+        border:
+          radius: 20
+          stroke_color:
+            default:
+              alpha: 0.1
+              hex: "#FFFFFF"
+          stroke_width: 2
+        items:
+        - position:
+            horizontal: center
+            vertical: center
+          size:
+            width: 100
+            height: 100
+          view:
+            type: icon_view
+            visibility:
+              default: true
+              invert_when_state_matches:
+                scope:
+                    - $asyncView
+                    - current
+                    - error
+                value:
+                    is_present: true
+            icon:
+              icon: progress_spinner
+              scale: 1
+              color:
+                default:
+                  hex: "#DDDDDD"
+                  alpha: 0.7
+        - position:
+            horizontal: center
+            vertical: center
+          size:
+            width: auto
+            height: auto
+          view:
+            visibility:
+              default: true
+              invert_when_state_matches:
+                scope:
+                    - $asyncView
+                    - current
+                    - error
+                value:
+                    is_present: false
+            type: linear_layout
+            direction: vertical
+            items:
+              - size:
+                    width: auto
+                    height: auto
+                view:
+                  type: label
+                  text: "Uh oh :(, something went wrong!"
+                  text_appearance:
+                    alignment: center
+                    font_size: 16
+                    color:
+                      default:
+                        hex: '#FFFFFF'
+                        alpha: 1
+                    styles:
+                        - bold
+                    font_families:
+                        - sans-serif
+              - size:
+                  width: 48%
+                  height: 50
+                margin:
+                  top: 16
+                view:
+                  type: label_button
+                  identifier: retry
+                  background_color:
+                    default:
+                      hex: '#001f9e'
+                      alpha: 1
+                  border:
+                    radius: 25
+                    stroke_width: 2
+                    stroke_color:
+                      default:
+                        hex: '#FFFFFF'
+                        alpha: 0.3
+                  button_click:
+                    - async_view_retry
+                  label:
+                    type: label
+                    text: Retry
+                    text_appearance:
+                      font_size: 16
+                      alignment: center
+                      styles:
+                        - bold
+                      color:
+                        default:
+                          hex: '#FFFFFF'
+                          alpha: 1
+        - position:
+            horizontal: end
+            vertical: top
+          margin:
+            top: 16
+            end: 16
+          size:
+            width: 32
+            height: 32
+          view:
+            type: image_button
+            identifier: close_button
+            button_click:
+            - dismiss
+            image:
+              type: icon
+              icon: close
+              color:
+                default:
+                  hex: '#FFFFFF'
+                  alpha: 0.8
+              scale: 0.7

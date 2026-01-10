@@ -2,29 +2,30 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 @MainActor
 struct StateController: View {
-    private let info: ThomasViewInfo.StateController
-    private let constraints: ViewConstraints
+    let info: ThomasViewInfo.StateController
+    let constraints: ViewConstraints
 
     @EnvironmentObject
     private var state: ThomasState
-
+    
+    @StateObject
+    private var scopedStateCache: ScopedStateCache = ScopedStateCache()
+    
     @StateObject
     private var mutableState: ThomasState.MutableState
-
+    
     init(
         info: ThomasViewInfo.StateController,
         constraints: ViewConstraints
     ) {
         self.info = info
         self.constraints = constraints
-        let inititlaState = ThomasState.MutableState(
-            inititalState: self.info.properties.initialState
-        )
         self._mutableState = StateObject(
-            wrappedValue: inititlaState
+            wrappedValue: ThomasState.MutableState(inititalState: info.properties.initialState)
         )
     }
     
@@ -32,6 +33,10 @@ struct StateController: View {
         ViewFactory.createView(self.info.properties.view, constraints: constraints)
             .constraints(constraints)
             .thomasCommon(self.info)
-            .environmentObject(state.copy(mutableState: mutableState))
+            .environmentObject(
+                scopedStateCache.getOrCreate {
+                    state.with(mutableState: mutableState)
+                }
+            )
     }
 }

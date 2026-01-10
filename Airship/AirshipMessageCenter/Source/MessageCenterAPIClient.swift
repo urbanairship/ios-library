@@ -109,6 +109,8 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
         return try await self.session.performHTTPRequest(request) { data, response in
             guard response.isSuccess else { return nil }
 
+            let json = try AirshipJSON.from(data: data)
+            AirshipLogger.error("Message Center Response: \(try! json.toString())")
             let parsed: MessageListResponse = try AirshipJSONUtils.decode(data: data)
             return try parsed.convertMessages()
         }
@@ -304,7 +306,7 @@ private struct MessageListResponse: Decodable {
         let messageBodyURL: URL
         let messageReporting: AirshipJSON
         let messageURL: URL
-        let contentType: String
+        let contentType: MessageCenterMessage.ContentType
         /// String instead of Date because they might be nonstandard ISO dates
         let messageSent: String
         let messageExpiration: String?
@@ -329,6 +331,17 @@ private struct MessageListResponse: Decodable {
     }
 }
 
+extension MessageCenterMessage.ContentType: Codable {
+    init(from decoder: any Decoder) throws {
+        let value = try decoder.singleValueContainer().decode(String.self)
+        
+        self = MessageCenterMessage.ContentType
+            .allCases
+            .first { $0.rawValue == value }
+        ?? .html
+    }
+}
+
 extension MessageListResponse {
     fileprivate func convertMessages() throws -> [MessageCenterMessage] {
         return try self.messages.map { responseMessage in
@@ -337,6 +350,7 @@ extension MessageListResponse {
             return MessageCenterMessage(
                 title: responseMessage.title,
                 id: responseMessage.messageID,
+                contentType: responseMessage.contentType,
                 extra: responseMessage.extra?.unWrap() as? [String: String]
                     ?? [:],
                 bodyURL: responseMessage.messageBodyURL,

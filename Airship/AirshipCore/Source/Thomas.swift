@@ -65,7 +65,7 @@ public final class Thomas {
 
         try displayable.display { windowInfo in
             let bannerConstraints = ThomasBannerConstraints(
-                size: windowInfo.size
+                windowSize: windowInfo.size
             )
 
             let rootView = BannerView(

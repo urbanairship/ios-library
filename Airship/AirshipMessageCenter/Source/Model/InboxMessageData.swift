@@ -61,4 +61,7 @@ class InboxMessageData: NSManagedObject {
     ///  The raw message dictionary. This is the dictionary that originally created the message.
     ///  It can contain more values then the message.
     @NSManaged var rawMessageObject: Data?
+    
+    /// The message content type
+    @NSManaged var contentType: String?
 }

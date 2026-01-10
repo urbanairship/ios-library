@@ -45,10 +45,19 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable {
     /// This is the dictionary that originally created the message.
     /// It can contain more values than the message.
     let rawMessageObject: AirshipJSON
+    
+    /// The message center content type
+    let contentType: ContentType
+    
+    enum ContentType: String, CaseIterable {
+        case html = "text/html"
+        case thomas = "application/vnd.urbanairship.thomas+json; version=1;"
+    }
 
     init(
         title: String,
         id: String,
+        contentType: ContentType,
         extra: [String: String],
         bodyURL: URL,
         expirationDate: Date?,
@@ -60,6 +69,7 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable {
     ) {
         self.title = title
         self.id = id
+        self.contentType = contentType
         self.extra = extra
         self.bodyURL = bodyURL
         self.expirationDate = expirationDate

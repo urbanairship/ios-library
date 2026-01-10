@@ -21,6 +21,10 @@ struct ThomasIconInfo: ThomasSerializable {
         case starFill = "star_fill"
         case heart = "heart"
         case heartFill = "heart_fill"
+        case chevronBackward = "chevron_backward"
+        case chevronForward = "chevron_forward"
+        case pause
+        case play
     }
 
     enum CodingKeys: String, CodingKey {

@@ -15,38 +15,19 @@ struct Label: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.sizeCategory) var sizeCategory
 
+    static let defaultHighlightColor: Color = Color(
+        red: 1.0,
+        green: 0.84,
+        blue: 0.04,
+        opacity: 0.3
+    )
+
     private var scaledFontSize: Double {
         UIFontMetrics.default.scaledValue(
             for: self.info.properties.textAppearance.fontSize
         )
     }
-    
-    private var markdownText: Text {
-        get throws {
-            var text = try AttributedString(
-                markdown: info.resolveLabelString(thomasState: thomasState),
-                options: .init(
-                    interpretedSyntax: .inlineOnlyPreservingWhitespace
-                )
-            )
 
-            let anchorAppearance = self.info.properties.markdown?.appearance?.anchor
-            let anchorColor = anchorAppearance?.color?.toColor(self.colorScheme)
-            // Currently we only support underlined styles
-            let underline = anchorAppearance?.styles?.contains(.underlined) ?? false
-
-            text.runs.filter { run in
-                run.link != nil
-            }.forEach { run in
-                text[run.range].foregroundColor = anchorColor
-                if underline {
-                    text[run.range].underlineStyle = .single
-                }
-            }
-
-            return Text(text)
-        }
-    }
 
     private var resolvedEndIcon: ThomasViewInfo.Label.LabelIcon? {
         return ThomasPropertyOverride.resolveOptional(
@@ -73,7 +54,6 @@ struct Label: View {
     }
 
     private var textView: Text {
-
         guard
             self.info.properties.markdown?.disabled != true
         else {
@@ -99,9 +79,16 @@ struct Label: View {
                     .accessibilityHidden(true)
             }
 
-            self.textView
-                .textAppearance(resolvedTextAppearance, colorScheme: colorScheme)
-                .truncationMode(.tail)
+            if #available(iOS 26.0, *) {
+                self.textView
+                    .textAppearance(resolvedTextAppearance, colorScheme: colorScheme)
+                    .truncationMode(.tail)
+                    .textRenderer(HighlightRenderer())
+            } else {
+                self.textView
+                    .textAppearance(resolvedTextAppearance, colorScheme: colorScheme)
+                    .truncationMode(.tail)
+            }
 
 
             if let icon = resolvedEndIcon {
@@ -161,17 +148,6 @@ extension ThomasTextAppearance.TextAlignement {
             return SwiftUI.TextAlignment.trailing
         case .center:
             return SwiftUI.TextAlignment.center
-        }
-    }
-
-    func toNSTextAlignment() -> NSTextAlignment {
-        switch self {
-        case .start:
-            return .left
-        case .end:
-            return .right
-        case .center:
-            return .center
         }
     }
 }
@@ -240,5 +216,213 @@ extension ThomasViewInfo.Label {
             overrides: overrides?.text,
             defaultValue: properties.text
         )
+    }
+}
+
+
+extension Label {
+    private func highlightSegments(
+        in attributed: AttributedString
+    ) -> [(range: Range<AttributedString.Index>, isHighlight: Bool)] {
+
+        let chars = attributed.characters
+        typealias Index = AttributedString.Index  // same as CharacterView.Index
+
+        struct Segment {
+            let range: Range<Index>
+            let isHighlight: Bool
+        }
+
+        var segments: [Segment] = []
+
+        let end = chars.endIndex
+
+        var searchStart: Index = chars.startIndex  // where the next "normal" segment starts
+        var i: Index = chars.startIndex
+
+        while i < end {
+            let next = chars.index(after: i)
+            guard next < end else { break }
+
+            // Look for opening "=="
+            if chars[i] == "=", chars[next] == "=" {
+                let openStart = i
+                let openEnd = chars.index(after: next) // first char *after* "=="
+
+                // Prefix BEFORE ==...==
+                if searchStart < openStart {
+                    segments.append(
+                        Segment(
+                            range: searchStart..<openStart,
+                            isHighlight: false
+                        )
+                    )
+                }
+
+                // Now search for the matching closing "=="
+                var j = openEnd
+                var foundClose = false
+
+                while j < end {
+                    let jNext = chars.index(after: j)
+                    if jNext < end, chars[j] == "=", chars[jNext] == "=" {
+                        // Found closing "=="
+                        let closeStart = j
+                        let closeEnd = chars.index(after: jNext) // after closing "=="
+
+                        let innerStart = openEnd
+                        let innerEnd = closeStart
+
+                        if innerStart < innerEnd {
+                            segments.append(
+                                Segment(
+                                    range: innerStart..<innerEnd,
+                                    isHighlight: true
+                                )
+                            )
+                        }
+
+                        // Next "normal" segment will start AFTER the closing "=="
+                        searchStart = closeEnd
+                        i = closeEnd
+                        foundClose = true
+                        break
+                    }
+
+                    j = chars.index(after: j)
+                }
+
+                if !foundClose {
+                    // No closing "==": treat the opening "==" as normal text
+                    i = chars.index(after: i)
+                }
+            } else {
+                i = next
+            }
+        }
+
+        // Trailing text after the last highlight
+        if searchStart < end {
+            segments.append(
+                Segment(
+                    range: searchStart..<end,
+                    isHighlight: false
+                )
+            )
+        }
+
+        return segments.map { ($0.range, $0.isHighlight) }
+    }
+
+    private var markdownText: Text {
+        get throws {
+            let resolved = info.resolveLabelString(thomasState: thomasState)
+
+            // Parse markdown into attributed
+            let attributed = try AttributedString(
+                markdown: resolved,
+                options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+            )
+
+            let highlightOptions = self.info.properties.markdown?.appearance?.highlight
+
+            // Find highlight segments INSIDE the attributed string
+            let segments = highlightSegments(in: attributed)
+
+            // Build Text by slicing
+            var result: Text?
+
+            for seg in segments {
+                var slice = attributed[seg.range]
+                let piece: Text
+
+                if seg.isHighlight {
+                    // For custom cornerRadius we have to use a custom attribute and renderer
+                    if #available(iOS 18.0, *), let cornerRadius = highlightOptions?.cornerRadius {
+                        let highlight = HighlightAttribute(
+                            color: highlightOptions?.color?.toColor(colorScheme) ?? Self.defaultHighlightColor,
+                            cornerRadius: cornerRadius
+                        )
+                        piece = Text(AttributedString(slice))
+                            .customAttribute(highlight)
+                    } else {
+                        slice.backgroundColor = highlightOptions?.color?.toColor(colorScheme) ?? Self.defaultHighlightColor
+                        piece = Text(AttributedString(slice))
+                    }
+                } else {
+                    piece = Text(AttributedString(slice))
+                }
+
+                result = (result == nil) ? piece : (result! + piece)
+            }
+
+            return result ?? Text(attributed)
+        }
+    }
+}
+
+@available(iOS 18.0, *)
+struct HighlightAttribute: TextAttribute {
+    let color: Color
+    let cornerRadius: CGFloat
+}
+
+@available(iOS 18.0, *)
+struct HighlightRenderer: TextRenderer {
+    struct Cluster {
+        var rect: CGRect
+        var attr: HighlightAttribute
+    }
+
+    func draw(layout: Text.Layout, in context: inout GraphicsContext) {
+        for line in layout {
+            var clusters: [Cluster] = []
+            var currentRect: CGRect?
+            var currentAttr: HighlightAttribute?
+
+            for run in line {
+                if let highlight = run[HighlightAttribute.self] {
+                    let runRect = run.typographicBounds.rect
+
+                    if var rect = currentRect, let attr = currentAttr,
+                       attr.color == highlight.color,
+                       attr.cornerRadius == highlight.cornerRadius {
+                        rect = rect.union(runRect)
+                        currentRect = rect
+                        currentAttr = highlight
+                    } else {
+                        // flush previous cluster
+                        if let rect = currentRect, let attr = currentAttr {
+                            clusters.append(Cluster(rect: rect, attr: attr))
+                        }
+                        currentRect = runRect
+                        currentAttr = highlight
+                    }
+                } else {
+                    // end of a cluster
+                    if let rect = currentRect, let attr = currentAttr {
+                        clusters.append(Cluster(rect: rect, attr: attr))
+                        currentRect = nil
+                        currentAttr = nil
+                    }
+                }
+            }
+
+            if let rect = currentRect, let attr = currentAttr {
+                clusters.append(Cluster(rect: rect, attr: attr))
+            }
+
+            for cluster in clusters {
+                let path = Path(
+                    roundedRect: cluster.rect,
+                    cornerRadius: cluster.attr.cornerRadius
+                )
+                context.fill(path, with: .color(cluster.attr.color))
+            }
+
+            for run in line {
+                context.draw(run)
+            }
+        }
     }
 }

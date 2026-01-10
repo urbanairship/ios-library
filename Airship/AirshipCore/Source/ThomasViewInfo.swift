@@ -15,6 +15,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
     case label(Label)
     case labelButton(LabelButton)
     case imageButton(ImageButton)
+    case stackImageButton(StackImageButton)
     case emptyView(EmptyView)
     case pager(Pager)
     case pagerIndicator(PagerIndicator)
@@ -48,6 +49,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         case label
         case labelButton = "label_button"
         case imageButton = "image_button"
+        case stackImageButton = "stack_image_button"
         case buttonLayout = "button_layout"
         case emptyView = "empty_view"
         case pager
@@ -104,6 +106,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         case .label: .label(try Label(from: decoder))
         case .labelButton: .labelButton(try LabelButton(from: decoder))
         case .imageButton: .imageButton(try ImageButton(from: decoder))
+        case .stackImageButton: .stackImageButton(try StackImageButton(from: decoder))
         case .emptyView: .emptyView(try EmptyView(from: decoder))
         case .pager: .pager(try Pager(from: decoder))
         case .pagerIndicator: .pagerIndicator(try PagerIndicator(from: decoder))
@@ -143,6 +146,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         case .label(let info): try info.encode(to: encoder)
         case .labelButton(let info): try info.encode(to: encoder)
         case .imageButton(let info): try info.encode(to: encoder)
+        case .stackImageButton(let info): try info.encode(to: encoder)
         case .emptyView(let info): try info.encode(to: encoder)
         case .pager(let info): try info.encode(to: encoder)
         case .pagerIndicator(let info): try info.encode(to: encoder)
@@ -648,6 +652,130 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 self = switch type {
                 case .button: .button
                 case .container: .container
+                }
+            }
+        }
+    }
+
+    struct StackImageButton: BaseInfo {
+        var commonProperties: CommonViewProperties
+        var commonOverrides: CommonViewOverrides?
+        var properties: Properties
+        var accessible: ThomasAccessibleInfo
+        var overrides: Overrides?
+
+        func encode(to encoder: any Encoder) throws {
+            try encoder.encode(
+                properties: commonProperties, properties, accessible,
+                overrides: commonOverrides, overrides
+            )
+        }
+
+        init(from decoder: any Decoder) throws {
+            self.commonProperties = try decoder.decodeProperties()
+            self.properties = try decoder.decodeProperties()
+            self.accessible = try decoder.decodeProperties()
+            self.commonOverrides = try decoder.decodeOverrides()
+            self.overrides = try decoder.decodeOverrides()
+        }
+
+        struct Properties: ThomasSerializable {
+            let type: ViewType = .imageButton
+            var identifier: String
+            var clickBehaviors: [ThomasButtonClickBehavior]?
+            var actions: ThomasActionsPayload?
+            var reportingMetadata: AirshipJSON?
+            var tapEffect: ThomasButtonTapEffect?
+            var items: [Item]
+
+            private enum CodingKeys: String, CodingKey {
+                case identifier
+                case clickBehaviors = "button_click"
+                case actions
+                case type
+                case tapEffect = "tap_effect"
+                case items
+                case reportingMetadata = "reporting_metadata"
+            }
+        }
+
+        struct Overrides: ThomasSerializable {
+            var items: [ThomasPropertyOverride<[Item]>]?
+            var contentDescription: [ThomasPropertyOverride<String>]?
+            var localizedContentDescription: [ThomasPropertyOverride<ThomasAccessibleInfo.Localized>]?
+
+            enum CodingKeys: String, CodingKey {
+                case items
+                case contentDescription = "content_description"
+                case localizedContentDescription = "localized_content_description"
+            }
+        }
+
+        enum ItemType: String, Codable, Equatable, Sendable {
+            case icon
+            case shape
+            case imageURL = "image_url"
+        }
+
+        enum Item: Codable, Equatable, Sendable {
+            case imageURL(ImageURLItem)
+            case icon(IconItem)
+            case shape(ShapeItem)
+
+            private enum CodingKeys: String, CodingKey {
+                case type = "type"
+            }
+
+            init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                let type = try container.decode(ItemType.self, forKey: .type)
+
+                self = switch type {
+                case .imageURL: .imageURL(try ImageURLItem(from: decoder))
+                case .shape: .shape(try ShapeItem(from: decoder))
+                case .icon: .icon(try IconItem(from: decoder))
+                }
+            }
+
+            func encode(to encoder: any Encoder) throws {
+                switch self {
+                case .icon(let info): try info.encode(to: encoder)
+                case .imageURL(let info): try info.encode(to: encoder)
+                case .shape(let info): try info.encode(to: encoder)
+                }
+            }
+
+            struct ImageURLItem: ThomasSerializable {
+                let type: ItemType = .imageURL
+                var url: String
+                var mediaFit: ThomasMediaFit
+                var cropPosition: ThomasPosition?
+
+                enum CodingKeys: String, CodingKey {
+                    case url
+                    case type
+                    case cropPosition = "position"
+                    case mediaFit = "media_fit"
+                }
+            }
+
+            struct ShapeItem: ThomasSerializable {
+                let type: ItemType = .shape
+                var shape: ThomasShapeInfo
+
+                enum CodingKeys: String, CodingKey {
+                    case type
+                    case shape
+                }
+            }
+
+            struct IconItem: ThomasSerializable {
+                let type: ItemType = .icon
+                var icon: ThomasIconInfo
+
+                enum CodingKeys: String, CodingKey {
+                    case type
+                    case icon
                 }
             }
         }
@@ -1895,7 +2023,13 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         }
 
         struct Properties: ThomasSerializable {
+            let type: ViewType = .iconView
             var icon: ThomasIconInfo
+
+            private enum CodingKeys: String, CodingKey {
+                case type
+                case icon
+            }
         }
 
         struct Overrides: ThomasSerializable {

@@ -1,0 +1,876 @@
+---
+version: 1
+presentation:
+  type: modal
+  placement_selectors: []
+  android:
+    disable_back_button: false
+  dismiss_on_touch_outside: false
+  default_placement:
+    ignore_safe_area: false
+    size:
+      width: 100%
+      height: 100%
+    position:
+      horizontal: center
+      vertical: top
+    shade_color:
+      default:
+        type: hex
+        hex: "#000000"
+        alpha: 0.2
+    web:
+      ignore_shade: true
+view:
+  type: pager_controller
+  identifier: 300229b5-c073-4ecb-8bc5-137054dd236b
+  view:
+    type: linear_layout
+    direction: vertical
+    items:
+    - size:
+        width: 100%
+        height: 100%
+      view:
+        type: container
+        items:
+        - identifier: e03cd022-5ea9-4a06-80c6-e85b59c1d8a0_pager_container_item
+          position:
+            horizontal: center
+            vertical: center
+          size:
+            width: 100%
+            height: 100%
+          view:
+            type: pager
+            disable_swipe: true
+            items:
+            - identifier: a0121f9b-4af6-425c-8ad0-ce74d7ee1b52
+              type: pager_item
+              view:
+                type: container
+                items:
+                - identifier: 470361c2-c195-49ff-80b9-fc248c00e83c_main_view_container_item
+                  size:
+                    width: 100%
+                    height: 100%
+                  position:
+                    horizontal: center
+                    vertical: center
+                  ignore_safe_area: false
+                  view:
+                    type: container
+                    items:
+                    - identifier: 7615e8fd-4256-4e37-9813-06579c0d7f5a_container_item
+                      margin:
+                        bottom: 0
+                        top: 0
+                        end: 0
+                        start: 0
+                      position:
+                        horizontal: center
+                        vertical: center
+                      size:
+                        width: 100%
+                        height: 100%
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                        - identifier: scroll_container
+                          size:
+                            width: 100%
+                            height: 100%
+                          view:
+                            type: scroll_layout
+                            direction: vertical
+                            view:
+                              type: linear_layout
+                              direction: vertical
+                              items:
+                              - identifier: c3bb182a-82c7-4dc6-b364-9aad64322a53
+                                size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 8
+                                  bottom: 8
+                                  start: 16
+                                  end: 16
+                                view:
+                                  type: label
+                                  text: ABCDEFGHIJKLMNOPQRSTUVWXYZ
+                                  content_description: test ulrich
+                                  text_appearance:
+                                    font_size: 32
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: 1
+                                      selectors:
+                                      - platform: ios
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#000000"
+                                          alpha: 1
+                                      - platform: ios
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#FFFFFF"
+                                          alpha: 1
+                                      - platform: android
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#000000"
+                                          alpha: 1
+                                      - platform: android
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#FFFFFF"
+                                          alpha: 1
+                                      - platform: web
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#000000"
+                                          alpha: 1
+                                      - platform: web
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#FFFFFF"
+                                          alpha: 1
+                                    alignment: start
+                                    styles:
+                                    - bold
+                                    - italic
+                                    font_families:
+                                    - Merriweather
+                                    - merriweather
+                                  accessibility_role:
+                                    type: heading
+                                    level: 1
+                                  accessibility_hidden: false
+                              - identifier: c3bb182a-82c7-4dc6-b364-9aad64322a53
+                                size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 8
+                                  bottom: 8
+                                  start: 16
+                                  end: 16
+                                view:
+                                  type: label
+                                  text: 100	Thin
+                                  content_description: test ulrich
+                                  text_appearance:
+                                    font_size: 32
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: 1
+                                      selectors:
+                                      - platform: ios
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#000000"
+                                          alpha: 1
+                                      - platform: ios
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#FFFFFF"
+                                          alpha: 1
+                                      - platform: android
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#000000"
+                                          alpha: 1
+                                      - platform: android
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#FFFFFF"
+                                          alpha: 1
+                                      - platform: web
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#000000"
+                                          alpha: 1
+                                      - platform: web
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#FFFFFF"
+                                          alpha: 1
+                                    alignment: start
+                                    font_weight: 100
+                                    font_families:
+                                    - Merriweather
+                                    - merriweather
+                                  accessibility_role:
+                                    type: heading
+                                    level: 1
+                                  accessibility_hidden: false
+                              - identifier: c3bb182a-82c7-4dc6-b364-9aad64322a53
+                                size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 8
+                                  bottom: 8
+                                  start: 16
+                                  end: 16
+                                view:
+                                  type: label
+                                  text: 200	Extra Light
+                                  content_description: test ulrich
+                                  text_appearance:
+                                    font_size: 32
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: 1
+                                      selectors:
+                                      - platform: ios
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#000000"
+                                          alpha: 1
+                                      - platform: ios
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#FFFFFF"
+                                          alpha: 1
+                                      - platform: android
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#000000"
+                                          alpha: 1
+                                      - platform: android
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#FFFFFF"
+                                          alpha: 1
+                                      - platform: web
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#000000"
+                                          alpha: 1
+                                      - platform: web
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#FFFFFF"
+                                          alpha: 1
+                                    alignment: start
+                                    styles:
+                                    font_weight: 200
+                                    font_families:
+                                    - Merriweather
+                                    - merriweather
+                                  accessibility_role:
+                                    type: heading
+                                    level: 1
+                                  accessibility_hidden: false
+                              - identifier: c3bb182a-82c7-4dc6-b364-9aad64322a53
+                                size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 8
+                                  bottom: 8
+                                  start: 16
+                                  end: 16
+                                view:
+                                  type: label
+                                  text: 300	Light
+                                  content_description: test ulrich
+                                  text_appearance:
+                                    font_size: 32
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: 1
+                                      selectors:
+                                      - platform: ios
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#000000"
+                                          alpha: 1
+                                      - platform: ios
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#FFFFFF"
+                                          alpha: 1
+                                      - platform: android
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#000000"
+                                          alpha: 1
+                                      - platform: android
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#FFFFFF"
+                                          alpha: 1
+                                      - platform: web
+                                        dark_mode: false
+                                        color:
+                                          type: hex
+                                          hex: "#000000"
+                                          alpha: 1
+                                      - platform: web
+                                        dark_mode: true
+                                        color:
+                                          type: hex
+                                          hex: "#FFFFFF"
+                                          alpha: 1
+                                    alignment: start
+                                    font_weight: 300
+                                    font_families:
+                                    - Merriweather
+                                    - merriweather
+                                  accessibility_role:
+                                    type: heading
+                                    level: 1
+                                  accessibility_hidden: false
+                              - identifier: c3bb182a-82c7-4dc6-b364-9aad64322a53
+                                size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 8
+                                  bottom: 8
+                                  start: 16
+                                  end: 16
+                                view:
+                                  type: label
+                                  text: 400	Normal
+                                  content_description: test ulrich
+                                  text_appearance:
+                                    font_size: 32
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: 1
+                                      selectors:
+                                        - platform: ios
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: ios
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                    alignment: start
+                                    styles:
+                                    font_weight: 400
+                                    font_families:
+                                      - Merriweather
+                                      - merriweather
+                                  accessibility_role:
+                                    type: heading
+                                    level: 1
+                                  accessibility_hidden: false
+                              - identifier: c3bb182a-82c7-4dc6-b364-9aad64322a53
+                                size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 8
+                                  bottom: 8
+                                  start: 16
+                                  end: 16
+                                view:
+                                  type: label
+                                  text: 500	Medium
+                                  content_description: test ulrich
+                                  text_appearance:
+                                    font_size: 32
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: 1
+                                      selectors:
+                                        - platform: ios
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: ios
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                    alignment: start
+                                    styles:
+                                    font_weight: 500
+                                    font_families:
+                                      - Merriweather
+                                      - merriweather
+                                  accessibility_role:
+                                    type: heading
+                                    level: 1
+                                  accessibility_hidden: false
+                              - identifier: c3bb182a-82c7-4dc6-b364-9aad64322a53
+                                size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 8
+                                  bottom: 8
+                                  start: 16
+                                  end: 16
+                                view:
+                                  type: label
+                                  text: 600	Semi Bold
+                                  content_description: test ulrich
+                                  text_appearance:
+                                    font_size: 32
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: 1
+                                      selectors:
+                                        - platform: ios
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: ios
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                    alignment: start
+                                    styles:
+                                    font_weight: 600
+                                    font_families:
+                                      - Merriweather
+                                      - merriweather
+                                  accessibility_role:
+                                    type: heading
+                                    level: 1
+                                  accessibility_hidden: false
+                              - identifier: c3bb182a-82c7-4dc6-b364-9aad64322a53
+                                size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 8
+                                  bottom: 8
+                                  start: 16
+                                  end: 16
+                                view:
+                                  type: label
+                                  text: 700	Bold
+                                  content_description: test ulrich
+                                  text_appearance:
+                                    font_size: 32
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: 1
+                                      selectors:
+                                        - platform: ios
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: ios
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                    alignment: start
+                                    styles:
+                                    font_weight: 700
+                                    font_families:
+                                      - Merriweather
+                                      - merriweather
+                                  accessibility_role:
+                                    type: heading
+                                    level: 1
+                                  accessibility_hidden: false
+                              - identifier: c3bb182a-82c7-4dc6-b364-9aad64322a53
+                                size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 8
+                                  bottom: 8
+                                  start: 16
+                                  end: 16
+                                view:
+                                  type: label
+                                  text: 800 Extra Bold
+                                  content_description: test ulrich
+                                  text_appearance:
+                                    font_size: 32
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: 1
+                                      selectors:
+                                        - platform: ios
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: ios
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                    alignment: start
+                                    styles:
+                                    font_weight: 800
+                                    font_families:
+                                      - Merriweather
+                                      - merriweather
+                                  accessibility_role:
+                                    type: heading
+                                    level: 1
+                                  accessibility_hidden: false
+                              - identifier: c3bb182a-82c7-4dc6-b364-9aad64322a53
+                                size:
+                                  width: 100%
+                                  height: auto
+                                margin:
+                                  top: 8
+                                  bottom: 8
+                                  start: 16
+                                  end: 16
+                                view:
+                                  type: label
+                                  text: 900 Black
+                                  content_description: test ulrich
+                                  text_appearance:
+                                    font_size: 32
+                                    color:
+                                      default:
+                                        type: hex
+                                        hex: "#000000"
+                                        alpha: 1
+                                      selectors:
+                                        - platform: ios
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: ios
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: android
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: false
+                                          color:
+                                            type: hex
+                                            hex: "#000000"
+                                            alpha: 1
+                                        - platform: web
+                                          dark_mode: true
+                                          color:
+                                            type: hex
+                                            hex: "#FFFFFF"
+                                            alpha: 1
+                                    alignment: start
+                                    styles:
+                                    font_weight: 900
+                                    font_families:
+                                      - Merriweather
+                                      - merriweather
+                                  accessibility_role:
+                                    type: heading
+                                    level: 1
+                                  accessibility_hidden: false
+                              - identifier: '088310d4-f576-40bf-bad0-c1259da56abf_linear_layout_item'
+                                size:
+                                  width: 100%
+                                  height: 100%
+                                view:
+                                  type: linear_layout
+                                  direction: horizontal
+                                  items: []
+                background_color:
+                  default:
+                    type: hex
+                    hex: "#FFFFFF"
+                    alpha: 1
+                  selectors:
+                  - platform: ios
+                    dark_mode: false
+                    color:
+                      type: hex
+                      hex: "#FFFFFF"
+                      alpha: 1
+                  - platform: ios
+                    dark_mode: true
+                    color:
+                      type: hex
+                      hex: "#000000"
+                      alpha: 1
+                  - platform: android
+                    dark_mode: false
+                    color:
+                      type: hex
+                      hex: "#FFFFFF"
+                      alpha: 1
+                  - platform: android
+                    dark_mode: true
+                    color:
+                      type: hex
+                      hex: "#000000"
+                      alpha: 1
+                  - platform: web
+                    dark_mode: false
+                    color:
+                      type: hex
+                      hex: "#FFFFFF"
+                      alpha: 1
+                  - platform: web
+                    dark_mode: true
+                    color:
+                      type: hex
+                      hex: "#000000"
+                      alpha: 1
+              state_actions:
+              - type: set
+                key: a0121f9b-4af6-425c-8ad0-ce74d7ee1b52_next
+          ignore_safe_area: false
+        - position:
+            horizontal: end
+            vertical: top
+          size:
+            width: 48
+            height: 48
+          view:
+            type: image_button
+            image:
+              scale: 0.4
+              type: icon
+              icon: close
+              color:
+                default:
+                  type: hex
+                  hex: "#000000"
+                  alpha: 1
+                selectors:
+                - platform: ios
+                  dark_mode: false
+                  color:
+                    type: hex
+                    hex: "#000000"
+                    alpha: 1
+                - platform: ios
+                  dark_mode: true
+                  color:
+                    type: hex
+                    hex: "#FFFFFF"
+                    alpha: 1
+                - platform: android
+                  dark_mode: false
+                  color:
+                    type: hex
+                    hex: "#000000"
+                    alpha: 1
+                - platform: android
+                  dark_mode: true
+                  color:
+                    type: hex
+                    hex: "#FFFFFF"
+                    alpha: 1
+                - platform: web
+                  dark_mode: false
+                  color:
+                    type: hex
+                    hex: "#000000"
+                    alpha: 1
+                - platform: web
+                  dark_mode: true
+                  color:
+                    type: hex
+                    hex: "#FFFFFF"
+                    alpha: 1
+            identifier: dismiss_button
+            button_click:
+            - dismiss
+            localized_content_description:
+              ref: ua_dismiss
+              fallback: Dismiss
+            reporting_metadata:
+              button_id: dismiss_button
+              button_action: dismiss

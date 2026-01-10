@@ -10,9 +10,11 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
     private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
     private let store: TestTriggerStore = TestTriggerStore()
     private var processor: AutomationTriggerProcessor!
+    private var history: (any AutomationEventsHistory)!
 
     override func setUp() async throws {
-        self.processor = AutomationTriggerProcessor(store: store, date: date)
+        self.history = DefaultAutomationEventsHistory(clock: date)
+        self.processor = AutomationTriggerProcessor(store: store, history: self.history, date: date)
     }
     
     func testRestoreSchedule() async throws {
@@ -161,6 +163,38 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
         
         result = await takeNext()
         XCTAssert(result.isEmpty)
+    }
+    
+    func testReplayEvents() async {
+        let triggerOld = AutomationTrigger.event(.init(id: "trigger-id", type: .appInit, goal: 2))
+        let oldSchedule = defaultSchedule(trigger: triggerOld)
+        
+        let event = AutomationEvent.event(type: .appInit)
+        
+        await self.processor.updateSchedules([oldSchedule])
+        await self.processor.processEvent(event)
+        await self.history.add(event)
+        
+        let triggerNew = AutomationTrigger.event(.init(id: "new-trigger-id", type: .appInit, goal: 1))
+        let scheduleNew = AutomationScheduleData(
+            schedule: AutomationSchedule(
+                identifier: "new-schedule-id",
+                data: .actions(.null),
+                triggers: [triggerNew],
+                group: nil
+            ),
+            scheduleState: .idle,
+            lastScheduleModifiedDate: self.date.now,
+            scheduleStateChangeDate: self.date.now,
+            executionCount: 0,
+            triggerSessionID: UUID().uuidString
+        )
+        
+        await self.processor.updateSchedules([oldSchedule, scheduleNew])
+        let results = await takeNext()
+        XCTAssertEqual(results.count, 1)
+        XCTAssertEqual("new-schedule-id", results.first?.scheduleID)
+        XCTAssertEqual(TriggerExecutionType.execution, results.first?.triggerExecutionType)
     }
     
     private func restoreSchedules(trigger: AutomationTrigger? = nil) async throws {

@@ -53,6 +53,7 @@ extension ThomasViewInfo {
         case .pagerController(let info): [info.properties.view]
         case .media: nil
         case .imageButton: nil
+        case .stackImageButton: nil
         #if !os(tvOS) && !os(watchOS)
         case .webView: nil
         #endif

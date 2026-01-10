@@ -165,6 +165,9 @@ struct ButtonLayout : View {
             case .pagerResume:
                 pagerState.resume()
 
+            case .pagerPauseToggle:
+                pagerState.togglePause()
+
             case .formValidate:
                 break
 

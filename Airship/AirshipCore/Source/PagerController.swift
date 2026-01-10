@@ -8,6 +8,7 @@ struct PagerController: View {
 
     @EnvironmentObject var formDataCollector: ThomasFormDataCollector
     @EnvironmentObject var environment: ThomasEnvironment
+    @EnvironmentObject var state: ThomasState
 
     init(
         info: ThomasViewInfo.PagerController,
@@ -22,7 +23,8 @@ struct PagerController: View {
             info: self.info,
             constraints: constraints,
             environment: environment,
-            parentFormDataCollector: self.formDataCollector
+            formDataCollector: formDataCollector,
+            parentState: state
         )
     }
 
@@ -30,19 +32,22 @@ struct PagerController: View {
     struct Content: View {
         let info: ThomasViewInfo.PagerController
         let constraints: ViewConstraints
+
         @Environment(\.layoutState) var layoutState
 
         @ObservedObject var pagerState: PagerState
         @StateObject var formDataCollector: ThomasFormDataCollector
 
         @Environment(\.isVoiceOverRunning) var isVoiceOverRunning
+        @StateObject var state: ThomasState
 
 
         init(
             info: ThomasViewInfo.PagerController,
             constraints: ViewConstraints,
             environment: ThomasEnvironment,
-            parentFormDataCollector: ThomasFormDataCollector
+            formDataCollector: ThomasFormDataCollector,
+            parentState: ThomasState
         ) {
             self.info = info
             self.constraints = constraints
@@ -59,7 +64,11 @@ struct PagerController: View {
             self._pagerState = ObservedObject(wrappedValue: pagerState)
 
             self._formDataCollector = StateObject(
-                wrappedValue: parentFormDataCollector.copy(pagerState: pagerState)
+                wrappedValue: formDataCollector.with(pagerState: pagerState)
+            )
+
+            self._state = StateObject(
+                wrappedValue: parentState.with(pagerState: pagerState)
             )
         }
 
@@ -73,8 +82,9 @@ struct PagerController: View {
                     pagerState.isVoiceOverRunning = isVoiceOverRunning
                 }
                 .thomasCommon(self.info)
-                .environmentObject(pagerState)
+                .environmentObject(self.pagerState)
                 .environmentObject(self.formDataCollector)
+                .environmentObject(self.state)
                 .environment(\.layoutState, layoutState.override(pagerState: pagerState))
         }
     }

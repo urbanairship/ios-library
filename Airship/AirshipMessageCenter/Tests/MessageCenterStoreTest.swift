@@ -115,6 +115,7 @@ extension MessageCenterMessage {
         return MessageCenterMessage(
             title: UUID().uuidString,
             id: UUID().uuidString,
+            contentType: .html,
             extra: [UUID().uuidString: UUID().uuidString],
             bodyURL: URL(
                 string: "https://www.some-url.fr/\(UUID().uuidString)"
