@@ -128,7 +128,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         _ = await self.executor.interrupted(schedule: schedule, preparedScheduleInfo: preparedInfo)
         let cleared = await self.assetManager.cleared
         XCTAssertEqual([self.preparedInfo.scheduleID], cleared)
-        XCTAssertEqual(analytics.events.first!.0.name, InAppResolutionEvent.interrupted().name)
+        XCTAssertEqual(analytics.events.first!.0.name, ThomasLayoutResolutionEvent.interrupted().name)
     }
 
     @MainActor
@@ -162,7 +162,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
 
         let result = try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
 
-        XCTAssertEqual(analytics.events.first!.0.name, InAppResolutionEvent.control(experimentResult: experimentResult).name)
+        XCTAssertEqual(analytics.events.first!.0.name, ThomasLayoutResolutionEvent.control(experimentResult: experimentResult).name)
         XCTAssertFalse(self.displayAdapter.displayed)
         XCTAssertEqual(result, .finished)
         XCTAssertTrue(self.actionRunner.actionPayloads.isEmpty)
@@ -240,7 +240,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
             preparedScheduleInfo: preparedInfo
         )
 
-        XCTAssertEqual(analytics.events.first!.0.name, InAppResolutionEvent.audienceExcluded().name)
+        XCTAssertEqual(analytics.events.first!.0.name, ThomasLayoutResolutionEvent.audienceExcluded().name)
         XCTAssertFalse(self.displayAdapter.displayed)
         XCTAssertEqual(result, .finished)
         XCTAssertTrue(self.actionRunner.actionPayloads.isEmpty)

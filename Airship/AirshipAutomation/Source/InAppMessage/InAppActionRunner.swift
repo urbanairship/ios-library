@@ -52,7 +52,7 @@ final class DefaultInAppActionRunner: InternalInAppActionRunner {
                 AirshipPermissionStatus
             ) async -> Void = { [analytics] permission, start, end in
                 await analytics.recordEvent(
-                    InAppPermissionResultEvent(
+                    ThomasLayoutPermissionResultEvent(
                         permission: permission,
                         startingStatus: start,
                         endingStatus: end

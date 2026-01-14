@@ -17,8 +17,8 @@ struct DefaultInAppActionRunnerTest {
         )
 
         let customEventContext = InAppCustomEventContext(
-            id: InAppEventMessageID.appDefined(identifier: "foo"),
-            context: InAppEventContext()
+            id: ThomasLayoutEventMessageID.appDefined(identifier: "foo"),
+            context: ThomasLayoutEventContext()
         )
 
         analytics.onMakeCustomEventContext = { lc in
@@ -36,8 +36,8 @@ struct DefaultInAppActionRunnerTest {
     @Test
     func testCustomEventContextNilLayoutContext() {
         let customEventContext = InAppCustomEventContext(
-            id: InAppEventMessageID.appDefined(identifier: "foo"),
-            context: InAppEventContext()
+            id: ThomasLayoutEventMessageID.appDefined(identifier: "foo"),
+            context: ThomasLayoutEventContext()
         )
 
         analytics.onMakeCustomEventContext = { lc in
@@ -70,7 +70,7 @@ struct DefaultInAppActionRunnerTest {
         try verifyEvents(
             [
                 (
-                    InAppPermissionResultEvent(
+                    ThomasLayoutPermissionResultEvent(
                         permission: .displayNotifications,
                         startingStatus: .granted,
                         endingStatus: .granted
@@ -95,7 +95,7 @@ struct DefaultInAppActionRunnerTest {
         try verifyEvents(
             [
                 (
-                    InAppPermissionResultEvent(
+                    ThomasLayoutPermissionResultEvent(
                         permission: .displayNotifications,
                         startingStatus: .granted,
                         endingStatus: .granted
@@ -119,7 +119,7 @@ struct DefaultInAppActionRunnerTest {
     }
 
     private func verifyEvents(
-        _ expected: [(InAppEvent, ThomasLayoutContext?)],
+        _ expected: [(ThomasLayoutEvent, ThomasLayoutContext?)],
         sourceLocation: SourceLocation = #_sourceLocation
     ) throws {
         #expect(expected.count == self.analytics.events.count, sourceLocation: sourceLocation)

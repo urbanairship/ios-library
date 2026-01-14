@@ -287,7 +287,7 @@ private struct MessageCenterMessageContentView: View {
         switch self.contentType {
         case .html:
             webBasedMessageView()
-        case .thomas:
+        case .native:
             thomasMessageView()
         case nil: EmptyView()
         }
@@ -319,15 +319,23 @@ private struct MessageCenterMessageContentView: View {
     
     @ViewBuilder
     private func thomasMessageView() -> some View {
-        MessageCenterThomasView(
-            phase: self.$messageLoadingPhase,
-            layout: self.thomasLoadableLayout,
-            dismiss: {
-                await MainActor.run {
-                    dismiss()
+        if let message = viewModel.message {
+            MessageCenterThomasView(
+                phase: self.$messageLoadingPhase,
+                message: message,
+                layout: self.thomasLoadableLayout,
+                timer: viewModel.timer,
+                dismiss: {
+                    await MainActor.run {
+                        dismiss()
+                    }
                 }
+            ).also { [weak viewModel] view in
+                viewModel?.backButtonCallbackDelegate = view.backButtonDelegate
             }
-        )
+        } else {
+            EmptyView()
+        }
     }
 
     private func dismiss() {

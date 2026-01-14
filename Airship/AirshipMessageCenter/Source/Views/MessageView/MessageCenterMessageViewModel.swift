@@ -24,6 +24,9 @@ public final class MessageCenterMessageViewModel: ObservableObject {
     }
 
     private var fetchMessageTask: Task<MessageCenterMessage?, Never>? = nil
+    
+    let timer: any AirshipTimerProtocol = AirshipTimer()
+    weak var backButtonCallbackDelegate: (any MessageViewBackButtonCallback)? = nil
 
     /// Fetches the message.
     /// - Returns: The message.
@@ -72,4 +75,9 @@ public final class MessageCenterMessageViewModel: ObservableObject {
         await Airship.messageCenter.inbox.delete(messageIDs: [message.id])
         return true
     }
+}
+
+protocol MessageViewBackButtonCallback: AnyObject, Sendable {
+    @MainActor
+    func onBackButtonTapped()
 }

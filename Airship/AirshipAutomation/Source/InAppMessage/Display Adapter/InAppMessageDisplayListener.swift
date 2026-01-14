@@ -25,7 +25,7 @@ final class InAppMessageDisplayListener: InAppMessageViewDelegate {
         timer.start()
 
         analytics.recordEvent(
-            InAppDisplayEvent(),
+            ThomasLayoutDisplayEvent(),
             layoutContext: nil
         )
     }
@@ -33,7 +33,7 @@ final class InAppMessageDisplayListener: InAppMessageViewDelegate {
     func onButtonDismissed(buttonInfo: InAppMessageButtonInfo) {
         tryDismiss { time in
             analytics.recordEvent(
-                InAppResolutionEvent.buttonTap(
+                ThomasLayoutResolutionEvent.buttonTap(
                     identifier: buttonInfo.identifier,
                     description: buttonInfo.label.text,
                     displayTime: time
@@ -47,7 +47,7 @@ final class InAppMessageDisplayListener: InAppMessageViewDelegate {
     func onTimedOut() {
         tryDismiss { time in
             analytics.recordEvent(
-                InAppResolutionEvent.timedOut(displayTime: time),
+                ThomasLayoutResolutionEvent.timedOut(displayTime: time),
                 layoutContext: nil
             )
             return .finished
@@ -57,7 +57,7 @@ final class InAppMessageDisplayListener: InAppMessageViewDelegate {
     func onUserDismissed() {
         tryDismiss { time in
             analytics.recordEvent(
-                InAppResolutionEvent.userDismissed(displayTime: time),
+                ThomasLayoutResolutionEvent.userDismissed(displayTime: time),
                 layoutContext: nil
             )
             return .finished
@@ -67,7 +67,7 @@ final class InAppMessageDisplayListener: InAppMessageViewDelegate {
     func onMessageTapDismissed() {
         tryDismiss { time in
             analytics.recordEvent(
-                InAppResolutionEvent.messageTap(displayTime: time),
+                ThomasLayoutResolutionEvent.messageTap(displayTime: time),
                 layoutContext: nil
             )
             return .finished

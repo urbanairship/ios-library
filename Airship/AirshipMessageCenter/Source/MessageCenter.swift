@@ -98,9 +98,10 @@ final class DefaultMessageCenter: MessageCenter {
 
     private let mutable: MutableValues
     private let privacyManager: any AirshipPrivacyManager
-    private let meteredUsage: any AirshipMeteredUsage
 
     public let inbox: any MessageCenterInbox
+    let meteredUsage: any AirshipMeteredUsage
+    let analytics: any InternalAirshipAnalytics
 
     @MainActor
     public var controller: MessageCenterController {
@@ -149,12 +150,14 @@ final class DefaultMessageCenter: MessageCenter {
         notificationCenter: NotificationCenter = NotificationCenter.default,
         inbox: DefaultMessageCenterInbox,
         controller: MessageCenterController,
-        meteredUsage: any AirshipMeteredUsage
+        meteredUsage: any AirshipMeteredUsage,
+        analytics: any InternalAirshipAnalytics
     ) {
         self.inbox = inbox
         self.privacyManager = privacyManager
         self.mutable = MutableValues(controller: controller, theme: MessageCenterThemeLoader.defaultPlist())
         self.meteredUsage = meteredUsage
+        self.analytics = analytics
 
         if let plist = config.airshipConfig.messageCenterStyleConfig {
             do {
@@ -184,7 +187,8 @@ final class DefaultMessageCenter: MessageCenter {
         channel: any InternalAirshipChannel,
         privacyManager: any AirshipPrivacyManager,
         workManager: any AirshipWorkManagerProtocol,
-        meteredUsage: any AirshipMeteredUsage
+        meteredUsage: any AirshipMeteredUsage,
+        analytics: any InternalAirshipAnalytics
     ) {
 
         let controller = MessageCenterController()
@@ -201,7 +205,8 @@ final class DefaultMessageCenter: MessageCenter {
             privacyManager: privacyManager,
             inbox: inbox,
             controller: controller,
-            meteredUsage: meteredUsage
+            meteredUsage: meteredUsage,
+            analytics: analytics
         )
     }
 
@@ -408,6 +413,14 @@ extension DefaultMessageCenter {
 public extension Airship {
     /// The shared `MessageCenter` instance. `Airship.takeOff` must be called before accessing this instance.
     static var messageCenter: any MessageCenter {
+        Airship.requireComponent(
+            ofType: MessageCenterComponent.self
+        ).messageCenter
+    }
+}
+
+extension Airship {
+    static var internalMessageCenter: DefaultMessageCenter {
         Airship.requireComponent(
             ofType: MessageCenterComponent.self
         ).messageCenter

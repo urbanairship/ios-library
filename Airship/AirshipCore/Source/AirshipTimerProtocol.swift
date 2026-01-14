@@ -14,25 +14,26 @@ public protocol AirshipTimerProtocol: Sendable {
     func stop()
 }
 
+/// - Note: for internal use only.  :nodoc:
 @MainActor
-final class AirshipTimer: AirshipTimerProtocol {
+final public class AirshipTimer: AirshipTimerProtocol {
     private var isStarted: Bool = false
     private var elapsedTime: TimeInterval = 0
     private var startDate: Date? = nil
     private let date: any AirshipDateProtocol
 
-    init(date: any AirshipDateProtocol = AirshipDate.shared) {
+    public init(date: any AirshipDateProtocol = AirshipDate.shared) {
         self.date = date
     }
 
-    func start() {
+    public func start() {
         guard !self.isStarted else { return }
 
         self.startDate = date.now
         self.isStarted = true
     }
 
-    func stop() {
+    public func stop() {
         guard self.isStarted else { return }
 
         self.elapsedTime += currentSessionTime()
@@ -45,7 +46,7 @@ final class AirshipTimer: AirshipTimerProtocol {
         return self.date.now.timeIntervalSince(date)
     }
 
-    var time: TimeInterval {
+    public var time: TimeInterval {
         return self.elapsedTime + currentSessionTime()
     }
 

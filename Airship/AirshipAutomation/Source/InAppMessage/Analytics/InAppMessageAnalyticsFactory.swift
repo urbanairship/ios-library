@@ -14,12 +14,12 @@ protocol InAppMessageAnalyticsFactoryProtocol: Sendable {
 }
 
 struct InAppMessageAnalyticsFactory: InAppMessageAnalyticsFactoryProtocol {
-    private let eventRecorder: InAppEventRecorder
+    private let eventRecorder: ThomasLayoutEventRecorder
     private let displayHistoryStore: any MessageDisplayHistoryStoreProtocol
     private let displayImpressionRuleProvider: any InAppDisplayImpressionRuleProvider
 
     init(
-        eventRecorder: InAppEventRecorder,
+        eventRecorder: ThomasLayoutEventRecorder,
         displayHistoryStore: any MessageDisplayHistoryStoreProtocol,
         displayImpressionRuleProvider: any InAppDisplayImpressionRuleProvider
     ) {

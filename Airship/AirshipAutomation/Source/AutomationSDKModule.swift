@@ -24,7 +24,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let displayCoordinatorManager = DisplayCoordinatorManager(dataStore: args.dataStore)
         let frequencyLimits = FrequencyLimitManager(config: args.config)
         let scheduleConditionsChangedNotifier = ScheduleConditionsChangedNotifier()
-        let eventRecorder = InAppEventRecorder(airshipAnalytics: args.analytics, meteredUsage: args.meteredUsage)
+        let eventRecorder = ThomasLayoutEventRecorder(airshipAnalytics: args.analytics, meteredUsage: args.meteredUsage)
         let metrics = ApplicationMetrics(dataStore: args.dataStore, privacyManager: args.privacyManager)
 
         let automationStore = AutomationStore(config: args.config)

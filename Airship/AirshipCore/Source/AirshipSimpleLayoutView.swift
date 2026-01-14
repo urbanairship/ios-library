@@ -22,13 +22,13 @@ public struct AirshipSimpleLayoutView: View {
     public init(
         layout: AirshipLayout,
         delegate: any ThomasDelegate,
+        timer: (any AirshipTimerProtocol)? = nil,
         extensions: ThomasExtensions? = nil
     ) {
-        self.environment = ThomasEnvironment(delegate: delegate, extensions: extensions)
+        self.environment = ThomasEnvironment(delegate: delegate, extensions: extensions, timer: timer)
         self.layout = layout
         self.viewConstraints = viewConstraints
     }
-    
     
     public var body: some View {
         RootView(

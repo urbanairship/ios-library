@@ -25,7 +25,8 @@ public class MessageCenterSDKModule: NSObject, AirshipSDKModule {
             channel: args.channel,
             privacyManager: args.privacyManager,
             workManager: args.workManager,
-            meteredUsage: args.meteredUsage
+            meteredUsage: args.meteredUsage,
+            analytics: args.analytics
         )
 
         return MessageCenterSDKModule(messageCenter: messageCenter)

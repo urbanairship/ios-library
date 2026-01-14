@@ -346,7 +346,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     ) async throws -> DisplayResult {
         return try await withCheckedThrowingContinuation { continuation in
             let listener = ThomasDisplayListener(analytics: analytics) { result in
-                continuation.resume(returning: result)
+                continuation.resume(returning: result.automationDisplayResult)
             }
 
 #if !os(tvOS)
@@ -396,5 +396,15 @@ fileprivate class AssetCacheImageProvider : AirshipImageProvider {
         }
         
         return imageData
+    }
+}
+
+extension ThomasDisplayListener.DisplayResult {
+    var automationDisplayResult: DisplayResult {
+        return switch self {
+            case .finished: .finished
+            case .cancel: .cancel
+            @unknown default: .finished
+        }
     }
 }

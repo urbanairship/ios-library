@@ -26,7 +26,7 @@ final class CustomDisplayAdapterWrapper: DisplayAdapter {
 
     @MainActor
     func display(displayTarget: AirshipDisplayTarget, analytics: any InAppMessageAnalyticsProtocol) async throws -> DisplayResult {
-        analytics.recordEvent(InAppDisplayEvent(), layoutContext: nil)
+        analytics.recordEvent(ThomasLayoutDisplayEvent(), layoutContext: nil)
         let scene = try displayTarget.sceneProvider()
         let timer = ActiveTimer()
         timer.start()
@@ -36,7 +36,7 @@ final class CustomDisplayAdapterWrapper: DisplayAdapter {
         switch(result) {
         case .buttonTap(let buttonInfo):
             analytics.recordEvent(
-                InAppResolutionEvent.buttonTap(
+                ThomasLayoutResolutionEvent.buttonTap(
                     identifier: buttonInfo.identifier,
                     description: buttonInfo.label.text,
                     displayTime: timer.time
@@ -47,17 +47,17 @@ final class CustomDisplayAdapterWrapper: DisplayAdapter {
             return buttonInfo.behavior == .cancel ? .cancel : .finished
         case .messageTap:
             analytics.recordEvent(
-                InAppResolutionEvent.messageTap(displayTime: timer.time),
+                ThomasLayoutResolutionEvent.messageTap(displayTime: timer.time),
                 layoutContext: nil
             )
         case .userDismissed:
             analytics.recordEvent(
-                InAppResolutionEvent.userDismissed(displayTime: timer.time),
+                ThomasLayoutResolutionEvent.userDismissed(displayTime: timer.time),
                 layoutContext: nil
             )
         case .timedOut:
             analytics.recordEvent(
-                InAppResolutionEvent.timedOut(displayTime: timer.time),
+                ThomasLayoutResolutionEvent.timedOut(displayTime: timer.time),
                 layoutContext: nil
             )
         }

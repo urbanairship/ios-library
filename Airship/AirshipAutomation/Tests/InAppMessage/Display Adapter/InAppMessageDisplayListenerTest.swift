@@ -26,12 +26,12 @@ class InAppMessageDisplayListenerTests: XCTestCase {
 
         listener.onAppear()
 
-        verifyEvents([InAppDisplayEvent()])
+        verifyEvents([ThomasLayoutDisplayEvent()])
         XCTAssertTrue(timer.isStarted)
 
         listener.onAppear()
 
-        verifyEvents([InAppDisplayEvent(), InAppDisplayEvent()])
+        verifyEvents([ThomasLayoutDisplayEvent(), ThomasLayoutDisplayEvent()])
         XCTAssertNil(self.result.value)
     }
 
@@ -50,7 +50,7 @@ class InAppMessageDisplayListenerTests: XCTestCase {
 
         verifyEvents(
             [
-                InAppResolutionEvent.buttonTap(
+                ThomasLayoutResolutionEvent.buttonTap(
                     identifier: "button id",
                     description: "button label",
                     displayTime: 10
@@ -77,7 +77,7 @@ class InAppMessageDisplayListenerTests: XCTestCase {
 
         verifyEvents(
             [
-                InAppResolutionEvent.buttonTap(
+                ThomasLayoutResolutionEvent.buttonTap(
                     identifier: "button id",
                     description: "button label",
                     displayTime: 10
@@ -96,7 +96,7 @@ class InAppMessageDisplayListenerTests: XCTestCase {
 
         listener.onTimedOut()
 
-        verifyEvents([InAppResolutionEvent.timedOut(displayTime: 3)])
+        verifyEvents([ThomasLayoutResolutionEvent.timedOut(displayTime: 3)])
         XCTAssertFalse(timer.isStarted)
         XCTAssertEqual(self.result.value, .finished)
     }
@@ -108,7 +108,7 @@ class InAppMessageDisplayListenerTests: XCTestCase {
 
         listener.onUserDismissed()
 
-        verifyEvents([InAppResolutionEvent.userDismissed(displayTime: 3)])
+        verifyEvents([ThomasLayoutResolutionEvent.userDismissed(displayTime: 3)])
         XCTAssertFalse(timer.isStarted)
         XCTAssertEqual(self.result.value, .finished)
     }
@@ -120,11 +120,11 @@ class InAppMessageDisplayListenerTests: XCTestCase {
 
         listener.onMessageTapDismissed()
 
-        verifyEvents([InAppResolutionEvent.messageTap(displayTime: 2)])
+        verifyEvents([ThomasLayoutResolutionEvent.messageTap(displayTime: 2)])
         XCTAssertEqual(self.result.value, .finished)
     }
 
-    private func verifyEvents(_ expected: [InAppEvent], line: UInt = #line) {
+    private func verifyEvents(_ expected: [ThomasLayoutEvent], line: UInt = #line) {
         XCTAssertEqual(expected.count, self.analytics.events.count, line: line)
 
         expected.indices.forEach { index in

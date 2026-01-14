@@ -7,17 +7,11 @@ import AirshipCore
 #endif
 
 struct InAppCustomEventContext: Sendable, Encodable, Equatable {
-    var id: InAppEventMessageID
-    var context: InAppEventContext?
+    var id: ThomasLayoutEventMessageID
+    var context: ThomasLayoutEventContext?
 }
 
-protocol InAppMessageAnalyticsProtocol: AnyObject, Sendable {
-    @MainActor
-    func recordEvent(
-        _ event: any InAppEvent,
-        layoutContext: ThomasLayoutContext?
-    )
-
+protocol InAppMessageAnalyticsProtocol: ThomasLayoutMessageAnalyticsProtocol {
     @MainActor
     func makeCustomEventContext(layoutContext: ThomasLayoutContext?) -> InAppCustomEventContext?
 }
@@ -27,7 +21,7 @@ final class LoggingInAppMessageAnalytics: InAppMessageAnalyticsProtocol {
         return nil
     }
     
-    func recordEvent(_ event: any InAppEvent, layoutContext: ThomasLayoutContext?) {
+    func recordEvent(_ event: any ThomasLayoutEvent, layoutContext: ThomasLayoutContext?) {
         do {
             let body = try event.data?.prettyString ?? "nil"
             let context = try layoutContext?.prettyString ?? "nil"
@@ -53,10 +47,10 @@ fileprivate extension Encodable {
 
 final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
     private let preparedScheduleInfo: PreparedScheduleInfo
-    private let messageID: InAppEventMessageID
-    private let source: InAppEventSource
+    private let messageID: ThomasLayoutEventMessageID
+    private let source: ThomasLayoutEventSource
     private let renderedLocale: AirshipJSON?
-    private let eventRecorder: any InAppEventRecorderProtocol
+    private let eventRecorder: any ThomasLayoutEventRecorderProtocol
     private let isReportingEnabled: Bool
     private let date: any AirshipDateProtocol
 
@@ -64,13 +58,13 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
     private let displayImpressionRule: InAppDisplayImpressionRule
 
     private let displayHistory: AirshipMainActorValue<MessageDisplayHistory>
-    private let displayContext: AirshipMainActorValue<InAppEventContext.Display>
+    private let displayContext: AirshipMainActorValue<ThomasLayoutEventContext.Display>
 
     init(
         preparedScheduleInfo: PreparedScheduleInfo,
         message: InAppMessage,
         displayImpressionRule: InAppDisplayImpressionRule,
-        eventRecorder: any InAppEventRecorderProtocol,
+        eventRecorder: any ThomasLayoutEventRecorderProtocol,
         historyStore: any MessageDisplayHistoryStoreProtocol,
         displayHistory: MessageDisplayHistory,
         date: any AirshipDateProtocol = AirshipDate.shared
@@ -92,7 +86,7 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
         self.displayHistory = AirshipMainActorValue(displayHistory)
 
         self.displayContext = AirshipMainActorValue(
-            InAppEventContext.Display(
+            ThomasLayoutEventContext.Display(
                 triggerSessionID: preparedScheduleInfo.triggerSessionID,
                 isFirstDisplay: displayHistory.lastDisplay == nil,
                 isFirstDisplayTriggerSessionID: preparedScheduleInfo.triggerSessionID != displayHistory.lastDisplay?.triggerSessionID
@@ -104,7 +98,7 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
     func makeCustomEventContext(layoutContext: ThomasLayoutContext?) -> InAppCustomEventContext? {
         return InAppCustomEventContext(
             id: self.messageID,
-            context: InAppEventContext.makeContext(
+            context: ThomasLayoutEventContext.makeContext(
                 reportingContext: self.preparedScheduleInfo.reportingContext,
                 experimentsResult: self.preparedScheduleInfo.experimentResult,
                 layoutContext: layoutContext,
@@ -114,12 +108,12 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
     }
 
     func recordEvent(
-        _ event: any InAppEvent,
+        _ event: any ThomasLayoutEvent,
         layoutContext: ThomasLayoutContext?
     ) {
         let now = self.date.now
 
-        if event is InAppDisplayEvent {
+        if event is ThomasLayoutDisplayEvent {
             if let lastDisplay = displayHistory.value.lastDisplay {
                 if self.preparedScheduleInfo.triggerSessionID == lastDisplay.triggerSessionID {
                     self.displayContext.update { value in
@@ -156,9 +150,9 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
 
         guard self.isReportingEnabled else { return }
 
-        let data = InAppEventData(
+        let data = ThomasLayoutEventData(
             event: event, 
-            context: InAppEventContext.makeContext(
+            context: ThomasLayoutEventContext.makeContext(
                 reportingContext: self.preparedScheduleInfo.reportingContext,
                 experimentsResult: self.preparedScheduleInfo.experimentResult,
                 layoutContext: layoutContext,
@@ -212,7 +206,7 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
         message: InAppMessage,
         scheduleID: String,
         campaigns: AirshipJSON?
-    ) -> InAppEventMessageID {
+    ) -> ThomasLayoutEventMessageID {
         switch (message.source ?? .remoteData) {
         case .appDefined: return .appDefined(identifier: scheduleID)
         case .remoteData: return .airship(identifier: scheduleID, campaigns: campaigns)
@@ -222,7 +216,7 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
 
     private static func makeEventSource(
         message: InAppMessage
-    ) -> InAppEventSource {
+    ) -> ThomasLayoutEventSource {
         switch (message.source ?? .remoteData) {
         case .appDefined: return .appDefined
         case .remoteData: return .airship

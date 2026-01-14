@@ -332,7 +332,7 @@ private struct MessageListResponse: Decodable {
 }
 
 extension MessageCenterMessage.ContentType: Codable {
-    init(from decoder: any Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let value = try decoder.singleValueContainer().decode(String.self)
         
         self = MessageCenterMessage.ContentType

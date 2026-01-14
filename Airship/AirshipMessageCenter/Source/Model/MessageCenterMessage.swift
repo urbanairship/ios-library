@@ -33,6 +33,9 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable {
     /// The unread status of the message.
     /// `true` if the message is unread, otherwise `false`.
     public var unread: Bool
+    
+    /// The message center content type
+    public let contentType: ContentType
 
     /// The reporting data of the message.
     let messageReporting: AirshipJSON?
@@ -46,12 +49,9 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable {
     /// It can contain more values than the message.
     let rawMessageObject: AirshipJSON
     
-    /// The message center content type
-    let contentType: ContentType
-    
-    enum ContentType: String, CaseIterable {
+    public enum ContentType: String, CaseIterable, Sendable {
         case html = "text/html"
-        case thomas = "application/vnd.urbanairship.thomas+json; version=1;"
+        case native = "application/vnd.urbanairship.thomas+json; version=1;"
     }
 
     init(

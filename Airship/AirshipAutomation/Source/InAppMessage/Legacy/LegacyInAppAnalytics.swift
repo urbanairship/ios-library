@@ -13,11 +13,11 @@ protocol LegacyInAppAnalyticsProtocol: Sendable {
 }
 
 struct LegacyInAppAnalytics : LegacyInAppAnalyticsProtocol {
-    let recorder: any InAppEventRecorderProtocol
+    let recorder: any ThomasLayoutEventRecorderProtocol
 
     func recordReplacedEvent(scheduleID: String, replacementID: String) {
         recorder.recordEvent(
-            inAppEventData: InAppEventData(
+            inAppEventData: ThomasLayoutEventData(
                 event: LegacyResolutionEvent.replaced(replacementID: replacementID),
                 context: nil,
                 source: .airship,
@@ -29,7 +29,7 @@ struct LegacyInAppAnalytics : LegacyInAppAnalyticsProtocol {
 
     func recordDirectOpenEvent(scheduleID: String) {
         recorder.recordEvent(
-            inAppEventData: InAppEventData(
+            inAppEventData: ThomasLayoutEventData(
                 event: LegacyResolutionEvent.directOpen(),
                 context: nil,
                 source: .airship,
@@ -40,7 +40,7 @@ struct LegacyInAppAnalytics : LegacyInAppAnalyticsProtocol {
     }
 }
 
-struct LegacyResolutionEvent : InAppEvent {
+struct LegacyResolutionEvent : ThomasLayoutEvent {
     let name = EventType.inAppResolution
 
     let data: (any Encodable & Sendable)?

@@ -167,6 +167,8 @@ public struct MessageCenterMessageViewWithNavigation: View {
         if let dismissAction = self.dismissAction {
             dismissAction()
         }
+        
+        messageViewModel.backButtonCallbackDelegate?.onBackButtonTapped()
         presentationMode.wrappedValue.dismiss()
     }
 }

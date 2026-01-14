@@ -11,9 +11,9 @@ final class TestInAppMessageAnalytics: InAppMessageAnalyticsProtocol, @unchecked
         return onMakeCustomEventContext!(layoutContext)
     }
     
-    var events: [(InAppEvent, ThomasLayoutContext?)] = []
+    var events: [(ThomasLayoutEvent, ThomasLayoutContext?)] = []
     var impressionsRecored: UInt = 0
-    func recordEvent(_ event: InAppEvent, layoutContext: ThomasLayoutContext?) {
+    func recordEvent(_ event: ThomasLayoutEvent, layoutContext: ThomasLayoutContext?) {
         events.append((event, layoutContext))
     }
 }
