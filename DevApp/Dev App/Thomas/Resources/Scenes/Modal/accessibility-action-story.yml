@@ -366,7 +366,7 @@ view:
                       hex: "#000000"
                       alpha: 1
     - size:
-        height: 5
+        height: 10
         width: 80%
       position:
         vertical: top
@@ -382,6 +382,7 @@ view:
           direction: horizontal
           sizing: equal
           spacing: 4
+          inactive_segment_scaler: 0.2
           progress_color:
             default:
               hex: "#E6E6FA"

@@ -1261,6 +1261,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 var spacing: Double?
                 var progressColor: ThomasColor
                 var trackColor: ThomasColor
+                var inactiveSegmentScaler: Double?
 
                 private enum CodingKeys: String, CodingKey {
                     case type
@@ -1269,6 +1270,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                     case spacing
                     case progressColor = "progress_color"
                     case trackColor = "track_color"
+                    case inactiveSegmentScaler = "inactive_segment_scaler"
                 }
             }
         }
