@@ -4,6 +4,13 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.1.1 - January 16, 2026
+Patch release that improves VoiceOver focus control and sizing for the progress bar indicator in Story views.
+
+### Changes
+- Added support for sizing inactive segments in Story view progress indicators.
+- Improved VoiceOver focus handling for Message Center Web content.
+
 ## Version 20.1.0 - January 9, 2026
 Minor release that includes several fixes and improvements for Scenes, In-App Automations, and Message Center.
 
