@@ -166,6 +166,9 @@ private struct MessageCenterMessageContentView: View {
     @State
     private var opacity = 0.0
     
+    @AccessibilityFocusState
+    private var messageLoaded: Bool
+    
     @State
     private var contentType: MessageCenterMessage.ContentType? = nil
 
@@ -245,6 +248,14 @@ private struct MessageCenterMessageContentView: View {
                 .onReceive(Just(messageLoadingPhase)) { _ in
                     if case .loaded = self.messageLoadingPhase {
                         self.opacity = 1.0
+                        
+                        // Ensure ProgressView is completely removed from accessibility
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                            if case .loaded = self.messageLoadingPhase {
+                                self.messageLoaded = true
+                            }
+                        }
+                        
                         if Airship.isFlying {
                             Task {
                                 await viewModel.markRead()
@@ -253,6 +264,7 @@ private struct MessageCenterMessageContentView: View {
                     }
                 }
                 .animation(.easeInOut(duration: 0.5), value: self.opacity)
+                .accessibilityFocused($messageLoaded)
             
             if case .loading = self.messageLoadingPhase {
                 ProgressView()
@@ -278,6 +290,9 @@ private struct MessageCenterMessageContentView: View {
                         }
                     }
                 }
+            } else {
+                EmptyView()
+                    .accessibilityHidden(true)
             }
         }
     }
@@ -310,6 +325,7 @@ private struct MessageCenterMessageContentView: View {
                 }
             }
         )
+        .accessibilityElement(children: .contain)
 #else
         Text("ua_mc_failed_to_load".messageCenterLocalizedString)
             .font(.headline)
