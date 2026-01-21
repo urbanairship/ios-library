@@ -6,7 +6,8 @@ import SwiftUI
 struct StoryIndicator: View {
 
     private static let defaultSpacing = 10.0
-    private static let defaultHeight = 32.0
+    private static let defaultHeight = 6.0
+    private static let defaultInactiveSegmentScaler = 0.5
     
     let info: ThomasViewInfo.StoryIndicator
     let constraints: ViewConstraints
@@ -73,10 +74,16 @@ struct StoryIndicator: View {
         progressDelay: Binding<Double>? = nil,
         constraints: ViewConstraints
     ) -> some View {
+        let scaler =
+            style.inactiveSegmentScaler ?? StoryIndicator.defaultInactiveSegmentScaler
         Rectangle()
             .fill(indicatorColor(index))
             .airshipApplyIf(progressDelay == nil) { view in
-                view.frame(height: (constraints.height ?? StoryIndicator.defaultHeight) * 0.5) }
+                view.frame(
+                    height: (constraints.height ?? StoryIndicator.defaultHeight)
+                        * scaler
+                )
+            }
             .overlayView {
                 if let progressDelay = progressDelay {
                     GeometryReader { metrics in
@@ -103,6 +110,7 @@ struct StoryIndicator: View {
             progressDelay: progress,
             childConstraints: childConstraints)
         .animation(nil, value: self.info)
+        .frame(height: constraints.height ?? StoryIndicator.defaultHeight)
         .constraints(constraints)
         .thomasCommon(self.info)
     }

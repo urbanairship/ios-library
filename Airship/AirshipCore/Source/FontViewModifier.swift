@@ -109,7 +109,7 @@ extension View {
         scaledFontSize: Double
     ) -> some View {
         if let multiplier {
-            if #available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, *) {
+            if #available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *) {
                 self.lineHeight(.multiple(factor: multiplier))
             } else {
                 // Fallback: approximate using scaled font size as base line height.

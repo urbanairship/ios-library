@@ -49,6 +49,8 @@
 		32B5BE4C28F8BFBA00F2254B /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE4A28F8BFBA00F2254B /* Toast.swift */; };
 		32B5BE4E28F94FD200F2254B /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE4D28F94FD200F2254B /* ToastView.swift */; };
 		32B5BE4F28F94FD200F2254B /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE4D28F94FD200F2254B /* ToastView.swift */; };
+		454A45392F15E1E000A940C7 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 454A45382F15E1E000A940C7 /* AirshipConfig.plist */; };
+		454A453A2F15E1E000A940C7 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 454A45382F15E1E000A940C7 /* AirshipConfig.plist */; };
 		6E7DB38F28ED0AF3002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6E7DB39028ED0AF4002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6E7DB39128ED0AF5002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
@@ -89,8 +91,6 @@
 		6EB21B032E821E34001A5660 /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21B012E821E30001A5660 /* DeepLinkHandler.swift */; };
 		6EB21B052E821E50001A5660 /* PushNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21B042E821E4C001A5660 /* PushNotificationHandler.swift */; };
 		6EB21B062E821E50001A5660 /* PushNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21B042E821E4C001A5660 /* PushNotificationHandler.swift */; };
-		6EC755692A4B842600851ABB /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EC7555A2A4B83AC00851ABB /* AirshipConfig.plist */; };
-		6EC7556A2A4B842600851ABB /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EC7555A2A4B83AC00851ABB /* AirshipConfig.plist */; };
 		6EDB2B0628D4E24F00A01377 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EDB2B0528D4E24F00A01377 /* WidgetKit.framework */; };
 		6EDB2B0828D4E24F00A01377 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EDB2B0728D4E24F00A01377 /* SwiftUI.framework */; };
 		6EDB2B0B28D4E24F00A01377 /* DeliveryActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDB2B0A28D4E24F00A01377 /* DeliveryActivityWidget.swift */; };
@@ -415,6 +415,7 @@
 		279DCF152E85AA02008B5542 /* LayoutsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutsList.swift; sourceTree = "<group>"; };
 		32B5BE4A28F8BFBA00F2254B /* Toast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		32B5BE4D28F94FD200F2254B /* ToastView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
+		454A45382F15E1E000A940C7 /* AirshipConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Airship.xcodeproj; path = ../Airship/Airship.xcodeproj; sourceTree = "<group>"; };
 		6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AirshipExtensions.xcodeproj; path = ../AirshipExtensions/AirshipExtensions.xcodeproj; sourceTree = "<group>"; };
 		6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryAttributes.swift; sourceTree = "<group>"; };
@@ -437,7 +438,6 @@
 		6EB21AFD2E821DFD001A5660 /* LiveActivityHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityHandler.swift; sourceTree = "<group>"; };
 		6EB21B012E821E30001A5660 /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
 		6EB21B042E821E4C001A5660 /* PushNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationHandler.swift; sourceTree = "<group>"; };
-		6EC7555A2A4B83AC00851ABB /* AirshipConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
 		6EDB2B0428D4E24F00A01377 /* LiveActivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LiveActivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EDB2B0528D4E24F00A01377 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		6EDB2B0728D4E24F00A01377 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -658,7 +658,7 @@
 		CCDA359A1B8D233A00950AD5 = {
 			isa = PBXGroup;
 			children = (
-				6EC7555A2A4B83AC00851ABB /* AirshipConfig.plist */,
+				454A45382F15E1E000A940C7 /* AirshipConfig.plist */,
 				6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */,
 				6E65D58B2396E9A300AF2D1A /* AirshipExtensions.xcodeproj */,
 				6EAAE97928C7E18B003CAE53 /* Dev App */,
@@ -977,7 +977,7 @@
 				279DCEE82E85A5BD008B5542 /* Scenes in Resources */,
 				279DCEE92E85A5BD008B5542 /* Messages in Resources */,
 				279DCEFB2E85A6C6008B5542 /* JurassicPark.otf in Resources */,
-				6EC755692A4B842600851ABB /* AirshipConfig.plist in Resources */,
+				454A453A2F15E1E000A940C7 /* AirshipConfig.plist in Resources */,
 				6EAAE97F28C7E18C003CAE53 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -989,7 +989,7 @@
 				279DCEE62E85A5BD008B5542 /* Scenes in Resources */,
 				279DCEE72E85A5BD008B5542 /* Messages in Resources */,
 				279DCEFC2E85A6C6008B5542 /* JurassicPark.otf in Resources */,
-				6EC7556A2A4B842600851ABB /* AirshipConfig.plist in Resources */,
+				454A45392F15E1E000A940C7 /* AirshipConfig.plist in Resources */,
 				6EAAE9BE28C7E31E003CAE53 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
