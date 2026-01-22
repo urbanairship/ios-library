@@ -32,7 +32,16 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
 
         let analyticsFactory = InAppMessageAnalyticsFactory(
             eventRecorder: eventRecorder,
-            displayHistoryStore: MessageDisplayHistoryStore(store: automationStore),
+            displayHistoryStore: MessageDisplayHistoryStore(
+                storageGetter: { scheduleID in
+                    try await automationStore.getAssociatedData(scheduleID: scheduleID)
+                },
+                storageSetter: { scheduleID, history in
+                    try await automationStore.updateSchedule(scheduleID: scheduleID) { data in
+                        data.associatedData = try JSONEncoder().encode(history)
+                    }
+                }
+            ),
             displayImpressionRuleProvider: DefaultInAppDisplayImpressionRuleProvider()
         )
 

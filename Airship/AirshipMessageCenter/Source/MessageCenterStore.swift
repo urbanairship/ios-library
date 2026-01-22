@@ -409,7 +409,8 @@ actor MessageCenterStore {
 
     func updateMessages(
         messages: [MessageCenterMessage],
-        lastModifiedTime: String?
+        lastModifiedTime: String?,
+        updateLastModifiedTime: Bool = true
     ) async throws {
         guard let coreData = self.coreData else {
             throw MessageCenterStoreError.coreDataUnavailble
@@ -435,6 +436,10 @@ actor MessageCenterStore {
                 data.rawMessageObject = AirshipJSONUtils.toData(message.rawMessageObject.unWrap() as? [String: Any])
                 data.messageReporting = AirshipJSONUtils.toData (message.messageReporting?.unWrap()as? [String: Any])
                 data.messageExpiration = message.expirationDate
+                
+                if let local = message.associatedData {
+                    data.associatedData = local
+                }
             }
 
             // Delete any messages no longer in the listing
@@ -449,7 +454,9 @@ actor MessageCenterStore {
             )
         }
         
-        self.setLastMessageListModifiedTime(lastModifiedTime)
+        if updateLastModifiedTime {
+            self.setLastMessageListModifiedTime(lastModifiedTime)
+        }
     }
 }
 
@@ -472,7 +479,7 @@ extension InboxMessageData {
         } else {
             MessageCenterMessage.ContentType.html
         }
-
+        
         return MessageCenterMessage(
             title: title,
             id: messageID,
@@ -484,7 +491,8 @@ extension InboxMessageData {
             unread: (self.unread && self.unreadClient),
             sentDate: messageSent,
             messageURL: messageURL,
-            rawMessageObject: AirshipJSONUtils.json(rawMessageObject) as? [String : Any] ?? [:]
+            rawMessageObject: AirshipJSONUtils.json(rawMessageObject) as? [String : Any] ?? [:],
+            associatedData: self.associatedData
         )
     }
 }

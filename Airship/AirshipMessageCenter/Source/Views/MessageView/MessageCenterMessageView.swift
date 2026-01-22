@@ -319,17 +319,12 @@ private struct MessageCenterMessageContentView: View {
     
     @ViewBuilder
     private func thomasMessageView() -> some View {
-        if let message = viewModel.message {
+        if let analytics = viewModel.makeAnalytics(onDismiss: { [action = dismissAction] in action?() } ) {
             MessageCenterThomasView(
                 phase: self.$messageLoadingPhase,
-                message: message,
                 layout: self.thomasLoadableLayout,
-                timer: viewModel.timer,
-                dismiss: {
-                    await MainActor.run {
-                        dismiss()
-                    }
-                }
+                analytics: analytics,
+                timer: viewModel.timer
             ).also { [weak viewModel] view in
                 viewModel?.backButtonCallbackDelegate = view.backButtonDelegate
             }

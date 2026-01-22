@@ -64,4 +64,7 @@ class InboxMessageData: NSManagedObject {
     
     /// The message content type
     @NSManaged var contentType: String?
+    
+    /// The message associated data(display history)
+    @NSManaged var associatedData: Data?
 }

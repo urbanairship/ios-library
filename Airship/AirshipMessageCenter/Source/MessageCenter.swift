@@ -98,10 +98,14 @@ final class DefaultMessageCenter: MessageCenter {
 
     private let mutable: MutableValues
     private let privacyManager: any AirshipPrivacyManager
-
-    public let inbox: any MessageCenterInbox
+    
+    let internalInbox: any InternalMessageCenterInbox
     let meteredUsage: any AirshipMeteredUsage
     let analytics: any InternalAirshipAnalytics
+    
+    public var inbox: any MessageCenterInbox {
+        return self.internalInbox
+    }
 
     @MainActor
     public var controller: MessageCenterController {
@@ -153,7 +157,7 @@ final class DefaultMessageCenter: MessageCenter {
         meteredUsage: any AirshipMeteredUsage,
         analytics: any InternalAirshipAnalytics
     ) {
-        self.inbox = inbox
+        self.internalInbox = inbox
         self.privacyManager = privacyManager
         self.mutable = MutableValues(controller: controller, theme: MessageCenterThemeLoader.defaultPlist())
         self.meteredUsage = meteredUsage

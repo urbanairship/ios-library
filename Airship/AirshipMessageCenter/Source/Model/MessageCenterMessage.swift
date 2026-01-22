@@ -8,6 +8,9 @@ import AirshipCore
 
 /// Message center message.
 public struct MessageCenterMessage: Sendable, Equatable, Identifiable {
+    private static let productIdKey = "product ID"
+    private static let defaultProductID = "default_thomas_mc"
+    
     /// The message title.
     public var title: String
 
@@ -49,6 +52,10 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable {
     /// It can contain more values than the message.
     let rawMessageObject: AirshipJSON
     
+    /// The message associated data
+    /// Currently only message display history for native messages is stored there
+    var associatedData: Data?
+    
     public enum ContentType: String, CaseIterable, Sendable {
         case html = "text/html"
         case native = "application/vnd.urbanairship.thomas+json; version=1;"
@@ -65,7 +72,8 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable {
         unread: Bool,
         sentDate: Date,
         messageURL: URL,
-        rawMessageObject: [String: Any]
+        rawMessageObject: [String: Any],
+        associatedData: Data? = nil
     ) {
         self.title = title
         self.id = id
@@ -78,6 +86,11 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable {
         self.sentDate = sentDate
         self.messageURL = messageURL
         self.rawMessageObject = (try? AirshipJSON.wrap(rawMessageObject))  ?? AirshipJSON.null
+        self.associatedData = associatedData
+    }
+    
+    public static func == (lhs: MessageCenterMessage, rhs: MessageCenterMessage) -> Bool {
+        return lhs.rawMessageObject == rhs.rawMessageObject
     }
 }
 
@@ -127,5 +140,9 @@ extension MessageCenterMessage {
             return (result == .orderedAscending || result == .orderedSame)
         }
         return false
+    }
+    
+    var productID: String {
+        return self.extra[Self.productIdKey] ?? Self.defaultProductID
     }
 }

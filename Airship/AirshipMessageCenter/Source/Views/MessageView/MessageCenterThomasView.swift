@@ -22,17 +22,15 @@ struct MessageCenterThomasView: View {
     
     init(
         phase: Binding<MessageCenterMessageView.DisplayPhase>,
-        message: MessageCenterMessage,
         layout: LoadableLayout,
-        timer: any AirshipTimerProtocol,
-        dismiss: @escaping () async -> Void
+        analytics: ThomasDisplayListener,
+        timer: any AirshipTimerProtocol
     ) {
         self._phase = phase
         self.viewModel = ViewModel(
-            message: message,
             layout: layout,
-            timer: timer,
-            onDismiss: dismiss
+            analytics: analytics,
+            timer: timer
         )
     }
     
@@ -60,7 +58,6 @@ struct MessageCenterThomasView: View {
 
 @MainActor
 private final class ViewModel: ObservableObject {
-    private let onDismiss: () async -> Void
     private let loadableLayout: LoadableLayout
     
     @Published
@@ -70,29 +67,14 @@ private final class ViewModel: ObservableObject {
     let timer: any AirshipTimerProtocol
     
     init (
-        message: MessageCenterMessage,
         layout: LoadableLayout,
-        timer: any AirshipTimerProtocol,
-        analytics: any InternalAirshipAnalytics = Airship.internalMessageCenter.analytics,
-        meteredUsage: any AirshipMeteredUsage = Airship.internalMessageCenter.meteredUsage,
-        onDismiss: @escaping () async -> Void
+        analytics: ThomasDisplayListener,
+        timer: any AirshipTimerProtocol
     ) {
         self.timer = timer
         self.loadableLayout = layout
         self.layout = loadableLayout.layout
-        self.onDismiss = onDismiss
-        self.analyticsRecorder = ThomasDisplayListener(
-            analytics: DefaultMessageViewAnalytics(
-                message: message,
-                eventRecorder: ThomasLayoutEventRecorder(
-                    airshipAnalytics: analytics,
-                    meteredUsage: meteredUsage)
-            ),
-            onDismiss: {  _ in
-                Task { @MainActor in
-                    await onDismiss()
-                }
-            })
+        self.analyticsRecorder = analytics
     }
     
     func loadLayout() async -> MessageCenterMessageView.DisplayPhase {

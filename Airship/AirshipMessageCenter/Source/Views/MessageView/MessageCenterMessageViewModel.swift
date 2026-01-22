@@ -27,6 +27,42 @@ public final class MessageCenterMessageViewModel: ObservableObject {
     
     let timer: any AirshipTimerProtocol = AirshipTimer()
     weak var backButtonCallbackDelegate: (any MessageViewBackButtonCallback)? = nil
+    
+    private var nativeAnalytics: ThomasDisplayListener? = nil
+    
+    func makeAnalytics(
+        messageCenter: DefaultMessageCenter = Airship.internalMessageCenter,
+        onDismiss: @MainActor @escaping () async -> Void
+    ) -> ThomasDisplayListener? {
+        guard let message else { return nil }
+        
+        if let cached = nativeAnalytics {
+            return cached
+        }
+        
+        let result = ThomasDisplayListener(
+            analytics: DefaultMessageViewAnalytics(
+                message: message,
+                eventRecorder: ThomasLayoutEventRecorder(
+                    airshipAnalytics: messageCenter.analytics,
+                    meteredUsage: messageCenter.meteredUsage),
+                historyStorage: MessageDisplayHistoryStore(
+                    storageGetter: { messageID in
+                        await messageCenter.internalInbox.message(forID: messageID)?.associatedData
+                    },
+                    storageSetter: { messageID, data in
+                        await messageCenter.internalInbox.saveDisplayHistory(for: messageID, history: data)
+                    })
+            ),
+            onDismiss: {  _ in
+                Task { @MainActor in
+                    await onDismiss()
+                }
+            })
+        
+        nativeAnalytics = result
+        return result
+    }
 
     /// Fetches the message.
     /// - Returns: The message.

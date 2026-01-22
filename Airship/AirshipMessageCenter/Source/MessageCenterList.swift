@@ -77,8 +77,12 @@ public protocol MessageCenterInbox: AnyObject, Sendable {
     func refreshMessages(timeout: TimeInterval) async throws -> Bool
 }
 
+protocol InternalMessageCenterInbox: MessageCenterInbox {
+    func saveDisplayHistory(for messageID: String, history: MessageDisplayHistory) async
+}
+
 /// Airship Message Center inbox.
-final class DefaultMessageCenterInbox: MessageCenterInbox, Sendable {
+final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
 
     private enum UpdateType: Sendable {
         case local
@@ -419,6 +423,24 @@ final class DefaultMessageCenterInbox: MessageCenterInbox, Sendable {
         } catch {
             AirshipLogger.error("Failed to fetch message: \(error)")
             return nil
+        }
+    }
+    
+    func saveDisplayHistory(for messageID: String, history: MessageDisplayHistory) async {
+        do {
+            guard var message = try await self.store.message(forID: messageID) else {
+                AirshipLogger.error("Failed to find message to update")
+                return
+            }
+            
+            message.associatedData = try JSONEncoder().encode(history)
+            try await self.store.updateMessages(
+                messages: [message],
+                lastModifiedTime: nil,
+                updateLastModifiedTime: false
+            )
+        } catch {
+            AirshipLogger.error("Failed to save history data message: \(error)")
         }
     }
 
