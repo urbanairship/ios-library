@@ -17,6 +17,7 @@ struct RadioInputController: View {
             environment: environment
         )
         .id(info.properties.identifier)
+        .accessibilityElement(children: .contain)
     }
 
     @MainActor

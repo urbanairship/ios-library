@@ -38,5 +38,6 @@ struct StateController: View {
                     state.with(mutableState: mutableState)
                 }
             )
+            .accessibilityElement(children: .contain)
     }
 }

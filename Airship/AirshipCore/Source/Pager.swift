@@ -157,6 +157,7 @@ struct Pager: View {
         .scrollTargetBehavior(.paging)
         .scrollPosition(id: $scrollPosition)
         .scrollIndicators(.never)
+        .accessibilityElement(children: .contain)
         .airshipOnChangeOf(scrollPosition ?? "", initial: false) { value in
             guard !value.isEmpty, value != self.pagerState.currentPageId else {
                 return
@@ -204,11 +205,7 @@ struct Pager: View {
                         pageItem: pagerState.pageItems[index]
                     )
                 }
-                .accessibilityHidden(
-                    !(
-                        self.isVisible && pagerState.pageItems[index].identifier == pagerState.currentPageId
-                    )
-                )
+                .accessibilityHidden(!self.isVisible)
             }
             .frame(
                 width: metrics.size.width,
@@ -218,6 +215,7 @@ struct Pager: View {
                 \.isButtonActionsEnabled,
                  (!self.isLegacyPageSwipeEnabled || self.translation == 0)
             )
+            .accessibilityElement(children: .contain)
             .id(pagerState.pageItems[index].identifier)
         }
     }
@@ -301,6 +299,8 @@ struct Pager: View {
             .constraints(constraints)
             .thomasCommon(self.info)
             .airshipGeometryGroupCompat()
+            .accessibilityElement(children: .contain)
+
     }
 
     // MARK: Handle Gesture

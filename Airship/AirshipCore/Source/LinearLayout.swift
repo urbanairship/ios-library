@@ -53,6 +53,7 @@ struct LinearLayout: View {
             }
         }
         .airshipGeometryGroupCompat()
+        .accessibilityElement(children: .contain)
         .constraints(self.constraints, alignment: .top)
         .applyFixedSizeForAlignment(info: self.info, constraints: constraints)
     }
