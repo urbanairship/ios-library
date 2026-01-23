@@ -86,6 +86,7 @@ struct PagerController: View {
                 .environmentObject(self.formDataCollector)
                 .environmentObject(self.state)
                 .environment(\.layoutState, layoutState.override(pagerState: pagerState))
+                .accessibilityElement(children: .contain)
         }
     }
 }

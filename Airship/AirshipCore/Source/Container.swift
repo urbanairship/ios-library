@@ -35,6 +35,7 @@ fileprivate struct NewContainer: View {
                 childItem(idx, item: info.properties.items[idx])
             }
         }
+        .accessibilityElement(children: .contain)
         .airshipGeometryGroupCompat()
         .constraints(constraints)
         .clipped()

@@ -96,6 +96,7 @@ struct ModalView: View {
         .ignoresSafeArea(safeAreasToIgnore)
         .opacity(self.contentSize == nil ? 0 : 1)
         .animation(nil, value: self.contentSize)
+        .accessibilityElement(children: .contain)
     }
 
     @ViewBuilder
