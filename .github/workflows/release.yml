@@ -57,6 +57,58 @@ jobs:
         with:
           name: airship-carthage
           path: ./build/Airship.xcframeworks.zip
+
+      - name: Create .NET xcframeworks (no dSYMs, no visionOS)
+        run: |
+          # Extract the full xcframeworks
+          mkdir -p dotnet-xcframeworks
+          unzip -q ./build/Airship.xcframeworks.zip -d temp-xcf
+          mv temp-xcf/*.xcframework dotnet-xcframeworks/
+          rm -rf temp-xcf
+
+          # Remove visionOS slices and dSYMs
+          for xcf in dotnet-xcframeworks/*.xcframework; do
+            # Remove visionOS slices
+            rm -rf "$xcf"/xros-* 2>/dev/null || true
+            # Remove dSYMs from all slices
+            find "$xcf" -name "dSYMs" -type d -exec rm -rf {} + 2>/dev/null || true
+
+            # Update Info.plist to remove visionOS references and dSYMs paths
+            plist="$xcf/Info.plist"
+            if [ -f "$plist" ]; then
+              python3 << PYEOF
+import plistlib
+plist_path = "$plist"
+with open(plist_path, 'rb') as f:
+    plist = plistlib.load(f)
+if 'AvailableLibraries' in plist:
+    # Remove visionOS entries and dSYMs paths
+    new_libs = []
+    for lib in plist['AvailableLibraries']:
+        if 'xros' not in lib.get('LibraryIdentifier', '').lower():
+            # Remove DebugSymbolsPath key if present
+            lib.pop('DebugSymbolsPath', None)
+            new_libs.append(lib)
+    plist['AvailableLibraries'] = new_libs
+with open(plist_path, 'wb') as f:
+    plistlib.dump(plist, f)
+PYEOF
+            fi
+          done
+
+          # Create the dotnet zip
+          zip -rq ./build/Airship.dotnet.xcframeworks.zip dotnet-xcframeworks
+          rm -rf dotnet-xcframeworks
+
+          echo "Created Airship.dotnet.xcframeworks.zip:"
+          ls -lh ./build/Airship.dotnet.xcframeworks.zip
+
+      - name: Upload .NET xcframeworks
+        uses: actions/upload-artifact@v4
+        with:
+          name: airship-dotnet
+          path: ./build/Airship.dotnet.xcframeworks.zip
+
       - name: Upload Documentation
         uses: actions/upload-artifact@v4
         with:
@@ -183,6 +235,12 @@ jobs:
           name: airship-carthage
           path: ./build
 
+      - name: Download .NET xcframeworks
+        uses: actions/download-artifact@v4
+        with:
+          name: airship-dotnet
+          path: ./build
+
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v2
@@ -195,6 +253,7 @@ jobs:
           files: |
             ./build/Airship.zip
             ./build/Airship.xcframeworks.zip
+            ./build/Airship.dotnet.xcframeworks.zip
       - name: Kickoff prebuilt repo
         env:
           GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
