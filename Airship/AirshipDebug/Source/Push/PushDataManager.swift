@@ -18,7 +18,7 @@ final class PushDataManager: Sendable {
         self.appKey = appKey
         self.coreData = UACoreData(
             name: "AirshipDebugPushData",
-            modelURL: DebugResources.bundle()
+            modelURL: AirshipDebugResources.bundle
                 .url(
                     forResource: "AirshipDebugPushData",
                     withExtension: "momd"

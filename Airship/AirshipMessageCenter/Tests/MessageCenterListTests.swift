@@ -14,7 +14,7 @@ final class MessageCenterListTest: XCTestCase {
     private let config: RuntimeConfig = .testConfig()
 
     private lazy var store: MessageCenterStore = {
-        let modelURL = MessageCenterResources.bundle?
+        let modelURL = AirshipMessageCenterResources.bundle
             .url(
                 forResource: "UAInbox",
                 withExtension: "momd"

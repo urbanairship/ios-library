@@ -14,7 +14,7 @@ final class EventDataManager: Sendable {
         self.appKey = appKey
         self.coreData = UACoreData(
             name: "AirshipDebugEventData",
-            modelURL: DebugResources.bundle()
+            modelURL: AirshipDebugResources.bundle
                 .url(
                     forResource: "AirshipDebugEventData",
                     withExtension: "momd"

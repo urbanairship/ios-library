@@ -11,7 +11,7 @@ actor LegacyAutomationStore {
     private let coreData: UACoreData?
 
     init(appKey: String, inMemory: Bool = false) {
-        let modelURL = AutomationResources.bundle.url(
+        let modelURL = AirshipAutomationResources.bundle.url(
             forResource: "UAAutomation",
             withExtension:"momd"
         )

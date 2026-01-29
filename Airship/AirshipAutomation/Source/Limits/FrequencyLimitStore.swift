@@ -20,7 +20,7 @@ actor FrequencyLimitStore {
         appKey: String,
         inMemory: Bool
     ) {
-        let bundle = AutomationResources.bundle
+        let bundle = AirshipAutomationResources.bundle
         if let modelURL = bundle.url(forResource: "UAFrequencyLimits", withExtension:"momd") {
             self.coreData = UACoreData(
                 name: "UAFrequencyLimits",
