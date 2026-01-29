@@ -59,6 +59,9 @@ struct Pager: View {
     }
 
     private var shouldAddA11ySwipeActions: Bool {
+        if isVoiceOverRunning {
+                    return false
+        }
         if self.info.isDefaultSwipeEnabled { return true }
         if self.info.containsGestures([.swipe]) { return true }
         return false
@@ -626,7 +629,7 @@ struct Pager: View {
         if isVoiceOverRunning && lastReportedIndex >= 0 {
             // Use layoutChanged to force VoiceOver to re-scan the page for focusable elements
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                UIAccessibility.post(notification: .screenChanged, argument: nil)
+                UIAccessibility.post(notification: .layoutChanged, argument: nil)
             }
         }
 #endif
@@ -660,4 +663,5 @@ struct Pager: View {
         return dragOffSet
     }
 }
+
 
