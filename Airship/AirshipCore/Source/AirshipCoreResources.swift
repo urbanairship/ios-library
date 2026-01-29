@@ -9,6 +9,9 @@ public final class AirshipCoreResources {
     public static let bundle = findBundle()
 
     private class func findBundle() -> Bundle {
+#if SWIFT_PACKAGE
+        return Bundle.module
+#else
         let mainBundle = Bundle.main
         let sourceBundle = Bundle(for: AirshipCoreResources.self)
 
@@ -44,5 +47,6 @@ public final class AirshipCoreResources {
 
         // Fallback to source
         return sourceBundle
+#endif
     }
 }
