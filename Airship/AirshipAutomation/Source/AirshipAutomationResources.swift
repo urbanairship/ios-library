@@ -9,8 +9,26 @@ import AirshipCore
 /// Resources for AirshipAutomation
 public final class AirshipAutomationResources {
     /// Module bundle
-    public static let bundle = Bundle.airshipModule(
-        moduleName: "AirshipAutomation",
-        sourceBundle: Bundle(for: AirshipAutomationResources.self)
-    )
+    public static let bundle = resolveBundle()
+
+    private static func resolveBundle() -> Bundle {
+#if SWIFT_PACKAGE
+        AirshipLogger.trace("Using Bundle.module for \(moduleName)")
+        let bundle = Bundle.module
+#if DEBUG
+        if bundle.resourceURL == nil {
+            assertionFailure("""
+            AirshipAutomation module was built with SWIFT_PACKAGE
+            but no resources were found. Check your build configuration.
+            """)
+        }
+#endif
+        return bundle
+#endif
+
+        return Bundle.airshipFindModule(
+            moduleName: "AirshipAutomation",
+            sourceBundle: Bundle(for: Self.self)
+        )
+    }
 }

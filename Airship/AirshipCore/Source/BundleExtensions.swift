@@ -4,26 +4,11 @@ public extension Bundle {
 
     /// Returns the bundle for the AirshipModule.
     /// NOTE: For internal use only. :nodoc:
-    static func airshipModule(
+    static func airshipFindModule(
         moduleName: String,
         sourceBundle: Bundle
     ) -> Bundle {
-
-        AirshipLogger.trace("Loading Bundle for module \(moduleName)")
-#if SWIFT_PACKAGE
-        AirshipLogger.trace("Using Bundle.module for \(moduleName)")
-        let bundle = Bundle.module
-#if DEBUG
-        if bundle.resourceURL == nil {
-            assertionFailure("""
-            Airship module '\(moduleName)' was built with SWIFT_PACKAGE
-            but no resources were found. Check your build configuration.
-            """)
-        }
-#endif
-        return bundle
-#endif
-
+        AirshipLogger.trace("Searching for module \(moduleName) Bundle")
         let candidates = [
             "Airship_\(moduleName)", // SPM/Tuist
             "\(moduleName)Resources",  // Cocoapods
