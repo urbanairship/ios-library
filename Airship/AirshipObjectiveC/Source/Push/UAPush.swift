@@ -304,6 +304,19 @@ public final class UAPush: NSObject, Sendable {
         Airship.push.setQuietTimeStartHour(startHour, startMinute: startMinute, endHour: endHour, endMinute: endMinute)
     }
 
+    /// Gets the current push notification status.
+    /// - Parameter completionHandler: The completion handler to call with the notification status.
+    @objc
+    @MainActor
+    public func getNotificationStatus(
+        completionHandler: @escaping (UAPushNotificationStatus) -> Void
+    ) {
+        Task { @MainActor in
+            let status = await Airship.push.notificationStatus
+            completionHandler(UAPushNotificationStatus(status))
+        }
+    }
+
     fileprivate final class Storage: Sendable  {
         @MainActor
         var registrationDelegate: (any RegistrationDelegate)?
