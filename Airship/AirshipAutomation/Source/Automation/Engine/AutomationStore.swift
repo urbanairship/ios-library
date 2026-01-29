@@ -52,7 +52,7 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
     private var migrationTask: Task<Void, any Error>?
 
     init(appKey: String, inMemory: Bool = false) {
-        let modelURL = AutomationResources.bundle.url(
+        let modelURL = AirshipAutomationResources.bundle.url(
             forResource: "AirshipAutomation",
             withExtension:"momd"
         )

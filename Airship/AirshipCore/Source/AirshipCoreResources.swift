@@ -2,47 +2,13 @@
 
 import Foundation
 
-/// Airship core resources
+/// Resources for AirshipCore
 public final class AirshipCoreResources {
 
-    /// Bundle
-    public static let bundle = findBundle()
-
-    private class func findBundle() -> Bundle {
-        let mainBundle = Bundle.main
-        let sourceBundle = Bundle(for: AirshipCoreResources.self)
-
-        // SPM
-        if let path = mainBundle.path(
-            forResource: "Airship_AirshipCore",
-            ofType: "bundle"
-        ) {
-            if let bundle = Bundle(path: path) {
-                return bundle
-            }
-        }
-
-        // Cocoapods (static)
-        if let path = mainBundle.path(
-            forResource: "AirshipCoreResources",
-            ofType: "bundle"
-        ) {
-            if let bundle = Bundle(path: path) {
-                return bundle
-            }
-        }
-
-        // Cocoapods (framework)
-        if let path = sourceBundle.path(
-            forResource: "AirshipCoreResources",
-            ofType: "bundle"
-        ) {
-            if let bundle = Bundle(path: path) {
-                return bundle
-            }
-        }
-
-        // Fallback to source
-        return sourceBundle
-    }
+    /// Module bundle
+    public static let bundle = Bundle.airshipModule(
+        moduleName: "AirshipCore",
+        sourceBundle: Bundle(for: AirshipCoreResources.self)
+    )
 }
+

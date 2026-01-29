@@ -2,25 +2,22 @@
 
 import Foundation
 
-@objc(UADebugResources)
-class DebugResources: NSObject {
-    public static func bundle() -> Bundle {
-        guard
-            let bundlePath = Bundle.main.path(
-                forResource: "Airship_AirshipDebug",
-                ofType: "bundle"
-            )
-        else {
-            return Bundle(for: DebugResources.self)
-        }
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
 
-        return Bundle(path: bundlePath)!
-    }
+/// Resources for AirshipDebug
+public final class AirshipDebugResources {
+    /// Module bundle
+    public static let bundle = Bundle.airshipModule(
+        moduleName: "AirshipDebug",
+        sourceBundle: Bundle(for: AirshipDebugResources.self)
+    )
 }
 
 extension String {
     func localized(
-        bundle: Bundle = DebugResources.bundle(),
+        bundle: Bundle = AirshipDebugResources.bundle,
         tableName: String = "AirshipDebug",
         comment: String = ""
     ) -> String {
