@@ -160,25 +160,38 @@ struct InAppMessageBannerView: View {
             .frame(width: tabWidth, height: tabHeight)
             .foregroundColor(tabColor)
             .accessibilityElement()
-            .accessibilityActions {
-                dissmisActionButton
+            .padding(.horizontal, 40)
+            .padding(.vertical, 16)
+            .contentShape(Rectangle())
+            .airshipFocusableCompat()
+            .accessibilityLabel("ua_dismiss".airshipLocalizedString(fallback: "Dismiss"))
+            .accessibilityAddTraits(.isButton)
+            .accessibilityAction {
+                onDismiss()
             }
+
     }
+    
 
     @ViewBuilder
     private var messageBody: some View {
         let itemSpacing: CGFloat = 16
 
-        let body = VStack(spacing: itemSpacing) {
+        let messageContent = VStack(spacing: itemSpacing) {
             contentBody
             buttonsView
         }
+
+        let body = VStack(spacing: 0) {
+            if (displayContent.placement == .top) {
+                messageContent
+                nub
+            } else {
+                nub
+                messageContent
+            }
+        }
         .padding(.horizontal, itemSpacing)
-        .airshipAddNub(
-            isTopPlacement: displayContent.placement == .top,
-            nub: AnyView(nub),
-            itemSpacing: itemSpacing
-        )
         .airshipGeometryGroupCompat()
 
         if let actions = displayContent.actions {

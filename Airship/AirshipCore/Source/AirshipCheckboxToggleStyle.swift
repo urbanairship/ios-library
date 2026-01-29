@@ -58,7 +58,6 @@ struct AirshipCheckboxToggleStyle: ToggleStyle {
                 }
                 .constraints(constraints, fixedSize: true)
                 .animation(Animation.easeInOut(duration: 0.05), value: configuration.isOn)
-                .addSelectedTrait(configuration.isOn)
             }
 #if os(tvOS)
             .buttonStyle(TVButtonStyle())

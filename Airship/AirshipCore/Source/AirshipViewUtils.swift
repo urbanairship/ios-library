@@ -77,6 +77,17 @@ public extension View {
     }
 
     @ViewBuilder
+    func airshipFocusableCompat(
+        _ isFocusable: Bool = true
+    ) -> some View {
+        if #available(iOS 17.0, *) {
+            self.focusable(isFocusable)
+        } else {
+            self
+        }
+    }
+
+    @ViewBuilder
     func airshipApplyTransitioningPlacement(
         isTopPlacement: Bool
     ) -> some View {
