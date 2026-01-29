@@ -76,23 +76,23 @@ jobs:
             # Update Info.plist to remove visionOS references and dSYMs paths
             plist="$xcf/Info.plist"
             if [ -f "$plist" ]; then
-              python3 << PYEOF
-import plistlib
-plist_path = "$plist"
-with open(plist_path, 'rb') as f:
-    plist = plistlib.load(f)
-if 'AvailableLibraries' in plist:
-    # Remove visionOS entries and dSYMs paths
-    new_libs = []
-    for lib in plist['AvailableLibraries']:
-        if 'xros' not in lib.get('LibraryIdentifier', '').lower():
-            # Remove DebugSymbolsPath key if present
-            lib.pop('DebugSymbolsPath', None)
-            new_libs.append(lib)
-    plist['AvailableLibraries'] = new_libs
-with open(plist_path, 'wb') as f:
-    plistlib.dump(plist, f)
-PYEOF
+              python3 << 'PYEOF'
+              import plistlib
+              plist_path = "$plist"
+              with open(plist_path, 'rb') as f:
+                  plist = plistlib.load(f)
+              if 'AvailableLibraries' in plist:
+                  # Remove visionOS entries and dSYMs paths
+                  new_libs = []
+                  for lib in plist['AvailableLibraries']:
+                      if 'xros' not in lib.get('LibraryIdentifier', '').lower():
+                          # Remove DebugSymbolsPath key if present
+                          lib.pop('DebugSymbolsPath', None)
+                          new_libs.append(lib)
+                  plist['AvailableLibraries'] = new_libs
+              with open(plist_path, 'wb') as f:
+                  plistlib.dump(plist, f)
+              PYEOF
             fi
           done
 
