@@ -10,7 +10,7 @@ public final class AirshipCoreResources {
 
     private static func resolveBundle() -> Bundle {
 #if SWIFT_PACKAGE
-        AirshipLogger.trace("Using Bundle.module for \(moduleName)")
+        AirshipLogger.trace("Using Bundle.module for AirshipCore")
         let bundle = Bundle.module
 #if DEBUG
         if bundle.resourceURL == nil {
