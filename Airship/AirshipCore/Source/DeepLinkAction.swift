@@ -41,7 +41,7 @@ public final class DeepLinkAction: AirshipAction {
     @MainActor
     public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
         let url = try parseURL(arguments.value)
-        let result = await Airship.shared.deepLink(url)
+        let result = await Airship.processDeepLink(url)
 
         if !result {
             try await self.openURL(url)
