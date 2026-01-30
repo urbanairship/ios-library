@@ -166,12 +166,28 @@ jobs:
         id: get_release_notes
         run: |
           set -euo pipefail
+          
           VERSION="${{ steps.get_version.outputs.VERSION }}"
-          NOTES="$(awk "/## Version $VERSION/{flag=1;next}/## Version/{flag=0}flag" CHANGELOG.md)"
+          
+          # We use -v to pass the variable safely. 
+          # We also ensure we match the header exactly to avoid partial matches.
+          NOTES=$(awk -v ver="$VERSION" '
+            $0 ~ "^## Version " ver "$" {flag=1; next} 
+            $0 ~ "^## Version " {flag=0} 
+            flag
+          ' CHANGELOG.md)
+
+          # Validate that we actually found something
+          if [ -z "$NOTES" ]; then
+            echo "Error: Could not find notes for Version $VERSION in CHANGELOG.md"
+            exit 1
+          fi
+
+          DELIMITER="EOF_$(uuidgen)"
           {
-            echo "NOTES<<'EOF'"
+            echo "NOTES<<$DELIMITER"
             echo "$NOTES"
-            echo "EOF"
+            echo "$DELIMITER"
           } >> "$GITHUB_OUTPUT"
 
       - name: Download zip distribution
