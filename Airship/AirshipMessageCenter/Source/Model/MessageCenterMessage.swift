@@ -7,7 +7,7 @@ import AirshipCore
 #endif
 
 /// Message center message.
-public struct MessageCenterMessage: Sendable, Equatable, Identifiable {
+public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable {
     private static let productIdKey = "product ID"
     private static let defaultProductID = "default_thomas_mc"
     
@@ -56,9 +56,42 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable {
     /// Currently only message display history for native messages is stored there
     var associatedData: Data?
     
-    public enum ContentType: String, CaseIterable, Sendable {
-        case html = "text/html"
-        case native = "application/vnd.urbanairship.thomas+json; version=1;"
+    public enum ContentType: Sendable, Hashable {
+        case html
+        case plain
+        case native(version: Int)
+        
+        var jsonValue: String {
+            switch self {
+            case .html: return "text/html"
+            case .plain: return "text/plain"
+            case .native(let version): return "application/vnd.urbanairship.thomas+json;version=\(version);"
+            }
+        }
+        
+        static let nativeContentTypePrefix: String = "application/vnd.urbanairship.thomas+json"
+        static func fromJson(value: String) -> ContentType? {
+            if value == Self.html.jsonValue {
+                return .html
+            } else if value == Self.plain.jsonValue {
+                return .plain
+            } else if value.hasPrefix(Self.nativeContentTypePrefix) {
+                guard let version = value
+                    .replacingOccurrences(of: " ", with: "")
+                    .components(separatedBy: ";")
+                    .last(where: { $0.hasPrefix("version") })?
+                    .components(separatedBy: "=")
+                    .last
+                    .flatMap(Int.init)
+                else {
+                    return nil
+                }
+                
+                return .native(version: version)
+            } else {
+                return nil
+            }
+        }
     }
 
     init(

@@ -53,6 +53,7 @@
 		27CCF77D2F1656150018058F /* MessageViewAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CCF77C2F1656150018058F /* MessageViewAnalytics.swift */; };
 		27CCF77F2F16DA500018058F /* MessageViewAnalyticsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CCF77E2F16DA500018058F /* MessageViewAnalyticsTest.swift */; };
 		27CCF8292F21512B0018058F /* MessageDisplayHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CBDB52BA4CF0C00519D9C /* MessageDisplayHistory.swift */; };
+		27CCF9342F2B87330018058F /* MessageCenterMessageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CCF9322F2B87330018058F /* MessageCenterMessageTest.swift */; };
 		27E4194A2EF59F9800D5C1A6 /* MessageCenterThomasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E419492EF59F9800D5C1A6 /* MessageCenterThomasView.swift */; };
 		27F1E1332F0E7AA400E317DB /* ThomasLayoutEventContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6AAFB2B58AA4F002FEA75 /* ThomasLayoutEventContext.swift */; };
 		27F1E1342F0E7C9C00E317DB /* ThomasLayoutEventRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6AABA2B58A946002FEA75 /* ThomasLayoutEventRecorder.swift */; };
@@ -1380,6 +1381,7 @@
 		27AFE7102E73477200767044 /* ModifyTagsActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyTagsActionTest.swift; sourceTree = "<group>"; };
 		27CCF77C2F1656150018058F /* MessageViewAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewAnalytics.swift; sourceTree = "<group>"; };
 		27CCF77E2F16DA500018058F /* MessageViewAnalyticsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewAnalyticsTest.swift; sourceTree = "<group>"; };
+		27CCF9322F2B87330018058F /* MessageCenterMessageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterMessageTest.swift; sourceTree = "<group>"; };
 		27E419482EF484DB00D5C1A6 /* UAInbox 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 4.xcdatamodel"; sourceTree = "<group>"; };
 		27E419492EF59F9800D5C1A6 /* MessageCenterThomasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterThomasView.swift; sourceTree = "<group>"; };
 		27F1E1F32F0E910B00E317DB /* ThomasLayoutButtonTapEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutButtonTapEvent.swift; sourceTree = "<group>"; };
@@ -3764,6 +3766,7 @@
 		6E4A466F28EF44F600A25617 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				27CCF9322F2B87330018058F /* MessageCenterMessageTest.swift */,
 				6E4A467828EF453400A25617 /* MessageCenterAPIClientTest.swift */,
 				32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */,
 				32F615A628F708980015696D /* MessageCenterListTests.swift */,
@@ -6424,6 +6427,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EB8394C2BC8AB51006611C4 /* TestWorkManager.swift in Sources */,
+				27CCF9342F2B87330018058F /* MessageCenterMessageTest.swift in Sources */,
 				32F615A728F708980015696D /* MessageCenterListTests.swift in Sources */,
 				32F615A828F708AD0015696D /* TestChannel.swift in Sources */,
 				32F68CDC28F02A7100F7F52A /* MessageCenterStoreTest.swift in Sources */,

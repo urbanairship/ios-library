@@ -285,7 +285,7 @@ private struct MessageCenterMessageContentView: View {
     @ViewBuilder
     private func messageContent() -> some View {
         switch self.contentType {
-        case .html:
+        case .html, .plain:
             webBasedMessageView()
         case .native:
             thomasMessageView()

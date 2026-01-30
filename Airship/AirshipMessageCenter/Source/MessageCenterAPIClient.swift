@@ -332,13 +332,19 @@ private struct MessageListResponse: Decodable {
 }
 
 extension MessageCenterMessage.ContentType: Codable {
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(self.jsonValue)
+    }
+    
     public init(from decoder: any Decoder) throws {
         let value = try decoder.singleValueContainer().decode(String.self)
         
-        self = MessageCenterMessage.ContentType
-            .allCases
-            .first { $0.rawValue == value }
-        ?? .html
+        guard let parsed = MessageCenterMessage.ContentType.fromJson(value: value) else {
+            throw DecodingError.typeMismatch(MessageCenterMessage.ContentType.self, DecodingError.Context(codingPath: [], debugDescription: "Failed to decode MessageCenterMessage.ContentType"))
+        }
+        
+        self = parsed
     }
 }
 
