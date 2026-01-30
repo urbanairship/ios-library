@@ -4,6 +4,15 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.2.0 - January 29, 2026
+Minor release that adds Objective-C wrappers for .NET bindings and improves bundle resource lookup for SPM and Tuist projects.
+
+### Changes
+- Added Objective-C wrappers for permissions manager and push notification status APIs to support .NET bindings.
+- Improved bundle resource lookup to better support Swift Package Manager and Tuist generated projects.
+- Fixed page tabbing, radio buttons, and checkbox accessibility in Scenes.
+- Improved banner IAA message accessibility.  
+
 ## Version 20.1.1 - January 16, 2026
 Patch release that improves VoiceOver focus control and sizing for the progress bar indicator in Story views.
 

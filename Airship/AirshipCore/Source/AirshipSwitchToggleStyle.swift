@@ -70,7 +70,6 @@ struct AirshipSwitchToggleStyle: ToggleStyle {
 #if os(tvOS)
                     .hoverEffect(.highlight, isEnabled: isFocused)
 #endif
-                    .addSelectedTrait(self.isOn.wrappedValue)   
             }
         }
     }

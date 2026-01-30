@@ -7,7 +7,7 @@ import AirshipCore
 #endif
 
 /// Resources for AirshipPreferenceCenter.
-class PreferenceCenterResources {
+public final class AirshipPreferenceCenterResources {
 
     public static func localizedString(key: String) -> String? {
         return AirshipLocalizationUtils.localizedString(
@@ -20,6 +20,6 @@ class PreferenceCenterResources {
 
 extension String {
     var preferenceCenterLocalizedString: String {
-        return PreferenceCenterResources.localizedString(key: self) ?? self
+        return AirshipPreferenceCenterResources.localizedString(key: self) ?? self
     }
 }

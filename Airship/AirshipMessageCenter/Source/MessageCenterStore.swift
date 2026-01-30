@@ -108,7 +108,7 @@ actor MessageCenterStore {
         self.keychainAccess = AirshipKeychainAccess.shared
         self.date = date
         
-        let modelURL = MessageCenterResources.bundle?
+        let modelURL = AirshipMessageCenterResources.bundle
             .url(
                 forResource: "UAInbox",
                 withExtension: "momd"

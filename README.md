@@ -106,7 +106,7 @@ await Airship.push.enableUserPushNotifications()
 ## Documentation
 
 - **[Getting Started](https://docs.airship.com/platform/mobile/setup/sdk/ios/)** - Complete setup guide
-- **[API Reference](https://docs.airship.com/platform/mobile/resources/api-references/#ios-api-references)** - Full API documentation
+- **[API Reference](hhttps://urbanairship.github.io/ios-library/)** - Full API documentation
 - **[Migration Guides](Documentation/Migration/README.md)** - Comprehensive migration documentation
 - **[Sample Apps](https://github.com/urbanairship/apple-sample-apps)** - Example implementations
 

@@ -98,7 +98,7 @@
 		322AAB1E2B5AB65700652DAC /* AddChannelPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DDC0562AF1055300D23EBE /* AddChannelPromptView.swift */; };
 		322AAB212B5ACB2800652DAC /* ChannelListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322AAB202B5ACB2800652DAC /* ChannelListView.swift */; };
 		322AAB222B5FCB6B00652DAC /* ContactManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322AAB1C2B5A869000652DAC /* ContactManagementView.swift */; };
-		3231126A29D5E4F600CF0D86 /* AutomationResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231126929D5E4F600CF0D86 /* AutomationResources.swift */; };
+		3231126A29D5E4F600CF0D86 /* AirshipAutomationResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231126929D5E4F600CF0D86 /* AirshipAutomationResources.swift */; };
 		3231128229D5E67200CF0D86 /* FrequencyLimitStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231127B29D5E67200CF0D86 /* FrequencyLimitStore.swift */; };
 		3231128329D5E67200CF0D86 /* FrequencyLimitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231127C29D5E67200CF0D86 /* FrequencyLimitManager.swift */; };
 		3231128429D5E67200CF0D86 /* Occurrence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231127D29D5E67200CF0D86 /* Occurrence.swift */; };
@@ -144,7 +144,7 @@
 		32F615A728F708980015696D /* MessageCenterListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F615A628F708980015696D /* MessageCenterListTests.swift */; };
 		32F615A828F708AD0015696D /* TestChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48426A60CDF0038CFDD /* TestChannel.swift */; };
 		32F68CDC28F02A7100F7F52A /* MessageCenterStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */; };
-		32F68CEE28F07C2C00F7F52A /* MessageCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CE828F07C2B00F7F52A /* MessageCenterResources.swift */; };
+		32F68CEE28F07C2C00F7F52A /* AirshipMessageCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CE828F07C2B00F7F52A /* AirshipMessageCenterResources.swift */; };
 		32F68CEF28F07C2C00F7F52A /* MessageCenterSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CE928F07C2C00F7F52A /* MessageCenterSDKModule.swift */; };
 		32F68CF328F07C2C00F7F52A /* MessageCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CED28F07C2C00F7F52A /* MessageCenter.swift */; };
 		32F68CF528F07C4900F7F52A /* MessageCenterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CF428F07C4800F7F52A /* MessageCenterList.swift */; };
@@ -164,7 +164,7 @@
 		3CA84AAE26DE255200A59685 /* EventStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA84AA626DE255200A59685 /* EventStore.swift */; };
 		3CA84AB826DE257200A59685 /* DefaultAirshipAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA84AB626DE257200A59685 /* DefaultAirshipAnalytics.swift */; };
 		3CA84ABA26DE257200A59685 /* AirshipAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA84AB726DE257200A59685 /* AirshipAnalytics.swift */; };
-		3CB37A1E251151A400E60392 /* DebugResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB37A1D251151A400E60392 /* DebugResources.swift */; };
+		3CB37A1E251151A400E60392 /* AirshipDebugResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CB37A1D251151A400E60392 /* AirshipDebugResources.swift */; };
 		3CC8AA0626BB3C7900405614 /* DefaultAirshipPush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC8AA0526BB3C7900405614 /* DefaultAirshipPush.swift */; };
 		3CC95B1F268E785900FE2ACD /* NotificationCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B1E268E785900FE2ACD /* NotificationCategories.swift */; };
 		3CC95B2B2696549B00FE2ACD /* AirshipPushableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B2A2696549B00FE2ACD /* AirshipPushableComponent.swift */; };
@@ -780,7 +780,7 @@
 		6EB21AFC2E8216A4001A5660 /* AirshipDebugShakeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21AFB2E82169F001A5660 /* AirshipDebugShakeModifier.swift */; };
 		6EB21B5F2E82FE9F001A5660 /* AirshipDebugAudienceSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21B5E2E82FE98001A5660 /* AirshipDebugAudienceSubject.swift */; };
 		6EB3FCEF2ABCFA680018594E /* RemoteDataProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */; };
-		6EB5156E28A42B5800870C5A /* PreferenceCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5156D28A42B5800870C5A /* PreferenceCenterResources.swift */; };
+		6EB5156E28A42B5800870C5A /* AirshipPreferenceCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5156D28A42B5800870C5A /* AirshipPreferenceCenterResources.swift */; };
 		6EB5157128A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5157028A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift */; };
 		6EB5158128A47BD700870C5A /* SubscriptionListEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5158028A47BD700870C5A /* SubscriptionListEdit.swift */; };
 		6EB5158328A47C7100870C5A /* ScopedSubscriptionListEdit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5158228A47C7100870C5A /* ScopedSubscriptionListEdit.swift */; };
@@ -829,6 +829,7 @@
 		6EC7E48526A60CDF0038CFDD /* TestChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48426A60CDF0038CFDD /* TestChannel.swift */; };
 		6EC7E48726A60DD60038CFDD /* TestContactAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48626A60DD60038CFDD /* TestContactAPIClient.swift */; };
 		6EC7E48D26A738C80038CFDD /* ContactConflictEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48C26A738C70038CFDD /* ContactConflictEvent.swift */; };
+		6EC815AF2F2BBFD500E1C0C6 /* BundleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC815AE2F2BBFD100E1C0C6 /* BundleExtensions.swift */; };
 		6EC9214E2D82144A000A3A59 /* ThomasFormField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC9214D2D82144A000A3A59 /* ThomasFormField.swift */; };
 		6EC922E12D832BB8000A3A59 /* ThomasFormFieldProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC922E02D832BAF000A3A59 /* ThomasFormFieldProcessor.swift */; };
 		6EC922E32D838DFF000A3A59 /* ThomasFormPayloadGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC922E22D838DFA000A3A59 /* ThomasFormPayloadGenerator.swift */; };
@@ -1398,7 +1399,7 @@
 		3215CA9C2739349700B7D97E /* ModalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalView.swift; sourceTree = "<group>"; };
 		322AAB1C2B5A869000652DAC /* ContactManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactManagementView.swift; sourceTree = "<group>"; };
 		322AAB202B5ACB2800652DAC /* ChannelListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListView.swift; sourceTree = "<group>"; };
-		3231126929D5E4F600CF0D86 /* AutomationResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationResources.swift; sourceTree = "<group>"; };
+		3231126929D5E4F600CF0D86 /* AirshipAutomationResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAutomationResources.swift; sourceTree = "<group>"; };
 		3231127B29D5E67200CF0D86 /* FrequencyLimitStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrequencyLimitStore.swift; sourceTree = "<group>"; };
 		3231127C29D5E67200CF0D86 /* FrequencyLimitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrequencyLimitManager.swift; sourceTree = "<group>"; };
 		3231127D29D5E67200CF0D86 /* Occurrence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Occurrence.swift; sourceTree = "<group>"; };
@@ -1442,7 +1443,7 @@
 		32F293D4295AFD94004A7D9C /* ActionArgumentsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionArgumentsTest.swift; sourceTree = "<group>"; };
 		32F615A628F708980015696D /* MessageCenterListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterListTests.swift; sourceTree = "<group>"; };
 		32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterStoreTest.swift; sourceTree = "<group>"; };
-		32F68CE828F07C2B00F7F52A /* MessageCenterResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterResources.swift; sourceTree = "<group>"; };
+		32F68CE828F07C2B00F7F52A /* AirshipMessageCenterResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipMessageCenterResources.swift; sourceTree = "<group>"; };
 		32F68CE928F07C2C00F7F52A /* MessageCenterSDKModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterSDKModule.swift; sourceTree = "<group>"; };
 		32F68CED28F07C2C00F7F52A /* MessageCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenter.swift; sourceTree = "<group>"; };
 		32F68CF428F07C4800F7F52A /* MessageCenterList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterList.swift; sourceTree = "<group>"; };
@@ -1463,7 +1464,7 @@
 		3CA84AA626DE255200A59685 /* EventStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventStore.swift; sourceTree = "<group>"; };
 		3CA84AB626DE257200A59685 /* DefaultAirshipAnalytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DefaultAirshipAnalytics.swift; sourceTree = "<group>"; };
 		3CA84AB726DE257200A59685 /* AirshipAnalytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipAnalytics.swift; sourceTree = "<group>"; };
-		3CB37A1D251151A400E60392 /* DebugResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugResources.swift; sourceTree = "<group>"; };
+		3CB37A1D251151A400E60392 /* AirshipDebugResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugResources.swift; sourceTree = "<group>"; };
 		3CC8AA0526BB3C7900405614 /* DefaultAirshipPush.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAirshipPush.swift; sourceTree = "<group>"; };
 		3CC95B1E268E785900FE2ACD /* NotificationCategories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCategories.swift; sourceTree = "<group>"; };
 		3CC95B2A2696549B00FE2ACD /* AirshipPushableComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipPushableComponent.swift; sourceTree = "<group>"; };
@@ -2103,7 +2104,7 @@
 		6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDataProtocol.swift; sourceTree = "<group>"; };
 		6EB4E4A32549F95200E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
 		6EB4E4BE2549F9B900E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS14.0.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
-		6EB5156D28A42B5800870C5A /* PreferenceCenterResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterResources.swift; sourceTree = "<group>"; };
+		6EB5156D28A42B5800870C5A /* AirshipPreferenceCenterResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipPreferenceCenterResources.swift; sourceTree = "<group>"; };
 		6EB5157028A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterViewControllerFactory.swift; sourceTree = "<group>"; };
 		6EB5158028A47BD700870C5A /* SubscriptionListEdit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListEdit.swift; sourceTree = "<group>"; };
 		6EB5158228A47C7100870C5A /* ScopedSubscriptionListEdit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopedSubscriptionListEdit.swift; sourceTree = "<group>"; };
@@ -2146,6 +2147,7 @@
 		6EC7E48426A60CDF0038CFDD /* TestChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestChannel.swift; sourceTree = "<group>"; };
 		6EC7E48626A60DD60038CFDD /* TestContactAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestContactAPIClient.swift; sourceTree = "<group>"; };
 		6EC7E48C26A738C70038CFDD /* ContactConflictEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactConflictEvent.swift; sourceTree = "<group>"; };
+		6EC815AE2F2BBFD100E1C0C6 /* BundleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleExtensions.swift; sourceTree = "<group>"; };
 		6EC9214D2D82144A000A3A59 /* ThomasFormField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormField.swift; sourceTree = "<group>"; };
 		6EC922E02D832BAF000A3A59 /* ThomasFormFieldProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormFieldProcessor.swift; sourceTree = "<group>"; };
 		6EC922E22D838DFA000A3A59 /* ThomasFormPayloadGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormPayloadGenerator.swift; sourceTree = "<group>"; };
@@ -2769,7 +2771,7 @@
 				3CA0E228237CCBA600EE76CF /* AirshipDebug.h */,
 				3CA0E233237CCBA600EE76CF /* AirshipDebugManager.swift */,
 				DFD2464D2473404C000FD565 /* DebugSDKModule.swift */,
-				3CB37A1D251151A400E60392 /* DebugResources.swift */,
+				3CB37A1D251151A400E60392 /* AirshipDebugResources.swift */,
 				6E6802972B8675A200F4591F /* DebugComponent.swift */,
 			);
 			path = Source;
@@ -2817,7 +2819,7 @@
 				6E4A466328EF448600A25617 /* MessageCenterAPIClient.swift */,
 				6E4A466228EF448600A25617 /* MessageCenterStore.swift */,
 				32F68CED28F07C2C00F7F52A /* MessageCenter.swift */,
-				32F68CE828F07C2B00F7F52A /* MessageCenterResources.swift */,
+				32F68CE828F07C2B00F7F52A /* AirshipMessageCenterResources.swift */,
 				32F68CE928F07C2C00F7F52A /* MessageCenterSDKModule.swift */,
 				32F68CF428F07C4800F7F52A /* MessageCenterList.swift */,
 				3C13BFBC2384AE050071E80C /* AirshipMessageCenter.h */,
@@ -3019,7 +3021,7 @@
 				3231127A29D5E67200CF0D86 /* Limits */,
 				6E1D90002B2D1A9B004BA130 /* Utils */,
 				6E0B872C294A9C130064B7BD /* AirshipAutomation.h */,
-				3231126929D5E4F600CF0D86 /* AutomationResources.swift */,
+				3231126929D5E4F600CF0D86 /* AirshipAutomationResources.swift */,
 				6E15282B2B4DE81E00DF1377 /* AutomationSDKModule.swift */,
 				6E68028F2B8671E700F4591F /* InAppAutomationComponent.swift */,
 			);
@@ -3613,6 +3615,7 @@
 		6E411D5F2538D26200FEE4E8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				6EC815AE2F2BBFD100E1C0C6 /* BundleExtensions.swift */,
 				6E3CA5402ECB9B7400210C32 /* AirshipDisplayTarget.swift */,
 				6E4339F02DFA099C000A7741 /* AirshipIvyVersionMatcher.swift */,
 				6E52146A2DCBF9BA00CF64B9 /* AirshipTimerProtocol.swift */,
@@ -4600,7 +4603,7 @@
 				6EB5156F28A42F9C00870C5A /* theme */,
 				6E2486FA2899BB0E00657CE4 /* view */,
 				6E6C3F9227A47D78007F55C7 /* data */,
-				6EB5156D28A42B5800870C5A /* PreferenceCenterResources.swift */,
+				6EB5156D28A42B5800870C5A /* AirshipPreferenceCenterResources.swift */,
 				847BFFF6267CD73A007CD249 /* AirshipPreferenceCenter.h */,
 				847B0012267CE558007CD249 /* PreferenceCenterSDKModule.swift */,
 				84483A67267CF0C000D0DA7D /* PreferenceCenter.swift */,
@@ -5660,7 +5663,7 @@
 				60653FC32CBD2CD4009CD9A7 /* PushData+CoreDataProperties.swift in Sources */,
 				6E6802982B8675A200F4591F /* DebugComponent.swift in Sources */,
 				DFD2464E2473404C000FD565 /* DebugSDKModule.swift in Sources */,
-				3CB37A1E251151A400E60392 /* DebugResources.swift in Sources */,
+				3CB37A1E251151A400E60392 /* AirshipDebugResources.swift in Sources */,
 				6E21852B237D32B30084933A /* EventData.swift in Sources */,
 				6E14C9A128B5E4AF00A55E65 /* PushNotification.swift in Sources */,
 				3CA0E2BF237CD05F00EE76CF /* AirshipEvent.swift in Sources */,
@@ -5723,7 +5726,7 @@
 				32F68CEF28F07C2C00F7F52A /* MessageCenterSDKModule.swift in Sources */,
 				32B5BE3F28F8A8C200F2254B /* MessageCenterView.swift in Sources */,
 				6E4D224C2E6F968A00A8D641 /* MessageCenterNavigationStack.swift in Sources */,
-				32F68CEE28F07C2C00F7F52A /* MessageCenterResources.swift in Sources */,
+				32F68CEE28F07C2C00F7F52A /* AirshipMessageCenterResources.swift in Sources */,
 				6E4A466628EF448600A25617 /* MessageCenterAPIClient.swift in Sources */,
 				6E4A466128EF447C00A25617 /* MessageCenterUser.swift in Sources */,
 				6E4D22B62E70D41000A8D641 /* MessageCenterMessageErrror.swift in Sources */,
@@ -5976,6 +5979,7 @@
 				6EF27DE32730E6F900548DA3 /* RadioInputController.swift in Sources */,
 				6EC9214E2D82144A000A3A59 /* ThomasFormField.swift in Sources */,
 				6EE49C1D2A0D9D8000AB1CF4 /* RemoteDataProvider.swift in Sources */,
+				6EC815AF2F2BBFD500E1C0C6 /* BundleExtensions.swift in Sources */,
 				6E698E09267A7DD900654DB2 /* RemoteDataAPIClient.swift in Sources */,
 				6EED67FC2CE26DB60087CDCB /* ThomasAttributeName.swift in Sources */,
 				A61517C426B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */,
@@ -6307,7 +6311,7 @@
 				6E0F4BE22B32190400673CA4 /* AutomationSchedule.swift in Sources */,
 				6E986EE42B448D3C00FBE6A0 /* AutomationEngine.swift in Sources */,
 				6E0F4BE72B32646000673CA4 /* AutomationDelay.swift in Sources */,
-				3231126A29D5E4F600CF0D86 /* AutomationResources.swift in Sources */,
+				3231126A29D5E4F600CF0D86 /* AirshipAutomationResources.swift in Sources */,
 				6EC0CA812B4C812A00333A87 /* DisplayAdapter.swift in Sources */,
 				6E1528312B4DED8900DF1377 /* InAppMessageAnalyticsFactory.swift in Sources */,
 				6E1528242B4DC60200DF1377 /* DisplayCoordinatorManager.swift in Sources */,
@@ -6456,7 +6460,7 @@
 				6EB5157128A4608C00870C5A /* PreferenceCenterViewControllerFactory.swift in Sources */,
 				6E9B488F2891B57300C905B1 /* CommonSectionView.swift in Sources */,
 				6E2486DF28945D3900657CE4 /* PreferenceCenterState.swift in Sources */,
-				6EB5156E28A42B5800870C5A /* PreferenceCenterResources.swift in Sources */,
+				6EB5156E28A42B5800870C5A /* AirshipPreferenceCenterResources.swift in Sources */,
 				841E7D12268617C800EA0317 /* PreferenceCenterResponse.swift in Sources */,
 				99560C2F2BB385F500F28BDC /* ChannelListViewHostingController.swift in Sources */,
 				6E3B230F28A318CD0005D46E /* PreferenceCenterThemeLoader.swift in Sources */,

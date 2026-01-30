@@ -24,18 +24,11 @@ jobs:
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
       - uses: actions/checkout@v4
       - name: Build SDK
-        run: make build-xcframeworks
-
-  build-docs:
-    runs-on: macos-15-xlarge
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build Docs
-        run: make build-docs
+        run: make build-xcframeworks-no-sign
 
   finished:
     runs-on: ubuntu-latest
-    needs: [build-sdk, build-docs]
+    needs: [build-sdk]
     steps:
       - name: Slack Notification
         uses: lazy-actions/slatify@master
