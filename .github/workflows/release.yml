@@ -169,17 +169,19 @@ jobs:
           
           VERSION="${{ steps.get_version.outputs.VERSION }}"
           
-          # We use -v to pass the variable safely. 
-          # We also ensure we match the header exactly to avoid partial matches.
+          # Match line starting with '## Version [VERSION]' 
+          # but allow for the date suffix that follows.
           NOTES=$(awk -v ver="$VERSION" '
-            $0 ~ "^## Version " ver "$" {flag=1; next} 
+            $0 ~ "^## Version " ver "($|[ ]-)" {flag=1; next} 
             $0 ~ "^## Version " {flag=0} 
             flag
           ' CHANGELOG.md)
 
-          # Validate that we actually found something
+          # Strip potential leading/trailing whitespace/newlines
+          NOTES="$(echo "$NOTES" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+
           if [ -z "$NOTES" ]; then
-            echo "Error: Could not find notes for Version $VERSION in CHANGELOG.md"
+            echo "::error::Could not find notes for Version $VERSION in CHANGELOG.md"
             exit 1
           fi
 
