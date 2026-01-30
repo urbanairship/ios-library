@@ -58,62 +58,12 @@ jobs:
           name: airship-carthage
           path: ./build/Airship.xcframeworks.zip
 
-      - name: Create .NET xcframeworks (no dSYMs, no visionOS)
-        run: |
-          # Extract the full xcframeworks
-          mkdir -p dotnet-xcframeworks
-          unzip -q ./build/Airship.xcframeworks.zip -d temp-xcf
-          mv temp-xcf/*.xcframework dotnet-xcframeworks/
-          rm -rf temp-xcf
-
-          # Remove visionOS slices and dSYMs
-          for xcf in dotnet-xcframeworks/*.xcframework; do
-            # Remove visionOS slices
-            rm -rf "$xcf"/xros-* 2>/dev/null || true
-            # Remove dSYMs from all slices
-            find "$xcf" -name "dSYMs" -type d -exec rm -rf {} + 2>/dev/null || true
-
-            # Update Info.plist to remove visionOS references and dSYMs paths
-            plist="$xcf/Info.plist"
-            if [ -f "$plist" ]; then
-              python3 << 'PYEOF'
-              import plistlib
-              plist_path = "$plist"
-              with open(plist_path, 'rb') as f:
-                  plist = plistlib.load(f)
-              if 'AvailableLibraries' in plist:
-                  # Remove visionOS entries and dSYMs paths
-                  new_libs = []
-                  for lib in plist['AvailableLibraries']:
-                      if 'xros' not in lib.get('LibraryIdentifier', '').lower():
-                          # Remove DebugSymbolsPath key if present
-                          lib.pop('DebugSymbolsPath', None)
-                          new_libs.append(lib)
-                  plist['AvailableLibraries'] = new_libs
-              with open(plist_path, 'wb') as f:
-                  plistlib.dump(plist, f)
-              PYEOF
-            fi
-          done
-
-          # Create the dotnet zip
-          zip -rq ./build/Airship.dotnet.xcframeworks.zip dotnet-xcframeworks
-          rm -rf dotnet-xcframeworks
-
-          echo "Created Airship.dotnet.xcframeworks.zip:"
-          ls -lh ./build/Airship.dotnet.xcframeworks.zip
-
       - name: Upload .NET xcframeworks
         uses: actions/upload-artifact@v4
         with:
           name: airship-dotnet
           path: ./build/Airship.dotnet.xcframeworks.zip
 
-      - name: Upload Documentation
-        uses: actions/upload-artifact@v4
-        with:
-          name: docs
-          path: ./build/Documentation
 
   build-samples:
     needs: check-version
@@ -293,55 +243,9 @@ jobs:
           job_name: "Publish the Pods ${{ steps.get_version.outputs.VERSION }} :tidepod:"
           url: ${{ secrets.SLACK_WEBHOOK }}
 
-  deploy-docs:
-    runs-on: macos-15-xlarge
-    needs:
-      - run-tests-core
-      - run-tests-preference-center
-      - run-tests-message-center
-      - run-tests-automation
-      - run-tests-feature-flags
-      - run-tests-service-extension
-      - build-package
-      - build-samples
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Get the version
-        id: get_version
-        run: |
-          set -euo pipefail
-          VERSION="${GITHUB_REF#refs/tags/}"
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Download docs
-        uses: actions/download-artifact@v4
-        with:
-          name: docs
-          path: ./build/Documentation
-
-      - name: Setup GCP Auth
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-
-      - name: Upload Docs
-        run: bash ./scripts/upload_docs.sh
-
-      - name: Slack Notification
-        uses: lazy-actions/slatify@master
-        if: always()
-        with:
-          type: ${{ job.status }}
-          job_name: "Uploaded iOS SDK API docs :female-doctor: :male-doctor:"
-          url: ${{ secrets.SLACK_WEBHOOK }}
-
   finished:
     runs-on: ubuntu-latest
-    needs: [deploy-github, deploy-pods, deploy-docs]
+    needs: [deploy-github, deploy-pods]
     steps:
       - name: Get the version
         id: get_version

@@ -15,9 +15,11 @@ derived_data_path = ${build_path}/derived_data
 archive_path = ${build_path}/archive
 
 xcframeworks_path = ${build_path}/xcframeworks
-docs_path = ${build_path}/Documentation
+xcframeworks_full_path = ${xcframeworks_path}/full
+xcframeworks_dotnet_path = ${xcframeworks_path}/dotnet
 package_zip_path = ${build_path}/Airship.zip
-package_carthage_zip_path = ${build_path}/Airship.xcframeworks.zip
+package_xcframeworks_zip_path = ${build_path}/Airship.xcframeworks.zip
+package_dotnet_xcframeworks_zip_path = ${build_path}/Airship.dotnet.xcframeworks.zip
 file_size=${build_path}/size.txt
 previous_file_size=${build_path}/previous-size.txt
 
@@ -34,23 +36,20 @@ all: setup build test pod-lint
 build: build-package build-samples
 
 .PHONY: build-package
-build-package: clean-package build-docs build-xcframeworks
+build-package: clean-package build-xcframeworks
 	bash ./scripts/package.sh \
 	 "${package_zip_path}" \
-	 "${xcframeworks_path}/*.xcframework" \
-	 "${docs_path}" \
+	 "${xcframeworks_full_path}/*.xcframework" \
 	 CHANGELOG.md \
 	 README.md \
 	 LICENSE
-	bash ./scripts/package_carthage.sh "${package_carthage_zip_path}" "${xcframeworks_path}/" 
+	bash ./scripts/package_xcframeworks.sh "${package_xcframeworks_zip_path}" "${xcframeworks_full_path}/" "Carthage/build"
+	bash ./scripts/package_xcframeworks.sh "${package_dotnet_xcframeworks_zip_path}" "${xcframeworks_dotnet_path}/" "xcframeworks"
 
 .PHONY: build-docC
 build-docC:
 	bash ./scripts/build_docCs.sh $(version)
 	
-.PHONY: build-docs
-build-docs: setup clean-docs
-	bash ./scripts/build_docs.sh "${docs_path}"
 
 .PHONY: build-xcframeworks
 build-xcframeworks: setup clean-xcframeworks
@@ -134,14 +133,11 @@ pod-lint-extensions: setup
 clean:
 	rm -rf "${build_path}"
 
-.PHONY: clean-docs
-clean-docs:
-	rm -rf "${docs_path}"
-
 .PHONY: clean-package
 clean-package:
 	rm -rf "${package_zip_path}"
-	rm -rf "${package_carthage_zip_path}"
+	rm -rf "${package_xcframeworks_zip_path}"
+	rm -rf "${package_dotnet_xcframeworks_zip_path}"
 
 .PHONY: clean-xcframeworks
 clean-xcframeworks:
