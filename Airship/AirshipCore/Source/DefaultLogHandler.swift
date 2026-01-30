@@ -23,7 +23,7 @@ final class DefaultLogHandler: AirshipLogHandler {
         line: UInt,
         function: String
     ) {
-        let logMessage = "[\(logLevel.initial)] \(fileID) \(function) [Line \(line)] \(message)"
+        let logMessage = "[\(logLevel.icon)] [\(logLevel.initial)] \(fileID) \(function) [Line \(line)] \(message)"
         switch self.privacyLevel {
         case .private:
             DefaultLogHandler.logger.log(
@@ -47,6 +47,17 @@ extension AirshipLogLevel {
         case .warn: return "W"
         case .error: return "E"
         default: return "U"
+        }
+    }
+    
+    var icon: String {
+        switch(self) {
+        case .error: return "❌"
+        case .warn: return "⚠️"
+        case .info: return "🔹"
+        case .debug: return "🛠️"
+        case .verbose: return "📖"
+        default: return ""
         }
     }
 
