@@ -3,7 +3,7 @@
 import Foundation
 
 struct ThomasLayoutPageViewEvent: ThomasLayoutEvent {
-    public let name = EventType.inAppPageView
+    public let name: EventType = EventType.inAppPageView
     public let data: (any Sendable & Encodable)?
 
     public init(data: ThomasReportingEvent.PageViewEvent) {

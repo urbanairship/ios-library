@@ -3,7 +3,7 @@
 import Foundation
 
 struct ThomasLayoutPagerSummaryEvent: ThomasLayoutEvent {
-    public let name = EventType.inAppPagerSummary
+    public let name: EventType = EventType.inAppPagerSummary
     public let data: (any Sendable & Encodable)?
 
     public init(data: ThomasReportingEvent.PagerSummaryEvent) {

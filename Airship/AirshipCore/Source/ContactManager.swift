@@ -29,9 +29,9 @@ actor ContactManager: ContactManagerProtocol {
 
     private var isEnabled: Bool = false
 
-    private var lastIdentifyOperationDate = Date.distantPast
+    private var lastIdentifyOperationDate: Date = Date.distantPast
 
-    private var lastSuccessfulIdentifyDate = Date.distantPast
+    private var lastSuccessfulIdentifyDate: Date = Date.distantPast
 
 
     private var operationEntries: [ContactOperationEntry] {
@@ -219,6 +219,7 @@ actor ContactManager: ContactManagerProtocol {
         throw AirshipErrors.error("Failed to refresh token")
     }
 
+    @inline(never)
     func authTokenExpired(token: String) async {
         self.cachedAuthToken.expireIf { auth in
             return auth.token == token
@@ -234,6 +235,7 @@ actor ContactManager: ContactManagerProtocol {
         }
     }
 
+    @inline(never)
     func currentContactIDInfo() -> ContactIDInfo? {
         guard let lastContactInfo = self.lastContactInfo else {
             return nil
@@ -248,6 +250,7 @@ actor ContactManager: ContactManagerProtocol {
     }
 
     // Worker -> one at a time
+    @inline(never)
     private func performNextOperation() async throws -> Bool {
         guard self.isEnabled else {
             AirshipLogger.trace("Contact manager is not enabled, unable to perform operation")

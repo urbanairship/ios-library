@@ -7,16 +7,21 @@ import Combine
 struct StackImageButton : View {
 
     /// Image Button model.
-    let info: ThomasViewInfo.StackImageButton
+    private let info: ThomasViewInfo.StackImageButton
 
     /// View constraints.
-    let constraints: ViewConstraints
+    private let constraints: ViewConstraints
 
-    @Environment(\.colorScheme) var colorScheme
-    @Environment(\.layoutState) var layoutState
-    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @EnvironmentObject var thomasState: ThomasState
-    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.layoutState) private var layoutState
+    @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
+    @EnvironmentObject private var thomasState: ThomasState
+    @Environment(\.thomasAssociatedLabelResolver) private var associatedLabelResolver
+
+    init(info: ThomasViewInfo.StackImageButton, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     private var resolveItems: [ThomasViewInfo.StackImageButton.Item] {
         ThomasPropertyOverride.resolveRequired(

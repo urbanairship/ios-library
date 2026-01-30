@@ -5,9 +5,14 @@ import SwiftUI
 
 @MainActor
 struct ScoreController: View {
-    let info: ThomasViewInfo.ScoreController
-    let constraints: ViewConstraints
-    @EnvironmentObject var environment: ThomasEnvironment
+    private let info: ThomasViewInfo.ScoreController
+    private let constraints: ViewConstraints
+    @EnvironmentObject private var environment: ThomasEnvironment
+
+    init(info: ThomasViewInfo.ScoreController, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     var body: some View {
         Content(
@@ -20,16 +25,16 @@ struct ScoreController: View {
 
     @MainActor
     struct Content: View {
-        let info: ThomasViewInfo.ScoreController
-        let constraints: ViewConstraints
+        private let info: ThomasViewInfo.ScoreController
+        private let constraints: ViewConstraints
 
-        @Environment(\.pageIdentifier) var pageID
-        @EnvironmentObject var formDataCollector: ThomasFormDataCollector
-        @EnvironmentObject var formState: ThomasFormState
-        @EnvironmentObject var thomasState: ThomasState
-        @ObservedObject var scoreState: ScoreState
-        @EnvironmentObject var validatableHelper: ValidatableHelper
-        @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+        @Environment(\.pageIdentifier) private var pageID
+        @EnvironmentObject private var formDataCollector: ThomasFormDataCollector
+        @EnvironmentObject private var formState: ThomasFormState
+        @EnvironmentObject private var thomasState: ThomasState
+        @ObservedObject private var scoreState: ScoreState
+        @EnvironmentObject private var validatableHelper: ValidatableHelper
+        @Environment(\.thomasAssociatedLabelResolver) private var associatedLabelResolver
 
         private var associatedLabel: String? {
             associatedLabelResolver?.labelFor(

@@ -5,10 +5,10 @@ import SwiftUI
 
 @MainActor
 struct ScoreToggleLayout: View {
-    @EnvironmentObject var formState: ThomasFormState
-    @EnvironmentObject var scoreState: ScoreState
-    @EnvironmentObject var thomasState: ThomasState
-    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+    @EnvironmentObject private var formState: ThomasFormState
+    @EnvironmentObject private var scoreState: ScoreState
+    @EnvironmentObject private var thomasState: ThomasState
+    @Environment(\.thomasAssociatedLabelResolver) private var associatedLabelResolver
 
     private var associatedLabel: String? {
         associatedLabelResolver?.labelFor(
@@ -18,8 +18,13 @@ struct ScoreToggleLayout: View {
         )
     }
 
-    let info: ThomasViewInfo.ScoreToggleLayout
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.ScoreToggleLayout
+    private let constraints: ViewConstraints
+
+    init(info: ThomasViewInfo.ScoreToggleLayout, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     private var isOnBinding: Binding<Bool> {
         return Binding<Bool>(

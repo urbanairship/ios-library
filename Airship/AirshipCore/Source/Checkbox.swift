@@ -5,13 +5,18 @@ import SwiftUI
 
 @MainActor
 struct Checkbox: View {
-    let info: ThomasViewInfo.Checkbox
-    let constraints: ViewConstraints
-    @EnvironmentObject var formState: ThomasFormState
-    @EnvironmentObject var checkboxState: CheckboxState
-    @EnvironmentObject var thomasState: ThomasState
+    private let info: ThomasViewInfo.Checkbox
+    private let constraints: ViewConstraints
+    @EnvironmentObject private var formState: ThomasFormState
+    @EnvironmentObject private var checkboxState: CheckboxState
+    @EnvironmentObject private var thomasState: ThomasState
 
-    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+    @Environment(\.thomasAssociatedLabelResolver) private var associatedLabelResolver
+
+    init(info: ThomasViewInfo.Checkbox, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     private var associatedLabel: String? {
         associatedLabelResolver?.labelFor(

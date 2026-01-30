@@ -6,11 +6,11 @@ import SwiftUI
 /// Button view.
 struct LabelButton : View {
 
-    let info: ThomasViewInfo.LabelButton
-    let constraints: ViewConstraints
-    @Environment(\.layoutState) var layoutState
-    @EnvironmentObject var thomasState: ThomasState
-    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+    private let info: ThomasViewInfo.LabelButton
+    private let constraints: ViewConstraints
+    @Environment(\.layoutState) private var layoutState
+    @EnvironmentObject private var thomasState: ThomasState
+    @Environment(\.thomasAssociatedLabelResolver) private var associatedLabelResolver
 
     private var associatedLabel: String? {
         associatedLabelResolver?.labelFor(
@@ -25,6 +25,28 @@ struct LabelButton : View {
         self.constraints = constraints
     }
 
+    @ViewBuilder
+    private var labelContent: some View {
+        Label(
+            info: self.info.properties.label,
+            constraints: ViewConstraints()
+        )
+        .airshipApplyIf(self.constraints.height == nil) { view in
+            view.padding([.bottom, .top], 12)
+        }
+        .airshipApplyIf(self.constraints.width == nil) { view in
+            view.padding([.leading, .trailing], 12)
+        }
+        .constraints(constraints)
+        .thomasCommon(info, scope: [.background])
+        .accessible(
+            self.info.accessible,
+            associatedLabel: associatedLabel,
+            hideIfDescriptionIsMissing: false
+        )
+        .background(Color.airshipTappableClear)
+    }
+
     var body: some View {
         AirshipButton(
             identifier: self.info.properties.identifier,
@@ -35,24 +57,7 @@ struct LabelButton : View {
             actions: self.info.properties.actions,
             tapEffect: self.info.properties.tapEffect
         ) {
-            Label(
-                info: self.info.properties.label,
-                constraints: ViewConstraints()
-            )
-            .airshipApplyIf(self.constraints.height == nil) { view in
-                view.padding([.bottom, .top], 12)
-            }
-            .airshipApplyIf(self.constraints.width == nil) { view in
-                view.padding([.leading, .trailing], 12)
-            }
-            .constraints(constraints)
-            .thomasCommon(info, scope: [.background])
-            .accessible(
-                self.info.accessible,
-                associatedLabel: associatedLabel,
-                hideIfDescriptionIsMissing: false
-            )
-            .background(Color.airshipTappableClear)
+            labelContent
         }
         .thomasCommon(info, scope: [.enableBehaviors, .visibility])
         .environment(

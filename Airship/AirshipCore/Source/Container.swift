@@ -7,10 +7,15 @@ import SwiftUI
 
 struct Container: View {
     /// Container model.
-    let info: ThomasViewInfo.Container
+    private let info: ThomasViewInfo.Container
 
     /// View constraints.
-    let constraints: ViewConstraints
+    private let constraints: ViewConstraints
+
+    init(info: ThomasViewInfo.Container, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     var body: some View {
         NewContainer(info: self.info, constraints: self.constraints)
@@ -18,13 +23,18 @@ struct Container: View {
 }
 
 fileprivate struct NewContainer: View {
-    @Environment(\.layoutDirection) var layoutDirection
+    @Environment(\.layoutDirection) private var layoutDirection
 
     /// Container model.
-    let info: ThomasViewInfo.Container
+    private let info: ThomasViewInfo.Container
 
     /// View constraints.
-    let constraints: ViewConstraints
+    private let constraints: ViewConstraints
+
+    init(info: ThomasViewInfo.Container, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     var body: some View {
         ContainerLayout(

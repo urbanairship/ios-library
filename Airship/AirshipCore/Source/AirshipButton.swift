@@ -12,17 +12,17 @@ struct AirshipButton<Label> : View  where Label : View {
     @Environment(\.layoutState) private var layoutState
     @Environment(\.isButtonActionsEnabled) private var isButtonActionsEnabled
 
-    let identifier: String
-    let reportingMetadata: AirshipJSON?
-    let description: String?
-    let clickBehaviors: [ThomasButtonClickBehavior]?
-    let eventHandlers: [ThomasEventHandler]?
-    let actions: ThomasActionsPayload?
-    let tapEffect: ThomasButtonTapEffect?
-    let label: () -> Label
+    private let identifier: String
+    private let reportingMetadata: AirshipJSON?
+    private let description: String?
+    private let clickBehaviors: [ThomasButtonClickBehavior]?
+    private let eventHandlers: [ThomasEventHandler]?
+    private let actions: ThomasActionsPayload?
+    private let tapEffect: ThomasButtonTapEffect?
+    private let label: () -> Label
 
     @State
-    var isProcessing: Bool = false
+    private var isProcessing: Bool = false
 
     init(
         identifier: String,

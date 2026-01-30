@@ -14,7 +14,7 @@ public struct AirshipSimpleLayoutView: View {
     
     private let environment: ThomasEnvironment
     
-    let layout: AirshipLayout
+    private let layout: AirshipLayout
     
     @State
     private var viewConstraints: ViewConstraints?

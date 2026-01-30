@@ -38,7 +38,7 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
     private let regions: AirshipMainActorValue<Set<String>> = AirshipMainActorValue(Set())
 
 
-    private var isAirshipReady = false
+    private var isAirshipReady: Bool = false
 
     /// The conversion send ID. :nodoc:
    public var conversionSendID: String? {
@@ -55,7 +55,7 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
         return self.sessionTracker.sessionState.sessionID
     }
 
-    private let eventSubject = PassthroughSubject<AirshipEventData, Never>()
+    private let eventSubject: PassthroughSubject<AirshipEventData, Never> = PassthroughSubject<AirshipEventData, Never>()
 
     /// Airship event publisher
     public var eventPublisher: AnyPublisher<AirshipEventData, Never> {
@@ -94,6 +94,7 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
     }
 
     @MainActor
+    @inline(never)
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,

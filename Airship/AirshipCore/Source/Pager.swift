@@ -26,13 +26,13 @@ struct Pager: View {
     @EnvironmentObject private var thomasState: ThomasState
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
 
-    @Environment(\.isVisible) var isVisible
-    @Environment(\.layoutState) var layoutState
-    @Environment(\.layoutDirection) var layoutDirection
-    @Environment(\.isVoiceOverRunning) var isVoiceOverRunning
+    @Environment(\.isVisible) private var isVisible
+    @Environment(\.layoutState) private var layoutState
+    @Environment(\.layoutDirection) private var layoutDirection
+    @Environment(\.isVoiceOverRunning) private var isVoiceOverRunning
 
-    let info: ThomasViewInfo.Pager
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.Pager
+    private let constraints: ViewConstraints
 
     @State private var lastReportedIndex = -1
     @GestureState private var translation: CGFloat = 0
@@ -185,41 +185,39 @@ struct Pager: View {
     }
 
     @ViewBuilder
+    private func makePageView(for index: Int, childConstraints: ViewConstraints, metrics: GeometryProxy) -> some View {
+        let pageItem = pagerState.pageItems[index]
+        let isCurrentPage = self.isVisible && pageItem.identifier == pagerState.currentPageId
+
+        VStack {
+            ViewFactory.createView(
+                pageItem.view,
+                constraints: childConstraints
+            )
+            .allowsHitTesting(isCurrentPage)
+            .environment(\.isVisible, isCurrentPage)
+            .environment(\.pageIdentifier, pageItem.identifier)
+            .accessibilityActions {
+                makeAccessibilityActions(pageItem: pageItem)
+            }
+            .accessibilityHidden(!self.isVisible)
+        }
+        .frame(
+            width: metrics.size.width,
+            height: metrics.size.height
+        )
+        .environment(
+            \.isButtonActionsEnabled,
+             (!self.isLegacyPageSwipeEnabled || self.translation == 0)
+        )
+        .accessibilityElement(children: .contain)
+        .id(pageItem.identifier)
+    }
+
+    @ViewBuilder
     private func makePageViews(childConstraints: ViewConstraints, metrics: GeometryProxy) -> some View {
         ForEach(0..<pagerState.pageItems.count, id: \.self) { index in
-            VStack {
-                ViewFactory.createView(
-                    pagerState.pageItems[index].view,
-                    constraints: childConstraints
-                )
-                .allowsHitTesting(
-                    self.isVisible && pagerState.pageItems[index].identifier == pagerState.currentPageId
-                )
-                .environment(
-                    \.isVisible,
-                     self.isVisible && pagerState.pageItems[index].identifier == pagerState.currentPageId
-                )
-                .environment(
-                    \.pageIdentifier,
-                     pagerState.pageItems[index].identifier
-                )
-                .accessibilityActions {
-                    makeAccessibilityActions(
-                        pageItem: pagerState.pageItems[index]
-                    )
-                }
-                .accessibilityHidden(!self.isVisible)
-            }
-            .frame(
-                width: metrics.size.width,
-                height: metrics.size.height
-            )
-            .environment(
-                \.isButtonActionsEnabled,
-                 (!self.isLegacyPageSwipeEnabled || self.translation == 0)
-            )
-            .accessibilityElement(children: .contain)
-            .id(pagerState.pageItems[index].identifier)
+            makePageView(for: index, childConstraints: childConstraints, metrics: metrics)
         }
     }
 

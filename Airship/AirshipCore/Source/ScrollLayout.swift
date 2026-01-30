@@ -8,13 +8,13 @@ import SwiftUI
 struct ScrollLayout: View {
     
     /// ScrollLayout model.
-    let info: ThomasViewInfo.ScrollLayout
+    private let info: ThomasViewInfo.ScrollLayout
     
     /// View constraints.
-    let constraints: ViewConstraints
+    private let constraints: ViewConstraints
     
     @State private var contentSize: CGSize? = nil
-    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @State private var scrollTask: (String, Task<Void, Never>)?
     
     private static let scrollInterval: TimeInterval = 0.01

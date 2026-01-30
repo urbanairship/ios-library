@@ -16,7 +16,7 @@ final class EventManager: EventManagerProtocol {
 
     private let headerBlocks: AirshipMainActorValue<[@Sendable () async -> [String: String]]> = AirshipMainActorValue([])
 
-    private let _uploadsEnabled = AirshipAtomicValue<Bool>(false)
+    private let _uploadsEnabled: AirshipAtomicValue<Bool> = AirshipAtomicValue<Bool>(false)
     var uploadsEnabled: Bool  {
         get {
             _uploadsEnabled.value

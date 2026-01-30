@@ -114,6 +114,7 @@ final class DefaultAirshipChannel: AirshipChannel, Sendable {
     }
 
     @MainActor
+    @inline(never)
     init(
         dataStore: PreferenceDataStore,
         config: RuntimeConfig,

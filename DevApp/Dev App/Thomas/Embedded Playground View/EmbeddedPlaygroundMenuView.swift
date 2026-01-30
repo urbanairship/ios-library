@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import SwiftUI
-import Yams
+internal import Yams
 
 struct Item {
     var icon: String

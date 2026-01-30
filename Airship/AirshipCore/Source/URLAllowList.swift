@@ -112,15 +112,15 @@ final class DefaultAirshipURLAllowList: AirshipURLAllowList {
         "\\", ".", "[", "]", "{", "}", "(", ")", "^", "$", "?", "+", "|", "*",
     ]
 
-    private let schemePatternValidator = try! NSRegularExpression(
+    private let schemePatternValidator: NSRegularExpression = try! NSRegularExpression(
         pattern: schemeRegex,
         options: .useUnicodeWordBoundaries
     )
-    private let hostPatternValidator = try! NSRegularExpression(
+    private let hostPatternValidator: NSRegularExpression = try! NSRegularExpression(
         pattern: hostRegex,
         options: .useUnicodeWordBoundaries
     )
-    private let pathPatternValidator = try! NSRegularExpression(
+    private let pathPatternValidator: NSRegularExpression = try! NSRegularExpression(
         pattern: pathRegex,
         options: .useUnicodeWordBoundaries
     )

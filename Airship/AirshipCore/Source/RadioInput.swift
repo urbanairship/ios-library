@@ -4,13 +4,18 @@ import Foundation
 import SwiftUI
 
 struct RadioInput: View {
-    let info: ThomasViewInfo.RadioInput
-    let constraints: ViewConstraints
-    @EnvironmentObject var formState: ThomasFormState
-    @EnvironmentObject var radioInputState: RadioInputState
-    @EnvironmentObject var thomasState: ThomasState
+    private let info: ThomasViewInfo.RadioInput
+    private let constraints: ViewConstraints
+    @EnvironmentObject private var formState: ThomasFormState
+    @EnvironmentObject private var radioInputState: RadioInputState
+    @EnvironmentObject private var thomasState: ThomasState
 
-    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+    @Environment(\.thomasAssociatedLabelResolver) private var associatedLabelResolver
+
+    init(info: ThomasViewInfo.RadioInput, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     private var associatedLabel: String? {
         associatedLabelResolver?.labelFor(

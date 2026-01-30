@@ -3,12 +3,12 @@ import SwiftUI
 
 @MainActor
 struct PagerController: View {
-    let info: ThomasViewInfo.PagerController
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.PagerController
+    private let constraints: ViewConstraints
 
-    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
-    @EnvironmentObject var environment: ThomasEnvironment
-    @EnvironmentObject var state: ThomasState
+    @EnvironmentObject private var formDataCollector: ThomasFormDataCollector
+    @EnvironmentObject private var environment: ThomasEnvironment
+    @EnvironmentObject private var state: ThomasState
 
     init(
         info: ThomasViewInfo.PagerController,
@@ -30,16 +30,16 @@ struct PagerController: View {
 
     @MainActor
     struct Content: View {
-        let info: ThomasViewInfo.PagerController
-        let constraints: ViewConstraints
+        private let info: ThomasViewInfo.PagerController
+        private let constraints: ViewConstraints
 
-        @Environment(\.layoutState) var layoutState
+        @Environment(\.layoutState) private var layoutState
 
-        @ObservedObject var pagerState: PagerState
-        @StateObject var formDataCollector: ThomasFormDataCollector
+        @ObservedObject private var pagerState: PagerState
+        @StateObject private var formDataCollector: ThomasFormDataCollector
 
-        @Environment(\.isVoiceOverRunning) var isVoiceOverRunning
-        @StateObject var state: ThomasState
+        @Environment(\.isVoiceOverRunning) private var isVoiceOverRunning
+        @StateObject private var state: ThomasState
 
 
         init(
