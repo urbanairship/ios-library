@@ -168,11 +168,11 @@ jobs:
           set -euo pipefail
           VERSION="${{ steps.get_version.outputs.VERSION }}"
           NOTES="$(awk "/## Version $VERSION/{flag=1;next}/## Version/{flag=0}flag" CHANGELOG.md)"
-          # Escape for GitHub Actions multiline string
-          NOTES="${NOTES//'%'/%25}"
-          NOTES="${NOTES//$'\n'/%0A}"
-          NOTES="${NOTES//$'\r'/%0D}"
-          echo "NOTES=$NOTES" >> $GITHUB_OUTPUT
+          {
+            echo "NOTES<<'EOF'"
+            echo "$NOTES"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Download zip distribution
         uses: actions/download-artifact@v4
