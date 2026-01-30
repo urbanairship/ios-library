@@ -7,8 +7,8 @@ import CoreData
 import AirshipCore
 #endif  
 
-@objc(UAInboxDataMappingV2toV3)
-class UAInboxDataMappingV2toV3: NSEntityMigrationPolicy {
+@objc(UAInboxDataMappingV2toV4)
+class UAInboxDataMappingV2toV4: NSEntityMigrationPolicy {
 
     override func createDestinationInstances(
         forSource source: NSManagedObject,
@@ -55,11 +55,13 @@ class UAInboxDataMappingV2toV3: NSEntityMigrationPolicy {
         newEntity.setValue(title, forKey: "title")
         newEntity.setValue(AirshipJSONUtils.toData(extra), forKey: "extra")
         newEntity.setValue(AirshipJSONUtils.toData(rawMessageObject), forKey: "rawMessageObject")
+        
+        manager.associate(sourceInstance: source, withDestinationInstance: newEntity, for: mapping)
     }
 }
 
-@objc(UAInboxDataMappingV1toV3)
-class UAInboxDataMappingV1toV3: NSEntityMigrationPolicy {
+@objc(UAInboxDataMappingV1toV4)
+class UAInboxDataMappingV1toV4: NSEntityMigrationPolicy {
 
     override func createDestinationInstances(
         forSource source: NSManagedObject,
@@ -102,5 +104,7 @@ class UAInboxDataMappingV1toV3: NSEntityMigrationPolicy {
         newEntity.setValue(title, forKey: "title")
         newEntity.setValue(AirshipJSONUtils.toData(extra), forKey: "extra")
         newEntity.setValue(AirshipJSONUtils.toData(rawMessageObject), forKey: "rawMessageObject")
+
+        manager.associate(sourceInstance: source, withDestinationInstance: newEntity, for: mapping)
     }
 }
