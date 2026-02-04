@@ -11,8 +11,8 @@ import UIKit
 
 /// This singleton provides an interface to the channel functionality.
 final class DefaultAirshipChannel: AirshipChannel, Sendable {
-    private static let tagsDataStoreKey = "com.urbanairship.channel.tags"
-    private static let legacyTagsSettingsKey = "UAPushTags"
+    private static let tagsDataStoreKey: String = "com.urbanairship.channel.tags"
+    private static let legacyTagsSettingsKey: String = "UAPushTags"
 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
@@ -605,15 +605,15 @@ public extension AirshipNotifications {
     final class ChannelCreated {
 
         /// NSNotification name.
-        public static let name = NSNotification.Name(
+        public static let name: NSNotification.Name = NSNotification.Name(
             "com.urbanairship.channel.channel_created"
         )
 
         /// NSNotification userInfo key to get the channel ID.
-        public static let channelIDKey = "channel_identifier"
+        public static let channelIDKey: String = "channel_identifier"
 
         /// NSNotification userInfo key to get a boolean if the channel is existing or not.
-        public static let isExistingChannelKey = "channel_existing"
+        public static let isExistingChannelKey: String = "channel_existing"
     }
 
 }

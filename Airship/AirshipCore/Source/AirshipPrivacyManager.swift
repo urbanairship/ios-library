@@ -51,14 +51,14 @@ protocol InternalAirshipPrivacyManager: AirshipPrivacyManager {
 }
 
 final class DefaultAirshipPrivacyManager: InternalAirshipPrivacyManager {
-    private static let enabledFeaturesKey = "com.urbanairship.privacymanager.enabledfeatures"
+    private static let enabledFeaturesKey: String = "com.urbanairship.privacymanager.enabledfeatures"
 
-    private let legacyIAAEnableFlag = "UAInAppMessageManagerEnabled"
-    private let legacyChatEnableFlag = "AirshipChat.enabled"
-    private let legacyLocationEnableFlag = "UALocationUpdatesEnabled"
-    private let legacyAnalyticsEnableFlag = "UAAnalyticsEnabled"
-    private let legacyPushTokenRegistrationEnableFlag = "UAPushTokenRegistrationEnabled"
-    private let legacyDataCollectionEnableEnableFlag = "com.urbanairship.data_collection_enabled"
+    private let legacyIAAEnableFlag: String = "UAInAppMessageManagerEnabled"
+    private let legacyChatEnableFlag: String = "AirshipChat.enabled"
+    private let legacyLocationEnableFlag: String = "UALocationUpdatesEnabled"
+    private let legacyAnalyticsEnableFlag: String = "UAAnalyticsEnabled"
+    private let legacyPushTokenRegistrationEnableFlag: String = "UAPushTokenRegistrationEnabled"
+    private let legacyDataCollectionEnableEnableFlag: String = "com.urbanairship.data_collection_enabled"
 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
@@ -67,7 +67,7 @@ final class DefaultAirshipPrivacyManager: InternalAirshipPrivacyManager {
 
     private let lock: AirshipLock = AirshipLock()
 
-    private let lastUpdated = AirshipAtomicValue<AirshipFeature>([])
+    private let lastUpdated: AirshipAtomicValue<AirshipFeature> = AirshipAtomicValue<AirshipFeature>([])
 
     private var localEnabledFeatures: AirshipFeature {
         get {
@@ -212,27 +212,27 @@ public struct AirshipFeature: OptionSet, Sendable, CustomStringConvertible {
     public let rawValue: UInt
 
     /// In-App automation
-    public static let inAppAutomation = AirshipFeature(rawValue: 1 << 0)
+    public static let inAppAutomation: AirshipFeature = AirshipFeature(rawValue: 1 << 0)
 
     /// Message Center
-    public static let messageCenter = AirshipFeature(rawValue: 1 << 1)
+    public static let messageCenter: AirshipFeature = AirshipFeature(rawValue: 1 << 1)
 
     /// Push
-    public static let push = AirshipFeature(rawValue: 1 << 2)
+    public static let push: AirshipFeature = AirshipFeature(rawValue: 1 << 2)
 
     /// Analytics
-    public static let analytics = AirshipFeature(rawValue: 1 << 4)
+    public static let analytics: AirshipFeature = AirshipFeature(rawValue: 1 << 4)
 
     /// Tags, attributes, and subscription lists
-    public static let tagsAndAttributes = AirshipFeature(rawValue: 1 << 5)
+    public static let tagsAndAttributes: AirshipFeature = AirshipFeature(rawValue: 1 << 5)
 
     /// Contacts
-    public static let contacts = AirshipFeature(rawValue: 1 << 6)
+    public static let contacts: AirshipFeature = AirshipFeature(rawValue: 1 << 6)
 
     /* Do not use: UAFeaturesLocation = (1 << 7) */
 
     /// Feature flags
-    public static let featureFlags = AirshipFeature(rawValue: 1 << 8)
+    public static let featureFlags: AirshipFeature = AirshipFeature(rawValue: 1 << 8)
 
     /// All features
     public static let all: AirshipFeature = [
@@ -355,7 +355,7 @@ public extension AirshipNotifications {
     final class PrivacyManagerUpdated {
 
         /// NSNotification name.
-        public static let name = NSNotification.Name(
+        public static let name: NSNotification.Name = NSNotification.Name(
             "com.urbanairship.privacymanager.enabledfeatures_changed"
         )
     }

@@ -76,7 +76,7 @@ actor AirshipDeferredResolver : AirshipDeferredResolverProtocol {
         self.audienceOverridesProvider = audienceOverrides
     }
 
-    public func resolve<T: Sendable>(
+    func resolve<T: Sendable>(
         request: DeferredRequest,
         resultParser: @escaping @Sendable (Data) async throws -> T
     ) async -> AirshipDeferredResult<T> {

@@ -15,7 +15,7 @@ actor EventUploadScheduler: EventUploadSchedulerProtocol {
     private static let foregroundWorkBatchDelay: TimeInterval = 5
     private static let backgroundWorkBatchDelay: TimeInterval = 1
     private static let uploadScheduleDelay: TimeInterval = 15
-    private static let workID = "EventUploadScheduler.upload"
+    private static let workID: String = "EventUploadScheduler.upload"
 
     private var lastWorkDate: Date = .distantPast
     private var nextScheduleDate: Date = .distantFuture

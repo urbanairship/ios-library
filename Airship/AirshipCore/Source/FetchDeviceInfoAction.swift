@@ -22,7 +22,7 @@
 public final class FetchDeviceInfoAction: AirshipAction {
 
     /// Default names - "fetch_device_info", "^+fdi"
-    public static let defaultNames = ["fetch_device_info", "^+fdi"]
+    public static let defaultNames: [String] = ["fetch_device_info", "^+fdi"]
 
     /// Default predicate - only accepts `ActionSituation.manualInvocation` and `ActionSituation.webViewInvocation`
     public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in
@@ -31,16 +31,16 @@ public final class FetchDeviceInfoAction: AirshipAction {
     }
 
     // Channel ID key
-    public static let channelID = "channel_id"
+    public static let channelID: String = "channel_id"
 
     // Named user key
-    public static let namedUser = "named_user"
+    public static let namedUser: String = "named_user"
 
     // Tags key
-    public static let tags = "tags"
+    public static let tags: String = "tags"
 
     // Push opt-in key
-    public static let pushOptIn = "push_opt_in"
+    public static let pushOptIn: String = "push_opt_in"
 
     private let channel: @Sendable () -> any AirshipChannel
     private let contact: @Sendable () -> any AirshipContact

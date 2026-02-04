@@ -5,7 +5,7 @@ import Foundation
 
 struct WorkConditionsMonitor: @unchecked Sendable {
     private let cancellable: AnyCancellable
-    private let conditionsSubject = PassthroughSubject<Void, Never>()
+    private let conditionsSubject: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
     private let networkMonitor: any AirshipNetworkCheckerProtocol
 
     init(

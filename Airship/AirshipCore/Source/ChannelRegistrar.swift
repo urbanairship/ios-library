@@ -21,12 +21,12 @@ enum ChannelRegistrationUpdate: Equatable, Sendable {
 /// The ChannelRegistrar class is responsible for device registrations.
 /// - Note: For internal use only. :nodoc:
 final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
-    static let workID = "UAChannelRegistrar.registration"
+    static let workID: String = "UAChannelRegistrar.registration"
     private static let payloadCadence: TimeInterval = 24 * 60 * 60
 
-    fileprivate static let forcefullyKey = "forcefully"
-    private static let channelIDKey = "UAChannelID"
-    private static let lastRegistrationInfo = "ChannelRegistrar.lastRegistrationInfo"
+    fileprivate static let forcefullyKey: String = "forcefully"
+    private static let channelIDKey: String = "UAChannelID"
+    private static let lastRegistrationInfo: String = "ChannelRegistrar.lastRegistrationInfo"
 
 
     private let dataStore: PreferenceDataStore

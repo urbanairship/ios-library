@@ -13,8 +13,8 @@ actor Worker {
     private var tasks: Set<Task<Void, any Error>> = Set()
     private var nextPendingID: Int = 0
 
-    private static let initialBackOff = 30.0
-    private static let maxBackOff = 120.0
+    private static let initialBackOff: TimeInterval = 30.0
+    private static let maxBackOff: TimeInterval = 120.0
 
     let workID: String
     private let conditionsMonitor: WorkConditionsMonitor

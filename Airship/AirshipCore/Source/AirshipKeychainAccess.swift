@@ -65,7 +65,7 @@ public protocol AirshipKeychainAccessProtocol: Sendable {
 /// - Note: for internal use only.  :nodoc:
 public final class AirshipKeychainAccess: AirshipKeychainAccessProtocol {
 
-    public static let shared = AirshipKeychainAccess()
+    public static let shared: AirshipKeychainAccess = AirshipKeychainAccess()
 
     // Dispatch queue to prevent blocking any tasks
     private let dispatchQueue: AirshipUnsafeSendableWrapper<DispatchQueue> = AirshipUnsafeSendableWrapper(

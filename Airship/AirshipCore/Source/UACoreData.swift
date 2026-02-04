@@ -8,7 +8,7 @@ import UIKit
 
 /// - Note: For internal use only. :nodoc:
 public actor UACoreData {
-    private static let managedContextStoreDirectory = "com.urbanairship.no-backup"
+    private static let managedContextStoreDirectory: String = "com.urbanairship.no-backup"
 
     private let name: String
     private let modelURL: URL
@@ -16,7 +16,7 @@ public actor UACoreData {
     public nonisolated let inMemory: Bool
 
 
-    private var shouldPrepareCoreData = false
+    private var shouldPrepareCoreData: Bool = false
     private var coreDataPrepared: Bool = false
     private var prepareCoreDataTask: Task<Void, any Error>?
 

@@ -6,7 +6,7 @@ import Foundation
 public class TagGroupsEditor {
 
     private var tagUpdates: [TagGroupUpdate] = []
-    private var allowDeviceTagGroup = false
+    private var allowDeviceTagGroup: Bool = false
     private let completionHandler: ([TagGroupUpdate]) -> Void
 
     init(

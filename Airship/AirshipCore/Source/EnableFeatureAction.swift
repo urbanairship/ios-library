@@ -12,7 +12,7 @@
 /// `ActionSituation.foregroundInteractiveButton`, and `ActionSituation.automation`
 public final class EnableFeatureAction: AirshipAction {
     /// Default names - "enable_feature", "^ef"
-    public static let defaultNames = ["enable_feature", "^ef"]
+    public static let defaultNames: [String] = ["enable_feature", "^ef"]
     
     /// Default predicate - rejects foreground pushes with visible display options
     public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in
@@ -21,12 +21,12 @@ public final class EnableFeatureAction: AirshipAction {
 
     /// Metadata key for a block that takes the permission results`(PermissionStatus, PermissionStatus) -> Void`.
     /// - Note: For internal use only. :nodoc:
-    public static let resultReceiverMetadataKey = PromptPermissionAction
+    public static let resultReceiverMetadataKey: String = PromptPermissionAction
         .resultReceiverMetadataKey
 
-    public static let userNotificationsActionValue = "user_notifications"
-    public static let locationActionValue = "location"
-    public static let backgroundLocationActionValue = "background_location"
+    public static let userNotificationsActionValue: String = "user_notifications"
+    public static let locationActionValue: String = "location"
+    public static let backgroundLocationActionValue: String = "background_location"
 
     private let permissionPrompter: @Sendable () -> any PermissionPrompter
 

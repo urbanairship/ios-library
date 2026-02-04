@@ -4,7 +4,7 @@ import CoreData
 
 final class RemoteDataStore: Sendable {
     
-    static let remoteDataEntity = "UARemoteDataStorePayload"
+    static let remoteDataEntity: String = "UARemoteDataStorePayload"
     
     private let coreData: UACoreData
     private let inMemory: Bool

@@ -24,7 +24,7 @@
 public final class AddTagsAction: AirshipAction {
 
     /// Default names - "add_tags_action", "^+t"
-    public static let defaultNames = ["add_tags_action", "^+t"]
+    public static let defaultNames: [String] = ["add_tags_action", "^+t"]
 
     /// Default predicate - rejects foreground pushes with visible display options
     public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in
@@ -34,7 +34,7 @@ public final class AddTagsAction: AirshipAction {
     private let channel: @Sendable () -> any AirshipChannel
     private let contact: @Sendable () -> any AirshipContact
     
-    private let tagMutationsChannel = AirshipAsyncChannel<TagActionMutation>()
+    private let tagMutationsChannel: AirshipAsyncChannel<TagActionMutation> = AirshipAsyncChannel<TagActionMutation>()
     
     public var tagMutations: AsyncStream<TagActionMutation> {
         get async {

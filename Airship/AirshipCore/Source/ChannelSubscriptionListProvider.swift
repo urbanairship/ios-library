@@ -14,7 +14,7 @@ protocol ChannelSubscriptionListProviderProtocol: Sendable {
 final class ChannelSubscriptionListProvider: ChannelSubscriptionListProviderProtocol {
 
     private let actor: BaseCachingRemoteDataProvider<ChannelSubscriptionListResult, ChannelAudienceOverrides>
-    private let overridesApplier = OverridesApplier()
+    private let overridesApplier: OverridesApplier = OverridesApplier()
     
     init(
         audienceOverrides: any AudienceOverridesProvider,

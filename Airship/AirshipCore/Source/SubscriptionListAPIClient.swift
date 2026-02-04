@@ -11,7 +11,7 @@ protocol SubscriptionListAPIClientProtocol: Sendable {
 /// NOTE: For internal use only. :nodoc:
 final class SubscriptionListAPIClient: SubscriptionListAPIClientProtocol {
 
-    private static let getPath = "/api/subscription_lists/channels/"
+    private static let getPath: String = "/api/subscription_lists/channels/"
 
     private let config: RuntimeConfig
     private let session: any AirshipRequestSession

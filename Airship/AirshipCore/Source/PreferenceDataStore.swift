@@ -7,7 +7,7 @@ import Foundation
 public final class PreferenceDataStore: @unchecked Sendable {
     private let defaults: UserDefaults
     private let appKey: String
-    static let deviceIDKey = "deviceID"
+    static let deviceIDKey: String = "deviceID"
     
     private var pending: [String: [Any?]] = [:]
     private var cache: [String: Cached] = [:]

@@ -3,7 +3,7 @@
 import Foundation
 
 struct HashChecker {
-    private let queue = AirshipSerialQueue()
+    private let queue: AirshipSerialQueue = AirshipSerialQueue()
     private let cache: any AirshipCache
 
     init(cache: any AirshipCache) {

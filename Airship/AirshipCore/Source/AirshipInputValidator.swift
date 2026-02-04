@@ -101,7 +101,7 @@ extension AirshipInputValidation {
     final class DefaultValidator: Validator {
 
         // Regular expression for validating email addresses.
-        private static let emailRegex = #"^[^@\s]+@[^@\s]+\.[^@\s.]+$"#
+        private static let emailRegex: String = #"^[^@\s]+@[^@\s]+\.[^@\s.]+$"#
 
         private let overrides: OverridesClosure?
         private let smsValidatorAPIClient: any SMSValidatorAPIClientProtocol

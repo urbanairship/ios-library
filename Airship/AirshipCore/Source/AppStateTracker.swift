@@ -27,31 +27,31 @@ public protocol AppStateTrackerProtocol: Sendable {
 public final class AppStateTracker: AppStateTrackerProtocol, Sendable {
 
 
-    public static let didBecomeActiveNotification = NSNotification.Name(
+    public static let didBecomeActiveNotification: NSNotification.Name = NSNotification.Name(
         "com.urbanairship.application_did_become_active"
     )
 
-    public static let willEnterForegroundNotification = NSNotification.Name(
+    public static let willEnterForegroundNotification: NSNotification.Name = NSNotification.Name(
         "com.urbanairship.application_will_enter_foreground"
     )
 
-    public static let didEnterBackgroundNotification = NSNotification.Name(
+    public static let didEnterBackgroundNotification: NSNotification.Name = NSNotification.Name(
         "com.urbanairship.application_did_enter_background"
     )
 
-    public static let willResignActiveNotification = NSNotification.Name(
+    public static let willResignActiveNotification: NSNotification.Name = NSNotification.Name(
         "com.urbanairship.application_will_resign_active"
     )
 
-    public static let willTerminateNotification = NSNotification.Name(
+    public static let willTerminateNotification: NSNotification.Name = NSNotification.Name(
         "com.urbanairship.application_will_terminate"
     )
 
-    public static let didTransitionToBackground = NSNotification.Name(
+    public static let didTransitionToBackground: NSNotification.Name = NSNotification.Name(
         "com.urbanairship.application_did_transition_to_background"
     )
 
-    public static let didTransitionToForeground = NSNotification.Name(
+    public static let didTransitionToForeground: NSNotification.Name = NSNotification.Name(
         "com.urbanairship.application_did_transition_to_foreground"
     )
 

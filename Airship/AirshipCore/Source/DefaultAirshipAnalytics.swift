@@ -11,11 +11,11 @@ import UIKit
 
 /// The Analytics object provides an interface to the Airship Analytics API.
 final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
-    private static let associatedIdentifiers = "UAAssociatedIdentifiers"
+    private static let associatedIdentifiers: String = "UAAssociatedIdentifiers"
 
-    static let missingSendID = "MISSING_SEND_ID"
-    static let pushMetadata = "com.urbanairship.metadata"
-    static let pushSendID = "_"
+    static let missingSendID: String = "MISSING_SEND_ID"
+    static let pushMetadata: String = "com.urbanairship.metadata"
+    static let pushSendID: String = "_"
 
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore

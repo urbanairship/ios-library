@@ -41,7 +41,7 @@ final class DefaultAirshipInstance: AirshipInstance {
     
 #if !os(tvOS) && !os(watchOS)
     
-    private let _jsDelegateHolder = AirshipAtomicValue<(any JavaScriptCommandDelegate)?>(nil)
+    private let _jsDelegateHolder: AirshipAtomicValue<(any JavaScriptCommandDelegate)?> = AirshipAtomicValue<(any JavaScriptCommandDelegate)?>(nil)
     public var javaScriptCommandDelegate: (any JavaScriptCommandDelegate)? {
         get { return _jsDelegateHolder.value }
         set { _jsDelegateHolder.value = newValue }
@@ -49,7 +49,7 @@ final class DefaultAirshipInstance: AirshipInstance {
     public let channelCapture: any AirshipChannelCapture
 #endif
 
-    private let _deeplinkDelegateHolder = AirshipAtomicValue<(any DeepLinkDelegate)?>(nil)
+    private let _deeplinkDelegateHolder: AirshipAtomicValue<(any DeepLinkDelegate)?> = AirshipAtomicValue<(any DeepLinkDelegate)?>(nil)
     public var deepLinkDelegate: (any DeepLinkDelegate)? {
         get { _deeplinkDelegateHolder.value }
         set { _deeplinkDelegateHolder.value = newValue }

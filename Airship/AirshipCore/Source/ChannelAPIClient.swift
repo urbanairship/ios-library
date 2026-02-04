@@ -4,7 +4,7 @@ import Foundation
 
 /// - Note: For internal use only. :nodoc:
 final class ChannelAPIClient: ChannelAPIClientProtocol, Sendable {
-    private let channelPath = "/api/channels/"
+    private let channelPath: String = "/api/channels/"
 
     private let config: RuntimeConfig
     private let session: any AirshipRequestSession

@@ -18,8 +18,8 @@ actor LiveActivityRegistry {
     private static let maxActiveTime: TimeInterval = 8 * 60 * 60
     private static let staleTokenAge: TimeInterval = 48 * 60 * 60
 
-    private let liveActivityKey = "LiveaActivityRegister#tracked"
-    private let startTokensKey = "LiveaActivityRegister#trackedStartTokens"
+    private let liveActivityKey: String = "LiveaActivityRegister#tracked"
+    private let startTokensKey: String = "LiveaActivityRegister#trackedStartTokens"
 
     private var restoreCalled: Bool = false
 

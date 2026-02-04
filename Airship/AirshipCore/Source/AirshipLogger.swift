@@ -9,7 +9,7 @@ import os
 /// - Note: For internal use only. :nodoc:
 public final class AirshipLogger: Sendable {
     // Configuration for the logger
-    private static let configuration = Configuration()
+    private static let configuration: Configuration = Configuration()
 
     static var logLevel: AirshipLogLevel {
         return configuration.storage.logLevel

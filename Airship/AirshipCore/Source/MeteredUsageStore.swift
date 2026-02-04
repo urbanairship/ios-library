@@ -2,9 +2,9 @@ import Foundation
 import CoreData
 
 final class MeteredUsageStore: Sendable {
-    private static let fileFormat = "MeteredUsage-%@.sqlite"
-    private static let eventDataEntityName = "UAMeteredUsageEventData"
-    private static let fetchEventLimit = 500
+    private static let fileFormat: String = "MeteredUsage-%@.sqlite"
+    private static let eventDataEntityName: String = "UAMeteredUsageEventData"
+    private static let fetchEventLimit: Int = 500
 
     private let coreData: UACoreData
     private let inMemory: Bool

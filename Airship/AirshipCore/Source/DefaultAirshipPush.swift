@@ -18,9 +18,9 @@ import UIKit
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
 
-    private let pushTokenChannel = AirshipAsyncChannel<String>()
+    private let pushTokenChannel: AirshipAsyncChannel<String> = AirshipAsyncChannel<String>()
 
-    private let notificationStatusChannel = AirshipAsyncChannel<AirshipNotificationStatus>()
+    private let notificationStatusChannel: AirshipAsyncChannel<AirshipNotificationStatus> = AirshipAsyncChannel<AirshipNotificationStatus>()
 
     @MainActor
     public var notificationStatusPublisher: AnyPublisher<AirshipNotificationStatus, Never> {
@@ -36,35 +36,35 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
         )
     }
 
-    private static let pushNotificationsOptionsKey = "UAUserPushNotificationsOptions"
-    private static let userPushNotificationsEnabledKey = "UAUserPushNotificationsEnabled"
-    private static let backgroundPushNotificationsEnabledKey = "UABackgroundPushNotificationsEnabled"
-    private static let requestExplicitPermissionWhenEphemeralKey = "UAExtendedPushNotificationPermissionEnabled"
-    private static let badgeSettingsKey = "UAPushBadge"
-    private static let deviceTokenKey = "UADeviceToken"
-    private static let quietTimeSettingsKey = "UAPushQuietTime"
-    private static let quietTimeEnabledSettingsKey = "UAPushQuietTimeEnabled"
-    private static let timeZoneSettingsKey = "UAPushTimeZone"
-    private static let typesAuthorizedKey = "UAPushTypesAuthorized"
-    private static let authorizationStatusKey = "UAPushAuthorizationStatus"
-    private static let userPromptedForNotificationsKey = "UAPushUserPromptedForNotifications"
+    private static let pushNotificationsOptionsKey: String = "UAUserPushNotificationsOptions"
+    private static let userPushNotificationsEnabledKey: String = "UAUserPushNotificationsEnabled"
+    private static let backgroundPushNotificationsEnabledKey: String = "UABackgroundPushNotificationsEnabled"
+    private static let requestExplicitPermissionWhenEphemeralKey: String = "UAExtendedPushNotificationPermissionEnabled"
+    private static let badgeSettingsKey: String = "UAPushBadge"
+    private static let deviceTokenKey: String = "UADeviceToken"
+    private static let quietTimeSettingsKey: String = "UAPushQuietTime"
+    private static let quietTimeEnabledSettingsKey: String = "UAPushQuietTimeEnabled"
+    private static let timeZoneSettingsKey: String = "UAPushTimeZone"
+    private static let typesAuthorizedKey: String = "UAPushTypesAuthorized"
+    private static let authorizationStatusKey: String = "UAPushAuthorizationStatus"
+    private static let userPromptedForNotificationsKey: String = "UAPushUserPromptedForNotifications"
 
     // Old push enabled key
-    private static let oldPushEnabledKey = "UAPushEnabled"
+    private static let oldPushEnabledKey: String = "UAPushEnabled"
 
     // The default device tag group.
-    private static let defaultDeviceTagGroup = "device"
+    private static let defaultDeviceTagGroup: String = "device"
 
     // The foreground presentation options that can be defined from API or dashboard
-    private static let presentationOptionBadge = "badge"
-    private static let presentationOptionAlert = "alert"
-    private static let presentationOptionSound = "sound"
-    private static let presentationOptionList = "list"
-    private static let presentationOptionBanner = "banner"
+    private static let presentationOptionBadge: String = "badge"
+    private static let presentationOptionAlert: String = "alert"
+    private static let presentationOptionSound: String = "sound"
+    private static let presentationOptionList: String = "list"
+    private static let presentationOptionBanner: String = "banner"
 
     // Foreground presentation keys
-    private static let ForegroundPresentationLegacykey = "foreground_presentation"
-    private static let ForegroundPresentationkey = "com.urbanairship.foreground_presentation"
+    private static let ForegroundPresentationLegacykey: String = "foreground_presentation"
+    private static let ForegroundPresentationkey: String = "com.urbanairship.foreground_presentation"
     private static let deviceTokenRegistrationWaitTime: TimeInterval = 10
 
     private let config: RuntimeConfig
@@ -1264,7 +1264,7 @@ public extension AirshipNotifications {
     final class ReceivedNotificationResponse {
 
         /// NSNotification name.
-        public static let name = NSNotification.Name(
+        public static let name: NSNotification.Name = NSNotification.Name(
             "com.urbanairship.push.received_notification_response"
         )
 
@@ -1277,7 +1277,7 @@ public extension AirshipNotifications {
     final class RecievedNotification {
 
         /// NSNotification name.
-        public static let name = NSNotification.Name(
+        public static let name: NSNotification.Name = NSNotification.Name(
             "com.urbanairship.push.received_notification"
         )
 
@@ -1291,8 +1291,8 @@ public extension AirshipNotifications {
 
 /// Quiet time settings
 public struct QuietTimeSettings: Sendable, Equatable {
-    private static let quietTimeStartKey = "start"
-    private static let quietTimeEndKey = "end"
+    private static let quietTimeStartKey: String = "start"
+    private static let quietTimeEndKey: String = "end"
 
     /// Start hour
     public let startHour: UInt

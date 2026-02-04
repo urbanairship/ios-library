@@ -12,7 +12,7 @@ protocol ChannelBulkUpdateAPIClientProtocol: Sendable {
 
 /// NOTE: For internal use only. :nodoc:
 final class ChannelBulkUpdateAPIClient: ChannelBulkUpdateAPIClientProtocol {
-    private static let path = "/api/channels/sdk/batch/"
+    private static let path: String = "/api/channels/sdk/batch/"
 
     private let config: RuntimeConfig
     private let session: any AirshipRequestSession

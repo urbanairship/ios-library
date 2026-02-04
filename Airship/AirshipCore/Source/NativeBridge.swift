@@ -14,19 +14,19 @@ public import WebKit
 /// bridge must be assigned as the navigation delegate on a `WKWebView` in order to function.
 public final class NativeBridge: NSObject, WKNavigationDelegate {
 
-    static let airshipScheme = "uairship"
-    private static let closeCommand = "close"
-    private static let dismissCommand = "dismiss"
-    private static let setNamedUserCommand = "named_user"
-    private static let multiCommand = "multi"
+    static let airshipScheme: String = "uairship"
+    private static let closeCommand: String = "close"
+    private static let dismissCommand: String = "dismiss"
+    private static let setNamedUserCommand: String = "named_user"
+    private static let multiCommand: String = "multi"
 
     private var jsRequests: [JSBridgeLoadRequest] = []
 
-    private static let forwardSchemes = [
+    private static let forwardSchemes: [String] = [
         "itms-apps", "maps", "sms", "tel", "mailto",
     ]
 
-    private static let forwardHosts = [
+    private static let forwardHosts: [String] = [
         "maps.google.com",
         "www.youtube.com",
         "phobos.apple.com",

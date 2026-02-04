@@ -15,7 +15,7 @@ public protocol AirshipMainActorCancellable: Sendable {
 
 /// - Note: for internal use only.  :nodoc:
 public final class AirshipMainActorCancellableBlock: AirshipMainActorCancellable, Sendable {
-    private let block = AirshipAtomicValue<(@Sendable @MainActor () -> Void)?>(nil)
+    private let block: AirshipAtomicValue<(@Sendable @MainActor () -> Void)?> = AirshipAtomicValue<(@Sendable @MainActor () -> Void)?>(nil)
 
     public init(block: @escaping @MainActor @Sendable () -> Void) {
         self.block.value = block

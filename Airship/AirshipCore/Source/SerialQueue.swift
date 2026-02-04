@@ -5,8 +5,8 @@ import Foundation
 // An actor that will run a task with a result in order.
 /// NOTE: For internal use only. :nodoc:
 public actor AirshipSerialQueue {
-    private var nextTaskNumber = 0
-    private var currentTaskNumber = 0
+    private var nextTaskNumber: Int = 0
+    private var currentTaskNumber: Int = 0
     private var currentTask: Task<Void, Never>?
 
     public init() {}

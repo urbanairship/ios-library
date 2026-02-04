@@ -23,7 +23,7 @@ public final class AirshipAnalyticsFeed: Sendable {
         case analytics(eventType: EventType, body: AirshipJSON, value: Double? = 1)
     }
 
-    private let channel = AirshipAsyncChannel<Event>()
+    private let channel: AirshipAsyncChannel<Event> = AirshipAsyncChannel<Event>()
 
     public var updates: AsyncStream<Event> {
         get async {

@@ -19,7 +19,7 @@ public protocol AirshipLocaleManager: AnyObject, Sendable {
 
 final class DefaultAirshipLocaleManager: AirshipLocaleManager {
 
-    fileprivate static let storeKey = "com.urbanairship.locale.locale"
+    fileprivate static let storeKey: String = "com.urbanairship.locale.locale"
 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
@@ -129,12 +129,12 @@ public extension AirshipNotifications {
     final class LocaleUpdated: NSObject {
 
         /// NSNotification name.
-        public static let name = NSNotification.Name(
+        public static let name: NSNotification.Name = NSNotification.Name(
             "com.urbanairship.locale.locale_updated"
         )
         
         /// NSNotification userInfo key to get the locale.
-        public static let localeKey = "locale"
+        public static let localeKey: String = "locale"
     }
 
 }

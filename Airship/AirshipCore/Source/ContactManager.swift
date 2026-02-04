@@ -1,14 +1,14 @@
 import Foundation
 
 actor ContactManager: ContactManagerProtocol {
-    private static let operationsKey = "Contact.operationEntries"
-    private static let legacyOperationsKey = "Contact.operations" // operations without the date
-    private static let contactInfoKey = "Contact.contactInfo"
-    private static let anonContactDataKey = "Contact.anonContactData"
+    private static let operationsKey: String = "Contact.operationEntries"
+    private static let legacyOperationsKey: String = "Contact.operations" // operations without the date
+    private static let contactInfoKey: String = "Contact.contactInfo"
+    private static let anonContactDataKey: String = "Contact.anonContactData"
 
-    static let identityRateLimitID = "Contact.identityRateLimitID"
-    static let updateRateLimitID = "Contact.updateRateLimitID"
-    static let updateTaskID = "Contact.update"
+    static let identityRateLimitID: String = "Contact.identityRateLimitID"
+    static let updateRateLimitID: String = "Contact.updateRateLimitID"
+    static let updateTaskID: String = "Contact.update"
 
     private let cachedAuthToken: CachedValue<AuthToken> = CachedValue()
     private var dataStore: PreferenceDataStore

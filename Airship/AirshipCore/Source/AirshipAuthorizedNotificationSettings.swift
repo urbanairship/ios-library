@@ -13,34 +13,34 @@ public struct AirshipAuthorizedNotificationSettings: OptionSet, Sendable {
     }
 
     // Badge
-    public static let badge = AirshipAuthorizedNotificationSettings(rawValue: 1 << 0)
+    public static let badge: AirshipAuthorizedNotificationSettings = AirshipAuthorizedNotificationSettings(rawValue: 1 << 0)
 
     // Sound
-    public static let sound = AirshipAuthorizedNotificationSettings(rawValue: 1 << 1)
+    public static let sound: AirshipAuthorizedNotificationSettings = AirshipAuthorizedNotificationSettings(rawValue: 1 << 1)
 
     // Alert
-    public static let alert = AirshipAuthorizedNotificationSettings(rawValue: 1 << 2)
+    public static let alert: AirshipAuthorizedNotificationSettings = AirshipAuthorizedNotificationSettings(rawValue: 1 << 2)
 
     // Carplad
-    public static let carPlay = AirshipAuthorizedNotificationSettings(rawValue: 1 << 3)
+    public static let carPlay: AirshipAuthorizedNotificationSettings = AirshipAuthorizedNotificationSettings(rawValue: 1 << 3)
 
     // Lockscreen
-    public static let lockScreen = AirshipAuthorizedNotificationSettings(rawValue: 1 << 4)
+    public static let lockScreen: AirshipAuthorizedNotificationSettings = AirshipAuthorizedNotificationSettings(rawValue: 1 << 4)
 
     // Notification Center
-    public static let notificationCenter = AirshipAuthorizedNotificationSettings(rawValue: 1 << 5)
+    public static let notificationCenter: AirshipAuthorizedNotificationSettings = AirshipAuthorizedNotificationSettings(rawValue: 1 << 5)
 
     // Critical alert
-    public static let criticalAlert = AirshipAuthorizedNotificationSettings(rawValue: 1 << 6)
+    public static let criticalAlert: AirshipAuthorizedNotificationSettings = AirshipAuthorizedNotificationSettings(rawValue: 1 << 6)
 
     // Announcement
-    public static let announcement = AirshipAuthorizedNotificationSettings(rawValue: 1 << 7)
+    public static let announcement: AirshipAuthorizedNotificationSettings = AirshipAuthorizedNotificationSettings(rawValue: 1 << 7)
 
     // Scheduled delivery
-    public static let scheduledDelivery = AirshipAuthorizedNotificationSettings(rawValue: 1 << 8)
+    public static let scheduledDelivery: AirshipAuthorizedNotificationSettings = AirshipAuthorizedNotificationSettings(rawValue: 1 << 8)
 
     // Time sensitive
-    public static let timeSensitive = AirshipAuthorizedNotificationSettings(rawValue: 1 << 9)
+    public static let timeSensitive: AirshipAuthorizedNotificationSettings = AirshipAuthorizedNotificationSettings(rawValue: 1 << 9)
 }
 
 

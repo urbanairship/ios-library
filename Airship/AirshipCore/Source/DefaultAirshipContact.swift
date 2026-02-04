@@ -11,7 +11,7 @@ import UIKit
 /// Airship contact. A contact is distinct from a channel and  represents a "user"
 /// within Airship. Contacts may be named and have channels associated with it.
 public final class DefaultAirshipContact: AirshipContact, @unchecked Sendable {
-    static let refreshContactPushPayloadKey = "com.urbanairship.contact.update"
+    static let refreshContactPushPayloadKey: String = "com.urbanairship.contact.update"
 
     public var contactChannelUpdates: AsyncStream<ContactChannelsResult> {
         get {
@@ -52,10 +52,10 @@ public final class DefaultAirshipContact: AirshipContact, @unchecked Sendable {
         }
     }
 
-    private static let resolveDateKey = "Contact.resolveDate"
-    static let legacyPendingTagGroupsKey = "com.urbanairship.tag_groups.pending_channel_tag_groups_mutations"
-    static let legacyPendingAttributesKey = "com.urbanairship.named_user_attributes.registrar_persistent_queue_key"
-    static let legacyNamedUserKey = "UANamedUserID"
+    private static let resolveDateKey: String = "Contact.resolveDate"
+    static let legacyPendingTagGroupsKey: String = "com.urbanairship.tag_groups.pending_channel_tag_groups_mutations"
+    static let legacyPendingAttributesKey: String = "com.urbanairship.named_user_attributes.registrar_persistent_queue_key"
+    static let legacyNamedUserKey: String = "UANamedUserID"
 
 
     // Interval for how often we emit a resolve operation on foreground
@@ -67,7 +67,7 @@ public final class DefaultAirshipContact: AirshipContact, @unchecked Sendable {
     // Subscription list cache age
     private static let maxSubscriptionListCacheAge: TimeInterval = 600.0 // 10 mins
 
-    public static let maxNamedUserIDLength = 128
+    public static let maxNamedUserIDLength: Int = 128
 
     private let dataStore: PreferenceDataStore
     private let config: RuntimeConfig
@@ -882,12 +882,12 @@ public extension AirshipNotifications {
     final class ContactConflict {
 
         /// NSNotification name.
-        public static let name = NSNotification.Name(
+        public static let name: NSNotification.Name = NSNotification.Name(
             "com.urbanairship.contact_conflict"
         )
 
         /// NSNotification userInfo key to get the `ContactConflictEvent`.
-        public static let eventKey = "event"
+        public static let eventKey: String = "event"
     }
 }
 

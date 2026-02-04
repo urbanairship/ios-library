@@ -7,10 +7,10 @@ public import SwiftUI
 /// - Note: for internal use only.  :nodoc:
 public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
 
-    let url: String
-    let imageLoader: AirshipImageLoader
-    let image: (Image, CGSize) -> ImageView
-    let placeholder: () -> Placeholder
+    private let url: String
+    private let imageLoader: AirshipImageLoader
+    private let image: (Image, CGSize) -> ImageView
+    private let placeholder: () -> Placeholder
 
     public init(
         url: String,

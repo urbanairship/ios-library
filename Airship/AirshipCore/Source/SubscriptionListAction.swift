@@ -11,7 +11,7 @@ import Foundation
 public final class SubscriptionListAction: AirshipAction {
 
     /// Default names - "subscription_list_action", "^sl", "edit_subscription_list_action", "^sla"
-    public static let defaultNames = [
+    public static let defaultNames: [String] = [
         "subscription_list_action", "^sl", "edit_subscription_list_action", "^sla"
     ]
     

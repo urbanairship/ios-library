@@ -21,13 +21,13 @@ public final class Airship: Sendable {
 
     /// Airship deep link scheme
     /// - Note: For internal use only. :nodoc:
-    public static let deepLinkScheme = "uairship"
+    public static let deepLinkScheme: String = "uairship"
 
-    private static let appSettingsDeepLinkHost = "app_settings"
+    private static let appSettingsDeepLinkHost: String = "app_settings"
 
-    private static let appStoreDeepLinkHost = "app_store"
+    private static let appStoreDeepLinkHost: String = "app_store"
 
-    private static let itunesIDKey = "itunesID"
+    private static let itunesIDKey: String = "itunesID"
 
     /// A flag that checks if the Airship instance is available. `true` if available, otherwise `false`.
     public static var isFlying: Bool {
@@ -118,7 +118,7 @@ public final class Airship: Sendable {
     /// - NOTE: For internal use only. :nodoc:
     public var components: [any AirshipComponent] { return airshipInstance.components }
 
-    static let _sharedHolder = AirshipAtomicValue<Airship?>(nil)
+    static let _sharedHolder: AirshipAtomicValue<Airship?> = AirshipAtomicValue<Airship?>(nil)
     static var _shared: Airship? {
         get { _sharedHolder.value }
         set { _sharedHolder.value = newValue }
@@ -488,7 +488,7 @@ public final class Airship: Sendable {
 
 
     // Taken from IAA so we can continue to use the existing value if set
-    private static let newUserCutOffDateKey = "UAInAppRemoteDataClient.ScheduledNewUserCutoffTime"
+    private static let newUserCutOffDateKey: String = "UAInAppRemoteDataClient.ScheduledNewUserCutoffTime"
 
     var installDate: Date {
         if let date = self.airshipInstance.preferenceDataStore.value(forKey: Airship.newUserCutOffDateKey) as? Date {
@@ -517,18 +517,18 @@ public final class AirshipNotifications {
     /// Notification when Airship is ready.
     public final class AirshipReady {
         /// Notification name
-        public static let name = NSNotification.Name(
+        public static let name: NSNotification.Name = NSNotification.Name(
             "com.urbanairship.airship_ready"
         )
 
         /// Airship ready channel ID key. Only available if `extendedBroadcastEnabled` is true in config.
-        public static let channelIDKey = "channel_id"
+        public static let channelIDKey: String = "channel_id"
 
         /// Airship ready app key. Only available if `extendedBroadcastEnabled` is true in config.
-        public static let appKey = "app_key"
+        public static let appKey: String = "app_key"
 
         /// Airship ready payload version. Only available if `extendedBroadcastEnabled` is true in config.
-        public static let payloadVersionKey = "payload_version"
+        public static let payloadVersionKey: String = "payload_version"
     }
 }
 

@@ -16,13 +16,13 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
         case failed
     }
 
-    static let refreshTaskID = "RemoteData.refresh"
+    static let refreshTaskID: String = "RemoteData.refresh"
     static let defaultRefreshInterval: TimeInterval = 10
-    static let refreshRemoteDataPushPayloadKey = "com.urbanairship.remote-data.update"
+    static let refreshRemoteDataPushPayloadKey: String = "com.urbanairship.remote-data.update"
 
     // Datastore keys
-    private static let randomValueKey = "remotedata.randomValue"
-    private static let changeTokenKey = "remotedata.CHANGE_TOKEN"
+    private static let randomValueKey: String = "remotedata.randomValue"
+    private static let changeTokenKey: String = "remotedata.CHANGE_TOKEN"
 
     private let config: RuntimeConfig
     private let providers: [any RemoteDataProviderProtocol]
@@ -35,7 +35,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
     private let statusUpdates: AirshipAsyncChannel<[RemoteDataSource: RemoteDataSourceStatus]> = AirshipAsyncChannel()
     private let currentSourceStatus: AirshipAtomicValue<[RemoteDataSource: RemoteDataSourceStatus]> = .init([:])
 
-    private let refreshResultSubject = PassthroughSubject<(source: RemoteDataSource, result: RemoteDataRefreshResult), Never>()
+    private let refreshResultSubject: PassthroughSubject<(source: RemoteDataSource, result: RemoteDataRefreshResult), Never> = PassthroughSubject<(source: RemoteDataSource, result: RemoteDataRefreshResult), Never>()
     private let refreshStatusSubjectMap: [RemoteDataSource: CurrentValueSubject<RefreshStatus, Never>]
 
     private let lastActiveRefreshDate: AirshipMainActorValue<Date> = AirshipMainActorValue(Date.distantPast)

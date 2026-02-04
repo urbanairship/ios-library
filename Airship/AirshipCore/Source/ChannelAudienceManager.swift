@@ -27,12 +27,12 @@ protocol ChannelAudienceManagerProtocol: AnyObject, Sendable {
 
 /// NOTE: For internal use only. :nodoc:
 final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
-    static let updateTaskID = "ChannelAudienceManager.update"
-    static let updatesKey = "UAChannel.audienceUpdates"
+    static let updateTaskID: String = "ChannelAudienceManager.update"
+    static let updatesKey: String = "UAChannel.audienceUpdates"
 
-    static let legacyPendingTagGroupsKey =
+    static let legacyPendingTagGroupsKey: String =
         "com.urbanairship.tag_groups.pending_channel_tag_groups_mutations"
-    static let legacyPendingAttributesKey =
+    static let legacyPendingAttributesKey: String =
         "com.urbanairship.channel_attributes.registrar_persistent_queue_key"
 
     static let maxCacheTime: TimeInterval = 600  // 10 minutes
@@ -49,9 +49,9 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
 
     private let cachedSubscriptionLists: CachedValue<[String]>
 
-    private let subscriptionListEditsSubject = PassthroughSubject<
+    private let subscriptionListEditsSubject: PassthroughSubject<
         SubscriptionListEdit, Never
-    >()
+    > = PassthroughSubject<SubscriptionListEdit, Never>()
 
     var subscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never> {
         self.subscriptionListEditsSubject.eraseToAnyPublisher()

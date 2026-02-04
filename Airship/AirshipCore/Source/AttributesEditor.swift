@@ -10,7 +10,7 @@ public final class AttributesEditor {
     private var removes: [String] = []
     private let completionHandler: ([AttributeUpdate]) -> Void
 
-    private static let JSON_EXPIRY_KEY = "exp"
+    private static let JSON_EXPIRY_KEY: String = "exp"
 
     init(
         date: any AirshipDateProtocol,

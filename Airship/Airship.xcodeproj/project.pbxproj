@@ -342,7 +342,6 @@
 		6E1C9C3A271E90EB009EF9EF /* LayoutModelsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C39271E90EB009EF9EF /* LayoutModelsTest.swift */; };
 		6E1C9C4B271F7878009EF9EF /* BackgroundColorViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1C9C4A271F7878009EF9EF /* BackgroundColorViewModifier.swift */; };
 		6E1CBD812BA3A30300519D9C /* AirshipEmbeddedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CBD802BA3A30300519D9C /* AirshipEmbeddedInfo.swift */; };
-		6E1CBDB62BA4CF0C00519D9C /* MessageDisplayHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CBDB52BA4CF0C00519D9C /* MessageDisplayHistory.swift */; };
 		6E1CBDE32BA51ED100519D9C /* InAppDisplayImpressionRuleProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CBDE22BA51ED100519D9C /* InAppDisplayImpressionRuleProvider.swift */; };
 		6E1CBDFF2BAA1DF200519D9C /* DefaultInAppDisplayImpressionRuleProviderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CBDFE2BAA1DF200519D9C /* DefaultInAppDisplayImpressionRuleProviderTest.swift */; };
 		6E1CBE2D2BAA2AEA00519D9C /* AirshipAutomation.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E1CBE2A2BAA2AEA00519D9C /* AirshipAutomation.xcdatamodeld */; };
@@ -831,6 +830,9 @@
 		6EC81D032F2D445500E1C0C6 /* UAInboxDataMappingV1toV4.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 6EC81D022F2D445500E1C0C6 /* UAInboxDataMappingV1toV4.xcmappingmodel */; };
 		6EC81D052F2D448B00E1C0C6 /* UAInboxDataMappingV2toV4.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 6EC81D042F2D448B00E1C0C6 /* UAInboxDataMappingV2toV4.xcmappingmodel */; };
 		6EC81D082F2D44D700E1C0C6 /* UAInboxDataMappingV3toV4.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 6EC81D072F2D44D700E1C0C6 /* UAInboxDataMappingV3toV4.xcmappingmodel */; };
+		6EC824A02F33A4DD00E1C0C6 /* MessageDisplayHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC8249F2F33A4DD00E1C0C6 /* MessageDisplayHistory.swift */; };
+		6EC824A22F33A5EC00E1C0C6 /* MessageCenterThemeLoaderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC824A12F33A5EC00E1C0C6 /* MessageCenterThemeLoaderTest.swift */; };
+		6EC824A42F33A5F600E1C0C6 /* MessageCenterMessageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC824A32F33A5F600E1C0C6 /* MessageCenterMessageTest.swift */; };
 		6EC9214E2D82144A000A3A59 /* ThomasFormField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC9214D2D82144A000A3A59 /* ThomasFormField.swift */; };
 		6EC922E12D832BB8000A3A59 /* ThomasFormFieldProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC922E02D832BAF000A3A59 /* ThomasFormFieldProcessor.swift */; };
 		6EC922E32D838DFF000A3A59 /* ThomasFormPayloadGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC922E22D838DFA000A3A59 /* ThomasFormPayloadGenerator.swift */; };
@@ -2149,6 +2151,9 @@
 		6EC81D022F2D445500E1C0C6 /* UAInboxDataMappingV1toV4.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UAInboxDataMappingV1toV4.xcmappingmodel; sourceTree = "<group>"; };
 		6EC81D042F2D448B00E1C0C6 /* UAInboxDataMappingV2toV4.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UAInboxDataMappingV2toV4.xcmappingmodel; sourceTree = "<group>"; };
 		6EC81D072F2D44D700E1C0C6 /* UAInboxDataMappingV3toV4.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UAInboxDataMappingV3toV4.xcmappingmodel; sourceTree = "<group>"; };
+		6EC8249F2F33A4DD00E1C0C6 /* MessageDisplayHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDisplayHistory.swift; sourceTree = "<group>"; };
+		6EC824A12F33A5EC00E1C0C6 /* MessageCenterThemeLoaderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterThemeLoaderTest.swift; sourceTree = "<group>"; };
+		6EC824A32F33A5F600E1C0C6 /* MessageCenterMessageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterMessageTest.swift; sourceTree = "<group>"; };
 		6EC9214D2D82144A000A3A59 /* ThomasFormField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormField.swift; sourceTree = "<group>"; };
 		6EC922E02D832BAF000A3A59 /* ThomasFormFieldProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormFieldProcessor.swift; sourceTree = "<group>"; };
 		6EC922E22D838DFA000A3A59 /* ThomasFormPayloadGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormPayloadGenerator.swift; sourceTree = "<group>"; };
@@ -2979,6 +2984,7 @@
 		6E062CFF27165642001A74A1 /* Thomas */ = {
 			isa = PBXGroup;
 			children = (
+				6EC8249F2F33A4DD00E1C0C6 /* MessageDisplayHistory.swift */,
 				27F1E20E2F0E911600E317DB /* Analytics */,
 				6E5213E22DCA7A3800CF64B9 /* ThomasEvent.swift */,
 				6EED68302CE28FA70087CDCB /* ThomasConstants.swift */,
@@ -3764,6 +3770,8 @@
 		6E4A466F28EF44F600A25617 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6EC824A32F33A5F600E1C0C6 /* MessageCenterMessageTest.swift */,
+				6EC824A12F33A5EC00E1C0C6 /* MessageCenterThemeLoaderTest.swift */,
 				6E4A467828EF453400A25617 /* MessageCenterAPIClientTest.swift */,
 				32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */,
 				32F615A628F708980015696D /* MessageCenterListTests.swift */,
@@ -6146,6 +6154,7 @@
 				6EED68222CE2806D0087CDCB /* ThomasAccessibleInfo.swift in Sources */,
 				6E49D7BA28401D2E00C7BB9D /* NotificationPermissionDelegate.swift in Sources */,
 				6EED67A72CE1A5000087CDCB /* ThomasBorder.swift in Sources */,
+				6EC824A02F33A4DD00E1C0C6 /* MessageDisplayHistory.swift in Sources */,
 				6E1A19222D6F875A0056418B /* ThomasFormValidationMode.swift in Sources */,
 				6E6ED1612683DBC300A2CBD0 /* AirshipVersion.swift in Sources */,
 				6E49D7B628401D2E00C7BB9D /* NotificationRegistrar.swift in Sources */,
@@ -6266,7 +6275,6 @@
 				6E986F062B47319E00FBE6A0 /* DeferredScheduleResult.swift in Sources */,
 				6E986EF92B44D41E00FBE6A0 /* InAppAutomation.swift in Sources */,
 				6E1528392B4E13D400DF1377 /* AirshipLayoutDisplayAdapter.swift in Sources */,
-				6E1CBDB62BA4CF0C00519D9C /* MessageDisplayHistory.swift in Sources */,
 				6E1A9BD32B5EE8A400A6489B /* AutomationScheduleState.swift in Sources */,
 				6E1A9BBF2B5EE19000A6489B /* PreparedSchedule.swift in Sources */,
 				6E1A9BD12B5EE84600A6489B /* AutomationScheduleData.swift in Sources */,
@@ -6432,8 +6440,10 @@
 				27CCF77F2F16DA500018058F /* MessageViewAnalyticsTest.swift in Sources */,
 				6EF13FFD2A16F390009A125D /* AirshipBaseTest.swift in Sources */,
 				6E4A467928EF453400A25617 /* MessageCenterAPIClientTest.swift in Sources */,
+				6EC824A22F33A5EC00E1C0C6 /* MessageCenterThemeLoaderTest.swift in Sources */,
 				6E4A468128EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */,
 				60A292112CB7C5C30096F5EB /* TestDate.swift in Sources */,
+				6EC824A42F33A5F600E1C0C6 /* MessageCenterMessageTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,7 +10,7 @@ import Foundation
 public final class DeepLinkAction: AirshipAction {
 
     /// Default names - "deep_link_action", "^d"
-    public static let defaultNames = ["deep_link_action", "^d"]
+    public static let defaultNames: [String] = ["deep_link_action", "^d"]
 
     /// Default predicate - Rejects `Airship.foregroundPush`
     public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in

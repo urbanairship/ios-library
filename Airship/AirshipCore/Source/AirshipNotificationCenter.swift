@@ -5,7 +5,7 @@ import Foundation
 /// - Note: For internal use only. :nodoc:
 public struct AirshipNotificationCenter: Sendable {
 
-    public static let shared = AirshipNotificationCenter()
+    public static let shared: AirshipNotificationCenter = AirshipNotificationCenter()
     
     private let notificationCenter: NotificationCenter
     

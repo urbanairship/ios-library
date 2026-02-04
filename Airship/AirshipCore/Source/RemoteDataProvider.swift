@@ -7,9 +7,9 @@ actor RemoteDataProvider: RemoteDataProviderProtocol {
 
 
     // Old
-    private static let lastRefreshMetadataKey = "remotedata.LAST_REFRESH_METADATA"
-    private static let lastRefreshTimeKey = "remotedata.LAST_REFRESH_TIME"
-    private static let lastRefreshAppVersionKey = "remotedata.LAST_REFRESH_APP_VERSION"
+    private static let lastRefreshMetadataKey: String = "remotedata.LAST_REFRESH_METADATA"
+    private static let lastRefreshTimeKey: String = "remotedata.LAST_REFRESH_TIME"
+    private static let lastRefreshAppVersionKey: String = "remotedata.LAST_REFRESH_APP_VERSION"
 
     private static let maxStaleTime: TimeInterval = 3 * 24 * 60.0 // 3 days
 

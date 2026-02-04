@@ -133,7 +133,7 @@ final class DefaultAirshipMeteredUsage: AirshipMeteredUsage {
         return .success
     }
 
-    public func addEvent(_ event: AirshipMeteredUsageEvent) async throws {
+    func addEvent(_ event: AirshipMeteredUsageEvent) async throws {
         guard self.isEnabled else { return }
 
         var eventToStore = event

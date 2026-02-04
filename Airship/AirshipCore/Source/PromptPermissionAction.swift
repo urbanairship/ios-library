@@ -15,7 +15,7 @@ import Foundation
 public final class PromptPermissionAction: AirshipAction {
 
     /// Default names - "prompt_permission_action", "^pp"
-    public static let defaultNames = ["prompt_permission_action", "^pp"]
+    public static let defaultNames: [String] = ["prompt_permission_action", "^pp"]
     
     /// Default predicate - rejects foreground pushes with visible display options
     public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in
@@ -24,7 +24,7 @@ public final class PromptPermissionAction: AirshipAction {
 
     /// Metadata key for the result receiver. Must be (Permission, PermissionStatus, PermissionStatus) -> Void
     /// - Note: For internal use only. :nodoc:
-    public static let resultReceiverMetadataKey = "permission_result"
+    public static let resultReceiverMetadataKey: String = "permission_result"
 
     private let permissionPrompter: @Sendable () -> any PermissionPrompter
 

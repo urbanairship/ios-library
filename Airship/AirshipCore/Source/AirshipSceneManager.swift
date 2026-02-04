@@ -20,7 +20,7 @@ public protocol AirshipSceneManagerProtocol: Sendable {
  */
 /// - Note: for internal use only.  :nodoc:
 public final class AirshipSceneManager: AirshipSceneManagerProtocol, Sendable {
-    public static let shared = AirshipSceneManager()
+    public static let shared: AirshipSceneManager = AirshipSceneManager()
 
 #if !os(watchOS)
 

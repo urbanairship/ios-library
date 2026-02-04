@@ -5,25 +5,25 @@ import Foundation
 /// NOTE: For internal use only. :nodoc:
 public struct AirshipIvyVersionMatcher: Sendable {
 
-    private static let exactVersionPattern = "^([0-9]+)(\\.([0-9]+)((\\.([0-9]+))?(.*)))?$"
-    private static let subVersionPattern = "^(.*)\\+$"
-    private static let startInclusive = "["
-    private static let startExclusive = "]"
-    private static let startInfinite = "("
-    private static let endInclusive = "]"
-    private static let endExclusive = "["
-    private static let endInfinite = ")"
-    private static let rangeSeparator = ","
-    private static let escapeChar = "\\"
+    private static let exactVersionPattern: String = "^([0-9]+)(\\.([0-9]+)((\\.([0-9]+))?(.*)))?$"
+    private static let subVersionPattern: String = "^(.*)\\+$"
+    private static let startInclusive: String = "["
+    private static let startExclusive: String = "]"
+    private static let startInfinite: String = "("
+    private static let endInclusive: String = "]"
+    private static let endExclusive: String = "["
+    private static let endInfinite: String = ")"
+    private static let rangeSeparator: String = ","
+    private static let escapeChar: String = "\\"
 
-    private static let startTokens = escapeChar + startInclusive + escapeChar + startExclusive + escapeChar + startInfinite
-    private static let endTokens = escapeChar + endInclusive + escapeChar + endExclusive + escapeChar + endInfinite
-    private static let startEndTokens = startTokens + endTokens
-    private static let startPattern = "([" + startTokens + "])"
-    private static let endPattern = "([" + endTokens + "])"
-    private static let separatorPattern = "(" + rangeSeparator + ")"
-    private static let versionPattern = "([^" + startEndTokens + rangeSeparator + "]*)"
-    private static let versionRangePattern = startPattern + versionPattern + separatorPattern + versionPattern + endPattern
+    private static let startTokens: String = escapeChar + startInclusive + escapeChar + startExclusive + escapeChar + startInfinite
+    private static let endTokens: String = escapeChar + endInclusive + escapeChar + endExclusive + escapeChar + endInfinite
+    private static let startEndTokens: String = startTokens + endTokens
+    private static let startPattern: String = "([" + startTokens + "])"
+    private static let endPattern: String = "([" + endTokens + "])"
+    private static let separatorPattern: String = "(" + rangeSeparator + ")"
+    private static let versionPattern: String = "([^" + startEndTokens + rangeSeparator + "]*)"
+    private static let versionRangePattern: String = startPattern + versionPattern + separatorPattern + versionPattern + endPattern
 
     private enum Constraint: Sendable {
         case exactVersion(String)

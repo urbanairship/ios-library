@@ -8,7 +8,7 @@ import Foundation
  */
 public final class ChallengeResolver: NSObject, Sendable  {
     
-    public static let shared = ChallengeResolver()
+    public static let shared: ChallengeResolver = ChallengeResolver()
     
     @MainActor
     var resolver: ChallengeResolveClosure?

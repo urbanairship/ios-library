@@ -7,20 +7,20 @@ import Foundation
 public struct CustomEvent: Sendable {
 
     /// Max properties size in bytes
-    public static let maxPropertiesSize = 65536
+    public static let maxPropertiesSize: Int = 65536
 
-    static let eventNameKey = "event_name"
-    static let eventValueKey = "event_value"
-    static let eventPropertiesKey = "properties"
-    static let eventTransactionIDKey = "transaction_id"
-    static let eventInteractionIDKey = "interaction_id"
-    static let eventInteractionTypeKey = "interaction_type"
-    static let eventInAppKey = "in_app"
-    static let eventConversionMetadataKey = "conversion_metadata"
-    static let eventConversionSendIDKey = "conversion_send_id"
-    static let eventTemplateTypeKey = "template_type"
+    static let eventNameKey: String = "event_name"
+    static let eventValueKey: String = "event_value"
+    static let eventPropertiesKey: String = "properties"
+    static let eventTransactionIDKey: String = "transaction_id"
+    static let eventInteractionIDKey: String = "interaction_id"
+    static let eventInteractionTypeKey: String = "interaction_type"
+    static let eventInAppKey: String = "in_app"
+    static let eventConversionMetadataKey: String = "conversion_metadata"
+    static let eventConversionSendIDKey: String = "conversion_send_id"
+    static let eventTemplateTypeKey: String = "template_type"
     static let eventType: String  = "enhanced_custom_event"
-    static let interactionMCRAP = "ua_mcrap"
+    static let interactionMCRAP: String = "ua_mcrap"
 
     /// Internal conversion send ID
     var conversionSendID: String?

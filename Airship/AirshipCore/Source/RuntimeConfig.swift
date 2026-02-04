@@ -7,7 +7,7 @@ import Combine
 public final class RuntimeConfig: Sendable {
 
     /// - NOTE: This option is reserved for internal debugging. :nodoc:
-    public static let configUpdatedEvent = Notification.Name(
+    public static let configUpdatedEvent: Notification.Name = Notification.Name(
         "com.urbanairship.runtime_config_updated"
     )
 

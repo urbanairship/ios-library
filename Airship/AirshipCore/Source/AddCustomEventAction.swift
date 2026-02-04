@@ -13,11 +13,11 @@ import Foundation
 ///
 /// Result value: nil
 public final class AddCustomEventAction: AirshipAction {
-    private static let eventNameKey = "name"
-    private static let eventValue = "value"
+    private static let eventNameKey: String = "name"
+    private static let eventValue: String = "value"
 
     /// Default names - "add_custom_event_action", "^+e"
-    public static let defaultNames = ["add_custom_event_action", "^+e"]
+    public static let defaultNames: [String] = ["add_custom_event_action", "^+e"]
     
     /// Default predicate - rejects foreground pushes with visible display options and `ActionSituation.backgroundPush`
     public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in
@@ -29,7 +29,7 @@ public final class AddCustomEventAction: AirshipAction {
 
     /// Metadata key for in-app context.
     /// - Note: For internal use only. :nodoc:
-    public static let _inAppMetadata = "in_app_metadata"
+    public static let _inAppMetadata: String = "in_app_metadata"
 
     public func accepts(arguments: ActionArguments) async -> Bool {
         return true

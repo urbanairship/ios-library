@@ -25,7 +25,7 @@ import Foundation
 public final class ModifyAttributesAction: AirshipAction {
 
     /// Default names - "modify_attributes_action", "^a"
-    public static let defaultNames = ["modify_attributes_action", "set_attributes_action", "^a"]
+    public static let defaultNames: [String] = ["modify_attributes_action", "set_attributes_action", "^a"]
     
     /// Default predicate - rejects foreground pushes with visible display options
     public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in
@@ -33,10 +33,10 @@ public final class ModifyAttributesAction: AirshipAction {
     }
     
 
-    private static let namedUserKey = "named_user"
-    private static let channelsKey = "channel"
-    private static let setActionKey = "set"
-    private static let removeActionKey = "remove"
+    private static let namedUserKey: String = "named_user"
+    private static let channelsKey: String = "channel"
+    private static let setActionKey: String = "set"
+    private static let removeActionKey: String = "remove"
 
 
     private let channel: @Sendable () -> any AirshipChannel
@@ -296,7 +296,7 @@ public final class ModifyAttributesAction: AirshipAction {
         }
         
         struct JsonValue: Codable, Sendable, Hashable {
-            private static let keyExpiration = "exp"
+            private static let keyExpiration: String = "exp"
             
             let name: String
             let instanceId: String

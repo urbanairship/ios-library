@@ -4,8 +4,8 @@ import CoreData
 import Foundation
 
 actor EventStore {
-    private static let eventDataEntityName = "UAEventData"
-    private static let fetchEventLimit = 500
+    private static let eventDataEntityName: String = "UAEventData"
+    private static let fetchEventLimit: Int = 500
 
     private var coreData: UACoreData
     private var storeName: String?

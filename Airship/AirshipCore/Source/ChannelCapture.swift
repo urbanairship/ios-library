@@ -24,7 +24,7 @@ public protocol AirshipChannelCapture: Sendable {
 /// or disabled in Airship Config.
 @available(tvOS, unavailable)
 final public class DefaultAirshipChannelCapture: AirshipChannelCapture {
-    private static let knocksToTriggerChannelCapture = 6
+    private static let knocksToTriggerChannelCapture: Int = 6
     private static let knocksMaxTimeSeconds: TimeInterval = 30
     private static let pasteboardExpirationSeconds: TimeInterval = 60
 

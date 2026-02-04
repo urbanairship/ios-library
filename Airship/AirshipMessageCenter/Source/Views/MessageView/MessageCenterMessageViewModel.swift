@@ -45,7 +45,8 @@ public final class MessageCenterMessageViewModel: ObservableObject {
                 message: message,
                 eventRecorder: ThomasLayoutEventRecorder(
                     airshipAnalytics: messageCenter.analytics,
-                    meteredUsage: messageCenter.meteredUsage),
+                    meteredUsage: messageCenter.meteredUsage
+                ),
                 historyStorage: MessageDisplayHistoryStore(
                     storageGetter: { messageID in
                         await messageCenter.internalInbox.message(forID: messageID)?.associatedData

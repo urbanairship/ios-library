@@ -13,7 +13,7 @@ final class DefaultDispatcher: UADispatcher, Sendable {
         queue: DispatchQueue.main
     )
 
-    private static let dispatchKey = DispatchSpecificKey<DefaultDispatcher>()
+    private static let dispatchKey: DispatchSpecificKey<DefaultDispatcher> = DispatchSpecificKey<DefaultDispatcher>()
 
     private let queue: DispatchQueue
 

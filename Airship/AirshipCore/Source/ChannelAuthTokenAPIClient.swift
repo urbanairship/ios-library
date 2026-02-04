@@ -3,7 +3,7 @@
 import Foundation
 
 final class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol, Sendable {
-    private let tokenPath = "/api/auth/device"
+    private let tokenPath: String = "/api/auth/device"
     private let config: RuntimeConfig
     private let session: any AirshipRequestSession
 

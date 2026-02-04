@@ -6,9 +6,9 @@ import Foundation
 /// Manages work for the Airship SDK
 final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
 
-    private let rateLimiter = WorkRateLimiter()
-    private let conditionsMonitor = WorkConditionsMonitor()
-    private let backgroundTasks = WorkBackgroundTasks()
+    private let rateLimiter: WorkRateLimiter = WorkRateLimiter()
+    private let conditionsMonitor: WorkConditionsMonitor = WorkConditionsMonitor()
+    private let backgroundTasks: WorkBackgroundTasks = WorkBackgroundTasks()
     private let workers: Workers = Workers()
     private let startTask: Task<Void, Never>
     private let backgroundWaitTask: AirshipMainActorValue<(any AirshipCancellable)?> = AirshipMainActorValue(nil)
@@ -16,7 +16,7 @@ final class AirshipWorkManager: AirshipWorkManagerProtocol, Sendable {
     private let backgroundWorkRequests: AirshipMainActorValue<[AirshipWorkRequest]> = AirshipMainActorValue([])
 
     /// Shared instance
-    static let shared = AirshipWorkManager()
+    static let shared: AirshipWorkManager = AirshipWorkManager()
 
     deinit {
         startTask.cancel()

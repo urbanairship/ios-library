@@ -5,8 +5,8 @@ import Foundation
 import SwiftUI
 
 public struct AirshipImageLoader {
-    private static let retryDelay = 10
-    private static let retries = 10
+    private static let retryDelay: TimeInterval = 10
+    private static let retries: Int = 10
 
     private let imageProvider: (any AirshipImageProvider)?
 

@@ -4,7 +4,7 @@ import Foundation
 
 /// - Note: For internal use only. :nodoc:
 public final class AirshipLock: Sendable {
-    private let _lock = NSRecursiveLock()
+    private let _lock: NSRecursiveLock = NSRecursiveLock()
 
     public init() {}
 

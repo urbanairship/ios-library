@@ -8,11 +8,11 @@ import Foundation
 /// composed of multiple `JSONMatcher` objects.
 public final class JSONPredicate: NSObject, Sendable, Codable {
     /// Key for the 'AND' logical operator.
-    private static let andTypeKey = "and"
+    private static let andTypeKey: String = "and"
     /// Key for the 'OR' logical operator.
-    private static let orTypeKey = "or"
+    private static let orTypeKey: String = "or"
     /// Key for the 'NOT' logical operator.
-    private static let notTypeKey = "not"
+    private static let notTypeKey: String = "not"
 
     /// The type of logical operation (e.g., "and", "or", "not").
     private let type: String?

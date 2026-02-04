@@ -227,7 +227,7 @@ fileprivate extension NSManagedObjectContext {
 // Internal core data entity
 @objc(UAirshipCacheData)
 fileprivate class AirshipCacheData: NSManagedObject {
-    static let entityName = "UAirshipCacheData"
+    static let entityName: String = "UAirshipCacheData"
 
     @NSManaged public dynamic var data: Data?
 

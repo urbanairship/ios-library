@@ -35,7 +35,7 @@ import Foundation
 public final class ModifyTagsAction: AirshipAction {
     
     /// Default names - "tag_action", "^t"
-    public static let defaultNames = ["tag_action", "^t"]
+    public static let defaultNames: [String] = ["tag_action", "^t"]
     
     /// Default predicate - rejects foreground pushes with visible display options
     public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in

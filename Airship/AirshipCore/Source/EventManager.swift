@@ -173,7 +173,7 @@ fileprivate actor EventManagerState {
     // Max database size
     private static let maxTotalDBSizeKB: UInt = 5120
     private static let minTotalDBSizeKB: UInt = 10
-    private static let tuninigInfoDefaultsKey = "Analytics.tuningInfo"
+    private static let tuninigInfoDefaultsKey: String = "Analytics.tuningInfo"
 
     // Total size in bytes that a given event post is allowed to send.
     private static let maxBatchSizeKB: UInt = 500

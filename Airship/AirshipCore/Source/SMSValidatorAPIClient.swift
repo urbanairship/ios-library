@@ -2,8 +2,7 @@
 
 import Foundation
 
-/// /// NOTE: For internal use only. :nodoc:
-public enum SMSValidatorAPIClientResult: Decodable, Equatable, Sendable {
+enum SMSValidatorAPIClientResult: Decodable, Equatable, Sendable {
     case valid(String)
     case invalid
 
@@ -12,7 +11,7 @@ public enum SMSValidatorAPIClientResult: Decodable, Equatable, Sendable {
         case msisdn
     }
 
-    public init(from decoder: any Decoder) throws {
+    init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         if try container.decode(Bool.self, forKey: .valid) {
@@ -24,8 +23,7 @@ public enum SMSValidatorAPIClientResult: Decodable, Equatable, Sendable {
     }
 }
 
-/// /// NOTE: For internal use only. :nodoc:
-public protocol SMSValidatorAPIClientProtocol: Sendable {
+protocol SMSValidatorAPIClientProtocol: Sendable {
     func validateSMS(
         msisdn: String,
         sender: String

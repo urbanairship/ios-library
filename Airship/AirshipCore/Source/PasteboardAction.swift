@@ -20,7 +20,7 @@ import UIKit
 public final class PasteboardAction: AirshipAction {
 
     /// Default names - "clipboard_action", "^c"
-    public static let defaultNames = ["clipboard_action", "^c"]
+    public static let defaultNames: [String] = ["clipboard_action", "^c"]
 
     public func accepts(arguments: ActionArguments) async -> Bool {
         switch arguments.situation {

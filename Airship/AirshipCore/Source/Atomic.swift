@@ -5,7 +5,7 @@ import Foundation
 /// - Note: for internal use only.  :nodoc:
 public final class AirshipAtomicValue<T: Sendable>: @unchecked Sendable {
 
-    fileprivate let lock = AirshipLock()
+    fileprivate let lock: AirshipLock = AirshipLock()
     fileprivate var _value: T
 
     public init(_ value: T) {

@@ -14,7 +14,7 @@ import Foundation
 public final class OpenExternalURLAction: AirshipAction {
 
     /// Default names - "open_external_url_action", "^u", "^w", "wallet_action"
-    public static let defaultNames = ["open_external_url_action", "^u", "^w", "wallet_action"]
+    public static let defaultNames: [String] = ["open_external_url_action", "^u", "^w", "wallet_action"]
 
     /// Default predicate - rejects `ActionSituation.foregroundPush`
     public static let defaultPredicate: @Sendable (ActionArguments) -> Bool = { args in

@@ -99,16 +99,16 @@ public protocol AirshipURLAllowList: Sendable {
 @MainActor
 final class DefaultAirshipURLAllowList: AirshipURLAllowList {
     /// `<scheme> := <any chars (no spaces), '*' will match 0 or more characters>`
-    private static let schemeRegex = "^([^\\s]*)$"
+    private static let schemeRegex: String = "^([^\\s]*)$"
 
     /// `<host> := '*' | *.<valid host characters> | <valid host characters>`
-    private static let hostRegex = "^((\\*)|(\\*\\.[^/\\*]+)|([^/\\*]+))$"
+    private static let hostRegex: String = "^((\\*)|(\\*\\.[^/\\*]+)|([^/\\*]+))$"
 
     /// `<path> | <scheme> := <any chars (no spaces), '*' will match 0 or more characters>`
-    private static let pathRegex = "^([^\\s]*)$"
+    private static let pathRegex: String = "^([^\\s]*)$"
 
     /// Regular expression to escape from a pattern
-    private static let escapeRegexCharacters = [
+    private static let escapeRegexCharacters: [String] = [
         "\\", ".", "[", "]", "{", "}", "(", ")", "^", "$", "?", "+", "|", "*",
     ]
 
@@ -506,10 +506,10 @@ public struct URLAllowListScope: OptionSet, Sendable, Equatable {
 
     // Scope that is checked before loading the JavaScript Native Bridge into
     // a WebView when using the `NativeBridge`
-    public static let javaScriptInterface = URLAllowListScope(rawValue: 1 << 0)
+    public static let javaScriptInterface: URLAllowListScope = URLAllowListScope(rawValue: 1 << 0)
 
     // Scope that is checked before opening a URL.
-    public static let openURL = URLAllowListScope(rawValue: 1 << 1)
+    public static let openURL: URLAllowListScope = URLAllowListScope(rawValue: 1 << 1)
 
     // All scopes
     public static let all: URLAllowListScope = [.javaScriptInterface, .openURL]

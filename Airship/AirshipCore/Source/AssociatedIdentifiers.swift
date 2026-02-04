@@ -7,12 +7,12 @@ public class AssociatedIdentifiers {
     /**
      * Maximum number of associated IDs that can be set.
      */
-    public static let maxCount = 100
+    public static let maxCount: Int = 100
 
     /**
      * Character limit for associated IDs or keys.
      */
-    public static let maxCharacterCount = 255
+    public static let maxCharacterCount: Int = 255
 
     /**
      * The advertising ID.
