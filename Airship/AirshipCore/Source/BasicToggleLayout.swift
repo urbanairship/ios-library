@@ -6,13 +6,13 @@ import SwiftUI
 @MainActor
 struct BasicToggleLayout: View {
 
-    @Environment(\.pageIdentifier) var pageID
-    @EnvironmentObject var formState: ThomasFormState
-    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
-    @State var isOn: Bool = false
+    @Environment(\.pageIdentifier) private var pageID
+    @EnvironmentObject private var formState: ThomasFormState
+    @EnvironmentObject private var formDataCollector: ThomasFormDataCollector
+    @State private var isOn: Bool = false
 
-    @EnvironmentObject var thomasState: ThomasState
-    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+    @EnvironmentObject private var thomasState: ThomasState
+    @Environment(\.thomasAssociatedLabelResolver) private var associatedLabelResolver
 
     private var associatedLabel: String? {
         associatedLabelResolver?.labelFor(
@@ -22,8 +22,13 @@ struct BasicToggleLayout: View {
         )
     }
 
-    let info: ThomasViewInfo.BasicToggleLayout
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.BasicToggleLayout
+    private let constraints: ViewConstraints
+
+    init(info: ThomasViewInfo.BasicToggleLayout, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     var body: some View {
         ToggleLayout(

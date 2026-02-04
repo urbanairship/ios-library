@@ -3,7 +3,7 @@
 import Foundation
 
 struct ThomasLayoutButtonTapEvent: ThomasLayoutEvent {
-    public let name = EventType.inAppButtonTap
+    public let name: EventType = EventType.inAppButtonTap
     public let data: (any Sendable & Encodable)?
 
     public init(data: ThomasReportingEvent.ButtonTapEvent) {

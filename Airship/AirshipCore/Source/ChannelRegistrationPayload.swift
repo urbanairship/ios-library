@@ -34,7 +34,7 @@ public struct ChannelRegistrationPayload: Codable, Equatable, Sendable {
     /// NOTE: For internal use only. :nodoc:
     public struct ChannelInfo: Codable, Equatable, Sendable {
 
-        var deviceType = "ios"
+        var deviceType: String = "ios"
 
         /// This flag indicates that the user is able to receive push notifications.
         public var isOptedIn: Bool = false

@@ -5,10 +5,15 @@ import SwiftUI
 
 @MainActor
 struct RadioInputController: View {
-    let info: ThomasViewInfo.RadioInputController
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.RadioInputController
+    private let constraints: ViewConstraints
 
-    @EnvironmentObject var environment: ThomasEnvironment
+    @EnvironmentObject private var environment: ThomasEnvironment
+
+    init(info: ThomasViewInfo.RadioInputController, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     var body: some View {
         Content(
@@ -22,17 +27,17 @@ struct RadioInputController: View {
 
     @MainActor
     struct Content: View {
-        let info: ThomasViewInfo.RadioInputController
-        let constraints: ViewConstraints
+        private let info: ThomasViewInfo.RadioInputController
+        private let constraints: ViewConstraints
 
-        @Environment(\.pageIdentifier) var pageID
-        @EnvironmentObject var formDataCollector: ThomasFormDataCollector
-        @EnvironmentObject var formState: ThomasFormState
-        @EnvironmentObject var thomasState: ThomasState
-        @ObservedObject var radioInputState: RadioInputState
-        @EnvironmentObject var validatableHelper: ValidatableHelper
+        @Environment(\.pageIdentifier) private var pageID
+        @EnvironmentObject private var formDataCollector: ThomasFormDataCollector
+        @EnvironmentObject private var formState: ThomasFormState
+        @EnvironmentObject private var thomasState: ThomasState
+        @ObservedObject private var radioInputState: RadioInputState
+        @EnvironmentObject private var validatableHelper: ValidatableHelper
 
-        @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+        @Environment(\.thomasAssociatedLabelResolver) private var associatedLabelResolver
 
         private var associatedLabel: String? {
             associatedLabelResolver?.labelFor(

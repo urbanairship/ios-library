@@ -4,16 +4,21 @@ import Foundation
 import SwiftUI
 
 struct AirshipToggle: View {
-    let info: ThomasViewInfo.Toggle
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.Toggle
+    private let constraints: ViewConstraints
 
-    @Environment(\.pageIdentifier) var pageID
-    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
-    @EnvironmentObject var formState: ThomasFormState
-    @EnvironmentObject var thomasState: ThomasState
-    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+    @Environment(\.pageIdentifier) private var pageID
+    @EnvironmentObject private var formDataCollector: ThomasFormDataCollector
+    @EnvironmentObject private var formState: ThomasFormState
+    @EnvironmentObject private var thomasState: ThomasState
+    @Environment(\.thomasAssociatedLabelResolver) private var associatedLabelResolver
 
     @State private var isOn: Bool = false
+
+    init(info: ThomasViewInfo.Toggle, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     private var associatedLabel: String? {
         associatedLabelResolver?.labelFor(

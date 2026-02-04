@@ -4,6 +4,13 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.3.0 - January 30, 2026
+Minor release that adds Objective-C wrapper for deep link processing and fixes a Message Center migration issue when upgrading from 17.x or older to 20.x.
+
+### Changes
+- Added `UAirship.processDeepLink(_:completionHandler:)` Objective-C wrapper for programmatic deep link handling.
+- Fixed a Message Center migration issue when upgrading from 17.x or older to 20.x
+
 ## Version 20.2.0 - January 29, 2026
 Minor release that adds Objective-C wrappers for .NET bindings and improves bundle resource lookup for SPM and Tuist projects.
 

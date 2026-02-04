@@ -370,16 +370,20 @@ public final class Airship: Sendable {
             return requireComponent(ofType: E.self)
         }
     }
-
+    
     /// Processes a deep link.
-    /// - Note: For internal use only. :nodoc:
-    /// `uairship://` deep links will be handled internally. All other deep links will be forwarded to the deep link handler or delegate
-    ///  in that order.
+    /// For `uairship://` scheme URLs, Airship will handle the deep link internally.
+    /// For other URLs, Airship will forward the deep link to the deep link listener if set.
     /// - Parameters:
-    ///     - deepLink: The deep link.
-    ///     - completionHandler: The result. `true` if the link was able to be processed, otherwise `false`.
+    ///     - url: The deep link.
+    /// - Returns `true` if the link was able to be processed, otherwise `false`.
     @MainActor
-    func deepLink(
+    public static func processDeepLink(_ url: URL) async -> Bool {
+        return await Airship.shared.deepLink(url)
+    }
+    
+    @MainActor
+    private func deepLink(
         _ deepLink: URL
     ) async -> Bool {
         guard deepLink.scheme != Airship.deepLinkScheme else {

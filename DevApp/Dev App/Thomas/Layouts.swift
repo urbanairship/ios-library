@@ -2,7 +2,7 @@
 
 import AirshipCore
 import Foundation
-import Yams
+internal import Yams
 import AirshipAutomation
 
 @MainActor

@@ -93,7 +93,7 @@ class PagerState: ObservableObject {
     /// Used to pause/resume a story
     @Published var inProgress: Bool = true
     
-    private var isManuallyPaused = false
+    private var isManuallyPaused: Bool = false
     private var clearPagingRequestTask: Task<Void, Never>?
     private var pageViewCounts: [String: Int] = [:]
 

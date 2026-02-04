@@ -24,15 +24,25 @@ internal struct MessageCenterUIKitAppearance {
         var prefersLargeTitles: Bool = false
         var navigationTitle: String?
 
+        /// Simplified equality that compares only the non-Font properties
+        /// Font instances don't support Equatable, so we exclude them from comparison
         static func == (lhs: DetectedAppearance, rhs: DetectedAppearance) -> Bool {
-            // Compare all properties except fonts (Font doesn't conform to Equatable)
-            return lhs.navigationBarTintColor == rhs.navigationBarTintColor &&
-            lhs.navigationBarBackgroundColor == rhs.navigationBarBackgroundColor &&
-            lhs.navigationTitleColor == rhs.navigationTitleColor &&
-            lhs.navigationLargeTitleColor == rhs.navigationLargeTitleColor &&
-            lhs.navigationBarIsTranslucent == rhs.navigationBarIsTranslucent &&
-            lhs.prefersLargeTitles == rhs.prefersLargeTitles &&
-            lhs.navigationTitle == rhs.navigationTitle
+            // Early return for boolean properties
+            if lhs.navigationBarIsTranslucent != rhs.navigationBarIsTranslucent ||
+               lhs.prefersLargeTitles != rhs.prefersLargeTitles ||
+               lhs.navigationTitle != rhs.navigationTitle {
+                return false
+            }
+            
+            // Compare color properties separately to reduce type-checking load
+            return lhs.compareColors(rhs)
+        }
+        
+        private func compareColors(_ other: DetectedAppearance) -> Bool {
+            navigationBarTintColor == other.navigationBarTintColor &&
+                navigationBarBackgroundColor == other.navigationBarBackgroundColor &&
+                navigationTitleColor == other.navigationTitleColor &&
+                navigationLargeTitleColor == other.navigationLargeTitleColor
         }
 
         // Convert UIKit appearance to this model

@@ -5,9 +5,19 @@ import SwiftUI
 #if !os(watchOS)
 struct SmsLocalePicker: View {
     
-    @Binding var selectedLocale: ThomasSMSLocale?
-    let availableLocales: [ThomasSMSLocale]
-    let fontSize: Double
+    @Binding private var selectedLocale: ThomasSMSLocale?
+    private let availableLocales: [ThomasSMSLocale]
+    private let fontSize: Double
+
+    init(
+        selectedLocale: Binding<ThomasSMSLocale?>,
+        availableLocales: [ThomasSMSLocale],
+        fontSize: Double
+    ) {
+        self._selectedLocale = selectedLocale
+        self.availableLocales = availableLocales
+        self.fontSize = fontSize
+    }
 
     var body: some View {
         Menu {

@@ -6,8 +6,8 @@ import Combine
 
 @MainActor
 struct StateController: View {
-    let info: ThomasViewInfo.StateController
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.StateController
+    private let constraints: ViewConstraints
 
     @EnvironmentObject
     private var state: ThomasState

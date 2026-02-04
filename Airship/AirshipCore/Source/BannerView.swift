@@ -7,28 +7,28 @@ import UIKit
 #endif
 
 struct BannerView: View {
-    @Environment(\.layoutState) var layoutState
+    @Environment(\.layoutState) private var layoutState
     @Environment(\.windowSize) private var windowSize
     @Environment(\.orientation) private var orientation
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.colorScheme) private var colorScheme
 
     static let animationInOutDuration = 0.2
 
-    let viewControllerOptions: ThomasViewControllerOptions
-    let presentation: ThomasPresentationInfo.Banner
-    let layout: AirshipLayout
+    private let viewControllerOptions: ThomasViewControllerOptions
+    private let presentation: ThomasPresentationInfo.Banner
+    private let layout: AirshipLayout
 
     @ObservedObject
-    var thomasEnvironment: ThomasEnvironment
+    private var thomasEnvironment: ThomasEnvironment
 
     @ObservedObject
-    var bannerConstraints: ThomasBannerConstraints
+    private var bannerConstraints: ThomasBannerConstraints
 
     @StateObject
     private var timer: AirshipObservableTimer
 
     /// The dismiss action callback
-    let onDismiss: () -> Void
+    private let onDismiss: () -> Void
 
     @State private var isShowing: Bool = false
     @State private var swipeOffset: CGFloat = 0

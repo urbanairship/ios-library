@@ -4,12 +4,24 @@ import SwiftUI
 
 @MainActor
 struct ToggleLayout<Content> : View  where Content : View {
-    @EnvironmentObject var thomasState: ThomasState
+    @EnvironmentObject private var thomasState: ThomasState
 
-    @Binding var isOn: Bool
-    let onToggleOn: ThomasViewInfo.ToggleActions
-    let onToggleOff: ThomasViewInfo.ToggleActions
-    let content: () -> Content
+    @Binding private var isOn: Bool
+    private let onToggleOn: ThomasViewInfo.ToggleActions
+    private let onToggleOff: ThomasViewInfo.ToggleActions
+    private let content: () -> Content
+
+    init(
+        isOn: Binding<Bool>,
+        onToggleOn: ThomasViewInfo.ToggleActions,
+        onToggleOff: ThomasViewInfo.ToggleActions,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self._isOn = isOn
+        self.onToggleOn = onToggleOn
+        self.onToggleOff = onToggleOff
+        self.content = content
+    }
 
     var body: some View {
         Toggle(isOn: $isOn.animation()) {
@@ -23,7 +35,7 @@ struct ToggleLayout<Content> : View  where Content : View {
     }
 
     private func handleStateActions(_ isOn: Bool) {
-        let actions = isOn ? onToggleOn : onToggleOff
+        let actions: ThomasViewInfo.ToggleActions = isOn ? onToggleOn : onToggleOff
         guard let stateActions = actions.stateActions else { return }
         thomasState.processStateActions(stateActions)
     }

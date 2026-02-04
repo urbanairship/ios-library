@@ -27,11 +27,11 @@ class UAirshipTest: XCTestCase {
         self.airshipInstance.components = [component]
 
         /// App settings
-        var result = await Airship.shared.deepLink(URL(string: "uairship://app_settings")!)
+        var result = await Airship.processDeepLink(URL(string: "uairship://app_settings")!)
         XCTAssertTrue(result)
 
         // App Store deeplink
-        result = await Airship.shared.deepLink(URL(string: "uairship://app_store?itunesID=0123456789")!)
+        result = await Airship.processDeepLink(URL(string: "uairship://app_store?itunesID=0123456789")!)
         XCTAssertTrue(result)
     }
 
@@ -56,7 +56,7 @@ class UAirshipTest: XCTestCase {
         self.airshipInstance.deepLinkDelegate = deepLinkHandler
 
         let deepLink = URL(string: "uairship://some-deep-link")!
-        let result = await Airship.shared.deepLink(deepLink)
+        let result = await Airship.processDeepLink(deepLink)
         XCTAssertTrue(result)
 
         XCTAssertEqual(deepLink, component1.deepLink)
@@ -86,7 +86,7 @@ class UAirshipTest: XCTestCase {
         self.airshipInstance.deepLinkDelegate = deepLinkHandler
 
         let deepLink = URL(string: "uairship://some-deep-link")!
-        let result = await Airship.shared.deepLink(deepLink)
+        let result = await Airship.processDeepLink(deepLink)
         XCTAssertTrue(result)
         XCTAssertEqual(deepLink, self.deepLinkHandler.deepLink)
         XCTAssertEqual(deepLink, component1.deepLink)
@@ -108,7 +108,7 @@ class UAirshipTest: XCTestCase {
         self.airshipInstance.components = [component1, component2]
 
         let deepLink = URL(string: "uairship://some-deep-link")!
-        let result = await Airship.shared.deepLink(deepLink)
+        let result = await Airship.processDeepLink(deepLink)
         XCTAssertTrue(result)
         XCTAssertEqual(deepLink, component1.deepLink)
         XCTAssertEqual(deepLink, component2.deepLink)
@@ -125,7 +125,7 @@ class UAirshipTest: XCTestCase {
         self.airshipInstance.components = [component]
 
         let deepLink = URL(string: "some-other://some-deep-link")!
-        let result = await Airship.shared.deepLink(deepLink)
+        let result = await Airship.processDeepLink(deepLink)
         XCTAssertFalse(result)
         XCTAssertNil(component.deepLink)
     }
@@ -141,7 +141,7 @@ class UAirshipTest: XCTestCase {
         self.airshipInstance.deepLinkDelegate = deepLinkHandler
 
         let deepLink = URL(string: "some-other://some-deep-link")!
-        let result = await Airship.shared.deepLink(deepLink)
+        let result = await Airship.processDeepLink(deepLink)
         XCTAssertTrue(result)
         XCTAssertNil(component.deepLink)
         XCTAssertEqual(deepLink, deepLinkHandler.deepLink)
@@ -165,7 +165,7 @@ class UAirshipTest: XCTestCase {
         self.airshipInstance.components = [component]
 
         let deepLink = URL(string: "some-other://some-deep-link")!
-        let result = await Airship.shared.deepLink(deepLink)
+        let result = await Airship.processDeepLink(deepLink)
         XCTAssertTrue(result)
         XCTAssertTrue(handlerCalled)
         XCTAssertNil(component.deepLink)
@@ -190,7 +190,7 @@ class UAirshipTest: XCTestCase {
         self.airshipInstance.components = [component]
 
         let deepLink = URL(string: "some-other://some-deep-link")!
-        let result = await Airship.shared.deepLink(deepLink)
+        let result = await Airship.processDeepLink(deepLink)
         XCTAssertTrue(result)
         XCTAssertTrue(handlerCalled)
         XCTAssertNil(component.deepLink)
@@ -214,7 +214,7 @@ class UAirshipTest: XCTestCase {
         self.airshipInstance.components = [component]
 
         let deepLink = URL(string: "some-other://some-deep-link")!
-        let result = await Airship.shared.deepLink(deepLink)
+        let result = await Airship.processDeepLink(deepLink)
         XCTAssertTrue(result) // Should return true since handler is set
         XCTAssertTrue(handlerCalled)
         XCTAssertNil(component.deepLink)
@@ -237,7 +237,7 @@ class UAirshipTest: XCTestCase {
         self.airshipInstance.components = [component]
 
         let deepLink = URL(string: "uairship://some-deep-link")!
-        let result = await Airship.shared.deepLink(deepLink)
+        let result = await Airship.processDeepLink(deepLink)
         XCTAssertTrue(result)
         XCTAssertTrue(handlerCalled)
         XCTAssertEqual(deepLink, component.deepLink) // Component still gets called for uairship:// URLs

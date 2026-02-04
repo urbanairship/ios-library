@@ -11,7 +11,7 @@ actor Worker {
     private var inProgress: Set<PendingRequest> = Set()
 
     private var tasks: Set<Task<Void, any Error>> = Set()
-    private var nextPendingID = 0
+    private var nextPendingID: Int = 0
 
     private static let initialBackOff = 30.0
     private static let maxBackOff = 120.0

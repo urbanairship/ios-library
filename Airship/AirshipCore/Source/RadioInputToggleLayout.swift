@@ -5,10 +5,10 @@ import SwiftUI
 
 @MainActor
 struct RadioInputToggleLayout: View {
-    @EnvironmentObject var formState: ThomasFormState
-    @EnvironmentObject var radioInputState: RadioInputState
-    @EnvironmentObject var thomasState: ThomasState
-    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+    @EnvironmentObject private var formState: ThomasFormState
+    @EnvironmentObject private var radioInputState: RadioInputState
+    @EnvironmentObject private var thomasState: ThomasState
+    @Environment(\.thomasAssociatedLabelResolver) private var associatedLabelResolver
 
     private var associatedLabel: String? {
         associatedLabelResolver?.labelFor(
@@ -18,8 +18,13 @@ struct RadioInputToggleLayout: View {
         )
     }
 
-    let info: ThomasViewInfo.RadioInputToggleLayout
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.RadioInputToggleLayout
+    private let constraints: ViewConstraints
+
+    init(info: ThomasViewInfo.RadioInputToggleLayout, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     private var isOnBinding: Binding<Bool> {
         return radioInputState.makeBinding(

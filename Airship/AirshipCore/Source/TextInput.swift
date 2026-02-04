@@ -7,19 +7,19 @@ import SwiftUI
 struct TextInput: View {
 
 
-    let info: ThomasViewInfo.TextInput
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.TextInput
+    private let constraints: ViewConstraints
 
-    @Environment(\.pageIdentifier) var pageID
-    @Environment(\.sizeCategory) var sizeCategory
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.pageIdentifier) private var pageID
+    @Environment(\.sizeCategory) private var sizeCategory
+    @Environment(\.colorScheme) private var colorScheme
 
-    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
-    @EnvironmentObject var formState: ThomasFormState
-    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @EnvironmentObject private var formDataCollector: ThomasFormDataCollector
+    @EnvironmentObject private var formState: ThomasFormState
+    @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject private var thomasState: ThomasState
-    @EnvironmentObject var validatableHelper: ValidatableHelper
-    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+    @EnvironmentObject private var validatableHelper: ValidatableHelper
+    @Environment(\.thomasAssociatedLabelResolver) private var associatedLabelResolver
 
     @State private var isEditing: Bool = false
     @StateObject private var viewModel: ViewModel
@@ -128,6 +128,37 @@ struct TextInput: View {
     }
 
     @ViewBuilder
+    private func textInputContent() -> some View {
+        ZStack {
+            if let hint = self.info.properties.placeholder ?? self.viewModel.selectedSMSLocale?.prefix {
+                Text(hint)
+                    .textAppearance(placeHolderTextAppearance(), colorScheme: colorScheme)
+                    .padding(5)
+                    .constraints(constraints, alignment: self.placeHolderAlignment)
+                    .opacity(self.viewModel.input.isEmpty && !isEditing ? 1 : 0)
+                    .animation(.linear(duration: 0.1), value: self.info.properties.placeholder)
+                    .accessibilityHidden(true)
+            }
+            HStack {
+                makeTextEditor()
+#if !os(watchOS)
+                    .airshipApplyIf(self.info.properties.inputType == .email) { view in
+                        view.textInputAutocapitalization(.never)
+                    }
+#endif
+                    .id(self.info.properties.identifier)
+
+                if let resolvedIconEndInfo = resolvedIconEndInfo?.icon {
+                    let size = scaledFontSize
+                    Icons.icon(info: resolvedIconEndInfo, colorScheme: colorScheme, resizable: false)
+                        .frame(maxWidth: size, maxHeight: size)
+                        .padding(5)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
     var body: some View {
         HStack {
             if showSMSPicker {
@@ -136,33 +167,7 @@ struct TextInput: View {
                     .padding(.leading, 5)
             }
             
-            ZStack {
-                if let hint = self.info.properties.placeholder ?? self.viewModel.selectedSMSLocale?.prefix {
-                    Text(hint)
-                        .textAppearance(placeHolderTextAppearance(), colorScheme: colorScheme)
-                        .padding(5)
-                        .constraints(constraints, alignment: self.placeHolderAlignment)
-                        .opacity(self.viewModel.input.isEmpty && !isEditing ? 1 : 0)
-                        .animation(.linear(duration: 0.1), value: self.info.properties.placeholder)
-                        .accessibilityHidden(true)
-                }
-                HStack {
-                    makeTextEditor()
-    #if !os(watchOS)
-                        .airshipApplyIf(self.info.properties.inputType == .email) { view in
-                            view.textInputAutocapitalization(.never)
-                        }
-    #endif
-                        .id(self.info.properties.identifier)
-
-                    if let resolvedIconEndInfo = resolvedIconEndInfo?.icon {
-                        let size = scaledFontSize
-                        Icons.icon(info: resolvedIconEndInfo, colorScheme: colorScheme, resizable: false)
-                            .frame(maxWidth: size, maxHeight: size)
-                            .padding(5)
-                    }
-                }
-            }
+            textInputContent()
         }
 #if !os(watchOS)
         .keyboardType(keyboardType)
@@ -484,22 +489,36 @@ struct TextInput: View {
 }
 
 struct AirshipTextField: View {
-    @Environment(\.sizeCategory) var sizeCategory
+    @Environment(\.sizeCategory) private var sizeCategory
 
-    let info: ThomasViewInfo.TextInput
-    let constraints: ViewConstraints
-    let alignment: Alignment
+    private let info: ThomasViewInfo.TextInput
+    private let constraints: ViewConstraints
+    private let alignment: Alignment
 
-    @Binding var binding: String
-    @Binding var isEditing: Bool
+    @Binding private var binding: String
+    @Binding private var isEditing: Bool
 
-    @Environment(\.colorScheme) var colorScheme
-    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @EnvironmentObject var viewState: ThomasState
+    @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
+    @EnvironmentObject private var viewState: ThomasState
 
     @FocusState private var focused: Bool
 
-    @State var icon: ThomasViewInfo.TextInput.IconEndInfo?
+    @State private var icon: ThomasViewInfo.TextInput.IconEndInfo?
+
+    init(
+        info: ThomasViewInfo.TextInput,
+        constraints: ViewConstraints,
+        alignment: Alignment,
+        binding: Binding<String>,
+        isEditing: Binding<Bool>
+    ) {
+        self.info = info
+        self.constraints = constraints
+        self.alignment = alignment
+        self._binding = binding
+        self._isEditing = isEditing
+    }
 
     var body: some View {
         let isMultiline = self.info.properties.inputType == .textMultiline

@@ -688,7 +688,7 @@ fileprivate struct ContactUpdateRequestBody: Encodable {
 
 
 fileprivate struct ContactIdentifyRequestBody: Encodable {
-    private let deviceInfo = DeviceInfo()
+    private let deviceInfo: DeviceInfo = DeviceInfo()
     private let action: RequestAction
 
     internal init(action: RequestAction) {
@@ -719,7 +719,7 @@ fileprivate struct ContactIdentifyRequestBody: Encodable {
     }
 
     internal struct DeviceInfo: Codable {
-        let deviceType = "ios"
+        let deviceType: String = "ios"
 
         enum CodingKeys: String, CodingKey {
             case deviceType = "device_type"
@@ -764,8 +764,8 @@ fileprivate struct OpenChannelRegistrationBody: Encodable {
     }
 
     internal struct ChannelPayload: Encodable {
-        let type = "open"
-        let optIn = true
+        let type: String = "open"
+        let optIn: Bool = true
         let address: String
         let timezone: String
         let localeCountry: String?
@@ -850,7 +850,7 @@ fileprivate struct EmailChannelRegistrationBody: Encodable {
     }
 
     internal struct ChannelPayload: Encodable {
-        let type = "email"
+        let type: String = "email"
         let address: String
         let timezone: String
         let localeCountry: String?

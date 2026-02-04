@@ -2,7 +2,7 @@
 
 import Combine
 import Foundation
-import Yams
+internal import Yams
 
 @MainActor
 final class ThomasLayoutViewModel: ObservableObject {

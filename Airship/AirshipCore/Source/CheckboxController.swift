@@ -4,10 +4,15 @@ import Foundation
 import SwiftUI
 
 struct CheckboxController: View {
-    let info: ThomasViewInfo.CheckboxController
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.CheckboxController
+    private let constraints: ViewConstraints
 
-    @EnvironmentObject var environment: ThomasEnvironment
+    @EnvironmentObject private var environment: ThomasEnvironment
+
+    init(info: ThomasViewInfo.CheckboxController, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     var body: some View {
         Content(
@@ -21,16 +26,16 @@ struct CheckboxController: View {
 
     @MainActor
     struct Content: View {
-        let info: ThomasViewInfo.CheckboxController
-        let constraints: ViewConstraints
+        private let info: ThomasViewInfo.CheckboxController
+        private let constraints: ViewConstraints
 
-        @Environment(\.pageIdentifier) var pageID
-        @EnvironmentObject var formDataCollector: ThomasFormDataCollector
-        @EnvironmentObject var formState: ThomasFormState
-        @EnvironmentObject var thomasState: ThomasState
-        @ObservedObject var checkboxState: CheckboxState
-        @EnvironmentObject var validatableHelper: ValidatableHelper
-        @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+        @Environment(\.pageIdentifier) private var pageID
+        @EnvironmentObject private var formDataCollector: ThomasFormDataCollector
+        @EnvironmentObject private var formState: ThomasFormState
+        @EnvironmentObject private var thomasState: ThomasState
+        @ObservedObject private var checkboxState: CheckboxState
+        @EnvironmentObject private var validatableHelper: ValidatableHelper
+        @Environment(\.thomasAssociatedLabelResolver) private var associatedLabelResolver
 
         private var associatedLabel: String? {
             associatedLabelResolver?.labelFor(

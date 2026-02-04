@@ -26,34 +26,44 @@ struct MessageCenterNavigationSplitView: View {
     }
 
     @ViewBuilder
-    public var body: some View {
-        NavigationSplitView {
-            NavigationStack {
-                MessageCenterContent(controller: self.controller, listViewModel: self.listViewModel)
-                    .environment(\.editMode, $editMode)
-                    .airshipOnChangeOf(editMode) { editMode in
-                        // Restores selceion state after edit mode exits
-                        if !editMode.isEditing, let last = self.listViewModel.selectedMessageID {
-                            DispatchQueue.main.async {
-                                self.listViewModel.selectedMessageID = last
-                            }
+    private var sidebar: some View {
+        NavigationStack {
+            MessageCenterContent(controller: self.controller, listViewModel: self.listViewModel)
+                .environment(\.editMode, $editMode)
+                .airshipOnChangeOf(editMode) { editMode in
+                    // Restores selection state after edit mode exits
+                    if !editMode.isEditing, let last = self.listViewModel.selectedMessageID {
+                        DispatchQueue.main.async {
+                            self.listViewModel.selectedMessageID = last
                         }
-                    }
-            }
-        } detail: {
-            NavigationStack {
-                Group {
-                    if let messageID = self.controller.currentMessageID {
-                        MessageCenterMessageViewWithNavigation(messageID: messageID) {
-                            self.controller.path.removeAll { $0 == .message(messageID) }
-                        }
-                        .id(messageID)
-                    } else {
-                        Text("Select a message")
-                            .font(.title)
-                            .foregroundColor(.secondary)
                     }
                 }
+        }
+    }
+
+    @ViewBuilder
+    private var detailView: some View {
+        Group {
+            if let messageID = self.controller.currentMessageID {
+                MessageCenterMessageViewWithNavigation(messageID: messageID) {
+                    self.controller.path.removeAll { $0 == .message(messageID) }
+                }
+                .id(messageID)
+            } else {
+                Text("Select a message")
+                    .font(.title)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+
+    @ViewBuilder
+    public var body: some View {
+        NavigationSplitView {
+            self.sidebar
+        } detail: {
+            NavigationStack {
+                self.detailView
             }
         }
     }

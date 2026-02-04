@@ -54,7 +54,7 @@ class ThomasState: ObservableObject {
         }
     }
 
-    private var stateSnapshot = StateSnapshot()
+    private var stateSnapshot: StateSnapshot = StateSnapshot()
     private var lastOutput: AirshipJSON = .object([:])
 
     init(

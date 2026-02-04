@@ -12,13 +12,18 @@ struct FormController: View {
         case form(ThomasViewInfo.FormController)
     }
 
-    let info: FormInfo
-    let constraints: ViewConstraints
+    private let info: FormInfo
+    private let constraints: ViewConstraints
 
-    @EnvironmentObject var formState: ThomasFormState
-    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
-    @EnvironmentObject var environment: ThomasEnvironment
-    @EnvironmentObject var state: ThomasState
+    @EnvironmentObject private var formState: ThomasFormState
+    @EnvironmentObject private var formDataCollector: ThomasFormDataCollector
+    @EnvironmentObject private var environment: ThomasEnvironment
+    @EnvironmentObject private var state: ThomasState
+
+    init(info: FormInfo, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     var body: some View {
         Content(
@@ -34,15 +39,15 @@ struct FormController: View {
 
     private struct Content: View {
 
-        let info: FormController.FormInfo
-        let constraints: ViewConstraints
+        private let info: FormController.FormInfo
+        private let constraints: ViewConstraints
 
-        @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-        @Environment(\.layoutState) var layoutState
+        @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
+        @Environment(\.layoutState) private var layoutState
 
-        @ObservedObject var formState: ThomasFormState
-        @StateObject var formDataCollector: ThomasFormDataCollector
-        @StateObject var state: ThomasState
+        @ObservedObject private var formState: ThomasFormState
+        @StateObject private var formDataCollector: ThomasFormDataCollector
+        @StateObject private var state: ThomasState
 
         init(
             info: FormController.FormInfo,

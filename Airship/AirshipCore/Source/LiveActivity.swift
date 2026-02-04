@@ -174,7 +174,7 @@ extension Data {
 @available(iOS 16.1, *)
 fileprivate class AirshipBackgroundTask {
 
-    private var taskID = UIBackgroundTaskIdentifier.invalid
+    private var taskID: UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
 
     private let name: String
 

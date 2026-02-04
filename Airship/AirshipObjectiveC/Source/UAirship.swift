@@ -171,6 +171,23 @@ public final class UAirship: NSObject, Sendable {
         var deepLinkDelegate: (any DeepLinkDelegate)?
     }
 
+    /// Processes a deep link.
+    /// For `uairship://` scheme URLs, Airship will handle the deep link internally.
+    /// For other URLs, Airship will forward the deep link to the deep link listener if set.
+    /// - Parameters:
+    ///     - url: The deep link.
+    ///     - completionHandler: The result. `true` if the link was able to be processed, otherwise `false`.
+    @objc
+    @MainActor
+    public class func processDeepLink(
+        _ url: URL,
+        completionHandler: @escaping (Bool) -> Void
+    ) {
+        Task { @MainActor in
+            let handled = await Airship.processDeepLink(url)
+            completionHandler(handled)
+        }
+    }
 }
 
 /// NSNotificationCenter keys event names

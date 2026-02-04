@@ -8,13 +8,18 @@ import SwiftUI
 struct LinearLayout: View {
 
     /// LinearLayout model.
-    let info: ThomasViewInfo.LinearLayout
+    private let info: ThomasViewInfo.LinearLayout
 
     /// View constraints.
-    let constraints: ViewConstraints
+    private let constraints: ViewConstraints
 
     @State
     private var numberGenerator: RepeatableNumberGenerator = RepeatableNumberGenerator()
+
+    init(info: ThomasViewInfo.LinearLayout, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     @ViewBuilder
     @MainActor
@@ -166,7 +171,7 @@ struct LinearLayout: View {
 
 class RepeatableNumberGenerator: RandomNumberGenerator {
     private var numbers: [UInt64] = []
-    private var index = 0
+    private var index: Int = 0
     private var numberGenerator: SystemRandomNumberGenerator = SystemRandomNumberGenerator()
 
     func next() -> UInt64 {

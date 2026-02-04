@@ -6,14 +6,14 @@ import SwiftUI
 /// Text/Label view
 
 struct Label: View {
-    let info: ThomasViewInfo.Label
+    private let info: ThomasViewInfo.Label
 
     /// View constraints.
-    let constraints: ViewConstraints
+    private let constraints: ViewConstraints
 
-    @EnvironmentObject var thomasState: ThomasState
-    @Environment(\.colorScheme) var colorScheme
-    @Environment(\.sizeCategory) var sizeCategory
+    @EnvironmentObject private var thomasState: ThomasState
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.sizeCategory) private var sizeCategory
 
     static let defaultHighlightColor: Color = Color(
         red: 1.0,
@@ -21,6 +21,11 @@ struct Label: View {
         blue: 0.04,
         opacity: 0.3
     )
+
+    init(info: ThomasViewInfo.Label, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     private var scaledFontSize: Double {
         UIFontMetrics.default.scaledValue(

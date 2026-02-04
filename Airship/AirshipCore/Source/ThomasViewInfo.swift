@@ -88,15 +88,19 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(ViewType.self, forKey: .type)
 
-        self = switch type {
+        self = try Self.decodeViewType(type, from: decoder)
+    }
+
+    // Separate decoding into smaller focused methods to reduce type-checking overhead
+    @inline(never)
+    private static func decodeViewType(_ type: ViewType, from decoder: any Decoder) throws -> ThomasViewInfo {
+        return switch type {
         case .container: .container(try Container(from: decoder))
         case .linearLayout: .linearLayout(try LinearLayout(from: decoder))
 
         case .webView:
 #if os(tvOS) || os(watchOS)
-            throw AirshipErrors.error(
-                "Webview not available on tvOS and watchOS"
-            )
+            throw AirshipErrors.error("Webview not available on tvOS and watchOS")
 #else
             .webView(try WebView(from: decoder))
 #endif
@@ -134,7 +138,13 @@ indirect enum ThomasViewInfo: ThomasSerializable {
     }
 
     func encode(to encoder: any Encoder) throws {
-        switch self {
+        try Self.encodeViewInfo(self, to: encoder)
+    }
+
+    // Separate encoding into smaller focused methods to reduce type-checking overhead
+    @inline(never)
+    private static func encodeViewInfo(_ viewInfo: ThomasViewInfo, to encoder: any Encoder) throws {
+        switch viewInfo {
         case .container(let info): try info.encode(to: encoder)
         case .linearLayout(let info): try info.encode(to: encoder)
         #if !os(tvOS) && !os(watchOS)

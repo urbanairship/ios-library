@@ -93,13 +93,25 @@ struct AdoptLayout: SwiftUI.Layout {
 }
 
 struct EmbeddedView: View {
-    let presentation: ThomasPresentationInfo.Embedded
-    let layout: AirshipLayout
-    let thomasEnvironment: ThomasEnvironment
+    private let presentation: ThomasPresentationInfo.Embedded
+    private let layout: AirshipLayout
+    private let thomasEnvironment: ThomasEnvironment
 
-    let embeddedSize: AirshipEmbeddedSize?
-    @State var viewConstraints: ViewConstraints?
-    @Environment(\.isVoiceOverRunning) var isVoiceOverRunning
+    private let embeddedSize: AirshipEmbeddedSize?
+    @State private var viewConstraints: ViewConstraints?
+    @Environment(\.isVoiceOverRunning) private var isVoiceOverRunning
+
+    init(
+        presentation: ThomasPresentationInfo.Embedded,
+        layout: AirshipLayout,
+        thomasEnvironment: ThomasEnvironment,
+        embeddedSize: AirshipEmbeddedSize?
+    ) {
+        self.presentation = presentation
+        self.layout = layout
+        self.thomasEnvironment = thomasEnvironment
+        self.embeddedSize = embeddedSize
+    }
 
     var body: some View {
         RootView(thomasEnvironment: thomasEnvironment, layout: layout) { orientation, windowSize in

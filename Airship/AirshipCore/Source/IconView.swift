@@ -5,11 +5,16 @@ import SwiftUI
 
 // Icon view that can be used to display icons inside a toggle layout
 struct IconView: View {
-    @Environment(\.colorScheme) var colorScheme
-    @EnvironmentObject var thomasState: ThomasState
+    @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject private var thomasState: ThomasState
 
-    let info: ThomasViewInfo.IconView
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.IconView
+    private let constraints: ViewConstraints
+
+    init(info: ThomasViewInfo.IconView, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     private var resolvedIcon: ThomasIconInfo {
         return ThomasPropertyOverride.resolveRequired(

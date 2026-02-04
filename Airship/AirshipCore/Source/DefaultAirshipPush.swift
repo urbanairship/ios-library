@@ -78,10 +78,10 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
     private let badger: any BadgerProtocol
 
     @MainActor
-    private var waitForDeviceToken = false
+    private var waitForDeviceToken: Bool = false
 
     @MainActor
-    private var pushEnabled = false
+    private var pushEnabled: Bool = false
 
     private let serialQueue: AirshipAsyncSerialQueue
 
@@ -131,6 +131,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
     private var subscriptions: Set<AnyCancellable> = Set()
     
     @MainActor
+    @inline(never)
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
@@ -435,7 +436,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
     /// Changes to this value will not take effect until the next time the app registers
     /// with updateRegistration.
     @MainActor
-    public var requireAuthorizationForDefaultCategories = true {
+    public var requireAuthorizationForDefaultCategories: Bool = true {
         didSet {
             self.updateCategories()
         }

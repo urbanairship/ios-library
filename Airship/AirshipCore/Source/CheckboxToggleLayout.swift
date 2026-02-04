@@ -5,10 +5,10 @@ import SwiftUI
 
 @MainActor
 struct CheckboxToggleLayout: View {
-    @EnvironmentObject var formState: ThomasFormState
-    @EnvironmentObject var checkboxState: CheckboxState
-    @EnvironmentObject var thomasState: ThomasState
-    @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+    @EnvironmentObject private var formState: ThomasFormState
+    @EnvironmentObject private var checkboxState: CheckboxState
+    @EnvironmentObject private var thomasState: ThomasState
+    @Environment(\.thomasAssociatedLabelResolver) private var associatedLabelResolver
 
     private var associatedLabel: String? {
         associatedLabelResolver?.labelFor(
@@ -18,8 +18,13 @@ struct CheckboxToggleLayout: View {
         )
     }
 
-    let info: ThomasViewInfo.CheckboxToggleLayout
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.CheckboxToggleLayout
+    private let constraints: ViewConstraints
+
+    init(info: ThomasViewInfo.CheckboxToggleLayout, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     private var isOnBinding: Binding<Bool> {
         self.checkboxState.makeBinding(

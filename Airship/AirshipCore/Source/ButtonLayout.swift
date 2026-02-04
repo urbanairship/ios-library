@@ -6,7 +6,7 @@ import SwiftUI
 /// Button layout view.
 struct ButtonLayout : View {
     @Environment(\.isVoiceOverRunning) private var isVoiceOverRunning
-    @Environment(\.layoutState) var layoutState
+    @Environment(\.layoutState) private var layoutState
     @EnvironmentObject private var formState: ThomasFormState
     @EnvironmentObject private var pagerState: PagerState
     @EnvironmentObject private var thomasState: ThomasState
@@ -14,8 +14,8 @@ struct ButtonLayout : View {
 
     @State private var actionTask: Task<Void, Never>?
 
-    let info: ThomasViewInfo.ButtonLayout
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.ButtonLayout
+    private let constraints: ViewConstraints
 
     init(info: ThomasViewInfo.ButtonLayout, constraints: ViewConstraints) {
         self.info = info

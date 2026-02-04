@@ -7,15 +7,20 @@ import AVFoundation
 /// Media view.
 
 struct Media: View {
-    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
 
-    let info: ThomasViewInfo.Media
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.Media
+    private let constraints: ViewConstraints
     @State
     private var mediaID: UUID = UUID()
-    private let defaultAspectRatio = 16.0 / 9.0
-    @EnvironmentObject var pagerState: PagerState
-    @Environment(\.pageIdentifier) var pageIdentifier
+    private let defaultAspectRatio: Double = 16.0 / 9.0
+    @EnvironmentObject private var pagerState: PagerState
+    @Environment(\.pageIdentifier) private var pageIdentifier
+
+    init(info: ThomasViewInfo.Media, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     var videoAspectRatio: CGFloat {
         CGFloat(self.info.properties.video?.aspectRatio ?? defaultAspectRatio)

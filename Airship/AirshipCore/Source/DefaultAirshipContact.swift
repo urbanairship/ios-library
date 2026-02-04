@@ -92,19 +92,19 @@ public final class DefaultAirshipContact: AirshipContact, @unchecked Sendable {
          }
      }
 
-    private let subscriptionListEditsSubject = PassthroughSubject<ScopedSubscriptionListEdit, Never>()
+    private let subscriptionListEditsSubject: PassthroughSubject<ScopedSubscriptionListEdit, Never> = PassthroughSubject<ScopedSubscriptionListEdit, Never>()
 
     /// Publishes all edits made to the subscription lists through the  SDK
     public var subscriptionListEdits: AnyPublisher<ScopedSubscriptionListEdit, Never> {
         subscriptionListEditsSubject.eraseToAnyPublisher()
     }
 
-    private let conflictEventSubject = PassthroughSubject<ContactConflictEvent, Never>()
+    private let conflictEventSubject: PassthroughSubject<ContactConflictEvent, Never> = PassthroughSubject<ContactConflictEvent, Never>()
     public var conflictEventPublisher: AnyPublisher<ContactConflictEvent, Never> {
         conflictEventSubject.eraseToAnyPublisher()
     }
 
-    private let contactIDUpdatesSubject = CurrentValueSubject<ContactIDInfo?, Never>(nil)
+    private let contactIDUpdatesSubject: CurrentValueSubject<ContactIDInfo?, Never> = CurrentValueSubject<ContactIDInfo?, Never>(nil)
     var contactIDUpdates: AnyPublisher<ContactIDInfo, Never> {
         return self.contactIDUpdatesSubject
             .compactMap { $0 }
@@ -112,7 +112,7 @@ public final class DefaultAirshipContact: AirshipContact, @unchecked Sendable {
             .eraseToAnyPublisher()
     }
 
-    private let namedUserUpdateSubject = CurrentValueSubject<NamedUserIDEvent?, Never>(nil)
+    private let namedUserUpdateSubject: CurrentValueSubject<NamedUserIDEvent?, Never> = CurrentValueSubject<NamedUserIDEvent?, Never>(nil)
     public var namedUserIDPublisher: AnyPublisher<String?, Never> {
         namedUserUpdateSubject
             .compactMap { $0 }
@@ -335,6 +335,7 @@ public final class DefaultAirshipContact: AirshipContact, @unchecked Sendable {
 
     /// Identifies the contact.
     /// - Parameter namedUserID: The named user ID.
+    @inline(never)
     public func identify(_ namedUserID: String) {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.warn("Contacts disabled. Enable to identify user.")
@@ -353,6 +354,7 @@ public final class DefaultAirshipContact: AirshipContact, @unchecked Sendable {
     }
 
     /// Resets the contact.
+    @inline(never)
     public func reset() {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.trace("Contacts are disabled, ignoring reset request")
@@ -364,6 +366,7 @@ public final class DefaultAirshipContact: AirshipContact, @unchecked Sendable {
     /// Can be called after the app performs a remote named user association for the channel instead
     /// of using `identify` or `reset` through the SDK. When called, the SDK will refresh the contact
     /// data. Applications should only call this method when the user login has changed.
+    @inline(never)
     public func notifyRemoteLogin() {
         guard self.privacyManager.isEnabled(.contacts) else {
             AirshipLogger.trace("Contacts are disabled, ignoring notifyRemoteLogin request")
