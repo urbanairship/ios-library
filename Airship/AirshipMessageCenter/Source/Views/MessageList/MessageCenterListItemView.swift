@@ -162,14 +162,16 @@ private struct MessageCenterListContentView: View {
             dark: theme.cellTintColorDark
         )
 
-        Image(systemName: MessageCenterListContentView.unreadIndicatorImageName)
-            .foregroundColor(
-                foregroundColor
-            )
-            .frame(
-                width: MessageCenterListContentView.unreadIndicatorSize,
-                height: MessageCenterListContentView.unreadIndicatorSize
-            )
+        if message.unread {
+            Image(systemName: MessageCenterListContentView.unreadIndicatorImageName)
+                .foregroundColor(
+                    foregroundColor
+                )
+                .frame(
+                    width: MessageCenterListContentView.unreadIndicatorSize,
+                    height: MessageCenterListContentView.unreadIndicatorSize
+                )
+        }
     }
 
     @ViewBuilder

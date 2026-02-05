@@ -34,10 +34,11 @@ class ThomasEnvironment: ObservableObject {
     var focusedID: String? = nil
 
     private var onDismiss: (() -> Void)?
-
+    private var dismissHandle: ThomasDismissHandle?
     private var subscriptions: Set<AnyCancellable> = Set()
 
     @Published private(set) var keyboardState: KeyboardState = .hidden
+
 
     @MainActor
     init(
@@ -45,6 +46,7 @@ class ThomasEnvironment: ObservableObject {
         extensions: ThomasExtensions?,
         pagerTracker: ThomasPagerTracker? = nil,
         timer: (any AirshipTimerProtocol)? = nil,
+        dismissHandle: ThomasDismissHandle? = nil,
         onDismiss: (() -> Void)? = nil
     ) {
         self.delegate = delegate
@@ -58,6 +60,11 @@ class ThomasEnvironment: ObservableObject {
         #if !os(tvOS) && !os(watchOS)
         self.subscribeKeyboard()
         #endif
+
+        self.dismissHandle = dismissHandle
+        dismissHandle?.addOnDismiss { [weak self] cancel in
+            self?.dismiss(cancel: cancel)
+        }
     }
 
     @MainActor

@@ -13,24 +13,24 @@ struct MessageCenterThomasView: View {
     @Binding
     var phase: MessageCenterMessageView.DisplayPhase
     
-    @ObservedObject
+    @StateObject
     private var viewModel: ViewModel
-    
-    var backButtonDelegate: any MessageViewBackButtonCallback {
-        return viewModel
-    }
     
     init(
         phase: Binding<MessageCenterMessageView.DisplayPhase>,
         layout: LoadableLayout,
         analytics: ThomasDisplayListener,
-        timer: any AirshipTimerProtocol
+        timer: any AirshipTimerProtocol,
+        dismissHandle: ThomasDismissHandle
     ) {
         self._phase = phase
-        self.viewModel = ViewModel(
-            layout: layout,
-            analytics: analytics,
-            timer: timer
+        self._viewModel = StateObject(
+            wrappedValue: ViewModel(
+                layout: layout,
+                analytics: analytics,
+                timer: timer,
+                dismissHandle: dismissHandle
+            )
         )
     }
     
@@ -38,8 +38,7 @@ struct MessageCenterThomasView: View {
         if let layout = viewModel.layout {
             AirshipSimpleLayoutView(
                 layout: layout,
-                delegate: viewModel.analyticsRecorder,
-                timer: viewModel.timer
+                viewModel: viewModel.layoutViewModel
             ).onAppear {
                 viewModel.timer.start()
             }
@@ -59,22 +58,31 @@ struct MessageCenterThomasView: View {
 @MainActor
 private final class ViewModel: ObservableObject {
     private let loadableLayout: LoadableLayout
-    
+
     @Published
     private(set) var layout: AirshipLayout? = nil
-    
+
     let analyticsRecorder: any ThomasDelegate
     let timer: any AirshipTimerProtocol
-    
-    init (
+    let dismissHandle: ThomasDismissHandle
+    let layoutViewModel: AirshipSimpleLayoutViewModel
+
+    init(
         layout: LoadableLayout,
         analytics: ThomasDisplayListener,
-        timer: any AirshipTimerProtocol
+        timer: any AirshipTimerProtocol,
+        dismissHandle: ThomasDismissHandle
     ) {
         self.timer = timer
         self.loadableLayout = layout
         self.layout = loadableLayout.layout
         self.analyticsRecorder = analytics
+        self.dismissHandle = dismissHandle
+        self.layoutViewModel = AirshipSimpleLayoutViewModel(
+            delegate: analytics,
+            timer: timer,
+            dismissHandle: dismissHandle
+        )
     }
     
     func loadLayout() async -> MessageCenterMessageView.DisplayPhase {
@@ -90,17 +98,12 @@ private final class ViewModel: ObservableObject {
         
         return .loaded
     }
-    
-    func reportDismissed() {
-        analyticsRecorder.onReportingEvent(.dismiss(.userDismissed, timer.time, ThomasLayoutContext()))
+
+    func dismiss() {
+        self.dismissHandle.dismiss()
     }
 }
 
-extension ViewModel: MessageViewBackButtonCallback {
-    func onBackButtonTapped() {
-        reportDismissed()
-    }
-}
 
 @MainActor
 class LoadableLayout {

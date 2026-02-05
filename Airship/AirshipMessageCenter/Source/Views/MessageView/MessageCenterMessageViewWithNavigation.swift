@@ -34,6 +34,9 @@ public struct MessageCenterMessageViewWithNavigation: View {
     private let title: String?
     private let dismissAction: (@MainActor () -> Void)?
 
+    @State
+    private var isDismissed = false // Add this state
+
     /// Initializer.
     /// - Parameters:
     ///   - messageID: The message ID.
@@ -94,7 +97,10 @@ public struct MessageCenterMessageViewWithNavigation: View {
             dark: self.theme.messageViewContainerBackgroundColorDark
         )
 
-        MessageCenterMessageView(viewModel: self.messageViewModel, dismissAction: dismissAction)
+        MessageCenterMessageView(
+            viewModel: self.messageViewModel,
+            dismissAction: dismiss
+        )
             .applyUIKitNavigationAppearance()
             .navigationBarBackButtonHidden(true) // Hide the default back button
 #if !os(tvOS)
@@ -164,11 +170,13 @@ public struct MessageCenterMessageViewWithNavigation: View {
     }
 
     private func dismiss() {
+        guard !isDismissed else { return }
+        isDismissed = true
+
         if let dismissAction = self.dismissAction {
             dismissAction()
         }
-        
-        messageViewModel.backButtonCallbackDelegate?.onBackButtonTapped()
+        messageViewModel.thomasDismissHandle.dismiss()
         presentationMode.wrappedValue.dismiss()
     }
 }

@@ -53,18 +53,21 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
 
         let configuration = AirshipEmbeddedViewStyleConfiguration(
             embeddedID: embeddedID,
-            views: pending.map{ pending in
-                AirshipEmbeddedContentView(
-                    embeddedInfo: pending.embeddedInfo,
-                    view: {
-                        EmbeddedView(
-                            presentation: pending.presentation,
-                            layout: pending.layout,
-                            thomasEnvironment: pending.environment,
-                            embeddedSize: embeddedSize
-                        )
-                    },
-                    onDismiss: { pending.environment.dismiss() }
+            pending: pending.map { item in
+                AirshipEmbeddedViewStyleConfiguration.Pending(
+                    content: AirshipEmbeddedContentView(
+                        embeddedInfo: item.embeddedInfo,
+                        view: {
+                            EmbeddedView(
+                                presentation: item.presentation,
+                                layout: item.layout,
+                                thomasEnvironment: item.environment,
+                                embeddedSize: embeddedSize
+                            )
+                        },
+                        dismissHandle: item.dismissHandle
+                    ),
+                    onDismiss: { item.dismissHandle.dismiss() }
                 )
             },
             placeHolder: AnyView(self.placeholder())
@@ -112,20 +115,20 @@ public struct AirshipEmbeddedContentView : View, Identifiable  {
     }
 
     private let view: () -> EmbeddedView
-    private let onDismiss: () -> Void
+    private let dismissHandle: ThomasDismissHandle
 
     internal init(
         embeddedInfo: AirshipEmbeddedInfo,
         view: @escaping () -> EmbeddedView,
-        onDismiss: @escaping () -> Void
+        dismissHandle: ThomasDismissHandle
     ) {
         self.embeddedInfo = embeddedInfo
         self.view = view
-        self.onDismiss = onDismiss
+        self.dismissHandle = dismissHandle
     }
 
     public func dismiss() {
-        self.onDismiss()
+        self.dismissHandle.dismiss()
     }
 
     @ViewBuilder
@@ -137,11 +140,32 @@ public struct AirshipEmbeddedContentView : View, Identifiable  {
     }
 }
 
-/// Style configuration for customizing an Airship embedded view
 public struct AirshipEmbeddedViewStyleConfiguration {
+    public struct Pending: Identifiable {
+        public let content: AirshipEmbeddedContentView
+        public let onDismiss: @MainActor () -> Void
+        public var id: String { content.id }
+    }
+
     public let embeddedID: String
-    public let views: [AirshipEmbeddedContentView]
+    public let pending: [Pending]
     public let placeHolder: AnyView
+
+    /// Deprecated: Use `pending` instead.
+    @available(*, deprecated, message: "Use `pending` which includes dismissal logic per-view.")
+    public var views: [AirshipEmbeddedContentView] {
+        return pending.map { $0.content }
+    }
+
+    internal init(
+        embeddedID: String,
+        pending: [Pending],
+        placeHolder: AnyView
+    ) {
+        self.embeddedID = embeddedID
+        self.pending = pending
+        self.placeHolder = placeHolder
+    }
 }
 
 /// Protocol for customizing an Airship embedded view with a style
@@ -166,7 +190,7 @@ public struct DefaultAirshipEmbeddedViewStyle: AirshipEmbeddedViewStyle {
     private func nextView(configuration: Configuration) -> AirshipEmbeddedContentView? {
         return EmbeddedViewSelector.shared.selectView(
             embeddedID: configuration.embeddedID,
-            views: configuration.views
+            views: configuration.pending.map { $0.content }
        )
     }
 

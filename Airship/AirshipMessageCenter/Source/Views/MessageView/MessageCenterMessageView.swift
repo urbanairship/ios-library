@@ -75,10 +75,7 @@ extension View {
     public func messageCenterMessageViewStyle<S>(
         _ style: S
     ) -> some View where S: MessageViewStyle {
-        self.environment(
-            \.airshipMessageViewStyle,
-             AnyMessageViewStyle(style: style)
-        )
+        self.environment(\.airshipMessageViewStyle, AnyMessageViewStyle(style: style))
     }
 }
 
@@ -173,7 +170,7 @@ private struct MessageCenterMessageContentView: View {
     var viewModel: MessageCenterMessageViewModel
     let dismissAction: (@MainActor @Sendable () -> Void)?
     
-    private var thomasLoadableLayout: LoadableLayout!
+    private var thomasLoadableLayout: LoadableLayout
     
     init(
         viewModel: MessageCenterMessageViewModel,
@@ -182,11 +179,15 @@ private struct MessageCenterMessageContentView: View {
         self.viewModel = viewModel
         self.dismissAction = dismissAction
         self.contentType = viewModel.message?.contentType
-        self.thomasLoadableLayout = LoadableLayout(request: self.makeRequest)
+        self.thomasLoadableLayout = LoadableLayout {
+            try await Self.makeRequest(viewModel: viewModel)
+        }
     }
 
     @MainActor
-    private func makeRequest() async throws -> URLRequest {
+    private static func makeRequest(
+        viewModel: MessageCenterMessageViewModel
+    ) async throws -> URLRequest {
         guard let message = await viewModel.fetchMessage(),
               let user = await Airship.messageCenter.inbox.user
         else {
@@ -302,7 +303,7 @@ private struct MessageCenterMessageContentView: View {
                 try await makeExtensionDelegate(messageID: viewModel.messageID)
             },
             request: {
-                try await makeRequest()
+                try await Self.makeRequest(viewModel: self.viewModel)
             },
             dismiss: {
                 await MainActor.run {
@@ -324,10 +325,9 @@ private struct MessageCenterMessageContentView: View {
                 phase: self.$messageLoadingPhase,
                 layout: self.thomasLoadableLayout,
                 analytics: analytics,
-                timer: viewModel.timer
-            ).also { [weak viewModel] view in
-                viewModel?.backButtonCallbackDelegate = view.backButtonDelegate
-            }
+                timer: viewModel.timer,
+                dismissHandle: self.viewModel.thomasDismissHandle
+            )
         } else {
             EmptyView()
         }

@@ -48,6 +48,7 @@
 		27264FB32E81B064000B6FA3 /* AirshipSceneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27264FB22E81B064000B6FA3 /* AirshipSceneController.swift */; };
 		2726505B2E81B80E000B6FA3 /* PagerControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2726505A2E81B80E000B6FA3 /* PagerControllerTest.swift */; };
 		275D32AC2EF957F200B75760 /* AirshipSimpleLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 275D32AA2EF955AD00B75760 /* AirshipSimpleLayoutView.swift */; };
+		275D32AD2EF957F200B75761 /* AirshipSimpleLayoutViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 275D32AB2EF955AD00B75761 /* AirshipSimpleLayoutViewModel.swift */; };
 		27AFE70F2E733F4400767044 /* ModifyTagsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFE70E2E733F4400767044 /* ModifyTagsAction.swift */; };
 		27AFE7112E73477200767044 /* ModifyTagsActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFE7102E73477200767044 /* ModifyTagsActionTest.swift */; };
 		27CCF77D2F1656150018058F /* MessageViewAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CCF77C2F1656150018058F /* MessageViewAnalytics.swift */; };
@@ -1378,6 +1379,7 @@
 		27264FB22E81B064000B6FA3 /* AirshipSceneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSceneController.swift; sourceTree = "<group>"; };
 		2726505A2E81B80E000B6FA3 /* PagerControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerControllerTest.swift; sourceTree = "<group>"; };
 		275D32AA2EF955AD00B75760 /* AirshipSimpleLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSimpleLayoutView.swift; sourceTree = "<group>"; };
+		275D32AB2EF955AD00B75761 /* AirshipSimpleLayoutViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSimpleLayoutViewModel.swift; sourceTree = "<group>"; };
 		27AFE70E2E733F4400767044 /* ModifyTagsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyTagsAction.swift; sourceTree = "<group>"; };
 		27AFE7102E73477200767044 /* ModifyTagsActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifyTagsActionTest.swift; sourceTree = "<group>"; };
 		27CCF77C2F1656150018058F /* MessageViewAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewAnalytics.swift; sourceTree = "<group>"; };
@@ -3237,6 +3239,7 @@
 				320AD3A529E7FA2000D66106 /* PagerGestureMap.swift */,
 				6EFD6D84272A53FA005B26F1 /* Pager.swift */,
 				275D32AA2EF955AD00B75760 /* AirshipSimpleLayoutView.swift */,
+				275D32AB2EF955AD00B75761 /* AirshipSimpleLayoutViewModel.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -5949,6 +5952,7 @@
 				6E887CD3272C5F5000E83363 /* Checkbox.swift in Sources */,
 				6EDAFB262CB463C5000BD4AA /* ButtonLayout.swift in Sources */,
 				275D32AC2EF957F200B75760 /* AirshipSimpleLayoutView.swift in Sources */,
+				275D32AD2EF957F200B75761 /* AirshipSimpleLayoutViewModel.swift in Sources */,
 				6EB11C8B2697AFC700DC698F /* AttributeUpdate.swift in Sources */,
 				6EE49C0C2A0C141800AB1CF4 /* RemoteDataSource.swift in Sources */,
 				6E91B4692689327D00DDB1A8 /* CustomEvent.swift in Sources */,

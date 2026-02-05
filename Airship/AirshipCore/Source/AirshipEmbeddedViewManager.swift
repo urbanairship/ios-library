@@ -42,10 +42,13 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
     ) -> any AirshipMainActorCancellable {
         let id = UUID().uuidString
 
-        let environment = ThomasEnvironment(delegate: delegate, extensions: extensions) {
+        let dismissHandle = ThomasDismissHandle()
+
+        let environment = ThomasEnvironment(delegate: delegate, extensions: extensions, dismissHandle: dismissHandle) {
             self.pending.removeAll { $0.id == id }
             self.viewSubject.send(self.pending)
         }
+
 
         self.pending.append(
             PendingEmbedded(
@@ -58,7 +61,8 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
                     embeddedID: presentation.embeddedID,
                     extras: extras,
                     priority: priority
-                )
+                ),
+                dismissHandle: dismissHandle
             )
         )
 
@@ -84,6 +88,7 @@ struct PendingEmbedded: Sendable {
     let layout: AirshipLayout
     let environment: ThomasEnvironment
     let embeddedInfo: AirshipEmbeddedInfo
+    let dismissHandle: ThomasDismissHandle
 }
 
 

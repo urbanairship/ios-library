@@ -10,62 +10,40 @@ public struct AirshipSimpleLayoutView: View {
         margin: nil,
         size: .init(width: .percent(100), height: .percent(100)),
         border: nil,
-        backgroundColor: nil)
-    
-    private let environment: ThomasEnvironment
-    
+        backgroundColor: nil
+    )
+
+    @ObservedObject
+    private var viewModel: AirshipSimpleLayoutViewModel
     private let layout: AirshipLayout
-    
+
     @State
     private var viewConstraints: ViewConstraints?
-    
-    public init(
-        layout: AirshipLayout,
-        delegate: any ThomasDelegate,
-        timer: (any AirshipTimerProtocol)? = nil,
-        extensions: ThomasExtensions? = nil
-    ) {
-        self.environment = ThomasEnvironment(delegate: delegate, extensions: extensions, timer: timer)
+
+    /// - Parameter viewModel: Owns the layout environment and state. Create one per layout session and reuse it so state is preserved across view updates.
+    public init(layout: AirshipLayout, viewModel: AirshipSimpleLayoutViewModel) {
         self.layout = layout
-        self.viewConstraints = viewConstraints
+        self.viewModel = viewModel
     }
-    
+
     public var body: some View {
         RootView(
-            thomasEnvironment: environment,
+            thomasEnvironment: viewModel.environment,
             layout: layout
         ) { orientation, windowSize in
-            if #available(iOS 16, tvOS 16, watchOS 9.0, *) {
-                AdoptLayout(
-                    placement: placement,
-                    viewConstraints: $viewConstraints,
-                    embeddedSize: nil
-                ) {
-                    if let constraints = viewConstraints {
-                        createView(
-                            constraints: constraints,
-                            placement: placement
-                        )
-                    } else {
-                        Color.clear
-                    }
+            AdoptLayout(
+                placement: placement,
+                viewConstraints: $viewConstraints,
+                embeddedSize: nil
+            ) {
+                if let constraints = viewConstraints {
+                    createView(
+                        constraints: constraints,
+                        placement: placement
+                    )
+                } else {
+                    Color.clear
                 }
-            } else {
-                let constraints = ViewConstraints(
-                    width: placement.size.width.calculateSize(nil),
-                    height: placement.size.height.calculateSize(nil)
-                )
-
-                let contentConstraints = constraints.contentConstraints(
-                    placement.size,
-                    contentSize: nil,
-                    margin: placement.margin
-                )
-
-                createView(
-                    constraints: contentConstraints,
-                    placement: placement
-                )
             }
         }
     }
