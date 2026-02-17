@@ -132,7 +132,7 @@ struct SMSValidatorAPIClientTest {
         guard
             let second,
             first.auth == second.auth,
-            first.compressBody == second.compressBody,
+            first.contentEncoding == second.contentEncoding,
             first.headers ==  second.headers,
             first.url == second.url,
             first.method == second.method

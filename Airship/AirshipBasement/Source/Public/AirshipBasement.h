@@ -9,4 +9,3 @@ FOUNDATION_EXPORT double AirshipBasementVersionNumber;
 FOUNDATION_EXPORT const unsigned char AirshipBasementVersionString[];
 
 #import "AirshipBasementLib.h"
-#include<zlib.h>

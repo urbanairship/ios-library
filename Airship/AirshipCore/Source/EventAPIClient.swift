@@ -45,7 +45,7 @@ final class EventAPIClient: EventAPIClientProtocol {
             method: "POST",
             auth: .channelAuthToken(identifier: channelID),
             body: try self.requestBody(fromEvents: events),
-            compressBody: true
+            contentEncoding: .deflate
         )
 
         AirshipLogger.trace("Sending to server: \(config.analyticsURL ?? "")")

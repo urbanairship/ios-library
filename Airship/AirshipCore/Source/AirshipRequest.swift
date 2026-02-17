@@ -2,6 +2,12 @@
 
 import Foundation
 
+/// Content encoding type for request body compression.
+/// - Note: For internal use only. :nodoc:
+public enum ContentEncoding: String, Sendable, Equatable {
+    case deflate
+}
+
 /// AirshipRequest
 /// - Note: For internal use only. :nodoc:
 public struct AirshipRequest: Sendable {
@@ -10,7 +16,7 @@ public struct AirshipRequest: Sendable {
     let method: String?
     let auth: AirshipRequestAuth?
     let body: Data?
-    let compressBody: Bool
+    let contentEncoding: ContentEncoding?
 
     public init(
         url: URL?,
@@ -18,13 +24,13 @@ public struct AirshipRequest: Sendable {
         method: String? = nil,
         auth: AirshipRequestAuth? = nil,
         body: Data? = nil,
-        compressBody: Bool = false
+        contentEncoding: ContentEncoding? = nil
     ) {
         self.url = url
         self.headers = headers
         self.method = method
         self.auth = auth
         self.body = body
-        self.compressBody = compressBody
+        self.contentEncoding = contentEncoding
     }
 }

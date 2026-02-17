@@ -301,20 +301,44 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
         XCTAssertEqual("HEAD", method)
     }
 
-    func testGZIPBody() async throws {
+    func testDeflateBody() async throws {
         let request = AirshipRequest(
             url: URL(string: "http://neat.com"),
             body: "body".data(using: .utf8),
-            compressBody: true
+            contentEncoding: .deflate
         )
 
         let _ = try? await self.airshipSession.performHTTPRequest(request)
 
         let body = testURLSession.requests.last?.httpBody
         XCTAssertEqual(
-            "H4sIAAAAAAAAE0vKT6kEALILqNsEAAAA",
+            "S8pPqQQA",
             body?.base64EncodedString()
         )
+
+        let contentEncoding = testURLSession.requests.last?.allHTTPHeaderFields?["Content-Encoding"]
+        XCTAssertEqual("deflate", contentEncoding)
+    }
+
+    func testDeflateRoundTrip() throws {
+        let testInputs: [Data] = [
+            "body".data(using: .utf8)!,
+            "Hello, World! This is a test of deflate compression.".data(using: .utf8)!,
+            String(repeating: "ABCDEFGHIJ", count: 1000).data(using: .utf8)!,
+            Data((0..<256).map { UInt8($0) }),
+            "a".data(using: .utf8)!,
+        ]
+
+        for (index, input) in testInputs.enumerated() {
+            let compressed = try (input as NSData).compressed(using: .zlib) as Data
+            let decompressed = try (compressed as NSData).decompressed(using: .zlib) as Data
+
+            XCTAssertEqual(
+                input,
+                decompressed,
+                "Deflate round-trip failed for input \(index) (size \(input.count) bytes)"
+            )
+        }
     }
 
     func testRequest() async throws {
@@ -342,7 +366,7 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
         let request = AirshipRequest(
             url: nil,
             body: "body".data(using: .utf8),
-            compressBody: true
+            contentEncoding: .deflate
         )
 
         do {

@@ -185,10 +185,10 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, Sendable {
             headers.merge(authHeaders) { (current, _) in current }
         }
 
-        if request.compressBody == true {
-            if let gzipped = request.body?.gzip() {
-                urlRequest.httpBody = gzipped
-                headers["Content-Encoding"] = "gzip"
+        if let encoding = request.contentEncoding {
+            if let compressed = request.body?.compress(encoding: encoding) {
+                urlRequest.httpBody = compressed
+                headers["Content-Encoding"] = encoding.rawValue
             } else {
                 urlRequest.httpBody = request.body
             }
@@ -459,8 +459,16 @@ fileprivate struct ResolvedAuth: Sendable {
 }
 
 extension Data {
-    fileprivate func gzip() -> Data? {
-        return UACompression.gzipData(self)
+    fileprivate func compress(encoding: ContentEncoding) -> Data? {
+        guard !self.isEmpty else { return nil }
+        switch encoding {
+        case .deflate:
+            do {
+                return try (self as NSData).compressed(using: .zlib) as Data
+            } catch {
+                return nil
+            }
+        }
     }
 }
 
