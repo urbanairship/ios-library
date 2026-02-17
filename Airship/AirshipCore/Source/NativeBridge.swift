@@ -10,6 +10,8 @@ import Foundation
 @preconcurrency
 public import WebKit
 
+typealias WebViewForwardHandler = (WKWebView, WKNavigationAction, @Sendable @escaping @MainActor (WKNavigationActionPolicy) -> Void) -> Void
+
 /// The native bridge will automatically load the Airship JavaScript environment into whitlelisted sites. The native
 /// bridge must be assigned as the navigation delegate on a `WKWebView` in order to function.
 public final class NativeBridge: NSObject, WKNavigationDelegate {
@@ -118,14 +120,7 @@ public final class NativeBridge: NSObject, WKNavigationDelegate {
             return
         }
 
-        let forward =
-            self.forwardNavigationDelegate?.webView
-            as (
-                (
-                    WKWebView, WKNavigationAction,
-                    @Sendable @escaping @MainActor(WKNavigationActionPolicy) -> Void
-                ) -> Void
-            )?
+        let forward = self.forwardNavigationDelegate?.webView as WebViewForwardHandler?
 
         // Forward
         if let forward = forward {
