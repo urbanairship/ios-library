@@ -186,7 +186,7 @@ struct TextInput: View {
         )
         .formElement()
         .onAppear {
-            restoreFormState()
+            viewModel.setInitialValue(restoredValue())
             validatableHelper.subscribe(
                 forIdentifier: info.properties.identifier,
                 formState: formState,
@@ -221,43 +221,18 @@ struct TextInput: View {
             formFieldValue: self.viewModel.formField?.input
         )
     }
-
-    private func restoreFormState() {
+    
+    private func restoredValue() -> String? {
         let identifier = self.info.properties.identifier
-        switch(self.info.properties.inputType) {
-        case .email:
-            guard
-                case .email(let value) = self.formState.field(
-                    identifier: identifier
-                )?.input,
-                let value
-            else {
-                return
-            }
-
-            self.$viewModel.input.wrappedValue = value
-        case .sms:
-            guard
-                case .sms(let value) = self.formState.field(
-                    identifier: identifier
-                )?.input,
-                let value
-            else {
-                return
-            }
-
-            self.$viewModel.input.wrappedValue = value
-        case .number, .text, .textMultiline:
-            guard
-                case .text(let value) = self.formState.field(
-                    identifier: identifier
-                )?.input,
-                let value
-            else {
-                return
-            }
-
-            self.$viewModel.input.wrappedValue = value
+        switch(self.info.properties.inputType, formState.fieldValue(identifier: identifier)) {
+        case(.email, .email(let value)),
+            (.sms, .sms(let value)),
+            (.number, .text(let value)),
+            (.text, .text(let value)),
+            (.textMultiline, .text(let value)):
+            return value
+        default:
+            return nil
         }
     }
 
@@ -304,13 +279,19 @@ struct TextInput: View {
 
         init(
             inputProperties: ThomasViewInfo.TextInput.Properties,
-            isRequired: Bool
+            isRequired: Bool,
         ) {
             self.inputProperties = inputProperties
             self.isRequired = isRequired
             self.availableLocales = inputProperties.smsLocales
             self.selectedSMSLocale = inputProperties.smsLocales?.first
-            self.formField = self.makeFormField(input: "")
+        }
+        
+        func setInitialValue(_ value: String?) {
+            guard self.formField == nil else { return }
+            
+            self.formField = self.makeFormField(input: value ?? "")
+            self.input = value ?? ""
         }
 
         private func updateFormData() {

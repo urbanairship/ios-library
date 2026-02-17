@@ -25,7 +25,7 @@ class RadioInputState: ObservableObject {
         }
     }
 
-    struct Selected: Sendable, Equatable, Hashable {
+    struct Selected: ThomasSerializable, Hashable {
         var identifier: String?
         var reportingValue: AirshipJSON
         var attributeValue: ThomasAttributeValue?
@@ -56,5 +56,25 @@ extension RadioInputState {
                 }
             }
         )
+    }
+}
+
+// MARK: - ThomasStateProvider
+extension RadioInputState: ThomasStateProvider {
+    typealias SnapshotType = Selected?
+    
+    var updates: AnyPublisher<any Codable, Never> {
+        return $selected
+            .removeDuplicates()
+            .map(\.self)
+            .eraseToAnyPublisher()
+    }
+    
+    func persistentStateSnapshot() -> SnapshotType {
+        return selected
+    }
+    
+    func restorePersistentState(_ state: SnapshotType) {
+        self.selected = state
     }
 }

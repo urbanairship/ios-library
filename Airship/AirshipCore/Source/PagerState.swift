@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 import Combine
 
-struct PageState: Sendable {
+struct PageState: ThomasSerializable {
     var identifier: String
     var delay: Double
 
@@ -145,6 +145,8 @@ class PagerState: ObservableObject {
         thomasState: ThomasState,
         swipeDisableSelectors: [ThomasViewInfo.Pager.DisableSwipeSelector]?
     ) {
+        let pagesChanged = pages != self.pageItems
+        
         if let branchControl {
             branchControl.configureAndAttachTo(
                 pages: pages,
@@ -164,7 +166,9 @@ class PagerState: ObservableObject {
                 }
         }
 
-        self.currentPageId = pageItems.first?.identifier
+        if self.currentPageId == nil || pagesChanged {
+            self.currentPageId = pageItems.first?.identifier
+        }
     }
 
     func pause() {
@@ -538,5 +542,41 @@ fileprivate extension ThomasViewInfo.Pager.Item {
                 automatedAction.identifier
             }
         )
+    }
+}
+
+//MARK: - ThomasStateProvider
+extension PagerState: ThomasStateProvider {
+    typealias SnapshotType = Snapshot
+    
+    struct Snapshot: Codable, Equatable {
+        let pageStates: [PageState]
+        let currentPageId: String?
+        let progress: Double
+    }
+    
+    var updates: AnyPublisher<any Codable, Never> {
+        return Publishers
+            .CombineLatest3($pageStates, $currentPageId, $progress)
+            .map(Snapshot.init)
+            .removeDuplicates()
+            .map(\.self)
+            .eraseToAnyPublisher()
+    }
+    
+    func persistentStateSnapshot() -> SnapshotType {
+        Snapshot(
+            pageStates: self.pageStates,
+            currentPageId: self.currentPageId,
+            progress: self.progress
+        )
+    }
+    
+    func restorePersistentState(_ state: Snapshot) {
+        DispatchQueue.main.async {
+            self.pageStates = state.pageStates
+            self.currentPageId = state.currentPageId
+            self.progress = state.progress
+        }
     }
 }

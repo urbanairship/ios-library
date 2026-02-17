@@ -7,7 +7,7 @@ import Combine
 class ThomasFormState: ObservableObject {
 
     /// Represents the possible statuses of a form during its lifecycle.
-    enum Status: String, Equatable, Sendable, Hashable {
+    enum Status: String, ThomasSerializable, Hashable {
         /// The form is valid and all its fields are correctly filled out.
         case valid
 
@@ -83,6 +83,7 @@ class ThomasFormState: ObservableObject {
     private var processTask: Task<Bool, Never>?
     private var lastChildStatus: [String: ThomasFormField.Status] = [:]
     private var parentFormState: ThomasFormState?
+    private var initialValues: [String: ThomasFormField.Value] = [:]
 
     init(
         identifier: String,
@@ -111,6 +112,14 @@ class ThomasFormState: ObservableObject {
         return self.children.first { child in
             child.field.identifier == identifier
         }?.field
+    }
+    
+    func fieldValue(identifier: String) -> ThomasFormField.Value? {
+        if let child = field(identifier: identifier)?.input {
+            return child
+        }
+        
+        return initialValues[identifier]
     }
 
     func lastFieldStatus(identifier: String) -> ThomasFormField.Status? {
@@ -445,6 +454,50 @@ fileprivate extension ThomasFormState.FormType {
         case .nps(let scoreID):
                 .npsForm(responseType: responseType, scoreID: scoreID, children: children)
         }
+    }
+}
+
+//MARK: - ThomasStateProvider
+extension ThomasFormState: ThomasStateProvider {
+    typealias SnapshotType = Snapshot
+    
+    struct Snapshot: Codable, Equatable {
+        let initialValues: [String: ThomasFormField.Value]
+        let isVisible: Bool
+        let isFormInputEnabled: Bool
+        let status: Status
+    }
+    
+    var updates: AnyPublisher<any Codable, Never> {
+        return Publishers
+            .CombineLatest4($activeFields, $isVisible, $isFormInputEnabled, $status)
+            .map { activeFields, isVisible, isFormInputEnabled, status in
+                Snapshot(
+                    initialValues: activeFields.mapValues(\.input),
+                    isVisible: isVisible,
+                    isFormInputEnabled: isFormInputEnabled,
+                    status: status
+                )
+            }
+            .removeDuplicates()
+            .map(\.self)
+            .eraseToAnyPublisher()
+    }
+    
+    func restorePersistentState(_ state: Snapshot) {
+        self.initialValues = state.initialValues
+        self.isVisible = state.isVisible
+        self.isFormInputEnabled = state.isFormInputEnabled
+        self.status = state.status
+    }
+    
+    func persistentStateSnapshot() -> SnapshotType {
+        return Snapshot(
+            initialValues: activeFields.mapValues(\.input),
+            isVisible: isVisible,
+            isFormInputEnabled: isFormInputEnabled,
+            status: status
+        )
     }
 }
 

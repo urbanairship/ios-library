@@ -25,8 +25,6 @@ public final class MessageCenterMessageViewModel: ObservableObject {
 
     private var fetchMessageTask: Task<MessageCenterMessage?, Never>? = nil
     
-    let timer: any AirshipTimerProtocol = AirshipTimer()
-    
     private var nativeAnalytics: ThomasDisplayListener? = nil
     let thomasDismissHandle: ThomasDismissHandle = .init()
 
@@ -62,6 +60,12 @@ public final class MessageCenterMessageViewModel: ObservableObject {
 
         nativeAnalytics = result
         return result
+    }
+    
+    func getOrCreateNativeStateStorage(
+        messageCenter: DefaultMessageCenter = Airship.internalMessageCenter
+    ) -> any LayoutDataStorage {
+        return messageCenter.internalInbox.getNativeStateStorage(for: messageID)
     }
 
     /// Fetches the message.

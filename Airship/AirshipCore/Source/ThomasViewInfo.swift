@@ -1359,6 +1359,8 @@ indirect enum ThomasViewInfo: ThomasSerializable {
     }
 
     struct StateController: BaseInfo {
+        static let defaultIdentifier: String = "default"
+        
         var commonProperties: CommonViewProperties
         var commonOverrides: CommonViewOverrides?
         var properties: Properties
@@ -1380,11 +1382,18 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             let type: ViewType = .stateController
             var view: ThomasViewInfo
             var initialState: AirshipJSON?
+            var identifier: String?
+            
             enum CodingKeys: String, CodingKey {
                 case view
                 case type
                 case initialState = "initial_state"
+                case identifier
             }
+        }
+        
+        var identifier: String {
+            return properties.identifier ?? Self.defaultIdentifier
         }
     }
 
@@ -1569,6 +1578,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         }
 
         struct Properties: ThomasSerializable {
+            let type: ViewType = .scoreToggleLayout
             var identifier: String
             var attributeValue: ThomasAttributeValue?
             var onToggleOn: ToggleActions
@@ -1583,6 +1593,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case onToggleOff = "on_toggle_off"
                 case view
                 case reportingValue = "reporting_value"
+                case type
             }
         }
     }
@@ -1733,6 +1744,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         }
 
         struct Properties: ThomasSerializable {
+            let type: ViewType = .basicToggleLayout
             var identifier: String
             var attributeName: ThomasAttributeName?
             var attributeValue: ThomasAttributeValue?
@@ -1747,6 +1759,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case onToggleOn = "on_toggle_on"
                 case onToggleOff = "on_toggle_off"
                 case view
+                case type
             }
         }
     }
@@ -1774,6 +1787,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         }
 
         struct Properties: ThomasSerializable {
+            let type: ViewType = .checkboxToggleLayout
             var identifier: String
             var onToggleOn: ToggleActions
             var onToggleOff: ToggleActions
@@ -1786,6 +1800,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case onToggleOff = "on_toggle_off"
                 case view
                 case reportingValue = "reporting_value"
+                case type
             }
         }
     }
@@ -1813,6 +1828,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         }
 
         struct Properties: ThomasSerializable {
+            let type: ViewType = .radioInputToggleLayout
             var identifier: String
             var attributeValue: ThomasAttributeValue?
             var onToggleOn: ToggleActions
@@ -1827,6 +1843,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case onToggleOff = "on_toggle_off"
                 case view
                 case reportingValue = "reporting_value"
+                case type
             }
         }
     }

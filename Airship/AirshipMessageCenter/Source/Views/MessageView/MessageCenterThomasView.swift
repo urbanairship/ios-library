@@ -18,18 +18,18 @@ struct MessageCenterThomasView: View {
     
     init(
         phase: Binding<MessageCenterMessageView.DisplayPhase>,
-        layout: LoadableLayout,
+        layoutRequest: @escaping () async throws -> URLRequest,
         analytics: ThomasDisplayListener,
-        timer: any AirshipTimerProtocol,
-        dismissHandle: ThomasDismissHandle
+        dismissHandle: ThomasDismissHandle,
+        stateStorage: (any LayoutDataStorage)? = nil
     ) {
         self._phase = phase
         self._viewModel = StateObject(
             wrappedValue: ViewModel(
-                layout: layout,
+                request: layoutRequest,
                 analytics: analytics,
-                timer: timer,
-                dismissHandle: dismissHandle
+                dismissHandle: dismissHandle,
+                stateStorage: stateStorage
             )
         )
     }
@@ -39,9 +39,7 @@ struct MessageCenterThomasView: View {
             AirshipSimpleLayoutView(
                 layout: layout,
                 viewModel: viewModel.layoutViewModel
-            ).onAppear {
-                viewModel.timer.start()
-            }
+            )
         } else {
             Color.clear.task {
                 switch phase {
@@ -51,37 +49,32 @@ struct MessageCenterThomasView: View {
             }
         }
     }
-    
-    
 }
 
 @MainActor
 private final class ViewModel: ObservableObject {
-    private let loadableLayout: LoadableLayout
+    private let layoutRequest: () async throws -> URLRequest
 
     @Published
     private(set) var layout: AirshipLayout? = nil
 
     let analyticsRecorder: any ThomasDelegate
-    let timer: any AirshipTimerProtocol
     let dismissHandle: ThomasDismissHandle
     let layoutViewModel: AirshipSimpleLayoutViewModel
 
     init(
-        layout: LoadableLayout,
+        request: @escaping () async throws -> URLRequest,
         analytics: ThomasDisplayListener,
-        timer: any AirshipTimerProtocol,
-        dismissHandle: ThomasDismissHandle
+        dismissHandle: ThomasDismissHandle,
+        stateStorage: (any LayoutDataStorage)? = nil
     ) {
-        self.timer = timer
-        self.loadableLayout = layout
-        self.layout = loadableLayout.layout
+        self.layoutRequest = request
         self.analyticsRecorder = analytics
         self.dismissHandle = dismissHandle
         self.layoutViewModel = AirshipSimpleLayoutViewModel(
             delegate: analytics,
-            timer: timer,
-            dismissHandle: dismissHandle
+            dismissHandle: dismissHandle,
+            stateStorage: stateStorage
         )
     }
     
@@ -91,7 +84,9 @@ private final class ViewModel: ObservableObject {
         }
         
         do {
-            self.layout = try await self.loadableLayout.load()
+            let request = try await self.layoutRequest()
+            let (data, _) = try await URLSession.airshipSecureSession.data(for: request)
+            self.layout = try JSONDecoder().decode(AirshipLayout.self, from: data)
         } catch {
             return .error(error)
         }
@@ -101,29 +96,6 @@ private final class ViewModel: ObservableObject {
 
     func dismiss() {
         self.dismissHandle.dismiss()
-    }
-}
-
-
-@MainActor
-class LoadableLayout {
-    private let request: () async throws -> URLRequest
-    private(set) var layout: AirshipLayout? = nil
-    
-    init(request: @escaping () async throws -> URLRequest) {
-        self.request = request
-    }
-    
-    func load() async throws -> AirshipLayout? {
-        if let layout = self.layout {
-            return layout
-        }
-        
-        let request = try await self.request()
-        let (data, _) = try await URLSession.airshipSecureSession.data(for: request)
-        self.layout = try JSONDecoder().decode(AirshipLayout.self, from: data)
-        
-        return self.layout
     }
 }
 

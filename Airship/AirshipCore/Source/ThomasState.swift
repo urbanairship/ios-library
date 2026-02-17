@@ -240,15 +240,130 @@ fileprivate extension AirshipJSON {
 @MainActor
 final class ScopedStateCache: ObservableObject {
     private var cachedState: ThomasState?
+    
+    private let updateSubject = PassthroughSubject<any Codable, Never>()
+    private var subscription: AnyCancellable?
+    private var pendingUpdate: SnapshotType? = nil
 
     func getOrCreate(_ createState: () -> ThomasState) -> ThomasState {
         if let cached = cachedState { return cached }
         let scoped = createState()
+        
+        if let pendingUpdate {
+            scoped.restorePersistentState(pendingUpdate)
+            self.pendingUpdate = nil
+        }
+        
         cachedState = scoped
+        rebroadcastUpdates(scoped)
         return scoped
     }
 
     func invalidate() {
         cachedState = nil
+        rebroadcastUpdates(nil)
+        pendingUpdate = nil
+    }
+    
+    private func rebroadcastUpdates(_ state: ThomasState?) {
+        guard let state else {
+            subscription?.cancel()
+            subscription = nil
+            updateSubject.send(ThomasState.PersistentState(
+                formState: nil,
+                pagerState: nil,
+                mutableState: nil)
+            )
+            return
+        }
+        
+        subscription = state.updates
+            .sink { [weak self] update in
+                self?.updateSubject.send(update)
+            }
+    }
+}
+
+//MARK: - ThomasStateProvider
+extension ThomasState.MutableState: ThomasStateProvider {
+    typealias StateSnapshot = [String: AirshipJSON]
+    
+    var updates: AnyPublisher<any Codable, Never> {
+        return $state.removeDuplicates().map(\.self).eraseToAnyPublisher()
+    }
+    
+    func persistentStateSnapshot() -> StateSnapshot {
+        return self.appliedState
+    }
+    
+    func restorePersistentState(_ state: [String: AirshipJSON]) {
+        self.appliedState = state
+        DispatchQueue.main.async { self.updateState() }
+    }
+}
+
+extension ThomasState: ThomasStateProvider {
+    typealias SnapshotType = PersistentState
+    
+    struct PersistentState: Codable {
+        let formState: ThomasFormState.SnapshotType?
+        let pagerState: PagerState.SnapshotType?
+        let mutableState: MutableState.SnapshotType?
+    }
+    
+    var updates: AnyPublisher<any Codable, Never> {
+        return $state.removeDuplicates().map(\.self).eraseToAnyPublisher()
+    }
+    
+    func persistentStateSnapshot() -> PersistentState {
+        return PersistentState(
+            formState: formState?.persistentStateSnapshot(),
+            pagerState: pagerState?.persistentStateSnapshot(),
+            mutableState: mutableState?.persistentStateSnapshot()
+        )
+    }
+    
+    func restorePersistentState(_ state: PersistentState) {
+        if let form = state.formState {
+            self.formState?.restorePersistentState(form)
+        }
+        
+        if let pager = state.pagerState {
+            self.pagerState?.restorePersistentState(pager)
+        }
+        
+        if let mutable = state.mutableState {
+            self.mutableState?.restorePersistentState(mutable)
+        }
+    }
+}
+
+extension ScopedStateCache: ThomasStateProvider {
+    typealias SnapshotType = ThomasState.PersistentState
+    
+    var updates: AnyPublisher<any Codable, Never> {
+        return updateSubject
+            .compactMap({ [weak self] _ in self?.makeSnapshot(self?.cachedState) })
+            .eraseToAnyPublisher()
+    }
+    
+    func persistentStateSnapshot() -> SnapshotType {
+        return makeSnapshot(cachedState)
+    }
+    
+    func restorePersistentState(_ state: SnapshotType) {
+        if let thomasState = cachedState {
+            thomasState.restorePersistentState(state)
+        } else {
+            pendingUpdate = state
+        }
+    }
+    
+    private func makeSnapshot(_ state: ThomasState?) -> ThomasState.PersistentState {
+        return state?.persistentStateSnapshot() ?? ThomasState.PersistentState(
+            formState: nil,
+            pagerState: nil,
+            mutableState: nil
+        )
     }
 }

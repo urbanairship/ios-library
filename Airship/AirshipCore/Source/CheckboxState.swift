@@ -34,7 +34,7 @@ class CheckboxState: ObservableObject {
         }
     }
 
-    struct Selected: Sendable, Equatable, Hashable {
+    struct Selected: ThomasSerializable, Hashable {
         var identifier: String?
         var reportingValue: AirshipJSON
     }
@@ -69,5 +69,25 @@ extension CheckboxState {
                 }
             }
         )
+    }
+}
+
+// MARK: - ThomasStateProvider
+extension CheckboxState: ThomasStateProvider {
+    typealias SnapshotType = Set<Selected>
+    
+    var updates: AnyPublisher<any Codable, Never> {
+        return $selected
+            .removeDuplicates()
+            .map(\.self)
+            .eraseToAnyPublisher()
+    }
+    
+    func persistentStateSnapshot() -> SnapshotType {
+        return selected
+    }
+    
+    func restorePersistentState(_ state: SnapshotType) {
+        self.selected = state
     }
 }

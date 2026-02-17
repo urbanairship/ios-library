@@ -5,7 +5,7 @@ import Combine
 
 @MainActor
 final class ScoreState: ObservableObject {
-
+    
     @Published
     private(set) var selected: Selected?
 
@@ -84,9 +84,29 @@ final class ScoreState: ObservableObject {
         )
     }
 
-    struct Selected: Sendable, Equatable, Hashable {
+    struct Selected: ThomasSerializable, Hashable {
         var identifier: String
         var reportingValue: AirshipJSON
         var attributeValue: ThomasAttributeValue?
+    }
+}
+
+//MARK: - State provider
+extension ScoreState: ThomasStateProvider {
+    typealias SnapshotType = Selected?
+    
+    var updates: AnyPublisher<any Codable, Never> {
+        return $selected
+            .removeDuplicates()
+            .map(\.self)
+            .eraseToAnyPublisher()
+    }
+    
+    func persistentStateSnapshot() -> SnapshotType {
+        return selected
+    }
+    
+    func restorePersistentState(_ state: SnapshotType) {
+        self.selected = state
     }
 }

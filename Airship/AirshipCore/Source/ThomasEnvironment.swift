@@ -12,19 +12,28 @@ class ThomasEnvironment: ObservableObject {
     private let delegate: any ThomasDelegate
     private let pagerTracker: ThomasPagerTracker
     private let timer: any AirshipTimerProtocol
+    private let stateStorage: (any ThomasStateStorage)?
     let extensions: ThomasExtensions?
     let imageLoader: AirshipImageLoader
 
     private var state: [String: Any] = [:]
 
-    func retrieveState<T: ObservableObject>(identifier: String, create: () -> T) -> T {
+    func retrieveState<T: ThomasStateProvider>(identifier: String, create: () -> T) -> T {
         let key = "\(identifier):\(T.self)"
-        guard let existing = self.state[key] as? T else {
-            let new = create()
-            state[key] = new
-            return new
+        if let existing = self.state[key] as? T {
+            return existing
         }
-        return existing
+        
+        if let stored = stateStorage?.retrieve(identifier: identifier, builder: create) {
+            self.state[key] = stored
+            return stored
+        }
+        
+        let new = create()
+        state[key] = new
+        stateStorage?.store(new, identifier: identifier)
+        
+        return new
     }
 
     @Published
@@ -46,6 +55,7 @@ class ThomasEnvironment: ObservableObject {
         extensions: ThomasExtensions?,
         pagerTracker: ThomasPagerTracker? = nil,
         timer: (any AirshipTimerProtocol)? = nil,
+        stateStorage: (any ThomasStateStorage)? = nil,
         dismissHandle: ThomasDismissHandle? = nil,
         onDismiss: (() -> Void)? = nil
     ) {
@@ -57,6 +67,8 @@ class ThomasEnvironment: ObservableObject {
         self.imageLoader = AirshipImageLoader(
             imageProvider: extensions?.imageProvider
         )
+        self.stateStorage = stateStorage
+        
         #if !os(tvOS) && !os(watchOS)
         self.subscribeKeyboard()
         #endif

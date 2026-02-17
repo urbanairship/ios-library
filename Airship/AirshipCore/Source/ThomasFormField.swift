@@ -43,7 +43,7 @@ final class ThomasFormField: Sendable {
         let attributeValue: ThomasAttributeValue
     }
 
-    enum Value: Sendable, Equatable {
+    enum Value: ThomasSerializable {
         case toggle(Bool)
         case radio(AirshipJSON?)
         case multipleCheckbox(Set<AirshipJSON>)

@@ -79,6 +79,9 @@ public protocol MessageCenterInbox: AnyObject, Sendable {
 
 protocol InternalMessageCenterInbox: MessageCenterInbox {
     func saveDisplayHistory(for messageID: String, history: MessageDisplayHistory) async
+    
+    @MainActor
+    func getNativeStateStorage(for messageID: String) -> any LayoutDataStorage
 }
 
 /// Airship Message Center inbox.
@@ -103,6 +106,9 @@ final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
     private let _enabled: AirshipAtomicValue<Bool> = AirshipAtomicValue(false)
     private let refreshOnExpireTask: AirshipAtomicValue<Task<Void, any Error>?> = AirshipAtomicValue(nil)
     private let taskSleeper: any AirshipTaskSleeper
+    
+    private let nativeStateStorageFactory: @Sendable @MainActor (String) -> any LayoutDataStorage
+    private let nativeMessageStorageValue: AirshipMainActorValue<(any LayoutDataStorage)?> = .init(nil)
     
     var enabled: Bool {
         get {
@@ -189,7 +195,8 @@ final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
         notificationCenter: NotificationCenter = NotificationCenter.default,
         date: any AirshipDateProtocol = AirshipDate.shared,
         workManager: any AirshipWorkManagerProtocol,
-        taskSleeper: (any AirshipTaskSleeper)? = nil
+        taskSleeper: (any AirshipTaskSleeper)? = nil,
+        stateStorageFactory: (@Sendable @MainActor (String) -> any LayoutDataStorage)? = nil
     ) {
         self.channel = channel
         self.client = client
@@ -199,6 +206,7 @@ final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
         self.date = date
         self.workManager = workManager
         self.taskSleeper = taskSleeper ?? DefaultAirshipTaskSleeper.shared
+        self.nativeStateStorageFactory = stateStorageFactory ?? { NativeLayoutInMemoryDataStore(identifier: $0) }
 
         self.startUpTask = if channel.identifier == nil, !config.airshipConfig.restoreMessageCenterOnReinstall {
             Task { [weak store] in
@@ -442,6 +450,19 @@ final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
         } catch {
             AirshipLogger.error("Failed to save history data message: \(error)")
         }
+    }
+    
+    @MainActor
+    func getNativeStateStorage(for messageID: String) -> any LayoutDataStorage {
+        if
+            let stored = self.nativeMessageStorageValue.value,
+            stored.identifier == messageID {
+            return stored
+        }
+        
+        let storage = self.nativeStateStorageFactory(messageID)
+        self.nativeMessageStorageValue.set(storage)
+        return storage
     }
 
     private func getOrCreateUser(

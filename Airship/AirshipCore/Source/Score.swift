@@ -287,9 +287,9 @@ struct Score: View {
 
     private func restoreFormState() {
         guard
-            case .score(let value) = self.formState.field(
+            case .score(let value) = self.formState.fieldValue(
                 identifier: self.info.properties.identifier
-            )?.input,
+            ),
             let value,
             let index = value.number
         else {

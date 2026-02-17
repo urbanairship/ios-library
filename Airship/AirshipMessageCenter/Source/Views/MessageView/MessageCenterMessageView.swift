@@ -170,8 +170,6 @@ private struct MessageCenterMessageContentView: View {
     var viewModel: MessageCenterMessageViewModel
     let dismissAction: (@MainActor @Sendable () -> Void)?
     
-    private var thomasLoadableLayout: LoadableLayout
-    
     init(
         viewModel: MessageCenterMessageViewModel,
         dismissAction: (@MainActor @Sendable () -> Void)?
@@ -179,9 +177,6 @@ private struct MessageCenterMessageContentView: View {
         self.viewModel = viewModel
         self.dismissAction = dismissAction
         self.contentType = viewModel.message?.contentType
-        self.thomasLoadableLayout = LoadableLayout {
-            try await Self.makeRequest(viewModel: viewModel)
-        }
     }
 
     @MainActor
@@ -323,10 +318,10 @@ private struct MessageCenterMessageContentView: View {
         if let analytics = viewModel.makeAnalytics(onDismiss: { [action = dismissAction] in action?() } ) {
             MessageCenterThomasView(
                 phase: self.$messageLoadingPhase,
-                layout: self.thomasLoadableLayout,
+                layoutRequest: { try await Self.makeRequest(viewModel: viewModel) },
                 analytics: analytics,
-                timer: viewModel.timer,
-                dismissHandle: self.viewModel.thomasDismissHandle
+                dismissHandle: self.viewModel.thomasDismissHandle,
+//                stateStorage: viewModel.getOrCreateNativeStateStorage() //disables state restoring for all message center views
             )
         } else {
             EmptyView()
