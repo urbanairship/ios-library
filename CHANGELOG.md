@@ -4,6 +4,15 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.11.6 - February 18, 2026
+Patch release that fixes an Xcode 26.4 beta compilation issue and improves Scene stability.
+
+### Changes
+- Fixed an Xcode 26.4 beta compilation issue.
+- Improved Scene stability by adding guards for non-finite layout values used in SwiftUI frame, offset, and position calculations.
+- Added additional Scene layout safety checks for container, pager, story indicator, video controls, and wrapping layout views.
+- Improved pager timer progression by safely handling zero and invalid page delays.
+
 ## Version 19.11.5 - December 17, 2025
 Patch release that fixes keyboard safe area with Scenes.
 
