@@ -109,7 +109,7 @@ internal struct VideoControls: ViewModifier {
                     ZStack {
                         if hasError {
                             VideoErrorView()
-                                .frame(width: geometry.size.width, height: geometry.size.height)
+                                .frame(width: geometry.size.width.safeValue, height: geometry.size.height.safeValue)
                         } else if showControls && isControlsVisible && player?.currentItem?.status == .readyToPlay {
                             VideoControlsView(
                                 player: player,
@@ -117,10 +117,13 @@ internal struct VideoControls: ViewModifier {
                                 currentTime: $currentTime,
                                 duration: $duration,
                                 isDraggingSlider: $isDraggingSlider,
-                                size: geometry.size,
+                                size: CGSize(
+                                    width: geometry.size.width.safeValue ?? 0,
+                                    height: geometry.size.height.safeValue ?? 0
+                                ),
                                 onInteraction: resetHideTimer
                             )
-                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .frame(width: geometry.size.width.safeValue, height: geometry.size.height.safeValue)
                             .transition(.opacity)
                         }
                     }
@@ -391,15 +394,15 @@ private struct VideoControlsView: View {
 
                             RoundedRectangle(cornerRadius: 2 * scaleFactor)
                                 .fill(Color.white)
-                                .frame(width: max(0, (duration > 0 ? CGFloat(currentTime / duration) : 0) * geometry.size.width), height: 4 * scaleFactor)
+                                .frame(width: max(0, (duration > 0 ? CGFloat(currentTime / duration) : 0) * geometry.size.width).safeValue, height: 4 * scaleFactor)
                                 .frame(maxHeight: .infinity)
 
                             Circle()
                                 .fill(Color.white)
                                 .frame(width: 12 * scaleFactor, height: 12 * scaleFactor)
                                 .position(
-                                    x: max(6 * scaleFactor, min(geometry.size.width - 6 * scaleFactor, (duration > 0 ? CGFloat(currentTime / duration) : 0) * geometry.size.width)),
-                                    y: geometry.size.height / 2
+                                    x: max(6 * scaleFactor, min(geometry.size.width - 6 * scaleFactor, (duration > 0 ? CGFloat(currentTime / duration) : 0) * geometry.size.width)).safeValue ?? 0,
+                                    y: (geometry.size.height / 2).safeValue ?? 0
                                 )
                         }
                         .contentShape(Rectangle())
@@ -427,7 +430,7 @@ private struct VideoControlsView: View {
                             DragGesture()
                                 .onChanged { value in
                                     isDraggingSlider = true
-                                    let progress = max(0, min(1, value.location.x / geometry.size.width))
+                                    let progress = geometry.size.width > 0 ? max(0, min(1, value.location.x / geometry.size.width)) : 0
                                     currentTime = progress * duration
                                     player?.pause()
                                     onInteraction()
@@ -444,7 +447,7 @@ private struct VideoControlsView: View {
                         .gesture(
                             DragGesture(minimumDistance: 0)
                                 .onEnded { value in
-                                    let progress = max(0, min(1, value.location.x / geometry.size.width))
+                                    let progress = geometry.size.width > 0 ? max(0, min(1, value.location.x / geometry.size.width)) : 0
                                     currentTime = progress * duration
                                     seek(to: currentTime)
                                     onInteraction()
