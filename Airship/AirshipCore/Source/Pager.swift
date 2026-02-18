@@ -84,8 +84,8 @@ struct Pager: View {
         } else {
             GeometryReader { metrics in
                 let childConstraints = ViewConstraints(
-                    width: metrics.size.width,
-                    height: metrics.size.height,
+                    width: metrics.size.width.safeValue,
+                    height: metrics.size.height.safeValue,
                     isHorizontalFixedSize: self.constraints.isHorizontalFixedSize,
                     isVerticalFixedSize: self.constraints.isVerticalFixedSize,
                     safeAreaInsets: self.constraints.safeAreaInsets
@@ -125,13 +125,13 @@ struct Pager: View {
             HStack(spacing: 0) {
                 makePageViews(childConstraints: childConstraints, metrics: metrics)
             }
-            .offset(x: -(metrics.size.width * CGFloat(pagerState.pageIndex)))
+            .offset(x: -((metrics.size.width.safeValue ?? 0) * CGFloat(pagerState.pageIndex)))
             .offset(x: calcDragOffset(index: pagerState.pageIndex))
             .animation(.interactiveSpring(duration: Pager.animationSpeed), value: pagerState.pageIndex)
         }
         .frame(
-            width: metrics.size.width,
-            height: metrics.size.height,
+            width: metrics.size.width.safeValue,
+            height: metrics.size.height.safeValue,
             alignment: .leading
         )
         .clipped()
@@ -167,8 +167,8 @@ struct Pager: View {
             }
         }
         .frame(
-            width: metrics.size.width,
-            height: metrics.size.height,
+            width: metrics.size.width.safeValue,
+            height: metrics.size.height.safeValue,
             alignment: .leading
         )
         .onAppear {
@@ -210,8 +210,8 @@ struct Pager: View {
                 )
             }
             .frame(
-                width: metrics.size.width,
-                height: metrics.size.height
+                width: metrics.size.width.safeValue,
+                height: metrics.size.height.safeValue
             )
             .environment(
                 \.isButtonActionsEnabled,
@@ -474,10 +474,11 @@ struct Pager: View {
         }
 
         let duration = self.pagerState.pageStates[pagerState.pageIndex].delay
+        let safeDuration = (duration > 0 && duration.isFinite) ? duration : 1.0
 
         if self.pagerState.inProgress && (self.pagerState.pageIndex < pagerState.pageItems.count) {
             if (self.pagerState.progress < 1) {
-                self.pagerState.progress += Pager.timerTransition / duration
+                self.pagerState.progress += Pager.timerTransition / safeDuration
             }
 
             // Check for any automated action past the current duration that have not been executed yet

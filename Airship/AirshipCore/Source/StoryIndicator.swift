@@ -46,9 +46,9 @@ struct StoryIndicator: View {
                             progressDelay: delay,
                             constraints: childConstraints
                         )
-                        .airshipApplyIf(self.style.sizing == .pageDuration) { view in
+                        .airshipApplyIf(self.style.sizing == .pageDuration && totalDelay > 0) { view in
                             view.frame(
-                                width: metrics.size.width * (currentDelay / totalDelay)
+                                width: (metrics.size.width * (currentDelay / totalDelay)).safeValue
                             )
                         }
                     }
@@ -79,7 +79,7 @@ struct StoryIndicator: View {
                 if let progressDelay = progressDelay {
                     GeometryReader { metrics in
                         Rectangle()
-                            .frame(width: metrics.size.width * progressDelay.wrappedValue)
+                            .frame(width: (metrics.size.width * progressDelay.wrappedValue).safeValue)
                             .foregroundColor(self.style.progressColor.toColor(colorScheme))
                             .animation(.linear(duration: Pager.animationSpeed), value: self.info)
                     }

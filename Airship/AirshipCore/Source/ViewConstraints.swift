@@ -280,4 +280,10 @@ extension CGFloat {
 
         return value
     }
+
+    /// Returns self if finite, otherwise returns nil.
+    /// Guards against NaN and infinity crashing SwiftUI frame/offset/position modifiers.
+    var safeValue: CGFloat? {
+        self.isFinite ? self : nil
+    }
 }

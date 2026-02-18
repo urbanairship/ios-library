@@ -26,17 +26,21 @@ struct Container: View {
 
 @available(iOS 16.0, *)
 fileprivate struct NewContainer: View {
-    @Environment(\.layoutDirection) var layoutDirection
+    @Environment(\.layoutDirection) private var layoutDirection
 
     /// Container model.
-    let info: ThomasViewInfo.Container
+    private let info: ThomasViewInfo.Container
 
     /// View constraints.
-    let constraints: ViewConstraints
+    private let constraints: ViewConstraints
+
+    init(info: ThomasViewInfo.Container, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
 
     var body: some View {
         ContainerLayout(
-            items: self.info.properties.items,
             constraints: self.constraints,
             layoutDirection: layoutDirection
         ) {
@@ -44,6 +48,7 @@ fileprivate struct NewContainer: View {
                 childItem(idx, item: info.properties.items[idx])
             }
         }
+        .accessibilityElement(children: .contain)
         .airshipGeometryGroupCompat()
         .constraints(constraints)
         .clipped()
@@ -74,17 +79,20 @@ fileprivate struct NewContainer: View {
         .frame(
             alignment: item.position.alignment
         )
-
+        .layoutValue(key: ContainerLayout.ContainerItemPositionKey.self, value: item.position)
     }
 }
 
 @available(iOS 16.0, *)
 fileprivate struct ContainerLayout: Layout {
+    struct ContainerItemPositionKey: LayoutValueKey {
+        static let defaultValue = ThomasPosition(horizontal: .center, vertical: .center)
+    }
+    
     struct Cache {
         var childSizes: [CGSize]
     }
 
-    let items: [ThomasViewInfo.Container.Item]
     let constraints: ViewConstraints
     let layoutDirection: LayoutDirection
 
@@ -104,10 +112,15 @@ fileprivate struct ContainerLayout: Layout {
 
         for (index, subview) in subviews.enumerated() {
             let size = subview.dimensions(in: proposal)
-            cache.childSizes[index] = CGSize(width: size.width, height: size.height)
 
-            maxWidth = max(maxWidth, size.width)
-            maxHeight = max(maxHeight, size.height)
+            let childSize = CGSize(
+                width: size.width.safeValue ?? 0,
+                height: size.height.safeValue ?? 0
+            )
+            cache.childSizes[index] = childSize
+
+            maxWidth = max(maxWidth, childSize.width)
+            maxHeight = max(maxHeight, childSize.height)
         }
 
         return CGSize(width: maxWidth, height: maxHeight)
@@ -119,11 +132,11 @@ fileprivate struct ContainerLayout: Layout {
         subviews: Subviews,
         cache: inout Cache
     ) {
-        for (index, subview) in subviews.enumerated() {
-            let item = items[index]
-            let childSize = cache.childSizes[index]
+        for (subviewIndex, subview) in subviews.enumerated() {
+            let position = subview[ContainerItemPositionKey.self]
+            let childSize = cache.childSizes[subviewIndex]
 
-            let x: CGFloat = switch item.position.horizontal {
+            let x: CGFloat = switch position.horizontal {
             case .start:
                 layoutDirection == .leftToRight ? bounds.minX : bounds.maxX - childSize.width
             case .end:
@@ -132,7 +145,7 @@ fileprivate struct ContainerLayout: Layout {
                 bounds.midX - (childSize.width / 2)
             }
 
-            let y: CGFloat = switch item.position.vertical {
+            let y: CGFloat = switch position.vertical {
             case .top:
                 bounds.minY
             case .bottom:
@@ -142,7 +155,10 @@ fileprivate struct ContainerLayout: Layout {
             }
 
             subview.place(
-                at: CGPoint(x: x, y: y),
+                at: CGPoint(
+                    x: x.safeValue ?? bounds.minX,
+                    y: y.safeValue ?? bounds.minY
+                ),
                 proposal: ProposedViewSize(
                     width: childSize.width,
                     height: childSize.height
