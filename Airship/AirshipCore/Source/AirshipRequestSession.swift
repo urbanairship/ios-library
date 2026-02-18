@@ -399,7 +399,8 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, Sendable {
             return ResolvedAuth(
                 headers: [
                     "Authorization": "Bearer \(token)",
-                    "X-UA-Appkey": self.appKey
+                    "X-UA-Appkey": self.appKey,
+                    "X-UA-Auth-Type": "SDK-JWT"
                 ]
             ) {
                 await provider.authTokenExpired(token: token)

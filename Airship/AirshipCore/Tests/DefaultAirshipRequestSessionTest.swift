@@ -105,7 +105,36 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
 
         let authHeaders = [
             "Authorization": "Bearer some auth token",
-            "X-UA-Appkey": "testAppKey"
+            "X-UA-Appkey": "testAppKey",
+            "X-UA-Auth-Type": "SDK-JWT"
+        ]
+
+        let headers = testURLSession.requests.last?.allHTTPHeaderFields?.filter({ (key: String, value: String) in
+            authHeaders[key] != nil
+        })
+
+        XCTAssertEqual(authHeaders, headers)
+    }
+
+    @MainActor
+    func testContactAuthToken() async throws {
+        let authProvider = TestAuthTokenProvider() { identifier in
+            XCTAssertEqual("some contact", identifier)
+            return "some auth token"
+        }
+        airshipSession.contactAuthTokenProvider = authProvider
+
+        let request = AirshipRequest(
+            url: URL(string: "http://neat.com"),
+            auth: .contactAuthToken(identifier: "some contact")
+        )
+
+        let _ = try? await self.airshipSession.performHTTPRequest(request)
+
+        let authHeaders = [
+            "Authorization": "Bearer some auth token",
+            "X-UA-Appkey": "testAppKey",
+            "X-UA-Auth-Type": "SDK-JWT"
         ]
 
         let headers = testURLSession.requests.last?.allHTTPHeaderFields?.filter({ (key: String, value: String) in
