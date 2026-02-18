@@ -117,7 +117,7 @@ extension Image {
             return false
         }
 
-        let aspectRatio = imageSize.width/imageSize.height
+        let aspectRatio = imageSize.height > 0 ? imageSize.width/imageSize.height : 1.0
 
         if let height = constraints.height, let maxWidth = constraints.maxWidth {
             let fitWidth = height * aspectRatio

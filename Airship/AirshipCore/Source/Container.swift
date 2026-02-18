@@ -108,10 +108,15 @@ fileprivate struct ContainerLayout: Layout {
 
         for (index, subview) in subviews.enumerated() {
             let size = subview.dimensions(in: proposal)
-            cache.childSizes[index] = CGSize(width: size.width, height: size.height)
 
-            maxWidth = max(maxWidth, size.width)
-            maxHeight = max(maxHeight, size.height)
+            let childSize = CGSize(
+                width: size.width.safeValue ?? 0,
+                height: size.height.safeValue ?? 0
+            )
+            cache.childSizes[index] = childSize
+
+            maxWidth = max(maxWidth, childSize.width)
+            maxHeight = max(maxHeight, childSize.height)
         }
 
         return CGSize(width: maxWidth, height: maxHeight)
@@ -124,7 +129,6 @@ fileprivate struct ContainerLayout: Layout {
         cache: inout Cache
     ) {
         for (subviewIndex, subview) in subviews.enumerated() {
-            // Get the position from the layout value
             let position = subview[ContainerItemPositionKey.self]
             let childSize = cache.childSizes[subviewIndex]
 
@@ -147,7 +151,10 @@ fileprivate struct ContainerLayout: Layout {
             }
 
             subview.place(
-                at: CGPoint(x: x, y: y),
+                at: CGPoint(
+                    x: x.safeValue ?? bounds.minX,
+                    y: y.safeValue ?? bounds.minY
+                ),
                 proposal: ProposedViewSize(
                     width: childSize.width,
                     height: childSize.height

@@ -119,7 +119,7 @@ internal struct WrappingLayout: Layout {
         let totalContentHeight = calculateTotalHeight(linesNeeded: linesNeeded, itemHeight: itemHeight, lineSpacing: lineSpacing)
 
         // Adjust yPosition to center content vertically
-        var yPosition = bounds.minY + (availableHeight - totalContentHeight) / 2.0
+        var yPosition = (bounds.minY + (availableHeight - totalContentHeight) / 2.0).safeValue ?? bounds.minY
 
         var currentIndex = 0
 
@@ -128,7 +128,7 @@ internal struct WrappingLayout: Layout {
             let totalLineWidth = CGFloat(itemsInThisLine) * itemWidth + CGFloat(itemsInThisLine - 1) * itemSpacing
 
             // Center the line within the available width
-            var xPosition = bounds.minX + (availableWidth - totalLineWidth) / 2.0
+            var xPosition = (bounds.minX + (availableWidth - totalLineWidth) / 2.0).safeValue ?? bounds.minX
 
             for _ in 0..<itemsInThisLine {
                 if currentIndex >= subviews.count { break }
