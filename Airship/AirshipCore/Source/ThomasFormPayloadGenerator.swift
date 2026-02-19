@@ -115,7 +115,7 @@ struct ThomasFormPayloadGenerator {
                 }
             }
 
-        case .sms(let value):
+        case .sms(let value, _):
             return AirshipJSON.makeObject { builder in
                 builder.set(string: "sms_input", key: Self.typeKey)
                 builder.set(string: value, key: Self.valueKey)

@@ -51,7 +51,7 @@ final class ThomasFormField: Sendable {
         case npsForm(responseType: String?, scoreID: String, children: [String: Value])
         case text(String?)
         case email(String?)
-        case sms(String?)
+        case sms(String?, ThomasSMSLocale?)
         case score(AirshipJSON?)
     }
 

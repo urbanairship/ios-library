@@ -186,7 +186,8 @@ struct TextInput: View {
         )
         .formElement()
         .onAppear {
-            viewModel.setInitialValue(restoredValue())
+            let (value, locale) = restoredValue()
+            viewModel.setInitialValue(value, locale: locale)
             validatableHelper.subscribe(
                 forIdentifier: info.properties.identifier,
                 formState: formState,
@@ -222,17 +223,18 @@ struct TextInput: View {
         )
     }
     
-    private func restoredValue() -> String? {
+    private func restoredValue() -> (String?, ThomasSMSLocale?) {
         let identifier = self.info.properties.identifier
         switch(self.info.properties.inputType, formState.fieldValue(identifier: identifier)) {
         case(.email, .email(let value)),
-            (.sms, .sms(let value)),
             (.number, .text(let value)),
             (.text, .text(let value)),
             (.textMultiline, .text(let value)):
-            return value
+            return (value, nil)
+        case (.sms, .sms(let value, let locale)):
+            return (value, locale)
         default:
-            return nil
+            return (nil, nil)
         }
     }
 
@@ -287,8 +289,14 @@ struct TextInput: View {
             self.selectedSMSLocale = inputProperties.smsLocales?.first
         }
         
-        func setInitialValue(_ value: String?) {
+        func setInitialValue(_ value: String?, locale: ThomasSMSLocale?) {
             guard self.formField == nil else { return }
+            
+            if
+                let locale,
+                inputProperties.smsLocales?.contains(where: { $0 == locale }) == true {
+                self.selectedSMSLocale = locale
+            }
             
             self.formField = self.makeFormField(input: value ?? "")
             self.input = value ?? ""
@@ -401,13 +409,13 @@ struct TextInput: View {
                     return if isRequired {
                         ThomasFormField.invalidField(
                             identifier: inputProperties.identifier,
-                            input: .sms(input)
+                            input: .sms(input, selectedSMSLocale)
                         )
                     } else {
                         ThomasFormField.validField(
                             identifier: inputProperties.identifier,
-                            input: .sms(input),
-                            result: .init(value: .sms(nil))
+                            input: .sms(input, selectedSMSLocale),
+                            result: .init(value: .sms(nil, nil))
                         )
                     }
                 }
@@ -425,7 +433,7 @@ struct TextInput: View {
 
                 return ThomasFormField.asyncField(
                     identifier: inputProperties.identifier,
-                    input: .sms(input)
+                    input: .sms(input, selectedSMSLocale)
                 ) { [weak self, inputValidator] in
                     guard let inputValidator else { return .invalid }
 
@@ -438,7 +446,7 @@ struct TextInput: View {
                     case .valid(let address):
                         return .valid(
                             .init(
-                                value: .sms(address),
+                                value: .sms(address, selectedSMSLocale),
                                 channels: self.makeChannels(
                                     value: address,
                                     selectedSMSLocale: selectedSMSLocale

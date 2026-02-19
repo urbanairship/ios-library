@@ -18,7 +18,7 @@ struct ThomasFormPayloadGeneratorTest {
                     "some-score-input": .score(AirshipJSON.number(7.0)),
                     "some-text-input": .text("neat text"),
                     "some-email-input": .email("email@email.email"),
-                    "some-sms-input": .sms("123"),
+                    "some-sms-input": .sms("123", nil),
                     "some-child-score": .score(AirshipJSON.number(8.0)),
                     "some-child-form": .form(
                         responseType: "some-child-form-response",
@@ -35,7 +35,7 @@ struct ThomasFormPayloadGeneratorTest {
                     ),
                     "text-nil": .text(nil),
                     "email-nil": .email(nil),
-                    "sms-nil": .sms(nil),
+                    "sms-nil": .sms(nil, .init(countryCode: "US", prefix: "+1")),
                     "score-nil": .score(nil),
                     "radio-nil": .radio(nil)
                 ]
