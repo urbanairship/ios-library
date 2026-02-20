@@ -8,9 +8,8 @@ import AirshipCore
 
 /// Message center message.
 public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable {
-    private static let productIdKey = "product ID"
-    private static let defaultProductID = "default_thomas_mc"
-    
+    private static let productIDKey = "product_id"
+
     /// The message title.
     public var title: String
 
@@ -128,7 +127,6 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable 
 }
 
 extension MessageCenterMessage {
-
     /// The list icon of the message. `nil` if there is none.
     public var listIcon: String? {
         guard
@@ -175,7 +173,7 @@ extension MessageCenterMessage {
         return false
     }
     
-    var productID: String {
-        return self.extra[Self.productIdKey] ?? Self.defaultProductID
+    var productID: String? {
+        return self.rawMessageObject.object?[Self.productIDKey]?.string
     }
 }

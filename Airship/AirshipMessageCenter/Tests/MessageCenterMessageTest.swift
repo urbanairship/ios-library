@@ -89,4 +89,45 @@ final class MessageCenterMessageTest: XCTestCase {
             )
         }
     }
+
+    func testMessageProductIDNilWhenNotProvided() throws {
+        let date = Date()
+        let message = MessageCenterMessage(
+            title: "title",
+            id: "identifier",
+            contentType: .native(version: 1),
+            extra: [:],
+            bodyURL: URL(string: "www.myspace.com")!,
+            expirationDate: date,
+            messageReporting: ["any" : "thing"],
+            unread: true,
+            sentDate: date,
+            messageURL: URL(string: "www.myspace.com")!,
+            rawMessageObject: ["raw" : "message object"]
+        )
+
+        XCTAssertNil(message.productID)
+    }
+
+    func testNativeMessageCenterUsesExplicitProductIDWhenProvided() throws {
+        let date = Date()
+        let message = MessageCenterMessage(
+            title: "title",
+            id: "identifier",
+            contentType: .native(version: 1),
+            extra: [:],
+            bodyURL: URL(string: "www.myspace.com")!,
+            expirationDate: date,
+            messageReporting: ["any" : "thing"],
+            unread: true,
+            sentDate: date,
+            messageURL: URL(string: "www.myspace.com")!,
+            rawMessageObject: [
+                "raw": "message object",
+                "product_id": "custom_product_id"
+            ]
+        )
+
+        XCTAssertEqual(message.productID, "custom_product_id")
+    }
 }

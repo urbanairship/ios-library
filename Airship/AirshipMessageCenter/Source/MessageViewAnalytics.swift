@@ -10,6 +10,7 @@ protocol MessageViewAnalytics: ThomasLayoutMessageAnalyticsProtocol {
 
 final class DefaultMessageViewAnalytics: MessageViewAnalytics {
     private static let impressionReportInterval: TimeInterval = 30 * 60 // 30 mins
+    private static let defaultProductID = "default_mc"
     
     private let messageID: ThomasLayoutEventMessageID
     private let productID: String
@@ -34,7 +35,7 @@ final class DefaultMessageViewAnalytics: MessageViewAnalytics {
         queue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
     ) {
         self.messageID = .airship(identifier: message.id, campaigns: nil)
-        self.productID = message.productID
+        self.productID = message.productID ?? Self.defaultProductID
         self.reportingContext = message.messageReporting
         self.eventRecorder = eventRecorder
         self.eventSource = eventSource

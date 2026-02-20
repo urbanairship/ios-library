@@ -153,6 +153,30 @@ struct DefaultMessageViewAnalyticsTests {
         #expect(history.lastDisplay?.triggerSessionID == "current-session")
         
     }
+
+    @Test("Record native message impression uses default product ID")
+    @MainActor
+    func recordNativeFirstImpressionUsesDefaultProductID() async throws {
+        let messageID = "test-native-message-id"
+
+        let message = createStubMessage(
+            id: messageID,
+            reporting: ["test": "reporting"],
+            contentType: .native(version: 1)
+        )
+        let analytics = makeAnalytics(message: message, sessionID: "current-session")
+
+        clock.offset = 100
+        analytics.recordEvent(ThomasLayoutDisplayEvent(), layoutContext: ThomasLayoutContext())
+        await operationsQueue.waitForCurrentOperations()
+
+        let impression = try #require(mockRecorder.lastRecordedImpression)
+        #expect(impression.entityID == messageID)
+        #expect(impression.usageType == .inAppExperienceImpression)
+        #expect(impression.reportingContext == .object(["test": .string("reporting")]))
+        #expect(impression.product == "default_mc")
+        #expect(impression.timestamp == clock.now)
+    }
     
     @Test("Record impression timeout")
     @MainActor
@@ -227,25 +251,26 @@ struct DefaultMessageViewAnalyticsTests {
     private func createStubMessage(
         id: String,
         reporting: [String: Any]? = nil,
-        productID: String? = nil
+        productID: String? = nil,
+        contentType: MessageCenterMessage.ContentType = .html
     ) -> MessageCenterMessage {
-        var extras: [String: String] = [:]
+        var rawMessageObject: [String: Any] = [:]
         if let productID {
-            extras["product ID"] = productID
+            rawMessageObject["product_id"] = productID
         }
         
         return MessageCenterMessage(
             title: "Test Title",
             id: id,
-            contentType: .html,
-            extra: extras,
+            contentType: contentType,
+            extra: [:],
             bodyURL: .init(string: "https://test.url")!,
             expirationDate: nil,
             messageReporting: reporting,
             unread: true,
             sentDate: Date(),
             messageURL: .init(string: "https://test.url")!,
-            rawMessageObject: [:]
+            rawMessageObject: rawMessageObject
         )
     }
     
