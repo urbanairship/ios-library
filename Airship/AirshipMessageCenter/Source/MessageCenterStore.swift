@@ -410,7 +410,8 @@ actor MessageCenterStore {
     func updateMessages(
         messages: [MessageCenterMessage],
         lastModifiedTime: String?,
-        updateLastModifiedTime: Bool = true
+        updateLastModifiedTime: Bool = true,
+        overwriteAssociatedData: Bool = false
     ) async throws {
         guard let coreData = self.coreData else {
             throw MessageCenterStoreError.coreDataUnavailble
@@ -437,8 +438,8 @@ actor MessageCenterStore {
                 data.messageReporting = AirshipJSONUtils.toData (message.messageReporting?.unWrap()as? [String: Any])
                 data.messageExpiration = message.expirationDate
                 
-                if let local = message.associatedData {
-                    data.associatedData = local
+                if overwriteAssociatedData {
+                    data.associatedData = message.associatedData.encoded()
                 }
             }
 

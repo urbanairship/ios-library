@@ -47,7 +47,7 @@ public final class MessageCenterMessageViewModel: ObservableObject {
                 ),
                 historyStorage: MessageDisplayHistoryStore(
                     storageGetter: { messageID in
-                        await messageCenter.internalInbox.message(forID: messageID)?.associatedData
+                        await messageCenter.internalInbox.message(forID: messageID)?.associatedData.displayHistory
                     },
                     storageSetter: { messageID, data in
                         await messageCenter.internalInbox.saveDisplayHistory(for: messageID, history: data)

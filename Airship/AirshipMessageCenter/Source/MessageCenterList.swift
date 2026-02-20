@@ -79,6 +79,7 @@ public protocol MessageCenterInbox: AnyObject, Sendable {
 
 protocol InternalMessageCenterInbox: MessageCenterInbox {
     func saveDisplayHistory(for messageID: String, history: MessageDisplayHistory) async
+    func saveLayoutState(for messageID: String, state: MessageCenterMessage.AssociatedData.ViewState?) async
     
     @MainActor
     func getNativeStateStorage(for messageID: String) -> any LayoutDataStorage
@@ -206,7 +207,25 @@ final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
         self.date = date
         self.workManager = workManager
         self.taskSleeper = taskSleeper ?? DefaultAirshipTaskSleeper.shared
-        self.nativeStateStorageFactory = stateStorageFactory ?? { NativeLayoutInMemoryDataStore(identifier: $0) }
+        self.nativeStateStorageFactory = stateStorageFactory ?? { messageID in
+            //can't use self here because it's init
+            NativeLayoutPersistentDataStore(
+                messageID: messageID) { state in
+                    Task {
+                        await Airship.internalMessageCenter
+                            .internalInbox
+                            .saveLayoutState(
+                                for: messageID,
+                                state: state
+                            )
+                    }
+                } onFetch: {
+                    await Airship.internalMessageCenter
+                        .internalInbox
+                        .message(forID: messageID)?
+                        .associatedData.viewState
+                }
+        }
 
         self.startUpTask = if channel.identifier == nil, !config.airshipConfig.restoreMessageCenterOnReinstall {
             Task { [weak store] in
@@ -435,17 +454,29 @@ final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
     }
     
     func saveDisplayHistory(for messageID: String, history: MessageDisplayHistory) async {
+        await updateAssociatedData(for: messageID) { associatedData in
+            associatedData.displayHistory = try JSONEncoder().encode(history)
+        }
+    }
+    
+    func saveLayoutState(for messageID: String, state: MessageCenterMessage.AssociatedData.ViewState?) async {
+        await updateAssociatedData(for: messageID) { $0.viewState = state }
+    }
+    
+    private func updateAssociatedData(for messageID: String, block: (inout MessageCenterMessage.AssociatedData) throws -> Void) async {
         do {
             guard var message = try await self.store.message(forID: messageID) else {
                 AirshipLogger.error("Failed to find message to update")
                 return
             }
             
-            message.associatedData = try JSONEncoder().encode(history)
+            try block(&message.associatedData)
+            
             try await self.store.updateMessages(
                 messages: [message],
                 lastModifiedTime: nil,
-                updateLastModifiedTime: false
+                updateLastModifiedTime: false,
+                overwriteAssociatedData: true
             )
         } catch {
             AirshipLogger.error("Failed to save history data message: \(error)")
@@ -456,7 +487,7 @@ final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
     func getNativeStateStorage(for messageID: String) -> any LayoutDataStorage {
         if
             let stored = self.nativeMessageStorageValue.value,
-            stored.identifier == messageID {
+            stored.messageID == messageID {
             return stored
         }
         

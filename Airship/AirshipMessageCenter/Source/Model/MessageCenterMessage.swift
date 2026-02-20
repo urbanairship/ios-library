@@ -52,8 +52,7 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable 
     let rawMessageObject: AirshipJSON
     
     /// The message associated data
-    /// Currently only message display history for native messages is stored there
-    var associatedData: Data?
+    var associatedData: AssociatedData
     
     public enum ContentType: Sendable, Hashable {
         case html
@@ -119,10 +118,26 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable 
         self.messageURL = messageURL
         self.rawMessageObject = (try? AirshipJSON.wrap(rawMessageObject))  ?? AirshipJSON.null
         self.associatedData = associatedData
+            .flatMap { try? JSONDecoder().decode(MessageCenterMessage.AssociatedData.self, from: $0) }
+            ?? AssociatedData()
     }
     
     public static func == (lhs: MessageCenterMessage, rhs: MessageCenterMessage) -> Bool {
         return lhs.rawMessageObject == rhs.rawMessageObject
+    }
+    
+    struct AssociatedData: Codable, Sendable, Equatable, Hashable {
+        var displayHistory: Data?
+        var viewState: ViewState?
+        
+        func encoded() -> Data? {
+            return try? JSONEncoder().encode(self)
+        }
+        
+        struct ViewState: Codable, Sendable, Equatable, Hashable {
+            var restoreID: String
+            var state: Data?
+        }
     }
 }
 

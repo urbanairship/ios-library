@@ -54,6 +54,7 @@ struct MessageCenterThomasView: View {
 @MainActor
 private final class ViewModel: ObservableObject {
     private let layoutRequest: () async throws -> URLRequest
+    private let stateStorage: (any LayoutDataStorage)?
 
     @Published
     private(set) var layout: AirshipLayout? = nil
@@ -71,6 +72,7 @@ private final class ViewModel: ObservableObject {
         self.layoutRequest = request
         self.analyticsRecorder = analytics
         self.dismissHandle = dismissHandle
+        self.stateStorage = stateStorage
         self.layoutViewModel = AirshipSimpleLayoutViewModel(
             delegate: analytics,
             dismissHandle: dismissHandle,
@@ -79,14 +81,17 @@ private final class ViewModel: ObservableObject {
     }
     
     func loadLayout() async -> MessageCenterMessageView.DisplayPhase {
-        guard self.layout == nil else {
+        if let layout {
+            await preloadData(for: layout)
             return .loaded
         }
         
         do {
             let request = try await self.layoutRequest()
             let (data, _) = try await URLSession.airshipSecureSession.data(for: request)
-            self.layout = try JSONDecoder().decode(AirshipLayout.self, from: data)
+            let downloaded = try JSONDecoder().decode(AirshipLayout.self, from: data)
+            await preloadData(for: downloaded)
+            self.layout = downloaded
         } catch {
             return .error(error)
         }
@@ -96,6 +101,10 @@ private final class ViewModel: ObservableObject {
 
     func dismiss() {
         self.dismissHandle.dismiss()
+    }
+    
+    private func preloadData(for layout: AirshipLayout) async {
+        await self.stateStorage?.prepare(restoreID: "static") //TODO: replace with the actual
     }
 }
 

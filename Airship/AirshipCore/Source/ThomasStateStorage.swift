@@ -14,7 +14,9 @@ protocol ThomasStateProvider: ObservableObject {
 
 @MainActor
 public protocol LayoutDataStorage: Sendable {
-    var identifier: String { get }
+    var messageID: String { get }
+    
+    func prepare(restoreID: String) async
     func store(_ state: Data?, key: String)
     func retrieve(_ key: String) -> Data?
     func clear()
@@ -24,7 +26,6 @@ public protocol LayoutDataStorage: Sendable {
 @MainActor
 protocol ThomasStateStorage: Sendable {
     
-    func prepare(restoreID: String)
     func store(_ provider: any ThomasStateProvider, identifier: String)
     
     func retrieve<T: ThomasStateProvider>(
@@ -37,8 +38,7 @@ protocol ThomasStateStorage: Sendable {
 @MainActor
 final class DefaultThomasStateStorage: ThomasStateStorage {
     
-    private let store: any LayoutDataStorage
-    private var restoreID: String? = nil
+    private var store: any LayoutDataStorage
     private var providers: [String: any ThomasStateProvider] = [:]
     private var cancellables: [String: AnyCancellable] = [:]
     
@@ -46,14 +46,6 @@ final class DefaultThomasStateStorage: ThomasStateStorage {
         self.store = store
     }
     
-    func prepare(restoreID: String) {
-        if restoreID != self.restoreID {
-            self.store.clear()
-            providers.removeAll()
-            self.restoreID = restoreID
-            cancellables.removeAll()
-        }
-    }
     
     func store(_ provider: any ThomasStateProvider, identifier: String) {
         removeStored(forKey: identifier)
