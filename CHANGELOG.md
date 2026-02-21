@@ -4,6 +4,15 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.3.1 - February 18, 2026
+Patch release that fixes an Xcode 26.4 beta compilation issue and improves Scene stability.
+
+### Changes
+- Fixed an Xcode 26.4 beta compilation issue.
+- Improved Scene stability by adding guards for non-finite layout values used in SwiftUI frame, offset, and position calculations.
+- Added additional Scene layout safety checks for container, pager, story indicator, video controls, and wrapping layout views.
+- Improved pager timer progression by safely handling zero and invalid page delays.
+
 ## Version 20.3.0 - January 30, 2026
 Minor release that adds Objective-C wrapper for deep link processing and fixes a Message Center migration issue when upgrading from 17.x or older to 20.x.
 
