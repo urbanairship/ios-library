@@ -7,7 +7,7 @@ import SwiftUI
 struct Icons {
 
     @MainActor
-    private static func makeSystemImageIcon(
+    static func makeSystemImageIcon(
         name: String,
         resizable: Bool,
         color: Color
@@ -16,6 +16,7 @@ struct Icons {
             .airshipApplyIf(resizable) { view in view.resizable() }
             .foregroundColor(color)
     }
+    
 
     @MainActor
     @ViewBuilder
@@ -146,27 +147,30 @@ struct Icons {
 private struct ProgressSpinnerIconView: View {
     let resizable: Bool
     let color: Color
+    // Only used for < 18
+    @State private var isSpinning: Bool = false
     
     var body: some View {
         if #available(iOS 18.0, visionOS 2.0, *) {
-            makeSystemImageIcon(
+            Icons.makeSystemImageIcon(
                 name: "progress.indicator",
                 resizable: resizable,
                 color: color
             )
             .symbolEffect(.variableColor.iterative, options: .repeat(.continuous))
         } else {
-            // Fallback on earlier versions
+            Icons.makeSystemImageIcon(
+                name: "rays",
+                resizable: resizable,
+                color: color
+            )
+            .rotationEffect(.degrees(isSpinning ? 360 : 0))
+            .onAppear {
+                withAnimation(.linear(duration: 1.2).repeatForever(autoreverses: false)) {
+                    isSpinning = true
+                }
+            }
         }
     }
-    
-    private func makeSystemImageIcon(
-        name: String,
-        resizable: Bool,
-        color: Color
-    ) -> some View {
-        Image(systemName: name)
-            .airshipApplyIf(resizable) { view in view.resizable() }
-            .foregroundColor(color)
-    }
+
 }
