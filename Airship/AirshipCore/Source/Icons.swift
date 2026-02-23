@@ -148,7 +148,7 @@ private struct ProgressSpinnerIconView: View {
     let color: Color
     
     var body: some View {
-        if #available(iOS 18.0, *) {
+        if #available(iOS 18.0, visionOS 2.0, *) {
             makeSystemImageIcon(
                 name: "progress.indicator",
                 resizable: resizable,
