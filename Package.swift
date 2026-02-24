@@ -68,7 +68,6 @@ let package = Package(
                 .linkedFramework("WebKit", .when(platforms: [.iOS, .visionOS])),
                 .linkedFramework("CoreTelephony", .when(platforms: [.iOS])),
                 //Libraries
-                .linkedLibrary("z"),
                 .linkedLibrary("sqlite3"),
             ]
         ),

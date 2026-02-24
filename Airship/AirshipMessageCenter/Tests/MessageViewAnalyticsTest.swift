@@ -174,7 +174,7 @@ struct DefaultMessageViewAnalyticsTests {
         #expect(impression.entityID == messageID)
         #expect(impression.usageType == .inAppExperienceImpression)
         #expect(impression.reportingContext == .object(["test": .string("reporting")]))
-        #expect(impression.product == "default_mc")
+        #expect(impression.product == "default_native_mc")
         #expect(impression.timestamp == clock.now)
     }
     

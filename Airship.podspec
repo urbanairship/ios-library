@@ -1,4 +1,4 @@
-AIRSHIP_VERSION="20.3.2"
+AIRSHIP_VERSION="20.4.0"
 
 Pod::Spec.new do |s|
    s.version                    = AIRSHIP_VERSION
@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
       basement.source_files               = "Airship/AirshipBasement/Source/Public/*.h", "Airship/AirshipBasement/Source/Internal/*.{h,m}", "Cocoapods/AirshipKit.h"
       basement.private_header_files       = "Airship/AirshipBasement/Source/Internal/*.h"
       basement.exclude_files              = "Airship/AirshipBasement/Source/Public/AirshipBasement.h"
-      basement.libraries                  = "z", "sqlite3"
+      basement.libraries                  = "sqlite3"
       basement.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "UIKit", "CoreData"
       basement.ios.frameworks             = "WebKit", "CoreTelephony", "SystemConfiguration"
       basement.tvos.frameworks            = "SystemConfiguration"
@@ -34,7 +34,7 @@ Pod::Spec.new do |s|
       core.source_files               = "Airship/AirshipCore/Source/*.{swift}"
       core.resource_bundle            = { 'AirshipCoreResources' => "Airship/AirshipCore/Resources/*" }
       core.exclude_files              = "Airship/AirshipCore/Resources/Info.plist", "Airship/AirshipCore/Source/AirshipCore.h"
-      core.libraries                  = "z", "sqlite3"
+      core.libraries                  = "sqlite3"
       core.frameworks                 = "UserNotifications", "CFNetwork", "CoreGraphics", "Foundation", "Security", "UIKit", "CoreData"
       core.ios.frameworks             = "WebKit", "CoreTelephony", "SystemConfiguration", "StoreKit"
       core.tvos.frameworks            = "SystemConfiguration"

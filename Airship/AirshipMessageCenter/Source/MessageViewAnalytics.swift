@@ -10,7 +10,7 @@ protocol MessageViewAnalytics: ThomasLayoutMessageAnalyticsProtocol {
 
 final class DefaultMessageViewAnalytics: MessageViewAnalytics {
     private static let impressionReportInterval: TimeInterval = 30 * 60 // 30 mins
-    private static let defaultProductID = "default_mc"
+    private static let defaultProductID = "default_native_mc"
     
     private let messageID: ThomasLayoutEventMessageID
     private let productID: String

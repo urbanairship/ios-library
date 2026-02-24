@@ -4,6 +4,14 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.4.0 - February 24, 2026
+Minor release that adds support for Native Message Center and In-App Experiences on tvOS. Native content type requires displaying the message content in a `MessageCenterMessageView`. Apps that do not use Airship's message views (e.g. using a WebView directly) should filter out messages where `message.contentType` is not `.html`.
+
+### Changes
+- Added support for Native Message Center.
+- Added support for In-App Experiences (Scenes, Banners, and non-HTML Automations) on tvOS.
+- Removed gzip encoding using internal UACompression class and `libz` dependency from AirshipBasement.
+
 ## Version 20.3.2 - February 23, 2026
 Patch release that fixes Message Center unread indicator behavior, improves spinner fallback on older iOS versions, and resolves visionOS availability checks.
 
