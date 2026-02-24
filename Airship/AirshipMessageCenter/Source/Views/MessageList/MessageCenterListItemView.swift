@@ -154,15 +154,14 @@ private struct MessageCenterListContentView: View {
 
     @ViewBuilder
     func makeUnreadIndicator() -> some View {
-        let foregroundColor = colorScheme.airshipResolveColor(
-            light: theme.unreadIndicatorColor,
-            dark: theme.unreadIndicatorColorDark
-        ) ?? colorScheme.airshipResolveColor(
-            light: theme.cellTintColor,
-            dark: theme.cellTintColorDark
-        )
-
         if message.unread {
+            let foregroundColor = colorScheme.airshipResolveColor(
+                light: theme.unreadIndicatorColor,
+                dark: theme.unreadIndicatorColorDark
+            ) ?? colorScheme.airshipResolveColor(
+                light: theme.cellTintColor,
+                dark: theme.cellTintColorDark
+            )
             Image(systemName: MessageCenterListContentView.unreadIndicatorImageName)
                 .foregroundColor(
                     foregroundColor

@@ -84,7 +84,7 @@ struct Label: View {
                     .accessibilityHidden(true)
             }
 
-            if #available(iOS 26.0, *) {
+            if #available(iOS 26.0, visionOS 26.0, *) {
                 self.textView
                     .textAppearance(resolvedTextAppearance, colorScheme: colorScheme)
                     .truncationMode(.tail)
@@ -343,7 +343,7 @@ extension Label {
 
                 if seg.isHighlight {
                     // For custom cornerRadius we have to use a custom attribute and renderer
-                    if #available(iOS 18.0, *), let cornerRadius = highlightOptions?.cornerRadius {
+                    if #available(iOS 18.0, visionOS 2.0, *), let cornerRadius = highlightOptions?.cornerRadius {
                         let highlight = HighlightAttribute(
                             color: highlightOptions?.color?.toColor(colorScheme) ?? Self.defaultHighlightColor,
                             cornerRadius: cornerRadius
