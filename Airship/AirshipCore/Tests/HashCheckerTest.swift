@@ -28,7 +28,7 @@ final class HashCheckerTest: XCTestCase {
             bucket: AudienceHashSelector.Bucket(min: 11600, max: 13000),
             sticky: AudienceHashSelector.Sticky(
                 id: "sticky ID",
-                reportingMetadata: .string("sticky reporting"),
+                reportingMetadata: "sticky reporting",
                 lastAccessTTL: 100.0
             )
         )
@@ -69,7 +69,7 @@ final class HashCheckerTest: XCTestCase {
             bucket: AudienceHashSelector.Bucket(min: 11600, max: 13000),
             sticky: AudienceHashSelector.Sticky(
                 id: "sticky ID",
-                reportingMetadata: .string("sticky reporting"),
+                reportingMetadata: "sticky reporting",
                 lastAccessTTL: 100.0
             )
         )
@@ -93,7 +93,7 @@ final class HashCheckerTest: XCTestCase {
 
         stickyHash.sticky = AudienceHashSelector.Sticky(
             id: "sticky ID",
-            reportingMetadata: .string("updated sticky reporting"),
+            reportingMetadata: "updated sticky reporting",
             lastAccessTTL: 50.0
         )
 
@@ -131,7 +131,7 @@ final class HashCheckerTest: XCTestCase {
             bucket: AudienceHashSelector.Bucket(min: 11600, max: 13000),
             sticky: AudienceHashSelector.Sticky(
                 id: "sticky ID",
-                reportingMetadata: .string("sticky reporting"),
+                reportingMetadata: "sticky reporting",
                 lastAccessTTL: 100.0
             )
         )

@@ -5,7 +5,7 @@ import Combine
 
 @MainActor
 class ThomasState: ObservableObject {
-    @Published private(set) var state: AirshipJSON = .object([:])
+    @Published private(set) var state: AirshipJSON = [:]
 
     private var subscriptions: Set<AnyCancellable> = []
 
@@ -32,22 +32,22 @@ class ThomasState: ObservableObject {
 
             // Add $forms
             if let formStatus, let formType {
-                result["$forms"] = .object([
+                result["$forms"] = [
                     "current": ThomasFormPayloadGenerator.makeFormStatePayload(
                         status: formStatus,
                         fields: formActiveFields.map { $0.value },
                         formType: formType
                     )
-                ])
+                ]
             }
 
             // Add $pagers
             if let pagerInProgress {
-                result["$pagers"] = .object([
-                    "current": .object([
+                result["$pagers"] = [
+                    "current": [
                         "paused": .bool(!pagerInProgress)
-                    ])
-                ])
+                    ]
+                ]
             }
 
             return .object(result)
@@ -55,7 +55,7 @@ class ThomasState: ObservableObject {
     }
 
     private var stateSnapshot: StateSnapshot = StateSnapshot()
-    private var lastOutput: AirshipJSON = .object([:])
+    private var lastOutput: AirshipJSON = [:]
 
     init(
         formState: ThomasFormState? = nil,
@@ -164,7 +164,7 @@ class ThomasState: ObservableObject {
             inititalState: AirshipJSON? = nil,
             taskSleeper: any AirshipTaskSleeper = DefaultAirshipTaskSleeper.shared
         ) {
-            self.state = inititalState ?? .object([:])
+            self.state = inititalState ?? [:]
             self.taskSleeper = taskSleeper
         }
 

@@ -37,10 +37,10 @@ struct ThomasLayoutEventContextTest {
                 isFirstDisplay: false,
                 isFirstDisplayTriggerSessionID: true
             ),
-            reportingContext: .string("reporting context"),
+            reportingContext: "reporting context",
             experimentsReportingData: [
-                .string("experiment result 1"),
-                .string("experiment result 2")
+                "experiment result 1",
+                "experiment result 2"
             ]
         )
 

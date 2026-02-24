@@ -20,7 +20,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         bucket: AudienceHashSelector.Bucket(min: 11600, max: 13000),
         sticky: AudienceHashSelector.Sticky(
             id: "sticky ID",
-            reportingMetadata: .string("sticky reporting"),
+            reportingMetadata: "sticky reporting",
             lastAccessTTL: 100.0
         )
     )
@@ -37,7 +37,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         bucket: AudienceHashSelector.Bucket(min: 0, max: 11600),
         sticky: AudienceHashSelector.Sticky(
             id: "sticky ID",
-            reportingMetadata: .string("inverse sticky reporting"),
+            reportingMetadata: "inverse sticky reporting",
             lastAccessTTL: 100.0
         )
     )

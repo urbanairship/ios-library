@@ -70,7 +70,7 @@ struct ThomasFormFieldProcessorTest {
 
     @Test("Test valid result does not retry")
     func testValidResultDoesNotRetry() async throws {
-        let result = ThomasFormFieldPendingResult.valid(.init(value: .score(AirshipJSON.number(100.0))))
+        let result = ThomasFormFieldPendingResult.valid(.init(value: .score(100.0)))
         await confirmation { confirmation in
             let request = processor.submit(processDelay: 1.0) {
                 confirmation.confirm()

@@ -267,7 +267,7 @@ class AnalyticsTest: XCTestCase {
             expectation.fulfill()
         }
 
-        self.analytics.recordEvent(AirshipEvent(priority: .normal, eventType: .appBackground, eventData: .string("body")))
+        self.analytics.recordEvent(AirshipEvent(priority: .normal, eventType: .appBackground, eventData: "body"))
 
         wait(for: [expectation], timeout: 5.0)
     }
@@ -542,10 +542,10 @@ class AnalyticsTest: XCTestCase {
         )
         XCTAssertEqual(
             [
-                .string("app_background"),
-                .string("app_foreground"),
-                .string("app_foreground_init"),
-                .string("app_background_init")
+                "app_background",
+                "app_foreground",
+                "app_foreground_init",
+                "app_background_init"
             ],
             events.map { $0.body }
         )

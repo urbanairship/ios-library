@@ -21,7 +21,7 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
 
     private let preparedScheduleInfo: PreparedScheduleInfo = PreparedScheduleInfo(
         scheduleID: UUID().uuidString,
-        campaigns: .string("campigns"),
+        campaigns: "campigns",
         contactID: UUID().uuidString,
         experimentResult: nil,
         triggerSessionID: UUID().uuidString,

@@ -542,7 +542,7 @@ final class AutomationScheduleDataTest: XCTestCase {
     func testTriggered() {
         let previousTriggerSessionID = self.data.triggerSessionID
 
-        let context = AirshipTriggerContext(type: "some-type", goal: 10.0, event: .string("event"))
+        let context = AirshipTriggerContext(type: "some-type", goal: 10.0, event: "event")
         
         self.data.triggered(triggerInfo: TriggeringInfo(context: context, date: self.date), date: self.date + 100)
         XCTAssertEqual(self.data.triggerInfo?.context, context)
@@ -556,7 +556,7 @@ final class AutomationScheduleDataTest: XCTestCase {
         self.data.schedule.limit = 1
         self.data.executionCount = 1
 
-        let context = AirshipTriggerContext(type: "some-type", goal: 10.0, event: .string("event"))
+        let context = AirshipTriggerContext(type: "some-type", goal: 10.0, event: "event")
         self.data.triggered(triggerInfo: TriggeringInfo(context: context, date: self.date), date: self.date + 100)
 
         XCTAssertNil(self.data.triggerInfo)
@@ -569,7 +569,7 @@ final class AutomationScheduleDataTest: XCTestCase {
         self.data.executionCount = 1
         self.data.schedule.end = self.date
 
-        let context = AirshipTriggerContext(type: "some-type", goal: 10.0, event: .string("event"))
+        let context = AirshipTriggerContext(type: "some-type", goal: 10.0, event: "event")
         self.data.triggered(triggerInfo: TriggeringInfo(context: context, date: self.date), date: self.date + 100)
 
         XCTAssertNil(self.data.triggerInfo)

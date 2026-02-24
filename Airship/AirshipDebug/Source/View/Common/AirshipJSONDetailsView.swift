@@ -45,6 +45,6 @@ struct AirshipJSONDetailsView: View {
 
 #Preview {
     AirshipJSONDetailsView(
-        payload: .object(["key": .string("value")]),
+        payload: ["key": "value"],
         title: "Preview")
 }

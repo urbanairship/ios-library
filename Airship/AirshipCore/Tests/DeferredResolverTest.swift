@@ -26,7 +26,7 @@ final class DeferredResolverTest: XCTestCase {
             triggerContext: AirshipTriggerContext(
                 type: "some type",
                 goal: 10.0,
-                event: .string("event")
+                event: "event"
             ),
             locale: Locale(identifier: "de-DE"),
             notificationOptIn: true
@@ -49,7 +49,7 @@ final class DeferredResolverTest: XCTestCase {
             AttributeUpdate(
                 attribute: "some-attribute",
                 type: .set,
-                jsonValue: .string("hello"),
+                jsonValue: "hello",
                 date: Date()
             )
         ]

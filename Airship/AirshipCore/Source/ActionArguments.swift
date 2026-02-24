@@ -57,7 +57,7 @@ public struct ActionArguments: Sendable {
         situation: ActionSituation = .manualInvocation,
         metadata: [String : any Sendable] = [:]
     ) {
-        self.value = AirshipJSON.string(string)
+        self.value = .string(string)
         self.situation = situation
         self.metadata = metadata
     }
@@ -77,7 +77,7 @@ public struct ActionArguments: Sendable {
         situation: ActionSituation = .manualInvocation,
         metadata: [String : any Sendable] = [:]
     ) {
-        self.value = AirshipJSON.bool(bool)
+        self.value = .bool(bool)
         self.situation = situation
         self.metadata = metadata
     }

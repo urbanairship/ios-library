@@ -10,7 +10,7 @@ struct ThomasLayoutGestureEventTest {
     func testEvent() throws {
         let thomasEvent = ThomasReportingEvent.GestureEvent(
             identifier: "gesture id",
-            reportingMetadata: .string("reporting metadata")
+            reportingMetadata: "reporting metadata"
         )
 
         let event = ThomasLayoutGestureEvent(data: thomasEvent)

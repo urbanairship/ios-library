@@ -68,24 +68,24 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
         var event = await takeNext().first
         XCTAssertEqual(AutomationEvent.event(type: .screen, data: .string(trackScreenName)), event)
         
-        await analyticsFeed.notifyEvent(.analytics(eventType: .regionEnter, body: .string("some region data")))
+        await analyticsFeed.notifyEvent(.analytics(eventType: .regionEnter, body: "some region data"))
         event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.event(type: .regionEnter, data: .string("some region data")), event)
+        XCTAssertEqual(AutomationEvent.event(type: .regionEnter, data: "some region data"), event)
 
-        await analyticsFeed.notifyEvent(.analytics(eventType: .regionExit, body: .string("some region data")))
+        await analyticsFeed.notifyEvent(.analytics(eventType: .regionExit, body: "some region data"))
         event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.event(type: .regionExit, data: .string("some region data")), event)
+        XCTAssertEqual(AutomationEvent.event(type: .regionExit, data: "some region data"), event)
 
-        await analyticsFeed.notifyEvent(.analytics(eventType: .customEvent, body: .string("some data"), value: 100))
+        await analyticsFeed.notifyEvent(.analytics(eventType: .customEvent, body: "some data", value: 100))
         event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.event(type: .customEventCount, data: .string("some data"), value: 1), event)
+        XCTAssertEqual(AutomationEvent.event(type: .customEventCount, data: "some data", value: 1), event)
         event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.event(type: .customEventValue, data: .string("some data"), value: 100), event)
+        XCTAssertEqual(AutomationEvent.event(type: .customEventValue, data: "some data", value: 100), event)
         
 
-        await analyticsFeed.notifyEvent(.analytics(eventType: .featureFlagInteraction, body: .string("some data")))
+        await analyticsFeed.notifyEvent(.analytics(eventType: .featureFlagInteraction, body: "some data"))
         event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.event(type: .featureFlagInteraction, data: .string("some data")), event)
+        XCTAssertEqual(AutomationEvent.event(type: .featureFlagInteraction, data: "some data"), event)
     }
     
     func testAnalyticFeedEvents() async throws {
@@ -130,7 +130,7 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
         
         await analyticsFeed.notifyEvent(.screen(screen: "foo"))
         let event = await takeNext().first
-        XCTAssertEqual(AutomationEvent.event(type: .screen, data: .string("foo"), value: 1.0), event)
+        XCTAssertEqual(AutomationEvent.event(type: .screen, data: "foo", value: 1.0), event)
     }
     
     func testCustomEventValues() async throws {

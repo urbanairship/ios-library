@@ -10,7 +10,7 @@ final class AccountEventTemplateTest: XCTestCase {
         XCTAssertEqual("registered_account", event.eventName)
         XCTAssertEqual("account", event.templateType)
 
-        let expectedProperties: [String: AirshipJSON] = [ "ltv": .bool(false) ]
+        let expectedProperties: [String: AirshipJSON] = ["ltv": false]
         XCTAssertEqual(expectedProperties, event.properties)
     }
 
@@ -19,7 +19,7 @@ final class AccountEventTemplateTest: XCTestCase {
         XCTAssertEqual("logged_in", event.eventName)
         XCTAssertEqual("account", event.templateType)
 
-        let expectedProperties: [String: AirshipJSON] = [ "ltv": .bool(false) ]
+        let expectedProperties: [String: AirshipJSON] = ["ltv": false]
         XCTAssertEqual(expectedProperties, event.properties)
     }
 
@@ -28,7 +28,7 @@ final class AccountEventTemplateTest: XCTestCase {
         XCTAssertEqual("logged_out", event.eventName)
         XCTAssertEqual("account", event.templateType)
 
-        let expectedProperties: [String: AirshipJSON] = [ "ltv": .bool(false) ]
+        let expectedProperties: [String: AirshipJSON] = ["ltv": false]
         XCTAssertEqual(expectedProperties, event.properties)
     }
 
@@ -43,10 +43,10 @@ final class AccountEventTemplateTest: XCTestCase {
         let event = CustomEvent(accountTemplate: .loggedOut, properties: properties)
 
         let expectedProperties: [String: AirshipJSON] = [
-            "user_id": .string("some user"),
-            "category": .string("some category"),
-            "type": .string("some type"),
-            "ltv": .bool(true)
+            "user_id": "some user",
+            "category": "some category",
+            "type": "some type",
+            "ltv": true
         ]
         XCTAssertEqual(expectedProperties, event.properties)
     }

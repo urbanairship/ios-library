@@ -12,10 +12,8 @@ final class InAppMessageNativeBridgeExtensionTest: XCTestCase {
     func testExtras() async throws {
         let message = InAppMessage(
             name: "some name",
-            displayContent: .custom(.string("custom")),
-            extras: .object(
-                ["cool": .string("value")]
-            )
+            displayContent: .custom("custom"),
+            extras: ["cool": "value"]
         )
 
         let jsProtocol = TestJSProtocol()
@@ -29,8 +27,8 @@ final class InAppMessageNativeBridgeExtensionTest: XCTestCase {
     func testExtrasWrongType() async throws {
         let message = InAppMessage(
             name: "some name",
-            displayContent: .custom(.string("custom")),
-            extras: .string("value")
+            displayContent: .custom("custom"),
+            extras: "value"
         )
 
         let jsProtocol = TestJSProtocol()

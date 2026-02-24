@@ -77,7 +77,7 @@ final class LandingPageActionTest: XCTestCase {
             }
         )
 
-        let args = ActionArguments(value: .string("https://some-url"), situation: .manualInvocation)
+        let args = ActionArguments(value: "https://some-url", situation: .manualInvocation)
 
         let result = try await action.perform(arguments: args)
         XCTAssertNil(result)
@@ -180,7 +180,7 @@ final class LandingPageActionTest: XCTestCase {
             }
         )
 
-        let args = ActionArguments(value: .string("some-url"), situation: .manualInvocation)
+        let args = ActionArguments(value: "some-url", situation: .manualInvocation)
         let result = try await action.perform(arguments: args)
         XCTAssertNil(result)
 
@@ -232,7 +232,7 @@ final class LandingPageActionTest: XCTestCase {
             }
         )
 
-        let args = ActionArguments(value: .string("some-url"), situation: .manualInvocation)
+        let args = ActionArguments(value: "some-url", situation: .manualInvocation)
         let result = try await action.perform(arguments: args)
         XCTAssertNil(result)
 
@@ -254,7 +254,7 @@ final class LandingPageActionTest: XCTestCase {
             }
         )
 
-        let args = ActionArguments(value: .string("https://some-url"), situation: .manualInvocation)
+        let args = ActionArguments(value: "https://some-url", situation: .manualInvocation)
 
         do {
             _ = try await action.perform(arguments: args)
@@ -265,7 +265,7 @@ final class LandingPageActionTest: XCTestCase {
     }
 
     func testReportingEnabled() async throws {
-        let pushMetadata = AirshipJSON.object(["_": .string("some-send-ID")])
+        let pushMetadata: AirshipJSON = ["_": "some-send-ID"]
 
         let scheduled = expectation(description: "scheduled")
 
@@ -302,7 +302,7 @@ final class LandingPageActionTest: XCTestCase {
         )
 
         let args = ActionArguments(
-            value: .string("https://some-url"),
+            value: "https://some-url",
             situation: .manualInvocation,
             metadata: [ActionArguments.pushPayloadJSONMetadataKey: pushMetadata]
         )

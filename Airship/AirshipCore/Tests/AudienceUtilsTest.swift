@@ -64,12 +64,12 @@ class AudienceUtilsTest: XCTestCase {
             AttributeUpdate.remove(attribute: "some-attribute", date: date),
             AttributeUpdate.set(
                 attribute: "some-attribute",
-                value: .string("neat"),
+                value: "neat",
                 date: date
             ),
             AttributeUpdate.set(
                 attribute: "some-other-attribute",
-                value: .number(12),
+                value: 12,
                 date: date
             ),
             AttributeUpdate.remove(

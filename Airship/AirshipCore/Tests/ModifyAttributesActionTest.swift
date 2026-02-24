@@ -128,7 +128,7 @@ final class ModifyAttributesActionTest: XCTestCase {
             AttributeUpdate(
                 attribute: "name",
                 type: .set,
-                jsonValue: .string("clive"),
+                jsonValue: "clive",
                 date: self.date.now
             )
         ]
@@ -143,7 +143,7 @@ final class ModifyAttributesActionTest: XCTestCase {
             AttributeUpdate(
                 attribute: "some other name",
                 type: .set,
-                jsonValue: .string("owen"),
+                jsonValue: "owen",
                 date: self.date.now
             )
         ]

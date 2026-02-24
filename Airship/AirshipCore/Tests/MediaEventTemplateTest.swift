@@ -10,7 +10,7 @@ final class MediaEventTemplateTest: XCTestCase {
         XCTAssertEqual("browsed_content", event.eventName)
         XCTAssertEqual("media", event.templateType)
 
-        let expectedProperties: [String: AirshipJSON] = [ "ltv": .bool(false) ]
+        let expectedProperties: [String: AirshipJSON] = ["ltv": false]
         XCTAssertEqual(expectedProperties, event.properties)
     }
 
@@ -19,7 +19,7 @@ final class MediaEventTemplateTest: XCTestCase {
         XCTAssertEqual("consumed_content", event.eventName)
         XCTAssertEqual("media", event.templateType)
 
-        let expectedProperties: [String: AirshipJSON] = [ "ltv": .bool(false) ]
+        let expectedProperties: [String: AirshipJSON] = ["ltv": false]
         XCTAssertEqual(expectedProperties, event.properties)
     }
 
@@ -29,9 +29,9 @@ final class MediaEventTemplateTest: XCTestCase {
         XCTAssertEqual("media", event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = [
-            "ltv": .bool(false),
-            "source": .string("some source"),
-            "medium": .string("some medium")
+            "ltv": false,
+            "source": "some source",
+            "medium": "some medium"
         ]
         XCTAssertEqual(expectedProperties, event.properties)
     }
@@ -41,7 +41,7 @@ final class MediaEventTemplateTest: XCTestCase {
         XCTAssertEqual("shared_content", event.eventName)
         XCTAssertEqual("media", event.templateType)
 
-        let expectedProperties: [String: AirshipJSON] = [ "ltv": .bool(false) ]
+        let expectedProperties: [String: AirshipJSON] = ["ltv": false]
         XCTAssertEqual(expectedProperties, event.properties)
     }
 
@@ -50,7 +50,7 @@ final class MediaEventTemplateTest: XCTestCase {
         XCTAssertEqual("starred_content", event.eventName)
         XCTAssertEqual("media", event.templateType)
 
-        let expectedProperties: [String: AirshipJSON] = [ "ltv": .bool(false) ]
+        let expectedProperties: [String: AirshipJSON] = ["ltv": false]
         XCTAssertEqual(expectedProperties, event.properties)
     }
 
@@ -75,16 +75,16 @@ final class MediaEventTemplateTest: XCTestCase {
         XCTAssertEqual("media", event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = [
-            "id": .string("some id"),
-            "category": .string("some category"),
-            "type": .string("some type"),
-            "description": .string("some description"),
-            "ltv": .bool(true),
-            "author": .string("some author"),
+            "id": "some id",
+            "category": "some category",
+            "type": "some type",
+            "description": "some description",
+            "ltv": true,
+            "author": "some author",
             "published_date": try! AirshipJSON.wrap(date, encoder: CustomEvent.defaultEncoder()),
-            "feature": .bool(true),
-            "source": .string("some source"),
-            "medium": .string("some medium")
+            "feature": true,
+            "source": "some source",
+            "medium": "some medium"
         ]
 
         XCTAssertEqual(expectedProperties, event.properties)

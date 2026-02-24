@@ -729,7 +729,7 @@ class AirshipContactTest: XCTestCase {
                 TagGroupUpdate(group: "some group", tags: ["tag"], type: .add)
             ],
             attributes: [
-                AttributeUpdate(attribute: "some attribute", type: .set, jsonValue: .string("cool"), date: self.date.now)
+                AttributeUpdate(attribute: "some attribute", type: .set, jsonValue: "cool", date: self.date.now)
             ],
             subscriptionLists: [
                 ScopedSubscriptionListUpdate(listId: "some list", type: .unsubscribe, scope: .app, date: self.date.now)
@@ -741,7 +741,7 @@ class AirshipContactTest: XCTestCase {
                 TagGroupUpdate(group: "some other group", tags: ["tag"], type: .add)
             ],
             attributes: [
-                AttributeUpdate(attribute: "some other attribute", type: .set, jsonValue: .string("cool"), date: self.date.now)
+                AttributeUpdate(attribute: "some other attribute", type: .set, jsonValue: "cool", date: self.date.now)
             ],
             subscriptionLists: [
                 ScopedSubscriptionListUpdate(listId: "some other list", type: .unsubscribe, scope: .app, date: self.date.now)
@@ -764,7 +764,7 @@ class AirshipContactTest: XCTestCase {
                 TagGroupUpdate(group: "some group", tags: ["tag"], type: .add)
             ],
             attributes: [
-                AttributeUpdate(attribute: "some attribute", type: .set, jsonValue: .string("cool"), date: self.date.now)
+                AttributeUpdate(attribute: "some attribute", type: .set, jsonValue: "cool", date: self.date.now)
             ],
             subscriptionLists: [
                 ScopedSubscriptionListUpdate(listId: "some list", type: .unsubscribe, scope: .app, date: self.date.now)
@@ -777,7 +777,7 @@ class AirshipContactTest: XCTestCase {
                 TagGroupUpdate(group: "some other group", tags: ["tag"], type: .add)
             ],
             attributes: [
-                AttributeUpdate(attribute: "some other attribute", type: .set, jsonValue: .string("cool"), date: self.date.now)
+                AttributeUpdate(attribute: "some other attribute", type: .set, jsonValue: "cool", date: self.date.now)
             ],
             subscriptionLists: [
                 ScopedSubscriptionListUpdate(listId: "some other list", type: .unsubscribe, scope: .app, date: self.date.now)

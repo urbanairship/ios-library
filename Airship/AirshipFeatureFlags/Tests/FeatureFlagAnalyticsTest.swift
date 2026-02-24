@@ -20,7 +20,7 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
             exists: false,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting two"),
+                reportingMetadata: "reporting two",
                 contactID: "some contactID",
                 channelID: "some channel ID"
             )
@@ -49,7 +49,7 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
             isEligible: true,
             exists: true,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reportingMetadata"),
+                reportingMetadata: "reportingMetadata",
                 contactID: "some_contact",
                 channelID: "some_channel"
             )
@@ -82,8 +82,8 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
             isEligible: true,
             exists: true,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reportingMetadata"),
-                supersededReportingMetadata: [.string("supersede")],
+                reportingMetadata: "reportingMetadata",
+                supersededReportingMetadata: ["supersede"],
                 contactID: "some_contact",
                 channelID: "some_channel"
             )
@@ -117,7 +117,7 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
             isEligible: true,
             exists: true,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reportingMetadata")
+                reportingMetadata: "reportingMetadata"
             )
         )
 
@@ -144,7 +144,7 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
             isEligible: true,
             exists: true,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reportingMetadata")
+                reportingMetadata: "reportingMetadata"
             )
         )
 

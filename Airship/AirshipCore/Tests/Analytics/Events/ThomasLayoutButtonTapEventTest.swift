@@ -10,7 +10,7 @@ struct ThomasLayoutButtonTapEventTest {
     func testEvent() throws {
         let thomasEvent = ThomasReportingEvent.ButtonTapEvent(
             identifier: "button id",
-            reportingMetadata: .string("reporting metadata")
+            reportingMetadata: "reporting metadata"
         )
 
         let event = ThomasLayoutButtonTapEvent(data: thomasEvent)

@@ -38,14 +38,14 @@ final class InAppMessageContentValidationTest: XCTestCase {
         validBody = InAppMessageTextInfo(text: validText, color: validColor, size: 16.0, fontFamilies: validFontFam, alignment: .center)
         validMedia = InAppMessageMediaInfo(url: validURL, type: .image, description: validText)
         validButtonLabel = InAppMessageTextInfo(text: validText, color: validColor, size: 10, fontFamilies: validFontFam, style: [.bold])
-        validButton = InAppMessageButtonInfo(identifier: validIdentifier, label: validButtonLabel, actions: AirshipJSON.object([:]), backgroundColor: validColor, borderColor: validColor, borderRadius: 2)
+        validButton = InAppMessageButtonInfo(identifier: validIdentifier, label: validButtonLabel, actions: [:], backgroundColor: validColor, borderColor: validColor, borderRadius: 2)
 
         // Empty components
         emptyHeading = InAppMessageTextInfo(text: "", color: validColor, size: 22.0, fontFamilies: validFontFam, alignment: .center)
         emptyBody = InAppMessageTextInfo(text: "", color: validColor, size: 16.0, fontFamilies: validFontFam, alignment: .center)
         emptyMedia = InAppMessageMediaInfo(url: "", type: .image, description: "")
         emptyButtonLabel = InAppMessageTextInfo(text: "", color: validColor, size: 10, fontFamilies: validFontFam, style: [.bold])
-        emptyButton = InAppMessageButtonInfo(identifier: "", label: validButtonLabel, actions: AirshipJSON.object([:]), backgroundColor: validColor, borderColor: validColor, borderRadius: 2)
+        emptyButton = InAppMessageButtonInfo(identifier: "", label: validButtonLabel, actions: [:], backgroundColor: validColor, borderColor: validColor, borderRadius: 2)
 
         validVideoMedia = InAppMessageMediaInfo(url: validURL, type: .video, description: validText)
         validYoutubeMedia = InAppMessageMediaInfo(url: validURL, type: .video, description: validText)

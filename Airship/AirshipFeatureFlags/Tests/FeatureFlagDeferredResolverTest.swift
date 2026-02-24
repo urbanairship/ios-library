@@ -28,7 +28,7 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
         created: Date(),
         lastUpdated: Date(),
         name: "flag name",
-        reportingMetadata: .string("reporting"),
+        reportingMetadata: "reporting",
         flagPayload: .deferredPayload(
             .init(
                 deferred: .init(url: URL(string: "example://example")!)
@@ -318,7 +318,7 @@ final class FeatureFlagDeferredResolverTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "flag name",
-            reportingMetadata: .string("reporting"),
+            reportingMetadata: "reporting",
             flagPayload: .deferredPayload(
                 .init(
                     deferred: .init(url: URL(string: "example://example")!)

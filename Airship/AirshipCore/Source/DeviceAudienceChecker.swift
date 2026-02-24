@@ -226,7 +226,7 @@ extension DeviceAudienceSelector {
         if let permissionPredicate = self.permissionPredicate {
             var map: [String: AirshipJSON] = [:]
             for entry in permissions {
-                map[entry.key.rawValue] = AirshipJSON.string(entry.value.rawValue)
+                map[entry.key.rawValue] = .string(entry.value.rawValue)
             }
 
             guard permissionPredicate.evaluate(json: .object(map)) else {
@@ -260,9 +260,12 @@ extension DeviceAudienceSelector {
             return false
         }
 
-        let versionObject = AirshipJSON.object(
-            ["ios": .object(["version": .string(appVersion)])]
-        )
+        let versionObject: AirshipJSON = [
+            "ios": [
+                "version": .string(appVersion)
+            ]
+        ]
+        
         return versionPredicate.evaluate(json: versionObject)
     }
 

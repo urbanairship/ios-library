@@ -76,12 +76,7 @@ final class ExperimentTest: XCTestCase {
             id: "cf9b8c05-05e2-4b8e-a2a3-7ed06d99cc1c",
             lastUpdated: decoded.lastUpdated,
             created: decoded.created,
-            reportingMetadata:
-                    .object(
-                        ["experiment_id" : .string(
-                            "cf9b8c05-05e2-4b8e-a2a3-7ed06d99cc1c"
-                        )]
-                    ),
+            reportingMetadata: ["experiment_id" : "cf9b8c05-05e2-4b8e-a2a3-7ed06d99cc1c"],
             audienceSelector: DeviceAudienceSelector(
                 hashSelector: .init(
                     hash: .init(
@@ -164,12 +159,7 @@ final class ExperimentTest: XCTestCase {
             id: "cf9b8c05-05e2-4b8e-a2a3-7ed06d99cc1c",
             lastUpdated: decoded.lastUpdated,
             created: decoded.created,
-            reportingMetadata:
-                    .object(
-                        ["experiment_id" : .string(
-                            "cf9b8c05-05e2-4b8e-a2a3-7ed06d99cc1c"
-                        )]
-                    ),
+            reportingMetadata: ["experiment_id" : "cf9b8c05-05e2-4b8e-a2a3-7ed06d99cc1c"],
             audienceSelector: DeviceAudienceSelector(
                 hashSelector: .init(
                     hash: .init(

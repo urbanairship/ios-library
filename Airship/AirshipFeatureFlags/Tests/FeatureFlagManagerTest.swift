@@ -56,7 +56,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(variables: nil)
                 ),
@@ -91,7 +91,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(variables: nil)
                 ),
@@ -121,7 +121,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(variables: nil)
                 )
@@ -135,7 +135,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -150,7 +150,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting"),
+            reportingMetadata: "reporting",
             audienceSelector: DeviceAudienceSelector(newUser: true),
             compoundAudience: .init(selector: .not(.atomic(DeviceAudienceSelector(newUser: false)))),
             flagPayload: .staticPayload(
@@ -176,7 +176,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -190,7 +190,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting"),
+            reportingMetadata: "reporting",
             audienceSelector: DeviceAudienceSelector(newUser: true),
             flagPayload: .staticPayload(
                 FeatureFlagPayload.StaticInfo(variables: nil)
@@ -213,7 +213,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -229,7 +229,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting 1"),
+                reportingMetadata: "reporting 1",
                 audienceSelector: DeviceAudienceSelector(newUser: true),
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(variables: nil)
@@ -240,7 +240,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting 2"),
+                reportingMetadata: "reporting 2",
                 audienceSelector: DeviceAudienceSelector(newUser: true),
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(
@@ -262,7 +262,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting 2"),
+                reportingMetadata: "reporting 2",
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -278,7 +278,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting 1"),
+                reportingMetadata: "reporting 1",
                 audienceSelector: DeviceAudienceSelector(newUser: true),
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(variables: nil)
@@ -289,7 +289,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting 2"),
+                reportingMetadata: "reporting 2",
                 audienceSelector: DeviceAudienceSelector(newUser: true),
                 flagPayload: .deferredPayload(
                     FeatureFlagPayload.DeferredInfo(
@@ -311,7 +311,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting 2"),
+                reportingMetadata: "reporting 2",
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -325,7 +325,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting"),
+            reportingMetadata: "reporting",
             audienceSelector: DeviceAudienceSelector(newUser: true),
             flagPayload: .staticPayload(
                 FeatureFlagPayload.StaticInfo(variables: nil)
@@ -337,7 +337,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting"),
+            reportingMetadata: "reporting",
             audienceSelector: DeviceAudienceSelector(newUser: false),
             flagPayload: .staticPayload(
                 FeatureFlagPayload.StaticInfo(
@@ -367,7 +367,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: AirshipJSON.string("flagInfo2 variables"),
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -382,7 +382,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting"),
+            reportingMetadata: "reporting",
             audienceSelector: nil,
             compoundAudience: .init(selector: .atomic(DeviceAudienceSelector(newUser: true))),
             flagPayload: .staticPayload(
@@ -395,7 +395,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting"),
+            reportingMetadata: "reporting",
             audienceSelector: DeviceAudienceSelector(newUser: false),
             flagPayload: .staticPayload(
                 FeatureFlagPayload.StaticInfo(
@@ -425,7 +425,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -460,7 +460,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting"),
+            reportingMetadata: "reporting",
             flagPayload: .staticPayload(
                 FeatureFlagPayload.StaticInfo(
                     variables: .variant(variables)
@@ -513,7 +513,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting"),
+            reportingMetadata: "reporting",
             flagPayload: .staticPayload(
                 FeatureFlagPayload.StaticInfo(
                     variables: .variant([])
@@ -521,7 +521,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             ),
             controlOptions: .init(
                 compoundAudience: .init(selector: .atomic(controlAudience)),
-                reportingMetadata: .string("supersede"),
+                reportingMetadata: "supersede",
                 controlType: .flag)
         )
         
@@ -549,7 +549,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -567,8 +567,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("supersede"),
-                supersededReportingMetadata: [.string("reporting")],
+                reportingMetadata: "supersede",
+                supersededReportingMetadata: ["reporting"],
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -591,7 +591,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting"),
+            reportingMetadata: "reporting",
             flagPayload: .staticPayload(
                 FeatureFlagPayload.StaticInfo(
                     variables: .variant([])
@@ -599,8 +599,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             ),
             controlOptions: .init(
                 compoundAudience: .init(selector: .atomic(controlAudience)),
-                reportingMetadata: .string("supersede"),
-                controlType: .variables(.string("variables-overrides")))
+                reportingMetadata: "supersede",
+                controlType: .variables("variables-overrides"))
         )
         
         self.remoteDataAccess.status = .upToDate
@@ -625,7 +625,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -641,10 +641,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             name: "foo",
             isEligible: true,
             exists: true,
-            variables: .string("variables-overrides"),
+            variables: "variables-overrides",
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("supersede"),
-                supersededReportingMetadata: [.string("reporting")],
+                reportingMetadata: "supersede",
+                supersededReportingMetadata: ["reporting"],
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -678,7 +678,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting"),
+            reportingMetadata: "reporting",
             flagPayload: .deferredPayload(
                 FeatureFlagPayload.DeferredInfo(
                     deferred: .init(url: URL(string: "some-url://")!)
@@ -687,7 +687,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         )
 
         let deferredResponse = DeferredFlagResponse.found(
-            DeferredFlag(isEligible: true, variables: .variant(variables), reportingMetadata: .string("reporting two"))
+            DeferredFlag(isEligible: true, variables: .variant(variables), reportingMetadata: "reporting two")
         )
 
         let expectedFlag = FeatureFlag(
@@ -696,7 +696,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: variables[1].data,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("Variant reporting"),
+                reportingMetadata: "Variant reporting",
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -736,7 +736,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting"),
+            reportingMetadata: "reporting",
             flagPayload: .deferredPayload(
                 FeatureFlagPayload.DeferredInfo(
                     deferred: .init(url: URL(string: "some-url://")!)
@@ -745,7 +745,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         )
 
         let deferredResponse = DeferredFlagResponse.found(
-            DeferredFlag(isEligible: false, variables: .variant(variables), reportingMetadata: .string("reporting two"))
+            DeferredFlag(isEligible: false, variables: .variant(variables), reportingMetadata: "reporting two")
         )
 
         let expectedFlag = FeatureFlag(
@@ -754,7 +754,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting two"),
+                reportingMetadata: "reporting two",
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -796,7 +796,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting"),
+            reportingMetadata: "reporting",
             flagPayload: .staticPayload(
                 FeatureFlagPayload.StaticInfo(
                     variables: .variant(variables)
@@ -837,7 +837,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(
                         variables: .fixed(nil)
@@ -855,7 +855,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 exists: true,
                 variables: nil,
                 reportingInfo: FeatureFlag.ReportingInfo(
-                    reportingMetadata: .string("reporting"),
+                    reportingMetadata: "reporting",
                     contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                     channelID: self.deviceInfoProvider.channelID
                 )
@@ -871,7 +871,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(
                         variables: .fixed(nil)
@@ -890,7 +890,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 exists: true,
                 variables: nil,
                 reportingInfo: FeatureFlag.ReportingInfo(
-                    reportingMetadata: .string("reporting"),
+                    reportingMetadata: "reporting",
                     contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                     channelID: self.deviceInfoProvider.channelID
                 )
@@ -906,7 +906,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(
                         variables: .fixed(nil)
@@ -936,7 +936,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(
                         variables: .fixed(nil)
@@ -949,7 +949,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(
                         variables: .fixed(nil)
@@ -977,7 +977,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(
                         variables: .fixed(nil)
@@ -996,7 +996,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 exists: true,
                 variables: nil,
                 reportingInfo: FeatureFlag.ReportingInfo(
-                    reportingMetadata: .string("reporting"),
+                    reportingMetadata: "reporting",
                     contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                     channelID: self.deviceInfoProvider.channelID
                 )
@@ -1013,7 +1013,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(
                         variables: .fixed(nil)
@@ -1026,7 +1026,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting"),
+                reportingMetadata: "reporting",
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(
                         variables: .fixed(nil)
@@ -1057,7 +1057,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting one"),
+                reportingMetadata: "reporting one",
                 audienceSelector: DeviceAudienceSelector(newUser: true),
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(
@@ -1070,7 +1070,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting two"),
+                reportingMetadata: "reporting two",
                 audienceSelector: DeviceAudienceSelector(newUser: true),
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(
@@ -1089,7 +1089,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 exists: true,
                 variables: nil,
                 reportingInfo: FeatureFlag.ReportingInfo(
-                    reportingMetadata: .string("reporting two"),
+                    reportingMetadata: "reporting two",
                     contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                     channelID: self.deviceInfoProvider.channelID
                 )
@@ -1108,7 +1108,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting one"),
+                reportingMetadata: "reporting one",
                 audienceSelector: DeviceAudienceSelector(newUser: true),
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(
@@ -1121,7 +1121,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting two"),
+                reportingMetadata: "reporting two",
                 audienceSelector: DeviceAudienceSelector(newUser: true),
                 flagPayload: .staticPayload(
                     FeatureFlagPayload.StaticInfo(
@@ -1140,7 +1140,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 exists: true,
                 variables: nil,
                 reportingInfo: FeatureFlag.ReportingInfo(
-                    reportingMetadata: .string("reporting two"),
+                    reportingMetadata: "reporting two",
                     contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                     channelID: self.deviceInfoProvider.channelID
                 )
@@ -1155,7 +1155,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting two"),
+                reportingMetadata: "reporting two",
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -1171,7 +1171,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting one"),
+            reportingMetadata: "reporting one",
             audienceSelector: DeviceAudienceSelector(newUser: true),
             flagPayload: .deferredPayload(
                 FeatureFlagPayload.DeferredInfo(
@@ -1181,7 +1181,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         )
 
         let deferredResponse = DeferredFlagResponse.found(
-            DeferredFlag(isEligible: false, variables: nil, reportingMetadata: .string("reporting two"))
+            DeferredFlag(isEligible: false, variables: nil, reportingMetadata: "reporting two")
         )
 
         let expectedFlag = FeatureFlag(
@@ -1190,7 +1190,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting two"),
+                reportingMetadata: "reporting two",
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -1224,7 +1224,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting one"),
+            reportingMetadata: "reporting one",
             audienceSelector: DeviceAudienceSelector(newUser: true),
             flagPayload: .deferredPayload(
                 FeatureFlagPayload.DeferredInfo(
@@ -1257,7 +1257,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting one"),
+                reportingMetadata: "reporting one",
                 audienceSelector: DeviceAudienceSelector(newUser: false),
                 flagPayload: .deferredPayload(
                     FeatureFlagPayload.DeferredInfo(
@@ -1270,7 +1270,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting two"),
+                reportingMetadata: "reporting two",
                 audienceSelector: DeviceAudienceSelector(newUser: true),
                 flagPayload: .deferredPayload(
                     FeatureFlagPayload.DeferredInfo(
@@ -1283,7 +1283,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 created: Date(),
                 lastUpdated: Date(),
                 name: "foo",
-                reportingMetadata: .string("reporting three"),
+                reportingMetadata: "reporting three",
                 flagPayload: .deferredPayload(
                     FeatureFlagPayload.DeferredInfo(
                         deferred: .init(url: URL(string: "some-url://")!)
@@ -1316,7 +1316,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             exists: true,
             variables: nil,
             reportingInfo: FeatureFlag.ReportingInfo(
-                reportingMetadata: .string("reporting three"),
+                reportingMetadata: "reporting three",
                 contactID: self.deviceInfoProvider.stableContactInfo.contactID,
                 channelID: self.deviceInfoProvider.channelID
             )
@@ -1342,7 +1342,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting one"),
+            reportingMetadata: "reporting one",
             audienceSelector: DeviceAudienceSelector(newUser: true),
             flagPayload: .deferredPayload(
                 FeatureFlagPayload.DeferredInfo(
@@ -1384,7 +1384,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting one"),
+            reportingMetadata: "reporting one",
             audienceSelector: DeviceAudienceSelector(newUser: true),
             flagPayload: .deferredPayload(
                 FeatureFlagPayload.DeferredInfo(
@@ -1426,7 +1426,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting one"),
+            reportingMetadata: "reporting one",
             audienceSelector: DeviceAudienceSelector(newUser: true),
             flagPayload: .deferredPayload(
                 FeatureFlagPayload.DeferredInfo(
@@ -1496,7 +1496,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             created: Date(),
             lastUpdated: Date(),
             name: "foo",
-            reportingMetadata: .string("reporting one"),
+            reportingMetadata: "reporting one",
             audienceSelector: DeviceAudienceSelector(newUser: true),
             flagPayload: .deferredPayload(
                 FeatureFlagPayload.DeferredInfo(

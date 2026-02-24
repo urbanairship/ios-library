@@ -129,14 +129,14 @@ final class CancelSchedulesActionTest: XCTestCase {
         
         _ = try await action.perform(
             arguments: ActionArguments(
-                value: AirshipJSON.object(["groups": .string("group-1")])))
+                value: ["groups": "group-1"]))
         
         var scheduleIds = await automation.schedules.map({ $0.identifier })
         XCTAssertEqual(["group2", "group3"], scheduleIds)
         
         _ = try await action.perform(
             arguments: ActionArguments(
-                value: AirshipJSON.object(["groups": .array([.string("group-2"), .string("group-3")])])))
+                value: ["groups": ["group-2", "group-3"]]))
         
         scheduleIds = await automation.schedules.map({ $0.identifier })
         XCTAssert(scheduleIds.isEmpty)
@@ -154,14 +154,14 @@ final class CancelSchedulesActionTest: XCTestCase {
         
         _ = try await action.perform(
             arguments: ActionArguments(
-                value: AirshipJSON.object(["ids": .string("id-1")])))
+                value: ["ids": "id-1"]))
         
         var scheduleIds = await automation.schedules.map({ $0.identifier })
         XCTAssertEqual(["id-2", "id-3"], scheduleIds)
         
         _ = try await action.perform(
             arguments: ActionArguments(
-                value: AirshipJSON.object(["ids": .array([.string("id-2"), .string("id-3")])])))
+                value: ["ids": ["id-2", "id-3"]]))
         
         scheduleIds = await automation.schedules.map({ $0.identifier })
         XCTAssert(scheduleIds.isEmpty)
@@ -178,7 +178,7 @@ final class CancelSchedulesActionTest: XCTestCase {
         
         _ = try await action.perform(
             arguments: ActionArguments(
-                value: AirshipJSON.object(["ids": .string("id-1"), "groups": .string("group")])))
+                value: ["ids": "id-1", "groups": "group"]))
         
         let scheduleIds = await automation.schedules.map({ $0.identifier })
         XCTAssert(scheduleIds.isEmpty)

@@ -686,12 +686,12 @@ class ContactAPIClientTest: XCTestCase {
         let attributeUpdates = [
             AttributeUpdate.set(
                 attribute: "some-string",
-                value: .string("Hello"),
+                value: "Hello",
                 date: date
             ),
             AttributeUpdate.set(
                 attribute: "some-number",
-                value: .number(32.0),
+                value: 32.0,
                 date: date
             ),
             AttributeUpdate.remove(attribute: "some-remove", date: date),

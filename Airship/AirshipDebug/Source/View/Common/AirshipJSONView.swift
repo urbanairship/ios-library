@@ -58,11 +58,11 @@ extension AirshipJSON {
 
     var typeString: String {
         switch(self) {
-        case .object(_): return "object"
-        case .string(_): return "string"
-        case .number(_): return "number"
-        case .array(_): return "array"
-        case .bool(_): return "boolean"
+        case .object: return "object"
+        case .string: return "string"
+        case .number: return "number"
+        case .array: return "array"
+        case .bool: return "boolean"
         case .null: return "null"
         @unknown default: return "unknown"
         }
@@ -107,5 +107,5 @@ fileprivate struct ObjectEntry: View {
 }
 
 #Preview {
-    AirshipJSONView(json: .object(["preview": .bool(true)]))
+    AirshipJSONView(json: ["preview": true])
 }

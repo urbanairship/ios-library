@@ -694,7 +694,7 @@ struct ContactManagerTest {
     }
 
     @Test("Auth token resolve mismatch")
-    func authTokenResolveMismatch() async throws {
+    func authTokenResolveMismatch() async {
         try await confirmation { confirm in
             self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
                 #expect(self.channel.identifier == channelID)
@@ -746,7 +746,7 @@ struct ContactManagerTest {
     }
 
     @Test("Auth token failed")
-    func authTokenFailed() async throws {
+    func authTokenFailed() async  {
         try await confirmation { confirm in
             self.apiClient.resolveCallback = { channelID, contactID, possiblyOrphanedContactID in
                 #expect(self.channel.identifier == channelID)
@@ -893,7 +893,7 @@ struct ContactManagerTest {
         ]
 
         let attributes = [
-            AttributeUpdate(attribute: "some attribute", type: .set, jsonValue: .string("cool"), date: self.date.now)
+            AttributeUpdate(attribute: "some attribute", type: .set, jsonValue: "cool", date: self.date.now)
         ]
 
         let subscriptions = [
@@ -941,7 +941,7 @@ struct ContactManagerTest {
         ]
 
         let attributes = [
-            AttributeUpdate(attribute: "some attribute", type: .set, jsonValue: .string("cool"), date: self.date.now)
+            AttributeUpdate(attribute: "some attribute", type: .set, jsonValue: "cool", date: self.date.now)
         ]
 
         let subscriptions = [
@@ -1378,9 +1378,9 @@ struct ContactManagerTest {
         ]
 
         let attributes = [
-            AttributeUpdate(attribute: "some other attribute", type: .set, jsonValue: .string("cool"), date: self.date.now),
-            AttributeUpdate(attribute: "some attribute", type: .set, jsonValue: .string("cool"), date: self.date.now),
-            AttributeUpdate(attribute: "some attribute", type: .remove, jsonValue: .string("cool"), date: self.date.now)
+            AttributeUpdate(attribute: "some other attribute", type: .set, jsonValue: "cool", date: self.date.now),
+            AttributeUpdate(attribute: "some attribute", type: .set, jsonValue: "cool", date: self.date.now),
+            AttributeUpdate(attribute: "some attribute", type: .remove, jsonValue: "cool", date: self.date.now)
         ]
 
         let subscriptions = [
@@ -1450,7 +1450,7 @@ struct ContactManagerTest {
         ]
 
         let attributes = [
-            AttributeUpdate(attribute: "some attribute", type: .set, jsonValue: .string("cool"), date: self.date.now),
+            AttributeUpdate(attribute: "some attribute", type: .set, jsonValue: "cool", date: self.date.now),
         ]
 
         let subscriptions = [
@@ -1511,7 +1511,7 @@ struct ContactManagerTest {
 
         let expctedConflictEvent =  ContactConflictEvent(
             tags: ["some group": ["tag"]],
-            attributes: ["some attribute": .string("cool")],
+            attributes: ["some attribute": "cool"],
             associatedChannels: [],
             subscriptionLists: ["some list": [.app]],
             conflictingNamedUserID: "some named user"

@@ -42,17 +42,12 @@ final class AirshipJSONTest: XCTestCase {
         ]
 
         let expected: [AirshipJSON] = [
-            .string("hello"),
-            .number(100.0),
-            .array(
-                [
-                    .string("foo"),
-                    .object(["cool": .string("story")]),
-                ]
-            ),
-            .object(["neat": .string("object")]),
-            .null,
-            .bool(true),
+            "hello",
+            100.0,
+            ["foo", ["cool": "story"], ],
+            ["neat": "object"],
+            nil,
+            true,
         ]
 
         XCTAssertEqual(.array(expected), try AirshipJSON.wrap(array))
@@ -69,12 +64,12 @@ final class AirshipJSONTest: XCTestCase {
         ]
 
         let expected: [String: AirshipJSON] = [
-            "string": .string("hello"),
-            "number": .number(100.0),
-            "array": .array([.string("cool"), .string("story")]),
-            "null": .null,
-            "boolean": .bool(true),
-            "object": .object(["neat": .string("object")]),
+            "string": "hello",
+            "number": 100.0,
+            "array": ["cool", "story"],
+            "null": nil,
+            "boolean": true,
+            "object": ["neat": "object"],
         ]
 
         XCTAssertEqual(.object(expected), try AirshipJSON.wrap(object))

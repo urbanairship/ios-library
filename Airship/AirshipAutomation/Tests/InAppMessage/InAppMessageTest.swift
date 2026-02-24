@@ -103,7 +103,7 @@ final class InAppMessageTest: XCTestCase {
                                 fontFamilies: ["sans-serif"],
                                 style: [.bold]
                             ),
-                            actions: AirshipJSON.object([:]),
+                            actions: [:],
                             backgroundColor: .init(hexColorString: "#63aff2"),
                             borderColor: .init(hexColorString: "#63aff2"),
                             borderRadius: 2
@@ -217,7 +217,7 @@ final class InAppMessageTest: XCTestCase {
                                 fontFamilies: ["sans-serif"],
                                 style: [.bold]
                             ),
-                            actions: AirshipJSON.object([:]),
+                            actions: [:],
                             backgroundColor: .init(hexColorString: "#63aff2"),
                             borderColor: .init(hexColorString: "#63aff2"),
                             borderRadius: 2
@@ -328,7 +328,7 @@ final class InAppMessageTest: XCTestCase {
                                 fontFamilies: ["sans-serif"],
                                 style: [.bold]
                             ),
-                            actions: AirshipJSON.object([:]),
+                            actions: [:],
                             backgroundColor: .init(hexColorString: "#63aff2"),
                             borderColor: .init(hexColorString: "#63aff2"),
                             borderRadius: 2
@@ -393,7 +393,7 @@ final class InAppMessageTest: XCTestCase {
         let expected = InAppMessage(
             name: "woot",
             displayContent: .custom(
-                AirshipJSON.object(["cool": .string("story")])
+                ["cool": "story"]
             ),
             source: .appDefined
         )
@@ -457,7 +457,7 @@ final class InAppMessageTest: XCTestCase {
         let expected = InAppMessage(
             name: "",
             displayContent: .custom(
-                AirshipJSON.object(["cool": .string("story")])
+                ["cool": "story"]
             ),
             source: .appDefined
         )

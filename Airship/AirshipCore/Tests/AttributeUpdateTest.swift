@@ -10,7 +10,7 @@ class AttributeUpdateTest: XCTestCase {
         let original = AttributeUpdate(
             attribute: "some attribute",
             type: .set,
-            jsonValue: .number(42),
+            jsonValue: 42,
             date: Date()
         )
 
@@ -31,7 +31,7 @@ class AttributeUpdateTest: XCTestCase {
         let original = AttributeUpdate(
             attribute: "some attribute",
             type: .set,
-            jsonValue: .string("neat"),
+            jsonValue: "neat",
             date: Date()
         )
 

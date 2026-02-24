@@ -9,7 +9,7 @@ struct ThomasLayoutFormResultEventTest {
     @Test
     func testEvent() throws {
         let thomasEvent = ThomasReportingEvent.FormResultEvent(
-            forms: .string("form result")
+            forms: "form result"
         )
 
         let event = ThomasLayoutFormResultEvent(data: thomasEvent)

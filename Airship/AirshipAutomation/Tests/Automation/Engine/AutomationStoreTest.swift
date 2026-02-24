@@ -56,14 +56,14 @@ final class AutomationStoreTest: XCTestCase {
         }
 
         let triggerInfo = TriggeringInfo(
-            context: AirshipTriggerContext(type: "foo", goal: 10.0, event: .string("event")),
+            context: AirshipTriggerContext(type: "foo", goal: 10.0, event: "event"),
             date: Date.distantPast
         )
 
         let preparedInfo = PreparedScheduleInfo(
             scheduleID: "full",
             productID: "some product",
-            campaigns: .string("campaigns"),
+            campaigns: "campaigns",
             contactID: "some contact",
             experimentResult: ExperimentResult(
                 channelID: "some channel",
@@ -98,14 +98,14 @@ final class AutomationStoreTest: XCTestCase {
     func testUpsertFullData() async throws {
         var schedule = self.makeSchedule(identifer: "full")
         schedule.triggerInfo = TriggeringInfo(
-            context: AirshipTriggerContext(type: "foo", goal: 10.0, event: .string("event")),
+            context: AirshipTriggerContext(type: "foo", goal: 10.0, event: "event"),
             date: Date.distantPast
         )
 
         schedule.preparedScheduleInfo = PreparedScheduleInfo(
             scheduleID: "full",
             productID: "some product",
-            campaigns: .string("campaigns"),
+            campaigns: "campaigns",
             contactID: "some contact",
             experimentResult: ExperimentResult(
                 channelID: "some channel",

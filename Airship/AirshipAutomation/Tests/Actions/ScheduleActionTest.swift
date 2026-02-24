@@ -56,21 +56,21 @@ final class ScheduleActionTest: XCTestCase {
     func testSchedule() async throws {
         let start = Date(timeIntervalSince1970: 1709138610)
         let end = Date(timeIntervalSince1970: 1709138610).advanced(by: 1)
-        let json = AirshipJSON.object([
-            "id": .string("test-id"),
-            "type": .string("actions"),
-            "group": .string("test-group"),
-            "limit": .number(1),
-            "actions": .object(["action-name": .string("action-value")]),
+        let json: AirshipJSON = [
+            "id": "test-id",
+            "type": "actions",
+            "group": "test-group",
+            "limit": 1,
+            "actions": ["action-name": "action-value"],
             "end": .string(AirshipDateFormatter.string(fromDate: end, format: .iso)),
             "start": .string(AirshipDateFormatter.string(fromDate: start, format: .iso)),
-            "triggers": .array([
-                .object([
-                    "type": .string("foreground"),
-                    "goal": .number(2)
-                ])
-            ])
-        ])
+            "triggers": [
+                [
+                    "type": "foreground",
+                    "goal": 2
+                ]
+            ]
+        ]
         
         var count = await automation.schedules.count
         XCTAssertEqual(0, count)
@@ -98,12 +98,12 @@ final class ScheduleActionTest: XCTestCase {
         default: actionJson = .null
         }
         
-        XCTAssertEqual(AirshipJSON.object(["action-name": .string("action-value")]), actionJson)
+        XCTAssertEqual(AirshipJSON.object(["action-name": "action-value"]), actionJson)
     }
     
     func testScheduleThrowsOnInvalidSource() async throws {
         do {
-            _ = try await action.perform(arguments: ActionArguments(value: .object([:])))
+            _ = try await action.perform(arguments: ActionArguments(value: [:]))
             XCTFail()
         } catch { }
     }

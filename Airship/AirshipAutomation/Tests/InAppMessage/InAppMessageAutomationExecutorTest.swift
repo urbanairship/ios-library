@@ -38,7 +38,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
             message: InAppMessage(
                 name: "",
                 displayContent: .custom(.string("")),
-                actions: .string("actions payload")
+                actions: "actions payload"
             ),
             displayAdapter: self.displayAdapter,
             displayCoordinator: self.displayCoordinator,

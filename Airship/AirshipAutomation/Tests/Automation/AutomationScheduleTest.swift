@@ -62,10 +62,10 @@ class AutomationScheduleTests: XCTestCase {
             interval: 3600,
             bypassHoldoutGroups: true,
             editGracePeriodDays: 7,
-            metadata: .object([:]),
+            metadata: [:],
             frequencyConstraintIDs: ["constraint1", "constraint2"],
             messageType: "test_type",
-            additionalAudienceCheckOverrides: .init(bypass: true, context: .string("json-context"), url: "https://result.url")
+            additionalAudienceCheckOverrides: .init(bypass: true, context: "json-context", url: "https://result.url")
         )
 
         try verify(json: jsonString, expected: expectedSchedule)
@@ -126,7 +126,7 @@ class AutomationScheduleTests: XCTestCase {
             interval: 3600,
             bypassHoldoutGroups: true,
             editGracePeriodDays: 7,
-            metadata: .object([:]),
+            metadata: [:],
             frequencyConstraintIDs: ["constraint1", "constraint2"],
             messageType: "test_type"
         )
@@ -176,7 +176,7 @@ class AutomationScheduleTests: XCTestCase {
         let message = InAppMessage(
             name: "woot",
             displayContent: .custom(
-                AirshipJSON.object(["cool": .string("story")])
+                ["cool": "story"]
             ),
             source: .appDefined
         )
@@ -197,7 +197,7 @@ class AutomationScheduleTests: XCTestCase {
             interval: 3600,
             bypassHoldoutGroups: true,
             editGracePeriodDays: 7,
-            metadata: .object([:]),
+            metadata: [:],
             frequencyConstraintIDs: ["constraint1", "constraint2"],
             messageType: "test_type"
         )
@@ -258,7 +258,7 @@ class AutomationScheduleTests: XCTestCase {
         let message = InAppMessage(
             name: "woot",
             displayContent: .custom(
-                AirshipJSON.object(["cool": .string("story")])
+                ["cool": "story"]
             ),
             source: .appDefined
         )
@@ -283,7 +283,7 @@ class AutomationScheduleTests: XCTestCase {
             interval: 3600,
             bypassHoldoutGroups: true,
             editGracePeriodDays: 7,
-            metadata: .object([:]),
+            metadata: [:],
             frequencyConstraintIDs: ["constraint1", "constraint2"],
             messageType: "test_type"
         )

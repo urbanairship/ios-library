@@ -54,7 +54,7 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
                 AttributeUpdate(
                     attribute: "some-attribute",
                     type: .set,
-                    jsonValue: .string("hello"),
+                    jsonValue: "hello",
                     date: date
                 )
             ]

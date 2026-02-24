@@ -59,7 +59,7 @@ struct ThomasDisplayListenerTest {
     func testButtonTapEvent() throws {
         let thomasEvent = ThomasReportingEvent.ButtonTapEvent(
             identifier: "button id",
-            reportingMetadata: .string("some metadata")
+            reportingMetadata: "some metadata"
         )
 
         listener.onReportingEvent(.buttonTap(thomasEvent, layoutContext))
@@ -117,7 +117,7 @@ struct ThomasDisplayListenerTest {
     func testGestureEvent() throws {
         let thomasEvent = ThomasReportingEvent.GestureEvent(
             identifier: "gesture id",
-            reportingMetadata: .string("some metadata")
+            reportingMetadata: "some metadata"
         )
 
         listener.onReportingEvent(.gesture(thomasEvent, layoutContext))
@@ -136,7 +136,7 @@ struct ThomasDisplayListenerTest {
     func testPageActionEvent() throws {
         let thomasEvent = ThomasReportingEvent.PageActionEvent(
             identifier: "page id",
-            reportingMetadata: .string("some metadata")
+            reportingMetadata: "some metadata"
         )
 
         listener.onReportingEvent(.pageAction(thomasEvent, layoutContext))

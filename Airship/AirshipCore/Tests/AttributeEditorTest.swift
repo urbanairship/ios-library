@@ -96,9 +96,9 @@ class AttributeEditorTest: XCTestCase {
         }
 
         let payload: [String: AirshipJSON] = [
-            "flavor": .string("vanilla"),
-            "rating": .number(5.0),
-            "available": .bool(true),
+            "flavor": "vanilla",
+            "rating": 5.0,
+            "available": true,
         ]
 
         try editor.set(
@@ -197,7 +197,7 @@ class AttributeEditorTest: XCTestCase {
 
         // JSON contains reserved key
         let badPayload: [String: AirshipJSON] = [
-            "exp": .number(100)
+            "exp": 100
         ]
         XCTAssertThrowsError(try editor.set(
             json: badPayload,

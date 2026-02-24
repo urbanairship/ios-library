@@ -10,7 +10,7 @@ struct ThomasLayoutPageActionEventTest {
     func testEvent() throws {
         let thomasEvent = ThomasReportingEvent.PageActionEvent(
             identifier: "action id",
-            reportingMetadata: .string("reporting metadata")
+            reportingMetadata: "reporting metadata"
         )
 
         let event = ThomasLayoutPageActionEvent(data: thomasEvent)

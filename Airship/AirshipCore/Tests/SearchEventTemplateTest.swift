@@ -10,7 +10,7 @@ final class SearchEventTemplateTest: XCTestCase {
         XCTAssertEqual("search", event.eventName)
         XCTAssertEqual("search", event.templateType)
 
-        let expectedProperties: [String: AirshipJSON] = [ "ltv": .bool(false) ]
+        let expectedProperties: [String: AirshipJSON] = ["ltv": false]
         XCTAssertEqual(expectedProperties, event.properties)
     }
 
@@ -31,12 +31,12 @@ final class SearchEventTemplateTest: XCTestCase {
         XCTAssertEqual("search", event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = [
-            "id": .string("some id"),
-            "category": .string("some category"),
-            "type": .string("some type"),
-            "ltv": .bool(true),
-            "query": .string("some query"),
-            "total_results": .number(20)
+            "id": "some id",
+            "category": "some category",
+            "type": "some type",
+            "ltv": true,
+            "query": "some query",
+            "total_results": 20
 
         ]
         XCTAssertEqual(expectedProperties, event.properties)

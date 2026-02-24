@@ -10,7 +10,7 @@ final class RetailEventTemplateTest: XCTestCase {
         XCTAssertEqual("browsed", event.eventName)
         XCTAssertEqual("retail", event.templateType)
 
-        let expectedProperties: [String: AirshipJSON] = [ "ltv": .bool(false) ]
+        let expectedProperties: [String: AirshipJSON] = ["ltv": false]
         XCTAssertEqual(expectedProperties, event.properties)
     }
 
@@ -19,7 +19,7 @@ final class RetailEventTemplateTest: XCTestCase {
         XCTAssertEqual("added_to_cart", event.eventName)
         XCTAssertEqual("retail", event.templateType)
 
-        let expectedProperties: [String: AirshipJSON] = [ "ltv": .bool(false) ]
+        let expectedProperties: [String: AirshipJSON] = ["ltv": false]
         XCTAssertEqual(expectedProperties, event.properties)
     }
 
@@ -28,7 +28,7 @@ final class RetailEventTemplateTest: XCTestCase {
         XCTAssertEqual("starred_product", event.eventName)
         XCTAssertEqual("retail", event.templateType)
 
-        let expectedProperties: [String: AirshipJSON] = [ "ltv": .bool(false) ]
+        let expectedProperties: [String: AirshipJSON] = ["ltv": false]
         XCTAssertEqual(expectedProperties, event.properties)
     }
 
@@ -37,7 +37,7 @@ final class RetailEventTemplateTest: XCTestCase {
         XCTAssertEqual("purchased", event.eventName)
         XCTAssertEqual("retail", event.templateType)
 
-        let expectedProperties: [String: AirshipJSON] = [ "ltv": .bool(false) ]
+        let expectedProperties: [String: AirshipJSON] = ["ltv": false]
         XCTAssertEqual(expectedProperties, event.properties)
     }
 
@@ -47,9 +47,9 @@ final class RetailEventTemplateTest: XCTestCase {
         XCTAssertEqual("retail", event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = [
-            "ltv": .bool(false),
-            "source": .string("some source"),
-            "medium": .string("some medium")
+            "ltv": false,
+            "source": "some source",
+            "medium": "some medium"
         ]
         XCTAssertEqual(expectedProperties, event.properties)
     }
@@ -59,7 +59,7 @@ final class RetailEventTemplateTest: XCTestCase {
         XCTAssertEqual("shared_product", event.eventName)
         XCTAssertEqual("retail", event.templateType)
 
-        let expectedProperties: [String: AirshipJSON] = [ "ltv": .bool(false) ]
+        let expectedProperties: [String: AirshipJSON] = ["ltv": false]
         XCTAssertEqual(expectedProperties, event.properties)
     }
 
@@ -69,9 +69,9 @@ final class RetailEventTemplateTest: XCTestCase {
         XCTAssertEqual("retail", event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = [
-            "ltv": .bool(false),
-            "wishlist_id": .string("some id"),
-            "wishlist_name": .string("some name")
+            "ltv": false,
+            "wishlist_id": "some id",
+            "wishlist_name": "some name"
         ]
         XCTAssertEqual(expectedProperties, event.properties)
     }
@@ -81,7 +81,7 @@ final class RetailEventTemplateTest: XCTestCase {
         XCTAssertEqual("wishlist", event.eventName)
         XCTAssertEqual("retail", event.templateType)
 
-        let expectedProperties: [String: AirshipJSON] = [ "ltv": .bool(false) ]
+        let expectedProperties: [String: AirshipJSON] = ["ltv": false]
         XCTAssertEqual(expectedProperties, event.properties)
     }
 
@@ -102,14 +102,14 @@ final class RetailEventTemplateTest: XCTestCase {
         XCTAssertEqual("retail", event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = [
-            "id": .string("some id"),
-            "category": .string("some category"),
-            "type": .string("some type"),
-            "description": .string("some description"),
-            "ltv": .bool(true),
-            "brand": .string("some brand"),
-            "new_item": .bool(true),
-            "currency": .string("cred"),
+            "id": "some id",
+            "category": "some category",
+            "type": "some type",
+            "description": "some description",
+            "ltv": true,
+            "brand": "some brand",
+            "new_item": true,
+            "currency": "cred",
         ]
 
         XCTAssertEqual(expectedProperties, event.properties)

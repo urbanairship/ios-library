@@ -47,7 +47,7 @@ final class DeferredAPIClientTest: AirshipBaseTest {
                 AttributeUpdate(
                     attribute: "some-attribute",
                     type: .set,
-                    jsonValue: .string("hello"),
+                    jsonValue: "hello",
                     date: date
                 )
             ]
@@ -68,7 +68,7 @@ final class DeferredAPIClientTest: AirshipBaseTest {
             triggerContext: AirshipTriggerContext(
                 type: "some trigger type",
                 goal: 10.0,
-                event: .string("event body")
+                event: "event body"
             )
         )
 

@@ -320,3 +320,49 @@ public struct AirshipJSONObjectBuilder {
         return .object(data)
     }
 }
+
+extension AirshipJSON: ExpressibleByStringLiteral {
+    public init(stringLiteral value: StringLiteralType) {
+        self = .string(value)
+    }
+}
+
+extension AirshipJSON: ExpressibleByBooleanLiteral {
+    public init(booleanLiteral value: Bool) {
+        self = .bool(value)
+    }
+}
+
+extension AirshipJSON: ExpressibleByIntegerLiteral {
+    public init(integerLiteral value: IntegerLiteralType) {
+        self = .number(Double(value))
+    }
+}
+
+extension AirshipJSON: ExpressibleByFloatLiteral {
+    public init(floatLiteral value: FloatLiteralType) {
+        self = .number(Double(value))
+    }
+}
+
+extension AirshipJSON: ExpressibleByArrayLiteral {
+    public init(arrayLiteral elements: AirshipJSON...) {
+        self = .array(elements)
+    }
+}
+
+extension AirshipJSON: ExpressibleByDictionaryLiteral {
+    public init(dictionaryLiteral elements: (String, AirshipJSON)...) {
+        var dict: [String: AirshipJSON] = [:]
+        for (key, value) in elements {
+            dict[key] = value
+        }
+        self = .object(dict)
+    }
+}
+
+extension AirshipJSON: ExpressibleByNilLiteral {
+    public init(nilLiteral: Void) {
+        self = .null
+    }
+}

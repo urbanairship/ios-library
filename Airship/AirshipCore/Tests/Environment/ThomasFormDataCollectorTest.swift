@@ -65,7 +65,7 @@ struct ThomasFormDataCollectorTest {
             pagerState: self.pagerState
         )
 
-        collector.updateField(.invalidField(identifier: "invalid", input: .score(AirshipJSON.number(1.0))), pageID: nil)
+        collector.updateField(.invalidField(identifier: "invalid", input: .score(1.0)), pageID: nil)
         #expect(self.formState.activeFields["invalid"] != nil)
     }
 
@@ -81,7 +81,7 @@ struct ThomasFormDataCollectorTest {
         collector.updateField(
             .invalidField(
                 identifier: "invalid",
-                input: .score(AirshipJSON.number(1.0))
+                input: .score(1.0)
             ),
             pageID: pages[1].id
         )

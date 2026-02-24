@@ -231,7 +231,7 @@ final class FeatureFlagInfoTest: XCTestCase {
             ),
             controlOptions: ControlOptions(
                 compoundAudience: nil,
-                reportingMetadata: .string("superseded"),
+                reportingMetadata: "superseded",
                 controlType: .flag
             )
         )
@@ -493,7 +493,7 @@ final class FeatureFlagInfoTest: XCTestCase {
             ),
             controlOptions: ControlOptions(
                 compoundAudience: .init(selector: .atomic(DeviceAudienceSelector(newUser: true))),
-                reportingMetadata: .string("superseded"),
+                reportingMetadata: "superseded",
                 controlType: .flag
             )
         )
@@ -539,7 +539,7 @@ final class FeatureFlagInfoTest: XCTestCase {
                     )
                 )
             ),
-            reportingMetadata: .string("superseded"),
+            reportingMetadata: "superseded",
             controlType: .variables(.string("variables_override"))
         )
 

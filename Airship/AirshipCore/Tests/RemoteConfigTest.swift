@@ -68,7 +68,7 @@ final class RemoteConfigTest: XCTestCase {
             disabledFeatures: [.push, .analytics],
             iaaConfig: .init(
                 retryingQueue: nil,
-                additionalAudienceConfig: .init(isEnabled: true, context: .string("json-value"), url: "https://test.url"))
+                additionalAudienceConfig: .init(isEnabled: true, context: "json-value", url: "https://test.url"))
         )
 
         let config = try self.decoder.decode(RemoteConfig.self, from: json.data(using: .utf8)!)

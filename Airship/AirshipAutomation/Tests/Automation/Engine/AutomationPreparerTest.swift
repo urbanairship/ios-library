@@ -376,7 +376,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaigns"),
+            campaigns: "campaigns",
             frequencyConstraintIDs: ["constraint"]
         )
 
@@ -446,7 +446,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaigns"),
+            campaigns: "campaigns",
             frequencyConstraintIDs: ["constraint"]
         )
 
@@ -558,7 +558,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaigns"),
+            campaigns: "campaigns",
             frequencyConstraintIDs: ["constraint"]
         )
 
@@ -616,7 +616,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaigns"),
+            campaigns: "campaigns",
             frequencyConstraintIDs: ["constraint"]
         )
 
@@ -685,7 +685,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaigns"),
+            campaigns: "campaigns",
             frequencyConstraintIDs: ["constraint"]
         )
 
@@ -767,7 +767,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaigns"),
+            campaigns: "campaigns",
             frequencyConstraintIDs: ["constraint"]
         )
 
@@ -899,7 +899,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaigns"),
+            campaigns: "campaigns",
             frequencyConstraintIDs: ["constraint"]
         )
 
@@ -965,7 +965,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaigns"),
+            campaigns: "campaigns",
             messageType: "some message type"
         )
 
@@ -1039,7 +1039,7 @@ final class AutomationPreparerTest: XCTestCase {
                 audienceSelector: DeviceAudienceSelector(),
                 missBehavior: .penalize
             ),
-            campaigns: .string("campaigns")
+            campaigns: "campaigns"
         )
 
         self.remoteDataAccess.contactIDBlock = { _ in
@@ -1113,7 +1113,7 @@ final class AutomationPreparerTest: XCTestCase {
                 missBehavior: .penalize
             ),
             bypassHoldoutGroups: true,
-            campaigns: .string("campaigns"),
+            campaigns: "campaigns",
             messageType: "some message type"
         )
 
@@ -1173,7 +1173,7 @@ final class AutomationPreparerTest: XCTestCase {
                 missBehavior: .penalize
             ),
             bypassHoldoutGroups: false, // even if false
-            campaigns: .string("campaigns"),
+            campaigns: "campaigns",
             messageType: "some message type"
         )
 

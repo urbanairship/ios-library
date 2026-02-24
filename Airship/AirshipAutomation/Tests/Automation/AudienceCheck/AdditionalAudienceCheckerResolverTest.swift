@@ -18,7 +18,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
 
     private let defaultAudienceConfig = RemoteConfig.AdditionalAudienceCheckConfig(
         isEnabled: true,
-        context: .string("remote config context"),
+        context: "remote config context",
         url: "https://test.config")
     
     override func setUp() async throws {
@@ -53,7 +53,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
             deviceInfoProvider: deviceInfoProvider,
             additionalAudienceCheckOverrides: .init(
                 bypass: false,
-                context: .string("default context"),
+                context: "default context",
                 url: nil
             )
         )
@@ -71,7 +71,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
             deviceInfoProvider: deviceInfoProvider,
             additionalAudienceCheckOverrides: .init(
                 bypass: false,
-                context: .string("default context"),
+                context: "default context",
                 url: nil
             )
         )
@@ -83,7 +83,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
             deviceInfoProvider: deviceInfoProvider,
             additionalAudienceCheckOverrides: .init(
                 bypass: false,
-                context: .string("default context"),
+                context: "default context",
                 url: nil
             )
         )
@@ -105,7 +105,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
             deviceInfoProvider: deviceInfoProvider,
             additionalAudienceCheckOverrides: .init(
                 bypass: false,
-                context: .string("default context"),
+                context: "default context",
                 url: nil))
         
         XCTAssert(result)
@@ -116,7 +116,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
             deviceInfoProvider: deviceInfoProvider,
             additionalAudienceCheckOverrides: .init(
                 bypass: false,
-                context: .string("default context"),
+                context: "default context",
                 url: "https://test.url"))
         
         XCTAssert(result)
@@ -127,7 +127,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
                 deviceInfoProvider: deviceInfoProvider,
                 additionalAudienceCheckOverrides: .init(
                     bypass: false,
-                    context: .string("default context"),
+                    context: "default context",
                     url: nil))
             XCTFail()
         } catch {
@@ -196,7 +196,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
             deviceInfoProvider: deviceInfoProvider,
             additionalAudienceCheckOverrides: .init(
                 bypass: false,
-                context: .string("default context"),
+                context: "default context",
                 url: nil
             )
         )
@@ -226,7 +226,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
             deviceInfoProvider: deviceInfoProvider,
             additionalAudienceCheckOverrides: .init(
                 bypass: false,
-                context: .string("default context"),
+                context: "default context",
                 url: nil
             )
         )
@@ -252,7 +252,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
                 deviceInfoProvider: deviceInfoProvider,
                 additionalAudienceCheckOverrides: .init(
                     bypass: false,
-                    context: .string("default context"),
+                    context: "default context",
                     url: nil
                 )
             )

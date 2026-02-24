@@ -89,7 +89,7 @@ final class AudienceHashSelectorTest: XCTestCase {
             bucket: AudienceHashSelector.Bucket(min: 10, max: 100),
             sticky: AudienceHashSelector.Sticky(
                 id: "test-id",
-                reportingMetadata: .string("test"),
+                reportingMetadata: "test",
                 lastAccessTTL: 0.123
             )
         )
