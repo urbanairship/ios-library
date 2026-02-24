@@ -4,6 +4,14 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.3.2 - February 23, 2026
+Patch release that fixes Message Center unread indicator behavior, improves spinner fallback on older iOS versions, and resolves visionOS availability checks.
+
+### Changes
+- Fixed Message Center unread indicator rendering so the unread indicator is only shown for unread messages.
+- Fixed spinner behavior on iOS versions earlier than 18 by adding a rotating fallback icon.
+- Fixed visionOS compilation and availability handling for newer iOS and visionOS APIs.
+
 ## Version 20.3.1 - February 18, 2026
 Patch release that fixes an Xcode 26.4 beta compilation issue and improves Scene stability.
 
