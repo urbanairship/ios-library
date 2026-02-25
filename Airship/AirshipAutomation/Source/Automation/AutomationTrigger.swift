@@ -78,14 +78,21 @@ public enum EventAutomationTriggerType: String, Sendable, Codable, Equatable, Ca
     case inAppPageAction = "in_app_page_action"
 }
 
+/// Logical operator for combining multiple automation triggers.
 public enum CompoundAutomationTriggerType: String, Sendable, Codable, Equatable {
+    /// Any of the triggers must fire.
     case or
+    /// All triggers must fire.
     case and
+    /// Triggers must fire in sequence.
     case chain
 }
 
+/// Defines what causes an automation to run: a single event trigger or a compound of triggers.
 public enum AutomationTrigger: Sendable, Codable, Equatable {
+    /// Trigger based on a single event (e.g. foreground, custom event).
     case event(EventAutomationTrigger)
+    /// Trigger that combines multiple triggers with a logical operator (and/or/chain).
     case compound(CompoundAutomationTrigger)
 
 

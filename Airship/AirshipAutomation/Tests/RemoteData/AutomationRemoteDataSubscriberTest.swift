@@ -7,7 +7,7 @@ import AirshipCore
 import AirshipAutomation
 
 final class AutomationRemoteDataSubscriberTest: XCTestCase {
-    private let remoteDataAcces: TestRemoteDataAccess = TestRemoteDataAccess()
+    private let remoteDataAccess: TestRemoteDataAccess = TestRemoteDataAccess()
     private let engine: TestAutomationEngine = TestAutomationEngine()
     private let frequencyLimits: TestFrequencyLimitManager = TestFrequencyLimitManager()
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
@@ -17,7 +17,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
     override func setUp() async throws {
         self.subscriber = AutomationRemoteDataSubscriber(
             dataStore: dataStore,
-            remoteDataAccess: remoteDataAcces,
+            remoteDataAccess: remoteDataAccess,
             engine: engine,
             frequencyLimitManager: frequencyLimits
         )
@@ -61,7 +61,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             }
         }
 
-        self.remoteDataAcces.updatesSubject.send(data)
+        self.remoteDataAccess.updatesSubject.send(data)
         await self.fulfillment(of: [appExpectation, contactExpectation])
     }
 
@@ -82,7 +82,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             stopExpectation.fulfill()
         }
 
-        self.remoteDataAcces.updatesSubject.send(emptyData)
+        self.remoteDataAccess.updatesSubject.send(emptyData)
         await self.fulfillment(of: [stopExpectation])
     }
 
@@ -115,7 +115,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             firstUpdateExpectation.fulfill()
         }
 
-        self.remoteDataAcces.updatesSubject.send(firstUpdate)
+        self.remoteDataAccess.updatesSubject.send(firstUpdate)
         await self.fulfillment(of: [firstUpdateExpectation])
 
         await self.engine.setSchedules(firstUpdateSchedules)
@@ -145,7 +145,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             secondUpdateExpectation.fulfill()
         }
 
-        self.remoteDataAcces.updatesSubject.send(secondUpdate)
+        self.remoteDataAccess.updatesSubject.send(secondUpdate)
         await self.fulfillment(of: [secondUpdateExpectation])
     }
 
@@ -153,7 +153,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
 
         self.subscriber = AutomationRemoteDataSubscriber(
             dataStore: dataStore,
-            remoteDataAccess: remoteDataAcces,
+            remoteDataAccess: remoteDataAccess,
             engine: engine,
             frequencyLimitManager: frequencyLimits,
             airshipSDKVersion: "1.0.0"
@@ -188,14 +188,14 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             firstUpdateExpectation.fulfill()
         }
 
-        self.remoteDataAcces.updatesSubject.send(firstUpdate)
+        self.remoteDataAccess.updatesSubject.send(firstUpdate)
         await self.fulfillment(of: [firstUpdateExpectation])
 
         await self.subscriber.unsubscribe()
         // Update sdk version
         self.subscriber = AutomationRemoteDataSubscriber(
             dataStore: dataStore,
-            remoteDataAccess: remoteDataAcces,
+            remoteDataAccess: remoteDataAccess,
             engine: engine,
             frequencyLimitManager: frequencyLimits,
             airshipSDKVersion: "2.0.0"
@@ -229,7 +229,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             secondUpdateExpectation.fulfill()
         }
 
-        self.remoteDataAcces.updatesSubject.send(secondUpdate)
+        self.remoteDataAccess.updatesSubject.send(secondUpdate)
         await self.fulfillment(of: [secondUpdateExpectation])
     }
 
@@ -261,8 +261,8 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             expecation.fulfill()
         }
 
-        self.remoteDataAcces.updatesSubject.send(update)
-        self.remoteDataAcces.updatesSubject.send(update)
+        self.remoteDataAccess.updatesSubject.send(update)
+        self.remoteDataAccess.updatesSubject.send(update)
         await self.fulfillment(of: [expecation])
     }
 
@@ -290,7 +290,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
 
 
 
-        self.remoteDataAcces.updatesSubject.send(InAppRemoteData(
+        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
             payloads: [
                 .app: .init(
                     data: .init(
@@ -326,7 +326,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         }
 
         // udpate again with different remote-data info
-        self.remoteDataAcces.updatesSubject.send(InAppRemoteData(
+        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
             payloads: [
                 .app: .init(
                     data: .init(
@@ -361,7 +361,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             source: .app
         )
 
-        self.remoteDataAcces.updatesSubject.send(InAppRemoteData(
+        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
             payloads: [
                 .app: .init(
                     data: .init(
@@ -386,7 +386,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
 
 
         // update again with different date
-        self.remoteDataAcces.updatesSubject.send(InAppRemoteData(
+        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
             payloads: [
                 .app: .init(
                     data: .init(
@@ -438,7 +438,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             expectation.fulfill()
         }
 
-        self.remoteDataAcces.updatesSubject.send(data)
+        self.remoteDataAccess.updatesSubject.send(data)
         await self.fulfillment(of: [expectation])
     }
 

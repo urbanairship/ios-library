@@ -22,16 +22,18 @@ public enum CustomDisplayAdapterType: Sendable {
     /// Banner adapter
     case banner
 
-    /// Custom adapapter
+    /// Custom adapter
     case custom
 }
 
 /// Custom display adapter
 public protocol CustomDisplayAdapter: Sendable {
     /// Checks if the adapter is ready
+    /// Whether the adapter has finished loading and is ready to display.
     @MainActor
     var isReady: Bool { get }
 
+    /// Suspends until the adapter is ready to display (e.g. assets loaded).
     @MainActor
     func waitForReady() async
 

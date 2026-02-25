@@ -593,15 +593,15 @@ extension DefaultAirshipAnalytics: AirshipComponent, InternalAirshipAnalytics {
 
     @MainActor
     public var screenUpdates: AsyncStream<String?> {
-        return AsyncStream { [screenState] continutation in
+        return AsyncStream { [screenState] continuation in
             let updates = screenState.updates
             let task = Task {
                 for await value in updates {
-                    continutation.yield(value.current)
+                    continuation.yield(value.current)
                 }
             }
 
-            continutation.onTermination = { _ in
+            continuation.onTermination = { _ in
                 task.cancel()
             }
         }

@@ -6,7 +6,7 @@ import Foundation
 import AirshipCore
 #endif
 
-/// Display adapter args
+/// Arguments passed to display adapters when creating or displaying an in-app message.
 public struct DisplayAdapterArgs: Sendable {
     /// The in-app message
     public var message: InAppMessage

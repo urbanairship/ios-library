@@ -1,7 +1,7 @@
 
 XCODE ?= 26.2
 
-export XCBEAUTIY_RENDERER ?= github-actions
+export XCBEAUTIFY_RENDERER ?= github-actions
 export TEST_DESTINATION ?= platform=iOS Simulator,OS=latest,name=iPhone 17 Pro Max
 export TEST_DESTINATION_TVOS ?= platform=tvOS Simulator,OS=latest,name=Apple TV
 export TEST_DESTINATION_VISIONOS ?= platform=visionOS Simulator,OS=latest,name=Apple Vision Pro

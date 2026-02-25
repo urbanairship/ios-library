@@ -6,6 +6,7 @@ import Foundation
 import AirshipCore
 #endif
 
+/// Defines when an automation is allowed to run (e.g. daily, weekly, or monthly time windows).
 public struct ExecutionWindow: Sendable, Equatable, Codable {
 
     let include: [Rule]?
@@ -18,6 +19,8 @@ public struct ExecutionWindow: Sendable, Equatable, Codable {
         try self.validate()
     }
 
+    /// Creates an execution window from a decoder (e.g. JSON).
+    /// - Parameter decoder: The decoder to read from.
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.include = try container.decodeIfPresent([ExecutionWindow.Rule].self, forKey: .include)
@@ -457,8 +460,8 @@ fileprivate struct AirshipCalendar : Hashable, Equatable, Sendable {
 
     func endOfDay(date: Date, dayOffset: Int = 0) -> Date {
         let day = startOfDay(date: date, dayOffset: dayOffset)
-        guard 
-            let endOfDay =  calendar.date(
+        guard
+            let endOfDay = calendar.date(
                 bySettingHour: 23,
                 minute: 59,
                 second: 59,
@@ -477,10 +480,10 @@ fileprivate struct AirshipCalendar : Hashable, Equatable, Sendable {
     private func date(date: Date, hour: Int, minute: Int) -> Date {
         guard
             let newDate = calendar.date(
-                bySettingHour: hour, 
+                bySettingHour: hour,
                 minute: minute,
                 second: 0,
-                of:date
+                of: date
             )
         else {
             return startOfDay(date: date).advanced(by: hour.hours + minute.minutes)

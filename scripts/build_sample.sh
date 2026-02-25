@@ -26,4 +26,4 @@ xcrun xcodebuild \
 -workspace "${ROOT_PATH}/Airship.xcworkspace" \
 -scheme "${SAMPLE}" \
 -sdk $TARGET_SDK \
--derivedDataPath "$DERIVED_DATA" | xcbeautify --renderer $XCBEAUTIY_RENDERER
+-derivedDataPath "$DERIVED_DATA" | xcbeautify --renderer $XCBEAUTIFY_RENDERER

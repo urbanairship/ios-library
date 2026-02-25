@@ -9,14 +9,18 @@ import Combine
 import AirshipCore
 #endif
 
+/// Protocol for subscribing to remote data updates and syncing automation schedules.
 protocol AutomationRemoteDataSubscriberProtocol: Sendable {
+    /// Starts listening for remote data updates and processing automation schedules.
     @MainActor
     func subscribe()
 
+    /// Stops listening for remote data updates and cancels any in-flight processing.
     @MainActor
     func unsubscribe()
 }
 
+/// Subscribes to in-app remote data, applies frequency constraints, and syncs schedules with the automation engine.
 final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtocol, Sendable {
     private let sourceInfoStore: AutomationSourceInfoStore
     private let remoteDataAccess: any AutomationRemoteDataAccessProtocol
@@ -30,12 +34,19 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
     private var updateStream: AsyncStream<InAppRemoteData> {
         AsyncStream { continuation in
             let cancellable = self.remoteDataAccess.publisher.sink { continuation.yield($0) }
-            continuation.onTermination = { continuation in
+            continuation.onTermination = { _ in
                 cancellable.cancel()
             }
         }
     }
 
+    /// Creates a remote data subscriber.
+    /// - Parameters:
+    ///   - dataStore: Store for preference and source info.
+    ///   - remoteDataAccess: Source of in-app remote data updates.
+    ///   - engine: Engine used to upsert and stop automation schedules.
+    ///   - frequencyLimitManager: Manager for frequency constraints from remote data.
+    ///   - airshipSDKVersion: SDK version used for source info (defaults to current).
     init(
         dataStore: PreferenceDataStore,
         remoteDataAccess: any AutomationRemoteDataAccessProtocol,
@@ -50,9 +61,10 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
         self.airshipSDKVersion = airshipSDKVersion
     }
 
+    /// Starts subscribing to remote data and processing automation updates.
     @MainActor
     func subscribe() {
-        if (processTask != nil) {
+        if processTask != nil {
             return
         }
 
@@ -69,6 +81,7 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
         }
     }
 
+    /// Stops the subscription and cancels any ongoing processing task.
     @MainActor
     func unsubscribe() {
         processTask?.cancel()
@@ -147,8 +160,8 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
         }
 
         let schedulesToUpsert = payload.data.schedules.filter { schedule in
-            // If we have an ID for this schedule then its either unchanged or updated
-            if (currentScheduleIDs.contains(schedule.identifier)) {
+            // If we have an ID for this schedule then it's either unchanged or updated
+            if currentScheduleIDs.contains(schedule.identifier) {
                 return true
             }
 
