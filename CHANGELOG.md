@@ -5,7 +5,7 @@
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
 ## Version 20.4.0 - February 24, 2026
-Minor release that adds support for Native Message Center and In-App Experiences on tvOS. Native content type requires displaying the message content in a `MessageCenterMessageView`. Apps that do not use Airship's message views (e.g. using a WebView directly) should filter out messages where `message.contentType` is not `.html`.
+Minor release that adds support for Native Message Center. Native content type requires displaying the message content in a `MessageCenterMessageView`. Apps that do not use Airship's message views (e.g. using a WebView directly) should filter out messages where `message.contentType` is not `.html`.
 
 ### Changes
 - Added support for Native Message Center.
