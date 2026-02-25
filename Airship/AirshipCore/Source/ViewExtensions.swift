@@ -130,17 +130,6 @@ extension View {
             self
         }
     }
-
-    @ViewBuilder
-    internal func addSelectedTrait(
-        _ isSelected: Bool
-    ) -> some View {
-        if isSelected {
-            self.accessibilityAddTraits(.isSelected)
-        } else {
-            self
-        }
-    }
 }
 
 internal struct ThomasCommonScope: OptionSet {

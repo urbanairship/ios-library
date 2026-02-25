@@ -29,9 +29,9 @@ struct ToggleLayout<Content> : View  where Content : View {
         }
         .airshipOnChangeOf(self.isOn) { isOn in
             self.handleStateActions(isOn)
-
         }
         .toggleStyle(PlainButtonToggleStyle())
+        .accessibilityRemoveTraits(.isSelected)
     }
 
     private func handleStateActions(_ isOn: Bool) {
