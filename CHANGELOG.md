@@ -11,6 +11,9 @@ Minor release that adds support for Native Message Center and In-App Experiences
 - Added support for Native Message Center.
 - Added support for In-App Experiences (Scenes, Banners, and non-HTML Automations) on tvOS.
 - Removed gzip encoding using internal UACompression class and `libz` dependency from AirshipBasement.
+- Added `ExpressibleBy` protocol conformances to `AirshipJSON` allowing initialization with literals.
+- Added `UAEmbeddedViewControllerFactory` to the `AirshipObjectiveC` module for embedding `AirshipEmbeddedView` in Objective-C applications.
+- Improved accessibility for single choice and multiple choice questions in Scenes.
 
 ## Version 20.3.2 - February 23, 2026
 Patch release that fixes Message Center unread indicator behavior, improves spinner fallback on older iOS versions, and resolves visionOS availability checks.
