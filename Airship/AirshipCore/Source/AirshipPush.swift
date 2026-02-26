@@ -5,6 +5,11 @@ import UIKit
 import UserNotifications
 public import Combine
 
+#if canImport(WatchKit)
+public import WatchKit
+#endif
+
+
 /// Airship Push protocol.
 public protocol AirshipPush: AnyObject, Sendable {
 

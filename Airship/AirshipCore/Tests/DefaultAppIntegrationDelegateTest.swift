@@ -71,10 +71,14 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
             return .newData
         }
 
-        let result = await delegate.didReceiveRemoteNotification(
-            userInfo: expectedUserInfo,
-            isForeground: true
-        )
+        let result = await withCheckedContinuation { continuation in
+            delegate.didReceiveRemoteNotification(
+                userInfo: expectedUserInfo,
+                isForeground: true
+            ) { result in
+                continuation.resume(returning: result)
+            }
+        }
         
         XCTAssertEqual(result, .newData)
     }

@@ -7,6 +7,10 @@ import UserNotifications
 import UIKit
 #endif
 
+#if canImport(WatchKit)
+import WatchKit
+#endif
+
 struct AirshipEvents {
     
 #if !os(tvOS)

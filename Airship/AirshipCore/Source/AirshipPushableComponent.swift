@@ -4,6 +4,10 @@ import Foundation
 import UIKit
 import UserNotifications
 
+#if canImport(WatchKit)
+import WatchKit
+#endif
+
 public enum UABackgroundFetchResult : Sendable {
     case newData
     case noData

@@ -3,7 +3,7 @@
 import Foundation
 
 #if canImport(WatchKit)
-import WatchKit
+public import WatchKit
 #endif
 
 #if canImport(UIKit)

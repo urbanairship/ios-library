@@ -99,28 +99,34 @@ final class TestIntegrationDelegate: NSObject, AppIntegrationDelegate {
 
     func didReceiveRemoteNotification(
         userInfo: [AnyHashable: Any],
-        isForeground: Bool
-    ) async -> UIBackgroundFetchResult {
-        return await self.didReceiveRemoteNotificationCallback!(
-            userInfo,
-            isForeground
-        )
+        isForeground: Bool,
+        completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        Task {
+            let result = await self.didReceiveRemoteNotificationCallback?(userInfo, isForeground) ?? .noData
+            completionHandler(result)
+        }
     }
 
     func willPresentNotification(
         notification: UNNotification,
-        presentationOptions options: UNNotificationPresentationOptions = []
-    ) async {
-        assertionFailure("Unable to mock UNNotification.")
+        presentationOptions: UNNotificationPresentationOptions,
+        completionHandler: @escaping () -> Void
+    ) {
+        completionHandler()
     }
 
     func didReceiveNotificationResponse(
-        response: UNNotificationResponse
-    ) async {
-        assertionFailure("Unable to mock UNNotificationResponse.")
+        response: UNNotificationResponse,
+        completionHandler: @escaping () -> Void
+    ) {
+        completionHandler()
     }
     
-    func presentationOptionsForNotification(_ notification: UNNotification) async -> UNNotificationPresentationOptions {
-        return []
+    func presentationOptions(
+        for notification: UNNotification,
+        completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([])
     }
 }

@@ -500,7 +500,7 @@ extension RemoteData: AirshipPushableComponent {
     ) async -> UABackgroundFetchResult {
 
         guard
-            let userInfo = notification.unwrapAsUserInfo(),
+            let userInfo = notification.unWrap() as? [AnyHashable: Any],
             userInfo[RemoteData.refreshRemoteDataPushPayloadKey] != nil
         else {
             return .noData

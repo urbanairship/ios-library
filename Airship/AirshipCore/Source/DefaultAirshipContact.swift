@@ -854,7 +854,7 @@ extension DefaultAirshipContact : InternalAirshipContact {
 extension DefaultAirshipContact: AirshipPushableComponent {
     public func receivedRemoteNotification(_ notification: AirshipJSON) async -> UABackgroundFetchResult {
         guard
-            let userInfo = notification.unwrapAsUserInfo(),
+            let userInfo = notification.unWrap() as? [AnyHashable: Any],
             userInfo[Self.refreshContactPushPayloadKey] != nil else {
             return .noData
         }

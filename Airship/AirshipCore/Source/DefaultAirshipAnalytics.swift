@@ -8,6 +8,10 @@ import UserNotifications
 import UIKit
 #endif
 
+#if canImport(WatchKit)
+import WatchKit
+#endif
+
 
 /// The Analytics object provides an interface to the Airship Analytics API.
 final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {

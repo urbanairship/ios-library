@@ -5,7 +5,7 @@ import UIKit
 #endif
 
 #if canImport(WatchKit)
-import WatchKit
+public import WatchKit
 #endif
 
 #if canImport(AirshipBasement)
@@ -25,7 +25,7 @@ public class AppIntegration {
 
     /// - Note: For internal use only. :nodoc:
     @MainActor
-    public static var integrationDelegate: (any AppIntegrationDelegate)?
+    static var integrationDelegate: (any AppIntegrationDelegate)?
 
     private class func logIgnoringCall(_ method: String = #function) {
         AirshipLogger.impError(
@@ -123,10 +123,16 @@ public class AppIntegration {
         }
 
         let isForeground = application.applicationState == .active
-        return await delegate.didReceiveRemoteNotification(
-            userInfo: userInfo,
-            isForeground: isForeground
-        )
+
+        // Wrap the completion-handler-based delegate call in a continuation
+        return await withCheckedContinuation { continuation in
+            delegate.didReceiveRemoteNotification(
+                userInfo: userInfo,
+                isForeground: isForeground
+            ) { result in
+                continuation.resume(returning: result)
+            }
+        }
     }
 #else
     /**
@@ -185,10 +191,16 @@ public class AppIntegration {
         }
 
         let isForeground = WKExtension.shared().applicationState == .active
-        return await delegate.didReceiveRemoteNotification(
-            userInfo: userInfo,
-            isForeground: isForeground
-        )
+
+        return await withCheckedContinuation { continuation in
+            delegate.didReceiveRemoteNotification(
+                userInfo: userInfo,
+                isForeground: isForeground
+            ) { result in
+                let watchResult = WKBackgroundFetchResult(rawValue: result.rawValue) ?? .noData
+                continuation.resume(returning: watchResult)
+            }
+        }
     }
 #endif
 
@@ -209,9 +221,22 @@ public class AppIntegration {
             logIgnoringCall()
             return []
         }
-        
-        let presentationOptions = await delegate.presentationOptionsForNotification(notification)
-        await delegate.willPresentNotification(notification: notification, presentationOptions: presentationOptions)
+
+        let presentationOptions = await withCheckedContinuation { continuation in
+            delegate.presentationOptions(for: notification) { options in
+                continuation.resume(returning: options)
+            }
+        }
+
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            delegate.willPresentNotification(
+                notification: notification,
+                presentationOptions: presentationOptions
+            ) {
+                continuation.resume()
+            }
+        }
+
         return presentationOptions
     }
 
@@ -275,14 +300,14 @@ public class AppIntegration {
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse
     ) async {
-        guard let delegate = integrationDelegate else {
-            logIgnoringCall()
-            return
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            self.userNotificationCenter(
+                center,
+                didReceive: response
+            ) {
+                continuation.resume()
+            }
         }
-
-        await delegate.didReceiveNotificationResponse(
-            response: response
-        )
     }
 
     /**

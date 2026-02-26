@@ -411,13 +411,8 @@
 		6E411CAB2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E411CA42538C6A500FEE4E8 /* UARemoteData.xcdatamodeld */; };
 		6E411CAF2538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E411CA72538C6A500FEE4E8 /* UAEvents.xcdatamodeld */; };
 		6E43202226EA814F009228AB /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
-		6E43214A26EA84A5009228AB /* UAAppIntegrationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E43214C26EA84A5009228AB /* UAAutoIntegration.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213026EA84A4009228AB /* UAAutoIntegration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43215226EA84A5009228AB /* AirshipBasementLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213326EA84A4009228AB /* AirshipBasementLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43216A26EA84A5009228AB /* AirshipBasement.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43213F26EA84A5009228AB /* AirshipBasement.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6E43217826EA84BE009228AB /* UASwizzler.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216D26EA84BE009228AB /* UASwizzler.m */; };
-		6E43217A26EA84BE009228AB /* UAAutoIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = 6E43216E26EA84BE009228AB /* UAAutoIntegration.m */; };
-		6E43218826EA84BE009228AB /* UASwizzler+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43217526EA84BE009228AB /* UASwizzler+Internal.h */; };
 		6E43219026EA89B6009228AB /* AirshipCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43218E26EA89B5009228AB /* AirshipCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43219226EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E43218F26EA89B6009228AB /* NativeBridgeDelegate.swift */; };
 		6E4325C32B7A9D9A00A9B000 /* AirshipPrivacyManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4325C22B7A9D9A00A9B000 /* AirshipPrivacyManagerTest.swift */; };
@@ -728,6 +723,9 @@
 		6EA5202327D1364E003011CA /* AirshipDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA5202227D1364E003011CA /* AirshipDateFormatter.swift */; };
 		6EAA61492D5297A7006602F7 /* SubjectExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAA61482D5297A2006602F7 /* SubjectExtension.swift */; };
 		6EAC295A27580063006DFA63 /* ChannelRegistrarTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAC295927580063006DFA63 /* ChannelRegistrarTest.swift */; };
+		6EAD3AF82F45305E00FF274E /* AirshipSwizzler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD3AF72F45305B00FF274E /* AirshipSwizzler.swift */; };
+		6EAD3AFA2F4530BE00FF274E /* AutoIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD3AF92F4530AD00FF274E /* AutoIntegration.swift */; };
+		6EAD3AFC2F4530F600FF274E /* UAAppIntegrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD3AFB2F4530E400FF274E /* UAAppIntegrationDelegate.swift */; };
 		6EAD7CE526B216DB00B88EA7 /* DeepLinkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD7CE426B216DB00B88EA7 /* DeepLinkAction.swift */; };
 		6EB11C872697ACBF00DC698F /* ContactOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C862697ACBF00DC698F /* ContactOperation.swift */; };
 		6EB11C892697AF5600DC698F /* TagGroupUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */; };
@@ -1741,13 +1739,8 @@
 		6E411CA62538C6A500FEE4E8 /* UARemoteData 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UARemoteData 2.xcdatamodel"; sourceTree = "<group>"; };
 		6E411CA82538C6A500FEE4E8 /* UAEvents.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAEvents.xcdatamodel; sourceTree = "<group>"; };
 		6E43204826EA814F009228AB /* AirshipBasement.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipBasement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAppIntegrationDelegate.h; path = Public/UAAppIntegrationDelegate.h; sourceTree = "<group>"; };
-		6E43213026EA84A4009228AB /* UAAutoIntegration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAutoIntegration.h; path = Public/UAAutoIntegration.h; sourceTree = "<group>"; };
 		6E43213326EA84A4009228AB /* AirshipBasementLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirshipBasementLib.h; path = Public/AirshipBasementLib.h; sourceTree = "<group>"; };
 		6E43213F26EA84A5009228AB /* AirshipBasement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirshipBasement.h; path = Public/AirshipBasement.h; sourceTree = "<group>"; };
-		6E43216D26EA84BE009228AB /* UASwizzler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UASwizzler.m; path = Internal/UASwizzler.m; sourceTree = "<group>"; };
-		6E43216E26EA84BE009228AB /* UAAutoIntegration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAutoIntegration.m; path = Internal/UAAutoIntegration.m; sourceTree = "<group>"; };
-		6E43217526EA84BE009228AB /* UASwizzler+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UASwizzler+Internal.h"; path = "Internal/UASwizzler+Internal.h"; sourceTree = "<group>"; };
 		6E43218E26EA89B5009228AB /* AirshipCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipCore.h; sourceTree = "<group>"; };
 		6E43218F26EA89B6009228AB /* NativeBridgeDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeBridgeDelegate.swift; sourceTree = "<group>"; };
 		6E4325C22B7A9D9A00A9B000 /* AirshipPrivacyManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipPrivacyManagerTest.swift; sourceTree = "<group>"; };
@@ -2055,6 +2048,9 @@
 		6EA5202227D1364E003011CA /* AirshipDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDateFormatter.swift; sourceTree = "<group>"; };
 		6EAA61482D5297A2006602F7 /* SubjectExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectExtension.swift; sourceTree = "<group>"; };
 		6EAC295927580063006DFA63 /* ChannelRegistrarTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRegistrarTest.swift; sourceTree = "<group>"; };
+		6EAD3AF72F45305B00FF274E /* AirshipSwizzler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSwizzler.swift; sourceTree = "<group>"; };
+		6EAD3AF92F4530AD00FF274E /* AutoIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoIntegration.swift; sourceTree = "<group>"; };
+		6EAD3AFB2F4530E400FF274E /* UAAppIntegrationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAppIntegrationDelegate.swift; sourceTree = "<group>"; };
 		6EAD7CE426B216DB00B88EA7 /* DeepLinkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkAction.swift; sourceTree = "<group>"; };
 		6EB11C862697ACBF00DC698F /* ContactOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactOperation.swift; sourceTree = "<group>"; };
 		6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagGroupUpdate.swift; sourceTree = "<group>"; };
@@ -3690,11 +3686,6 @@
 			children = (
 				6E43213F26EA84A5009228AB /* AirshipBasement.h */,
 				6E43213326EA84A4009228AB /* AirshipBasementLib.h */,
-				6E43212F26EA84A4009228AB /* UAAppIntegrationDelegate.h */,
-				6E43213026EA84A4009228AB /* UAAutoIntegration.h */,
-				6E43216E26EA84BE009228AB /* UAAutoIntegration.m */,
-				6E43216D26EA84BE009228AB /* UASwizzler.m */,
-				6E43217526EA84BE009228AB /* UASwizzler+Internal.h */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -4042,6 +4033,9 @@
 		6E937300237615B400AA9C2A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6EAD3AFB2F4530E400FF274E /* UAAppIntegrationDelegate.swift */,
+				6EAD3AF92F4530AD00FF274E /* AutoIntegration.swift */,
+				6EAD3AF72F45305B00FF274E /* AirshipSwizzler.swift */,
 				6E77CD462D8A22320057A52C /* Input Validation */,
 				6E6BD2402AE995C800B9DFC9 /* Deferred */,
 				6E5A64C22AAB7D3B00574085 /* MeteredUsage */,
@@ -5111,9 +5105,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E43216A26EA84A5009228AB /* AirshipBasement.h in Headers */,
-				6E43214C26EA84A5009228AB /* UAAutoIntegration.h in Headers */,
-				6E43218826EA84BE009228AB /* UASwizzler+Internal.h in Headers */,
-				6E43214A26EA84A5009228AB /* UAAppIntegrationDelegate.h in Headers */,
 				6E43215226EA84A5009228AB /* AirshipBasementLib.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5968,6 +5959,7 @@
 				6EED680A2CE26E550087CDCB /* ThomasAutomatedAction.swift in Sources */,
 				6EED68122CE271E50087CDCB /* ThomasEnableBehavior.swift in Sources */,
 				6E49D7C628401D2E00C7BB9D /* Badger.swift in Sources */,
+				6EAD3AF82F45305E00FF274E /* AirshipSwizzler.swift in Sources */,
 				6E96ECF6293FCE080053CC91 /* EventUploadScheduler.swift in Sources */,
 				6E71129D2880DACB004942E4 /* EventHandlerViewModifier.swift in Sources */,
 				6EF27DE62730E77300548DA3 /* RadioInputState.swift in Sources */,
@@ -5976,6 +5968,7 @@
 				6ECB627E2A36A0770095C85C /* ExternalURLProcessor.swift in Sources */,
 				6E1BACDD2719FC0A0038399E /* ViewFactory.swift in Sources */,
 				6E9B4874288F0CE000C905B1 /* RateAppAction.swift in Sources */,
+				6EAD3AFA2F4530BE00FF274E /* AutoIntegration.swift in Sources */,
 				6ED80793273CA0C800D1F455 /* EnvironmentValues.swift in Sources */,
 				6E49D7BE28401D2E00C7BB9D /* RegistrationDelegate.swift in Sources */,
 				6E6ED15B2683DBC300A2CBD0 /* AirshipBase64.swift in Sources */,
@@ -5987,6 +5980,7 @@
 				6E77CD4A2D8A225E0057A52C /* SMSValidatorAPIClient.swift in Sources */,
 				6E77CD4B2D8A225E0057A52C /* AirshipInputValidator.swift in Sources */,
 				6E952920268A6C1500398B54 /* SearchEventTemplate.swift in Sources */,
+				6EAD3AFC2F4530F600FF274E /* UAAppIntegrationDelegate.swift in Sources */,
 				6E739D6E26B9F58700BC6F6D /* TagGroupMutations.swift in Sources */,
 				6EF02DF02714EB500008B6C9 /* Thomas.swift in Sources */,
 				6E92EC90284954B10038802D /* ButtonState.swift in Sources */,
@@ -6434,8 +6428,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E43217A26EA84BE009228AB /* UAAutoIntegration.m in Sources */,
-				6E43217826EA84BE009228AB /* UASwizzler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

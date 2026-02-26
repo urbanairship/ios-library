@@ -283,15 +283,6 @@ public final class Airship: Sendable {
 
         if resolvedConfig.isAutomaticSetupEnabled {
             AirshipLogger.info("Automatic setup enabled.")
-            UAAutoIntegration.setLogger { isError, function, line, message in
-                AirshipLogger.log(
-                    logLevel: isError ? .error : .verbose,
-                    message: message(),
-                    fileID: "UAAutoIntegration",
-                    line: line,
-                    function: function
-                )
-            }
             #if !os(tvOS) && !os(watchOS)
             // Check if app delegate is available for swizzling
             if UIApplication.shared.delegate == nil {
@@ -306,7 +297,7 @@ public final class Airship: Sendable {
                     MainActor.assumeIsolated {
                         if UIApplication.shared.delegate != nil {
                             AirshipLogger.info("App delegate now available via didFinishLaunching, performing automatic integration.")
-                            UAAutoIntegration.integrate(with: integrationDelegate)
+                            AutoIntegration.shared.integrate(with: integrationDelegate)
                         } else {
                             AirshipLogger.error("App delegate still not set after didFinishLaunching. Automatic setup skipped.")
                         }
@@ -314,11 +305,11 @@ public final class Airship: Sendable {
                 }
             } else {
                 // App delegate is available, integrate immediately
-                UAAutoIntegration.integrate(with: integrationDelegate)
+                AutoIntegration.shared.integrate(with: integrationDelegate)
             }
             #else
             // watchOS and tvOS always integrate immediately
-            UAAutoIntegration.integrate(with: integrationDelegate)
+            AutoIntegration.shared.integrate(with: integrationDelegate)
             #endif
         } else {
             AppIntegration.integrationDelegate = integrationDelegate
