@@ -35,7 +35,7 @@ if [[ "$TARGET_TYPE" == "test" ]]; then
     -workspace "${ROOT_PATH}/Airship.xcworkspace" \
     -scheme $SCHEME \
     -derivedDataPath $DERIVED_DATA_PATH \
-    test | xcbeautify --renderer $XCBEAUTIY_RENDERER
+    test | xcbeautify --renderer $XCBEAUTIFY_RENDERER
 else
     echo -ne "\n\n *********** BUILDING $SCHEME *********** \n\n"
     
@@ -43,5 +43,5 @@ else
     -destination "${TEST_DESTINATION}" \
     -workspace "${ROOT_PATH}/Airship.xcworkspace" \
     -scheme $SCHEME \
-    -derivedDataPath $DERIVED_DATA_PATH | xcbeautify --renderer $XCBEAUTIY_RENDERER
+    -derivedDataPath $DERIVED_DATA_PATH | xcbeautify --renderer $XCBEAUTIFY_RENDERER
 fi

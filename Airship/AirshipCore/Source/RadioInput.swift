@@ -47,5 +47,6 @@ struct RadioInput: View {
                 hideIfDescriptionIsMissing: false
             )
             .formElement()
+            .accessibilityRemoveTraits(.isSelected)
     }
 }

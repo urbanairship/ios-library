@@ -33,7 +33,7 @@ let package = Package(
             name: "AirshipFeatureFlags",
             targets: ["AirshipFeatureFlags"]
         ),
-	.library(
+        .library(
             name: "AirshipObjectiveC",
             targets: ["AirshipObjectiveC"]
         ),
@@ -168,10 +168,10 @@ let package = Package(
             ],
             sources: ["Source"]
         ),
-	.target(
+        .target(
             name: "AirshipObjectiveC",
             dependencies: [
-		.target(name: "AirshipBasement"),
+                .target(name: "AirshipBasement"),
                 .target(name: "AirshipCore"),
                 .target(name: "AirshipPreferenceCenter"),
                 .target(name: "AirshipMessageCenter"),

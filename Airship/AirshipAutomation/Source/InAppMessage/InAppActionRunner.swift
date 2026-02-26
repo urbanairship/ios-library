@@ -6,7 +6,7 @@ import Foundation
 
 /// Action runner for in-app experiences. Must be used in order to properly attribute custom events to the message.
 public protocol InAppActionRunner: Sendable {
-    // Runs an action.
+    /// Runs an action.
     /// - Parameters:
     ///     - actionName: The action name.
     ///     - arguments: The action arguments.
@@ -20,7 +20,7 @@ public protocol InAppActionRunner: Sendable {
     @MainActor
     func runAsync(actions: AirshipJSON)
 
-    // Runs actions.
+    /// Runs actions.
     /// - Parameters:
     ///     - actions: The actions payload
     @MainActor

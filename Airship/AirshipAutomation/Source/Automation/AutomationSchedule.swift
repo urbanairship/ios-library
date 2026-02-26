@@ -25,10 +25,10 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
 
     ///  The schedule ID.
     public let identifier: String
-    
+
     /// List of triggers
     public var triggers: [AutomationTrigger]
-    
+
     /// Optional schedule group. Can be used to cancel a set of schedules.
     public var group: String?
 
@@ -46,8 +46,8 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
 
     /// On device automation selector
     public var audience: AutomationAudience?
-    
-    /// Compoud audience. If both `audience` and `compoundAudience`, they will both
+
+    /// Compound audience. If both `audience` and `compoundAudience`, they will both
     /// be evaluated to determine if the schedule should be executed.
     public var compoundAudience: AutomationCompoundAudience?
 
@@ -166,7 +166,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.data = data
         self.bypassHoldoutGroups = bypassHoldoutGroups
         self.editGracePeriodDays = editGracePeriodDays
-        
+
         self.metadata = nil
         self.frequencyConstraintIDs = nil
         self.messageType = nil

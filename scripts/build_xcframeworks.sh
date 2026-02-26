@@ -67,7 +67,7 @@ function build_archive {
     -archivePath "$ARCHIVE_PATH/xcarchive/$scheme/mac.xcarchive" \
     -derivedDataPath "$DERIVED_DATA" \
     SKIP_INSTALL=NO \
-    BUILD_LIBRARIES_FOR_DISTRIBUTION=YES | xcbeautify --renderer $XCBEAUTIY_RENDERER
+    BUILD_LIBRARIES_FOR_DISTRIBUTION=YES | xcbeautify --renderer $XCBEAUTIFY_RENDERER
   else
     xcrun xcodebuild archive -quiet \
     -workspace "$ROOT_PATH/Airship.xcworkspace" \
@@ -87,7 +87,7 @@ function build_archive {
     -archivePath "$ARCHIVE_PATH/xcarchive/$scheme/$simulatorSdk.xcarchive" \
     -derivedDataPath "$DERIVED_DATA" \
     SKIP_INSTALL=NO \
-    BUILD_LIBRARIES_FOR_DISTRIBUTION=YES | xcbeautify --renderer $XCBEAUTIY_RENDERER
+    BUILD_LIBRARIES_FOR_DISTRIBUTION=YES | xcbeautify --renderer $XCBEAUTIFY_RENDERER
   fi
 }
 

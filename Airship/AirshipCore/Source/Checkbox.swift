@@ -40,6 +40,7 @@ struct Checkbox: View {
 
         return isSelected || !self.checkboxState.isMaxSelectionReached
     }
+    
 
     var body: some View {
         Toggle(isOn: self.isOnBinding.animation()) {}
@@ -56,5 +57,6 @@ struct Checkbox: View {
             )
             .formElement()
             .disabled(!self.isEnabled)
+            .accessibilityRemoveTraits(.isSelected)
     }
 }
