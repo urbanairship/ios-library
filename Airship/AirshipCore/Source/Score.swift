@@ -315,20 +315,8 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
         // Pick which text appearance we should use
         let selectedAppearance = style.bindings.selected.textAppearance
         let unselectedAppearance = style.bindings.unselected.textAppearance
-        let appearance = isOn ? selectedAppearance : unselectedAppearance
 
-        let measuredSize = measureTextSize("\(style.end)", with: appearance)
-
-        let minTappableDimension: CGFloat = 44.0
-
-        let fontMetrics = UIFontMetrics.default
-        let scaledWidthSpacing = fontMetrics.scaledValue(for: measuredSize.width)
-        let scaledHeightSpacing = fontMetrics.scaledValue(for: measuredSize.height)
-
-        let minWidth = max(minTappableDimension, measuredSize.width + scaledWidthSpacing)
-        let minHeight = max(minTappableDimension, measuredSize.height + scaledHeightSpacing)
-
-        let maxDimension = max(minWidth, minHeight)
+        let maxDimension = max(measureForAppearance(selectedAppearance), measureForAppearance(unselectedAppearance))
 
         /// Inject new constraints
         let viewConstraints = ViewConstraints(width: maxDimension,
@@ -383,6 +371,21 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
 #if os(tvOS)
         .buttonStyle(TVButtonStyle())
 #endif
+    }
+    
+    private func measureForAppearance(_ appearance: ThomasTextAppearance?) -> CGFloat {
+        let measuredSize = measureTextSize("\(style.end)", with: appearance)
+
+        let minTappableDimension: CGFloat = 44.0
+
+        let fontMetrics = UIFontMetrics.default
+        let scaledWidthSpacing = fontMetrics.scaledValue(for: measuredSize.width)
+        let scaledHeightSpacing = fontMetrics.scaledValue(for: measuredSize.height)
+
+        let minWidth = max(minTappableDimension, measuredSize.width + scaledWidthSpacing)
+        let minHeight = max(minTappableDimension, measuredSize.height + scaledHeightSpacing)
+
+        return max(minWidth, minHeight)
     }
 
     private func measureTextSize(_ text: String, with appearance: ThomasTextAppearance?) -> CGSize {
