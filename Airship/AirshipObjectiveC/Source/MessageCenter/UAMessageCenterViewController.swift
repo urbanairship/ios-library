@@ -132,7 +132,8 @@ public final class UAMessageCenterViewControllerFactory: NSObject, Sendable {
             cancelButtonTitleColorDark: UAMessageCenterViewControllerFactory.toColor(color: theme.cancelButtonTitleColorDark),
             backButtonColor: UAMessageCenterViewControllerFactory.toColor(color: theme.backButtonColor),
             backButtonColorDark: UAMessageCenterViewControllerFactory.toColor(color: theme.backButtonColorDark),
-            navigationBarTitle: theme.navigationBarTitle, messageListBackgroundColor: UAMessageCenterViewControllerFactory.toColor(color: theme.messageListBackgroundColor),
+            navigationBarTitle: theme.navigationBarTitle,
+            messageListBackgroundColor: UAMessageCenterViewControllerFactory.toColor(color: theme.messageListBackgroundColor),
             messageListBackgroundColorDark: UAMessageCenterViewControllerFactory.toColor(color: theme.messageListBackgroundColorDark),
             messageListContainerBackgroundColor: UAMessageCenterViewControllerFactory.toColor(color: theme.messageListContainerBackgroundColor),
             messageListContainerBackgroundColorDark: UAMessageCenterViewControllerFactory.toColor(color: theme.messageListContainerBackgroundColorDark),
@@ -142,7 +143,7 @@ public final class UAMessageCenterViewControllerFactory: NSObject, Sendable {
             messageViewContainerBackgroundColorDark: UAMessageCenterViewControllerFactory.toColor(color: theme.messageViewContainerBackgroundColorDark))
     }
     
-    private class func toColor(color: UIColor?) -> Color? {
+    private class func toColor(color: AirshipNativeColor?) -> Color? {
         if let color = color {
             return Color(color)
         }

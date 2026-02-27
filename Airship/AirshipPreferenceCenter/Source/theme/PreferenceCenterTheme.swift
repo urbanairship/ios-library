@@ -5,7 +5,7 @@ public import SwiftUI
 import UIKit
 
 #if canImport(AirshipCore)
-import AirshipCore
+public import AirshipCore
 #endif
 
 /// Preference Center theme
@@ -48,24 +48,24 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         public var overrideConfigTitle: Bool?  = true
 
         /// Navigation bar background color
-        public var backgroundColor: UIColor? = nil
+        public var backgroundColor: AirshipNativeColor? = nil
 
         /// Navigation bar background color for dark mode
-        public var backgroundColorDark: UIColor? = nil
-        
+        public var backgroundColorDark: AirshipNativeColor? = nil
+
         /// Navigation bar back button color
-        public var backButtonColor: UIColor? = nil
+        public var backButtonColor: AirshipNativeColor? = nil
 
         /// Navigation bar back button color for dark mode
-        public var backButtonColorDark: UIColor? = nil
+        public var backButtonColorDark: AirshipNativeColor? = nil
 
         public init(
             title: String? = nil,
             overrideConfigTitle: Bool? = true,
-            backgroundColor: UIColor? = nil,
-            backgroundColorDark: UIColor? = nil,
-            backButtonColor: UIColor? = nil,
-            backButtonColorDark: UIColor? = nil
+            backgroundColor: AirshipNativeColor? = nil,
+            backgroundColorDark: AirshipNativeColor? = nil,
+            backButtonColor: AirshipNativeColor? = nil,
+            backButtonColorDark: AirshipNativeColor? = nil
         ) {
             self.title = title
             self.overrideConfigTitle = overrideConfigTitle
@@ -81,15 +81,15 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
         public var navigationBar: NavigationBar? = nil
 
         /// Window background color
-        public var backgroundColor: UIColor? = nil
+        public var backgroundColor: AirshipNativeColor? = nil
 
         /// Window background color for dark mode
-        public var backgroundColorDark: UIColor? = nil
+        public var backgroundColorDark: AirshipNativeColor? = nil
 
         public init(
             navigationBar: NavigationBar? = nil,
-            backgroundColor: UIColor? = nil,
-            backgroundColorDark: UIColor? = nil
+            backgroundColor: AirshipNativeColor? = nil,
+            backgroundColorDark: AirshipNativeColor? = nil
         ) {
             self.navigationBar = navigationBar
             self.backgroundColor = backgroundColor
@@ -489,12 +489,12 @@ extension Color {
      ** by the difference between the current primary and secondary colors
      **/
     func secondaryVariant(for colorScheme: ColorScheme) -> Color {
-        /// Convert target color to UIColor
-        let targetUIColor = UIColor(self)
+        /// Convert target color to AirshipNativeColor
+        let targetUIColor = AirshipNativeColor(self)
 
-        /// Convert primary and secondary colors to UIColor
-        let primaryUIColor = UIColor(.primary)
-        let secondaryUIColor = UIColor(.secondary)
+        /// Convert primary and secondary colors to AirshipNativeColor
+        let primaryUIColor = AirshipNativeColor(.primary)
+        let secondaryUIColor = AirshipNativeColor(.secondary)
 
         /// Calculate RGBA differences between primary and secondary
         var primaryRed: CGFloat = 0, primaryGreen: CGFloat = 0, primaryBlue: CGFloat = 0, primaryAlpha: CGFloat = 0
@@ -516,7 +516,7 @@ extension Color {
             let newBlue = colorScheme == .light ? max(targetBlue - blueDiff, 0) : min(targetBlue + blueDiff, 1)
             let newAlpha = targetAlpha + alphaDiff
 
-            return Color(UIColor(red: newRed, green: newGreen, blue: newBlue, alpha: newAlpha))
+            return Color(AirshipNativeColor(red: newRed, green: newGreen, blue: newBlue, alpha: newAlpha))
         } else {
             return self /// Return the original color if unable to modify
         }
@@ -548,11 +548,11 @@ struct PreferenceCenterDefaults {
     static let buttonDestructiveBackgroundColor = Color.red
     static let buttonBackgroundColor = AirshipSystemColors.label
 
-    static let promptBackgroundColor: Color = Color(UIColor { (traitCollection: UITraitCollection) -> UIColor in
+    static let promptBackgroundColor: Color = Color(UIColor { (traitCollection: UITraitCollection) -> AirshipNativeColor in
 #if os(tvOS)
-        return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#272727") : .black) ?? .white
+        return (traitCollection.userInterfaceStyle == .dark ? AirshipColor.resolveNativeColor("#272727") : .black) ?? .white
 #else
-        return (traitCollection.userInterfaceStyle == .dark ? AirshipColorUtils.color("#272727") : .secondarySystemBackground) ?? .secondarySystemBackground
+        return (traitCollection.userInterfaceStyle == .dark ? AirshipColor.resolveNativeColor("#272727") : .secondarySystemBackground) ?? .secondarySystemBackground
 #endif
 
     })
@@ -624,17 +624,17 @@ struct PreferenceCenterDefaults {
 
 
 internal struct AirshipSystemColors {
-    static let placeholder = Color(UIColor.placeholderText)
+    static let placeholder = Color(.placeholderText)
     static let label = Color.primary
     static let secondaryLabel = Color.secondary
-    static let tertiaryLabel = Color(UIColor.tertiaryLabel)
+    static let tertiaryLabel = Color(.tertiaryLabel)
 #if os(tvOS)
     static let background = Color.black
 #else
-    static let background = Color(UIColor.systemBackground)
-    static let secondaryBackground = Color(UIColor.secondarySystemBackground)
-    static let tertiaryBackground = Color(UIColor.tertiarySystemBackground)
+    static let background = Color(.systemBackground)
+    static let secondaryBackground = Color(.secondarySystemBackground)
+    static let tertiaryBackground = Color(.tertiarySystemBackground)
 #endif
 
-    static let link = Color(UIColor.link)
+    static let link = Color(.link)
 }

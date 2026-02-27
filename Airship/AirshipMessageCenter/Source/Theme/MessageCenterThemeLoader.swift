@@ -148,7 +148,7 @@ extension Color {
         var blue: CGFloat = 0
         var opacity: CGFloat = 0
 
-        UIColor(self).getRed(&red, green: &green, blue: &blue, alpha: &opacity)
+        AirshipNativeColor(self).getRed(&red, green: &green, blue: &blue, alpha: &opacity)
 
         return opacity == 0.0
     }

@@ -19,7 +19,7 @@ public struct InAppMessageColor: Codable, Sendable, Equatable {
     /// - Parameter hexColorString: Color represented  by hex string of the format #AARRGGBB
     public init(hexColorString: String) {
         self.hexColorString = hexColorString
-        self.color = Color(AirshipColorUtils.color(hexColorString) ?? .clear)
+        self.color = AirshipColor.resolveHexColor(hexColorString) ?? .clear
     }
 
     public init(from decoder: any Decoder) throws {

@@ -36,82 +36,49 @@ struct ThomasColor: ThomasSerializable {
         }
     }
 }
-
 extension ThomasColor.HexColor {
-
     func toColor() -> Color {
-        guard let uiColor = AirshipColorUtils.color(self.hex) else {
+        // Use the new AirshipColor resolver instead of AirshipColorUtils
+        let color = AirshipColor.resolveColor(self.hex)
+        let alpha = self.alpha ?? 1.0
+
+        // Combine the hex color with the explicit alpha multiplier
+        let finalColor = color.opacity(alpha)
+
+        /// Clear needs to be replaced by tappable clear to prevent SwiftUI from passing through tap events
+        /// Note: We check if the resulting alpha is 0 (either from hex or explicit alpha)
+        if alpha == 0 || color == .clear {
             return ThomasConstants.tappableClearColor
         }
 
-        let alpha = self.alpha ?? 1
-
-        let color = Color(uiColor).opacity(alpha)
-
-        /// Clear needs to be replaced by tappable clear to prevent SwiftUI from passing through tap events
-        if alpha == 0 {
-            return  ThomasConstants.tappableClearColor
-        }
-
-        return color
-    }
-
-    func toUIColor() -> UIColor {
-        let hexColor = hex.trimmingCharacters(
-            in: CharacterSet.alphanumerics.inverted
-        )
-        guard
-            let int = Scanner(string: hexColor)
-                .scanInt32(
-                    representation: .hexadecimal
-                )
-        else { return UIColor.white }
-
-        let r: Int32
-        let g: Int32
-        let b: Int32
-        switch hexColor.count {
-        case 3:
-            (r, g, b) = (
-                (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17
-            )  // RGB (12-bit)
-        case 6:
-            (r, g, b) = (int >> 16, int >> 8 & 0xFF, int & 0xFF)  // RGB (24-bit)
-        default:
-            (r, g, b) = (0, 0, 0)
-        }
-
-        return UIColor(
-            red: CGFloat(r) / 255.0,
-            green: CGFloat(g) / 255.0,
-            blue: CGFloat(b) / 255.0,
-            alpha: alpha ?? 0
-        )
+        return finalColor
     }
 }
 
 extension ThomasColor {
     func toColor(_ colorScheme: ColorScheme) -> Color {
-        let darkMode = colorScheme == .dark
+        let isDarkMode = colorScheme == .dark
+
         for selector in selectors ?? [] {
-            if let platform = selector.platform, platform != .ios {
-                continue
+            // Platform filtering
+            if let platform = selector.platform {
+                #if os(macOS)
+                if platform != .macOS { continue }
+                #else
+                if platform != .ios { continue }
+                #endif
             }
 
-            if let selectorDarkMode = selector.darkMode,
-                darkMode != selectorDarkMode
-            {
+            // Dark mode filtering
+            if let selectorDarkMode = selector.darkMode, isDarkMode != selectorDarkMode {
                 continue
             }
 
             return selector.color.toColor()
         }
 
+        // Fallback to default if no selectors matched
         return defaultColor.toColor()
-    }
-
-    func toUIColor(_ colorScheme: ColorScheme) -> UIColor {
-        return UIColor(toColor(colorScheme))
     }
 }
 

@@ -64,7 +64,7 @@ public struct MessageCenterTheme: Sendable {
     public var cellSeparatorStyle: SeparatorStyle?
 
     /// The message cell separator color.
-    public var cellSeparatorColor: Color? = Color(UIColor.separator)
+    public var cellSeparatorColor: Color? = Color(.separator)
 
     /// The dark mode message cell separator color.
     public var cellSeparatorColorDark: Color? = nil

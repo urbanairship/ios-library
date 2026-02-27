@@ -5,7 +5,7 @@ public import UIKit
 
 #if canImport(AirshipCore)
 import AirshipMessageCenter
-import AirshipCore
+public import AirshipCore
 #endif
 
 /// Message Center theme
@@ -14,11 +14,11 @@ public final class UAMessageCenterTheme: NSObject {
     
     @objc
     /// The tint color of the "pull to refresh" control
-    public var refreshTintColor: UIColor? = nil
+    public var refreshTintColor: AirshipNativeColor? = nil
 
     @objc
     /// The dark mode tint color of the "pull to refresh" control
-    public var refreshTintColorDark: UIColor? = nil
+    public var refreshTintColorDark: AirshipNativeColor? = nil
 
     @objc
     /// Whether icons are enabled. Defaults to `NO`.
@@ -38,67 +38,67 @@ public final class UAMessageCenterTheme: NSObject {
 
     @objc
     /// The regular color for message cells
-    public var cellColor: UIColor? = nil
+    public var cellColor: AirshipNativeColor? = nil
 
     @objc
     /// The dark mode color for message cells
-    public var cellColorDark: UIColor? = nil
+    public var cellColorDark: AirshipNativeColor? = nil
 
     @objc
     /// The regular color for message cell titles.
-    public var cellTitleColor: UIColor? = .label
+    public var cellTitleColor: AirshipNativeColor? = .label
 
     @objc
     /// The dark mode color for message cell titles.
-    public var cellTitleColorDark: UIColor? = nil
+    public var cellTitleColorDark: AirshipNativeColor? = nil
 
     @objc
     /// The regular color for message cell dates.
-    public var cellDateColor: UIColor? = .secondaryLabel
+    public var cellDateColor: AirshipNativeColor? = .secondaryLabel
 
     @objc
     /// The dark mode color for message cell dates.
-    public var cellDateColorDark: UIColor? = nil
+    public var cellDateColorDark: AirshipNativeColor? = nil
 
     @objc
     /// The message cell tint color.
-    public var cellTintColor: UIColor? = nil
+    public var cellTintColor: AirshipNativeColor? = nil
 
     @objc
     /// The dark mode message cell tint color.
-    public var cellTintColorDark: UIColor? = nil
+    public var cellTintColorDark: AirshipNativeColor? = nil
 
     @objc
     /// The background color for the unread indicator.
-    public var unreadIndicatorColor: UIColor? = nil
+    public var unreadIndicatorColor: AirshipNativeColor? = nil
 
     @objc
     /// The dark mode background color for the unread indicator.
-    public var unreadIndicatorColorDark: UIColor? = nil
+    public var unreadIndicatorColorDark: AirshipNativeColor? = nil
 
     @objc
     /// The title color for the "Select All" button.
-    public var selectAllButtonTitleColor: UIColor? = nil
+    public var selectAllButtonTitleColor: AirshipNativeColor? = nil
 
     @objc
     /// The dark mode title color for the "Select All" button.
-    public var selectAllButtonTitleColorDark: UIColor? = nil
+    public var selectAllButtonTitleColorDark: AirshipNativeColor? = nil
 
     @objc
     /// The title color for the "Delete" button.
-    public var deleteButtonTitleColor: UIColor? = nil
+    public var deleteButtonTitleColor: AirshipNativeColor? = nil
 
     @objc
     /// The dark mode title color for the "Delete" button.
-    public var deleteButtonTitleColorDark: UIColor? = nil
+    public var deleteButtonTitleColorDark: AirshipNativeColor? = nil
 
     @objc
     /// The title color for the "Mark Read" button.
-    public var markAsReadButtonTitleColor: UIColor? = nil
+    public var markAsReadButtonTitleColor: AirshipNativeColor? = nil
 
     @objc
     /// The dark mode title color for the "Mark Read" button.
-    public var markAsReadButtonTitleColorDark: UIColor? = nil
+    public var markAsReadButtonTitleColorDark: AirshipNativeColor? = nil
 
     @objc
     /// Whether the delete message button from the message view is enabled. Defaults to `NO`.
@@ -106,27 +106,27 @@ public final class UAMessageCenterTheme: NSObject {
 
     @objc
     /// The title color for the "Edit" button.
-    public var editButtonTitleColor: UIColor? = nil
+    public var editButtonTitleColor: AirshipNativeColor? = nil
 
     @objc
     /// The dark mode title color for the "Edit" button.
-    public var editButtonTitleColorDark: UIColor? = nil
+    public var editButtonTitleColorDark: AirshipNativeColor? = nil
 
     @objc
     /// The title color for the "Cancel" button.
-    public var cancelButtonTitleColor: UIColor? = nil
+    public var cancelButtonTitleColor: AirshipNativeColor? = nil
 
     @objc
     /// The dark mode title color for the "Cancel" button.
-    public var cancelButtonTitleColorDark: UIColor? = nil
+    public var cancelButtonTitleColorDark: AirshipNativeColor? = nil
 
     @objc
     /// The title color for the "Done" button.
-    public var backButtonColor: UIColor? = nil
+    public var backButtonColor: AirshipNativeColor? = nil
 
     @objc
     /// The dark mode title color for the "Done" button.
-    public var backButtonColorDark: UIColor? = nil
+    public var backButtonColorDark: AirshipNativeColor? = nil
 
     @objc
     /// The navigation bar title
@@ -134,35 +134,35 @@ public final class UAMessageCenterTheme: NSObject {
 
     @objc
     /// The background of the message list.
-    public var messageListBackgroundColor: UIColor? = nil
+    public var messageListBackgroundColor: AirshipNativeColor? = nil
 
     @objc
     /// The dark mode background of the message list.
-    public var messageListBackgroundColorDark: UIColor? = nil
+    public var messageListBackgroundColorDark: AirshipNativeColor? = nil
 
     @objc
     /// The background of the message list container.
-    public var messageListContainerBackgroundColor: UIColor? = nil
+    public var messageListContainerBackgroundColor: AirshipNativeColor? = nil
 
     @objc
     /// The dark mode background of the message list container.
-    public var messageListContainerBackgroundColorDark: UIColor? = nil
+    public var messageListContainerBackgroundColorDark: AirshipNativeColor? = nil
 
     @objc
     /// The background of the message view.
-    public var messageViewBackgroundColor: UIColor? = nil
+    public var messageViewBackgroundColor: AirshipNativeColor? = nil
 
     @objc
     /// The dark mode background of the message view.
-    public var messageViewBackgroundColorDark: UIColor? = nil
+    public var messageViewBackgroundColorDark: AirshipNativeColor? = nil
 
     @objc
     /// The background of the message view container.
-    public var messageViewContainerBackgroundColor: UIColor? = nil
+    public var messageViewContainerBackgroundColor: AirshipNativeColor? = nil
 
     @objc
     /// The dark mode background of the message view container.
-    public var messageViewContainerBackgroundColorDark: UIColor? = nil
+    public var messageViewContainerBackgroundColorDark: AirshipNativeColor? = nil
 
 }
     

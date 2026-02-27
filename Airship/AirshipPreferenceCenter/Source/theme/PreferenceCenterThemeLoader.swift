@@ -233,17 +233,6 @@ struct PreferenceCenterThemeLoader {
     }
 }
 
-// Existing extensions remain unchanged
-extension String {
-    fileprivate func toUIColor() -> UIColor? {
-        let colorString = self.trimmingCharacters(in: .whitespaces)
-        if let uiColor = AirshipColorUtils.color(colorString) {
-            return uiColor
-        }
-
-        return UIColor(named: self)
-    }
-}
 
 extension PreferenceCenterThemeLoader.FontConfig {
     fileprivate func toFont() throws -> Font {
@@ -291,10 +280,10 @@ extension PreferenceCenterThemeLoader.Config.NavigationBar {
     func toNavigationBar() throws -> PreferenceCenterTheme.NavigationBar {
         return PreferenceCenterTheme.NavigationBar(
             title: self.title,
-            backgroundColor: self.backgroundColor?.toUIColor(),
-            backgroundColorDark: self.backgroundColorDark?.toUIColor(),
-            backButtonColor: self.backButtonColor?.toUIColor(),
-            backButtonColorDark: self.backButtonColorDark?.toUIColor()
+            backgroundColor: self.backgroundColor?.airshipHexToNativeColor(),
+            backgroundColorDark: self.backgroundColorDark?.airshipHexToNativeColor(),
+            backButtonColor: self.backButtonColor?.airshipHexToNativeColor(),
+            backButtonColorDark: self.backButtonColorDark?.airshipHexToNativeColor()
         )
     }
 }
@@ -392,8 +381,8 @@ extension PreferenceCenterThemeLoader.Config.ViewController {
     func toViewController() throws -> PreferenceCenterTheme.ViewController {
         return PreferenceCenterTheme.ViewController(
             navigationBar: try self.navigationBar?.toNavigationBar(),
-            backgroundColor: self.backgroundColor?.toUIColor(),
-            backgroundColorDark: self.backgroundColorDark?.toUIColor()
+            backgroundColor: self.backgroundColor?.airshipHexToNativeColor(),
+            backgroundColorDark: self.backgroundColorDark?.airshipHexToNativeColor()
         )
     }
 }
@@ -454,11 +443,11 @@ extension PreferenceCenterThemeLoader.LegacyConfig {
             viewController: PreferenceCenterTheme.ViewController(
                 navigationBar: PreferenceCenterTheme.NavigationBar(
                     title: self.title,
-                    backgroundColor: self.navigationBarColor?.toUIColor(),
-                    backgroundColorDark: self.navigationBarColorDark?.toUIColor()
+                    backgroundColor: self.navigationBarColor?.airshipHexToNativeColor(),
+                    backgroundColorDark: self.navigationBarColorDark?.airshipHexToNativeColor()
                 ),
-                backgroundColor: self.backgroundColor?.toUIColor(),
-                backgroundColorDark: self.backgroundColorDark?.toUIColor()
+                backgroundColor: self.backgroundColor?.airshipHexToNativeColor(),
+                backgroundColorDark: self.backgroundColorDark?.airshipHexToNativeColor()
             ),
             preferenceCenter: PreferenceCenterTheme.PreferenceCenter(
                 subtitleAppearance: PreferenceCenterTheme.TextAppearance(
