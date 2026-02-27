@@ -60,6 +60,21 @@ public struct AirshipDevice: Sendable {
 #endif
     }
 
+    /// Returns the system name (e.g., "iOS", "tvOS", "watchOS").
+        /// This matches UIDevice.current.systemName on Apple platforms.
+        @MainActor
+    public static var deviceFamily: String {
+#if os(watchOS)
+        return WKInterfaceDevice.current().systemName
+#elseif canImport(UIKit)
+        return UIDevice.current.systemName
+#elseif os(macOS)
+        return "macOS"
+#else
+        return "Unknown"
+#endif
+    }
+
     /// Returns the OS name
     public static var osName: String {
 #if os(macOS)

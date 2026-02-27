@@ -220,7 +220,7 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
     private func makeHeaders() async -> [String: String] {
         var headers: [String: String] = [:]
 
-        headers["X-UA-Device-Family"] = await AirshipDevice.model
+        headers["X-UA-Device-Family"] = await AirshipDevice.deviceFamily
         headers["X-UA-OS-Version"] = await AirshipDevice.osVersion
         headers["X-UA-Device-Model"] = AirshipDevice.modelIdentifier
 
