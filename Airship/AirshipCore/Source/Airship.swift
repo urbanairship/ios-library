@@ -63,9 +63,7 @@ public final class Airship: Sendable {
             shared._airshipInstanceHolder.value.javaScriptCommandDelegate = newValue
         }
     }
-#endif
 
-#if !os(macOS) && !os(watchOS) && !os(tvOS)
     /// The channel capture utility.
     public static var channelCapture: any AirshipChannelCapture {
         return shared.airshipInstance.channelCapture

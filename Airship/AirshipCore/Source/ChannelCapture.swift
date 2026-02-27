@@ -6,7 +6,11 @@ import Foundation
 import UIKit
 #endif
 
-#if !os(watchOS)
+#if canImport(AppKit)
+import AppKit
+#endif
+
+#if !os(watchOS) 
 
 @available(tvOS, unavailable)
 @MainActor
@@ -49,14 +53,13 @@ final public class DefaultAirshipChannelCapture: AirshipChannelCapture {
         channel: any AirshipChannel,
         notificationCenter: NotificationCenter = NotificationCenter.default,
         date: any AirshipDateProtocol = AirshipDate.shared,
-        pasteboard: any AirshipPasteboardProtocol = UIPasteboard.general
+        pasteboard: (any AirshipPasteboardProtocol) = DefaultAirshipPasteboard()
     ) {
         self.config = config
         self.channel = channel
         self.notificationCenter = notificationCenter
         self.date = date
         self.pasteboard = pasteboard
-
         self.enabled = config.airshipConfig.isChannelCaptureEnabled
 
         notificationCenter.addObserver(
@@ -71,20 +74,15 @@ final public class DefaultAirshipChannelCapture: AirshipChannelCapture {
     @MainActor
     private func applicationDidTransitionToForeground() {
         guard enabled else {
-            AirshipLogger.trace(
-                "Channel Capture disabled, ignoring foreground."
-            )
+            AirshipLogger.trace("Channel Capture disabled, ignoring foreground.")
             return
         }
 
-        // Save time of transition
         if knockTimes.count >= DefaultAirshipChannelCapture.knocksToTriggerChannelCapture {
             knockTimes.remove(at: 0)
         }
 
-        AirshipLogger.trace(
-            "Channel Capture capturing foreground at time \(date.now)"
-        )
+        AirshipLogger.trace("Channel Capture capturing foreground at time \(date.now)")
         knockTimes.append(date.now)
 
         if knockTimes.count < DefaultAirshipChannelCapture.knocksToTriggerChannelCapture {
@@ -92,12 +90,9 @@ final public class DefaultAirshipChannelCapture: AirshipChannelCapture {
         }
 
         let firstKnock = knockTimes[0]
-        let lastKnock = knockTimes[
-            DefaultAirshipChannelCapture.knocksToTriggerChannelCapture - 1
-        ]
-        if lastKnock.timeIntervalSince(firstKnock)
-            > DefaultAirshipChannelCapture.knocksMaxTimeSeconds
-        {
+        let lastKnock = knockTimes[DefaultAirshipChannelCapture.knocksToTriggerChannelCapture - 1]
+
+        if lastKnock.timeIntervalSince(firstKnock) > DefaultAirshipChannelCapture.knocksMaxTimeSeconds {
             return
         }
 
@@ -107,6 +102,7 @@ final public class DefaultAirshipChannelCapture: AirshipChannelCapture {
         AirshipLogger.debug(
             "Channel Capture setting channel ID:\(identifier) to pasteboard."
         )
+        AirshipLogger.debug("Channel Capture setting channel ID:\(identifier) to pasteboard.")
 
         self.pasteboard.copy(
             value: identifier,
@@ -115,25 +111,4 @@ final public class DefaultAirshipChannelCapture: AirshipChannelCapture {
     }
 }
 
-@available(tvOS, unavailable)
-protocol AirshipPasteboardProtocol: Sendable {
-    func copy(value: String, expiry: TimeInterval)
-}
-
-@available(tvOS, unavailable)
-extension UIPasteboard: AirshipPasteboardProtocol {
-
-    func copy(value: String, expiry: TimeInterval) {
-        let expirationDate = Date().advanced(by: expiry)
-        self.setItems(
-            [[UIPasteboard.typeAutomatic: value]],
-            options: [
-                UIPasteboard.OptionsKey.expirationDate: expirationDate
-            ]
-        )
-    }
-}
-
 #endif
-
-

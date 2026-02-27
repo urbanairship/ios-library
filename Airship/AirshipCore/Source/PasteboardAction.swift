@@ -1,9 +1,8 @@
 /* Copyright Airship and Contributors */
 
+#if !os(watchOS)
 
-#if canImport(UIKit)
-import UIKit
-#endif
+import Foundation
 
 /// Sets the pasteboard's string.
 ///
@@ -25,18 +24,20 @@ public final class PasteboardAction: AirshipAction {
     public func accepts(arguments: ActionArguments) async -> Bool {
         switch arguments.situation {
         case .manualInvocation, .webViewInvocation, .launchedFromPush,
-            .backgroundInteractiveButton, .foregroundInteractiveButton,
-            .automation:
+             .backgroundInteractiveButton, .foregroundInteractiveButton,
+             .automation:
             return pasteboardString(arguments) != nil
         case .backgroundPush, .foregroundPush:
             return false
         }
     }
 
+    @MainActor
     public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
-        #if !os(watchOS)
-        UIPasteboard.general.string = pasteboardString(arguments)
-        #endif
+        if let string = pasteboardString(arguments) {
+            DefaultAirshipPasteboard().copy(value: string)
+        }
+
         return arguments.value
     }
 
@@ -52,3 +53,5 @@ public final class PasteboardAction: AirshipAction {
         return nil
     }
 }
+
+#endif
