@@ -13,6 +13,7 @@ fileprivate struct AppInfo: Sendable {
     let applicationLocale: String
 }
 
+@MainActor
 struct AirshipDebugAppInfoView: View {
 
     @StateObject
@@ -44,8 +45,8 @@ struct AirshipDebugAppInfoView: View {
 
             CommonItems.infoRow(
                 title: "Model".localized(),
-                value: UIDevice.current.model,
-                onTap: { copyValue(UIDevice.current.model) }
+                value: AirshipDevice.modelIdentifier,
+                onTap: { copyValue(AirshipDevice.modelIdentifier) }
             )
 
             CommonItems.infoRow(

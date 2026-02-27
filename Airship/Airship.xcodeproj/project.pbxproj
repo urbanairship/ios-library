@@ -268,6 +268,7 @@
 		6E10A1482C2B825200ED9556 /* DefaultTaskSleeperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E10A1472C2B825200ED9556 /* DefaultTaskSleeperTest.swift */; };
 		6E1185C62C3328A10071334E /* ExecutionWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1185C52C3328A10071334E /* ExecutionWindow.swift */; };
 		6E12539129A81ACE0009EE58 /* AirshipCoreDataPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */; };
+		6E146C502F5214D900320A36 /* AirshipDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E146C4F2F5214D900320A36 /* AirshipDevice.swift */; };
 		6E14C9A128B5E4AF00A55E65 /* PushNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C9A028B5E4AF00A55E65 /* PushNotification.swift */; };
 		6E1528172B4DC3C000DF1377 /* ActionAutomationExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1528162B4DC3C000DF1377 /* ActionAutomationExecutor.swift */; };
 		6E1528192B4DC3D000DF1377 /* InAppMessageAutomationPreparer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1528182B4DC3D000DF1377 /* InAppMessageAutomationPreparer.swift */; };
@@ -1568,6 +1569,7 @@
 		6E10A1472C2B825200ED9556 /* DefaultTaskSleeperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTaskSleeperTest.swift; sourceTree = "<group>"; };
 		6E1185C52C3328A10071334E /* ExecutionWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutionWindow.swift; sourceTree = "<group>"; };
 		6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCoreDataPredicate.swift; sourceTree = "<group>"; };
+		6E146C4F2F5214D900320A36 /* AirshipDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDevice.swift; sourceTree = "<group>"; };
 		6E14C9A028B5E4AF00A55E65 /* PushNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotification.swift; sourceTree = "<group>"; };
 		6E1528162B4DC3C000DF1377 /* ActionAutomationExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionAutomationExecutor.swift; sourceTree = "<group>"; };
 		6E1528182B4DC3D000DF1377 /* InAppMessageAutomationPreparer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageAutomationPreparer.swift; sourceTree = "<group>"; };
@@ -3629,6 +3631,7 @@
 		6E411D5F2538D26200FEE4E8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				6E146C4F2F5214D900320A36 /* AirshipDevice.swift */,
 				6EC815AE2F2BBFD100E1C0C6 /* BundleExtensions.swift */,
 				6E3CA5402ECB9B7400210C32 /* AirshipDisplayTarget.swift */,
 				6E4339F02DFA099C000A7741 /* AirshipIvyVersionMatcher.swift */,
@@ -5973,6 +5976,7 @@
 				6E49D7BE28401D2E00C7BB9D /* RegistrationDelegate.swift in Sources */,
 				6E6ED15B2683DBC300A2CBD0 /* AirshipBase64.swift in Sources */,
 				A61517B226A9C4C3008A41C4 /* SubscriptionListEditor.swift in Sources */,
+				6E146C502F5214D900320A36 /* AirshipDevice.swift in Sources */,
 				6E1528282B4DCFCB00DF1377 /* AirshipActorValue.swift in Sources */,
 				6E664BCA26C4852B00A2C8E5 /* AddCustomEventAction.swift in Sources */,
 				6EC922E32D838DFF000A3A59 /* ThomasFormPayloadGenerator.swift in Sources */,

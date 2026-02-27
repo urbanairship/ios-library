@@ -201,7 +201,7 @@ fileprivate extension SessionEvent {
                 object.set(string: AirshipVersion.version, key: "lib_version")
                 object.set(string: AirshipUtils.bundleShortVersionString() ?? "", key: "package_version")
 
-                object.set(string: Self.osVersion, key:"os_version")
+                object.set(string: AirshipDevice.osVersion, key:"os_version")
 
 
                 let localtz = TimeZone.current
@@ -222,12 +222,5 @@ fileprivate extension SessionEvent {
         }
     }
 
-    @MainActor
-    private static var osVersion: String {
-#if !os(watchOS)
-        return UIDevice.current.systemVersion
-#else
-       return WKInterfaceDevice.current().systemVersion
-#endif
-    }
+
 }

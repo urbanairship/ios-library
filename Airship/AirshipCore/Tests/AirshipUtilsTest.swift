@@ -7,13 +7,6 @@ import AirshipCore
 
 final class AirshipUtilsTest: XCTestCase {
 
-    func testDeviceModelName() {
-        let deviceModelName = AirshipUtils.deviceModelName()!
-        XCTAssertNotNil(deviceModelName)
-        let validSimulatorModels = ["x86_64", "arm64", "mac"]
-        XCTAssertTrue(validSimulatorModels.contains(deviceModelName))
-    }
-
     func testSignedToken() throws {
 
         XCTAssertEqual(

@@ -241,7 +241,7 @@ struct ChannelTest {
         expectedPayload.channel.appVersion = AirshipUtils.bundleShortVersionString()
         expectedPayload.channel.sdkVersion = AirshipVersion.version
         expectedPayload.channel.deviceOS = UIDevice.current.systemVersion
-        expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
+        expectedPayload.channel.deviceModel = AirshipDevice.modelIdentifier
         expectedPayload.channel.setTags = true
         expectedPayload.channel.permissions = [
             "location": "granted",
@@ -284,7 +284,7 @@ struct ChannelTest {
         expectedPayload.channel.appVersion = AirshipUtils.bundleShortVersionString()
         expectedPayload.channel.sdkVersion = AirshipVersion.version
         expectedPayload.channel.deviceOS = UIDevice.current.systemVersion
-        expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
+        expectedPayload.channel.deviceModel = AirshipDevice.modelIdentifier
         expectedPayload.channel.setTags = true
         expectedPayload.channel.permissions = nil
 
@@ -323,7 +323,7 @@ struct ChannelTest {
         expectedPayload.channel.appVersion = AirshipUtils.bundleShortVersionString()
         expectedPayload.channel.sdkVersion = AirshipVersion.version
         expectedPayload.channel.deviceOS = UIDevice.current.systemVersion
-        expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
+        expectedPayload.channel.deviceModel = AirshipDevice.modelIdentifier
         expectedPayload.channel.setTags = true
         expectedPayload.channel.permissions = [
             "location": "granted",
@@ -374,8 +374,8 @@ struct ChannelTest {
         TimeZone.autoupdatingCurrent.identifier
         expectedPayload.channel.appVersion = AirshipUtils.bundleShortVersionString()
         expectedPayload.channel.sdkVersion = AirshipVersion.version
-        expectedPayload.channel.deviceOS = await UIDevice.current.systemVersion
-        expectedPayload.channel.deviceModel = AirshipUtils.deviceModelName()
+        expectedPayload.channel.deviceOS = await AirshipDevice.osVersion
+        expectedPayload.channel.deviceModel = AirshipDevice.modelIdentifier
         expectedPayload.channel.setTags = false
         expectedPayload.channel.permissions = [:]
 

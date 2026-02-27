@@ -2,7 +2,6 @@
 
 #if !os(tvOS) && !os(watchOS)
 
-import UIKit
 import Foundation
 
 /// Protocol for building the Airship JavaScript environment injected into web views.
@@ -110,7 +109,7 @@ public final class JavaScriptEnvironment: JavaScriptEnvironmentProtocol, Sendabl
         return await [
             makeGetter(
                 name: "getDeviceModel",
-                string: UIDevice.current.model
+                string: AirshipDevice.model
             ),
 
             makeGetter(

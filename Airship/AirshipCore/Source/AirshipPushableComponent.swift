@@ -7,8 +7,10 @@ import UIKit
 #if canImport(WatchKit)
 import WatchKit
 #endif
+
 public import UserNotifications
 
+/// Airship wrapper for background fetch results to provide platform-agnostic handling.
 public enum UABackgroundFetchResult : Sendable {
     case newData
     case noData

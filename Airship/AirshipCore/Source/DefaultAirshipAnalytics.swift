@@ -231,7 +231,7 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
             WKInterfaceDevice.current().systemVersion
         #endif
 
-        headers["X-UA-Device-Model"] = AirshipUtils.deviceModelName()
+        headers["X-UA-Device-Model"] = await AirshipDevice.modelIdentifier
 
         // App info
         if let infoDictionary = Bundle.main.infoDictionary {

@@ -420,7 +420,7 @@ class AnalyticsTest: XCTestCase {
             "X-UA-Locale-Variant": "POSIX",
             "X-UA-Device-Family": UIDevice.current.systemName,
             "X-UA-OS-Version": UIDevice.current.systemVersion,
-            "X-UA-Device-Model": AirshipUtils.deviceModelName(),
+            "X-UA-Device-Model": AirshipDevice.modelIdentifier,
             "X-UA-Lib-Version": AirshipVersion.version,
             "X-UA-App-Key": self.config.appCredentials.appKey,
             "X-UA-Package-Name":

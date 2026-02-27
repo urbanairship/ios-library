@@ -21,25 +21,9 @@ public final class AirshipUtils {
     /// Get the device model name (e.g.,` iPhone3,1`).
     ///
     /// - Returns: The device model name.
+    @available(*, deprecated, message: "This method is no longer supported and will be removed in a future SDK version.")
     public class func deviceModelName() -> String? {
-        #if targetEnvironment(macCatalyst)
-        return "mac"
-        #else
-        var systemInfo = utsname()
-        uname(&systemInfo)
-        let machineMirror = Mirror(reflecting: systemInfo.machine)
-        let modelName = machineMirror.children.reduce(
-            "",
-            { modelName, element in
-                guard let value = element.value as? Int8, value != 0 else {
-                    return modelName
-                }
-                return modelName + String(UnicodeScalar(UInt8(value)))
-            }
-        )
-
-        return modelName
-        #endif
+        return AirshipDevice.modelIdentifier
     }
 
     /// Gets the short bundle version string.
