@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-#if !os(watchOS)
-import UIKit
+#if canImport(UIKit) && !os(watchOS)
+public import UIKit
 #endif
 
 /// - Note: for internal use only.  :nodoc:

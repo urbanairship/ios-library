@@ -3,6 +3,7 @@
 import Testing
 
 @testable import AirshipCore
+import UIKit
 
 @Suite(.timeLimit(.minutes(1)))
 struct ChannelTest {

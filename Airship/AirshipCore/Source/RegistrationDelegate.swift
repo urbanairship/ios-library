@@ -2,7 +2,7 @@
 
 import Foundation
 
-import UserNotifications
+public import UserNotifications
 
 /// Implement this protocol and add as a Push.registrationDelegate to receive
 /// registration success and failure callbacks.

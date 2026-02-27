@@ -4,7 +4,7 @@ import Combine
 import Foundation
 
 @preconcurrency
-import UserNotifications
+public import UserNotifications
 
 #if canImport(WatchKit)
 import WatchKit
@@ -98,13 +98,16 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
     @MainActor
     public var onForegroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> Void)?
 
-#if !os(watchOS)
-    @MainActor
-    public var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> UIBackgroundFetchResult)?
-#else
+#if os(watchOS)
     @MainActor
     public var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> WKBackgroundFetchResult)?
-#endif
+#elseif os(macOS)
+    @MainActor
+    public var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> Void)?
+    #else
+    @MainActor
+    public var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> UIBackgroundFetchResult)?
+    #endif
 
     #if !os(tvOS)
     @MainActor
@@ -121,7 +124,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
 
     @MainActor
     private var isBackgroundRefreshStatusAvailable: Bool {
-        #if os(watchOS)
+        #if os(watchOS) || os(macOS)
         return false
         #else
         return self.apnsRegistrar.isBackgroundRefreshStatusAvailable
@@ -223,7 +226,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
 
     @MainActor
     private func observeNotificationCenterEvents() {
-        #if !os(watchOS)
+        #if !os(watchOS) && !os(macOS)
         self.notificationCenter.addObserver(
             self,
             selector: #selector(applicationBackgroundRefreshStatusChanged),
@@ -524,13 +527,17 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
         var settingsChanged = false
         if self.privacyManager.isEnabled(.push) {
             if !self.userPromptedForNotifications {
-                #if os(tvOS) || os(watchOS)
+#if os(tvOS) || os(watchOS)
                 self.userPromptedForNotifications = status != .notDetermined
-                #else
+#elseif os(macOS)
+                if status != .notDetermined{
+                    self.userPromptedForNotifications = true
+                }
+#else
                 if status != .notDetermined && status != .ephemeral {
                     self.userPromptedForNotifications = true
                 }
-                #endif
+#endif
             }
             if status != self.authorizationStatus {
                 self.authorizationStatus = status
@@ -955,7 +962,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
         }
     }
 
-    #if !os(watchOS)
+    #if !os(watchOS) && !os(macOS)
     @objc
     @MainActor
     private func applicationBackgroundRefreshStatusChanged() {
@@ -1048,7 +1055,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
 
 /// - Note: For internal use only. :nodoc:
 extension DefaultAirshipPush: InternalAirshipPush {
-    
+
     public func dispatchUpdateAuthorizedNotificationTypes() {
         self.serialQueue.enqueue {
             _ = await self.updateAuthorizedNotificationTypes()
@@ -1123,7 +1130,7 @@ extension DefaultAirshipPush: InternalAirshipPush {
         } else {
             options = self.defaultPresentationOptions
         }
-        
+
         if let onExtendPresentationOptions = self.onExtendPresentationOptions {
             options = await onExtendPresentationOptions(options, notification)
         } else if let delegate = self.pushNotificationDelegate {
@@ -1133,7 +1140,7 @@ extension DefaultAirshipPush: InternalAirshipPush {
         return options
     }
 
-    #if !os(tvOS)
+#if !os(tvOS)
 
     public func didReceiveNotificationResponse(_ response: UNNotificationResponse) async {
         guard self.privacyManager.isEnabled(.push) else {
@@ -1159,20 +1166,16 @@ extension DefaultAirshipPush: InternalAirshipPush {
         }
     }
 
-    #endif
+#endif
 
     @MainActor
     public func didReceiveRemoteNotification(
         _ notification: [AnyHashable: Any],
         isForeground: Bool
-    ) async -> any Sendable {
+    ) async -> UABackgroundFetchResult {
 
         guard self.privacyManager.isEnabled(.push) else {
-            #if !os(watchOS)
-            return UIBackgroundFetchResult.noData
-            #else
-            return WKBackgroundFetchResult.noData
-            #endif
+            return .noData
         }
 
         let delegate = self.pushNotificationDelegate
@@ -1193,31 +1196,44 @@ extension DefaultAirshipPush: InternalAirshipPush {
                 await delegate?.receivedForegroundNotification(notification)
             }
 
-            #if !os(watchOS)
-            return UIBackgroundFetchResult.noData
-            #else
-            return WKBackgroundFetchResult.noData
-            #endif
+            return .noData
         } else {
-            if let onBackgroundNotificationReceived = self.onBackgroundNotificationReceived {
-                return await onBackgroundNotificationReceived(notification)
+#if os(watchOS)
+            let result: WKBackgroundFetchResult = if let onBackgroundNotificationReceived = self.onBackgroundNotificationReceived {
+                await onBackgroundNotificationReceived(notification)
             } else if let result = await delegate?.receivedBackgroundNotification(notification) {
-                return result
+                result
             } else {
-                #if !os(watchOS)
-                return UIBackgroundFetchResult.noData
-                #else
-                return WKBackgroundFetchResult.noData
-                #endif
+                .noData
             }
+
+            return UABackgroundFetchResult(from: result)
+#elseif os(macOS)
+            if let onBackgroundNotificationReceived = self.onBackgroundNotificationReceived {
+                await onBackgroundNotificationReceived(notification)
+            } else {
+                await delegate?.receivedBackgroundNotification(notification)
+            }
+            return .noData
+#else
+            let result: UIBackgroundFetchResult = if let onBackgroundNotificationReceived = self.onBackgroundNotificationReceived {
+                await onBackgroundNotificationReceived(notification)
+            } else if let result = await delegate?.receivedBackgroundNotification(notification) {
+                result
+            } else {
+                .noData
+            }
+
+            return UABackgroundFetchResult(from: result)
+#endif
         }
     }
 
     private func foregroundPresentationOptions(notification: UNNotification)
-        -> [String]?
+    -> [String]?
     {
         var presentationOptions: [String]? = nil
-        #if !os(tvOS)
+#if !os(tvOS)
         // get the presentation options from the the notification
         presentationOptions =
         notification.request.content.userInfo[
@@ -1231,7 +1247,7 @@ extension DefaultAirshipPush: InternalAirshipPush {
                 DefaultAirshipPush.ForegroundPresentationLegacykey
             ] as? [String]
         }
-        #endif
+#endif
         return presentationOptions
     }
 

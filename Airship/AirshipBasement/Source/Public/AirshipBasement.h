@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for AirshipCore.
 FOUNDATION_EXPORT double AirshipBasementVersionNumber;

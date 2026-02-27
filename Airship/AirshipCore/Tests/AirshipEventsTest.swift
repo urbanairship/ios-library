@@ -402,8 +402,8 @@ private final class InternalPush: InternalAirshipPush {
     func didReceiveRemoteNotification(
         _ userInfo: [AnyHashable: Any],
         isForeground: Bool
-    ) async -> any Sendable {
-        return 0
+    ) async -> UABackgroundFetchResult {
+        return .noData
     }
 
     func presentationOptionsForNotification(

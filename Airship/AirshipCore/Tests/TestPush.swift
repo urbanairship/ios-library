@@ -141,11 +141,13 @@ final class TestPush: NSObject, InternalAirshipPush, AirshipPush, AirshipCompone
     func didReceiveRemoteNotification(
         _ userInfo: [AnyHashable: Any],
         isForeground: Bool
-    ) async -> any Sendable {
-        return self.didReceiveRemoteNotificationCallback!(
+    ) async -> UABackgroundFetchResult {
+        let result = self.didReceiveRemoteNotificationCallback!(
             userInfo,
             isForeground
         )
+
+        return .init(from: result)
     }
 
 

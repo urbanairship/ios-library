@@ -1,20 +1,20 @@
 /* Copyright Airship and Contributors */
 
 #if canImport(UIKit)
-import UIKit
+public import UIKit
 #endif
 
 #if canImport(WatchKit)
 public import WatchKit
 #endif
 
-#if canImport(AirshipBasement)
-import AirshipBasement
+#if canImport(AppKit)
+public import AppKit
 #endif
 
 import Foundation
 @preconcurrency
-import UserNotifications
+public import UserNotifications
 
 
 /// Application hooks required by Airship. If `automaticSetupEnabled` is enabled
@@ -33,8 +33,142 @@ public class AppIntegration {
         )
     }
 
-#if !os(watchOS)
+#if os(watchOS)
+    /**
+     * Must be called by the WKExtensionDelegate's
+     * didRegisterForRemoteNotificationsWithDeviceToken:.
+     *
+     * - Parameters:
+     *   - deviceToken: The device token.
+     */
+    @MainActor
+    public class func didRegisterForRemoteNotificationsWithDeviceToken(
+        deviceToken: Data
+    ) {
+        guard let delegate = integrationDelegate else {
+            logIgnoringCall()
+            return
+        }
 
+        delegate.didRegisterForRemoteNotifications(deviceToken: deviceToken)
+    }
+
+    /**
+     * Must be called by the WKExtensionDelegate's
+     * didFailToRegisterForRemoteNotificationsWithError:.
+     *
+     * - Parameters:
+     *   - error: The error.
+     */
+    @MainActor
+    public class func didFailToRegisterForRemoteNotificationsWithError(
+        error: any Error
+    ) {
+        guard let delegate = integrationDelegate else {
+            logIgnoringCall()
+            return
+        }
+
+        delegate.didFailToRegisterForRemoteNotifications(error: error)
+    }
+    /**
+     * Must be called by the WKExtensionDelegate's
+     * didReceiveRemoteNotification:fetchCompletionHandler:.
+     *
+     * - Parameters:
+     *   - userInfo: The remote notification.
+     *   - completionHandler: The completion handler.
+     */
+    @MainActor
+    public class func didReceiveRemoteNotification(
+        userInfo: [AnyHashable: Any]
+    ) async -> WKBackgroundFetchResult {
+
+        guard let delegate = integrationDelegate else {
+            logIgnoringCall()
+            return .noData
+        }
+
+        let isForeground = WKApplication.shared().applicationState == .active
+        
+        return await withCheckedContinuation { continuation in
+            delegate.didReceiveRemoteNotification(
+                userInfo: userInfo,
+                isForeground: isForeground
+            ) { result in
+                let watchResult = WKBackgroundFetchResult(rawValue: result.rawValue) ?? .noData
+                continuation.resume(returning: watchResult)
+            }
+        }
+    }
+
+#elseif os(macOS)
+
+    /**
+     * Must be called by the NSApplicationDelegate's
+     * application:didRegisterForRemoteNotificationsWithDeviceToken:.
+     *
+     * - Parameters:
+     *   - application: The application
+     *   - deviceToken: The device token.
+     */
+    @MainActor
+    public class func application(
+        _ application: NSApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        guard let delegate = integrationDelegate else {
+            logIgnoringCall()
+            return
+        }
+
+        delegate.didRegisterForRemoteNotifications(deviceToken: deviceToken)
+    }
+
+    /**
+     * Must be called by the NSApplicationDelegate's
+     * application:didFailToRegisterForRemoteNotificationsWithError:.
+     *
+     * - Parameters:
+     *   - application: The application
+     *   - error: The error.
+     */
+    @MainActor
+    public class func application(
+        _ application: NSApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: any Error
+    ) {
+        guard let delegate = integrationDelegate else {
+            logIgnoringCall()
+            return
+        }
+
+        delegate.didFailToRegisterForRemoteNotifications(error: error)
+    }
+
+    /**
+     * Must be called by the NSApplicationDelegate's
+     * application:didReceiveRemoteNotification:.
+     *
+     * - Parameters:
+     * - userInfo: The remote notification.
+     */
+    @MainActor
+    public class func didReceiveRemoteNotification(
+        userInfo: [AnyHashable: Any]
+    ) {
+        guard let delegate = integrationDelegate else {
+            logIgnoringCall()
+            return
+        }
+
+        let isForeground = NSApplication.shared.isActive
+        delegate.didReceiveRemoteNotification(
+            userInfo: userInfo,
+            isForeground: isForeground
+        )
+    }
+#else
     /**
      * Must be called by the UIApplicationDelegate's
      * application:performFetchWithCompletionHandler:.
@@ -134,74 +268,6 @@ public class AppIntegration {
             }
         }
     }
-#else
-    /**
-     * Must be called by the WKExtensionDelegate's
-     * didRegisterForRemoteNotificationsWithDeviceToken:.
-     *
-     * - Parameters:
-     *   - deviceToken: The device token.
-     */
-    @MainActor
-    public class func didRegisterForRemoteNotificationsWithDeviceToken(
-        deviceToken: Data
-    ) {
-        guard let delegate = integrationDelegate else {
-            logIgnoringCall()
-            return
-        }
-
-        delegate.didRegisterForRemoteNotifications(deviceToken: deviceToken)
-    }
-
-    /**
-     * Must be called by the WKExtensionDelegate's
-     * didFailToRegisterForRemoteNotificationsWithError:.
-     *
-     * - Parameters:
-     *   - error: The error.
-     */
-    @MainActor
-    public class func didFailToRegisterForRemoteNotificationsWithError(
-        error: any Error
-    ) {
-        guard let delegate = integrationDelegate else {
-            logIgnoringCall()
-            return
-        }
-
-        delegate.didFailToRegisterForRemoteNotifications(error: error)
-    }
-    /**
-     * Must be called by the WKExtensionDelegate's
-     * didReceiveRemoteNotification:fetchCompletionHandler:.
-     *
-     * - Parameters:
-     *   - userInfo: The remote notification.
-     *   - completionHandler: The completion handler.
-     */
-    @MainActor
-    public class func didReceiveRemoteNotification(
-        userInfo: [AnyHashable: Any]
-    ) async -> WKBackgroundFetchResult {
-
-        guard let delegate = integrationDelegate else {
-            logIgnoringCall()
-            return .noData
-        }
-
-        let isForeground = WKExtension.shared().applicationState == .active
-
-        return await withCheckedContinuation { continuation in
-            delegate.didReceiveRemoteNotification(
-                userInfo: userInfo,
-                isForeground: isForeground
-            ) { result in
-                let watchResult = WKBackgroundFetchResult(rawValue: result.rawValue) ?? .noData
-                continuation.resume(returning: watchResult)
-            }
-        }
-    }
 #endif
 
     /**
@@ -263,7 +329,7 @@ public class AppIntegration {
     }
 
 
-    #if !os(tvOS)
+#if !os(tvOS)
     /**
      * Processes a user's response to a notification.
      *
@@ -336,5 +402,5 @@ public class AppIntegration {
             completionHandler: completionHandler
         )
     }
-    #endif
+#endif
 }

@@ -62,20 +62,20 @@ final class DefaultAppIntegrationDelegate: AppIntegrationDelegate, Sendable {
     @MainActor
     public func willPresentNotification(notification: UNNotification, presentationOptions: UNNotificationPresentationOptions, completionHandler: @escaping @Sendable () -> Void) {
         Task { @MainActor in
-            #if !os(tvOS) && !os(watchOS)
+#if !os(tvOS) && !os(watchOS)
             _ = await self.processPush(
                 notification.request.content.userInfo,
                 isForeground: true,
                 presentationOptions: presentationOptions
             )
-            #endif
+#endif
             completionHandler()
         }
     }
 
     // MARK: - Response Handling (Conditional for tvOS)
 
-    #if !os(tvOS)
+#if !os(tvOS)
     @MainActor
     public func didReceiveNotificationResponse(response: UNNotificationResponse, completionHandler: @escaping @Sendable () -> Void) {
         AirshipLogger.info("Application received notification response: \(response)")
@@ -111,34 +111,41 @@ final class DefaultAppIntegrationDelegate: AppIntegrationDelegate, Sendable {
             completionHandler()
         }
     }
-    #endif
+#endif
 
     // MARK: - Remote Notification Handling
 
-    #if os(watchOS)
+#if os(watchOS)
     @MainActor
     public func didReceiveRemoteNotification(userInfo: [AnyHashable : Any], isForeground: Bool, completionHandler: @escaping @Sendable (WKBackgroundFetchResult) -> Void) {
         self.processRemoteNotification(userInfo: userInfo, isForeground: isForeground) { result in
-            completionHandler(WKBackgroundFetchResult(rawValue: result) ?? .noData)
+            completionHandler(result.osFetchResult)
         }
     }
-    #else
+#elseif os(macOS)
+    @MainActor
+    public func didReceiveRemoteNotification(
+        userInfo: [AnyHashable : Any],
+        isForeground: Bool
+    ) {
+        self.processRemoteNotification(
+            userInfo: userInfo,
+            isForeground: isForeground
+        ) { _ in }
+    }
+#else
     @MainActor
     public func didReceiveRemoteNotification(userInfo: [AnyHashable : Any], isForeground: Bool, completionHandler: @escaping @Sendable (UIBackgroundFetchResult) -> Void) {
         self.processRemoteNotification(userInfo: userInfo, isForeground: isForeground) { result in
-            completionHandler(UIBackgroundFetchResult(rawValue: result) ?? .noData)
+            completionHandler(result.osFetchResult)
         }
     }
-    #endif
+#endif
 
     @MainActor
-    private func processRemoteNotification(userInfo: [AnyHashable : Any], isForeground: Bool, completionHandler: @escaping @Sendable (UInt) -> Void) {
+    private func processRemoteNotification(userInfo: [AnyHashable : Any], isForeground: Bool, completionHandler: @escaping @Sendable (UABackgroundFetchResult) -> Void) {
         guard !isForeground || AirshipUtils.isSilentPush(userInfo) else {
-#if os(watchOS)
-            completionHandler(WKBackgroundFetchResult.noData.rawValue)
-#else
-            completionHandler(UIBackgroundFetchResult.noData.rawValue)
-#endif
+            completionHandler(.noData)
             return
         }
 
@@ -153,32 +160,33 @@ final class DefaultAppIntegrationDelegate: AppIntegrationDelegate, Sendable {
     }
 
     // MARK: - Private Processing
-
     @MainActor
     private func processPush(
         _ userInfo: [AnyHashable: Any],
         isForeground: Bool,
         presentationOptions: UNNotificationPresentationOptions?
-    ) async -> UInt {
+    ) async -> UABackgroundFetchResult {
         AirshipLogger.info("Application received remote notification: \(userInfo)")
 
-        let fetchResults = AirshipAtomicValue(Array<UInt>())
+        // Start with .noData as the baseline
+        let finalResult = AirshipAtomicValue(UABackgroundFetchResult.noData)
         let wrappedUserInfo = self.safeWrap(userInfo: userInfo) ?? .null
 
-        await withTaskGroup(of: UInt.self) { taskGroup in
+        await withTaskGroup(of: UABackgroundFetchResult.self) { taskGroup in
             for component in pushableComponents {
                 taskGroup.addTask {
-                    return (await component.receivedRemoteNotification(wrappedUserInfo)).osFetchResult.rawValue
+                    return await component.receivedRemoteNotification(wrappedUserInfo)
                 }
             }
 
             for await result in taskGroup {
-                fetchResults.update(onModify: { $0 + [result] })
+                finalResult.update { $0.merge(result) }
             }
         }
 
+        // Get and merge the platform-specific fetch result
         let fetchResult = await getFetchResult(userInfo, isForeground: isForeground)
-        fetchResults.update(onModify: { $0 + [fetchResult] })
+        finalResult.update { $0.merge(fetchResult) }
 
         if let pushJSON = self.safeWrap(userInfo: userInfo) {
             let situation: ActionSituation = isForeground ? .foregroundPush : .backgroundPush
@@ -196,18 +204,18 @@ final class DefaultAppIntegrationDelegate: AppIntegrationDelegate, Sendable {
             )
         }
 
-        return AirshipUtils.mergeFetchResults(fetchResults.value).rawValue
+        return finalResult.value
     }
 
     @MainActor
-    private func getFetchResult(_ userInfo: [AnyHashable: Any], isForeground: Bool) async -> UInt {
-        #if os(watchOS)
-        let result = await self.push.didReceiveRemoteNotification(userInfo, isForeground: isForeground) as? WKBackgroundFetchResult
-        return result?.rawValue ?? WKBackgroundFetchResult.noData.rawValue
-        #else
-        let result = await self.push.didReceiveRemoteNotification(userInfo, isForeground: isForeground) as? UIBackgroundFetchResult
-        return result?.rawValue ?? UIBackgroundFetchResult.noData.rawValue
-        #endif
+    private func getFetchResult(
+        _ userInfo: [AnyHashable: Any],
+        isForeground: Bool
+    ) async -> UABackgroundFetchResult {
+        return await self.push.didReceiveRemoteNotification(
+            userInfo,
+            isForeground: isForeground
+        )
     }
 
     // MARK: - Helpers
@@ -219,7 +227,7 @@ final class DefaultAppIntegrationDelegate: AppIntegrationDelegate, Sendable {
         return options != []
     }
 
-    #if !os(tvOS)
+#if !os(tvOS)
     private func situationFromAction(_ action: UNNotificationAction?) -> ActionSituation? {
         guard let options = action?.options else { return nil }
         return options.contains(.foreground) ? .foregroundInteractiveButton : .backgroundInteractiveButton
@@ -248,7 +256,7 @@ final class DefaultAppIntegrationDelegate: AppIntegrationDelegate, Sendable {
         }
         return action
     }
-    #endif
+#endif
 
     private func safeWrap(userInfo: [AnyHashable: Any]?) -> AirshipJSON? {
         guard let userInfo = userInfo else { return nil }

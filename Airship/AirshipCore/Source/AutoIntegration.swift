@@ -11,6 +11,10 @@ import UIKit
 import WatchKit
 #endif
 
+#if canImport(AppKit)
+import AppKit
+#endif
+
 @MainActor
 final class AutoIntegration {
     public static let shared = AutoIntegration()
@@ -19,35 +23,108 @@ final class AutoIntegration {
     private let dummyNotificationDelegate = UAAutoIntegrationDummyDelegate()
     weak var delegate: (any AppIntegrationDelegate)?
 
+
+
     public func integrate(with delegate: any AppIntegrationDelegate) {
-        AirshipLogger.debug("Integrating Airship Auto-Integration.")
         self.delegate = delegate
 
 #if os(watchOS)
-        
-        if let extensionDelegate = WKExtension.shared().delegate {
-            self.swizzler.swizzleWatchDidRegister(extensionDelegate, delegate: delegate)
-        }
+        performWatchIntegration(delegate: delegate)
+#elseif os(macOS)
+        performMacIntegration(delegate: delegate)
 #else
-        if let appDelegate = UIApplication.shared.delegate {
-            self.swizzler.swizzleDidRegister(appDelegate, delegate: delegate)
-            self.swizzler.swizzleDidFailToRegister(appDelegate, delegate: delegate)
-            self.swizzler.swizzleDidReceiveRemoteNotification(appDelegate, delegate: delegate)
-            self.swizzler.swizzleBackgroundFetch(appDelegate, delegate: delegate)
-        }
+        performMobileIntegration(delegate: delegate)
 #endif
+        // Notification Center swizzling (Platform independent)
+        swizzleNotificationCenter(delegate: delegate)
+    }
 
+    private func swizzleNotificationCenter(delegate: any AppIntegrationDelegate) {
         self.swizzler.swizzleNotificationCenterDelegateSetter(
             delegate: delegate,
             dummyDelegate: self.dummyNotificationDelegate
         )
 
-        if let current = UNUserNotificationCenter.current().delegate as? NSObject {
+        if let current = UNUserNotificationCenter.current().delegate {
             self.swizzler.swizzleNotificationCenterDelegate(current, delegate: delegate)
         } else {
             UNUserNotificationCenter.current().delegate = dummyNotificationDelegate
         }
     }
+
+    // MARK: - Platform Specific Integration Logic
+
+#if os(watchOS)
+    private func performWatchIntegration(delegate: any AppIntegrationDelegate) {
+        // Access via WKApplication (Modern/SwiftUI friendly)
+        guard let appDelegate = WKApplication.shared().delegate else {
+            AirshipLogger.info("Watch app delegate not set, deferring until didFinishLaunching.")
+            NotificationCenter.default.addObserver(
+                forName: WKApplication.didFinishLaunchingNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                MainActor.assumeIsolated {
+                    self?.performWatchIntegration(delegate: delegate)
+                }
+            }
+            return
+        }
+
+        AirshipLogger.debug("Integrating Airship Auto-Integration (watchOS).")
+        self.swizzler.swizzleWatchDidRegister(appDelegate, delegate: delegate)
+        self.swizzler.swizzleWatchDidFailToRegister(appDelegate, delegate: delegate)
+        self.swizzler.swizzleWatchDidReceiveRemoteNotification(appDelegate, delegate: delegate)
+    }
+
+#elseif os(macOS)
+
+    private func performMacIntegration(delegate: any AppIntegrationDelegate) {
+        guard let appDelegate = NSApplication.shared.delegate else {
+            AirshipLogger.info("macOS app delegate not set, deferring until didFinishLaunching.")
+            NotificationCenter.default.addObserver(
+                forName: NSApplication.didFinishLaunchingNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                MainActor.assumeIsolated {
+                    self?.performMacIntegration(delegate: delegate)
+                }
+            }
+            return
+        }
+
+        AirshipLogger.debug("Integrating Airship Auto-Integration (macOS).")
+        self.swizzler.swizzleMacDidRegister(appDelegate, delegate: delegate)
+        self.swizzler.swizzleMacDidFailToRegister(appDelegate, delegate: delegate)
+        self.swizzler.swizzleMacDidReceiveRemoteNotification(appDelegate, delegate: delegate)
+    }
+
+#else
+
+    private func performMobileIntegration(delegate: any AppIntegrationDelegate) {
+        guard let appDelegate = UIApplication.shared.delegate else {
+            AirshipLogger.info("App delegate not set, deferring until didFinishLaunching.")
+            NotificationCenter.default.addObserver(
+                forName: UIApplication.didFinishLaunchingNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                MainActor.assumeIsolated {
+                    self?.performMobileIntegration(delegate: delegate)
+                }
+            }
+            return
+        }
+
+        AirshipLogger.debug("Integrating Airship Auto-Integration (iOS/tvOS/visionOS).")
+        self.swizzler.swizzleDidRegister(appDelegate, delegate: delegate)
+        self.swizzler.swizzleDidFailToRegister(appDelegate, delegate: delegate)
+        self.swizzler.swizzleDidReceiveRemoteNotification(appDelegate, delegate: delegate)
+        self.swizzler.swizzleBackgroundFetch(appDelegate, delegate: delegate)
+    }
+
+#endif
 }
 
 // MARK: - Default delegate
@@ -83,8 +160,8 @@ fileprivate extension AirshipSwizzler {
                 fn(center, setter, newDelegate)
             }
 
-            if let obj = newDelegate as? NSObject {
-                self.swizzleNotificationCenterDelegate(obj, delegate: delegate)
+            if let newDelegate {
+                self.swizzleNotificationCenterDelegate(newDelegate, delegate: delegate)
             } else {
                 UNUserNotificationCenter.current().delegate = dummyDelegate
             }
@@ -92,7 +169,7 @@ fileprivate extension AirshipSwizzler {
         self.swizzleClass(UNUserNotificationCenter.self, selector: setter, implementation: imp_implementationWithBlock(block))
     }
 
-    func swizzleNotificationCenterDelegate(_ delegate: NSObject, delegate integrationDelegate: any AppIntegrationDelegate) {
+    func swizzleNotificationCenterDelegate(_ delegate: any UNUserNotificationCenterDelegate, delegate integrationDelegate: any AppIntegrationDelegate) {
         swizzleNotificationCenterWillPresent(delegate, delegate: integrationDelegate)
 
 #if !os(tvOS)
@@ -100,7 +177,7 @@ fileprivate extension AirshipSwizzler {
 #endif
     }
 
-    private func swizzleNotificationCenterWillPresent(_ delegate: NSObject, delegate integrationDelegate: any AppIntegrationDelegate) {
+    private func swizzleNotificationCenterWillPresent(_ delegate: any UNUserNotificationCenterDelegate, delegate integrationDelegate: any AppIntegrationDelegate) {
         let willPresentSelector = #selector((any UNUserNotificationCenterDelegate).userNotificationCenter(_:willPresent:withCompletionHandler:))
         let willPresentBlock: WillPresentNotificationBlock = { [weak self] (receiver, center, notification, handler) in
             guard receiver === UNUserNotificationCenter.current().delegate else {
@@ -144,7 +221,7 @@ fileprivate extension AirshipSwizzler {
     }
 
 #if !os(tvOS)
-    private func swizzleNotificationCenterDidReceive(_ delegate: NSObject, delegate integrationDelegate: any AppIntegrationDelegate) {
+    private func swizzleNotificationCenterDidReceive(_ delegate: any UNUserNotificationCenterDelegate, delegate integrationDelegate: any AppIntegrationDelegate) {
         let responseSelector = #selector((any UNUserNotificationCenterDelegate).userNotificationCenter(_:didReceive:withCompletionHandler:))
         let responseBlock: DidReceiveNotificationResponseBlock = { [weak self] (receiver, center, response, handler) in
             guard receiver === UNUserNotificationCenter.current().delegate else {
@@ -180,9 +257,157 @@ fileprivate extension AirshipSwizzler {
 #endif
 }
 
-// MARK: - App Delegate (iOS, tvOS, visionOS)
+#if os(watchOS)
 
-#if !os(watchOS)
+// MARK: - App Delegate watchOS
+extension AirshipSwizzler {
+    private typealias WatchDidRegisterForRemoteNotificationsBlock = @convention(block) (NSObject, Data) -> Void
+    private typealias WatchDidReceiveRemoteNotificationBlock = @convention(block) (NSObject, [AnyHashable: Any], @escaping (WKBackgroundFetchResult) -> Void) -> Void
+    private typealias WatchDidFailToRegisterBlock = @convention(block) (NSObject, any Error) -> Void
+
+    func swizzleWatchDidRegister(_ delegate: any NSObjectProtocol, delegate integrationDelegate: any AppIntegrationDelegate) {
+        let regSelector = #selector((any WKExtensionDelegate).didRegisterForRemoteNotifications(withDeviceToken:))
+        let regBlock: WatchDidRegisterForRemoteNotificationsBlock = { [weak self] (receiver, token) in
+            integrationDelegate.didRegisterForRemoteNotifications(deviceToken: token)
+            if let strongSelf = self, let original = strongSelf.originalImplementation(regSelector, forClass: type(of: receiver)) {
+                let fn = unsafeBitCast(original, to: (@convention(c) (NSObject, Selector, Data) -> Void).self)
+                fn(receiver, regSelector, token)
+            }
+        }
+        self.swizzleInstance(
+            delegate,
+            selector: regSelector,
+            protocol: (any WKExtensionDelegate).self,
+            implementation: imp_implementationWithBlock(regBlock)
+        )
+    }
+
+    func swizzleWatchDidReceiveRemoteNotification(_ delegate: any NSObjectProtocol, delegate integrationDelegate: any AppIntegrationDelegate) {
+        let selector = #selector((any WKExtensionDelegate).didReceiveRemoteNotification(_:fetchCompletionHandler:))
+
+        let block: WatchDidReceiveRemoteNotificationBlock = { [weak self] (receiver, userInfo, handler) in
+            let resultValue: AirshipAtomicValue<WKBackgroundFetchResult> = AirshipAtomicValue(.noData)
+            let group = DispatchGroup()
+
+            let updateResult: @Sendable (WKBackgroundFetchResult) -> Void = { next in
+                resultValue.update { current in
+                    // Logic: .newData wins, otherwise .failed wins over .noData
+                    return (current == .newData || next == .newData) ? .newData : (next == .failed ? .failed : current)
+                }
+            }
+
+            if let strongSelf = self, let original = strongSelf.originalImplementation(selector, forClass: type(of: receiver)) {
+                group.enter()
+                let fn = unsafeBitCast(original, to: (@convention(c) (NSObject, Selector, [AnyHashable: Any], @escaping (WKBackgroundFetchResult) -> Void) -> Void).self)
+                let safeCompletion = strongSelf.ensureOnce(selector: selector) { res in
+                    updateResult(res)
+                    group.leave()
+                }
+                fn(receiver, selector, userInfo, safeCompletion)
+            }
+
+            group.enter()
+
+            // watchOS doesn't have applicationState == .active in the same way,
+            // but you can check if the app is in the foreground via WKApplication
+            let isForeground = WKApplication.shared().applicationState == .active
+            integrationDelegate.didReceiveRemoteNotification(userInfo: userInfo, isForeground: isForeground) { res in
+                updateResult(res)
+                group.leave()
+            }
+
+            group.notify(queue: .main) {
+                handler(resultValue.value)
+            }
+        }
+
+        self.swizzleInstance(
+            delegate,
+            selector: selector,
+            protocol: (any WKExtensionDelegate).self,
+            implementation: imp_implementationWithBlock(block)
+        )
+    }
+
+    func swizzleWatchDidFailToRegister(_ delegate: any NSObjectProtocol, delegate integrationDelegate: any AppIntegrationDelegate) {
+        let selector = #selector((any WKExtensionDelegate).didFailToRegisterForRemoteNotificationsWithError(_:))
+
+        let block: WatchDidFailToRegisterBlock = { [weak self] (receiver, error) in
+            integrationDelegate.didFailToRegisterForRemoteNotifications(error: error)
+
+            if let strongSelf = self,
+               let original = strongSelf.originalImplementation(selector, forClass: type(of: receiver)) {
+                let fn = unsafeBitCast(original, to: (@convention(c) (NSObject, Selector, any Error) -> Void).self)
+                fn(receiver, selector, error)
+            }
+        }
+
+        self.swizzleInstance(
+            delegate,
+            selector: selector,
+            protocol: (any WKExtensionDelegate).self,
+            implementation: imp_implementationWithBlock(block)
+        )
+    }
+}
+
+
+
+#elseif os(macOS)
+
+// MARK: - App Delegate macOS
+extension AirshipSwizzler {
+    private typealias MacDidRegisterBlock = @convention(block) (NSObject, NSApplication, Data) -> Void
+    private typealias MacDidFailBlock = @convention(block) (NSObject, NSApplication, any Error) -> Void
+
+    func swizzleMacDidRegister(_ appDelegate: any NSApplicationDelegate, delegate: any AppIntegrationDelegate) {
+        let selector = #selector((any NSApplicationDelegate).application(_:didRegisterForRemoteNotificationsWithDeviceToken:))
+        let block: MacDidRegisterBlock = { [weak self] (receiver, app, token) in
+            delegate.didRegisterForRemoteNotifications(deviceToken: token)
+            if let strongSelf = self, let original = strongSelf.originalImplementation(selector, forClass: type(of: receiver)) {
+                let fn = unsafeBitCast(original, to: (@convention(c) (NSObject, Selector, NSApplication, Data) -> Void).self)
+                fn(receiver, selector, app, token)
+            }
+        }
+        self.swizzleInstance(appDelegate, selector: selector, protocol: (any NSApplicationDelegate).self, implementation: imp_implementationWithBlock(block))
+    }
+
+    func swizzleMacDidFailToRegister(_ appDelegate: any NSApplicationDelegate, delegate: any AppIntegrationDelegate) {
+        let selector = #selector((any NSApplicationDelegate).application(_:didFailToRegisterForRemoteNotificationsWithError:))
+        let block: MacDidFailBlock = { [weak self] (receiver, app, error) in
+            delegate.didFailToRegisterForRemoteNotifications(error: error)
+            if let strongSelf = self, let original = strongSelf.originalImplementation(selector, forClass: type(of: receiver)) {
+                let fn = unsafeBitCast(original, to: (@convention(c) (NSObject, Selector, NSApplication, any Error) -> Void).self)
+                fn(receiver, selector, app, error)
+            }
+        }
+        self.swizzleInstance(appDelegate, selector: selector, protocol: (any NSApplicationDelegate).self, implementation: imp_implementationWithBlock(block))
+    }
+
+    func swizzleMacDidReceiveRemoteNotification(_ appDelegate: any NSApplicationDelegate, delegate: any AppIntegrationDelegate) {
+        let selector = #selector((any NSApplicationDelegate).application(_:didReceiveRemoteNotification:))
+        let block: MacDidReceiveRemoteNotificationBlock = { [weak self] (receiver, userInfo) in
+            let isForeground = NSApplication.shared.isActive
+            integrationDelegate.didReceiveRemoteNotification(userInfo: userInfo, isForeground: isForeground)
+            if let strongSelf = self,
+               let original = strongSelf.originalImplementation(selector, forClass: type(of: receiver)) {
+                let fn = unsafeBitCast(original, to: (@convention(c) (NSObject, Selector, [AnyHashable: Any]) -> Void).self)
+                fn(receiver, selector, userInfo)
+            }
+        }
+
+        self.swizzleInstance(
+            appDelegate,
+            selector: selector,
+            protocol: (any NSApplicationDelegate).self,
+            implementation: imp_implementationWithBlock(block)
+        )
+    }
+}
+
+#else
+
+// MARK: - App Delegate tvOS, ipadOS, iOS
 fileprivate extension AirshipSwizzler {
     private typealias DidRegisterForRemoteNotificationsBlock = @convention(block) (NSObject, UIApplication, Data) -> Void
     private typealias DidFailToRegisterForRemoteNotificationsBlock = @convention(block) (NSObject, UIApplication, any Error) -> Void
@@ -293,28 +518,6 @@ fileprivate extension AirshipSwizzler {
 }
 #endif
 
-#if os(watchOS)
-extension AirshipSwizzler {
-    private typealias WatchDidRegisterForRemoteNotificationsBlock = @convention(block) (NSObject, Data) -> Void
-
-    func swizzleWatchDidRegister(_ delegate: any WKExtensionDelegate, delegate integrationDelegate: any AppIntegrationDelegate) {
-        let regSelector = #selector((any WKExtensionDelegate).didRegisterForRemoteNotifications(withDeviceToken:))
-        let regBlock: WatchDidRegisterForRemoteNotificationsBlock = { [weak self] (receiver, token) in
-            integrationDelegate.didRegisterForRemoteNotifications(deviceToken: token)
-            if let strongSelf = self, let original = strongSelf.originalImplementation(regSelector, forClass: type(of: receiver)) {
-                let fn = unsafeBitCast(original, to: (@convention(c) (NSObject, Selector, Data) -> Void).self)
-                fn(receiver, regSelector, token)
-            }
-        }
-        self.swizzleInstance(
-            delegate,
-            selector: regSelector,
-            protocol: (any WKExtensionDelegate).self,
-            implementation: imp_implementationWithBlock(regBlock)
-        )
-    }
-}
-#endif
 
 fileprivate extension AirshipSwizzler {
     func ensureOnce<T>(selector: Selector, completion: @escaping (T) -> Void) -> (T) -> Void {

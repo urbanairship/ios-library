@@ -3,6 +3,7 @@ import Foundation
 @testable
 public import AirshipCore
 public import Combine
+public import UserNotifications
 
 public class TestAnalytics: InternalAirshipAnalytics, AirshipComponent, @unchecked Sendable {
     public var eventFeed: AirshipAnalyticsFeed = AirshipAnalyticsFeed { true }

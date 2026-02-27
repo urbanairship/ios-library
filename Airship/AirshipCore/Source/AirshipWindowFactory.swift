@@ -2,7 +2,7 @@
 
 #if canImport(UIKit) && !os(watchOS)
 
-import UIKit
+public import UIKit
 
 /// A singleton factory class to create and configure UIWindow objects.
 /// This allows apps to override behaviors like dark mode and other window-specific settings.

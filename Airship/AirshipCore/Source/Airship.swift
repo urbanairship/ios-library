@@ -3,17 +3,16 @@
 import Foundation
 
 #if canImport(UIKit)
-import UIKit
+public import UIKit
+#endif
+
+#if canImport(AppKit) && os(macOS)
+import AppKit
 #endif
 
 #if canImport(WatchKit)
 import WatchKit
 #endif
-
-#if canImport(AirshipBasement)
-import AirshipBasement
-#endif
-
 
 /// Main entry point for Airship. The application must call `takeOff` within `application(_:didFinishLaunchingWithOptions:)`
 /// before accessing any instances on Airship or Airship modules.
@@ -52,7 +51,7 @@ public final class Airship: Sendable {
         return shared.airshipInstance.permissionsManager
     }
 
-    #if !os(tvOS) && !os(watchOS)
+#if !os(tvOS) && !os(watchOS)
 
     /// A user configurable UAJavaScriptCommandDelegate
     /// - NOTE: this delegate is not retained.
@@ -64,12 +63,14 @@ public final class Airship: Sendable {
             shared._airshipInstanceHolder.value.javaScriptCommandDelegate = newValue
         }
     }
+#endif
 
+#if !os(macOS) && !os(watchOS) && !os(tvOS)
     /// The channel capture utility.
     public static var channelCapture: any AirshipChannelCapture {
         return shared.airshipInstance.channelCapture
     }
-    #endif
+#endif
 
     /// A user configurable deep link delegate.
     /// - NOTE: this delegate is not retained.
@@ -158,37 +159,6 @@ public final class Airship: Sendable {
         self._airshipInstanceHolder = AirshipAtomicValue(instance)
     }
 
-#if !os(watchOS)
-    /// Initializes Airship. If any errors are found with the config or if Airship is already initialized it will throw with
-    /// the error.
-    /// - Parameters:
-    ///     - config: The Airship config. If nil, config will be loading from a plist.
-    ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
-    @MainActor
-    @available(*, deprecated, message: "Use Airship.takeOff(_:) instead")
-    public class func takeOff(
-        _ config: AirshipConfig? = nil,
-        launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-    ) throws {
-        try commonTakeOff(config) {
-#if !os(tvOS) && !os(watchOS)
-            if let remoteNotification =
-                launchOptions?[
-                    UIApplication.LaunchOptionsKey.remoteNotification
-                ]
-                as? [AnyHashable: Any]
-            {
-                if AppStateTracker.shared.state != .background {
-                    self.requireComponent(ofType: (any InternalAirshipAnalytics).self).launched(
-                        fromNotification: remoteNotification
-                    )
-                }
-            }
-#endif
-        }
-    }
-#endif
-
     /// Initializes Airship. If any errors are found with the config or if Airship is already intiialized it will throw with
     /// the error.
     /// - Parameters:
@@ -199,6 +169,23 @@ public final class Airship: Sendable {
     ) throws {
         try commonTakeOff(config)
     }
+
+#if !os(macOS) && !os(watchOS)
+    /// Initializes Airship. If any errors are found with the config or if Airship is already intiialized it will throw with
+    /// the error.
+    /// - Parameters:
+    ///     - config: The Airship config. If nil, config will be loading from a plist.
+    ///     - launchOptions: The launch options passed into `application:didFinishLaunchingWithOptions:`.
+    @MainActor
+    @available(*, deprecated, message: "Use Airship.takeOff(_:) instead")
+    public class func takeOff(
+        _ config: AirshipConfig? = nil,
+        launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) throws {
+        try Self.takeOff(config)
+    }
+#endif
+
 
     /// On ready callback gets called immediately when ready otherwise gets called immediately after takeoff
     /// - Parameter callback: callback closure that's called when Airship is ready
@@ -283,34 +270,7 @@ public final class Airship: Sendable {
 
         if resolvedConfig.isAutomaticSetupEnabled {
             AirshipLogger.info("Automatic setup enabled.")
-            #if !os(tvOS) && !os(watchOS)
-            // Check if app delegate is available for swizzling
-            if UIApplication.shared.delegate == nil {
-                AirshipLogger.info("App delegate not set, deferring automatic integration until didFinishLaunching.")
-
-                // Defer swizzling until app delegate is available (SwiftUI App.init() case)
-                NotificationCenter.default.addObserver(
-                    forName: UIApplication.didFinishLaunchingNotification,
-                    object: nil,
-                    queue: nil
-                ) { _ in
-                    MainActor.assumeIsolated {
-                        if UIApplication.shared.delegate != nil {
-                            AirshipLogger.info("App delegate now available via didFinishLaunching, performing automatic integration.")
-                            AutoIntegration.shared.integrate(with: integrationDelegate)
-                        } else {
-                            AirshipLogger.error("App delegate still not set after didFinishLaunching. Automatic setup skipped.")
-                        }
-                    }
-                }
-            } else {
-                // App delegate is available, integrate immediately
-                AutoIntegration.shared.integrate(with: integrationDelegate)
-            }
-            #else
-            // watchOS and tvOS always integrate immediately
             AutoIntegration.shared.integrate(with: integrationDelegate)
-            #endif
         } else {
             AppIntegration.integrationDelegate = integrationDelegate
         }
@@ -322,8 +282,7 @@ public final class Airship: Sendable {
 
         if resolvedConfig.isExtendedBroadcastsEnabled {
             var userInfo: [String: Any] = [:]
-            userInfo[AirshipNotifications.AirshipReady.channelIDKey] =
-                self.channel.identifier
+            userInfo[AirshipNotifications.AirshipReady.channelIDKey] = self.channel.identifier
             userInfo[AirshipNotifications.AirshipReady.appKey] = credentials.appKey
             userInfo[AirshipNotifications.AirshipReady.payloadVersionKey] = 1
             NotificationCenter.default.post(
@@ -361,7 +320,7 @@ public final class Airship: Sendable {
             return requireComponent(ofType: E.self)
         }
     }
-    
+
     /// Processes a deep link.
     /// For `uairship://` scheme URLs, Airship will handle the deep link internally.
     /// For other URLs, Airship will forward the deep link to the deep link listener if set.
@@ -372,7 +331,7 @@ public final class Airship: Sendable {
     public static func processDeepLink(_ url: URL) async -> Bool {
         return await Airship.shared.deepLink(url)
     }
-    
+
     @MainActor
     private func deepLink(
         _ deepLink: URL
@@ -402,7 +361,7 @@ public final class Airship: Sendable {
                 AirshipLogger.debug("Unhandled deep link \(deepLink)")
                 return true
             }
-           return true
+            return true
         }
 
         // Try handler first, then delegate
@@ -431,12 +390,14 @@ public final class Airship: Sendable {
 
         switch deeplink.host {
         case Airship.appSettingsDeepLinkHost:
-            #if !os(watchOS)
+#if !os(watchOS) && !os(macOS)
             AirshipLogger.debug("Handling Settings deep link: \(deeplink)")
             if let url = URL(string: UIApplication.openSettingsURLString) {
                 UIApplication.shared.open(url)
             }
-            #endif
+#else
+            AirshipLogger.info("Settings deep link not supported on this platform.")
+#endif
             return true
         case Airship.appStoreDeepLinkHost:
             AirshipLogger.debug("Handling App Store deep link: \(deeplink)")
@@ -446,17 +407,23 @@ public final class Airship: Sendable {
                 return true
             }
             if let url = URL(string: appStoreUrl + itunesID) {
-                #if !os(watchOS)
-                UIApplication.shared.open(url)
-                #else
-                WKExtension.shared().openSystemURL(url)
-                #endif
+                openURL(url)
             }
             return true
         default:
             return false
         }
+    }
 
+    @MainActor
+    private func openURL(_ url: URL) {
+#if os(macOS)
+        NSWorkspace.shared.open(url)
+#elseif os(watchOS)
+        WKExtension.shared().openSystemURL(url)
+#else
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+#endif
     }
 
     /// Gets the iTunes ID.
@@ -501,6 +468,7 @@ public final class Airship: Sendable {
         return date
     }
 }
+
 
 /// NSNotificationCenter keys event names
 public final class AirshipNotifications {
@@ -562,4 +530,3 @@ public extension Airship {
     }
     
 }
-

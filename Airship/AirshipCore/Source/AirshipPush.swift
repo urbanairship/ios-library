@@ -1,14 +1,17 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import UIKit
-import UserNotifications
+
+public import UserNotifications
 public import Combine
 
 #if canImport(WatchKit)
 public import WatchKit
 #endif
 
+#if canImport(UIKit)
+public import UIKit
+#endif
 
 /// Airship Push protocol.
 public protocol AirshipPush: AnyObject, Sendable {
@@ -198,16 +201,21 @@ public protocol AirshipPush: AnyObject, Sendable {
     @MainActor
     var onForegroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> Void)? { get set }
 
-#if !os(watchOS)
-    /// Callback to be called when a notification is received in the background.
-    /// This callback takes precedence over the delegate method if both are set.
-    @MainActor
-    var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> UIBackgroundFetchResult)? { get set }
-#else
+#if os(watchOS)
     /// Callback to be called when a notification is received in the background.
     /// This callback takes precedence over the delegate method if both are set.
     @MainActor
     var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> WKBackgroundFetchResult)? { get set }
+#elseif os(macOS)
+    /// Callback to be called when a notification is received in the background.
+    /// This callback takes precedence over the delegate method if both are set.
+    @MainActor
+    var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> Void)? { get set }
+#else
+    /// Callback to be called when a notification is received in the background.
+    /// This callback takes precedence over the delegate method if both are set.
+    @MainActor
+    var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> UIBackgroundFetchResult)? { get set }
 #endif
 
 #if !os(tvOS)
@@ -226,7 +234,7 @@ public protocol AirshipPush: AnyObject, Sendable {
 protocol InternalAirshipPush: Sendable {
     @MainActor
     var deviceToken: String? { get }
-    
+
     func dispatchUpdateAuthorizedNotificationTypes()
 
     @MainActor
@@ -239,16 +247,16 @@ protocol InternalAirshipPush: Sendable {
     func didReceiveRemoteNotification(
         _ notification: [AnyHashable: Any],
         isForeground: Bool
-    ) async -> any Sendable
-    
+    ) async -> UABackgroundFetchResult
+
     @MainActor
     func presentationOptionsForNotification(_ notification: UNNotification) async -> UNNotificationPresentationOptions
-    
-    #if !os(tvOS)
+
+#if !os(tvOS)
     @MainActor
     func didReceiveNotificationResponse(_ response: UNNotificationResponse) async
 
     @MainActor
     var combinedCategories: Set<UNNotificationCategory> { get }
-    #endif
+#endif
 }

@@ -860,8 +860,7 @@ class AirshipPushTest: XCTestCase {
             isForeground: true
         )
 
-        let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
-        XCTAssertEqual(UIBackgroundFetchResult.noData, res)
+        XCTAssertEqual(UABackgroundFetchResult.noData, result)
     }
 
     @MainActor
@@ -879,8 +878,7 @@ class AirshipPushTest: XCTestCase {
 
         let result = await self.push.didReceiveRemoteNotification(expected, isForeground: true)
 
-        let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
-        XCTAssertEqual(UIBackgroundFetchResult.noData, res)
+        XCTAssertEqual(UABackgroundFetchResult.noData, result)
     }
 
     @MainActor
@@ -892,8 +890,7 @@ class AirshipPushTest: XCTestCase {
             isForeground: false
         )
 
-        let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
-        XCTAssertEqual(UIBackgroundFetchResult.noData, res)
+        XCTAssertEqual(UABackgroundFetchResult.noData, result)
     }
 
     @MainActor
@@ -915,8 +912,7 @@ class AirshipPushTest: XCTestCase {
             isForeground: false
         )
 
-        let res: UIBackgroundFetchResult = result as! UIBackgroundFetchResult
-        XCTAssertEqual(UIBackgroundFetchResult.newData, res)
+        XCTAssertEqual(UABackgroundFetchResult.newData, result)
     }
 
     @MainActor

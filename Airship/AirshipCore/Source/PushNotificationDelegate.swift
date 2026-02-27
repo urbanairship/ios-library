@@ -6,11 +6,11 @@ import Foundation
 public import WatchKit
 #endif
 
-#if canImport(UIKit)
-import UIKit
+#if canImport(UIKit) && !os(watchOS)
+public import UIKit
 #endif
 
-import UserNotifications
+public import UserNotifications
 
 /// Protocol to be implemented by push notification clients. All methods are optional.
 public protocol PushNotificationDelegate: AnyObject, Sendable {
@@ -20,22 +20,29 @@ public protocol PushNotificationDelegate: AnyObject, Sendable {
     ///   - userInfo: The notification info
     @MainActor
     func receivedForegroundNotification(_ userInfo: [AnyHashable: Any]) async
-    #if !os(watchOS)
-    /// Called when a notification is received in the background.
-    ///
-    /// - Parameters:
-    ///   - userInfo: The notification info
-    @MainActor
-    func receivedBackgroundNotification(_ userInfo: [AnyHashable: Any]) async -> UIBackgroundFetchResult
-    #else
+#if os(watchOS)
     /// Called when a notification is received in the background.
     ///
     /// - Parameters:
     ///   - userInfo: The notification info
     @MainActor
     func receivedBackgroundNotification(_ userInfo: [AnyHashable: Any]) async -> WKBackgroundFetchResult
-    #endif
-    #if !os(tvOS)
+#elseif os(macOS)
+    /// Called when a notification is received in the background.
+    ///
+    /// - Parameters:
+    ///   - userInfo: The notification info
+    @MainActor
+    func receivedBackgroundNotification(_ userInfo: [AnyHashable: Any]) async -> Void
+#else
+    /// Called when a notification is received in the background.
+    ///
+    /// - Parameters:
+    ///   - userInfo: The notification info
+    @MainActor
+    func receivedBackgroundNotification(_ userInfo: [AnyHashable: Any]) async -> UIBackgroundFetchResult
+#endif
+#if !os(tvOS)
     /// Called when a notification is received in the background or foreground and results in a user interaction.
     /// User interactions can include launching the application from the push, or using an interactive control on the notification interface
     /// such as a button or text field.
@@ -45,7 +52,7 @@ public protocol PushNotificationDelegate: AnyObject, Sendable {
     /// to the notification and the associated notification contents.
     @MainActor
     func receivedNotificationResponse(_ notificationResponse: UNNotificationResponse) async
-    #endif
+#endif
     
     /// Called when a notification has arrived in the foreground and is available for display.
     ///

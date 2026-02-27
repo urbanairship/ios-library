@@ -4,7 +4,7 @@ import Foundation
 public import Combine
 
 #if canImport(UserNotifications)
-import UserNotifications
+public import UserNotifications
 #endif
 
 /// Analytics protocol
