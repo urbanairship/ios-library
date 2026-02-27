@@ -319,13 +319,15 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
         let maxDimension = max(measureForAppearance(selectedAppearance), measureForAppearance(unselectedAppearance))
 
         /// Inject new constraints
-        let viewConstraints = ViewConstraints(width: maxDimension,
-                                              height: maxDimension,
-                                              maxWidth: viewConstraints.maxWidth,
-                                              maxHeight: viewConstraints.maxHeight,
-                                              isHorizontalFixedSize: viewConstraints.isHorizontalFixedSize,
-                                              isVerticalFixedSize: viewConstraints.isVerticalFixedSize,
-                                              safeAreaInsets: viewConstraints.safeAreaInsets)
+        let viewConstraints = ViewConstraints(
+            width: maxDimension,
+            height: maxDimension,
+            maxWidth: viewConstraints.maxWidth,
+            maxHeight: viewConstraints.maxHeight,
+            isHorizontalFixedSize: viewConstraints.isHorizontalFixedSize,
+            isVerticalFixedSize: viewConstraints.isVerticalFixedSize,
+            safeAreaInsets: viewConstraints.safeAreaInsets
+        )
 
         return Button(action: { configuration.isOn.toggle() }) {
             ZStack {
@@ -378,9 +380,8 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
 
         let minTappableDimension: CGFloat = 44.0
 
-        let fontMetrics = UIFontMetrics.default
-        let scaledWidthSpacing = fontMetrics.scaledValue(for: measuredSize.width)
-        let scaledHeightSpacing = fontMetrics.scaledValue(for: measuredSize.height)
+        let scaledWidthSpacing = AirshipFont.scaledSize(measuredSize.width)
+        let scaledHeightSpacing = AirshipFont.scaledSize(measuredSize.height)
 
         let minWidth = max(minTappableDimension, measuredSize.width + scaledWidthSpacing)
         let minHeight = max(minTappableDimension, measuredSize.height + scaledHeightSpacing)
@@ -393,7 +394,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
             return CGSizeZero
         }
 
-        let font = UIFont.resolveUIFont(appearance)
+        let font = appearance.nativeFont
         return (text as String).size(withAttributes: [.font: font])
     }
 
@@ -402,9 +403,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
             return 0
         }
 
-        let font = UIFont.resolveUIFont(appearance)
+        let font = appearance.nativeFont
         return (text as String).size(withAttributes: [.font: font]).height
     }
-
-
 }

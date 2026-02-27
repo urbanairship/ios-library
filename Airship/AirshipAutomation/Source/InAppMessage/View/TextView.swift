@@ -2,13 +2,17 @@
 
 import SwiftUI
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
 struct TextView: View {
     let textInfo: InAppMessageTextInfo
     let textTheme: InAppMessageTheme.Text
 
     var body: some View {
         Text(textInfo.text)
-            .foregroundColor(textInfo.color?.color ?? Color.black) /// Should never default to black
+            .foregroundColor(textInfo.color?.color ?? .primary)
             .multilineTextAlignment(alignment(for: textInfo.alignment))
             .applyTextStyling(textInfo: textInfo)
             .applyTextTheme(textTheme)
@@ -23,74 +27,30 @@ struct TextView: View {
         case .right:
             return .trailing
         case .none:
-            return .center /// Default alignment
+            return .center
         }
     }
 }
 
 extension View {
-    func applyTextStyling(textInfo:InAppMessageTextInfo) -> some View {
+    func applyTextStyling(textInfo: InAppMessageTextInfo) -> some View {
         return self.modifier(TextStyleViewModifier(textInfo: textInfo))
     }
 }
 
 struct TextStyleViewModifier: ViewModifier {
-    // Needed for dynamic font size
     @Environment(\.sizeCategory) var sizeCategory
     let textInfo: InAppMessageTextInfo
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        content.font(UIFont.resolve(self.textInfo))
-    }
-}
-
-fileprivate extension UIFont {
-    static func resolve(
-        _ textInfo: InAppMessageTextInfo
-    ) -> Font {
-        var font: Font
-        let scaledSize = UIFontMetrics.default.scaledValue(for: textInfo.size ?? 14)
-
-        if let fontFamily = resolveFamily(
-            families: textInfo.fontFamilies
-        ) {
-            font = Font.custom(
-                fontFamily,
-                fixedSize: scaledSize
+        content.font(
+            AirshipFont.resolveFont(
+                size: textInfo.size ?? 14,
+                families: textInfo.fontFamilies,
+                isItalic: textInfo.style?.contains(.italic) ?? false,
+                isBold: textInfo.style?.contains(.bold) ?? false
             )
-        } else {
-            font = Font.system(size: scaledSize)
-        }
-
-        if let styles = textInfo.style {
-            if styles.contains(.bold) {
-                font = font.bold()
-            }
-            if styles.contains(.italic) {
-                font = font.italic()
-            }
-        }
-        return font
-    }
-
-    static func resolveFamily(families: [String]?) -> String? {
-        if let families = families {
-            for family in families {
-                let lowerCased = family.lowercased()
-
-                switch lowerCased {
-                case "serif":
-                    return "Times New Roman"
-                case "sans-serif":
-                    return nil
-                default:
-                    if !UIFont.fontNames(forFamilyName: lowerCased).isEmpty {
-                        return family
-                    }
-                }
-            }
-        }
-        return nil
+        )
     }
 }

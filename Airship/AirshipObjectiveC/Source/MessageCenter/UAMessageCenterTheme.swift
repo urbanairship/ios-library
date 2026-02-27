@@ -30,11 +30,11 @@ public final class UAMessageCenterTheme: NSObject {
 
     @objc
     /// The font to use for message cell titles.
-    public var cellTitleFont: UIFont? = UIFont.preferredFont(forTextStyle: .headline)
+    public var cellTitleFont: AirshipNativeFont? = AirshipNativeFont.preferredFont(forTextStyle: .headline)
 
     @objc
     /// The font to use for message cell dates.
-    public var cellDateFont: UIFont? = UIFont.preferredFont(forTextStyle: .subheadline)
+    public var cellDateFont: AirshipNativeFont? = AirshipNativeFont.preferredFont(forTextStyle: .subheadline)
 
     @objc
     /// The regular color for message cells

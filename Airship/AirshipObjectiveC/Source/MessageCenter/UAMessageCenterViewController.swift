@@ -150,7 +150,7 @@ public final class UAMessageCenterViewControllerFactory: NSObject, Sendable {
         return nil
     }
     
-    private class func toFont(font: UIFont?) -> Font? {
+    private class func toFont(font: AirshipNativeFont?) -> Font? {
         if let font = font {
             return Font(font)
         }

@@ -34,9 +34,7 @@ struct TextInput: View {
 
 
     private var scaledFontSize: Double {
-        UIFontMetrics.default.scaledValue(
-            for: self.info.properties.textAppearance.fontSize
-        )
+        AirshipFont.scaledSize(self.info.properties.textAppearance.fontSize)
     }
 
     init(
@@ -54,7 +52,7 @@ struct TextInput: View {
         )
     }
 
-#if !os(watchOS)
+#if !os(watchOS) && !os(macOS)
     private var keyboardType: UIKeyboardType {
         switch self.info.properties.inputType {
         case .email:
@@ -141,7 +139,7 @@ struct TextInput: View {
             }
             HStack {
                 makeTextEditor()
-#if !os(watchOS)
+#if !os(watchOS) && !os(macOS)
                     .airshipApplyIf(self.info.properties.inputType == .email) { view in
                         view.textInputAutocapitalization(.never)
                     }
@@ -169,7 +167,7 @@ struct TextInput: View {
             
             textInputContent()
         }
-#if !os(watchOS)
+#if !os(watchOS) && !os(macOS)
         .keyboardType(keyboardType)
         .airshipApplyIf(self.info.properties.inputType == .email) { view in
             view.textContentType(.emailAddress)

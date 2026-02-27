@@ -28,11 +28,8 @@ struct Label: View {
     }
 
     private var scaledFontSize: Double {
-        UIFontMetrics.default.scaledValue(
-            for: self.info.properties.textAppearance.fontSize
-        )
+        AirshipFont.scaledSize(self.info.properties.textAppearance.fontSize)
     }
-
 
     private var resolvedEndIcon: ThomasViewInfo.Label.LabelIcon? {
         return ThomasPropertyOverride.resolveOptional(
