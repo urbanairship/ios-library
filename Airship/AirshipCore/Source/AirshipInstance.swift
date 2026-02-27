@@ -10,8 +10,11 @@ protocol AirshipInstance: Sendable {
 
     #if !os(tvOS) && !os(watchOS)
     var javaScriptCommandDelegate: (any JavaScriptCommandDelegate)? { get set }
-    var channelCapture: any AirshipChannelCapture { get }
     #endif
+
+#if !os(macOS) && !os(tvOS) && !os(watchOS)
+    var channelCapture: any AirshipChannelCapture { get }
+#endif
 
     var deepLinkDelegate: (any DeepLinkDelegate)? { get set }
 
@@ -46,6 +49,9 @@ final class DefaultAirshipInstance: AirshipInstance {
         get { return _jsDelegateHolder.value }
         set { _jsDelegateHolder.value = newValue }
     }
+#endif
+
+#if !os(macOS) && !os(tvOS) && !os(watchOS)
     public let channelCapture: any AirshipChannelCapture
 #endif
 
@@ -101,15 +107,9 @@ final class DefaultAirshipInstance: AirshipInstance {
             config: self.config
         )
         
-#if !os(watchOS)
-        let apnsRegistrar = UIApplicationAPNSRegistrar()
-#else
-        let apnsRegistrar = WKExtensionAPNSRegistrar()
-#endif
-        
+        let apnsRegistrar = DefaultAPNSRegistrar()
         let audienceOverridesProvider = DefaultAudienceOverridesProvider()
-        
-        
+
         let channel = DefaultAirshipChannel(
             dataStore: dataStore,
             config: self.config,
@@ -180,7 +180,7 @@ final class DefaultAirshipInstance: AirshipInstance {
             privacyManager: privacyManager
         )
         
-#if !os(tvOS) && !os(watchOS)
+#if !os(tvOS) && !os(watchOS) && !os(macOS)
         self.channelCapture = DefaultAirshipChannelCapture(
             config: self.config,
             channel: channel

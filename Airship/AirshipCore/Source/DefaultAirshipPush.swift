@@ -29,7 +29,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
             .compactMap { $0 }
             .eraseToAnyPublisher()
     }
-    
+
     var notificationStatusUpdates: AsyncStream<AirshipNotificationStatus> {
         return self.notificationStatusChannel.makeNonIsolatedDedupingStream(
             initialValue: { [weak self] in await self?.notificationStatus }
@@ -104,15 +104,15 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
 #elseif os(macOS)
     @MainActor
     public var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> Void)?
-    #else
+#else
     @MainActor
     public var onBackgroundNotificationReceived: (@MainActor @Sendable ([AnyHashable: Any]) async -> UIBackgroundFetchResult)?
-    #endif
+#endif
 
-    #if !os(tvOS)
+#if !os(tvOS)
     @MainActor
     public var onNotificationResponseReceived: (@MainActor @Sendable (UNNotificationResponse) async -> Void)?
-    #endif
+#endif
 
     @MainActor
     public var onExtendPresentationOptions: (@MainActor @Sendable (UNNotificationPresentationOptions, UNNotification) async -> UNNotificationPresentationOptions)?
@@ -124,15 +124,11 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
 
     @MainActor
     private var isBackgroundRefreshStatusAvailable: Bool {
-        #if os(watchOS) || os(macOS)
-        return false
-        #else
         return self.apnsRegistrar.isBackgroundRefreshStatusAvailable
-        #endif
     }
 
     private var subscriptions: Set<AnyCancellable> = Set()
-    
+
     @MainActor
     @inline(never)
     init(
@@ -172,12 +168,12 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
                 skipIfEphemeral: skipIfEphemeral
             )
         }
-        
+
         self.permissionsManager.setDelegate(
             permissionDelegate,
             permission: .displayNotifications
         )
-        
+
         self.permissionsManager.addRequestExtender(
             permission: .displayNotifications
         ) { status in
@@ -226,7 +222,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
 
     @MainActor
     private func observeNotificationCenterEvents() {
-        #if !os(watchOS) && !os(macOS)
+#if !os(watchOS) && !os(macOS)
         self.notificationCenter.addObserver(
             self,
             selector: #selector(applicationBackgroundRefreshStatusChanged),
@@ -234,7 +230,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
                 .backgroundRefreshStatusDidChangeNotification,
             object: nil
         )
-        #endif
+#endif
         self.notificationCenter.addObserver(
             self,
             selector: #selector(applicationDidBecomeActive),
@@ -397,21 +393,21 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
                     forKey: DefaultAirshipPush.pushNotificationsOptionsKey
                 ) as? UInt
             else {
-                #if os(tvOS)
+#if os(tvOS)
                 return .badge
-                #else
+#else
                 guard self.authorizationStatus == .provisional else {
                     return [.badge, .sound, .alert]
                 }
                 return [.badge, .sound, .alert, .provisional]
-                #endif
+#endif
             }
 
             return UNAuthorizationOptions(rawValue: value)
         }
     }
 
-    #if !os(tvOS)
+#if !os(tvOS)
     /// Custom notification categories. Airship default notification
     /// categories will be unaffected by this field.
     @MainActor
@@ -431,7 +427,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
         return defaultCategories.union(self.customCategories)
     }
 
-    #endif
+#endif
 
     /// Sets authorization required for the default Airship categories. Only applies
     /// to background user notification actions.
@@ -451,10 +447,10 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
     @MainActor
     public weak var registrationDelegate: (any RegistrationDelegate)?
 
-    #if !os(tvOS)
+#if !os(tvOS)
     /// Notification response that launched the application.
     public private(set) var launchNotificationResponse: UNNotificationResponse?
-    #endif
+#endif
 
     public private(set) var authorizedNotificationSettings: AirshipAuthorizedNotificationSettings {
         set {
@@ -497,7 +493,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
             }
 
             return UNAuthorizationStatus(rawValue: Int(value))
-                ?? .notDetermined
+            ?? .notDetermined
         }
     }
 
@@ -516,7 +512,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
     }
 
     public var defaultPresentationOptions: UNNotificationPresentationOptions =
-        []
+    []
 
     @MainActor
     private func updateAuthorizedNotificationTypes(
@@ -690,15 +686,15 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
     @MainActor
     private func backgroundPushNotificationsAllowed() -> Bool {
         guard self.deviceToken != nil,
-            self.backgroundPushNotificationsEnabled,
-            self.apnsRegistrar.isRemoteNotificationBackgroundModeEnabled,
-            self.privacyManager.isEnabled(.push)
+              self.backgroundPushNotificationsEnabled,
+              self.apnsRegistrar.isRemoteNotificationBackgroundModeEnabled,
+              self.privacyManager.isEnabled(.push)
         else {
             return false
         }
 
         return self.isRegisteredForRemoteNotifications
-            && self.isBackgroundRefreshStatusAvailable
+        && self.isBackgroundRefreshStatusAvailable
     }
 
     @MainActor
@@ -728,7 +724,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
         guard self.privacyManager.isEnabled(.push) else {
             return
         }
-        
+
         if self.deviceToken == nil {
             self.apnsRegistrar.registerForRemoteNotifications()
         }
@@ -737,7 +733,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
             alwaysUpdateChannel: true
         )
 
-        #if !os(tvOS)
+#if !os(tvOS)
         if let onNotificationRegistrationFinished {
             onNotificationRegistrationFinished(
                 NotificationRegistrationResult(
@@ -754,7 +750,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
                     status: status
                 )
         }
-        #else
+#else
         if let onNotificationRegistrationFinished {
             onNotificationRegistrationFinished(
                 NotificationRegistrationResult(
@@ -769,10 +765,10 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
                     status: status
                 )
         }
-        #endif
+#endif
     }
 
-    #if !os(watchOS)
+#if !os(watchOS)
 
     public func setBadgeNumber(_ newBadgeNumber: Int) async throws {
         try await self.badger.setBadgeNumber(newBadgeNumber)
@@ -813,7 +809,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
         try await self.setBadgeNumber(0)
     }
 
-    #endif
+#endif
 
     public var quietTime: QuietTimeSettings? {
         get {
@@ -847,9 +843,9 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
 
         get {
             let timeZoneName =
-                self.dataStore.string(forKey: DefaultAirshipPush.timeZoneSettingsKey) ?? ""
+            self.dataStore.string(forKey: DefaultAirshipPush.timeZoneSettingsKey) ?? ""
             return NSTimeZone(name: timeZoneName) ?? NSTimeZone.default
-                as NSTimeZone
+            as NSTimeZone
         }
     }
 
@@ -895,8 +891,8 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
 
     @MainActor
     private func updateCategories() {
-        #if !os(tvOS)
-        guard 
+#if !os(tvOS)
+        guard
             self.privacyManager.isEnabled(.push),
             self.config.airshipConfig.requestAuthorizationToUseNotifications
         else {
@@ -904,7 +900,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
         }
 
         self.notificationRegistrar.setCategories(self.combinedCategories)
-        #endif
+#endif
     }
 
     private func dispatchUpdateNotifications() {
@@ -954,15 +950,15 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
 
     @objc
     private func applicationDidEnterBackground() {
-        #if !os(tvOS)
+#if !os(tvOS)
         self.launchNotificationResponse = nil
-        #endif
+#endif
         if self.privacyManager.isEnabled(.push) {
             self.dispatchUpdateAuthorizedNotificationTypes()
         }
     }
 
-    #if !os(watchOS) && !os(macOS)
+#if !os(watchOS) && !os(macOS)
     @objc
     @MainActor
     private func applicationBackgroundRefreshStatusChanged() {
@@ -976,7 +972,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
             }
         }
     }
-    #endif
+#endif
 
     @MainActor
     private func extendChannelRegistrationPayload(
@@ -1042,11 +1038,11 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
         }
         var headers: [String: String] = [:]
         headers["X-UA-Channel-Opted-In"] =
-            self.isPushNotificationsOptedIn ? "true" : "false"
+        self.isPushNotificationsOptedIn ? "true" : "false"
         headers["X-UA-Notification-Prompted"] =
-            self.userPromptedForNotifications ? "true" : "false"
+        self.userPromptedForNotifications ? "true" : "false"
         headers["X-UA-Channel-Background-Enabled"] =
-            self.backgroundPushNotificationsAllowed() ? "true" : "false"
+        self.backgroundPushNotificationsAllowed() ? "true" : "false"
         headers["X-UA-Push-Address"] = self.deviceToken
 
         return headers

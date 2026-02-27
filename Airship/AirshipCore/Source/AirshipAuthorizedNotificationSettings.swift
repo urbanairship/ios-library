@@ -64,7 +64,7 @@ extension AirshipAuthorizedNotificationSettings {
             authorizedSettings.insert(.alert)
         }
 
-#if !os(watchOS)
+#if !os(watchOS) && !os(macOS)
         if settings.carPlaySetting == .enabled {
             authorizedSettings.insert(.carPlay)
         }
@@ -82,7 +82,7 @@ extension AirshipAuthorizedNotificationSettings {
             authorizedSettings.insert(.criticalAlert)
         }
 
-#if !os(visionOS)
+#if !os(visionOS) && !os(macOS)
         /// Announcement authorization is always included in visionOS
         if settings.announcementSetting == .enabled {
             authorizedSettings.insert(.announcement)
