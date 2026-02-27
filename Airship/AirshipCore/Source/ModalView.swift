@@ -168,7 +168,7 @@ struct ModalView: View {
     }
 
     private func statusBarShimColor() -> Color {
-        #if os(tvOS) || os(watchOS)
+        #if os(tvOS) || os(watchOS) || os(macOS)
         return Color.clear
         #else
 

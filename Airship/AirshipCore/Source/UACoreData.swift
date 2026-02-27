@@ -54,8 +54,8 @@ public actor UACoreData {
         self.modelURL = modelURL
         self.inMemory = inMemory
         self.storeNames = stores
-
-        #if !os(watchOS)
+        
+#if !os(watchOS) && !os(macOS)
         Task { @MainActor [weak self] in
             if (UIApplication.shared.isProtectedDataAvailable) {
                 await self?.protectedDataAvailable()
@@ -68,7 +68,7 @@ public actor UACoreData {
                 })
             }
         }
-        #endif
+#endif
     }
 
 

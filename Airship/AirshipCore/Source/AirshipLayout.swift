@@ -99,4 +99,3 @@ extension AirshipLayout {
         return self.view.extractDescendants(extractor: extractor)
     }
 }
-

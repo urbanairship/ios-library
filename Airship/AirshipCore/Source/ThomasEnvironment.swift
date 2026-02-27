@@ -69,7 +69,7 @@ class ThomasEnvironment: ObservableObject {
         )
         self.stateStorage = stateStorage
         
-        #if !os(tvOS) && !os(watchOS)
+        #if !os(tvOS) && !os(watchOS) && !os(macOS)
         self.subscribeKeyboard()
         #endif
 
@@ -440,7 +440,7 @@ class ThomasEnvironment: ObservableObject {
         return context
     }
 
-    #if !os(tvOS) && !os(watchOS)
+    #if !os(tvOS) && !os(watchOS) && !os(macOS)
     @MainActor
     private func subscribeKeyboard() {
         Publishers.Merge3(

@@ -11,9 +11,6 @@ import UIKit
 import WatchKit
 #endif
 
-#if canImport(AirshipBasement)
-import AirshipBasement
-#endif
 
 // NOTE: For internal use only. :nodoc:
 final class DefaultAppIntegrationDelegate: AppIntegrationDelegate, Sendable {

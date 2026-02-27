@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#if !os(watchOS)
+#if !os(watchOS) && !os(macOS)
 
 import SwiftUI
 import AVFoundation
@@ -32,7 +32,6 @@ private class VideoControlsObserver: ObservableObject {
 }
 
 
-#if !os(watchOS)
 // The video control view wrapper for centering the controls over the video
 struct VideoControlsWrapper: View {
     let info: ThomasViewInfo.Media
@@ -86,7 +85,6 @@ struct VideoControlsWrapper: View {
     }
 }
 
-#endif
 
 internal struct VideoControls: ViewModifier {
     let hasError: Bool

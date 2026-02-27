@@ -1,8 +1,8 @@
 /* Copyright Airship and Contributors */
 
+#if os(iOS)
 import UIKit
 
-#if os(iOS)
 final class ActivityViewController: UIActivityViewController,
     UIPopoverPresentationControllerDelegate, UIPopoverControllerDelegate
 {

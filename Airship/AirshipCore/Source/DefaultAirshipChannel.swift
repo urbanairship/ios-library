@@ -3,7 +3,7 @@
 @preconcurrency
 import Combine
 import Foundation
-
+import UserNotifications
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -474,7 +474,7 @@ extension DefaultAirshipChannel: AirshipPushableComponent {
         }
 
         if self.privacyManager.isEnabled(.analytics) {
-            payload.channel.deviceModel = await AirshipDevice.modelIdentifier
+            payload.channel.deviceModel = AirshipDevice.modelIdentifier
             payload.channel.appVersion = AirshipUtils.bundleShortVersionString()
             payload.channel.deviceOS = await AirshipDevice.osVersion
         }
@@ -518,7 +518,7 @@ extension DefaultAirshipChannel: InternalAirshipChannel {
     }
 }
 
-#if canImport(ActivityKit) && !targetEnvironment(macCatalyst)
+#if canImport(ActivityKit) && !targetEnvironment(macCatalyst) && !os(macOS)
 import ActivityKit
 @available(iOS 16.1, *)
 extension DefaultAirshipChannel {

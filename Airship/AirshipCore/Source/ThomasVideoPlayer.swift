@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#if !os(watchOS)
+#if !os(watchOS) && !os(macOS)
 
 import Foundation
 import SwiftUI

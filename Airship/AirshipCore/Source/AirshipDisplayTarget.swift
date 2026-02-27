@@ -155,8 +155,8 @@ public final class AirshipDisplayTarget {
 class ModalDisplayable: AirshipDisplayTarget.Displayable {
     private var window: NSWindow?
     private var parentWindow: NSWindow?
-    private var frameObserver: NSObjectProtocol?
-    private var moveObserver: NSObjectProtocol?
+    private var frameObserver: (any NSObjectProtocol)?
+    private var moveObserver: (any NSObjectProtocol)?
 
     func display(viewControllerProvider: @MainActor (AirshipDisplayTarget.WindowInfo) -> NSViewController) throws {
         // Dismiss any existing modal first
@@ -204,8 +204,10 @@ class ModalDisplayable: AirshipDisplayTarget.Displayable {
             object: parentWindow,
             queue: .main
         ) { [weak self] _ in
-            guard let self = self, let window = self.window, let parent = self.parentWindow else { return }
-            self.updateChildWindowFrame(window: window, parent: parent)
+            MainActor.assumeIsolated {
+                guard let self = self, let window = self.window, let parent = self.parentWindow else { return }
+                self.updateChildWindowFrame(window: window, parent: parent)
+            }
         }
         
         moveObserver = NotificationCenter.default.addObserver(
@@ -213,8 +215,10 @@ class ModalDisplayable: AirshipDisplayTarget.Displayable {
             object: parentWindow,
             queue: .main
         ) { [weak self] _ in
-            guard let self = self, let window = self.window, let parent = self.parentWindow else { return }
-            self.updateChildWindowFrame(window: window, parent: parent)
+            MainActor.assumeIsolated {
+                guard let self = self, let window = self.window, let parent = self.parentWindow else { return }
+                self.updateChildWindowFrame(window: window, parent: parent)
+            }
         }
         
         // Make key and order front (after setting parent and frame)
@@ -296,7 +300,9 @@ class BannerDisplayable: AirshipDisplayTarget.Displayable {
         // 8. Setup Auto-Resizing
         // Child windows do not stick to parent size automatically. We must observe.
         parentObservation = hostWindow.observe(\.contentLayoutRect, options: [.new, .initial]) { [weak overlayWindow] window, _ in
-            overlayWindow?.setFrame(window.contentLayoutRect, display: true)
+            MainActor.assumeIsolated {
+                overlayWindow?.setFrame(window.contentLayoutRect, display: true)
+            }
         }
 
         // 9. Store Reference

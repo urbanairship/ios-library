@@ -50,7 +50,7 @@ struct Media: View {
                 hideIfDescriptionIsMissing: true
             )
         case .video:
-#if !os(watchOS)
+#if !os(watchOS) && !os(macOS)
             VideoControlsWrapper(
                 info: self.info,
                 constraints: constraints,

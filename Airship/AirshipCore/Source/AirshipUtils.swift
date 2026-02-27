@@ -115,7 +115,7 @@ public final class AirshipUtils {
 
     // MARK: UI Utilities
 
-    #if !os(watchOS)
+    #if !os(watchOS) && !os(macOS)
     /// Returns the main window for the app.
     ///
     /// This window will be positioned underneath any other windows added and removed at runtime,
@@ -159,7 +159,7 @@ public final class AirshipUtils {
 
     // MARK: Fetch Results
 
-    #if !os(watchOS)
+    #if !os(watchOS) && !os(macOS)
     ///  Takes an array of fetch results and returns the merged result.
     ///
     /// - Parameter results: An `Array` of fetch results.
@@ -178,7 +178,9 @@ public final class AirshipUtils {
         }
         return mergedResult
     }
-    #else
+    #endif
+    
+    #if os(watchOS)
     ///  Takes an array of fetch results and returns the merged result.
     ///
     /// - Parameter results: An `Array` of fetch results.

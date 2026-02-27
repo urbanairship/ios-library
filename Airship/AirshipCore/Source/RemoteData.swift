@@ -8,6 +8,8 @@ import Foundation
 import UIKit
 #endif
 
+import UserNotifications
+
 /// NOTE: For internal use only. :nodoc:
 final class RemoteData: AirshipComponent, RemoteDataProtocol {
     fileprivate enum RefreshStatus: Sendable {

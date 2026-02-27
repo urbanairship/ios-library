@@ -32,7 +32,7 @@ struct UNNotificationRegistrar: NotificationRegistrar {
             return
         }
 
-#if !os(tvOS) && !os(watchOS)
+#if !os(tvOS) && !os(watchOS) && !os(macOS)
         // Skip registration for ephemeral if skipRegistrationIfEphemeral
         if status == .ephemeral && skipIfEphemeral {
             return

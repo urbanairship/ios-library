@@ -220,18 +220,9 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
     private func makeHeaders() async -> [String: String] {
         var headers: [String: String] = [:]
 
-        // Device info
-        #if !os(watchOS)
-        headers["X-UA-Device-Family"] = await UIDevice.current.systemName
-        headers["X-UA-OS-Version"] = await UIDevice.current.systemVersion
-        #else
-        headers["X-UA-Device-Family"] =
-            WKInterfaceDevice.current().systemName
-        headers["X-UA-OS-Version"] =
-            WKInterfaceDevice.current().systemVersion
-        #endif
-
-        headers["X-UA-Device-Model"] = await AirshipDevice.modelIdentifier
+        headers["X-UA-Device-Family"] = await AirshipDevice.model
+        headers["X-UA-OS-Version"] = await AirshipDevice.osVersion
+        headers["X-UA-Device-Model"] = AirshipDevice.modelIdentifier
 
         // App info
         if let infoDictionary = Bundle.main.infoDictionary {

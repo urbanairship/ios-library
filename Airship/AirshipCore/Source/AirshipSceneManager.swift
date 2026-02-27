@@ -7,7 +7,7 @@ public import UIKit
 
 /// - Note: for internal use only.  :nodoc:
 public protocol AirshipSceneManagerProtocol: Sendable {
-#if !os(watchOS)
+#if !os(watchOS) && !os(macOS)
     @MainActor
     var lastActiveScene: UIWindowScene  { get throws }
 #endif
@@ -22,7 +22,7 @@ public protocol AirshipSceneManagerProtocol: Sendable {
 public final class AirshipSceneManager: AirshipSceneManagerProtocol, Sendable {
     public static let shared: AirshipSceneManager = AirshipSceneManager()
 
-#if !os(watchOS)
+#if !os(watchOS) && !os(macOS)
 
     private let scenes: AirshipAtomicValue<[UIWindowScene]> = AirshipAtomicValue([UIWindowScene]())
 
