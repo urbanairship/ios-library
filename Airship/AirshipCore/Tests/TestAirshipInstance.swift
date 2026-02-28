@@ -84,6 +84,8 @@ final class TestAirshipInstance: AirshipInstance, @unchecked Sendable {
     @MainActor
     public var onDeepLink: (@MainActor @Sendable (URL) async -> Void)?
 
+    public let urlOpener: any URLOpenerProtocol = TestURLOpener()
+
     public var components: [AirshipComponent] = []
 
     private var componentMap: [String: AirshipComponent] = [:]
@@ -113,3 +115,4 @@ final class TestAirshipInstance: AirshipInstance, @unchecked Sendable {
         _permissionsManager = DefaultAirshipPermissionsManager()
     }
 }
+

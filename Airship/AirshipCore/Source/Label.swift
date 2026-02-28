@@ -3,6 +3,14 @@
 import Foundation
 import SwiftUI
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
+#if canImport(AppKit)
+import AppKit
+#endif
+
 /// Text/Label view
 
 struct Label: View {
@@ -122,9 +130,9 @@ struct Label: View {
         .onAppear {
             if self.info.properties.isAccessibilityAlert == true {
                 let message = self.info.resolveLabelString(thomasState: self.thomasState)
-                #if !os(watchOS)
+#if !os(watchOS) && !os(macOS)
                 UIAccessibility.post(notification: .announcement, argument: message)
-                #endif
+#endif
             }
         }
     }

@@ -52,6 +52,7 @@ class OpenExternalURLActionTest: XCTestCase {
         }
     }
 
+    @MainActor
     func testPerform() async throws {
         self.urlAllowList.isAllowedReturnValue = true
         self.testURLOpener.returnValue = true
@@ -66,6 +67,7 @@ class OpenExternalURLActionTest: XCTestCase {
         XCTAssertEqual("http://some-valid-url", self.testURLOpener.lastURL?.absoluteString)
     }
 
+    @MainActor
     func testPerformRejectsURL() async throws {
         self.urlAllowList.isAllowedReturnValue = false
         self.testURLOpener.returnValue = true
@@ -83,6 +85,7 @@ class OpenExternalURLActionTest: XCTestCase {
         XCTAssertNil(self.testURLOpener.lastURL)
     }
 
+    @MainActor
     func testPerformUnableToOpenURL() async throws {
         self.urlAllowList.isAllowedReturnValue = true
         self.testURLOpener.returnValue = false
@@ -100,6 +103,7 @@ class OpenExternalURLActionTest: XCTestCase {
         XCTAssertEqual("http://some-valid-url", self.testURLOpener.lastURL?.absoluteString)
     }
 
+    @MainActor
     func testPerformInvalidURL() async throws {
         self.urlAllowList.isAllowedReturnValue = true
         self.testURLOpener.returnValue = true

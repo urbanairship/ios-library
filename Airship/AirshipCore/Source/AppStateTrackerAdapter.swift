@@ -94,7 +94,9 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter {
         )
     }
 }
-#else
+#endif
+
+#if !os(macOS) && !os(watchOS)
 import UIKit
 
 final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter {
@@ -183,3 +185,85 @@ final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter {
 
 #endif
 
+#if os(macOS)
+import AppKit
+
+final class DefaultAppStateTrackerAdapter: AppStateTrackerAdapter {
+    var state: ApplicationState {
+        // macOS is active if it's the frontmost app and not hidden.
+        if NSApplication.shared.isActive {
+            return .active
+        } else if NSApplication.shared.isHidden {
+            return .background
+        } else {
+            return .inactive
+        }
+    }
+
+    func watchAppLifeCycleEvents(
+        eventHandler: @MainActor @Sendable @escaping (AppLifeCycleEvent) -> Void
+    ) {
+        let notificationCenter = NotificationCenter.default
+
+        // Active
+        notificationCenter.addObserver(
+            forName: NSApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: nil,
+            using: { _ in
+                MainActor.assumeIsolated {
+                    eventHandler(.didBecomeActive)
+                }
+            }
+        )
+
+        // Resign Active (Inactive/Background transition)
+        notificationCenter.addObserver(
+            forName: NSApplication.didResignActiveNotification,
+            object: nil,
+            queue: nil,
+            using: { _ in
+                MainActor.assumeIsolated {
+                    eventHandler(.willResignActive)
+                }
+            }
+        )
+
+        // Hide (Maps well to Enter Background)
+        notificationCenter.addObserver(
+            forName: NSApplication.didHideNotification,
+            object: nil,
+            queue: nil,
+            using: { _ in
+                MainActor.assumeIsolated {
+                    eventHandler(.didEnterBackground)
+                }
+            }
+        )
+
+        // Unhide (Maps well to Enter Foreground)
+        notificationCenter.addObserver(
+            forName: NSApplication.willUnhideNotification,
+            object: nil,
+            queue: nil,
+            using: { _ in
+                MainActor.assumeIsolated {
+                    eventHandler(.willEnterForeground)
+                }
+            }
+        )
+
+        // Terminate
+        notificationCenter.addObserver(
+            forName: NSApplication.willTerminateNotification,
+            object: nil,
+            queue: nil,
+            using: { _ in
+                MainActor.assumeIsolated {
+                    eventHandler(.willTerminate)
+                }
+            }
+        )
+    }
+}
+#endif

@@ -4,36 +4,36 @@ import Foundation
 import SwiftUI
 import Combine
 
-#if !os(watchOS)
+#if !os(watchOS) && !os(macOS)
 
 class ThomasViewController<Content> : UIHostingController<Content> where Content : View {
-    
+
     var options: ThomasViewControllerOptions
     var onDismiss: (() -> Void)?
     private var scrollViewsUpdated: Bool = false
-    
+
     init(rootView: Content, options: ThomasViewControllerOptions = ThomasViewControllerOptions()) {
         self.options = options
         super.init(rootView: rootView)
         self.view.backgroundColor = .clear
     }
-    
+
     @objc
     required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.onDismiss?()
     }
-    
+
 #if !os(tvOS)
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         guard let orientation = options.orientation else {
             return .all
         }
-        
+
         switch orientation {
         case .portrait:
             return .portrait
@@ -41,12 +41,12 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
             return .landscape
         }
     }
-    
+
     override var shouldAutorotate: Bool {
         return self.options.orientation == nil
     }
 #endif
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if !scrollViewsUpdated {
@@ -70,7 +70,7 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
 #endif
                 }
             }
-            
+
             updateScrollViews(view: subView)
         }
     }
@@ -104,10 +104,10 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     @objc required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         createBannerConstraints()
 
         if UIAccessibility.isVoiceOverRunning {
@@ -136,7 +136,7 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
 
     func createBannerConstraints() {
         self.view.translatesAutoresizingMaskIntoConstraints = false
-        
+
         if let window = self.view.window {
             centerXConstraint = self.view.centerXAnchor.constraint(equalTo: window.centerXAnchor)
             topConstraint = self.view.topAnchor.constraint(equalTo: window.topAnchor)
@@ -166,7 +166,7 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
         self.bottomConstraint?.isActive = false
 
         let edgeInsets = contentPlacement.additionalEdgeInsets
-        
+
         // Shift horizontal constraint by start/end margins
         // Positive leading margin shifts right, positive trailing margin shifts left
         let horizontalOffset = edgeInsets.leading - edgeInsets.trailing
@@ -175,7 +175,7 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
             constant: horizontalOffset
         )
         self.centerXConstraint?.isActive = true
-        
+
         if contentPlacement.ignoreSafeArea {
             // Anchor to window edges when ignoring safe area, shifted by margins
             if contentPlacement.isTop {
@@ -229,6 +229,136 @@ class ThomasModalViewController : ThomasViewController<ModalView> {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+#elseif os(macOS)
+
+@available(iOS 13.0.0, tvOS 13.0, *)
+class ThomasViewController<Content> : NSHostingController<Content> where Content : View {
+
+    var options: ThomasViewControllerOptions
+    var onDismiss: (() -> Void)?
+    private var scrollViewsUpdated: Bool = false
+
+    init(rootView: Content, options: ThomasViewControllerOptions = ThomasViewControllerOptions()) {
+        self.options = options
+        super.init(rootView: rootView)
+        self.view.layer?.backgroundColor = NSColor.clear.cgColor
+    }
+
+    @objc
+    required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+
+    override func viewWillDisappear() {
+        super.viewWillDisappear()
+        self.onDismiss?()
+    }
+
+}
+
+
+class ThomasBannerViewController: ThomasViewController<BannerView> {
+    private var centerXConstraint: NSLayoutConstraint?
+    private var topConstraint: NSLayoutConstraint?
+    private var bottomConstraint: NSLayoutConstraint?
+    private var heightConstraint: NSLayoutConstraint?
+    private var widthConstraint: NSLayoutConstraint?
+
+    private let thomasBannerConstraints: ThomasBannerConstraints
+
+    private let position: ThomasPresentationInfo.Banner.Position?
+
+    private var subscription: AnyCancellable?
+    private weak var window: NSWindow?
+
+    init(rootView: BannerView,
+        position: ThomasPresentationInfo.Banner.Position,
+        options: ThomasViewControllerOptions,
+        constraints: ThomasBannerConstraints
+    ) {
+        self.thomasBannerConstraints = constraints
+
+        self.position = position
+        super.init(rootView: rootView, options: options)
+    }
+
+    @objc required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidAppear() {
+        super.viewDidAppear()
+
+        createBannerConstraints()
+        handleBannerConstraints(size: self.thomasBannerConstraints.windowSize)
+
+        let isVoiceOverRunning = AXIsProcessTrusted()
+        if isVoiceOverRunning {
+            DispatchQueue.main.asyncAfter(deadline: .now() + BannerView.animationInOutDuration) {
+                NSAccessibility.post(element: self, notification: .layoutChanged)
+            }
+        }
+
+        subscription = thomasBannerConstraints.$windowSize.sink { [weak self] size in
+            self?.handleBannerConstraints(size: size)
+        }
+    }
+
+    override func viewWillDisappear() {
+        subscription?.cancel()
+        super.viewWillDisappear()
+    }
+
+    func createBannerConstraints() {
+        self.view.translatesAutoresizingMaskIntoConstraints = false
+        if let view = self.window?.contentView {
+            centerXConstraint = self.view.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            topConstraint = self.view.topAnchor.constraint(equalTo: view.topAnchor)
+            bottomConstraint = self.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+
+            heightConstraint = self.view.heightAnchor.constraint(equalToConstant: self.thomasBannerConstraints.windowSize.height)
+            widthConstraint = self.view.widthAnchor.constraint(equalToConstant: self.thomasBannerConstraints.windowSize.width)
+        }
+    }
+
+    func handleBannerConstraints(size: CGSize) {
+        // Ensure view is still in window hierarchy before updating constraints
+        guard self.view.window != nil else { return }
+
+        self.centerXConstraint?.isActive = true
+        self.heightConstraint?.isActive = true
+        self.widthConstraint?.isActive = true
+        self.widthConstraint?.constant = size.width
+
+        switch self.position {
+        case .top:
+            self.topConstraint?.isActive = true
+            self.bottomConstraint?.isActive = false
+            self.heightConstraint?.constant = size.height + self.view.safeAreaInsets.top
+
+        default:
+            self.topConstraint?.isActive = false
+            self.bottomConstraint?.isActive = true
+            self.heightConstraint?.constant = size.height + self.view.safeAreaInsets.bottom
+        }
+
+        self.view.layoutSubtreeIfNeeded()
+    }
+}
+
+class ThomasModalViewController : ThomasViewController<ModalView> {
+
+    override init(rootView: ModalView, options: ThomasViewControllerOptions) {
+        super.init(rootView: rootView, options: options)
+    }
+
+    @objc required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 
 #endif
 
@@ -299,5 +429,4 @@ fileprivate struct ContentPlacement: Sendable, Equatable {
     let height: Double
     let ignoreSafeArea: Bool
 }
-
 

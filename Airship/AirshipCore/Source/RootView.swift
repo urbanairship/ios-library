@@ -14,12 +14,7 @@ struct RootView<Content: View>: View {
 
     @State private var isForeground: Bool = true
     @State private var isVisible: Bool = false
-
-#if !os(watchOS)
-    @State private var isVoiceOverRunning: Bool = UIAccessibility.isVoiceOverRunning
-#else
-    @State private var isVoiceOverRunning: Bool = false
-#endif
+    @State private var isVoiceOverRunning: Bool = Self.resolveIsVoiceOverRunning()
 
     @ObservedObject var thomasEnvironment: ThomasEnvironment
     @StateObject var thomasState: ThomasState
@@ -86,7 +81,12 @@ struct RootView<Content: View>: View {
                 self.isForeground = false
                 self.thomasEnvironment.onVisibilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
             }
-#if !os(watchOS)
+#if os(macOS)
+            .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification)) { _ in
+                updateVoiceoverRunningState()
+            }
+#elseif !os(watchOS)
+        // iOS, tvOS, visionOS
             .onReceive(NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)) { _ in
                 updateVoiceoverRunningState()
             }
@@ -117,7 +117,9 @@ struct RootView<Content: View>: View {
     /// - medium: regular x compact or compact x regular
     /// - small: compact x compact
     func resolveWindowSize() -> ThomasWindowSize {
-#if os(tvOS) || os(watchOS)
+#if os(watchOS)
+        return .small
+#elseif os(tvOS)
         return .large
 #else
         switch (verticalSizeClass, horizontalSizeClass) {
@@ -132,7 +134,7 @@ struct RootView<Content: View>: View {
     }
 
     static func resolveOrientation() -> ThomasOrientation {
-#if os(tvOS) || os(watchOS)
+#if os(tvOS) || os(watchOS) || os(macOS)
         return .landscape
 #else
         let scene = try? AirshipSceneManager.shared.lastActiveScene
@@ -149,10 +151,19 @@ struct RootView<Content: View>: View {
     }
 
     private func updateVoiceoverRunningState() {
-#if !os(watchOS)
-        isVoiceOverRunning = UIAccessibility.isVoiceOverRunning
+        isVoiceOverRunning = Self.resolveIsVoiceOverRunning()
+    }
+
+    private static func resolveIsVoiceOverRunning() -> Bool {
+#if os(watchOS)
+        // watchOS does not expose a public property to check VoiceOver status
+        return false
+#elseif os(macOS)
+        // macOS equivalent
+        return NSWorkspace.shared.isVoiceOverEnabled
 #else
-        isVoiceOverRunning = false
+        // iOS, tvOS, visionOS
+        return UIAccessibility.isVoiceOverRunning
 #endif
     }
 }

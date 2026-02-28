@@ -7,6 +7,7 @@ protocol AirshipInstance: Sendable {
     var preferenceDataStore: PreferenceDataStore { get }
     var permissionsManager: any AirshipPermissionsManager { get }
     var actionRegistry: any AirshipActionRegistry { get }
+    var urlOpener: any URLOpenerProtocol { get }
 
     #if !os(tvOS) && !os(watchOS)
     var javaScriptCommandDelegate: (any JavaScriptCommandDelegate)? { get set }
@@ -66,6 +67,7 @@ final class DefaultAirshipInstance: AirshipInstance {
     private let experimentManager: any ExperimentDataProvider
     private let componentMap: AirshipAtomicValue<[String: any AirshipComponent]> = AirshipAtomicValue([String: any AirshipComponent]()) //it's accessed with the lock below
     private let lock: AirshipLock = AirshipLock()
+    public let urlOpener: any URLOpenerProtocol = DefaultURLOpener()
     
     @MainActor
     init(airshipConfig: AirshipConfig, appCredentials: AirshipAppCredentials) {

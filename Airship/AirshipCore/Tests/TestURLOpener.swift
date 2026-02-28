@@ -5,27 +5,36 @@ import Foundation
 import AirshipCore
 
 final class TestURLOpener: URLOpenerProtocol, @unchecked Sendable {
+    @MainActor
     var returnValue: Bool = true
-    var lastURL: URL? = nil
-    var openSettingsCalled: Bool = false
-    var lastCompletionHandlerValue: Bool? = nil
+
+    @MainActor
+    var lastURL: URL?
+
+    @MainActor
+    var lastOpenSettingsCalled: Bool = false
+
+    @MainActor
+    func reset() {
+        lastURL = nil
+        lastOpenSettingsCalled = false
+    }
 
     @MainActor
     func openURL(_ url: URL) async -> Bool {
-        self.lastURL = url
+        lastURL = url
         return returnValue
     }
 
     @MainActor
     func openURL(_ url: URL, completionHandler: (@MainActor @Sendable (Bool) -> Void)?) {
-        self.lastURL = url
-        self.lastCompletionHandlerValue = returnValue
+        lastURL = url
         completionHandler?(returnValue)
     }
 
     @MainActor
     func openSettings() async -> Bool {
-        self.openSettingsCalled = true
+        lastOpenSettingsCalled = true
         return returnValue
     }
 }

@@ -274,6 +274,7 @@
 		6E146EDD2F52537000320A36 /* AishipFontTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E146EDC2F52536C00320A36 /* AishipFontTests.swift */; };
 		6E146FF32F525E7300320A36 /* AirshipPasteboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E146FF22F525E7300320A36 /* AirshipPasteboard.swift */; };
 		6E1472D52F526DCD00320A36 /* AirshipNativeViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1472D42F526DC600320A36 /* AirshipNativeViewRepresentable.swift */; };
+		6E1473EA2F527C4D00320A36 /* TestURLOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB62812A36A45F0095C85C /* TestURLOpener.swift */; };
 		6E14C9A128B5E4AF00A55E65 /* PushNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C9A028B5E4AF00A55E65 /* PushNotification.swift */; };
 		6E1528172B4DC3C000DF1377 /* ActionAutomationExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1528162B4DC3C000DF1377 /* ActionAutomationExecutor.swift */; };
 		6E1528192B4DC3D000DF1377 /* InAppMessageAutomationPreparer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1528182B4DC3D000DF1377 /* InAppMessageAutomationPreparer.swift */; };
@@ -6420,6 +6421,7 @@
 				60FCA30A2B51364A005C9232 /* LegacyInAppMessageTest.swift in Sources */,
 				3231129129D5E6D900CF0D86 /* FrequencyLimitManagerTest.swift in Sources */,
 				6EC0CA4F2B48987700333A87 /* AutomationRemoteDataAccessTest.swift in Sources */,
+				6E1473EA2F527C4D00320A36 /* TestURLOpener.swift in Sources */,
 				6E1A9BB72B5B1D9E00A6489B /* TestActiveTimer.swift in Sources */,
 				6E1CBDFF2BAA1DF200519D9C /* DefaultInAppDisplayImpressionRuleProviderTest.swift in Sources */,
 				6E1A9BB92B5B20A500A6489B /* InAppMessageDisplayListenerTest.swift in Sources */,

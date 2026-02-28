@@ -119,7 +119,7 @@ struct EmbeddedView: View {
                 orientation: orientation,
                 windowSize: windowSize
             )
-            
+
             AdoptLayout(placement: placement, viewConstraints: $viewConstraints, embeddedSize: embeddedSize) {
                 if let constraints = viewConstraints {
                     createView(constraints: constraints, placement: placement)
@@ -128,9 +128,21 @@ struct EmbeddedView: View {
                 }
             }
         }
-#if !os(watchOS)
+
+#if os(macOS)
         .onAppear {
-            // Announce to VoiceOver when embedded view appears
+            if isVoiceOverRunning {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    NSAccessibility.post(
+                        element: (NSApp.mainWindow ?? NSApp) as Any,
+                        notification: .layoutChanged
+                    )
+                }
+            }
+        }
+#elseif !os(watchOS)
+        // iOS, tvOS, visionOS
+        .onAppear {
             if isVoiceOverRunning {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     UIAccessibility.post(notification: .screenChanged, argument: nil)

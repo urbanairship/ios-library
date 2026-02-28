@@ -388,7 +388,7 @@ public final class Airship: Sendable {
         switch deeplink.host {
         case Airship.appSettingsDeepLinkHost:
             AirshipLogger.debug("Handling Settings deep link: \(deeplink)")
-            return await DefaultURLOpener.shared.openSettings()
+            return await self.airshipInstance.urlOpener.openSettings()
 
         case Airship.appStoreDeepLinkHost:
             AirshipLogger.debug("Handling App Store deep link: \(deeplink)")
@@ -398,7 +398,7 @@ public final class Airship: Sendable {
                 return true
             }
             if let url = URL(string: appStoreUrl + itunesID) {
-                await DefaultURLOpener.shared.openURL(url)
+                await self.airshipInstance.urlOpener.openURL(url)
             }
             return true
 

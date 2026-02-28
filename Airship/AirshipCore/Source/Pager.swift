@@ -4,6 +4,14 @@ import Foundation
 import SwiftUI
 import Combine
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
+#if canImport(AppKit)
+import AppKit
+#endif
+
 @MainActor
 struct Pager: View {
 
@@ -623,15 +631,23 @@ struct Pager: View {
         )
         self.lastReportedIndex = index
         
-#if !os(watchOS)
-        // Announce page change to VoiceOver
         if isVoiceOverRunning && lastReportedIndex >= 0 {
-            // Use layoutChanged to force VoiceOver to re-scan the page for focusable elements
+            // Small delay to allow the UI to settle after navigation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+#if os(watchOS)
+                // watchOS handles accessibility focus via the system pager automatically
+#elseif os(macOS)
+                // For macOS, notify that the layout has changed within the app
+                NSAccessibility.post(
+                    element: (NSApp.mainWindow ?? NSApp) as Any,
+                    notification: .layoutChanged
+                )
+#else
+                // For iOS, tvOS, and visionOS
                 UIAccessibility.post(notification: .layoutChanged, argument: nil)
+#endif
             }
         }
-#endif
 
         // Run any actions set on the current page
         let page = pagerState.pageItems[index]

@@ -52,6 +52,7 @@ class DeepLinkActionTest: XCTestCase {
         }
     }
 
+    @MainActor
     func testPerformDeepLinkDelegate() async throws {
         let deepLinkDelegate = TestDeepLinkDelegate()
         self.urlAllowList.isAllowedReturnValue = false
@@ -70,6 +71,7 @@ class DeepLinkActionTest: XCTestCase {
         XCTAssertNil(self.testURLOpener.lastURL)
     }
 
+    @MainActor
     func testPerformFallback() async throws {
         self.urlAllowList.isAllowedReturnValue = true
         self.testURLOpener.returnValue = true
@@ -83,6 +85,7 @@ class DeepLinkActionTest: XCTestCase {
         XCTAssertEqual("http://some-valid-url", self.testURLOpener.lastURL?.absoluteString)
     }
 
+    @MainActor
     func testPerformFallbackRejectsURL() async throws {
         self.urlAllowList.isAllowedReturnValue = false
         self.testURLOpener.returnValue = true
@@ -100,6 +103,7 @@ class DeepLinkActionTest: XCTestCase {
         XCTAssertNil(self.testURLOpener.lastURL)
     }
 
+    @MainActor
     func testPerformFallbackUnableToOpenURL() async throws {
         self.urlAllowList.isAllowedReturnValue = true
         self.testURLOpener.returnValue = false
@@ -117,6 +121,7 @@ class DeepLinkActionTest: XCTestCase {
         XCTAssertEqual("http://some-valid-url", self.testURLOpener.lastURL?.absoluteString)
     }
 
+    @MainActor
     func testPerformInvalidURL() async throws {
         self.urlAllowList.isAllowedReturnValue = true
         self.testURLOpener.returnValue = true

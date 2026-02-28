@@ -17,22 +17,29 @@ class UAirshipTest: XCTestCase {
         TestAirshipInstance.clearShared()
     }
 
+    @MainActor
     func testUAirshipDeepLinks() async {
         let component = TestAirshipComponent()
         component.onDeepLink = { _ in
             XCTFail()
             return false
         }
+        
+        let testOpener = (self.airshipInstance.urlOpener as! TestURLOpener)
 
         self.airshipInstance.components = [component]
 
         /// App settings
         var result = await Airship.processDeepLink(URL(string: "uairship://app_settings")!)
         XCTAssertTrue(result)
+        XCTAssertTrue(testOpener.lastOpenSettingsCalled)
+        
+        testOpener.reset()
 
         // App Store deeplink
         result = await Airship.processDeepLink(URL(string: "uairship://app_store?itunesID=0123456789")!)
         XCTAssertTrue(result)
+        XCTAssertEqual(testOpener.lastURL?.absoluteString, "itms-apps://itunes.apple.com/app/0123456789")
     }
 
     func testUAirshipComponentsDeepLinks() async {

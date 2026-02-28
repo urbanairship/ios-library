@@ -62,11 +62,7 @@ extension ThomasColor {
         for selector in selectors ?? [] {
             // Platform filtering
             if let platform = selector.platform {
-                #if os(macOS)
-                if platform != .macOS { continue }
-                #else
                 if platform != .ios { continue }
-                #endif
             }
 
             // Dark mode filtering
