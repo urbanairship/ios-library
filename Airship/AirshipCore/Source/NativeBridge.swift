@@ -1,14 +1,19 @@
 /* Copyright Airship and Contributors */
 
-#if canImport(AirshipBasement)
-import AirshipBasement
-#endif
 
 #if !os(tvOS) && !os(watchOS)
 
 import Foundation
 @preconcurrency
 public import WebKit
+
+#if canImport(UIKit)
+import UIKit
+#endif
+
+#if canImport(AppKit)
+import AppKit
+#endif
 
 typealias WebViewForwardHandler = (WKWebView, WKNavigationAction, @Sendable @escaping @MainActor (WKNavigationActionPolicy) -> Void) -> Void
 
@@ -22,6 +27,7 @@ public final class NativeBridge: NSObject, WKNavigationDelegate {
     private static let setNamedUserCommand: String = "named_user"
     private static let multiCommand: String = "multi"
 
+    @MainActor
     private var jsRequests: [JSBridgeLoadRequest] = []
 
     private static let forwardSchemes: [String] = [
@@ -62,7 +68,7 @@ public final class NativeBridge: NSObject, WKNavigationDelegate {
     ) {
         self.actionHandler = actionHandler
         self.javaScriptEnvironmentFactoryBlock =
-            javaScriptEnvironmentFactoryBlock
+        javaScriptEnvironmentFactoryBlock
         self.challengeResolver = resolver
         super.init()
     }
@@ -103,7 +109,7 @@ public final class NativeBridge: NSObject, WKNavigationDelegate {
         let requestURL = navigationAction.request.url
 
         let isAirshipJSAllowed =
-            originatingURL?.isAllowed(scope: .javaScriptInterface) ?? false
+        originatingURL?.isAllowed(scope: .javaScriptInterface) ?? false
 
         // Airship commands
         if let requestURL = requestURL, isAirshipJSAllowed, requestURL.isAirshipCommand {
@@ -152,13 +158,9 @@ public final class NativeBridge: NSObject, WKNavigationDelegate {
         let handleLink: () -> Void = {
             /// If target frame is a new window navigation, have OS handle it
             if navigationAction.targetFrame == nil {
-                UIApplication.shared.open(
-                    requestURL,
-                    options: [:],
-                    completionHandler: { success in
-                        decisionHandler(success ? .cancel : .allow)
-                    }
-                )
+                self.openURL(url: requestURL) { success in
+                    decisionHandler(success ? .cancel : .allow)
+                }
             } else {
                 decisionHandler(.allow)
             }
@@ -282,7 +284,7 @@ public final class NativeBridge: NSObject, WKNavigationDelegate {
     public func webView(
         _ webView: WKWebView,
         didReceiveServerRedirectForProvisionalNavigation navigation:
-            WKNavigation!
+        WKNavigation!
     ) {
         self.forwardNavigationDelegate?.webView?(
             webView,
@@ -340,7 +342,7 @@ public final class NativeBridge: NSObject, WKNavigationDelegate {
                             URLSession.AuthChallengeDisposition,
                             URLCredential?
                         ) ->
-                            Void
+                        Void
                     ) -> Void
                 )?
         else {
@@ -480,30 +482,42 @@ public final class NativeBridge: NSObject, WKNavigationDelegate {
     @MainActor
     private func handle(
         _ url: URL?,
-        _ completionHandler: @escaping (Bool) -> Void
+        _ completionHandler: @Sendable @escaping @MainActor (Bool) -> Void
     ) {
         guard let url = url, shouldForwardURL(url) else {
             completionHandler(false)
             return
         }
 
-        UIApplication.shared.open(url, options: [:]) { success in
-            /// Its better to return YES here and no-op on these links instead of reporting an unhandled URL
-            /// to avoid the message thinking it failed to load. The only time a NO will happen is on a simulator
-            /// without access to the app store.
-            completionHandler(true)
-        }
+        openURL(url: url, completionHandler: completionHandler)
     }
 
     private func shouldForwardURL(_ url: URL) -> Bool {
         let scheme = url.scheme?.lowercased() ?? ""
         let host = url.host?.lowercased() ?? ""
         return NativeBridge.forwardSchemes.contains(scheme)
-            || NativeBridge.forwardHosts.contains(host)
+        || NativeBridge.forwardHosts.contains(host)
     }
 
     private func closeWindow(_ animated: Bool) {
         self.forwardNavigationDelegate?.closeWindow?(animated)
+    }
+
+    @MainActor
+    private func openURL(url: URL, completionHandler: @escaping @Sendable @MainActor (Bool) -> Void) {
+#if os(macOS)
+        NSWorkspace.shared.open(url, configuration: .init()) { _, error in
+            Task { @MainActor in
+                completionHandler(error == nil)
+            }
+        }
+#else
+        UIApplication.shared.open(url, options: [:]) { success in
+            Task { @MainActor in
+                completionHandler(true)
+            }
+        }
+#endif
     }
 }
 

@@ -273,6 +273,7 @@
 		6E146D6A2F5241BC00320A36 /* AirshipColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E146D692F5241BA00320A36 /* AirshipColor.swift */; };
 		6E146EDD2F52537000320A36 /* AishipFontTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E146EDC2F52536C00320A36 /* AishipFontTests.swift */; };
 		6E146FF32F525E7300320A36 /* AirshipPasteboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E146FF22F525E7300320A36 /* AirshipPasteboard.swift */; };
+		6E1472D52F526DCD00320A36 /* AirshipNativeViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1472D42F526DC600320A36 /* AirshipNativeViewRepresentable.swift */; };
 		6E14C9A128B5E4AF00A55E65 /* PushNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C9A028B5E4AF00A55E65 /* PushNotification.swift */; };
 		6E1528172B4DC3C000DF1377 /* ActionAutomationExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1528162B4DC3C000DF1377 /* ActionAutomationExecutor.swift */; };
 		6E1528192B4DC3D000DF1377 /* InAppMessageAutomationPreparer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1528182B4DC3D000DF1377 /* InAppMessageAutomationPreparer.swift */; };
@@ -1577,6 +1578,7 @@
 		6E146D692F5241BA00320A36 /* AirshipColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipColor.swift; sourceTree = "<group>"; };
 		6E146EDC2F52536C00320A36 /* AishipFontTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AishipFontTests.swift; sourceTree = "<group>"; };
 		6E146FF22F525E7300320A36 /* AirshipPasteboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipPasteboard.swift; sourceTree = "<group>"; };
+		6E1472D42F526DC600320A36 /* AirshipNativeViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipNativeViewRepresentable.swift; sourceTree = "<group>"; };
 		6E14C9A028B5E4AF00A55E65 /* PushNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotification.swift; sourceTree = "<group>"; };
 		6E1528162B4DC3C000DF1377 /* ActionAutomationExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionAutomationExecutor.swift; sourceTree = "<group>"; };
 		6E1528182B4DC3D000DF1377 /* InAppMessageAutomationPreparer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageAutomationPreparer.swift; sourceTree = "<group>"; };
@@ -3636,6 +3638,7 @@
 		6E411D5F2538D26200FEE4E8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				6E1472D42F526DC600320A36 /* AirshipNativeViewRepresentable.swift */,
 				6E146FF22F525E7300320A36 /* AirshipPasteboard.swift */,
 				6E146D692F5241BA00320A36 /* AirshipColor.swift */,
 				6E146D672F523DB700320A36 /* AirshipFont.swift */,
@@ -5814,6 +5817,7 @@
 				6ECD4F6D2DD7A7060060EE72 /* RadioInputToggleLayout.swift in Sources */,
 				6EB5158328A47C7100870C5A /* ScopedSubscriptionListEdit.swift in Sources */,
 				60D3BCD02A154D9400E07524 /* MessageCriteria.swift in Sources */,
+				6E1472D52F526DCD00320A36 /* AirshipNativeViewRepresentable.swift in Sources */,
 				608B16E62C2C1138005298FA /* SubscriptionListProvider.swift in Sources */,
 				6E94761529BBC0240025F364 /* AirshipButton.swift in Sources */,
 				3251586B272AFB2E00DF8B44 /* MediaWebView.swift in Sources */,

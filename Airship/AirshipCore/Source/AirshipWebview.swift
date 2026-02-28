@@ -8,17 +8,17 @@ import WebKit
 
 /// Airship Webview
 struct AirshipWebView: View {
-
+    
     let info: ThomasViewInfo.WebView
-
+    
     let constraints: ViewConstraints
-
+    
     @State var isWebViewLoading: Bool = false
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) var layoutState
-
+    
     var body: some View {
-
+        
         ZStack {
             WebViewView(
                 url: self.info.properties.url,
@@ -33,7 +33,7 @@ struct AirshipWebView: View {
                 }
             )
             .opacity(self.isWebViewLoading ? 0.0 : 1.0)
-
+            
             if self.isWebViewLoading {
                 AirshipProgressView()
             }
@@ -44,16 +44,35 @@ struct AirshipWebView: View {
 }
 
 /// Webview
-struct WebViewView: UIViewRepresentable {
-    typealias UIViewType = WKWebView
+struct WebViewView: AirshipNativeViewRepresentable {
 
+#if os(macOS)
+    typealias NSViewType = WKWebView
+#else
+    typealias UIViewType = WKWebView
+#endif
+    
     let url: String
     let nativeBridgeExtension: (any NativeBridgeExtensionDelegate)?
     @Binding var isWebViewLoading: Bool
     let onRunActions: @MainActor (String, ActionArguments, WKWebView) async -> ActionResult
     let onDismiss: () -> Void
 
+#if os(macOS)
+    func makeNSView(context: Context) -> WKWebView {
+        return makeWebView(context: context)
+    }
+
+    func updateNSView(_ nsView: WKWebView, context: Context) {}
+#else
     func makeUIView(context: Context) -> WKWebView {
+        return makeWebView(context: context)
+    }
+
+    func updateUIView(_ uiView: WKWebView, context: Context) {}
+#endif
+
+    func makeWebView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.navigationDelegate = context.coordinator.nativeBridge
 
@@ -73,17 +92,15 @@ struct WebViewView: UIViewRepresentable {
         Coordinator(self, actionRunner: BlockNativeBridgeActionRunner(onRun: onRunActions))
     }
 
-    func updateUIView(_ uiView: WKWebView, context: Context) {}
-
     func updateLoading(_ isWebViewLoading: Bool) {
         DispatchQueue.main.async {
             self.isWebViewLoading = isWebViewLoading
         }
     }
 
-    
+
     class Coordinator: NSObject, AirshipWKNavigationDelegate,
-        JavaScriptCommandDelegate, NativeBridgeDelegate
+                       JavaScriptCommandDelegate, NativeBridgeDelegate
     {
         private let parent: WebViewView
         private let challengeResolver: ChallengeResolver
@@ -93,11 +110,11 @@ struct WebViewView: UIViewRepresentable {
             self.parent = parent
             self.nativeBridge = NativeBridge(actionRunner: actionRunner)
             self.challengeResolver = resolver
-            
+
             super.init()
-            
+
             self.nativeBridge.nativeBridgeExtensionDelegate =
-                self.parent.nativeBridgeExtension
+            self.parent.nativeBridgeExtension
             self.nativeBridge.forwardNavigationDelegate = self
             self.nativeBridge.javaScriptCommandDelegate = self
             self.nativeBridge.nativeBridgeDelegate = self
@@ -128,7 +145,7 @@ struct WebViewView: UIViewRepresentable {
                 webView?.reload()
             }
         }
-        
+
         func webView(
             _ webView: WKWebView,
             respondTo challenge: URLAuthenticationChallenge)

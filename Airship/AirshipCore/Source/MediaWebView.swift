@@ -6,10 +6,13 @@ import Foundation
 import SwiftUI
 import WebKit
 
+struct MediaWebView: AirshipNativeViewRepresentable {
 
-struct MediaWebView: UIViewRepresentable {
-
+#if os(macOS)
+    typealias NSViewType = WKWebView
+#else
     typealias UIViewType = WKWebView
+#endif
 
     let info: ThomasViewInfo.Media
     let onMediaReady: @MainActor () -> Void
@@ -19,6 +22,24 @@ struct MediaWebView: UIViewRepresentable {
     @EnvironmentObject var pagerState: PagerState
     @Environment(\.layoutDirection) var layoutDirection
 
+#if os(macOS)
+    func makeNSView(context: Context) -> WKWebView {
+        return makeWebView(context: context)
+    }
+
+    func updateNSView(_ nsView: WKWebView, context: Context) {
+        updateView(nsView, context: context)
+    }
+#else
+    func makeUIView(context: Context) -> WKWebView {
+        return makeWebView(context: context)
+    }
+
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        updateView(uiView, context: context)
+    }
+#endif
+    
 
     private var video: ThomasViewInfo.Media.Video? {
         self.info.properties.video
@@ -76,58 +97,73 @@ struct MediaWebView: UIViewRepresentable {
         return URL(string: "https://\(bundleIdentifier)")
     }
 
-
     @MainActor
-    func makeUIView(context: Context) -> WKWebView {
-        return createWebView(context: context)
-    }
-
-    @MainActor
-    func updateUIView(_ uiView: WKWebView, context: Context) {
+    private func updateView(_ view: WKWebView, context: Context) {
         if (pagerState.inProgress) {
             switch (isVisible, isLoaded) {
             case (true, true):
-                handleAutoplayingVideos(uiView: uiView)
+                handleAutoplayingVideos(uiView: view)
             case (false, true):
-                resetMedias(uiView: uiView)
-                pauseMedias(uiView: uiView)
+                resetMedias(uiView: view)
+                pauseMedias(uiView: view)
             default:
-                pauseMedias(uiView: uiView)
+                pauseMedias(uiView: view)
             }
         } else {
-            pauseMedias(uiView: uiView)
+            pauseMedias(uiView: view)
         }
     }
 
     @MainActor
-    func createWebView(context: Context) -> WKWebView {
+    func makeWebView(context: Context) -> WKWebView {
         let contentController = WKUserContentController()
-          contentController.add(makeCoordinator(), name: "callback")
-        
+        contentController.add(context.coordinator, name: "callback")
+
         let config = WKWebViewConfiguration()
         config.userContentController = contentController
+
+#if os(macOS)
+        let webView = WKWebView(frame: .zero, configuration: config)
+        webView.setAccessibilityElement(true)
+        webView.setAccessibilityLabel(self.info.accessible.contentDescription)
+        webView.layer?.backgroundColor = .clear
+        webView.setValue(false, forKey: "drawsBackground") // For transparency
+#else
         config.allowsInlineMediaPlayback = true
         config.allowsPictureInPictureMediaPlayback = true
-
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.isAccessibilityElement = true
         webView.accessibilityLabel = self.info.accessible.contentDescription
         webView.scrollView.isScrollEnabled = false
         webView.isOpaque = false
-        webView.backgroundColor = UIColor.clear
-        webView.scrollView.backgroundColor = UIColor.clear
+        webView.backgroundColor = .clear
+        webView.scrollView.backgroundColor = .clear
         webView.navigationDelegate = context.coordinator
         webView.scrollView.contentInsetAdjustmentBehavior = .never
+#endif
+
+        webView.navigationDelegate = context.coordinator
 
         if #available(iOS 16.4, *) {
             webView.isInspectable = Airship.isFlying && Airship.config.airshipConfig.isWebViewInspectionEnabled
         }
 
+        loadMediaContent(webView: webView)
+
+        return webView
+    }
+
+    @MainActor
+    private func loadMediaContent(webView: WKWebView) {
         let video = self.info.properties.video
-        if self.info.properties.mediaType == .video {
+
+        switch(info.properties.mediaType) {
+        case .image:
+            return
+        case .video:
             let html = String(
                 format: """
-                    <body style="margin:0">
+                    <body style="margin:0; background-color:transparent;">
                         <video id="video" playsinline %@ %@ %@ %@ height="100%%" width="100%%" src="%@" style="%@"></video>
 
                         <script>
@@ -147,11 +183,11 @@ struct MediaWebView: UIViewRepresentable {
                 styleForVideo
             )
             webView.loadHTMLString(html, baseURL: baseURL)
-        } else if self.info.properties.mediaType == .youtube {
+        case .youtube:
             if let videoID = retrieveYoutubeVideoID(url: url) {
                 let html = String(
                     format: """
-                    <body style="margin:0">
+                    <body style="margin:0; background-color:transparent;">
                         <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
                         <div id="player"></div>
                     
@@ -199,17 +235,18 @@ struct MediaWebView: UIViewRepresentable {
                 )
                 webView.loadHTMLString(html, baseURL: baseURL)
             } else {
-                guard let videoUrl = URL(string: String(format: "%@%@", url, "?playsinline=1")) else {
-                    return webView
+                // FALLBACK: Standard URL loading if ID extraction fails
+                // Force playsinline for better mobile behavior
+                let suffix = url.contains("?") ? "&playsinline=1" : "?playsinline=1"
+                if let videoUrl = URL(string: "\(url)\(suffix)") {
+                    webView.load(URLRequest(url: videoUrl))
                 }
-                webView.load(URLRequest(url: videoUrl))
             }
-        } else if self.info.properties.mediaType == .vimeo {
+        case .vimeo:
             let html = String(
                 format: """
                 <head><meta name="viewport" content="initial-scale=1,maximum-scale=1"></head>
-                <body style="margin:0">
-                  
+                <body style="margin:0; background-color:transparent;">                  
                     <iframe id="vimeoIframe"
                       src="%@&playsinline=1"
                       width="100%%" height="100%%" frameborder="0"
@@ -230,7 +267,6 @@ struct MediaWebView: UIViewRepresentable {
             )
             webView.loadHTMLString(html, baseURL: baseURL)
         }
-        return webView
     }
     
     func retrieveYoutubeVideoID(url: String) -> String? {
