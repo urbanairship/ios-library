@@ -145,12 +145,19 @@ final class DefaultAirshipURLAllowList: AirshipURLAllowList {
             addEntry("*", scope: .openURL)
         }
 
-        #if !os(watchOS)
+#if os(macOS)
+        // Allow-list the System Settings root and specific panes
+        addEntry(
+            "x-apple.systempreferences:",
+            scope: .openURL
+        )
+#elseif !os(watchOS)
+        // iOS, tvOS, visionOS
         addEntry(
             UIApplication.openSettingsURLString,
             scope: .openURL
         )
-        #endif
+#endif
 
         airshipConfig.urlAllowList?.forEach {
             addEntry($0)
@@ -215,7 +222,7 @@ final class DefaultAirshipURLAllowList: AirshipURLAllowList {
 
         // Scheme WILDCARD -> *
         let scheme =
-            url.scheme?.replacingOccurrences(of: "WILDCARD", with: "*") ?? ""
+        url.scheme?.replacingOccurrences(of: "WILDCARD", with: "*") ?? ""
         if scheme.isEmpty
             || !Self.validatePattern(
                 scheme,
@@ -356,7 +363,7 @@ final class DefaultAirshipURLAllowList: AirshipURLAllowList {
     }
 
     private static func compilePattern(_ pattern: String)
-        -> NSRegularExpression?
+    -> NSRegularExpression?
     {
         var pattern = pattern
         if !pattern.hasPrefix("^") {
@@ -380,7 +387,7 @@ final class DefaultAirshipURLAllowList: AirshipURLAllowList {
     }
 
     private func matcherForScheme(_ scheme: String, host: String, path: String)
-        -> AllowListMatcher
+    -> AllowListMatcher
     {
         let schemeRegex: NSRegularExpression?
         if scheme.isEmpty || scheme == "*" {
@@ -429,33 +436,33 @@ final class DefaultAirshipURLAllowList: AirshipURLAllowList {
         return { @MainActor (url: URL) -> Bool in
             let scheme = url.scheme ?? ""
             if let expression = schemeRegex,
-                scheme.isEmpty
-                    || !Self.validatePattern(
-                        scheme,
-                        expression: expression
-                    )
+               scheme.isEmpty
+                || !Self.validatePattern(
+                    scheme,
+                    expression: expression
+                )
             {
                 return false
             }
 
             let host = url.host ?? ""
             if let expression = hostRegex,
-                host.isEmpty
-                    || !Self.validatePattern(
-                        host,
-                        expression: expression
-                    )
+               host.isEmpty
+                || !Self.validatePattern(
+                    host,
+                    expression: expression
+                )
             {
                 return false
             }
 
             let path = Self.pathForUrl(url) ?? ""
             if let expression = pathRegex,
-                path.isEmpty
-                    || !Self.validatePattern(
-                        path,
-                        expression: expression
-                    )
+               path.isEmpty
+                || !Self.validatePattern(
+                    path,
+                    expression: expression
+                )
             {
                 return false
             }

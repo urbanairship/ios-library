@@ -384,19 +384,13 @@ public final class Airship: Sendable {
     ///     - deepLink: The deep link.
     /// - Returns: `true` if the deeplink is handled, `false` otherwise.
     @MainActor
-    private func handleAirshipDeeplink(_ deeplink: URL) -> Bool {
+    private func handleAirshipDeeplink(_ deeplink: URL) async -> Bool {
 
         switch deeplink.host {
         case Airship.appSettingsDeepLinkHost:
-#if !os(watchOS) && !os(macOS)
             AirshipLogger.debug("Handling Settings deep link: \(deeplink)")
-            if let url = URL(string: UIApplication.openSettingsURLString) {
-                UIApplication.shared.open(url)
-            }
-#else
-            AirshipLogger.info("Settings deep link not supported on this platform.")
-#endif
-            return true
+            return await DefaultURLOpener.shared.openSettings()
+
         case Airship.appStoreDeepLinkHost:
             AirshipLogger.debug("Handling App Store deep link: \(deeplink)")
 
@@ -405,23 +399,13 @@ public final class Airship: Sendable {
                 return true
             }
             if let url = URL(string: appStoreUrl + itunesID) {
-                openURL(url)
+                await DefaultURLOpener.shared.openURL(url)
             }
             return true
+
         default:
             return false
         }
-    }
-
-    @MainActor
-    private func openURL(_ url: URL) {
-#if os(macOS)
-        NSWorkspace.shared.open(url)
-#elseif os(watchOS)
-        WKExtension.shared().openSystemURL(url)
-#else
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-#endif
     }
 
     /// Gets the iTunes ID.

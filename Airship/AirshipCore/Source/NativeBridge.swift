@@ -158,7 +158,7 @@ public final class NativeBridge: NSObject, WKNavigationDelegate {
         let handleLink: () -> Void = {
             /// If target frame is a new window navigation, have OS handle it
             if navigationAction.targetFrame == nil {
-                self.openURL(url: requestURL) { success in
+                DefaultURLOpener.shared.openURL(requestURL) { success in
                     decisionHandler(success ? .cancel : .allow)
                 }
             } else {
@@ -489,7 +489,7 @@ public final class NativeBridge: NSObject, WKNavigationDelegate {
             return
         }
 
-        openURL(url: url, completionHandler: completionHandler)
+        DefaultURLOpener.shared.openURL(url, completionHandler: completionHandler)
     }
 
     private func shouldForwardURL(_ url: URL) -> Bool {
@@ -501,23 +501,6 @@ public final class NativeBridge: NSObject, WKNavigationDelegate {
 
     private func closeWindow(_ animated: Bool) {
         self.forwardNavigationDelegate?.closeWindow?(animated)
-    }
-
-    @MainActor
-    private func openURL(url: URL, completionHandler: @escaping @Sendable @MainActor (Bool) -> Void) {
-#if os(macOS)
-        NSWorkspace.shared.open(url, configuration: .init()) { _, error in
-            Task { @MainActor in
-                completionHandler(error == nil)
-            }
-        }
-#else
-        UIApplication.shared.open(url, options: [:]) { success in
-            Task { @MainActor in
-                completionHandler(true)
-            }
-        }
-#endif
     }
 }
 
