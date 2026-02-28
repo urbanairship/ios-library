@@ -21,6 +21,12 @@ public final class PasteboardAction: AirshipAction {
     /// Default names - "clipboard_action", "^c"
     public static let defaultNames: [String] = ["clipboard_action", "^c"]
 
+    private let pasteboard: any AirshipPasteboardProtocol
+
+    init(pasteboard: any AirshipPasteboardProtocol = DefaultAirshipPasteboard()) {
+        self.pasteboard = pasteboard
+    }
+
     public func accepts(arguments: ActionArguments) async -> Bool {
         switch arguments.situation {
         case .manualInvocation, .webViewInvocation, .launchedFromPush,
@@ -35,7 +41,7 @@ public final class PasteboardAction: AirshipAction {
     @MainActor
     public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
         if let string = pasteboardString(arguments) {
-            DefaultAirshipPasteboard().copy(value: string)
+            self.pasteboard.copy(value: string)
         }
 
         return arguments.value

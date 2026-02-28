@@ -1,18 +1,19 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+@testable import AirshipCore
 
-@testable
-import AirshipCore
+@Suite struct PasteboardActionTest {
 
-final class PasteboardActionTest: XCTestCase {
+    private let testPasteboard: TestPasteboard = TestPasteboard()
+    private let action: PasteboardAction!
 
-    private var action: PasteboardAction!
 
-    override func setUp() async throws {
-        action = PasteboardAction()
+    init() {
+        self.action = PasteboardAction(pasteboard: self.testPasteboard)
     }
 
+    @Test
     func testAcceptsArguments() async throws {
         let validStringValue = "pasteboard string"
         let validDictValue = ["text": "pasteboard string"]
@@ -37,7 +38,7 @@ final class PasteboardActionTest: XCTestCase {
                 situation: situation
             )
             let result = await self.action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result, "Should accept valid situation: \(situation)")
         }
 
         for situation in validSituations {
@@ -46,7 +47,7 @@ final class PasteboardActionTest: XCTestCase {
                 situation: situation
             )
             let result = await self.action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result, "Should accept valid dictionary value in situation: \(situation)")
         }
 
         for situation in validSituations {
@@ -54,7 +55,7 @@ final class PasteboardActionTest: XCTestCase {
                 situation: situation
             )
             let result = await self.action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!result, "Should reject empty arguments in situation: \(situation)")
         }
 
         for situation in rejectedSituations {
@@ -63,19 +64,54 @@ final class PasteboardActionTest: XCTestCase {
                 situation: situation
             )
             let result = await self.action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!result, "Should reject invalid situation: \(situation)")
         }
     }
     
+    @Test
+    @MainActor
     func testPerformWithString() async throws {
-        let arguments = ActionArguments(string: "pasteboard_string")
+        let value = "pasteboard_string"
+        let arguments = ActionArguments(string: value)
+        
         let result = try await self.action.perform(arguments: arguments)
-        XCTAssertEqual(result, arguments.value)
+        
+        #expect(result == arguments.value)
+        #expect(testPasteboard.lastCopyValue == value)
     }
     
+    @Test
+    @MainActor
     func testPerformWithDictionary() async throws {
-        let arguments = ActionArguments(value: try AirshipJSON.wrap(["text": "pasteboard string"]))
+        let value = "pasteboard string"
+        let arguments = ActionArguments(value: try AirshipJSON.wrap(["text": value]))
+        
         let result = try await self.action.perform(arguments: arguments)
-        XCTAssertEqual(result, arguments.value)
+        
+        #expect(result == arguments.value)
+        #expect(testPasteboard.lastCopyValue == value)
+    }
+}
+
+fileprivate final class TestPasteboard: AirshipPasteboardProtocol, @unchecked Sendable {
+    private let lock = NSLock()
+    private var _lastCopyValue: String?
+    
+    var lastCopyValue: String? {
+        lock.lock()
+        defer { lock.unlock() }
+        return _lastCopyValue
+    }
+
+    func copy(value: String, expiry: TimeInterval) {
+        lock.lock()
+        defer { lock.unlock() }
+        _lastCopyValue = value
+    }
+
+    func copy(value: String) {
+        lock.lock()
+        defer { lock.unlock() }
+        _lastCopyValue = value
     }
 }

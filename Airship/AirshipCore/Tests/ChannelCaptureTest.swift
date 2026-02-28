@@ -76,7 +76,7 @@ final class ChannelCaptureTest: XCTestCase {
     }
 }
 
-final class TestPasteboard: AirshipPasteboardProtocol, @unchecked Sendable {
+fileprivate final class TestPasteboard: AirshipPasteboardProtocol, @unchecked Sendable {
     var lastCopy: (String, TimeInterval)?
 
     func copy(value: String) {
