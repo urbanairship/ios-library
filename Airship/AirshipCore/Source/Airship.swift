@@ -335,7 +335,7 @@ public final class Airship: Sendable {
         _ deepLink: URL
     ) async -> Bool {
         guard deepLink.scheme != Airship.deepLinkScheme else {
-            guard handleAirshipDeeplink(deepLink) else {
+            guard await handleAirshipDeeplink(deepLink) else {
                 let component = self.airshipInstance.components.first(
                     where: { $0.deepLink(deepLink) }
                 )
@@ -385,7 +385,6 @@ public final class Airship: Sendable {
     /// - Returns: `true` if the deeplink is handled, `false` otherwise.
     @MainActor
     private func handleAirshipDeeplink(_ deeplink: URL) async -> Bool {
-
         switch deeplink.host {
         case Airship.appSettingsDeepLinkHost:
             AirshipLogger.debug("Handling Settings deep link: \(deeplink)")

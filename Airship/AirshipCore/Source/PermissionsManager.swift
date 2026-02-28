@@ -6,6 +6,10 @@ import Foundation
 import UIKit
 #endif
 
+#if canImport(AppKit)
+import AppKit
+#endif
+
 /// Airship permissions manager.
 ///
 /// Airship will provide the default handling for `Permission.postNotifications`. All other permissions will need
@@ -373,42 +377,46 @@ extension PromptPermissionFallback {
     }
 }
 
-
-
 protocol SystemSettingsNavigatorProtocol: Sendable {
     @MainActor
     func open(for: AirshipPermission) async -> Bool
 }
 
 struct SystemSettingsNavigator: SystemSettingsNavigatorProtocol {
-#if !os(watchOS)
     @MainActor
     func open(for permission: AirshipPermission) async -> Bool {
-        if let url = systemSettingURLForPermission(permission) {
-            return await UIApplication.shared.open(url, options: [:])
-        } else {
+#if os(watchOS)
+        return false
+#else
+        guard let url = systemSettingURLForPermission(permission) else {
             return false
         }
+        
+        // Use our unified cross-platform opener
+        return await DefaultURLOpener.shared.openURL(url)
+#endif
     }
     
     @MainActor
     private func systemSettingURLForPermission(_ permission: AirshipPermission) -> URL? {
+#if os(macOS)
+        let path = switch(permission) {
+        case .displayNotifications:
+            "x-apple.systempreferences:com.apple.Notifications-Settings.extension"
+        case .location:
+            "x-apple.systempreferences:com.apple.preference.security?Privacy_LocationServices"
+        }
+        return URL(string: path)
+#elseif !os(watchOS)
         let string = switch(permission) {
         case .displayNotifications:
             UIApplication.openNotificationSettingsURLString
         case .location:
             UIApplication.openSettingsURLString
         }
-
         return URL(string: string)
+#else
+        return nil
+#endif
     }
-    #else
-
-    @MainActor
-    func open(for permission: AirshipPermission) async -> Bool {
-       return false
-    }
-
-    #endif
-
 }
