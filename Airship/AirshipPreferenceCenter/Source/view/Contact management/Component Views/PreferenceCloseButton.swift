@@ -27,7 +27,7 @@ struct PreferenceCloseButton: View {
     private let tappableWidth: CGFloat = 44
 
     private func imageExistsInBundle(name: String) -> Bool {
-        return UIImage(named: name) != nil
+        return AirshipNativeImage(named: name) != nil
     }
 
     /// Check bundle and system for resource name

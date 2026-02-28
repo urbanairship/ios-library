@@ -157,9 +157,9 @@ public final class UAMessageCenterViewControllerFactory: NSObject, Sendable {
         return nil
     }
     
-    private class func toImage(image: UIImage?) -> Image? {
+    private class func toImage(image: AirshipNativeImage?) -> Image? {
         if let image = image {
-            return Image(uiImage: image)
+            return Image(airshipNativeImage: image)
         }
         return nil
     }

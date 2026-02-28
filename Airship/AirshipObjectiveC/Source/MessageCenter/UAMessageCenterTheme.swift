@@ -26,7 +26,7 @@ public final class UAMessageCenterTheme: NSObject {
 
     @objc
     /// An optional placeholder image to use when icons haven't fully loaded.
-    public var placeholderIcon: UIImage? = nil
+    public var placeholderIcon: AirshipNativeImage? = nil
 
     @objc
     /// The font to use for message cell titles.

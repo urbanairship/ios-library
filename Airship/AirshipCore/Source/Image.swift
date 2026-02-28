@@ -1,19 +1,25 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+public import SwiftUI
 
 #if canImport(UIKit)
-import UIKit
+public import UIKit
+public typealias AirshipNativeImage = UIImage
+#elseif canImport(AppKit)
+public import AppKit
+public typealias AirshipNativeImage = NSImage
 #endif
 
 @preconcurrency
 import ImageIO
 
+
 /// - Note: for internal use only.  :nodoc:
 public final class AirshipImageData: Sendable {
     // Image frame
     struct Frame {
-        let image: UIImage
+        let image: AirshipNativeImage
         let duration: TimeInterval
     }
 
@@ -89,17 +95,17 @@ public final class AirshipImageData: Sendable {
 
 actor AirshipImageDataFrameActor {
     private let source: CGImageSource
-    
+
     let framesCount: Int
-    
+
     init(source: CGImageSource) {
         self.source = source
         framesCount = CGImageSourceGetCount(source)
     }
-    
+
     func loadFrame(at index: Int) -> AirshipImageData.Frame? {
         guard index >= 0, index < framesCount else { return nil }
-        
+
         guard let image = Self.frameImage(index, source: source) else {
             return nil
         }
@@ -109,16 +115,17 @@ actor AirshipImageDataFrameActor {
             duration: Self.frameDuration(index, source: source)
         )
     }
-    
-    fileprivate static func frameImage(_ index: Int, source: CGImageSource)
-        -> UIImage?
-    {
+
+    fileprivate static func frameImage(
+        _ index: Int,
+        source: CGImageSource
+    ) -> AirshipNativeImage? {
         guard let imageRef = CGImageSourceCreateImageAtIndex(source, index, nil)
         else {
             return nil
         }
-
-        return UIImage(cgImage: imageRef)
+        // Use a cross-platform initializer
+        return AirshipNativeImage.make(with: imageRef)
     }
 
     fileprivate static func frameDuration(
@@ -174,5 +181,38 @@ extension CGImageSource {
 
         let loopCount = gifDictionary[kCGImagePropertyGIFLoopCount] as? Int
         return loopCount
+    }
+}
+
+fileprivate extension AirshipNativeImage {
+    static func make(with cgImage: CGImage) -> AirshipNativeImage {
+#if os(macOS)
+        return NSImage(cgImage: cgImage, size: .zero) // .zero size uses the pixel dimensions
+#else
+        return UIImage(cgImage: cgImage)
+#endif
+    }
+}
+
+public extension Image {
+    /// Bridges UIImage and NSImage into a single SwiftUI Image initializer
+    init(airshipNativeImage: AirshipNativeImage) {
+        #if os(macOS)
+        self.init(nsImage: airshipNativeImage)
+        #else
+        self.init(uiImage: airshipNativeImage)
+        #endif
+    }
+}
+
+
+public extension AirshipNativeImage {
+    /// Cross-platform initializer for SF Symbols
+    static func airshipSystemImage(name: String) -> AirshipNativeImage? {
+        #if os(macOS)
+        return NSImage(systemSymbolName: name, accessibilityDescription: nil)
+        #else
+        return UIImage(systemName: name)
+        #endif
     }
 }

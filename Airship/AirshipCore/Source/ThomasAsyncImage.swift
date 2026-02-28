@@ -24,7 +24,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
     }
 
     @State private var loadedImage: AirshipImageData? = nil
-    @State private var currentImage: UIImage?
+    @State private var currentImage: AirshipNativeImage?
     @State private var imageIndex: Int = 0
     @State private var imageTask: Task<Void, Never>?
     @State private var cancellable: AnyCancellable?
@@ -70,7 +70,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
     private var content: some View {
         Group {
             if let image = currentImage {
-                self.image(Image(uiImage: image), image.size)
+                self.image(Image(airshipNativeImage: image), image.size)
                     .animation(nil, value: self.imageIndex)
                     .onDisappear {
                         imageTask?.cancel()

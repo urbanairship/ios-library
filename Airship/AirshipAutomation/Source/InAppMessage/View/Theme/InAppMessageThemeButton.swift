@@ -3,16 +3,19 @@
 import Foundation
 public import SwiftUI
 
+#if canImport(AirshipCore)
+import AirshipCore
+#endif
+
 public extension InAppMessageTheme {
     static func dismissIcon(_ dismissIconResource: String?) -> Image {
-        /// Try custom image, then fallback to system image, finally fallback to xmark
-        if let name = dismissIconResource, let customImage = UIImage(named: name) {
-            return Image(uiImage: customImage)
-        } else if let name = dismissIconResource, let systemImage = UIImage(systemName: name) {
-            return Image(uiImage: systemImage)
-        } else {
-            return Image(systemName: "xmark")
+        if let name = dismissIconResource, let customImage = AirshipNativeImage(named: name) {
+            return Image(airshipNativeImage: customImage)
         }
+        if let name = dismissIconResource, let systemImage = AirshipNativeImage.airshipSystemImage(name: name) {
+            return Image(airshipNativeImage: systemImage)
+        }
+        return Image(systemName: "xmark")
     }
 
     /// Button in-app message theme
