@@ -11,77 +11,83 @@ import AirshipCore
 /// A view that displays a list of messages as well as modifies the toolbars and navigation title.
 @MainActor
 public struct MessageCenterListViewWithNavigation: View {
-
+    
     @Environment(\.messageCenterDismissAction)
     private var dismissAction: (@MainActor @Sendable () -> Void)?
-
+    
+#if !os(macOS)
     @Environment(\.editMode)
     private var editMode
-
+    
+    @Environment(\.messageCenterDetectedAppearance)
+    private var detectedAppearance
+#endif
+    
     @Environment(\.colorScheme)
     private var colorScheme
     
     @Environment(\.airshipMessageCenterTheme)
     private var theme
-
+    
     @StateObject
     private var viewModel: MessageCenterMessageListViewModel
-
-    @Environment(\.messageCenterDetectedAppearance)
-    private var detectedAppearance
-
+    
+    
     /// Initializer.
     /// - Parameters:
     ///   - viewModel: The message center list view model.
     public init(viewModel: MessageCenterMessageListViewModel) {
         _viewModel = .init(wrappedValue: viewModel)
     }
-
+    
     /// Initializer.
     /// - Parameters:
     ///   - predicate: A predicate to filter messages.
     public init(predicate: (any MessageCenterPredicate)? = nil) {
         _viewModel = .init(wrappedValue: .init(predicate: predicate))
     }
-
-    private var effectiveColors: MessageCenterEffectiveColors {
-        MessageCenterEffectiveColors(
-            detectedAppearance: detectedAppearance,
-            theme: theme,
-            colorScheme: colorScheme
-        )
+    
+    private var navigationBarAppearance: MessageCenterNavigationAppearance {
+#if !os(macOS)
+        if let detectedAppearance {
+            return detectedAppearance.resolveAppearance(theme: theme, colorScheme: colorScheme)
+        }
+#endif
+        return MessageCenterNavigationAppearance(theme: theme, colorScheme: colorScheme)
     }
-
+    
+#if !os(macOS)
     private var isEditMode: Bool {
         self.editMode?.wrappedValue.isEditing ?? false
     }
-
-#if !os(tvOS)
+#endif
+    
+#if !os(tvOS) && !os(macOS)
     private func editButton() -> some View {
-        let color = isEditMode
-        ? colorScheme.airshipResolveColor(light: theme.cancelButtonTitleColor, dark: theme.cancelButtonTitleColorDark)
-        : effectiveColors.editButtonColor
-
         return EditButton()
-            .foregroundColor(color)
+            .foregroundColor(navigationBarAppearance.editButtonColor(isEditing: isEditMode))
             .accessibilityHint("ua_edit_messages_description".messageCenterLocalizedString)
     }
 #endif
-
+    
     private func markRead(messages: Set<String>) {
+#if !os(macOS)
         withAnimation {
             self.editMode?.wrappedValue = .inactive
         }
+#endif
         self.viewModel.markRead(messages: messages)
     }
-
+    
     private func delete(messages: Set<String>) {
+#if !os(macOS)
         withAnimation {
             self.editMode?.wrappedValue = .inactive
         }
+#endif
         self.viewModel.delete(messages: messages)
     }
-
+    
     private func markDeleteButton() -> some View {
         Button(
             "ua_mark_messages_read".messageCenterLocalizedString,
@@ -99,7 +105,7 @@ public struct MessageCenterListViewWithNavigation: View {
         .accessibilityHint("ua_delete_messages".messageCenterLocalizedString)
         .disabled(self.viewModel.editModeSelection.isEmpty)
     }
-
+    
     @ViewBuilder
     private func markReadButton() -> some View {
         Button(
@@ -117,7 +123,7 @@ public struct MessageCenterListViewWithNavigation: View {
         .disabled(self.viewModel.editModeSelection.isEmpty)
         .accessibilityHint("ua_mark_messages_read".messageCenterLocalizedString)
     }
-
+    
     @ViewBuilder
     private func selectButton() -> some View {
         if self.viewModel.editModeSelection.count == self.viewModel.messages.count {
@@ -126,7 +132,7 @@ public struct MessageCenterListViewWithNavigation: View {
             selectAll()
         }
     }
-
+    
     private func selectAll() -> some View {
         Button(
             "ua_select_all_messages".messageCenterLocalizedString
@@ -141,7 +147,7 @@ public struct MessageCenterListViewWithNavigation: View {
         )
         .accessibilityHint("ua_select_all_messages".messageCenterLocalizedString)
     }
-
+    
     private func selectNone() -> some View {
         Button(
             "ua_select_none_messages".messageCenterLocalizedString
@@ -156,17 +162,19 @@ public struct MessageCenterListViewWithNavigation: View {
         )
         .accessibilityHint("ua_select_none_messages".messageCenterLocalizedString)
     }
-
+    
     /// The body of the view.
     public var body: some View {
         let containerColor: Color? = colorScheme.airshipResolveColor(
             light: theme.messageListContainerBackgroundColor,
             dark: theme.messageListContainerBackgroundColorDark
         )
-
+        
         let content = MessageCenterListView(viewModel: self.viewModel)
             .frame(maxHeight: .infinity)
+#if !os(macOS)
             .applyUIKitNavigationAppearance()
+#endif
             .navigationTitle(
                 theme.navigationBarTitle ?? "ua_message_center_title".messageCenterLocalizedString
             )
@@ -181,16 +189,18 @@ public struct MessageCenterListViewWithNavigation: View {
                         editButton()
                     }
                 }
-
+                
                 ToolbarItemGroup(placement: .bottomBar) {
                     selectButton()
                     Spacer()
                     markReadButton()
                     markDeleteButton()
                 }
-#elseif !os(tvOS)
+#elseif !os(tvOS) && !os(macOS)
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
+#if !os(macOS)
                     editButton()
+#endif
                 }
                 ToolbarItemGroup(placement: .bottomBar) {
                     selectButton()
@@ -200,21 +210,23 @@ public struct MessageCenterListViewWithNavigation: View {
                     markDeleteButton()
                 }
 #endif
-
-                if effectiveColors.navigationTitleColor != nil || detectedAppearance?.navigationTitleFont != nil {
+                
+                if navigationBarAppearance.titleColor != nil || navigationBarAppearance.titleFont != nil {
                     ToolbarItemGroup(placement: .principal) {
                         // Custom title with detected color
                         Text(theme.navigationBarTitle ?? "ua_message_center_title".messageCenterLocalizedString)
-                            .foregroundColor(effectiveColors.navigationTitleColor)
-                            .airshipApplyIf(detectedAppearance?.navigationTitleFont != nil) { text in
-                                text.font(detectedAppearance!.navigationTitleFont)
+                            .foregroundColor(navigationBarAppearance.titleColor)
+                            .airshipApplyIf(navigationBarAppearance.titleFont != nil) { text in
+                                text.font(navigationBarAppearance.titleFont)
                             }
                     }
                 }
             }
- #if !os(tvOS)
+#if !os(tvOS) && !os(macOS)
             .toolbar(isEditMode ? .visible : .hidden, for: .bottomBar)
 #endif
+        
+#if !os(macOS)
             .airshipApplyIf(containerColor != nil) { view in
                 let visibility: Visibility = if #available(iOS 26.0, *) {
                     .automatic
@@ -231,7 +243,9 @@ public struct MessageCenterListViewWithNavigation: View {
                     }
                 }
             }
-
+#endif
+        
+#if !os(macOS)
         if #available(iOS 26.0, *) {
             content.toolbar(
                 isEditMode ? .hidden : .automatic,
@@ -241,5 +255,11 @@ public struct MessageCenterListViewWithNavigation: View {
         } else {
             content
         }
+#else
+        
+        content
+        
+#endif
+        
     }
 }

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
+#if canImport(UIKit)
 import SwiftUI
-import UIKit
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -33,11 +33,11 @@ internal struct MessageCenterUIKitAppearance {
                lhs.navigationTitle != rhs.navigationTitle {
                 return false
             }
-            
+
             // Compare color properties separately to reduce type-checking load
             return lhs.compareColors(rhs)
         }
-        
+
         private func compareColors(_ other: DetectedAppearance) -> Bool {
             navigationBarTintColor == other.navigationBarTintColor &&
                 navigationBarBackgroundColor == other.navigationBarBackgroundColor &&
@@ -92,6 +92,7 @@ internal struct MessageCenterUIKitAppearance {
 
             return appearance
         }
+
     }
 
     // MARK: - Environment Keys
@@ -119,48 +120,6 @@ extension EnvironmentValues {
     var messageCenterDetectedAppearance: MessageCenterUIKitAppearance.DetectedAppearance? {
         get { self[MessageCenterUIKitAppearance.DetectedAppearanceKey.self] }
         set { self[MessageCenterUIKitAppearance.DetectedAppearanceKey.self] = newValue }
-    }
-}
-
-// MARK: - Effective Colors Helper
-
-internal struct MessageCenterEffectiveColors {
-    let detectedAppearance: MessageCenterUIKitAppearance.DetectedAppearance?
-    let theme: MessageCenterTheme
-    let colorScheme: ColorScheme
-
-    private func resolveButtonColor(themeLight: Color?, themeDark: Color?) -> Color? {
-        detectedAppearance?.navigationBarTintColor ?? colorScheme.airshipResolveColor(
-            light: themeLight,
-            dark: themeDark
-        )
-    }
-
-    var navigationBarTintColor: Color? {
-        detectedAppearance?.navigationBarTintColor
-    }
-
-    var backButtonColor: Color? {
-        resolveButtonColor(themeLight: theme.backButtonColor, themeDark: theme.backButtonColorDark)
-    }
-
-    var deleteButtonColor: Color? {
-        resolveButtonColor(themeLight: theme.deleteButtonTitleColor, themeDark: theme.deleteButtonTitleColorDark)
-    }
-
-    var editButtonColor: Color? {
-        resolveButtonColor(themeLight: theme.editButtonTitleColor, themeDark: theme.editButtonTitleColorDark)
-    }
-
-    var navigationBarBackgroundColor: Color? {
-        detectedAppearance?.navigationBarBackgroundColor ?? colorScheme.airshipResolveColor(
-            light: theme.messageListContainerBackgroundColor,
-            dark: theme.messageListContainerBackgroundColorDark
-        )
-    }
-
-    var navigationTitleColor: Color? {
-        detectedAppearance?.navigationTitleColor
     }
 }
 
@@ -242,14 +201,6 @@ internal struct MessageCenterApplyDetectedAppearance: ViewModifier {
     }
 }
 
-// MARK: - Helper Extensions
-
-extension Font {
-    /// Initialize Font from UIFont
-    init(_ uiFont: UIFont) {
-        self = Font(uiFont as CTFont)
-    }
-}
 
 // MARK: - View Extension for Appearance
 
@@ -259,3 +210,19 @@ extension View {
         self.modifier(MessageCenterApplyDetectedAppearance())
     }
 }
+
+extension MessageCenterUIKitAppearance.DetectedAppearance {
+    /// Factory method to convert detected UIKit data into the platform-agnostic NavigationAppearance
+    @MainActor
+    func resolveAppearance(theme: MessageCenterTheme, colorScheme: ColorScheme) -> MessageCenterNavigationAppearance {
+        return MessageCenterNavigationAppearance(
+            theme: theme,
+            colorScheme: colorScheme,
+            barTintColor: self.navigationBarTintColor,
+            barBackgroundColor: self.navigationBarBackgroundColor,
+            titleColor: self.navigationTitleColor,
+            titleFont: self.navigationTitleFont
+        )
+    }
+}
+#endif

@@ -2,7 +2,18 @@
 
 import Foundation
 import SwiftUI
-import UIKit
+
+#if canImport(AirshipCore)
+public import AirshipCore
+#endif
+
+#if canImport(UIKit)
+public import UIKit
+#endif
+
+#if canImport(AppKit)
+public import AppKit
+#endif
 
 /// View controller for Message Center view
 public class MessageCenterViewControllerFactory: NSObject {
@@ -20,7 +31,7 @@ public class MessageCenterViewControllerFactory: NSObject {
         predicate: (any MessageCenterPredicate)? = nil,
         controller: MessageCenterController,
         dismissAction: (@MainActor @Sendable () -> Void)? = nil
-    ) -> UIViewController {
+    ) -> AirshipNativeViewController {
         let theme = theme ?? MessageCenterTheme()
         return MessageCenterViewController(
             rootView: MessageCenterView(
@@ -45,8 +56,8 @@ public class MessageCenterViewControllerFactory: NSObject {
         themePlist: String?,
         controller: MessageCenterController,
         dismissAction: (@Sendable () -> Void)? = nil
-    ) throws -> UIViewController {
-        
+    ) throws -> AirshipNativeViewController {
+
         if let themePlist = themePlist {
             return make(
                 theme: try MessageCenterThemeLoader.fromPlist(themePlist),
@@ -74,7 +85,7 @@ public class MessageCenterViewControllerFactory: NSObject {
         predicate: (any MessageCenterPredicate)?,
         controller: MessageCenterController,
         dismissAction: (@Sendable () -> Void)? = nil
-    ) throws -> UIViewController {
+    ) throws -> AirshipNativeViewController {
 
         if let themePlist = themePlist {
             return make(
@@ -93,12 +104,17 @@ public class MessageCenterViewControllerFactory: NSObject {
     }
 }
 
-private class MessageCenterViewController<Content>: UIHostingController<Content>
-where Content: View {
+private class MessageCenterViewController<Content>: AirshipNativeHostingController<Content> where Content: View {
 
     override init(rootView: Content) {
         super.init(rootView: rootView)
+
+#if os(macOS)
+        self.view.wantsLayer = true
+        self.view.layer?.backgroundColor = NSColor.clear.cgColor
+#else
         self.view.backgroundColor = .clear
+#endif
     }
 
     required dynamic init?(coder aDecoder: NSCoder) {

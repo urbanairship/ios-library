@@ -2,7 +2,6 @@
 
 import Foundation
 public import SwiftUI
-import UIKit
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -63,8 +62,13 @@ public struct MessageCenterTheme: Sendable {
     /// The message cell separator style.
     public var cellSeparatorStyle: SeparatorStyle?
 
+#if os(macOS)
+    /// The message cell separator color.
+    public var cellSeparatorColor: Color? = Color(.separatorColor)
+#else
     /// The message cell separator color.
     public var cellSeparatorColor: Color? = Color(.separator)
+#endif
 
     /// The dark mode message cell separator color.
     public var cellSeparatorColorDark: Color? = nil

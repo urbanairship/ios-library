@@ -10,8 +10,11 @@ import AirshipCore
 
 /// A view that displays a list of messages.
 public struct MessageCenterListView: View {
+
+#if !os(macOS)
     @Environment(\.editMode)
     private var editMode
+#endif
 
     @Environment(\.colorScheme)
     private var colorScheme
@@ -103,7 +106,11 @@ public struct MessageCenterListView: View {
     }
 
     private var isEditMode: Bool {
+#if os(macOS)
+        false
+#else
         self.editMode?.wrappedValue.isEditing ?? false
+#endif
     }
 
     @ViewBuilder

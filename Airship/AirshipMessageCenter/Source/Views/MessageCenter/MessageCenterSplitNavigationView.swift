@@ -17,8 +17,10 @@ struct MessageCenterNavigationSplitView: View {
     @StateObject
     private var listViewModel: MessageCenterMessageListViewModel
 
+#if !os(macOS)
     @State
     private var editMode: EditMode = .inactive
+#endif
 
     init(controller: MessageCenterController, predicate: (any MessageCenterPredicate)?) {
         self.controller = controller
@@ -28,16 +30,18 @@ struct MessageCenterNavigationSplitView: View {
     @ViewBuilder
     private var sidebar: some View {
         NavigationStack {
-            MessageCenterContent(controller: self.controller, listViewModel: self.listViewModel)
+            let content = MessageCenterContent(controller: self.controller, listViewModel: self.listViewModel)
+            content
+#if !os(macOS)
                 .environment(\.editMode, $editMode)
                 .airshipOnChangeOf(editMode) { editMode in
-                    // Restores selection state after edit mode exits
                     if !editMode.isEditing, let last = self.listViewModel.selectedMessageID {
                         DispatchQueue.main.async {
                             self.listViewModel.selectedMessageID = last
                         }
                     }
                 }
+#endif
         }
     }
 

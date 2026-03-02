@@ -10,6 +10,7 @@ import AirshipCore
 import UIKit
 #endif
 
+import UserNotifications
 
 /// Actual airship component for MessageCenter. Used to hide AirshipComponent methods.
 final class MessageCenterComponent : AirshipComponent, AirshipPushableComponent, Sendable {

@@ -87,6 +87,7 @@ internal extension View {
     }
 }
 
+#if canImport(UIKit)
 struct MessageCenterUIKitContextModifier: ViewModifier {
     let hostingControllerRef: MessageCenterUIKitAppearance.WeakReference<UIViewController>
     @State private var detectedAppearance: MessageCenterUIKitAppearance.DetectedAppearance?
@@ -105,3 +106,4 @@ struct MessageCenterUIKitContextModifier: ViewModifier {
             )
     }
 }
+#endif

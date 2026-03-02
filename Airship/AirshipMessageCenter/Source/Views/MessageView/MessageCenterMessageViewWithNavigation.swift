@@ -21,8 +21,10 @@ public struct MessageCenterMessageViewWithNavigation: View {
     @Environment(\.airshipMessageCenterTheme)
     private var theme
 
+#if !os(macOS)
     @Environment(\.messageCenterDetectedAppearance)
     private var detectedAppearance
+#endif
 
     @State
     private var opacity = 0.0
@@ -73,13 +75,14 @@ public struct MessageCenterMessageViewWithNavigation: View {
         self.dismissAction = dismissAction
     }
 
-    /// Prioritizes theme values -> inherited appearance -> defaults
-    private var effectiveColors: MessageCenterEffectiveColors {
-        MessageCenterEffectiveColors(
-            detectedAppearance: detectedAppearance,
-            theme: theme,
-            colorScheme: colorScheme
-        )
+
+    private var navigationBarAppearance: MessageCenterNavigationAppearance {
+#if !os(macOS)
+        if let detectedAppearance {
+            return detectedAppearance.resolveAppearance(theme: theme, colorScheme: colorScheme)
+        }
+#endif
+        return MessageCenterNavigationAppearance(theme: theme, colorScheme: colorScheme)
     }
 
     private var shouldShowBackButton: Bool {
@@ -92,64 +95,75 @@ public struct MessageCenterMessageViewWithNavigation: View {
 
     /// The body of the view.
     public var body: some View {
-        let containerColor = effectiveColors.navigationBarBackgroundColor ?? self.colorScheme.airshipResolveColor(
-            light: self.theme.messageViewContainerBackgroundColor,
-            dark: self.theme.messageViewContainerBackgroundColorDark
-        )
-
+        let containerColor = navigationBarAppearance.barBackgroundColor
+        
         MessageCenterMessageView(
             viewModel: self.messageViewModel,
             dismissAction: dismiss
         )
-            .applyUIKitNavigationAppearance()
-            .navigationBarBackButtonHidden(true) // Hide the default back button
-#if !os(tvOS)
-            .navigationBarTitleDisplayMode(.inline)
+#if !os(macOS)
+        .applyUIKitNavigationAppearance()
 #endif
-            .navigationTitle(self.messageViewModel.message?.title ?? self.title ?? "")
-            .toolbar {
-                if shouldShowBackButton {
-                    ToolbarItemGroup(placement: .navigationBarLeading) {
-                        MessageCenterBackButton(dismissAction: dismiss)
-                    }
-                }
-
-#if os(iOS)
-                if #available(iOS 26.0, *) {
-                    ToolbarItemGroup(placement: .topBarTrailing) {
-                        deleteButton
-                    }
-                } else {
-                    ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        deleteButton
-                    }
+        .navigationBarBackButtonHidden(true) // Hide the default back button
+#if !os(tvOS) && !os(macOS)
+        .navigationBarTitleDisplayMode(.inline)
+#endif
+        .navigationTitle(self.messageViewModel.message?.title ?? self.title ?? "")
+        .toolbar {
+            if shouldShowBackButton {
+#if !os(macOS)
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    MessageCenterBackButton(dismissAction: dismiss)
                 }
 #else
+                ToolbarItemGroup(placement: .automatic) {
+                    MessageCenterBackButton(dismissAction: dismiss)
+                }
+#endif
+            }
+            
+#if os(iOS)
+            if #available(iOS 26.0, *) {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    deleteButton
+                }
+            } else {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     deleteButton
                 }
+            }
+#elseif !os(macOS)
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                deleteButton
+            }
+#else
+            ToolbarItemGroup(placement: .automatic) {
+                deleteButton
+            }
 #endif
-
-                if effectiveColors.navigationTitleColor != nil || detectedAppearance?.navigationTitleFont != nil {
-                    ToolbarItemGroup(placement: .principal) {
-                        // Custom title with detected color
-                        Text(self.messageViewModel.message?.title ?? self.title ?? "")
-                            .foregroundColor(effectiveColors.navigationTitleColor)
-                            .airshipApplyIf(detectedAppearance?.navigationTitleFont != nil) { text in
-                                text.font(detectedAppearance!.navigationTitleFont)
-                            }
-                    }
+            
+            if navigationBarAppearance.titleColor != nil || navigationBarAppearance.titleFont != nil {
+                ToolbarItemGroup(placement: .principal) {
+                    // Custom title with detected color
+                    Text(self.messageViewModel.message?.title ?? self.title ?? "")
+                        .foregroundColor(navigationBarAppearance.titleColor)
+                        .airshipApplyIf(navigationBarAppearance.titleFont != nil) { text in
+                            text.font(navigationBarAppearance.titleFont)
+                        }
                 }
             }
-            .airshipApplyIf(containerColor != nil) { view in
-                let visibility: Visibility = if #available(iOS 26.0, *) {
-                    .automatic
-                } else {
-                    .visible
-                }
-                view.toolbarBackground(containerColor!, for: .navigationBar)
-                    .toolbarBackground(visibility, for: .navigationBar)
+        }
+        .airshipApplyIf(containerColor != nil) { view in
+            let visibility: Visibility = if #available(iOS 26.0, *) {
+                .automatic
+            } else {
+                .visible
             }
+#if !os(macOS)
+            view.toolbarBackground(containerColor!, for: .navigationBar)
+                .toolbarBackground(visibility, for: .navigationBar)
+#endif
+        }
     }
 
     @ViewBuilder
@@ -165,7 +179,7 @@ public struct MessageCenterMessageViewWithNavigation: View {
                 }
                 dismiss()
             }
-            .tint(effectiveColors.deleteButtonColor)
+            .tint(navigationBarAppearance.deleteButtonColor)
         }
     }
 

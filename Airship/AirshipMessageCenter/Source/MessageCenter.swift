@@ -11,6 +11,10 @@ public import AirshipCore
 import UIKit
 #endif
 
+#if canImport(AppKit)
+import AppKit
+#endif
+
 
 /// Delegate protocol for receiving callbacks related to message center.
 public protocol MessageCenterDisplayDelegate {
@@ -75,7 +79,6 @@ public protocol MessageCenter: AnyObject, Sendable {
     /// Dismiss the message center.
     func dismiss()
 }
-
 
 /// Airship Message Center module.
 final class DefaultMessageCenter: MessageCenter {
@@ -314,7 +317,7 @@ extension DefaultMessageCenter {
 
     @MainActor
     func deepLink(_ deepLink: URL) -> Bool {
-        
+
         // Ensure the scheme matches Airship deeplLink scheme
         guard deepLink.scheme == Airship.deepLinkScheme else {
             return false
@@ -324,28 +327,28 @@ extension DefaultMessageCenter {
         guard deepLink.host == "message_center" else {
             return false
         }
-        
+
         let components = deepLink.pathComponents
         let path = deepLink.path
-        
+
         // Case 1: No path -> open message center
         if path.isEmpty || path == "/" {
             display()
             return true
         }
-        
+
         // Case 2: /message/<id>
         if components.count == 3, components[1] == "message" {
             display(messageID: components[2])
             return true
         }
-        
+
         // Case 3: /<id>
         if components.count == 2 {
             display(messageID: components[1])
             return true
         }
-        
+
         // Anything else is unsupported
         return false
     }

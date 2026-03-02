@@ -147,9 +147,7 @@ extension Color {
         var green: CGFloat = 0
         var blue: CGFloat = 0
         var opacity: CGFloat = 0
-
         AirshipNativeColor(self).getRed(&red, green: &green, blue: &blue, alpha: &opacity)
-
         return opacity == 0.0
     }
 }

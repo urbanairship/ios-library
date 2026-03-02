@@ -4,8 +4,16 @@ import Combine
 import Foundation
 public import SwiftUI
 
+#if canImport(UIKit)
+public import UIKit
+#endif
+
+#if canImport(AppKit)
+public import AppKit
+#endif
+
 #if canImport(AirshipCore)
-import AirshipCore
+public import AirshipCore
 #endif
 
 /// The Message Center content view.
@@ -83,9 +91,9 @@ public struct MessageCenterContent: View {
 
     @StateObject
     private var listViewModel: MessageCenterMessageListViewModel
-
+    
     /// Weak reference to the hosting view controller for UIKit appearance detection
-    weak private var hostingController: UIViewController?
+    weak private var hostingController: AirshipNativeViewController?
 
     /// Initializer.
     /// - Parameters:
@@ -106,7 +114,7 @@ public struct MessageCenterContent: View {
     ///   - predicate: A predicate to filter messages.
     public init(
         controller: MessageCenterController,
-        hostingController: UIViewController? = nil,
+        hostingController: AirshipNativeViewController? = nil,
         predicate: (any MessageCenterPredicate)? = nil
     ) {
         self.controller = controller
@@ -124,12 +132,14 @@ public struct MessageCenterContent: View {
                     controller.navigate(messageID: messageID)
                 }
             }
-            .airshipOnChangeOf(controller.path, initial: true) { path in
+            .airshipOnChangeOf(controller.path, initial: true) { _ in
                 // Sync controller path to the ID
                 if self.listViewModel.selectedMessageID != controller.currentMessageID {
                     self.listViewModel.selectedMessageID = controller.currentMessageID
                 }
             }
+
+#if !os(macOS)
         if let hostingController = hostingController {
             content.modifier(
                 MessageCenterUIKitContextModifier(
@@ -139,5 +149,8 @@ public struct MessageCenterContent: View {
         } else {
             content
         }
+#else
+        content
+#endif
     }
 }

@@ -11,8 +11,28 @@ import AirshipCore
 #endif
 
 #if canImport(WebKit)
-struct MessageCenterWebView: UIViewRepresentable {
+struct MessageCenterWebView: AirshipNativeViewRepresentable {
+
+#if os(macOS)
+    typealias NSViewType = WKWebView
+    func makeNSView(context: Context) -> WKWebView {
+        return makeWebView(context: context)
+    }
+
+    func updateNSView(_ nsView: WKWebView, context: Context) {
+        updateView(nsView, context: context)
+    }
+#else
     typealias UIViewType = WKWebView
+
+    func makeUIView(context: Context) -> WKWebView {
+        return makeWebView(context: context)
+    }
+
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        updateView(uiView, context: context)
+    }
+#endif
 
     @Binding
     var phase: MessageCenterMessageView.DisplayPhase
@@ -33,10 +53,13 @@ struct MessageCenterWebView: UIViewRepresentable {
         return true
     }
 
-    func makeUIView(context: Context) -> WKWebView {
+    func makeWebView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
+
+#if !os(macOS)
         configuration.allowsInlineMediaPlayback = true
         configuration.dataDetectorTypes = .all
+#endif
 
         let webView = WKWebView(
             frame: CGRect.zero,
@@ -56,7 +79,7 @@ struct MessageCenterWebView: UIViewRepresentable {
         Coordinator(self)
     }
 
-    func updateUIView(_ uiView: WKWebView, context: Context) {
+    func updateView(_ uiView: WKWebView, context: Context) {
         Task {
             await checkLoad(
                 webView: uiView,
