@@ -11,27 +11,27 @@ import AirshipCore
 /// The main view for the Airship Preference Center. This view provides a navigation stack.
 /// If you wish to provide your own navigation, see `PreferenceCenterContent`.
 public struct PreferenceCenterView: View {
-
+    
     @Environment(\.preferenceCenterDismissAction)
     private var dismissAction: (@MainActor @Sendable () -> Void)?
-
+    
     @Environment(\.airshipPreferenceCenterTheme)
     private var theme
-
+    
     @Environment(\.colorScheme)
     private var colorScheme
-
+    
     private let preferenceCenterID: String
-
+    
     @State private var title: String? = nil
-
+    
     /// Default constructor
     /// - Parameters:
     ///     - preferenceCenterID: The preference center ID
     public init(preferenceCenterID: String) {
         self.preferenceCenterID = preferenceCenterID
     }
-
+    
     @ViewBuilder
     private func makeBackButton() -> some View {
         let theme = theme.viewController?.navigationBar
@@ -39,7 +39,7 @@ public struct PreferenceCenterView: View {
             light: theme?.backButtonColor,
             dark: theme?.backButtonColorDark
         )
-
+        
         Button(action: {
             self.dismissAction?()
         }) {
@@ -49,31 +49,31 @@ public struct PreferenceCenterView: View {
                 .foregroundColor(resolvedBackButtonColor)
         }
     }
-
+    
     private var navigationBarTitle: String? {
         var title: String? = self.title
-
+        
         if theme.viewController?.navigationBar?.overrideConfigTitle == true {
             title = theme.viewController?.navigationBar?.title ?? title
         }
-
+        
         return title
     }
-
-
+    
+    
     @ViewBuilder
     public var body: some View {
         let resolvedNavigationBarColor = colorScheme.airshipResolveColor(
             light: theme.viewController?.navigationBar?.backgroundColor,
             dark: theme.viewController?.navigationBar?.backgroundColorDark
         )
-
+        
         NavigationStack {
             PreferenceCenterContent(
                 preferenceCenterID: preferenceCenterID,
                 onPhaseChange: { phase in
                     guard case .loaded(let state) = phase else { return }
-
+                    
                     let title = state.config.display?.title
                     if let title, title.isEmpty == false {
                         self.title = title
@@ -89,10 +89,12 @@ public struct PreferenceCenterView: View {
                 } else {
                     .visible
                 }
-
+#if !os(macOS)
                 view.toolbarBackground(resolvedNavigationBarColor!, for: .navigationBar)
                     .toolbarBackground(visibility, for: .navigationBar)
+#endif
             }
+#if !os(macOS)
             .toolbar {
                 if self.dismissAction != nil {
                     ToolbarItem(placement: .navigationBarLeading) {
@@ -100,6 +102,17 @@ public struct PreferenceCenterView: View {
                     }
                 }
             }
+#else
+            .toolbar {
+                if self.dismissAction != nil {
+                    ToolbarItem(placement: .automatic) {
+                        makeBackButton()
+                    }
+                }
+            }
+            
+#endif
+            
             .navigationTitle(navigationBarTitle ?? "")
         }
     }

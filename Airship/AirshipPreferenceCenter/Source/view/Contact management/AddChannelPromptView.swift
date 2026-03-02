@@ -66,7 +66,7 @@ struct AddChannelPromptView: View, Sendable {
 
     // MARK: - Body
     var body: some View {
-        #if os(tvOS)
+#if os(tvOS)
         // On tvOS, use a simpler structure without NavigationStack
         promptContentView
             .interactiveDismissDisabled(isLoading)
@@ -82,7 +82,7 @@ struct AddChannelPromptView: View, Sendable {
             } message: { successPrompt in
                 successAlertMessage(for: successPrompt)
             }
-        #else
+#else
         NavigationStack {
             promptContentView
                 .frame(maxWidth: Layout.maxWidth)
@@ -100,14 +100,14 @@ struct AddChannelPromptView: View, Sendable {
         } message: { successPrompt in
             successAlertMessage(for: successPrompt)
         }
-        #endif
+#endif
     }
 
     // MARK: - View Components
 
     @ViewBuilder
     private var promptContentView: some View {
-        #if os(tvOS)
+#if os(tvOS)
         // tvOS: Custom header with title and cancel button
         VStack(spacing: 0) {
             // Custom header bar
@@ -122,7 +122,7 @@ struct AddChannelPromptView: View, Sendable {
                 .buttonStyle(.bordered)
             }
             .padding()
-            
+
             ScrollView {
                 VStack(alignment: .leading, spacing: Layout.standardSpacing) {
                     descriptionSection
@@ -130,7 +130,7 @@ struct AddChannelPromptView: View, Sendable {
                     errorSection
                     submitButtonSection
                     footerSection
-                    
+
                     Spacer(minLength: Layout.standardSpacing)
                 }
                 .padding()
@@ -139,7 +139,7 @@ struct AddChannelPromptView: View, Sendable {
         .airshipOnChangeOf(viewModel.inputText) { _ in
             resetErrorStateIfNeeded()
         }
-        #else
+#else
         // iOS and other platforms: Use navigation bar
         ScrollView {
             VStack(alignment: .leading, spacing: Layout.standardSpacing) {
@@ -155,7 +155,9 @@ struct AddChannelPromptView: View, Sendable {
             .padding()
         }
         .navigationTitle(viewModel.item.display.title)
+#if !os(macOS)
         .navigationBarTitleDisplayMode(.inline)
+#endif
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 cancelButton
@@ -164,7 +166,7 @@ struct AddChannelPromptView: View, Sendable {
         .airshipOnChangeOf(viewModel.inputText) { _ in
             resetErrorStateIfNeeded()
         }
-        #endif
+#endif
     }
 
     @ViewBuilder
@@ -221,14 +223,14 @@ struct AddChannelPromptView: View, Sendable {
         Button(action: handleSubmission) {
             HStack {
                 Spacer()
-
+                
                 if isLoading {
                     ProgressView()
                         .progressViewStyle(CircularProgressViewStyle())
                 } else {
                     Text(viewModel.item.submitButton.text)
                 }
-
+                
                 Spacer()
             }
         }
@@ -308,14 +310,3 @@ struct AddChannelPromptView: View, Sendable {
     }
 }
 
-// MARK: - Extensions
-extension PreferenceCenterConfig.ContactManagementItem.Platform {
-    var inputLabel: String {
-        switch self {
-        case .sms:
-            return "Phone Number"
-        case .email:
-            return "Email Address"
-        }
-    }
-}

@@ -2,9 +2,11 @@
 
 #if !os(watchOS)
 
-#if canImport(AppKit)
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 public import AppKit
-#elseif canImport(UIKit)
+#endif
+
+#if canImport(UIKit)
 public import UIKit
 #endif
 
@@ -18,7 +20,7 @@ public final class AirshipWindowFactory: Sendable {
 
     private init() {}
 
-#if os(macOS)
+#if os(macOS) && !targetEnvironment(macCatalyst)
     /// A closure that allows apps to customize window creation.
     public var makeBlock: (@MainActor @Sendable () -> NSWindow)?
 

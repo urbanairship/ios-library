@@ -4,10 +4,8 @@ public import SwiftUI
 
 #if canImport(UIKit)
 public import UIKit
-public typealias AirshipNativeColor = UIColor
 #elseif canImport(AppKit)
 public import AppKit
-public typealias AirshipNativeColor = NSColor
 #endif
 
 public enum AirshipColorError: Error {

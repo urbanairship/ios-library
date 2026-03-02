@@ -11,13 +11,13 @@ import AirshipCore
 public struct ChannelTextField: View {
     // MARK: - Constants
     private enum Layout {
-        #if os(tvOS)
+#if os(tvOS)
         static let fieldHeight: CGFloat = 66  // tvOS needs taller fields for focus
         static let fieldPadding: CGFloat = 12
-        #else
+#else
         static let fieldHeight: CGFloat = 52
         static let fieldPadding: CGFloat = 10
-        #endif
+#endif
         static let fieldCornerRadius: CGFloat = 4
         static let stackSpacing: CGFloat = 2
         static let standardSpacing: CGFloat = 12
@@ -70,7 +70,7 @@ public struct ChannelTextField: View {
     public var body: some View {
         VStack(spacing: Layout.standardSpacing) {
             countryPicker
-            
+
             VStack {
                 HStack(spacing: Layout.stackSpacing) {
                     textFieldLabel
@@ -139,7 +139,9 @@ public struct ChannelTextField: View {
         TextField(makePlaceholder(), text: $inputText)
             .foregroundColor(textColor)
             .padding(Layout.placeHolderPadding)
+#if !os(macOS)
             .keyboardType(keyboardType)
+#endif
     }
 
     @ViewBuilder
@@ -173,6 +175,8 @@ public struct ChannelTextField: View {
     }
 
     // MARK: Keyboard type
+
+#if !os(macOS)
     private var keyboardType: UIKeyboardType {
         if let platform = self.platform {
             switch platform {
@@ -185,6 +189,7 @@ public struct ChannelTextField: View {
             return .default
         }
     }
+#endif
 
     // MARK: Placeholder
     private func makePlaceholder() -> String {

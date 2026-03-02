@@ -5,10 +5,8 @@ public import SwiftUI
 
 #if canImport(UIKit)
 public import UIKit
-public typealias AirshipNativeFont = UIFont
 #elseif canImport(AppKit)
 public import AppKit
-public typealias AirshipNativeFont = NSFont
 #endif
 
 public struct AirshipFont {

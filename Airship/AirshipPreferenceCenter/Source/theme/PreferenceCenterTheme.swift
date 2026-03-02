@@ -2,7 +2,15 @@
 
 import Foundation
 public import SwiftUI
+
+#if canImport(UIKit)
 import UIKit
+#endif
+
+#if canImport(AppKit)
+import AppKit
+#endif
+
 
 #if canImport(AirshipCore)
 public import AirshipCore
@@ -510,6 +518,19 @@ extension Color {
 
         /// Apply the differences to the target color
         var targetRed: CGFloat = 0, targetGreen: CGFloat = 0, targetBlue: CGFloat = 0, targetAlpha: CGFloat = 0
+
+#if os(macOS)
+        if targetUIColor.usingColorSpace(.deviceRGB)?.getRed(&targetRed, green: &targetGreen, blue: &targetBlue, alpha: &targetAlpha) != nil {
+            let newRed = colorScheme == .light ? max(targetRed - redDiff, 0) : min(targetRed + redDiff, 1)
+            let newGreen = colorScheme == .light ? max(targetGreen - greenDiff, 0) : min(targetGreen + greenDiff, 1)
+            let newBlue = colorScheme == .light ? max(targetBlue - blueDiff, 0) : min(targetBlue + blueDiff, 1)
+            let newAlpha = targetAlpha + alphaDiff
+
+            return Color(NSColor(red: newRed, green: newGreen, blue: newBlue, alpha: newAlpha))
+        } else {
+            return self /// Return the original color if unable to modify
+        }
+#else
         if targetUIColor.getRed(&targetRed, green: &targetGreen, blue: &targetBlue, alpha: &targetAlpha) {
             let newRed = colorScheme == .light ? max(targetRed - redDiff, 0) : min(targetRed + redDiff, 1)
             let newGreen = colorScheme == .light ? max(targetGreen - greenDiff, 0) : min(targetGreen + greenDiff, 1)
@@ -520,6 +541,7 @@ extension Color {
         } else {
             return self /// Return the original color if unable to modify
         }
+#endif
     }
 }
 
@@ -548,14 +570,21 @@ struct PreferenceCenterDefaults {
     static let buttonDestructiveBackgroundColor = Color.red
     static let buttonBackgroundColor = AirshipSystemColors.label
 
-    static let promptBackgroundColor: Color = Color(UIColor { (traitCollection: UITraitCollection) -> AirshipNativeColor in
-#if os(tvOS)
-        return (traitCollection.userInterfaceStyle == .dark ? AirshipColor.resolveNativeColor("#272727") : .black) ?? .white
+    static let promptBackgroundColor: Color = {
+#if os(macOS)
+        return Color(NSColor(name: nil) { appearance in
+            return (appearance.isDark ? AirshipColor.resolveNativeColor("#272727") : .controlBackgroundColor) ?? .controlBackgroundColor
+        })
+#elseif os(tvOS)
+        return Color(UIColor { trait in
+            return (trait.userInterfaceStyle == .dark ? AirshipColor.resolveNativeColor("#272727") : .black) ?? .white
+        })
 #else
-        return (traitCollection.userInterfaceStyle == .dark ? AirshipColor.resolveNativeColor("#272727") : .secondarySystemBackground) ?? .secondarySystemBackground
+        return Color(UIColor { trait in
+            return (trait.userInterfaceStyle == .dark ? AirshipColor.resolveNativeColor("#272727") : .secondarySystemBackground) ?? .secondarySystemBackground
+        })
 #endif
-
-    })
+    }()
 
     static let labeledSectionBreakTitleAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline,
@@ -624,17 +653,43 @@ struct PreferenceCenterDefaults {
 
 
 internal struct AirshipSystemColors {
-    static let placeholder = Color(.placeholderText)
-    static let label = Color.primary
-    static let secondaryLabel = Color.secondary
-    static let tertiaryLabel = Color(.tertiaryLabel)
-#if os(tvOS)
-    static let background = Color.black
+
+    static let label: Color = .primary
+    static let secondaryLabel: Color = .secondary
+
+#if os(macOS)
+    static let placeholder: Color = Color(.placeholderTextColor)
+    static let tertiaryLabel: Color = Color(.tertiaryLabelColor)
+    static let link = Color(.linkColor)
+    static let background = Color(.windowBackgroundColor)
+    static let secondaryBackground = Color(.controlBackgroundColor)
+    static let tertiaryBackground = Color(.underPageBackgroundColor)
+#elseif os(tvOS)
+    static let placeholder: Color = Color(.placeholderText)
+    static let tertiaryLabel: Color = Color(.tertiaryLabel)
+    static let link = Color(.link)
+    static let background: Color  = Color(UIColor.systemBackground)
+    static let secondaryBackground: Color = Color(UIColor.secondarySystemBackground)
+    static let tertiaryBackground: Color = Color(UIColor.tertiarySystemBackground)
+    static let background: Color = .black
+    static let secondaryBackground: Color = .black
+    static let tertiaryBackground: Color = .black
 #else
-    static let background = Color(.systemBackground)
-    static let secondaryBackground = Color(.secondarySystemBackground)
-    static let tertiaryBackground = Color(.tertiarySystemBackground)
+    static let placeholder: Color = Color(.placeholderText)
+    static let tertiaryLabel: Color = Color(.tertiaryLabel)
+    static let link: Color = Color(.link)
+    static let background: Color = Color(.systemBackground)
+    static let secondaryBackground: Color = Color(.secondarySystemBackground)
+    static let tertiaryBackground: Color = Color(.tertiarySystemBackground)
 #endif
 
-    static let link = Color(.link)
 }
+
+
+#if os(macOS)
+extension NSAppearance {
+    var isDark: Bool {
+        return bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+    }
+}
+#endif

@@ -172,7 +172,7 @@ struct ChannelListViewCell: View {
     @ViewBuilder
     private func makeCell(channel: ContactChannel) -> some View {
         VStack(alignment: .leading) {
-            let cellText = channel.maskedAddress.replacingAsterisksWithBullets()
+            let cellText = channel.maskedAddress
             if channel.channelType == .email {
                 makeCellLabel(iconSystemName: "envelope", labelText: cellText)
             } else {

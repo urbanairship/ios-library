@@ -273,7 +273,7 @@
 		6E146D6A2F5241BC00320A36 /* AirshipColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E146D692F5241BA00320A36 /* AirshipColor.swift */; };
 		6E146EDD2F52537000320A36 /* AishipFontTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E146EDC2F52536C00320A36 /* AishipFontTests.swift */; };
 		6E146FF32F525E7300320A36 /* AirshipPasteboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E146FF22F525E7300320A36 /* AirshipPasteboard.swift */; };
-		6E1472D52F526DCD00320A36 /* AirshipNativeViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1472D42F526DC600320A36 /* AirshipNativeViewRepresentable.swift */; };
+		6E1472D52F526DCD00320A36 /* AirshipNativePlatform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1472D42F526DC600320A36 /* AirshipNativePlatform.swift */; };
 		6E1473EA2F527C4D00320A36 /* TestURLOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB62812A36A45F0095C85C /* TestURLOpener.swift */; };
 		6E14C9A128B5E4AF00A55E65 /* PushNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14C9A028B5E4AF00A55E65 /* PushNotification.swift */; };
 		6E1528172B4DC3C000DF1377 /* ActionAutomationExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1528162B4DC3C000DF1377 /* ActionAutomationExecutor.swift */; };
@@ -998,7 +998,7 @@
 		841E7D12268617C800EA0317 /* PreferenceCenterResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841E7D11268617C800EA0317 /* PreferenceCenterResponse.swift */; };
 		84483A68267CF0C000D0DA7D /* PreferenceCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84483A67267CF0C000D0DA7D /* PreferenceCenter.swift */; };
 		847B0004267CD73A007CD249 /* AirshipPreferenceCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 847BFFF6267CD73A007CD249 /* AirshipPreferenceCenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		847B000B267CD85E007CD249 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
+		847B000B267CD85E007CD249 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
 		847B0013267CE558007CD249 /* PreferenceCenterSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847B0012267CE558007CD249 /* PreferenceCenterSDKModule.swift */; };
 		847BFFFD267CD73A007CD249 /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 847BFFF4267CD739007CD249 /* AirshipPreferenceCenter.framework */; };
 		9908E60E2B000DBA00DB3E2E /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E60D2B000DBA00DB3E2E /* CustomView.swift */; };
@@ -1579,7 +1579,7 @@
 		6E146D692F5241BA00320A36 /* AirshipColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipColor.swift; sourceTree = "<group>"; };
 		6E146EDC2F52536C00320A36 /* AishipFontTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AishipFontTests.swift; sourceTree = "<group>"; };
 		6E146FF22F525E7300320A36 /* AirshipPasteboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipPasteboard.swift; sourceTree = "<group>"; };
-		6E1472D42F526DC600320A36 /* AirshipNativeViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipNativeViewRepresentable.swift; sourceTree = "<group>"; };
+		6E1472D42F526DC600320A36 /* AirshipNativePlatform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipNativePlatform.swift; sourceTree = "<group>"; };
 		6E14C9A028B5E4AF00A55E65 /* PushNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushNotification.swift; sourceTree = "<group>"; };
 		6E1528162B4DC3C000DF1377 /* ActionAutomationExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionAutomationExecutor.swift; sourceTree = "<group>"; };
 		6E1528182B4DC3D000DF1377 /* InAppMessageAutomationPreparer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageAutomationPreparer.swift; sourceTree = "<group>"; };
@@ -3639,7 +3639,7 @@
 		6E411D5F2538D26200FEE4E8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				6E1472D42F526DC600320A36 /* AirshipNativeViewRepresentable.swift */,
+				6E1472D42F526DC600320A36 /* AirshipNativePlatform.swift */,
 				6E146FF22F525E7300320A36 /* AirshipPasteboard.swift */,
 				6E146D692F5241BA00320A36 /* AirshipColor.swift */,
 				6E146D672F523DB700320A36 /* AirshipFont.swift */,
@@ -5818,7 +5818,7 @@
 				6ECD4F6D2DD7A7060060EE72 /* RadioInputToggleLayout.swift in Sources */,
 				6EB5158328A47C7100870C5A /* ScopedSubscriptionListEdit.swift in Sources */,
 				60D3BCD02A154D9400E07524 /* MessageCriteria.swift in Sources */,
-				6E1472D52F526DCD00320A36 /* AirshipNativeViewRepresentable.swift in Sources */,
+				6E1472D52F526DCD00320A36 /* AirshipNativePlatform.swift in Sources */,
 				608B16E62C2C1138005298FA /* SubscriptionListProvider.swift in Sources */,
 				6E94761529BBC0240025F364 /* AirshipButton.swift in Sources */,
 				3251586B272AFB2E00DF8B44 /* MediaWebView.swift in Sources */,
@@ -6899,6 +6899,13 @@
 		};
 		847B000E267CD85E007CD249 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				macos,
+				tvos,
+				xros,
+			);
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = 847B000D267CD85E007CD249 /* PBXContainerItemProxy */;
 		};
@@ -7692,6 +7699,9 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = AirshipPreferenceCenter/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -7705,8 +7715,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipPreferenceCenter;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = "1,2,3,7";
@@ -7731,6 +7742,9 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = AirshipPreferenceCenter/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -7743,8 +7757,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipPreferenceCenter;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = "1,2,3,7";
