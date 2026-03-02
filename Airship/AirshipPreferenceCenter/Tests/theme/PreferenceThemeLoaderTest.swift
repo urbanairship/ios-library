@@ -1,15 +1,24 @@
 /* Copyright Airship and Contributors */
 
+import Testing
 import SwiftUI
-import XCTest
 
-@testable import AirshipPreferenceCenter
+@testable
+import AirshipPreferenceCenter
 
-class PreferenceThemeLoaderTest: XCTestCase {
-
-    func testFromPlist() throws {
-        let bundle = Bundle(for: Self.self)
-
+@Suite("Preference Theme Loader")
+struct PreferenceThemeLoaderTest {
+    
+    private class BundleFinder {}
+    let bundle: Bundle
+    
+    init() {
+        bundle = Bundle(for: BundleFinder.self)
+    }
+    
+    @Test
+    func fromPlist() throws {
+        
         let legacyTheme = try PreferenceCenterThemeLoader.fromPlist(
             "TestLegacyTheme",
             bundle: bundle
@@ -18,30 +27,23 @@ class PreferenceThemeLoaderTest: XCTestCase {
             "TestTheme",
             bundle: bundle
         )
-
-        XCTAssertEqual(legacyTheme, theme)
-        XCTAssertNotEqual(PreferenceCenterTheme(), theme)
+        
+        #expect(legacyTheme == theme)
+        #expect(PreferenceCenterTheme() != theme)
     }
-
-    func testLoadEmptyPlist() throws {
-        let bundle = Bundle(for: Self.self)
-
-        let emptyTheme = try PreferenceCenterThemeLoader.fromPlist(
+    
+    @Test
+    func loadEmptyPlist() throws {
+        _ = try PreferenceCenterThemeLoader.fromPlist(
             "TestThemeEmpty",
             bundle: bundle
         )
-
-        XCTAssertNotNil(emptyTheme)
     }
-
-    func testInvalidFile() throws {
-        let bundle = Bundle(for: Self.self)
-
-        XCTAssertThrowsError(
-            try PreferenceCenterThemeLoader.fromPlist(
-                "Not a file",
-                bundle: bundle
-            )
-        )
+    
+    @Test
+    func invalidFile() throws {
+        #expect(throws: (any Error).self) {
+            try PreferenceCenterThemeLoader.fromPlist("Not a file", bundle: bundle)
+        }
     }
 }

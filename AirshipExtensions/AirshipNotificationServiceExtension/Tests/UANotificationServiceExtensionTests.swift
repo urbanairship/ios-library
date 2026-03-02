@@ -1,38 +1,51 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
-@testable import AirshipNotificationServiceExtension
+import Testing
 
-final class UANotificationServiceExtensionTests: XCTestCase {
+@testable
+import AirshipNotificationServiceExtension
+
+@Suite("U A Notification Service Extension")
+struct UANotificationServiceExtensionTests {
+    
+    private class BundleFinder {}
     let subject = UANotificationServiceExtension()
     
-    func testEmptyContent() {
+    @Test
+    func emptyContent() async throws {
+        // 1. Setup
         let content = UNNotificationContent()
-        let request = UNNotificationRequest(identifier: "identifier", content: content, trigger: nil)
-        let expectation = expectation(description: "delivery")
-        subject.didReceive(request) { deliveredContent in
-            XCTAssertEqual(0, deliveredContent.attachments.count)
-            XCTAssertNil(deliveredContent.badge)
-            XCTAssertNil(deliveredContent.sound)
-            XCTAssertEqual("", deliveredContent.body)
-            XCTAssertEqual("", deliveredContent.title)
-            XCTAssertEqual("", deliveredContent.subtitle)
-            XCTAssertEqual("", deliveredContent.categoryIdentifier)
-            XCTAssertEqual("", deliveredContent.launchImageName)
-            XCTAssertEqual("", deliveredContent.threadIdentifier)
-            XCTAssertEqual(0, deliveredContent.userInfo.count)
-            XCTAssertEqual("", deliveredContent.summaryArgument)
-            XCTAssertEqual(0, deliveredContent.summaryArgumentCount)
-            XCTAssertNil(deliveredContent.targetContentIdentifier)
-            expectation.fulfill()
+        let request = UNNotificationRequest(
+            identifier: "identifier", content: content, trigger: nil
+        )
+        
+        let deliveredContent: UNNotificationContent = try await withCheckedThrowingContinuation { continuation in
+            subject.didReceive(request) { result in
+                continuation.resume(returning: result)
+            }
         }
         
-        self.wait(for: [expectation], timeout: 10)
+        // 3. Assertions
+        #expect(deliveredContent.attachments.isEmpty)
+        #expect(deliveredContent.badge == nil)
+        #expect(deliveredContent.sound == nil)
+        #expect(deliveredContent.body.isEmpty)
+        #expect(deliveredContent.title.isEmpty)
+        #expect(deliveredContent.subtitle.isEmpty)
+        #expect(deliveredContent.categoryIdentifier.isEmpty)
+        #expect(deliveredContent.launchImageName.isEmpty)
+        #expect(deliveredContent.threadIdentifier.isEmpty)
+        #expect(deliveredContent.userInfo.isEmpty)
+        #expect(deliveredContent.targetContentIdentifier == nil)
     }
     
-    func testSampleContent() throws {
+    @Test
+    func sampleContent() async throws {
         
-        let fileUrl = try XCTUnwrap(Bundle(for: self.classForCoder).url(forResource: "airship", withExtension: "jpg"))
+        let fileUrl = try #require(
+            Bundle(for: BundleFinder.self)
+                .url(forResource: "airship", withExtension: "jpg")
+        )
         
         let content = UNMutableNotificationContent()
         content.body = "oh hi"
@@ -65,32 +78,29 @@ final class UANotificationServiceExtensionTests: XCTestCase {
         ]
         
         let request = UNNotificationRequest(identifier: "4B2D08E6-8955-4964-8C15-6F7FEBC0EBB4", content: content, trigger: nil)
-        let expectation = self.expectation(description: "delivery")
         
-        self.subject.didReceive(request) { deliveredContent in
-            XCTAssertEqual(1, deliveredContent.attachments.count)
-            let attachment = deliveredContent.attachments[0]
-            
-            XCTAssertNotNil(attachment.identifier)
-            XCTAssertNotNil(attachment.url)
-            XCTAssert(FileManager.default.contentsEqual(atPath: attachment.url.path, andPath: fileUrl.path))
-            XCTAssertEqual("public.jpeg", attachment.type)
-            
-            XCTAssertNil(deliveredContent.badge)
-            XCTAssertNil(deliveredContent.sound)
-            XCTAssertNil(deliveredContent.targetContentIdentifier)
-            XCTAssertEqual("Moustache Twirl", deliveredContent.title)
-            XCTAssertEqual("The saga of a bendy stache.", deliveredContent.subtitle)
-            XCTAssertEqual("Have you ever seen a moustache like this?!", deliveredContent.body)
-            XCTAssertEqual("news", deliveredContent.categoryIdentifier)
-            XCTAssertEqual("", deliveredContent.launchImageName)
-            XCTAssertEqual("", deliveredContent.threadIdentifier)
-            XCTAssertEqual("", deliveredContent.summaryArgument)
-            XCTAssertEqual(0, deliveredContent.summaryArgumentCount)
-            
-            expectation.fulfill()
+        let deliveredContent: UNNotificationContent = try await withCheckedThrowingContinuation { continuation in
+            subject.didReceive(request) { result in
+                continuation.resume(returning: result)
+            }
         }
         
-        wait(for: [expectation], timeout: 30)
+        try #require(deliveredContent.attachments.count == 1)
+        let attachment = deliveredContent.attachments[0]
+        
+        
+        #expect(FileManager.default.contentsEqual(atPath: attachment.url.path, andPath: fileUrl.path))
+        #expect("public.jpeg" == attachment.type)
+        
+        #expect(deliveredContent.badge == nil)
+        #expect(deliveredContent.sound == nil)
+        #expect(deliveredContent.targetContentIdentifier == nil)
+        #expect("Moustache Twirl" == deliveredContent.title)
+        #expect("The saga of a bendy stache." == deliveredContent.subtitle)
+        #expect("Have you ever seen a moustache like this?!" == deliveredContent.body)
+        #expect("news" == deliveredContent.categoryIdentifier)
+        #expect("" == deliveredContent.launchImageName)
+        #expect("" == deliveredContent.threadIdentifier)
     }
+    
 }

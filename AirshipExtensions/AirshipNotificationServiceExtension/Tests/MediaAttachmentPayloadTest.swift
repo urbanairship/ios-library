@@ -1,45 +1,52 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
-@testable import AirshipNotificationServiceExtension
+import Testing
 
-final class MediaAttachmentPayloadTest: XCTestCase {
+@testable
+import AirshipNotificationServiceExtension
+
+@Suite("Media Attachment Payload")
+struct MediaAttachmentPayloadTest {
     
-    func testAirshipEmptyPayload() {
+    @Test
+    func airshipEmptyPayload() {
         let payload = decodeFrom(source: [:])
-        XCTAssertNil(payload)
+        #expect(payload == nil)
     }
     
-    func testAirshipURLPayloads() {
+    @Test
+    func airshipURLPayloads() {
         //invalid payload
-        XCTAssertNil(decodeFrom(source: [ "url": [:] ]))
+        let decoded = decodeFrom(source: [ "url": [:] ])
+        #expect(decoded == nil)
         
         // Test valid contents of the url when it is an empty array
         var payload = decodeFrom(source: [ "url": [] ])
-        XCTAssertNotNil(payload)
-        XCTAssertEqual(0, payload?.media.count)
+        #expect(payload != nil)
+        #expect(0 == payload?.media.count)
         
         // Airship payload
         payload = decodeFrom(source: [ "url": "https://sample.url" ])
-        XCTAssertNotNil(payload)
-        XCTAssertEqual(1, payload?.media.count)
-        XCTAssertEqual("https://sample.url", payload?.media.first?.url.absoluteString)
+        #expect(payload != nil)
+        #expect(1 == payload?.media.count)
+        #expect("https://sample.url" == payload?.media.first?.url.absoluteString)
         
         // Test contents of the url when it is an array with valid urls
         payload = decodeFrom(source: [ "url": ["https://sample.url", "http://sample1.url"] ])
-        XCTAssertNotNil(payload)
-        XCTAssertEqual(2, payload?.media.count)
-        XCTAssertEqual("https://sample.url", payload?.media.first?.url.absoluteString)
-        XCTAssertEqual("http://sample1.url", payload?.media.last?.url.absoluteString)
+        #expect(payload != nil)
+        #expect(2 == payload?.media.count)
+        #expect("https://sample.url" == payload?.media.first?.url.absoluteString)
+        #expect("http://sample1.url" == payload?.media.last?.url.absoluteString)
     }
     
-    func testAirshipURLSPayloads() {
+    @Test
+    func airshipURLSPayloads() {
         //invalid
-        XCTAssertNil(decodeFrom(source: ["urls": [:]]))
+        #expect(decodeFrom(source: ["urls": [:]]) == nil)
         
         // Test contents of the url when it is an array with invalid urls
         var payload = decodeFrom(source: ["urls": [1]])
-        XCTAssertNil(payload)
+        #expect(payload == nil)
         
         // VALID PAYLOADS
         // "url" key is ignored if "urls" is present
@@ -47,8 +54,8 @@ final class MediaAttachmentPayloadTest: XCTestCase {
             "url": "https://test.url",
             "urls": []
         ])
-        XCTAssertNotNil(payload)
-        XCTAssertEqual(0, payload?.media.count)
+        #expect(payload != nil)
+        #expect(0 == payload?.media.count)
         
         // Test contents of the url when it is an array with valid urls
         payload = decodeFrom(source: [
@@ -64,45 +71,51 @@ final class MediaAttachmentPayloadTest: XCTestCase {
             ]
         ])
         
-        XCTAssertEqual("http://sample1.url", payload?.media.first?.url.absoluteString)
-        XCTAssertEqual("sample-1-id", payload?.media.first?.urldID)
-        XCTAssertEqual("http://sample2.url", payload?.media.last?.url.absoluteString)
-        XCTAssertEqual("sample-2-id", payload?.media.last?.urldID)
+        #expect("http://sample1.url" == payload?.media.first?.url.absoluteString)
+        #expect("sample-1-id" == payload?.media.first?.urldID)
+        #expect("http://sample2.url" == payload?.media.last?.url.absoluteString)
+        #expect("sample-2-id" == payload?.media.last?.urldID)
     }
     
-    func testAirshipOptionsPayloads() {
+    @Test
+    func airshipOptionsPayloads() {
         // NOT VALID PAYLOADS
-        XCTAssertNil(decodeFrom(source: [
-            "url": "https://test.ur",
-            "options": []
-        ]))
+        #expect(
+            decodeFrom(
+                source: [
+                    "url": "https://test.ur",
+                    "options": []
+                ]
+            ) == nil
+        )
         
         // VALID PAYLOADS
         let payload = decodeFrom(source: [
             "url": "https://test.ur",
             "options": [:]
         ])
-        XCTAssertNotNil(payload)
-        XCTAssertNotNil(payload?.options)
-        XCTAssertNil(payload?.options.crop)
-        XCTAssertNil(payload?.options.hidden)
-        XCTAssertNil(payload?.options.time)
+        #expect(payload != nil)
+        #expect(payload?.options != nil)
+        #expect(payload?.options.crop == nil)
+        #expect(payload?.options.hidden == nil)
+        #expect(payload?.options.time == nil)
     }
     
-    func testAirshipCropOptionsPayloads() {
+    @Test
+    func airshipCropOptionsPayloads() {
         // NOT VALID PAYLOADS
         var payload = decodeFrom(source: [
             "url": "https://test.ur",
             "options": [ "crop": "" ]
         ])
-        XCTAssertNil(payload)
+        #expect(payload == nil)
         
         // Empty crop dictionary
         payload = decodeFrom(source: [
             "url": "https://test.ur",
             "options": [ "crop": [:] ]
         ])
-        XCTAssertNil(payload)
+        #expect(payload == nil)
         
         // Missing crop option
         payload = decodeFrom(source: [
@@ -113,7 +126,7 @@ final class MediaAttachmentPayloadTest: XCTestCase {
                 "height": 1
             ] ]
         ])
-        XCTAssertNil(payload)
+        #expect(payload == nil)
         
         // Non-valid crop option
         payload = decodeFrom(source: [
@@ -125,7 +138,7 @@ final class MediaAttachmentPayloadTest: XCTestCase {
                 "height": 1
             ] ]
         ])
-        XCTAssertNil(payload)
+        #expect(payload == nil)
         
         // valid crop options
         payload = decodeFrom(source: [
@@ -137,21 +150,26 @@ final class MediaAttachmentPayloadTest: XCTestCase {
                 "height": 1
             ] ]
         ])
-        XCTAssertNotNil(payload)
+        #expect(payload != nil)
         
         let generatedCrop = payload?.options.generateNotificationAttachmentOptions(hideThumbnail: false)[UNNotificationAttachmentOptionsThumbnailClippingRectKey] as? [String: Double]
-        XCTAssertEqual(1, generatedCrop?["X"])
-        XCTAssertEqual(1, generatedCrop?["Y"])
-        XCTAssertEqual(0.5, generatedCrop?["Width"])
-        XCTAssertEqual(1, generatedCrop?["Height"])
+        #expect(1 == generatedCrop?["X"])
+        #expect(1 == generatedCrop?["Y"])
+        #expect(0.5 == generatedCrop?["Width"])
+        #expect(1 == generatedCrop?["Height"])
     }
     
-    func testAirshipTimeOptionPayloads() {
+    @Test
+    func airshipTimeOptionPayloads() {
         // NOT VALID PAYLOADS
-        XCTAssertNil(decodeFrom(source: [
-            "url": "https://test.ur",
-            "options": ["time": ""]
-        ]))
+        #expect(
+            decodeFrom(
+                source: [
+                    "url": "https://test.ur",
+                    "options": ["time": ""]
+                ]
+            ) == nil
+        )
         
         // VALID PAYLOADS
         let payload = decodeFrom(source: [
@@ -161,17 +179,22 @@ final class MediaAttachmentPayloadTest: XCTestCase {
             ]
             
         ])
-        XCTAssertNotNil(payload)
-        XCTAssertEqual(1, payload?.options.time)
-        XCTAssertEqual(1, payload?.options.generateNotificationAttachmentOptions(hideThumbnail: false)[UNNotificationAttachmentOptionsThumbnailTimeKey] as? Double)
+        #expect(payload != nil)
+        #expect(1 == payload?.options.time)
+        #expect(1 == payload?.options.generateNotificationAttachmentOptions(hideThumbnail: false)[UNNotificationAttachmentOptionsThumbnailTimeKey] as? Double)
     }
     
-    func testAirshipHiddenOptionPayloads() {
+    @Test
+    func airshipHiddenOptionPayloads() {
         // NOT VALID PAYLOADS
-        XCTAssertNil(decodeFrom(source: [
-            "url": "https://test.ur",
-            "options": ["hidden": ""]
-        ]))
+        #expect(
+            decodeFrom(
+                source: [
+                    "url": "https://test.ur",
+                    "options": ["hidden": ""]
+                ]
+            ) == nil
+        )
         
         // VALID PAYLOADS
         let payload = decodeFrom(source: [
@@ -181,23 +204,34 @@ final class MediaAttachmentPayloadTest: XCTestCase {
             ]
             
         ])
-        XCTAssertNotNil(payload)
-        XCTAssertEqual(true, payload?.options.hidden)
-        XCTAssertEqual(true, payload?.options.generateNotificationAttachmentOptions(hideThumbnail: false)[UNNotificationAttachmentOptionsThumbnailHiddenKey] as? Bool)
+        #expect(payload != nil)
+        #expect(true == payload?.options.hidden)
+        #expect(true == payload?.options.generateNotificationAttachmentOptions(hideThumbnail: false)[UNNotificationAttachmentOptionsThumbnailHiddenKey] as? Bool)
     }
     
-    func testAirshipContentPayloads() {
+    @Test
+    func airshipContentPayloads() {
         // NOT VALID PAYLOADS
-        XCTAssertNil(decodeFrom(source: [
-            "url": "https://test.ur",
-            "content": ""
-        ]))
+        #expect(
+            decodeFrom(
+                source: [
+                    "url": "https://test.ur",
+                    "content": ""
+                ]
+            )
+            == nil
+        )
         
         // non-valid content
-        XCTAssertNil(decodeFrom(source: [
-            "url": "https://test.ur",
-            "content": [ "body": [:] ]
-        ]))
+        #expect(
+            decodeFrom(
+                source: [
+                    "url": "https://test.ur",
+                    "content": [ "body": [:] ]
+                ]
+            )
+            == nil
+        )
         
         // VALID PAYLOADS
         // empty content
@@ -205,22 +239,22 @@ final class MediaAttachmentPayloadTest: XCTestCase {
             "url": "https://test.ur",
             "content": [:]
         ])
-        XCTAssertNotNil(payload)
-        XCTAssertNotNil(payload?.textContent)
-        XCTAssertNil(payload?.textContent?.title)
-        XCTAssertNil(payload?.textContent?.subtitle)
-        XCTAssertNil(payload?.textContent?.body)
+        #expect(payload != nil)
+        #expect(payload?.textContent != nil)
+        #expect(payload?.textContent?.title == nil)
+        #expect(payload?.textContent?.subtitle == nil)
+        #expect(payload?.textContent?.body == nil)
         
         // minimal content
         payload = decodeFrom(source: [
             "url": "https://test.ur",
             "content": ["title" : "sample title" ]
         ])
-        XCTAssertNotNil(payload)
-        XCTAssertNotNil(payload?.textContent)
-        XCTAssertEqual("sample title", payload?.textContent?.title)
-        XCTAssertNil(payload?.textContent?.subtitle)
-        XCTAssertNil(payload?.textContent?.body)
+        #expect(payload != nil)
+        #expect(payload?.textContent != nil)
+        #expect("sample title" == payload?.textContent?.title)
+        #expect(payload?.textContent?.subtitle == nil)
+        #expect(payload?.textContent?.body == nil)
         
         // complete content
         payload = decodeFrom(source: [
@@ -231,19 +265,25 @@ final class MediaAttachmentPayloadTest: XCTestCase {
                 "body": "sample body"
             ]
         ])
-        XCTAssertNotNil(payload)
-        XCTAssertNotNil(payload?.textContent)
-        XCTAssertEqual("sample title", payload?.textContent?.title)
-        XCTAssertEqual("sample subtitle", payload?.textContent?.subtitle)
-        XCTAssertEqual("sample body", payload?.textContent?.body)
+        #expect(payload != nil)
+        #expect(payload?.textContent != nil)
+        #expect("sample title" == payload?.textContent?.title)
+        #expect("sample subtitle" == payload?.textContent?.subtitle)
+        #expect("sample body" == payload?.textContent?.body)
     }
     
-    func testAirshipThumbnailIDPayloads() {
+    @Test
+    func airshipThumbnailIDPayloads() {
         // NOT VALID PAYLOADS
-        XCTAssertNil(decodeFrom(source: [
-            "url": "https://test.ur",
-            "thumbnail_id": 1
-        ]))
+        #expect(
+            decodeFrom(
+                source: [
+                    "url": "https://test.ur",
+                    "thumbnail_id": 1
+                ]
+            )
+            == nil
+        )
         
         // VALID PAYLOADS
         let payload = decodeFrom(source: [
@@ -251,17 +291,23 @@ final class MediaAttachmentPayloadTest: XCTestCase {
             "thumbnail_id": "test-thumbnail"
         ])
         
-        XCTAssertNotNil(payload)
-        XCTAssertEqual("test-thumbnail", payload?.thumbnailID)
+        #expect(payload != nil)
+        #expect("test-thumbnail" == payload?.thumbnailID)
     }
     
-    func testAccengageThumbnailIDPayloads() {
+    @Test
+    func accengageThumbnailIDPayloads() {
         // NOT VALID PAYLOADS
-        XCTAssertNil(decodeFrom(source: [
-            "a4sid": "id",
-            "url": "https://test.ur",
-            "thumbnail_id": 1
-        ]))
+        #expect(
+            decodeFrom(
+                source: [
+                    "a4sid": "id",
+                    "url": "https://test.ur",
+                    "thumbnail_id": 1
+                ]
+            )
+            == nil
+        )
         
         // VALID PAYLOADS
         let payload = decodeFrom(source: [
@@ -270,8 +316,8 @@ final class MediaAttachmentPayloadTest: XCTestCase {
             "thumbnail_id": "test-thumbnail"
         ])
         
-        XCTAssertNotNil(payload)
-        XCTAssertEqual("test-thumbnail", payload?.thumbnailID)
+        #expect(payload != nil)
+        #expect("test-thumbnail" == payload?.thumbnailID)
     }
     
     private func decodeFrom(source: [String: Any]) -> MediaAttachmentPayload? {
