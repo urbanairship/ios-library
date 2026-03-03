@@ -14,7 +14,7 @@ struct EmbeddedPlaygroundPicker: View {
                     Text(id).tag(id)
                 }
             }
-#if !os(tvOS)
+#if !os(tvOS) && !os(macOS)
             .pickerStyle(WheelPickerStyle())
 #endif
         }

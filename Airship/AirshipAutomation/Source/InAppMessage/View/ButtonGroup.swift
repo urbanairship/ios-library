@@ -202,21 +202,33 @@ struct RoundedEdgeShape: Shape {
     var edge: RoundedEdge
 
     func path(in rect: CGRect) -> Path {
-        var corners: UIRectCorner = []
+        var topLeading: CGFloat = 0
+        var bottomLeading: CGFloat = 0
+        var topTrailing: CGFloat = 0
+        var bottomTrailing: CGFloat = 0
 
         switch edge {
-        case .none:
-            corners = []
         case .leading:
-            corners = [.topLeft, .bottomLeft]
+            topLeading = radius
+            bottomLeading = radius
         case .trailing:
-            corners = [.topRight, .bottomRight]
+            topTrailing = radius
+            bottomTrailing = radius
         case .all:
-            corners = [.topLeft, .bottomLeft, .topRight, .bottomRight]
+            topLeading = radius
+            bottomLeading = radius
+            topTrailing = radius
+            bottomTrailing = radius
+        case .none:
+            break
         }
 
-        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
-        return Path(path.cgPath)
+        return UnevenRoundedRectangle(
+            topLeadingRadius: topLeading,
+            bottomLeadingRadius: bottomLeading,
+            bottomTrailingRadius: bottomTrailing,
+            topTrailingRadius: topTrailing
+        ).path(in: rect)
     }
 }
 

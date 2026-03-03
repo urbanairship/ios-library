@@ -295,9 +295,13 @@ extension InAppMessage {
     @MainActor
     public func _display() async throws {
         let adapter = try AirshipLayoutDisplayAdapter(message: self, priority: 0, assets: EmptyAirshipCachedAssets())
+#if os(macOS)
+        let displayTarget = AirshipDisplayTarget()
+#else
         let displayTarget = AirshipDisplayTarget {
             try AirshipSceneManager.shared.lastActiveScene
         }
+#endif
 
         _ = try await adapter.display(
             displayTarget: displayTarget,

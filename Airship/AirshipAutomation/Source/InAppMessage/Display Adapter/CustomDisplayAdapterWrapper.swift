@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import UIKit
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -27,12 +26,18 @@ final class CustomDisplayAdapterWrapper: DisplayAdapter {
     @MainActor
     func display(displayTarget: AirshipDisplayTarget, analytics: any InAppMessageAnalyticsProtocol) async throws -> DisplayResult {
         analytics.recordEvent(ThomasLayoutDisplayEvent(), layoutContext: nil)
-        let scene = try displayTarget.sceneProvider()
         let timer = ActiveTimer()
+        
+#if os(macOS)
+        timer.start()
+        let result = await self.adapter.display()
+#else
+        let scene = try displayTarget.sceneProvider()
         timer.start()
         let result = await self.adapter.display(scene: scene)
+#endif
         timer.stop()
-
+        
         switch(result) {
         case .buttonTap(let buttonInfo):
             analytics.recordEvent(
@@ -43,7 +48,7 @@ final class CustomDisplayAdapterWrapper: DisplayAdapter {
                 ),
                 layoutContext: nil
             )
-
+            
             return buttonInfo.behavior == .cancel ? .cancel : .finished
         case .messageTap:
             analytics.recordEvent(

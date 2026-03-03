@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import UIKit
 import SwiftUI
 
 #if canImport(AirshipCore)
@@ -120,25 +119,6 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         }
     }
 
-    @MainActor
-    private class func windowSize(_ window: UIWindow) -> CGSize {
-#if os(iOS) || os(tvOS)
-        return window.screen.bounds.size
-#elseif os(visionOS)
-        // https://developer.apple.com/design/human-interface-guidelines/windows#visionOS
-        return CGSize(
-            width: 1280,
-            height: 720
-        )
-#elseif os(watchOS)
-        return CGSize(
-            width: WKInterfaceDevice.current().screenBounds.width,
-            height: WKInterfaceDevice.current().screenBounds.height
-        )
-#endif
-    }
-
-
     private func makeInAppExtensions() -> InAppMessageExtensions {
 #if !os(tvOS)
         InAppMessageExtensions(
@@ -241,7 +221,9 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             do {
                 try displayable.display { _ in
                     let viewController = InAppMessageHostingController(rootView: rootView)
+#if !os(macOS)
                     viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+#endif
                     return viewController
                 }
             } catch {
@@ -282,7 +264,9 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             do {
                 try displayable.display { _ in
                     let viewController = InAppMessageHostingController(rootView: rootView)
+#if !os(macOS)
                     viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+#endif
                     return viewController
                 }
             } catch {
@@ -324,7 +308,9 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             do {
                 try displayable.display { _ in
                     let viewController = InAppMessageHostingController(rootView: rootView)
+#if !os(macOS)
                     viewController.modalPresentationStyle = UIModalPresentationStyle.fullScreen
+#endif
                     return viewController
                 }
             } catch {

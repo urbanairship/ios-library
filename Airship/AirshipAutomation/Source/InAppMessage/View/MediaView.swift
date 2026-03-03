@@ -61,7 +61,28 @@ struct MediaView: View {
 }
 
 #if canImport(WebKit)
-struct InAppMessageMediaWebView: UIViewRepresentable {
+struct InAppMessageMediaWebView: AirshipNativeViewRepresentable {
+#if os(macOS)
+    typealias NSViewType = WKWebView
+    func makeNSView(context: Context) -> WKWebView {
+        return makeWebView(context: context)
+    }
+
+    func updateNSView(_ nsView: WKWebView, context: Context) {
+        updateView(nsView, context: context)
+    }
+#else
+    typealias UIViewType = WKWebView
+
+    func makeUIView(context: Context) -> WKWebView {
+        return makeWebView(context: context)
+    }
+
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        updateView(uiView, context: context)
+    }
+#endif
+
     let mediaInfo: InAppMessageMediaInfo
 
     private var baseURL: URL? {
@@ -69,19 +90,29 @@ struct InAppMessageMediaWebView: UIViewRepresentable {
         return URL(string: "https://\(bundleIdentifier)")
     }
 
-    func makeUIView(context: Context) -> WKWebView {
+    func makeWebView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
+
+
+#if os(macOS)
+        let webView = WKWebView(frame: .zero, configuration: config)
+        webView.setAccessibilityElement(true)
+        webView.layer?.backgroundColor = .clear
+        webView.setValue(false, forKey: "drawsBackground") // For transparency
+#else
         config.allowsInlineMediaPlayback = true
         config.allowsPictureInPictureMediaPlayback = true
-
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.isAccessibilityElement = true
         webView.scrollView.isScrollEnabled = false
         webView.isOpaque = false
-        webView.backgroundColor = UIColor.clear
-        webView.scrollView.backgroundColor = UIColor.clear
-        webView.navigationDelegate = context.coordinator
+        webView.backgroundColor = .clear
+        webView.scrollView.backgroundColor = .clear
         webView.scrollView.contentInsetAdjustmentBehavior = .never
+#endif
+
+        webView.navigationDelegate = context.coordinator
+
 
         if #available(iOS 16.4, *) {
             webView.isInspectable = Airship.isFlying && Airship.config.airshipConfig.isWebViewInspectionEnabled
@@ -90,7 +121,7 @@ struct InAppMessageMediaWebView: UIViewRepresentable {
         return webView
     }
 
-    func updateUIView(_ uiView: WKWebView, context: Context) {
+    func updateView(_ uiView: WKWebView, context: Context) {
         switch mediaInfo.type {
         case .video:
             let htmlString = "<body style=\"margin:0\"><video playsinline controls height=\"100%\" width=\"100%\" src=\"\(mediaInfo.url)\"></video></body>"

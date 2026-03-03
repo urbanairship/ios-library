@@ -74,7 +74,7 @@ struct HomeView: View {
                     )
                 }
 
-#if canImport(ActivityKit)
+#if canImport(ActivityKit) && !os(macOS)
                 Divider()
 
                 Button(action: {
@@ -167,8 +167,10 @@ struct HomeView: View {
             content
                 .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+#if !os(macOS)
                 .navigationBarTitle("")
                 .navigationBarHidden(true)
+#endif
                 .navigationDestination(for: AppRouter.HomeRoute.self) { $0.destination() }
         }
     }
@@ -229,11 +231,19 @@ struct HomeView: View {
         
 #if !os(tvOS)
         func copyChannel() {
-            UIPasteboard.general.string = Airship.channel.identifier
+            guard let channelID = Airship.channel.identifier else { return }
+            
+#if os(macOS)
+            let pasteboard = NSPasteboard.general
+            pasteboard.declareTypes([.string], owner: nil)
+            pasteboard.setString(channelID, forType: .string)
+#else
+            UIPasteboard.general.string = channelID
+#endif
         }
 #endif
 
-#if canImport(ActivityKit)
+#if canImport(ActivityKit) && !os(macOS)
         func startLiveActivity() throws {
             let state = DeliveryAttributes.ContentState(
                 stopsAway: 10

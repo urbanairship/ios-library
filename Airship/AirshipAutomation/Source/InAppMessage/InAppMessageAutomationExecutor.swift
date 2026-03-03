@@ -10,10 +10,33 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     typealias ExecutionData = PreparedInAppMessageData
 
     private let delegates: Delegates = Delegates()
-    private let sceneManager: any InAppMessageSceneManagerProtocol
     private let assetManager: any AssetCacheManagerProtocol
     private let analyticsFactory: any InAppMessageAnalyticsFactoryProtocol
     private let scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier
+
+#if os(macOS)
+    init(
+        assetManager: any AssetCacheManagerProtocol,
+        analyticsFactory: any InAppMessageAnalyticsFactoryProtocol,
+        scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier
+    ) {
+        self.assetManager = assetManager
+        self.analyticsFactory = analyticsFactory
+        self.scheduleConditionsChangedNotifier = scheduleConditionsChangedNotifier
+    }
+#else
+    private let sceneManager: any InAppMessageSceneManagerProtocol
+
+
+    @MainActor
+    weak var sceneDelegate: (any InAppMessageSceneDelegate)? {
+        get {
+            return sceneManager.delegate
+        }
+        set {
+            sceneManager.delegate = newValue
+        }
+    }
 
     init(
         sceneManager: any InAppMessageSceneManagerProtocol,
@@ -26,6 +49,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         self.analyticsFactory = analyticsFactory
         self.scheduleConditionsChangedNotifier = scheduleConditionsChangedNotifier
     }
+#endif
 
     @MainActor
     weak var displayDelegate: (any InAppMessageDisplayDelegate)? {
@@ -47,16 +71,8 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         }
     }
     
-    
-    @MainActor
-    weak var sceneDelegate: (any InAppMessageSceneDelegate)? {
-        get {
-            return sceneManager.delegate
-        }
-        set {
-            sceneManager.delegate = newValue
-        }
-    }
+
+
 
     func isReady(
         data: PreparedInAppMessageData,
@@ -116,9 +132,14 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             return .finished
         }
 
+#if os(macOS)
+        let displayTarget = AirshipDisplayTarget()
+#else
         let displayTarget = AirshipDisplayTarget {
             try self.sceneManager.scene(forMessage: data.message).scene
         }
+#endif
+
 
         // Display
         self.delegates.displayDelegate?.messageWillDisplay(

@@ -50,7 +50,9 @@ struct AppView: View {
             PreferenceCenterView(
                 preferenceCenterID: router.preferenceCenterID
             )
+#if !os(macOS)
             .navigationViewStyle(.stack)
+#endif
             .tabItem {
                 Label(
                     "Preferences",

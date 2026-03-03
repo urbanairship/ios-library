@@ -1,4 +1,4 @@
-#if !os(tvOS)
+#if !os(tvOS) && !os(macOS)
 import CoreLocation
 import MapKit
 import SwiftUI

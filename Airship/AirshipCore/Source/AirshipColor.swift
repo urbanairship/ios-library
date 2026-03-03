@@ -186,3 +186,20 @@ public extension ColorScheme {
         return resolved.map { Color($0) }
     }
 }
+
+
+public extension AirshipColor {
+    static var systemBackground: Color {
+#if os(macOS)
+        return Color(NSColor.windowBackgroundColor)
+#elseif os(watchOS)
+        return .black
+#elseif os(tvOS)
+        return Color(UIColor { trait in
+            return trait.userInterfaceStyle == .dark ? .black : .white
+        })
+#else
+        return Color(UIColor.systemBackground)
+#endif
+    }
+}

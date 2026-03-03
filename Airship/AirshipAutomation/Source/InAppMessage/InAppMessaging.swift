@@ -26,9 +26,11 @@ public protocol InAppMessaging: AnyObject, Sendable {
     @MainActor
     var displayDelegate: (any InAppMessageDisplayDelegate)? { get set }
 
+#if !os(macOS)
     /// Scene delegate
     @MainActor
     var sceneDelegate: (any InAppMessageSceneDelegate)? { get set }
+#endif
 
     /// Sets a factory block for a custom display adapter.
     /// If the factory block returns a nil adapter, the default adapter will be used.
@@ -86,6 +88,7 @@ final class DefaultInAppMessaging: InAppMessaging {
         }
     }
 
+#if !os(macOS)
     @MainActor
     weak var sceneDelegate: (any InAppMessageSceneDelegate)? {
         get {
@@ -95,7 +98,7 @@ final class DefaultInAppMessaging: InAppMessaging {
             executor.sceneDelegate = newValue
         }
     }
-
+#endif
 
     @MainActor
     func setAdapterFactoryBlock(

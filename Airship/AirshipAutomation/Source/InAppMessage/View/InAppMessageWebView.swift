@@ -34,7 +34,7 @@ struct InAppMessageWebView: View {
             )
             .addBackground(
                 /// Add system background color by default - clear color will be parsed by the display content if it's set
-                color: displayContent.backgroundColor?.color ?? Color(.systemBackground)
+                color: displayContent.backgroundColor?.color ?? AirshipColor.systemBackground
             )
             .zIndex(0)
 
@@ -47,8 +47,27 @@ struct InAppMessageWebView: View {
     }
 }
 
-struct WKWebViewRepresentable: UIViewRepresentable {
+struct WKWebViewRepresentable: AirshipNativeViewRepresentable {
+#if os(macOS)
+    typealias NSViewType = WKWebView
+    func makeNSView(context: Context) -> WKWebView {
+        return makeWebView(context: context)
+    }
+
+    func updateNSView(_ nsView: WKWebView, context: Context) {
+        updateView(nsView, context: context)
+    }
+#else
     typealias UIViewType = WKWebView
+
+    func makeUIView(context: Context) -> WKWebView {
+        return makeWebView(context: context)
+    }
+
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        updateView(uiView, context: context)
+    }
+#endif
 
     let url: String
     let nativeBridgeExtension: (any NativeBridgeExtensionDelegate)?
@@ -58,14 +77,21 @@ struct WKWebViewRepresentable: UIViewRepresentable {
     let onRunActions: @MainActor (String, ActionArguments, WKWebView) async -> ActionResult
     let onDismiss: () -> Void
 
-    func makeUIView(context: Context) -> WKWebView {
+    func makeWebView(context: Context) -> WKWebView {
         let webView = WKWebView()
+
+#if os(macOS)
+        webView.setValue(false, forKey: "drawsBackground")
+        webView.setAccessibilityElement(true)
+        webView.setAccessibilityLabel(accessibilityLabel)
+#else
         webView.isOpaque = false
         webView.backgroundColor = .clear
         webView.scrollView.backgroundColor = .clear
-        webView.navigationDelegate = context.coordinator.nativeBridge
         webView.isAccessibilityElement = true
         webView.accessibilityLabel = accessibilityLabel
+#endif
+        webView.navigationDelegate = context.coordinator.nativeBridge
 
         if #available(iOS 16.4, *) {
             webView.isInspectable = Airship.isFlying && Airship.config.airshipConfig.isWebViewInspectionEnabled
@@ -83,7 +109,7 @@ struct WKWebViewRepresentable: UIViewRepresentable {
         Coordinator(self, actionRunner: BlockNativeBridgeActionRunner(onRun: onRunActions))
     }
 
-    func updateUIView(_ uiView: WKWebView, context: Context) {}
+    func updateView(_ uiView: WKWebView, context: Context) {}
 
     func updateLoading(_ isWebViewLoading: Bool) {
         DispatchQueue.main.async {

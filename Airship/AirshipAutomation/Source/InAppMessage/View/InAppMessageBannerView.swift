@@ -289,7 +289,12 @@ struct InAppMessageBannerView: View {
 
     var width: CGFloat {
 #if os(visionOS)
-        min(1280, theme.maxWidth)
+        return min(1280, theme.maxWidth)
+#elseif os(macOS)
+        // On macOS, we typically use the main window's width or
+        // a reasonable default if the window isn't attached yet.
+        let screenWidth = NSScreen.main?.frame.width ?? 1024
+        return min(screenWidth, theme.maxWidth)
 #else
         min(UIScreen.main.bounds.size.width, theme.maxWidth)
 #endif

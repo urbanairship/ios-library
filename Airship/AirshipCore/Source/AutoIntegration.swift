@@ -121,7 +121,10 @@ final class AutoIntegration {
         self.swizzler.swizzleDidRegister(appDelegate, delegate: delegate)
         self.swizzler.swizzleDidFailToRegister(appDelegate, delegate: delegate)
         self.swizzler.swizzleDidReceiveRemoteNotification(appDelegate, delegate: delegate)
+
+#if !os(visionOS)
         self.swizzler.swizzleBackgroundFetch(appDelegate, delegate: delegate)
+#endif
     }
 
 #endif
@@ -496,6 +499,7 @@ fileprivate extension AirshipSwizzler {
         )
     }
 
+#if !os(visionOS)
     func swizzleBackgroundFetch(_ appDelegate: any UIApplicationDelegate, delegate: any AppIntegrationDelegate) {
         let backgroundSelector = #selector((any UIApplicationDelegate).application(_:performFetchWithCompletionHandler:))
         let backgroundBlock: BackgroundFetchBlock = { [weak self] (receiver, app, handler) in
@@ -516,6 +520,7 @@ fileprivate extension AirshipSwizzler {
             implementation: imp_implementationWithBlock(backgroundBlock)
         )
     }
+#endif
 }
 #endif
 

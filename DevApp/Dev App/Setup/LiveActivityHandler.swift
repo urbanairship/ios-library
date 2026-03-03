@@ -18,7 +18,7 @@ struct LiveActivityHandler {
     /// Sets up example Live Activity integration.
     static func setup() {
 
-#if canImport(ActivityKit)
+#if canImport(ActivityKit) && !os(macOS)
 
         // Restores live activity tracking
         Airship.channel.restoreLiveActivityTracking { restorer in

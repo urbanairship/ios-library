@@ -668,12 +668,9 @@ internal struct AirshipSystemColors {
     static let placeholder: Color = Color(.placeholderText)
     static let tertiaryLabel: Color = Color(.tertiaryLabel)
     static let link = Color(.link)
-    static let background: Color  = Color(UIColor.systemBackground)
-    static let secondaryBackground: Color = Color(UIColor.secondarySystemBackground)
-    static let tertiaryBackground: Color = Color(UIColor.tertiarySystemBackground)
-    static let background: Color = .black
-    static let secondaryBackground: Color = .black
-    static let tertiaryBackground: Color = .black
+    static let background: Color = AirshipColor.systemBackground
+    static let secondaryBackground: Color = AirshipColor.systemBackground
+    static let tertiaryBackground: Color = AirshipColor.systemBackground
 #else
     static let placeholder: Color = Color(.placeholderText)
     static let tertiaryLabel: Color = Color(.tertiaryLabel)

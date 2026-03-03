@@ -11,14 +11,13 @@ import Foundation
 public class AutomationSDKModule: NSObject, AirshipSDKModule {
     public let components: [any AirshipComponent]
     public let actionsManifest: (any ActionsManifest)? = AutomationActionManifest()
-
+    
     init(components: [any AirshipComponent]) {
         self.components = components
     }
-
+    
     public static func load(_ args: AirshiopModuleLoaderArgs) -> (any AirshipSDKModule)? {
         /// Utils
-        let messageSceneManager = InAppMessageSceneManager(sceneManger: AirshipSceneManager.shared)
         let remoteDataAccess = AutomationRemoteDataAccess(remoteData: args.remoteData)
         let assetManager = AssetCacheManager()
         let displayCoordinatorManager = DisplayCoordinatorManager(dataStore: args.dataStore)
@@ -26,10 +25,10 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let scheduleConditionsChangedNotifier = ScheduleConditionsChangedNotifier()
         let eventRecorder = ThomasLayoutEventRecorder(airshipAnalytics: args.analytics, meteredUsage: args.meteredUsage)
         let metrics = ApplicationMetrics(dataStore: args.dataStore, privacyManager: args.privacyManager)
-
+        
         let automationStore = AutomationStore(config: args.config)
         let history = DefaultAutomationEventsHistory()
-
+        
         let analyticsFactory = InAppMessageAnalyticsFactory(
             eventRecorder: eventRecorder,
             displayHistoryStore: MessageDisplayHistoryStore(
@@ -44,7 +43,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             ),
             displayImpressionRuleProvider: DefaultInAppDisplayImpressionRuleProvider()
         )
-
+        
         /// Preperation
         let actionPreparer = ActionAutomationPreparer()
         let messagePreparer = InAppMessageAutomationPreparer(
@@ -66,30 +65,40 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
                 cache: args.cache
             )
         )
-
-
+        
+        
         // Execution
         let actionExecutor = ActionAutomationExecutor()
+        
+#if os(macOS)
+        let messageExecutor = InAppMessageAutomationExecutor(
+            assetManager: assetManager,
+            analyticsFactory: analyticsFactory,
+            scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier
+        )
+#else
+        let messageSceneManager = InAppMessageSceneManager(sceneManger: AirshipSceneManager.shared)
         let messageExecutor = InAppMessageAutomationExecutor(
             sceneManager: messageSceneManager,
             assetManager: assetManager,
             analyticsFactory: analyticsFactory,
             scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier
         )
+#endif
         
         let automationExecutor = AutomationExecutor(
             actionExecutor: actionExecutor,
             messageExecutor: messageExecutor,
             remoteDataAccess: remoteDataAccess
         )
-
+        
         let feed = AutomationEventFeed(
             applicationMetrics: metrics,
             applicationStateTracker: AppStateTracker.shared,
             analyticsFeed: args.analytics.eventFeed
         )
         feed.attach()
-
+        
         // Engine
         let engine = AutomationEngine(
             store: automationStore,
@@ -104,25 +113,25 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             delayProcessor: AutomationDelayProcessor(analytics: args.analytics),
             eventsHistory: history,
         )
-
+        
         let remoteDataSubscriber = AutomationRemoteDataSubscriber(
             dataStore: args.dataStore,
             remoteDataAccess: remoteDataAccess,
             engine: engine,
             frequencyLimitManager: frequencyLimits
         )
-
+        
         let inAppMessaging = DefaultInAppMessaging(
             executor: messageExecutor,
             preparer: messagePreparer
         )
-
+        
         let legacyInAppMessaging = DefaultLegacyInAppMessaging(
             analytics: LegacyInAppAnalytics(recorder: eventRecorder),
             dataStore: args.dataStore,
             automationEngine: engine
         )
-
+        
         let inAppAutomation = DefaultInAppAutomation(
             engine: engine,
             inAppMessaging: inAppMessaging,
@@ -133,7 +142,7 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             privacyManager: args.privacyManager,
             config: args.config
         )
-
+        
         return AutomationSDKModule(
             components: [
                 InAppAutomationComponent(inAppAutomation: inAppAutomation)

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#if !os(tvOS) && !os(visionOS)
+#if !os(tvOS) && !os(visionOS) && !os(macOS)
 import SwiftUI
 import LocalAuthentication
 

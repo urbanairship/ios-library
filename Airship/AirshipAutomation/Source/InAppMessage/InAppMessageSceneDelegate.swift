@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+#if !os(macOS)
+
 import Foundation
 public import UIKit
 
@@ -13,3 +15,5 @@ public protocol InAppMessageSceneDelegate: AnyObject {
     @MainActor
     func sceneForMessage(_ message: InAppMessage) -> UIWindowScene?
 }
+
+#endif

@@ -1,4 +1,4 @@
-#if !os(visionOS)
+#if !os(visionOS) && !os(macOS)
 /* Copyright Airship and Contributors */
 
 import SwiftUI

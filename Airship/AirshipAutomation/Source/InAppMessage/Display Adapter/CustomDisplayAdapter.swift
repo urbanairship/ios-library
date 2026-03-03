@@ -1,7 +1,10 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+
+#if canImport(UIKit)
 public import UIKit
+#endif
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -37,12 +40,19 @@ public protocol CustomDisplayAdapter: Sendable {
     @MainActor
     func waitForReady() async
 
+#if !os(macOS)
     /// Called to display the message
     /// - Parameters:
     ///     - scene: The window scene
     /// - Returns a CustomDisplayResolution
     @MainActor
     func display(scene: UIWindowScene) async -> CustomDisplayResolution
+#else
+    /// Called to display the message
+    /// - Returns a CustomDisplayResolution
+    @MainActor
+    func display() async -> CustomDisplayResolution
+#endif
 }
 
 /// Resolution data
