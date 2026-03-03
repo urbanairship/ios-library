@@ -47,29 +47,9 @@ let package = Package(
             name: "AirshipBasement",
             path: "Airship/AirshipBasement",
             exclude: [
-                "Source/Public/AirshipBasement.h",
                 "Info.plist",
             ],
-            sources: ["Source"],
-            publicHeadersPath: "Source/Public",
-            cSettings: [
-                .headerSearchPath("Source/Internal")
-            ],
-            linkerSettings: [
-                //Frameworks
-                .linkedFramework("UserNotifications"),
-                .linkedFramework("CFNetwork"),
-                .linkedFramework("CoreGraphics"),
-                .linkedFramework("Foundation"),
-                .linkedFramework("Security"),
-                .linkedFramework("SystemConfiguration"),
-                .linkedFramework("UIKit"),
-                .linkedFramework("CoreData"),
-                .linkedFramework("WebKit", .when(platforms: [.iOS, .visionOS])),
-                .linkedFramework("CoreTelephony", .when(platforms: [.iOS])),
-                //Libraries
-                .linkedLibrary("sqlite3"),
-            ]
+            sources: ["Source"]
         ),
         .target(
             name: "AirshipCore",
@@ -82,22 +62,6 @@ let package = Package(
             sources: ["Source"],
             resources: [
                 .process("Resources")
-            ],
-            linkerSettings: [
-                //Frameworks
-                .linkedFramework("UserNotifications"),
-                .linkedFramework("CFNetwork"),
-                .linkedFramework("CoreGraphics"),
-                .linkedFramework("Foundation"),
-                .linkedFramework("Security"),
-                .linkedFramework("SystemConfiguration"),
-                .linkedFramework("UIKit"),
-                .linkedFramework("CoreData"),
-                .linkedFramework("WebKit", .when(platforms: [.iOS, .visionOS])),
-                .linkedFramework("CoreTelephony", .when(platforms: [.iOS])),
-                .linkedFramework("StoreKit", .when(platforms: [.iOS, .visionOS])),
-                //Libraries
-                .linkedLibrary("sqlite3"),
             ]
         ),
         .target(
@@ -105,7 +69,6 @@ let package = Package(
             dependencies: [.target(name: "AirshipCore")],
             path: "Airship/AirshipAutomation",
             exclude: [
-                "Source/AirshipAutomation.h",
                 "Info.plist",
                 "Tests"
             ],
@@ -119,39 +82,28 @@ let package = Package(
             dependencies: [.target(name: "AirshipCore")],
             path: "Airship/AirshipMessageCenter",
             exclude: [
-                "Source/AirshipMessageCenter.h",
                 "Info.plist",
                 "Tests"
             ],
             sources: ["Source"],
             resources: [
                 .process("Resources")
-            ],
-            publicHeadersPath: "Source/Public",
-            cSettings: [
-                .headerSearchPath("Source"),
-                .headerSearchPath("Source/Inbox"),
-                .headerSearchPath("Source/Inbox/Data"),
-                .headerSearchPath("Source/User"),
             ]
         ),
         .target(
             name: "AirshipNotificationServiceExtension",
             path: "AirshipExtensions/AirshipNotificationServiceExtension",
             exclude: [
-                "Source/AirshipNotificationServiceExtension.h",
                 "Info.plist",
-                "Tests",
+                "Tests"
             ],
-            sources: ["Source"],
-            publicHeadersPath: "Source"
+            sources: ["Source"]
         ),
         .target(
             name: "AirshipPreferenceCenter",
             dependencies: [.target(name: "AirshipCore")],
             path: "Airship/AirshipPreferenceCenter",
             exclude: [
-                "Source/AirshipPreferenceCenter.h",
                 "Info.plist",
                 "Tests",
             ],
@@ -162,7 +114,6 @@ let package = Package(
             dependencies: [.target(name: "AirshipCore")],
             path: "Airship/AirshipFeatureFlags",
             exclude: [
-                "Source/AirshipFeatureFlags.h",
                 "Info.plist",
                 "Tests",
             ],
@@ -179,9 +130,6 @@ let package = Package(
                 .target(name: "AirshipFeatureFlags")
             ],
             path: "Airship/AirshipObjectiveC",
-            exclude: [
-                "Source/AirshipObjectiveC.h"
-            ],
             sources: ["Source"]
         ),
         .target(
@@ -195,7 +143,6 @@ let package = Package(
             ],
             path: "Airship/AirshipDebug",
             exclude: [
-                "Source/AirshipDebug.h",
                 "Info.plist",
             ],
             sources: ["Source"],

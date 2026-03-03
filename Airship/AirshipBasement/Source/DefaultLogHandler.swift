@@ -4,10 +4,11 @@ import Foundation
 import os
 
 /// Default log handler. Logs to either os.Logger or just prints depending on OS version.
-final class DefaultLogHandler: AirshipLogHandler {
+@_spi(AirshipInternal)
+public final class DefaultLogHandler: AirshipLogHandler {
     private let privacyLevel: AirshipLogPrivacyLevel
 
-    init(privacyLevel: AirshipLogPrivacyLevel) {
+    public init(privacyLevel: AirshipLogPrivacyLevel) {
         self.privacyLevel = privacyLevel
     }
 
@@ -16,7 +17,7 @@ final class DefaultLogHandler: AirshipLogHandler {
         category: "Airship"
     )
 
-    func log(
+    public func log(
         logLevel: AirshipLogLevel,
         message: String,
         fileID: String,

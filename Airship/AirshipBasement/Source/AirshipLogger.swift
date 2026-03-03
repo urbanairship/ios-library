@@ -26,7 +26,8 @@ public final class AirshipLogger: Sendable {
     ///     - logLevel: The log level
     ///     - handler: The log handler
     @MainActor
-    static func configure(
+    @_spi(AirshipInternal)
+    public static func configure(
         logLevel: AirshipLogLevel,
         handler: (any AirshipLogHandler)
     ) {

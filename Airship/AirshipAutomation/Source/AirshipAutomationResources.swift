@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+public import Foundation
 
 #if canImport(AirshipCore)
 import AirshipCore
@@ -9,7 +9,7 @@ import AirshipCore
 /// Resources for AirshipAutomation
 public final class AirshipAutomationResources {
     /// Module bundle
-    public static let bundle = resolveBundle()
+    public static let bundle: Bundle = resolveBundle()
 
     private static func resolveBundle() -> Bundle {
 #if SWIFT_PACKAGE

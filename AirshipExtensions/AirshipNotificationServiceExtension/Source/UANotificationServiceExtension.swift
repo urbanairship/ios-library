@@ -3,7 +3,7 @@
 import Foundation
 
 @preconcurrency
-import UserNotifications
+public import UserNotifications
 
 #if !os(tvOS)
 @objc
