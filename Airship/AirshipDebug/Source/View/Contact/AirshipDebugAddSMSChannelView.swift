@@ -23,7 +23,9 @@ struct AirshipDebugAddSMSChannelView: View {
                         "MSISDN".localized(),
                         text: self.$phoneNumber
                     )
+#if !os(macOS)
                     .keyboardType(.phonePad)
+#endif
                     .freeInput()
                 }
 
@@ -39,7 +41,7 @@ struct AirshipDebugAddSMSChannelView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .confirmationAction) {
                 Button {
                     createChannel()
                 } label: {

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 import CoreData
-import UIKit
 import AirshipCore
 
 final class EventDataManager: Sendable {

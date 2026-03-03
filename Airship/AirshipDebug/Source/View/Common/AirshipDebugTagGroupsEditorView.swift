@@ -57,7 +57,7 @@ struct AirshipDebugTagGroupsEditorView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .confirmationAction) {
                 Button {
                     apply()
                 } label: {

@@ -35,7 +35,9 @@ struct AirshipDebugAddEventView: View {
                 value: binding,
                 formatter: NumberFormatter()
             )
+#if !os(macOS)
             .keyboardType(.numberPad)
+#endif
         }
     }
 
@@ -74,7 +76,7 @@ struct AirshipDebugAddEventView: View {
                             self.viewModel.properties[$0] = $1
                         }
                         .navigationTitle("New Property")
-#if !os(tvOS)
+#if !os(tvOS) && !os(macOS)
                         .navigationBarTitleDisplayMode(.inline)
 #endif
                     }
@@ -100,7 +102,7 @@ struct AirshipDebugAddEventView: View {
 
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .confirmationAction) {
                 Button {
                     self.viewModel.createEvent()
                     presentationMode.wrappedValue.dismiss()

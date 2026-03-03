@@ -63,7 +63,7 @@ struct AirshipDebugAddEmailChannelView: View {
                             self.viewModel.properties[$0] = $1
                         }
                         .navigationTitle("New Property")
-#if !os(tvOS)
+#if !os(tvOS) && !os(macOS)
                         .navigationBarTitleDisplayMode(.inline)
 #endif
                     }
@@ -90,7 +90,7 @@ struct AirshipDebugAddEmailChannelView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .confirmationAction) {
                 Button {
                     self.viewModel.createChannel()
                     presentationMode.wrappedValue.dismiss()

@@ -95,7 +95,9 @@ struct AirshipDebugAttributesEditorView: View {
                     value: self.$number,
                     formatter: NumberFormatter()
                 )
+#if !os(macOS)
                 .keyboardType(.numberPad)
+#endif
             }
         case .json:
             VStack(alignment: .leading, spacing: 8) {
@@ -190,7 +192,7 @@ struct AirshipDebugAttributesEditorView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .confirmationAction) {
                 Button {
                     apply()
                 } label: {
@@ -285,6 +287,7 @@ struct AirshipDebugAttributesEditorView: View {
 }
 
 /// For tvOS
+#if os(tvOS)
 struct MultilineTextView: UIViewRepresentable {
     @Binding var text: String
 
@@ -311,6 +314,7 @@ struct MultilineTextView: UIViewRepresentable {
         if uiView.text != text { uiView.text = text }
     }
 }
+#endif
 
 #Preview {
     AirshipDebugAttributesEditorView()

@@ -19,6 +19,7 @@ struct TvDatePickerComponents: OptionSet {
     }
 }
 
+#if os(tvOS)
 /// A `SwiftUI` tvOS date picker view
 struct TVDatePicker: View {
     
@@ -281,3 +282,5 @@ private extension TVDatePicker {
         displayedComponents: .all
     )
 }
+
+#endif

@@ -60,7 +60,7 @@ public struct AirshipDebugView: View {
             AirshipDebugContentView()
                 .toolbar {
                     if let onDismiss {
-                        ToolbarItem(placement: .navigationBarLeading) {
+                        ToolbarItem(placement: .cancellationAction) {
                             Button(action: {
                                 onDismiss()
                             }) {

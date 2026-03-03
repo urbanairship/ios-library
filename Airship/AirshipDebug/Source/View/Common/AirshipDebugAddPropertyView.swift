@@ -130,7 +130,9 @@ struct AirshipDebugAddPropertyView: View {
                     value: self.$numberValue,
                     formatter: NumberFormatter()
                 )
+#if !os(macOS)
                 .keyboardType(.numberPad)
+#endif
             }
         }
 

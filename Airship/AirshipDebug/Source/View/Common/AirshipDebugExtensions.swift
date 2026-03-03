@@ -19,7 +19,12 @@ extension Binding where Value == String {
 extension View {
     @ViewBuilder
     func freeInput() -> some View {
+#if os(macOS)
+        self.disableAutocorrection(true)
+#else
+        
         self.textInputAutocapitalization(.never)
             .disableAutocorrection(true)
+#endif
     }
 }

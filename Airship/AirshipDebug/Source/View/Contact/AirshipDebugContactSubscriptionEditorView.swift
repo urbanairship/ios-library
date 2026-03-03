@@ -63,7 +63,7 @@ struct AirshipDebugContactSubscriptionEditorView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .confirmationAction) {
                 Button {
                     apply()
                 } label: {

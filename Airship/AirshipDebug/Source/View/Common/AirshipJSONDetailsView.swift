@@ -20,7 +20,7 @@ struct AirshipJSONDetailsView: View {
         }
         .navigationTitle(title)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .primaryAction) {
                 Button("Copy") {
                     copyToClipboard(value: payload.prettyString)
                 }

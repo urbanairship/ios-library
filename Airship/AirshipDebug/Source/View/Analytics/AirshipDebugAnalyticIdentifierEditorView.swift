@@ -24,7 +24,7 @@ struct AirshipDebugAnalyticIdentifierEditorView: View {
                             self.viewModel.identifiers[$0] = $1
                         }
                         .navigationTitle("New Identifier")
-#if !os(tvOS)
+#if !os(tvOS) && !os(macOS)
                         .navigationBarTitleDisplayMode(.inline)
 #endif
                     }
@@ -111,7 +111,7 @@ private struct AddIdentifierView: View {
             }
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .confirmationAction) {
                 Button {
                     onAdd(key, value)
                     presentationMode.wrappedValue.dismiss()

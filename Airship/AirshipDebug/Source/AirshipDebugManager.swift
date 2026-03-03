@@ -2,9 +2,8 @@
 
 @preconcurrency import Combine
 import SwiftUI
-import UIKit
 public import AirshipCore
-
+import UserNotifications
 
 /// A protocol that provides access to Airship's debug interface functionality.
 ///
@@ -221,7 +220,7 @@ final class DefaultAirshipDebugManager: InternalAirshipDebugManager {
 
         do {
             try displayable.display { _ in
-                return UIHostingController(rootView: rootView)
+                return AirshipNativeHostingController(rootView: rootView)
             }
             self.currentDisplay = AirshipMainActorCancellableBlock(block: {
                 displayable.dismiss()

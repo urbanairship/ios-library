@@ -20,7 +20,11 @@ extension View {
 
 extension String {
     func pastleboard() {
-#if !os(tvOS)
+#if os(macOS)
+        let pasteboard = NSPasteboard.general
+        pasteboard.declareTypes([.string], owner: nil)
+        pasteboard.setString(self, forType: .string)
+#elseif !os(tvOS)
         UIPasteboard.general.string = self
 #endif
     }
