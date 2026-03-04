@@ -75,8 +75,8 @@
 		6EAAEA0028C7E4B4003CAE53 /* AirshipBasement.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB1B41326EAA531000421B9 /* AirshipBasement.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6EAAEA0128C7E4B4003CAE53 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; };
 		6EAAEA0228C7E4B4003CAE53 /* AirshipCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6EAAEA0328C7E4B4003CAE53 /* AirshipDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; platformFilters = (ios, tvos, xros, ); };
-		6EAAEA0428C7E4B4003CAE53 /* AirshipDebug.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; platformFilters = (ios, tvos, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6EAAEA0328C7E4B4003CAE53 /* AirshipDebug.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; };
+		6EAAEA0428C7E4B4003CAE53 /* AirshipDebug.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6EAAEA0528C7E4B4003CAE53 /* AirshipMessageCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; };
 		6EAAEA0628C7E4B4003CAE53 /* AirshipMessageCenter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6EAAEA0728C7E4B4003CAE53 /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EAD7CDF26B2003700B88EA7 /* AirshipPreferenceCenter.framework */; };

@@ -517,6 +517,7 @@ struct AirshipTextField: View {
             .focused($focused)
             .foregroundColor(self.info.properties.textAppearance.color.toColor(colorScheme))
             .contentShape(Rectangle())
+            .textFieldStyle(.plain)
             .onTapGesture {
                 self.focused = true
             }

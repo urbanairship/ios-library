@@ -254,7 +254,7 @@
 		6E07B5FB2D925F2A0087EC47 /* TestPrivacyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E07B5F72D925ED30087EC47 /* TestPrivacyManager.swift */; };
 		6E07B5FC2D925F2A0087EC47 /* TestPrivacyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E07B5F72D925ED30087EC47 /* TestPrivacyManager.swift */; };
 		6E0B8732294A9C130064B7BD /* AirshipAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E0B872A294A9C120064B7BD /* AirshipAutomation.framework */; };
-		6E0B8744294A9C950064B7BD /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
+		6E0B8744294A9C950064B7BD /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
 		6E0B8760294CE0BF0064B7BD /* FarmHashFingerprint64Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B875F294CE0BF0064B7BD /* FarmHashFingerprint64Test.swift */; };
 		6E0B8762294CE0DC0064B7BD /* FarmHashFingerprint64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0B8761294CE0DC0064B7BD /* FarmHashFingerprint64.swift */; };
 		6E0F4BE22B32190400673CA4 /* AutomationSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F4BE12B32190400673CA4 /* AutomationSchedule.swift */; };
@@ -917,7 +917,7 @@
 		6EE6AB022B58B6E9002FEA75 /* LegacyInAppAnalyticsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6AB002B58B5AE002FEA75 /* LegacyInAppAnalyticsTest.swift */; };
 		6EE6AB062B59C231002FEA75 /* AirshipLayoutDisplayAdapterTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6AB052B59C231002FEA75 /* AirshipLayoutDisplayAdapterTest.swift */; };
 		6EE6AB092B59C236002FEA75 /* CustomDisplayAdapterWrapperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6AB032B59C21A002FEA75 /* CustomDisplayAdapterWrapperTest.swift */; };
-		6EE7725B238F179300E79944 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; platformFilters = (ios, maccatalyst, tvos, xros, ); settings = {ATTRIBUTES = (Required, ); }; };
+		6EE7725B238F179300E79944 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		6EED67652CDEE7900087CDCB /* ThomasViewInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED67632CDEE75D0087CDCB /* ThomasViewInfo.swift */; };
 		6EED676E2CDEE7EB0087CDCB /* ThomasPresentationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED676C2CDEE7E50087CDCB /* ThomasPresentationInfo.swift */; };
 		6EED67722CDEE8390087CDCB /* ThomasOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED67702CDEE8370087CDCB /* ThomasOrientation.swift */; };
@@ -994,7 +994,7 @@
 		8401769C26C5729E00373AF7 /* JSONValueMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769B26C5729E00373AF7 /* JSONValueMatcher.swift */; };
 		841E7D12268617C800EA0317 /* PreferenceCenterResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 841E7D11268617C800EA0317 /* PreferenceCenterResponse.swift */; };
 		84483A68267CF0C000D0DA7D /* PreferenceCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84483A67267CF0C000D0DA7D /* PreferenceCenter.swift */; };
-		847B000B267CD85E007CD249 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
+		847B000B267CD85E007CD249 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		847B0013267CE558007CD249 /* PreferenceCenterSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847B0012267CE558007CD249 /* PreferenceCenterSDKModule.swift */; };
 		847BFFFD267CD73A007CD249 /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 847BFFF4267CD739007CD249 /* AirshipPreferenceCenter.framework */; };
 		9908E60E2B000DBA00DB3E2E /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9908E60D2B000DBA00DB3E2E /* CustomView.swift */; };
@@ -1054,7 +1054,7 @@
 		A61517B526AEEAAB008A41C4 /* SubscriptionListUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */; };
 		A61517C426B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */; };
 		A61F3A752A5DA58500EE94CC /* FeatureFlagManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61F3A732A5D9D6800EE94CC /* FeatureFlagManagerTest.swift */; };
-		A61F3A782A5DBA1800EE94CC /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
+		A61F3A782A5DBA1800EE94CC /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
 		A62058712A5841330041FBF9 /* AirshipFeatureFlags.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A62058692A5841330041FBF9 /* AirshipFeatureFlags.framework */; };
 		A62058812A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62058802A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift */; };
 		A629F7DA295B514C00671647 /* PasteboardActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A629F7D9295B514C00671647 /* PasteboardActionTest.swift */; };
@@ -6749,12 +6749,6 @@
 		};
 		3CA0E347237E4A7B00EE76CF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-				maccatalyst,
-				tvos,
-				xros,
-			);
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = 3CA0E348237E4A7B00EE76CF /* PBXContainerItemProxy */;
 		};
@@ -6765,6 +6759,13 @@
 		};
 		6E0B8743294A9C780064B7BD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				macos,
+				tvos,
+				xros,
+			);
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = 6E0B8742294A9C780064B7BD /* PBXContainerItemProxy */;
 		};
@@ -6865,13 +6866,6 @@
 		};
 		847B000E267CD85E007CD249 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-				maccatalyst,
-				macos,
-				tvos,
-				xros,
-			);
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = 847B000D267CD85E007CD249 /* PBXContainerItemProxy */;
 		};
@@ -6887,11 +6881,25 @@
 		};
 		A61F3A772A5DBA0E00EE94CC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				macos,
+				tvos,
+				xros,
+			);
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = A61F3A762A5DBA0E00EE94CC /* PBXContainerItemProxy */;
 		};
 		A61F3A7B2A5DBA1800EE94CC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				macos,
+				tvos,
+				xros,
+			);
 			target = 494DD9561B0EB677009C134E /* AirshipCore */;
 			targetProxy = A61F3A7A2A5DBA1800EE94CC /* PBXContainerItemProxy */;
 		};
@@ -7364,6 +7372,9 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -7378,8 +7389,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipAutomation;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
@@ -7405,6 +7417,9 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -7418,8 +7433,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipAutomation;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
@@ -7829,6 +7845,9 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/AirshipFeatureFlags/Info.plist";
@@ -7844,8 +7863,9 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.AirshipFeatureFlags;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = "1,2,3,7";
@@ -7870,6 +7890,9 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/AirshipFeatureFlags/Info.plist";
@@ -7884,8 +7907,9 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.richpush.AirshipFeatureFlags;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				TARGETED_DEVICE_FAMILY = "1,2,3,7";

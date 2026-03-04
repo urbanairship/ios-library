@@ -497,12 +497,20 @@ extension Color {
      ** by the difference between the current primary and secondary colors
      **/
     func secondaryVariant(for colorScheme: ColorScheme) -> Color {
-        /// Convert target color to AirshipNativeColor
+        /// Convert target, primary and secondary colors to AirshipNativeColor
+        #if os(macOS)
+        guard
+            let targetUIColor = AirshipNativeColor(self).usingColorSpace(.sRGB),
+            let primaryUIColor = AirshipNativeColor(.primary).usingColorSpace(.sRGB),
+            let secondaryUIColor = AirshipNativeColor(.secondary).usingColorSpace(.sRGB)
+        else {
+            return self
+        }
+        #else
         let targetUIColor = AirshipNativeColor(self)
-
-        /// Convert primary and secondary colors to AirshipNativeColor
         let primaryUIColor = AirshipNativeColor(.primary)
         let secondaryUIColor = AirshipNativeColor(.secondary)
+        #endif
 
         /// Calculate RGBA differences between primary and secondary
         var primaryRed: CGFloat = 0, primaryGreen: CGFloat = 0, primaryBlue: CGFloat = 0, primaryAlpha: CGFloat = 0
@@ -520,28 +528,18 @@ extension Color {
         var targetRed: CGFloat = 0, targetGreen: CGFloat = 0, targetBlue: CGFloat = 0, targetAlpha: CGFloat = 0
 
 #if os(macOS)
-        if targetUIColor.usingColorSpace(.deviceRGB)?.getRed(&targetRed, green: &targetGreen, blue: &targetBlue, alpha: &targetAlpha) != nil {
-            let newRed = colorScheme == .light ? max(targetRed - redDiff, 0) : min(targetRed + redDiff, 1)
-            let newGreen = colorScheme == .light ? max(targetGreen - greenDiff, 0) : min(targetGreen + greenDiff, 1)
-            let newBlue = colorScheme == .light ? max(targetBlue - blueDiff, 0) : min(targetBlue + blueDiff, 1)
-            let newAlpha = targetAlpha + alphaDiff
-
-            return Color(NSColor(red: newRed, green: newGreen, blue: newBlue, alpha: newAlpha))
-        } else {
-            return self /// Return the original color if unable to modify
-        }
+        targetUIColor.getRed(&targetRed, green: &targetGreen, blue: &targetBlue, alpha: &targetAlpha)
 #else
-        if targetUIColor.getRed(&targetRed, green: &targetGreen, blue: &targetBlue, alpha: &targetAlpha) {
-            let newRed = colorScheme == .light ? max(targetRed - redDiff, 0) : min(targetRed + redDiff, 1)
-            let newGreen = colorScheme == .light ? max(targetGreen - greenDiff, 0) : min(targetGreen + greenDiff, 1)
-            let newBlue = colorScheme == .light ? max(targetBlue - blueDiff, 0) : min(targetBlue + blueDiff, 1)
-            let newAlpha = targetAlpha + alphaDiff
-
-            return Color(AirshipNativeColor(red: newRed, green: newGreen, blue: newBlue, alpha: newAlpha))
-        } else {
-            return self /// Return the original color if unable to modify
+        if !targetUIColor.getRed(&targetRed, green: &targetGreen, blue: &targetBlue, alpha: &targetAlpha) {
+            return self
         }
 #endif
+        let newRed = colorScheme == .light ? max(targetRed - redDiff, 0) : min(targetRed + redDiff, 1)
+        let newGreen = colorScheme == .light ? max(targetGreen - greenDiff, 0) : min(targetGreen + greenDiff, 1)
+        let newBlue = colorScheme == .light ? max(targetBlue - blueDiff, 0) : min(targetBlue + blueDiff, 1)
+        let newAlpha = targetAlpha + alphaDiff
+
+        return Color(AirshipNativeColor(red: newRed, green: newGreen, blue: newBlue, alpha: newAlpha))
     }
 }
 
