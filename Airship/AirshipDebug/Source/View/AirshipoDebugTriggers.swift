@@ -53,6 +53,7 @@ public extension View {
     ///
     /// This is a legacy convenience method for iOS that specifically enables the
     /// shake gesture trigger. For more control, use ``airshipDebug(triggers:)``.
+    @available(*, deprecated, renamed: "airshipDebug(triggers:)", message: "Use airshipDebug(triggers: .shake) instead.")
     func airshipDebugOnShake() -> some View {
         self.airshipDebug(triggers: .shake)
     }
@@ -71,16 +72,13 @@ struct AirshipDebugModifier: ViewModifier {
 #endif
             .airshipApplyIf(triggers.contains(.cmdShiftD)) { view in
                 view.background {
-                    Group {
-                        if triggers.contains(.cmdShiftD) {
-                            Button("") {
-                                displayDebug()
-                            }
-                            .keyboardShortcut("d", modifiers: [.command, .shift])
-                            .opacity(0)
-                            .allowsHitTesting(false)
-                        }
+                    Button("") {
+                        displayDebug()
                     }
+                    .keyboardShortcut("d", modifiers: [.command, .shift])
+                    .opacity(0)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
                 }
             }
     }
