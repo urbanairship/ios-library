@@ -416,7 +416,6 @@
 		6E411CAB2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E411CA42538C6A500FEE4E8 /* UARemoteData.xcdatamodeld */; };
 		6E411CAF2538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E411CA72538C6A500FEE4E8 /* UAEvents.xcdatamodeld */; };
 		6E43202226EA814F009228AB /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
-		6E43219026EA89B6009228AB /* AirshipCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E43218E26EA89B5009228AB /* AirshipCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6E43219226EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E43218F26EA89B6009228AB /* NativeBridgeDelegate.swift */; };
 		6E4325C32B7A9D9A00A9B000 /* AirshipPrivacyManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4325C22B7A9D9A00A9B000 /* AirshipPrivacyManagerTest.swift */; };
 		6E4325C52B7AC3F700A9B000 /* TestPush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4325C42B7AC3F700A9B000 /* TestPush.swift */; };
@@ -1748,7 +1747,6 @@
 		6E411CA62538C6A500FEE4E8 /* UARemoteData 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UARemoteData 2.xcdatamodel"; sourceTree = "<group>"; };
 		6E411CA82538C6A500FEE4E8 /* UAEvents.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAEvents.xcdatamodel; sourceTree = "<group>"; };
 		6E43204826EA814F009228AB /* AirshipBasement.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipBasement.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E43218E26EA89B5009228AB /* AirshipCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AirshipCore.h; sourceTree = "<group>"; };
 		6E43218F26EA89B6009228AB /* NativeBridgeDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NativeBridgeDelegate.swift; sourceTree = "<group>"; };
 		6E4325C22B7A9D9A00A9B000 /* AirshipPrivacyManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipPrivacyManagerTest.swift; sourceTree = "<group>"; };
 		6E4325C42B7AC3F700A9B000 /* TestPush.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestPush.swift; sourceTree = "<group>"; };
@@ -4037,7 +4035,6 @@
 				6E91E42E28EF420700B6F25E /* WorkManager */,
 				6E49D7CA2840257000C7BB9D /* PermissionsManager */,
 				6E062CFF27165642001A74A1 /* Thomas */,
-				6E43218E26EA89B5009228AB /* AirshipCore.h */,
 				A61517AD26A97419008A41C4 /* Subscription Lists */,
 				6E698E02267A799500654DB2 /* AirshipErrors.swift */,
 				6E698DE826790AC300654DB2 /* PreferenceDataStore.swift */,
@@ -5079,7 +5076,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E43219026EA89B6009228AB /* AirshipCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
