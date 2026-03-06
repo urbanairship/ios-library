@@ -89,8 +89,7 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
     }
 
     private func processAutomations(_ data: InAppRemoteData) async {
-        var currentSchedules: [AutomationSchedule]!
-
+        let currentSchedules: [AutomationSchedule]
         do {
             currentSchedules = try await engine.schedules
         } catch {
@@ -121,14 +120,12 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
         currentSchedules: [AutomationSchedule]
     ) async throws {
 
-        let currentScheduleIDs = currentSchedules.map { $0.identifier }
+        let currentScheduleIDs = Set(currentSchedules.map { $0.identifier })
 
-        guard
-            let payload = payload
-        else {
+        guard let payload = payload else {
             if !currentSchedules.isEmpty {
                 try await engine.stopSchedules(
-                    identifiers: currentScheduleIDs
+                    identifiers: Array(currentScheduleIDs)
                 )
             }
             return
@@ -140,19 +137,25 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
             contactID: contactID
         )
 
+        let failureResolution = resolveFailedSchedules(
+            lastSourceInfo: lastSourceInfo,
+            currentFailures: payload.data.failedSchedules
+        )
+
         let currentSourceInfo = AutomationSourceInfo(
             remoteDataInfo: payload.remoteDataInfo,
             payloadTimestamp: payload.timestamp,
-            airshipSDKVersion: airshipSDKVersion
+            airshipSDKVersion: airshipSDKVersion,
+            failedSchedules: failureResolution.tracked
         )
 
         guard lastSourceInfo != currentSourceInfo else {
             return
         }
 
-        let identifiers = Set(payload.data.schedules.map { $0.identifier })
+        let payloadScheduleIDs = Set(payload.data.schedules.map { $0.identifier })
 
-        let schedulesToStop = currentSchedules.filter { !identifiers.contains($0.identifier) }
+        let schedulesToStop = currentSchedules.filter { !payloadScheduleIDs.contains($0.identifier) }
         if !schedulesToStop.isEmpty {
             try await engine.stopSchedules(
                 identifiers: schedulesToStop.map { $0.identifier }
@@ -160,14 +163,17 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
         }
 
         let schedulesToUpsert = payload.data.schedules.filter { schedule in
-            // If we have an ID for this schedule then it's either unchanged or updated
             if currentScheduleIDs.contains(schedule.identifier) {
                 return true
             }
 
-            // Otherwise check to see if we consider this a new schedule based on timestamp
-            // and SDK version
-            return schedule.isNewSchedule(
+            if failureResolution.recovered.contains(schedule.identifier) {
+                return true
+            }
+
+            return AutomationSchedule.isNewSchedule(
+                created: schedule.created,
+                minSDKVersion: schedule.minSDKVersion,
                 sinceDate: lastSourceInfo?.payloadTimestamp ?? .distantPast,
                 lastSDKVersion: lastSourceInfo?.airshipSDKVersion
             )
@@ -182,6 +188,35 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
             source: source,
             contactID: contactID
         )
+    }
+
+    private func resolveFailedSchedules(
+        lastSourceInfo: AutomationSourceInfo?,
+        currentFailures: [FailedScheduleRecord]
+    ) -> (tracked: [FailedScheduleRecord], recovered: Set<String>) {
+        let previouslyFailed = Set(lastSourceInfo?.failedSchedules?.map { $0.identifier } ?? [])
+        let currentlyFailed = Set(currentFailures.map { $0.identifier })
+        let recovered = previouslyFailed.subtracting(currentlyFailed)
+
+        let stillFailing = lastSourceInfo?.failedSchedules?.filter {
+            currentlyFailed.contains($0.identifier)
+        } ?? []
+
+        let stillFailingIDs = Set(stillFailing.map { $0.identifier })
+        let lastPayloadTimestamp = lastSourceInfo?.payloadTimestamp ?? .distantPast
+
+        let newlyFailed = currentFailures
+            .filter { !stillFailingIDs.contains($0.identifier) }
+            .filter {
+                AutomationSchedule.isNewSchedule(
+                    created: $0.createdDate,
+                    minSDKVersion: $0.minSDKVersion,
+                    sinceDate: lastPayloadTimestamp,
+                    lastSDKVersion: lastSourceInfo?.airshipSDKVersion
+                )
+            }
+
+        return (tracked: stillFailing + newlyFailed, recovered: recovered)
     }
 
     private func processConstraints(_ data: InAppRemoteData) async {

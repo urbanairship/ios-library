@@ -183,32 +183,52 @@ struct InAppRemoteData: Sendable {
     struct Data: Decodable, Equatable {
         var schedules: [AutomationSchedule]
         var constraints: [FrequencyConstraint]?
+        var failedSchedules: [FailedScheduleRecord]
 
         enum CodingKeys: String, CodingKey {
             case schedules = "in_app_messages"
             case constraints = "frequency_constraints"
         }
         
-        init(schedules: [AutomationSchedule], constraints: [FrequencyConstraint]? ) {
+        init(
+            schedules: [AutomationSchedule],
+            constraints: [FrequencyConstraint]?,
+            failedSchedules: [FailedScheduleRecord] = []
+        ) {
             self.schedules = schedules
             self.constraints = constraints
+            self.failedSchedules = failedSchedules
         }
         
         init(from decoder: any Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             
+            var schedules: [AutomationSchedule] = []
+            var failedScheduleRecords: [FailedScheduleRecord] = []
+            
             let decodedSchedules = try container
-                .decode([ScheduleOrError].self, forKey: .schedules)
-                .compactMap { parsed in
-                    switch(parsed) {
-                    case .succeed(let result): return result
-                    case .failed(let error):
-                        AirshipLogger.error("Failed to parse schedule \(error)")
-                        return nil
+                .decode([ScheduleDecodeResult].self, forKey: .schedules)
+            
+            for parsed in decodedSchedules {
+                switch parsed {
+                case .succeed(let result):
+                    schedules.append(result)
+                case .failed(let schedule, let error):
+                    AirshipLogger.error("Failed to parse schedule \(error)")
+                    if let schedule = schedule {
+                        failedScheduleRecords.append(
+                            FailedScheduleRecord(
+                                identifier: schedule.identifier,
+                                createdDate: schedule.created ?? Date(),
+                                minSDKVersion: schedule.minSDKVersion
+                            )
+                        )
                     }
                 }
+            }
             
-            self.schedules = decodedSchedules
+            self.schedules = schedules
+            self.failedSchedules = failedScheduleRecords
             self.constraints = try container.decodeIfPresent([FrequencyConstraint].self, forKey: .constraints)
         }
     }
@@ -220,6 +240,13 @@ struct InAppRemoteData: Sendable {
     }
 
     var payloads: [RemoteDataSource: Payload]
+    
+    /// Returns all schedule record that failed to parse across all payloads with their failure timestamps
+    var failedSchedules: [FailedScheduleRecord] {
+        payloads.values.flatMap { payload in
+            payload.data.failedSchedules
+        }
+    }
 
     static func parsePayload(_ payload: RemoteDataPayload?) -> Payload? {
         guard let payload = payload else { return nil }
@@ -280,17 +307,49 @@ struct InAppRemoteData: Sendable {
     }
 }
 
-fileprivate enum ScheduleOrError: Decodable {
+/// A struct to extract just the ID, created date, and min SDK version from a schedule when full parsing fails
+fileprivate struct PartialSchedule: Decodable {
+    let identifier: String
+    let created: Date?
+    let minSDKVersion: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case identifier = "id"
+        case created
+        case minSDKVersion = "min_sdk_version"
+    }
+    
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.identifier = try container.decode(String.self, forKey: .identifier)
+        self.minSDKVersion = try container.decodeIfPresent(String.self, forKey: .minSDKVersion)
+        
+        if let createdString = try? container.decodeIfPresent(String.self, forKey: .created) {
+            self.created = AirshipDateFormatter.date(fromISOString: createdString)
+        } else {
+            self.created = nil
+        }
+    }
+}
+
+
+fileprivate enum ScheduleDecodeResult: Decodable {
 
     case succeed(AutomationSchedule)
-    case failed(any Error)
+    case failed(PartialSchedule?, any Error)
 
     init(from decoder: any Decoder) throws {
         do {
             let schedule = try AutomationSchedule(from: decoder)
             self = .succeed(schedule)
         } catch {
-            self = .failed(error)
+            // Try to at least extract the ID and created date for tracking purposes
+            if let container = try? decoder.singleValueContainer(),
+               let partial = try? container.decode(PartialSchedule.self) {
+                self = .failed(partial, error)
+            } else {
+                self = .failed(nil, error)
+            }
         }
     }
 }

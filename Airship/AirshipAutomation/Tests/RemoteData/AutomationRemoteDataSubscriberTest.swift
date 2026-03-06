@@ -442,6 +442,276 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         await self.fulfillment(of: [expectation])
     }
 
+    // MARK: - Failed schedule tracking tests
+
+    func testFailedScheduleCarriedForwardAndRetriedOnSDKUpdate() async throws {
+        let date = Date()
+        let scheduleA = makeSchedule(source: .app, created: date)
+        let failedB = FailedScheduleRecord(
+            identifier: "failed_schedule_B",
+            createdDate: date,
+            minSDKVersion: nil
+        )
+
+        // First sync (SDK 1.0.0): A succeeds, B fails
+        self.subscriber = AutomationRemoteDataSubscriber(
+            dataStore: dataStore,
+            remoteDataAccess: remoteDataAccess,
+            engine: engine,
+            frequencyLimitManager: frequencyLimits,
+            airshipSDKVersion: "1.0.0"
+        )
+        await self.subscriber.subscribe()
+
+        let firstExpectation = expectation(description: "first sync upsert")
+        await self.engine.setOnUpsert { schedules in
+            XCTAssertEqual(schedules, [scheduleA])
+            firstExpectation.fulfill()
+        }
+
+        let remoteDataInfo = RemoteDataInfo(
+            url: URL(string: "some-url")!,
+            lastModifiedTime: nil,
+            source: .app
+        )
+
+        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+            payloads: [
+                .app: .init(
+                    data: .init(
+                        schedules: [scheduleA],
+                        constraints: [],
+                        failedSchedules: [failedB]
+                    ),
+                    timestamp: date,
+                    remoteDataInfo: remoteDataInfo
+                )
+            ]
+        ))
+        await self.fulfillment(of: [firstExpectation])
+
+        // Now simulate SDK update: recreate subscriber with new version
+        await self.subscriber.unsubscribe()
+        await self.engine.setSchedules([scheduleA])
+
+        self.subscriber = AutomationRemoteDataSubscriber(
+            dataStore: dataStore,
+            remoteDataAccess: remoteDataAccess,
+            engine: engine,
+            frequencyLimitManager: frequencyLimits,
+            airshipSDKVersion: "2.0.0"
+        )
+        await self.subscriber.subscribe()
+
+        // Second sync: B now parses successfully
+        let scheduleB = makeSchedule(
+            source: .app,
+            identifier: "failed_schedule_B",
+            created: date
+        )
+
+        let secondExpectation = expectation(description: "retry sync upsert")
+        await self.engine.setOnUpsert { schedules in
+            let ids = Set(schedules.map { $0.identifier })
+            XCTAssertTrue(ids.contains("failed_schedule_B"))
+            secondExpectation.fulfill()
+        }
+
+        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+            payloads: [
+                .app: .init(
+                    data: .init(
+                        schedules: [scheduleA, scheduleB],
+                        constraints: [],
+                        failedSchedules: []
+                    ),
+                    timestamp: date,
+                    remoteDataInfo: remoteDataInfo
+                )
+            ]
+        ))
+        await self.fulfillment(of: [secondExpectation])
+    }
+
+    func testFailedScheduleNowParsesOnServerFix() async throws {
+        let date = Date()
+        let scheduleA = makeSchedule(source: .app, created: date)
+        let failedB = FailedScheduleRecord(
+            identifier: "failed_schedule_B",
+            createdDate: date,
+            minSDKVersion: nil
+        )
+
+        await self.subscriber.subscribe()
+
+        let remoteDataInfo = RemoteDataInfo(
+            url: URL(string: "some-url")!,
+            lastModifiedTime: nil,
+            source: .app
+        )
+
+        // First sync: A succeeds, B fails
+        let firstExpectation = expectation(description: "first sync")
+        await self.engine.setOnUpsert { schedules in
+            XCTAssertEqual(schedules.map { $0.identifier }, [scheduleA.identifier])
+            firstExpectation.fulfill()
+        }
+
+        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+            payloads: [
+                .app: .init(
+                    data: .init(
+                        schedules: [scheduleA],
+                        constraints: [],
+                        failedSchedules: [failedB]
+                    ),
+                    timestamp: date,
+                    remoteDataInfo: remoteDataInfo
+                )
+            ]
+        ))
+        await self.fulfillment(of: [firstExpectation])
+
+        await self.engine.setSchedules([scheduleA])
+
+        // Second sync: server fixed B, new timestamp
+        let scheduleB = makeSchedule(
+            source: .app,
+            identifier: "failed_schedule_B",
+            created: date
+        )
+
+        let secondExpectation = expectation(description: "server fix sync")
+        await self.engine.setOnUpsert { schedules in
+            let ids = Set(schedules.map { $0.identifier })
+            XCTAssertTrue(ids.contains("failed_schedule_B"))
+            secondExpectation.fulfill()
+        }
+
+        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+            payloads: [
+                .app: .init(
+                    data: .init(
+                        schedules: [scheduleA, scheduleB],
+                        constraints: [],
+                        failedSchedules: []
+                    ),
+                    timestamp: date + 100,
+                    remoteDataInfo: remoteDataInfo
+                )
+            ]
+        ))
+        await self.fulfillment(of: [secondExpectation])
+    }
+
+    func testFailedScheduleRemovedFromRemoteData() async throws {
+        let date = Date()
+        let scheduleA = makeSchedule(source: .app, created: date)
+        let failedB = FailedScheduleRecord(
+            identifier: "failed_schedule_B",
+            createdDate: date,
+            minSDKVersion: nil
+        )
+
+        await self.subscriber.subscribe()
+
+        let remoteDataInfo = RemoteDataInfo(
+            url: URL(string: "some-url")!,
+            lastModifiedTime: nil,
+            source: .app
+        )
+
+        // First sync: A succeeds, B fails
+        let firstExpectation = expectation(description: "first sync")
+        await self.engine.setOnUpsert { _ in
+            firstExpectation.fulfill()
+        }
+
+        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+            payloads: [
+                .app: .init(
+                    data: .init(
+                        schedules: [scheduleA],
+                        constraints: [],
+                        failedSchedules: [failedB]
+                    ),
+                    timestamp: date,
+                    remoteDataInfo: remoteDataInfo
+                )
+            ]
+        ))
+        await self.fulfillment(of: [firstExpectation])
+
+        await self.engine.setSchedules([scheduleA])
+
+        // Second sync: B removed entirely from remote data, new timestamp
+        let secondExpectation = expectation(description: "second sync")
+        await self.engine.setOnUpsert { schedules in
+            let ids = schedules.map { $0.identifier }
+            XCTAssertFalse(ids.contains("failed_schedule_B"))
+            secondExpectation.fulfill()
+        }
+
+        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+            payloads: [
+                .app: .init(
+                    data: .init(
+                        schedules: [scheduleA],
+                        constraints: [],
+                        failedSchedules: []
+                    ),
+                    timestamp: date + 100,
+                    remoteDataInfo: remoteDataInfo
+                )
+            ]
+        ))
+        await self.fulfillment(of: [secondExpectation])
+    }
+
+    func testSamePayloadWithFailuresSkipsProcessing() async throws {
+        let date = Date()
+        let scheduleA = makeSchedule(source: .app, created: date)
+        let failedB = FailedScheduleRecord(
+            identifier: "failed_schedule_B",
+            createdDate: date,
+            minSDKVersion: nil
+        )
+
+        await self.subscriber.subscribe()
+
+        let remoteDataInfo = RemoteDataInfo(
+            url: URL(string: "some-url")!,
+            lastModifiedTime: nil,
+            source: .app
+        )
+
+        let payload = InAppRemoteData(
+            payloads: [
+                .app: .init(
+                    data: .init(
+                        schedules: [scheduleA],
+                        constraints: [],
+                        failedSchedules: [failedB]
+                    ),
+                    timestamp: date,
+                    remoteDataInfo: remoteDataInfo
+                )
+            ]
+        )
+
+        let upsertExpectation = expectation(description: "upsert called once")
+        await self.engine.setOnUpsert { _ in
+            upsertExpectation.fulfill()
+        }
+
+        // Send the same payload twice — upsert should only fire once
+        self.remoteDataAccess.updatesSubject.send(payload)
+        self.remoteDataAccess.updatesSubject.send(payload)
+        await self.fulfillment(of: [upsertExpectation])
+    }
+
+    // MARK: - Helpers
+
     private func makeSchedules(
         source: RemoteDataSource,
         count: UInt = UInt.random(in: 1..<10),
@@ -455,6 +725,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
 
     private func makeSchedule(
         source: RemoteDataSource,
+        identifier: String = UUID().uuidString,
         minSDKVersion: String? = nil,
         created: Date = Date()
     ) -> AutomationSchedule {
@@ -464,7 +735,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             source: source
         )
         return AutomationSchedule(
-            identifier: UUID().uuidString,
+            identifier: identifier,
             data: .actions(.string("actions")),
             triggers: [AutomationTrigger.activeSession(count: 1)],
             created: created,

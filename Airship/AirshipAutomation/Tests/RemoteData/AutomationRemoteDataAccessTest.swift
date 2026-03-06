@@ -287,7 +287,105 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
              let decoded: InAppRemoteData.Data = try payload.data.decode()
              XCTAssertEqual(1, decoded.schedules.count)
              XCTAssertEqual("test_schedule", decoded.schedules.first?.identifier)
+             // Invalid schedule without ID can't be tracked
+             XCTAssertTrue(decoded.failedSchedules.isEmpty)
          }
+    
+    func testRemoteDataInfoTracksFailedSchedules() throws {
+        let validSchedule = """
+           {
+               "id": "valid_schedule",
+               "triggers": [
+                   {
+                       "type": "custom_event_count",
+                       "goal": 1,
+                       "id": "json-id"
+                   }
+               ],
+               "type": "actions",
+               "actions": {
+                   "foo": "bar"
+               }
+           }
+           """
+        // Invalid schedule WITH an ID and created date (missing required triggers)
+        let invalidScheduleWithID = """
+           {
+               "id": "failed_schedule_id",
+               "created": "2023-12-20T12:00:00Z",
+               "type": "actions",
+               "actions": {
+                   "foo": "bar"
+               }
+           }
+           """
+
+        let dataJson = try AirshipJSON.from(json: "{\"in_app_messages\": [\(validSchedule), \(invalidScheduleWithID)]}")
+        let payload = RemoteDataPayload(
+            type: "schedule_test",
+            timestamp: Date(),
+            data: dataJson,
+            remoteDataInfo: nil)
+
+        let decoded: InAppRemoteData.Data = try payload.data.decode()
+        XCTAssertEqual(1, decoded.schedules.count)
+        XCTAssertEqual("valid_schedule", decoded.schedules.first?.identifier)
+        // Failed schedule with ID should be tracked
+        XCTAssertEqual(decoded.failedSchedules.map { $0.identifier}, ["failed_schedule_id"])
+        // Verify created date is captured as createdDate
+        let expectedCreatedDate = AirshipDateFormatter.date(fromISOString: "2023-12-20T12:00:00Z")
+        XCTAssertEqual(decoded.failedSchedules.first?.createdDate, expectedCreatedDate)
+    }
+    
+    func testFromPayloadsAggregatesFailedSchedules() throws {
+        let validSchedule = """
+           {
+               "id": "valid_schedule",
+               "triggers": [
+                   {
+                       "type": "custom_event_count",
+                       "goal": 1,
+                       "id": "json-id"
+                   }
+               ],
+               "type": "actions",
+               "actions": {
+                   "foo": "bar"
+               }
+           }
+           """
+        // Invalid schedule WITH an ID and created date (missing required triggers)
+        let invalidScheduleWithID = """
+           {
+               "id": "failed_schedule_id",
+               "created": "2023-12-20T12:00:00Z",
+               "type": "actions",
+               "actions": {
+                   "foo": "bar"
+               }
+           }
+           """
+
+        let dataJson = try AirshipJSON.from(json: "{\"in_app_messages\": [\(validSchedule), \(invalidScheduleWithID)]}")
+        let remoteDataInfo = RemoteDataInfo(
+            url: URL(string: "https://airship.test")!,
+            lastModifiedTime: nil,
+            source: .app
+        )
+        let payload = RemoteDataPayload(
+            type: "in_app_messages",
+            timestamp: Date(),
+            data: dataJson,
+            remoteDataInfo: remoteDataInfo)
+        
+        let inAppRemoteData = InAppRemoteData.fromPayloads([payload])
+        
+        // Verify aggregate failedSchedules on InAppRemoteData
+        XCTAssertEqual(inAppRemoteData.failedSchedules.map { $0.identifier}, ["failed_schedule_id"])
+        // Verify created date is captured as createdDate
+        let expectedCreatedDate = AirshipDateFormatter.date(fromISOString: "2023-12-20T12:00:00Z")
+        XCTAssertEqual(inAppRemoteData.failedSchedules.first?.createdDate, expectedCreatedDate)
+    }
     
     private func makeSchedule(remoteDataInfo: RemoteDataInfo?) -> AutomationSchedule {
         return AutomationSchedule(
