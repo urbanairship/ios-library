@@ -380,7 +380,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     }
 }
 
-fileprivate class AssetCacheImageProvider : AirshipImageProvider {
+fileprivate final class AssetCacheImageProvider : AirshipImageProvider {
     let assets: any AirshipCachedAssetsProtocol
     init(assets: any AirshipCachedAssetsProtocol) {
         self.assets = assets

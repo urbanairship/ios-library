@@ -4,7 +4,7 @@ import Foundation
 
 /// Image provider to extend image loading.
 /// - Note: for internal use only.  :nodoc:
-public protocol AirshipImageProvider {
+public protocol AirshipImageProvider: Sendable {
 
     /// Gets the an image.
     /// - Parameters:

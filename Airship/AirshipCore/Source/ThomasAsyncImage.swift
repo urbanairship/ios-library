@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Combine
 import Foundation
 public import SwiftUI
 
@@ -23,39 +22,38 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
         self.placeholder = placeholder
     }
 
-    @State private var loadedImage: AirshipImageData? = nil
+    @State private var loadedURL: String?
+    @State private var loadedImage: AirshipImageData?
     @State private var currentImage: UIImage?
     @State private var imageIndex: Int = 0
     @State private var imageTask: Task<Void, Never>?
-    @State private var cancellable: AnyCancellable?
     @State private var loopsCompleted: Int = 0
 
     @Environment(\.isVisible) var isVisible: Bool   // we use this value not for updating view tree, but for starting stopping animation,
-                                                    //that's why we need to store the actual value in a separate @State variable
+                                                    // that's why we need to store the actual value in a separate @State variable
     @State private var isImageVisible: Bool = false
 
     public var body: some View {
         content
-            .onAppear {
+            .task(id: url) {
                 self.isImageVisible = self.isVisible
-                if self.loadedImage != nil {
+
+                guard loadedURL != url else {
                     animateIfNeeded()
-                } else {
-                    self.cancellable = self.imageLoader.load(url: self.url)
-                        .receive(on: DispatchQueue.main)
-                        .sink(
-                            receiveCompletion: { completion in
-                                if case let .failure(error) = completion {
-                                    AirshipLogger.error(
-                                        "Unable to load image \(error)"
-                                    )
-                                }
-                            },
-                            receiveValue: { image in
-                                self.loadedImage = image
-                                animateIfNeeded()
-                            }
-                        )
+                    return
+                }
+
+                self.loadedImage = nil
+                self.currentImage = nil
+
+                do {
+                    let image = try await imageLoader.load(url: url)
+                    self.loadedURL = url
+                    self.loadedImage = image
+                    animateIfNeeded()
+                } catch is CancellationError {
+                } catch {
+                    AirshipLogger.error("Unable to load image \(error)")
                 }
             }
             .airshipOnChangeOf(isVisible) { newValue in

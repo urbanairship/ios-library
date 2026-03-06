@@ -1,93 +1,75 @@
 /* Copyright Airship and Contributors */
 
-import Combine
 import Foundation
-import SwiftUI
 
-public struct AirshipImageLoader {
-    private static let retryDelay: TimeInterval = 10
-    private static let retries: Int = 10
-
+public actor AirshipImageLoader {
+    private static let retryDelay: UInt64 = 10 * 1_000_000_000
+    private static let maxRetries: Int = 10
+    
     private let imageProvider: (any AirshipImageProvider)?
-
-    public init(imageProvider: (any AirshipImageProvider)? = nil) {
+    
+    public init(
+        imageProvider: (any AirshipImageProvider)? = nil
+    ) {
         self.imageProvider = imageProvider
     }
-
-    func load(url: String) -> AnyPublisher<AirshipImageData, any Error> {
-        guard let url = URL(string: url) else {
-            return Fail(error: AirshipErrors.error("Invalid URL"))
-                .eraseToAnyPublisher()
+    
+    func load(
+        url urlString: String
+    ) async throws -> AirshipImageData {
+        
+        guard let url = URL(string: urlString) else {
+            throw AirshipErrors.error("Invalid URL")
         }
-
-        return Deferred { () -> AnyPublisher<AirshipImageData, any Error> in
-            // First, check the image provider (cache)
-            if let imageData = self.imageProvider?.get(url: url) {
-                return Just(imageData)
-                    .setFailureType(to: (any Error).self)
-                    .eraseToAnyPublisher()
-            }
-
-            // If not cached, check if it's a local file URL
-            if url.isFileURL {
-                return self.loadImageFromFile(url: url)
-            } else {
-                // Otherwise, fetch from the network
-                return self.fetchImage(url: url)
-            }
+        
+        // Check Cache/Provider first
+        if let cachedData = imageProvider?.get(url: url) {
+            return cachedData
         }
-        .subscribe(on: DispatchQueue.global(qos: .userInteractive))
-        .eraseToAnyPublisher()
+        
+        // Route to appropriate loading logic
+        if url.isFileURL {
+            return try await loadImageFromFile(url: url)
+        } else {
+            return try await fetchImageWithRetry(url: url)
+        }
     }
-
-    private func loadImageFromFile(url: URL) -> AnyPublisher<AirshipImageData, any Error> {
-        do {
+    
+    private func loadImageFromFile(
+        url: URL
+    ) async throws -> AirshipImageData {
+        // Moving file I/O to a background task to avoid blocking the actor
+        return try await Task.detached(priority: .userInitiated) {
             let data = try Data(contentsOf: url)
-            let imageData = try AirshipImageData(data: data)
-            return Just(imageData)
-                .setFailureType(to: (any Error).self)
-                .eraseToAnyPublisher()
-        } catch {
-            return Fail(error: AirshipErrors.error("failed to fetch message"))
-                .eraseToAnyPublisher()
-        }
+            return try AirshipImageData(data: data)
+        }.value
     }
-
-    private func fetchImage(url: URL) -> AnyPublisher<AirshipImageData, any Error> {
-        return URLSession.airshipSecureSession.dataTaskPublisher(for: url)
-            .mapError { AirshipErrors.error("URL error \($0)") }
-            .map { response -> AnyPublisher<AirshipImageData, any Error> in
-                guard let httpResponse = response.response as? HTTPURLResponse,
-                      httpResponse.statusCode == 200
-                else {
-                    return Fail(
-                        error: AirshipErrors.error("failed to fetch message")
-                    )
-                    .eraseToAnyPublisher()
+    
+    private func fetchImageWithRetry(
+        url: URL
+    ) async throws -> AirshipImageData {
+        var lastError: (any Error)?
+        
+        for attempt in 0..<Self.maxRetries {
+            do {
+                let (data, response) = try await URLSession.airshipSecureSession.data(from: url)
+                
+                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                    throw AirshipErrors.error("Invalid server response")
                 }
-
-                do {
-                    let imageData = try AirshipImageData(data: response.data)
-                    return Just(imageData)
-                        .setFailureType(to: (any Error).self)
-                        .eraseToAnyPublisher()
-                } catch {
-                    return Fail(error: error)
-                        .eraseToAnyPublisher()
+                
+                return try AirshipImageData(data: data)
+            } catch {
+                lastError = error
+                AirshipLogger.debug("Failed to fetch image \(url) attempt \(attempt + 1)/\(Self.maxRetries): \(error)")
+                
+                if attempt < Self.maxRetries - 1 {
+                    try await Task.sleep(nanoseconds: Self.retryDelay)
                 }
             }
-            .catch { error in
-                return Fail(
-                    error: AirshipErrors.error("failed to fetch message")
-                )
-                .delay(
-                    for: .seconds(AirshipImageLoader.retryDelay),
-                    scheduler: DispatchQueue.global()
-                )
-                .eraseToAnyPublisher()
-            }
-            .switchToLatest()
-            .retry(AirshipImageLoader.retries)
-            .eraseToAnyPublisher()
+        }
+        
+        AirshipLogger.debug("Failed to fetch image \(url) after \(Self.maxRetries) attempts")
+        throw lastError ?? AirshipErrors.error("Failed to fetch after \(Self.maxRetries) attempts")
     }
 }
