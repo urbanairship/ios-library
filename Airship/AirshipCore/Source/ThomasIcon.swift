@@ -25,6 +25,8 @@ struct ThomasIconInfo: ThomasSerializable {
         case chevronForward = "chevron_forward"
         case pause
         case play
+        case mute
+        case unmute
     }
 
     enum CodingKeys: String, CodingKey {

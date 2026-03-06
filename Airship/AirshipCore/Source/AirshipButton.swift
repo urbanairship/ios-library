@@ -7,6 +7,7 @@ import SwiftUI
 struct AirshipButton<Label> : View  where Label : View {
     @EnvironmentObject private var formState: ThomasFormState
     @EnvironmentObject private var pagerState: PagerState
+    @EnvironmentObject private var videoState: VideoState
     @EnvironmentObject private var thomasState: ThomasState
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutState) private var layoutState
@@ -153,13 +154,31 @@ struct AirshipButton<Label> : View  where Label : View {
             case .formValidate:
                 // Already handled above
                 break
-                
+
             case .formSubmit:
                 do {
                     try await formState.submit(layoutState: layoutState)
                 } catch {
                     AirshipLogger.error("Failed to submit \(error)")
                 }
+
+            case .videoPlay:
+                videoState.play()
+
+            case .videoPause:
+                videoState.pause()
+
+            case .videoTogglePlay:
+                videoState.togglePlay()
+
+            case .videoMute:
+                videoState.mute()
+
+            case .videoUnmute:
+                videoState.unmute()
+
+            case .videoToggleMute:
+                videoState.toggleMute()
             }
         }
     }

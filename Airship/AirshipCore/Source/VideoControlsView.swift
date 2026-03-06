@@ -31,21 +31,35 @@ private class VideoControlsObserver: ObservableObject {
     }
 }
 
-
 // The video control view wrapper for centering the controls over the video
 struct VideoControlsWrapper: View {
     let info: ThomasViewInfo.Media
+    let videoIdentifier: String?
     let constraints: ViewConstraints
     let videoAspectRatio: CGFloat
     let onMediaReady: @MainActor () -> Void
 
-    @State private var hasError: Bool = false
-    @State private var player: AVPlayer?
-    @State private var isPlaying: Bool = false
-    @State private var currentTime: Double = 0
-    @State private var duration: Double = 1.0
-    @State private var isControlsVisible: Bool = true
-    @State private var controlsTimer: Timer?
+    @State
+    private var hasError: Bool = false
+    @State
+    private var player: AVPlayer?
+    @State
+    private var isPlaying: Bool = false
+    @State
+    private var isSystemPausing: Bool = false
+    @State
+    private var currentTime: Double = 0
+    @State
+    private var duration: Double = 1.0
+    @State
+    private var isControlsVisible: Bool = true
+    @State
+    private var controlsTimer: Timer?
+
+    @EnvironmentObject
+    var videoState: VideoState
+    @Environment(\.isVisible)
+    var isVisible
 
     private var showControls: Bool {
         info.properties.video?.showControls ?? true
@@ -60,7 +74,8 @@ struct VideoControlsWrapper: View {
             info: info,
             onMediaReady: onMediaReady,
             hasError: $hasError,
-            player: $player
+            player: $player,
+            isSystemPausing: $isSystemPausing
         )
         .airshipApplyIf(self.constraints.width == nil || self.constraints.height == nil) {
             $0.aspectRatio(videoAspectRatio, contentMode: ContentMode.fill)
@@ -82,23 +97,80 @@ struct VideoControlsWrapper: View {
             isControlsVisible: $isControlsVisible,
             controlsTimer: $controlsTimer
         ))
+        .onAppear {
+            registerWithVideoState()
+        }
+        .onDisappear {
+            unregisterFromVideoState()
+        }
+        .airshipOnChangeOf(player) { _ in
+            registerWithVideoState()
+        }
+        .airshipOnChangeOf(isPlaying) { newValue in
+            defer { isSystemPausing = false }
+            guard let videoId = videoIdentifier,
+                  videoState.shouldControl(videoIdentifier: videoId),
+                  isVisible else { return }
+            if !newValue && isSystemPausing { return }
+            videoState.updatePlayingState(newValue)
+        }
+    }
+
+    private func registerWithVideoState() {
+        guard let videoId = videoIdentifier,
+              videoState.shouldControl(videoIdentifier: videoId),
+              let player = player else {
+            return
+        }
+
+        videoState.register(
+            videoIdentifier: videoId,
+            play: { [player] in
+                player.play()
+            },
+            pause: { [player] in
+                player.pause()
+            },
+            mute: { [player] in
+                player.isMuted = true
+            },
+            unmute: { [player] in
+                player.isMuted = false
+            }
+        )
+
+        videoState.muteGroup.initializeMuted(player.isMuted)
+        videoState.playGroup.initializePlaying(player.rate > 0)
+
+        player.isMuted = videoState.isMuted
+    }
+
+    private func unregisterFromVideoState() {
+        guard let videoId = videoIdentifier else { return }
+        videoState.unregister(videoIdentifier: videoId)
     }
 }
-
 
 internal struct VideoControls: ViewModifier {
     let hasError: Bool
     let showControls: Bool
     let shouldLoop: Bool
     let player: AVPlayer?
-    @Binding var isPlaying: Bool
-    @Binding var currentTime: Double
-    @Binding var duration: Double
-    @Binding var isControlsVisible: Bool
-    @Binding var controlsTimer: Timer?
+    @Binding
+    var isPlaying: Bool
+    @Binding
+    var currentTime: Double
+    @Binding
+    var duration: Double
+    @Binding
+    var isControlsVisible: Bool
+    @Binding
+    var controlsTimer: Timer?
 
-    @StateObject private var observer = VideoControlsObserver()
-    @State private var isDraggingSlider: Bool = false
+    @StateObject
+    private var observer = VideoControlsObserver()
+    @State
+    private var isDraggingSlider: Bool = false
 
     func body(content: Content) -> some View {
         content
@@ -107,7 +179,7 @@ internal struct VideoControls: ViewModifier {
                     ZStack {
                         if hasError {
                             VideoErrorView()
-                                .frame(width: geometry.size.width.safeValue, height: geometry.size.height.safeValue)
+                                .frame(width: geometry.size.width, height: geometry.size.height)
                         } else if showControls && isControlsVisible && player?.currentItem?.status == .readyToPlay {
                             VideoControlsView(
                                 player: player,
@@ -115,13 +187,10 @@ internal struct VideoControls: ViewModifier {
                                 currentTime: $currentTime,
                                 duration: $duration,
                                 isDraggingSlider: $isDraggingSlider,
-                                size: CGSize(
-                                    width: geometry.size.width.safeValue ?? 0,
-                                    height: geometry.size.height.safeValue ?? 0
-                                ),
+                                size: geometry.size,
                                 onInteraction: resetHideTimer
                             )
-                            .frame(width: geometry.size.width.safeValue, height: geometry.size.height.safeValue)
+                            .frame(width: geometry.size.width, height: geometry.size.height)
                             .transition(.opacity)
                         }
                     }
@@ -280,14 +349,19 @@ private struct VideoErrorView: View {
 
 private struct VideoControlsView: View {
     let player: AVPlayer?
-    @Binding var isPlaying: Bool
-    @Binding var currentTime: Double
-    @Binding var duration: Double
-    @Binding var isDraggingSlider: Bool
+    @Binding
+    var isPlaying: Bool
+    @Binding
+    var currentTime: Double
+    @Binding
+    var duration: Double
+    @Binding
+    var isDraggingSlider: Bool
     let size: CGSize
     let onInteraction: () -> Void
 
-    @State private var isMuted: Bool = false
+    @State
+    private var isMuted: Bool = false
 
     private var scaleFactor: CGFloat {
         let baseControlsWidth: CGFloat = 320
@@ -392,15 +466,15 @@ private struct VideoControlsView: View {
 
                             RoundedRectangle(cornerRadius: 2 * scaleFactor)
                                 .fill(Color.white)
-                                .frame(width: max(0, (duration > 0 ? CGFloat(currentTime / duration) : 0) * geometry.size.width).safeValue, height: 4 * scaleFactor)
+                                .frame(width: max(0, (duration > 0 ? CGFloat(currentTime / duration) : 0) * geometry.size.width), height: 4 * scaleFactor)
                                 .frame(maxHeight: .infinity)
 
                             Circle()
                                 .fill(Color.white)
                                 .frame(width: 12 * scaleFactor, height: 12 * scaleFactor)
                                 .position(
-                                    x: max(6 * scaleFactor, min(geometry.size.width - 6 * scaleFactor, (duration > 0 ? CGFloat(currentTime / duration) : 0) * geometry.size.width)).safeValue ?? 0,
-                                    y: (geometry.size.height / 2).safeValue ?? 0
+                                    x: max(6 * scaleFactor, min(geometry.size.width - 6 * scaleFactor, (duration > 0 ? CGFloat(currentTime / duration) : 0) * geometry.size.width)),
+                                    y: geometry.size.height / 2
                                 )
                         }
                         .contentShape(Rectangle())
@@ -428,7 +502,7 @@ private struct VideoControlsView: View {
                             DragGesture()
                                 .onChanged { value in
                                     isDraggingSlider = true
-                                    let progress = geometry.size.width > 0 ? max(0, min(1, value.location.x / geometry.size.width)) : 0
+                                    let progress = max(0, min(1, value.location.x / geometry.size.width))
                                     currentTime = progress * duration
                                     player?.pause()
                                     onInteraction()
@@ -445,7 +519,7 @@ private struct VideoControlsView: View {
                         .gesture(
                             DragGesture(minimumDistance: 0)
                                 .onEnded { value in
-                                    let progress = geometry.size.width > 0 ? max(0, min(1, value.location.x / geometry.size.width)) : 0
+                                    let progress = max(0, min(1, value.location.x / geometry.size.width))
                                     currentTime = progress * duration
                                     seek(to: currentTime)
                                     onInteraction()

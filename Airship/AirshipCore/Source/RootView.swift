@@ -37,6 +37,12 @@ struct RootView<Content: View>: View {
         branching: nil
     )
 
+    // Default video state so @EnvironmentObject does not crash
+    @StateObject
+    private var defaultVideoState: VideoState = VideoState(
+        identifier: ""
+    )
+
     let layout: AirshipLayout
     let content: (ThomasOrientation, ThomasWindowSize) -> Content
 
@@ -68,6 +74,7 @@ struct RootView<Content: View>: View {
             .environmentObject(self.validatableHelper)
             .environmentObject(self.defaultPagerState)
             .environmentObject(self.defaultFormState)
+            .environmentObject(self.defaultVideoState)
             .environment(\.orientation, currentOrientation)
             .environment(\.windowSize, resolveWindowSize())
             .environment(\.isVisible, isVisible)

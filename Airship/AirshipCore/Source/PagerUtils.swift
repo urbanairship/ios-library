@@ -55,6 +55,12 @@ extension Array where Element == ThomasAutomatedAction {
                 case .pagerPause: false
                 case .pagerResume: false
                 case .pagerPauseToggle: false
+                case .videoPlay: false
+                case .videoPause: false
+                case .videoTogglePlay: false
+                case .videoMute: false
+                case .videoUnmute: false
+                case .videoToggleMute: false
                 }
             }.isEmpty == false
         }

@@ -76,6 +76,7 @@ extension ThomasViewInfo {
         case .iconView: nil
         case .scoreController(let info): [info.properties.view]
         case .scoreToggleLayout(let info): [info.properties.view]
+        case .videoController(let info): [info.properties.view]
         }
     }
 }

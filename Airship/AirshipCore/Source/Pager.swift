@@ -575,6 +575,11 @@ struct Pager: View {
                 case .formSubmit, .formValidate:
                     // not supported
                     break
+
+                case .videoPlay, .videoPause, .videoTogglePlay,
+                     .videoMute, .videoUnmute, .videoToggleMute:
+                    // Video behaviors handled by VideoController, not Pager
+                    break
                 }
             }
 

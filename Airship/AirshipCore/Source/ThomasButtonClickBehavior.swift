@@ -14,6 +14,12 @@ enum ThomasButtonClickBehavior: String, ThomasSerializable {
     case pagerPause = "pager_pause"
     case pagerResume = "pager_resume"
     case pagerPauseToggle = "pager_toggle_pause"
+    case videoPlay = "video_play"
+    case videoPause = "video_pause"
+    case videoTogglePlay = "video_toggle_play"
+    case videoMute = "video_mute"
+    case videoUnmute = "video_unmute"
+    case videoToggleMute = "video_toggle_mute"
 }
 
 extension ThomasButtonClickBehavior {
@@ -28,6 +34,18 @@ extension ThomasButtonClickBehavior {
         case .pagerResume:
             return 2
         case .pagerPauseToggle:
+            return 2
+        case .videoPlay:
+            return 2
+        case .videoPause:
+            return 2
+        case .videoTogglePlay:
+            return 2
+        case .videoMute:
+            return 2
+        case .videoUnmute:
+            return 2
+        case .videoToggleMute:
             return 2
         case .pagerNextOrFirst:
             return 1

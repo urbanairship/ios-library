@@ -53,6 +53,7 @@ struct Media: View {
 #if !os(watchOS) && !os(macOS)
             VideoControlsWrapper(
                 info: self.info,
+                videoIdentifier: self.info.properties.identifier ?? mediaID.uuidString,
                 constraints: constraints,
                 videoAspectRatio: videoAspectRatio,
                 onMediaReady: {
@@ -70,7 +71,10 @@ struct Media: View {
 #endif
         case .youtube, .vimeo:
 #if !os(tvOS) && !os(watchOS)
-            MediaWebView(info: self.info) {
+            MediaWebView(
+                info: self.info,
+                videoIdentifier: self.info.properties.identifier ?? mediaID.uuidString
+            ) {
                 pagerState.setMediaReady(
                     pageId: pageIdentifier ?? "",
                     id: mediaID,

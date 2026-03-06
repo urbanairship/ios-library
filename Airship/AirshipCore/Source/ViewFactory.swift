@@ -79,6 +79,8 @@ struct ViewFactory {
             ScoreController(info: info, constraints: constraints)
         case .scoreToggleLayout(let info):
             ScoreToggleLayout(info: info, constraints: constraints)
+        case .videoController(let info):
+            VideoController(info: info, constraints: constraints)
         }
     }
 }

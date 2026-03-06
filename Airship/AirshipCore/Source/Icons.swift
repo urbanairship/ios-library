@@ -86,6 +86,18 @@ struct Icons {
                 resizable: resizable,
                 color: color
             )
+        case .mute:
+            makeSystemImageIcon(
+                name: "speaker.slash.fill",
+                resizable: resizable,
+                color: color
+            )
+        case .unmute:
+            makeSystemImageIcon(
+                name: "speaker.wave.2.fill",
+                resizable: resizable,
+                color: color
+            )
         case .exclamationmarkCircleFill:
             makeSystemImageIcon(
                 name: "exclamationmark.circle.fill",

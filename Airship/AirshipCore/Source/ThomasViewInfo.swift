@@ -38,6 +38,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
     case iconView(IconView)
     case scoreController(ScoreController)
     case scoreToggleLayout(ScoreToggleLayout)
+    case videoController(VideoController)
 
     enum ViewType: String, Codable {
         case container
@@ -72,6 +73,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         case iconView = "icon_view"
         case scoreController = "score_controller"
         case scoreToggleLayout = "score_toggle_layout"
+        case videoController = "video_controller"
 
     }
 
@@ -134,6 +136,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         case .iconView: .iconView(try IconView(from: decoder))
         case .scoreController: .scoreController(try ScoreController(from: decoder))
         case .scoreToggleLayout: .scoreToggleLayout(try ScoreToggleLayout(from: decoder))
+        case .videoController: .videoController(try VideoController(from: decoder))
         }
     }
 
@@ -179,6 +182,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         case .iconView(let info): try info.encode(to: encoder)
         case .scoreController(let info): try info.encode(to: encoder)
         case .scoreToggleLayout(let info): try info.encode(to: encoder)
+        case .videoController(let info): try info.encode(to: encoder)
         }
     }
 
@@ -538,6 +542,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var mediaFit: ThomasMediaFit
             var video: Video?
             var cropPosition: ThomasPosition?
+            var identifier: String?
 
             private enum CodingKeys: String, CodingKey {
                 case mediaType = "media_type"
@@ -546,6 +551,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case video
                 case cropPosition = "position"
                 case type
+                case identifier
             }
         }
     }
@@ -1315,6 +1321,47 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case identifier = "identifier"
                 case type
                 case branching
+            }
+        }
+    }
+
+    struct VideoController: BaseInfo {
+        var commonProperties: CommonViewProperties
+        var commonOverrides: CommonViewOverrides?
+        var properties: Properties
+
+        func encode(to encoder: any Encoder) throws {
+            try encoder.encode(
+                properties: commonProperties, properties,
+                overrides: commonOverrides
+            )
+        }
+
+        init(from decoder: any Decoder) throws {
+            self.commonProperties = try decoder.decodeProperties()
+            self.properties = try decoder.decodeProperties()
+            self.commonOverrides = try decoder.decodeOverrides()
+        }
+
+        struct GroupInfo: ThomasSerializable {
+            var identifier: String
+        }
+
+        struct Properties: ThomasSerializable {
+            let type: ViewType = .videoController
+            var view: ThomasViewInfo
+            var identifier: String
+            var videoScope: [String]?
+            var muteGroup: GroupInfo?
+            var playGroup: GroupInfo?
+
+            enum CodingKeys: String, CodingKey {
+                case view
+                case identifier
+                case type
+                case videoScope = "video_scope"
+                case muteGroup = "mute_group"
+                case playGroup = "play_group"
             }
         }
     }

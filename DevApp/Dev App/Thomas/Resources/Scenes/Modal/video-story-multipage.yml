@@ -1,0 +1,463 @@
+version: 1
+presentation:
+  type: modal
+  default_placement:
+    size:
+      width: 100%
+      height: 100%
+    ignore_safe_area: true
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.6
+  dismiss_on_touch_outside: false
+view:
+  type: video_controller
+  identifier: vc-story-multi
+  view:
+    type: pager_controller
+    identifier: pager-controller-multi
+    view:
+      type: container
+      background_color:
+        default:
+          type: hex
+          hex: '#000000'
+          alpha: 1
+      items:
+        - position:
+            horizontal: center
+            vertical: center
+          size:
+            width: 100%
+            height: 100%
+          ignore_safe_area: true
+          view:
+            type: pager
+            gestures:
+              - type: hold
+                identifier: hold-id
+                press_behavior:
+                  behaviors:
+                    - pager_pause
+                release_behavior:
+                  behaviors:
+                    - pager_resume
+              - type: swipe
+                identifier: swipe-up-id
+                direction: up
+                behavior:
+                  behaviors:
+                    - dismiss
+            items:
+              # PAGE 1 — tests: first-load autoplay, navigate-away and return (should restart)
+              - identifier: story-page-1
+                type: pager_item
+                automated_actions:
+                  - delay: 15
+                    identifier: auto-next-1
+                    behaviors:
+                      - pager_next_or_dismiss
+                view:
+                  type: container
+                  items:
+                    - position:
+                        horizontal: center
+                        vertical: center
+                      size:
+                        width: 100%
+                        height: 100%
+                      ignore_safe_area: true
+                      view:
+                        type: media
+                        identifier: story-video-1
+                        media_type: video
+                        media_fit: center_crop
+                        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                        video:
+                          aspect_ratio: 1.77777777777778
+                          autoplay: true
+                          muted: false
+                          loop: true
+                          show_controls: false
+                    - position:
+                        horizontal: center
+                        vertical: top
+                      margin:
+                        top: 28
+                        start: 16
+                        end: 16
+                      size:
+                        width: 100%
+                        height: auto
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                          - size:
+                              width: 100%
+                              height: auto
+                            view:
+                              type: label
+                              text: "1 / 3"
+                              text_appearance:
+                                font_size: 22
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 1
+                                styles:
+                                  - bold
+                          - size:
+                              width: 100%
+                              height: auto
+                            margin:
+                              top: 6
+                            view:
+                              type: label
+                              text: "Swipe → next. Come back — video should restart."
+                              text_appearance:
+                                font_size: 14
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 0.85
+
+              # PAGE 2 — tests: autoplay on new page, navigate back restarts page 1
+              - identifier: story-page-2
+                type: pager_item
+                automated_actions:
+                  - delay: 15
+                    identifier: auto-next-2
+                    behaviors:
+                      - pager_next_or_dismiss
+                view:
+                  type: container
+                  items:
+                    - position:
+                        horizontal: center
+                        vertical: center
+                      size:
+                        width: 100%
+                        height: 100%
+                      ignore_safe_area: true
+                      view:
+                        type: media
+                        identifier: story-video-2
+                        media_type: video
+                        media_fit: center_crop
+                        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                        video:
+                          aspect_ratio: 1.77777777777778
+                          autoplay: true
+                          muted: false
+                          loop: true
+                          show_controls: false
+                    - position:
+                        horizontal: center
+                        vertical: top
+                      margin:
+                        top: 28
+                        start: 16
+                        end: 16
+                      size:
+                        width: 100%
+                        height: auto
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                          - size:
+                              width: 100%
+                              height: auto
+                            view:
+                              type: label
+                              text: "2 / 3"
+                              text_appearance:
+                                font_size: 22
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 1
+                                styles:
+                                  - bold
+                          - size:
+                              width: 100%
+                              height: auto
+                            margin:
+                              top: 6
+                            view:
+                              type: label
+                              text: "Swipe ← back — page 1 should autoplay from start."
+                              text_appearance:
+                                font_size: 14
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 0.85
+
+              # PAGE 3 — tests: user pause intent preserved across navigation
+              - identifier: story-page-3
+                type: pager_item
+                automated_actions:
+                  - delay: 15
+                    identifier: auto-next-3
+                    behaviors:
+                      - pager_next_or_dismiss
+                view:
+                  type: container
+                  items:
+                    - position:
+                        horizontal: center
+                        vertical: center
+                      size:
+                        width: 100%
+                        height: 100%
+                      ignore_safe_area: true
+                      view:
+                        type: media
+                        identifier: story-video-3
+                        media_type: video
+                        media_fit: center_crop
+                        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                        video:
+                          aspect_ratio: 1.77777777777778
+                          autoplay: true
+                          muted: false
+                          loop: true
+                          show_controls: false
+                    - position:
+                        horizontal: center
+                        vertical: top
+                      margin:
+                        top: 28
+                        start: 16
+                        end: 16
+                      size:
+                        width: 100%
+                        height: auto
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                          - size:
+                              width: 100%
+                              height: auto
+                            view:
+                              type: label
+                              text: "3 / 3"
+                              text_appearance:
+                                font_size: 22
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 1
+                                styles:
+                                  - bold
+                          - size:
+                              width: 100%
+                              height: auto
+                            margin:
+                              top: 6
+                            view:
+                              type: label
+                              text: "Pause ↓ then swipe ← back — page 1 should stay paused."
+                              text_appearance:
+                                font_size: 14
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 0.85
+
+        - size:
+            height: 5
+            width: 80%
+          position:
+            vertical: top
+            horizontal: center
+          margin:
+            top: 8
+          view:
+            type: story_indicator
+            source:
+              type: pager
+            style:
+              type: linear_progress
+              direction: horizontal
+              sizing: equal
+              spacing: 4
+              progress_color:
+                default:
+                  type: hex
+                  hex: '#FFFFFF'
+                  alpha: 1
+              track_color:
+                default:
+                  type: hex
+                  hex: '#FFFFFF'
+                  alpha: 0.4
+
+        - position:
+            horizontal: end
+            vertical: top
+          size:
+            width: 48
+            height: 48
+          view:
+            type: image_button
+            identifier: dismiss_button
+            button_click:
+              - dismiss
+            localized_content_description:
+              refs:
+                - ua_dismiss
+              fallback: Dismiss
+            image:
+              type: icon
+              icon: close
+              scale: 0.4
+              color:
+                default:
+                  type: hex
+                  hex: '#FFFFFF'
+                  alpha: 1
+
+        - position:
+            horizontal: center
+            vertical: bottom
+          margin:
+            bottom: 40
+          size:
+            width: auto
+            height: auto
+          view:
+            type: linear_layout
+            direction: horizontal
+            items:
+              - size:
+                  width: 64
+                  height: 64
+                margin:
+                  end: 16
+                view:
+                  type: stack_image_button
+                  identifier: play_pause_btn
+                  button_click:
+                    - pager_toggle_pause
+                    - video_toggle_play
+                  localized_content_description:
+                    refs:
+                      - ua_play
+                    fallback: Play
+                  items:
+                    - type: icon
+                      icon:
+                        type: icon
+                        icon: play
+                        color:
+                          default:
+                            type: hex
+                            hex: '#FFFFFF'
+                            alpha: 1
+                        scale: 0.5
+                  view_overrides:
+                    localized_content_description:
+                      - value:
+                          refs:
+                            - ua_pause
+                          fallback: Pause
+                        when_state_matches:
+                          scope:
+                            - $video
+                            - current
+                            - playing
+                          value:
+                            equals: true
+                    items:
+                      - value:
+                          - type: icon
+                            icon:
+                              type: icon
+                              icon: pause
+                              color:
+                                default:
+                                  type: hex
+                                  hex: '#FFFFFF'
+                                  alpha: 1
+                              scale: 0.5
+                        when_state_matches:
+                          scope:
+                            - $video
+                            - current
+                            - playing
+                          value:
+                            equals: true
+              - size:
+                  width: 64
+                  height: 64
+                view:
+                  type: stack_image_button
+                  identifier: mute_btn
+                  button_click:
+                    - video_toggle_mute
+                  localized_content_description:
+                    refs:
+                      - ua_mute
+                    fallback: Mute
+                  items:
+                    - type: icon
+                      icon:
+                        type: icon
+                        icon: unmute
+                        color:
+                          default:
+                            type: hex
+                            hex: '#FFFFFF'
+                            alpha: 1
+                        scale: 0.5
+                  view_overrides:
+                    localized_content_description:
+                      - value:
+                          refs:
+                            - ua_unmute
+                          fallback: Unmute
+                        when_state_matches:
+                          scope:
+                            - $video
+                            - current
+                            - muted
+                          value:
+                            equals: true
+                    items:
+                      - value:
+                          - type: icon
+                            icon:
+                              type: icon
+                              icon: mute
+                              color:
+                                default:
+                                  type: hex
+                                  hex: '#FFFFFF'
+                                  alpha: 1
+                              scale: 0.5
+                        when_state_matches:
+                          scope:
+                            - $video
+                            - current
+                            - muted
+                          value:
+                            equals: true
+display_type: layout
+name: Video Story (Multi-Page)

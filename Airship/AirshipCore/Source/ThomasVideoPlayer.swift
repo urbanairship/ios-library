@@ -13,12 +13,28 @@ struct ThomasVideoPlayer: UIViewRepresentable {
 
     let info: ThomasViewInfo.Media
     let onMediaReady: @MainActor () -> Void
-    @Binding var hasError: Bool
-    @Binding var player: AVPlayer?
-    @Environment(\.isVisible) private var isVisible
-    @State private var isLoaded: Bool = false
-    @EnvironmentObject var pagerState: PagerState
-    @Environment(\.layoutDirection) private var layoutDirection
+
+    @Binding
+    var hasError: Bool
+    @Binding
+    var player: AVPlayer?
+    @Binding
+    var isSystemPausing: Bool
+
+    @Environment(\.isVisible)
+    private var isVisible
+    @Environment(\.pageIdentifier)
+    private var pageIdentifier
+    @Environment(\.layoutDirection)
+    private var layoutDirection
+
+    @State
+    private var isLoaded: Bool = false
+
+    @EnvironmentObject
+    var pagerState: PagerState
+    @EnvironmentObject
+    var videoState: VideoState
 
     private var video: ThomasViewInfo.Media.Video? {
         self.info.properties.video
@@ -52,7 +68,7 @@ struct ThomasVideoPlayer: UIViewRepresentable {
         playerContainer.player = playerInstance
         playerContainer.videoURL = videoURL
 
-        DispatchQueue.main.async {
+        Task { @MainActor in
             self.player = playerInstance
         }
 
@@ -73,26 +89,65 @@ struct ThomasVideoPlayer: UIViewRepresentable {
 
     @MainActor
     func updateUIView(_ uiView: UIView, context: Context) {
-        guard let playerContainer = uiView as? VideoPlayerContainer else { return }
+        Task { @MainActor [weak uiView] in
+            guard
+                let playerContainer = uiView as? VideoPlayerContainer
+            else {
+                return
+            }
 
-        if hasError {
-            playerContainer.alpha = 0
-        } else {
-            playerContainer.alpha = 1
+            let coordinator = context.coordinator
+
+
+            self.updateState(
+                playerContainer: playerContainer,
+                coordinator: coordinator
+            )
         }
+    }
 
-        if (pagerState.inProgress) {
+    @MainActor
+    private func updateState(
+        playerContainer: VideoPlayerContainer,
+        coordinator: Coordinator
+    ) {
+        let justLoaded = !coordinator.lastIsLoaded && isLoaded
+        let didChange = coordinator.lastIsVisible != isVisible
+            || coordinator.lastIsLoaded != isLoaded
+            || coordinator.lastInProgress != pagerState.inProgress
+        coordinator.lastIsVisible = isVisible
+        coordinator.lastIsLoaded = isLoaded
+        coordinator.lastInProgress = pagerState.inProgress
+
+        guard didChange else { return }
+
+        playerContainer.alpha = hasError ? 0 : 1
+
+        let isCurrentlyPlaying = (playerContainer.player?.rate ?? 0) > 0
+        let isAutoplay = video?.autoplay ?? false
+
+        if pagerState.inProgress {
             switch (isVisible, isLoaded) {
             case (true, true):
-                handleAutoplayingVideos(container: playerContainer)
+                if isAutoplay,
+                   pageIdentifier != nil || justLoaded || videoState.isPlaying {
+                    self.isSystemPausing = false
+                    videoState.updatePlayingState(true)
+                    playerContainer.player?.play()
+                }
             case (false, true):
-                resetMedias(container: playerContainer)
-                pauseMedias(container: playerContainer)
+                if isCurrentlyPlaying { self.isSystemPausing = true }
+                if isAutoplay {
+                    playerContainer.player?.seek(to: CMTime.zero)
+                }
+                playerContainer.player?.pause()
             default:
-                pauseMedias(container: playerContainer)
+                if isCurrentlyPlaying { self.isSystemPausing = true }
+                playerContainer.player?.pause()
             }
         } else {
-            pauseMedias(container: playerContainer)
+            if isCurrentlyPlaying { self.isSystemPausing = true }
+            playerContainer.player?.pause()
         }
     }
 
@@ -140,36 +195,6 @@ struct ThomasVideoPlayer: UIViewRepresentable {
                 }
             }
         }
-
-
-    }
-
-    @MainActor
-    func handleAutoplayingVideos(container: VideoPlayerContainer) {
-        if isVisible {
-            if video?.autoplay ?? false {
-                playMedias(container: container)
-            }
-        } else {
-            pauseMedias(container: container)
-        }
-    }
-
-    @MainActor
-    func pauseMedias(container: VideoPlayerContainer) {
-        container.player?.pause()
-    }
-
-    @MainActor
-    func resetMedias(container: VideoPlayerContainer) {
-        if video?.autoplay ?? false {
-            container.player?.seek(to: CMTime.zero)
-        }
-    }
-
-    @MainActor
-    func playMedias(container: VideoPlayerContainer) {
-        container.player?.play()
     }
 
     func makeCoordinator() -> Coordinator {
@@ -183,6 +208,9 @@ struct ThomasVideoPlayer: UIViewRepresentable {
         var onMediaReady: (@MainActor () -> Void)?
         var endTimeObserver: (any NSObjectProtocol)?
         var statusObserver: NSKeyValueObservation?
+        var lastIsVisible: Bool = false
+        var lastIsLoaded: Bool = false
+        var lastInProgress: Bool = true
 
         init(isLoaded: Binding<Bool>, hasError: Binding<Bool>) {
             self.isLoaded = isLoaded
@@ -215,7 +243,6 @@ struct ThomasVideoPlayer: UIViewRepresentable {
         var isMuted: Bool = false
         var info: ThomasViewInfo.Media?
         var isRTL: Bool = false
-        private var playerLayerObservation: NSKeyValueObservation?
 
         override init(frame: CGRect) {
             super.init(frame: frame)

@@ -12,6 +12,7 @@ class ThomasState: ObservableObject {
     // Child State Objects
     private let formState: ThomasFormState?
     private let pagerState: PagerState?
+    private let videoState: VideoState?
     private let mutableState: MutableState?
 
     private let onStateChange: @Sendable @MainActor (AirshipJSON) -> Void
@@ -23,6 +24,8 @@ class ThomasState: ObservableObject {
         var formActiveFields: [String: ThomasFormField] = [:]
         var formType: ThomasFormState.FormType?
         var pagerInProgress: Bool?
+        var videoPlaying: Bool?
+        var videoMuted: Bool?
         var mutableStateValue: AirshipJSON?
 
         /// Generates the final AirshipJSON based strictly on this snapshot data
@@ -50,6 +53,15 @@ class ThomasState: ObservableObject {
                 ]
             }
 
+            if let videoPlaying, let videoMuted {
+                result["$video"] = [
+                    "current": [
+                        "playing": .bool(videoPlaying),
+                        "muted": .bool(videoMuted)
+                    ]
+                ]
+            }
+
             return .object(result)
         }
     }
@@ -60,11 +72,13 @@ class ThomasState: ObservableObject {
     init(
         formState: ThomasFormState? = nil,
         pagerState: PagerState? = nil,
+        videoState: VideoState? = nil,
         mutableState: MutableState? = nil,
         onStateChange: @escaping @Sendable @MainActor (AirshipJSON) -> Void
     ) {
         self.formState = formState
         self.pagerState = pagerState
+        self.videoState = videoState
         self.mutableState = mutableState
         self.onStateChange = onStateChange
 
@@ -76,6 +90,8 @@ class ThomasState: ObservableObject {
             formActiveFields: formState?.activeFields,
             formType: formState?.formType,
             pagerInProgress: pagerState?.inProgress,
+            videoPlaying: videoState?.isPlaying,
+            videoMuted: videoState?.isMuted,
             mutableStateValue: mutableState?.state,
         )
     }
@@ -84,6 +100,8 @@ class ThomasState: ObservableObject {
         formState?.$status.sink { [weak self] in self?.updateSnapshot(formStatus: $0) }.store(in: &subscriptions)
         formState?.$activeFields.sink { [weak self] in self?.updateSnapshot(formActiveFields: $0) }.store(in: &subscriptions)
         pagerState?.$inProgress.sink { [weak self] in self?.updateSnapshot(pagerInProgress: $0) }.store(in: &subscriptions)
+        videoState?.isPlayingPublisher.sink { [weak self] in self?.updateSnapshot(videoPlaying: $0) }.store(in: &subscriptions)
+        videoState?.isMutedPublisher.sink { [weak self] in self?.updateSnapshot(videoMuted: $0) }.store(in: &subscriptions)
         mutableState?.$state.sink { [weak self] in self?.updateSnapshot(mutableStateValue: $0) }.store(in: &subscriptions)
     }
 
@@ -92,6 +110,8 @@ class ThomasState: ObservableObject {
         formActiveFields: [String: ThomasFormField]? = nil,
         formType: ThomasFormState.FormType? = nil,
         pagerInProgress: Bool? = nil,
+        videoPlaying: Bool? = nil,
+        videoMuted: Bool? = nil,
         mutableStateValue: AirshipJSON? = nil,
     ) {
         // Update the snapshot with provided values
@@ -99,6 +119,8 @@ class ThomasState: ObservableObject {
         if let val = formActiveFields { stateSnapshot.formActiveFields = val }
         if let val = formType { stateSnapshot.formType = val }
         if let val = pagerInProgress { stateSnapshot.pagerInProgress = val }
+        if let val = videoPlaying { stateSnapshot.videoPlaying = val }
+        if let val = videoMuted { stateSnapshot.videoMuted = val }
         if let val = mutableStateValue { stateSnapshot.mutableStateValue = val }
 
         // Compute new output directly from the snapshot
@@ -116,15 +138,18 @@ class ThomasState: ObservableObject {
     func with(
         formState: ThomasFormState? = nil,
         pagerState: PagerState? = nil,
+        videoState: VideoState? = nil,
         mutableState: MutableState? = nil,
     ) -> ThomasState {
         let newFormState = formState ?? self.formState
         let newPagerState = pagerState ?? self.pagerState
+        let newVideoState = videoState ?? self.videoState
         let newMutableState = mutableState ?? self.mutableState
 
         // Return self if nothing changed to avoid redundant copies
         if newFormState === self.formState,
            newPagerState === self.pagerState,
+           newVideoState === self.videoState,
            newMutableState === self.mutableState {
             return self
         }
@@ -132,6 +157,7 @@ class ThomasState: ObservableObject {
         return .init(
             formState: newFormState,
             pagerState: newPagerState,
+            videoState: newVideoState,
             mutableState: newMutableState,
             onStateChange: self.onStateChange
         )
