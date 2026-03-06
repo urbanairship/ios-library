@@ -8,7 +8,7 @@ import AVKit
 import AVFoundation
 import UIKit
 
-struct ThomasVideoPlayer: UIViewRepresentable {
+struct NativeVideoPlayer: UIViewRepresentable {
     typealias UIViewType = UIView
 
     let info: ThomasViewInfo.Media
@@ -73,9 +73,7 @@ struct ThomasVideoPlayer: UIViewRepresentable {
         }
 
         let videoSettings = self.video
-        playerContainer.showControls = false
         playerContainer.shouldLoop = videoSettings?.loop ?? false
-        playerContainer.shouldAutoplay = videoSettings?.autoplay ?? false
         playerContainer.isMuted = videoSettings?.muted ?? false
 
         // Set up observers
@@ -90,18 +88,13 @@ struct ThomasVideoPlayer: UIViewRepresentable {
     @MainActor
     func updateUIView(_ uiView: UIView, context: Context) {
         Task { @MainActor [weak uiView] in
-            guard
-                let playerContainer = uiView as? VideoPlayerContainer
-            else {
+            guard let playerContainer = uiView as? VideoPlayerContainer else {
                 return
             }
 
-            let coordinator = context.coordinator
-
-
             self.updateState(
                 playerContainer: playerContainer,
-                coordinator: coordinator
+                coordinator: context.coordinator
             )
         }
     }
@@ -129,8 +122,9 @@ struct ThomasVideoPlayer: UIViewRepresentable {
         if pagerState.inProgress {
             switch (isVisible, isLoaded) {
             case (true, true):
-                if isAutoplay,
-                   pageIdentifier != nil || justLoaded || videoState.isPlaying {
+                let shouldPlay = videoState.isPlaying
+                    || (isAutoplay && (pageIdentifier != nil || justLoaded))
+                if shouldPlay {
                     self.isSystemPausing = false
                     videoState.updatePlayingState(true)
                     playerContainer.player?.play()
@@ -223,6 +217,8 @@ struct ThomasVideoPlayer: UIViewRepresentable {
                 NotificationCenter.default.removeObserver(observer)
                 endTimeObserver = nil
             }
+            statusObserver?.invalidate()
+            statusObserver = nil
         }
 
         deinit {
@@ -235,11 +231,8 @@ struct ThomasVideoPlayer: UIViewRepresentable {
 
     class VideoPlayerContainer: UIView {
         var player: AVPlayer?
-        var playerViewController: AVPlayerViewController?
         var videoURL: URL?
-        var showControls: Bool = true
         var shouldLoop: Bool = false
-        var shouldAutoplay: Bool = false
         var isMuted: Bool = false
         var info: ThomasViewInfo.Media?
         var isRTL: Bool = false
@@ -254,56 +247,15 @@ struct ThomasVideoPlayer: UIViewRepresentable {
         }
 
         func configurePlayerView() {
-            // Remove existing views
-            subviews.forEach { $0.removeFromSuperview() }
             layer.sublayers?.forEach {
                 if $0 is AVPlayerLayer {
                     $0.removeFromSuperlayer()
                 }
             }
 
-            if showControls {
-                setupPlayerWithControls()
-            } else {
-                setupPlayer()
-            }
+            setupPlayer()
 
-            // Configure player
             player?.isMuted = isMuted
-
-            // Start playback if needed
-            if shouldAutoplay {
-                player?.play()
-            }
-        }
-
-        func setupPlayerWithControls() {
-            guard let player = self.player else { return }
-
-            let playerViewController = AVPlayerViewController()
-            playerViewController.player = player
-            playerViewController.showsPlaybackControls = false
-
-            if let mediaInfo = self.info {
-                playerViewController.videoGravity = videoGravityForMediaFit(mediaInfo.properties.mediaFit)
-            } else {
-                playerViewController.videoGravity = videoGravityForMediaFit(.centerInside)
-            }
-
-            let hostingController = UIHostingController(rootView: EmptyView())
-            hostingController.view.backgroundColor = .clear
-            hostingController.view.frame = bounds
-            hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-
-            hostingController.addChild(playerViewController)
-            hostingController.view.addSubview(playerViewController.view)
-            playerViewController.view.frame = hostingController.view.bounds
-            playerViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-            playerViewController.didMove(toParent: hostingController)
-
-            addSubview(hostingController.view)
-
-            self.playerViewController = playerViewController
         }
 
         func setupPlayer() {

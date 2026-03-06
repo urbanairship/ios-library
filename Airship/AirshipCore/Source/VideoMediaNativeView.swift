@@ -7,12 +7,14 @@ import AVFoundation
 import AVKit
 import Combine
 
+
 @MainActor
 private class VideoControlsObserver: ObservableObject {
     var timeObserver: Any?
     var endTimeObserver: (any NSObjectProtocol)?
     var statusObserver: NSKeyValueObservation?
     weak var player: AVPlayer?
+    var isCancelled: Bool = false
 
     /// Called by wrapper
     internal func cleanup() {
@@ -31,8 +33,10 @@ private class VideoControlsObserver: ObservableObject {
     }
 }
 
+
 // The video control view wrapper for centering the controls over the video
-struct VideoControlsWrapper: View {
+@MainActor
+struct VideoMediaNativeView: View {
     let info: ThomasViewInfo.Media
     let videoIdentifier: String?
     let constraints: ViewConstraints
@@ -70,7 +74,7 @@ struct VideoControlsWrapper: View {
     }
 
     var body: some View {
-        ThomasVideoPlayer(
+        NativeVideoPlayer(
             info: info,
             onMediaReady: onMediaReady,
             hasError: $hasError,
@@ -86,21 +90,24 @@ struct VideoControlsWrapper: View {
             constraints: constraints,
             videoAspectRatio: videoAspectRatio
         )
-        .modifier(VideoControls(
-            hasError: hasError,
-            showControls: showControls,
-            shouldLoop: shouldLoop,
-            player: player,
-            isPlaying: $isPlaying,
-            currentTime: $currentTime,
-            duration: $duration,
-            isControlsVisible: $isControlsVisible,
-            controlsTimer: $controlsTimer
-        ))
+        .modifier(
+            VideoControls(
+                hasError: hasError,
+                showControls: showControls,
+                shouldLoop: shouldLoop,
+                player: player,
+                isPlaying: $isPlaying,
+                currentTime: $currentTime,
+                duration: $duration,
+                isControlsVisible: $isControlsVisible,
+                controlsTimer: $controlsTimer
+            )
+        )
         .onAppear {
             registerWithVideoState()
         }
         .onDisappear {
+            player?.pause()
             unregisterFromVideoState()
         }
         .airshipOnChangeOf(player) { _ in
@@ -244,8 +251,10 @@ internal struct VideoControls: ViewModifier {
         controlsTimer?.invalidate()
 
         let visibilityBinding = _isControlsVisible
+        let observer = observer
         controlsTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { _ in
             Task { @MainActor in
+                guard !observer.isCancelled else { return }
                 withAnimation(.easeInOut(duration: 0.3)) {
                     visibilityBinding.wrappedValue = false
                 }
@@ -257,6 +266,7 @@ internal struct VideoControls: ViewModifier {
         guard let player = player else { return }
 
         observer.cleanup()
+        observer.isCancelled = false
         observer.player = player
 
         let isPlayingBinding = _isPlaying
@@ -331,6 +341,7 @@ internal struct VideoControls: ViewModifier {
     private func cleanup() {
         controlsTimer?.invalidate()
         controlsTimer = nil
+        observer.isCancelled = true
         observer.cleanup()
     }
 
@@ -362,6 +373,8 @@ private struct VideoControlsView: View {
 
     @State
     private var isMuted: Bool = false
+    @State
+    private var wasPlayingBeforeDrag: Bool = false
 
     private var scaleFactor: CGFloat {
         let baseControlsWidth: CGFloat = 320
@@ -501,6 +514,9 @@ private struct VideoControlsView: View {
                         .gesture(
                             DragGesture()
                                 .onChanged { value in
+                                    if !isDraggingSlider {
+                                        wasPlayingBeforeDrag = isPlaying
+                                    }
                                     isDraggingSlider = true
                                     let progress = max(0, min(1, value.location.x / geometry.size.width))
                                     currentTime = progress * duration
@@ -510,7 +526,7 @@ private struct VideoControlsView: View {
                                 .onEnded { _ in
                                     isDraggingSlider = false
                                     seek(to: currentTime)
-                                    if isPlaying {
+                                    if wasPlayingBeforeDrag {
                                         player?.play()
                                     }
                                     onInteraction()
@@ -606,6 +622,22 @@ private struct VideoControlsView: View {
         isMuted = player.isMuted
     }
 
+    private static let hourFormatter: DateComponentsFormatter = {
+        let f = DateComponentsFormatter()
+        f.unitsStyle = .positional
+        f.zeroFormattingBehavior = .pad
+        f.allowedUnits = [.hour, .minute, .second]
+        return f
+    }()
+
+    private static let minuteFormatter: DateComponentsFormatter = {
+        let f = DateComponentsFormatter()
+        f.unitsStyle = .positional
+        f.zeroFormattingBehavior = .pad
+        f.allowedUnits = [.minute, .second]
+        return f
+    }()
+
     private func formatTime(_ interval: TimeInterval, locale: Locale = Locale.current) -> String {
         if interval.isNaN || interval.isInfinite {
             return "--:--"
@@ -613,18 +645,8 @@ private struct VideoControlsView: View {
 
         let effectiveInterval = max(0, interval)
 
-        let formatter = DateComponentsFormatter()
-        formatter.unitsStyle = .positional // Results in "HH:MM:SS" or "MM:SS"
-        formatter.zeroFormattingBehavior = .pad // Ensures padding like "01:05" instead of "1:5"
-
-        let showsHours: Bool
-        if effectiveInterval >= 3600.0 { // 3600 seconds = 1 hour
-            showsHours = true
-            formatter.allowedUnits = [.hour, .minute, .second]
-        } else {
-            showsHours = false
-            formatter.allowedUnits = [.minute, .second]
-        }
+        let showsHours = effectiveInterval >= 3600.0
+        let formatter = showsHours ? Self.hourFormatter : Self.minuteFormatter
 
         var calendar = Calendar.current
         calendar.locale = locale

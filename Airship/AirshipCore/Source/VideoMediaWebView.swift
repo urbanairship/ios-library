@@ -7,7 +7,7 @@ import SwiftUI
 import WebKit
 
 
-struct MediaWebView: AirshipNativeViewRepresentable {
+struct VideoMediaWebView: AirshipNativeViewRepresentable {
 
 #if os(macOS)
     typealias NSViewType = WKWebView
@@ -200,7 +200,7 @@ struct MediaWebView: AirshipNativeViewRepresentable {
             )
             webView.loadHTMLString(html, baseURL: baseURL)
         case .youtube:
-            if let videoID = retrieveYoutubeVideoID(url: url) {
+            if let videoID = Self.retrieveYoutubeVideoID(url: url) {
                 let html = String(
                     format: """
                         <body style="margin:0; background-color:transparent;">
@@ -296,19 +296,15 @@ struct MediaWebView: AirshipNativeViewRepresentable {
         }
     }
 
-    func retrieveYoutubeVideoID(url: String) -> String? {
+    static func retrieveYoutubeVideoID(url: String) -> String? {
         do {
-            let regex = try NSRegularExpression(pattern: "embed/([a-zA-Z0-9_-]+).*")
-            let results = regex.firstMatch(in: url, range: NSRange(url.startIndex..., in: url))
-            let result = results.map {
-                String(url[Range($0.range, in: url)!])
-            }
-            guard let result = result else {
+            let regex = try NSRegularExpression(pattern: "embed/([a-zA-Z0-9_-]+)")
+            guard let match = regex.firstMatch(in: url, range: NSRange(url.startIndex..., in: url)),
+                  let range = Range(match.range(at: 1), in: url) else {
                 return nil
             }
-            let separatedResult = result.components(separatedBy: "/")
-            return separatedResult[1]
-        } catch _ {
+            return String(url[range])
+        } catch {
             return nil
         }
     }
@@ -316,13 +312,12 @@ struct MediaWebView: AirshipNativeViewRepresentable {
     @MainActor
     func handleAutoplayingVideos(uiView: WKWebView, justLoaded: Bool) {
         if isVisible {
-            if video?.autoplay ?? false {
-                // On first load always autoplay. On subsequent visibility re-entries
-                // (e.g. pager navigation), respect the VideoState — if the user
-                // explicitly paused, don't restart the video behind their back.
-                if justLoaded || videoState.isPlaying {
-                    playMedias(webView: uiView)
-                }
+            let isAutoplay = video?.autoplay ?? false
+            let shouldPlay = videoState.isPlaying
+                || !videoState.shouldControl(videoIdentifier: videoIdentifier)
+                || (isAutoplay && justLoaded)
+            if shouldPlay {
+                playMedias(webView: uiView)
             }
         } else {
             pauseMedias(webView: uiView)
@@ -397,7 +392,7 @@ struct MediaWebView: AirshipNativeViewRepresentable {
     }
 
     class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
-        var parent: MediaWebView
+        var parent: VideoMediaWebView
         var isLoaded: Binding<Bool>
         var videoIdentifier: String?
         var videoState: VideoState
@@ -413,7 +408,7 @@ struct MediaWebView: AirshipNativeViewRepresentable {
         var isSystemPausing: Bool = false
 
         init(
-            _ parent: MediaWebView,
+            _ parent: VideoMediaWebView,
             isLoaded: Binding<Bool>,
             videoIdentifier: String?,
             videoState: VideoState,
@@ -427,6 +422,15 @@ struct MediaWebView: AirshipNativeViewRepresentable {
                 self.onMediaReady = onMediaReady
                 self.challengeResolver = resolver
             }
+
+        deinit {
+            Task { @MainActor [weak videoState, weak webView, videoIdentifier] in
+                if let videoIdentifier {
+                    videoState?.unregister(videoIdentifier: videoIdentifier)
+                }
+                await webView?.pauseAllMediaPlayback()
+            }
+        }
 
         @MainActor
         func registerWithVideoState() {

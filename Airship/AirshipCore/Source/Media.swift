@@ -51,7 +51,7 @@ struct Media: View {
             )
         case .video:
 #if !os(watchOS) && !os(macOS)
-            VideoControlsWrapper(
+            VideoMediaNativeView(
                 info: self.info,
                 videoIdentifier: self.info.properties.identifier ?? mediaID.uuidString,
                 constraints: constraints,
@@ -71,7 +71,7 @@ struct Media: View {
 #endif
         case .youtube, .vimeo:
 #if !os(tvOS) && !os(watchOS)
-            MediaWebView(
+            VideoMediaWebView(
                 info: self.info,
                 videoIdentifier: self.info.properties.identifier ?? mediaID.uuidString
             ) {

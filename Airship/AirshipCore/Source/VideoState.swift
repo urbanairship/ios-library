@@ -60,7 +60,6 @@ class VideoState: ObservableObject {
     /// False when this is the default fallback state injected at the root with no real VideoController ancestor.
     private var hasController: Bool {
         guard !identifier.isEmpty else {
-            AirshipLogger.warn("Video control behaviors require a video_controller ancestor")
             return false
         }
         return true
@@ -68,6 +67,7 @@ class VideoState: ObservableObject {
 
     /// Determines if this controller should control a video with the given identifier
     func shouldControl(videoIdentifier: String?) -> Bool {
+        guard hasController else { return false }
         guard let scope = videoScope else {
             return true
         }
@@ -86,6 +86,7 @@ class VideoState: ObservableObject {
         unmute: @escaping @MainActor () -> Void
     ) {
         guard shouldControl(videoIdentifier: videoIdentifier) else { return }
+        guard hasController else { return }
 
         registeredVideos[videoIdentifier] = VideoRegistration(
             play: play,
