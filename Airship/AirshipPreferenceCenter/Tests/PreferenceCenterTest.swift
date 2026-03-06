@@ -1,18 +1,20 @@
 /* Copyright Airship and Contributors */
 
+import Testing
 import AirshipCore
-import XCTest
 
-@testable import AirshipPreferenceCenter
+@testable
+import AirshipPreferenceCenter
 
-class PreferenceCenterTest: XCTestCase {
-
+@Suite("Preference Center")
+struct PreferenceCenterTest {
+    
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private var privacyManager: TestPrivacyManager!
     private var preferenceCenter: DefaultPreferenceCenter!
     private let remoteDataProvider: TestRemoteData = TestRemoteData()
-
-    override func setUp() async throws {
+    
+    init() async {
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: .testConfig(),
@@ -26,8 +28,9 @@ class PreferenceCenterTest: XCTestCase {
             inputValidator: TestInputValidator()
         )
     }
-
-    func testConfig() async throws {
+    
+    @Test("Json config", arguments: ["form-1", "form-2"])
+    func config(id: String) async throws {
         let payloadData = """
             {
                "preference_forms":[
@@ -52,18 +55,16 @@ class PreferenceCenterTest: XCTestCase {
                ]
             }
             """
-
+        
         let remoteData = createPayload(payloadData)
         self.remoteDataProvider.payloads = [remoteData]
-
-        var config = try! await self.preferenceCenter.config(preferenceCenterID: "form-1")
-        XCTAssertEqual("form-1", config.identifier)
-
-        config = try! await self.preferenceCenter.config(preferenceCenterID: "form-2")
-        XCTAssertEqual("form-2", config.identifier)
+        
+        var config = try! await self.preferenceCenter.config(preferenceCenterID: id)
+        #expect(id == config.identifier)
     }
-
-    func testJSONConfig() async throws {
+    
+    @Test("Json config", arguments: ["form-1", "form-2"])
+    func jsonConfig(id: String) async throws {
         let payloadData = """
             {
                "preference_forms":[
@@ -86,88 +87,84 @@ class PreferenceCenterTest: XCTestCase {
                ]
             }
             """
-
+        
         let remoteData = createPayload(payloadData)
         self.remoteDataProvider.payloads = [remoteData]
-
-        let config1 = try! await self.preferenceCenter.jsonConfig(preferenceCenterID: "form-1")
-
-        XCTAssertEqual(
-            try! AirshipJSON.from(data: config1),
-            try! AirshipJSON.wrap(["id": "form-1"])
-        )
-
-        let config2 = try! await self.preferenceCenter.jsonConfig(preferenceCenterID: "form-2")
-        XCTAssertEqual(
-            try! AirshipJSON.from(data: config2),
-            try! AirshipJSON.wrap(["id": "form-2"])
-        )
+        
+        let config = try! await self.preferenceCenter.jsonConfig(preferenceCenterID: id)
+        
+        let jsonConfig = try! AirshipJSON.from(data: config)
+        let jsonform = try! AirshipJSON.wrap(["id": id])
+        #expect(jsonConfig == jsonform)
     }
-
+    
     @MainActor
-      func testOnDisplay() async throws {
-          let delegate = MockPreferenceCenterOpenDelegate()
-          self.preferenceCenter.openDelegate = delegate
-
-          let expectation = self.expectation(description: "onDisplay called")
-          self.preferenceCenter.onDisplay = { identifier in
-              XCTAssertEqual("some-form", identifier)
-              expectation.fulfill()
-              return true // Handle the display
-          }
-
-          self.preferenceCenter.display("some-form")
-
-          await self.fulfillment(of: [expectation], timeout: 1.0)
-
-          XCTAssertFalse(delegate.openCalled)
-      }
-
-      @MainActor
-      func testOnDisplayNilFallback() async throws {
-          let delegate = MockPreferenceCenterOpenDelegate()
-          self.preferenceCenter.openDelegate = delegate
-          self.preferenceCenter.onDisplay = nil
-
-          self.preferenceCenter.display("some-form")
-          XCTAssertEqual("some-form", delegate.lastOpenID)
-      }
-
-    @MainActor
-    func testDeepLink() async throws {
+    @Test("Ensure preference center displays the correct form")
+    func onDisplay() async throws {
         let delegate = MockPreferenceCenterOpenDelegate()
         self.preferenceCenter.openDelegate = delegate
-
-        let valid = URL(string: "uairship://preferences/some-id")!
-        XCTAssertTrue(self.preferenceCenter.deepLink(valid))
         
-        XCTAssertEqual("some-id", delegate.lastOpenID)
-
+        await confirmation("onDisplay called", expectedCount: 1) { confirm in
+            
+            self.preferenceCenter.onDisplay = { identifier in
+                #expect(identifier == "some-form")
+                confirm()
+                return true
+            }
+            
+            self.preferenceCenter.display("some-form")
+        }
+        #expect(!delegate.openCalled)
+    }
+    
+    @MainActor
+    @Test
+    func onDisplayNilFallback() async throws {
+        let delegate = MockPreferenceCenterOpenDelegate()
+        self.preferenceCenter.openDelegate = delegate
+        self.preferenceCenter.onDisplay = nil
+        
+        self.preferenceCenter.display("some-form")
+        #expect("some-form" == delegate.lastOpenID)
+    }
+    
+    @MainActor
+    @Test
+    func deepLink() async throws {
+        let delegate = MockPreferenceCenterOpenDelegate()
+        self.preferenceCenter.openDelegate = delegate
+        
+        let valid = URL(string: "uairship://preferences/some-id")!
+        #expect(self.preferenceCenter.deepLink(valid))
+        
+        #expect("some-id" == delegate.lastOpenID)
+        
         let trailingSlash = URL(
             string: "uairship://preferences/some-other-id/"
         )!
-        XCTAssertTrue(self.preferenceCenter.deepLink(trailingSlash))
+        #expect(self.preferenceCenter.deepLink(trailingSlash))
         
-        XCTAssertEqual("some-other-id", delegate.lastOpenID)
+        #expect("some-other-id" == delegate.lastOpenID)
     }
-
+    
     @MainActor
-    func testDeepLinkInvalid() {
+    @Test
+    func deepLinkInvalid() {
         let delegate = MockPreferenceCenterOpenDelegate()
         self.preferenceCenter.openDelegate = delegate
-
+        
         let wrongScheme = URL(string: "whatever://preferences/some-id")!
-        XCTAssertFalse(self.preferenceCenter.deepLink(wrongScheme))
-
+        #expect(!self.preferenceCenter.deepLink(wrongScheme))
+        
         let wrongHost = URL(string: "uairship://message_center/some-id")!
-        XCTAssertFalse(self.preferenceCenter.deepLink(wrongHost))
-
+        #expect(!self.preferenceCenter.deepLink(wrongHost))
+        
         let tooManyArgs = URL(
             string: "uairship://preferences/some-other-id/what"
         )!
-        XCTAssertFalse(self.preferenceCenter.deepLink(tooManyArgs))
+        #expect(!self.preferenceCenter.deepLink(tooManyArgs))
     }
-
+    
     private func createPayload(_ json: String) -> RemoteDataPayload {
         return RemoteDataPayload(
             type: "preference_forms",
@@ -189,7 +186,7 @@ fileprivate final class TestInputValidator: AirshipInputValidation.Validator {
 fileprivate class MockPreferenceCenterOpenDelegate: PreferenceCenterOpenDelegate {
     var lastOpenID: String?
     var openCalled: Bool = false
-
+    
     func openPreferenceCenter(_ preferenceCenterID: String) -> Bool {
         self.lastOpenID = preferenceCenterID
         self.openCalled = true

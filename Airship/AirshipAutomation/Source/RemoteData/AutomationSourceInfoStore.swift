@@ -99,10 +99,21 @@ final class AutomationSourceInfoStore: Sendable {
     }
 }
 
+/// Represents a schedule that failed to parse, with enough info to evaluate newness on retry.
+struct FailedScheduleRecord: Sendable, Codable, Equatable {
+    let identifier: String
+    let createdDate: Date
+    let minSDKVersion: String?
+}
+
 struct AutomationSourceInfo: Sendable, Codable, Equatable {
     let remoteDataInfo: RemoteDataInfo?
     let payloadTimestamp: Date
     let airshipSDKVersion: String?
+    
+    /// Schedules that failed to parse, carried forward across syncs until
+    /// they either parse successfully or are removed from remote data.
+    var failedSchedules: [FailedScheduleRecord]?
 }
 
 fileprivate struct LegacyAppKeys {

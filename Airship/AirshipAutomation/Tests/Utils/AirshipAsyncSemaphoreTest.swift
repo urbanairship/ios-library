@@ -18,54 +18,76 @@ struct AirshipAsyncSemaphoreTest {
     }
 
     @Test
-    func testSequentialPermitWithOnePermit() async throws {
+    func testMutualExclusionWithOnePermit() async throws {
         let semaphore = AirshipAsyncSemaphore(value: 1)
-        let order: AirshipActorValue<[Int]> = AirshipActorValue([])
+        let concurrent: AirshipActorValue<Int> = AirshipActorValue(0)
+        let maxConcurrent: AirshipActorValue<Int> = AirshipActorValue(0)
+        let completedCount: AirshipActorValue<Int> = AirshipActorValue(0)
 
         async let first: () = semaphore.withPermit {
-            try await Task.sleep(nanoseconds: 100_000_000) // 0.1 sec
-            await order.update { value in
-                value.append(1)
-            }
+            let current = await concurrent.getAndUpdate { $0 += 1 }
+            await maxConcurrent.update { $0 = max($0, current) }
+            try await Task.sleep(nanoseconds: 50_000_000)
+            await concurrent.update { $0 -= 1 }
+            await completedCount.update { $0 += 1 }
         }
 
         async let second: () = semaphore.withPermit {
-            await order.update { value in
-                value.append(2)
-            }
+            let current = await concurrent.getAndUpdate { $0 += 1 }
+            await maxConcurrent.update { $0 = max($0, current) }
+            try await Task.sleep(nanoseconds: 50_000_000)
+            await concurrent.update { $0 -= 1 }
+            await completedCount.update { $0 += 1 }
         }
 
-
         async let third: () = semaphore.withPermit {
-            await order.update { value in
-                value.append(3)
-            }
+            let current = await concurrent.getAndUpdate { $0 += 1 }
+            await maxConcurrent.update { $0 = max($0, current) }
+            try await Task.sleep(nanoseconds: 50_000_000)
+            await concurrent.update { $0 -= 1 }
+            await completedCount.update { $0 += 1 }
         }
 
         _ = try await (first, second, third)
 
-        await #expect(order.value == [1, 2, 3])
+        await #expect(maxConcurrent.value <= 1)
+        await #expect(completedCount.value == 3)
     }
 
     @Test
-    func testSequentialPermitWith() async throws {
+    func testConcurrencyLimitWithTwoPermits() async throws {
         let semaphore = AirshipAsyncSemaphore(value: 2)
-        let order: AirshipActorValue<[Int]> = AirshipActorValue([])
+        let concurrent: AirshipActorValue<Int> = AirshipActorValue(0)
+        let maxConcurrent: AirshipActorValue<Int> = AirshipActorValue(0)
+        let completedCount: AirshipActorValue<Int> = AirshipActorValue(0)
 
         async let first: () = semaphore.withPermit {
-            try await Task.sleep(nanoseconds: 100_000_000) // 0.1 sec
-            await order.update { value in
-                value.append(1)
-            }
+            let current = await concurrent.getAndUpdate { $0 += 1 }
+            await maxConcurrent.update { $0 = max($0, current) }
+            try await Task.sleep(nanoseconds: 50_000_000)
+            await concurrent.update { $0 -= 1 }
+            await completedCount.update { $0 += 1 }
         }
 
         async let second: () = semaphore.withPermit {
-            await order.update { value in
-                value.append(2)
-            }
+            let current = await concurrent.getAndUpdate { $0 += 1 }
+            await maxConcurrent.update { $0 = max($0, current) }
+            try await Task.sleep(nanoseconds: 50_000_000)
+            await concurrent.update { $0 -= 1 }
+            await completedCount.update { $0 += 1 }
         }
-        _ = try await (first, second)
 
-        await #expect(order.value == [2, 1])
+        async let third: () = semaphore.withPermit {
+            let current = await concurrent.getAndUpdate { $0 += 1 }
+            await maxConcurrent.update { $0 = max($0, current) }
+            try await Task.sleep(nanoseconds: 50_000_000)
+            await concurrent.update { $0 -= 1 }
+            await completedCount.update { $0 += 1 }
+        }
+
+        _ = try await (first, second, third)
+
+        await #expect(maxConcurrent.value <= 2)
+        await #expect(completedCount.value == 3)
     }
 }

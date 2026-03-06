@@ -1,13 +1,17 @@
 /* Copyright Airship and Contributors */
 
+import Testing
 import AirshipCore
-import XCTest
 
-@testable import AirshipPreferenceCenter
+@testable
+import AirshipPreferenceCenter
 
-class PreferenceCenterDecoderTest: XCTestCase {
-    func testForm() throws {
-        let testPayload: String = 
+@Suite("Preference Center Decoder")
+struct PreferenceCenterDecoderTest {
+    
+    @Test
+    func form() throws {
+        let testPayload: String =
 """
 {
           "id": "cool-prefs",
@@ -214,18 +218,16 @@ class PreferenceCenterDecoderTest: XCTestCase {
           ]
         }
 """
-        let response = try! PreferenceCenterDecoder.decodeConfig(
+        let _ = try PreferenceCenterDecoder.decodeConfig(
             data: testPayload.data(using: .utf8)!
         )
-
-        XCTAssertNotNil(response)
     }
-
+    
     private func parseAndSortJSON(jsonString: String) -> String? {
         guard let data = jsonString.data(using: .utf8),
               let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
         else { return nil }
-
+        
         let sortedData = try? JSONSerialization.data(withJSONObject: jsonObject, options: [.sortedKeys, .prettyPrinted])
         return sortedData.flatMap { String(data: $0, encoding: .utf8) }
     }

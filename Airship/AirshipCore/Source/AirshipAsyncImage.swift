@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Combine
 import Foundation
 public import SwiftUI
 
@@ -24,33 +23,31 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
         self.placeholder = placeholder
     }
 
-    @State private var loadedImage: AirshipImageData? = nil
+    @State private var loadedURL: String?
+    @State private var loadedImage: AirshipImageData?
     @State private var currentImage: AirshipNativeImage?
     @State private var imageIndex: Int = 0
     @State private var animationTask: Task<Void, Never>?
-    @State private var cancellable: AnyCancellable?
 
     public var body: some View {
         content
-            .onAppear {
-                if self.loadedImage != nil {
+            .task(id: url) {
+                guard loadedURL != url else {
                     startAnimation()
-                } else {
-                    self.cancellable = self.imageLoader.load(url: self.url)
-                        .receive(on: DispatchQueue.main)
-                        .sink(
-                            receiveCompletion: { completion in
-                                if case let .failure(error) = completion {
-                                    AirshipLogger.error(
-                                        "Unable to load image \(self.url): \(error)"
-                                    )
-                                }
-                            },
-                            receiveValue: { image in
-                                self.loadedImage = image
-                                startAnimation()
-                            }
-                        )
+                    return
+                }
+
+                self.loadedImage = nil
+                self.currentImage = nil
+
+                do {
+                    let image = try await imageLoader.load(url: url)
+                    self.loadedURL = url
+                    self.loadedImage = image
+                    startAnimation()
+                } catch is CancellationError {
+                } catch {
+                    AirshipLogger.error("Unable to load image \(url): \(error)")
                 }
             }
     }
@@ -112,4 +109,3 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
         }
     }
 }
-

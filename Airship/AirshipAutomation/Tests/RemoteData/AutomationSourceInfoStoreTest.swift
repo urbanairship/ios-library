@@ -67,7 +67,8 @@ final class AutomationSourceInfoStoreTest: XCTestCase {
         let sourceInfo = AutomationSourceInfo(
             remoteDataInfo: nil,
             payloadTimestamp: Date(),
-            airshipSDKVersion: "17.9.9"
+            airshipSDKVersion: "17.9.9",
+            failedSchedules: []
         )
         self.infoStore.setSourceInfo(sourceInfo, source: .app, contactID: "foo")
 
@@ -91,7 +92,8 @@ final class AutomationSourceInfoStoreTest: XCTestCase {
         let sourceInfo = AutomationSourceInfo(
             remoteDataInfo: nil,
             payloadTimestamp: Date(),
-            airshipSDKVersion: "17.9.9"
+            airshipSDKVersion: "17.9.9",
+            failedSchedules: []
         )
         self.infoStore.setSourceInfo(sourceInfo, source: .contact, contactID: "foo")
 

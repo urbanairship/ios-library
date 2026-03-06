@@ -1,18 +1,20 @@
 /* Copyright Airship and Contributors */
 
+import Testing
 import AirshipCore
 import Combine
-import XCTest
 import SwiftUI
 
-@testable import AirshipPreferenceCenter
+@testable
+import AirshipPreferenceCenter
 
-class PreferenceCenterStateTest: XCTestCase {
+@Suite("Preference Center State")
+struct PreferenceCenterStateTest {
     let subscriber = TestPreferenceSubscriber()
-    var state: PreferenceCenterState!
+    let state: PreferenceCenterState!
 
     @MainActor
-    override func setUp() async throws {
+    init() {
         state = PreferenceCenterState(
             config: PreferenceCenterConfig(
                 identifier: "empty",
@@ -27,108 +29,98 @@ class PreferenceCenterStateTest: XCTestCase {
     }
 
     @MainActor
-    func testChannelBinding() {
+    @Test
+    func channelBinding() {
         let channelFoo = self.state.makeBinding(channelListID: "foo")
-        XCTAssertTrue(channelFoo.wrappedValue)
+        #expect(channelFoo.wrappedValue)
 
         channelFoo.wrappedValue.toggle()
-        XCTAssertFalse(channelFoo.wrappedValue)
-        XCTAssertEqual([.unsubscribe("foo")], self.subscriber.channelEdits)
+        #expect(!channelFoo.wrappedValue)
+        #expect([.unsubscribe("foo")] == self.subscriber.channelEdits)
 
         channelFoo.wrappedValue.toggle()
-        XCTAssertEqual(
-            [.unsubscribe("foo"), .subscribe("foo")],
-            self.subscriber.channelEdits
-        )
+        #expect([.unsubscribe("foo"), .subscribe("foo")] == self.subscriber.channelEdits)
     }
 
     @MainActor
-    func testChannelBindingNotSubscribed() {
+    @Test
+    func channelBindingNotSubscribed() {
         let channelNotFoo = self.state.makeBinding(channelListID: "not foo")
-        XCTAssertFalse(channelNotFoo.wrappedValue)
+        #expect(!channelNotFoo.wrappedValue)
 
         channelNotFoo.wrappedValue.toggle()
-        XCTAssertTrue(channelNotFoo.wrappedValue)
-        XCTAssertEqual([.subscribe("not foo")], self.subscriber.channelEdits)
+        #expect(channelNotFoo.wrappedValue)
+        #expect([.subscribe("not foo")] == self.subscriber.channelEdits)
     }
 
     @MainActor
-    func testContactBinding() {
+    @Test
+    func contactBinding() {
         let contactBaz = self.state.makeBinding(
             contactListID: "baz",
             scopes: [.app]
         )
-        XCTAssertTrue(contactBaz.wrappedValue)
+        #expect(contactBaz.wrappedValue)
 
         contactBaz.wrappedValue.toggle()
-        XCTAssertFalse(contactBaz.wrappedValue)
-        XCTAssertEqual(
-            [.unsubscribe("baz", .app)],
-            self.subscriber.contactEdits
-        )
+        #expect(!contactBaz.wrappedValue)
+        #expect([.unsubscribe("baz", .app)] == self.subscriber.contactEdits)
 
         contactBaz.wrappedValue.toggle()
-        XCTAssertEqual(
-            [.unsubscribe("baz", .app), .subscribe("baz", .app)],
-            self.subscriber.contactEdits
-        )
+        #expect([.unsubscribe("baz", .app), .subscribe("baz", .app)] == self.subscriber.contactEdits)
     }
 
     @MainActor
-    func testContactlBindingNotSubscribed() {
+    @Test
+    func contactlBindingNotSubscribed() {
         let contactNotBaz = self.state.makeBinding(
             contactListID: "not baz",
             scopes: [.app]
         )
-        XCTAssertFalse(contactNotBaz.wrappedValue)
+        #expect(!contactNotBaz.wrappedValue)
 
         contactNotBaz.wrappedValue.toggle()
-        XCTAssertTrue(contactNotBaz.wrappedValue)
-        XCTAssertEqual(
-            [.subscribe("not baz", .app)],
-            self.subscriber.contactEdits
-        )
+        #expect(contactNotBaz.wrappedValue)
+        #expect([.subscribe("not baz", .app)] == self.subscriber.contactEdits)
     }
 
     @MainActor
-    func testContactlBindingPartialScope() {
+    @Test
+    func contactlBindingPartialScope() {
         let contactBaz = self.state.makeBinding(
             contactListID: "baz",
             scopes: [.app, .web]
         )
-        XCTAssertTrue(contactBaz.wrappedValue)
+        #expect(contactBaz.wrappedValue)
 
         contactBaz.wrappedValue.toggle()
-        XCTAssertFalse(contactBaz.wrappedValue)
-        XCTAssertEqual(
-            [.unsubscribe("baz", .app), .unsubscribe("baz", .web)],
-            self.subscriber.contactEdits
-        )
+        #expect(!contactBaz.wrappedValue)
+        #expect([.unsubscribe("baz", .app), .unsubscribe("baz", .web)] == self.subscriber.contactEdits)
 
         contactBaz.wrappedValue.toggle()
-        XCTAssertEqual(
+        #expect(
             [
                 .unsubscribe("baz", .app),
                 .unsubscribe("baz", .web),
                 .subscribe("baz", .app),
-                .subscribe("baz", .web),
-            ],
-            self.subscriber.contactEdits
-        )
+                .subscribe("baz", .web)
+            ] == self.subscriber.contactEdits)
     }
 
     @MainActor
-    func testContactDifferentScope() {
+    @Test
+    func contactDifferentScope() {
         let contactBaz = self.state.makeBinding(
             contactListID: "baz",
             scopes: [.web]
         )
-        XCTAssertFalse(contactBaz.wrappedValue)
+        #expect(!contactBaz.wrappedValue)
     }
 
     @MainActor
-    func testChannelMergeData() {
-        state = PreferenceCenterState(
+    @Test
+    func channelMergeData() {
+        let state = PreferenceCenterState(
             config: PreferenceCenterConfig(
                 identifier: "empty",
                 sections: [],
@@ -143,58 +135,57 @@ class PreferenceCenterStateTest: XCTestCase {
             subscriber: subscriber
         )
 
-        let contactAppBaz = self.state.makeBinding(
+        let contactAppBaz = state.makeBinding(
             contactListID: "baz",
             scopes: [.app]
         )
-        XCTAssertTrue(contactAppBaz.wrappedValue)
+        #expect(contactAppBaz.wrappedValue)
 
         contactAppBaz.wrappedValue.toggle()
-        XCTAssertTrue(contactAppBaz.wrappedValue)
-        XCTAssertEqual(
-            [.unsubscribe("baz", .app)],
-            self.subscriber.contactEdits
-        )
-        XCTAssertEqual([], self.subscriber.channelEdits)
+        #expect(contactAppBaz.wrappedValue)
+        #expect([.unsubscribe("baz", .app)] == self.subscriber.contactEdits)
+        #expect(self.subscriber.channelEdits.isEmpty)
     }
 
     @MainActor
-    func testChannelExternalUpdates() {
+    @Test
+    func channelExternalUpdates() {
         let channelFoo = self.state.makeBinding(channelListID: "foo")
-        XCTAssertTrue(channelFoo.wrappedValue)
+        #expect(channelFoo.wrappedValue)
 
         self.subscriber.channelEditsSubject.send(.subscribe("foo"))
-        XCTAssertTrue(channelFoo.wrappedValue)
+        #expect(channelFoo.wrappedValue)
 
         self.subscriber.channelEditsSubject.send(.unsubscribe("foo"))
-        XCTAssertFalse(channelFoo.wrappedValue)
+        #expect(!channelFoo.wrappedValue)
 
         self.subscriber.channelEditsSubject.send(.unsubscribe("foo"))
-        XCTAssertFalse(channelFoo.wrappedValue)
+        #expect(!channelFoo.wrappedValue)
 
         self.subscriber.channelEditsSubject.send(.subscribe("foo"))
-        XCTAssertTrue(channelFoo.wrappedValue)
+        #expect(channelFoo.wrappedValue)
     }
 
     @MainActor
-    func testContactExternalUpdates() {
+    @Test
+    func contactExternalUpdates() {
         let contactBaz = self.state.makeBinding(
             contactListID: "baz",
             scopes: [.app]
         )
-        XCTAssertTrue(contactBaz.wrappedValue)
+        #expect(contactBaz.wrappedValue)
 
         self.subscriber.contactEditsSubject.send(.subscribe("baz", .app))
-        XCTAssertTrue(contactBaz.wrappedValue)
+        #expect(contactBaz.wrappedValue)
 
         self.subscriber.contactEditsSubject.send(.unsubscribe("baz", .app))
-        XCTAssertFalse(contactBaz.wrappedValue)
+        #expect(!contactBaz.wrappedValue)
 
         self.subscriber.contactEditsSubject.send(.unsubscribe("baz", .app))
-        XCTAssertFalse(contactBaz.wrappedValue)
+        #expect(!contactBaz.wrappedValue)
 
         self.subscriber.contactEditsSubject.send(.subscribe("baz", .app))
-        XCTAssertTrue(contactBaz.wrappedValue)
+        #expect(contactBaz.wrappedValue)
     }
 }
 
