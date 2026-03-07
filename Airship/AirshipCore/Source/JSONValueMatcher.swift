@@ -1,6 +1,6 @@
 // Copyright Airship and Contributors
 
-import Foundation
+public import Foundation
 
 /// A `JSONValueMatcher` is used to match a JSON value against a set of constraints.
 ///

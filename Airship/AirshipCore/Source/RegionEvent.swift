@@ -1,5 +1,7 @@
 /* Copyright Airship and Contributors */
 
+import Foundation
+
 /// Represents the boundary crossing event type.
 public enum AirshipBoundaryEvent: Int, Sendable {
     /**

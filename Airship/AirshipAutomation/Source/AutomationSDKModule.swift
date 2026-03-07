@@ -4,7 +4,7 @@
 public import AirshipCore
 #endif
 
-import Foundation
+public import Foundation
 
 /// NOTE: For internal use only. :nodoc:
 @objc(UAAutomationSDKModule)

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+public import Foundation
 
 /// NOTE: For internal use only. :nodoc:
 public struct RemoteConfig: Codable, Equatable, Sendable {

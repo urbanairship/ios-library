@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
-import Foundation
+
+public import Foundation
 public import AirshipCore
 
 /// - Note: For internal use only. :nodoc:

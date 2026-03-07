@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+public import Foundation
+
 /**
  * Airship JSON.
  */

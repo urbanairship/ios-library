@@ -2,7 +2,7 @@
 
 @preconcurrency
 import Combine
-import Foundation
+public import Foundation
 import UserNotifications
 #if canImport(UIKit)
 import UIKit

@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+public import Foundation
 
 /// Airship locale manager.
 public protocol AirshipLocaleManager: AnyObject, Sendable {

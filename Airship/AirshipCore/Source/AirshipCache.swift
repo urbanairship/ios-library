@@ -1,3 +1,4 @@
+public import Foundation
 import CoreData
 
 public protocol AirshipCache: Actor {

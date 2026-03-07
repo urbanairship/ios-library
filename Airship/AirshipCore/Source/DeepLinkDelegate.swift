@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+public import Foundation
 
 /// Protocol to be implemented by deep link handlers.
 public protocol DeepLinkDelegate: AnyObject, Sendable {

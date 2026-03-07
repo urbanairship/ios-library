@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import Combine
-import Foundation
+public import Foundation
 
 /// NOTE: For internal use only. :nodoc:
 public protocol RemoteDataProtocol: AnyObject, Sendable {
