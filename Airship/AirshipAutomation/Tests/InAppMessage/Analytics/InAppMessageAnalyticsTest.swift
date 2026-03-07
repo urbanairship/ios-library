@@ -4,6 +4,7 @@ import Testing
 
 @testable import AirshipAutomation
 @testable import AirshipCore
+import Foundation
 
 @MainActor
 struct InAppMessageAnalyticsTest {

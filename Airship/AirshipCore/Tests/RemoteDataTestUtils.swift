@@ -1,5 +1,5 @@
 
-import Foundation
+public import Foundation
 
 @testable
 public import AirshipCore

@@ -2,6 +2,7 @@
 
 import Testing
 @testable import AirshipCore
+import Foundation
 
 struct PagerDisableSwipeSelectorTest {
     

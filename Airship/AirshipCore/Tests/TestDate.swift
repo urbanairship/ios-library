@@ -2,6 +2,7 @@
 
 @testable
 public import AirshipCore
+public import Foundation
 
 public class UATestDate: @unchecked Sendable, AirshipDateProtocol  {
 

@@ -4,6 +4,7 @@ import Testing
 
 @testable
 import AirshipNotificationServiceExtension
+import UserNotifications
 
 @Suite("Media Attachment Payload")
 struct MediaAttachmentPayloadTest {

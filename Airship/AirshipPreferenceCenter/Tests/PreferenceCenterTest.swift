@@ -2,6 +2,7 @@
 
 import Testing
 import AirshipCore
+import Foundation
 
 @testable
 import AirshipPreferenceCenter

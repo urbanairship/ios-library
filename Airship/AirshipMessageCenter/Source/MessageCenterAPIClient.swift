@@ -109,8 +109,14 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
         return try await self.session.performHTTPRequest(request) { data, response in
             guard response.isSuccess else { return nil }
 
-            let parsed: MessageListResponse = try AirshipJSONUtils.decode(data: data)
-            return try parsed.convertMessages()
+            do {
+                let parsed: MessageListResponse = try AirshipJSONUtils.decode(data: data)
+                return try parsed.convertMessages()
+            } catch {
+                let responseBody = data.flatMap { String(data: $0, encoding: .utf8) } ?? "nil"
+                AirshipLogger.error("Failed to parse message list response: \(error) responseBody: \(responseBody)")
+                throw error
+            }
         }
     }
 

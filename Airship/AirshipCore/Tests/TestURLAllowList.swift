@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import AirshipCore
+public import Foundation
 
 public final class TestURLAllowList: AirshipURLAllowList, @unchecked Sendable {
     public var delegate: (any URLAllowListDelegate)?

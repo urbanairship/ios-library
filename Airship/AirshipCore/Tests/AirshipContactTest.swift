@@ -4,6 +4,7 @@ import XCTest
 
 @testable import AirshipCore
 import Combine
+import Foundation
 
 class AirshipContactTest: XCTestCase {
     private let channel: TestChannel = TestChannel()

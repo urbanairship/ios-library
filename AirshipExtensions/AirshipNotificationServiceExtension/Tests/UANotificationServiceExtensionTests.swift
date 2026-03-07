@@ -4,6 +4,8 @@ import Testing
 
 @testable
 import AirshipNotificationServiceExtension
+import UserNotifications
+import Foundation
 
 @Suite("U A Notification Service Extension")
 struct UANotificationServiceExtensionTests {

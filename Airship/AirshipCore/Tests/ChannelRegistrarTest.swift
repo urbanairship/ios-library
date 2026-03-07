@@ -4,6 +4,7 @@ import Testing
 import Combine
 
 @testable import AirshipCore
+import Foundation
 
 @Suite(.timeLimit(.minutes(1)))
 struct ChannelRegistrarTest {
