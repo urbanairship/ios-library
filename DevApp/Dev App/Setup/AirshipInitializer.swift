@@ -25,6 +25,7 @@ struct AirshipInitializer {
         #if DEBUG
         config.inProduction = false
         config.isAirshipDebugEnabled = true
+        config.isWebViewInspectionEnabled = true
         #else
         config.inProduction = true
         #endif

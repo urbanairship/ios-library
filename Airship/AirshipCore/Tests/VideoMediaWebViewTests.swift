@@ -6,6 +6,7 @@ import Testing
 @testable import AirshipCore
 
 @Suite
+@MainActor
 struct VideoMediaWebViewTests {
 
     // MARK: - Standard embed URLs

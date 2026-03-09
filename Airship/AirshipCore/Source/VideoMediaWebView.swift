@@ -7,26 +7,43 @@ import SwiftUI
 import WebKit
 
 
+@MainActor
+private class WeakScriptMessageHandler: NSObject, WKScriptMessageHandler {
+    weak var delegate: WKScriptMessageHandler?
+
+    init(_ delegate: WKScriptMessageHandler) {
+        self.delegate = delegate
+        super.init()
+    }
+
+    func userContentController(
+        _ userContentController: WKUserContentController,
+        didReceive message: WKScriptMessage
+    ) {
+        delegate?.userContentController(userContentController, didReceive: message)
+    }
+}
+
 struct VideoMediaWebView: AirshipNativeViewRepresentable {
 
 #if os(macOS)
     typealias NSViewType = WKWebView
     func makeNSView(context: Context) -> WKWebView {
-          return makeWebView(context: context)
-      }
+        return makeWebView(context: context)
+    }
 
-      func updateNSView(_ nsView: WKWebView, context: Context) {
-          updateView(nsView, context: context)
-      }
+    func updateNSView(_ nsView: WKWebView, context: Context) {
+        updateView(nsView, context: context)
+    }
 #else
     typealias UIViewType = WKWebView
     func makeUIView(context: Context) -> WKWebView {
-           return makeWebView(context: context)
-       }
+        return makeWebView(context: context)
+    }
 
-       func updateUIView(_ uiView: WKWebView, context: Context) {
-           updateView(uiView, context: context)
-       }
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        updateView(uiView, context: context)
+    }
 #endif
 
     let info: ThomasViewInfo.Media
@@ -34,11 +51,9 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
     let onMediaReady: @MainActor () -> Void
     @Environment(\.isVisible) var isVisible
     @State private var isLoaded: Bool = false
-    @State private var isMediaReady: Bool = false
     @EnvironmentObject var pagerState: PagerState
     @EnvironmentObject var videoState: VideoState
     @Environment(\.layoutDirection) var layoutDirection
-
 
     private var video: ThomasViewInfo.Media.Video? {
         self.info.properties.video
@@ -96,11 +111,10 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
         return URL(string: "https://\(bundleIdentifier)")
     }
 
-
     @MainActor
     func makeWebView(context: Context) -> WKWebView {
         let contentController = WKUserContentController()
-        contentController.add(context.coordinator, name: "callback")
+        contentController.add(WeakScriptMessageHandler(context.coordinator), name: "callback")
 
         let config = WKWebViewConfiguration()
         config.userContentController = contentController
@@ -113,6 +127,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
         webView.setValue(false, forKey: "drawsBackground") // For transparency
 #else
         config.allowsInlineMediaPlayback = true
+        config.mediaTypesRequiringUserActionForPlayback = []
         config.allowsPictureInPictureMediaPlayback = true
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.isAccessibilityElement = true
@@ -137,31 +152,15 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
 
     @MainActor
     private func updateView(_ view: WKWebView, context: Context) {
-        let justLoaded = !context.coordinator.lastIsLoaded && isLoaded
-        let didChange = context.coordinator.lastIsVisible != isVisible
-            || context.coordinator.lastIsLoaded != isLoaded
-            || context.coordinator.lastInProgress != pagerState.inProgress
-        context.coordinator.lastIsVisible = isVisible
-        context.coordinator.lastIsLoaded = isLoaded
-        context.coordinator.lastInProgress = pagerState.inProgress
-
-        guard didChange else { return }
-
-        if (pagerState.inProgress) {
-            switch (isVisible, isLoaded) {
-            case (true, true):
-                handleAutoplayingVideos(uiView: view, justLoaded: justLoaded)
-            case (false, true):
-                context.coordinator.isSystemPausing = true
-                resetMedias(webView: view)
-                pauseMedias(webView: view)
-            default:
-                context.coordinator.isSystemPausing = true
-                pauseMedias(webView: view)
-            }
-        } else {
-            context.coordinator.isSystemPausing = true
-            pauseMedias(webView: view)
+        let isVisible = isVisible
+        let isLoaded = isLoaded
+        let inProgress = pagerState.inProgress
+        Task { @MainActor [weak coordinator = context.coordinator] in
+            coordinator?.update(
+                isVisible: isVisible,
+                isLoaded: isLoaded,
+                inProgress: inProgress
+            )
         }
     }
 
@@ -255,8 +254,6 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
                 )
                 webView.loadHTMLString(html, baseURL: baseURL)
             } else {
-                // FALLBACK: Standard URL loading if ID extraction fails
-                // Force playsinline for better mobile behavior
                 let suffix = url.contains("?") ? "&playsinline=1" : "?playsinline=1"
                 if let videoUrl = URL(string: "\(url)\(suffix)") {
                     webView.load(URLRequest(url: videoUrl))
@@ -309,78 +306,6 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
         }
     }
 
-    @MainActor
-    func handleAutoplayingVideos(uiView: WKWebView, justLoaded: Bool) {
-        if isVisible {
-            let isAutoplay = video?.autoplay ?? false
-            let shouldPlay = videoState.isPlaying
-                || !videoState.shouldControl(videoIdentifier: videoIdentifier)
-                || (isAutoplay && justLoaded)
-            if shouldPlay {
-                playMedias(webView: uiView)
-            }
-        } else {
-            pauseMedias(webView: uiView)
-        }
-    }
-
-    @MainActor
-    func pauseMedias(webView: WKWebView) {
-        if self.info.properties.mediaType == .video {
-            webView.evaluateJavaScript("videoElement.pause();")
-        } else if self.info.properties.mediaType == .youtube {
-            webView.evaluateJavaScript("player.pauseVideo();")
-        } else if self.info.properties.mediaType == .vimeo {
-            webView.evaluateJavaScript("vimeoPlayer.pause();")
-        }
-    }
-
-    @MainActor
-    func resetMedias(webView: WKWebView) {
-        if video?.autoplay ?? false {
-            if self.info.properties.mediaType == .video {
-                webView.evaluateJavaScript("videoElement.currentTime = 0;")
-            } else if self.info.properties.mediaType == .youtube {
-                webView.evaluateJavaScript("player.seekTo(0);")
-            } else if self.info.properties.mediaType == .vimeo {
-                webView.evaluateJavaScript("vimeoPlayer.setCurrentTime(0);")
-            }
-        }
-    }
-
-    @MainActor
-    func playMedias(webView: WKWebView) {
-        if self.info.properties.mediaType == .video {
-            webView.evaluateJavaScript("videoElement.play();")
-        } else if self.info.properties.mediaType == .youtube {
-            webView.evaluateJavaScript("player.playVideo();")
-        } else if self.info.properties.mediaType == .vimeo {
-            webView.evaluateJavaScript("vimeoPlayer.play();")
-        }
-    }
-
-    @MainActor
-    func muteMedias(webView: WKWebView) {
-        if self.info.properties.mediaType == .video {
-            webView.evaluateJavaScript("videoElement.muted = true;")
-        } else if self.info.properties.mediaType == .youtube {
-            webView.evaluateJavaScript("player.mute();")
-        } else if self.info.properties.mediaType == .vimeo {
-            webView.evaluateJavaScript("vimeoPlayer.setMuted(true);")
-        }
-    }
-
-    @MainActor
-    func unmuteMedias(webView: WKWebView) {
-        if self.info.properties.mediaType == .video {
-            webView.evaluateJavaScript("videoElement.muted = false;")
-        } else if self.info.properties.mediaType == .youtube {
-            webView.evaluateJavaScript("player.unMute();")
-        } else if self.info.properties.mediaType == .vimeo {
-            webView.evaluateJavaScript("vimeoPlayer.setMuted(false);")
-        }
-    }
-    
     func makeCoordinator() -> Coordinator {
         Coordinator(
             self,
@@ -391,21 +316,31 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
         )
     }
 
-    class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
-        var parent: VideoMediaWebView
-        var isLoaded: Binding<Bool>
-        var videoIdentifier: String?
-        var videoState: VideoState
-        var onMediaReady: @MainActor () -> Void
-        let challengeResolver: ChallengeResolver
-        weak var webView: WKWebView?
+    // MARK: - Coordinator
 
-        // Track previous values so updateUIView only reacts to real state changes,
-        // not SwiftUI re-renders triggered by VideoState publishing.
-        var lastIsVisible: Bool = false
-        var lastIsLoaded: Bool = false
-        var lastInProgress: Bool = true
-        var isSystemPausing: Bool = false
+    class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
+        private var parent: VideoMediaWebView
+        private var isLoaded: Binding<Bool>
+        private var videoIdentifier: String?
+        private var videoState: VideoState
+        private var onMediaReady: @MainActor () -> Void
+        private let challengeResolver: ChallengeResolver
+        private weak var webView: WKWebView?
+
+        private var lastIsVisible: Bool = false
+        private var lastIsLoaded: Bool = false
+        private var lastInProgress: Bool = true
+
+        /// Tracks whether the system (visibility change, pager, backgrounding) initiated a pause.
+        /// When true, incoming "paused" JS callbacks won't clear `localIsPlaying`.
+        private var isSystemPausing: Bool = false
+
+        /// Tracks playing intent from JS callbacks. `nil` = initial (autoplay should trigger),
+        /// `true` = playing/was playing, `false` = user explicitly paused.
+        /// Guarded by `isSystemPausing` so system pauses don't clear user intent.
+        private var localIsPlaying: Bool? = nil
+
+        private var appStateTask: Task<Void, Never>?
 
         init(
             _ parent: VideoMediaWebView,
@@ -413,17 +348,31 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             videoIdentifier: String?,
             videoState: VideoState,
             resolver: ChallengeResolver = .shared,
-            onMediaReady: @escaping @MainActor () -> Void) {
+            onMediaReady: @escaping @MainActor () -> Void
+        ) {
+            self.parent = parent
+            self.isLoaded = isLoaded
+            self.videoIdentifier = videoIdentifier
+            self.videoState = videoState
+            self.onMediaReady = onMediaReady
+            self.challengeResolver = resolver
 
-                self.parent = parent
-                self.isLoaded = isLoaded
-                self.videoIdentifier = videoIdentifier
-                self.videoState = videoState
-                self.onMediaReady = onMediaReady
-                self.challengeResolver = resolver
+            super.init()
+
+            appStateTask = Task { @MainActor [weak self] in
+                for await state in AppStateTracker.shared.stateUpdates {
+                    guard !Task.isCancelled else { return }
+                    if state == .active {
+                        self?.handleForeground()
+                    } else {
+                        self?.systemPause()
+                    }
+                }
             }
+        }
 
         deinit {
+            appStateTask?.cancel()
             Task { @MainActor [weak videoState, weak webView, videoIdentifier] in
                 if let videoIdentifier {
                     videoState?.unregister(videoIdentifier: videoIdentifier)
@@ -432,8 +381,171 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             }
         }
 
+        // MARK: - Playback Control
+
         @MainActor
-        func registerWithVideoState() {
+        private var mediaType: ThomasViewInfo.Media.MediaType {
+            parent.info.properties.mediaType
+        }
+
+        @MainActor
+        private var isAutoplay: Bool {
+            parent.video?.autoplay ?? false
+        }
+
+        @MainActor
+        private var showControls: Bool {
+            parent.video?.showControls ?? true
+        }
+
+        @MainActor
+        private var isMuted: Bool {
+            parent.video?.muted ?? false
+        }
+
+        @MainActor
+        private func play() {
+            guard let webView else { return }
+            switch mediaType {
+            case .video:
+                webView.evaluateJavaScript("videoElement.play();")
+            case .youtube:
+                webView.evaluateJavaScript("player.playVideo();")
+            case .vimeo:
+                webView.evaluateJavaScript("vimeoPlayer.play();")
+            case .image:
+                break
+            }
+        }
+
+        @MainActor
+        private func pause() {
+            guard let webView else { return }
+            switch mediaType {
+            case .video:
+                webView.evaluateJavaScript("videoElement.pause();")
+            case .youtube:
+                webView.evaluateJavaScript("player.pauseVideo();")
+            case .vimeo:
+                webView.evaluateJavaScript("vimeoPlayer.pause();")
+            case .image: break
+            }
+        }
+
+        @MainActor
+        private func reset() {
+            guard
+                isAutoplay,
+                !showControls,
+                let webView
+            else {
+                return
+            }
+
+            localIsPlaying = nil
+
+            switch mediaType {
+            case .video:
+                webView.evaluateJavaScript("videoElement.currentTime = 0;")
+            case .youtube:
+                webView.evaluateJavaScript("player.seekTo(0);")
+            case .vimeo:
+                webView.evaluateJavaScript("vimeoPlayer.setCurrentTime(0);")
+            case .image:
+                break
+            }
+        }
+
+        @MainActor
+        private func mute() {
+            guard let webView else { return }
+            switch mediaType {
+            case .video:
+                webView.evaluateJavaScript("videoElement.muted = true;")
+            case .youtube:
+                webView.evaluateJavaScript("player.mute();")
+            case .vimeo:
+                webView.evaluateJavaScript("vimeoPlayer.setMuted(true);")
+            case .image:
+                break
+            }
+        }
+
+        @MainActor
+        private func unmute() {
+            guard let webView else { return }
+            switch mediaType {
+            case .video:
+                webView.evaluateJavaScript("videoElement.muted = false;")
+            case .youtube:
+                webView.evaluateJavaScript("player.unMute();")
+            case .vimeo:
+                webView.evaluateJavaScript("vimeoPlayer.setMuted(false);")
+            case .image:
+                break
+            }
+        }
+
+        // MARK: - State Management
+
+        @MainActor
+        func update(isVisible: Bool, isLoaded: Bool, inProgress: Bool) {
+            let didChange = lastIsVisible != isVisible
+                || lastIsLoaded != isLoaded
+                || lastInProgress != inProgress
+            lastIsVisible = isVisible
+            lastIsLoaded = isLoaded
+            lastInProgress = inProgress
+
+            guard didChange else { return }
+
+            if inProgress, isVisible, isLoaded {
+                handleResume()
+            } else {
+                if !isVisible {
+                    self.reset()
+                    Task { [weak webView] in
+                        await webView?.pauseAllMediaPlayback()
+                    }
+                }
+                systemPause()
+            }
+        }
+
+        @MainActor
+        private func systemPause() {
+            isSystemPausing = true
+            pause()
+        }
+
+        @MainActor
+        private func handleForeground() {
+            guard lastIsVisible, lastIsLoaded, lastInProgress else { return }
+            handleResume()
+        }
+
+        @MainActor
+        private func handleResume() {
+            let shouldPlay: Bool
+            if videoState.shouldControl(videoIdentifier: videoIdentifier) {
+                shouldPlay = videoState.isPlaying
+            } else if isAutoplay {
+                shouldPlay = localIsPlaying != false
+            } else {
+                shouldPlay = localIsPlaying == true
+            }
+            isSystemPausing = false
+            if shouldPlay {
+                localIsPlaying = true
+                play()
+            }
+        }
+
+
+        // MARK: - Video State Registration
+
+        @MainActor
+        private func registerWithVideoState() {
             guard let videoId = videoIdentifier,
                   videoState.shouldControl(videoIdentifier: videoId) else {
                 return
@@ -441,30 +553,17 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
 
             videoState.register(
                 videoIdentifier: videoId,
-                play: { [weak self] in
-                    guard let webView = self?.webView else { return }
-                    self?.parent.playMedias(webView: webView)
-                },
-                pause: { [weak self] in
-                    guard let webView = self?.webView else { return }
-                    self?.parent.pauseMedias(webView: webView)
-                },
-                mute: { [weak self] in
-                    guard let webView = self?.webView else { return }
-                    self?.parent.muteMedias(webView: webView)
-                },
-                unmute: { [weak self] in
-                    guard let webView = self?.webView else { return }
-                    self?.parent.unmuteMedias(webView: webView)
-                }
+                play: { [weak self] in self?.play() },
+                pause: { [weak self] in self?.pause() },
+                mute: { [weak self] in self?.mute() },
+                unmute: { [weak self] in self?.unmute() }
             )
+
+            videoState.playGroup.initializePlaying(isAutoplay)
+            videoState.muteGroup.initializeMuted(isMuted)
         }
 
-        @MainActor
-        func unregisterFromVideoState() {
-            guard let videoId = videoIdentifier else { return }
-            videoState.unregister(videoIdentifier: videoId)
-        }
+        // MARK: - WKNavigationDelegate
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             Task { @MainActor in
@@ -478,8 +577,13 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             return await challengeResolver.resolve(challenge)
         }
 
+        // MARK: - WKScriptMessageHandler
+
         @MainActor
-        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        func userContentController(
+            _ userContentController: WKUserContentController,
+            didReceive message: WKScriptMessage
+        ) {
             guard let response = message.body as? String else {
                 return
             }
@@ -489,29 +593,26 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             switch response {
             case "mediaReady":
                 onMediaReady()
-            case "playing" where canControlVideo:
-                isSystemPausing = false
-                videoState.updatePlayingState(true)
-            case "paused" where canControlVideo:
-                if !isSystemPausing {
+                if canControlVideo {
+                    if videoState.isMuted { mute() } else { unmute() }
+                }
+            case "playing":
+                if canControlVideo {
+                    isSystemPausing = false
+                    videoState.updatePlayingState(true)
+                } else {
+                    localIsPlaying = true
+                }
+            case "paused":
+                if canControlVideo && !isSystemPausing {
                     videoState.updatePlayingState(false)
+                } else if !isSystemPausing {
+                    localIsPlaying = false
                 }
-            case "muted" where canControlVideo:
-                if videoState.muteGroup.isMutedInitialized {
-                    if !videoState.isMuted, let webView {
-                        parent.unmuteMedias(webView: webView)
-                    }
-                } else {
-                    videoState.updateMutedState(true)
-                }
-            case "unmuted" where canControlVideo:
-                if videoState.muteGroup.isMutedInitialized {
-                    if videoState.isMuted, let webView {
-                        parent.muteMedias(webView: webView)
-                    }
-                } else {
-                    videoState.updateMutedState(false)
-                }
+            case "muted" where canControlVideo && showControls:
+                videoState.updateMutedState(true)
+            case "unmuted" where canControlVideo && showControls:
+                videoState.updateMutedState(false)
             default:
                 break
             }

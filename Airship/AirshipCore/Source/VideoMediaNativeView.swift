@@ -34,7 +34,6 @@ private class VideoControlsObserver: ObservableObject {
 }
 
 
-// The video control view wrapper for centering the controls over the video
 @MainActor
 struct VideoMediaNativeView: View {
     let info: ThomasViewInfo.Media
@@ -43,27 +42,16 @@ struct VideoMediaNativeView: View {
     let videoAspectRatio: CGFloat
     let onMediaReady: @MainActor () -> Void
 
-    @State
-    private var hasError: Bool = false
-    @State
-    private var player: AVPlayer?
-    @State
-    private var isPlaying: Bool = false
-    @State
-    private var isSystemPausing: Bool = false
-    @State
-    private var currentTime: Double = 0
-    @State
-    private var duration: Double = 1.0
-    @State
-    private var isControlsVisible: Bool = true
-    @State
-    private var controlsTimer: Timer?
+    @State private var hasError: Bool = false
+    @State private var player: AVPlayer?
+    @State private var isPlaying: Bool = false
+    @State private var currentTime: Double = 0
+    @State private var duration: Double = 1.0
+    @State private var isControlsVisible: Bool = true
+    @State private var controlsTimer: Timer?
 
-    @EnvironmentObject
-    var videoState: VideoState
-    @Environment(\.isVisible)
-    var isVisible
+    @EnvironmentObject var videoState: VideoState
+    @Environment(\.isVisible) var isVisible
 
     private var showControls: Bool {
         info.properties.video?.showControls ?? true
@@ -76,10 +64,10 @@ struct VideoMediaNativeView: View {
     var body: some View {
         NativeVideoPlayer(
             info: info,
+            videoIdentifier: videoIdentifier,
             onMediaReady: onMediaReady,
             hasError: $hasError,
-            player: $player,
-            isSystemPausing: $isSystemPausing
+            player: $player
         )
         .airshipApplyIf(self.constraints.width == nil || self.constraints.height == nil) {
             $0.aspectRatio(videoAspectRatio, contentMode: ContentMode.fill)
@@ -103,58 +91,6 @@ struct VideoMediaNativeView: View {
                 controlsTimer: $controlsTimer
             )
         )
-        .onAppear {
-            registerWithVideoState()
-        }
-        .onDisappear {
-            player?.pause()
-            unregisterFromVideoState()
-        }
-        .airshipOnChangeOf(player) { _ in
-            registerWithVideoState()
-        }
-        .airshipOnChangeOf(isPlaying) { newValue in
-            defer { isSystemPausing = false }
-            guard let videoId = videoIdentifier,
-                  videoState.shouldControl(videoIdentifier: videoId),
-                  isVisible else { return }
-            if !newValue && isSystemPausing { return }
-            videoState.updatePlayingState(newValue)
-        }
-    }
-
-    private func registerWithVideoState() {
-        guard let videoId = videoIdentifier,
-              videoState.shouldControl(videoIdentifier: videoId),
-              let player = player else {
-            return
-        }
-
-        videoState.register(
-            videoIdentifier: videoId,
-            play: { [player] in
-                player.play()
-            },
-            pause: { [player] in
-                player.pause()
-            },
-            mute: { [player] in
-                player.isMuted = true
-            },
-            unmute: { [player] in
-                player.isMuted = false
-            }
-        )
-
-        videoState.muteGroup.initializeMuted(player.isMuted)
-        videoState.playGroup.initializePlaying(player.rate > 0)
-
-        player.isMuted = videoState.isMuted
-    }
-
-    private func unregisterFromVideoState() {
-        guard let videoId = videoIdentifier else { return }
-        videoState.unregister(videoIdentifier: videoId)
     }
 }
 
@@ -274,8 +210,6 @@ internal struct VideoControls: ViewModifier {
         let durationBinding = _duration
         let isDraggingBinding = _isDraggingSlider
 
-        // Only handle video end for non-looping videos.
-        // For looping videos, ThomasVideoPlayer manages the seek+play cycle.
         if !shouldLoop {
             observer.endTimeObserver = NotificationCenter.default.addObserver(
                 forName: .AVPlayerItemDidPlayToEndTime,
