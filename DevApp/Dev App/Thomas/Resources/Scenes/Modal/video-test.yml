@@ -12,16 +12,21 @@ presentation:
         alpha: 0.2
   dismiss_on_touch_outside: false
 view:
-  type: pager_controller
-  identifier: pager-controller
+  type: video_controller
+  identifier: vc-parent
+  mute_group:
+    identifier: shared-mute
   view:
-    type: container
-    background_color:
-      default:
-        type: hex
-        hex: '#000000'
-        alpha: 1
-    items:
+    type: pager_controller
+    identifier: pager-controller
+    view:
+      type: container
+      background_color:
+        default:
+          type: hex
+          hex: '#000000'
+          alpha: 1
+      items:
       - position:
           horizontal: center
           vertical: center
@@ -36,429 +41,453 @@ view:
             - identifier: page-1
               type: pager_item
               view:
-                type: container
-                items:
-                  - position:
-                      horizontal: center
-                      vertical: center
-                    size:
-                      width: 100%
-                      height: 100%
-                    ignore_safe_area: true
-                    view:
-                      type: media
-                      media_fit: center_crop
-                      url: "https://www.youtube.com/embed/7sxVHYZ_PnA/?autoplay=1&controls=0&loop=1&mute=1"
-                      media_type: youtube
-                      video:
-                        aspect_ratio: 0.5625
-                        autoplay: true
-                        muted: true
-                        loop: true
-                        show_controls: false
-                  - position:
-                      horizontal: center
-                      vertical: top
-                    margin:
-                      top: 64
-                      start: 16
-                      end: 16
-                    size:
-                      width: 100%
-                      height: auto
-                    view:
-                      type: linear_layout
-                      direction: vertical
-                      items:
-                        - size:
-                            width: 100%
-                            height: auto
-                          view:
-                            type: label
-                            text: "1. YouTube — Autoplay + No Controls"
-                            text_appearance:
-                              font_size: 22
-                              alignment: center
-                              color:
-                                default:
-                                  type: hex
-                                  hex: '#FFFFFF'
-                                  alpha: 1
-                              styles:
-                                - bold
-                        - size:
-                            width: 100%
-                            height: auto
-                          margin:
-                            top: 6
-                          view:
-                            type: label
-                            text: "Should reset to beginning on swipe away"
-                            text_appearance:
-                              font_size: 14
-                              alignment: center
-                              color:
-                                default:
-                                  type: hex
-                                  hex: '#FFFFFF'
-                                  alpha: 0.85
+                type: video_controller
+                identifier: vc-page-1
+                view:
+                  type: container
+                  items:
+                    - position:
+                        horizontal: center
+                        vertical: center
+                      size:
+                        width: 100%
+                        height: 100%
+                      ignore_safe_area: true
+                      view:
+                        type: media
+                        identifier: video-1
+                        media_fit: center_crop
+                        url: "https://www.youtube.com/embed/7sxVHYZ_PnA/?autoplay=1&controls=0&loop=1&mute=1"
+                        media_type: youtube
+                        video:
+                          aspect_ratio: 0.5625
+                          autoplay: true
+                          muted: true
+                          loop: true
+                          show_controls: false
+                    - position:
+                        horizontal: center
+                        vertical: top
+                      margin:
+                        top: 64
+                        start: 16
+                        end: 16
+                      size:
+                        width: 100%
+                        height: auto
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                          - size:
+                              width: 100%
+                              height: auto
+                            view:
+                              type: label
+                              text: "1. YouTube — Autoplay + No Controls"
+                              text_appearance:
+                                font_size: 22
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 1
+                                styles:
+                                  - bold
+                          - size:
+                              width: 100%
+                              height: auto
+                            margin:
+                              top: 6
+                            view:
+                              type: label
+                              text: "Should reset to beginning on swipe away"
+                              text_appearance:
+                                font_size: 14
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 0.85
 
             # PAGE 2: Native - Autoplay + Controls
             - identifier: page-2
               type: pager_item
               view:
-                type: container
-                items:
-                  - position:
-                      horizontal: center
-                      vertical: center
-                    size:
-                      width: 100%
-                      height: 100%
-                    ignore_safe_area: true
-                    view:
-                      type: media
-                      media_type: video
-                      media_fit: center_crop
-                      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
-                      video:
-                        aspect_ratio: 1.77777777777778
-                        autoplay: true
-                        muted: true
-                        loop: true
-                        show_controls: true
-                  - position:
-                      horizontal: center
-                      vertical: top
-                    margin:
-                      top: 64
-                      start: 16
-                      end: 16
-                    size:
-                      width: 100%
-                      height: auto
-                    view:
-                      type: linear_layout
-                      direction: vertical
-                      items:
-                        - size:
-                            width: 100%
-                            height: auto
-                          view:
-                            type: label
-                            text: "2. Native — Autoplay + Controls"
-                            text_appearance:
-                              font_size: 22
-                              alignment: center
-                              color:
-                                default:
-                                  type: hex
-                                  hex: '#FFFFFF'
-                                  alpha: 1
-                              styles:
-                                - bold
-                        - size:
-                            width: 100%
-                            height: auto
-                          margin:
-                            top: 6
-                          view:
-                            type: label
-                            text: "Pause should survive swipe away/back"
-                            text_appearance:
-                              font_size: 14
-                              alignment: center
-                              color:
-                                default:
-                                  type: hex
-                                  hex: '#FFFFFF'
-                                  alpha: 0.85
+                type: video_controller
+                identifier: vc-page-2
+                view:
+                  type: container
+                  items:
+                    - position:
+                        horizontal: center
+                        vertical: center
+                      size:
+                        width: 100%
+                        height: 100%
+                      ignore_safe_area: true
+                      view:
+                        type: media
+                        identifier: video-2
+                        media_type: video
+                        media_fit: center_crop
+                        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+                        video:
+                          aspect_ratio: 1.77777777777778
+                          autoplay: true
+                          muted: true
+                          loop: true
+                          show_controls: true
+                    - position:
+                        horizontal: center
+                        vertical: top
+                      margin:
+                        top: 64
+                        start: 16
+                        end: 16
+                      size:
+                        width: 100%
+                        height: auto
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                          - size:
+                              width: 100%
+                              height: auto
+                            view:
+                              type: label
+                              text: "2. Native — Autoplay + Controls"
+                              text_appearance:
+                                font_size: 22
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 1
+                                styles:
+                                  - bold
+                          - size:
+                              width: 100%
+                              height: auto
+                            margin:
+                              top: 6
+                            view:
+                              type: label
+                              text: "Pause should survive swipe away/back"
+                              text_appearance:
+                                font_size: 14
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 0.85
 
             # PAGE 3: Native - Non-autoplay + Controls
             - identifier: page-3
               type: pager_item
               view:
-                type: container
-                items:
-                  - position:
-                      horizontal: center
-                      vertical: center
-                    size:
-                      width: 100%
-                      height: 100%
-                    ignore_safe_area: true
-                    view:
-                      type: media
-                      media_type: video
-                      media_fit: center_inside
-                      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
-                      video:
-                        aspect_ratio: 1.77777777777778
-                        autoplay: false
-                        muted: false
-                        loop: false
-                        show_controls: true
-                  - position:
-                      horizontal: center
-                      vertical: top
-                    margin:
-                      top: 64
-                      start: 16
-                      end: 16
-                    size:
-                      width: 100%
-                      height: auto
-                    view:
-                      type: linear_layout
-                      direction: vertical
-                      items:
-                        - size:
-                            width: 100%
-                            height: auto
-                          view:
-                            type: label
-                            text: "3. Native — Non-autoplay + Controls"
-                            text_appearance:
-                              font_size: 22
-                              alignment: center
-                              color:
-                                default:
-                                  type: hex
-                                  hex: '#FFFFFF'
-                                  alpha: 1
-                              styles:
-                                - bold
-                        - size:
-                            width: 100%
-                            height: auto
-                          margin:
-                            top: 6
-                          view:
-                            type: label
-                            text: "Should not play until user taps play"
-                            text_appearance:
-                              font_size: 14
-                              alignment: center
-                              color:
-                                default:
-                                  type: hex
-                                  hex: '#FFFFFF'
-                                  alpha: 0.85
+                type: video_controller
+                identifier: vc-page-3
+                view:
+                  type: container
+                  items:
+                    - position:
+                        horizontal: center
+                        vertical: center
+                      size:
+                        width: 100%
+                        height: 100%
+                      ignore_safe_area: true
+                      view:
+                        type: media
+                        identifier: video-3
+                        media_type: video
+                        media_fit: center_inside
+                        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                        video:
+                          aspect_ratio: 1.77777777777778
+                          autoplay: false
+                          muted: false
+                          loop: false
+                          show_controls: true
+                    - position:
+                        horizontal: center
+                        vertical: top
+                      margin:
+                        top: 64
+                        start: 16
+                        end: 16
+                      size:
+                        width: 100%
+                        height: auto
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                          - size:
+                              width: 100%
+                              height: auto
+                            view:
+                              type: label
+                              text: "3. Native — Non-autoplay + Controls"
+                              text_appearance:
+                                font_size: 22
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 1
+                                styles:
+                                  - bold
+                          - size:
+                              width: 100%
+                              height: auto
+                            margin:
+                              top: 6
+                            view:
+                              type: label
+                              text: "Should not play until user taps play"
+                              text_appearance:
+                                font_size: 14
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 0.85
 
-            # PAGE 4: YouTube - Autoplay + No Controls
+            # PAGE 4: Native - Autoplay + No Controls
             - identifier: page-4
               type: pager_item
               view:
-                type: container
-                items:
-                  - position:
-                      horizontal: center
-                      vertical: center
-                    size:
-                      width: 100%
-                      height: 100%
-                    ignore_safe_area: true
-                    view:
-                      type: media
-                      media_fit: center_crop
-                      url: "https://www.youtube.com/embed/7sxVHYZ_PnA/?autoplay=1&controls=0&loop=1&mute=1"
-                      media_type: youtube
-                      video:
-                        aspect_ratio: 0.5625
-                        autoplay: true
-                        muted: true
-                        loop: true
-                        show_controls: false
-                  - position:
-                      horizontal: center
-                      vertical: top
-                    margin:
-                      top: 64
-                      start: 16
-                      end: 16
-                    size:
-                      width: 100%
-                      height: auto
-                    view:
-                      type: linear_layout
-                      direction: vertical
-                      items:
-                        - size:
-                            width: 100%
-                            height: auto
-                          view:
-                            type: label
-                            text: "4. YouTube — Autoplay + No Controls"
-                            text_appearance:
-                              font_size: 22
-                              alignment: center
-                              color:
-                                default:
-                                  type: hex
-                                  hex: '#FFFFFF'
-                                  alpha: 1
-                              styles:
-                                - bold
-                        - size:
-                            width: 100%
-                            height: auto
-                          margin:
-                            top: 6
-                          view:
-                            type: label
-                            text: "Should reset to beginning on swipe away"
-                            text_appearance:
-                              font_size: 14
-                              alignment: center
-                              color:
-                                default:
-                                  type: hex
-                                  hex: '#FFFFFF'
-                                  alpha: 0.85
+                type: video_controller
+                identifier: vc-page-4
+                view:
+                  type: container
+                  items:
+                    - position:
+                        horizontal: center
+                        vertical: center
+                      size:
+                        width: 100%
+                        height: 100%
+                      ignore_safe_area: true
+                      view:
+                        type: media
+                        identifier: video-4
+                        media_type: video
+                        media_fit: center_crop
+                        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                        video:
+                          aspect_ratio: 1.77777777777778
+                          autoplay: true
+                          muted: true
+                          loop: true
+                          show_controls: false
+                    - position:
+                        horizontal: center
+                        vertical: top
+                      margin:
+                        top: 64
+                        start: 16
+                        end: 16
+                      size:
+                        width: 100%
+                        height: auto
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                          - size:
+                              width: 100%
+                              height: auto
+                            view:
+                              type: label
+                              text: "4. Native — Autoplay + No Controls"
+                              text_appearance:
+                                font_size: 22
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 1
+                                styles:
+                                  - bold
+                          - size:
+                              width: 100%
+                              height: auto
+                            margin:
+                              top: 6
+                            view:
+                              type: label
+                              text: "Should reset to beginning on swipe away"
+                              text_appearance:
+                                font_size: 14
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 0.85
 
             # PAGE 5: YouTube - Autoplay + Controls
             - identifier: page-5
               type: pager_item
               view:
-                type: container
-                items:
-                  - position:
-                      horizontal: center
-                      vertical: center
-                    size:
-                      width: 100%
-                      height: 100%
-                    ignore_safe_area: true
-                    view:
-                      type: media
-                      media_fit: center_inside
-                      url: "https://www.youtube.com/embed/M7lc1UVf-VE/?autoplay=1&controls=1&loop=1&mute=1"
-                      media_type: youtube
-                      video:
-                        aspect_ratio: 1.77777777777778
-                        autoplay: true
-                        muted: true
-                        loop: true
-                        show_controls: true
-                  - position:
-                      horizontal: center
-                      vertical: top
-                    margin:
-                      top: 64
-                      start: 16
-                      end: 16
-                    size:
-                      width: 100%
-                      height: auto
-                    view:
-                      type: linear_layout
-                      direction: vertical
-                      items:
-                        - size:
-                            width: 100%
-                            height: auto
-                          view:
-                            type: label
-                            text: "5. YouTube — Autoplay + Controls"
-                            text_appearance:
-                              font_size: 22
-                              alignment: center
-                              color:
-                                default:
-                                  type: hex
-                                  hex: '#FFFFFF'
-                                  alpha: 1
-                              styles:
-                                - bold
-                        - size:
-                            width: 100%
-                            height: auto
-                          margin:
-                            top: 6
-                          view:
-                            type: label
-                            text: "Pause via YT controls should survive swipe"
-                            text_appearance:
-                              font_size: 14
-                              alignment: center
-                              color:
-                                default:
-                                  type: hex
-                                  hex: '#FFFFFF'
-                                  alpha: 0.85
+                type: video_controller
+                identifier: vc-page-5
+                view:
+                  type: container
+                  items:
+                    - position:
+                        horizontal: center
+                        vertical: center
+                      size:
+                        width: 100%
+                        height: 100%
+                      ignore_safe_area: true
+                      view:
+                        type: media
+                        identifier: video-5
+                        media_fit: center_inside
+                        url: "https://www.youtube.com/embed/M7lc1UVf-VE/?autoplay=1&controls=1&loop=1&mute=1"
+                        media_type: youtube
+                        video:
+                          aspect_ratio: 1.77777777777778
+                          autoplay: true
+                          muted: true
+                          loop: true
+                          show_controls: true
+                    - position:
+                        horizontal: center
+                        vertical: top
+                      margin:
+                        top: 64
+                        start: 16
+                        end: 16
+                      size:
+                        width: 100%
+                        height: auto
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                          - size:
+                              width: 100%
+                              height: auto
+                            view:
+                              type: label
+                              text: "5. YouTube — Autoplay + Controls"
+                              text_appearance:
+                                font_size: 22
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 1
+                                styles:
+                                  - bold
+                          - size:
+                              width: 100%
+                              height: auto
+                            margin:
+                              top: 6
+                            view:
+                              type: label
+                              text: "Pause via YT controls should survive swipe"
+                              text_appearance:
+                                font_size: 14
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 0.85
 
             # PAGE 6: YouTube - Non-autoplay + Controls
             - identifier: page-6
               type: pager_item
               view:
-                type: container
-                items:
-                  - position:
-                      horizontal: center
-                      vertical: center
-                    size:
-                      width: 100%
-                      height: 100%
-                    ignore_safe_area: true
-                    view:
-                      type: media
-                      media_fit: center_inside
-                      url: "https://www.youtube.com/embed/jNQXAC9IVRw/?autoplay=0&controls=1&loop=0&mute=0"
-                      media_type: youtube
-                      video:
-                        aspect_ratio: 1.77777777777778
-                        autoplay: false
-                        muted: false
-                        loop: false
-                        show_controls: true
-                  - position:
-                      horizontal: center
-                      vertical: top
-                    margin:
-                      top: 64
-                      start: 16
-                      end: 16
-                    size:
-                      width: 100%
-                      height: auto
-                    view:
-                      type: linear_layout
-                      direction: vertical
-                      items:
-                        - size:
-                            width: 100%
-                            height: auto
-                          view:
-                            type: label
-                            text: "6. YouTube — Non-autoplay + Controls"
-                            text_appearance:
-                              font_size: 22
-                              alignment: center
-                              color:
-                                default:
-                                  type: hex
-                                  hex: '#FFFFFF'
-                                  alpha: 1
-                              styles:
-                                - bold
-                        - size:
-                            width: 100%
-                            height: auto
-                          margin:
-                            top: 6
-                          view:
-                            type: label
-                            text: "Should not play until user taps play"
-                            text_appearance:
-                              font_size: 14
-                              alignment: center
-                              color:
-                                default:
-                                  type: hex
-                                  hex: '#FFFFFF'
-                                  alpha: 0.85
+                type: video_controller
+                identifier: vc-page-6
+                view:
+                  type: container
+                  items:
+                    - position:
+                        horizontal: center
+                        vertical: center
+                      size:
+                        width: 100%
+                        height: 100%
+                      ignore_safe_area: true
+                      view:
+                        type: media
+                        identifier: video-6
+                        media_fit: center_inside
+                        url: "https://www.youtube.com/embed/jNQXAC9IVRw/?autoplay=0&controls=1&loop=0&mute=0"
+                        media_type: youtube
+                        video:
+                          aspect_ratio: 1.77777777777778
+                          autoplay: false
+                          muted: false
+                          loop: false
+                          show_controls: true
+                    - position:
+                        horizontal: center
+                        vertical: top
+                      margin:
+                        top: 64
+                        start: 16
+                        end: 16
+                      size:
+                        width: 100%
+                        height: auto
+                      view:
+                        type: linear_layout
+                        direction: vertical
+                        items:
+                          - size:
+                              width: 100%
+                              height: auto
+                            view:
+                              type: label
+                              text: "6. YouTube — Non-autoplay + Controls"
+                              text_appearance:
+                                font_size: 22
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 1
+                                styles:
+                                  - bold
+                          - size:
+                              width: 100%
+                              height: auto
+                            margin:
+                              top: 6
+                            view:
+                              type: label
+                              text: "Should not play until user taps play"
+                              text_appearance:
+                                font_size: 14
+                                alignment: center
+                                color:
+                                  default:
+                                    type: hex
+                                    hex: '#FFFFFF'
+                                    alpha: 0.85
 
-            # PAGE 7: Native - Autoplay + VideoController (shared mute)
+            # PAGE 7: Native - Autoplay + VideoController (shared mute with page 8)
             - identifier: page-7
               type: pager_item
               view:
@@ -659,7 +688,7 @@ view:
                                       value:
                                         equals: true
 
-            # PAGE 8: YouTube - Autoplay + Controls + VideoController (shared mute)
+            # PAGE 8: YouTube - Autoplay + Controls + VideoController (shared mute with page 7)
             - identifier: page-8
               type: pager_item
               view:
