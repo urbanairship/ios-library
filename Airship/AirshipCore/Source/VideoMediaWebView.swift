@@ -432,10 +432,11 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             self.webView?.navigationDelegate = nil
             self.webView?.configuration.userContentController.removeAllScriptMessageHandlers()
             self.webView?.pauseAllMediaPlayback()
-            self.webView?.loadHTMLString("", baseURL: nil)
 #if !os(macOS)
             if #unavailable(iOS 26.3) {
-                self.webView?.removeFromSuperview()
+                if self.webView?.superview != nil {
+                    self.webView?.removeFromSuperview()
+                }
             }
 #endif
             self.webView = nil
