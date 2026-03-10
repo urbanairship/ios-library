@@ -259,7 +259,6 @@ struct NativeVideoPlayer: UIViewRepresentable {
         @MainActor
         private func resetToBeginning() {
             guard autoResetPosition else { return }
-            localIsPlaying = nil
             playerContainer?.player?.seek(to: .zero)
         }
 

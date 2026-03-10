@@ -446,8 +446,6 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
                 return
             }
 
-            localIsPlaying = nil
-
             switch mediaType {
             case .video:
                 webView.evaluateJavaScript("videoElement.currentTime = 0;")
