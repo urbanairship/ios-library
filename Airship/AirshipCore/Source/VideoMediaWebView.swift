@@ -9,9 +9,9 @@ import WebKit
 
 @MainActor
 private class WeakScriptMessageHandler: NSObject, WKScriptMessageHandler {
-    weak var delegate: WKScriptMessageHandler?
+    weak var delegate: (any WKScriptMessageHandler)?
 
-    init(_ delegate: WKScriptMessageHandler) {
+    init(_ delegate: any WKScriptMessageHandler) {
         self.delegate = delegate
         super.init()
     }
@@ -35,6 +35,10 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
     func updateNSView(_ nsView: WKWebView, context: Context) {
         updateView(nsView, context: context)
     }
+
+    static func dismantleNSView(_ nsView: WKWebView, coordinator: Coordinator) {
+        coordinator.teardown(webView: nsView)
+    }
 #else
     typealias UIViewType = WKWebView
     func makeUIView(context: Context) -> WKWebView {
@@ -43,6 +47,10 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
 
     func updateUIView(_ uiView: WKWebView, context: Context) {
         updateView(uiView, context: context)
+    }
+
+    static func dismantleUIView(_ uiView: WKWebView, coordinator: Coordinator) {
+        coordinator.teardown(webView: uiView)
     }
 #endif
 
@@ -55,9 +63,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
     @EnvironmentObject var videoState: VideoState
     @Environment(\.layoutDirection) var layoutDirection
 
-    private var video: ThomasViewInfo.Media.Video? {
-        self.info.properties.video
-    }
+
 
     private var url: String {
         self.info.properties.url
@@ -140,6 +146,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
 #endif
 
         webView.navigationDelegate = context.coordinator
+        context.coordinator.configure(webView: webView)
 
         if #available(iOS 16.4, *) {
             webView.isInspectable = Airship.isFlying && Airship.config.airshipConfig.isWebViewInspectionEnabled
@@ -202,7 +209,14 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             if let videoID = Self.retrieveYoutubeVideoID(url: url) {
                 let html = String(
                     format: """
-                        <body style="margin:0; background-color:transparent;">
+                        <head>
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+                            <style>
+                                body { margin:0; background-color:transparent; overflow:hidden; }
+                                #player { width:100vw; height:100vh; %@ }
+                            </style>
+                        </head>
+                        <body>
                             <div id="player"></div>
                         
                             <script>
@@ -246,6 +260,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
                             </script>
                         </body>
                         """,
+                    styleForVideo,
                     videoID,
                     video?.showControls ?? true ? "1" : "0",
                     video?.autoplay ?? false ? "1" : "0",
@@ -306,12 +321,21 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
         }
     }
 
+    private var video: ThomasViewInfo.Media.Video? {
+        self.info.properties.video
+    }
+
     func makeCoordinator() -> Coordinator {
-        Coordinator(
-            self,
+        let video = self.info.properties.video
+        return Coordinator(
             isLoaded: $isLoaded,
             videoIdentifier: videoIdentifier,
             videoState: videoState,
+            mediaType: info.properties.mediaType,
+            isAutoplay: video?.autoplay ?? false,
+            showControls: video?.showControls ?? true,
+            autoResetPosition: video?.autoResetPosition ?? ((video?.autoplay ?? false) && !(video?.showControls ?? true)),
+            isMuted: video?.muted ?? false,
             onMediaReady: onMediaReady
         )
     }
@@ -319,7 +343,6 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
     // MARK: - Coordinator
 
     class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
-        private var parent: VideoMediaWebView
         private var isLoaded: Binding<Bool>
         private var videoIdentifier: String?
         private var videoState: VideoState
@@ -340,20 +363,34 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
         /// Guarded by `isSystemPausing` so system pauses don't clear user intent.
         private var localIsPlaying: Bool? = nil
 
+        private let mediaType: ThomasViewInfo.Media.MediaType
+        private let isAutoplay: Bool
+        private let showControls: Bool
+        private let autoResetPosition: Bool
+        private let isMuted: Bool
+
         private var appStateTask: Task<Void, Never>?
 
         init(
-            _ parent: VideoMediaWebView,
             isLoaded: Binding<Bool>,
             videoIdentifier: String?,
             videoState: VideoState,
+            mediaType: ThomasViewInfo.Media.MediaType,
+            isAutoplay: Bool,
+            showControls: Bool,
+            autoResetPosition: Bool,
+            isMuted: Bool,
             resolver: ChallengeResolver = .shared,
             onMediaReady: @escaping @MainActor () -> Void
         ) {
-            self.parent = parent
             self.isLoaded = isLoaded
             self.videoIdentifier = videoIdentifier
             self.videoState = videoState
+            self.mediaType = mediaType
+            self.isAutoplay = isAutoplay
+            self.showControls = showControls
+            self.autoResetPosition = autoResetPosition
+            self.isMuted = isMuted
             self.onMediaReady = onMediaReady
             self.challengeResolver = resolver
 
@@ -371,42 +408,28 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             }
         }
 
-        deinit {
+        @MainActor
+        func configure(webView: WKWebView) {
+            self.webView = webView
+        }
+
+        @MainActor
+        func teardown(webView: WKWebView) {
             appStateTask?.cancel()
-            Task { @MainActor [weak videoState, weak webView, videoIdentifier] in
-                if let videoIdentifier {
-                    videoState?.unregister(videoIdentifier: videoIdentifier)
-                }
-                await webView?.pauseAllMediaPlayback()
+            appStateTask = nil
+
+            if let videoIdentifier {
+                videoState.unregister(videoIdentifier: videoIdentifier)
             }
+
+            webView.stopLoading()
+            webView.navigationDelegate = nil
+            webView.configuration.userContentController.removeAllScriptMessageHandlers()
+
+            self.webView = nil
         }
 
         // MARK: - Playback Control
-
-        @MainActor
-        private var mediaType: ThomasViewInfo.Media.MediaType {
-            parent.info.properties.mediaType
-        }
-
-        @MainActor
-        private var isAutoplay: Bool {
-            parent.video?.autoplay ?? false
-        }
-
-        @MainActor
-        private var showControls: Bool {
-            parent.video?.showControls ?? true
-        }
-
-        @MainActor
-        private var autoResetPosition: Bool {
-            parent.video?.autoResetPosition ?? (isAutoplay && !showControls)
-        }
-
-        @MainActor
-        private var isMuted: Bool {
-            parent.video?.muted ?? false
-        }
 
         @MainActor
         private func play() {
@@ -565,10 +588,10 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
         // MARK: - WKNavigationDelegate
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            Task { @MainActor in
-                isLoaded.wrappedValue = true
-                self.webView = webView
-                registerWithVideoState()
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                self.isLoaded.wrappedValue = true
+                self.registerWithVideoState()
             }
         }
 

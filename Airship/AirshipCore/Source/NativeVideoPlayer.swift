@@ -68,6 +68,10 @@ struct NativeVideoPlayer: UIViewRepresentable {
         return playerContainer
     }
 
+    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
+        coordinator.teardown()
+    }
+
     @MainActor
     func updateUIView(_ uiView: UIView, context: Context) {
         let isVisible = isVisible
@@ -180,17 +184,21 @@ struct NativeVideoPlayer: UIViewRepresentable {
         }
 
         deinit {
+        }
+
+        @MainActor
+        func teardown() {
             appStateTask?.cancel()
-            let observers = self.observers
-            let videoState = self.videoState
-            let videoIdentifier = self.videoIdentifier
-            Task { @MainActor in
-                observers.player?.pause()
-                observers.cleanup()
-                if let videoIdentifier {
-                    videoState.unregister(videoIdentifier: videoIdentifier)
-                }
+            appStateTask = nil
+
+            observers.player?.pause()
+            observers.cleanup()
+
+            if let videoIdentifier {
+                videoState.unregister(videoIdentifier: videoIdentifier)
             }
+
+            playerContainer = nil
         }
 
         // MARK: - Configuration
