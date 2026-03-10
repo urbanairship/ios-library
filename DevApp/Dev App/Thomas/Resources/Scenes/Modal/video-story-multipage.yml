@@ -356,7 +356,6 @@ view:
                   identifier: play_pause_btn
                   button_click:
                     - pager_toggle_pause
-                    - video_toggle_play
                   localized_content_description:
                     refs:
                       - ua_play
@@ -380,11 +379,11 @@ view:
                           fallback: Pause
                         when_state_matches:
                           scope:
-                            - $video
+                            - $pagers
                             - current
-                            - playing
+                            - paused
                           value:
-                            equals: true
+                            equals: false
                     items:
                       - value:
                           - type: icon
@@ -399,11 +398,11 @@ view:
                               scale: 0.5
                         when_state_matches:
                           scope:
-                            - $video
+                            - $pagers
                             - current
-                            - playing
+                            - paused
                           value:
-                            equals: true
+                            equals: false
               - size:
                   width: 64
                   height: 64

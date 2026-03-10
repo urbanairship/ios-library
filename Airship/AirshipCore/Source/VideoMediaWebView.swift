@@ -194,7 +194,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
                                 });
                                 videoElement.addEventListener("play",  () => { webkit.messageHandlers.callback.postMessage('playing'); });
                                 videoElement.addEventListener("pause", () => { webkit.messageHandlers.callback.postMessage('paused'); });
-                                videoElement.addEventListener("ended", () => { webkit.messageHandlers.callback.postMessage('paused'); });
+                                videoElement.addEventListener("ended", () => { webkit.messageHandlers.callback.postMessage('ended'); });
                             </script>
                         </body>
                         """,
@@ -246,8 +246,10 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
                                     'onStateChange': function(event) {
                                       if (event.data === YT.PlayerState.PLAYING) {
                                         webkit.messageHandlers.callback.postMessage('playing');
-                                      } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+                                      } else if (event.data === YT.PlayerState.PAUSED) {
                                         webkit.messageHandlers.callback.postMessage('paused');
+                                      } else if (event.data === YT.PlayerState.ENDED) {
+                                        webkit.messageHandlers.callback.postMessage('ended');
                                       }
                                     }
                                   }
@@ -294,7 +296,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
                               webkit.messageHandlers.callback.postMessage('mediaReady');
                               vimeoPlayer.on('play',  function() { webkit.messageHandlers.callback.postMessage('playing'); });
                               vimeoPlayer.on('pause', function() { webkit.messageHandlers.callback.postMessage('paused'); });
-                              vimeoPlayer.on('ended', function() { webkit.messageHandlers.callback.postMessage('paused'); });
+                              vimeoPlayer.on('ended', function() { webkit.messageHandlers.callback.postMessage('ended'); });
                               return vimeoPlayer.getMuted();
                             }).then(function(muted) {
                               webkit.messageHandlers.callback.postMessage(muted ? 'muted' : 'unmuted');
@@ -335,6 +337,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             isAutoplay: video?.autoplay ?? false,
             showControls: video?.showControls ?? true,
             autoResetPosition: video?.autoResetPosition ?? ((video?.autoplay ?? false) && !(video?.showControls ?? true)),
+            isLooping: video?.loop ?? false,
             isMuted: video?.muted ?? false,
             onMediaReady: onMediaReady
         )
@@ -367,6 +370,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
         private let isAutoplay: Bool
         private let showControls: Bool
         private let autoResetPosition: Bool
+        private let isLooping: Bool
         private let isMuted: Bool
 
         private var appStateTask: Task<Void, Never>?
@@ -379,6 +383,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             isAutoplay: Bool,
             showControls: Bool,
             autoResetPosition: Bool,
+            isLooping: Bool,
             isMuted: Bool,
             resolver: ChallengeResolver = .shared,
             onMediaReady: @escaping @MainActor () -> Void
@@ -390,6 +395,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             self.isAutoplay = isAutoplay
             self.showControls = showControls
             self.autoResetPosition = autoResetPosition
+            self.isLooping = isLooping
             self.isMuted = isMuted
             self.onMediaReady = onMediaReady
             self.challengeResolver = resolver
@@ -643,6 +649,12 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
                     localIsPlaying = true
                 }
             case "paused":
+                if canControlVideo && !isSystemPausing {
+                    videoState.updatePlayingState(false)
+                } else if !isSystemPausing {
+                    localIsPlaying = false
+                }
+            case "ended" where !isLooping:
                 if canControlVideo && !isSystemPausing {
                     videoState.updatePlayingState(false)
                 } else if !isSystemPausing {
