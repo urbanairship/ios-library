@@ -90,7 +90,8 @@ struct NativeVideoPlayer: UIViewRepresentable {
             videoState: videoState,
             videoIdentifier: videoIdentifier,
             isAutoplay: video?.autoplay ?? false,
-            showControls: video?.showControls ?? true
+            showControls: video?.showControls ?? true,
+            autoResetPosition: video?.autoResetPosition ?? ((video?.autoplay ?? false) && !(video?.showControls ?? true))
         )
     }
 
@@ -127,6 +128,7 @@ struct NativeVideoPlayer: UIViewRepresentable {
         private var videoIdentifier: String?
         private var isAutoplay: Bool
         private var showControls: Bool
+        private var autoResetPosition: Bool
 
         private weak var playerContainer: VideoPlayerContainer?
         private var onMediaReady: (@MainActor () -> Void)?
@@ -153,7 +155,8 @@ struct NativeVideoPlayer: UIViewRepresentable {
             videoState: VideoState,
             videoIdentifier: String?,
             isAutoplay: Bool,
-            showControls: Bool
+            showControls: Bool,
+            autoResetPosition: Bool
         ) {
             self.isLoaded = isLoaded
             self.hasError = hasError
@@ -161,6 +164,7 @@ struct NativeVideoPlayer: UIViewRepresentable {
             self.videoIdentifier = videoIdentifier
             self.isAutoplay = isAutoplay
             self.showControls = showControls
+            self.autoResetPosition = autoResetPosition
 
             super.init()
 
@@ -254,7 +258,7 @@ struct NativeVideoPlayer: UIViewRepresentable {
 
         @MainActor
         private func resetToBeginning() {
-            guard isAutoplay, !showControls else { return }
+            guard autoResetPosition else { return }
             localIsPlaying = nil
             playerContainer?.player?.seek(to: .zero)
         }

@@ -27,924 +27,797 @@ view:
           hex: '#000000'
           alpha: 1
       items:
-      - position:
-          horizontal: center
-          vertical: center
-        size:
-          width: 100%
-          height: 100%
-        ignore_safe_area: true
-        view:
-          type: pager
-          items:
-            # PAGE 1: YouTube - Autoplay + No Controls
-            - identifier: page-1
-              type: pager_item
-              view:
-                type: video_controller
-                identifier: vc-page-1
+        - position:
+            horizontal: center
+            vertical: center
+          size:
+            width: 100%
+            height: 100%
+          ignore_safe_area: true
+          view:
+            type: pager
+            items:
+              # PAGE 1: YouTube - Autoplay + No Controls (auto_reset_position defaults true)
+              - identifier: page-1
+                type: pager_item
                 view:
-                  type: container
-                  items:
-                    - position:
-                        horizontal: center
-                        vertical: center
-                      size:
-                        width: 100%
-                        height: 100%
-                      ignore_safe_area: true
-                      view:
-                        type: media
-                        identifier: video-1
-                        media_fit: center_crop
-                        url: "https://www.youtube.com/embed/7sxVHYZ_PnA/?autoplay=1&controls=0&loop=1&mute=1"
-                        media_type: youtube
-                        video:
-                          aspect_ratio: 0.5625
-                          autoplay: true
-                          muted: true
-                          loop: true
-                          show_controls: false
-                    - position:
-                        horizontal: center
-                        vertical: top
-                      margin:
-                        top: 64
-                        start: 16
-                        end: 16
-                      size:
-                        width: 100%
-                        height: auto
-                      view:
-                        type: linear_layout
-                        direction: vertical
-                        items:
-                          - size:
-                              width: 100%
-                              height: auto
-                            view:
-                              type: label
-                              text: "1. YouTube — Autoplay + No Controls"
-                              text_appearance:
-                                font_size: 22
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 1
-                                styles:
-                                  - bold
-                          - size:
-                              width: 100%
-                              height: auto
-                            margin:
-                              top: 6
-                            view:
-                              type: label
-                              text: "Should reset to beginning on swipe away"
-                              text_appearance:
-                                font_size: 14
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 0.85
+                  type: video_controller
+                  identifier: vc-page-1
+                  view:
+                    type: container
+                    items:
+                      - position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        ignore_safe_area: true
+                        view:
+                          type: media
+                          identifier: video-1
+                          media_fit: center_crop
+                          url: "https://www.youtube.com/embed/7sxVHYZ_PnA/?autoplay=1&controls=0&loop=1&mute=1"
+                          media_type: youtube
+                          video:
+                            aspect_ratio: 0.5625
+                            autoplay: true
+                            muted: true
+                            loop: true
+                            show_controls: false
+                      - position:
+                          horizontal: center
+                          vertical: top
+                        margin:
+                          top: 64
+                          start: 16
+                          end: 16
+                        size:
+                          width: 100%
+                          height: auto
+                        view:
+                          type: label
+                          text: "1. YouTube — Autoplay + No Controls\nauto_reset_position: true (default)"
+                          text_appearance:
+                            font_size: 20
+                            alignment: center
+                            color:
+                              default:
+                                type: hex
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                              - bold
 
-            # PAGE 2: Native - Autoplay + Controls
-            - identifier: page-2
-              type: pager_item
-              view:
-                type: video_controller
-                identifier: vc-page-2
+              # PAGE 2: YouTube - Autoplay + Controls + auto_reset_position: true (override)
+              - identifier: page-2
+                type: pager_item
                 view:
-                  type: container
-                  items:
-                    - position:
-                        horizontal: center
-                        vertical: center
-                      size:
-                        width: 100%
-                        height: 100%
-                      ignore_safe_area: true
-                      view:
-                        type: media
-                        identifier: video-2
-                        media_type: video
-                        media_fit: center_crop
-                        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
-                        video:
-                          aspect_ratio: 1.77777777777778
-                          autoplay: true
-                          muted: true
-                          loop: true
-                          show_controls: true
-                    - position:
-                        horizontal: center
-                        vertical: top
-                      margin:
-                        top: 64
-                        start: 16
-                        end: 16
-                      size:
-                        width: 100%
-                        height: auto
-                      view:
-                        type: linear_layout
-                        direction: vertical
-                        items:
-                          - size:
-                              width: 100%
-                              height: auto
-                            view:
-                              type: label
-                              text: "2. Native — Autoplay + Controls"
-                              text_appearance:
-                                font_size: 22
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 1
-                                styles:
-                                  - bold
-                          - size:
-                              width: 100%
-                              height: auto
-                            margin:
-                              top: 6
-                            view:
-                              type: label
-                              text: "Pause should survive swipe away/back"
-                              text_appearance:
-                                font_size: 14
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 0.85
+                  type: video_controller
+                  identifier: vc-page-2
+                  view:
+                    type: container
+                    items:
+                      - position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        ignore_safe_area: true
+                        view:
+                          type: media
+                          identifier: video-2
+                          media_fit: center_inside
+                          url: "https://www.youtube.com/embed/M7lc1UVf-VE/?autoplay=1&controls=1&loop=1&mute=1"
+                          media_type: youtube
+                          video:
+                            aspect_ratio: 1.77777777777778
+                            autoplay: true
+                            muted: true
+                            loop: true
+                            show_controls: true
+                            auto_reset_position: true
+                      - position:
+                          horizontal: center
+                          vertical: top
+                        margin:
+                          top: 64
+                          start: 16
+                          end: 16
+                        size:
+                          width: 100%
+                          height: auto
+                        view:
+                          type: label
+                          text: "2. YouTube — Autoplay + Controls\nauto_reset_position: true (override)"
+                          text_appearance:
+                            font_size: 20
+                            alignment: center
+                            color:
+                              default:
+                                type: hex
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                              - bold
 
-            # PAGE 3: Native - Non-autoplay + Controls
-            - identifier: page-3
-              type: pager_item
-              view:
-                type: video_controller
-                identifier: vc-page-3
+              # PAGE 3: Native - Autoplay + Controls (auto_reset_position defaults false)
+              - identifier: page-3
+                type: pager_item
                 view:
-                  type: container
-                  items:
-                    - position:
-                        horizontal: center
-                        vertical: center
-                      size:
-                        width: 100%
-                        height: 100%
-                      ignore_safe_area: true
-                      view:
-                        type: media
-                        identifier: video-3
-                        media_type: video
-                        media_fit: center_inside
-                        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
-                        video:
-                          aspect_ratio: 1.77777777777778
-                          autoplay: false
-                          muted: false
-                          loop: false
-                          show_controls: true
-                    - position:
-                        horizontal: center
-                        vertical: top
-                      margin:
-                        top: 64
-                        start: 16
-                        end: 16
-                      size:
-                        width: 100%
-                        height: auto
-                      view:
-                        type: linear_layout
-                        direction: vertical
-                        items:
-                          - size:
-                              width: 100%
-                              height: auto
-                            view:
-                              type: label
-                              text: "3. Native — Non-autoplay + Controls"
-                              text_appearance:
-                                font_size: 22
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 1
-                                styles:
-                                  - bold
-                          - size:
-                              width: 100%
-                              height: auto
-                            margin:
-                              top: 6
-                            view:
-                              type: label
-                              text: "Should not play until user taps play"
-                              text_appearance:
-                                font_size: 14
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 0.85
+                  type: video_controller
+                  identifier: vc-page-3
+                  view:
+                    type: container
+                    items:
+                      - position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        ignore_safe_area: true
+                        view:
+                          type: media
+                          identifier: video-3
+                          media_type: video
+                          media_fit: center_crop
+                          url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+                          video:
+                            aspect_ratio: 1.77777777777778
+                            autoplay: true
+                            muted: true
+                            loop: true
+                            show_controls: true
+                      - position:
+                          horizontal: center
+                          vertical: top
+                        margin:
+                          top: 64
+                          start: 16
+                          end: 16
+                        size:
+                          width: 100%
+                          height: auto
+                        view:
+                          type: label
+                          text: "3. Native — Autoplay + Controls\nauto_reset_position: false (default)"
+                          text_appearance:
+                            font_size: 20
+                            alignment: center
+                            color:
+                              default:
+                                type: hex
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                              - bold
 
-            # PAGE 4: Native - Autoplay + No Controls
-            - identifier: page-4
-              type: pager_item
-              view:
-                type: video_controller
-                identifier: vc-page-4
+              # PAGE 4: Native - Non-autoplay + Controls
+              - identifier: page-4
+                type: pager_item
                 view:
-                  type: container
-                  items:
-                    - position:
-                        horizontal: center
-                        vertical: center
-                      size:
-                        width: 100%
-                        height: 100%
-                      ignore_safe_area: true
-                      view:
-                        type: media
-                        identifier: video-4
-                        media_type: video
-                        media_fit: center_crop
-                        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                        video:
-                          aspect_ratio: 1.77777777777778
-                          autoplay: true
-                          muted: true
-                          loop: true
-                          show_controls: false
-                    - position:
-                        horizontal: center
-                        vertical: top
-                      margin:
-                        top: 64
-                        start: 16
-                        end: 16
-                      size:
-                        width: 100%
-                        height: auto
-                      view:
-                        type: linear_layout
-                        direction: vertical
-                        items:
-                          - size:
-                              width: 100%
-                              height: auto
-                            view:
-                              type: label
-                              text: "4. Native — Autoplay + No Controls"
-                              text_appearance:
-                                font_size: 22
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 1
-                                styles:
-                                  - bold
-                          - size:
-                              width: 100%
-                              height: auto
-                            margin:
-                              top: 6
-                            view:
-                              type: label
-                              text: "Should reset to beginning on swipe away"
-                              text_appearance:
-                                font_size: 14
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 0.85
+                  type: video_controller
+                  identifier: vc-page-4
+                  view:
+                    type: container
+                    items:
+                      - position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        ignore_safe_area: true
+                        view:
+                          type: media
+                          identifier: video-4
+                          media_type: video
+                          media_fit: center_inside
+                          url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                          video:
+                            aspect_ratio: 1.77777777777778
+                            autoplay: false
+                            muted: false
+                            loop: false
+                            show_controls: true
+                      - position:
+                          horizontal: center
+                          vertical: top
+                        margin:
+                          top: 64
+                          start: 16
+                          end: 16
+                        size:
+                          width: 100%
+                          height: auto
+                        view:
+                          type: label
+                          text: "4. Native — Non-autoplay + Controls\nShould not play until user taps play"
+                          text_appearance:
+                            font_size: 20
+                            alignment: center
+                            color:
+                              default:
+                                type: hex
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                              - bold
 
-            # PAGE 5: YouTube - Autoplay + Controls
-            - identifier: page-5
-              type: pager_item
-              view:
-                type: video_controller
-                identifier: vc-page-5
+              # PAGE 5: Vimeo - Autoplay + Controls
+              - identifier: page-5
+                type: pager_item
                 view:
-                  type: container
-                  items:
-                    - position:
-                        horizontal: center
-                        vertical: center
-                      size:
-                        width: 100%
-                        height: 100%
-                      ignore_safe_area: true
-                      view:
-                        type: media
-                        identifier: video-5
-                        media_fit: center_inside
-                        url: "https://www.youtube.com/embed/M7lc1UVf-VE/?autoplay=1&controls=1&loop=1&mute=1"
-                        media_type: youtube
-                        video:
-                          aspect_ratio: 1.77777777777778
-                          autoplay: true
-                          muted: true
-                          loop: true
-                          show_controls: true
-                    - position:
-                        horizontal: center
-                        vertical: top
-                      margin:
-                        top: 64
-                        start: 16
-                        end: 16
-                      size:
-                        width: 100%
-                        height: auto
-                      view:
-                        type: linear_layout
-                        direction: vertical
-                        items:
-                          - size:
-                              width: 100%
-                              height: auto
-                            view:
-                              type: label
-                              text: "5. YouTube — Autoplay + Controls"
-                              text_appearance:
-                                font_size: 22
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 1
-                                styles:
-                                  - bold
-                          - size:
-                              width: 100%
-                              height: auto
-                            margin:
-                              top: 6
-                            view:
-                              type: label
-                              text: "Pause via YT controls should survive swipe"
-                              text_appearance:
-                                font_size: 14
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 0.85
+                  type: video_controller
+                  identifier: vc-page-5
+                  view:
+                    type: container
+                    items:
+                      - position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        ignore_safe_area: true
+                        view:
+                          type: media
+                          identifier: video-5
+                          media_fit: center_inside
+                          url: "https://player.vimeo.com/video/76979871?background=1"
+                          media_type: vimeo
+                          video:
+                            aspect_ratio: 1.77777777777778
+                            autoplay: true
+                            muted: true
+                            loop: true
+                            show_controls: true
+                      - position:
+                          horizontal: center
+                          vertical: top
+                        margin:
+                          top: 64
+                          start: 16
+                          end: 16
+                        size:
+                          width: 100%
+                          height: auto
+                        view:
+                          type: label
+                          text: "5. Vimeo — Autoplay + Controls\nPause should survive swipe"
+                          text_appearance:
+                            font_size: 20
+                            alignment: center
+                            color:
+                              default:
+                                type: hex
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                              - bold
 
-            # PAGE 6: YouTube - Non-autoplay + Controls
-            - identifier: page-6
-              type: pager_item
-              view:
-                type: video_controller
-                identifier: vc-page-6
+              # PAGE 6: Vimeo - Non-autoplay + Controls
+              - identifier: page-6
+                type: pager_item
                 view:
-                  type: container
-                  items:
-                    - position:
-                        horizontal: center
-                        vertical: center
-                      size:
-                        width: 100%
-                        height: 100%
-                      ignore_safe_area: true
-                      view:
-                        type: media
-                        identifier: video-6
-                        media_fit: center_inside
-                        url: "https://www.youtube.com/embed/jNQXAC9IVRw/?autoplay=0&controls=1&loop=0&mute=0"
-                        media_type: youtube
-                        video:
-                          aspect_ratio: 1.77777777777778
-                          autoplay: false
-                          muted: false
-                          loop: false
-                          show_controls: true
-                    - position:
-                        horizontal: center
-                        vertical: top
-                      margin:
-                        top: 64
-                        start: 16
-                        end: 16
-                      size:
-                        width: 100%
-                        height: auto
-                      view:
-                        type: linear_layout
-                        direction: vertical
-                        items:
-                          - size:
-                              width: 100%
-                              height: auto
-                            view:
-                              type: label
-                              text: "6. YouTube — Non-autoplay + Controls"
-                              text_appearance:
-                                font_size: 22
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 1
-                                styles:
-                                  - bold
-                          - size:
-                              width: 100%
-                              height: auto
-                            margin:
-                              top: 6
-                            view:
-                              type: label
-                              text: "Should not play until user taps play"
-                              text_appearance:
-                                font_size: 14
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 0.85
+                  type: video_controller
+                  identifier: vc-page-6
+                  view:
+                    type: container
+                    items:
+                      - position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        ignore_safe_area: true
+                        view:
+                          type: media
+                          identifier: video-6
+                          media_fit: center_inside
+                          url: "https://player.vimeo.com/video/76979871?background=0"
+                          media_type: vimeo
+                          video:
+                            aspect_ratio: 1.77777777777778
+                            autoplay: false
+                            muted: false
+                            loop: false
+                            show_controls: true
+                      - position:
+                          horizontal: center
+                          vertical: top
+                        margin:
+                          top: 64
+                          start: 16
+                          end: 16
+                        size:
+                          width: 100%
+                          height: auto
+                        view:
+                          type: label
+                          text: "6. Vimeo — Non-autoplay + Controls\nShould not play until user taps play"
+                          text_appearance:
+                            font_size: 20
+                            alignment: center
+                            color:
+                              default:
+                                type: hex
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                              - bold
 
-            # PAGE 7: Native - Autoplay + VideoController (shared mute with page 8)
-            - identifier: page-7
-              type: pager_item
-              view:
-                type: video_controller
-                identifier: vc-page-7
-                mute_group:
-                  identifier: shared-mute
+              # PAGE 7: Native - Autoplay + No Controls + auto_reset_position
+              - identifier: page-7
+                type: pager_item
                 view:
-                  type: container
-                  items:
-                    - position:
-                        horizontal: center
-                        vertical: center
-                      size:
-                        width: 100%
-                        height: 100%
-                      ignore_safe_area: true
-                      view:
-                        type: media
-                        identifier: video-7
-                        media_type: video
-                        media_fit: center_crop
-                        url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                        video:
-                          aspect_ratio: 1.77777777777778
-                          autoplay: true
-                          muted: true
-                          loop: true
-                          show_controls: false
-                    - position:
-                        horizontal: center
-                        vertical: top
-                      margin:
-                        top: 64
-                        start: 16
-                        end: 16
-                      size:
-                        width: 100%
-                        height: auto
-                      view:
-                        type: linear_layout
-                        direction: vertical
-                        items:
-                          - size:
-                              width: 100%
-                              height: auto
-                            view:
-                              type: label
-                              text: "7. Native — Autoplay + Controller"
-                              text_appearance:
-                                font_size: 22
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 1
-                                styles:
-                                  - bold
-                          - size:
-                              width: 100%
-                              height: auto
-                            margin:
-                              top: 6
-                            view:
-                              type: label
-                              text: "Shared mute with page 8. Use buttons below."
-                              text_appearance:
-                                font_size: 14
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 0.85
-                    - position:
-                        horizontal: center
-                        vertical: bottom
-                      margin:
-                        bottom: 40
-                      size:
-                        width: auto
-                        height: auto
-                      view:
-                        type: linear_layout
-                        direction: horizontal
-                        items:
-                          - size:
-                              width: 56
-                              height: 56
-                            margin:
-                              end: 16
-                            view:
-                              type: stack_image_button
-                              identifier: play_pause_btn_7
-                              button_click:
-                                - video_toggle_play
-                              localized_content_description:
-                                refs:
-                                  - ua_play
-                                fallback: Play
-                              items:
-                                - type: icon
-                                  icon:
-                                    type: icon
-                                    icon: play
-                                    color:
-                                      default:
-                                        type: hex
-                                        hex: '#FFFFFF'
-                                        alpha: 1
-                                    scale: 0.5
-                              view_overrides:
+                  type: video_controller
+                  identifier: vc-page-7
+                  view:
+                    type: container
+                    items:
+                      - position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        ignore_safe_area: true
+                        view:
+                          type: media
+                          identifier: video-7
+                          media_type: video
+                          media_fit: center_crop
+                          url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                          video:
+                            aspect_ratio: 1.77777777777778
+                            autoplay: true
+                            muted: true
+                            loop: true
+                            show_controls: false
+                      - position:
+                          horizontal: center
+                          vertical: top
+                        margin:
+                          top: 64
+                          start: 16
+                          end: 16
+                        size:
+                          width: 100%
+                          height: auto
+                        view:
+                          type: label
+                          text: "7. Native — Autoplay + No Controls\nauto_reset_position: true (default)"
+                          text_appearance:
+                            font_size: 20
+                            alignment: center
+                            color:
+                              default:
+                                type: hex
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                              - bold
+
+              # PAGE 8: YouTube - Non-autoplay + Controls
+              - identifier: page-8
+                type: pager_item
+                view:
+                  type: video_controller
+                  identifier: vc-page-8
+                  view:
+                    type: container
+                    items:
+                      - position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        ignore_safe_area: true
+                        view:
+                          type: media
+                          identifier: video-8
+                          media_fit: center_inside
+                          url: "https://www.youtube.com/embed/jNQXAC9IVRw/?autoplay=0&controls=1&loop=0&mute=0"
+                          media_type: youtube
+                          video:
+                            aspect_ratio: 1.77777777777778
+                            autoplay: false
+                            muted: false
+                            loop: false
+                            show_controls: true
+                      - position:
+                          horizontal: center
+                          vertical: top
+                        margin:
+                          top: 64
+                          start: 16
+                          end: 16
+                        size:
+                          width: 100%
+                          height: auto
+                        view:
+                          type: label
+                          text: "8. YouTube — Non-autoplay + Controls\nShould not play until user taps play"
+                          text_appearance:
+                            font_size: 20
+                            alignment: center
+                            color:
+                              default:
+                                type: hex
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                              - bold
+
+              # PAGE 9: Native + Controller (shared mute with page 10)
+              - identifier: page-9
+                type: pager_item
+                view:
+                  type: video_controller
+                  identifier: vc-page-9
+                  mute_group:
+                    identifier: shared-mute
+                  view:
+                    type: container
+                    items:
+                      - position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        ignore_safe_area: true
+                        view:
+                          type: media
+                          identifier: video-9
+                          media_type: video
+                          media_fit: center_crop
+                          url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                          video:
+                            aspect_ratio: 1.77777777777778
+                            autoplay: true
+                            muted: true
+                            loop: true
+                            show_controls: false
+                      - position:
+                          horizontal: center
+                          vertical: top
+                        margin:
+                          top: 64
+                          start: 16
+                          end: 16
+                        size:
+                          width: 100%
+                          height: auto
+                        view:
+                          type: label
+                          text: "9. Native — Controller\nShared mute with page 10"
+                          text_appearance:
+                            font_size: 20
+                            alignment: center
+                            color:
+                              default:
+                                type: hex
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                              - bold
+                      - position:
+                          horizontal: center
+                          vertical: bottom
+                        margin:
+                          bottom: 40
+                        size:
+                          width: auto
+                          height: auto
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                            - size:
+                                width: 56
+                                height: 56
+                              margin:
+                                end: 16
+                              view:
+                                type: stack_image_button
+                                identifier: play_pause_btn_9
+                                button_click:
+                                  - video_toggle_play
                                 localized_content_description:
-                                  - value:
-                                      refs:
-                                        - ua_pause
-                                      fallback: Pause
-                                    when_state_matches:
-                                      scope:
-                                        - $video
-                                        - current
-                                        - playing
-                                      value:
-                                        equals: true
+                                  refs:
+                                    - ua_play
+                                  fallback: Play
                                 items:
-                                  - value:
-                                      - type: icon
-                                        icon:
-                                          type: icon
-                                          icon: pause
-                                          color:
-                                            default:
-                                              type: hex
-                                              hex: '#FFFFFF'
-                                              alpha: 1
-                                          scale: 0.5
-                                    when_state_matches:
-                                      scope:
-                                        - $video
-                                        - current
-                                        - playing
-                                      value:
-                                        equals: true
-                          - size:
-                              width: 56
-                              height: 56
-                            view:
-                              type: stack_image_button
-                              identifier: mute_btn_7
-                              button_click:
-                                - video_toggle_mute
-                              localized_content_description:
-                                refs:
-                                  - ua_mute
-                                fallback: Mute
-                              items:
-                                - type: icon
-                                  icon:
-                                    type: icon
-                                    icon: unmute
-                                    color:
-                                      default:
-                                        type: hex
-                                        hex: '#FFFFFF'
-                                        alpha: 1
-                                    scale: 0.5
-                              view_overrides:
+                                  - type: icon
+                                    icon:
+                                      type: icon
+                                      icon: play
+                                      color:
+                                        default:
+                                          type: hex
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                      scale: 0.5
+                                view_overrides:
+                                  items:
+                                    - value:
+                                        - type: icon
+                                          icon:
+                                            type: icon
+                                            icon: pause
+                                            color:
+                                              default:
+                                                type: hex
+                                                hex: '#FFFFFF'
+                                                alpha: 1
+                                            scale: 0.5
+                                      when_state_matches:
+                                        scope:
+                                          - $video
+                                          - current
+                                          - playing
+                                        value:
+                                          equals: true
+                            - size:
+                                width: 56
+                                height: 56
+                              view:
+                                type: stack_image_button
+                                identifier: mute_btn_9
+                                button_click:
+                                  - video_toggle_mute
                                 localized_content_description:
-                                  - value:
-                                      refs:
-                                        - ua_unmute
-                                      fallback: Unmute
-                                    when_state_matches:
-                                      scope:
-                                        - $video
-                                        - current
-                                        - muted
-                                      value:
-                                        equals: true
+                                  refs:
+                                    - ua_mute
+                                  fallback: Mute
                                 items:
-                                  - value:
-                                      - type: icon
-                                        icon:
-                                          type: icon
-                                          icon: mute
-                                          color:
-                                            default:
-                                              type: hex
-                                              hex: '#FFFFFF'
-                                              alpha: 1
-                                          scale: 0.5
-                                    when_state_matches:
-                                      scope:
-                                        - $video
-                                        - current
-                                        - muted
-                                      value:
-                                        equals: true
+                                  - type: icon
+                                    icon:
+                                      type: icon
+                                      icon: unmute
+                                      color:
+                                        default:
+                                          type: hex
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                      scale: 0.5
+                                view_overrides:
+                                  items:
+                                    - value:
+                                        - type: icon
+                                          icon:
+                                            type: icon
+                                            icon: mute
+                                            color:
+                                              default:
+                                                type: hex
+                                                hex: '#FFFFFF'
+                                                alpha: 1
+                                            scale: 0.5
+                                      when_state_matches:
+                                        scope:
+                                          - $video
+                                          - current
+                                          - muted
+                                        value:
+                                          equals: true
 
-            # PAGE 8: YouTube - Autoplay + Controls + VideoController (shared mute with page 7)
-            - identifier: page-8
-              type: pager_item
-              view:
-                type: video_controller
-                identifier: vc-page-8
-                mute_group:
-                  identifier: shared-mute
+              # PAGE 10: YouTube + Controller (shared mute with page 9)
+              - identifier: page-10
+                type: pager_item
                 view:
-                  type: container
-                  items:
-                    - position:
-                        horizontal: center
-                        vertical: center
-                      size:
-                        width: 100%
-                        height: 100%
-                      ignore_safe_area: true
-                      view:
-                        type: media
-                        identifier: video-8
-                        media_fit: center_inside
-                        url: "https://www.youtube.com/embed/dQw4w9WgXcQ/?autoplay=1&controls=1&loop=1&mute=1"
-                        media_type: youtube
-                        video:
-                          aspect_ratio: 1.77777777777778
-                          autoplay: true
-                          muted: true
-                          loop: true
-                          show_controls: true
-                    - position:
-                        horizontal: center
-                        vertical: top
-                      margin:
-                        top: 64
-                        start: 16
-                        end: 16
-                      size:
-                        width: 100%
-                        height: auto
-                      view:
-                        type: linear_layout
-                        direction: vertical
-                        items:
-                          - size:
-                              width: 100%
-                              height: auto
-                            view:
-                              type: label
-                              text: "8. YouTube — Autoplay + Controller"
-                              text_appearance:
-                                font_size: 22
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 1
-                                styles:
-                                  - bold
-                          - size:
-                              width: 100%
-                              height: auto
-                            margin:
-                              top: 6
-                            view:
-                              type: label
-                              text: "Shared mute with page 7. Use buttons below."
-                              text_appearance:
-                                font_size: 14
-                                alignment: center
-                                color:
-                                  default:
-                                    type: hex
-                                    hex: '#FFFFFF'
-                                    alpha: 0.85
-                    - position:
-                        horizontal: center
-                        vertical: bottom
-                      margin:
-                        bottom: 40
-                      size:
-                        width: auto
-                        height: auto
-                      view:
-                        type: linear_layout
-                        direction: horizontal
-                        items:
-                          - size:
-                              width: 56
-                              height: 56
-                            margin:
-                              end: 16
-                            view:
-                              type: stack_image_button
-                              identifier: play_pause_btn_8
-                              button_click:
-                                - video_toggle_play
-                              localized_content_description:
-                                refs:
-                                  - ua_play
-                                fallback: Play
-                              items:
-                                - type: icon
-                                  icon:
-                                    type: icon
-                                    icon: play
-                                    color:
-                                      default:
-                                        type: hex
-                                        hex: '#FFFFFF'
-                                        alpha: 1
-                                    scale: 0.5
-                              view_overrides:
+                  type: video_controller
+                  identifier: vc-page-10
+                  mute_group:
+                    identifier: shared-mute
+                  view:
+                    type: container
+                    items:
+                      - position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        ignore_safe_area: true
+                        view:
+                          type: media
+                          identifier: video-10
+                          media_fit: center_inside
+                          url: "https://www.youtube.com/embed/dQw4w9WgXcQ/?autoplay=1&controls=1&loop=1&mute=1"
+                          media_type: youtube
+                          video:
+                            aspect_ratio: 1.77777777777778
+                            autoplay: true
+                            muted: true
+                            loop: true
+                            show_controls: true
+                      - position:
+                          horizontal: center
+                          vertical: top
+                        margin:
+                          top: 64
+                          start: 16
+                          end: 16
+                        size:
+                          width: 100%
+                          height: auto
+                        view:
+                          type: label
+                          text: "10. YouTube — Controller\nShared mute with page 9"
+                          text_appearance:
+                            font_size: 20
+                            alignment: center
+                            color:
+                              default:
+                                type: hex
+                                hex: '#FFFFFF'
+                                alpha: 1
+                            styles:
+                              - bold
+                      - position:
+                          horizontal: center
+                          vertical: bottom
+                        margin:
+                          bottom: 40
+                        size:
+                          width: auto
+                          height: auto
+                        view:
+                          type: linear_layout
+                          direction: horizontal
+                          items:
+                            - size:
+                                width: 56
+                                height: 56
+                              margin:
+                                end: 16
+                              view:
+                                type: stack_image_button
+                                identifier: play_pause_btn_10
+                                button_click:
+                                  - video_toggle_play
                                 localized_content_description:
-                                  - value:
-                                      refs:
-                                        - ua_pause
-                                      fallback: Pause
-                                    when_state_matches:
-                                      scope:
-                                        - $video
-                                        - current
-                                        - playing
-                                      value:
-                                        equals: true
+                                  refs:
+                                    - ua_play
+                                  fallback: Play
                                 items:
-                                  - value:
-                                      - type: icon
-                                        icon:
-                                          type: icon
-                                          icon: pause
-                                          color:
-                                            default:
-                                              type: hex
-                                              hex: '#FFFFFF'
-                                              alpha: 1
-                                          scale: 0.5
-                                    when_state_matches:
-                                      scope:
-                                        - $video
-                                        - current
-                                        - playing
-                                      value:
-                                        equals: true
-                          - size:
-                              width: 56
-                              height: 56
-                            view:
-                              type: stack_image_button
-                              identifier: mute_btn_8
-                              button_click:
-                                - video_toggle_mute
-                              localized_content_description:
-                                refs:
-                                  - ua_mute
-                                fallback: Mute
-                              items:
-                                - type: icon
-                                  icon:
-                                    type: icon
-                                    icon: unmute
-                                    color:
-                                      default:
-                                        type: hex
-                                        hex: '#FFFFFF'
-                                        alpha: 1
-                                    scale: 0.5
-                              view_overrides:
+                                  - type: icon
+                                    icon:
+                                      type: icon
+                                      icon: play
+                                      color:
+                                        default:
+                                          type: hex
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                      scale: 0.5
+                                view_overrides:
+                                  items:
+                                    - value:
+                                        - type: icon
+                                          icon:
+                                            type: icon
+                                            icon: pause
+                                            color:
+                                              default:
+                                                type: hex
+                                                hex: '#FFFFFF'
+                                                alpha: 1
+                                            scale: 0.5
+                                      when_state_matches:
+                                        scope:
+                                          - $video
+                                          - current
+                                          - playing
+                                        value:
+                                          equals: true
+                            - size:
+                                width: 56
+                                height: 56
+                              view:
+                                type: stack_image_button
+                                identifier: mute_btn_10
+                                button_click:
+                                  - video_toggle_mute
                                 localized_content_description:
-                                  - value:
-                                      refs:
-                                        - ua_unmute
-                                      fallback: Unmute
-                                    when_state_matches:
-                                      scope:
-                                        - $video
-                                        - current
-                                        - muted
-                                      value:
-                                        equals: true
+                                  refs:
+                                    - ua_mute
+                                  fallback: Mute
                                 items:
-                                  - value:
-                                      - type: icon
-                                        icon:
-                                          type: icon
-                                          icon: mute
-                                          color:
-                                            default:
-                                              type: hex
-                                              hex: '#FFFFFF'
-                                              alpha: 1
-                                          scale: 0.5
-                                    when_state_matches:
-                                      scope:
-                                        - $video
-                                        - current
-                                        - muted
-                                      value:
-                                        equals: true
+                                  - type: icon
+                                    icon:
+                                      type: icon
+                                      icon: unmute
+                                      color:
+                                        default:
+                                          type: hex
+                                          hex: '#FFFFFF'
+                                          alpha: 1
+                                      scale: 0.5
+                                view_overrides:
+                                  items:
+                                    - value:
+                                        - type: icon
+                                          icon:
+                                            type: icon
+                                            icon: mute
+                                            color:
+                                              default:
+                                                type: hex
+                                                hex: '#FFFFFF'
+                                                alpha: 1
+                                            scale: 0.5
+                                      when_state_matches:
+                                        scope:
+                                          - $video
+                                          - current
+                                          - muted
+                                        value:
+                                          equals: true
 
-      # Dismiss button
-      - position:
-          horizontal: end
-          vertical: top
-        size:
-          width: 48
-          height: 48
-        view:
-          type: image_button
-          identifier: dismiss_button
-          button_click:
-            - dismiss
-          localized_content_description:
-            refs:
-              - ua_dismiss
-            fallback: Dismiss
-          image:
-            type: icon
-            icon: close
-            scale: 0.4
-            color:
-              default:
-                type: hex
-                hex: '#FFFFFF'
-                alpha: 1
+        # Dismiss button
+        - position:
+            horizontal: end
+            vertical: top
+          size:
+            width: 48
+            height: 48
+          view:
+            type: image_button
+            identifier: dismiss_button
+            button_click:
+              - dismiss
+            localized_content_description:
+              refs:
+                - ua_dismiss
+              fallback: Dismiss
+            image:
+              type: icon
+              icon: close
+              scale: 0.4
+              color:
+                default:
+                  type: hex
+                  hex: '#FFFFFF'
+                  alpha: 1
 
-      # Pager indicator
-      - position:
-          horizontal: center
-          vertical: bottom
-        margin:
-          bottom: 16
-        size:
-          width: auto
-          height: 8
-        view:
-          type: pager_indicator
-          spacing: 8
-          bindings:
-            selected:
-              shapes:
-                - type: ellipse
-                  scale: 1
-                  color:
-                    default:
-                      type: hex
-                      hex: '#FFFFFF'
-                      alpha: 1
-            unselected:
-              shapes:
-                - type: ellipse
-                  scale: 1
-                  color:
-                    default:
-                      type: hex
-                      hex: '#FFFFFF'
-                      alpha: 0.4
+        # Pager indicator
+        - position:
+            horizontal: center
+            vertical: bottom
+          margin:
+            bottom: 16
+          size:
+            width: auto
+            height: 8
+          view:
+            type: pager_indicator
+            spacing: 8
+            bindings:
+              selected:
+                shapes:
+                  - type: ellipse
+                    scale: 1
+                    color:
+                      default:
+                        type: hex
+                        hex: '#FFFFFF'
+                        alpha: 1
+              unselected:
+                shapes:
+                  - type: ellipse
+                    scale: 1
+                    color:
+                      default:
+                        type: hex
+                        hex: '#FFFFFF'
+                        alpha: 0.4
 display_type: layout
 name: Video Test Matrix

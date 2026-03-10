@@ -399,6 +399,11 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
         }
 
         @MainActor
+        private var autoResetPosition: Bool {
+            parent.video?.autoResetPosition ?? (isAutoplay && !showControls)
+        }
+
+        @MainActor
         private var isMuted: Bool {
             parent.video?.muted ?? false
         }
@@ -435,8 +440,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
         @MainActor
         private func reset() {
             guard
-                isAutoplay,
-                !showControls,
+                autoResetPosition,
                 let webView
             else {
                 return

@@ -525,6 +525,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var autoplay: Bool?
             var muted: Bool?
             var loop: Bool?
+            var autoResetPosition: Bool?
 
             enum CodingKeys: String, CodingKey {
                 case aspectRatio = "aspect_ratio"
@@ -532,6 +533,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case autoplay
                 case muted
                 case loop
+                case autoResetPosition = "auto_reset_position"
             }
         }
 
