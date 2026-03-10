@@ -171,6 +171,9 @@ struct NativeVideoPlayer: UIViewRepresentable {
 
             super.init()
 
+            AirshipLogger.debug("NativeVideoPlayer Coordinator init")
+
+
             appStateTask = Task { @MainActor [weak self] in
                 for await state in AppStateTracker.shared.stateUpdates {
                     guard !Task.isCancelled else { return }
@@ -184,6 +187,7 @@ struct NativeVideoPlayer: UIViewRepresentable {
         }
 
         deinit {
+            AirshipLogger.debug("NativeVideoPlayer Coordinator deinit")
         }
 
         @MainActor

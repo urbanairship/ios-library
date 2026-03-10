@@ -216,7 +216,7 @@ extension View {
 
     @MainActor
     private func centerInsideVideo(constraints: ViewConstraints, videoAspectRatio: CGFloat ) -> some View {
-        self.aspectRatio(videoAspectRatio, contentMode: .fill)
+        self.aspectRatio(videoAspectRatio, contentMode: .fit)
             .constraints(constraints)
     }
 }

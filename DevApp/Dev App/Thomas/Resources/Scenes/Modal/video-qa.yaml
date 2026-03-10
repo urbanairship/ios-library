@@ -1,0 +1,486 @@
+---
+presentation:
+  android:
+    disable_back_button: false
+  default_placement:
+    device:
+      lock_orientation: portrait
+    ignore_safe_area: false
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        alpha: 0.2
+        hex: "#000000"
+        type: hex
+    size:
+      height: 100%
+      width: 100%
+    web:
+      ignore_shade: true
+  dismiss_on_touch_outside: false
+  placement_selectors:
+    - orientation: landscape
+      placement:
+        border:
+          radius: 10
+          stroke_color:
+            default:
+              alpha: 1
+              hex: "#000000"
+              type: hex
+        device:
+          lock_orientation: portrait
+        ignore_safe_area: false
+        position:
+          horizontal: center
+          vertical: center
+        shade_color:
+          default:
+            alpha: 0.2
+            hex: "#000000"
+            type: hex
+          selectors:
+            - color:
+                alpha: 0.2
+                hex: "#FFFFFF"
+                type: hex
+              dark_mode: true
+        size:
+          height: 100%
+          width: 100%
+        web:
+          ignore_shade: false
+      window_size: large
+  type: modal
+version: 1
+view:
+  type: state_controller
+  view:
+    identifier: 56c21953-ce73-4d79-ba9e-d590bb465b50
+    type: pager_controller
+    view:
+      direction: vertical
+      items:
+        - size:
+            height: 100%
+            width: 100%
+          view:
+            items:
+              - identifier: 3b61f71f-328f-48dc-a8b3-c8e1bc1a206f_pager_container_item
+                ignore_safe_area: false
+                position:
+                  horizontal: center
+                  vertical: center
+                size:
+                  height: 100%
+                  width: 100%
+                view:
+                  disable_swipe: true
+                  gestures:
+                    - behavior:
+                        behaviors:
+                          - pager_previous
+                      identifier: 56c21953-ce73-4d79-ba9e-d590bb465b50_tap_start
+                      location: start
+                      type: tap
+                    - behavior:
+                        behaviors:
+                          - pager_next_or_dismiss
+                      identifier: 56c21953-ce73-4d79-ba9e-d590bb465b50_tap_end
+                      location: end
+                      type: tap
+                    - behavior:
+                        behaviors:
+                          - dismiss
+                      direction: up
+                      identifier: 56c21953-ce73-4d79-ba9e-d590bb465b50_swipe_up
+                      type: swipe
+                    - behavior:
+                        behaviors:
+                          - dismiss
+                      direction: down
+                      identifier: 56c21953-ce73-4d79-ba9e-d590bb465b50_swipe_down
+                      type: swipe
+                    - identifier: 56c21953-ce73-4d79-ba9e-d590bb465b50_hold
+                      press_behavior:
+                        behaviors:
+                          - pager_pause
+                      release_behavior:
+                        behaviors:
+                          - pager_resume
+                      type: hold
+                  items:
+                    - automated_actions:
+                        - behaviors:
+                            - pager_next
+                          delay: 5
+                          identifier: "[pager_next]_3867ec4b-dea8-4682-98f6-697a14c9fcc8"
+                      identifier: 3867ec4b-dea8-4682-98f6-697a14c9fcc8
+                      state_actions:
+                        - key: 3867ec4b-dea8-4682-98f6-697a14c9fcc8_next
+                          type: set
+                      type: pager_item
+                      view:
+                        background_color:
+                          default:
+                            alpha: 1
+                            hex: "#FFFFFA"
+                            type: hex
+                          selectors:
+                            - color:
+                                alpha: 1
+                                hex: "#111111"
+                                type: hex
+                              dark_mode: true
+                        items:
+                          - identifier: cc467337-1b3b-44f2-94fd-8abf6ce94b24_background_image_container
+                            ignore_safe_area: false
+                            margin:
+                              end: 0
+                              start: 0
+                            position:
+                              horizontal: center
+                              vertical: center
+                            size:
+                              height: 100%
+                              width: 100%
+                            view:
+                              media_fit: center_crop
+                              media_type: youtube
+                              type: media
+                              url: https://www.youtube.com/embed/7sxVHYZ_PnA/?autoplay=1&controls=0&loop=1&mute=1
+                              video:
+                                aspect_ratio: 0.5625
+                                autoplay: true
+                                loop: true
+                                muted: true
+                                show_controls: false
+                          - identifier: 4c7af3ba-2396-459e-87c7-58abeb565fdf_main_view_container_item
+                            ignore_safe_area: false
+                            position:
+                              horizontal: center
+                              vertical: center
+                            size:
+                              height: 100%
+                              width: 100%
+                            view:
+                              items:
+                                - identifier: 0f664c4a-8969-4a62-bb07-d162c069e169_container_item
+                                  margin:
+                                    bottom: 0
+                                    end: 0
+                                    start: 0
+                                    top: 0
+                                  position:
+                                    horizontal: center
+                                    vertical: center
+                                  size:
+                                    height: 100%
+                                    width: 100%
+                                  view:
+                                    direction: vertical
+                                    items:
+                                      - identifier: layout_container
+                                        size:
+                                          height: 100%
+                                          width: 100%
+                                        view:
+                                          direction: vertical
+                                          items:
+                                            - identifier: 0e88653c-4ee2-4f15-94a5-e71e3256e043
+                                              margin:
+                                                bottom: 8
+                                                end: 16
+                                                start: 16
+                                                top: 48
+                                              size:
+                                                height: auto
+                                                width: 100%
+                                              view:
+                                                accessibility_hidden: false
+                                                accessibility_role:
+                                                  level: 1
+                                                  type: heading
+                                                content_description: QA VIDEO
+                                                text: QA VIDEO
+                                                text_appearance:
+                                                  alignment: start
+                                                  color:
+                                                    default:
+                                                      alpha: 1
+                                                      hex: "#000000"
+                                                      type: hex
+                                                    selectors:
+                                                      - color:
+                                                          alpha: 1
+                                                          hex: "#FFFFFF"
+                                                          type: hex
+                                                        dark_mode: true
+                                                  font_families:
+                                                    - sans-serif
+                                                  font_size: 29
+                                                  styles:
+                                                    - bold
+                                                type: label
+                                            - identifier: 4b00b79c-d7f1-497b-b608-81a0b407588e
+                                              margin:
+                                                bottom: 0
+                                                end: 0
+                                                start: 0
+                                                top: 0
+                                              size:
+                                                height: auto
+                                                width: 50%
+                                              view:
+                                                media_fit: center_inside
+                                                media_type: youtube
+                                                type: media
+                                                url: https://www.youtube.com/embed/pJtu4nBhkHo/?autoplay=0&controls=1&loop=0&mute=0
+                                                video:
+                                                  aspect_ratio: 1.3333333333333333
+                                                  autoplay: false
+                                                  loop: false
+                                                  muted: false
+                                                  show_controls: true
+                                          type: linear_layout
+                                    type: linear_layout
+                              type: container
+                        type: container
+                    - automated_actions:
+                        - behaviors:
+                            - pager_next
+                          delay: 5
+                          identifier: "[pager_next]_08b41094-e0e4-4c8f-9827-883bba4b28e6"
+                      identifier: '08b41094-e0e4-4c8f-9827-883bba4b28e6'
+                      state_actions:
+                        - key: '08b41094-e0e4-4c8f-9827-883bba4b28e6_next'
+                          type: set
+                      type: pager_item
+                      view:
+                        background_color:
+                          default:
+                            alpha: 1
+                            hex: "#FFFFFA"
+                            type: hex
+                          selectors:
+                            - color:
+                                alpha: 1
+                                hex: "#111111"
+                                type: hex
+                              dark_mode: true
+                        items:
+                          - identifier: cd028436-5d8c-4b8e-98f9-74ad9fe81e11_main_view_container_item
+                            ignore_safe_area: false
+                            position:
+                              horizontal: center
+                              vertical: center
+                            size:
+                              height: 100%
+                              width: 100%
+                            view:
+                              items:
+                                - identifier: 8e703435-11e0-4420-b0dc-6b428b500ad3_container_item
+                                  margin:
+                                    bottom: 0
+                                    end: 0
+                                    start: 0
+                                    top: 0
+                                  position:
+                                    horizontal: center
+                                    vertical: center
+                                  size:
+                                    height: 100%
+                                    width: 100%
+                                  view:
+                                    direction: vertical
+                                    items:
+                                      - identifier: layout_container
+                                        size:
+                                          height: 100%
+                                          width: 100%
+                                        view:
+                                          direction: vertical
+                                          items:
+                                            - identifier: 03221167-63d1-4fa2-bd5d-fdc0d6ed425b
+                                              margin:
+                                                bottom: 0
+                                                end: 0
+                                                start: 0
+                                                top: 0
+                                              size:
+                                                height: auto
+                                                width: 100%
+                                              view:
+                                                media_fit: center_inside
+                                                media_type: video
+                                                type: media
+                                                url: https://dl-staging.urbanairship.com/binary/public/Vl0wyG8kSyCyOUW98Wj4xg/b63811eb-17dc-4ba3-a4f0-092c073d7081
+                                                video:
+                                                  aspect_ratio: 1.3333333333333333
+                                                  autoplay: false
+                                                  loop: false
+                                                  muted: true
+                                                  show_controls: true
+                                          type: linear_layout
+                                    type: linear_layout
+                              type: container
+                        type: container
+                    - automated_actions:
+                        - behaviors:
+                            - pager_next_or_dismiss
+                          delay: 5
+                          identifier: pager_next_or_dismiss_aa8dd148-663d-455c-8df4-4e0e1f50d676
+                      identifier: aa8dd148-663d-455c-8df4-4e0e1f50d676
+                      state_actions:
+                        - key: aa8dd148-663d-455c-8df4-4e0e1f50d676_next
+                          type: set
+                      type: pager_item
+                      view:
+                        background_color:
+                          default:
+                            alpha: 1
+                            hex: "#FFFFFA"
+                            type: hex
+                          selectors:
+                            - color:
+                                alpha: 1
+                                hex: "#111111"
+                                type: hex
+                              dark_mode: true
+                        items:
+                          - identifier: 26436888-0192-4e3e-9c20-91d85c067ec5_main_view_container_item
+                            ignore_safe_area: false
+                            position:
+                              horizontal: center
+                              vertical: center
+                            size:
+                              height: 100%
+                              width: 100%
+                            view:
+                              items:
+                                - identifier: aaf45ec1-c0de-45a3-b84f-1681f759d980_container_item
+                                  margin:
+                                    bottom: 0
+                                    end: 0
+                                    start: 0
+                                    top: 0
+                                  position:
+                                    horizontal: center
+                                    vertical: center
+                                  size:
+                                    height: 100%
+                                    width: 100%
+                                  view:
+                                    direction: vertical
+                                    items:
+                                      - identifier: layout_container
+                                        size:
+                                          height: 100%
+                                          width: 100%
+                                        view:
+                                          direction: vertical
+                                          items:
+                                            - identifier: 06c3d487-8f24-44b0-a500-17b23ce73c83
+                                              margin:
+                                                bottom: 0
+                                                end: 0
+                                                start: 0
+                                                top: 0
+                                              size:
+                                                height: auto
+                                                width: 100%
+                                              view:
+                                                media_fit: center_inside
+                                                media_type: youtube
+                                                type: media
+                                                url: https://www.youtube.com/embed/pJtu4nBhkHo/?autoplay=1&controls=1&loop=0&mute=0
+                                                video:
+                                                  aspect_ratio: 1.7777777777777777
+                                                  autoplay: true
+                                                  loop: false
+                                                  muted: false
+                                                  show_controls: true
+                                          type: linear_layout
+                                    type: linear_layout
+                              type: container
+                        type: container
+                  type: pager
+              - margin:
+                  top: 8
+                position:
+                  horizontal: end
+                  vertical: top
+                size:
+                  height: 48
+                  width: 48
+                view:
+                  button_click:
+                    - dismiss
+                  identifier: dismiss_button
+                  image:
+                    color:
+                      default:
+                        alpha: 1
+                        hex: "#000000"
+                        type: hex
+                      selectors:
+                        - color:
+                            alpha: 1
+                            hex: "#FFFFFF"
+                            type: hex
+                          dark_mode: true
+                    icon: close
+                    scale: 0.4
+                    type: icon
+                  localized_content_description:
+                    fallback: Dismiss
+                    ref: ua_dismiss
+                    refs:
+                      - ua_close
+                      - ua_dismiss
+                  reporting_metadata:
+                    button_action: dismiss
+                    button_id: dismiss_button
+                  type: image_button
+              - margin:
+                  bottom: 0
+                  end: 16
+                  start: 16
+                  top: 8
+                position:
+                  horizontal: center
+                  vertical: top
+                size:
+                  height: 4
+                  width: 100%
+                view:
+                  automated_accessibility_actions:
+                    - type: announce
+                  source:
+                    type: pager
+                  style:
+                    direction: horizontal
+                    progress_color:
+                      default:
+                        alpha: 1
+                        hex: "#000000"
+                        type: hex
+                      selectors:
+                        - color:
+                            alpha: 1
+                            hex: "#FFFFFF"
+                            type: hex
+                          dark_mode: true
+                    sizing: equal
+                    spacing: 4
+                    track_color:
+                      default:
+                        alpha: 1
+                        hex: "#BFBFB0"
+                        type: hex
+                    type: linear_progress
+                  type: story_indicator
+            type: container
+      type: linear_layout

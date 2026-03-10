@@ -37,7 +37,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
     }
 
     static func dismantleNSView(_ nsView: WKWebView, coordinator: Coordinator) {
-        coordinator.teardown(webView: nsView)
+        coordinator.teardown()
     }
 #else
     typealias UIViewType = WKWebView
@@ -50,7 +50,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
     }
 
     static func dismantleUIView(_ uiView: WKWebView, coordinator: Coordinator) {
-        coordinator.teardown(webView: uiView)
+        coordinator.teardown()
     }
 #endif
 
@@ -61,9 +61,8 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
     @State private var isLoaded: Bool = false
     @EnvironmentObject var pagerState: PagerState
     @EnvironmentObject var videoState: VideoState
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutDirection) var layoutDirection
-
-
 
     private var url: String {
         self.info.properties.url
@@ -162,11 +161,13 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
         let isVisible = isVisible
         let isLoaded = isLoaded
         let inProgress = pagerState.inProgress
+        let isDismissed = thomasEnvironment.isDismissed
         Task { @MainActor [weak coordinator = context.coordinator] in
             coordinator?.update(
                 isVisible: isVisible,
                 isLoaded: isLoaded,
-                inProgress: inProgress
+                inProgress: inProgress,
+                isDismissed: isDismissed
             )
         }
     }
@@ -213,7 +214,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
                             <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
                             <style>
                                 body { margin:0; background-color:transparent; overflow:hidden; }
-                                #player { width:100vw; height:100vh; %@ }
+                                #player { width:100vw; height:100vh; }
                             </style>
                         </head>
                         <body>
@@ -260,7 +261,6 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
                             </script>
                         </body>
                         """,
-                    styleForVideo,
                     videoID,
                     video?.showControls ?? true ? "1" : "0",
                     video?.autoplay ?? false ? "1" : "0",
@@ -396,6 +396,8 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
 
             super.init()
 
+            AirshipLogger.debug("VideoMediaWebView Coordinator init, mediaType: \(mediaType)")
+
             appStateTask = Task { @MainActor [weak self] in
                 for await state in AppStateTracker.shared.stateUpdates {
                     guard !Task.isCancelled else { return }
@@ -408,24 +410,34 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             }
         }
 
+        deinit {
+            AirshipLogger.debug("VideoMediaWebView Coordinator deinit")
+        }
+
         @MainActor
         func configure(webView: WKWebView) {
             self.webView = webView
         }
 
         @MainActor
-        func teardown(webView: WKWebView) {
+        func teardown() {
             appStateTask?.cancel()
             appStateTask = nil
-
+            
             if let videoIdentifier {
                 videoState.unregister(videoIdentifier: videoIdentifier)
             }
-
-            webView.stopLoading()
-            webView.navigationDelegate = nil
-            webView.configuration.userContentController.removeAllScriptMessageHandlers()
-
+            
+            self.webView?.stopLoading()
+            self.webView?.navigationDelegate = nil
+            self.webView?.configuration.userContentController.removeAllScriptMessageHandlers()
+            self.webView?.pauseAllMediaPlayback()
+            self.webView?.loadHTMLString("", baseURL: nil)
+#if !os(macOS)
+            if #unavailable(iOS 26.3) {
+                self.webView?.removeFromSuperview()
+            }
+#endif
             self.webView = nil
         }
 
@@ -514,7 +526,12 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
         // MARK: - State Management
 
         @MainActor
-        func update(isVisible: Bool, isLoaded: Bool, inProgress: Bool) {
+        func update(isVisible: Bool, isLoaded: Bool, inProgress: Bool, isDismissed: Bool) {
+            guard !isDismissed else {
+                teardown()
+                return
+            }
+
             let didChange = lastIsVisible != isVisible
                 || lastIsLoaded != isLoaded
                 || lastInProgress != inProgress

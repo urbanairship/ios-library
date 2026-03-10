@@ -57,24 +57,44 @@ struct WebViewView: AirshipNativeViewRepresentable {
     @Binding var isWebViewLoading: Bool
     let onRunActions: @MainActor (String, ActionArguments, WKWebView) async -> ActionResult
     let onDismiss: () -> Void
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
 
 #if os(macOS)
     func makeNSView(context: Context) -> WKWebView {
         return makeWebView(context: context)
     }
 
-    func updateNSView(_ nsView: WKWebView, context: Context) {}
+    func updateNSView(_ nsView: WKWebView, context: Context) {
+        updateView(context: context)
+    }
+
+    static func dismantleNSView(_ nsView: WKWebView, coordinator: Coordinator) {
+        coordinator.teardown()
+    }
 #else
     func makeUIView(context: Context) -> WKWebView {
         return makeWebView(context: context)
     }
 
-    func updateUIView(_ uiView: WKWebView, context: Context) {}
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        updateView(context: context)
+    }
+
+    static func dismantleUIView(_ uiView: WKWebView, coordinator: Coordinator) {
+        coordinator.teardown()
+    }
 #endif
+
+    private func updateView(context: Context) {
+        if thomasEnvironment.isDismissed {
+            context.coordinator.teardown()
+        }
+    }
 
     func makeWebView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.navigationDelegate = context.coordinator.nativeBridge
+        context.coordinator.configure(webView: webView)
 
         if #available(iOS 16.4, *) {
             webView.isInspectable = Airship.isFlying && Airship.config.airshipConfig.isWebViewInspectionEnabled
@@ -104,6 +124,7 @@ struct WebViewView: AirshipNativeViewRepresentable {
     {
         private let parent: WebViewView
         private let challengeResolver: ChallengeResolver
+        private weak var webView: WKWebView?
         let nativeBridge: NativeBridge
 
         init(_ parent: WebViewView, actionRunner: any NativeBridgeActionRunner, resolver: ChallengeResolver = .shared) {
@@ -112,12 +133,35 @@ struct WebViewView: AirshipNativeViewRepresentable {
             self.challengeResolver = resolver
 
             super.init()
+            AirshipLogger.debug("WebViewView Coordinator init")
 
             self.nativeBridge.nativeBridgeExtensionDelegate =
             self.parent.nativeBridgeExtension
             self.nativeBridge.forwardNavigationDelegate = self
             self.nativeBridge.javaScriptCommandDelegate = self
             self.nativeBridge.nativeBridgeDelegate = self
+        }
+
+        deinit {
+            AirshipLogger.debug("WebViewView Coordinator deinit")
+        }
+
+        func configure(webView: WKWebView) {
+            self.webView = webView
+        }
+
+        @MainActor
+        func teardown() {
+            self.webView?.stopLoading()
+            self.webView?.navigationDelegate = nil
+            self.webView?.pauseAllMediaPlayback()
+            self.webView?.loadHTMLString("", baseURL: nil)
+#if !os(macOS)
+            if #unavailable(iOS 26.3) {
+                self.webView?.removeFromSuperview()
+            }
+#endif
+            self.webView = nil
         }
 
         func webView(
