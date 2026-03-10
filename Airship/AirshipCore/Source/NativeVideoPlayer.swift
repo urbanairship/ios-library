@@ -57,14 +57,13 @@ struct NativeVideoPlayer: UIViewRepresentable {
         playerContainer.isMuted = video?.muted ?? false
         playerContainer.configurePlayerView()
 
-        Task { @MainActor in
+        Task { @MainActor [weak coordinator = context.coordinator] in
             self.player = playerInstance
+            coordinator?.configure(
+                playerContainer: playerContainer,
+                onMediaReady: onMediaReady
+            )
         }
-
-        context.coordinator.configure(
-            playerContainer: playerContainer,
-            onMediaReady: onMediaReady
-        )
 
         return playerContainer
     }
@@ -360,7 +359,6 @@ struct NativeVideoPlayer: UIViewRepresentable {
 
                     if canControlVideo {
                         if isPlaying {
-                            self.isSystemPausing = false
                             self.videoState.updatePlayingState(true)
                         } else if isPaused && !self.isSystemPausing {
                             self.videoState.updatePlayingState(false)

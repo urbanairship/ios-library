@@ -270,7 +270,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
                           webkitallowfullscreen mozallowfullscreen allowfullscreen>
                         </iframe>
                       
-                        <script src="https://player.vimeo.com/api/player.js" />
+                        <script src="https://player.vimeo.com/api/player.js"></script>
                         <script>
                             const vimeoIframe = document.querySelector('#vimeoIframe');
                             const vimeoPlayer = new Vimeo.Player(vimeoIframe);
@@ -506,9 +506,6 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             } else {
                 if !isVisible {
                     self.reset()
-                    Task { [weak webView] in
-                        await webView?.pauseAllMediaPlayback()
-                    }
                 }
                 systemPause()
             }
@@ -600,7 +597,6 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
                 }
             case "playing":
                 if canControlVideo {
-                    isSystemPausing = false
                     videoState.updatePlayingState(true)
                 } else {
                     localIsPlaying = true
