@@ -45,7 +45,7 @@ view:
                 type: pager
                 disable_swipe: false
                 items:
-                  - identifier: d07e16f6-f4c4-4acd-ad54-86996e6cf29c
+                  - identifier: d07e16f6-f4c4-4acd-ad54-86996e6cf29a
                     type: pager_item
                     view:
                       type: container
@@ -97,7 +97,7 @@ view:
                           type: hex
                           hex: "#FFFFFF"
                           alpha: 1
-                  - identifier: d07e16f6-f4c4-4acd-ad54-86996e6cf29c
+                  - identifier: d07e16f6-f4c4-4acd-ad54-86996e6cf29b
                     type: pager_item
                     view:
                       type: container

@@ -42,7 +42,8 @@ struct Pager: View {
     private let info: ThomasViewInfo.Pager
     private let constraints: ViewConstraints
 
-    @State private var lastReportedIndex = -1
+    @State private var lastReportedPageID: String?
+    @State private var hasReportedCompleted: Bool = false
     @GestureState private var translation: CGFloat = 0
     @State private var size: CGSize?
     @State private var scrollPosition: String?
@@ -122,7 +123,7 @@ struct Pager: View {
             pagerState.pageItems[0].view,
             constraints: constraints
         )
-        .environment(\.isVisible, true)
+        .environment(\.isVisible, self.isVisible)
         .environment(
             \.pageIdentifier,
              pagerState.pageItems[0].identifier
@@ -135,7 +136,11 @@ struct Pager: View {
     func makeLegacyPager(childConstraints: ViewConstraints, metrics: GeometryProxy) -> some View {
         VStack {
             HStack(spacing: 0) {
-                makePageViews(childConstraints: childConstraints, metrics: metrics)
+                makePageViews(
+                    childConstraints: childConstraints,
+                    metrics: metrics,
+                    isLegacyPager: true
+                )
             }
             .offset(x: -((metrics.size.width.safeValue ?? 0) * CGFloat(pagerState.pageIndex)))
             .offset(x: calcDragOffset(index: pagerState.pageIndex))
@@ -160,11 +165,16 @@ struct Pager: View {
     func makeScrollViewPager(childConstraints: ViewConstraints, metrics: GeometryProxy) -> some View {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 0) {
-                makePageViews(childConstraints: childConstraints, metrics: metrics)
+                makePageViews(
+                    childConstraints: childConstraints,
+                    metrics: metrics,
+                    isLegacyPager: false
+                )
             }
             .scrollTargetLayout()
         }
         .scrollDisabled(self.info.properties.disableSwipe == true || self.pagerState.isScrollingDisabled)
+        .allowsHitTesting(!pagerState.isNavigationInProgress)
         .scrollTargetBehavior(.paging)
         .scrollPosition(id: $scrollPosition)
         .scrollIndicators(.never)
@@ -193,7 +203,12 @@ struct Pager: View {
     }
 
     @ViewBuilder
-    private func makePageView(for index: Int, childConstraints: ViewConstraints, metrics: GeometryProxy) -> some View {
+    private func makePageView(
+        for index: Int,
+        childConstraints: ViewConstraints,
+        metrics: GeometryProxy,
+        isLegacyPager: Bool
+    ) -> some View {
         let pageItem = pagerState.pageItems[index]
         let isCurrentPage = self.isVisible && pageItem.identifier == pagerState.currentPageId
 
@@ -202,7 +217,9 @@ struct Pager: View {
                 pageItem.view,
                 constraints: childConstraints
             )
-            .allowsHitTesting(isCurrentPage)
+            .airshipApplyIf(isLegacyPager) { view in
+                view.allowsHitTesting(isCurrentPage)
+            }
             .environment(\.isVisible, isCurrentPage)
             .environment(\.pageIdentifier, pageItem.identifier)
             .accessibilityActions {
@@ -223,9 +240,18 @@ struct Pager: View {
     }
 
     @ViewBuilder
-    private func makePageViews(childConstraints: ViewConstraints, metrics: GeometryProxy) -> some View {
+    private func makePageViews(
+        childConstraints: ViewConstraints,
+        metrics: GeometryProxy,
+        isLegacyPager: Bool
+    ) -> some View {
         ForEach(0..<pagerState.pageItems.count, id: \.self) { index in
-            makePageView(for: index, childConstraints: childConstraints, metrics: metrics)
+            makePageView(
+                for: index,
+                childConstraints: childConstraints,
+                metrics: metrics,
+                isLegacyPager: isLegacyPager
+            )
         }
     }
 
@@ -254,26 +280,31 @@ struct Pager: View {
     var body: some View {
         makePager()
             .onAppear(perform: attachToPagerState)
-            .airshipOnChangeOf(pagerState.pageIndex, initial: true) { value in
-                guard value >= 0, value < pagerState.pageItems.count else {
-                    return
-                }
-
-                reportPage(value)
-
-                let newIdentifier = pagerState.pageItems[value].identifier
-                guard newIdentifier != scrollPosition else { return }
-
-                withAnimation {
-                    scrollPosition = newIdentifier
-                }
-            }
             .airshipOnChangeOf(pagerState.completed) { completed in
                 guard completed else { return }
-                self.thomasEnvironment.pagerCompleted(
-                    pagerState: pagerState,
-                    layoutState: layoutState
-                )
+                reportCompleted()
+            }
+            .airshipOnChangeOf(pagerState.currentPageId, initial: true) { pageID in
+                guard let pageID else { return }
+
+                reportPage(pageID: pageID)
+
+                guard pageID != scrollPosition else { return }
+
+                if scrollPosition != nil {
+                    pagerState.disableTouchDuringNavigation()
+                }
+                withAnimation {
+                    scrollPosition = pageID
+                }
+            }
+            .airshipOnChangeOf(isVisible) { visible in
+                if visible, let pageID = pagerState.currentPageId {
+                    reportPage(pageID: pageID)
+                }
+                if visible, pagerState.completed {
+                    reportCompleted()
+                }
             }
             .onReceive(self.timer) { _ in
                 onTimer()
@@ -493,7 +524,7 @@ struct Pager: View {
 
             // Check for any automated action past the current duration that have not been executed yet
             automatedActions.filter {
-                let isExecuted = (self.pagerState.currentPageState.automatedActionStatus[$0.identifier] == true)
+                let isExecuted = (self.pagerState.currentPageState?.automatedActionStatus[$0.identifier] == true)
                 let isOlder = (self.pagerState.progress * duration) >= ($0.delay ?? 0.0)
                 return !isExecuted && isOlder
             }.forEach { action in
@@ -624,19 +655,32 @@ struct Pager: View {
         }
     }
 
-    private func reportPage(_ index: Int) {
-        guard self.lastReportedIndex != index, !pagerState.pageItems.isEmpty else {
-            return
-        }
-        
-        self.thomasEnvironment.pageViewed(
-            pagerState: self.pagerState,
-            pageInfo: self.pagerState.pageInfo(index: index),
+    private func reportCompleted() {
+        guard isVisible, !hasReportedCompleted else { return }
+        self.hasReportedCompleted = true
+        self.thomasEnvironment.pagerCompleted(
+            pagerState: pagerState,
             layoutState: layoutState
         )
-        self.lastReportedIndex = index
-        
-        if isVoiceOverRunning && lastReportedIndex >= 0 {
+    }
+
+    private func reportPage(pageID: String) {
+        guard
+            isVisible,
+            self.lastReportedPageID != pageID,
+            let page = pagerState.pageItems.first(where: { $0.identifier == pageID })
+        else {
+            return
+        }
+
+        self.thomasEnvironment.pageViewed(
+            pagerState: self.pagerState,
+            pageInfo: self.pagerState.pageInfo(pageIdentifier: pageID),
+            layoutState: layoutState
+        )
+        self.lastReportedPageID = pageID
+
+        if isVoiceOverRunning {
             // Small delay to allow the UI to settle after navigation
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 #if os(watchOS)
@@ -655,8 +699,6 @@ struct Pager: View {
         }
 
         // Run any actions set on the current page
-        let page = pagerState.pageItems[index]
-
         let displayActions: [ThomasActionsPayload]? = if let actions = page.displayActions {
             [actions]
         } else {

@@ -73,13 +73,11 @@ internal struct PagerNextButtonEnableBehavior: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         if let onApply = onApply {
-            content.onReceive(self.pagerState.$pageIndex) { pageIndex in
-                onApply(pageIndex < (pagerState.pageStates.count - 1), .pagerNext)
+            content.airshipOnChangeOf(pagerState.canGoForward, initial: true) { canGoForward in
+                onApply(canGoForward, .pagerNext)
             }
         } else {
-            content.disabled(
-                pagerState.pageIndex >= (pagerState.pageStates.count - 1)
-            )
+            content.disabled(!pagerState.canGoForward)
         }
     }
 }
@@ -92,11 +90,11 @@ struct PagerPreviousButtonEnableBehavior: ViewModifier {
     @ViewBuilder
     func body(content: Content) -> some View {
         if let onApply = onApply {
-            content.onReceive(self.pagerState.$pageIndex) { pageIndex in
-                onApply(pageIndex > 0, .pagerPrevious)
+            content.airshipOnChangeOf(pagerState.canGoBack, initial: true) { canGoBack in
+                onApply(canGoBack, .pagerPrevious)
             }
         } else {
-            content.disabled(pagerState.pageIndex <= 0)
+            content.disabled(!pagerState.canGoBack)
         }
     }
 }

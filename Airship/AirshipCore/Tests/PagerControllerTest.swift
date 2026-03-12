@@ -20,8 +20,11 @@ struct PagerControllerTest {
     
     @MainActor
     @Test
-    func controllerDisplaysCorrectStateOnNavigation() async throws {
-        let pagerState = PagerState(identifier: "test", branching: nil)
+    func controllerDisplaysCorrectStateOnNavigation() {
+        let pagerState = PagerState(
+            identifier: "test",
+            branching: nil
+        )
         pagerState.setPagesAndListenForUpdates(
             pages: [
                 makePageItem(id: "page-1"),
@@ -34,22 +37,41 @@ struct PagerControllerTest {
         let controller = AirshipSceneController.PagerController(pagerState: pagerState)
         #expect(controller.canGoBack == false)
         #expect(controller.canGoNext == true)
-        
+
         #expect(controller.navigate(request: .back) == false)
         #expect(controller.navigate(request: .next) == true)
-        
-        try await Task.sleep(nanoseconds: 300_000_000) //300 ms for disable swipe fix
-        
+
         #expect(controller.canGoBack == true)
         #expect(controller.canGoNext == false)
-        
+
         #expect(controller.navigate(request: .next) == false)
         #expect(controller.navigate(request: .back) == true)
-        
-        try await Task.sleep(nanoseconds: 300_000_000) // 300 ms for disable swipe fix
-        
+
         #expect(controller.canGoBack == false)
         #expect(controller.canGoNext == true)
+    }
+
+    @MainActor
+    @Test
+    func disableTouchDuringNavigation() async throws {
+        let sleeper = TestTaskSleeper()
+        let sleepUpdates = await sleeper.sleepUpdates
+        var iterator = sleepUpdates.makeAsyncIterator()
+
+        let pagerState = PagerState(
+            identifier: "test",
+            branching: nil,
+            taskSleeper: sleeper
+        )
+
+        #expect(pagerState.isNavigationInProgress == false)
+
+        pagerState.disableTouchDuringNavigation()
+        #expect(pagerState.isNavigationInProgress == true)
+
+        let sleeps = await iterator.next()
+        #expect(sleeps?.count == 1)
+        #expect(pagerState.isNavigationInProgress == false)
     }
     
     private func makePageItem(id: String) -> ThomasViewInfo.Pager.Item {
@@ -79,5 +101,3 @@ extension ThomasState {
         )
     }
 }
-
-
