@@ -270,17 +270,10 @@ class BannerDisplayable: AirshipDisplayTarget.Displayable {
             throw AirshipErrors.error("Failed to find window")
         }
 
-        // 3. Create the Satellite Window
-        // We create a borderless window exactly the size of the host's content area
-        let overlayWindow = NSWindow(
-            contentRect: hostWindow.contentLayoutRect,
-            styleMask: [.borderless],
-            backing: .buffered,
-            defer: false
-        )
-
-        // 4. Configure Transparency
-        // Essential so we don't cover the app with a gray box
+        // 3. Create the Satellite Window via factory so app customizations apply
+        let overlayWindow = AirshipWindowFactory.shared.makeWindow()
+        overlayWindow.setFrame(hostWindow.contentLayoutRect, display: false)
+        overlayWindow.styleMask = [.borderless]
         overlayWindow.backgroundColor = .clear
         overlayWindow.isOpaque = false
         overlayWindow.hasShadow = false

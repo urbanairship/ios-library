@@ -4,6 +4,18 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.5.0 - March XX, 2026
+Minor release that improves video playback and improves pager navigation reliability in Scenes.
+
+### Changes
+- Improved pager navigation reliability by fixing a race condition that could cause desync when swiping rapidly during scroll.
+- Improved NPS score selector tap targets to remain consistent when toggling between selected and unselected states.
+- Improved video playback lifecycle handling to prevent potential memory leaks on dismiss.
+- Improved In-App Automation schedule parsing to retry failed schedules when remote data is updated.
+- Removed remaining Objective-C from AirshipBasement.
+- Replaced Objective-C based swizzling with a more reliable Swift implementation.
+- Fixed video aspect ratio to avoid cropping content when using center-inside display mode.
+
 ## Version 20.4.0 - February 24, 2026
 Minor release that adds support for Native Message Center. Native content type requires displaying the message content in a `MessageCenterMessageView`. Apps that do not use Airship's message views (e.g. using a WebView directly) should filter out messages where `message.contentType` is not `.html`.
 

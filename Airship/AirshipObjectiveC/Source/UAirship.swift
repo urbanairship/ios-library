@@ -54,7 +54,7 @@ public final class UAirship: NSObject, Sendable {
         return _contact
     }
 
-    /// Contact instance
+    /// Analytics instance
     @objc
     public static var analytics: UAAnalytics {
         assertAirshipIsFlying()

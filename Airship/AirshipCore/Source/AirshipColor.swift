@@ -76,12 +76,9 @@ public struct AirshipColor {
     /// - Returns: The hex string in #AARRGGBB format.
     public static func hexString(_ color: AirshipNativeColor) throws -> String {
 #if os(macOS)
-        // Ensure we have a color space that supports RGB components
-        // Dynamic system colors or pattern colors will crash getRed otherwise.
-        let convertedColor = color.usingColorSpace(.sRGB) ?? color
-
-        // On macOS, getRed is void. We check component count to verify compatibility.
-        guard convertedColor.numberOfComponents >= 3 else {
+        // Convert to sRGB to ensure getRed works safely.
+        // Colors in non-RGB spaces (CMYK, pattern, etc.) will crash getRed otherwise.
+        guard let convertedColor = color.usingColorSpace(.sRGB) else {
             throw AirshipColorError.incompatibleColorSpace(color)
         }
 #else

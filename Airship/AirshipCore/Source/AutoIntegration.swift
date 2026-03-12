@@ -362,7 +362,7 @@ extension AirshipSwizzler {
 extension AirshipSwizzler {
     private typealias MacDidRegisterBlock = @convention(block) (NSObject, NSApplication, Data) -> Void
     private typealias MacDidFailBlock = @convention(block) (NSObject, NSApplication, any Error) -> Void
-    private typealias MacDidReceiveRemoteNotificationBlock = @convention(block) (NSObject, [AnyHashable: Any]) -> Void
+    private typealias MacDidReceiveRemoteNotificationBlock = @convention(block) (NSObject, NSApplication, [AnyHashable: Any]) -> Void
 
     func swizzleMacDidRegister(_ appDelegate: any NSApplicationDelegate, delegate: any AppIntegrationDelegate) {
         let selector = #selector((any NSApplicationDelegate).application(_:didRegisterForRemoteNotificationsWithDeviceToken:))
@@ -390,13 +390,13 @@ extension AirshipSwizzler {
 
     func swizzleMacDidReceiveRemoteNotification(_ appDelegate: any NSApplicationDelegate, delegate: any AppIntegrationDelegate) {
         let selector = #selector((any NSApplicationDelegate).application(_:didReceiveRemoteNotification:))
-        let block: MacDidReceiveRemoteNotificationBlock = { [weak self] (receiver, userInfo) in
+        let block: MacDidReceiveRemoteNotificationBlock = { [weak self] (receiver, app, userInfo) in
             let isForeground = NSApplication.shared.isActive
             delegate.didReceiveRemoteNotification(userInfo: userInfo, isForeground: isForeground)
             if let strongSelf = self,
                let original = strongSelf.originalImplementation(selector, forClass: type(of: receiver)) {
-                let fn = unsafeBitCast(original, to: (@convention(c) (NSObject, Selector, [AnyHashable: Any]) -> Void).self)
-                fn(receiver, selector, userInfo)
+                let fn = unsafeBitCast(original, to: (@convention(c) (NSObject, Selector, NSApplication, [AnyHashable: Any]) -> Void).self)
+                fn(receiver, selector, app, userInfo)
             }
         }
 

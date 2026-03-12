@@ -140,7 +140,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
         let urlString =
             "\(deviceAPIURL)\("/api/user/")\(user.username)\("/messages/delete/")"
 
-        let body = UpdateMessagseRequestBody(messages: messageReportings)
+        let body = UpdateMessagesRequestBody(messages: messageReportings)
 
         let request = AirshipRequest(
             url: URL(string: urlString),
@@ -187,7 +187,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
             MessageCenterAPIClient.channelIDHeader: channelID,
         ]
 
-        let body = UpdateMessagseRequestBody(messages: messageReportings)
+        let body = UpdateMessagesRequestBody(messages: messageReportings)
         let request = AirshipRequest(
             url: URL(string: urlString),
             headers: headers,
@@ -197,7 +197,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
         )
 
         AirshipLogger.trace(
-            "Request to perfom batch mark messages as read: \(urlString) body: \(body)"
+            "Request to perform batch mark messages as read: \(urlString) body: \(body)"
         )
 
         return try await self.session.performHTTPRequest(request)
@@ -228,7 +228,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
         )
 
         AirshipLogger.trace(
-            "Request to perfom batch create user: \(urlString) body: \(body)"
+            "Request to perform batch create user: \(urlString) body: \(body)"
         )
 
         return try await self.session.performHTTPRequest(request) {
@@ -271,14 +271,14 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
             body: bodyData
         )
         AirshipLogger.trace(
-            "Request to perfom batch update user: \(urlString) body: \(body)"
+            "Request to perform batch update user: \(urlString) body: \(body)"
         )
 
         return try await self.session.performHTTPRequest(request)
     }
 }
 
-private struct UpdateMessagseRequestBody: Encodable {
+private struct UpdateMessagesRequestBody: Encodable {
     let messages: [AirshipJSON]
 }
 

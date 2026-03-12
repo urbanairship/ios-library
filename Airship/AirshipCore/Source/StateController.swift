@@ -60,7 +60,7 @@ struct StateController: View {
             self._scopedStateCache = scopedStateCache
             
             self._mutableState = StateObject(
-                wrappedValue: ThomasState.MutableState(inititalState: info.properties.initialState)
+                wrappedValue: ThomasState.MutableState(initialState: info.properties.initialState)
             )
             
         }

@@ -223,22 +223,22 @@ internal struct VideoControls: ViewModifier {
             }
         }
         let interval = CMTime(seconds: 0.1, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
-        observer.timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { time in
-            Task { @MainActor in
-                if !isDraggingBinding.wrappedValue {
-                    currentTimeBinding.wrappedValue = time.seconds
-                }
+        observer.timeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main
+        ) { time in
+            if !isDraggingBinding.wrappedValue {
+                currentTimeBinding.wrappedValue = time.seconds
+            }
 
-                isPlayingBinding.wrappedValue = player.rate > 0
+            isPlayingBinding.wrappedValue = player.rate > 0
 
-                if let currentItem = player.currentItem {
-                    let duration = currentItem.duration
-                    if duration.isNumeric && !duration.isIndefinite {
-                        durationBinding.wrappedValue = duration.seconds
-                    }
+            if let currentItem = player.currentItem {
+                let duration = currentItem.duration
+                if duration.isNumeric && !duration.isIndefinite {
+                    durationBinding.wrappedValue = duration.seconds
                 }
             }
         }
+        
         isPlaying = player.rate > 0
         if let currentItem = player.currentItem {
             let duration = currentItem.duration
@@ -356,10 +356,6 @@ private struct VideoControlsView: View {
 
     private var cornerRadius: CGFloat {
         20 * scaleFactor
-    }
-
-    private var playButtonPadding: CGFloat {
-        15 * scaleFactor
     }
 
     var body: some View {

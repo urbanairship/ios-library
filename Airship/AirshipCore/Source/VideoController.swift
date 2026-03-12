@@ -9,7 +9,6 @@ struct VideoController: View {
     let info: ThomasViewInfo.VideoController
     let constraints: ViewConstraints
 
-    @EnvironmentObject var formDataCollector: ThomasFormDataCollector
     @EnvironmentObject var environment: ThomasEnvironment
     @EnvironmentObject var state: ThomasState
     @EnvironmentObject var parentVideoState: VideoState

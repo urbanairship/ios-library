@@ -133,8 +133,7 @@ struct WebViewView: AirshipNativeViewRepresentable {
             self.challengeResolver = resolver
 
             super.init()
-            AirshipLogger.debug("WebViewView Coordinator init")
-
+            AirshipLogger.trace("WebViewView Coordinator init")
             self.nativeBridge.nativeBridgeExtensionDelegate =
             self.parent.nativeBridgeExtension
             self.nativeBridge.forwardNavigationDelegate = self
@@ -143,7 +142,7 @@ struct WebViewView: AirshipNativeViewRepresentable {
         }
 
         deinit {
-            AirshipLogger.debug("WebViewView Coordinator deinit")
+            AirshipLogger.trace("WebViewView Coordinator deinit")
         }
 
         func configure(webView: WKWebView) {

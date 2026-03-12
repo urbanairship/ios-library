@@ -92,7 +92,7 @@ public struct ContactSubscriptionViewStyleConfiguration {
     public let colorScheme: ColorScheme
 }
 
-/// Contact subcription view style
+/// Contact subscription view style
 public protocol ContactSubscriptionViewStyle: Sendable {
     associatedtype Body: View
     typealias Configuration = ContactSubscriptionViewStyleConfiguration

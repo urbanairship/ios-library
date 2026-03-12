@@ -41,13 +41,13 @@ class TestChannelAudienceManager: ChannelAudienceManagerProtocol, @unchecked Sen
 
     public var attributeEditor: AttributesEditor?
 
-    public var subcriptionListEditor: SubscriptionListEditor?
+    public var subscriptionListEditor: SubscriptionListEditor?
 
     public var fetchSubscriptionListCallback:
         (() async throws -> [String])?
 
     public func editSubscriptionLists() -> SubscriptionListEditor {
-        return subcriptionListEditor!
+        return subscriptionListEditor!
     }
 
     public func editTagGroups(allowDeviceGroup: Bool) -> TagGroupsEditor {

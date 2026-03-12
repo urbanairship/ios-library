@@ -402,7 +402,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
 
             super.init()
 
-            AirshipLogger.debug("VideoMediaWebView Coordinator init, mediaType: \(mediaType)")
+            AirshipLogger.trace("VideoMediaWebView Coordinator init, mediaType: \(mediaType)")
 
             appStateTask = Task { @MainActor [weak self] in
                 for await state in AppStateTracker.shared.stateUpdates {
@@ -417,7 +417,8 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
         }
 
         deinit {
-            AirshipLogger.debug("VideoMediaWebView Coordinator deinit")
+            appStateTask?.cancel()
+            AirshipLogger.trace("VideoMediaWebView Coordinator deinit")
         }
 
         @MainActor

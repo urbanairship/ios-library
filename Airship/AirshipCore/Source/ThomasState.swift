@@ -187,10 +187,10 @@ class ThomasState: ObservableObject {
         private let taskSleeper: any AirshipTaskSleeper
 
         init(
-            inititalState: AirshipJSON? = nil,
+            initialState: AirshipJSON? = nil,
             taskSleeper: any AirshipTaskSleeper = DefaultAirshipTaskSleeper.shared
         ) {
-            self.state = inititalState ?? [:]
+            self.state = initialState ?? [:]
             self.taskSleeper = taskSleeper
         }
 

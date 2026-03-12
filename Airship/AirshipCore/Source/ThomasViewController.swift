@@ -271,7 +271,6 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     private let position: ThomasPresentationInfo.Banner.Position?
 
     private var subscription: AnyCancellable?
-    private weak var window: NSWindow?
 
     init(rootView: BannerView,
         position: ThomasPresentationInfo.Banner.Position,
@@ -313,10 +312,10 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
 
     func createBannerConstraints() {
         self.view.translatesAutoresizingMaskIntoConstraints = false
-        if let view = self.window?.contentView {
-            centerXConstraint = self.view.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-            topConstraint = self.view.topAnchor.constraint(equalTo: view.topAnchor)
-            bottomConstraint = self.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        if let contentView = self.view.window?.contentView {
+            centerXConstraint = self.view.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
+            topConstraint = self.view.topAnchor.constraint(equalTo: contentView.topAnchor)
+            bottomConstraint = self.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
 
             heightConstraint = self.view.heightAnchor.constraint(equalToConstant: self.thomasBannerConstraints.windowSize.height)
             widthConstraint = self.view.widthAnchor.constraint(equalToConstant: self.thomasBannerConstraints.windowSize.width)
