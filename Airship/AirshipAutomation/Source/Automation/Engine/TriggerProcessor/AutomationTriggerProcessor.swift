@@ -9,6 +9,9 @@ import AirshipCore
 protocol AutomationTriggerProcessorProtocol: Sendable {
     @MainActor
     func setPaused(_ paused: Bool)
+
+    @MainActor
+    func suppressForSession()
     
     var triggerResults: AsyncStream<TriggerResult> { get async }
 
@@ -44,6 +47,7 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
     private let continuation: AsyncStream<TriggerResult>.Continuation
     
     @MainActor private var isPaused = false
+    @MainActor private var isSuppressedForSession = false
     
     // scheduleID to [PreparedTriggers]
     private var preparedTriggers: [String: [PreparedTrigger]] = [:]
@@ -69,6 +73,11 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
         self.isPaused = paused
     }
 
+    @MainActor
+    func suppressForSession() {
+        self.isSuppressedForSession = true
+    }
+
     var triggerResults: AsyncStream<TriggerResult> {
         return self.stream
     }
@@ -83,7 +92,14 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
             //save current app state
             self.trackStateChange(event: event)
         }
-        
+
+        // Clear session suppression when app goes to background
+        if case .event(let type, _, _) = event, type == .background {
+            await MainActor.run { self.isSuppressedForSession = false }
+        }
+
+        guard await self.isSuppressedForSession == false else { return }
+
         guard await self.isPaused == false else { return }
         
         var results = triggers.compactMap { item in

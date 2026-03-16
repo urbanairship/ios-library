@@ -15,6 +15,8 @@ import AirshipCore
 
 /// Actual airship component for InAppAutomation. Used to hide AirshipComponent methods.
 final class InAppAutomationComponent: AirshipComponent, AirshipPushableComponent {
+    private static let suppressTriggersKey = "com.urbanairship.suppress_triggers"
+
     let inAppAutomation: DefaultInAppAutomation
 
     init(inAppAutomation: DefaultInAppAutomation) {
@@ -29,6 +31,9 @@ final class InAppAutomationComponent: AirshipComponent, AirshipPushableComponent
     func receivedRemoteNotification(
         _ notification: AirshipJSON
     ) async -> UABackgroundFetchResult {
+        if notification.object?[Self.suppressTriggersKey]?.string == "true" {
+            await self.inAppAutomation.suppressTriggersForSession()
+        }
         return await self.inAppAutomation.receivedRemoteNotification(notification)
     }
 

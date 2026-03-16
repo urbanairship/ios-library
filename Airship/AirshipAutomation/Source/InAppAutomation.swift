@@ -62,6 +62,10 @@ public protocol InAppAutomation: AnyObject, Sendable {
     ///  - Parameters
     ///     - maxTime: Timeout in seconds.
     func waitRefresh(maxTime: TimeInterval?) async
+
+    /// Suppresses in-app automation triggers for the current session.
+    @MainActor
+    func suppressTriggersForSession() async
 }
 
 internal protocol InternalInAppAutomation: InAppAutomation {
@@ -233,6 +237,11 @@ extension DefaultInAppAutomation {
             }
         }
         self.privacyManagerUpdated()
+    }
+
+    @MainActor
+    func suppressTriggersForSession() async {
+        await self.engine.suppressTriggersForSession()
     }
 
     func receivedRemoteNotification(

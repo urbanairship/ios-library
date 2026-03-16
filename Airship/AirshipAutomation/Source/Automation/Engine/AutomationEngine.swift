@@ -73,6 +73,11 @@ actor AutomationEngine : AutomationEngineProtocol {
         }
     }
 
+    @MainActor
+    func suppressTriggersForSession() {
+        self.triggersProcessor.suppressForSession()
+    }
+
     func start() async {
         self.startTask = Task {
             do {
@@ -795,6 +800,10 @@ protocol AutomationEngineProtocol: Actor, Sendable {
 
     @MainActor
     func setExecutionPaused(_ paused: Bool)
+
+    @MainActor
+    func suppressTriggersForSession()
+
     func start() async
 
     func upsertSchedules(_ schedules: [AutomationSchedule]) async throws
