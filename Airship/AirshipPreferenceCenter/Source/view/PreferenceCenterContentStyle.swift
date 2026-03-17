@@ -96,6 +96,9 @@ public struct DefaultPreferenceCenterViewStyle: PreferenceCenterContentStyle {
                         .frame(minWidth: 44)
                 }
             )
+            #if os(macOS)
+            .buttonStyle(.plain)
+            #endif
         }
     }
 
