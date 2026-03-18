@@ -39,8 +39,7 @@ final class MessageCenterMessageTest: XCTestCase {
         XCTAssertEqual(dictionary.count, 1, "dictionary should only contain one entry since m1 and m2 are equal.")
     }
     
-    func testContentTypeParsing() {
-        // 1. Positive Cases: Map input string -> Expected Enum Case
+    func testContentTypeDecoding() throws {
         let validCases: [String: MessageCenterMessage.ContentType] = [
             "text/html": .html,
             "text/plain": .plain,
@@ -49,7 +48,6 @@ final class MessageCenterMessageTest: XCTestCase {
             "application/vnd.urbanairship.thomas+json; version=3; foo=bar": .native(version: 3),
         ]
 
-        // 2. Negative Cases: List of strings that should return nil
         let invalidCases: [String] = [
             "",
             "text/json",
@@ -60,32 +58,32 @@ final class MessageCenterMessageTest: XCTestCase {
             "application/vnd.urbanairship.thomas+json;garbage version=1"
         ]
 
-        // 3. Execution Loop
-            
-        // Check Positive Cases
         for (input, expected) in validCases {
-            let result = MessageCenterMessage.ContentType.fromJson(value: input)
-                
+            let data = try JSONEncoder().encode(input)
+            let result = try JSONDecoder().decode(MessageCenterMessage.ContentType.self, from: data)
+
             XCTAssertEqual(
                 result,
                 expected,
-                "Failed to parse valid input: '\(input)'"
+                "Failed to decode valid input: '\(input)'"
             )
-            
-            if input == expected.jsonValue {
-                XCTAssertEqual(
-                    result?.jsonValue,
-                    input,
-                    "Round-trip jsonValue failed for '\(input)'"
-                )
-            }
+
+            let roundTripped = try JSONDecoder().decode(
+                MessageCenterMessage.ContentType.self,
+                from: JSONEncoder().encode(result)
+            )
+            XCTAssertEqual(
+                roundTripped,
+                expected,
+                "Round-trip Codable failed for '\(input)'"
+            )
         }
 
-        // Check Negative Cases
         for input in invalidCases {
-            XCTAssertNil(
-                MessageCenterMessage.ContentType.fromJson(value: input),
-                "Expected nil but got a value for invalid input: '\(input)'"
+            let data = try JSONEncoder().encode(input)
+            XCTAssertThrowsError(
+                try JSONDecoder().decode(MessageCenterMessage.ContentType.self, from: data),
+                "Expected decoding to throw for invalid input: '\(input)'"
             )
         }
     }

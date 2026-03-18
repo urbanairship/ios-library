@@ -54,12 +54,12 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable 
     /// The message associated data
     var associatedData: AssociatedData
     
-    public enum ContentType: Sendable, Hashable {
+    public enum ContentType: Sendable, Hashable, Codable {
         case html
         case plain
         case native(version: Int)
         
-        var jsonValue: String {
+        var stringValue: String {
             switch self {
             case .html: return "text/html"
             case .plain: return "text/plain"
@@ -68,28 +68,38 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable 
         }
         
         static let nativeContentTypePrefix: String = "application/vnd.urbanairship.thomas+json"
-        static func fromJson(value: String) -> ContentType? {
-            if value == Self.html.jsonValue {
-                return .html
-            } else if value == Self.plain.jsonValue {
-                return .plain
-            } else if value.hasPrefix(Self.nativeContentTypePrefix) {
-                guard let version = value
-                    .replacingOccurrences(of: " ", with: "")
-                    .components(separatedBy: ";")
-                    .last(where: { $0.hasPrefix("version") })?
-                    .components(separatedBy: "=")
-                    .last
-                    .flatMap(Int.init)
-                else {
-                    return nil
-                }
-                
-                return .native(version: version)
+
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.singleValueContainer()
+            try container.encode(self.stringValue)
+        }
+
+        public init(from decoder: any Decoder) throws {
+            let value = try decoder.singleValueContainer().decode(String.self)
+
+            if value == Self.html.stringValue {
+                self = .html
+            } else if value == Self.plain.stringValue {
+                self = .plain
+            } else if value.hasPrefix(Self.nativeContentTypePrefix),
+                      let version = value
+                        .replacingOccurrences(of: " ", with: "")
+                        .components(separatedBy: ";")
+                        .last(where: { $0.hasPrefix("version") })?
+                        .components(separatedBy: "=")
+                        .last
+                        .flatMap(Int.init) {
+                self = .native(version: version)
             } else {
-                return nil
+                throw DecodingError.dataCorrupted(
+                    DecodingError.Context(
+                        codingPath: decoder.codingPath,
+                        debugDescription: "Invalid content type: \(value)"
+                    )
+                )
             }
         }
+
     }
 
     init(

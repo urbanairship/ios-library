@@ -80,6 +80,7 @@ final class MessageCenterAPIClientTest: XCTestCase {
         let message = messages[0] as MessageCenterMessage
         XCTAssertEqual(message.id, "some_mesg_id")
         XCTAssertEqual(message.title, "Message title")
+        XCTAssertEqual(message.contentType, .html)
 
         let request = self.session.lastRequest!
         XCTAssertEqual(
@@ -378,6 +379,91 @@ final class MessageCenterAPIClientTest: XCTestCase {
             expected as NSDictionary,
             requestPayload as! NSDictionary
         )
+    }
+
+    func testRetrieveMessageListInvalidContentTypeDefaultsToHTML() async throws {
+        self.session.response = HTTPURLResponse(
+            url: URL(string: "www.anyurl.com")!,
+            statusCode: 200,
+            httpVersion: nil,
+            headerFields: [:]
+        )
+
+        let messageResponse: String = """
+            {
+                "messages": [
+                    {
+                        "message_id": "some_mesg_id",
+                        "message_url": "https://go.urbanairship.com/api/user/userId/messages/message/some_mesg_id/",
+                        "message_body_url": "https://go.urbanairship.com/api/user/userId/messages/message/some_mesg_id/body/",
+                        "message_read_url": "https://go.urbanairship.com/api/user/userId/messages/message/some_mesg_id/read/",
+                        "unread": true,
+                        "message_sent": "2010-09-05 12:13 -0000",
+                        "title": "Message title",
+                        "extra": {
+                            "some_key": "some_value"
+                        },
+                        "message_reporting": { "cool": "story" },
+                        "content_type": "application/x-unknown",
+                        "content_size": "128"
+                    }
+                ]
+            }
+            """
+
+        self.session.data = messageResponse.data(using: .utf8)
+
+        let response = try await self.client.retrieveMessageList(
+            user: self.user,
+            channelID: "some channel",
+            lastModified: nil
+        )
+
+        let messages = response.result!
+        XCTAssertEqual(messages.count, 1)
+        XCTAssertEqual(messages[0].contentType, .html)
+    }
+
+    func testRetrieveMessageListMissingContentTypeDefaultsToHTML() async throws {
+        self.session.response = HTTPURLResponse(
+            url: URL(string: "www.anyurl.com")!,
+            statusCode: 200,
+            httpVersion: nil,
+            headerFields: [:]
+        )
+
+        let messageResponse: String = """
+            {
+                "messages": [
+                    {
+                        "message_id": "some_mesg_id",
+                        "message_url": "https://go.urbanairship.com/api/user/userId/messages/message/some_mesg_id/",
+                        "message_body_url": "https://go.urbanairship.com/api/user/userId/messages/message/some_mesg_id/body/",
+                        "message_read_url": "https://go.urbanairship.com/api/user/userId/messages/message/some_mesg_id/read/",
+                        "unread": true,
+                        "message_sent": "2010-09-05 12:13 -0000",
+                        "title": "Message title",
+                        "extra": {
+                            "some_key": "some_value"
+                        },
+                        "message_reporting": { "cool": "story" },
+                        "content_size": "128"
+                    }
+                ]
+            }
+            """
+
+        self.session.data = messageResponse.data(using: .utf8)
+
+        let response = try await self.client.retrieveMessageList(
+            user: self.user,
+            channelID: "some channel",
+            lastModified: nil
+        )
+
+        let messages = response.result!
+        XCTAssertEqual(messages.count, 1)
+        XCTAssertEqual(messages[0].contentType, .html)
     }
 
     /// Tests creating user with status code failure

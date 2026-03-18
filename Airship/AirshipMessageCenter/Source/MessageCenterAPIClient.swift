@@ -310,7 +310,7 @@ private struct MessageListResponse: Decodable {
         let messageBodyURL: URL
         let messageReporting: AirshipJSON
         let messageURL: URL
-        let contentType: MessageCenterMessage.ContentType
+        let contentType: MessageCenterMessage.ContentType?
         /// String instead of Date because they might be nonstandard ISO dates
         let messageSent: String
         let messageExpiration: String?
@@ -332,23 +332,21 @@ private struct MessageListResponse: Decodable {
             case icons = "icons"
             case messageReporting = "message_reporting"
         }
-    }
-}
 
-extension MessageCenterMessage.ContentType: Codable {
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(self.jsonValue)
-    }
-    
-    public init(from decoder: any Decoder) throws {
-        let value = try decoder.singleValueContainer().decode(String.self)
-        
-        guard let parsed = MessageCenterMessage.ContentType.fromJson(value: value) else {
-            throw DecodingError.typeMismatch(MessageCenterMessage.ContentType.self, DecodingError.Context(codingPath: [], debugDescription: "Failed to decode MessageCenterMessage.ContentType"))
+        init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            self.messageID = try container.decode(String.self, forKey: .messageID)
+            self.messageBodyURL = try container.decode(URL.self, forKey: .messageBodyURL)
+            self.messageReporting = try container.decode(AirshipJSON.self, forKey: .messageReporting)
+            self.messageURL = try container.decode(URL.self, forKey: .messageURL)
+            self.contentType = try? container.decode(MessageCenterMessage.ContentType.self, forKey: .contentType)
+            self.messageSent = try container.decode(String.self, forKey: .messageSent)
+            self.messageExpiration = try container.decodeIfPresent(String.self, forKey: .messageExpiration)
+            self.title = try container.decode(String.self, forKey: .title)
+            self.extra = try container.decodeIfPresent(AirshipJSON.self, forKey: .extra)
+            self.icons = try container.decodeIfPresent(AirshipJSON.self, forKey: .icons)
+            self.unread = try container.decode(Bool.self, forKey: .unread)
         }
-        
-        self = parsed
     }
 }
 
@@ -360,7 +358,7 @@ extension MessageListResponse {
             return MessageCenterMessage(
                 title: responseMessage.title,
                 id: responseMessage.messageID,
-                contentType: responseMessage.contentType,
+                contentType: responseMessage.contentType ?? .html,
                 extra: responseMessage.extra?.unWrap() as? [String: String]
                     ?? [:],
                 bodyURL: responseMessage.messageBodyURL,
