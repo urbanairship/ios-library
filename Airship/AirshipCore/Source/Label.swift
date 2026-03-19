@@ -231,79 +231,63 @@ extension ThomasViewInfo.Label {
 
 
 extension Label {
-    private func highlightSegments(
-        in attributed: AttributedString
-    ) -> [(range: Range<AttributedString.Index>, isHighlight: Bool)] {
+    private static let scriptFontScale: Double = 0.65
+    private static let superscriptBaselineScale: Double = 0.4
+    private static let subscriptBaselineScale: Double = 0.2
 
-        let chars = attributed.characters
-        typealias Index = AttributedString.Index  // same as CharacterView.Index
+    private struct Segment {
+        let range: Range<AttributedString.Index>
+        let isHighlight: Bool
+        let isSuperscript: Bool
+        let isSubscript: Bool
+    }
 
-        struct Segment {
-            let range: Range<Index>
-            let isHighlight: Bool
-        }
+    private struct DelimitedRange {
+        /// Full range including the delimiter characters themselves.
+        let outer: Range<AttributedString.Index>
+        /// Inner content range, excluding the delimiter characters.
+        let inner: Range<AttributedString.Index>
+    }
 
-        var segments: [Segment] = []
-
+    private func findDelimitedRanges(
+        in chars: AttributedString.CharacterView,
+        open: (Character, Character),
+        close: (Character, Character)
+    ) -> [DelimitedRange] {
+        var results: [DelimitedRange] = []
         let end = chars.endIndex
-
-        var searchStart: Index = chars.startIndex  // where the next "normal" segment starts
-        var i: Index = chars.startIndex
+        var i = chars.startIndex
 
         while i < end {
             let next = chars.index(after: i)
             guard next < end else { break }
 
-            // Look for opening "=="
-            if chars[i] == "=", chars[next] == "=" {
-                let openStart = i
-                let openEnd = chars.index(after: next) // first char *after* "=="
-
-                // Prefix BEFORE ==...==
-                if searchStart < openStart {
-                    segments.append(
-                        Segment(
-                            range: searchStart..<openStart,
-                            isHighlight: false
-                        )
-                    )
-                }
-
-                // Now search for the matching closing "=="
+            if chars[i] == open.0, chars[next] == open.1 {
+                let outerStart = i
+                let openEnd = chars.index(after: next)
                 var j = openEnd
                 var foundClose = false
 
                 while j < end {
                     let jNext = chars.index(after: j)
-                    if jNext < end, chars[j] == "=", chars[jNext] == "=" {
-                        // Found closing "=="
-                        let closeStart = j
-                        let closeEnd = chars.index(after: jNext) // after closing "=="
-
+                    if jNext < end, chars[j] == close.0, chars[jNext] == close.1 {
                         let innerStart = openEnd
-                        let innerEnd = closeStart
-
+                        let innerEnd = j
+                        let outerEnd = chars.index(after: jNext)
                         if innerStart < innerEnd {
-                            segments.append(
-                                Segment(
-                                    range: innerStart..<innerEnd,
-                                    isHighlight: true
-                                )
-                            )
+                            results.append(DelimitedRange(
+                                outer: outerStart..<outerEnd,
+                                inner: innerStart..<innerEnd
+                            ))
                         }
-
-                        // Next "normal" segment will start AFTER the closing "=="
-                        searchStart = closeEnd
-                        i = closeEnd
+                        i = outerEnd
                         foundClose = true
                         break
                     }
-
                     j = chars.index(after: j)
                 }
 
                 if !foundClose {
-                    // No closing "==": treat the opening "==" as normal text
                     i = chars.index(after: i)
                 }
             } else {
@@ -311,17 +295,66 @@ extension Label {
             }
         }
 
-        // Trailing text after the last highlight
-        if searchStart < end {
+        return results
+    }
+
+    private func formatSegments(in attributed: AttributedString) -> [Segment] {
+        let chars = attributed.characters
+        let start = chars.startIndex
+        let end = chars.endIndex
+
+        let highlightRanges   = findDelimitedRanges(in: chars, open: ("=", "="), close: ("=", "="))
+        let superscriptRanges = findDelimitedRanges(in: chars, open: ("^", "^"), close: ("^", "^"))
+        let subscriptRanges   = findDelimitedRanges(in: chars, open: (",", "{"), close: ("}", ","))
+
+        // Build boundaries from both outer and inner edges so delimiter
+        // characters form their own sub-segments and can be skipped.
+        var boundarySet: [AttributedString.Index] = [start, end]
+        for r in highlightRanges + superscriptRanges + subscriptRanges {
+            boundarySet.append(r.outer.lowerBound)
+            boundarySet.append(r.inner.lowerBound)
+            boundarySet.append(r.inner.upperBound)
+            boundarySet.append(r.outer.upperBound)
+        }
+        let boundaries = boundarySet
+            .sorted { $0 < $1 }
+            .reduce(into: [AttributedString.Index]()) { result, idx in
+                if result.last != idx { result.append(idx) }
+            }
+
+        var segments: [Segment] = []
+        for idx in 0..<(boundaries.count - 1) {
+            let segStart = boundaries[idx]
+            let segEnd = boundaries[idx + 1]
+            guard segStart < segEnd else { continue }
+
+            // Use midpoint to determine which ranges contain this segment.
+            let mid = chars.index(segStart, offsetBy: chars.distance(from: segStart, to: segEnd) / 2)
+
+            // A segment is a "delimiter" if it falls inside an outer range but
+            // outside that range's inner content — skip it so delimiters are invisible.
+            let isDelimiter =
+                highlightRanges.contains   { $0.outer.contains(mid) && !$0.inner.contains(mid) } ||
+                superscriptRanges.contains { $0.outer.contains(mid) && !$0.inner.contains(mid) } ||
+                subscriptRanges.contains   { $0.outer.contains(mid) && !$0.inner.contains(mid) }
+
+            if isDelimiter { continue }
+
+            let isHighlight   = highlightRanges.contains   { $0.inner.contains(mid) }
+            let isSuperscript = superscriptRanges.contains { $0.inner.contains(mid) }
+            let isSubscript   = subscriptRanges.contains   { $0.inner.contains(mid) }
+
             segments.append(
                 Segment(
-                    range: searchStart..<end,
-                    isHighlight: false
+                    range: segStart..<segEnd,
+                    isHighlight: isHighlight,
+                    isSuperscript: isSuperscript,
+                    isSubscript: isSubscript
                 )
             )
         }
 
-        return segments.map { ($0.range, $0.isHighlight) }
+        return segments
     }
 
     private var markdownText: Text {
@@ -335,9 +368,10 @@ extension Label {
             )
 
             let highlightOptions = self.info.properties.markdown?.appearance?.highlight
+            let fontSize = scaledFontSize
 
-            // Find highlight segments INSIDE the attributed string
-            let segments = highlightSegments(in: attributed)
+            // Find format segments INSIDE the attributed string
+            let segments = formatSegments(in: attributed)
 
             // Build Text by slicing
             var result: Text?
@@ -345,6 +379,14 @@ extension Label {
             for seg in segments {
                 var slice = attributed[seg.range]
                 let piece: Text
+
+                if seg.isSuperscript {
+                    slice.baselineOffset = fontSize * Self.superscriptBaselineScale
+                    slice.font = .system(size: fontSize * Self.scriptFontScale)
+                } else if seg.isSubscript {
+                    slice.baselineOffset = -(fontSize * Self.subscriptBaselineScale)
+                    slice.font = .system(size: fontSize * Self.scriptFontScale)
+                }
 
                 if seg.isHighlight {
                     // For custom cornerRadius we have to use a custom attribute and renderer
@@ -363,7 +405,7 @@ extension Label {
                     piece = Text(AttributedString(slice))
                 }
 
-                result = (result == nil) ? piece : (result! + piece)
+                result = result.map { $0 + piece } ?? piece
             }
 
             return result ?? Text(attributed)
