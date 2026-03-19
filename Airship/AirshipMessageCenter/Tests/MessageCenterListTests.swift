@@ -296,6 +296,122 @@ final class MessageCenterListTest: XCTestCase {
         XCTAssertEqual(unreadCountUpdate, 1)
     }
 
+    func testRefreshMessagesThrowingSuccess() async throws {
+        self.channel.identifier = UUID().uuidString
+
+        let expectations = self.expectation(description: "client called")
+        expectations.expectedFulfillmentCount = 2
+
+        let messages = MessageCenterMessage.generateMessages(1)
+        let mcUser = MessageCenterUser(
+            username: UUID().uuidString,
+            password: UUID().uuidString
+        )
+
+        self.client.onCreateUser = { channelID in
+            XCTAssertEqual(channelID, self.channel.identifier)
+            expectations.fulfill()
+            return AirshipHTTPResponse(
+                result: mcUser,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        self.client.onRetrieve = { user, channelID, lastModified in
+            XCTAssertEqual(channelID, self.channel.identifier)
+            XCTAssertEqual(user, mcUser)
+            XCTAssertNil(lastModified)
+
+            expectations.fulfill()
+            return AirshipHTTPResponse(
+                result: messages,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        self.inbox.enabled = true
+        self.workManager.autoLaunchRequests = true
+
+        try await self.inbox.refreshMessagesThrowing()
+        await self.fulfillment(of: [expectations])
+
+        let inboxMessages = await self.inbox.messages
+        XCTAssertEqual(inboxMessages, messages)
+    }
+
+    func testRefreshMessagesThrowingThrowsDisabled() async throws {
+        self.inbox.enabled = false
+        self.workManager.autoLaunchRequests = true
+
+        do {
+            try await self.inbox.refreshMessagesThrowing()
+            XCTFail("Expected MessageCenterInboxError.disabled")
+        } catch let error as MessageCenterInboxError {
+            XCTAssertEqual(error, .disabled)
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+
+    func testRefreshMessagesThrowingThrowsFailedToFetchWhenNoChannel() async throws {
+        self.channel.identifier = nil
+        self.inbox.enabled = true
+        self.workManager.autoLaunchRequests = true
+
+        do {
+            try await self.inbox.refreshMessagesThrowing()
+            XCTFail("Expected MessageCenterInboxError.failedToFetchMessage")
+        } catch let error as MessageCenterInboxError {
+            XCTAssertEqual(error, .failedToFetchMessage)
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+
+    func testRefreshMessagesThrowingThrowsFailedToFetchWhenRetrieveFails() async throws {
+        self.channel.identifier = UUID().uuidString
+
+        let mcUser = MessageCenterUser(
+            username: UUID().uuidString,
+            password: UUID().uuidString
+        )
+
+        self.client.onCreateUser = { channelID in
+            XCTAssertEqual(channelID, self.channel.identifier)
+            return AirshipHTTPResponse(
+                result: mcUser,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        self.client.onRetrieve = { user, channelID, lastModified in
+            XCTAssertEqual(channelID, self.channel.identifier)
+            XCTAssertEqual(user, mcUser)
+            XCTAssertNil(lastModified)
+
+            return AirshipHTTPResponse(
+                result: [],
+                statusCode: 400,
+                headers: [:]
+            )
+        }
+
+        self.inbox.enabled = true
+        self.workManager.autoLaunchRequests = true
+
+        do {
+            try await self.inbox.refreshMessagesThrowing()
+            XCTFail("Expected MessageCenterInboxError.failedToFetchMessage")
+        } catch let error as MessageCenterInboxError {
+            XCTAssertEqual(error, .failedToFetchMessage)
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+
     func testRefreshMessagesWithTimeout() async throws {
         self.channel.identifier = UUID().uuidString
 

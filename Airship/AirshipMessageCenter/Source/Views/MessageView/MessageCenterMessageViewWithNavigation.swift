@@ -180,6 +180,7 @@ public struct MessageCenterMessageViewWithNavigation: View {
                 dismiss()
             }
             .tint(navigationBarAppearance.deleteButtonColor)
+            .disabled(messageViewModel.message == nil)
         }
     }
 

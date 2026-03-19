@@ -8,6 +8,19 @@ public import Foundation
 public import AirshipCore
 #endif
 
+/// Errors that can occur when loading or refreshing Message Center Inbox.
+public enum MessageCenterInboxError: Error, Equatable {
+    /// Message Center is unavailable because the `AirshipFeature.messageCenter` feature
+    /// is disabled in the privacy manager.
+    case disabled
+
+    /// The message could not be fetched from the server.
+    case failedToFetchMessage
+    
+    /// The refresh operation has been cancelled
+    case cancelled
+}
+
 /// Airship Message Center inbox protocol.
 public protocol MessageCenterInbox: AnyObject, Sendable {
 
@@ -15,6 +28,10 @@ public protocol MessageCenterInbox: AnyObject, Sendable {
     /// - Returns: `true` if the messages was refreshed, otherwise `false`.
     @discardableResult
     func refreshMessages() async -> Bool
+    
+    /// Refreshes the list of messages in the inbox.
+    /// - Throws : An error of type `MessageCenterInboxError`
+    func refreshMessagesThrowing() async throws
 
     /// Marks messages read.
     /// - Parameters:
@@ -357,9 +374,18 @@ final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
 
     @discardableResult
     public func refreshMessages() async -> Bool {
+        do {
+            try await refreshMessagesThrowing()
+            return true
+        } catch {
+            return false
+        }
+    }
+    
+    public func refreshMessagesThrowing() async throws {
         if !self.enabled {
             AirshipLogger.error("Message center is disabled")
-            return false
+            throw MessageCenterInboxError.disabled
         }
 
         let stream = await updateChannel.makeStream()
@@ -374,9 +400,15 @@ final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
             guard update == .refreshSucess || update == .refreshFailed else {
                 continue
             }
-            return update == .refreshSucess
+            
+            if update != .refreshSucess {
+                throw MessageCenterInboxError.failedToFetchMessage
+            }
+            
+            return
         }
-        return false
+        
+        throw MessageCenterInboxError.cancelled
     }
 
     func refreshMessages(timeout: TimeInterval) async throws -> Bool {
