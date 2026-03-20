@@ -58,15 +58,17 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable 
         case html
         case plain
         case native(version: Int)
-        
-        var stringValue: String {
+        case unknown(String?)
+
+        var stringValue: String? {
             switch self {
             case .html: return "text/html"
             case .plain: return "text/plain"
             case .native(let version): return "application/vnd.urbanairship.thomas+json;version=\(version);"
+            case .unknown(let value): return value
             }
         }
-        
+
         static let nativeContentTypePrefix: String = "application/vnd.urbanairship.thomas+json"
 
         public func encode(to encoder: any Encoder) throws {
@@ -74,13 +76,11 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable 
             try container.encode(self.stringValue)
         }
 
-        public init(from decoder: any Decoder) throws {
-            let value = try decoder.singleValueContainer().decode(String.self)
-
-            if value == Self.html.stringValue {
-                self = .html
-            } else if value == Self.plain.stringValue {
-                self = .plain
+        static func parse(_ value: String) -> ContentType {
+            if value == "text/html" {
+                return .html
+            } else if value == "text/plain" {
+                return .plain
             } else if value.hasPrefix(Self.nativeContentTypePrefix),
                       let version = value
                         .replacingOccurrences(of: " ", with: "")
@@ -89,15 +89,15 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable 
                         .components(separatedBy: "=")
                         .last
                         .flatMap(Int.init) {
-                self = .native(version: version)
+                return .native(version: version)
             } else {
-                throw DecodingError.dataCorrupted(
-                    DecodingError.Context(
-                        codingPath: decoder.codingPath,
-                        debugDescription: "Invalid content type: \(value)"
-                    )
-                )
+                return .unknown(value)
             }
+        }
+
+        public init(from decoder: any Decoder) throws {
+            let value = try decoder.singleValueContainer().decode(String.self)
+            self = Self.parse(value)
         }
 
     }
@@ -109,11 +109,11 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable 
         extra: [String: String],
         bodyURL: URL,
         expirationDate: Date?,
-        messageReporting: [String: Any]?,
+        messageReporting: AirshipJSON?,
         unread: Bool,
         sentDate: Date,
         messageURL: URL,
-        rawMessageObject: [String: Any],
+        rawMessageObject: AirshipJSON,
         associatedData: Data? = nil
     ) {
         self.title = title
@@ -122,11 +122,11 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable 
         self.extra = extra
         self.bodyURL = bodyURL
         self.expirationDate = expirationDate
-        self.messageReporting = try? AirshipJSON.wrap(messageReporting)
+        self.messageReporting = messageReporting
         self.unread = unread
         self.sentDate = sentDate
         self.messageURL = messageURL
-        self.rawMessageObject = (try? AirshipJSON.wrap(rawMessageObject))  ?? AirshipJSON.null
+        self.rawMessageObject = rawMessageObject
         self.associatedData = associatedData
             .flatMap { try? JSONDecoder().decode(MessageCenterMessage.AssociatedData.self, from: $0) }
             ?? AssociatedData()

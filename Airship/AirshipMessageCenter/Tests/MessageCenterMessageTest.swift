@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import XCTest
-
+import AirshipCore
 @testable import AirshipMessageCenter
 
 final class MessageCenterMessageTest: XCTestCase {
@@ -13,11 +13,11 @@ final class MessageCenterMessageTest: XCTestCase {
                                       extra: ["cool": "story"],
                                       bodyURL: URL(string: "www.myspace.com")!,
                                       expirationDate: date,
-                                      messageReporting: ["any" : "thing"],
+                                      messageReporting: ["any": "thing"],
                                       unread: true,
                                       sentDate: date,
                                       messageURL:  URL(string: "www.myspace.com")!,
-                                      rawMessageObject: ["raw" : "message object"])
+                                      rawMessageObject: ["raw": "message object"])
 
         let m2 = MessageCenterMessage(title: "title",
                                       id: "identifier",
@@ -25,11 +25,11 @@ final class MessageCenterMessageTest: XCTestCase {
                                       extra: ["cool": "story"],
                                       bodyURL: URL(string: "www.myspace.com")!,
                                       expirationDate: date,
-                                      messageReporting: ["any" : "thing"],
+                                      messageReporting: ["any": "thing"],
                                       unread: true,
                                       sentDate: date,
                                       messageURL:  URL(string: "www.myspace.com")!,
-                                      rawMessageObject: ["raw" : "message object"])
+                                      rawMessageObject: ["raw": "message object"])
 
         XCTAssertTrue(m1 == m2)
 
@@ -87,7 +87,7 @@ final class MessageCenterMessageTest: XCTestCase {
             "application/vnd.urbanairship.thomas+json; version=3; foo=bar": .native(version: 3),
         ]
 
-        let invalidCases: [String] = [
+        let unknownCases: [String] = [
             "",
             "text/json",
             "garbage_value",
@@ -118,11 +118,13 @@ final class MessageCenterMessageTest: XCTestCase {
             )
         }
 
-        for input in invalidCases {
+        for input in unknownCases {
             let data = try JSONEncoder().encode(input)
-            XCTAssertThrowsError(
-                try JSONDecoder().decode(MessageCenterMessage.ContentType.self, from: data),
-                "Expected decoding to throw for invalid input: '\(input)'"
+            let result = try JSONDecoder().decode(MessageCenterMessage.ContentType.self, from: data)
+            XCTAssertEqual(
+                result,
+                .unknown(input),
+                "Expected .unknown for unrecognized input: '\(input)'"
             )
         }
     }
@@ -136,11 +138,11 @@ final class MessageCenterMessageTest: XCTestCase {
             extra: [:],
             bodyURL: URL(string: "www.myspace.com")!,
             expirationDate: date,
-            messageReporting: ["any" : "thing"],
+            messageReporting: ["any": "thing"],
             unread: true,
             sentDate: date,
             messageURL: URL(string: "www.myspace.com")!,
-            rawMessageObject: ["raw" : "message object"]
+            rawMessageObject: ["raw": "message object"]
         )
 
         XCTAssertNil(message.productID)
@@ -155,7 +157,7 @@ final class MessageCenterMessageTest: XCTestCase {
             extra: [:],
             bodyURL: URL(string: "www.myspace.com")!,
             expirationDate: date,
-            messageReporting: ["any" : "thing"],
+            messageReporting: ["any": "thing"],
             unread: true,
             sentDate: date,
             messageURL: URL(string: "www.myspace.com")!,

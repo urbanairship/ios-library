@@ -33,4 +33,21 @@ public struct AirshipRequest: Sendable {
         self.body = body
         self.contentEncoding = contentEncoding
     }
+
+    public init<T: Encodable>(
+        url: URL?,
+        headers: [String: String] = [:],
+        method: String? = nil,
+        auth: AirshipRequestAuth? = nil,
+        encodableBody: T,
+        encoder: JSONEncoder = AirshipJSON.defaultEncoder,
+        contentEncoding: ContentEncoding? = nil
+    ) throws {
+        self.url = url
+        self.headers = headers
+        self.method = method
+        self.auth = auth
+        self.body = try encoder.encode(encodableBody)
+        self.contentEncoding = contentEncoding
+    }
 }

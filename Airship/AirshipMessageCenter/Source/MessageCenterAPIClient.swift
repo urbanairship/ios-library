@@ -110,7 +110,8 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
             guard response.isSuccess else { return nil }
 
             do {
-                let parsed: MessageListResponse = try AirshipJSONUtils.decode(data: data)
+                guard let data else { throw AirshipErrors.parseError("Missing response body") }
+                let parsed = try JSONDecoder().decode(MessageListResponse.self, from: data)
                 return try parsed.convertMessages()
             } catch {
                 let responseBody = data.flatMap { String(data: $0, encoding: .utf8) } ?? "nil"
@@ -142,7 +143,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
 
         let body = UpdateMessagesRequestBody(messages: messageReportings)
 
-        let request = AirshipRequest(
+        let request = try AirshipRequest(
             url: URL(string: urlString),
             headers: [
                 "Accept": "application/vnd.urbanairship+json; version=3;",
@@ -151,7 +152,7 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
             ],
             method: "POST",
             auth: .basic(username: user.username, password: user.password),
-            body: try AirshipJSONUtils.encode(object: body)
+            encodableBody: body
         )
 
         AirshipLogger.trace(
@@ -188,12 +189,12 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
         ]
 
         let body = UpdateMessagesRequestBody(messages: messageReportings)
-        let request = AirshipRequest(
+        let request = try AirshipRequest(
             url: URL(string: urlString),
             headers: headers,
             method: "POST",
             auth: .basic(username: user.username, password: user.password),
-            body: try AirshipJSONUtils.encode(object: body)
+            encodableBody: body
         )
 
         AirshipLogger.trace(
@@ -219,12 +220,12 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
         ]
 
         let body = CreateUserRequestBody(iOSChannels: [channelID])
-        let request = AirshipRequest(
+        let request = try AirshipRequest(
             url: URL(string: urlString),
             headers: headers,
             method: "POST",
             auth: .channelAuthToken(identifier: channelID),
-            body: try AirshipJSONUtils.encode(object: body)
+            encodableBody: body
         )
 
         AirshipLogger.trace(
@@ -236,8 +237,8 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
             response in
             guard response.isSuccess else { return nil }
 
-            let response: MessageCenterUser = try AirshipJSONUtils.decode(data: data)
-            return response
+            guard let data else { throw AirshipErrors.parseError("Missing response body") }
+            return try JSONDecoder().decode(MessageCenterUser.self, from: data)
         }
     }
 
@@ -262,13 +263,12 @@ struct MessageCenterAPIClient: MessageCenterAPIClientProtocol, Sendable {
             )
         )
 
-        let bodyData = try AirshipJSONUtils.encode(object: body)
-        let request = AirshipRequest(
+        let request = try AirshipRequest(
             url: URL(string: urlString),
             headers: headers,
             method: "POST",
             auth: .basic(username: user.username, password: user.password),
-            body: bodyData
+            encodableBody: body
         )
         AirshipLogger.trace(
             "Request to perform batch update user: \(urlString) body: \(body)"
@@ -305,7 +305,7 @@ private struct CreateUserRequestBody: Encodable {
 private struct MessageListResponse: Decodable {
     let messages: [Message]
 
-    struct Message: Codable {
+    struct Message: Decodable {
         let messageID: String
         let messageBodyURL: URL
         let messageReporting: AirshipJSON
@@ -318,6 +318,7 @@ private struct MessageListResponse: Decodable {
         let extra: AirshipJSON?
         let icons: AirshipJSON?
         let unread: Bool
+        let rawJSON: AirshipJSON
 
         private enum CodingKeys: String, CodingKey {
             case messageID = "message_id"
@@ -346,6 +347,7 @@ private struct MessageListResponse: Decodable {
             self.extra = try container.decodeIfPresent(AirshipJSON.self, forKey: .extra)
             self.icons = try container.decodeIfPresent(AirshipJSON.self, forKey: .icons)
             self.unread = try container.decode(Bool.self, forKey: .unread)
+            self.rawJSON = try AirshipJSON(from: decoder)
         }
     }
 }
@@ -353,22 +355,18 @@ private struct MessageListResponse: Decodable {
 extension MessageListResponse {
     fileprivate func convertMessages() throws -> [MessageCenterMessage] {
         return try self.messages.map { responseMessage in
-            let rawJSONData = try AirshipJSONUtils.encode(object: responseMessage)
-            let rawJSON = try JSONSerialization.jsonObject(with: rawJSONData)
             return MessageCenterMessage(
                 title: responseMessage.title,
                 id: responseMessage.messageID,
-                contentType: responseMessage.contentType ?? .html,
-                extra: responseMessage.extra?.unWrap() as? [String: String]
-                    ?? [:],
+                contentType: responseMessage.contentType ?? .unknown(nil),
+                extra: responseMessage.extra?.object?.compactMapValues { $0.string } ?? [:],
                 bodyURL: responseMessage.messageBodyURL,
                 expirationDate: try responseMessage.messageExpiration?.toDate(),
-                messageReporting: responseMessage.messageReporting.unWrap()
-                    as? [String: AnyHashable] ?? [:],
+                messageReporting: responseMessage.messageReporting,
                 unread: responseMessage.unread,
                 sentDate: try responseMessage.messageSent.toDate(),
                 messageURL: responseMessage.messageURL,
-                rawMessageObject: rawJSON as? [String: AnyHashable] ?? [:]
+                rawMessageObject: responseMessage.rawJSON
             )
         }
     }

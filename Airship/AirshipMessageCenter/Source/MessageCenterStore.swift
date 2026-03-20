@@ -429,13 +429,13 @@ actor MessageCenterStore {
                 data.messageID = message.id
                 data.title = message.title
                 data.contentType = message.contentType.stringValue
-                data.extra = AirshipJSONUtils.toData(message.extra)
+                data.extra = AirshipJSON.object(message.extra.mapValues { .string($0) }).toDataLoggingError()
                 data.messageBodyURL = message.bodyURL
                 data.messageURL = message.messageURL
                 data.unread = message.unread
                 data.messageSent = message.sentDate
-                data.rawMessageObject = AirshipJSONUtils.toData(message.rawMessageObject.unWrap() as? [String: Any])
-                data.messageReporting = AirshipJSONUtils.toData (message.messageReporting?.unWrap()as? [String: Any])
+                data.rawMessageObject = message.rawMessageObject.toDataLoggingError()
+                data.messageReporting = message.messageReporting?.toDataLoggingError()
                 data.messageExpiration = message.expirationDate
                 
                 if overwriteAssociatedData {
@@ -463,36 +463,37 @@ actor MessageCenterStore {
 
 extension InboxMessageData {
     fileprivate func message() -> MessageCenterMessage? {
-        guard let title = self.title,
+        guard
+            let title = self.title,
             let messageID = self.messageID,
             let messageBodyURL = self.messageBodyURL,
             let messageReporting = self.messageReporting,
             let messageURL = self.messageURL,
             let messageSent = self.messageSent,
-            let rawMessageObject = self.rawMessageObject
+            let rawMessageObject = self.rawMessageObject,
+            let rawJSON = AirshipJSON.fromDataLoggingError(data:rawMessageObject)
         else {
             AirshipLogger.error("Invalid message data")
             return nil
         }
         
-        let contentType: MessageCenterMessage.ContentType = if let value = contentType {
-            (try? AirshipJSON.string(value).decode()) ?? .html
-        } else {
-            .html
-        }
+        let contentTypeString = contentType ?? rawJSON.object?["content_type"]?.string
+        let contentType: MessageCenterMessage.ContentType = contentTypeString.map {
+            MessageCenterMessage.ContentType.parse($0)
+        } ?? .unknown(nil)
 
         return MessageCenterMessage(
             title: title,
             id: messageID,
             contentType: contentType,
-            extra: AirshipJSONUtils.json(self.extra) as? [String : String] ?? [:],
+            extra: AirshipJSON.fromDataLoggingError(data:self.extra)?.unWrap() as? [String: String] ?? [:],
             bodyURL: messageBodyURL,
             expirationDate: self.messageExpiration,
-            messageReporting: AirshipJSONUtils.json(messageReporting) as? [String : Any] ?? [:],
+            messageReporting: AirshipJSON.fromDataLoggingError(data:messageReporting),
             unread: (self.unread && self.unreadClient),
             sentDate: messageSent,
             messageURL: messageURL,
-            rawMessageObject: AirshipJSONUtils.json(rawMessageObject) as? [String : Any] ?? [:],
+            rawMessageObject: rawJSON,
             associatedData: self.associatedData
         )
     }

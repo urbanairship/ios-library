@@ -18,8 +18,7 @@ struct DefaultMessageViewAnalyticsTests {
     func recordEventDefaults() async throws {
         
         let messageID = "test-message-id"
-        let reportingContext = ["test": AirshipJSON.string("reporting")]
-        let message = createStubMessage(id: messageID, reporting: reportingContext)
+        let message = createStubMessage(id: messageID, reporting: ["test": "reporting"])
         
         let analytics = makeAnalytics(message: message)
         
@@ -39,8 +38,7 @@ struct DefaultMessageViewAnalyticsTests {
             Issue.record("Message ID should be of type .airship")
         }
         
-        let expectedReporting = try! AirshipJSON.wrap(reportingContext)
-        #expect(capturedData.context!.reportingContext == expectedReporting)
+        #expect(capturedData.context!.reportingContext == ["test": "reporting"])
     }
     
     @Test("Record events with no saved history")
@@ -251,15 +249,12 @@ struct DefaultMessageViewAnalyticsTests {
     // MARK: - Helpers
     private func createStubMessage(
         id: String,
-        reporting: [String: Any]? = nil,
+        reporting: AirshipJSON? = nil,
         productID: String? = nil,
         contentType: MessageCenterMessage.ContentType = .html
     ) -> MessageCenterMessage {
-        var rawMessageObject: [String: Any] = [:]
-        if let productID {
-            rawMessageObject["product_id"] = productID
-        }
-        
+        let rawJSON: AirshipJSON = productID.map { id in ["product_id": .string(id)] } ?? .null
+
         return MessageCenterMessage(
             title: "Test Title",
             id: id,
@@ -271,7 +266,7 @@ struct DefaultMessageViewAnalyticsTests {
             unread: true,
             sentDate: Date(),
             messageURL: .init(string: "https://test.url")!,
-            rawMessageObject: rawMessageObject
+            rawMessageObject: rawJSON
         )
     }
     

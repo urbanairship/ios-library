@@ -164,19 +164,19 @@ private struct MessageCenterMessageContentView: View {
     private var opacity = 0.0
     
     @State
-    private var contentType: MessageCenterMessage.ContentType? = nil
+    private var contentType: MessageCenterMessage.ContentType = .unknown(nil)
 
     @ObservedObject
     var viewModel: MessageCenterMessageViewModel
     let dismissAction: (@MainActor @Sendable () -> Void)?
-    
+
     init(
         viewModel: MessageCenterMessageViewModel,
         dismissAction: (@MainActor @Sendable () -> Void)?
     ) {
         self.viewModel = viewModel
         self.dismissAction = dismissAction
-        self.contentType = viewModel.message?.contentType
+        self.contentType = viewModel.message?.contentType ?? .unknown(nil)
     }
 
     @MainActor
@@ -279,11 +279,10 @@ private struct MessageCenterMessageContentView: View {
     @ViewBuilder
     private func messageContent() -> some View {
         switch self.contentType {
-        case .html, .plain:
+        case .html, .plain, .unknown:
             webBasedMessageView()
         case .native:
             thomasMessageView()
-        case nil: EmptyView()
         }
     }
     

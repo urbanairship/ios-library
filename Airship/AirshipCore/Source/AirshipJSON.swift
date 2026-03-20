@@ -265,6 +265,41 @@ public extension AirshipJSON {
     }
 }
 
+extension AirshipJSON {
+    /// Decodes an ``AirshipJSON`` value from raw JSON data, logging any decode error and returning `nil` on failure.
+    ///
+    /// Unlike ``from(data:decoder:)``, this method never throws. Decode errors are logged via `AirshipLogger`
+    /// and `nil` is returned instead. Passing `nil` data returns ``AirshipJSON/null``.
+    ///
+    /// - Parameters:
+    ///   - data: The raw JSON data to decode. Passing `nil` returns ``AirshipJSON/null``.
+    ///   - decoder: The decoder to use. Defaults to ``defaultDecoder``.
+    /// - Returns: The decoded value, or `nil` if decoding failed.
+    public static func fromDataLoggingError(data: Data?, decoder: JSONDecoder = AirshipJSON.defaultDecoder) -> AirshipJSON? {
+        do {
+            return try AirshipJSON.from(data: data, decoder: decoder)
+        } catch {
+            AirshipLogger.error("Failed to decode AirshipJSON: \(error)")
+            return nil
+        }
+    }
+
+    /// Encodes the value to JSON data, logging any encode error and returning `nil` on failure.
+    ///
+    /// Unlike ``toData(encoder:)``, this method never throws. Encode errors are logged via `AirshipLogger`
+    /// and `nil` is returned instead.
+    ///
+    /// - Returns: The encoded data, or `nil` if encoding failed.
+    public func toDataLoggingError(encoder: JSONEncoder = AirshipJSON.defaultEncoder) -> Data? {
+        do {
+            return try self.toData(encoder: encoder)
+        } catch {
+            AirshipLogger.error("Failed to encode AirshipJSON: \(error)")
+            return nil
+        }
+    }
+
+}
 
 public struct AirshipJSONObjectBuilder {
     var data: [String: AirshipJSON] = [:]

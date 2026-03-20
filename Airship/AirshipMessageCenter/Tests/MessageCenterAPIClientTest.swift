@@ -381,7 +381,7 @@ final class MessageCenterAPIClientTest: XCTestCase {
         )
     }
 
-    func testRetrieveMessageListInvalidContentTypeDefaultsToHTML() async throws {
+    func testRetrieveMessageListInvalidContentTypeBecomesUnknown() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
             statusCode: 200,
@@ -421,10 +421,10 @@ final class MessageCenterAPIClientTest: XCTestCase {
 
         let messages = response.result!
         XCTAssertEqual(messages.count, 1)
-        XCTAssertEqual(messages[0].contentType, .html)
+        XCTAssertEqual(messages[0].contentType, .unknown("application/x-unknown"))
     }
 
-    func testRetrieveMessageListMissingContentTypeDefaultsToHTML() async throws {
+    func testRetrieveMessageListMissingContentTypeBecomesUnknown() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
             statusCode: 200,
@@ -463,7 +463,7 @@ final class MessageCenterAPIClientTest: XCTestCase {
 
         let messages = response.result!
         XCTAssertEqual(messages.count, 1)
-        XCTAssertEqual(messages[0].contentType, .html)
+        XCTAssertEqual(messages[0].contentType, .unknown(nil))
     }
 
     /// Tests creating user with status code failure
