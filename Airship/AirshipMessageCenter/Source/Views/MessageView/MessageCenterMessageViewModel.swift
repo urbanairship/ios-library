@@ -23,7 +23,7 @@ public final class MessageCenterMessageViewModel: ObservableObject {
         self.messageID = messageID
     }
 
-    private var fetchMessageTask: Task<MessageCenterMessage?, Never>? = nil
+    private var fetchMessageTask: Task<MessageCenterMessage, any Error>? = nil
     
     private var nativeAnalytics: ThomasDisplayListener? = nil
     let thomasDismissHandle: ThomasDismissHandle = .init()
@@ -72,30 +72,49 @@ public final class MessageCenterMessageViewModel: ObservableObject {
     /// - Returns: The message.
     @MainActor
     public func fetchMessage() async -> MessageCenterMessage? {
-        _ = await fetchMessageTask?.value
+        return try? await fetchMessageThrowing()
+    }
+    
+    /// Fetches the message.
+    ///  - Throws: An error of type `MessageCenterMessageError`
+    /// - Returns: The message.
+    @MainActor
+    public func fetchMessageThrowing() async throws -> MessageCenterMessage {
+        _ = try await fetchMessageTask?.value
 
         if let message = message {
             return message
         }
 
-        self.fetchMessageTask = Task<MessageCenterMessage?, Never> {
+        let task = Task {
             var message = await Airship.messageCenter.inbox.message(
                 forID: messageID
             )
-
-            if message == nil {
-                await Airship.messageCenter.inbox.refreshMessages()
-                message = await Airship.messageCenter.inbox.message(
-                    forID: messageID
-                )
+            
+            do {
+                if message == nil {
+                    try await Airship.messageCenter.inbox.refreshMessagesThrowing()
+                    message = await Airship.messageCenter.inbox.message(
+                        forID: messageID
+                    )
+                }
+            } catch {
+                throw MessageCenterMessageError.failedToFetchMessage
             }
-
-            return message
+            
+            if let message {
+                return message
+            } else {
+                throw MessageCenterMessageError.messageGone
+            }
         }
+        
+        self.fetchMessageTask = task
 
-        self.message = await self.fetchMessageTask?.value
-
-        return self.message
+        let result = try await task.value
+        self.message = result
+        
+        return result
     }
 
     /// Marks the message as read.

@@ -428,7 +428,7 @@ actor MessageCenterStore {
 
                 data.messageID = message.id
                 data.title = message.title
-                data.contentType = message.contentType.jsonValue
+                data.contentType = message.contentType.stringValue
                 data.extra = AirshipJSONUtils.toData(message.extra)
                 data.messageBodyURL = message.bodyURL
                 data.messageURL = message.messageURL
@@ -475,18 +475,16 @@ extension InboxMessageData {
             return nil
         }
         
-        let contentType = if let value = contentType {
-            MessageCenterMessage.ContentType.fromJson(value: value)
+        let contentType: MessageCenterMessage.ContentType = if let value = contentType {
+            (try? AirshipJSON.string(value).decode()) ?? .html
         } else {
-            MessageCenterMessage.ContentType.html
+            .html
         }
-        
-        if contentType == nil { return nil }
-        
+
         return MessageCenterMessage(
             title: title,
             id: messageID,
-            contentType: contentType ?? .html,
+            contentType: contentType,
             extra: AirshipJSONUtils.json(self.extra) as? [String : String] ?? [:],
             bodyURL: messageBodyURL,
             expirationDate: self.messageExpiration,

@@ -227,15 +227,6 @@ private struct MessageCenterMessageContentView: View {
                 backgroundColor.ignoresSafeArea()
             }
             
-            if self.contentType == nil {
-                ProgressView().onAppear {
-                    Task {
-                        let message = await viewModel.fetchMessage()
-                        self.contentType = message?.contentType
-                    }
-                }
-            }
-            
             messageContent()
                 .opacity(self.opacity)
                 .onReceive(Just(messageLoadingPhase)) { _ in
@@ -251,7 +242,14 @@ private struct MessageCenterMessageContentView: View {
                 .animation(.easeInOut(duration: 0.5), value: self.opacity)
             
             if case .loading = self.messageLoadingPhase {
-                ProgressView()
+                ProgressView().task {
+                    do {
+                        let message = try await viewModel.fetchMessageThrowing()
+                        self.contentType = message.contentType
+                    } catch {
+                        self.messageLoadingPhase = .error(error)
+                    }
+                }
             } else if case .error(let error) = self.messageLoadingPhase {
                 if let error = error as? MessageCenterMessageError,
                    error == .messageGone
