@@ -133,7 +133,12 @@ public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable 
     }
     
     public static func == (lhs: MessageCenterMessage, rhs: MessageCenterMessage) -> Bool {
-        return lhs.rawMessageObject == rhs.rawMessageObject
+        return lhs.rawMessageObject == rhs.rawMessageObject && lhs.unread == rhs.unread
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(rawMessageObject)
+        hasher.combine(unread)
     }
     
     struct AssociatedData: Codable, Sendable, Equatable, Hashable {

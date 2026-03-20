@@ -39,6 +39,45 @@ final class MessageCenterMessageTest: XCTestCase {
         XCTAssertEqual(dictionary.count, 1, "dictionary should only contain one entry since m1 and m2 are equal.")
     }
     
+    func testEqualityConsidersUnreadState() {
+        let date = Date()
+        let unread = MessageCenterMessage(
+            title: "title",
+            id: "identifier",
+            contentType: .html,
+            extra: [:],
+            bodyURL: URL(string: "www.myspace.com")!,
+            expirationDate: date,
+            messageReporting: nil,
+            unread: true,
+            sentDate: date,
+            messageURL: URL(string: "www.myspace.com")!,
+            rawMessageObject: ["raw": "message object"]
+        )
+
+        let read = MessageCenterMessage(
+            title: "title",
+            id: "identifier",
+            contentType: .html,
+            extra: [:],
+            bodyURL: URL(string: "www.myspace.com")!,
+            expirationDate: date,
+            messageReporting: nil,
+            unread: false,
+            sentDate: date,
+            messageURL: URL(string: "www.myspace.com")!,
+            rawMessageObject: ["raw": "message object"]
+        )
+
+        XCTAssertNotEqual(unread, read)
+        XCTAssertNotEqual(unread.hashValue, read.hashValue)
+
+        var readCopy = unread
+        readCopy.unread = false
+        XCTAssertEqual(read, readCopy)
+        XCTAssertEqual(read.hashValue, readCopy.hashValue)
+    }
+
     func testContentTypeDecoding() throws {
         let validCases: [String: MessageCenterMessage.ContentType] = [
             "text/html": .html,
