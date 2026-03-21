@@ -172,7 +172,7 @@ class ModalDisplayable: AirshipDisplayTarget.Displayable {
         // Create a new window for the modal
         let window = AirshipWindowFactory.shared.makeWindow()
         
-        window.styleMask = [.borderless]
+        window.styleMask = [.titled]
         window.isOpaque = false
         window.backgroundColor = .clear
         window.hasShadow = false
@@ -180,6 +180,9 @@ class ModalDisplayable: AirshipDisplayTarget.Displayable {
         window.level = .modalPanel
         window.ignoresMouseEvents = false  // Capture all mouse events
         window.acceptsMouseMovedEvents = true
+        window.titleVisibility = .hidden           // Hides the title text
+        window.titlebarAppearsTransparent = true   // Transparent title bar
+        window.styleMask.insert(.fullSizeContentView) 
 
         self.window = window
         
@@ -258,8 +261,7 @@ class BannerDisplayable: AirshipDisplayTarget.Displayable {
 
     private let holder: AirshipStrongValueHolder<NSViewController> = AirshipStrongValueHolder()
 
-    // NEW: We must hold a reference to the observer, or resizing stops working immediately.
-    private var parentObservation: NSKeyValueObservation?
+    private var observers: [(any NSObjectProtocol)] = []
 
     func display(viewControllerProvider: @MainActor (AirshipDisplayTarget.WindowInfo) -> NSViewController) throws {
         // 1. Dismiss any existing banner/window first to prevent stacking
@@ -273,18 +275,28 @@ class BannerDisplayable: AirshipDisplayTarget.Displayable {
         // 3. Create the Satellite Window via factory so app customizations apply
         let overlayWindow = AirshipWindowFactory.shared.makeWindow()
         overlayWindow.setFrame(hostWindow.contentLayoutRect, display: false)
-        overlayWindow.styleMask = [.borderless]
+        overlayWindow.styleMask = [.titled]
         overlayWindow.backgroundColor = .clear
         overlayWindow.isOpaque = false
         overlayWindow.hasShadow = false
+        overlayWindow.isReleasedWhenClosed = false // AppKit holds a strong reference to the window, so it will manage its lifecycle
+        overlayWindow.acceptsMouseMovedEvents = true
+        
+        overlayWindow.titleVisibility = .hidden           // Hides the title text
+        overlayWindow.titlebarAppearsTransparent = true   // Transparent title bar
+        overlayWindow.styleMask.insert(.fullSizeContentView)
 
         // 5. Load the View Controller
         let viewController = viewControllerProvider(hostWindow.airshipInfo)
+        let wrapperViewController = FillWindowViewController(content: viewController)
 
         // 6. Set Root (Standard AppKit)
         // We set it as the contentViewController of our *new* window.
         // This handles lifecycle methods (viewWillAppear) automatically.
-        overlayWindow.contentViewController = viewController
+        overlayWindow.contentViewController = wrapperViewController
+        
+        self.updateChildWindowFrame(window: overlayWindow, parent: hostWindow)
+        
 
         // 7. Attach to Host Window
         // This ensures the banner moves, minimizes, and closes with the main app window.
@@ -292,12 +304,28 @@ class BannerDisplayable: AirshipDisplayTarget.Displayable {
 
         // 8. Setup Auto-Resizing
         // Child windows do not stick to parent size automatically. We must observe.
-        parentObservation = hostWindow.observe(\.contentLayoutRect, options: [.new, .initial]) { [weak overlayWindow] window, _ in
+        observers.append(NotificationCenter.default.addObserver(
+            forName: NSWindow.didResizeNotification,
+            object: hostWindow,
+            queue: .main
+        ) { [weak self] _ in
             MainActor.assumeIsolated {
-                overlayWindow?.setFrame(window.contentLayoutRect, display: true)
+                guard let self else { return }
+                self.updateChildWindowFrame(window: overlayWindow, parent: hostWindow)
             }
-        }
+        })
 
+        observers.append(NotificationCenter.default.addObserver(
+            forName: NSWindow.didMoveNotification,
+            object: hostWindow,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                self.updateChildWindowFrame(window: overlayWindow, parent: hostWindow)
+            }
+        })
+        
         // 9. Store Reference
         holder.value = viewController
     }
@@ -313,11 +341,54 @@ class BannerDisplayable: AirshipDisplayTarget.Displayable {
         }
 
         // 3. Cleanup references
-        parentObservation = nil
+        cleanupObservers()
         holder.value = nil
+    }
+
+    private func cleanupObservers() {
+        observers.forEach(NotificationCenter.default.removeObserver)
+        observers.removeAll()
+    }
+    
+    private func updateChildWindowFrame(window: NSWindow, parent: NSWindow) {
+        // When using addChildWindow, set the frame to match the parent's frame in screen coordinates
+        // The child window will automatically move with the parent
+        let parentFrame = parent.frame
+        window.setFrame(parentFrame, display: false)
     }
 }
 
+class FillWindowViewController: NSViewController {
+    private let contentViewController: NSViewController
+    
+    init(content: NSViewController) {
+        self.contentViewController = content
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func loadView() {
+        let containerView = NSView()
+        containerView.autoresizingMask = [.width, .height]
+        self.view = containerView
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        contentViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        addChild(contentViewController)
+        view.addSubview(contentViewController.view)
+        
+        NSLayoutConstraint.activate([
+            contentViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10)
+        ])
+    }
+}
 
 extension NSWindow {
     /// Returns window information suitable for use with `AirshipDisplayTarget`.

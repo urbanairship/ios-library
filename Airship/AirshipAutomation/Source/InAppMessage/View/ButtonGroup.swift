@@ -161,11 +161,16 @@ struct ButtonView: View {
                            edge: roundedEdge,
                            borderColor: buttonInfo.borderColor?.color ?? .clear,
                            borderWidth: 2)
+                #if os(macOS)
+                .fixedSize()
+                #endif
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-#if os(tvOS)
+        #if os(tvOS)
         .buttonStyle(.card)
-#endif
+        #elseif os(macOS)
+        .buttonStyle(.plain)
+        #endif
     }
 
     private func onTap() {

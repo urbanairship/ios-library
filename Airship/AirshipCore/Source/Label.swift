@@ -380,12 +380,17 @@ extension Label {
                 var slice = attributed[seg.range]
                 let piece: Text
 
-                if seg.isSuperscript {
-                    slice.baselineOffset = fontSize * Self.superscriptBaselineScale
-                    slice.font = .system(size: fontSize * Self.scriptFontScale)
-                } else if seg.isSubscript {
-                    slice.baselineOffset = -(fontSize * Self.subscriptBaselineScale)
-                    slice.font = .system(size: fontSize * Self.scriptFontScale)
+                if seg.isSuperscript || seg.isSubscript {
+                    slice.baselineOffset = seg.isSuperscript
+                        ? fontSize * Self.superscriptBaselineScale
+                        : -(fontSize * Self.subscriptBaselineScale)
+                    slice.font = AirshipFont.resolveFont(
+                        size: resolvedTextAppearance.fontSize * Self.scriptFontScale,
+                        families: resolvedTextAppearance.fontFamilies,
+                        weight: resolvedTextAppearance.fontWeight,
+                        isItalic: resolvedTextAppearance.hasStyle(.italic),
+                        isBold: resolvedTextAppearance.hasStyle(.bold)
+                    )
                 }
 
                 if seg.isHighlight {
