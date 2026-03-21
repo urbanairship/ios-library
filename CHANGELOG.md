@@ -4,6 +4,16 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.6.0 - March 20, 2026
+Minor release that adds Objective-C wrappers for the Message Center native bridge to support .NET bindings, adds subscript and superscript text support in Scenes, and improves Message Center reliability.
+
+### Changes
+- Added `UAMessageCenterNativeBridge` and `UAMessageCenterNativeBridgeDelegate` to support .NET MAUI bindings for Message Center web view deep link handling.
+- Added subscript and superscript text support in Scenes.
+- Fixed Message Center mark-as-read not updating the list UI.
+- Improved Message Center content type handling.
+- Improved Message Center behavior when a message is unavailable or deleted.
+
 ## Version 20.5.0 - March XX, 2026
 Minor release that improves video playback and improves pager navigation reliability in Scenes.
 
