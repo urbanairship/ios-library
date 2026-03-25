@@ -150,6 +150,9 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
                     )
                     new.append(existing)
                 } else {
+                    AirshipLogger.debug(
+                        "New execution trigger for schedule \(schedule.identifier) id \(trigger.id) type \(trigger.type) — no existing match, count starts from store or zero"
+                    )
                     let prepared = await makePreparedTrigger(
                         schedule: data.schedule,
                         trigger: trigger,
@@ -174,6 +177,9 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
                     )
                     new.append(existing)
                 } else {
+                    AirshipLogger.debug(
+                        "New cancellation trigger for schedule \(schedule.identifier) id \(trigger.id) type \(trigger.type) — no existing match, count starts from store or zero"
+                    )
                     let prepared = await makePreparedTrigger(
                         schedule: data.schedule,
                         trigger: trigger,
@@ -192,9 +198,12 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
             do {
                 let stale = oldIDs.subtracting(newIDs)
                 if !stale.isEmpty {
+                    AirshipLogger.debug(
+                        "Deleting \(stale.count) stale trigger(s) for schedule \(schedule.identifier): \(stale.map { String($0.prefix(8)) })"
+                    )
                     try await self.store.deleteTriggers(scheduleID: schedule.identifier, triggerIDs: stale)
                 }
-                
+
             } catch {
                 AirshipLogger.error("Failed to delete trigger states error \(error)")
             }
@@ -241,6 +250,7 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
     }
     
     func updateScheduleState(scheduleID: String, state: AutomationScheduleState) async {
+        AirshipLogger.trace("Schedule state update: \(scheduleID) -> \(state)")
         switch state {
         case .idle:
             await self.updateActiveTriggerType(for: scheduleID, type: .execution)
@@ -303,6 +313,16 @@ final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
             triggerData = try await self.store.getTrigger(scheduleID: schedule.identifier, triggerID: trigger.id)
         } catch {
             AirshipLogger.error("Failed to load trigger state for \(trigger) error \(error)")
+        }
+
+        if let loaded = triggerData {
+            AirshipLogger.debug(
+                "Restored trigger data for schedule \(schedule.identifier) trigger \(trigger.id) type \(trigger.type) count \(loaded.count)/\(trigger.goal)"
+            )
+        } else {
+            AirshipLogger.debug(
+                "No stored data for schedule \(schedule.identifier) trigger \(trigger.id) type \(trigger.type) — starting at count 0"
+            )
         }
 
         return PreparedTrigger(

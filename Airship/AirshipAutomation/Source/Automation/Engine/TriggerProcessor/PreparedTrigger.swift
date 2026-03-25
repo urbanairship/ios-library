@@ -50,9 +50,15 @@ final class PreparedTrigger {
         self.priority = priority
         self.trigger.removeStaleChildData(data: &self.triggerData)
     }
-    
+
     func process(event: AutomationEvent) -> EventProcessResult? {
-        guard self.isActive, self.isWithingDateRange() else {
+        guard self.isActive else {
+            AirshipLogger.trace("Trigger skipped (inactive): schedule \(scheduleID) trigger \(trigger.id) type \(trigger.type) executionType \(executionType)")
+            return nil
+        }
+
+        guard self.isWithingDateRange() else {
+            AirshipLogger.trace("Trigger skipped (out of date range): schedule \(scheduleID) trigger \(trigger.id) type \(trigger.type)")
             return nil
         }
 
@@ -65,13 +71,19 @@ final class PreparedTrigger {
 
         self.triggerData = currentData
 
+        if match?.isTriggered == true {
+            AirshipLogger.debug("Trigger fired: schedule \(scheduleID) trigger \(trigger.id) type \(trigger.type)")
+        } else {
+            AirshipLogger.trace("Trigger updated: schedule \(scheduleID) trigger \(trigger.id) type \(trigger.type) count \(currentData.count)/\(trigger.goal)")
+        }
+
         return EventProcessResult(
             triggerData: triggerData,
             triggerResult: match?.isTriggered == true ? generateTriggerResult(eventData: event.eventData ?? .null) : nil,
             priority: self.priority
         )
     }
-    
+
     func update(
         trigger: AutomationTrigger,
         startDate: Date?,
@@ -84,21 +96,29 @@ final class PreparedTrigger {
         self.priority = priority
         self.trigger.removeStaleChildData(data: &triggerData)
     }
-    
+
     func activate() {
         guard !self.isActive else { return }
-        
+
+        AirshipLogger.debug(
+            "Trigger activated: schedule \(scheduleID) trigger \(trigger.id) type \(trigger.type) executionType \(executionType) count \(triggerData.count)/\(trigger.goal)"
+        )
+
         self.isActive = true
 
         if self.executionType == .delayCancellation {
             self.triggerData.resetCount()
         }
     }
-    
+
     func disable() {
+        guard self.isActive else { return }
+        AirshipLogger.debug(
+            "Trigger disabled: schedule \(scheduleID) trigger \(trigger.id) type \(trigger.type) executionType \(executionType)"
+        )
         self.isActive = false
     }
-    
+
     private func generateTriggerResult(eventData: AirshipJSON) -> TriggerResult {
         return TriggerResult(
             scheduleID: self.scheduleID,
@@ -142,11 +162,14 @@ extension EventAutomationTrigger {
         case .stateChanged(let state):
             return stateTriggerMatch(state: state, data: &data)
         case .event(let type, let eventData, let value):
-            guard
-                self.type == type,
-                isPredicateMatching(value: eventData)
-            else { return nil }
-            
+            guard self.type == type else {
+                return nil
+            }
+            guard isPredicateMatching(value: eventData) else {
+                AirshipLogger.trace("Event trigger predicate no-match: trigger \(self.id) type \(self.type)")
+                return nil
+            }
+
             return evaluateResults(data: &data, increment: value)
         }
     }
@@ -202,18 +225,18 @@ extension EventAutomationTrigger {
 
 extension CompoundAutomationTrigger {
     fileprivate func matchEvent(_ event: AutomationEvent, data: inout TriggerData) -> MatchResult? {
-        
+
         let triggeredChildren = triggeredChildrenCount(data: data)
-        
+
         var childResults = self.matchChildren(event: event, data: &data)
-        
+
         // Resend state event if children is triggered for chain triggers
         if
             self.type == .chain,
             let state = data.lastTriggerableState,
             !event.isStateEvent,
             triggeredChildren != triggeredChildrenCount(data: data)  {
-            
+
             childResults = self.matchChildren(event: .stateChanged(state: state), data: &data)
         } else if case .stateChanged(let state) = event {
             // Remember state on compound trigger level in order to be able to re-send it
@@ -259,7 +282,11 @@ extension CompoundAutomationTrigger {
             }
         }
 
-        return MatchResult(triggerID: self.id, isTriggered: data.count >= self.goal)
+        let result = MatchResult(triggerID: self.id, isTriggered: data.count >= self.goal)
+        AirshipLogger.trace(
+            "Compound trigger[\(self.type)] id \(self.id) count \(data.count)/\(self.goal) triggered \(result.isTriggered) childResults \(childResults.map { "\($0.triggerID.prefix(8)):\($0.isTriggered)" })"
+        )
+        return result
     }
 
     private func matchChildren(
@@ -267,7 +294,7 @@ extension CompoundAutomationTrigger {
         data: inout TriggerData
     ) -> [MatchResult] {
         var evaluateRemaining = true
-        return children.map { child in
+        return children.enumerated().map { index, child in
             var childData = data.childData(triggerID: child.trigger.id)
 
             var matchResult: MatchResult?
@@ -282,7 +309,12 @@ extension CompoundAutomationTrigger {
                 isTriggered: child.trigger.isTriggered(data: childData)
             )
 
+            AirshipLogger.trace(
+                "Compound child[\(index)] id \(child.trigger.id) type \(child.trigger.type) count \(childData.count)/\(child.trigger.goal) triggered \(result.isTriggered) evaluated \(evaluateRemaining)"
+            )
+
             if self.type == .chain, evaluateRemaining, !result.isTriggered {
+                AirshipLogger.debug("Chain stopped at child[\(index)] id \(child.trigger.id) type \(child.trigger.type) count \(childData.count)/\(child.trigger.goal)")
                 evaluateRemaining = false
             }
 
@@ -304,7 +336,7 @@ extension CompoundAutomationTrigger {
 
         data.children = updatedData
     }
-    
+
     private func triggeredChildrenCount(data: TriggerData) -> Int {
         return children
             .filter { child in
