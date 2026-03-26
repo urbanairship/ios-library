@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.6.1 - March 26, 2026
+Patch release that improves diagnostic logging for In-App Automation trigger processing.
+
+### Changes
+- Improved trigger processor logging to aid diagnosis of chain trigger drop-off and unexpected count resets.
+
 ## Version 20.6.0 - March 20, 2026
 Minor release that adds Objective-C wrappers for the Message Center native bridge to support .NET bindings, adds subscript and superscript text support in Scenes, and improves Message Center reliability.
 
