@@ -1,0 +1,444 @@
+---
+# MOBILE-5553: Verify per-corner radii on rectangle shapes
+# Shapes render inside stack_image_button items.
+# Left column = uniform radius | Right column = per-corner equivalent
+# With the fix both columns should look identical (or correctly asymmetric in rows 2/4).
+# Without the fix the right column would render as plain rectangles.
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  default_placement:
+    size:
+      width: 95%
+      height: 90%
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.6
+view:
+  type: scroll_layout
+  direction: vertical
+  view:
+    type: container
+    background_color:
+      default:
+        hex: "#ffffff"
+        alpha: 1
+    border:
+      radius: 12
+    items:
+    - position:
+        horizontal: center
+        vertical: top
+      size:
+        height: auto
+        width: 100%
+      view:
+        type: linear_layout
+        direction: vertical
+        items:
+
+        # Title
+        - margin:
+            top: 16
+            bottom: 4
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: label
+            text: "MOBILE-5553: Shape Corner Radii"
+            text_appearance:
+              alignment: center
+              font_size: 16
+              styles: [bold]
+              color:
+                default:
+                  hex: "#000000"
+                  alpha: 1
+
+        - margin:
+            top: 0
+            bottom: 16
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: label
+            text: "Left = uniform radius  |  Right = per-corner\nBoth columns should look identical per row"
+            text_appearance:
+              alignment: center
+              font_size: 11
+              color:
+                default:
+                  hex: "#666666"
+                  alpha: 1
+
+        # ── Row 1: fill-only, all corners equal ──────────────────────
+        - margin:
+            top: 0
+            bottom: 6
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: label
+            text: "1. Fill only — all corners = 24"
+            text_appearance:
+              alignment: start
+              font_size: 13
+              styles: [bold]
+              color:
+                default:
+                  hex: "#333333"
+                  alpha: 1
+
+        - margin:
+            top: 0
+            bottom: 20
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: 64
+          view:
+            type: linear_layout
+            direction: horizontal
+            items:
+            - size:
+                width: 50%
+                height: 100%
+              margin:
+                end: 6
+              view:
+                type: stack_image_button
+                identifier: row1_left
+                items:
+                  - type: shape
+                    shape:
+                      type: rectangle
+                      color:
+                        default:
+                          hex: "#4A90D9"
+                          alpha: 1
+                      border:
+                        radius: 24
+
+            - size:
+                width: 50%
+                height: 100%
+              margin:
+                start: 6
+              view:
+                type: stack_image_button
+                identifier: row1_right
+                items:
+                  - type: shape
+                    shape:
+                      type: rectangle
+                      color:
+                        default:
+                          hex: "#E8734A"
+                          alpha: 1
+                      border:
+                        corner_radius:
+                          top_left: 24
+                          top_right: 24
+                          bottom_left: 24
+                          bottom_right: 24
+
+        # ── Row 2: fill-only, top corners only ───────────────────────
+        - margin:
+            top: 0
+            bottom: 6
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: label
+            text: "2. Fill only — top corners only (TL=24 TR=24 BL=0 BR=0)"
+            text_appearance:
+              alignment: start
+              font_size: 13
+              styles: [bold]
+              color:
+                default:
+                  hex: "#333333"
+                  alpha: 1
+
+        - margin:
+            top: 0
+            bottom: 4
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: label
+            text: "Right: should be rounded top, square bottom"
+            text_appearance:
+              alignment: start
+              font_size: 11
+              color:
+                default:
+                  hex: "#888888"
+                  alpha: 1
+
+        - margin:
+            top: 0
+            bottom: 20
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: 64
+          view:
+            type: linear_layout
+            direction: horizontal
+            items:
+            - size:
+                width: 50%
+                height: 100%
+              margin:
+                end: 6
+              view:
+                type: label
+                text: "N/A\n(uniform can't\ndo this)"
+                text_appearance:
+                  alignment: center
+                  font_size: 11
+                  color:
+                    default:
+                      hex: "#999999"
+                      alpha: 1
+
+            - size:
+                width: 50%
+                height: 100%
+              margin:
+                start: 6
+              view:
+                type: stack_image_button
+                identifier: row2_right
+                items:
+                  - type: shape
+                    shape:
+                      type: rectangle
+                      color:
+                        default:
+                          hex: "#E8734A"
+                          alpha: 1
+                      border:
+                        corner_radius:
+                          top_left: 24
+                          top_right: 24
+                          bottom_left: 0
+                          bottom_right: 0
+
+        # ── Row 3: stroke + all corners ──────────────────────────────
+        - margin:
+            top: 0
+            bottom: 6
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: label
+            text: "3. Stroke (3dp) — all corners = 16"
+            text_appearance:
+              alignment: start
+              font_size: 13
+              styles: [bold]
+              color:
+                default:
+                  hex: "#333333"
+                  alpha: 1
+
+        - margin:
+            top: 0
+            bottom: 20
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: 64
+          view:
+            type: linear_layout
+            direction: horizontal
+            items:
+            - size:
+                width: 50%
+                height: 100%
+              margin:
+                end: 6
+              view:
+                type: stack_image_button
+                identifier: row3_left
+                items:
+                  - type: shape
+                    shape:
+                      type: rectangle
+                      border:
+                        radius: 16
+                        stroke_width: 3
+                        stroke_color:
+                          default:
+                            hex: "#4A90D9"
+                            alpha: 1
+
+            - size:
+                width: 50%
+                height: 100%
+              margin:
+                start: 6
+              view:
+                type: stack_image_button
+                identifier: row3_right
+                items:
+                  - type: shape
+                    shape:
+                      type: rectangle
+                      border:
+                        corner_radius:
+                          top_left: 16
+                          top_right: 16
+                          bottom_left: 16
+                          bottom_right: 16
+                        stroke_width: 3
+                        stroke_color:
+                          default:
+                            hex: "#E8734A"
+                            alpha: 1
+
+        # ── Row 4: stroke + diagonal corners (ticket use case) ───────
+        - margin:
+            top: 0
+            bottom: 6
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: label
+            text: "4. Stroke (3dp) — diagonal corners TL=24 BR=24"
+            text_appearance:
+              alignment: start
+              font_size: 13
+              styles: [bold]
+              color:
+                default:
+                  hex: "#333333"
+                  alpha: 1
+
+        - margin:
+            top: 0
+            bottom: 4
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: label
+            text: "Right: matches ticket use case (outside-edge rounded buttons)"
+            text_appearance:
+              alignment: start
+              font_size: 11
+              color:
+                default:
+                  hex: "#888888"
+                  alpha: 1
+
+        - margin:
+            top: 0
+            bottom: 24
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: 64
+          view:
+            type: linear_layout
+            direction: horizontal
+            items:
+            - size:
+                width: 50%
+                height: 100%
+              margin:
+                end: 6
+              view:
+                type: label
+                text: "N/A\n(uniform can't\ndo this)"
+                text_appearance:
+                  alignment: center
+                  font_size: 11
+                  color:
+                    default:
+                      hex: "#999999"
+                      alpha: 1
+
+            - size:
+                width: 50%
+                height: 100%
+              margin:
+                start: 6
+              view:
+                type: stack_image_button
+                identifier: row4_right
+                items:
+                  - type: shape
+                    shape:
+                      type: rectangle
+                      border:
+                        corner_radius:
+                          top_left: 24
+                          top_right: 0
+                          bottom_left: 0
+                          bottom_right: 24
+                        stroke_width: 3
+                        stroke_color:
+                          default:
+                            hex: "#E8734A"
+                            alpha: 1
+
+        # Dismiss
+        - margin:
+            top: 0
+            bottom: 20
+            start: 16
+            end: 16
+          size:
+            width: 100%
+            height: auto
+          view:
+            type: label_button
+            identifier: dismiss
+            background_color:
+              default:
+                hex: "#333333"
+                alpha: 1
+            border:
+              radius: 8
+            label:
+              type: label
+              text: "Dismiss"
+              text_appearance:
+                alignment: center
+                font_size: 14
+                color:
+                  default:
+                    hex: "#ffffff"
+                    alpha: 1

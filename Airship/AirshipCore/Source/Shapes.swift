@@ -36,15 +36,15 @@ struct Shapes {
     ) -> some View {
         let strokeColor = border?.strokeColor?.toColor(colorScheme) ?? Color.clear
         let strokeWidth = border?.strokeWidth ?? 0
-        let cornerRadius = border?.radius ?? 0
+        let cornerRadius = border?.maxRadius ?? 0
 
         if cornerRadius > 0 {
+            let cornerRadii = CustomCornerRadii(outerRadiiFor: border)
+            let shape = CustomRoundedRectangle(cornerRadii: cornerRadii, style: .continuous)
             if strokeWidth > 0 {
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .strokeBorder(strokeColor, lineWidth: strokeWidth)
+                shape.strokeBorder(strokeColor, lineWidth: strokeWidth)
             } else {
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(Color.clear)
+                shape.fill(Color.clear)
             }
         } else {
             if strokeWidth > 0 {
@@ -61,9 +61,10 @@ struct Shapes {
         border: ThomasBorder?,
         color: Color
     ) -> some View {
-        let cornerRadius = border?.radius ?? 0
+        let cornerRadius = border?.maxRadius ?? 0
         if cornerRadius > 0 {
-            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            let cornerRadii = CustomCornerRadii(outerRadiiFor: border)
+            CustomRoundedRectangle(cornerRadii: cornerRadii, style: .continuous)
                 .fill(color)
         } else {
             Rectangle()
