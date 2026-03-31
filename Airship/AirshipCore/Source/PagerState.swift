@@ -10,7 +10,7 @@ struct PageState: Sendable {
 
     // represent the automated action identifier and it's status (true if it's executed and false if not)
     var automatedActionStatus: [String: Bool] = [:]
-    
+
     init(
         identifier: String,
         delay: Double,
@@ -18,20 +18,20 @@ struct PageState: Sendable {
     ) {
         self.identifier = identifier
         self.delay = delay
-        
+
         if let automatedActions = automatedActions {
             automatedActions.forEach { automatedAction in
                 self.automatedActionStatus[automatedAction] = false
             }
         }
     }
-    
+
     mutating func markAutomatedActionExecuted(
         _ identifier: String
     ) {
         self.automatedActionStatus[identifier] = true
     }
-    
+
     mutating func resetExecutedActions() {
         automatedActionStatus.keys.forEach { key in
             automatedActionStatus[key] = false
@@ -62,39 +62,39 @@ class PagerState: ObservableObject {
         var toPage: ThomasPageInfo
     }
 
-    @Published private(set) var pageIndex: Int = 0
+    var pageIndex: Int {
+        pageItems.firstIndex(where: { $0.identifier == currentPageId }) ?? 0
+    }
 
     @Published private(set) var currentPageId: String? {
         didSet {
             guard
                 let page = currentPageId,
-                page != oldValue,
-                let index = pageItems.firstIndex(where: { $0.identifier == page })
+                page != oldValue
             else {
                 return
             }
 
             self.pageViewCounts[page] = (self.pageViewCounts[page] ?? 0) + 1
-            pageIndex = index
             updateInProgress(pageId: page)
             resetExecutedActions(for: oldValue)
             branchControl?.addToHistoryPage(id: page)
             updateCompleted()
-            updateScrollControl()
         }
     }
-    
+
     @Published private(set) var pageStates: [PageState] = []
     @Published private(set) var pageItems: [ThomasViewInfo.Pager.Item] = []
     @Published var progress: Double = 0.0
     @Published private(set) var completed: Bool = false
     @Published private(set) var isScrollingDisabled = false
+    @Published private(set) var isNavigationInProgress = false
 
     /// Used to pause/resume a story
     @Published var inProgress: Bool = true
-    
-    private var isManuallyPaused = false
-    private var clearPagingRequestTask: Task<Void, Never>?
+
+    private var isManuallyPaused: Bool = false
+    private var navigationCooldownTask: Task<Void, Never>?
     private var pageViewCounts: [String: Int] = [:]
 
     @Published
@@ -102,49 +102,60 @@ class PagerState: ObservableObject {
 
     private var mediaReadyState: [MediaKey: Bool] = [:]
 
-    var currentPageState: PageState {
-        get { pageStates[pageIndex] }
-        set { pageStates[pageIndex] = newValue }
+    var currentPageState: PageState? {
+        get { pageStates.isEmpty ? nil : pageStates[pageIndex] }
+        set {
+            guard let newValue, !pageStates.isEmpty else { return }
+            pageStates[pageIndex] = newValue
+        }
     }
-    
+
+    private static let navigationCooldownInterval: TimeInterval = 0.3
+
     let identifier: String
     private let branchControl: BranchControl?
     private var thomasStateSubscription: AnyCancellable? = nil
-    
-    //determin if the scrollview should be disabled based on `ThomasViewInfo.Pager.DisableSwipeSelector`
-    private var isScrollSelectorDisabled: Bool = false
-    
-    //used for reporting
+    private let taskSleeper: any AirshipTaskSleeper
+
+    // Used for reporting
     var reportingPageCount: Int {
         get { branchControl == nil ? pageItems.count : -1 }
     }
 
-    init(identifier: String, branching: ThomasPagerControllerBranching?) {
+    init(
+        identifier: String,
+        branching: ThomasPagerControllerBranching?,
+        taskSleeper: any AirshipTaskSleeper = DefaultAirshipTaskSleeper.shared
+    ) {
         self.identifier = identifier
-        
+        self.taskSleeper = taskSleeper
+
         if let branching {
             branchControl = BranchControl(completionChecker: branching)
         } else {
             branchControl = nil
         }
-        
+
         if let branchControl {
             branchControl.$pages
                 .map { pages in
                     pages.map { $0.toPageState() }
                 }
                 .assign(to: &$pageStates)
-            
+
             branchControl.$pages.assign(to: &$pageItems)
+
             branchControl.$isComplete.assign(to: &$completed)
         }
     }
-    
+
     func setPagesAndListenForUpdates(
         pages: [ThomasViewInfo.Pager.Item],
         thomasState: ThomasState,
         swipeDisableSelectors: [ThomasViewInfo.Pager.DisableSwipeSelector]?
     ) {
+        let pagesChanged = pages != self.pageItems
+
         if let branchControl {
             branchControl.configureAndAttachTo(
                 pages: pages,
@@ -154,7 +165,7 @@ class PagerState: ObservableObject {
             self.pageStates = pages.map({ $0.toPageState() })
             self.pageItems = pages
         }
-        
+
         thomasStateSubscription?.cancel()
         if let selectors = swipeDisableSelectors {
             thomasStateSubscription = thomasState.$state
@@ -164,7 +175,9 @@ class PagerState: ObservableObject {
                 }
         }
 
-        self.currentPageId = pageItems.first?.identifier
+        if self.currentPageId == nil || pagesChanged {
+            self.currentPageId = pageItems.first?.identifier
+        }
     }
 
     func pause() {
@@ -174,23 +187,36 @@ class PagerState: ObservableObject {
         }
     }
 
+    func togglePause() {
+        if self.isManuallyPaused {
+            resume()
+        } else {
+            pause()
+        }
+    }
+
+
     func resume() {
         self.isManuallyPaused = false
         if let currentPageId {
             updateInProgress(pageId: currentPageId)
         }
     }
-    
+
     var isFirstPage: Bool {
         return pageIndex == 0
     }
-    
+
     var isLastPage: Bool {
         return pageIndex == pageItems.count - 1
     }
-    
+
     var canGoBack: Bool {
-        return pageIndex > 0 && !isScrollingDisabled
+        return pageIndex > 0
+    }
+
+    var canGoForward: Bool {
+        return pageIndex < pageItems.count - 1
     }
 
     @discardableResult
@@ -213,7 +239,6 @@ class PagerState: ObservableObject {
         branchControl?.clearHistoryAfter(id: id)
         self.progress = 0.0
         self.currentPageId = id
-
         return NavigationResult(fromPage: fromPage, toPage: toPage)
     }
 
@@ -221,9 +246,9 @@ class PagerState: ObservableObject {
         return ThomasPageInfo(
             identifier: pageIdentifier,
             index: self.pageItems.firstIndex(where: { item in
-                item.identifier == identifier
+                item.identifier == pageIdentifier
             }) ?? -1,
-            viewCount: self.pageViewCounts[identifier] ?? 0
+            viewCount: self.pageViewCounts[pageIdentifier] ?? 0
         )
     }
 
@@ -246,31 +271,23 @@ class PagerState: ObservableObject {
         }
 
         branchControl?.onPageRequest(request)
-        if #available(iOS 16.0, *) {
-            fixTouchDuringNavigationIssue()
-        } else {
-            updateScrollControl()
-        }
-
         return result
     }
-    
+
     private func reEvaluateScrollability(
         state: AirshipJSON,
         selectors: [ThomasViewInfo.Pager.DisableSwipeSelector]
     ) {
         let selector = selectors.first(where: { $0.predicate?.evaluate(json: state) ?? true })
-        
+
         switch(selector?.direction) {
         case .horizontal:
-            isScrollSelectorDisabled = true
+            isScrollingDisabled = true
         case .none:
-            isScrollSelectorDisabled = false
+            isScrollingDisabled = false
         }
-         
-        self.updateScrollControl()
     }
-    
+
     private func resetExecutedActions(for pageId: String?) {
         guard
             let pageId,
@@ -278,32 +295,24 @@ class PagerState: ObservableObject {
         else {
             return
         }
-        
+
         pageStates[index].resetExecutedActions()
     }
-    
-    private func updateScrollControl() {
-        self.isScrollingDisabled = isScrollSelectorDisabled
-    }
-    
-    @available(iOS 16.0, *)
-    private func fixTouchDuringNavigationIssue() {
-        // This workarounds an issue that I found with scrollPosition(id:)
-        // where if you animate the scrollPosition and touch fast enough
-        // to interrupt the scroll behavior, the scrollPosition will
-        // think its on the other page, but in reality its not. To prevent
-        // this, we are disabling touch while we have a `self.pagerState.pageRequest`
-        // and enabling it after 250 ms. And yes, I tried using the completion handler
-        // on the animation but it was being called immediately no matter what I
-        // did, probably due to some config on the scroll view.
-        self.isScrollingDisabled = true
-        self.clearPagingRequestTask?.cancel()
-        self.clearPagingRequestTask = Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(250))
-            self.updateScrollControl()
+
+    func disableTouchDuringNavigation() {
+        // WORKAROUND: SwiftUI's scrollPosition(id:) has a race condition where rapid touch
+        // during scroll animation causes scrollPosition state to desync from actual position.
+        self.isNavigationInProgress = true
+        self.navigationCooldownTask?.cancel()
+        self.navigationCooldownTask = Task { @MainActor [weak self] in
+            guard let self = self else { return }
+            try? await taskSleeper.sleep(timeInterval: Self.navigationCooldownInterval)
+            guard !Task.isCancelled else { return }
+            self.navigationCooldownTask = nil
+            self.isNavigationInProgress = false
         }
     }
-    
+
     private func nextIndexNoBranching(request: PageRequest) -> Int {
         return switch request {
         case .next:
@@ -314,12 +323,12 @@ class PagerState: ObservableObject {
             0
         }
     }
-    
+
     private func updateCompleted() {
         if branchControl != nil || completed {
             return
         }
-        
+
         completed = pageIndex == (pageItems.count - 1)
     }
 
@@ -332,12 +341,12 @@ class PagerState: ObservableObject {
 
     func setMediaReady(pageId: String, id: UUID, isReady: Bool) {
         let key = MediaKey(pageId: pageId, id: id)
-        mediaReadyState[key] = true
+        mediaReadyState[key] = isReady
         updateInProgress(pageId: pageId)
     }
 
     func markAutomatedActionExecuted(_ identifier: String) {
-        self.currentPageState.markAutomatedActionExecuted(identifier)
+        self.currentPageState?.markAutomatedActionExecuted(identifier)
     }
 
     private func updateInProgress(pageId: String) {
@@ -360,16 +369,16 @@ class PagerState: ObservableObject {
 @MainActor
 private class BranchControl: Sendable {
     let completionChecker: ThomasPagerControllerBranching
-    
+
     private var allPages: [ThomasViewInfo.Pager.Item] = []
-    
+
     @Published private(set) var pages: [ThomasViewInfo.Pager.Item] = []
     @Published private(set) var isComplete: Bool = false
 
     private var thomasState: ThomasState?
     private var history: [ThomasViewInfo.Pager.Item] = []
     private var subscriptions: Set<AnyCancellable> = []
-    
+
     init(completionChecker: ThomasPagerControllerBranching) {
         self.completionChecker = completionChecker
     }
@@ -397,7 +406,7 @@ private class BranchControl: Sendable {
 
         updateState()
     }
-    
+
     func detach() {
         subscriptions.forEach({ $0.cancel() })
         subscriptions.removeAll()
@@ -407,25 +416,25 @@ private class BranchControl: Sendable {
         self.reEvaluatePath()
         self.evaluateCompletion()
     }
-    
-    
+
+
     func onPageRequest(_ request: PageRequest) {
         self.updateState()
-        
+
         switch request {
         case .next, .back: break
         case .first: history.removeAll()
         }
     }
-    
+
     func clearHistoryAfter(id: String) {
         guard let index = history.firstIndex(where: { $0.identifier == id }) else {
             return
         }
-        
+
         history.removeSubrange((index + 1)...)
     }
-    
+
     func addToHistoryPage(id: String) {
         guard
             let page = allPages.first(where: { $0.identifier == id }),
@@ -433,7 +442,7 @@ private class BranchControl: Sendable {
         else {
             return
         }
-        
+
         history.append(page)
     }
 
@@ -441,36 +450,36 @@ private class BranchControl: Sendable {
         if history.isEmpty, !allPages.isEmpty {
             history = [allPages[0]]
         }
-        
+
         var historyCopy = history
         guard let current = historyCopy.popLast() else {
             return
         }
-        
+
         pages = historyCopy + buildPathFrom(page: current, payload: payload)
     }
-    
+
     private func buildPathFrom(
         page: ThomasViewInfo.Pager.Item,
         payload: AirshipJSON
     ) -> [ThomasViewInfo.Pager.Item] {
-        
+
         guard var pageIndex = allPages.firstIndex(of: page) else {
             return []
         }
-        
+
         var result: [ThomasViewInfo.Pager.Item] = []
-        
+
         while(pageIndex >= 0 && pageIndex < allPages.count) {
             let current = allPages[pageIndex]
-            
+
             if result.contains(current) {
                 AirshipLogger.warn("Trying to add a duplicate \(current)")
                 break
             }
-            
+
             result.append(current)
-            
+
             guard
                 let branching = current.branching,
                 let nextPage = branching.nextPageId(json: payload),
@@ -478,16 +487,16 @@ private class BranchControl: Sendable {
             else {
                 break
             }
-            
+
             pageIndex = nextPageIndex
         }
-        
+
         return result
     }
-    
+
     private func evaluateCompletion() {
         guard !isComplete else { return }
-        
+
         var result = false
         for indicator in completionChecker.completions {
             if indicator.predicate?.evaluate(json: payload) != false {
@@ -495,14 +504,14 @@ private class BranchControl: Sendable {
                 break
             }
         }
-        
+
         if result, result != isComplete {
             performCompletionStateActions()
         }
-        
+
         self.isComplete = result
     }
-    
+
     private func performCompletionStateActions() {
         guard let thomasState else { return }
         let actions = completionChecker.completions
@@ -518,8 +527,7 @@ fileprivate extension ThomasPageBranching {
     func nextPageId(json: AirshipJSON) -> String? {
         return nextPage?
             .first(where: { selector in
-                let isMatched = selector.predicate?.evaluate(json: json) != false
-                return isMatched
+                selector.predicate?.evaluate(json: json) != false
             })?
             .pageId
     }

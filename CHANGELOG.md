@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.11.7 - March 30, 2026
+Patch release that improves pager navigation reliability in Scenes.
+
+### Changes
+- Improved pager navigation reliability by fixing a race condition that could cause desync when swiping rapidly during scroll.
+
 ## Version 19.11.6 - February 18, 2026
 Patch release that fixes an Xcode 26.4 beta compilation issue and improves Scene stability.
 
