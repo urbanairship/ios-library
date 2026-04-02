@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.6.2 - April 2, 2026
+Patch release that improves border rendering in Scenes.
+
+### Changes
+- Support per-corner border for shapes drawn in Scenes
+
 ## Version 20.6.1 - March 26, 2026
 Patch release that improves diagnostic logging for In-App Automation trigger processing.
 
