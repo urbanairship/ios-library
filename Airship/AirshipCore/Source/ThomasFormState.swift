@@ -71,7 +71,7 @@ class ThomasFormState: ObservableObject {
     }
 
     // On submit block
-    var onSubmit: (@Sendable @MainActor (String, ThomasFormField.Result, LayoutState) throws -> Void)?
+    var onSubmit: (@Sendable @MainActor (String, ThomasFormField.Result, LayoutState) -> Void)?
 
     let identifier: String
     let formType: FormType
@@ -185,8 +185,8 @@ class ThomasFormState: ObservableObject {
             attributes: attributesResult
         )
 
-        try onSubmit(self.identifier, formResult, layoutState)
         updateStatus(.submitted)
+        onSubmit(self.identifier, formResult, layoutState)
     }
 
     func dataChanged() {

@@ -217,6 +217,7 @@ class ThomasEnvironment: ObservableObject {
         pagerState: PagerState,
         layoutState: LayoutState
     ) {
+        pagerTracker.markCompleted(pagerIdentifier: pagerState.identifier)
         self.delegate.onReportingEvent(
             .pagerCompleted(
                 .init(
@@ -237,7 +238,7 @@ class ThomasEnvironment: ObservableObject {
         cancel: Bool,
         layoutState: LayoutState
     ) {
-        tryDismiss { displayTime in
+        tryDismiss(layoutState: layoutState) { displayTime in
             self.delegate.onReportingEvent(
                 .dismiss(
                     .buttonTapped(
@@ -254,7 +255,7 @@ class ThomasEnvironment: ObservableObject {
 
     @MainActor
     func dismiss(cancel: Bool = false, layoutState: LayoutState? = nil) {
-        tryDismiss { displayTime in
+        tryDismiss(layoutState: layoutState) { displayTime in
             self.delegate.onReportingEvent(
                 .dismiss(
                     .userDismissed,
@@ -268,7 +269,7 @@ class ThomasEnvironment: ObservableObject {
 
     @MainActor
     func timedOut(layoutState: LayoutState? = nil) {
-        tryDismiss { displayTime in
+        tryDismiss(layoutState: layoutState) { displayTime in
             self.delegate.onReportingEvent(
                 .dismiss(
                     .timedOut,
@@ -344,26 +345,26 @@ class ThomasEnvironment: ObservableObject {
         self.delegate.onStateChanged(state)
     }
 
-    private func emitPagerSummaryEvents() {
+    private func emitPagerSummaryEvents(layoutState: LayoutState?) {
         pagerTracker.summary.forEach { summary in
             delegate.onReportingEvent(
                 .pagerSummary(
                     summary,
-                    makeLayoutContext(layoutState: nil)
+                    makeLayoutContext(layoutState: layoutState)
                 )
             )
         }
     }
 
     @MainActor
-    private func tryDismiss(callback: (TimeInterval) -> Void) {
+    private func tryDismiss(layoutState: LayoutState? = nil, callback: (TimeInterval) -> Void) {
         if !self.isDismissed {
             self.isDismissed = true
 
             timer.stop()
-            
+
             pagerTracker.stopAll(currentDisplayTime: timer.time)
-            emitPagerSummaryEvents()
+            emitPagerSummaryEvents(layoutState: layoutState)
 
             callback(timer.time)
             onDismiss?()

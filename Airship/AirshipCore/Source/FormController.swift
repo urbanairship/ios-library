@@ -74,15 +74,19 @@ struct FormController: View {
 
             if info.isParent {
                 formState.onSubmit = { [weak environment] identifier, result, layoutState in
-                    guard let environment else { throw AirshipErrors.error("Missing environment") }
+                    guard let environment else {
+                        AirshipLogger.error("Missing environment on form submit")
+                        return
+                    }
+                    guard let formData = try? ThomasFormPayloadGenerator.makeFormEventPayload(
+                        identifier: identifier,
+                        formValue: result.value
+                    ) else {
+                        AirshipLogger.error("Failed to make form event payload for \(identifier)")
+                        return
+                    }
                     environment.submitForm(
-                        result: ThomasFormResult(
-                            identifier: identifier,
-                            formData: try ThomasFormPayloadGenerator.makeFormEventPayload(
-                                identifier: identifier,
-                                formValue: result.value
-                            )
-                        ),
+                        result: ThomasFormResult(identifier: identifier, formData: formData),
                         channels: result.channels ?? [],
                         attributes: result.attributes ?? [],
                         layoutState: layoutState
@@ -90,7 +94,10 @@ struct FormController: View {
                 }
             } else {
                 formState.onSubmit = { [weak parentFormDataCollector] identifier, result, layoutState in
-                    guard let parentFormDataCollector else { throw AirshipErrors.error("Missing form collector") }
+                    guard let parentFormDataCollector else {
+                        AirshipLogger.error("Missing form collector on form submit")
+                        return
+                    }
                     let field = ThomasFormField.validField(identifier: identifier, input: result.value, result: result)
                     parentFormDataCollector.updateField(field, pageID: layoutState.pagerState?.currentPageId)
                 }
@@ -114,6 +121,7 @@ struct FormController: View {
                 .environmentObject(formState)
                 .environmentObject(formDataCollector)
                 .environmentObject(state)
+                .environment(\.layoutState, layoutState.override(formState: formState))
                 .airshipOnChangeOf(formState.isVisible) { [weak formState, weak thomasEnvironment] incoming in
                     guard info.isParent, incoming, let formState, let thomasEnvironment else {
                         return

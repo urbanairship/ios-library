@@ -28,6 +28,10 @@ final class ThomasPagerTracker {
         lastPagerPageEvent[pageEvent.identifier] = pageEvent
     }
 
+    func markCompleted(pagerIdentifier: String) {
+        lastPagerPageEvent[pagerIdentifier]?.completed = true
+    }
+
     func stopAll(currentDisplayTime: TimeInterval) {
         self.trackers.values.forEach { $0.stop(currentDisplayTime: currentDisplayTime) }
     }
