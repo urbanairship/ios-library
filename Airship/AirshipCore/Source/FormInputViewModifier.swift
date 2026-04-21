@@ -40,7 +40,9 @@ extension View {
     @ViewBuilder
     @MainActor
     func formElement() -> some View {
-        self.modifier(FormVisibilityViewModifier())
-            .modifier(FormInputEnabledViewModifier())
+        self.viewModifiers {
+            FormVisibilityViewModifier()
+            FormInputEnabledViewModifier()
+        }
     }
 }

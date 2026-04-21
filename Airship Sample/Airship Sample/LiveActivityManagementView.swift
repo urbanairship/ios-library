@@ -7,7 +7,7 @@ import SwiftUI
 import Combine
 import AirshipCore
 
-import ActivityKit
+@preconcurrency import ActivityKit
 
 @available(iOS 16.1, *)
 struct LiveActivityManagementView: View {
@@ -219,7 +219,10 @@ extension ActivityState {
         case .stale:
             return "Stale"
         @unknown default:
-            fatalError()
+            if #available(iOS 26.0, *), self == .pending {
+                return "Pending"
+            }
+            return "Unknown"
         }
     }
 }

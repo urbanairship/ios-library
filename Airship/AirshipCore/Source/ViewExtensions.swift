@@ -25,7 +25,7 @@ extension View {
             )
         }
     }
-    
+
     @ViewBuilder
     public func airshipApplyIf<Content: View>(
         _ predicate: @autoclosure () -> Bool,
@@ -102,24 +102,51 @@ extension View {
         }
     }
 
-    @ViewBuilder
     internal func thomasCommon(
         _ info: any ThomasViewInfo.BaseInfo,
-        formInputID: String? = nil
+        formInputID: String? = nil,
+        scope: ThomasCommonScope = .all
     ) -> some View {
-        self.thomasBackground(
-            color: info.commonProperties.backgroundColor,
-            colorOverrides: info.commonOverrides?.backgroundColor,
-            border: info.commonProperties.border,
-            borderOverrides: info.commonOverrides?.border
-        )
-        .thomasStateTriggers(info.commonProperties.stateTriggers)
-        .thomasEventHandlers(
-            info.commonProperties.eventHandlers,
-            formInputID: formInputID
-        )
-        .thomasEnableBehaviors(info.commonProperties.enabled)
-        .thomasVisibility(info.commonProperties.visibility)
+        let commonOverrides = info.commonOverrides
+        let commonProperties = info.commonProperties
+
+        return self.viewModifiers {
+            if scope.contains(.background), info.hasBackground {
+                BackgroundViewModifier(
+                    backgroundColor: commonProperties.backgroundColor,
+                    backgroundColorOverrides: commonOverrides?.backgroundColor,
+                    border: commonProperties.border,
+                    borderOverrides: commonOverrides?.border,
+                    shadow: nil
+                )
+            }
+            if scope.contains(.stateTriggers), let triggers = commonProperties.stateTriggers, !triggers.isEmpty {
+                StateTriggerModifier(triggers: triggers)
+            }
+            if scope.contains(.eventHandlers), let handlers = commonProperties.eventHandlers, !handlers.isEmpty {
+                EventHandlerViewModifier(eventHandlers: handlers, formInputID: formInputID)
+            }
+            if scope.contains(.visibility), let visibility = commonProperties.visibility {
+                VisibilityViewModifier(visibilityInfo: visibility)
+            }
+            if scope.contains(.enableBehaviors), let behaviors = commonProperties.enabled {
+                if behaviors.contains(.formValidation) {
+                    ValidFormButtonEnableBehavior(onApply: nil)
+                }
+
+                if behaviors.contains(.pagerNext) {
+                    PagerNextButtonEnableBehavior(onApply: nil)
+                }
+
+                if behaviors.contains(.pagerPrevious) {
+                    PagerPreviousButtonEnableBehavior(onApply: nil)
+                }
+
+                if behaviors.contains(.formSubmission) {
+                    FormSubmissionEnableBehavior(onApply: nil)
+                }
+            }
+        }
     }
 
     internal func viewModifiers<Modifiers: ViewModifier>(
@@ -127,7 +154,7 @@ extension View {
     ) -> some View {
         self.modifier(modifiers())
     }
-    
+
     internal func overlayView<T: View>(
         alignment: Alignment = .center,
         @ViewBuilder content: () -> T
@@ -139,6 +166,26 @@ extension View {
     }
 }
 
+internal struct ThomasCommonScope: OptionSet {
+    let rawValue: UInt
+
+    public static let background = ThomasCommonScope(rawValue: 1 << 0)
+    public static let stateTriggers = ThomasCommonScope(rawValue: 1 << 1)
+    public static let eventHandlers = ThomasCommonScope(rawValue: 1 << 2)
+    public static let enableBehaviors = ThomasCommonScope(rawValue: 1 << 3)
+    public static let visibility = ThomasCommonScope(rawValue: 1 << 4)
+
+    static let all: ThomasCommonScope = [.background, .stateTriggers, .eventHandlers, .enableBehaviors, .visibility]
+}
+
+fileprivate extension ThomasViewInfo.BaseInfo {
+    var hasBackground: Bool {
+        return commonProperties.border != nil ||
+               commonProperties.backgroundColor != nil ||
+               (commonOverrides?.border?.isEmpty == false) ||
+               (commonOverrides?.backgroundColor?.isEmpty == false)
+    }
+}
 
 @resultBuilder
 struct AirshipViewModifierBuilder {
@@ -205,6 +252,68 @@ struct AirshipViewModifierBuilder {
         -> some ViewModifier
     {
         return vm0.concat(vm1).concat(vm2).concat(vm3).concat(vm4).concat(vm5)
+    }
+
+    static func buildBlock<
+        VM0: ViewModifier,
+        VM1: ViewModifier,
+        VM2: ViewModifier,
+        VM3: ViewModifier,
+        VM4: ViewModifier,
+        VM5: ViewModifier,
+        VM6: ViewModifier
+    >(_ vm0: VM0, _ vm1: VM1, _ vm2: VM2, _ vm3: VM3, _ vm4: VM4, _ vm5: VM5, _ vm6: VM6)
+        -> some ViewModifier
+    {
+        return vm0.concat(vm1).concat(vm2).concat(vm3).concat(vm4).concat(vm5).concat(vm6)
+    }
+
+    static func buildBlock<
+        VM0: ViewModifier,
+        VM1: ViewModifier,
+        VM2: ViewModifier,
+        VM3: ViewModifier,
+        VM4: ViewModifier,
+        VM5: ViewModifier,
+        VM6: ViewModifier,
+        VM7: ViewModifier
+    >(_ vm0: VM0, _ vm1: VM1, _ vm2: VM2, _ vm3: VM3, _ vm4: VM4, _ vm5: VM5, _ vm6: VM6, _ vm7: VM7)
+        -> some ViewModifier
+    {
+        return vm0.concat(vm1).concat(vm2).concat(vm3).concat(vm4).concat(vm5).concat(vm6).concat(vm7)
+    }
+
+    static func buildBlock<
+        VM0: ViewModifier,
+        VM1: ViewModifier,
+        VM2: ViewModifier,
+        VM3: ViewModifier,
+        VM4: ViewModifier,
+        VM5: ViewModifier,
+        VM6: ViewModifier,
+        VM7: ViewModifier,
+        VM8: ViewModifier
+    >(_ vm0: VM0, _ vm1: VM1, _ vm2: VM2, _ vm3: VM3, _ vm4: VM4, _ vm5: VM5, _ vm6: VM6, _ vm7: VM7, _ vm8: VM8)
+        -> some ViewModifier
+    {
+        return vm0.concat(vm1).concat(vm2).concat(vm3).concat(vm4).concat(vm5).concat(vm6).concat(vm7).concat(vm8)
+    }
+
+    static func buildBlock<
+        VM0: ViewModifier,
+        VM1: ViewModifier,
+        VM2: ViewModifier,
+        VM3: ViewModifier,
+        VM4: ViewModifier,
+        VM5: ViewModifier,
+        VM6: ViewModifier,
+        VM7: ViewModifier,
+        VM8: ViewModifier,
+        VM9: ViewModifier
+    >(_ vm0: VM0, _ vm1: VM1, _ vm2: VM2, _ vm3: VM3, _ vm4: VM4, _ vm5: VM5, _ vm6: VM6, _ vm7: VM7, _ vm8: VM8, _ vm9: VM9)
+        -> some ViewModifier
+    {
+        return vm0.concat(vm1).concat(vm2).concat(vm3).concat(vm4).concat(vm5).concat(vm6).concat(vm7).concat(vm8).concat(vm9)
     }
 
     private struct Optional<Modifier: ViewModifier>: ViewModifier {
