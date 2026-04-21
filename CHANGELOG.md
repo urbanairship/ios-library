@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.11.8 - April 21, 2026
+Patch release that fixes Xcode 26.4 build issues with whole module optimization.
+
+### Changes
+- Fixed Xcode 26.4 build issues with whole module optimization.
+
 ## Version 19.11.7 - March 30, 2026
 Patch release that improves pager navigation reliability in Scenes.
 
