@@ -4,6 +4,14 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.6.3 - April 24, 2026
+Patch release with Scenes reliability fixes and a VoiceOver accessibility fix for paged scenes.
+
+### Changes
+- Fixed form submit ordering so the form status is marked submitted before the onSubmit callback runs
+- Fixed pager summary events to include the correct layout context on dismiss and reflect pager completion
+- Fixed VoiceOver so dismiss and navigation buttons remain reachable on paged scenes
+
 ## Version 20.6.2 - April 2, 2026
 Patch release that improves border rendering in Scenes.
 
