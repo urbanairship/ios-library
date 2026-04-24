@@ -225,7 +225,7 @@ struct Pager: View {
             .accessibilityActions {
                 makeAccessibilityActions(pageItem: pageItem)
             }
-            .accessibilityHidden(!self.isVisible)
+            .accessibilityHidden(!isCurrentPage)
         }
         .frame(
             width: metrics.size.width.safeValue,
