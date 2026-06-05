@@ -1,0 +1,1312 @@
+# Tests aspect_ratio on ThomasSize across multiple layout scenarios (fixed modal size required for concrete parent heights)
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  default_placement:
+    size:
+      width: 90%
+      height: 85%
+    position:
+      horizontal: center
+      vertical: center
+    shade_color:
+      default:
+        hex: '#000000'
+        alpha: 0.6
+    background_color:
+      default:
+        hex: '#FFFFFF'
+        alpha: 1
+    border:
+      radius: 12
+view:
+  type: pager_controller
+  identifier: aspect_ratio_pager_controller
+  view:
+    type: pager
+    items:
+
+      # PAGE 1 — Container auto/auto: aspect_ratio on linear_layout item fills page
+      - identifier: page_1
+        type: pager_item
+        view:
+          type: linear_layout
+          direction: vertical
+          items:
+            - size:
+                width: 100%
+                height: auto
+              margin:
+                top: 12
+                bottom: 4
+                start: 12
+                end: 12
+              view:
+                type: label
+                text: "Page 1 — Container: item width:100%, height:auto, aspect_ratio:1.778. One-auto — height derived from width."
+                text_appearance:
+                  font_size: 12
+                  alignment: center
+                  color:
+                    default:
+                      hex: '#666666'
+                      alpha: 1
+            - size:
+                width: 100%
+                height: auto
+                aspect_ratio: 1.778
+              view:
+                type: container
+                items:
+                  - position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      width: 100%
+                      height: 100%
+                    view:
+                      type: empty_view
+                      background_color:
+                        default:
+                          hex: '#FFD93D'
+                          alpha: 1
+                  - position:
+                      horizontal: center
+                      vertical: bottom
+                    size:
+                      width: 100%
+                      height: auto
+                    margin:
+                      bottom: 12
+                    view:
+                      type: label_button
+                      identifier: page1_dismiss
+                      background_color:
+                        default:
+                          hex: '#333333'
+                          alpha: 0.8
+                      border:
+                        radius: 8
+                      button_click:
+                        - dismiss
+                      label:
+                        type: label
+                        text: Dismiss
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+
+      # PAGE 2 — Container percent/fixed combos
+      - identifier: page_2
+        type: pager_item
+        view:
+          type: linear_layout
+          direction: vertical
+          items:
+            - size:
+                width: 100%
+                height: auto
+              margin:
+                top: 12
+                bottom: 4
+                start: 12
+                end: 12
+              view:
+                type: label
+                text: "Page 2 — Container: 60%/auto/1.0 center, 30%/auto/2.0 top-left, auto/80pt/1.778 bottom-right"
+                text_appearance:
+                  font_size: 12
+                  alignment: center
+                  color:
+                    default:
+                      hex: '#666666'
+                      alpha: 1
+            - size:
+                width: 100%
+                height: auto
+              view:
+                type: container
+                items:
+                  - position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      width: 60%
+                      height: auto
+                      aspect_ratio: 1.0
+                    view:
+                      type: empty_view
+                      background_color:
+                        default:
+                          hex: '#4ECDC4'
+                          alpha: 1
+                  - position:
+                      horizontal: start
+                      vertical: top
+                    size:
+                      width: 30%
+                      height: auto
+                      aspect_ratio: 2.0
+                    view:
+                      type: empty_view
+                      background_color:
+                        default:
+                          hex: '#FF6B6B'
+                          alpha: 1
+                  - position:
+                      horizontal: end
+                      vertical: bottom
+                    size:
+                      width: auto
+                      height: 80
+                      aspect_ratio: 1.778
+                    view:
+                      type: empty_view
+                      background_color:
+                        default:
+                          hex: '#A8E6CF'
+                          alpha: 1
+            - size:
+                width: 100%
+                height: auto
+              view:
+                type: linear_layout
+                direction: horizontal
+                items:
+                  - size:
+                      width: 50%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 8
+                      end: 4
+                    view:
+                      type: label_button
+                      identifier: page2_back
+                      background_color:
+                        default:
+                          hex: '#888888'
+                          alpha: 1
+                      border:
+                        radius: 8
+                      button_click:
+                        - pager_previous
+                      label:
+                        type: label
+                        text: Back
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+                  - size:
+                      width: 50%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 4
+                      end: 8
+                    view:
+                      type: label_button
+                      identifier: page2_next
+                      background_color:
+                        default:
+                          hex: '#4A90D9'
+                          alpha: 1
+                      border:
+                        radius: 8
+                      button_click:
+                        - pager_next
+                      label:
+                        type: label
+                        text: Next
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+
+      # PAGE 3 — Linear vertical with aspect_ratio items
+      - identifier: page_3
+        type: pager_item
+        view:
+          type: linear_layout
+          direction: vertical
+          items:
+            - size:
+                width: 100%
+                height: auto
+              margin:
+                top: 12
+                bottom: 4
+                start: 12
+                end: 12
+              view:
+                type: label
+                text: "Page 3 — Vertical linear: 100%/auto/3.0 wide bar, 70%/auto/1.0 square, 50%/auto/0.5625 portrait"
+                text_appearance:
+                  font_size: 12
+                  alignment: center
+                  color:
+                    default:
+                      hex: '#666666'
+                      alpha: 1
+            - size:
+                width: 100%
+                height: auto
+                aspect_ratio: 3.0
+              margin:
+                top: 8
+                start: 8
+                end: 8
+              view:
+                type: container
+                items:
+                  - position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      width: 100%
+                      height: 100%
+                    view:
+                      type: empty_view
+                      background_color:
+                        default:
+                          hex: '#FF6B6B'
+                          alpha: 1
+            - size:
+                width: 70%
+                height: auto
+                aspect_ratio: 1.0
+              margin:
+                top: 8
+                start: 8
+                end: 8
+              view:
+                type: container
+                items:
+                  - position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      width: 100%
+                      height: 100%
+                    view:
+                      type: empty_view
+                      background_color:
+                        default:
+                          hex: '#00B4D8'
+                          alpha: 1
+            - size:
+                width: 50%
+                height: auto
+                aspect_ratio: 0.5625
+              margin:
+                top: 8
+                start: 8
+                end: 8
+              view:
+                type: container
+                items:
+                  - position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      width: 100%
+                      height: 100%
+                    view:
+                      type: empty_view
+                      background_color:
+                        default:
+                          hex: '#9B5DE5'
+                          alpha: 1
+            - size:
+                width: 100%
+                height: auto
+              view:
+                type: linear_layout
+                direction: horizontal
+                items:
+                  - size:
+                      width: 50%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 8
+                      end: 4
+                    view:
+                      type: label_button
+                      identifier: page3_back
+                      background_color:
+                        default:
+                          hex: '#888888'
+                          alpha: 1
+                      border:
+                        radius: 8
+                      button_click:
+                        - pager_previous
+                      label:
+                        type: label
+                        text: Back
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+                  - size:
+                      width: 50%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 4
+                      end: 8
+                    view:
+                      type: label_button
+                      identifier: page3_next
+                      background_color:
+                        default:
+                          hex: '#4A90D9'
+                          alpha: 1
+                      border:
+                        radius: 8
+                      button_click:
+                        - pager_next
+                      label:
+                        type: label
+                        text: Next
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+
+      # PAGE 4 — Horizontal linear with height-driven items (auto w, 100% h, aspect_ratio).
+      # Container root gives the horizontal LL concrete dimensions.
+      # Label overlaid at top, buttons at bottom so the LL fills the middle.
+      - identifier: page_4
+        type: pager_item
+        view:
+          type: container
+          items:
+            - position:
+                horizontal: center
+                vertical: top
+              size:
+                width: 100%
+                height: auto
+              margin:
+                top: 12
+                bottom: 4
+                start: 12
+                end: 12
+              view:
+                type: label
+                text: "Page 4 — Horizontal linear: auto/100%/1.0, auto/100%/1.778, auto/100%/0.5. Tests (nil-w, concrete-h) branch."
+                text_appearance:
+                  font_size: 12
+                  alignment: center
+                  color:
+                    default:
+                      hex: '#666666'
+                      alpha: 1
+            - position:
+                horizontal: center
+                vertical: center
+              size:
+                width: 100%
+                height: 100%
+              view:
+                type: linear_layout
+                direction: horizontal
+                items:
+                  - size:
+                      width: auto
+                      height: 100%
+                      aspect_ratio: 1.0
+                    view:
+                      type: container
+                      items:
+                        - position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            width: 100%
+                            height: 100%
+                          view:
+                            type: empty_view
+                            background_color:
+                              default:
+                                hex: '#9B5DE5'
+                                alpha: 1
+                  - size:
+                      width: auto
+                      height: 100%
+                      aspect_ratio: 1.778
+                    view:
+                      type: container
+                      items:
+                        - position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            width: 100%
+                            height: 100%
+                          view:
+                            type: empty_view
+                            background_color:
+                              default:
+                                hex: '#4CAF50'
+                                alpha: 1
+                  - size:
+                      width: auto
+                      height: 100%
+                      aspect_ratio: 0.5
+                    view:
+                      type: container
+                      items:
+                        - position:
+                            horizontal: center
+                            vertical: center
+                          size:
+                            width: 100%
+                            height: 100%
+                          view:
+                            type: empty_view
+                            background_color:
+                              default:
+                                hex: '#FF9800'
+                                alpha: 1
+            - position:
+                horizontal: center
+                vertical: bottom
+              size:
+                width: 100%
+                height: auto
+              view:
+                type: linear_layout
+                direction: horizontal
+                items:
+                  - size:
+                      width: 50%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 8
+                      end: 4
+                    view:
+                      type: label_button
+                      identifier: page4_back
+                      background_color:
+                        default:
+                          hex: '#888888'
+                          alpha: 1
+                      border:
+                        radius: 8
+                      button_click:
+                        - pager_previous
+                      label:
+                        type: label
+                        text: Back
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+                  - size:
+                      width: 50%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 4
+                      end: 8
+                    view:
+                      type: label_button
+                      identifier: page4_next
+                      background_color:
+                        default:
+                          hex: '#4A90D9'
+                          alpha: 1
+                      border:
+                        radius: 8
+                      button_click:
+                        - pager_next
+                      label:
+                        type: label
+                        text: Next
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+
+      # PAGE 5 — Combo: 3 columns (33% each) in a horizontal layout, each column has
+      # vertical aspect_ratio items. Container root gives the HLL concrete dimensions.
+      - identifier: page_5
+        type: pager_item
+        view:
+          type: container
+          items:
+            - position:
+                horizontal: center
+                vertical: top
+              size:
+                width: 100%
+                height: auto
+              margin:
+                top: 12
+                bottom: 4
+                start: 12
+                end: 12
+              view:
+                type: label
+                text: "Page 5 — Combo: 3 columns × 33% width, each with vertical aspect_ratio items"
+                text_appearance:
+                  font_size: 12
+                  alignment: center
+                  color:
+                    default:
+                      hex: '#666666'
+                      alpha: 1
+            - position:
+                horizontal: center
+                vertical: center
+              size:
+                width: 100%
+                height: 100%
+              view:
+                type: linear_layout
+                direction: horizontal
+                items:
+                  - size:
+                      width: 33%
+                      height: 100%
+                    view:
+                      type: linear_layout
+                      direction: vertical
+                      items:
+                        - size:
+                            width: 100%
+                            height: auto
+                            aspect_ratio: 1.0
+                          margin:
+                            top: 4
+                            start: 4
+                            end: 2
+                          view:
+                            type: container
+                            items:
+                              - position:
+                                  horizontal: center
+                                  vertical: center
+                                size:
+                                  width: 100%
+                                  height: 100%
+                                view:
+                                  type: empty_view
+                                  background_color:
+                                    default:
+                                      hex: '#FF6B6B'
+                                      alpha: 1
+                        - size:
+                            width: 100%
+                            height: auto
+                            aspect_ratio: 2.0
+                          margin:
+                            top: 4
+                            start: 4
+                            end: 2
+                          view:
+                            type: container
+                            items:
+                              - position:
+                                  horizontal: center
+                                  vertical: center
+                                size:
+                                  width: 100%
+                                  height: 100%
+                                view:
+                                  type: empty_view
+                                  background_color:
+                                    default:
+                                      hex: '#FFB347'
+                                      alpha: 1
+                  - size:
+                      width: 33%
+                      height: 100%
+                    view:
+                      type: linear_layout
+                      direction: vertical
+                      items:
+                        - size:
+                            width: 100%
+                            height: auto
+                            aspect_ratio: 0.5625
+                          margin:
+                            top: 4
+                            start: 2
+                            end: 2
+                          view:
+                            type: container
+                            items:
+                              - position:
+                                  horizontal: center
+                                  vertical: center
+                                size:
+                                  width: 100%
+                                  height: 100%
+                                view:
+                                  type: empty_view
+                                  background_color:
+                                    default:
+                                      hex: '#9B5DE5'
+                                      alpha: 1
+                        - size:
+                            width: 100%
+                            height: auto
+                            aspect_ratio: 1.778
+                          margin:
+                            top: 4
+                            start: 2
+                            end: 2
+                          view:
+                            type: container
+                            items:
+                              - position:
+                                  horizontal: center
+                                  vertical: center
+                                size:
+                                  width: 100%
+                                  height: 100%
+                                view:
+                                  type: empty_view
+                                  background_color:
+                                    default:
+                                      hex: '#4ECDC4'
+                                      alpha: 1
+                  - size:
+                      width: 34%
+                      height: 100%
+                    view:
+                      type: linear_layout
+                      direction: vertical
+                      items:
+                        - size:
+                            width: 100%
+                            height: auto
+                            aspect_ratio: 3.0
+                          margin:
+                            top: 4
+                            start: 2
+                            end: 4
+                          view:
+                            type: container
+                            items:
+                              - position:
+                                  horizontal: center
+                                  vertical: center
+                                size:
+                                  width: 100%
+                                  height: 100%
+                                view:
+                                  type: empty_view
+                                  background_color:
+                                    default:
+                                      hex: '#4CAF50'
+                                      alpha: 1
+                        - size:
+                            width: 100%
+                            height: auto
+                            aspect_ratio: 1.333
+                          margin:
+                            top: 4
+                            start: 2
+                            end: 4
+                          view:
+                            type: container
+                            items:
+                              - position:
+                                  horizontal: center
+                                  vertical: center
+                                size:
+                                  width: 100%
+                                  height: 100%
+                                view:
+                                  type: empty_view
+                                  background_color:
+                                    default:
+                                      hex: '#FF9800'
+                                      alpha: 1
+            - position:
+                horizontal: center
+                vertical: bottom
+              size:
+                width: 100%
+                height: auto
+              view:
+                type: linear_layout
+                direction: horizontal
+                items:
+                  - size:
+                      width: 50%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 8
+                      end: 4
+                    view:
+                      type: label_button
+                      identifier: page5_back
+                      background_color:
+                        default:
+                          hex: '#888888'
+                          alpha: 1
+                      border:
+                        radius: 8
+                      button_click:
+                        - pager_previous
+                      label:
+                        type: label
+                        text: Back
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+                  - size:
+                      width: 50%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 4
+                      end: 8
+                    view:
+                      type: label_button
+                      identifier: page5_next
+                      background_color:
+                        default:
+                          hex: '#4A90D9'
+                          alpha: 1
+                      border:
+                        radius: 8
+                      button_click:
+                        - pager_next
+                      label:
+                        type: label
+                        text: Next
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+
+      # PAGE 6 — Scroll layout. Container root gives scroll concrete height so it actually scrolls.
+      - identifier: page_6
+        type: pager_item
+        view:
+          type: container
+          items:
+            - position:
+                horizontal: center
+                vertical: top
+              size:
+                width: 100%
+                height: auto
+              margin:
+                top: 12
+                bottom: 4
+                start: 12
+                end: 12
+              view:
+                type: label
+                text: "Page 6 — Scroll: width:100%, height:auto, aspect_ratio:0.5. One-auto — height = width/0.5. Scroll to see full extent."
+                text_appearance:
+                  font_size: 12
+                  alignment: center
+                  color:
+                    default:
+                      hex: '#666666'
+                      alpha: 1
+            - position:
+                horizontal: center
+                vertical: center
+              size:
+                width: 100%
+                height: 100%
+              view:
+                type: scroll_layout
+                direction: vertical
+                view:
+                  type: linear_layout
+                  direction: vertical
+                  items:
+                    - size:
+                        width: 100%
+                        height: auto
+                        aspect_ratio: 0.5
+                      view:
+                        type: empty_view
+                        background_color:
+                          default:
+                            hex: '#C77DFF'
+                            alpha: 1
+            - position:
+                horizontal: center
+                vertical: bottom
+              size:
+                width: 100%
+                height: auto
+              view:
+                type: linear_layout
+                direction: horizontal
+                items:
+                  - size:
+                      width: 50%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 8
+                      end: 4
+                    view:
+                      type: label_button
+                      identifier: page6_back
+                      background_color:
+                        default:
+                          hex: '#888888'
+                          alpha: 1
+                      border:
+                        radius: 8
+                      button_click:
+                        - pager_previous
+                      label:
+                        type: label
+                        text: Back
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+                  - size:
+                      width: 50%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 4
+                      end: 8
+                    view:
+                      type: label_button
+                      identifier: page6_next
+                      background_color:
+                        default:
+                          hex: '#888888'
+                          alpha: 1
+                      border:
+                        radius: 8
+                      button_click:
+                        - pager_next
+                      label:
+                        type: label
+                        text: "Next →"
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+
+      # PAGE 7 — Both-auto in fixed-size container (both maxW and maxH known)
+      # width:auto, height:auto, aspect_ratio:1.0 inside a 100%/100% container.
+      # Max bounds are ratio-constrained to a square from min(modalW, modalH).
+      - identifier: page_7
+        type: pager_item
+        view:
+          type: linear_layout
+          direction: vertical
+          items:
+            - size:
+                width: 100%
+                height: auto
+              margin:
+                top: 12
+                bottom: 6
+                start: 12
+                end: 12
+              view:
+                type: label
+                text: "Page 7 — Both-auto, fixed parent: width:auto, height:auto, aspect_ratio:1.0. Max bounds ratio-constrained to square from min(W,H)."
+                text_appearance:
+                  font_size: 12
+                  alignment: center
+                  color:
+                    default:
+                      hex: '#666666'
+                      alpha: 1
+            - size:
+                width: 100%
+                height: 100%
+              view:
+                type: container
+                items:
+                  - position:
+                      horizontal: center
+                      vertical: center
+                    size:
+                      width: auto
+                      height: auto
+                      aspect_ratio: 1.0
+                    view:
+                      type: empty_view
+                      background_color:
+                        default:
+                          hex: '#6C5CE7'
+                          alpha: 1
+                      border:
+                        radius: 4
+                  - position:
+                      horizontal: center
+                      vertical: bottom
+                    size:
+                      width: 100%
+                      height: auto
+                    margin:
+                      bottom: 8
+                      start: 12
+                      end: 12
+                    view:
+                      type: linear_layout
+                      direction: horizontal
+                      items:
+                        - size:
+                            width: 50%
+                            height: auto
+                          margin:
+                            top: 8
+                            bottom: 8
+                            start: 8
+                            end: 4
+                          view:
+                            type: label_button
+                            identifier: page7_back
+                            background_color:
+                              default:
+                                hex: '#888888'
+                                alpha: 1
+                            border:
+                              radius: 8
+                            button_click:
+                              - pager_previous
+                            label:
+                              type: label
+                              text: Back
+                              text_appearance:
+                                font_size: 14
+                                alignment: center
+                                color:
+                                  default:
+                                    hex: '#FFFFFF'
+                                    alpha: 1
+                        - size:
+                            width: 50%
+                            height: auto
+                          margin:
+                            top: 8
+                            bottom: 8
+                            start: 4
+                            end: 8
+                          view:
+                            type: label_button
+                            identifier: page7_next
+                            background_color:
+                              default:
+                                hex: '#888888'
+                                alpha: 1
+                            border:
+                              radius: 8
+                            button_click:
+                              - pager_next
+                            label:
+                              type: label
+                              text: "Next →"
+                              text_appearance:
+                                font_size: 14
+                                alignment: center
+                                color:
+                                  default:
+                                    hex: '#FFFFFF'
+                                    alpha: 1
+
+      # PAGE 8 — Both-auto, only width bound (auto-height linear_layout item)
+      # width:auto, height:auto, aspect_ratio:1.778. maxW = modalW, maxH = modalH.
+      # Ratio-constrained: max becomes landscape 16:9 box within modal.
+      - identifier: page_8
+        type: pager_item
+        view:
+          type: linear_layout
+          direction: vertical
+          items:
+            - size:
+                width: 100%
+                height: auto
+              margin:
+                top: 12
+                bottom: 6
+                start: 12
+                end: 12
+              view:
+                type: label
+                text: "Page 8 — Both-auto linear item: width:auto, height:auto, aspect_ratio:1.778. Max bounds are ratio-constrained to 16:9 within modal."
+                text_appearance:
+                  font_size: 12
+                  alignment: center
+                  color:
+                    default:
+                      hex: '#666666'
+                      alpha: 1
+            - size:
+                width: auto
+                height: auto
+                aspect_ratio: 1.778
+              view:
+                type: empty_view
+                background_color:
+                  default:
+                    hex: '#00B894'
+                    alpha: 1
+                border:
+                  radius: 4
+            - size:
+                width: 100%
+                height: auto
+              margin:
+                top: 8
+                bottom: 8
+                start: 12
+                end: 12
+              view:
+                type: linear_layout
+                direction: horizontal
+                items:
+                  - size:
+                      width: 50%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 8
+                      end: 4
+                    view:
+                      type: label_button
+                      identifier: page8_back
+                      background_color:
+                        default:
+                          hex: '#888888'
+                          alpha: 1
+                      border:
+                        radius: 8
+                      button_click:
+                        - pager_previous
+                      label:
+                        type: label
+                        text: Back
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+                  - size:
+                      width: 50%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 4
+                      end: 8
+                    view:
+                      type: label_button
+                      identifier: page8_next
+                      background_color:
+                        default:
+                          hex: '#888888'
+                          alpha: 1
+                      border:
+                        radius: 8
+                      button_click:
+                        - pager_next
+                      label:
+                        type: label
+                        text: "Next →"
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+
+      # PAGE 9 — Both-auto with three items, different ratios
+      # Shows that each both-auto item independently sizes within its fair share.
+      - identifier: page_9
+        type: pager_item
+        view:
+          type: linear_layout
+          direction: vertical
+          items:
+            - size:
+                width: 100%
+                height: auto
+              margin:
+                top: 12
+                bottom: 6
+                start: 12
+                end: 12
+              view:
+                type: label
+                text: "Page 9 — Three both-auto items: ratio 3:1, 1:1, 1:3. Each sizes within its fair share of VStack space."
+                text_appearance:
+                  font_size: 12
+                  alignment: center
+                  color:
+                    default:
+                      hex: '#666666'
+                      alpha: 1
+            - size:
+                width: auto
+                height: auto
+                aspect_ratio: 3.0
+              view:
+                type: empty_view
+                background_color:
+                  default:
+                    hex: '#FF6B6B'
+                    alpha: 1
+                border:
+                  radius: 4
+            - size:
+                width: auto
+                height: auto
+                aspect_ratio: 1.0
+              view:
+                type: empty_view
+                background_color:
+                  default:
+                    hex: '#FDCB6E'
+                    alpha: 1
+                border:
+                  radius: 4
+            - size:
+                width: auto
+                height: auto
+                aspect_ratio: 0.333
+              view:
+                type: empty_view
+                background_color:
+                  default:
+                    hex: '#74B9FF'
+                    alpha: 1
+                border:
+                  radius: 4
+            - size:
+                width: 100%
+                height: auto
+              margin:
+                top: 8
+                bottom: 8
+                start: 12
+                end: 12
+              view:
+                type: linear_layout
+                direction: horizontal
+                items:
+                  - size:
+                      width: 50%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 8
+                      end: 4
+                    view:
+                      type: label_button
+                      identifier: page9_back
+                      background_color:
+                        default:
+                          hex: '#888888'
+                          alpha: 1
+                      border:
+                        radius: 8
+                      button_click:
+                        - pager_previous
+                      label:
+                        type: label
+                        text: Back
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1
+                  - size:
+                      width: 50%
+                      height: auto
+                    margin:
+                      top: 8
+                      bottom: 8
+                      start: 4
+                      end: 8
+                    view:
+                      type: label_button
+                      identifier: page9_dismiss
+                      background_color:
+                        default:
+                          hex: '#E53935'
+                          alpha: 1
+                      border:
+                        radius: 8
+                      button_click:
+                        - dismiss
+                      label:
+                        type: label
+                        text: Dismiss
+                        text_appearance:
+                          font_size: 14
+                          alignment: center
+                          color:
+                            default:
+                              hex: '#FFFFFF'
+                              alpha: 1

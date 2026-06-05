@@ -431,11 +431,11 @@ final class InAppMessageTest: XCTestCase {
           }
         """
 
-        let expectedLayout = try! JSONDecoder().decode(AirshipLayout.self, from: airshipLayout.data(using: .utf8)!)
+        let displayJSON = try! AirshipJSON.from(json: #"{"layout": \#(airshipLayout)}"#)
         let expected = InAppMessage(
             name: "Airship layout",
-            displayContent: .airshipLayout(
-                expectedLayout
+            displayContent: .airshipLayoutIntermediate(
+                AirshipLayoutIntermediate(layoutJSON: displayJSON)
             ),
             source: .remoteData
         )

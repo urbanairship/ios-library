@@ -341,6 +341,33 @@ class AnalyticsTest: XCTestCase {
         XCTAssertEqual(next, .screen(screen: "some screen"))
     }
 
+    @MainActor
+    func testForegroundDoesNotReEmitScreenEvent() async throws {
+        var feed = await self.analytics.eventFeed.updates.makeAsyncIterator()
+
+        self.analytics.trackScreen("foo")
+        self.notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification)
+        self.notificationCenter.post(name: AppStateTracker.willEnterForegroundNotification)
+
+        // The previous screen should be restored for duration tracking.
+        XCTAssertEqual("foo", self.analytics.currentScreen)
+
+        self.analytics.trackScreen("bar")
+
+        // Collect screen events from the feed until we see "bar".
+        // A re-emitted "foo" between nil and "bar" would mean foreground
+        // re-fired the screenview trigger.
+        var screenEvents: [String?] = []
+        while screenEvents.last != "bar" {
+            guard let event = await feed.next() else { break }
+            if case let .screen(screen) = event {
+                screenEvents.append(screen)
+            }
+        }
+
+        XCTAssertEqual(screenEvents, ["foo", nil, "bar"])
+    }
+
     func testRegionEventEventFeed() async throws {
         let event = RegionEvent(
             regionID: "foo",

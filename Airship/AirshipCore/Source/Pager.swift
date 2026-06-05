@@ -39,6 +39,9 @@ struct Pager: View {
     @Environment(\.layoutState) private var layoutState
     @Environment(\.layoutDirection) private var layoutDirection
     @Environment(\.isVoiceOverRunning) private var isVoiceOverRunning
+#if !os(tvOS) && !os(watchOS)
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+#endif
 
     private let info: ThomasViewInfo.Pager
     private let constraints: ViewConstraints
@@ -233,6 +236,9 @@ struct Pager: View {
             height: height,
             alignment: .leading
         )
+#if !os(tvOS) && !os(watchOS)
+        .id(verticalSizeClass)
+#endif
     }
 
     @ViewBuilder
@@ -338,8 +344,14 @@ struct Pager: View {
 
                 if scrollPosition != nil {
                     pagerState.disableTouchDuringNavigation()
-                }
-                withAnimation {
+                    withAnimation {
+                        scrollPosition = pageID
+                    }
+                } else {
+                    // Nil means the scroll view was just created or recreated (e.g. after
+                    // rotation rebuilds via .id(verticalSizeClass)). Set directly without
+                    // animation — animating from offset 0 sweeps intermediate pages and
+                    // fires spurious navigateToPage calls via onChange(scrollPosition).
                     scrollPosition = pageID
                 }
             }

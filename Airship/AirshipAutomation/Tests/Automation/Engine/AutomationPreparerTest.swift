@@ -1234,9 +1234,9 @@ final class TestPreparerDelegate<In: Sendable, Out: Sendable>: AutomationPrepare
     var prepareCalled: Bool = false
     var prepareBlock: (@Sendable (In, PreparedScheduleInfo) async -> Out)?
 
-    func prepare(data: In, preparedScheduleInfo: PreparedScheduleInfo) async throws -> Out {
+    func prepare(data: In, preparedScheduleInfo: PreparedScheduleInfo) async throws -> DelegatePreparerResult<Out> {
         prepareCalled = true
-        return await prepareBlock!(data, preparedScheduleInfo)
+        return .prepared(await prepareBlock!(data, preparedScheduleInfo))
     }
 }
 

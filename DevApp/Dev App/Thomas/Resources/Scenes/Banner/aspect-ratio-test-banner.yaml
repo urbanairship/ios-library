@@ -1,0 +1,87 @@
+# Tests aspect_ratio on linear_layout item inside a banner: width:100%, height:auto, aspect_ratio:1.778 (16:9 purple box)
+version: 1
+presentation:
+  type: banner
+  default_placement:
+    position:
+      horizontal: center
+      vertical: top
+    size:
+      width: 100%
+      height: auto
+    background_color:
+      default:
+        hex: '#FFFFFF'
+        alpha: 1
+    border:
+      radius: 0
+  duration: 10
+view:
+  type: linear_layout
+  direction: vertical
+  items:
+    - size:
+        width: 100%
+        height: auto
+        aspect_ratio: 1.778
+      view:
+        type: container
+        items:
+          - position:
+              horizontal: center
+              vertical: center
+            size:
+              width: 100%
+              height: 100%
+            view:
+              type: empty_view
+              background_color:
+                default:
+                  hex: '#6A0DAD'
+                  alpha: 1
+    - size:
+        width: 100%
+        height: auto
+      margin:
+        top: 8
+        start: 16
+        end: 16
+      view:
+        type: label
+        text: "Banner linear_layout item: width 100%, height auto, aspect_ratio 1.778"
+        text_appearance:
+          font_size: 13
+          alignment: center
+          color:
+            default:
+              hex: '#444444'
+              alpha: 1
+    - size:
+        width: 50%
+        height: auto
+      margin:
+        top: 8
+        bottom: 12
+        start: 16
+        end: 16
+      view:
+        type: label_button
+        identifier: banner_dismiss
+        background_color:
+          default:
+            hex: '#6A0DAD'
+            alpha: 1
+        border:
+          radius: 8
+        button_click:
+          - dismiss
+        label:
+          type: label
+          text: Dismiss
+          text_appearance:
+            font_size: 14
+            alignment: center
+            color:
+              default:
+                hex: '#FFFFFF'
+                alpha: 1

@@ -9,6 +9,7 @@ struct ThomasConstrainedSize: ThomasSerializable {
     var minHeight: ThomasSizeConstraint?
     var height: ThomasSizeConstraint
     var maxHeight: ThomasSizeConstraint?
+    var aspectRatio: Double?
 
     private enum CodingKeys: String, CodingKey {
         case minWidth = "min_width"
@@ -17,5 +18,6 @@ struct ThomasConstrainedSize: ThomasSerializable {
         case minHeight = "min_height"
         case height
         case maxHeight = "max_height"
+        case aspectRatio = "aspect_ratio"
     }
 }

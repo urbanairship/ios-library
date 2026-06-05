@@ -410,3 +410,19 @@ extension AirshipJSON: ExpressibleByNilLiteral {
         self = .null
     }
 }
+
+@_spi(AirshipInternal)
+public extension AirshipJSON {
+    /// Decodes to `T` on a dedicated 8MB-stack thread so deeply nested Codable
+    /// types (e.g. Thomas layouts) don't exhaust the 512KB cooperative pool stack.
+    func decodeLargerStack<T: Decodable & Sendable>(_ type: T.Type) async throws -> T {
+        return try await withCheckedThrowingContinuation { continuation in
+            let thread = Thread { [self] in
+                let result: Result<T, any Error> = Result { try self.decode() }
+                Task { continuation.resume(with: result) }
+            }
+            thread.stackSize = 8 * 1024 * 1024
+            thread.start()
+        }
+    }
+}

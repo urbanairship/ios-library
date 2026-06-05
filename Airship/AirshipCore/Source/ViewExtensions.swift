@@ -56,6 +56,9 @@ extension View {
                     && constraints.height != nil
             )
         }
+        .airshipApplyIfPresent(constraints.aspectRatio) { view, ratio in
+            view.aspectRatio(ratio, contentMode: .fit)
+        }
     }
     
     @ViewBuilder

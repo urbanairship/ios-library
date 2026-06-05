@@ -58,8 +58,13 @@ internal struct WrappingLayout: Layout {
 
         let totalItems = subviews.count
 
-        // Determine the maximum width from viewConstraints or proposal
-        let maxWidth = viewConstraints.width ?? proposal.width ?? viewConstraints.maxWidth ?? .infinity
+        // Take the most constrained of the three width sources so an explicit viewConstraints.width
+        // cap is never silently ignored when the proposal is wider.
+        let maxWidth = min(
+            viewConstraints.width ?? .infinity,
+            proposal.width ?? .infinity,
+            viewConstraints.maxWidth ?? .infinity
+        )
 
         // Calculate the number of items per line
         let itemsInLine = calculateItemsInLine(

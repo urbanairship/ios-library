@@ -183,11 +183,18 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
     @objc
     @MainActor
     private func applicationWillEnterForeground() {
-        // Start tracking previous screen before backgrounding began
+        // Restore the previous screen so its tracked duration spans the
+        // background/foreground gap, but skip the event feed notification
+        // so screenview triggers don't fire on foreground.
         if let previousScreen = self.restoreScreenOnForeground.value,
            self.screenState.value.current == nil
         {
-            trackScreen(previousScreen)
+            let date = self.date.now
+            self.screenState.update { state in
+                state.current = previousScreen
+                state.startDate = date
+                state.previous = nil
+            }
         }
         self.restoreScreenOnForeground.set(nil)
     }

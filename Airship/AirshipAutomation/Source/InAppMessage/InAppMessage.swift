@@ -29,19 +29,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
     public var name: String
 
     /// Display content
-    public var displayContent: InAppMessageDisplayContent {
-        get {
-            return displayContentWrapper.displayContent
-        }
-        set {
-            displayContentWrapper = DisplayContentWrapper(displayContent: newValue, json: nil)
-        }
-    }
-
-    // Workaround for iOS 26.0 encoding crash (FB#3472, June 2025).
-    // TODO: Test and remove in SDK 21 if iOS 26.x SDKs have fixed the encoding issue.
-    // The workaround avoids re-encoding AirshipLayout by caching the original JSON.
-    private var displayContentWrapper: DisplayContentWrapper
+    public var displayContent: InAppMessageDisplayContent
 
     /// Source
     var source: InAppMessageSource?
@@ -92,7 +80,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         displayBehavior: DisplayBehavior? = nil
     ) {
         self.name = name
-        self.displayContentWrapper = DisplayContentWrapper(displayContent: displayContent, json: nil)
+        self.displayContent = displayContent
         self.extras = extras
         self.actions = actions
         self.isReportingEnabled = isReportingEnabled
@@ -105,7 +93,6 @@ public struct InAppMessage: Codable, Equatable, Sendable {
     init(
         name: String,
         displayContent: InAppMessageDisplayContent,
-        displayContentJSON: AirshipJSON? = nil,
         source: InAppMessageSource?,
         extras: AirshipJSON? = nil,
         actions: AirshipJSON? = nil,
@@ -114,7 +101,7 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         renderedLocale: AirshipJSON? = nil
     ) {
         self.name = name
-        self.displayContentWrapper = DisplayContentWrapper(displayContent: displayContent, json: displayContentJSON)
+        self.displayContent = displayContent
         self.source = source
         self.extras = extras
         self.actions = actions
@@ -136,7 +123,6 @@ public struct InAppMessage: Codable, Equatable, Sendable {
 
         let displayType = try container.decode(DisplayType.self, forKey: .displayType)
 
-        var displayContentJSON: AirshipJSON?
         let displayContent: InAppMessageDisplayContent
 
         switch displayType {
@@ -156,15 +142,15 @@ public struct InAppMessage: Codable, Equatable, Sendable {
             let html = try container.decode(InAppMessageDisplayContent.HTML.self, forKey: .display)
             displayContent = .html(html)
         case .layout:
-            displayContentJSON = try container.decode(AirshipJSON.self, forKey: .display)
-            let wrapper = try container.decode(AirshipLayoutWrapper.self, forKey: .display)
-            displayContent = .airshipLayout(wrapper.layout)
+            let layoutJSON = try container.decode(AirshipJSON.self, forKey: .display)
+            // Store as intermediate — ThomasViewInfo is decoded at prepare time to avoid
+            // exhausting the 512KB CoreData queue stack via recursive Codable decode.
+            displayContent = .airshipLayoutIntermediate(AirshipLayoutIntermediate(layoutJSON: layoutJSON))
         }
 
         self.init(
             name: name,
             displayContent: displayContent,
-            displayContentJSON: displayContentJSON,
             source: source,
             extras: extras,
             actions: actions,
@@ -202,11 +188,10 @@ public struct InAppMessage: Codable, Equatable, Sendable {
             try container.encode(custom, forKey: .display)
             try container.encode(DisplayType.custom, forKey: .displayType)
         case .airshipLayout(let layout):
-            if let json = displayContentWrapper.json {
-                try container.encode(json, forKey: .display)
-            } else {
-                try container.encode(AirshipLayoutWrapper(layout: layout), forKey: .display)
-            }
+            try container.encode(AirshipLayoutWrapper(layout: layout), forKey: .display)
+            try container.encode(DisplayType.layout, forKey: .displayType)
+        case .airshipLayoutIntermediate(let intermediate):
+            try container.encode(intermediate.layoutJSON, forKey: .display)
             try container.encode(DisplayType.layout, forKey: .displayType)
         }
     }
@@ -236,6 +221,9 @@ extension InAppMessage {
             return []
         case .airshipLayout(let content):
             return content.urlInfos
+        case .airshipLayoutIntermediate:
+            // Layout not decoded yet at this point; URL prefetching skipped.
+            return []
         }
     }
 
@@ -253,39 +241,24 @@ extension InAppMessage {
     }
 
     var isEmbedded: Bool {
-        guard case .airshipLayout(let data) = self.displayContent else {
-            return false
+        switch self.displayContent {
+        case .airshipLayout(let layout): return layout.isEmbedded
+        case .airshipLayoutIntermediate(let intermediate): return intermediate.isEmbedded
+        default: return false
         }
-
-        return data.isEmbedded
     }
 
 
     var isAirshipLayout: Bool {
-        guard case .airshipLayout(_) = self.displayContent else {
-            return false
+        switch self.displayContent {
+        case .airshipLayout, .airshipLayoutIntermediate: return true
+        default: return false
         }
-
-        return true
     }
 }
 
-fileprivate struct AirshipLayoutWrapper: Codable {
+struct AirshipLayoutWrapper: Codable {
     var layout: AirshipLayout
-}
-
-fileprivate struct DisplayContentWrapper: Equatable {
-    var displayContent: InAppMessageDisplayContent
-    var json: AirshipJSON?
-
-    init(displayContent: InAppMessageDisplayContent, json: AirshipJSON?) {
-        self.displayContent = displayContent
-        self.json = json
-    }
-
-    static func ==(lhs: DisplayContentWrapper, rhs: DisplayContentWrapper) -> Bool {
-        return lhs.displayContent == rhs.displayContent
-    }
 }
 
 /// These are just for view testing purposes
@@ -313,4 +286,3 @@ extension InAppMessage {
         )
     }
 }
-

@@ -79,7 +79,7 @@ final class DisplayAdapterFactory: DisplayAdapterFactoryProtocol, Sendable {
             } else {
                 throw AirshipErrors.error("No adapter for message: \(args.message)")
             }
-        case .airshipLayout(_):
+        case .airshipLayout(_), .airshipLayoutIntermediate(_):
             break
         }
 

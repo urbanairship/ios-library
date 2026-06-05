@@ -58,7 +58,7 @@ final class SceneAction: AirshipAction {
     }
 
     fileprivate struct ActionArgs: Decodable, Sendable {
-        var scene: String
+        var dsl: String
     }
 
     @MainActor
@@ -69,11 +69,11 @@ final class SceneAction: AirshipAction {
         // Decode the action arguments object
         let args: ActionArgs = try arguments.value.decode()
 
-        let layout = try SceneAction.decodeLayout(from: args.scene)
+        let layoutJSON = try SceneAction.layoutJSON(from: args.dsl)
 
         let message = InAppMessage(
             name: "Scene Landing Page \(messageID ?? "")",
-            displayContent: .airshipLayout(layout),
+            displayContent: .airshipLayoutIntermediate(AirshipLayoutIntermediate(layoutJSON: layoutJSON)),
             isReportingEnabled: messageID != nil,
             displayBehavior: .immediate
         )
@@ -92,15 +92,11 @@ final class SceneAction: AirshipAction {
         return nil
     }
 
-    private static func decodeLayout(from base64Scene: String) throws -> AirshipLayout {
+    private static func layoutJSON(from base64Scene: String) throws -> AirshipJSON {
         guard let compressedData = AirshipBase64.data(from: base64Scene) else {
             throw AirshipErrors.error("Invalid base64 encoded scene string")
         }
-
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .airshipISO8601
-
         let decompressedData = try (compressedData as NSData).decompressed(using: .zlib) as Data
-        return try decoder.decode(AirshipLayout.self, from: decompressedData)
+        return try AirshipJSON.from(data: decompressedData)
     }
 }

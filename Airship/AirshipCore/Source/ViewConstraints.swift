@@ -30,6 +30,9 @@ struct ViewConstraints: Equatable {
     var safeAreaInsets: EdgeInsets
     var isHorizontalFixedSize: Bool
     var isVerticalFixedSize: Bool
+    var isHorizontalAbsoluteSize: Bool
+    var isVerticalAbsoluteSize: Bool
+    var aspectRatio: Double?
 
     init(
         width: CGFloat? = nil,
@@ -38,6 +41,9 @@ struct ViewConstraints: Equatable {
         maxHeight: CGFloat? = nil,
         isHorizontalFixedSize: Bool = false,
         isVerticalFixedSize: Bool = false,
+        isHorizontalAbsoluteSize: Bool = false,
+        isVerticalAbsoluteSize: Bool = false,
+        aspectRatio: Double? = nil,
         safeAreaInsets: EdgeInsets = emptyEdgeSet
     ) {
 
@@ -48,6 +54,9 @@ struct ViewConstraints: Equatable {
         self.safeAreaInsets = safeAreaInsets
         self.isHorizontalFixedSize = isHorizontalFixedSize
         self.isVerticalFixedSize = isVerticalFixedSize
+        self.isHorizontalAbsoluteSize = isHorizontalAbsoluteSize
+        self.isVerticalAbsoluteSize = isVerticalAbsoluteSize
+        self.aspectRatio = aspectRatio
     }
 
     init(size: CGSize, safeAreaInsets: EdgeInsets) {
@@ -56,6 +65,8 @@ struct ViewConstraints: Equatable {
             height: size.height + safeAreaInsets.top + safeAreaInsets.bottom,
             isHorizontalFixedSize: true,
             isVerticalFixedSize: true,
+            isHorizontalAbsoluteSize: true,
+            isVerticalAbsoluteSize: true,
             safeAreaInsets: safeAreaInsets
         )
     }
@@ -111,6 +122,8 @@ struct ViewConstraints: Equatable {
         let isHorizontalFixedSize: Bool = constrainedSize.width.isFixedSize(
             self.isHorizontalFixedSize
         )
+        let isHorizontalAbsoluteSize: Bool = constrainedSize.width.isPoints
+        let isVerticalAbsoluteSize: Bool = constrainedSize.height.isPoints
 
         if let contentSize = contentSize {
             if let maxWidth = childMaxWidth, contentSize.width >= maxWidth {
@@ -130,13 +143,35 @@ struct ViewConstraints: Equatable {
             }
         }
 
+        var aspectRatio: Double? = nil
+        if let ratio = constrainedSize.aspectRatio, ratio > 0 {
+            switch (childWidth, childHeight) {
+            case (nil, let h?):
+                childWidth = (h * ratio).bound(minValue: childMinWidth, maxValue: childMaxWidth)
+                aspectRatio = ratio
+            case (let w?, nil):
+                childHeight = (w / ratio).bound(minValue: childMinHeight, maxValue: childMaxHeight)
+                aspectRatio = ratio
+            case (nil, nil):
+                aspectRatio = ratio
+            default:
+                break
+            }
+        }
+
+        let roundedWidth = childWidth?.rounded()
+        let roundedHeight = childHeight?.rounded()
+
         return ViewConstraints(
-            width: childWidth,
-            height: childHeight,
-            maxWidth: childWidth ?? parentWidth,
-            maxHeight: childHeight ?? parentHeight,
+            width: roundedWidth,
+            height: roundedHeight,
+            maxWidth: roundedWidth ?? parentWidth,
+            maxHeight: roundedHeight ?? parentHeight,
             isHorizontalFixedSize: isHorizontalFixedSize,
             isVerticalFixedSize: isVerticalFixedSize,
+            isHorizontalAbsoluteSize: isHorizontalAbsoluteSize,
+            isVerticalAbsoluteSize: isVerticalAbsoluteSize,
+            aspectRatio: aspectRatio,
             safeAreaInsets: self.safeAreaInsets
         )
     }
@@ -181,16 +216,55 @@ struct ViewConstraints: Equatable {
             childHeight = max(0, min(height, parentHeight.subtract(verticalMargins)))
         }
 
-        let isVerticalFixedSize: Bool = size.height.isFixedSize(
-            self.isVerticalFixedSize
-        )
+        // Pre-compute derived dimension so children receive concrete parent bounds.
+        // Also carry the ratio through to ViewConstraints so the .constraints()
+        // modifier can apply SwiftUI's .aspectRatio(.fit), which correctly enforces
+        // the ratio during the layout pass (handles VStack fair-sharing, nil proposals,
+        // landscape orientation, etc.).
+        var aspectRatio: Double? = nil
+        if let ratio = size.aspectRatio, ratio > 0 {
+            switch (childWidth, childHeight) {
+            case (nil, let h?):
+                // width is auto: derive from height and carry ratio for SwiftUI
+                childWidth = h * ratio
+                aspectRatio = ratio
+            case (let w?, nil):
+                // height is auto: derive from width and carry ratio for SwiftUI
+                childHeight = w / ratio
+                aspectRatio = ratio
+            case (nil, nil):
+                // Both auto: content determines the size, maxWidth/maxHeight bound it.
+                // Don't pre-compute — leave nil so SwiftUI sizes to content.
+                // .aspectRatio() on the view enforces the ratio within those bounds.
+                aspectRatio = ratio
+            default:
+                break  // both dims already concrete: explicit values win, ratio ignored
+            }
+        }
 
-        let isHorizontalFixedSize: Bool = size.width.isFixedSize(
-            self.isHorizontalFixedSize
-        )
+        let isVerticalFixedSize: Bool = size.height.isFixedSize(self.isVerticalFixedSize)
+        let isHorizontalFixedSize: Bool = size.width.isFixedSize(self.isHorizontalFixedSize)
+        let isHorizontalAbsoluteSize: Bool = size.width.isPoints
+        let isVerticalAbsoluteSize: Bool = size.height.isPoints
 
-        let maxWidth = (parentWidth ?? self.maxWidth?.subtract(padding * 2))?.subtract(horizontalMargins)
-        let maxHeight = (parentHeight ?? self.maxHeight?.subtract(padding * 2))?.subtract(verticalMargins)
+        var maxWidth = (parentWidth ?? self.maxWidth?.subtract(padding * 2))?.subtract(horizontalMargins)
+        var maxHeight = (parentHeight ?? self.maxHeight?.subtract(padding * 2))?.subtract(verticalMargins)
+
+        // For both-auto + aspect_ratio, tighten max bounds by the ratio so children
+        // receive accurate parent bounds (e.g. maxHeight 600 with 16:9 ratio → 225, not 600).
+        if childWidth == nil, childHeight == nil, let ratio = aspectRatio, ratio > 0 {
+            switch (maxWidth, maxHeight) {
+            case (let w?, let h?):
+                maxWidth = min(w, h * ratio)
+                maxHeight = min(h, w / ratio)
+            case (let w?, nil):
+                maxHeight = w / ratio
+            case (nil, let h?):
+                maxWidth = h * ratio
+            case (nil, nil):
+                break
+            }
+        }
 
         return ViewConstraints(
             width: childWidth,
@@ -199,6 +273,9 @@ struct ViewConstraints: Equatable {
             maxHeight: childHeight ?? maxHeight,
             isHorizontalFixedSize: isHorizontalFixedSize,
             isVerticalFixedSize: isVerticalFixedSize,
+            isHorizontalAbsoluteSize: isHorizontalAbsoluteSize,
+            isVerticalAbsoluteSize: isVerticalAbsoluteSize,
+            aspectRatio: aspectRatio,
             safeAreaInsets: safeAreaInsets
         )
     }
@@ -250,6 +327,11 @@ extension ThomasSizeConstraint {
         case .auto:
             return false
         }
+    }
+
+    var isPoints: Bool {
+        if case .points = self { return true }
+        return false
     }
 }
 

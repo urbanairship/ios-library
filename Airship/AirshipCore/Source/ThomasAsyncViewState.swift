@@ -366,7 +366,7 @@ final class ThomasAsyncViewState: ObservableObject {
         let resolvedAuth: AirshipRequestAuth?
         switch info.auth {
         case .app:
-            resolvedAuth = .basicAppAuth
+            resolvedAuth = .generatedAppToken
         case .channel:
             let channelID = try await channelIdFetcher()
             resolvedAuth = .generatedChannelToken(identifier: channelID)

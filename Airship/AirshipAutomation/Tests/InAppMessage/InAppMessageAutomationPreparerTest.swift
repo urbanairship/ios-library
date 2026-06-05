@@ -68,7 +68,9 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
             return displayAdapter
         }
 
-        let results = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
+        guard case .prepared(let results) = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo) else {
+            return XCTFail("Expected .prepared result")
+        }
 
         XCTAssertEqual(self.message, results.message)
         XCTAssertTrue(displayCoordinator === results.displayCoordinator)
@@ -116,6 +118,29 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
             _ = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
             XCTFail("should throw")
         } catch {}
+    }
+
+    func testPrepareIntermediateLayoutResolveFails_appDefined_cancels() async throws {
+        // A broken layout JSON (not a valid AirshipLayoutWrapper) on an app-defined
+        // schedule should return .cancel — the payload won't be updated by remote data.
+        let badMessage = InAppMessage(
+            name: "bad layout",
+            displayContent: .airshipLayoutIntermediate(AirshipLayoutIntermediate(layoutJSON: .string("not a layout")))
+        )
+        let result = try await self.preparer.prepare(data: badMessage, preparedScheduleInfo: preparedScheduleInfo)
+        guard case .cancel = result else { return XCTFail("Expected .cancel, got \(result)") }
+    }
+
+    func testPrepareIntermediateLayoutResolveFails_remoteData_skips() async throws {
+        // A broken layout JSON on a remote-data schedule should return .skip so the
+        // schedule goes back to idle and retries after the server pushes a fix.
+        let badMessage = InAppMessage(
+            name: "bad layout",
+            displayContent: .airshipLayoutIntermediate(AirshipLayoutIntermediate(layoutJSON: .string("not a layout"))),
+            source: .remoteData
+        )
+        let result = try await self.preparer.prepare(data: badMessage, preparedScheduleInfo: preparedScheduleInfo)
+        guard case .skip = result else { return XCTFail("Expected .skip, got \(result)") }
     }
 
     func testCancelled() async throws {

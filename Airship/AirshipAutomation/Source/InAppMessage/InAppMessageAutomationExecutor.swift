@@ -175,7 +175,8 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             } catch {
                 data.displayCoordinator.messageFinishedDisplaying(data.message)
                 AirshipLogger.error("Failed to display message \(error)")
-                result = .retry
+                // Non-remote-data schedules come from push payloads that won't change — cancel.
+                result = data.message.source != .remoteData ? .cancel : .retry
             }
         }
 

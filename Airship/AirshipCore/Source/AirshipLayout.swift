@@ -90,15 +90,12 @@ extension AirshipLayout {
     static let minLayoutVersion = 1
     static let maxLayoutVersion = 2
 
-    public func validate() -> Bool
-    {
-        guard
-            self.version >= Self.minLayoutVersion
-                && self.version <= Self.maxLayoutVersion else {
-            return false
-        }
+    public static func isValidVersion(_ version: Int) -> Bool {
+        return version >= minLayoutVersion && version <= maxLayoutVersion
+    }
 
-        return true
+    public func validate() -> Bool {
+        return Self.isValidVersion(self.version)
     }
 
     func extract<T>(extractor: (ThomasViewInfo) -> T?) -> [T] {

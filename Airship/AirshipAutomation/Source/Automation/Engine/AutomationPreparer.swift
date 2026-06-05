@@ -16,6 +16,12 @@ protocol AutomationPreparerProtocol: Sendable {
     func cancelled(schedule: AutomationSchedule) async
 }
 
+enum DelegatePreparerResult<T: Sendable>: Sendable {
+    case prepared(T)
+    case cancel
+    case skip
+}
+
 protocol AutomationPreparerDelegate<PrepareDataIn, PrepareDataOut>: Sendable {
     associatedtype PrepareDataIn: Sendable
     associatedtype PrepareDataOut: Sendable
@@ -23,7 +29,7 @@ protocol AutomationPreparerDelegate<PrepareDataIn, PrepareDataOut>: Sendable {
     func prepare(
         data: PrepareDataIn,
         preparedScheduleInfo: PreparedScheduleInfo
-    ) async throws -> PrepareDataOut
+    ) async throws -> DelegatePreparerResult<PrepareDataOut>
 
     func cancelled(scheduleID: String) async
 }
@@ -206,13 +212,14 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         switch (data) {
         case .actions(let data):
             let preparedInfo = try await prepareScheduleInfo()
-            let result = try await self.actionPreparer.prepare(
-                data: data,
-                preparedScheduleInfo: preparedInfo
-            )
-
-            let preparedSchedule = prepareSchedule(preparedInfo, .actions(result))
-            return .success(result: .prepared(preparedSchedule))
+            switch try await self.actionPreparer.prepare(data: data, preparedScheduleInfo: preparedInfo) {
+            case .prepared(let result):
+                return .success(result: .prepared(prepareSchedule(preparedInfo, .actions(result))))
+            case .cancel:
+                return .success(result: .cancel)
+            case .skip:
+                return .success(result: .skip)
+            }
 
         case .inAppMessage(let data):
             guard data.displayContent.validate() else {
@@ -221,13 +228,14 @@ struct AutomationPreparer: AutomationPreparerProtocol {
             }
 
             let preparedInfo = try await prepareScheduleInfo()
-            let result = try await self.messagePreparer.prepare(
-                data: data,
-                preparedScheduleInfo: preparedInfo
-            )
-
-            let preparedSchedule = prepareSchedule(preparedInfo, .inAppMessage(result))
-            return .success(result: .prepared(preparedSchedule))
+            switch try await self.messagePreparer.prepare(data: data, preparedScheduleInfo: preparedInfo) {
+            case .prepared(let result):
+                return .success(result: .prepared(prepareSchedule(preparedInfo, .inAppMessage(result))))
+            case .cancel:
+                return .success(result: .cancel)
+            case .skip:
+                return .success(result: .skip)
+            }
 
         case .deferred(let deferred):
             return try await self.prepareDeferred(

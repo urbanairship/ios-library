@@ -223,7 +223,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         let result =  try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
 
         XCTAssertTrue(self.displayAdapter.displayed)
-        XCTAssertEqual(result, .retry)
+        XCTAssertEqual(result, .cancel)
         XCTAssertTrue(self.actionRunner.actionPayloads.isEmpty)
     }
 
@@ -258,7 +258,7 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         }
 
         let result = try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
-        XCTAssertEqual(result, .retry)
+        XCTAssertEqual(result, .cancel)
     }
 
     @MainActor

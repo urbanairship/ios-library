@@ -125,8 +125,9 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 displayTarget: displayTarget,
                 analytics: analytics
             )
-        case .custom(_):
-            // This should never happen - constructor will throw
+        case .custom(_), .airshipLayoutIntermediate(_):
+            // These should never reach the display adapter.
+            // custom: constructor throws. airshipLayoutIntermediate: resolved to airshipLayout during prepare.
             return .finished
         }
     }

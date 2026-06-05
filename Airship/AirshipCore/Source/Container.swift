@@ -85,38 +85,21 @@ fileprivate struct ContainerLayout: Layout {
         static let defaultValue = ThomasPosition(horizontal: .center, vertical: .center)
     }
     
-    struct Cache {
-        var childSizes: [CGSize]
-    }
-
     let constraints: ViewConstraints
     let layoutDirection: LayoutDirection
-
-    func makeCache(subviews: Subviews) -> Cache {
-        Cache(
-            childSizes: Array(repeating: .zero, count: subviews.count)
-        )
-    }
 
     func sizeThatFits(
         proposal: ProposedViewSize,
         subviews: Subviews,
-        cache: inout Cache
+        cache: inout ()
     ) -> CGSize {
         var maxWidth: CGFloat = (constraints.width == nil) ? 0 : proposal.width ?? 0
         var maxHeight: CGFloat = (constraints.height == nil) ? 0 : proposal.height ?? 0
 
-        for (index, subview) in subviews.enumerated() {
+        for subview in subviews {
             let size = subview.dimensions(in: proposal)
-
-            let childSize = CGSize(
-                width: size.width.safeValue ?? 0,
-                height: size.height.safeValue ?? 0
-            )
-            cache.childSizes[index] = childSize
-
-            maxWidth = max(maxWidth, childSize.width)
-            maxHeight = max(maxHeight, childSize.height)
+            maxWidth = max(maxWidth, size.width.safeValue ?? 0)
+            maxHeight = max(maxHeight, size.height.safeValue ?? 0)
         }
 
         return CGSize(width: maxWidth, height: maxHeight)
@@ -126,11 +109,23 @@ fileprivate struct ContainerLayout: Layout {
         in bounds: CGRect,
         proposal: ProposedViewSize,
         subviews: Subviews,
-        cache: inout Cache
+        cache: inout ()
     ) {
-        for (subviewIndex, subview) in subviews.enumerated() {
+        for subview in subviews {
             let position = subview[ContainerItemPositionKey.self]
-            let childSize = cache.childSizes[subviewIndex]
+
+            // Re-measure with the actual bounds so placement uses the size the child
+            // will actually occupy, not a stale cached size from an earlier sizeThatFits
+            // pass (e.g. an ideal-size pass that proposed full-width).
+            let placementProposal = ProposedViewSize(
+                width: bounds.width,
+                height: bounds.height
+            )
+            let dims = subview.dimensions(in: placementProposal)
+            let childSize = CGSize(
+                width: dims.width.safeValue ?? 0,
+                height: dims.height.safeValue ?? 0
+            )
 
             let x: CGFloat = switch position.horizontal {
             case .start:
@@ -155,10 +150,7 @@ fileprivate struct ContainerLayout: Layout {
                     x: x.safeValue ?? bounds.minX,
                     y: y.safeValue ?? bounds.minY
                 ),
-                proposal: ProposedViewSize(
-                    width: childSize.width,
-                    height: childSize.height
-                )
+                proposal: placementProposal
             )
         }
     }

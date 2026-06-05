@@ -165,6 +165,19 @@ struct ThomasAsyncViewStateTest {
     }
 
     @Test
+    func appAuth() async throws {
+        let testSession = TestAirshipRequestSession()
+        testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validViewInfoJSONData)]
+        let state = ThomasAsyncViewState(
+            properties: try makeProperties(auth: .app),
+            taskSleeper: RecordingTaskSleeper(),
+            requestSession: testSession
+        )
+        try await state.resolve()
+        #expect(testSession.lastRequest?.auth == .generatedAppToken)
+    }
+
+    @Test
     func channelAuth() async throws {
         let testSession = TestAirshipRequestSession()
         testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validViewInfoJSONData)]
