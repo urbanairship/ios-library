@@ -1007,11 +1007,13 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             let items: [Item]
             let gestures: [Gesture]?
             let disableSwipePredicate: [DisableSwipeSelector]?
+            var identifier: String? // Added later so its treated as optional.
 
             enum CodingKeys: String, CodingKey {
-                case items = "items"
+                case identifier
+                case items
                 case disableSwipe = "disable_swipe"
-                case gestures = "gestures"
+                case gestures
                 case type
                 case disableSwipePredicate = "disable_swipe_when"
             }

@@ -54,6 +54,16 @@ struct Pager: View {
     @State private var pageHeights: [String: CGFloat] = [:]
     private let timer: Publishers.Autoconnect<Timer.TimerPublisher>
 
+    private var resolvedPagerID: String {
+        let pagerID = self.info.properties.identifier ?? pagerState.identifier
+#if !os(tvOS) && !os(watchOS)
+        let verticalClass = verticalSizeClass == .regular ? "p" : "l"
+        return "\(pagerID)-\(verticalClass)"
+#else
+        return pagerID
+#endif
+    }
+
     private var isLegacyPageSwipeEnabled: Bool {
         if #available(iOS 17.0, *) {
             return if Self.forceLegacyPager {
@@ -182,12 +192,20 @@ struct Pager: View {
     private func makeLegacyPager(childConstraints: ViewConstraints, width: CGFloat?, height: CGFloat?) -> some View {
         VStack {
             HStack(spacing: 0) {
-                makePageViews(
-                    childConstraints: childConstraints,
-                    width: width,
-                    height: height,
-                    isLegacyPager: true
-                )
+                ForEach(0..<pagerState.pageItems.count, id: \.self) { index in
+                    makePageView(
+                        for: index,
+                        childConstraints: childConstraints,
+                        width: width,
+                        height: height,
+                        isLegacyPager: true
+                    )
+                    .onAppear {
+                        if pagerState.pageItems[index].identifier == pagerState.currentPageId {
+                            pagerState.confirmNavigation()
+                        }
+                    }
+                }
             }
             .offset(x: -((width ?? 0) * CGFloat(pagerState.pageIndex)))
             .offset(x: calcDragOffset(index: pagerState.pageIndex))
@@ -201,28 +219,38 @@ struct Pager: View {
         .clipped()
     }
 
+
     @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
     @ViewBuilder
     private func makeScrollViewPager(childConstraints: ViewConstraints, width: CGFloat?, height: CGFloat?) -> some View {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 0) {
-                makePageViews(
-                    childConstraints: childConstraints,
-                    width: width,
-                    height: height,
-                    isLegacyPager: false
-                )
+                ForEach(0..<pagerState.pageItems.count, id: \.self) { index in
+                    makePageView(
+                        for: index,
+                        childConstraints: childConstraints,
+                        width: width,
+                        height: height,
+                        isLegacyPager: false
+                    )
+                    .containerRelativeFrame(.horizontal)
+                    .onAppear {
+                        if pagerState.pageItems[index].identifier == pagerState.currentPageId {
+                            pagerState.confirmNavigation()
+                        }
+                    }
+                }
             }
             .scrollTargetLayout()
         }
         .scrollDisabled(self.info.properties.disableSwipe == true || self.pagerState.isScrollingDisabled)
         .allowsHitTesting(!pagerState.isNavigationInProgress)
-        .scrollTargetBehavior(.paging)
+        .scrollTargetBehavior(Self.scrollTargetBehavior)
         .scrollPosition(id: $scrollPosition)
         .scrollIndicators(.never)
         .accessibilityElement(children: .contain)
-        .airshipOnChangeOf(scrollPosition ?? "", initial: false) { value in
-            guard !value.isEmpty, value != self.pagerState.currentPageId else {
+        .airshipOnChangeOf(scrollPosition, initial: false) { value in
+            guard let value, value != self.pagerState.currentPageId else {
                 return
             }
 
@@ -236,9 +264,8 @@ struct Pager: View {
             height: height,
             alignment: .leading
         )
-#if !os(tvOS) && !os(watchOS)
-        .id(verticalSizeClass)
-#endif
+        .clipped()
+        .id(resolvedPagerID)
     }
 
     @ViewBuilder
@@ -285,28 +312,6 @@ struct Pager: View {
         )
         .accessibilityElement(children: .contain)
         .id(pageItem.identifier)
-    }
-
-    @ViewBuilder
-    private func makePageViews(
-        childConstraints: ViewConstraints,
-        width: CGFloat?,
-        height: CGFloat?,
-        isLegacyPager: Bool
-    ) -> some View {
-        ForEach(0..<pagerState.pageItems.count, id: \.self) { index in
-            makePageView(
-                for: index,
-                childConstraints: childConstraints,
-                width: width,
-                height: height,
-                isLegacyPager: isLegacyPager
-            ).onAppear {
-                if pagerState.pageItems[index].identifier == pagerState.currentPageId {
-                    pagerState.confirmNavigation()
-                }
-            }
-        }
     }
 
     @ViewBuilder
@@ -766,4 +771,16 @@ extension ThomasViewInfo.Pager.Item {
     }
 }
 
+@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+extension Pager {
+    // Use .viewAligned instead of .paging — .paging has a SwiftUI bug where full-screen
+    // pagers with clipped images misalign pages at exactly 100% of the window width.
+    static var scrollTargetBehavior: ViewAlignedScrollTargetBehavior {
+        if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *) {
+            return .viewAligned(limitBehavior: .alwaysByOne)
+        } else {
+            return .viewAligned(limitBehavior: .always)
+        }
+    }
+}
 
