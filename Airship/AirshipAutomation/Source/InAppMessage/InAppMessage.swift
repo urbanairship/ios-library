@@ -145,7 +145,9 @@ public struct InAppMessage: Codable, Equatable, Sendable {
             let layoutJSON = try container.decode(AirshipJSON.self, forKey: .display)
             // Store as intermediate — ThomasViewInfo is decoded at prepare time to avoid
             // exhausting the 512KB CoreData queue stack via recursive Codable decode.
-            displayContent = .airshipLayoutIntermediate(AirshipLayoutIntermediate(layoutJSON: layoutJSON))
+            displayContent = .airshipLayoutIntermediate(
+                AirshipLayoutIntermediate(layoutJSON: layoutJSON)
+            )
         }
 
         self.init(
@@ -166,7 +168,6 @@ public struct InAppMessage: Codable, Equatable, Sendable {
         try container.encodeIfPresent(self.source, forKey: .source)
         try container.encodeIfPresent(self.extras, forKey: .extras)
         try container.encodeIfPresent(self.actions, forKey: .actions)
-        try container.encodeIfPresent(self.isReportingEnabled, forKey: .isReportingEnabled)
         try container.encodeIfPresent(self.isReportingEnabled, forKey: .isReportingEnabled)
         try container.encodeIfPresent(self.displayBehavior, forKey: .displayBehavior)
         try container.encodeIfPresent(self.renderedLocale, forKey: .renderedLocale)

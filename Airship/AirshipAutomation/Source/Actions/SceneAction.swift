@@ -71,9 +71,15 @@ final class SceneAction: AirshipAction {
 
         let layoutJSON = try SceneAction.layoutJSON(from: args.dsl)
 
+        // The scene DSL contains the raw AirshipLayout. Wrap it under "layout" so it matches
+        // the canonical display format that AirshipLayoutIntermediate and the remote-data path expect.
+        let wrappedLayoutJSON = AirshipJSON.object(["layout": layoutJSON])
+
         let message = InAppMessage(
             name: "Scene Landing Page \(messageID ?? "")",
-            displayContent: .airshipLayoutIntermediate(AirshipLayoutIntermediate(layoutJSON: layoutJSON)),
+            displayContent: .airshipLayoutIntermediate(
+                AirshipLayoutIntermediate(layoutJSON: wrappedLayoutJSON)
+            ),
             isReportingEnabled: messageID != nil,
             displayBehavior: .immediate
         )

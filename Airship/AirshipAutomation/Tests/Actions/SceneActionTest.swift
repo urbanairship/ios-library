@@ -84,10 +84,14 @@ struct SceneActionTests {
                     #expect(message.isReportingEnabled == false)
                     #expect(message.displayBehavior == .immediate)
 
-                    guard case .airshipLayoutIntermediate = message.displayContent else {
+                    guard case .airshipLayoutIntermediate(let intermediate) = message.displayContent else {
                         Issue.record("Expected airshipLayoutIntermediate display content")
                         return
                     }
+
+                    let rawLayout = try AirshipJSON.from(json: minimalLayoutJSON)
+                    #expect(intermediate.layoutJSON == .object(["layout": rawLayout]))
+                    #expect(intermediate.layoutJSON.object?["layout"] == rawLayout)
 
                     await self.expectStandardSceneSchedule(schedule)
                     confirm()
