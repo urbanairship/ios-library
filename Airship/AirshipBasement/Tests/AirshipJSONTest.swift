@@ -2,7 +2,7 @@
 
 import XCTest
 
-@testable import AirshipCore
+@testable import AirshipBasement
 
 final class AirshipJSONTest: XCTestCase {
     func testWrapPrimitives() throws {
