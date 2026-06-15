@@ -89,7 +89,10 @@ extension View {
                 let baseLineHeight = scaledFontSize
                 let effective = baseLineHeight * multiplier
                 let extra = max(effective - baseLineHeight, 0)
-                self.lineSpacing(extra)
+                self
+                    .lineSpacing(extra)
+                    .frame(minHeight: effective, alignment: .top) 
+
             }
         } else {
             self
