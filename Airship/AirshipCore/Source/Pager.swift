@@ -223,49 +223,54 @@ struct Pager: View {
     @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
     @ViewBuilder
     private func makeScrollViewPager(childConstraints: ViewConstraints, width: CGFloat?, height: CGFloat?) -> some View {
-        ScrollView(.horizontal) {
-            LazyHStack(spacing: 0) {
-                ForEach(0..<pagerState.pageItems.count, id: \.self) { index in
-                    makePageView(
-                        for: index,
-                        childConstraints: childConstraints,
-                        width: width,
-                        height: height,
-                        isLegacyPager: false
-                    )
-                    .containerRelativeFrame(.horizontal)
-                    .onAppear {
-                        if pagerState.pageItems[index].identifier == pagerState.currentPageId {
-                            pagerState.confirmNavigation()
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal) {
+                LazyHStack(spacing: 0) {
+                    ForEach(0..<pagerState.pageItems.count, id: \.self) { index in
+                        makePageView(
+                            for: index,
+                            childConstraints: childConstraints,
+                            width: width,
+                            height: height,
+                            isLegacyPager: false
+                        )
+                        .containerRelativeFrame(.horizontal)
+                        .onAppear {
+                            if pagerState.pageItems[index].identifier == pagerState.currentPageId {
+                                pagerState.confirmNavigation()
+                            }
                         }
                     }
                 }
+                .scrollTargetLayout()
             }
-            .scrollTargetLayout()
-        }
-        .scrollDisabled(self.info.properties.disableSwipe == true || self.pagerState.isScrollingDisabled)
-        .allowsHitTesting(!pagerState.isNavigationInProgress)
-        .scrollTargetBehavior(Self.scrollTargetBehavior)
-        .scrollPosition(id: $scrollPosition)
-        .scrollIndicators(.never)
-        .accessibilityElement(children: .contain)
-        .airshipOnChangeOf(scrollPosition, initial: false) { value in
-            guard let value, value != self.pagerState.currentPageId else {
-                return
-            }
+            .scrollDisabled(self.info.properties.disableSwipe == true || self.pagerState.isScrollingDisabled)
+            .allowsHitTesting(!pagerState.isNavigationInProgress)
+            .scrollTargetBehavior(Self.scrollTargetBehavior)
+            .scrollPosition(id: $scrollPosition)
+            .scrollIndicators(.never)
+            .accessibilityElement(children: .contain)
+            .airshipOnChangeOf(scrollPosition, initial: false) { value in
+                guard let value, value != self.pagerState.currentPageId else {
+                    return
+                }
 
-            let result = self.pagerState.navigateToPage(id: value)
-            if let result {
-                handleEvents(.defaultSwipe(result))
+                let result = self.pagerState.navigateToPage(id: value)
+                if let result {
+                    handleEvents(.defaultSwipe(result))
+                }
+            }
+            .frame(
+                width: width,
+                height: height,
+                alignment: .leading
+            )
+            .clipped()
+            .id(resolvedPagerID)
+            .task(id: resolvedPagerID) {
+                proxy.scrollTo(scrollPosition)
             }
         }
-        .frame(
-            width: width,
-            height: height,
-            alignment: .leading
-        )
-        .clipped()
-        .id(resolvedPagerID)
     }
 
     @ViewBuilder
