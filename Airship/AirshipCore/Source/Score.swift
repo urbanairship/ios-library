@@ -192,7 +192,7 @@ struct Score: View {
                         initialValue: self.viewModel.score,
                         valueUpdates: self.viewModel.$score,
                         validatables: info.validation
-                    ) { [weak thomasState, weak viewModel] outcomes in
+                    ) { [weak thomasState = thomasState, weak viewModel = viewModel] outcomes in
                         guard let thomasState, let viewModel else { return }
                         thomasState.processSync(
                             outcomes: outcomes,

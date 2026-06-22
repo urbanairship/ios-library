@@ -10,11 +10,11 @@ struct RootView<Content: View>: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
 
-    @State private var currentOrientation: ThomasOrientation = RootView.resolveOrientation()
+    @State private var currentOrientation: ThomasOrientation = RootViewResolver.resolveOrientation()
 
     @State private var isForeground: Bool = true
     @State private var isVisible: Bool = false
-    @State private var isVoiceOverRunning: Bool = Self.resolveIsVoiceOverRunning()
+    @State private var isVoiceOverRunning: Bool = RootViewResolver.resolveIsVoiceOverRunning()
 
     @ObservedObject var thomasEnvironment: ThomasEnvironment
     @StateObject var thomasState: ThomasState
@@ -60,7 +60,7 @@ struct RootView<Content: View>: View {
         self.thomasEnvironment = thomasEnvironment
         self.layout = layout
         self.content = content
-        self.isForeground = AppStateTracker.shared.isForegrounded
+        self._isForeground = State(initialValue: AppStateTracker.shared.isForegrounded)
         self._thomasState = StateObject(
             wrappedValue: ThomasState() { [weak thomasEnvironment] state in
                 thomasEnvironment?.onStateChange(state)
@@ -105,7 +105,7 @@ struct RootView<Content: View>: View {
 #endif
             .onAppear {
                 updateVoiceoverRunningState()
-                self.currentOrientation = RootView.resolveOrientation()
+                self.currentOrientation = RootViewResolver.resolveOrientation()
                 self.isVisible = true
                 self.thomasEnvironment.onVisibilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
             }
@@ -119,7 +119,7 @@ struct RootView<Content: View>: View {
                     for: UIDevice.orientationDidChangeNotification
                 )
             ) { _ in
-                self.currentOrientation = RootView.resolveOrientation()
+                self.currentOrientation = RootViewResolver.resolveOrientation()
             }
 #endif
     }
@@ -145,6 +145,15 @@ struct RootView<Content: View>: View {
 #endif
     }
 
+    private func updateVoiceoverRunningState() {
+        isVoiceOverRunning = RootViewResolver.resolveIsVoiceOverRunning()
+    }
+}
+
+/// Non-generic helpers so referencing them does not form a `RootView<Content>`
+/// metatype, which would surface `Content`'s isolated `View` conformance.
+@MainActor
+private enum RootViewResolver {
     static func resolveOrientation() -> ThomasOrientation {
 #if os(tvOS) || os(watchOS) || os(macOS)
         return .landscape
@@ -162,11 +171,7 @@ struct RootView<Content: View>: View {
 #endif
     }
 
-    private func updateVoiceoverRunningState() {
-        isVoiceOverRunning = Self.resolveIsVoiceOverRunning()
-    }
-
-    private static func resolveIsVoiceOverRunning() -> Bool {
+    static func resolveIsVoiceOverRunning() -> Bool {
 #if os(watchOS)
         // watchOS does not expose a public property to check VoiceOver status
         return false

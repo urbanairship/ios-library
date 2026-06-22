@@ -616,7 +616,7 @@ struct Pager: View {
         Task {
             await thomasState.process(
                 outcomes: outcomes,
-                actionsDelegate: { [weak thomasEnvironment, layoutState] outcome in
+                actionsDelegate: { [weak thomasEnvironment = thomasEnvironment, layoutState] outcome in
                     switch outcome {
                     case .formAction: break
                     case .dismiss(let outcome):

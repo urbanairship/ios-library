@@ -20,7 +20,7 @@ struct Icons {
 
     @MainActor
     @ViewBuilder
-    private static func makeView(
+    fileprivate static func makeView(
         icon: ThomasIconInfo.Icon,
         resizable: Bool,
         color: Color
@@ -136,14 +136,33 @@ struct Icons {
         }
     }
 
-    @ViewBuilder
     @MainActor
     static func icon(
         info: ThomasIconInfo,
         colorScheme: ColorScheme,
         resizable: Bool = true
     ) -> some View {
-        makeView(
+        IconsContent(info: info, colorScheme: colorScheme, resizable: resizable)
+    }
+}
+
+/// The content of a single icon, extracted into its own concrete `View` type.
+///
+/// Inlining `Icons.makeView(...)` (a 17-case @ViewBuilder switch where each case
+/// returns the opaque result of `makeSystemImageIcon`) directly in callers' bodies
+/// builds an opaque-type tree large enough to crash the Swift optimizer under
+/// -O + library evolution (non-terminating substOpaqueTypesWithUnderlyingTypes in
+/// SILGen). Referencing a named struct keeps callers' type trees small while
+/// preserving full static typing (and thus view identity / animations), unlike
+/// erasing to `AnyView`.
+@MainActor
+private struct IconsContent: View {
+    let info: ThomasIconInfo
+    let colorScheme: ColorScheme
+    let resizable: Bool
+
+    var body: some View {
+        Icons.makeView(
             icon: info.icon,
             resizable: resizable,
             color: info.color.toColor(colorScheme)

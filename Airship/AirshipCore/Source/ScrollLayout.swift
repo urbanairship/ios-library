@@ -56,7 +56,7 @@ struct ScrollLayout: View {
         ScrollViewReader { proxy in
             makeScrollView(axis: axis)
                 .clipped()
-                .airshipOnChangeOf(self.thomasEnvironment.keyboardState) { [weak thomasEnvironment] newValue in
+                .airshipOnChangeOf(self.thomasEnvironment.keyboardState) { [weak thomasEnvironment = thomasEnvironment] newValue in
                     if let focusedID = thomasEnvironment?.focusedID {
                         switch newValue {
                         case .hidden:

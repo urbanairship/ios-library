@@ -86,10 +86,14 @@ final class SessionTracker: SessionTrackerProtocol {
     func airshipReady() {
         let date = self.date.now
         Task { @MainActor in
-            try await self.taskSleeper.sleep(timeInterval: SessionTracker.appInitWaitTime)
-            let isForeground = self.appStateTracker.state != .background
-            self.ensureInit(isForeground: isForeground, date: date) {
-                AirshipLogger.debug("App init - AirshipReady")
+            do {
+                try await self.taskSleeper.sleep(timeInterval: SessionTracker.appInitWaitTime)
+                let isForeground = self.appStateTracker.state != .background
+                self.ensureInit(isForeground: isForeground, date: date) {
+                    AirshipLogger.debug("App init - AirshipReady")
+                }
+            } catch {
+                AirshipLogger.error("App init wait failed: \(error)")
             }
         }
     }

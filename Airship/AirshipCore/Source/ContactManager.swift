@@ -129,16 +129,20 @@ actor ContactManager: ContactManagerProtocol {
         )
 
         Task { [weak channel] in
-            await self.yieldContactUpdates()
+            do {
+                await self.yieldContactUpdates()
 
-            let startingChannelID = channel?.identifier
-            let updates = channel?.identifierUpdates.filter { $0 != startingChannelID }
+                let startingChannelID = channel?.identifier
+                let updates = channel?.identifierUpdates.filter { $0 != startingChannelID }
 
-            if let updates {
-                for await _ in updates {
-                    try Task.checkCancellation()
-                    await enqueueTask()
+                if let updates {
+                    for await _ in updates {
+                        try Task.checkCancellation()
+                        await enqueueTask()
+                    }
                 }
+            } catch {
+                AirshipLogger.error("Failed to yield contact updates: \(error)")
             }
         }
     }
