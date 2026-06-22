@@ -72,7 +72,7 @@ final class ExperimentTest: XCTestCase {
                     bucket: .init(min: 0, max: 8192))
             ),
             exclusions: [
-                .init(messageTypePredicate: try! .fromJson(json: ["value": ["equals": "transactional"]]), campaignsPredicate: nil)
+                .init(messageTypePredicate: try! JSONPredicate(json: ["value": ["equals": "transactional"]]), campaignsPredicate: nil)
             ],
             timeCriteria: .init(start: Date(milliseconds: 1689012595000), end: Date(milliseconds: 1689091608000))
         )
@@ -154,7 +154,7 @@ final class ExperimentTest: XCTestCase {
             ),
             compoundAudience: .init(selector: .atomic(.init(newUser: true))),
             exclusions: [
-                .init(messageTypePredicate: try! .fromJson(json: ["value": ["equals": "transactional"]]), campaignsPredicate: nil)
+                .init(messageTypePredicate: try! JSONPredicate(json: ["value": ["equals": "transactional"]]), campaignsPredicate: nil)
             ],
             timeCriteria: .init(start: Date(milliseconds: 1689012595000), end: Date(milliseconds: 1689091608000))
         )

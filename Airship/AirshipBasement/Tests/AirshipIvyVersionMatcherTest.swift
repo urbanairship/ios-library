@@ -2,8 +2,7 @@
 
 import XCTest
 
-@testable
-import AirshipCore
+@testable import AirshipBasement
 
 final class AirshipIvyVersionMatcherTest: XCTestCase {
 

@@ -3425,6 +3425,10 @@
 			children = (
 				6ED2F5342B7FFCD7000AFC80 /* AirshipDateFormatterTest.swift */,
 				6E7DB38D28ECFCED002725F6 /* AirshipJSONTest.swift */,
+				6E65244F2A4FD8D30019F353 /* JSONPredicateTest.swift */,
+				60E09FDA2B2780DB005A16EA /* JsonMatcherTest.swift */,
+				6087DB872B278F7600449BA8 /* JsonValueMatcherTest.swift */,
+				6ED2F52A2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -3546,10 +3550,6 @@
 		6E411CE22538CBB200FEE4E8 /* JSON */ = {
 			isa = PBXGroup;
 			children = (
-				8401769326C5671100373AF7 /* JSONMatcher.swift */,
-				8401769726C5722400373AF7 /* JSONPredicate.swift */,
-				8401769B26C5729E00373AF7 /* JSONValueMatcher.swift */,
-				6E4339EE2DFA039B000A7741 /* JSONValueMatcherPredicates.swift */,
 			);
 			name = JSON;
 			sourceTree = "<group>";
@@ -3780,7 +3780,6 @@
 				6E146C4F2F5214D900320A36 /* AirshipDevice.swift */,
 				6EC815AE2F2BBFD100E1C0C6 /* BundleExtensions.swift */,
 				6E3CA5402ECB9B7400210C32 /* AirshipDisplayTarget.swift */,
-				6E4339F02DFA099C000A7741 /* AirshipIvyVersionMatcher.swift */,
 				6E52146A2DCBF9BA00CF64B9 /* AirshipTimerProtocol.swift */,
 				6E916C562DB30D9E00C676FA /* AirshipWindowFactory.swift */,
 				6EAA61482D5297A2006602F7 /* SubjectExtension.swift */,
@@ -3836,6 +3835,11 @@
 				6EF1933828380086005F192A /* Logger */,
 				6E6C3F9D27A4C3D4007F55C7 /* AirshipJSON.swift */,
 				6E698E02267A799500654DB2 /* AirshipErrors.swift */,
+				8401769326C5671100373AF7 /* JSONMatcher.swift */,
+				8401769726C5722400373AF7 /* JSONPredicate.swift */,
+				8401769B26C5729E00373AF7 /* JSONValueMatcher.swift */,
+				6E4339EE2DFA039B000A7741 /* JSONValueMatcherPredicates.swift */,
+				6E4339F02DFA099C000A7741 /* AirshipIvyVersionMatcher.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -4087,9 +4091,6 @@
 		6E7DB38C28ECFCDB002725F6 /* JSON */ = {
 			isa = PBXGroup;
 			children = (
-				6E65244F2A4FD8D30019F353 /* JSONPredicateTest.swift */,
-				60E09FDA2B2780DB005A16EA /* JsonMatcherTest.swift */,
-				6087DB872B278F7600449BA8 /* JsonValueMatcherTest.swift */,
 			);
 			name = JSON;
 			sourceTree = "<group>";
@@ -5046,7 +5047,6 @@
 				6EF553E22B7EE40B00901A22 /* AirshipLocalizationUtilsTest.swift */,
 				6ED2F5242B7EE648000AFC80 /* AirshipBase64Test.swift */,
 				6ED2F5282B7FC59F000AFC80 /* AirshipColorTests.swift */,
-				6ED2F52A2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift */,
 				6EB8394D2BC8B1F4006611C4 /* AirshipAsyncChannelTest.swift */,
 				6032695A2BF75D69007F7F75 /* AirshipHTTPResponseTest.swift */,
 				6E10A1472C2B825200ED9556 /* DefaultTaskSleeperTest.swift */,
@@ -5942,7 +5942,6 @@
 				6E664BDD26C4CD8700A2C8E5 /* OpenExternalURLAction.swift in Sources */,
 				6E75F50529C4EAF600E3585A /* AudienceOverridesProvider.swift in Sources */,
 				3237D5F22B865D990055932B /* JSONValueTransformer.swift in Sources */,
-				6E4339EF2DFA03A3000A7741 /* JSONValueMatcherPredicates.swift in Sources */,
 				6EED68162CE271F80087CDCB /* ThomasFormSubmitBehavior.swift in Sources */,
 				6ECD4F6D2DD7A7060060EE72 /* RadioInputToggleLayout.swift in Sources */,
 				6EB5158328A47C7100870C5A /* ScopedSubscriptionListEdit.swift in Sources */,
@@ -5996,7 +5995,6 @@
 				27F1E20C2F0E910B00E317DB /* ThomasLayoutPermissionResultEvent.swift in Sources */,
 				27F1E20D2F0E910B00E317DB /* ThomasLayoutResolutionEvent.swift in Sources */,
 				6E299FD728D13E54001305A7 /* AirshipRequest.swift in Sources */,
-				8401769C26C5729E00373AF7 /* JSONValueMatcher.swift in Sources */,
 				3CC95B2B2696549B00FE2ACD /* AirshipPushableComponent.swift in Sources */,
 				32F97AC129E5986B00FED65F /* StoryIndicator.swift in Sources */,
 				6EFD6D4B27272333005B26F1 /* EmptyView.swift in Sources */,
@@ -6079,7 +6077,6 @@
 				6EF1401B2A2671ED009A125D /* AirshipDeviceID.swift in Sources */,
 				99E433942C9A03D9006436B9 /* Pager.swift in Sources */,
 				6E698E5F267BF63B00654DB2 /* ApplicationState.swift in Sources */,
-				8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */,
 				602AD0D52D7242B300C7D566 /* ThomasSmsLocale.swift in Sources */,
 				6E146D682F523DB900320A36 /* AirshipFont.swift in Sources */,
 				6EFD6D8B272A53FB005B26F1 /* PagerController.swift in Sources */,
@@ -6154,7 +6151,6 @@
 				6E698E09267A7DD900654DB2 /* RemoteDataAPIClient.swift in Sources */,
 				6EED67FC2CE26DB60087CDCB /* ThomasAttributeName.swift in Sources */,
 				A61517C426B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */,
-				8401769426C5671100373AF7 /* JSONMatcher.swift in Sources */,
 				6EED68292CE28C9A0087CDCB /* ThomasVisibilityInfo.swift in Sources */,
 				6E146D6A2F5241BC00320A36 /* AirshipColor.swift in Sources */,
 				9908E60E2B000DBA00DB3E2E /* CustomView.swift in Sources */,
@@ -6335,7 +6331,6 @@
 				6EBD12052DA73FDA00F678AB /* ValidatableHelper.swift in Sources */,
 				6E9C2BDA2D027B5F000089A9 /* AirshipAppCredentials.swift in Sources */,
 				6E887CD1272C5E8400E83363 /* CheckboxState.swift in Sources */,
-				6E4339F12DFA099F000A7741 /* AirshipIvyVersionMatcher.swift in Sources */,
 				3CA84ABA26DE257200A59685 /* AirshipAnalytics.swift in Sources */,
 				6ED735DD26C7401D003B0A7D /* TagEditor.swift in Sources */,
 				6E698E41267BEDC300654DB2 /* TagGroupsEditor.swift in Sources */,
@@ -6582,6 +6577,10 @@
 			files = (
 				6E2016AF2F7DCE02005B2F94 /* AirshipDateFormatterTest.swift in Sources */,
 				6E7DB38E28ECFCED002725F6 /* AirshipJSONTest.swift in Sources */,
+				6E6524502A4FD8D30019F353 /* JSONPredicateTest.swift in Sources */,
+				60E09FDB2B2780DB005A16EA /* JsonMatcherTest.swift in Sources */,
+				6087DB882B278F7600449BA8 /* JsonValueMatcherTest.swift in Sources */,
+				6ED2F52B2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6597,6 +6596,11 @@
 				6EDFBBC82F5780EA0043D9EF /* LogLevel.swift in Sources */,
 				6E6C3F9E27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */,
 				6E698E03267A799500654DB2 /* AirshipErrors.swift in Sources */,
+				8401769426C5671100373AF7 /* JSONMatcher.swift in Sources */,
+				8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */,
+				8401769C26C5729E00373AF7 /* JSONValueMatcher.swift in Sources */,
+				6E4339EF2DFA03A3000A7741 /* JSONValueMatcherPredicates.swift in Sources */,
+				6E4339F12DFA099F000A7741 /* AirshipIvyVersionMatcher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6740,7 +6744,6 @@
 				6E4325D32B7AD96800A9B000 /* AirshipTest.swift in Sources */,
 				6068E0342B2B7CA100349E82 /* RetailEventTemplateTest.swift in Sources */,
 				6E475CBA2F5B3E45003D8E42 /* VideoMediaWebViewTests.swift in Sources */,
-				6087DB882B278F7600449BA8 /* JsonValueMatcherTest.swift in Sources */,
 				6E1802F92C5C2DEC00198D0D /* AirshipAnalyticFeedTest.swift in Sources */,
 				6E4325C52B7AC3F700A9B000 /* TestPush.swift in Sources */,
 				6E8B4BF12888606D00AA336E /* ChannelTest.swift in Sources */,
@@ -6767,7 +6770,6 @@
 				6058771D2AC73C940021628E /* AirshipMeteredUsageTest.swift in Sources */,
 				27AFE7112E73477200767044 /* ModifyTagsActionTest.swift in Sources */,
 				6E15B70326CDE40E0099C92D /* RemoteConfigManagerTest.swift in Sources */,
-				6E6524502A4FD8D30019F353 /* JSONPredicateTest.swift in Sources */,
 				6E97D6AF2D84B17D0001CF7F /* ThomasFormDataCollectorTest.swift in Sources */,
 				A62C3354299FD509004DB0DA /* ShareActionTest.swift in Sources */,
 				6EE49C262A1446B100AB1CF4 /* RemoteDataTestUtils.swift in Sources */,
@@ -6781,7 +6783,6 @@
 				6ED040EB278B5D7C00FCF773 /* ThomasFormPayloadGeneratorTest.swift in Sources */,
 				6E1767FA29B92F1700D65F60 /* AirshipUtilsTest.swift in Sources */,
 				6E1767F629B923D100D65F60 /* ChannelAuthTokenProviderTest.swift in Sources */,
-				60E09FDB2B2780DB005A16EA /* JsonMatcherTest.swift in Sources */,
 				6EC755AF2A4FCD8800851ABB /* AudienceHashSelectorTest.swift in Sources */,
 				3299EF26294B222F00251E70 /* RemoteDataStoreTest.swift in Sources */,
 				99C3CC792BCF3E5B00B5BED5 /* SMSValidatorAPIClientTest.swift in Sources */,
@@ -6900,7 +6901,6 @@
 				605073902B347B6400209B51 /* ThomasPresentationModelCodingTest.swift in Sources */,
 				6EFAFB78295525C3008AD187 /* ChannelAPIClientTest.swift in Sources */,
 				6E4326072B7C364300A9B000 /* AssociatedIdentifiersTest.swift in Sources */,
-				6ED2F52B2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift in Sources */,
 				9971A8852C125C0200092ED1 /* ContactChannelsProviderTest.swift in Sources */,
 				6E65244C2A4FD4270019F353 /* DeviceTagSelectorTest.swift in Sources */,
 				3299EF222949EC3E00251E70 /* AirshipBaseTest.swift in Sources */,
