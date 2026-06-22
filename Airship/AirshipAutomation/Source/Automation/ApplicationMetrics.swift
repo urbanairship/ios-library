@@ -5,6 +5,9 @@ import Foundation
 #if canImport(AirshipCore)
 import AirshipCore
 #endif
+#if canImport(AirshipBasement)
+@_spi(AirshipInternal) import AirshipBasement
+#endif
 
 protocol ApplicationMetricsProtocol: Sendable {
     var isAppVersionUpdated: Bool { get }
@@ -29,7 +32,7 @@ final class ApplicationMetrics: ApplicationMetricsProtocol {
             self.privacyManager.isApplicationMetricsEnabled,
             let currentVersion = self.currentAppVersion,
             let lastVersion = self.lastAppVersion,
-            AirshipUtils.compareVersion(lastVersion, toVersion: currentVersion) == .orderedAscending
+            AirshipVersionUtils.compareVersions(lastVersion, toVersion: currentVersion) == .orderedAscending
         else {
             return false
         }

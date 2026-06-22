@@ -3,6 +3,9 @@
 import CommonCrypto
 import Foundation
 public import SwiftUI
+#if canImport(AirshipBasement)
+@_spi(AirshipInternal) import AirshipBasement
+#endif
 
 #if !os(watchOS)
 import SystemConfiguration
@@ -75,41 +78,13 @@ public final class AirshipUtils {
     ///   - maxVersionParts: Max number of version parts to compare. Use 3 to only compare major.minor.patch
     ///
     /// - Returns: a `ComparisonResult`.
+    @available(*, deprecated, renamed: "AirshipVersionUtils.compareVersions", message: "Deprecated in SDK 21, will be removed in SDK 22.")
     public class func compareVersion(
         _ fromVersion: String,
         toVersion: String,
         maxVersionParts: Int? = nil
     ) -> ComparisonResult {
-        if let maxVersionParts, maxVersionParts <= 0 {
-            return .orderedSame
-        }
-
-        let fromParts = fromVersion.components(separatedBy: ".").map {
-            ($0 as NSString).integerValue
-        }
-
-        let toParts = toVersion.components(separatedBy: ".").map {
-            ($0 as NSString).integerValue
-        }
-
-        var i = 0
-        while fromParts.count > i || toParts.count > i {
-            let from: Int = fromParts.count > i ? fromParts[i] : 0
-            let to: Int = toParts.count > i ? toParts[i] : 0
-
-            if from < to {
-                return .orderedAscending
-            } else if from > to {
-                return .orderedDescending
-            }
-            i += 1
-
-            if let maxVersionParts, maxVersionParts <= i {
-                break
-            }
-        }
-
-        return .orderedSame
+        return AirshipVersionUtils.compareVersions(fromVersion, toVersion: toVersion, maxVersionParts: maxVersionParts)
     }
 
 

@@ -42,6 +42,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0819962B3B894E13AD9CB3A4 /* ThomasMediaUrlSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5434B912CEA845F8BE89112C /* ThomasMediaUrlSelector.swift */; };
 		27051CD72EE75E3300C770D5 /* AutomationEventsHistoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27051CD62EE75E3300C770D5 /* AutomationEventsHistoryTest.swift */; };
 		27077E4C2EE7531C0027A282 /* AutomationEventsHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27077E4B2EE7531C0027A282 /* AutomationEventsHistory.swift */; };
 		271B38652DB2866200495D9F /* TagActionMutation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271B38642DB2866200495D9F /* TagActionMutation.swift */; };
@@ -902,6 +903,8 @@
 		6ED838AB2D0CE9D6009CBB0C /* CompoundDeviceAudienceSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED838AA2D0CE9D6009CBB0C /* CompoundDeviceAudienceSelector.swift */; };
 		6ED838AD2D0CEF4A009CBB0C /* CompoundDeviceAudienceSelectorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED838AC2D0CEF4A009CBB0C /* CompoundDeviceAudienceSelectorTest.swift */; };
 		6ED838D02D0D118B009CBB0C /* AutomationCompoundAudience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED838CF2D0D118B009CBB0C /* AutomationCompoundAudience.swift */; };
+		6EDAB5362FE99EF600FD8194 /* AirshipVersionUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAB5352FE99EEF00FD8194 /* AirshipVersionUtils.swift */; };
+		6EDAB5382FE99F0D00FD8194 /* AirshipVersionUtilsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAB5372FE99F0500FD8194 /* AirshipVersionUtilsTest.swift */; };
 		6EDAFB262CB463C5000BD4AA /* ButtonLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */; };
 		6EDE293F2A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */; };
 		6EDE5F192B9BD7E700E33D04 /* InboxMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDE5F182B9BD7E700E33D04 /* InboxMessageData.swift */; };
@@ -965,7 +968,6 @@
 		6EED67C02CE1B5160087CDCB /* ThomasActionsPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED67BD2CE1B5120087CDCB /* ThomasActionsPayload.swift */; };
 		6EED67C32CE1B5890087CDCB /* ThomasIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED67C12CE1B5850087CDCB /* ThomasIcon.swift */; };
 		6EED67C82CE1B6020087CDCB /* ThomasMediaFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED67C52CE1B5FF0087CDCB /* ThomasMediaFit.swift */; };
-		0819962B3B894E13AD9CB3A4 /* ThomasMediaUrlSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5434B912CEA845F8BE89112C /* ThomasMediaUrlSelector.swift */; };
 		6EED67E32CE268680087CDCB /* ThomasButtonTapEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED67E22CE268630087CDCB /* ThomasButtonTapEffect.swift */; };
 		6EED67E82CE268BF0087CDCB /* ThomasButtonClickBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED67E62CE268BB0087CDCB /* ThomasButtonClickBehavior.swift */; };
 		6EED67EB2CE269970087CDCB /* ThomasDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED67EA2CE269930087CDCB /* ThomasDirection.swift */; };
@@ -1545,6 +1547,7 @@
 		45A8ADD123133E51004AD8CA /* testMCColorsCatalog.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = testMCColorsCatalog.xcassets; sourceTree = "<group>"; };
 		494DD9571B0EB677009C134E /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5434B912CEA845F8BE89112C /* ThomasMediaUrlSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasMediaUrlSelector.swift; sourceTree = "<group>"; };
 		6014AD662C1B5F540072DCF0 /* ChallengeResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeResolver.swift; sourceTree = "<group>"; };
 		6014AD6A2C2032360072DCF0 /* ChallengeResolverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeResolverTest.swift; sourceTree = "<group>"; };
 		6014AD742C20410A0072DCF0 /* airship.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = airship.der; sourceTree = "<group>"; };
@@ -2260,6 +2263,8 @@
 		6ED838AA2D0CE9D6009CBB0C /* CompoundDeviceAudienceSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompoundDeviceAudienceSelector.swift; sourceTree = "<group>"; };
 		6ED838AC2D0CEF4A009CBB0C /* CompoundDeviceAudienceSelectorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompoundDeviceAudienceSelectorTest.swift; sourceTree = "<group>"; };
 		6ED838CF2D0D118B009CBB0C /* AutomationCompoundAudience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationCompoundAudience.swift; sourceTree = "<group>"; };
+		6EDAB5352FE99EEF00FD8194 /* AirshipVersionUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipVersionUtils.swift; sourceTree = "<group>"; };
+		6EDAB5372FE99F0500FD8194 /* AirshipVersionUtilsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipVersionUtilsTest.swift; sourceTree = "<group>"; };
 		6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLayout.swift; sourceTree = "<group>"; };
 		6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeBridgeActionRunner.swift; sourceTree = "<group>"; };
 		6EDE5F182B9BD7E700E33D04 /* InboxMessageData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InboxMessageData.swift; sourceTree = "<group>"; };
@@ -2342,7 +2347,6 @@
 		6EED67BD2CE1B5120087CDCB /* ThomasActionsPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasActionsPayload.swift; sourceTree = "<group>"; };
 		6EED67C12CE1B5850087CDCB /* ThomasIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasIcon.swift; sourceTree = "<group>"; };
 		6EED67C52CE1B5FF0087CDCB /* ThomasMediaFit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasMediaFit.swift; sourceTree = "<group>"; };
-		5434B912CEA845F8BE89112C /* ThomasMediaUrlSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasMediaUrlSelector.swift; sourceTree = "<group>"; };
 		6EED67E22CE268630087CDCB /* ThomasButtonTapEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasButtonTapEffect.swift; sourceTree = "<group>"; };
 		6EED67E62CE268BB0087CDCB /* ThomasButtonClickBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasButtonClickBehavior.swift; sourceTree = "<group>"; };
 		6EED67EA2CE269930087CDCB /* ThomasDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasDirection.swift; sourceTree = "<group>"; };
@@ -3416,6 +3420,7 @@
 			isa = PBXGroup;
 			children = (
 				6EA5202227D1364E003011CA /* AirshipDateFormatter.swift */,
+				6EDAB5352FE99EEF00FD8194 /* AirshipVersionUtils.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -3423,12 +3428,8 @@
 		6E2016A02F7DCD7A005B2F94 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				6ED2F5342B7FFCD7000AFC80 /* AirshipDateFormatterTest.swift */,
-				6E7DB38D28ECFCED002725F6 /* AirshipJSONTest.swift */,
-				6E65244F2A4FD8D30019F353 /* JSONPredicateTest.swift */,
-				60E09FDA2B2780DB005A16EA /* JsonMatcherTest.swift */,
-				6087DB872B278F7600449BA8 /* JsonValueMatcherTest.swift */,
-				6ED2F52A2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift */,
+				6EDAB53D2FE9A1AB00FD8194 /* Json */,
+				6EDAB53A2FE9A16700FD8194 /* Utils */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -3831,15 +3832,10 @@
 		6E43212926EA847D009228AB /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6EDAB53B2FE9A18100FD8194 /* Json */,
 				6E20169F2F7DCD6E005B2F94 /* Utils */,
 				6EF1933828380086005F192A /* Logger */,
-				6E6C3F9D27A4C3D4007F55C7 /* AirshipJSON.swift */,
 				6E698E02267A799500654DB2 /* AirshipErrors.swift */,
-				8401769326C5671100373AF7 /* JSONMatcher.swift */,
-				8401769726C5722400373AF7 /* JSONPredicate.swift */,
-				8401769B26C5729E00373AF7 /* JSONValueMatcher.swift */,
-				6E4339EE2DFA039B000A7741 /* JSONValueMatcherPredicates.swift */,
-				6E4339F02DFA099C000A7741 /* AirshipIvyVersionMatcher.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -4525,6 +4521,56 @@
 				6ECDDE7829B804FB009D79DB /* ChannelAuthTokenAPIClient.swift */,
 			);
 			name = Auth;
+			sourceTree = "<group>";
+		};
+		6EDAB53A2FE9A16700FD8194 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				6EDAB5372FE99F0500FD8194 /* AirshipVersionUtilsTest.swift */,
+				6ED2F5342B7FFCD7000AFC80 /* AirshipDateFormatterTest.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		6EDAB53B2FE9A18100FD8194 /* Json */ = {
+			isa = PBXGroup;
+			children = (
+				6EDAB53C2FE9A19500FD8194 /* Predicate */,
+				6E6C3F9D27A4C3D4007F55C7 /* AirshipJSON.swift */,
+			);
+			path = Json;
+			sourceTree = "<group>";
+		};
+		6EDAB53C2FE9A19500FD8194 /* Predicate */ = {
+			isa = PBXGroup;
+			children = (
+				8401769326C5671100373AF7 /* JSONMatcher.swift */,
+				8401769726C5722400373AF7 /* JSONPredicate.swift */,
+				8401769B26C5729E00373AF7 /* JSONValueMatcher.swift */,
+				6E4339EE2DFA039B000A7741 /* JSONValueMatcherPredicates.swift */,
+				6E4339F02DFA099C000A7741 /* AirshipIvyVersionMatcher.swift */,
+			);
+			path = Predicate;
+			sourceTree = "<group>";
+		};
+		6EDAB53D2FE9A1AB00FD8194 /* Json */ = {
+			isa = PBXGroup;
+			children = (
+				6EDAB53E2FE9A1B400FD8194 /* Predicate */,
+				6E7DB38D28ECFCED002725F6 /* AirshipJSONTest.swift */,
+			);
+			path = Json;
+			sourceTree = "<group>";
+		};
+		6EDAB53E2FE9A1B400FD8194 /* Predicate */ = {
+			isa = PBXGroup;
+			children = (
+				6E65244F2A4FD8D30019F353 /* JSONPredicateTest.swift */,
+				60E09FDA2B2780DB005A16EA /* JsonMatcherTest.swift */,
+				6087DB872B278F7600449BA8 /* JsonValueMatcherTest.swift */,
+				6ED2F52A2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift */,
+			);
+			path = Predicate;
 			sourceTree = "<group>";
 		};
 		6EDF1D912B292F8600E23BC4 /* InAppMessage */ = {
@@ -6580,6 +6626,7 @@
 				6E6524502A4FD8D30019F353 /* JSONPredicateTest.swift in Sources */,
 				60E09FDB2B2780DB005A16EA /* JsonMatcherTest.swift in Sources */,
 				6087DB882B278F7600449BA8 /* JsonValueMatcherTest.swift in Sources */,
+				6EDAB5382FE99F0D00FD8194 /* AirshipVersionUtilsTest.swift in Sources */,
 				6ED2F52B2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6597,6 +6644,7 @@
 				6E6C3F9E27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */,
 				6E698E03267A799500654DB2 /* AirshipErrors.swift in Sources */,
 				8401769426C5671100373AF7 /* JSONMatcher.swift in Sources */,
+				6EDAB5362FE99EF600FD8194 /* AirshipVersionUtils.swift in Sources */,
 				8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */,
 				8401769C26C5729E00373AF7 /* JSONValueMatcher.swift in Sources */,
 				6E4339EF2DFA03A3000A7741 /* JSONValueMatcherPredicates.swift in Sources */,
