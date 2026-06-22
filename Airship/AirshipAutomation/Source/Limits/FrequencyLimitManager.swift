@@ -79,10 +79,10 @@ final class FrequencyLimitManager: FrequencyLimitManagerProtocol, Sendable {
             }
 
             return FrequencyChecker(
-                isOverLimitBlock: { [weak self] in
+                isOverLimitBlock: { [weak self = self] in
                     return self?.isOverLimit(constraintIDs: constraintIDs) ?? true
                 },
-                checkAndIncrementBlock: { [weak self] in
+                checkAndIncrementBlock: { [weak self = self] in
                     return self?.checkAndIncrement(constraintIDs: constraintIDs) ?? false
                 }
             )

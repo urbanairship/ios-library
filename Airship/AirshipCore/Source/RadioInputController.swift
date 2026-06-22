@@ -87,7 +87,7 @@ struct RadioInputController: View {
                             initialValue: radioInputState.selected,
                             valueUpdates: radioInputState.$selected,
                             validatables: info.validation
-                        ) { [weak thomasState, weak radioInputState] outcomes in
+                        ) { [weak thomasState = thomasState, weak radioInputState = radioInputState] outcomes in
                             guard let thomasState, let radioInputState else { return }
                             thomasState.processSync(
                                 outcomes: outcomes,

@@ -182,7 +182,7 @@ fileprivate class AirshipBackgroundTask {
         self.name = name
 
         taskID = UIApplication.shared.beginBackgroundTask(withName: name) {
-            Task { @MainActor [weak self] in
+            Task { @MainActor [weak self = self] in
                 self?.stop()
             }
         }
@@ -191,10 +191,14 @@ fileprivate class AirshipBackgroundTask {
             AirshipLogger.trace("Background task started: \(name)")
 
             Task {
-                try await Task.sleep(
-                    nanoseconds: UInt64(expiry * 1_000_000_000)
-                )
-                self.stop()
+                do {
+                    try await Task.sleep(
+                        nanoseconds: UInt64(expiry * 1_000_000_000)
+                    )
+                    self.stop()
+                } catch {
+                    AirshipLogger.error("Background task expiry sleep failed: \(error)")
+                }
             }
         }
     }

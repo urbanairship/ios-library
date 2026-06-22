@@ -86,7 +86,7 @@ actor AutomationEngine : AutomationEngineProtocol {
             await self.startTask?.value
 
             await withTaskGroup(of: Void.self) { group in
-                group.addTask { [weak self] in
+                group.addTask { [weak self = self] in
                     guard
                         !Task.isCancelled,
                         let resultsStream = await self?.triggersProcessor.triggerResults
@@ -100,7 +100,7 @@ actor AutomationEngine : AutomationEngineProtocol {
                     }
                 }
 
-                group.addTask { [weak self] in
+                group.addTask { [weak self = self] in
                     guard
                         !Task.isCancelled,
                         let eventsFeed = self?.eventFeed.feed
@@ -301,9 +301,13 @@ actor AutomationEngine : AutomationEngineProtocol {
 
     private func handleInterval(_ interval: TimeInterval, scheduleID: String) {
         Task { [weak self, date] in
-            try await self?.taskSleeper.sleep(timeInterval: interval)
-            try await self?.updateState(identifier: scheduleID) { data in
-                data.idle(date: date.now)
+            do {
+                try await self?.taskSleeper.sleep(timeInterval: interval)
+                try await self?.updateState(identifier: scheduleID) { data in
+                    data.idle(date: date.now)
+                }
+            } catch {
+                AirshipLogger.error("Failed to update schedule state after interval: \(error)")
             }
         }
     }

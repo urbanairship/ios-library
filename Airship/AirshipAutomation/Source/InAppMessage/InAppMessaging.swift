@@ -3,7 +3,7 @@
 public import Foundation
 
 #if canImport(AirshipCore)
-public import AirshipCore
+import AirshipCore
 #endif
 
 /// In-app messaging

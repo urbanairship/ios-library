@@ -208,7 +208,7 @@ internal struct VideoControls: ViewModifier {
         let isPlayingBinding = _isPlaying
         let currentTimeBinding = _currentTime
         let durationBinding = _duration
-        let isDraggingBinding = _isDraggingSlider
+        let isDraggingBinding: State<Bool> = _isDraggingSlider
 
         if !shouldLoop {
             observer.endTimeObserver = NotificationCenter.default.addObserver(

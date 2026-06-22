@@ -61,7 +61,7 @@ final class EventManager: EventManagerProtocol {
         self.state = EventManagerState(dataStore: dataStore)
 
         Task {
-            await self.eventScheduler.setWorkBlock { [weak self] in
+            await self.eventScheduler.setWorkBlock { [weak self = self] in
                 try await self?.uploadEvents() ?? .success
             }
         }

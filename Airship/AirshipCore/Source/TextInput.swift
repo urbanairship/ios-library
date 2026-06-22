@@ -192,7 +192,7 @@ struct TextInput: View {
                 initialValue: self.viewModel.input,
                 valueUpdates: self.viewModel.$input,
                 validatables: info.validation
-            ) { [weak thomasState, weak viewModel] outcomes in
+            ) { [weak thomasState = thomasState, weak viewModel = viewModel] outcomes in
                 guard let thomasState, let viewModel else { return }
                 thomasState.processSync(
                     outcomes: outcomes,

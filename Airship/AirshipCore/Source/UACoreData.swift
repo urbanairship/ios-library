@@ -62,7 +62,7 @@ public actor UACoreData {
             } else {
                 guard let self else { return }
                 NotificationCenter.default.addObserver(forName: UIApplication.protectedDataDidBecomeAvailableNotification, object: nil, queue: nil, using: { _ in
-                    Task { [weak self] in
+                    Task { [weak self = self] in
                         await self?.protectedDataAvailable()
                     }
                 })
