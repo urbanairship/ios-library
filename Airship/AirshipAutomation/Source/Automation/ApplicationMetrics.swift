@@ -2,12 +2,8 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
-#if canImport(AirshipBasement)
 @_spi(AirshipInternal) import AirshipBasement
-#endif
 
 protocol ApplicationMetricsProtocol: Sendable {
     var isAppVersionUpdated: Bool { get }

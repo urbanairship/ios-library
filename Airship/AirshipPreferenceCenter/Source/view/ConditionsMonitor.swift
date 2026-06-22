@@ -3,9 +3,7 @@
 import Combine
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 @MainActor
 class ConditionsMonitor: ObservableObject {

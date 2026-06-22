@@ -3,9 +3,7 @@
 import CoreData
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 enum MessageCenterStoreError: Error {
     case coreDataUnavailble

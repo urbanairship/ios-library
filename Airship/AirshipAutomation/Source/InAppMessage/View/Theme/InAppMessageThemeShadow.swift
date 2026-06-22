@@ -4,9 +4,7 @@ import Foundation
 public import SwiftUI
 
 /// For color utils
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 
 public extension InAppMessageTheme {

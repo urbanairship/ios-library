@@ -4,9 +4,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 @MainActor
 class InAppMessageEnvironment: ObservableObject {

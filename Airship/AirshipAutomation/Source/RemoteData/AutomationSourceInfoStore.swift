@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Stores information about a remote-data source used for scheduling
 final class AutomationSourceInfoStore: Sendable {
@@ -91,10 +89,8 @@ final class AutomationSourceInfoStore: Sendable {
             )
             self.dataStore.setSafeCodable(sourceInfo, forKey: key)
             return sourceInfo
-#if canImport(AirshipCore)
         @unknown default:
             return nil
-#endif
         }
     }
 }

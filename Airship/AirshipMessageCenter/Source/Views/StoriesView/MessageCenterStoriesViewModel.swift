@@ -4,9 +4,7 @@
 public import Foundation
 import Combine
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// A sort comparator type for ordering message center messages.
 public typealias ComparePredicate = any SortComparator<MessageCenterMessage>

@@ -3,9 +3,7 @@
 import Foundation
 import SwiftUI
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 struct PreferenceCenterThemeLoader {
     // Existing code remains unchanged

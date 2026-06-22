@@ -1,9 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import Foundation
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// The privacy manager allow enabling/disabling features in the SDK.
 /// The SDK will not make any network requests or collect data if all features are disabled, with

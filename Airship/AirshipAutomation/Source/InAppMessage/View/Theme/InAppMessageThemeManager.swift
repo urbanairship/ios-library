@@ -4,9 +4,7 @@ import Foundation
 import SwiftUI
 
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Theme manager for in-app messages.
 @MainActor

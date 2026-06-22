@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 protocol AutomationDelayProcessorProtocol: Sendable {
     // Waits for the delay

@@ -5,9 +5,7 @@ import SwiftUI
 import Combine
 
 /// Imported for Logger and Contact calls
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 @MainActor
 internal class AddChannelPromptViewModel: ObservableObject {

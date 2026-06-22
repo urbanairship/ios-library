@@ -2,13 +2,9 @@
 
 import Foundation
 
-#if canImport(AirshipBasement)
 @_spi(AirshipInternal) import AirshipBasement
-#endif
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 /// Preference center config.
 public struct PreferenceCenterConfig: Decodable, Sendable, Equatable {

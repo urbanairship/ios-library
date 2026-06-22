@@ -1,8 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#if canImport(AirshipBasement)
 @_spi(AirshipInternal) import AirshipBasement
-#endif
 
 import Foundation
 

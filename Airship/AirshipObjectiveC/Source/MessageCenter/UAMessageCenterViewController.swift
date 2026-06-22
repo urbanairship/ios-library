@@ -3,10 +3,8 @@
 public import Foundation
 public import UIKit
 
-#if canImport(AirshipCore)
 import AirshipMessageCenter
 import AirshipCore
-#endif
 
 import SwiftUI
 

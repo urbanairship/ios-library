@@ -2,9 +2,7 @@
 
 public import Foundation
 
-#if canImport(AirshipCore)
 @_spi(AirshipInternal) public import AirshipCore
-#endif
 
 /// Partially-decoded Airship layout. isEmbedded and validate() are available
 /// without a full decode; the full view tree is decoded at prepare time.

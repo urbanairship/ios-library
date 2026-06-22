@@ -3,9 +3,7 @@
 import Foundation
 public import SwiftUI
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// The contact subscription item view
 public struct ContactSubscriptionView: View {

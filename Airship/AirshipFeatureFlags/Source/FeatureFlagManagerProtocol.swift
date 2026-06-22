@@ -2,9 +2,7 @@
 
 public import Foundation
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 /// Feature flag errors
 public enum FeatureFlagError: Error, Equatable {

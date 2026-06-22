@@ -3,9 +3,7 @@
 import Foundation
 public import SwiftUI
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 public enum SeparatorStyle: Sendable {
     case none

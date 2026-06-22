@@ -2,9 +2,7 @@
 
 public import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// CustomEvent captures information regarding a custom event for
 /// Analytics.

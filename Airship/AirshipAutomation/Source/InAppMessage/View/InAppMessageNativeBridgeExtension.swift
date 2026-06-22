@@ -3,9 +3,7 @@
 import Foundation
 public import WebKit
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 /// Airship native bridge extension for an InAppMessage
 public final class InAppMessageNativeBridgeExtension: NativeBridgeExtensionDelegate, Sendable {

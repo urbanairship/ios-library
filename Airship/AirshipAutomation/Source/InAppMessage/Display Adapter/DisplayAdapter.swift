@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 // Internal display adapter
 protocol DisplayAdapter: Sendable {

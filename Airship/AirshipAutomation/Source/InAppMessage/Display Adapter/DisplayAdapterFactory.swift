@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 /// Arguments passed to display adapters when creating or displaying an in-app message.
 public struct DisplayAdapterArgs: Sendable {

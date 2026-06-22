@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 // This is only called from an actor `AutomationTriggerProcessor`
 final class PreparedTrigger {

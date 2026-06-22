@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 
 /// A display coordinator that only requires the app to be active

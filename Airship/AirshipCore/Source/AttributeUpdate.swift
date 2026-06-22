@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipBasement)
 @_spi(AirshipInternal) import AirshipBasement
-#endif
 
 enum AttributeUpdateType: Int, Codable, Sendable, Equatable {
     case remove

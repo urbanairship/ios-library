@@ -4,13 +4,9 @@ import Combine
 import Foundation
 public import SwiftUI
 
-#if canImport(AirshipBasement)
 @_spi(AirshipInternal) import AirshipBasement
-#endif
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// A view that displays a list of messages.
 public struct MessageCenterListView: View {

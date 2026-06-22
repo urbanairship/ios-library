@@ -3,9 +3,7 @@
 public import Combine
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// A view model for the message center list.
 @MainActor

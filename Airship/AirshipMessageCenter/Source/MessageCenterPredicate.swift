@@ -3,9 +3,7 @@
 import Foundation
 public import SwiftUI
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Predicate for filtering messages in the Message Center.
 public protocol MessageCenterPredicate: Sendable {

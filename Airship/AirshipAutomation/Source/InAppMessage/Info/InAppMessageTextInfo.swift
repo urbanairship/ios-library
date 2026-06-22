@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// InAppMessage text info
 public struct InAppMessageTextInfo: Sendable, Codable, Equatable {

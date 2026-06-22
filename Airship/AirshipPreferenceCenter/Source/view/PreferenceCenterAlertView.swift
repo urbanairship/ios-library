@@ -3,9 +3,7 @@
 import Foundation
 public import SwiftUI
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// The Preference Center alert item view
 public struct PreferenceCenterAlertView: View {

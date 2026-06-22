@@ -2,10 +2,8 @@
 
 public import Foundation
 
-#if canImport(AirshipCore)
 import AirshipMessageCenter
 import AirshipCore
-#endif
 
 /// Message center inbox.
 @objc

@@ -1,6 +1,4 @@
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 import Foundation
 

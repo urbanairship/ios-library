@@ -2,9 +2,7 @@
 
 public import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Bindings for `AirshipFeature`
 @objc

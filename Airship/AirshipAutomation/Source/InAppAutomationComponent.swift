@@ -8,9 +8,7 @@ import UserNotifications
 import UIKit
 #endif
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 
 /// Actual airship component for InAppAutomation. Used to hide AirshipComponent methods.

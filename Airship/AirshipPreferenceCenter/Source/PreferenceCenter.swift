@@ -3,9 +3,7 @@
 public import Foundation
 import SwiftUI
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 /// Open delegate.
 @MainActor

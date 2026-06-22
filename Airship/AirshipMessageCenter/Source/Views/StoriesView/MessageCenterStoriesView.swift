@@ -3,9 +3,7 @@
 import Foundation
 public import SwiftUI
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// A horizontal strip of message center items shown as circular “story” avatars.
 ///

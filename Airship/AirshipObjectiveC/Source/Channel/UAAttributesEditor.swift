@@ -1,9 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import Foundation
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Attributes editor.
 @objc

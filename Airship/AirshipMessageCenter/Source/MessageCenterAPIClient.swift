@@ -2,13 +2,9 @@
 
 import Foundation
 
-#if canImport(AirshipBasement)
 @_spi(AirshipInternal) import AirshipBasement
-#endif
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Message Center API client protocol
 protocol MessageCenterAPIClientProtocol: Sendable {

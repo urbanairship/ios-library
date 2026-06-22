@@ -3,9 +3,7 @@
 import Foundation
 public import SwiftUI
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// In-App message color
 public struct InAppMessageColor: Codable, Sendable, Equatable {

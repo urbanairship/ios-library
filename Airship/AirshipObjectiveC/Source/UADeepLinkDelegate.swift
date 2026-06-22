@@ -2,9 +2,7 @@
 
 public import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Protocol to be implemented by deep link handlers.
 @objc

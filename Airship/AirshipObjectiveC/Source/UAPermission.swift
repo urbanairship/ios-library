@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Airship permissions. Used with `UAPermissionsManager`
 @objc

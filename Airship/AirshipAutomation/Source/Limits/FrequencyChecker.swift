@@ -1,8 +1,6 @@
 /* Copyright Airship and Contributors */
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Protocol for checking and incrementing frequency limits (e.g. for in-app message display caps).
 public protocol FrequencyCheckerProtocol: Sendable {

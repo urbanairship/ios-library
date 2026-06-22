@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 enum FeatureFlagEvaluationError: Error, Equatable {
     case outOfDate

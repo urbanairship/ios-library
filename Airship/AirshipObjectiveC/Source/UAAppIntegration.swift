@@ -6,9 +6,7 @@ public import Foundation
 public import UIKit
 #endif
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 @preconcurrency import UserNotifications
 

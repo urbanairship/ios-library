@@ -8,9 +8,7 @@ public import SwiftUI
 import WebKit
 #endif
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// The Message Center message view.
 @MainActor

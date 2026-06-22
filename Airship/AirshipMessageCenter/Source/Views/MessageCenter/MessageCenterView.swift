@@ -8,9 +8,7 @@ public import SwiftUI
 import UIKit
 #endif
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// The main view for the Airship Message Center. This view provides a navigation stack.
 /// If you wish to provide your own navigation, see `MessageCenterContent`.

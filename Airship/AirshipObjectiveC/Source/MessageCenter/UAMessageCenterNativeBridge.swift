@@ -5,10 +5,8 @@
 public import Foundation
 public import WebKit
 
-#if canImport(AirshipCore)
 import AirshipCore
 import AirshipMessageCenter
-#endif
 
 /// Delegate for native bridge events from Message Center web views.
 @objc

@@ -4,9 +4,7 @@ public import Combine
 
 public import Foundation
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 /// Errors that can occur when loading or refreshing Message Center Inbox.
 public enum MessageCenterInboxError: Error, Equatable {

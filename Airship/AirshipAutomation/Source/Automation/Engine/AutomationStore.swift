@@ -3,9 +3,7 @@
 import Foundation
 import CoreData
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 protocol TriggerStoreProtocol: Sendable {
     func getTrigger(scheduleID: String, triggerID: String) async throws -> TriggerData?

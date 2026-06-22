@@ -12,9 +12,7 @@ import AppKit
 #endif
 
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 /// Preference Center theme
 public struct PreferenceCenterTheme: Equatable, Sendable {

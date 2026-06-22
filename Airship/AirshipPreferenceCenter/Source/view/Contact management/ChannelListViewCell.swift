@@ -2,9 +2,7 @@
 
 import SwiftUI
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 import Combine
 
@@ -211,24 +209,18 @@ extension ContactChannel {
                     return info.commercialOptedIn != nil
                 }
                 return info.commercialOptedIn?.compare(optedOut) == .orderedDescending /// Make sure optedIn date is after opt out date if both exist
-#if canImport(AirshipCore)
             @unknown default:
                 return false
-#endif
             }
         case .sms(let sms):
             switch(sms) {
             case .pending(_): return false
             case .registered(let info): return info.isOptIn
-#if canImport(AirshipCore)
             @unknown default:
                 return false
-#endif
             }
-#if canImport(AirshipCore)
         @unknown default:
             return false
-#endif
         }
     }
 }

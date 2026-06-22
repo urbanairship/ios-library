@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 @_spi(AirshipInternal) import AirshipCore
-#endif
 
 final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     typealias ExecutionData = PreparedInAppMessageData

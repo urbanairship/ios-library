@@ -2,9 +2,7 @@
 
 import SwiftUI
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 private let defaultButtonMargin: CGFloat = 15
 private let defaultFooterMargin: CGFloat = 0

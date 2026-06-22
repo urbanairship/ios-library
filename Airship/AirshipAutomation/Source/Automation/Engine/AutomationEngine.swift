@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 actor AutomationEngine : AutomationEngineProtocol {
     internal var startTask: Task<Void, Never>?

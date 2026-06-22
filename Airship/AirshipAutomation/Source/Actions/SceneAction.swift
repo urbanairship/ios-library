@@ -2,13 +2,9 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
-#if canImport(AirshipBasement)
 @_spi(AirshipInternal) import AirshipBasement
-#endif
 
 /// Scene page action
 final class SceneAction: AirshipAction {
@@ -50,10 +46,8 @@ final class SceneAction: AirshipAction {
         case .backgroundPush,
                 .backgroundInteractiveButton:
             return false
-#if canImport(AirshipCore)
         @unknown default:
             return false
-#endif
         }
     }
 

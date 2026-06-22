@@ -1,9 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 protocol FeatureFlagDeferredResolverProtocol: Actor {
     func resolve(

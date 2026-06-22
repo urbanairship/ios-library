@@ -4,9 +4,7 @@ public import Foundation
 public import UIKit
 import SwiftUI
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Embedded view controller factory
 @objc

@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Actual airship component for PreferenceCenter. Used to hide AirshipComponent methods.
 final class PreferenceCenterComponent: AirshipComponent {

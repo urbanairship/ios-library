@@ -2,9 +2,7 @@
 
 public import Combine
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// A view model for a message.
 @MainActor

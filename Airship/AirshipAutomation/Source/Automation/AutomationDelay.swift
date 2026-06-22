@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Automation app state
 public enum AutomationAppState: String, Sendable, Codable {

@@ -3,9 +3,7 @@
 import Foundation
 import SwiftUI
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 #if canImport(UIKit)
 public import UIKit

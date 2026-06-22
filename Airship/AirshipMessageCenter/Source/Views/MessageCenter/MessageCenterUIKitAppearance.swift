@@ -3,9 +3,7 @@
 #if canImport(UIKit)
 import SwiftUI
 
-#if canImport(AirshipCore)
 @_spi(AirshipInternal) import AirshipCore
-#endif
 
 /// Detects and bridges UIKit navigation appearance to SwiftUI Message Center
 internal struct MessageCenterUIKitAppearance {

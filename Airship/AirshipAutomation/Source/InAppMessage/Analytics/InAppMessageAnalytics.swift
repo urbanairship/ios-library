@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 struct InAppCustomEventContext: Sendable, Encodable, Equatable {
     var id: ThomasLayoutEventMessageID

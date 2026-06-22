@@ -4,9 +4,6 @@ on:
   push:
     tags:
       - "[0-9]+.[0-9]+.[0-9]+**"
-env:
-  BUNDLE_PATH: vendor/bundle
-
 jobs:
   check-version:
     if: github.repository == 'urbanairship/ios-library'
@@ -239,44 +236,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
         run: gh --repo urbanairship/ios-library-prebuilt workflow run release.yml
 
-  deploy-pods:
-    runs-on: macos-15-xlarge
-    needs:
-      - run-tests-basement
-      - run-tests-core
-      - run-tests-preference-center
-      - run-tests-message-center
-      - run-tests-automation
-      - run-tests-feature-flags
-      - run-tests-service-extension
-      - build-package
-      - build-samples
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Get the version
-        id: get_version
-        run: |
-          set -euo pipefail
-          VERSION="${GITHUB_REF#refs/tags/}"
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Publish Pods
-        env:
-          COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
-        run: make pod-publish
-
-      - name: Slack Notification
-        uses: lazy-actions/slatify@master
-        if: always()
-        with:
-          type: ${{ job.status }}
-          job_name: "Publish the Pods ${{ steps.get_version.outputs.VERSION }} :tidepod:"
-          url: ${{ secrets.SLACK_WEBHOOK }}
-
   finished:
     runs-on: ubuntu-latest
-    needs: [deploy-github, deploy-pods]
+    needs: [deploy-github]
     steps:
       - name: Get the version
         id: get_version

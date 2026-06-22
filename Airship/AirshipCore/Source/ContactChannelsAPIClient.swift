@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipBasement)
 @_spi(AirshipInternal) import AirshipBasement
-#endif
 
 /// - Note: For internal use only. :nodoc:
 public protocol ContactChannelsAPIClientProtocol: Sendable {

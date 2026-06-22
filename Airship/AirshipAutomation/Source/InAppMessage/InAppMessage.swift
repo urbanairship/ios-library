@@ -3,9 +3,7 @@
 import Foundation
 import SwiftUI
 
-#if canImport(AirshipCore)
 @_spi(AirshipInternal) public import AirshipCore
-#endif
 
 enum InAppMessageSource: String, Codable, Equatable, Sendable {
     case remoteData = "remote-data"

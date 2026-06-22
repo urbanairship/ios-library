@@ -2,9 +2,7 @@
 
 public import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Message center message.
 public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable {

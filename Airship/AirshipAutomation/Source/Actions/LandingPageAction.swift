@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 /// Landing page action
 public final class LandingPageAction: AirshipAction {
@@ -66,10 +64,8 @@ public final class LandingPageAction: AirshipAction {
         case .foregroundInteractiveButton: return true
         case .backgroundInteractiveButton: return false
         case .automation: return true
-#if canImport(AirshipCore)
         @unknown default:
             return false
-#endif
         }
     }
 

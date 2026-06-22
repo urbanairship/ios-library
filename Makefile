@@ -28,11 +28,10 @@ previous_file_size=${build_path}/previous-size.txt
 .PHONY: setup
 setup:
 	test ${DEVELOPER_DIR}
-	bundle install --quiet
 	bash ./scripts/check_xcbeautify.sh
 
 .PHONY: all
-all: setup build test pod-lint
+all: setup build test
 
 .PHONY: build
 build: build-package build-samples
@@ -116,37 +115,6 @@ test-feature-flags: setup
 test-service-extension: setup
 	bash ./scripts/run_xcodebuild.sh AirshipNotificationServiceExtension "${derived_data_path}" test
 
-.PHONY: pod-publish
-pod-publish: setup
-	bundle exec pod trunk push Airship.podspec --allow-warnings
-	bundle exec pod trunk push AirshipServiceExtension.podspec --allow-warnings
-
-.PHONY: pod-lint
-pod-lint: pod-lint-tvos pod-lint-ios pod-lint-extensions
-
-.PHONY: pod-lint-tvos
-pod-lint-tvos: setup
-	bundle exec pod lib lint Airship.podspec --verbose --platforms=tvos --fail-fast --skip-tests --no-subspecs --allow-warnings
-
-.PHONY: pod-lint-macos
-pod-lint-macos: setup
-	bundle exec pod lib lint Airship.podspec --verbose --platforms=macos --fail-fast --skip-tests --no-subspecs --allow-warnings
-	
-.PHONY: pod-lint-watchos
-pod-lint-watchos: setup
-	bundle exec pod lib lint Airship.podspec --verbose --platforms=watchos --subspec=Core --fail-fast --skip-tests --no-clean --allow-warnings
-
-.PHONY: pod-lint-ios
-pod-lint-ios: setup
-	bundle exec pod lib lint Airship.podspec --verbose --platforms=ios  --fail-fast --skip-tests --no-subspecs --allow-warnings
-
-.PHONY: pod-lint-visionos
-pod-lint-visionos: setup
-	bundle exec pod lib lint Airship.podspec --verbose --platforms=visionOS  --fail-fast --skip-tests --no-subspecs --allow-warnings
-
-.PHONY: pod-lint-extensions
-pod-lint-extensions: setup
-	bundle exec pod lib lint AirshipServiceExtension.podspec --verbose --platforms=ios  --fail-fast --skip-tests --allow-warnings
 
 .PHONY: clean
 clean:

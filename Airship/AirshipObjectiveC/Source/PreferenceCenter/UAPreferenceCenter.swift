@@ -2,10 +2,8 @@
 
 public import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
 import AirshipPreferenceCenter
-#endif
 
 /// Open delegate.
 @objc

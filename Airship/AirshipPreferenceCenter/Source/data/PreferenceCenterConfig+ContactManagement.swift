@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 public extension PreferenceCenterConfig {
 

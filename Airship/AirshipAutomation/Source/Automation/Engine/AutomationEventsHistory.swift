@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 protocol AutomationEventsHistory: Sendable {
     var events: [AutomationEvent] { get async }

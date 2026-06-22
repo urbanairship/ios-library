@@ -6,9 +6,7 @@ import Foundation
 public import UIKit
 #endif
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Protocol to be implemented by push notification clients. All methods are optional.
 @objc

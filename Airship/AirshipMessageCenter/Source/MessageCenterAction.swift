@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 /// Message center action that launches the message center.
 ///

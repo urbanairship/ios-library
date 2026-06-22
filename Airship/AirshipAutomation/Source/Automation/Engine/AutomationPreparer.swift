@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 protocol AutomationPreparerProtocol: Sendable {
     func prepare(
@@ -321,11 +319,9 @@ struct AutomationPreparer: AutomationPreparerProtocol {
             } else {
                 return .retry
             }
-#if canImport(AirshipCore)
         @unknown default:
             // Not possible
             return .retry
-#endif
         }
     }
 }

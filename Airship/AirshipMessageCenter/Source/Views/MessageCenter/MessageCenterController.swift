@@ -3,9 +3,7 @@
 import SwiftUI
 public import Combine
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// The message center controller's possible states.
 public enum MessageCenterState: Equatable, Sendable {

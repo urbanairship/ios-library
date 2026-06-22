@@ -3,10 +3,8 @@
 public import Foundation
 public import UIKit
 
-#if canImport(AirshipCore)
 import AirshipMessageCenter
 public import AirshipCore
-#endif
 
 /// Message Center theme
 @objc

@@ -2,9 +2,7 @@
 
 import SwiftUI
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 struct TextView: View {
     let textInfo: InAppMessageTextInfo

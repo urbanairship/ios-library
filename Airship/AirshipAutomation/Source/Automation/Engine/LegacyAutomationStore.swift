@@ -3,9 +3,7 @@
 import Foundation
 import CoreData
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 actor LegacyAutomationStore {
     private let coreData: UACoreData?

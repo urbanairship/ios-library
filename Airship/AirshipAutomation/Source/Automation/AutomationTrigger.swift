@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 /// Automation trigger types
 public enum EventAutomationTriggerType: String, Sendable, Codable, Equatable, CaseIterable {

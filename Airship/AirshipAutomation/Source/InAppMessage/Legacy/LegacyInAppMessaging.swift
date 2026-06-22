@@ -7,9 +7,7 @@ import UserNotifications
 import UIKit
 #endif
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 public typealias MessageConvertor = @MainActor @Sendable (LegacyInAppMessage) -> AutomationSchedule?
 public typealias MessageExtender = @Sendable (inout InAppMessage) -> Void

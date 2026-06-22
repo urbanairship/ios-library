@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 @_spi(AirshipInternal) import AirshipCore
-#endif
 
 /// Any data needed by in-app message to handle displaying the message
 struct PreparedInAppMessageData: Sendable {

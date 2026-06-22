@@ -4,9 +4,7 @@ public import Foundation
 
 public import UserNotifications
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// This singleton provides an interface to the functionality provided by the Airship iOS Push API.
 @objc

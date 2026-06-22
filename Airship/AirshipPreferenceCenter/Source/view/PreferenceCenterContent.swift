@@ -4,9 +4,7 @@ import Foundation
 public import SwiftUI
 import Combine
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Preference center content phase
 public enum PreferenceCenterContentPhase: Sendable {

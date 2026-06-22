@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 struct ActionAutomationPreparer: AutomationPreparerDelegate {
     typealias PrepareDataIn = AirshipJSON

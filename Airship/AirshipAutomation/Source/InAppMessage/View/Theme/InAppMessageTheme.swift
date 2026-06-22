@@ -3,9 +3,7 @@
 import Foundation
 import SwiftUI
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// In-app message themes
 public struct InAppMessageTheme {

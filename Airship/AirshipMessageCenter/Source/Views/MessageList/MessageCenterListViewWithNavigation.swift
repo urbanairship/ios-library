@@ -4,9 +4,7 @@ import Combine
 import Foundation
 public import SwiftUI
 
-#if canImport(AirshipCore)
 @_spi(AirshipInternal) import AirshipCore
-#endif
 
 /// A view that displays a list of messages as well as modifies the toolbars and navigation title.
 @MainActor

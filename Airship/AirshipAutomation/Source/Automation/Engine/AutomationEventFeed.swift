@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 protocol AutomationEventFeedProtocol: Sendable {
     var feed: AsyncStream<AutomationEvent> { get }
@@ -195,10 +193,8 @@ private extension AirshipAnalyticsFeed.Event {
             default:
                 return nil
             }
-#if canImport(AirshipCore)
         @unknown default:
             return nil
-#endif
         }
     }
 }

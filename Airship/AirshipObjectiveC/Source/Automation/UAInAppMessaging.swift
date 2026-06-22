@@ -2,10 +2,8 @@
 
 public import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
 import AirshipAutomation
-#endif
 
 /// In-App messaging
 public final class UAInAppMessaging: NSObject, Sendable {

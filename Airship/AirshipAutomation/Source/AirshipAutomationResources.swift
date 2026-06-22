@@ -2,9 +2,7 @@
 
 public import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Resources for AirshipAutomation
 public final class AirshipAutomationResources {

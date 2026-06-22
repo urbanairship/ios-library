@@ -4,9 +4,7 @@
 import Foundation
 public import WebKit
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 private let messageSentDateFormatter: DateFormatter = {
     let f = DateFormatter()

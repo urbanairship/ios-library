@@ -2,9 +2,7 @@
 
 import Foundation
 import SwiftUI
-#if canImport(AirshipCore)
 @_spi(AirshipInternal) import AirshipCore
-#endif
 
 final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 
@@ -66,10 +64,8 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 if let url = URL(string: url), prefetch, !assets.isCached(remoteURL: url) {
                     return true
                 }
-#if canImport(AirshipCore)
             @unknown default:
                 return true
-#endif
             }
 
             return false

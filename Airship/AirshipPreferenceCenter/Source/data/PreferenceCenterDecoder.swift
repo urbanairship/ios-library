@@ -2,13 +2,9 @@
 
 import Foundation
 
-#if canImport(AirshipBasement)
 @_spi(AirshipInternal) import AirshipBasement
-#endif
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 class PreferenceCenterDecoder {
     class func decodeConfig(data: Data) throws -> PreferenceCenterConfig {

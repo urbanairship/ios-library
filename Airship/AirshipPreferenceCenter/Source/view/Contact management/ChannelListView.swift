@@ -3,9 +3,7 @@
 import SwiftUI
 import Combine
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 struct ChannelListView: View {
     // MARK: - Constants

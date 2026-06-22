@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Defines when an automation is allowed to run (e.g. daily, weekly, or monthly time windows).
 public struct ExecutionWindow: Sendable, Equatable, Codable {

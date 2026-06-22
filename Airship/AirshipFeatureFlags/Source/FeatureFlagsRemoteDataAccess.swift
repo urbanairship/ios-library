@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 protocol FeatureFlagRemoteDataAccessProtocol: Sendable {
     func remoteDataFlagInfo(name: String) async -> RemoteDataFeatureFlagInfo

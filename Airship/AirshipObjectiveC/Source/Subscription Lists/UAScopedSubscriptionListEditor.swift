@@ -2,9 +2,7 @@
 
 public import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Scoped subscription list editor.
 @objc
@@ -83,10 +81,8 @@ extension ChannelScope {
         case .web: .web
         case .email: .email
         case .sms: .sms
-#if canImport(AirshipCore)
         @unknown default:
                 .app
-#endif
         }
     }
 }

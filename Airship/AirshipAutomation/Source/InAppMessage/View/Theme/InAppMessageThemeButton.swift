@@ -3,9 +3,7 @@
 import Foundation
 public import SwiftUI
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 public extension InAppMessageTheme {
     static func dismissIcon(_ dismissIconResource: String?) -> Image {

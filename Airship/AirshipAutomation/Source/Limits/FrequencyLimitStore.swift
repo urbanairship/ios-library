@@ -3,9 +3,7 @@
 import CoreData
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 enum FrequencyLimitStoreError: Error, Sendable {
     case coreDataUnavailable

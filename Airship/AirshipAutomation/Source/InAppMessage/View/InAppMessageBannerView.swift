@@ -3,9 +3,7 @@
 import SwiftUI
 import Combine
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 struct InAppMessageBannerView: View {
     @ObservedObject

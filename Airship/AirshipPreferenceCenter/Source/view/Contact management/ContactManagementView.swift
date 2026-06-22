@@ -3,9 +3,7 @@
 public import SwiftUI
 import Combine
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 public struct PreferenceCenterContactManagementView: View {
 

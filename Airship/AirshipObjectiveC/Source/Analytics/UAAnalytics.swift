@@ -2,9 +2,7 @@
 
 public import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// The Analytics object provides an interface to the Airship Analytics API.
 @objc

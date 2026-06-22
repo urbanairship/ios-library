@@ -2,9 +2,7 @@
 
 public import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Feature Flag result cache
 public protocol FeatureFlagResultCache: Actor {

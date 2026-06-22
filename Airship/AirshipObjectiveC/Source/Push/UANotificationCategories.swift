@@ -4,9 +4,7 @@ public import Foundation
 
 public import UserNotifications
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 @objc
 public final class UANotificationCategories: NSObject, Sendable {

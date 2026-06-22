@@ -2,9 +2,6 @@ name: CI Pull Request
 
 on: [pull_request]
 
-env:
-  BUNDLE_PATH: vendor/bundle
-
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
@@ -114,37 +111,3 @@ jobs:
   #     - name: Test
   #       run: make build-sample-watchos
         
-  pod-lib-lint-watchos:
-    runs-on: macos-15-xlarge
-    steps:
-      - uses: actions/checkout@v4
-      - name: Pod lint
-        run: make pod-lint-watchos
-        
-  pod-lib-lint-macos:
-    runs-on: macos-15-xlarge
-    steps:
-      - uses: actions/checkout@v4
-      - name: Pod lint
-        run: make pod-lint-macos
-        
-  pod-lib-lint-tvos:
-    runs-on: macos-15-xlarge
-    steps:
-      - uses: actions/checkout@v4
-      - name: Pod lint
-        run: make pod-lint-tvos
-
-  pod-lib-lint-ios:
-    runs-on: macos-15-xlarge
-    steps:
-      - uses: actions/checkout@v4
-      - name: Pod lint
-        run: make pod-lint-ios
-
-  pod-lib-lint-extensions:
-    runs-on: macos-15-xlarge
-    steps:
-      - uses: actions/checkout@v4
-      - name: Pod lint
-        run: make pod-lint-extensions

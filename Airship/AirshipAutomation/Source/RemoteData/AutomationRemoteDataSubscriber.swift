@@ -5,9 +5,7 @@ import Foundation
 @preconcurrency
 import Combine
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Protocol for subscribing to remote data updates and syncing automation schedules.
 protocol AutomationRemoteDataSubscriberProtocol: Sendable {

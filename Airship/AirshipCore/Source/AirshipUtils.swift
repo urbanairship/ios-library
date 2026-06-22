@@ -3,9 +3,7 @@
 import CommonCrypto
 import Foundation
 public import SwiftUI
-#if canImport(AirshipBasement)
 @_spi(AirshipInternal) import AirshipBasement
-#endif
 
 #if !os(watchOS)
 import SystemConfiguration

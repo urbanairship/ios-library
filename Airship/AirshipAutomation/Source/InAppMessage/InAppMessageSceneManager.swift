@@ -4,9 +4,7 @@
 import Foundation
 import UIKit
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 protocol InAppMessageSceneManagerProtocol: AnyObject, Sendable {
     @MainActor

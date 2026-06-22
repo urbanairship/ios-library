@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// - Note: For internal use only. :nodoc:
 public struct DeferredAutomationData: Sendable, Codable, Equatable {

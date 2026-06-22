@@ -1,8 +1,6 @@
 import Foundation
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 /// Automation compound audience
 public struct AutomationCompoundAudience: Codable, Sendable, Equatable {

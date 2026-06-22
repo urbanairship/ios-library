@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 
 /// A concurrent queue that automatically retries an operation with a backoff.

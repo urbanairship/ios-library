@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Wraps a custom display adapter as a DisplayAdapter
 final class CustomDisplayAdapterWrapper: DisplayAdapter {

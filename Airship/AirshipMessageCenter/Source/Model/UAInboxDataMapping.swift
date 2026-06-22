@@ -3,9 +3,8 @@
 import Foundation
 import CoreData
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif  
+  
 
 @objc(UAInboxDataMappingV2toV4)
 class UAInboxDataMappingV2toV4: NSEntityMigrationPolicy {

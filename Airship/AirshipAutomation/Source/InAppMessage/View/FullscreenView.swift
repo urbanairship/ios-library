@@ -3,9 +3,7 @@
 import SwiftUI
 import Combine
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 struct FullscreenView: View, Sendable {
     @EnvironmentObject var environment: InAppMessageEnvironment

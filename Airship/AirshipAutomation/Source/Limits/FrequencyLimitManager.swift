@@ -2,9 +2,7 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Manager protocol for keeping track of frequency limits and occurrence counts.
 protocol FrequencyLimitManagerProtocol: Sendable {

@@ -3,13 +3,9 @@
 import Foundation
 import Combine
 
-#if canImport(AirshipBasement)
 @_spi(AirshipInternal) import AirshipBasement
-#endif
 
-#if canImport(AirshipCore)
 import AirshipCore
-#endif
 
 /// Remote data access for automation
 protocol AutomationRemoteDataAccessProtocol: Sendable {
@@ -77,10 +73,8 @@ final class AutomationRemoteDataAccess: AutomationRemoteDataAccessProtocol {
             return false
         case .upToDate:
             return false
-#if canImport(AirshipCore)
         @unknown default:
             return false
-#endif
         }
     }
 

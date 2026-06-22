@@ -3,9 +3,7 @@
 import Foundation
 import Combine
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 #if canImport(UIKit)
 import UIKit

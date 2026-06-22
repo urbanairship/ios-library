@@ -7,9 +7,7 @@ import UserNotifications
 import UIKit
 #endif
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 
 /**

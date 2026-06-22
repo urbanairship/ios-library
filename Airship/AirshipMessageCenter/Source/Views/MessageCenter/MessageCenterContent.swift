@@ -12,9 +12,7 @@ public import UIKit
 public import AppKit
 #endif
 
-#if canImport(AirshipCore)
 public import AirshipCore
-#endif
 
 /// The Message Center content view.
 /// This view can be used to construct a custom Message Center. For a more turnkey solution, see `MessageCenterView`.
