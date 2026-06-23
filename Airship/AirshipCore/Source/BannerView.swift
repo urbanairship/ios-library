@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import SwiftUI
+@_spi(AirshipInternal) import AirshipBasement
 
 #if canImport(UIKit)
 import UIKit
@@ -307,7 +308,6 @@ struct BannerView: View {
 }
 
 private extension View {
-    
     @ViewBuilder
     func airshipApplyBannerTransition(
         isTopPlacement: Bool,
@@ -315,9 +315,41 @@ private extension View {
     ) -> some View {
         switch animation {
         case .slide:
-            airshipApplyTransition(isTopPlacement: isTopPlacement)
+            if isTopPlacement {
+                self.transition(
+                    .asymmetric(
+                        insertion: .move(edge: .top),
+                        removal: .move(edge: .top).combined(with: .opacity)
+                    )
+                )
+            } else {
+                self.transition(
+                    .asymmetric(
+                        insertion: .move(edge: .bottom),
+                        removal: .move(edge: .bottom).combined(with: .opacity)
+                    )
+                )
+            }
         case .fade, _:
             self.transition(.opacity)
         }
     }
+
+    @ViewBuilder
+    func airshipAddNub(
+        isTopPlacement: Bool,
+        nub: AnyView,
+        itemSpacing: CGFloat
+    ) -> some View {
+        VStack(spacing: 0) {
+            if isTopPlacement {
+                self
+                nub.padding(.vertical, itemSpacing / 2)
+            } else {
+                nub.padding(.vertical, itemSpacing / 2)
+                self
+            }
+        }
+    }
+
 }

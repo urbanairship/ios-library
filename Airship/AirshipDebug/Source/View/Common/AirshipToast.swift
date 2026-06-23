@@ -2,6 +2,7 @@
 
 import SwiftUI
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 struct AirshipToast: View {
     struct Message: Equatable {

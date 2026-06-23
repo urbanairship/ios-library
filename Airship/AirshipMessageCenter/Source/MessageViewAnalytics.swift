@@ -2,6 +2,7 @@
 
 import Foundation
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 final class DefaultMessageViewAnalytics: ThomasLayoutMessageAnalyticsProtocol {
     private static let impressionReportInterval: TimeInterval = 30 * 60 // 30 mins

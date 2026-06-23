@@ -4,6 +4,7 @@ import Foundation
 import SwiftUI
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 internal extension View {
     @ViewBuilder

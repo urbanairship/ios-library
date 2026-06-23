@@ -3,6 +3,7 @@
 import Combine
 import Foundation
 import SwiftUI
+@_spi(AirshipInternal) import AirshipBasement
 
 internal struct FormSubmissionEnableBehavior: ViewModifier {
     let onApply: ((Bool, ThomasEnableBehavior) -> Void)?

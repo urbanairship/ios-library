@@ -8,6 +8,7 @@ import UIKit
 #endif
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 public typealias MessageConvertor = @MainActor @Sendable (LegacyInAppMessage) -> AutomationSchedule?
 public typealias MessageExtender = @Sendable (inout InAppMessage) -> Void

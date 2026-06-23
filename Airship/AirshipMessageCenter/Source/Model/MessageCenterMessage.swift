@@ -3,6 +3,7 @@
 public import Foundation
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Message center message.
 public struct MessageCenterMessage: Sendable, Equatable, Identifiable, Hashable {

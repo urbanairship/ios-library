@@ -5,6 +5,7 @@ import Foundation
 public import SwiftUI
 
 @_spi(AirshipInternal) import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 /// A view that displays a list of messages as well as modifies the toolbars and navigation title.
 @MainActor

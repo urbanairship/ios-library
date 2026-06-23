@@ -3,6 +3,7 @@
 import SwiftUI
 
 @_spi(AirshipInternal) import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 struct PreferenceCloseButton: View {
     internal init(dismissIconColor: Color, dismissIconResource:String, onTap: @escaping () -> ()) {

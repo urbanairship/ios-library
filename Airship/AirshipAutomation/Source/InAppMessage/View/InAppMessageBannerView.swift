@@ -4,6 +4,7 @@ import SwiftUI
 import Combine
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 struct InAppMessageBannerView: View {
     @ObservedObject
@@ -351,5 +352,60 @@ fileprivate struct InAppMessageCustomOpacityButtonStyle: ButtonStyle {
     let pressedOpacity: Double
     func makeBody(configuration: Configuration) -> some View {
         configuration.label.opacity(configuration.isPressed ? pressedOpacity : 1.0)
+    }
+}
+
+fileprivate extension View {
+    @ViewBuilder
+    func showing(isShowing: Bool) -> some View {
+        if isShowing {
+            self.opacity(1)
+        } else {
+            self.hidden().opacity(0)
+        }
+    }
+
+    @ViewBuilder
+    func airshipAddNub(
+        isTopPlacement: Bool,
+        nub: AnyView,
+        itemSpacing: CGFloat
+    ) -> some View {
+        VStack(spacing: 0) {
+            if isTopPlacement {
+                self
+                nub.padding(.vertical, itemSpacing / 2)
+            } else {
+                nub.padding(.vertical, itemSpacing / 2)
+                self
+            }
+        }
+    }
+
+    @ViewBuilder
+    func airshipApplyTransitioningPlacement(
+        isTopPlacement: Bool
+    ) -> some View {
+        if isTopPlacement {
+            VStack {
+                self.transition(
+                    .asymmetric(
+                        insertion: .move(edge: .top),
+                        removal: .move(edge: .top).combined(with: .opacity)
+                    )
+                )
+                Spacer()
+            }
+        } else {
+            VStack {
+                Spacer()
+                self.transition(
+                    .asymmetric(
+                        insertion: .move(edge: .bottom),
+                        removal: .move(edge: .bottom).combined(with: .opacity)
+                    )
+                )
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@
 import SwiftUI
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 struct FooterView: View {
     @Environment(\.colorScheme)

@@ -1,4 +1,5 @@
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 actor ContactManager: ContactManagerProtocol {
     private static let operationsKey: String = "Contact.operationEntries"

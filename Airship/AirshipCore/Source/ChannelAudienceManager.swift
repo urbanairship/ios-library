@@ -2,6 +2,7 @@
 
 @preconcurrency import Combine
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 protocol ChannelAudienceManagerProtocol: AnyObject, Sendable {
     var channelID: String? { get set }

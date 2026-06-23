@@ -2,6 +2,7 @@
 
 import Foundation
 import SwiftUI
+@_spi(AirshipInternal) import AirshipBasement
 
 #if !os(tvOS)
 fileprivate struct TouchViewModifier: ViewModifier {

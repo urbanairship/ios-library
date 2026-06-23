@@ -3,6 +3,7 @@
 import Foundation
 import SwiftUI
 import Combine
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Image Button view.
 struct ImageButton : View {

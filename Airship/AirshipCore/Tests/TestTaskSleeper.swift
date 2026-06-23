@@ -1,5 +1,6 @@
 public import AirshipCore
 public import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Test sleeper that records each `sleep` call and optionally parks until released.
 ///
@@ -7,6 +8,7 @@ public import Foundation
 /// subsequent sleeps park on a continuation until `resume()` is called.
 ///
 /// Use `waitForSleep(_:)` to await a specific interval being recorded.
+@_spi(AirshipInternal)
 public actor TestTaskSleeper: AirshipTaskSleeper {
     public var sleeps: [TimeInterval] = []
     private var updates: AirshipAsyncChannel<[TimeInterval]> = AirshipAsyncChannel()

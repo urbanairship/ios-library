@@ -3,6 +3,7 @@
 import Combine
 import Foundation
 import SwiftUI
+@_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
 struct FormController: View {

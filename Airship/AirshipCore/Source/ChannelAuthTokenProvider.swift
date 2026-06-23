@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 final class ChannelAuthTokenProvider: AuthTokenProvider {
     private let cachedAuthToken: CachedValue<AuthToken>

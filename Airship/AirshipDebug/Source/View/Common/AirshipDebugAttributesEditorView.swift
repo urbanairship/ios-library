@@ -3,6 +3,7 @@
 import Foundation
 import SwiftUI
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 struct AirshipDebugAttributesEditorView: View {
 

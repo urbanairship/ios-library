@@ -4,6 +4,7 @@ public import SwiftUI
 import Combine
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 // MARK: Channel text field
 public struct ChannelTextField: View {

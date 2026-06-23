@@ -2,6 +2,7 @@
 
 import Foundation
 import Combine
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Contact channels provider protocol for receiving contact updates.
 protocol ContactChannelsProviderProtocol: Sendable {

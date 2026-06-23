@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 enum ThomasFormFieldPendingResult: Equatable, Sendable {
     case valid(ThomasFormField.Result)
@@ -41,7 +42,7 @@ final class DefaultThomasFormFieldProcessor: ThomasFormFieldProcessor {
 
     init(
         date: any AirshipDateProtocol = AirshipDate.shared,
-        taskSleeper: any AirshipTaskSleeper  = DefaultAirshipTaskSleeper()
+        taskSleeper: any AirshipTaskSleeper = .shared
     ) {
         self.date = date
         self.taskSleeper = taskSleeper

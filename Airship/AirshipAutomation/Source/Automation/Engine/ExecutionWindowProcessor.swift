@@ -3,6 +3,7 @@
 import AirshipCore
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 
 protocol ExecutionWindowProcessorProtocol: Actor {

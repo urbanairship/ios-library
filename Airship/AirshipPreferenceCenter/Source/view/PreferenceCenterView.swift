@@ -5,6 +5,7 @@ public import SwiftUI
 import Combine
 
 @_spi(AirshipInternal) import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 /// The main view for the Airship Preference Center. This view provides a navigation stack.
 /// If you wish to provide your own navigation, see `PreferenceCenterContent`.

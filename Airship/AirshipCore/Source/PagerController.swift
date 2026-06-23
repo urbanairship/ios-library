@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+@_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
 struct PagerController: View {

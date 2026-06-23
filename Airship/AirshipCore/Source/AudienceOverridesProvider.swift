@@ -1,4 +1,5 @@
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 protocol AudienceOverridesProvider: Actor {
     func setStableContactIDProvider(

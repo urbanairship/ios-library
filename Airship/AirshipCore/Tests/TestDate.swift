@@ -1,28 +1,29 @@
 /* Copyright Airship and Contributors */
 
-@testable
-public import AirshipCore
 public import Foundation
+@_spi(AirshipInternal) public import AirshipBasement
 
+@_spi(AirshipInternal)
 public class UATestDate: @unchecked Sendable, AirshipDateProtocol  {
 
     public init(offset: TimeInterval = 0, dateOverride: Date? = nil) {
-        self._offSet = AirshipAtomicValue(offset)
+        self._offSet = offset
         self.dateOverride = dateOverride
     }
 
-    private var _offSet: AirshipAtomicValue<TimeInterval>
+    private let lock = NSLock()
+    private var _offSet: TimeInterval
 
     public func advance(by: TimeInterval) {
-        self._offSet.value += by
+        self.offset += by
     }
 
     public var offset: TimeInterval {
         get {
-            return self._offSet.value
+            return self.lock.withLock { self._offSet }
         }
         set {
-            self._offSet.value = newValue
+            self.lock.withLock { self._offSet = newValue }
         }
     }
 

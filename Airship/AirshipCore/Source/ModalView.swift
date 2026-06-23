@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import SwiftUI
-
+@_spi(AirshipInternal) import AirshipBasement
 
 struct ModalView: View {
 

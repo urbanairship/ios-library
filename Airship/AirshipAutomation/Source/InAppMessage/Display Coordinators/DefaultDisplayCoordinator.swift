@@ -3,6 +3,7 @@
 import Foundation
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Display coordinator that only allows a single message at a time to be displayed with an optional interval between
 /// displays.

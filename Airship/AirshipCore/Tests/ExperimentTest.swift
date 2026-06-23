@@ -4,6 +4,7 @@ import XCTest
 
 @testable
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 final class ExperimentTest: XCTestCase {
 
@@ -74,7 +75,7 @@ final class ExperimentTest: XCTestCase {
             exclusions: [
                 .init(messageTypePredicate: try! JSONPredicate(json: ["value": ["equals": "transactional"]]), campaignsPredicate: nil)
             ],
-            timeCriteria: .init(start: Date(milliseconds: 1689012595000), end: Date(milliseconds: 1689091608000))
+            timeCriteria: .init(start: Date(airshipMilliseconds: 1689012595000), end: Date(airshipMilliseconds: 1689091608000))
         )
 
         XCTAssertEqual(expected, decoded)
@@ -156,7 +157,7 @@ final class ExperimentTest: XCTestCase {
             exclusions: [
                 .init(messageTypePredicate: try! JSONPredicate(json: ["value": ["equals": "transactional"]]), campaignsPredicate: nil)
             ],
-            timeCriteria: .init(start: Date(milliseconds: 1689012595000), end: Date(milliseconds: 1689091608000))
+            timeCriteria: .init(start: Date(airshipMilliseconds: 1689012595000), end: Date(airshipMilliseconds: 1689091608000))
         )
 
         XCTAssertEqual(expected, decoded)

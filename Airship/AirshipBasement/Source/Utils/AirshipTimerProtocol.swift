@@ -3,6 +3,7 @@
 public import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol AirshipTimerProtocol: Sendable {
     @MainActor
     var time : TimeInterval { get }
@@ -16,6 +17,7 @@ public protocol AirshipTimerProtocol: Sendable {
 
 /// - Note: For internal use only. :nodoc:
 @MainActor
+@_spi(AirshipInternal)
 final public class AirshipTimer: AirshipTimerProtocol {
     private var isStarted: Bool = false
     private var elapsedTime: TimeInterval = 0
@@ -49,6 +51,4 @@ final public class AirshipTimer: AirshipTimerProtocol {
     public var time: TimeInterval {
         return self.elapsedTime + currentSessionTime()
     }
-
 }
-

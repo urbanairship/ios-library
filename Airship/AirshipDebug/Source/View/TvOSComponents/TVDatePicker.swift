@@ -2,6 +2,7 @@
 
 import SwiftUI
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Represents the available components of the tv date picker view.
 struct TvDatePickerComponents: OptionSet {

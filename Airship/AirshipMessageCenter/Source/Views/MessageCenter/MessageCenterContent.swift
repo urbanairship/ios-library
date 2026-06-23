@@ -13,6 +13,7 @@ public import AppKit
 #endif
 
 public import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 /// The Message Center content view.
 /// This view can be used to construct a custom Message Center. For a more turnkey solution, see `MessageCenterView`.

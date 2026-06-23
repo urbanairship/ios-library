@@ -192,7 +192,7 @@ final class FeatureFlagRemoteDataAccessTest: XCTestCase {
     }
 
     func testFeatureFlagsIgnoreInActive() async throws {
-        let nowMs = self.date.now.millisecondsSince1970
+        let nowMs = self.date.now.airshipMillisecondsSince1970
         let json = """
         {
            "feature_flags":[

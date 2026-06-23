@@ -4,6 +4,7 @@ import Foundation
 public import SwiftUI
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Common section item view
 public struct CommonSectionView: View {

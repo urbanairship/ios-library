@@ -1,5 +1,6 @@
 public import Foundation
 import CoreData
+@_spi(AirshipInternal) import AirshipBasement
 
 public protocol AirshipCache: Actor {
     func deleteCachedValue(key: String) async

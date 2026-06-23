@@ -29,7 +29,7 @@ struct ToastView: View {
     @ViewBuilder
     var body: some View {
         makeView()
-            .airshipOnChangeOf(self.toast.message) { incoming in
+            .onChangeOfCompat(self.toast.message) { incoming in
                 if incoming != nil {
                     showToast()
                 }

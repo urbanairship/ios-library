@@ -3,6 +3,7 @@
 import Combine
 import Foundation
 import UserNotifications
+@_spi(AirshipInternal) import AirshipBasement
 
 #if canImport(UIKit)
 import UIKit

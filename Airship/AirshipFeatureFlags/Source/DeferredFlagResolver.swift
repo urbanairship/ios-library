@@ -2,6 +2,7 @@
 
 import Foundation
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 protocol FeatureFlagDeferredResolverProtocol: Actor {
     func resolve(

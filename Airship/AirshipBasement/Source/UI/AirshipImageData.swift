@@ -93,7 +93,7 @@ public final class AirshipImageData: Sendable {
     }
 }
 
-actor AirshipImageDataFrameActor {
+fileprivate actor AirshipImageDataFrameActor {
     private let source: CGImageSource
 
     let framesCount: Int
@@ -193,6 +193,7 @@ fileprivate extension AirshipNativeImage {
     }
 }
 
+@_spi(AirshipInternal)
 public extension Image {
     /// Bridges UIImage and NSImage into a single SwiftUI Image initializer
     init(airshipNativeImage: AirshipNativeImage) {
@@ -204,6 +205,7 @@ public extension Image {
     }
 }
 
+@_spi(AirshipInternal)
 public extension AirshipNativeImage {
     /// Cross-platform initializer for SF Symbols
     static func airshipSystemImage(name: String) -> AirshipNativeImage? {

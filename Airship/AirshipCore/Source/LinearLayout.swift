@@ -2,6 +2,7 @@
 
 import Foundation
 import SwiftUI
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Linear Layout - either a VStack or HStack depending on the direction.
 

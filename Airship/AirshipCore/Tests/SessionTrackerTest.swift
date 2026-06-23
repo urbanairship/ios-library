@@ -3,6 +3,7 @@
 import XCTest
 @testable
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 final class SessionTrackerTest: XCTestCase {
 
@@ -479,7 +480,7 @@ final class SessionTrackerTest: XCTestCase {
         }
 
         let timeoutTask = Task {
-            try? await DefaultAirshipTaskSleeper().sleep(timeInterval:2.0)
+            try? await DefaultAirshipTaskSleeper.shared.sleep(timeInterval:2.0)
             if Task.isCancelled == false {
                 XCTFail("Failed to get events", line: line)
                 verifyTask.cancel()

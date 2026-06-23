@@ -9,6 +9,7 @@ import UIKit
 #endif
 
 public import UserNotifications
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Airship contact. A contact is distinct from a channel and  represents a "user"
 /// within Airship. Contacts may be named and have channels associated with it.

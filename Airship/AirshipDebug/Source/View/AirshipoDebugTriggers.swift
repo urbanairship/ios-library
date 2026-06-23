@@ -2,10 +2,12 @@
 
 public import SwiftUI
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 #if canImport(UIKit)
 import UIKit
 #endif
+
 
 /// Defines the triggers available for the Airship Debug interface.
 public struct AirshipDebugTrigger: OptionSet, Sendable {

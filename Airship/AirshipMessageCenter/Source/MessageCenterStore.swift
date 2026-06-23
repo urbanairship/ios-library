@@ -4,6 +4,7 @@ import CoreData
 import Foundation
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 enum MessageCenterStoreError: Error {
     case coreDataUnavailble

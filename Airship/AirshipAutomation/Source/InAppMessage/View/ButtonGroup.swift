@@ -3,6 +3,7 @@
 import SwiftUI
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 private let defaultButtonMargin: CGFloat = 15
 private let defaultFooterMargin: CGFloat = 0

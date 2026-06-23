@@ -3,6 +3,7 @@
 import Foundation
 import SwiftUI
 import AVFoundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Media view.
 

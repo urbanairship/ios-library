@@ -2,6 +2,7 @@
 
 import Foundation
 import SwiftUI
+@_spi(AirshipInternal) import AirshipBasement
 
 // Icon view that can be used to display icons inside a toggle layout
 struct IconView: View {

@@ -2,6 +2,7 @@
 
 import Foundation
 import SwiftUI
+@_spi(AirshipInternal) import AirshipBasement
 
 struct CheckboxController: View {
     private let info: ThomasViewInfo.CheckboxController

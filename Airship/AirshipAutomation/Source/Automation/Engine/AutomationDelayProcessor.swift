@@ -3,6 +3,7 @@
 import Foundation
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 protocol AutomationDelayProcessorProtocol: Sendable {
     // Waits for the delay

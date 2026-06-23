@@ -5,6 +5,7 @@ public import Combine
 public import Foundation
 
 public import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Errors that can occur when loading or refreshing Message Center Inbox.
 public enum MessageCenterInboxError: Error, Equatable {

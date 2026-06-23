@@ -3,6 +3,7 @@
 import Foundation
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 
 /// A concurrent queue that automatically retries an operation with a backoff.

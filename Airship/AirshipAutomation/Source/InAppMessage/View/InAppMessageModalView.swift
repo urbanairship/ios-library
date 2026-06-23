@@ -4,6 +4,7 @@ import SwiftUI
 import Combine
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 struct InAppMessageModalView: View {
     @EnvironmentObject var environment: InAppMessageEnvironment

@@ -2,6 +2,7 @@
 
 import Foundation
 import SwiftUI
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Button view.
 struct LabelButton : View {

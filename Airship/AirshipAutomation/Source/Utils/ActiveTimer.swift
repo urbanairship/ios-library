@@ -2,6 +2,7 @@
 
 import Foundation
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
 final class ActiveTimer: AirshipTimerProtocol {

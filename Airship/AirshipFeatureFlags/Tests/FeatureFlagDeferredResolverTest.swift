@@ -5,6 +5,7 @@ import XCTest
 import AirshipFeatureFlags
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 final class FeatureFlagDeferredResolverTest: XCTestCase {
 

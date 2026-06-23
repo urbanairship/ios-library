@@ -36,7 +36,7 @@ struct MainApp: App {
             AppView()
                 .environmentObject(appRouter)
                 .environmentObject(toast)
-                .airshipOnChangeOf(scenePhase) { phase in
+                .onChangeOfCompat(scenePhase) { phase in
                     if phase == .active {
                         print("App became active!")
 
@@ -50,3 +50,5 @@ struct MainApp: App {
         }
     }
 }
+
+

@@ -3,11 +3,13 @@
 public import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol AirshipTaskSleeper: Sendable {
     func sleep(timeInterval: TimeInterval) async throws
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class DefaultAirshipTaskSleeper: AirshipTaskSleeper {
     fileprivate static let shared: DefaultAirshipTaskSleeper = DefaultAirshipTaskSleeper()
     private static let maxDelayInterval: TimeInterval = 30
@@ -41,6 +43,7 @@ public final class DefaultAirshipTaskSleeper: AirshipTaskSleeper {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public extension AirshipTaskSleeper where Self == DefaultAirshipTaskSleeper {
     /// Default style
     static var shared: Self {

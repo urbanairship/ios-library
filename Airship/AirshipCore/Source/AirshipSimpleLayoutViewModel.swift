@@ -2,6 +2,7 @@
 
 import Foundation
 public import Combine
+@_spi(AirshipInternal) import AirshipBasement
 
 /// View model that owns the Thomas layout environment and its state.
 /// Create one per layout session (e.g. per message) and pass it to ``AirshipSimpleLayoutView``.

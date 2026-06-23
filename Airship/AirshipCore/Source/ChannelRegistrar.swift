@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 protocol ChannelRegistrarProtocol: AnyObject, Sendable {
     var channelID: String? { get }

@@ -4,6 +4,7 @@
 import SwiftUI
 
 @_spi(AirshipInternal) import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Detects and bridges UIKit navigation appearance to SwiftUI Message Center
 internal struct MessageCenterUIKitAppearance {

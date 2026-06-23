@@ -2,7 +2,7 @@
 
 import Foundation
 public import SwiftUI
-
+@_spi(AirshipInternal) import AirshipBasement
 import AirshipCore
 
 public extension InAppMessageTheme {

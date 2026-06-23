@@ -3,6 +3,7 @@
 import Foundation
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 protocol FeatureFlagRemoteDataAccessProtocol: Sendable {
     func remoteDataFlagInfo(name: String) async -> RemoteDataFeatureFlagInfo

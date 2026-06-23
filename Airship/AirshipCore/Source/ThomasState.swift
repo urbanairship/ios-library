@@ -2,6 +2,7 @@
 
 import Foundation
 import Combine
+@_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
 class ThomasState: ObservableObject {

@@ -6,6 +6,7 @@ import SwiftUI
 import AVFoundation
 import AVKit
 import Combine
+@_spi(AirshipInternal) import AirshipBasement
 
 
 @MainActor

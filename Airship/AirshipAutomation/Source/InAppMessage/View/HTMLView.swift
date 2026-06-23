@@ -7,6 +7,7 @@ import SwiftUI
 import AirshipCore
 
 import Combine
+@_spi(AirshipInternal) import AirshipBasement
 
 struct HTMLView: View {
 

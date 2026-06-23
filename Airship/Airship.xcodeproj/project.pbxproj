@@ -291,7 +291,6 @@
 		6E0F4BE72B32646000673CA4 /* AutomationDelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F4BE62B32646000673CA4 /* AutomationDelay.swift */; };
 		6E0F4BE92B3264A400673CA4 /* DeferredAutomationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F4BE82B3264A400673CA4 /* DeferredAutomationData.swift */; };
 		6E0F557F2AE03BB900E7CB8C /* ThomasAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0F557E2AE03BB900E7CB8C /* ThomasAsyncImage.swift */; };
-		6E10A1482C2B825200ED9556 /* DefaultTaskSleeperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E10A1472C2B825200ED9556 /* DefaultTaskSleeperTest.swift */; };
 		6E1185C62C3328A10071334E /* ExecutionWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1185C52C3328A10071334E /* ExecutionWindow.swift */; };
 		6E12539129A81ACE0009EE58 /* AirshipCoreDataPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */; };
 		6E146C502F5214D900320A36 /* AirshipDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E146C4F2F5214D900320A36 /* AirshipDevice.swift */; };
@@ -523,7 +522,6 @@
 		6E5213E32DCA7A3B00CF64B9 /* ThomasEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5213E22DCA7A3800CF64B9 /* ThomasEvent.swift */; };
 		6E5214672DCAB03900CF64B9 /* ThomasFormResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5214662DCAB03600CF64B9 /* ThomasFormResult.swift */; };
 		6E5214692DCABFCE00CF64B9 /* ThomasLayoutContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5214682DCABFCA00CF64B9 /* ThomasLayoutContext.swift */; };
-		6E52146B2DCBF9BD00CF64B9 /* AirshipTimerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E52146A2DCBF9BA00CF64B9 /* AirshipTimerProtocol.swift */; };
 		6E52146D2DCBFABE00CF64B9 /* ThomasPagerTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E52146C2DCBFAB900CF64B9 /* ThomasPagerTracker.swift */; };
 		6E52146F2DCC075500CF64B9 /* ThomasPagerTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E52146E2DCC075100CF64B9 /* ThomasPagerTrackerTest.swift */; };
 		6E5215222DCEA12A00CF64B9 /* ThomasViewedPageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5215212DCEA10F00CF64B9 /* ThomasViewedPageInfo.swift */; };
@@ -605,7 +603,6 @@
 		6E6BD26D2AF1AC5700B9DFC9 /* AirshipCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD26C2AF1AC5700B9DFC9 /* AirshipCache.swift */; };
 		6E6BD2722AF1B05500B9DFC9 /* UAirshipCache.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD2702AF1B05500B9DFC9 /* UAirshipCache.xcdatamodeld */; };
 		6E6BD2762AF1C1D800B9DFC9 /* DeferredFlagResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD2752AF1C1D800B9DFC9 /* DeferredFlagResolver.swift */; };
-		6E6BD2782AF2B97300B9DFC9 /* AirshipTaskSleeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BD2772AF2B97300B9DFC9 /* AirshipTaskSleeper.swift */; };
 		6E6C3F7F27A20C3C007F55C7 /* ChannelScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F7E27A20C3C007F55C7 /* ChannelScope.swift */; };
 		6E6C3F8A27A266C0007F55C7 /* CachedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F8927A266C0007F55C7 /* CachedValue.swift */; };
 		6E6C3F8D27A26992007F55C7 /* CachedValueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C3F8C27A26992007F55C7 /* CachedValueTest.swift */; };
@@ -614,7 +611,6 @@
 		6E6C84462A5C8CFE00DD83A2 /* AirshipConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6C84452A5C8CFD00DD83A2 /* AirshipConfigTest.swift */; };
 		6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6CC38023A3F9B4003D583C /* PushDataManager.swift */; };
 		6E6ED13B2683A58D00A2CBD0 /* Dispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1352683A58D00A2CBD0 /* Dispatcher.swift */; };
-		6E6ED1402683A9F200A2CBD0 /* AirshipDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED13F2683A9F200A2CBD0 /* AirshipDate.swift */; };
 		6E6ED1432683B8FA00A2CBD0 /* TestDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */; };
 		6E6ED1452683BC7F00A2CBD0 /* TestDispatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1442683BC7F00A2CBD0 /* TestDispatcher.swift */; };
 		6E6ED1492683D8E200A2CBD0 /* LocaleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1482683D8E200A2CBD0 /* LocaleManager.swift */; };
@@ -748,6 +744,7 @@
 		6E9C2BDC2D028034000089A9 /* APNSEnvironmentTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9C2BDB2D028030000089A9 /* APNSEnvironmentTest.swift */; };
 		6E9D529826C195F7004EA16B /* ActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D529726C195F7004EA16B /* ActionRunner.swift */; };
 		6E9D529B26C1A77C004EA16B /* ActionRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D529A26C1A77C004EA16B /* ActionRegistry.swift */; };
+		6EA11A0F2F7E100100FD8194 /* AirshipImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA11A0E2F7E100100FD8194 /* AirshipImageData.swift */; };
 		6EAA61492D5297A7006602F7 /* SubjectExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAA61482D5297A2006602F7 /* SubjectExtension.swift */; };
 		6EAC295A27580063006DFA63 /* ChannelRegistrarTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAC295927580063006DFA63 /* ChannelRegistrarTest.swift */; };
 		6EAD3AF82F45305E00FF274E /* AirshipSwizzler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD3AF72F45305B00FF274E /* AirshipSwizzler.swift */; };
@@ -813,6 +810,15 @@
 		6EB5159728A5C54400870C5A /* TestThemeEmpty.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EB5159628A5C54400870C5A /* TestThemeEmpty.plist */; };
 		6EB5159928A5C61D00870C5A /* TestThemeInvalid.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6EB5159828A5C61D00870C5A /* TestThemeInvalid.plist */; };
 		6EB515A328A5F1C600870C5A /* PreferenceCenterStateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB515A228A5F1C600870C5A /* PreferenceCenterStateTest.swift */; };
+		6EB7215C2FEB0C51001FBB9F /* AirshipViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB7215B2FEB0C51001FBB9F /* AirshipViewExtensions.swift */; };
+		6EB7215E2FEB0C5E001FBB9F /* AirshipColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB7215D2FEB0C59001FBB9F /* AirshipColorExtensions.swift */; };
+		6EB721602FEB0C89001FBB9F /* AirshipObservableTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB7215F2FEB0C85001FBB9F /* AirshipObservableTimer.swift */; };
+		6EB721642FEB1BD1001FBB9F /* AirshipObservableTimerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB721632FEB1BCD001FBB9F /* AirshipObservableTimerTest.swift */; };
+		6EB721682FEB1CE1001FBB9F /* AirshipDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB721672FEB1CE1001FBB9F /* AirshipDate.swift */; };
+		6EB7216C2FEB1D50001FBB9F /* AirshipTaskSleeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB7216B2FEB1D50001FBB9F /* AirshipTaskSleeper.swift */; };
+		6EB7216E2FEB1DA5001FBB9F /* AirshipTimerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB7216D2FEB1DA5001FBB9F /* AirshipTimerProtocol.swift */; };
+		6EB721702FEB1F13001FBB9F /* DefaultTaskSleeperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB7216F2FEB1F13001FBB9F /* DefaultTaskSleeperTest.swift */; };
+		6EB721712FEB1F27001FBB9F /* TestDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */; };
 		6EB839472BC83B9D006611C4 /* DefaultInAppActionRunnerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB839452BC83B96006611C4 /* DefaultInAppActionRunnerTest.swift */; };
 		6EB839492BC8898E006611C4 /* AirshipAsyncChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB839482BC8898E006611C4 /* AirshipAsyncChannel.swift */; };
 		6EB8394C2BC8AB51006611C4 /* TestWorkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63A567528F449D8004B8951 /* TestWorkManager.swift */; };
@@ -881,7 +887,6 @@
 		6ED2F52B2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F52A2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift */; };
 		6ED2F52D2B7FD403000AFC80 /* JavaScriptCommandTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F52C2B7FD403000AFC80 /* JavaScriptCommandTest.swift */; };
 		6ED2F52F2B7FD49B000AFC80 /* AirshipURLAllowListTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F52E2B7FD49B000AFC80 /* AirshipURLAllowListTest.swift */; };
-		6ED2F5312B7FF819000AFC80 /* AirshipViewUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F5302B7FF819000AFC80 /* AirshipViewUtils.swift */; };
 		6ED2F5392B7FFF68000AFC80 /* AirshipSceneManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99D1B3272B44F08900447840 /* AirshipSceneManager.swift */; };
 		6ED562A02EA9434B00C20B55 /* StackImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED5629F2EA9434900C20B55 /* StackImageButton.swift */; };
 		6ED5D8362ECF8996009F9EC4 /* SceneActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED5D8352ECF8996009F9EC4 /* SceneActionTest.swift */; };
@@ -903,7 +908,6 @@
 		6ED838AD2D0CEF4A009CBB0C /* CompoundDeviceAudienceSelectorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED838AC2D0CEF4A009CBB0C /* CompoundDeviceAudienceSelectorTest.swift */; };
 		6ED838D02D0D118B009CBB0C /* AutomationCompoundAudience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED838CF2D0D118B009CBB0C /* AutomationCompoundAudience.swift */; };
 		6EDAB5362FE99EF600FD8194 /* AirshipVersionUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAB5352FE99EEF00FD8194 /* AirshipVersionUtils.swift */; };
-		6EA11A0F2F7E100100FD8194 /* AirshipImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA11A0E2F7E100100FD8194 /* AirshipImageData.swift */; };
 		6EDAB5382FE99F0D00FD8194 /* AirshipVersionUtilsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAB5372FE99F0500FD8194 /* AirshipVersionUtilsTest.swift */; };
 		6EDAFB262CB463C5000BD4AA /* ButtonLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */; };
 		6EDE293F2A9802BF00235738 /* NativeBridgeActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */; };
@@ -1632,7 +1636,6 @@
 		6E0F4BE62B32646000673CA4 /* AutomationDelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationDelay.swift; sourceTree = "<group>"; };
 		6E0F4BE82B3264A400673CA4 /* DeferredAutomationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeferredAutomationData.swift; sourceTree = "<group>"; };
 		6E0F557E2AE03BB900E7CB8C /* ThomasAsyncImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThomasAsyncImage.swift; sourceTree = "<group>"; };
-		6E10A1472C2B825200ED9556 /* DefaultTaskSleeperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTaskSleeperTest.swift; sourceTree = "<group>"; };
 		6E1185C52C3328A10071334E /* ExecutionWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutionWindow.swift; sourceTree = "<group>"; };
 		6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCoreDataPredicate.swift; sourceTree = "<group>"; };
 		6E146C4F2F5214D900320A36 /* AirshipDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDevice.swift; sourceTree = "<group>"; };
@@ -1888,7 +1891,6 @@
 		6E5213E22DCA7A3800CF64B9 /* ThomasEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasEvent.swift; sourceTree = "<group>"; };
 		6E5214662DCAB03600CF64B9 /* ThomasFormResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormResult.swift; sourceTree = "<group>"; };
 		6E5214682DCABFCA00CF64B9 /* ThomasLayoutContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutContext.swift; sourceTree = "<group>"; };
-		6E52146A2DCBF9BA00CF64B9 /* AirshipTimerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipTimerProtocol.swift; sourceTree = "<group>"; };
 		6E52146C2DCBFAB900CF64B9 /* ThomasPagerTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasPagerTracker.swift; sourceTree = "<group>"; };
 		6E52146E2DCC075100CF64B9 /* ThomasPagerTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasPagerTrackerTest.swift; sourceTree = "<group>"; };
 		6E5215212DCEA10F00CF64B9 /* ThomasViewedPageInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewedPageInfo.swift; sourceTree = "<group>"; };
@@ -1972,7 +1974,6 @@
 		6E6BD26C2AF1AC5700B9DFC9 /* AirshipCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCache.swift; sourceTree = "<group>"; };
 		6E6BD2712AF1B05500B9DFC9 /* UAAirshipCache.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAAirshipCache.xcdatamodel; sourceTree = "<group>"; };
 		6E6BD2752AF1C1D800B9DFC9 /* DeferredFlagResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeferredFlagResolver.swift; sourceTree = "<group>"; };
-		6E6BD2772AF2B97300B9DFC9 /* AirshipTaskSleeper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipTaskSleeper.swift; sourceTree = "<group>"; };
 		6E6C3F7E27A20C3C007F55C7 /* ChannelScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelScope.swift; sourceTree = "<group>"; };
 		6E6C3F8927A266C0007F55C7 /* CachedValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedValue.swift; sourceTree = "<group>"; };
 		6E6C3F8C27A26992007F55C7 /* CachedValueTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedValueTest.swift; sourceTree = "<group>"; };
@@ -1981,7 +1982,6 @@
 		6E6C84452A5C8CFD00DD83A2 /* AirshipConfigTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipConfigTest.swift; sourceTree = "<group>"; };
 		6E6CC38023A3F9B4003D583C /* PushDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushDataManager.swift; sourceTree = "<group>"; };
 		6E6ED1352683A58D00A2CBD0 /* Dispatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dispatcher.swift; sourceTree = "<group>"; };
-		6E6ED13F2683A9F200A2CBD0 /* AirshipDate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipDate.swift; sourceTree = "<group>"; };
 		6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDate.swift; sourceTree = "<group>"; };
 		6E6ED1442683BC7F00A2CBD0 /* TestDispatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDispatcher.swift; sourceTree = "<group>"; };
 		6E6ED1482683D8E200A2CBD0 /* LocaleManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocaleManager.swift; sourceTree = "<group>"; };
@@ -2112,6 +2112,7 @@
 		6E9C2BDB2D028030000089A9 /* APNSEnvironmentTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APNSEnvironmentTest.swift; sourceTree = "<group>"; };
 		6E9D529726C195F7004EA16B /* ActionRunner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionRunner.swift; sourceTree = "<group>"; };
 		6E9D529A26C1A77C004EA16B /* ActionRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRegistry.swift; sourceTree = "<group>"; };
+		6EA11A0E2F7E100100FD8194 /* AirshipImageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipImageData.swift; sourceTree = "<group>"; };
 		6EA5202227D1364E003011CA /* AirshipDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDateFormatter.swift; sourceTree = "<group>"; };
 		6EAA61482D5297A2006602F7 /* SubjectExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectExtension.swift; sourceTree = "<group>"; };
 		6EAC295927580063006DFA63 /* ChannelRegistrarTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRegistrarTest.swift; sourceTree = "<group>"; };
@@ -2179,6 +2180,14 @@
 		6EB5159628A5C54400870C5A /* TestThemeEmpty.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = TestThemeEmpty.plist; sourceTree = "<group>"; };
 		6EB5159828A5C61D00870C5A /* TestThemeInvalid.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = TestThemeInvalid.plist; sourceTree = "<group>"; };
 		6EB515A228A5F1C600870C5A /* PreferenceCenterStateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterStateTest.swift; sourceTree = "<group>"; };
+		6EB7215B2FEB0C51001FBB9F /* AirshipViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipViewExtensions.swift; sourceTree = "<group>"; };
+		6EB7215D2FEB0C59001FBB9F /* AirshipColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipColorExtensions.swift; sourceTree = "<group>"; };
+		6EB7215F2FEB0C85001FBB9F /* AirshipObservableTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipObservableTimer.swift; sourceTree = "<group>"; };
+		6EB721632FEB1BCD001FBB9F /* AirshipObservableTimerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipObservableTimerTest.swift; sourceTree = "<group>"; };
+		6EB721672FEB1CE1001FBB9F /* AirshipDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDate.swift; sourceTree = "<group>"; };
+		6EB7216B2FEB1D50001FBB9F /* AirshipTaskSleeper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipTaskSleeper.swift; sourceTree = "<group>"; };
+		6EB7216D2FEB1DA5001FBB9F /* AirshipTimerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipTimerProtocol.swift; sourceTree = "<group>"; };
+		6EB7216F2FEB1F13001FBB9F /* DefaultTaskSleeperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTaskSleeperTest.swift; sourceTree = "<group>"; };
 		6EB839452BC83B96006611C4 /* DefaultInAppActionRunnerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultInAppActionRunnerTest.swift; sourceTree = "<group>"; };
 		6EB839482BC8898E006611C4 /* AirshipAsyncChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAsyncChannel.swift; sourceTree = "<group>"; };
 		6EB8394D2BC8B1F4006611C4 /* AirshipAsyncChannelTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAsyncChannelTest.swift; sourceTree = "<group>"; };
@@ -2242,7 +2251,6 @@
 		6ED2F52A2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipIvyVersionMatcherTest.swift; sourceTree = "<group>"; };
 		6ED2F52C2B7FD403000AFC80 /* JavaScriptCommandTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptCommandTest.swift; sourceTree = "<group>"; };
 		6ED2F52E2B7FD49B000AFC80 /* AirshipURLAllowListTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipURLAllowListTest.swift; sourceTree = "<group>"; };
-		6ED2F5302B7FF819000AFC80 /* AirshipViewUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipViewUtils.swift; sourceTree = "<group>"; };
 		6ED2F5342B7FFCD7000AFC80 /* AirshipDateFormatterTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDateFormatterTest.swift; sourceTree = "<group>"; };
 		6ED5629F2EA9434900C20B55 /* StackImageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackImageButton.swift; sourceTree = "<group>"; };
 		6ED5D8352ECF8996009F9EC4 /* SceneActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneActionTest.swift; sourceTree = "<group>"; };
@@ -2264,7 +2272,6 @@
 		6ED838AC2D0CEF4A009CBB0C /* CompoundDeviceAudienceSelectorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompoundDeviceAudienceSelectorTest.swift; sourceTree = "<group>"; };
 		6ED838CF2D0D118B009CBB0C /* AutomationCompoundAudience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationCompoundAudience.swift; sourceTree = "<group>"; };
 		6EDAB5352FE99EEF00FD8194 /* AirshipVersionUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipVersionUtils.swift; sourceTree = "<group>"; };
-		6EA11A0E2F7E100100FD8194 /* AirshipImageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipImageData.swift; sourceTree = "<group>"; };
 		6EDAB5372FE99F0500FD8194 /* AirshipVersionUtilsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipVersionUtilsTest.swift; sourceTree = "<group>"; };
 		6EDAFB252CB463C1000BD4AA /* ButtonLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLayout.swift; sourceTree = "<group>"; };
 		6EDE293E2A9802BF00235738 /* NativeBridgeActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeBridgeActionRunner.swift; sourceTree = "<group>"; };
@@ -3421,8 +3428,13 @@
 		6E20169F2F7DCD6E005B2F94 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				6EB7216D2FEB1DA5001FBB9F /* AirshipTimerProtocol.swift */,
+				6EB7216B2FEB1D50001FBB9F /* AirshipTaskSleeper.swift */,
+				6EB721672FEB1CE1001FBB9F /* AirshipDate.swift */,
+				6EB7215F2FEB0C85001FBB9F /* AirshipObservableTimer.swift */,
 				6EA5202227D1364E003011CA /* AirshipDateFormatter.swift */,
 				6EDAB5352FE99EEF00FD8194 /* AirshipVersionUtils.swift */,
+				6E1472D42F526DC600320A36 /* AirshipNativePlatform.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -3776,14 +3788,12 @@
 		6E411D5F2538D26200FEE4E8 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				6E1472D42F526DC600320A36 /* AirshipNativePlatform.swift */,
 				6E146FF22F525E7300320A36 /* AirshipPasteboard.swift */,
 				6E146D692F5241BA00320A36 /* AirshipColor.swift */,
 				6E146D672F523DB700320A36 /* AirshipFont.swift */,
 				6E146C4F2F5214D900320A36 /* AirshipDevice.swift */,
 				6EC815AE2F2BBFD100E1C0C6 /* BundleExtensions.swift */,
 				6E3CA5402ECB9B7400210C32 /* AirshipDisplayTarget.swift */,
-				6E52146A2DCBF9BA00CF64B9 /* AirshipTimerProtocol.swift */,
 				6E916C562DB30D9E00C676FA /* AirshipWindowFactory.swift */,
 				6EAA61482D5297A2006602F7 /* SubjectExtension.swift */,
 				99E433972C9A044C006436B9 /* AirshipResources.swift */,
@@ -3800,7 +3810,6 @@
 				6E6ED14D2683DBC200A2CBD0 /* AirshipBase64.swift */,
 				6E6ED1532683DBC300A2CBD0 /* UACoreData.swift */,
 				6E6ED1542683DBC300A2CBD0 /* AirshipNetworkChecker.swift */,
-				6E6ED13F2683A9F200A2CBD0 /* AirshipDate.swift */,
 				6E6ED1352683A58D00A2CBD0 /* Dispatcher.swift */,
 				6E6C3F8927A266C0007F55C7 /* CachedValue.swift */,
 				6E92ECB0284ECE590038802D /* CachedList.swift */,
@@ -3812,9 +3821,7 @@
 				6E07688729F9D28A0014E2A9 /* AirshipNotificationCenter.swift */,
 				6E07689129FB39440014E2A9 /* AirshipUnsafeSendableWrapper.swift */,
 				6ECB627D2A36A0770095C85C /* ExternalURLProcessor.swift */,
-				6E6BD2772AF2B97300B9DFC9 /* AirshipTaskSleeper.swift */,
 				6E1528272B4DCFCB00DF1377 /* AirshipActorValue.swift */,
-				6ED2F5302B7FF819000AFC80 /* AirshipViewUtils.swift */,
 				6E213B172BC60AF100BF24AE /* AirshipWeakValueHolder.swift */,
 				6EB839482BC8898E006611C4 /* AirshipAsyncChannel.swift */,
 			);
@@ -3833,11 +3840,11 @@
 		6E43212926EA847D009228AB /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6EB721622FEB0D2B001FBB9F /* UI */,
 				6EDAB53B2FE9A18100FD8194 /* Json */,
 				6E20169F2F7DCD6E005B2F94 /* Utils */,
 				6EF1933828380086005F192A /* Logger */,
 				6E698E02267A799500654DB2 /* AirshipErrors.swift */,
-				6EA11A0E2F7E100100FD8194 /* AirshipImageData.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -4407,6 +4414,16 @@
 			path = view;
 			sourceTree = "<group>";
 		};
+		6EB721622FEB0D2B001FBB9F /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				6EA11A0E2F7E100100FD8194 /* AirshipImageData.swift */,
+				6EB7215D2FEB0C59001FBB9F /* AirshipColorExtensions.swift */,
+				6EB7215B2FEB0C51001FBB9F /* AirshipViewExtensions.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		6EC0CA4D2B48985B00333A87 /* RemoteData */ = {
 			isa = PBXGroup;
 			children = (
@@ -4528,6 +4545,8 @@
 		6EDAB53A2FE9A16700FD8194 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				6EB7216F2FEB1F13001FBB9F /* DefaultTaskSleeperTest.swift */,
+				6EB721632FEB1BCD001FBB9F /* AirshipObservableTimerTest.swift */,
 				6EDAB5372FE99F0500FD8194 /* AirshipVersionUtilsTest.swift */,
 				6ED2F5342B7FFCD7000AFC80 /* AirshipDateFormatterTest.swift */,
 			);
@@ -5098,7 +5117,6 @@
 				6ED2F5282B7FC59F000AFC80 /* AirshipColorTests.swift */,
 				6EB8394D2BC8B1F4006611C4 /* AirshipAsyncChannelTest.swift */,
 				6032695A2BF75D69007F7F75 /* AirshipHTTPResponseTest.swift */,
-				6E10A1472C2B825200ED9556 /* DefaultTaskSleeperTest.swift */,
 				6EE6AAD42B58A977002FEA75 /* TestThomasLayoutEvent.swift */,
 			);
 			name = Utils;
@@ -6106,7 +6124,6 @@
 				6EED67972CDEEA2E0087CDCB /* ThomasShapeInfo.swift in Sources */,
 				60D3BCCC2A153C0700E07524 /* Experiment.swift in Sources */,
 				6ED838AB2D0CE9D6009CBB0C /* CompoundDeviceAudienceSelector.swift in Sources */,
-				6E52146B2DCBF9BD00CF64B9 /* AirshipTimerProtocol.swift in Sources */,
 				60C1DB122A8B743C00A1D3DA /* EmbeddedView.swift in Sources */,
 				27F1E1362F0E7D7B00E317DB /* ThomasLayoutEventSource.swift in Sources */,
 				A658DE192728498900007672 /* AirshipWebview.swift in Sources */,
@@ -6114,7 +6131,6 @@
 				6E15B72D26CF13BC0099C92D /* RemoteDataProviderDelegate.swift in Sources */,
 				6E07688829F9D28A0014E2A9 /* AirshipNotificationCenter.swift in Sources */,
 				99E433932C9A0362006436B9 /* PagerIndicator.swift in Sources */,
-				6E6ED1402683A9F200A2CBD0 /* AirshipDate.swift in Sources */,
 				6EC922E12D832BB8000A3A59 /* ThomasFormFieldProcessor.swift in Sources */,
 				6E411CAF2538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */,
 				6EF66D912769B69C00ABCB76 /* RootView.swift in Sources */,
@@ -6141,7 +6157,6 @@
 				6EED67AB2CE1A5D00087CDCB /* ThomasMarkdownOptions.swift in Sources */,
 				6E299FDB28D14208001305A7 /* AirshipResponse.swift in Sources */,
 				6EED67AE2CE1A6B90087CDCB /* ThomasPosition.swift in Sources */,
-				6ED2F5312B7FF819000AFC80 /* AirshipViewUtils.swift in Sources */,
 				6E87BD9226D963B60005D20D /* DefaultAppIntegrationDelegate.swift in Sources */,
 				6E91B44026868C3400DDB1A8 /* RegionEvent.swift in Sources */,
 				60D3BCC42A1529D800E07524 /* ExperimentDataProvider.swift in Sources */,
@@ -6237,7 +6252,6 @@
 				A6D6D49D2A0260780072A5CA /* AirshipAction.swift in Sources */,
 				6E87BD6726D6A39A0005D20D /* AirshipConfig.swift in Sources */,
 				6E82483829A6E1BE00136EA0 /* AirshipCancellable.swift in Sources */,
-				6E6BD2782AF2B97300B9DFC9 /* AirshipTaskSleeper.swift in Sources */,
 				6E57CE3228DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */,
 				6EED67E32CE268680087CDCB /* ThomasButtonTapEffect.swift in Sources */,
 				6E5214672DCAB03900CF64B9 /* ThomasFormResult.swift in Sources */,
@@ -6626,7 +6640,10 @@
 			files = (
 				6E2016AF2F7DCE02005B2F94 /* AirshipDateFormatterTest.swift in Sources */,
 				6E7DB38E28ECFCED002725F6 /* AirshipJSONTest.swift in Sources */,
+				6EB721642FEB1BD1001FBB9F /* AirshipObservableTimerTest.swift in Sources */,
+				6EB721712FEB1F27001FBB9F /* TestDate.swift in Sources */,
 				6E6524502A4FD8D30019F353 /* JSONPredicateTest.swift in Sources */,
+				6EB721702FEB1F13001FBB9F /* DefaultTaskSleeperTest.swift in Sources */,
 				60E09FDB2B2780DB005A16EA /* JsonMatcherTest.swift in Sources */,
 				6087DB882B278F7600449BA8 /* JsonValueMatcherTest.swift in Sources */,
 				6EDAB5382FE99F0D00FD8194 /* AirshipVersionUtilsTest.swift in Sources */,
@@ -6641,16 +6658,22 @@
 				6EDFBBC42F5780EA0043D9EF /* AirshipLogHandler.swift in Sources */,
 				6E2016B02F7DCE25005B2F94 /* AirshipDateFormatter.swift in Sources */,
 				6EDFBBC52F5780EA0043D9EF /* AirshipLogger.swift in Sources */,
+				6EB721602FEB0C89001FBB9F /* AirshipObservableTimer.swift in Sources */,
 				6EDFBBC62F5780EA0043D9EF /* AirshipLogPrivacyLevel.swift in Sources */,
+				6EB7215E2FEB0C5E001FBB9F /* AirshipColorExtensions.swift in Sources */,
 				6EDFBBC72F5780EA0043D9EF /* DefaultLogHandler.swift in Sources */,
 				6EDFBBC82F5780EA0043D9EF /* LogLevel.swift in Sources */,
 				6E6C3F9E27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */,
+				6EB721682FEB1CE1001FBB9F /* AirshipDate.swift in Sources */,
+				6EB7216C2FEB1D50001FBB9F /* AirshipTaskSleeper.swift in Sources */,
+				6EB7216E2FEB1DA5001FBB9F /* AirshipTimerProtocol.swift in Sources */,
 				6E698E03267A799500654DB2 /* AirshipErrors.swift in Sources */,
 				8401769426C5671100373AF7 /* JSONMatcher.swift in Sources */,
 				6EDAB5362FE99EF600FD8194 /* AirshipVersionUtils.swift in Sources */,
 				6EA11A0F2F7E100100FD8194 /* AirshipImageData.swift in Sources */,
 				8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */,
 				8401769C26C5729E00373AF7 /* JSONValueMatcher.swift in Sources */,
+				6EB7215C2FEB0C51001FBB9F /* AirshipViewExtensions.swift in Sources */,
 				6E4339EF2DFA03A3000A7741 /* JSONValueMatcherPredicates.swift in Sources */,
 				6E4339F12DFA099F000A7741 /* AirshipIvyVersionMatcher.swift in Sources */,
 			);
@@ -6915,7 +6938,6 @@
 				A6CDD8D0269491BE0040A673 /* ContactAPIClientTest.swift in Sources */,
 				6E64C88027331ABA000EB887 /* PreferenceDataStoreTest.swift in Sources */,
 				6EC7E48726A60DD60038CFDD /* TestContactAPIClient.swift in Sources */,
-				6E10A1482C2B825200ED9556 /* DefaultTaskSleeperTest.swift in Sources */,
 				6E6ED1452683BC7F00A2CBD0 /* TestDispatcher.swift in Sources */,
 				A6AF8D2D27E8D4910068C7EE /* SubscriptionListActionTest.swift in Sources */,
 				6E9C2BD02D02321D000089A9 /* RuntimeConfig.swift in Sources */,

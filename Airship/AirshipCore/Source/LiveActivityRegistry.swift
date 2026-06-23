@@ -1,4 +1,5 @@
 /* Copyright Airship and Contributors */
+@_spi(AirshipInternal) import AirshipBasement
 
 #if canImport(ActivityKit)
 
@@ -329,8 +330,8 @@ actor LiveActivityRegistry {
         
         let update = LiveActivityUpdate(
             action: action,
-            source: .liveActivity(id: info.id, name: info.name, startTimeMS: info.startDate.millisecondsSince1970),
-            actionTimeMS: actionDate.millisecondsSince1970, 
+            source: .liveActivity(id: info.id, name: info.name, startTimeMS: info.startDate.airshipMillisecondsSince1970),
+            actionTimeMS: actionDate.airshipMillisecondsSince1970, 
             token: action == .set ? info.token : nil)
         
         updatesContinuation.yield(update)
@@ -343,7 +344,7 @@ actor LiveActivityRegistry {
         let update = LiveActivityUpdate(
             action: token == nil ? .remove : .set,
             source: .startToken(attributeType: attributeType),
-            actionTimeMS: self.date.now.millisecondsSince1970,
+            actionTimeMS: self.date.now.airshipMillisecondsSince1970,
             token: token
         )
 

@@ -4,6 +4,7 @@ import SwiftUI
 import Combine
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 struct FullscreenView: View, Sendable {
     @EnvironmentObject var environment: InAppMessageEnvironment

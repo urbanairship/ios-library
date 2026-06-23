@@ -3,6 +3,7 @@
 import Foundation
 
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 actor AutomationEngine : AutomationEngineProtocol {
     internal var startTask: Task<Void, Never>?

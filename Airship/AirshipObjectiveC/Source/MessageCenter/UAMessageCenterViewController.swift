@@ -5,6 +5,7 @@ public import UIKit
 
 import AirshipMessageCenter
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 import SwiftUI
 

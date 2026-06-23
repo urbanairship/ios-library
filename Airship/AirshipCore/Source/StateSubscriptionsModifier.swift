@@ -3,6 +3,7 @@
 import Combine
 import Foundation
 import SwiftUI
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Evaluates which trigger outcome batches should run for a given Thomas state snapshot.
 /// Used by ``StateTriggerModifier`` and unit tests.

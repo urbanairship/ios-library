@@ -3,6 +3,7 @@
 import Foundation
 import SwiftUI
 import Combine
+@_spi(AirshipInternal) import AirshipBasement
 
 struct PageState: ThomasSerializable {
     var identifier: String

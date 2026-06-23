@@ -2,6 +2,7 @@
 
 public import Foundation
 import Combine
+@_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
 protocol ThomasStateProvider: ObservableObject {

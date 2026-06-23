@@ -9,6 +9,7 @@ import UIKit
 #endif
 
 import UserNotifications
+@_spi(AirshipInternal) import AirshipBasement
 
 final class RemoteData: AirshipComponent, RemoteDataProtocol {
     fileprivate enum RefreshStatus: Sendable {

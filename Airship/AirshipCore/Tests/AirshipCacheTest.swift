@@ -4,6 +4,7 @@ import XCTest
 
 @testable
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 final class AirshipCacheTest: XCTestCase {
 

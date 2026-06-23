@@ -5,6 +5,7 @@ import XCTest
 import AirshipCore
 @testable
 import AirshipAutomation
+@_spi(AirshipInternal) import AirshipBasement
 
 final class RetryingQueueTests: XCTestCase {
 

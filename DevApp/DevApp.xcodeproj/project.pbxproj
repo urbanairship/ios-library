@@ -91,6 +91,8 @@
 		6EB21B032E821E34001A5660 /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21B012E821E30001A5660 /* DeepLinkHandler.swift */; };
 		6EB21B052E821E50001A5660 /* PushNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21B042E821E4C001A5660 /* PushNotificationHandler.swift */; };
 		6EB21B062E821E50001A5660 /* PushNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21B042E821E4C001A5660 /* PushNotificationHandler.swift */; };
+		6EB7217D2FEB26E1001FBB9F /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB721722FEB26DF001FBB9F /* ViewExtensions.swift */; };
+		6EB7217E2FEB26E1001FBB9F /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB721722FEB26DF001FBB9F /* ViewExtensions.swift */; };
 		6EDB2B0628D4E24F00A01377 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EDB2B0528D4E24F00A01377 /* WidgetKit.framework */; };
 		6EDB2B0828D4E24F00A01377 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EDB2B0728D4E24F00A01377 /* SwiftUI.framework */; };
 		6EDB2B0B28D4E24F00A01377 /* DeliveryActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDB2B0A28D4E24F00A01377 /* DeliveryActivityWidget.swift */; };
@@ -445,6 +447,7 @@
 		6EB21AFD2E821DFD001A5660 /* LiveActivityHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityHandler.swift; sourceTree = "<group>"; };
 		6EB21B012E821E30001A5660 /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
 		6EB21B042E821E4C001A5660 /* PushNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationHandler.swift; sourceTree = "<group>"; };
+		6EB721722FEB26DF001FBB9F /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		6EDB2B0428D4E24F00A01377 /* LiveActivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LiveActivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EDB2B0528D4E24F00A01377 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		6EDB2B0728D4E24F00A01377 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -631,6 +634,7 @@
 		6EB21AA52E821509001A5660 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				6EB721722FEB26DF001FBB9F /* ViewExtensions.swift */,
 				32B5BE4D28F94FD200F2254B /* ToastView.swift */,
 				6EAAE8C028C7C9A3003CAE53 /* AppView.swift */,
 				6EAAE8B828C7C9A3003CAE53 /* HomeView.swift */,
@@ -1049,6 +1053,7 @@
 				279DCF162E85AA02008B5542 /* LayoutsList.swift in Sources */,
 				279DCEDF2E85A544008B5542 /* WeatherViewModel.swift in Sources */,
 				6EAAE98A28C7E1A1003CAE53 /* MainApp.swift in Sources */,
+				6EB7217D2FEB26E1001FBB9F /* ViewExtensions.swift in Sources */,
 				6EB21B022E821E34001A5660 /* DeepLinkHandler.swift in Sources */,
 				279DCF112E85A826008B5542 /* ThomasLayoutListView.swift in Sources */,
 				6EAAE98828C7E1A1003CAE53 /* NamedUserView.swift in Sources */,
@@ -1086,6 +1091,7 @@
 				279DCF0C2E85A75C008B5542 /* EmbeddedPlaygroundView.swift in Sources */,
 				6E7DB39028ED0AF4002725F6 /* DeliveryAttributes.swift in Sources */,
 				32B5BE4F28F94FD200F2254B /* ToastView.swift in Sources */,
+				6EB7217E2FEB26E1001FBB9F /* ViewExtensions.swift in Sources */,
 				6EB21B052E821E50001A5660 /* PushNotificationHandler.swift in Sources */,
 				279DCF172E85AA02008B5542 /* LayoutsList.swift in Sources */,
 				279DCEE22E85A558008B5542 /* ThomasLayoutViewModel.swift in Sources */,

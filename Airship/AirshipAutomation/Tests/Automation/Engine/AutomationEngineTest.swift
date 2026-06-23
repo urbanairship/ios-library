@@ -5,6 +5,7 @@ import XCTest
 @testable
 import AirshipAutomation
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
 final class TestScheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifierProtocol {
