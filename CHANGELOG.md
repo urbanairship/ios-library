@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.8.1 - June 22, 2026
+Patch release with support for Xcode 27.
+
+### Changes
+- Added support for Xcode 27
+
 ## Version 20.8.0 - June 16, 2026
 Minor release that adds support for launching Scenes from push notifications using the new Scene action and improvements to pager scroll behavior.
 
