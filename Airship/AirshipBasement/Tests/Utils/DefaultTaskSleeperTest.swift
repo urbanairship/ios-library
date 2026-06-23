@@ -1,43 +1,48 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @_spi(AirshipInternal) @testable import AirshipBasement
 
-final class DefaultTaskSleeperTest: XCTestCase {
+struct DefaultTaskSleeperTest {
     private let date: UATestDate = UATestDate(dateOverride: Date())
     private let sleeps: SleepRecorder = SleepRecorder()
-    private var sleeper: (any AirshipTaskSleeper)!
+    private let sleeper: any AirshipTaskSleeper
 
-    override func setUp() async throws {
+    init() {
         sleeper = DefaultAirshipTaskSleeper(date: date) { [sleeps, date] interval in
             date.offset += interval
             await sleeps.append(interval)
         }
     }
 
-    func testIntervalSleep() async throws {
+    @Test
+    func intervalSleep() async throws {
         try await sleeper.sleep(timeInterval: 85.0)
         let sleeps = await sleeps.values
-        XCTAssertEqual(sleeps, [30.0, 30.0, 25.0])
+        #expect(sleeps == [30.0, 30.0, 25.0])
     }
 
-    func testBelowIntervalSleep() async throws {
+    @Test
+    func belowIntervalSleep() async throws {
         try await sleeper.sleep(timeInterval: 30.0)
         let sleeps = await sleeps.values
-        XCTAssertEqual(sleeps, [30.0])
+        #expect(sleeps == [30.0])
     }
 
-    func testNegativeSleep() async throws {
+    @Test
+    func negativeSleep() async throws {
         try await sleeper.sleep(timeInterval: -1.0)
         let sleeps = await sleeps.values
-        XCTAssertEqual(sleeps, [])
+        #expect(sleeps == [])
     }
 
-    func testNoSleep() async throws {
+    @Test
+    func noSleep() async throws {
         try await sleeper.sleep(timeInterval: 0.0)
         let sleeps = await sleeps.values
-        XCTAssertEqual(sleeps, [])
+        #expect(sleeps == [])
     }
 }
 

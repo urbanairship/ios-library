@@ -1,34 +1,38 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable import AirshipBasement
 
-final class AirshipJSONTest: XCTestCase {
-    func testWrapPrimitives() throws {
-        XCTAssertEqual(.number(100.0), try AirshipJSON.wrap(100.0))
-        XCTAssertEqual(.number(99.0), try AirshipJSON.wrap(99))
-        XCTAssertEqual(.number(33.0), try AirshipJSON.wrap(UInt(33)))
-        XCTAssertEqual(.number(1), try AirshipJSON.wrap(1))
-        XCTAssertEqual(.number(0), try AirshipJSON.wrap(0))
+struct AirshipJSONTest {
+    @Test
+    func wrapPrimitives() throws {
+        #expect(try AirshipJSON.wrap(100.0) == .number(100.0))
+        #expect(try AirshipJSON.wrap(99) == .number(99.0))
+        #expect(try AirshipJSON.wrap(UInt(33)) == .number(33.0))
+        #expect(try AirshipJSON.wrap(1) == .number(1))
+        #expect(try AirshipJSON.wrap(0) == .number(0))
 
-        XCTAssertEqual(.string("hello"), try AirshipJSON.wrap("hello"))
-        XCTAssertEqual(.bool(true), try AirshipJSON.wrap(true))
-        XCTAssertEqual(.bool(false), try AirshipJSON.wrap(false))
-        XCTAssertEqual(.null, try AirshipJSON.wrap(nil))
+        #expect(try AirshipJSON.wrap("hello") == .string("hello"))
+        #expect(try AirshipJSON.wrap(true) == .bool(true))
+        #expect(try AirshipJSON.wrap(false) == .bool(false))
+        #expect(try AirshipJSON.wrap(nil) == .null)
     }
 
-    func testWrapNSNumber() throws {
-        XCTAssertEqual(.number(100.0), try AirshipJSON.wrap(NSNumber(100)))
-        XCTAssertEqual(.number(99.0), try AirshipJSON.wrap(NSNumber(99.0)))
-        XCTAssertEqual(.number(33.0), try AirshipJSON.wrap(NSNumber(33.0)))
-        XCTAssertEqual(.number(1), try AirshipJSON.wrap(NSNumber(1)))
-        XCTAssertEqual(.number(0), try AirshipJSON.wrap(NSNumber(0)))
-        XCTAssertEqual(.bool(true), try AirshipJSON.wrap(NSNumber(true)))
-        XCTAssertEqual(.bool(false), try AirshipJSON.wrap(NSNumber(false)))
+    @Test
+    func wrapNSNumber() throws {
+        #expect(try AirshipJSON.wrap(NSNumber(100)) == .number(100.0))
+        #expect(try AirshipJSON.wrap(NSNumber(99.0)) == .number(99.0))
+        #expect(try AirshipJSON.wrap(NSNumber(33.0)) == .number(33.0))
+        #expect(try AirshipJSON.wrap(NSNumber(1)) == .number(1))
+        #expect(try AirshipJSON.wrap(NSNumber(0)) == .number(0))
+        #expect(try AirshipJSON.wrap(NSNumber(true)) == .bool(true))
+        #expect(try AirshipJSON.wrap(NSNumber(false)) == .bool(false))
     }
 
-    func testWrapArray() throws {
+    @Test
+    func wrapArray() throws {
         let array: [Any?] = [
             "hello",
             100,
@@ -50,10 +54,11 @@ final class AirshipJSONTest: XCTestCase {
             true,
         ]
 
-        XCTAssertEqual(.array(expected), try AirshipJSON.wrap(array))
+        #expect(try AirshipJSON.wrap(array) == .array(expected))
     }
 
-    func testWrapObject() throws {
+    @Test
+    func wrapObject() throws {
         let object: [String: Any?] = [
             "string": "hello",
             "number": 100.0,
@@ -72,11 +77,14 @@ final class AirshipJSONTest: XCTestCase {
             "object": ["neat": "object"],
         ]
 
-        XCTAssertEqual(.object(expected), try AirshipJSON.wrap(object))
+        #expect(try AirshipJSON.wrap(object) == .object(expected))
     }
 
-    func testWrapInvalid() throws {
-        XCTAssertThrowsError(try AirshipJSON.wrap(InvalidJSON()))
+    @Test
+    func wrapInvalid() throws {
+        #expect(throws: (any Error).self) {
+            try AirshipJSON.wrap(InvalidJSON())
+        }
     }
 
     fileprivate struct InvalidJSON {

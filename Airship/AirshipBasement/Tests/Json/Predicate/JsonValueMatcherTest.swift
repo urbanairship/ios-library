@@ -1,45 +1,48 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @testable import AirshipBasement
 
-final class JsonValueMatcherTest: XCTestCase {
+struct JsonValueMatcherTest {
 
-    func testEqualsString() throws {
+    @Test
+    func equalsString() throws {
         let matcher = JSONValueMatcher.matcherWhereStringEquals("cool")
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("cool")))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("cool"), ignoreCase:false))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("cool"), ignoreCase:true))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("COOL"), ignoreCase:true))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("CooL"), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("cool")))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("cool"), ignoreCase:false))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("cool"), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("COOL"), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("CooL"), ignoreCase:true))
 
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(nil)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("COOL")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("CooL")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("NOT COOL")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("not cool")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(1)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(true)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(nil)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("COOL")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("CooL")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("NOT COOL")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("not cool")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(1)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(true)))
 
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(nil), ignoreCase: false))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(matcher), ignoreCase:false))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("COOL"), ignoreCase:false))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("CooL"), ignoreCase:false))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("NOT COOL"), ignoreCase:false))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("not cool"), ignoreCase:false))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(1), ignoreCase:false))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(true), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(nil), ignoreCase: false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(matcher), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("COOL"), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("CooL"), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("NOT COOL"), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("not cool"), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(1), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(true), ignoreCase:false))
 
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(nil), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(matcher), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("NOT COOL"), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("not cool"), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(1), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(true), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(nil), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(matcher), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("NOT COOL"), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("not cool"), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(1), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(true), ignoreCase:true))
     }
 
-    func testEqualsStringPayload() throws {
+    @Test
+    func equalsStringPayload() throws {
         let json = """
         {
             "equals": "cool"
@@ -48,25 +51,27 @@ final class JsonValueMatcherTest: XCTestCase {
         let matcher = JSONValueMatcher.matcherWhereStringEquals("cool")
 
         // Verify the JSONValue recreates the expected matcher
-        XCTAssertEqual(matcher, try AirshipJSON.from(json: json).decode())
+        #expect(matcher == (try AirshipJSON.from(json: json).decode()))
     }
 
-    func testEqualsBoolean() throws {
+    @Test
+    func equalsBoolean() throws {
         let matcher = JSONValueMatcher.matcherWhereBooleanEquals(false)
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(false)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(false), ignoreCase:true))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(false), ignoreCase:false))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(false)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(false), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(false), ignoreCase:false))
 
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(nil)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("not cool")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(1)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(true)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(true), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(true), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(nil)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("not cool")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(1)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(true)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(true), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(true), ignoreCase:false))
     }
 
-    func testEqualsBooleanPayload() throws {
+    @Test
+    func equalsBooleanPayload() throws {
         let json = """
         {
             "equals": true
@@ -76,27 +81,29 @@ final class JsonValueMatcherTest: XCTestCase {
         let matcher = JSONValueMatcher.matcherWhereBooleanEquals(true)
 
         // Verify the JSONValue recreates the expected matcher
-        XCTAssertEqual(matcher, try AirshipJSON.from(json: json).decode())
+        #expect(matcher == (try AirshipJSON.from(json: json).decode()))
     }
 
-    func testEqualsNumber() throws {
+    @Test
+    func equalsNumber() throws {
         let matcher = JSONValueMatcher.matcherWhereNumberEquals(to: 123.35)
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.35)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.350)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.350), ignoreCase:true))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.350), ignoreCase:false))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.35)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.350)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.350), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.350), ignoreCase:false))
 
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(nil)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("not cool")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(123)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(123.3)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(123.3), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(123.3), ignoreCase:false))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(true)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(nil)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("not cool")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(123)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(123.3)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(123.3), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(123.3), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(true)))
     }
 
-    func testEqualsNumberPayload() throws {
+    @Test
+    func equalsNumberPayload() throws {
         let json = """
         {
             "equals": 123.456
@@ -105,27 +112,29 @@ final class JsonValueMatcherTest: XCTestCase {
         let match = JSONValueMatcher.matcherWhereNumberEquals(to: 123.456)
 
         // Verify the JSONValue recreates the expected matcher
-        XCTAssertEqual(match, try AirshipJSON.from(json: json).decode())
+        #expect(match == (try AirshipJSON.from(json: json).decode()))
     }
 
-    func testAtLeast() throws {
+    @Test
+    func atLeast() throws {
         let matcher = JSONValueMatcher.matcherWhereNumberAtLeast(123.35)
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.35)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.36)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.36), ignoreCase:true))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.36), ignoreCase:false))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.35)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.36)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.36), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.36), ignoreCase:false))
 
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(nil)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("not cool")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(123)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(123.3)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(123.3), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(123.3), ignoreCase:false))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(true)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(nil)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("not cool")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(123)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(123.3)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(123.3), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(123.3), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(true)))
     }
 
-    func testAtLeastPayload() throws {
+    @Test
+    func atLeastPayload() throws {
         let json = """
         {
             "at_least": 100
@@ -135,26 +144,28 @@ final class JsonValueMatcherTest: XCTestCase {
         let matcher = JSONValueMatcher.matcherWhereNumberAtLeast(100)
 
         // Verify the JSONValue recreates the expected matcher
-        XCTAssertEqual(matcher, try AirshipJSON.from(json: json).decode())
+        #expect(matcher == (try AirshipJSON.from(json: json).decode()))
     }
 
-    func testAtMost() throws {
+    @Test
+    func atMost() throws {
         let matcher = JSONValueMatcher.matcherWhereNumberAtMost(123.35)
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.35)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.34)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.34), ignoreCase:true))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.34), ignoreCase:false))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.35)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.34)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.34), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.34), ignoreCase:false))
 
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(nil)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("not cool")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(123.36)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(123.36), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(123.36), ignoreCase:false))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(124)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(nil)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("not cool")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(123.36)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(123.36), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(123.36), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(124)))
     }
 
-    func testAtMostPayload() throws {
+    @Test
+    func atMostPayload() throws {
         let json = """
         {
             "at_most": 100
@@ -164,27 +175,29 @@ final class JsonValueMatcherTest: XCTestCase {
         let matcher = JSONValueMatcher.matcherWhereNumberAtMost(100)
 
         // Verify the JSONValue recreates the expected matcher
-        XCTAssertEqual(matcher, try AirshipJSON.from(json: json).decode())
+        #expect(matcher == (try AirshipJSON.from(json: json).decode()))
     }
 
-    func testAtLeastAtMost() throws {
+    @Test
+    func atLeastAtMost() throws {
         let matcher = JSONValueMatcher.matcherWhereNumberAtLeast(100, atMost: 150)
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(100)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(150)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.456)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.456), ignoreCase:true))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(123.456), ignoreCase:false))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(100)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(150)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.456)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.456), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(123.456), ignoreCase:false))
 
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(nil)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("not cool")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(99)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(151)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(151), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(151), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(nil)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("not cool")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(99)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(151)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(151), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(151), ignoreCase:false))
     }
 
-    func testAtLeastAtMostPayload() throws {
+    @Test
+    func atLeastAtMostPayload() throws {
         let json = """
         {
             "at_least": 1,
@@ -194,22 +207,24 @@ final class JsonValueMatcherTest: XCTestCase {
         let matcher = JSONValueMatcher.matcherWhereNumberAtLeast(1, atMost: 100)
 
         // Verify the JSONValue recreates the expected matcher
-        XCTAssertEqual(matcher, try AirshipJSON.from(json: json).decode())
+        #expect(matcher == (try AirshipJSON.from(json: json).decode()))
     }
 
-    func testPresence() throws {
+    @Test
+    func presence() throws {
         let matcher = JSONValueMatcher.matcherWhereValueIsPresent(true)
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(100)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("cool")))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("cool"), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(100)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("cool")))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("cool"), ignoreCase:true))
 
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(nil)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(nil), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(nil), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(nil)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(nil), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(nil), ignoreCase:false))
     }
 
-    func testPresencePayload() throws {
+    @Test
+    func presencePayload() throws {
         let json = """
         {
             "is_present": true
@@ -218,22 +233,24 @@ final class JsonValueMatcherTest: XCTestCase {
         let matcher = JSONValueMatcher.matcherWhereValueIsPresent(true)
 
         // Verify the JSONValue recreates the expected matcher
-        XCTAssertEqual(matcher, try AirshipJSON.from(json: json).decode())
+        #expect(matcher == (try AirshipJSON.from(json: json).decode()))
     }
 
-    func testAbsence() throws {
+    @Test
+    func absence() throws {
         let matcher = JSONValueMatcher.matcherWhereValueIsPresent(false)
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(nil)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(nil), ignoreCase:true))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(nil), ignoreCase:false))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(nil)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(nil), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(nil), ignoreCase:false))
 
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(100)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("cool")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("cool"), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(100)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(matcher)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("cool")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("cool"), ignoreCase:true))
     }
 
-    func testAbsencePayload() throws {
+    @Test
+    func absencePayload() throws {
         let json = """
         {
             "is_present": false
@@ -242,59 +259,61 @@ final class JsonValueMatcherTest: XCTestCase {
         let matcher = JSONValueMatcher.matcherWhereValueIsPresent(false)
 
         // Verify the JSONValue recreates the expected matcher
-        XCTAssertEqual(matcher, try AirshipJSON.from(json: json).decode())
+        #expect(matcher == (try AirshipJSON.from(json: json).decode()))
     }
 
-    func testVersionRangeConstraints() throws {
+    @Test
+    func versionRangeConstraints() throws {
         var matcher = JSONValueMatcher.matcherWithVersionConstraint("1.0")!
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("1.0")))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("1.0"), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(" 2.0 ")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(" 2.0 "), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("1.0")))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("1.0"), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(" 2.0 ")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(" 2.0 "), ignoreCase:true))
 
         matcher = JSONValueMatcher.matcherWithVersionConstraint("1.0+")!
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("1.0")))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("1.0.0")))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("1.0"), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("2")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("2"), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("1.0")))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("1.0.0")))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("1.0"), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("2")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("2"), ignoreCase:true))
 
         matcher = JSONValueMatcher.matcherWithVersionConstraint("[1.0,2.0]")!
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("1.0")))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("1.0.0")))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("1.0"), ignoreCase:true))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("2.0.0")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("2.0.1")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("2.0.1"), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("1.0")))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("1.0.0")))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("1.0"), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("2.0.0")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("2.0.1")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("2.0.1"), ignoreCase:true))
     }
 
-    func testArrayContains() throws {
+    @Test
+    func arrayContains() throws {
         let valueMatcher = JSONValueMatcher.matcherWhereStringEquals("bingo")
         var jsonMatcher = JSONMatcher(valueMatcher: valueMatcher)
         var predicate = JSONPredicate(jsonMatcher: jsonMatcher)
         var matcher = JSONValueMatcher.matcherWithArrayContainsPredicate(predicate)!
 
         // Invalid values
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("1.0")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(["bingo": "what"])))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(["BINGO": "what"]), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(1)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(nil)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("1.0")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(["bingo": "what"])))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(["BINGO": "what"]), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(1)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(nil)))
 
         var value = ["thats", "a", "BINGO"]
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:false))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:true))
         value = ["thats", "a"]
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value)))
         value = []
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value)))
 
         // Valid values
         value = ["thats", "a", "bingo"]
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(value)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:false))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(value)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:false))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:true))
 
         // ignore case
         jsonMatcher = JSONMatcher(valueMatcher: valueMatcher, ignoreCase: true)
@@ -302,49 +321,50 @@ final class JsonValueMatcherTest: XCTestCase {
         matcher = JSONValueMatcher.matcherWithArrayContainsPredicate(predicate)!
 
         value = ["thats", "a", "BINGO"]
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(value)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:false))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(value)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:false))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:true))
     }
 
-    func testArrayContainsAtIndex() throws {
+    @Test
+    func arrayContainsAtIndex() throws {
         let valueMatcher = JSONValueMatcher.matcherWhereStringEquals("bingo")
         var jsonMatcher = JSONMatcher(valueMatcher: valueMatcher)
         var predicate = JSONPredicate(jsonMatcher: jsonMatcher)
         var matcher = JSONValueMatcher.matcherWithArrayContainsPredicate(predicate, at: 1)!
 
         // Invalid values
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("1.0")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(["bingo": "what"])))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(["bingo": "what"]), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(1)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(nil)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("1.0")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(["bingo": "what"])))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(["bingo": "what"]), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(1)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(nil)))
 
         var value = ["thats", "a", "BINGO"]
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:false))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:true))
 
         value = ["thats", "a"]
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value)))
 
         value = []
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value)))
 
         value = ["thats", "BINGO", "a"]
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:false))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:true))
 
         // Valid values
         value = ["thats", "bingo", "a"]
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(value)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(value)))
 
         value = ["thats", "bingo"]
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(value)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(value)))
 
         value = ["a", "bingo"]
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(value)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(value)))
 
         // ignore case
         jsonMatcher = JSONMatcher(valueMatcher: valueMatcher, ignoreCase: true)
@@ -352,17 +372,18 @@ final class JsonValueMatcherTest: XCTestCase {
         matcher = JSONValueMatcher.matcherWithArrayContainsPredicate(predicate, at: 1)!
 
         value = ["thats", "a", "BINGO"]
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value)))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:false))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value)))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:false))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:true))
 
         value = ["thats", "BINGO", "a"]
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(value)))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:false))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:true))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(value)))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:false))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap(value), ignoreCase:true))
     }
 
-    func testVersionMatcher() throws {
+    @Test
+    func versionMatcher() throws {
         let jsonV9 = """
         {
             "version_matches": "9.9"
@@ -376,19 +397,20 @@ final class JsonValueMatcherTest: XCTestCase {
         """
 
         var matcher: JSONValueMatcher = try AirshipJSON.from(json: jsonV9).decode()
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("9.0")))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("9.9")))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("9.9"), ignoreCase:true))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("10.0")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("10.0"), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("9.0")))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("9.9")))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("9.9"), ignoreCase:true))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("10.0")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("10.0"), ignoreCase:true))
 
         matcher = try AirshipJSON.from(json: jsonV8).decode()
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("8.0")))
-        XCTAssertTrue(matcher.evaluate(json: try AirshipJSON.wrap("8.9")))
-        XCTAssertFalse(matcher.evaluate(json: try AirshipJSON.wrap("9.0")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("8.0")))
+        #expect(matcher.evaluate(json: try AirshipJSON.wrap("8.9")))
+        #expect(!matcher.evaluate(json: try AirshipJSON.wrap("9.0")))
     }
 
-    func testInvalidPayload() {
+    @Test
+    func invalidPayload() {
         let invalid = """
         {
             "cool": "neat"
@@ -398,13 +420,14 @@ final class JsonValueMatcherTest: XCTestCase {
         // Invalid object
         do {
             let _: JSONValueMatcher = try AirshipJSON.from(json: invalid).decode()
-            XCTFail()
+            Issue.record()
         } catch {
 
         }
     }
 
-    func testStringBeginsMatcherParsing() throws {
+    @Test
+    func stringBeginsMatcherParsing() throws {
         let json = """
         {
             "string_begins": "neat"
@@ -415,10 +438,11 @@ final class JsonValueMatcherTest: XCTestCase {
         let expected = JSONValueMatcher(
             predicate: JSONValueMatcher.StringBeginsPredicate(stringBegins: "neat")
         )
-        XCTAssertEqual(fromJSON, expected)
+        #expect(fromJSON == expected)
     }
 
-    func testStringEndsMatcherParsing() throws {
+    @Test
+    func stringEndsMatcherParsing() throws {
         let json = """
         {
             "string_ends": "neat"
@@ -429,10 +453,11 @@ final class JsonValueMatcherTest: XCTestCase {
         let expected = JSONValueMatcher(
             predicate: JSONValueMatcher.StringEndsPredicate(stringEnds: "neat")
         )
-        XCTAssertEqual(fromJSON, expected)
+        #expect(fromJSON == expected)
     }
 
-    func testStringContainsMatcherParsing() throws {
+    @Test
+    func stringContainsMatcherParsing() throws {
         let json = """
         {
             "string_contains": "neat"
@@ -443,60 +468,66 @@ final class JsonValueMatcherTest: XCTestCase {
         let expected = JSONValueMatcher(
             predicate: JSONValueMatcher.StringContainsPredicate(stringContains: "neat")
         )
-        XCTAssertEqual(fromJSON, expected)
+        #expect(fromJSON == expected)
     }
 
-    func testStringBeginsMatcher() throws {
+    @Test
+    func stringBeginsMatcher() throws {
         let matcher = JSONValueMatcher(
             predicate: JSONValueMatcher.StringBeginsPredicate(stringBegins: "foo")
         )
-        XCTAssertTrue(matcher.evaluate(json: AirshipJSON.string("foobar")))
-        XCTAssertTrue(matcher.evaluate(json: AirshipJSON.string("FOOBAR"), ignoreCase: true))
-        XCTAssertFalse(matcher.evaluate(json: AirshipJSON.string("FOOBAR")))
-        XCTAssertFalse(matcher.evaluate(json: AirshipJSON.string("barfoo")))
+        #expect(matcher.evaluate(json: AirshipJSON.string("foobar")))
+        #expect(matcher.evaluate(json: AirshipJSON.string("FOOBAR"), ignoreCase: true))
+        #expect(!matcher.evaluate(json: AirshipJSON.string("FOOBAR")))
+        #expect(!matcher.evaluate(json: AirshipJSON.string("barfoo")))
     }
 
-    func testStringEndsMatcher() throws {
+    @Test
+    func stringEndsMatcher() throws {
         let matcher = JSONValueMatcher(
             predicate: JSONValueMatcher.StringEndsPredicate(stringEnds: "bar")
         )
-        XCTAssertTrue(matcher.evaluate(json: AirshipJSON.string("foobar")))
-        XCTAssertTrue(matcher.evaluate(json: AirshipJSON.string("FOOBAR"), ignoreCase: true))
-        XCTAssertFalse(matcher.evaluate(json: AirshipJSON.string("FOOBAR")))
-        XCTAssertFalse(matcher.evaluate(json: AirshipJSON.string("barfoo")))
+        #expect(matcher.evaluate(json: AirshipJSON.string("foobar")))
+        #expect(matcher.evaluate(json: AirshipJSON.string("FOOBAR"), ignoreCase: true))
+        #expect(!matcher.evaluate(json: AirshipJSON.string("FOOBAR")))
+        #expect(!matcher.evaluate(json: AirshipJSON.string("barfoo")))
     }
 
-    func testStringContainsMatcher() throws {
+    @Test
+    func stringContainsMatcher() throws {
         let matcher = JSONValueMatcher(
             predicate: JSONValueMatcher.StringContainsPredicate(stringContains: "oob")
         )
-        XCTAssertTrue(matcher.evaluate(json: AirshipJSON.string("foobar")))
-        XCTAssertTrue(matcher.evaluate(json: AirshipJSON.string("FOOBAR"), ignoreCase: true))
-        XCTAssertFalse(matcher.evaluate(json: AirshipJSON.string("FOOBAR")))
-        XCTAssertFalse(matcher.evaluate(json: AirshipJSON.string("barfoo")))
+        #expect(matcher.evaluate(json: AirshipJSON.string("foobar")))
+        #expect(matcher.evaluate(json: AirshipJSON.string("FOOBAR"), ignoreCase: true))
+        #expect(!matcher.evaluate(json: AirshipJSON.string("FOOBAR")))
+        #expect(!matcher.evaluate(json: AirshipJSON.string("barfoo")))
     }
 
-    func testStringEndsMatcherEdgeCase() throws {
+    @Test
+    func stringEndsMatcherEdgeCase() throws {
         let matcher = JSONValueMatcher(
             predicate: JSONValueMatcher.StringEndsPredicate(stringEnds: "i")
         )
-        XCTAssertFalse(matcher.evaluate(json: AirshipJSON.string("fooİ")))
-        XCTAssertTrue(matcher.evaluate(json: AirshipJSON.string("fooİ"), ignoreCase: true))
+        #expect(!matcher.evaluate(json: AirshipJSON.string("fooİ")))
+        #expect(matcher.evaluate(json: AirshipJSON.string("fooİ"), ignoreCase: true))
     }
 
-    func testStringBeginsMatcherEdgeCase() throws {
+    @Test
+    func stringBeginsMatcherEdgeCase() throws {
         let matcher = JSONValueMatcher(
             predicate: JSONValueMatcher.StringBeginsPredicate(stringBegins: "i")
         )
-        XCTAssertFalse(matcher.evaluate(json: AirshipJSON.string("İfoo")))
-        XCTAssertTrue(matcher.evaluate(json: AirshipJSON.string("İfoo"), ignoreCase: true))
+        #expect(!matcher.evaluate(json: AirshipJSON.string("İfoo")))
+        #expect(matcher.evaluate(json: AirshipJSON.string("İfoo"), ignoreCase: true))
     }
 
-    func testStringContainsMatcherEdgeCase() throws {
+    @Test
+    func stringContainsMatcherEdgeCase() throws {
         let matcher = JSONValueMatcher(
             predicate: JSONValueMatcher.StringContainsPredicate(stringContains: "i")
         )
-        XCTAssertFalse(matcher.evaluate(json: AirshipJSON.string("fooİẞar")))
-        XCTAssertTrue(matcher.evaluate(json: AirshipJSON.string("FOOİẞAR"), ignoreCase: true))
+        #expect(!matcher.evaluate(json: AirshipJSON.string("fooİẞar")))
+        #expect(matcher.evaluate(json: AirshipJSON.string("FOOİẞAR"), ignoreCase: true))
     }
 }

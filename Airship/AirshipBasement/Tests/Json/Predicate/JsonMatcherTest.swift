@@ -1,43 +1,45 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @testable import AirshipBasement
 
-final class JsonMatcherTest: XCTestCase {
+struct JsonMatcherTest {
 
-    var subject = JSONValueMatcher.matcherWhereStringEquals("cool")
+    let subject = JSONValueMatcher.matcherWhereStringEquals("cool")
 
-    func testMatcherOnly() throws {
+    @Test
+    func matcherOnly() throws {
         let matcher = JSONMatcher(valueMatcher: subject)
-        XCTAssertNotNil(matcher)
 
-        XCTAssertTrue(matcher.evaluate(json: try! AirshipJSON.wrap("cool")))
+        #expect(matcher.evaluate(json: try! AirshipJSON.wrap("cool")))
 
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(nil)))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(matcher)))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap("not cool")))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(1)))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(true)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(nil)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(matcher)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap("not cool")))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(1)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(true)))
     }
 
-    func testMatcherOnlyIgnoreCase() throws {
+    @Test
+    func matcherOnlyIgnoreCase() throws {
         let matcher = JSONMatcher(valueMatcher: subject, ignoreCase: true)
 
-        XCTAssertNotNil(matcher)
-        XCTAssertTrue(matcher.evaluate(json: try! AirshipJSON.wrap("cool")))
-        XCTAssertTrue(matcher.evaluate(json: try! AirshipJSON.wrap("COOL")))
-        XCTAssertTrue(matcher.evaluate(json: try! AirshipJSON.wrap("CooL")))
+        #expect(matcher.evaluate(json: try! AirshipJSON.wrap("cool")))
+        #expect(matcher.evaluate(json: try! AirshipJSON.wrap("COOL")))
+        #expect(matcher.evaluate(json: try! AirshipJSON.wrap("CooL")))
 
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(nil)))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(matcher)))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap("not cool")))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap("NOT COOL")))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(["property": "cool"])))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(1)))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(true)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(nil)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(matcher)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap("not cool")))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap("NOT COOL")))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(["property": "cool"])))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(1)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(true)))
     }
 
-    func testMatcherOnlyPayload() throws {
+    @Test
+    func matcherOnlyPayload() throws {
         let json = """
         {
             "value": {
@@ -47,107 +49,108 @@ final class JsonMatcherTest: XCTestCase {
         """
         let matcher = JSONMatcher(valueMatcher: subject)
 
-        XCTAssertEqual(try AirshipJSON.from(json: json), try AirshipJSON.wrap(matcher))
+        #expect(try AirshipJSON.from(json: json) == (try AirshipJSON.wrap(matcher)))
 
         let fromJSON: JSONMatcher = try AirshipJSON.from(json: json).decode()
-        XCTAssertEqual(matcher, fromJSON)
+        #expect(matcher == fromJSON)
     }
 
-    func testMatcherOnlyIgnoreCasePayload() throws {
+    @Test
+    func matcherOnlyIgnoreCasePayload() throws {
         let json = """
         {
-            "value": { 
+            "value": {
                 "equals": "cool"
             },
-            "ignore_case": true    
+            "ignore_case": true
         }
         """
 
 
         let matcher = JSONMatcher(valueMatcher: subject, ignoreCase: true)
-        XCTAssertEqual(try AirshipJSON.from(json: json), try AirshipJSON.wrap(matcher))
+        #expect(try AirshipJSON.from(json: json) == (try AirshipJSON.wrap(matcher)))
 
         // Verify a matcher created from the JSON matches
         var fromJsonMatcher: JSONMatcher = try AirshipJSON.from(json: json).decode()
-        XCTAssertNotNil(fromJsonMatcher)
-        XCTAssertEqual(fromJsonMatcher, matcher)
+        #expect(fromJsonMatcher == matcher)
 
         // Verify a matcher created from the JSON from the first matcher matches
         fromJsonMatcher = try AirshipJSON.wrap(matcher).decode()
-        XCTAssertNotNil(fromJsonMatcher)
-        XCTAssertEqual(fromJsonMatcher, matcher)
+        #expect(fromJsonMatcher == matcher)
     }
 
-    func testMatcherOnlyPayloadWithUnknownKey() throws {
+    @Test
+    func matcherOnlyPayloadWithUnknownKey() throws {
         let json = """
         {
-            "value": { 
+            "value": {
                 "equals": "cool"
             },
-            "unknown": true    
+            "unknown": true
         }
         """
 
         let matcher = JSONMatcher(valueMatcher: subject)
-        XCTAssertNotNil(matcher)
 
         // Verify a matcher created from the JSON matches
         var fromJsonMatcher: JSONMatcher = try AirshipJSON.from(json: json).decode()
-        XCTAssertNotNil(fromJsonMatcher)
-        XCTAssertEqual(fromJsonMatcher, matcher)
+        #expect(fromJsonMatcher == matcher)
 
         // Verify a matcher created from the JSON from the first matcher matches
         fromJsonMatcher = try AirshipJSON.wrap(matcher).decode()
-        XCTAssertNotNil(fromJsonMatcher)
-        XCTAssertEqual(fromJsonMatcher, matcher)
+        #expect(fromJsonMatcher == matcher)
     }
 
-    func testMatcherWithKey() throws {
+    @Test
+    func matcherWithKey() throws {
         let matcher = JSONMatcher(valueMatcher: subject, scope: ["property"])
-        XCTAssertTrue(matcher.evaluate(json: try! AirshipJSON.wrap(["property": "cool"])))
+        #expect(matcher.evaluate(json: try! AirshipJSON.wrap(["property": "cool"])))
 
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap("property")))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(["property": "not cool"])))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(nil)))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(matcher)))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap("not cool")))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(1)))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(true)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap("property")))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(["property": "not cool"])))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(nil)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(matcher)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap("not cool")))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(1)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(true)))
     }
 
-    func testMatcherWithScopeIgnoreCase() throws {
+    @Test
+    func matcherWithScopeIgnoreCase() throws {
         let matcher = JSONMatcher(valueMatcher: subject, scope: ["property"], ignoreCase: true)
-        XCTAssertTrue(matcher.evaluate(json: try! AirshipJSON.wrap(["property": "cool"])))
-        XCTAssertTrue(matcher.evaluate(json: try! AirshipJSON.wrap(["property": "COOL"])))
-        XCTAssertTrue(matcher.evaluate(json: try! AirshipJSON.wrap(["property": "CooL"])))
+        #expect(matcher.evaluate(json: try! AirshipJSON.wrap(["property": "cool"])))
+        #expect(matcher.evaluate(json: try! AirshipJSON.wrap(["property": "COOL"])))
+        #expect(matcher.evaluate(json: try! AirshipJSON.wrap(["property": "CooL"])))
 
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap("property")))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(["property": "not cool"])))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(["property": "NOT COOL"])))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(nil)))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(matcher)))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap("not cool")))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(1)))
-        XCTAssertFalse(matcher.evaluate(json: try! AirshipJSON.wrap(true)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap("property")))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(["property": "not cool"])))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(["property": "NOT COOL"])))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(nil)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(matcher)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap("not cool")))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(1)))
+        #expect(!matcher.evaluate(json: try! AirshipJSON.wrap(true)))
     }
 
-    func testScopeAsString() throws {
+    @Test
+    func scopeAsString() throws {
         let json = """
         {
-            "value": { 
+            "value": {
                 "equals": "cool"
             },
             "key": "subproperty",
-            "scope": ["property"]  
+            "scope": ["property"]
         }
         """
 
         let fromJSON: JSONMatcher = try AirshipJSON.from(json: json).decode()
 
-        XCTAssertEqual(try AirshipJSON.from(json: json), try AirshipJSON.wrap(fromJSON))
+        #expect(try AirshipJSON.from(json: json) == (try AirshipJSON.wrap(fromJSON)))
     }
 
-    func testInvalidKey() {
+    @Test
+    func invalidKey() {
         // Invalid key value
         let json = """
         {
@@ -157,23 +160,21 @@ final class JsonMatcherTest: XCTestCase {
         }
         """
 
-        do {
+        #expect(throws: (any Error).self) {
             let _: JSONMatcher = try AirshipJSON.from(json: json).decode()
-            XCTFail()
-        } catch {}
+        }
     }
 
-    func testInvalidPayload() {
+    @Test
+    func invalidPayload() {
         let json = """
         {
             "not": "cool"
         }
         """
 
-        do {
+        #expect(throws: (any Error).self) {
             let _: JSONMatcher = try AirshipJSON.from(json: json).decode()
-            XCTFail()
-        } catch {}
-
+        }
     }
 }
