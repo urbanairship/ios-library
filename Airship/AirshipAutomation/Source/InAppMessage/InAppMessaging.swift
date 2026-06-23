@@ -11,7 +11,7 @@ public protocol InAppMessaging: AnyObject, Sendable {
     /// Return `true` if the message is ready to display,  `false`  otherwise.
     @MainActor
     var onIsReadyToDisplay: (@MainActor @Sendable (_ message: InAppMessage, _ scheduleID: String) -> Bool)? { get set }
-    
+
     /// Theme manager
     @MainActor
     var themeManager: InAppAutomationThemeManager { get }
@@ -46,16 +46,33 @@ public protocol InAppMessaging: AnyObject, Sendable {
     /// This should only be called when state that was used to prevent a display with  `InAppMessageDisplayDelegate` changes.
     @MainActor
     func notifyDisplayConditionsChanged()
+
+    /// Called during schedule preparation, after deferred resolution, to allow app-side logic to
+    /// approve or suppress the message before assets are fetched. Throwing causes the prepare
+    /// operation to retry with backoff — catch internally to fail open instead.
+    @_spi(AirshipInternal)
+    @MainActor
+    var onCheckLocalAudience: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> LocalAudienceCheckResult)? { get set }
 }
 
+@_spi(AirshipInternal)
+public extension InAppMessaging {
+    @MainActor
+    var onCheckLocalAudience: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> LocalAudienceCheckResult)? {
+        get { nil }
+        set { }
+    }
+}
+
+
 final class DefaultInAppMessaging: InAppMessaging {
-    
+
     let executor: InAppMessageAutomationExecutor
     let preparer: InAppMessageAutomationPreparer
 
     @MainActor
     let themeManager: InAppAutomationThemeManager = InAppAutomationThemeManager()
-    
+
     @MainActor
     var displayInterval: TimeInterval {
         get {
@@ -75,7 +92,7 @@ final class DefaultInAppMessaging: InAppMessaging {
             executor.onIsReadyToDisplay = newValue
         }
     }
-    
+
     @MainActor
     weak var displayDelegate: (any InAppMessageDisplayDelegate)? {
         get {
@@ -128,5 +145,11 @@ final class DefaultInAppMessaging: InAppMessaging {
     @MainActor
     func notifyDisplayConditionsChanged() {
         executor.notifyDisplayConditionsChanged()
+    }
+
+    @MainActor
+    var onCheckLocalAudience: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> LocalAudienceCheckResult)? {
+        get { preparer.onCheckLocalAudience }
+        set { preparer.onCheckLocalAudience = newValue }
     }
 }

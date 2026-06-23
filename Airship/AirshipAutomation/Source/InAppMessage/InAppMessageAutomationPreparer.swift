@@ -22,6 +22,13 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
     private let assetManager: any AssetCacheManagerProtocol
     private let analyticsFactory: any InAppMessageAnalyticsFactoryProtocol
     private let actionRunnerFactory: any InAppActionRunnerFactoryProtocol
+    private let hooks = Hooks()
+
+    @MainActor
+    var onCheckLocalAudience: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> LocalAudienceCheckResult)? {
+        get { hooks.onCheckLocalAudience }
+        set { hooks.onCheckLocalAudience = newValue }
+    }
 
     @MainActor
     public var displayInterval: TimeInterval {
@@ -80,6 +87,18 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
             }
         } else {
             message = data
+        }
+
+        if let check = await hooks.onCheckLocalAudience {
+            switch try await check(message, preparedScheduleInfo.scheduleID) {
+            case .match: break
+            case .miss(let behavior):
+                return switch behavior {
+                case .cancel: .cancel
+                case .skip: .skip
+                case .penalize: .penalize
+                }
+            }
         }
 
         let assets = try await self.prepareAssets(
@@ -153,5 +172,10 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
                 factoryBlock(args)
             }
         )
+    }
+
+    private final class Hooks: Sendable {
+        @MainActor
+        var onCheckLocalAudience: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> LocalAudienceCheckResult)?
     }
 }

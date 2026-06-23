@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import XCTest
-@testable import AirshipAutomation
+@_spi(AirshipInternal) @testable import AirshipAutomation
 import AirshipCore
 
 final class InAppMessageAutomationPreparerTest: XCTestCase {
@@ -149,6 +149,98 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
 
         let cleared = await self.assetManager.cleared
         XCTAssertEqual(cleared, [scheduleID])
+    }
+
+    func testLocalAudienceCheckMatch() async throws {
+        let coordinator = await TestDisplayCoordinator()
+        let adapter = await TestDisplayAdapter()
+        await self.assetManager.setOnCache { _, _ in TestCachedAssets() }
+        self.displayCoordinatorManager.onCoordinator = { _ in coordinator }
+        self.displayAdapterFactory.onMake = { _ in adapter }
+
+        await MainActor.run {
+            self.preparer.onCheckLocalAudience = { _, _ in .match }
+        }
+
+        guard case .prepared = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo) else {
+            return XCTFail("Expected .prepared")
+        }
+    }
+
+    func testLocalAudienceCheckMissSkip() async throws {
+        // onCache intentionally not set — if assets are prepared the force-unwrap crashes
+        await MainActor.run {
+            self.preparer.onCheckLocalAudience = { _, _ in .miss(.skip) }
+        }
+
+        let result = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
+        guard case .skip = result else { return XCTFail("Expected .skip, got \(result)") }
+    }
+
+    func testLocalAudienceCheckMissCancel() async throws {
+        await MainActor.run {
+            self.preparer.onCheckLocalAudience = { _, _ in .miss(.cancel) }
+        }
+
+        let result = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
+        guard case .cancel = result else { return XCTFail("Expected .cancel, got \(result)") }
+    }
+
+    func testLocalAudienceCheckMissPenalize() async throws {
+        await MainActor.run {
+            self.preparer.onCheckLocalAudience = { _, _ in .miss(.penalize) }
+        }
+
+        let result = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
+        guard case .penalize = result else { return XCTFail("Expected .penalize, got \(result)") }
+    }
+
+    func testLocalAudienceCheckThrows() async throws {
+        await MainActor.run {
+            self.preparer.onCheckLocalAudience = { _, _ in throw AirshipErrors.error("LLM unavailable") }
+        }
+
+        do {
+            _ = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
+            XCTFail("Expected throw")
+        } catch {}
+    }
+
+    func testLocalAudienceCheckReceivesMessageAndScheduleID() async throws {
+        let coordinator = await TestDisplayCoordinator()
+        let adapter = await TestDisplayAdapter()
+        await self.assetManager.setOnCache { _, _ in TestCachedAssets() }
+        self.displayCoordinatorManager.onCoordinator = { _ in coordinator }
+        self.displayAdapterFactory.onMake = { _ in adapter }
+
+        var receivedMessage: InAppMessage?
+        var receivedScheduleID: String?
+
+        await MainActor.run {
+            self.preparer.onCheckLocalAudience = { message, scheduleID in
+                receivedMessage = message
+                receivedScheduleID = scheduleID
+                return .match
+            }
+        }
+
+        _ = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
+
+        XCTAssertEqual(receivedMessage, message)
+        XCTAssertEqual(receivedScheduleID, preparedScheduleInfo.scheduleID)
+    }
+
+    func testLocalAudienceCheckNilSkipsHook() async throws {
+        let coordinator = await TestDisplayCoordinator()
+        let adapter = await TestDisplayAdapter()
+        await self.assetManager.setOnCache { _, _ in TestCachedAssets() }
+        self.displayCoordinatorManager.onCoordinator = { _ in coordinator }
+        self.displayAdapterFactory.onMake = { _ in adapter }
+
+        // no hook set — should prepare normally
+        guard case .prepared = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo) else {
+            return XCTFail("Expected .prepared")
+        }
     }
 
 }

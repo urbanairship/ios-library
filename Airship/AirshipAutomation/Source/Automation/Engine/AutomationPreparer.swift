@@ -18,6 +18,7 @@ enum DelegatePreparerResult<T: Sendable>: Sendable {
     case prepared(T)
     case cancel
     case skip
+    case penalize
 }
 
 protocol AutomationPreparerDelegate<PrepareDataIn, PrepareDataOut>: Sendable {
@@ -217,6 +218,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 return .success(result: .cancel)
             case .skip:
                 return .success(result: .skip)
+            case .penalize:
+                return .success(result: .penalize)
             }
 
         case .inAppMessage(let data):
@@ -233,6 +236,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 return .success(result: .cancel)
             case .skip:
                 return .success(result: .skip)
+            case .penalize:
+                return .success(result: .penalize)
             }
 
         case .deferred(let deferred):

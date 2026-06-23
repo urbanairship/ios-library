@@ -1001,6 +1001,7 @@
 		6EF27DE32730E6F900548DA3 /* RadioInputController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DE22730E6F900548DA3 /* RadioInputController.swift */; };
 		6EF27DE62730E77300548DA3 /* RadioInputState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DE52730E77300548DA3 /* RadioInputState.swift */; };
 		6EF27DE92730E85700548DA3 /* RadioInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF27DE82730E85700548DA3 /* RadioInput.swift */; };
+		6EF422662FE9E996000F5A55 /* LocalAudienceCheckResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF422652FE9E996000F5A55 /* LocalAudienceCheckResult.swift */; };
 		6EF553E32B7EE40B00901A22 /* AirshipLocalizationUtilsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF553E22B7EE40B00901A22 /* AirshipLocalizationUtilsTest.swift */; };
 		6EF66D8D276461DA00ABCB76 /* UrlInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF66D8C276461DA00ABCB76 /* UrlInfo.swift */; };
 		6EF66D912769B69C00ABCB76 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF66D902769B69C00ABCB76 /* RootView.swift */; };
@@ -2380,6 +2381,7 @@
 		6EF27DE22730E6F900548DA3 /* RadioInputController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioInputController.swift; sourceTree = "<group>"; };
 		6EF27DE52730E77300548DA3 /* RadioInputState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioInputState.swift; sourceTree = "<group>"; };
 		6EF27DE82730E85700548DA3 /* RadioInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioInput.swift; sourceTree = "<group>"; };
+		6EF422652FE9E996000F5A55 /* LocalAudienceCheckResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAudienceCheckResult.swift; sourceTree = "<group>"; };
 		6EF553E22B7EE40B00901A22 /* AirshipLocalizationUtilsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipLocalizationUtilsTest.swift; sourceTree = "<group>"; };
 		6EF66D8C276461DA00ABCB76 /* UrlInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlInfo.swift; sourceTree = "<group>"; };
 		6EF66D902769B69C00ABCB76 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -4576,6 +4578,7 @@
 		6EDF1D912B292F8600E23BC4 /* InAppMessage */ = {
 			isa = PBXGroup;
 			children = (
+				6EF422652FE9E996000F5A55 /* LocalAudienceCheckResult.swift */,
 				6E213B1D2BC7054500BF24AE /* InAppActionRunner.swift */,
 				60FCA3032B4F10D9005C9232 /* Legacy */,
 				6E986EFA2B44D48C00FBE6A0 /* InAppMessaging.swift */,
@@ -6445,6 +6448,7 @@
 				99E0BD0F2B4DD71A00465B37 /* InAppMessageHostingController.swift in Sources */,
 				6E1CBDE32BA51ED100519D9C /* InAppDisplayImpressionRuleProvider.swift in Sources */,
 				60D1D9B82B68FB6400EBE0A4 /* PreparedTrigger.swift in Sources */,
+				6EF422662FE9E996000F5A55 /* LocalAudienceCheckResult.swift in Sources */,
 				6E2E3CA22B32723C00B8515B /* InAppMessageNativeBridgeExtension.swift in Sources */,
 				99F662B22B60425E00696098 /* InAppMessageModalView.swift in Sources */,
 				6E213B1E2BC7054500BF24AE /* InAppActionRunner.swift in Sources */,
