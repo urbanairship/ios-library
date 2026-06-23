@@ -3,7 +3,7 @@
 import Foundation
 public import SwiftUI
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 /// A horizontal strip of message center items shown as circular “story” avatars.
 ///

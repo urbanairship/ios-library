@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// - NOTE: For internal use only. :nodoc:
 @_spi(AirshipInternal)
@@ -60,21 +61,22 @@ private final class ParentClosureCache: AirshipImageProvider {
     func removeChild(token: String) {}
 }
 
+@_spi(AirshipInternal)
 @MainActor
-final class NonExtendableAssetCacheImageProvider: AirshipImageProvider {
+public final class NonExtendableAssetCacheImageProvider: AirshipImageProvider {
     private let load: @Sendable (URL) -> AirshipImageData?
 
-    init(getter: @escaping @Sendable (URL) -> AirshipImageData?) {
+    public init(getter: @escaping @Sendable (URL) -> AirshipImageData?) {
         self.load = getter
     }
 
-    func get(url: URL) -> AirshipImageData? {
+    public func get(url: URL) -> AirshipImageData? {
         load(url)
     }
 
-    func tryAddChild(_ cache: any AirshipImageProvider) -> String? {
+    public func tryAddChild(_ cache: any AirshipImageProvider) -> String? {
         return nil
     }
 
-    func removeChild(token: String) {}
+    public func removeChild(token: String) {}
 }

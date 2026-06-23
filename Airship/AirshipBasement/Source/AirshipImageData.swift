@@ -14,22 +14,22 @@ public typealias AirshipNativeImage = NSImage
 @preconcurrency
 import ImageIO
 
-
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class AirshipImageData: Sendable {
     // Image frame
-    struct Frame {
-        let image: AirshipNativeImage
-        let duration: TimeInterval
+    public struct Frame: @unchecked Sendable {
+        public let image: AirshipNativeImage
+        public let duration: TimeInterval
     }
 
-    static let minFrameDuration: TimeInterval = 0.01
+    public static let minFrameDuration: TimeInterval = 0.01
     private let source: CGImageSource
     private let imageActor: AirshipImageDataFrameActor
-    
-    let isAnimated: Bool
-    let imageFramesCount: Int
-    let loopCount: Int?
+
+    public let isAnimated: Bool
+    public let imageFramesCount: Int
+    public let loopCount: Int?
 
     init(_ source: CGImageSource) throws {
         self.source = source
@@ -52,7 +52,7 @@ public final class AirshipImageData: Sendable {
         try self.init(source)
     }
 
-    func loadFrames() async -> [Frame] {
+    public func loadFrames() async -> [Frame] {
         await withCheckedContinuation { continuation in
             DispatchQueue.global(qos: .userInitiated).async {
                 let frames = Self.frames(from: self.source)
@@ -63,8 +63,8 @@ public final class AirshipImageData: Sendable {
         }
     }
 
-    func getActor() -> AirshipImageDataFrameActor {
-        return self.imageActor
+    public func loadFrame(at index: Int) async -> Frame? {
+        await imageActor.loadFrame(at: index)
     }
 
     private class func frames(from source: CGImageSource) -> [Frame] {
@@ -171,7 +171,6 @@ actor AirshipImageDataFrameActor {
     }
 }
 
-
 extension CGImageSource {
     func gifLoopCount() -> Int? {
         guard let properties = CGImageSourceCopyProperties(self, nil) as NSDictionary?,
@@ -204,7 +203,6 @@ public extension Image {
         #endif
     }
 }
-
 
 public extension AirshipNativeImage {
     /// Cross-platform initializer for SF Symbols

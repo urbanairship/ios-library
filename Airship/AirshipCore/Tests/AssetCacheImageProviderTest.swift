@@ -4,6 +4,7 @@ import Foundation
 import Testing
 
 @testable
+@_spi(AirshipInternal) import AirshipBasement
 @_spi(AirshipInternal) import AirshipCore
 
 // MARK: - Utils

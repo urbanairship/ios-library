@@ -2,7 +2,7 @@
 
 import Foundation
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 /// Airship rendering engine extensions.
 struct InAppMessageExtensions {

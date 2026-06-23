@@ -4,7 +4,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 @MainActor
 class InAppMessageEnvironment: ObservableObject {

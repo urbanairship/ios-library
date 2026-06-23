@@ -3,7 +3,7 @@
 import Foundation
 public import SwiftUI
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 struct MessageCenterListItemView: View {
     @Environment(\.airshipMessageCenterListItemStyle)

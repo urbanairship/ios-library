@@ -7,7 +7,7 @@ import SwiftUI
 import WebKit
 #endif
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 struct MediaView: View {
     @EnvironmentObject

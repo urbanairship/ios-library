@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 import Combine
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 struct MessageCenterThomasView: View {
 

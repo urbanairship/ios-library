@@ -5,6 +5,7 @@ public import SwiftUI
 
 /// Simple layout class that converts airship layout into a swiftui view
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct AirshipSimpleLayoutView: View {
     private let placement: ThomasPresentationInfo.Embedded.Placement = .init(
         margin: nil,

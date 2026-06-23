@@ -2,6 +2,7 @@
 
 import Combine
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
 final class ThomasAsyncViewState: ObservableObject {

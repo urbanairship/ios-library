@@ -2,7 +2,9 @@
 
 import Foundation
 public import SwiftUI
+@_spi(AirshipInternal) import AirshipBasement
 
+@_spi(AirshipInternal)
 public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
 
     let url: String
@@ -102,7 +104,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
             return
         }
 
-        let image = await loadedImage.getActor().loadFrame(at: 0)?.image
+        let image = await loadedImage.loadFrame(at: 0)?.image
         if !Task.isCancelled {
             self.currentImage = image
         }
@@ -117,10 +119,8 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
             return
         }
 
-        let frameActor = loadedImage.getActor()
-
         imageIndex = 0
-        var frame = await frameActor.loadFrame(at: imageIndex)
+        var frame = await loadedImage.loadFrame(at: imageIndex)
 
         self.currentImage = frame?.image
 
@@ -136,7 +136,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
             let nextIndex = (imageIndex + 1) % loadedImage.imageFramesCount
 
             do {
-                let (_, nextFrame) = try await (delay, frameActor.loadFrame(at: nextIndex))
+                let (_, nextFrame) = try await (delay, loadedImage.loadFrame(at: nextIndex))
                 frame = nextFrame
             } catch {} // most likely it's a task cancelled exception when animation is stopped
 

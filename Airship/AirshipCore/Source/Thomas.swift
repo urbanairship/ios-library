@@ -5,6 +5,7 @@ import SwiftUI
 
 /// Airship rendering engine.
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class Thomas {
 
     #if !os(watchOS)
@@ -135,6 +136,7 @@ public final class Thomas {
 
 /// Airship rendering engine extensions.
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct ThomasExtensions {
 
     #if !os(tvOS) && !os(watchOS)

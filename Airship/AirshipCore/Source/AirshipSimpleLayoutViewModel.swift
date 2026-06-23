@@ -8,6 +8,7 @@ public import Combine
 /// Same view model = preserved state across view updates; new view model = fresh state.
 ///
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 @MainActor
 public final class AirshipSimpleLayoutViewModel: ObservableObject {
     let environment: ThomasEnvironment

@@ -1,7 +1,9 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
+@_spi(AirshipInternal)
 public actor AirshipImageLoader {
     private static let retryDelay: UInt64 = 10 * 1_000_000_000
     private static let maxRetries: Int = 10

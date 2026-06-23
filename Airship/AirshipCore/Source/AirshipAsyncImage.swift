@@ -2,8 +2,10 @@
 
 import Foundation
 public import SwiftUI
+@_spi(AirshipInternal) import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
 
     private let url: String
@@ -82,10 +84,8 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
             return
         }
         
-        let frameActor = loadedImage.getActor()
-
         imageIndex = 0
-        var frame = await frameActor.loadFrame(at: imageIndex)
+        var frame = await loadedImage.loadFrame(at: imageIndex)
 
         self.currentImage = frame?.image
 
@@ -97,7 +97,7 @@ public struct AirshipAsyncImage<Placeholder: View, ImageView: View>: View {
             let nextIndex = (imageIndex + 1) % loadedImage.imageFramesCount
             
             do {
-                let (_, nextFrame) = try await (delay, frameActor.loadFrame(at: nextIndex))
+                let (_, nextFrame) = try await (delay, loadedImage.loadFrame(at: nextIndex))
                 frame = nextFrame
             } catch {} // most likely it's a task cancelled exception when animation is stopped
 
