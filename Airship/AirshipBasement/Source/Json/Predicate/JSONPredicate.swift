@@ -1,12 +1,12 @@
 /* Copyright Airship and Contributors */
 
-public import Foundation
+import Foundation
 
 /// Defines a predicate for evaluating a JSON payload.
 ///
 /// `JSONPredicate` can be used to build complex logical conditions (`AND`, `OR`, `NOT`)
 /// composed of multiple `JSONMatcher` objects.
-public final class JSONPredicate: NSObject, Sendable, Codable {
+public struct JSONPredicate: Sendable, Codable, Equatable, Hashable {
     /// Key for the 'AND' logical operator.
     private static let andTypeKey: String = "and"
     /// Key for the 'OR' logical operator.
@@ -24,7 +24,7 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
     private let jsonMatcher: JSONMatcher?
 
     /// Designated initializer.
-    required init(
+    init(
         type: String?,
         jsonMatcher: JSONMatcher?,
         subpredicates: [JSONPredicate]?
@@ -32,7 +32,6 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
         self.type = type
         self.jsonMatcher = jsonMatcher
         self.subpredicates = subpredicates
-        super.init()
     }
 
     /// Coding keys for serialization.
@@ -46,13 +45,13 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
     ///
     /// - Parameter json: The JSON payload representing the predicate.
     /// - Throws: An error if the JSON is invalid or cannot be decoded.
-    public convenience init(json: Any?) throws {
+    public init(json: Any?) throws {
         let value: JSONPredicate = try AirshipJSON.wrap(json).decode()
         self.init(type: value.type, jsonMatcher: value.jsonMatcher, subpredicates: value.subpredicates)
     }
 
     /// - Note: For internal use only. :nodoc:
-    public convenience init(from decoder: any Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         // This implementation is for backward compatibility and may be refactored.
         let container = try decoder.container(keyedBy: CodingKeys.self)
         if let key = CodingKeys.allCases.first(where: { container.contains($0) }) {
@@ -126,14 +125,14 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
 
     /// Creates a predicate from a `JSONMatcher`.
     /// - Parameter matcher: The `JSONMatcher` to base the predicate on.
-    public convenience init(jsonMatcher matcher: JSONMatcher) {
+    public init(jsonMatcher matcher: JSONMatcher) {
         self.init(type: nil, jsonMatcher: matcher, subpredicates: nil)
     }
 
     /// Creates a predicate by AND-ing an array of sub-predicates.
     /// - Parameter subpredicates: An array of predicates to combine.
     /// - Returns: A new `JSONPredicate` instance.
-    public class func andPredicate(subpredicates: [JSONPredicate]) -> JSONPredicate {
+    public static func and(subpredicates: [JSONPredicate]) -> JSONPredicate {
         return JSONPredicate(
             type: JSONPredicate.andTypeKey,
             jsonMatcher: nil,
@@ -144,7 +143,7 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
     /// Creates a predicate by OR-ing an array of sub-predicates.
     /// - Parameter subpredicates: An array of predicates to combine.
     /// - Returns: A new `JSONPredicate` instance.
-    public class func orPredicate(subpredicates: [JSONPredicate]) -> JSONPredicate {
+    public static func or(subpredicates: [JSONPredicate]) -> JSONPredicate {
         return JSONPredicate(
             type: JSONPredicate.orTypeKey,
             jsonMatcher: nil,
@@ -155,7 +154,7 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
     /// Creates a predicate by NOT-ing a single sub-predicate.
     /// - Parameter subpredicate: The predicate to negate.
     /// - Returns: A new `JSONPredicate` instance.
-    public class func notPredicate(subpredicate: JSONPredicate) -> JSONPredicate {
+    public static func not(subpredicate: JSONPredicate) -> JSONPredicate {
         return JSONPredicate(
             type: JSONPredicate.notTypeKey,
             jsonMatcher: nil,
@@ -167,36 +166,7 @@ public final class JSONPredicate: NSObject, Sendable, Codable {
     /// - Parameter json: The JSON payload.
     /// - Returns: A predicate or `nil` if the JSON is invalid.
     /// - Throws: An error if the JSON cannot be parsed.
-    class func fromJson(json: Any?) throws -> JSONPredicate {
+    static func fromJson(json: Any?) throws -> JSONPredicate {
         return try JSONPredicate(json: json)
-    }
-
-    /// - Note: For internal use only. :nodoc:
-    func isEqual(to predicate: JSONPredicate) -> Bool {
-        return type == predicate.type
-            && jsonMatcher == predicate.jsonMatcher
-            && subpredicates == predicate.subpredicates
-    }
-
-    /// - Note: For internal use only. :nodoc:
-    public override func isEqual(_ object: Any?) -> Bool {
-        guard let predicate = object as? JSONPredicate else {
-            return false
-        }
-
-        if self === predicate {
-            return true
-        }
-
-        return isEqual(to: predicate)
-    }
-
-    /// - Note: For internal use only. :nodoc:
-    public override var hash: Int {
-        var hasher = Hasher()
-        hasher.combine(type)
-        hasher.combine(jsonMatcher)
-        hasher.combine(subpredicates)
-        return hasher.finalize()
     }
 }

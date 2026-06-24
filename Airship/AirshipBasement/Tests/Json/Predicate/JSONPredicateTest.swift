@@ -47,7 +47,7 @@ struct JSONPredicateTest {
             from: json.data(using: .utf8)!
         )
 
-        let expected: JSONPredicate = .orPredicate(
+        let expected: JSONPredicate = .or(
             subpredicates: [
                 JSONPredicate(
                     jsonMatcher: JSONMatcher(
@@ -95,7 +95,7 @@ struct JSONPredicateTest {
 
     @Test
     func notPredicate() throws {
-        let predicate = JSONPredicate.notPredicate(subpredicate: JSONPredicate(jsonMatcher: stringMatcher))
+        let predicate = JSONPredicate.not(subpredicate: JSONPredicate(jsonMatcher: stringMatcher))
         #expect(!predicate.evaluate(json: try AirshipJSON.wrap("cool")))
 
         #expect(predicate.evaluate(json: try AirshipJSON.wrap(nil)))
@@ -107,7 +107,7 @@ struct JSONPredicateTest {
     @Test
     func notPredicatePayload() throws {
         let json = [ "not": [ ["value": ["equals": "cool" ]] ] ]
-        let predicate = JSONPredicate.notPredicate(subpredicate: JSONPredicate(jsonMatcher: stringMatcher))
+        let predicate = JSONPredicate.not(subpredicate: JSONPredicate(jsonMatcher: stringMatcher))
         #expect(try AirshipJSON.wrap(json) == AirshipJSON.wrap(predicate))
 
         // Verify the JSONValue recreates the expected payload
@@ -134,7 +134,7 @@ struct JSONPredicateTest {
             from: json.data(using: .utf8)!
         )
 
-        let expected: JSONPredicate = .notPredicate(
+        let expected: JSONPredicate = .not(
             subpredicate: JSONPredicate(
                 jsonMatcher: JSONMatcher(
                     valueMatcher: JSONValueMatcher.matcherWhereStringEquals("bar"),
@@ -166,7 +166,7 @@ struct JSONPredicateTest {
             from: json.data(using: .utf8)!
         )
 
-        let expected: JSONPredicate = .notPredicate(
+        let expected: JSONPredicate = .not(
             subpredicate: JSONPredicate(
                 jsonMatcher: JSONMatcher(
                     valueMatcher: JSONValueMatcher.matcherWhereStringEquals("bar"),
@@ -248,7 +248,7 @@ struct JSONPredicateTest {
     func andPredicate() throws {
         let fooPredicate = JSONPredicate(jsonMatcher: fooMatcher)
         let storyPredicate = JSONPredicate(jsonMatcher: storyMatcher)
-        let predicate = JSONPredicate.andPredicate(subpredicates: [fooPredicate, storyPredicate])
+        let predicate = JSONPredicate.and(subpredicates: [fooPredicate, storyPredicate])
 
         var payload: [String: String] = ["foo": "bar", "cool": "story"]
         #expect(predicate.evaluate(json: try AirshipJSON.wrap(payload)))
@@ -283,7 +283,7 @@ struct JSONPredicateTest {
 
         let fooPredicate = JSONPredicate(jsonMatcher: fooMatcher)
         let storyPredicate = JSONPredicate(jsonMatcher: storyMatcher)
-        let predicate = JSONPredicate.andPredicate(subpredicates: [fooPredicate, storyPredicate])
+        let predicate = JSONPredicate.and(subpredicates: [fooPredicate, storyPredicate])
 
         #expect(try AirshipJSON.wrap(json) == AirshipJSON.wrap(predicate))
 
@@ -296,7 +296,7 @@ struct JSONPredicateTest {
     func orPredicate() throws {
         let fooPredicate = JSONPredicate(jsonMatcher: fooMatcher)
         let storyPredicate = JSONPredicate(jsonMatcher: storyMatcher)
-        let predicate = JSONPredicate.orPredicate(subpredicates: [fooPredicate, storyPredicate])
+        let predicate = JSONPredicate.or(subpredicates: [fooPredicate, storyPredicate])
 
         var payload: [String: String] = ["foo": "bar", "cool": "story"]
         #expect(predicate.evaluate(json: try AirshipJSON.wrap(payload)))
@@ -331,7 +331,7 @@ struct JSONPredicateTest {
 
         let fooPredicate = JSONPredicate(jsonMatcher: fooMatcher)
         let storyPredicate = JSONPredicate(jsonMatcher: storyMatcher)
-        let predicate = JSONPredicate.orPredicate(subpredicates: [fooPredicate, storyPredicate])
+        let predicate = JSONPredicate.or(subpredicates: [fooPredicate, storyPredicate])
 
         #expect(try AirshipJSON.wrap(json) == AirshipJSON.wrap(predicate))
 

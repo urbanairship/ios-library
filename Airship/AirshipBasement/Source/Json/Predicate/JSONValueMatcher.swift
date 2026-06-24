@@ -1,13 +1,13 @@
 // Copyright Airship and Contributors
 
-public import Foundation
+import Foundation
 
 /// A `JSONValueMatcher` is used to match a JSON value against a set of constraints.
 ///
-/// This class provides a flexible way to define conditions for JSON values, such as checking for equality,
+/// This struct provides a flexible way to define conditions for JSON values, such as checking for equality,
 /// numerical ranges, presence of a value, version constraints, and conditions on array elements.
 /// It is `Codable`, allowing it to be easily serialized and deserialized.
-public final class JSONValueMatcher: NSObject, Sendable, Codable {
+public struct JSONValueMatcher: Sendable, Codable, Equatable, Hashable {
 
     /// A protocol for defining the specific logic of a JSON value matcher.
     /// Each predicate implementation checks a JSON value against a specific condition.
@@ -57,7 +57,7 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
     /// Creates a matcher that requires a number to be at least a minimum value.
     /// - Parameter atLeast: The minimum acceptable value.
     /// - Returns: A `JSONValueMatcher` for the specified condition.
-    public class func matcherWhereNumberAtLeast(
+    public static func matcherWhereNumberAtLeast(
         _ atLeast: Double
     )-> JSONValueMatcher {
         return .init(
@@ -70,7 +70,7 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
     ///   - atLeast: The minimum acceptable value (inclusive).
     ///   - atMost: The maximum acceptable value (inclusive).
     /// - Returns: A `JSONValueMatcher` for the specified condition.
-    public class func matcherWhereNumberAtLeast(
+    public static func matcherWhereNumberAtLeast(
         _ atLeast: Double,
         atMost: Double
     ) -> JSONValueMatcher {
@@ -85,7 +85,7 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
     /// Creates a matcher that requires a number to be at most a maximum value.
     /// - Parameter atMost: The maximum acceptable value.
     /// - Returns: A `JSONValueMatcher` for the specified condition.
-    public class func matcherWhereNumberAtMost(
+    public static func matcherWhereNumberAtMost(
         _ atMost: Double
     ) -> JSONValueMatcher {
         return .init(
@@ -98,7 +98,7 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
     /// Creates a matcher for an exact number value.
     /// - Parameter number: The exact number to match.
     /// - Returns: A `JSONValueMatcher` for the specified condition.
-    public class func matcherWhereNumberEquals(
+    public static func matcherWhereNumberEquals(
         to number: Double
     ) -> JSONValueMatcher {
         return .init(
@@ -111,7 +111,7 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
     /// Creates a matcher for an exact boolean value.
     /// - Parameter boolean: The exact boolean to match.
     /// - Returns: A `JSONValueMatcher` for the specified condition.
-    public class func matcherWhereBooleanEquals(
+    public static func matcherWhereBooleanEquals(
         _ boolean: Bool
     ) -> JSONValueMatcher {
         return .init(
@@ -124,7 +124,7 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
     /// Creates a matcher for an exact string value.
     /// - Parameter string: The exact string to match.
     /// - Returns: A `JSONValueMatcher` for the specified condition.
-    public class func matcherWhereStringEquals(
+    public static func matcherWhereStringEquals(
         _ string: String
     ) -> JSONValueMatcher {
         return .init(
@@ -137,7 +137,7 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
     /// Creates a matcher that checks for the presence or absence of a value.
     /// - Parameter present: If `true`, the value must exist (not be null). If `false`, it must not.
     /// - Returns: A `JSONValueMatcher` for the specified condition.
-    public class func matcherWhereValueIsPresent(
+    public static func matcherWhereValueIsPresent(
         _ present: Bool
     ) -> JSONValueMatcher {
         return .init(
@@ -151,7 +151,7 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
     /// The value being checked is expected to be a string representing a version.
     /// - Parameter versionConstraint: The version constraint string (e.g., "1.0.0+", "[1.0, 2.0)").
     /// - Returns: A `JSONValueMatcher` for the specified condition.
-    public class func matcherWithVersionConstraint(
+    public static func matcherWithVersionConstraint(
         _ versionConstraint: String
     ) -> JSONValueMatcher? {
         return .init(
@@ -164,7 +164,7 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
     /// Creates a matcher that checks if an array contains an element that matches a `JSONPredicate`.
     /// - Parameter predicate: The predicate to apply to elements in the array.
     /// - Returns: A `JSONValueMatcher` for the specified condition.
-    public class func matcherWithArrayContainsPredicate(
+    public static func matcherWithArrayContainsPredicate(
         _ predicate: JSONPredicate
     ) -> JSONValueMatcher? {
         return .init(
@@ -177,7 +177,7 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
     ///   - predicate: The predicate to apply to the element at the specified index.
     ///   - index: The index of the array element to check.
     /// - Returns: A `JSONValueMatcher` for the specified condition.
-    public class func matcherWithArrayContainsPredicate(
+    public static func matcherWithArrayContainsPredicate(
         _ predicate: JSONPredicate,
         at index: Int
     ) -> JSONValueMatcher? {
@@ -202,20 +202,12 @@ public final class JSONValueMatcher: NSObject, Sendable, Codable {
         self.predicate.evaluate(json: json, ignoreCase: ignoreCase)
     }
 
-    public override func isEqual(_ other: Any?) -> Bool {
-        guard let matcher = other as? JSONValueMatcher else {
-            return false
-        }
-
-        if self === matcher {
-            return true
-        }
-
-        return predicate.isEqual(to: matcher.predicate)
+    public static func == (lhs: JSONValueMatcher, rhs: JSONValueMatcher) -> Bool {
+        lhs.predicate.isEqual(to: rhs.predicate)
     }
 
-    public func hash() -> Int {
-        return predicate.hashValue
+    public func hash(into hasher: inout Hasher) {
+        predicate.hash(into: &hasher)
     }
 }
 
