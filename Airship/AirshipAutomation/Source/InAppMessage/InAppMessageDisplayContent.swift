@@ -3,6 +3,7 @@
 public import Foundation
 
 @_spi(AirshipInternal) public import AirshipCore
+public import AirshipScenes
 
 /// Partially-decoded Airship layout. isEmbedded and validate() are available
 /// without a full decode; the full view tree is decoded at prepare time.

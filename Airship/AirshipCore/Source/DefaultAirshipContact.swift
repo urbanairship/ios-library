@@ -632,6 +632,7 @@ public final class DefaultAirshipContact: AirshipContact, @unchecked Sendable {
         return result
     }
 
+    @_spi(AirshipInternal)
     public func getStableContactID() async -> String {
         return await waitForContactIDInfo { update in
             update.isStable

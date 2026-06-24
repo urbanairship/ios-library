@@ -2,6 +2,7 @@
 
 import SwiftUI
 import AirshipCore
+import AirshipScenes
 
 protocol EmbeddedViewMaker {}
 extension EmbeddedViewMaker {

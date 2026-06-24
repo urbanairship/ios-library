@@ -112,7 +112,8 @@ public final class Airship: Sendable {
         return shared.airshipInstance.privacyManager
     }
 
-    static var inputValidator: any AirshipInputValidation.Validator {
+    @_spi(AirshipInternal)
+    public static var inputValidator: any AirshipInputValidation.Validator {
         return shared.airshipInstance.inputValidator
     }
 

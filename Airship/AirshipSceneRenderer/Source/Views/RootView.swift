@@ -1,0 +1,187 @@
+/* Copyright Airship and Contributors */
+
+import Foundation
+import SwiftUI
+import AirshipCore
+
+struct RootView<Content: View>: View {
+
+#if !os(tvOS) && !os(watchOS)
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+#endif
+
+    @State private var currentOrientation: ThomasOrientation = RootViewResolver.resolveOrientation()
+
+    @State private var isForeground: Bool = true
+    @State private var isVisible: Bool = false
+    @State private var isVoiceOverRunning: Bool = RootViewResolver.resolveIsVoiceOverRunning()
+
+    @ObservedObject var thomasEnvironment: ThomasEnvironment
+    @StateObject var thomasState: ThomasState
+    @StateObject var validatableHelper: ValidatableHelper = ValidatableHelper()
+    @StateObject var formInputCollector: ThomasFormDataCollector = ThomasFormDataCollector()
+
+    // Default form state so @EnvironmentObject does not crash
+    @StateObject
+    private var defaultFormState: ThomasFormState = ThomasFormState(
+        identifier: "",
+        formType: .form,
+        formResponseType: nil,
+        validationMode: .onDemand
+    )
+
+    // Default pager state so @EnvironmentObject does not crash
+    @StateObject
+    private var defaultPagerState: PagerState = PagerState(
+        identifier: "",
+        branching: nil
+    )
+
+    // Default video state so @EnvironmentObject does not crash
+    @StateObject
+    private var defaultVideoState: VideoState = VideoState(
+        identifier: ""
+    )
+
+    // Default async view state so @EnvironmentObject does not crash
+    @StateObject
+    private var defaultAsyncViewState: ThomasAsyncViewState = ThomasAsyncViewState()
+    
+    let layout: AirshipLayout
+    let content: (ThomasOrientation, ThomasWindowSize) -> Content
+
+    let associatedLabelResolver: ThomasAssociatedLabelResolver
+
+    init(
+        thomasEnvironment: ThomasEnvironment,
+        layout: AirshipLayout,
+        @ViewBuilder content: @escaping (ThomasOrientation, ThomasWindowSize) -> Content
+    ) {
+        self.thomasEnvironment = thomasEnvironment
+        self.layout = layout
+        self.content = content
+        self._isForeground = State(initialValue: AppStateTracker.shared.isForegrounded)
+        self._thomasState = StateObject(
+            wrappedValue: ThomasState() { [weak thomasEnvironment] state in
+                thomasEnvironment?.onStateChange(state)
+            }
+        )
+        self.associatedLabelResolver = ThomasAssociatedLabelResolver(layout: layout)
+    }
+
+    @ViewBuilder
+    var body: some View {
+        content(currentOrientation, resolveWindowSize())
+            .environmentObject(self.thomasEnvironment)
+            .environmentObject(self.thomasState)
+            .environmentObject(self.formInputCollector)
+            .environmentObject(self.validatableHelper)
+            .environmentObject(self.defaultPagerState)
+            .environmentObject(self.defaultFormState)
+            .environmentObject(self.defaultVideoState)
+            .environmentObject(self.defaultAsyncViewState)
+            .environment(\.orientation, currentOrientation)
+            .environment(\.windowSize, resolveWindowSize())
+            .environment(\.isVisible, isVisible)
+            .environment(\.isVoiceOverRunning, isVoiceOverRunning)
+            .environment(\.thomasAssociatedLabelResolver, associatedLabelResolver)
+            .onReceive(NotificationCenter.default.publisher(for: AppStateTracker.didTransitionToForeground)) { (_) in
+                self.isForeground = true
+                self.thomasEnvironment.onVisibilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: AppStateTracker.didTransitionToBackground)) { (_) in
+                self.isForeground = false
+                self.thomasEnvironment.onVisibilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
+            }
+#if os(macOS)
+            .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification)) { _ in
+                updateVoiceoverRunningState()
+            }
+#elseif !os(watchOS)
+        // iOS, tvOS, visionOS
+            .onReceive(NotificationCenter.default.publisher(for: UIAccessibility.voiceOverStatusDidChangeNotification)) { _ in
+                updateVoiceoverRunningState()
+            }
+#endif
+            .onAppear {
+                updateVoiceoverRunningState()
+                self.currentOrientation = RootViewResolver.resolveOrientation()
+                self.isVisible = true
+                self.thomasEnvironment.onVisibilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
+            }
+            .onDisappear {
+                self.isVisible = false
+                self.thomasEnvironment.onVisibilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
+            }
+#if os(iOS)
+            .onReceive(
+                NotificationCenter.default.publisher(
+                    for: UIDevice.orientationDidChangeNotification
+                )
+            ) { _ in
+                self.currentOrientation = RootViewResolver.resolveOrientation()
+            }
+#endif
+    }
+
+    /// Uses the vertical and horizontal class size to determine small, medium, large window size:
+    /// - large: regular x regular = large
+    /// - medium: regular x compact or compact x regular
+    /// - small: compact x compact
+    func resolveWindowSize() -> ThomasWindowSize {
+#if os(watchOS)
+        return .small
+#elseif os(tvOS)
+        return .large
+#else
+        switch (verticalSizeClass, horizontalSizeClass) {
+        case (.regular, .regular):
+            return .large
+        case (.compact, .compact):
+            return .small
+        default:
+            return .medium
+        }
+#endif
+    }
+
+    private func updateVoiceoverRunningState() {
+        isVoiceOverRunning = RootViewResolver.resolveIsVoiceOverRunning()
+    }
+}
+
+/// Non-generic helpers so referencing them does not form a `RootView<Content>`
+/// metatype, which would surface `Content`'s isolated `View` conformance.
+@MainActor
+private enum RootViewResolver {
+    static func resolveOrientation() -> ThomasOrientation {
+#if os(tvOS) || os(watchOS) || os(macOS)
+        return .landscape
+#else
+        let scene = try? AirshipSceneManager.shared.lastActiveScene
+
+        if let scene = scene {
+            if scene.interfaceOrientation.isLandscape {
+                return .landscape
+            } else if scene.interfaceOrientation.isPortrait {
+                return .portrait
+            }
+        }
+        return .portrait
+#endif
+    }
+
+    static func resolveIsVoiceOverRunning() -> Bool {
+#if os(watchOS)
+        // watchOS does not expose a public property to check VoiceOver status
+        return false
+#elseif os(macOS)
+        // macOS equivalent
+        return NSWorkspace.shared.isVoiceOverEnabled
+#else
+        // iOS, tvOS, visionOS
+        return UIAccessibility.isVoiceOverRunning
+#endif
+    }
+}

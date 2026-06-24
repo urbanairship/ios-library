@@ -4,6 +4,8 @@ import Testing
 
 @testable import AirshipCore
 @testable import AirshipAutomation
+@testable import AirshipSceneRenderer
+import AirshipScenes
 
 @MainActor
 struct DefaultInAppActionRunnerTest {

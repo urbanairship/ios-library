@@ -3,6 +3,7 @@
 import AirshipCore
 import Combine
 import SwiftUI
+import AirshipScenes
 
 #if canImport(ActivityKit)
 import ActivityKit

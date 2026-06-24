@@ -141,6 +141,34 @@
 			remoteGlobalIDString = 6E0B8729294A9C120064B7BD;
 			remoteInfo = AirshipAutomation;
 		};
+		6E21C4452FEC574A00EA3E56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EB7231A2FEB3FF5001FBB9F;
+			remoteInfo = AirshipSceneRenderer;
+		};
+		6E21C4472FEC574A00EA3E56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EB723342FEB3FF7001FBB9F;
+			remoteInfo = AirshipScenes;
+		};
+		6E21C4492FEC574A00EA3E56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EB723502FEB402E001FBB9F;
+			remoteInfo = AirshipSceneRendererTests;
+		};
+		6E21C44B2FEC574A00EA3E56 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6EB7236B2FEB4030001FBB9F;
+			remoteInfo = AirshipScenesTest;
+		};
 		6E2F5A982A67330900CABD3D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6E65D56A2396E99D00AF2D1A /* Airship.xcodeproj */;
@@ -572,6 +600,8 @@
 			children = (
 				6EB1B41326EAA531000421B9 /* AirshipBasement.framework */,
 				6E65D57C2396E99D00AF2D1A /* AirshipCore.framework */,
+				6E21C4462FEC574A00EA3E56 /* AirshipSceneRenderer.framework */,
+				6E21C4482FEC574A00EA3E56 /* AirshipScenes.framework */,
 				84A565712A3D01A100F3A345 /* AirshipAutomation.framework */,
 				6E2F5AA82A67330900CABD3D /* AirshipFeatureFlags.framework */,
 				6E65D5882396E99D00AF2D1A /* AirshipMessageCenter.framework */,
@@ -580,6 +610,8 @@
 				6E65D5842396E99D00AF2D1A /* AirshipDebug.framework */,
 				45A5536C2FD8BE680082247F /* AirshipBasementTests.xctest */,
 				6E65D5802396E99D00AF2D1A /* AirshipTests.xctest */,
+				6E21C44A2FEC574A00EA3E56 /* AirshipSceneRendererTests.xctest */,
+				6E21C44C2FEC574A00EA3E56 /* AirshipScenesTest.xctest */,
 				84A565732A3D01A100F3A345 /* AirshipAutomationTests.xctest */,
 				6E2F5AAA2A67330900CABD3D /* AirshipFeatureFlagsTests.xctest */,
 				32F68D0628F07C7300F7F52A /* AirshipMessageCenterTests.xctest */,
@@ -891,6 +923,34 @@
 			fileType = wrapper.cfbundle;
 			path = AirshipBasementTests.xctest;
 			remoteRef = 45A5536B2FD8BE680082247F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E21C4462FEC574A00EA3E56 /* AirshipSceneRenderer.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipSceneRenderer.framework;
+			remoteRef = 6E21C4452FEC574A00EA3E56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E21C4482FEC574A00EA3E56 /* AirshipScenes.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AirshipScenes.framework;
+			remoteRef = 6E21C4472FEC574A00EA3E56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E21C44A2FEC574A00EA3E56 /* AirshipSceneRendererTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipSceneRendererTests.xctest;
+			remoteRef = 6E21C4492FEC574A00EA3E56 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6E21C44C2FEC574A00EA3E56 /* AirshipScenesTest.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AirshipScenesTest.xctest;
+			remoteRef = 6E21C44B2FEC574A00EA3E56 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		6E2F5AA82A67330900CABD3D /* AirshipFeatureFlags.framework */ = {

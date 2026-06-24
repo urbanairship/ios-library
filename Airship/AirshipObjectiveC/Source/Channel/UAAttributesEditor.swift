@@ -38,7 +38,7 @@ public class UAAttributesEditor: NSObject {
      */
     @objc(setNumber:attribute:)
     public func set(number: NSNumber, attribute: String) {
-        self.editor?.set(number: number, attribute: attribute)
+        self.editor?.set(double: number.doubleValue, attribute: attribute)
     }
 
     /**

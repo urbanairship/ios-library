@@ -5,6 +5,7 @@ public import UIKit
 import SwiftUI
 
 import AirshipCore
+import AirshipScenes
 
 /// Embedded view controller factory
 @objc

@@ -4,6 +4,8 @@ import Testing
 
 @testable import AirshipAutomation
 @testable import AirshipCore
+@testable import AirshipSceneRenderer
+import AirshipScenes
 import Foundation
 
 @MainActor

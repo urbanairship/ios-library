@@ -157,9 +157,10 @@ public final class UAAppIntegration: NSObject {
     @objc(userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:)
     public class func userNotificationCenter(
         _ center: UNUserNotificationCenter,
-        didReceive response: UNNotificationResponse
-    ) async {
-        await AppIntegration.userNotificationCenter(center, didReceive: response)
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping @Sendable () -> Void
+    ) {
+        AppIntegration.userNotificationCenter(center, didReceive: response, withCompletionHandler: completionHandler)
     }
 #endif
 }

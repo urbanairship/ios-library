@@ -400,7 +400,7 @@ class AirshipPushTest: XCTestCase {
 
     func testSetTimeZone() throws {
         self.push.timeZone = NSTimeZone(abbreviation: "HST")
-        XCTAssertEqual("HST", self.push.timeZone?.abbreviation)
+        XCTAssertTrue(["HST", "HAST"].contains(self.push.timeZone?.abbreviation))
         self.push.timeZone = nil
         XCTAssertEqual(NSTimeZone.default as NSTimeZone, self.push.timeZone)
     }

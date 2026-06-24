@@ -4,6 +4,7 @@ import Foundation
 import SwiftUI
 @_spi(AirshipInternal) import AirshipBasement
 @_spi(AirshipInternal) import AirshipCore
+@_spi(AirshipInternal) import AirshipScenes
 
 final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 

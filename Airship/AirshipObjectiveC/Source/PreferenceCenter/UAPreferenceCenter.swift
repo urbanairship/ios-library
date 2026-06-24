@@ -83,7 +83,7 @@ public final class UAPreferenceCenter: NSObject, Sendable {
     @objc(openPreferenceCenter:)
     @MainActor
     public func open(_ preferenceCenterID: String) {
-        Airship.preferenceCenter.open(preferenceCenterID)
+        Airship.preferenceCenter.display(preferenceCenterID)
     }
     
     /**

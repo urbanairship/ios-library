@@ -363,13 +363,6 @@ extension Locale {
     }
 }
 
-internal extension Int {
-    func airshipLocalizedForVoiceOver() -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .spellOut
-        return formatter.string(from: NSNumber(value: self)) ?? String(self)
-    }
-}
 
 internal extension Collection {
     subscript(safe index: Index) -> Element? {

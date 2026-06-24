@@ -3,6 +3,7 @@
 import Foundation
 
 @_spi(AirshipInternal) import AirshipCore
+import AirshipScenes
 
 /// Any data needed by in-app message to handle displaying the message
 struct PreparedInAppMessageData: Sendable {

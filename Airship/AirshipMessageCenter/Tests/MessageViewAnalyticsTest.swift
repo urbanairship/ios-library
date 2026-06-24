@@ -3,6 +3,8 @@
 import Testing
 @testable import AirshipCore
 @testable import AirshipMessageCenter
+@testable import AirshipSceneRenderer
+import AirshipScenes
 import Foundation
 
 struct DefaultMessageViewAnalyticsTests {

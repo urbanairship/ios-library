@@ -3,6 +3,7 @@
 public import Combine
 
 import AirshipCore
+import AirshipScenes
 
 /// A view model for a message.
 @MainActor

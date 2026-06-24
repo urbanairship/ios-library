@@ -1,4 +1,5 @@
 public import AirshipCore
+import AirshipScenes
 
 import Foundation
 

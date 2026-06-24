@@ -58,7 +58,7 @@ public final class AttributesEditor {
      *   - number: The value.
      *   - attribute: The attribute.
      */
-    @available(*, deprecated, message: "Use set(number:number) with Double type instead")
+    @available(*, deprecated, message: "Use set(double:attribute:) with Double type instead")
     public func set(number: NSNumber, attribute: String) {
         trySetAttribute(attribute, value: .number(number.doubleValue))
     }

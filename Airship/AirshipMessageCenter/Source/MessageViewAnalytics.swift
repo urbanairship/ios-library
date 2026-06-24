@@ -2,6 +2,7 @@
 
 import Foundation
 import AirshipCore
+import AirshipScenes
 @_spi(AirshipInternal) import AirshipBasement
 
 final class DefaultMessageViewAnalytics: ThomasLayoutMessageAnalyticsProtocol {

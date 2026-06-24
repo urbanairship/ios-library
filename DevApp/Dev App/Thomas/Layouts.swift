@@ -4,6 +4,7 @@ import AirshipCore
 import Foundation
 internal import Yams
 import AirshipAutomation
+import AirshipScenes
 
 @MainActor
 final class LayoutLoader: Sendable {

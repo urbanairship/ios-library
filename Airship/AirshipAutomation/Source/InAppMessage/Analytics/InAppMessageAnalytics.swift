@@ -3,6 +3,7 @@
 import Foundation
 
 import AirshipCore
+import AirshipScenes
 @_spi(AirshipInternal) import AirshipBasement
 
 struct InAppCustomEventContext: Sendable, Encodable, Equatable {

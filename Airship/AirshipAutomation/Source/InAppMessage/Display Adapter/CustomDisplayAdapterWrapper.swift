@@ -3,6 +3,7 @@
 import Foundation
 
 import AirshipCore
+import AirshipScenes
 
 /// Wraps a custom display adapter as a DisplayAdapter
 final class CustomDisplayAdapterWrapper: DisplayAdapter {

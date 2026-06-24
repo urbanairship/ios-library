@@ -129,7 +129,7 @@ final class RemoteDataTest: AirshipBaseTest {
         await self.testTaskSleeper.pause()
         self.testAppStateTracker.currentState = .active
 
-        await self.remoteData.airshipReady()
+        self.remoteData.airshipReady()
         XCTAssertEqual(1, testWorkManager.workRequests.count)
 
         await self.testTaskSleeper.waitForSleep(self.remoteData.foregroundPollingInterval)
@@ -141,7 +141,7 @@ final class RemoteDataTest: AirshipBaseTest {
     func testAirshipReadyDoesNotStartPollingWhenBackgrounded() async {
         self.testAppStateTracker.currentState = .background
 
-        await self.remoteData.airshipReady()
+        self.remoteData.airshipReady()
         XCTAssertEqual(1, testWorkManager.workRequests.count)
 
         for _ in 0..<5 { await Task.yield() }
@@ -170,7 +170,7 @@ final class RemoteDataTest: AirshipBaseTest {
 
     @MainActor
     func testForegroundPollingUsesRemoteConfigInterval() async {
-        await self.config.updateRemoteConfig(
+        self.config.updateRemoteConfig(
             RemoteConfig(foregroundPollingIntervalMilliseconds: 30_000)
         )
         await self.remoteData.serialQueue.waitForCurrentOperations()

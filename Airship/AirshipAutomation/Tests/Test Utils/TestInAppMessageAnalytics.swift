@@ -3,6 +3,7 @@
 import Foundation
 @testable import AirshipAutomation
 @testable import AirshipCore
+import AirshipScenes
 
 final class TestInAppMessageAnalytics: InAppMessageAnalyticsProtocol, @unchecked Sendable {
 

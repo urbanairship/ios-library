@@ -5,6 +5,7 @@ import XCTest
 @testable
 import AirshipAutomation
 import AirshipCore
+import AirshipScenes
 
 final class DefaultInAppDisplayImpressionRuleProviderTest: XCTestCase {
 

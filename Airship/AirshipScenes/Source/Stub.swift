@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-public import AirshipCore
-import AirshipSceneRenderer
+import AirshipCore
+@_exported import AirshipSceneRenderer
 
 import Foundation

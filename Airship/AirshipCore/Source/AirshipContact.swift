@@ -130,14 +130,22 @@ public protocol AirshipContact: AnyObject, Sendable {
     func editSubscriptionLists(
         _ editorBlock: (ScopedSubscriptionListEditor) -> Void
     )
+
+    /// - Note: For internal use only. :nodoc:
+    @_spi(AirshipInternal)
+    func getStableContactID() async -> String
 }
 
+@_spi(AirshipInternal)
+extension AirshipContact {
+    public func getStableContactID() async -> String {
+        fatalError("getStableContactID() not implemented")
+    }
+}
 
 protocol InternalAirshipContact: AirshipContact {
     var contactID: String? { get async }
     var authTokenProvider: any AuthTokenProvider { get }
-
-    func getStableContactID() async -> String
 
     var contactIDInfo: ContactIDInfo? { get async }
     var contactIDUpdates: AnyPublisher<ContactIDInfo, Never> { get }
