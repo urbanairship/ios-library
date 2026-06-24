@@ -38,7 +38,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             remoteData: self.remoteData,
             analytics: self.analytics,
             audienceChecker: self.audienceChecker,
-            deviceInfoProviderFactory: { self.deviceInfoProvider },
+            deviceInfoProviderFactory: { [provider = self.deviceInfoProvider] in provider },
             deferredResolver: self.deferredResolver,
             privacyManager: self.privacyManager,
             resultCache: self.resultCache
