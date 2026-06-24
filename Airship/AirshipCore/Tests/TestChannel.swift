@@ -3,7 +3,7 @@ import ActivityKit
 
 @testable
 import AirshipCore
-import Combine
+@preconcurrency import Combine
 
 class TestChannel: NSObject, AirshipChannel, AirshipComponent, @unchecked Sendable {
     private var identifierSubject: CurrentValueSubject<String?, Never> = CurrentValueSubject(nil)

@@ -4,6 +4,10 @@ on:
   push:
     tags:
       - "[0-9]+.[0-9]+.[0-9]+**"
+
+permissions:
+  contents: read
+
 jobs:
   check-version:
     if: github.repository == 'urbanairship/ios-library'
@@ -115,6 +119,28 @@ jobs:
       - name: Test Message Center
         run: make test-message-center
 
+  run-tests-scene-renderer:
+    needs: check-version
+    runs-on: macos-15-xlarge
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install xcodegen
+        run: brew install xcodegen
+      - name: Test Scene Renderer
+        run: make test-scene-renderer
+
+  run-tests-scenes:
+    needs: check-version
+    runs-on: macos-15-xlarge
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install xcodegen
+        run: brew install xcodegen
+      - name: Test Scenes
+        run: make test-scenes
+
   run-tests-automation:
     needs: check-version
     runs-on: macos-15-xlarge
@@ -157,6 +183,8 @@ jobs:
       - run-tests-core
       - run-tests-preference-center
       - run-tests-message-center
+      - run-tests-scene-renderer
+      - run-tests-scenes
       - run-tests-automation
       - run-tests-feature-flags
       - run-tests-service-extension

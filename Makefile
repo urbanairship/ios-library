@@ -85,7 +85,7 @@ build-airship-objectiveC: setup
 	bash ./scripts/run_xcodebuild.sh "AirshipObjectiveC" "${derived_data_path}" build
 
 .PHONY: test
-test: setup test-basement test-core test-preference-center test-message-center test-automation test-feature-flags test-service-extension
+test: setup test-basement test-core test-preference-center test-message-center test-scene-renderer test-scenes test-automation test-feature-flags test-service-extension
 
 .PHONY: test-basement
 test-basement: setup
@@ -102,6 +102,14 @@ test-message-center: setup
 .PHONY: test-preference-center
 test-preference-center: setup
 	bash ./scripts/run_xcodebuild.sh AirshipPreferenceCenter "${derived_data_path}" test
+
+.PHONY: test-scene-renderer
+test-scene-renderer: setup
+	bash ./scripts/run_xcodebuild.sh AirshipSceneRenderer "${derived_data_path}" test
+
+.PHONY: test-scenes
+test-scenes: setup
+	bash ./scripts/run_xcodebuild.sh AirshipScenes "${derived_data_path}" test
 
 .PHONY: test-automation
 test-automation: setup

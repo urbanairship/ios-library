@@ -41,6 +41,14 @@ let package = Package(
             name: "AirshipDebug",
             targets: ["AirshipDebug"]
         ),
+        .library(
+            name: "AirshipSceneRenderer",
+            targets: ["AirshipSceneRenderer"]
+        ),
+        .library(
+            name: "AirshipScenes",
+            targets: ["AirshipScenes"]
+        ),
     ],
     targets: [
         .target(
@@ -66,7 +74,10 @@ let package = Package(
         ),
         .target(
             name: "AirshipAutomation",
-            dependencies: [.target(name: "AirshipCore")],
+            dependencies: [
+                .target(name: "AirshipCore"),
+                .target(name: "AirshipScenes"),
+            ],
             path: "Airship/AirshipAutomation",
             exclude: [
                 "Info.plist",
@@ -79,7 +90,10 @@ let package = Package(
         ),
         .target(
             name: "AirshipMessageCenter",
-            dependencies: [.target(name: "AirshipCore")],
+            dependencies: [
+                .target(name: "AirshipCore"),
+                .target(name: "AirshipScenes"),
+            ],
             path: "Airship/AirshipMessageCenter",
             exclude: [
                 "Info.plist",
@@ -149,6 +163,29 @@ let package = Package(
             resources: [
                 .process("Resources")
             ]
+        ),
+        .target(
+            name: "AirshipSceneRenderer",
+            dependencies: [.target(name: "AirshipBasement")],
+            path: "Airship/AirshipSceneRenderer",
+            exclude: [
+                "Info.plist",
+                "Tests",
+            ],
+            sources: ["Source"]
+        ),
+        .target(
+            name: "AirshipScenes",
+            dependencies: [
+                .target(name: "AirshipCore"),
+                .target(name: "AirshipSceneRenderer"),
+            ],
+            path: "Airship/AirshipScenes",
+            exclude: [
+                "Info.plist",
+                "Tests",
+            ],
+            sources: ["Source"]
         ),
     ]
 )

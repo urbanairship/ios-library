@@ -69,6 +69,10 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
 
     public let eventFeed: AirshipAnalyticsFeed
 
+    /// Serializes screen event feed notifications so they are delivered in the
+    /// order `trackScreen` was called, instead of racing on independent tasks.
+    private let screenEventQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue()
+
     private var isAnalyticsEnabled: Bool {
         return self.privacyManager.isEnabled(.analytics) &&
         self.config.airshipConfig.isAnalyticsEnabled
@@ -488,8 +492,8 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
             return
         }
 
-        Task {
-            await self.eventFeed.notifyEvent(.screen(screen: screen))
+        self.screenEventQueue.enqueue { [eventFeed = self.eventFeed] in
+            await eventFeed.notifyEvent(.screen(screen: screen))
         }
 
         let currentScreen = self.screenState.value.current
