@@ -25,7 +25,10 @@ class InAppMessageEnvironment: ObservableObject {
         extensions: InAppMessageExtensions? = nil
     ) {
         self.delegate = delegate
-        self.imageLoader = AirshipImageLoader(imageProvider: extensions?.imageProvider)
+        self.imageLoader = AirshipImageLoader(
+            imageProvider: extensions?.imageProvider,
+            session: URLSession.airshipSecureSession
+        )
 
 #if !os(tvOS)
         self.nativeBridgeExtension = extensions?.nativeBridgeExtension

@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
-@_spi(AirshipInternal) import AirshipBasement
+public import Foundation
 
 @_spi(AirshipInternal)
 public actor AirshipImageLoader {
@@ -9,14 +8,18 @@ public actor AirshipImageLoader {
     private static let maxRetries: Int = 10
     
     private let imageProvider: (any AirshipImageProvider)?
+    private let session: URLSession
     
     public init(
-        imageProvider: (any AirshipImageProvider)? = nil
+        imageProvider: (any AirshipImageProvider)? = nil,
+        session: URLSession
     ) {
         self.imageProvider = imageProvider
+        self.session = session
     }
     
-    func load(
+    @_spi(AirshipInternal)
+    public func load(
         url urlString: String
     ) async throws -> AirshipImageData {
         
@@ -56,7 +59,7 @@ public actor AirshipImageLoader {
         
         for attempt in 0..<Self.maxRetries {
             do {
-                let (data, response) = try await URLSession.airshipSecureSession.data(from: url)
+                let (data, response) = try await session.data(from: url)
                 
                 guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                     throw AirshipErrors.error("Invalid server response")

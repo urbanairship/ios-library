@@ -67,7 +67,8 @@ class ThomasEnvironment: ObservableObject {
         self.timer = timer ?? AirshipTimer()
         self.onDismiss = onDismiss
         self.imageLoader = AirshipImageLoader(
-            imageProvider: extensions?.imageProvider
+            imageProvider: extensions?.imageProvider,
+            session: URLSession.airshipSecureSession
         )
         self.stateStorage = stateStorage
         

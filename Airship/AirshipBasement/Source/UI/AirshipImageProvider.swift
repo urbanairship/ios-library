@@ -1,7 +1,6 @@
 /* Copyright Airship and Contributors */
 
 public import Foundation
-@_spi(AirshipInternal) import AirshipBasement
 
 /// Image provider to extend image loading.
 /// - Note: For internal use only. :nodoc:

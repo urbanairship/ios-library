@@ -14,7 +14,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
 
     public init(
         url: String,
-        imageLoader: AirshipImageLoader = AirshipImageLoader(),
+        imageLoader: AirshipImageLoader = AirshipImageLoader(session: URLSession.airshipSecureSession),
         image: @escaping (Image, CGSize) -> ImageView,
         placeholder: @escaping () -> Placeholder
     ) {

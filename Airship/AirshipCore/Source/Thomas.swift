@@ -2,6 +2,7 @@
 
 import Foundation
 import SwiftUI
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Airship rendering engine.
 /// - Note: For internal use only. :nodoc:
