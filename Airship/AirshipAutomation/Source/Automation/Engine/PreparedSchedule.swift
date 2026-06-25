@@ -23,6 +23,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
     var triggerSessionID: String
     var additionalAudienceCheckResult: Bool
     var priority: Int
+    var sendMetadata: String?
 
     init(
         scheduleID: String,
@@ -33,7 +34,8 @@ struct PreparedScheduleInfo: Codable, Equatable {
         reportingContext: AirshipJSON? = nil,
         triggerSessionID: String,
         additionalAudienceCheckResult: Bool = true,
-        priority: Int
+        priority: Int,
+        sendMetadata: String? = nil
     ) {
         self.scheduleID = scheduleID
         self.productID = productID
@@ -44,6 +46,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.triggerSessionID = triggerSessionID
         self.additionalAudienceCheckResult = additionalAudienceCheckResult
         self.priority = priority
+        self.sendMetadata = sendMetadata
     }
 
     init(from decoder: any Decoder) throws {
@@ -57,6 +60,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.triggerSessionID = try container.decodeIfPresent(String.self, forKey: .triggerSessionID) ?? UUID().uuidString
         self.additionalAudienceCheckResult = try container.decodeIfPresent(Bool.self, forKey: .additionalAudienceCheckResult) ?? true
         self.priority = try container.decodeIfPresent(Int.self, forKey: .priority) ?? 0
+        self.sendMetadata = try container.decodeIfPresent(String.self, forKey: .sendMetadata)
     }
 }
 

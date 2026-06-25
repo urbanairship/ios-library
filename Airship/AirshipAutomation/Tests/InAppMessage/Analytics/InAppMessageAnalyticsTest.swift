@@ -83,6 +83,42 @@ struct InAppMessageAnalyticsTest {
     }
 
     @Test
+    func testPushActionSourceUsesSendMetadata() async throws {
+        let sendMetadata = "encoded-send-metadata"
+        let infoWithMetadata = PreparedScheduleInfo(
+            scheduleID: preparedInfo.scheduleID,
+            campaigns: preparedInfo.campaigns,
+            triggerSessionID: preparedInfo.triggerSessionID,
+            priority: 0,
+            sendMetadata: sendMetadata
+        )
+
+        let analytics = InAppMessageAnalytics(
+            preparedScheduleInfo: infoWithMetadata,
+            message: InAppMessage(
+                name: "name",
+                displayContent: .custom(.string("custom")),
+                source: .pushAction
+            ),
+            displayImpressionRule: .once,
+            eventRecorder: eventRecorder,
+            historyStore: historyStore,
+            displayHistory: MessageDisplayHistory()
+        )
+
+        analytics.recordEvent(TestThomasLayoutEvent(), layoutContext: nil)
+
+        let data = eventRecorder.eventData.first!
+        let expectedID = ThomasLayoutEventMessageID.airship(
+            identifier: infoWithMetadata.scheduleID,
+            campaigns: infoWithMetadata.campaigns,
+            sendMetadata: sendMetadata
+        )
+        #expect(data.messageID == expectedID)
+        #expect(data.source == .airship)
+    }
+
+    @Test
     func testLegacyMessageID() async throws {
         let analytics = InAppMessageAnalytics(
             preparedScheduleInfo: preparedInfo,

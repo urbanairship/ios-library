@@ -118,6 +118,7 @@ struct SceneActionTests {
                     #expect(message.name == "Scene Landing Page some-send-ID")
                     #expect(message.isReportingEnabled == true)
                     #expect(schedule.identifier == "some-send-ID")
+                    #expect(schedule.sendMetadata == nil)
 
                     await self.expectStandardSceneSchedule(schedule)
                     confirm()
@@ -131,6 +132,52 @@ struct SceneActionTests {
             )
 
             let result = try await action.perform(arguments: args)
+            #expect(result == nil)
+        }
+    }
+
+    @Test("perform propagates send metadata to schedule")
+    func performSendMetadataPropagatedToSchedule() async throws {
+        let pushPayload = AirshipJSON.object([
+            "_": .string("some-send-ID"),
+            "com.urbanairship.metadata": .string("encoded-send-metadata")
+        ])
+
+        try await confirmation(expectedCount: 1) { confirm in
+            let action = SceneAction(
+                scheduler: { schedule in
+                    #expect(schedule.identifier == "some-send-ID")
+                    #expect(schedule.sendMetadata == "encoded-send-metadata")
+                    confirm()
+                }
+            )
+
+            let args = ActionArguments(
+                value: try AirshipJSON.from(json: #"{"dsl":"\#(compressedSceneBase64)"}"#),
+                situation: .manualInvocation,
+                metadata: [ActionArguments.pushPayloadJSONMetadataKey: pushPayload]
+            )
+
+            let result = try await action.perform(arguments: args)
+            #expect(result == nil)
+        }
+    }
+
+    @Test("perform sets message source to pushAction")
+    func performMessageSourceIsPushAction() async throws {
+        try await confirmation(expectedCount: 1) { confirm in
+            let action = SceneAction(
+                scheduler: { schedule in
+                    guard case .inAppMessage(let message) = schedule.data else {
+                        Issue.record("Expected inAppMessage schedule data")
+                        return
+                    }
+                    #expect(message.source == .pushAction)
+                    confirm()
+                }
+            )
+
+            let result = try await action.perform(arguments: sceneArgs(compressedSceneBase64))
             #expect(result == nil)
         }
     }

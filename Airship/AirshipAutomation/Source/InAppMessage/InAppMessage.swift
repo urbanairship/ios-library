@@ -10,6 +10,7 @@ enum InAppMessageSource: String, Codable, Equatable, Sendable {
     case remoteData = "remote-data"
     case appDefined = "app-defined"
     case legacyPush = "legacy-push"
+    case pushAction = "push-action"
 }
 
 /// In-App Message

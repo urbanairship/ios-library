@@ -33,7 +33,7 @@ struct DefaultMessageViewAnalyticsTests {
 
         #expect(capturedData.event is ThomasLayoutDisplayEvent)
         #expect(capturedData.source == .airship)
-        if case .airship(let identifier, let campaigns) = capturedData.messageID {
+        if case .airship(let identifier, let campaigns, _) = capturedData.messageID {
             #expect(identifier == messageID)
             #expect(campaigns == nil)
         } else {
