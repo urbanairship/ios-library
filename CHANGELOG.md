@@ -4,7 +4,7 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
-## Version 20.8.1 - June 22, 2026
+## Version 20.8.1 - June 25, 2026
 Patch release with support for Xcode 27.
 
 ### Changes
