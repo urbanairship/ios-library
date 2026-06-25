@@ -15,6 +15,9 @@ public actor UACoreData {
     private let storeNames: [String]
     public nonisolated let inMemory: Bool
 
+    /// Rebuilds a store that fails to open with a migration error. Only enable
+    /// for stores whose contents can be safely rebuilt (e.g. a server cache).
+    private let recoverOnMigrationError: Bool
 
     private var shouldPrepareCoreData: Bool = false
     private var coreDataPrepared: Bool = false
@@ -48,13 +51,15 @@ public actor UACoreData {
         name: String,
         modelURL: URL,
         inMemory: Bool = false,
-        stores: [String]
+        stores: [String],
+        recoverOnMigrationError: Bool = false
     ) {
         self.name = name
         self.modelURL = modelURL
         self.inMemory = inMemory
         self.storeNames = stores
-        
+        self.recoverOnMigrationError = recoverOnMigrationError
+
 #if !os(watchOS) && !os(macOS)
         Task { @MainActor [weak self] in
             if (UIApplication.shared.isProtectedDataAvailable) {
@@ -201,38 +206,107 @@ public actor UACoreData {
     }
 
     private func loadStores(container: NSPersistentContainer) async throws {
-        let remaining = AirshipAtomicValue(container.persistentStoreDescriptions.count)
-        let errorMessage = AirshipAtomicValue<String?>(nil)
+        let failures = await attemptLoadStores(container: container)
+        guard !failures.isEmpty else {
+            return
+        }
 
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) -> Void in
+        let errorMessage = failures.map { $0.description }.joined(separator: ", ")
+
+        // Only rebuild on a migration failure, never on transient I/O errors
+        // (disk full, locked file), which may succeed on a later attempt.
+        guard
+            self.recoverOnMigrationError,
+            failures.allSatisfy({ $0.isMigrationError })
+        else {
+            throw AirshipErrors.error(errorMessage)
+        }
+
+        AirshipLogger.warn(
+            "Store migration failed, rebuilding store. \(errorMessage)"
+        )
+
+        for failure in failures {
+            guard let url = failure.storeURL else { continue }
+            do {
+                try container.persistentStoreCoordinator.destroyPersistentStore(
+                    at: url,
+                    ofType: failure.storeType,
+                    options: nil
+                )
+            } catch {
+                AirshipLogger.error("Failed to destroy store at \(url): \(error)")
+            }
+        }
+
+        // Retry once. Any failure now is terminal.
+        let retryFailures = await attemptLoadStores(container: container)
+        guard retryFailures.isEmpty else {
+            throw AirshipErrors.error(
+                retryFailures.map { $0.description }.joined(separator: ", ")
+            )
+        }
+    }
+
+    private struct StoreLoadFailure: Sendable {
+        let storeURL: URL?
+        let storeType: String
+        let description: String
+        let isMigrationError: Bool
+    }
+
+    private func attemptLoadStores(
+        container: NSPersistentContainer
+    ) async -> [StoreLoadFailure] {
+        let remaining = AirshipAtomicValue(container.persistentStoreDescriptions.count)
+        let failures = AirshipAtomicValue<[StoreLoadFailure]>([])
+
+        return await withCheckedContinuation { (continuation: CheckedContinuation<[StoreLoadFailure], Never>) -> Void in
             container.loadPersistentStores { description, error in
                 if let error {
                     AirshipLogger.error(
                         "Failed to create store \(description): \(error)"
                     )
 
-                    errorMessage.update { msg in
-                        if let msg {
-                            return "\(msg), \(error.localizedDescription)"
-                        } else {
-                            return error.localizedDescription
-                        }
-                    }
+                    let failure = StoreLoadFailure(
+                        storeURL: description.url,
+                        storeType: description.type,
+                        description: error.localizedDescription,
+                        isMigrationError: Self.isMigrationError(error as NSError)
+                    )
+                    failures.update { $0 + [failure] }
                 }
 
                 remaining.update { current in
                     current - 1
                 }
 
-                if (remaining.value == 0) {
-                    if let msg = errorMessage.value {
-                        continuation.resume(throwing: AirshipErrors.error(msg))
-                    } else {
-                        continuation.resume()
-                    }
+                if (remaining.value <= 0) {
+                    continuation.resume(returning: failures.value)
                 }
             }
         }
+    }
+
+    static func isMigrationError(_ error: NSError) -> Bool {
+        let migrationCodes: Set<Int> = [
+            NSPersistentStoreIncompatibleVersionHashError,  // 134100
+            NSMigrationError,                                // 134110
+            NSMigrationMissingSourceModelError,              // 134130
+            NSMigrationMissingMappingModelError,             // 134140
+            NSEntityMigrationPolicyError,                    // 134170
+            NSInferredMappingModelError,                     // 134190
+        ]
+
+        if error.domain == NSCocoaErrorDomain, migrationCodes.contains(error.code) {
+            return true
+        }
+
+        if let underlying = error.userInfo[NSUnderlyingErrorKey] as? NSError {
+            return isMigrationError(underlying)
+        }
+
+        return false
     }
 
     private func storeSQLDirectory() -> URL? {

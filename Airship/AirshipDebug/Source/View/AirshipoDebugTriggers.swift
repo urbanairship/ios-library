@@ -72,6 +72,7 @@ struct AirshipDebugModifier: ViewModifier {
 #endif
             .airshipApplyIf(triggers.contains(.cmdShiftD)) { view in
                 view.background {
+#if !os(tvOS)
                     Button("") {
                         displayDebug()
                     }
@@ -79,6 +80,14 @@ struct AirshipDebugModifier: ViewModifier {
                     .opacity(0)
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
+#else
+                    Button("") {
+                        displayDebug()
+                    }
+                    .opacity(0)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+#endif
                 }
             }
     }
