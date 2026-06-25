@@ -24,12 +24,14 @@ else
   FAILED_COUNT=$((FAILED_COUNT+1))
 fi
 
-if sed -i '' "s/\(^AIRSHIP_VERSION *= *\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/AirshipDebug.podspec 2>/dev/null; then
-  echo "✓ AirshipDebug.podspec"
-  SUCCESS_COUNT=$((SUCCESS_COUNT+1))
-else
-  echo "✗ AirshipDebug.podspec"
-  FAILED_COUNT=$((FAILED_COUNT+1))
+if [ -f "$ROOT_PATH/AirshipDebug.podspec" ]; then
+  if sed -i '' "s/\(^AIRSHIP_VERSION *= *\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/AirshipDebug.podspec 2>/dev/null; then
+    echo "✓ AirshipDebug.podspec"
+    SUCCESS_COUNT=$((SUCCESS_COUNT+1))
+  else
+    echo "✗ AirshipDebug.podspec"
+    FAILED_COUNT=$((FAILED_COUNT+1))
+  fi
 fi
 
 if sed -i '' "s/\(^AIRSHIP_VERSION *= *\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/AirshipServiceExtension.podspec 2>/dev/null; then
