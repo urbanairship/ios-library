@@ -73,6 +73,8 @@ private final class StubThomasDelegate: ThomasDelegate {
     func onReportingEvent(_ event: ThomasReportingEvent) {}
     func onDismissed(cancel: Bool) {}
     func runActions(_ actions: AirshipJSON, layoutContext: ThomasLayoutContext) {}
+    func registerChannels(_ channels: [ThomasChannelRegistration]) {}
+    func applyAttributes(_ attributes: [ThomasAttribute]) {}
 #if !os(tvOS) && !os(watchOS)
     func makeWebView(
         url: String,

@@ -3,7 +3,7 @@
 import XCTest
 
 @testable import AirshipCore
-@testable import AirshipSceneRenderer
+@testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
 final class ThomasPresentationModelCodingTest: XCTestCase {
     

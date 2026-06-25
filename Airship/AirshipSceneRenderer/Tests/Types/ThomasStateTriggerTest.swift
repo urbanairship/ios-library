@@ -4,7 +4,7 @@ import Foundation
 import Testing
 
 @testable import AirshipCore
-@testable import AirshipSceneRenderer
+@testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
 @Suite(.timeLimit(.minutes(1)))
 struct ThomasStateTriggerTest {

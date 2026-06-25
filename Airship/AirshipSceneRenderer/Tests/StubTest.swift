@@ -2,7 +2,7 @@
 
 import Foundation
 import Testing
-@testable import AirshipSceneRenderer
+@testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
 struct StubTest {
     @Test

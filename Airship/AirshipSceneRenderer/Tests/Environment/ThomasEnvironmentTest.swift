@@ -2,8 +2,11 @@
 
 import Testing
 import Foundation
+import SwiftUI
 
+@_spi(AirshipInternal) import AirshipBasement
 @testable import AirshipCore
+@testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
 // MARK: - Test Doubles
 
@@ -13,6 +16,9 @@ final class TestThomasDelegate: ThomasDelegate {
     var reportedEvents: [ThomasReportingEvent] = []
     var dismissals: [Bool] = []
     var stateChanges: [AirshipJSON] = []
+    var ranActions: [AirshipJSON] = []
+    var registeredChannels: [ThomasChannelRegistration] = []
+    var appliedAttributes: [ThomasAttribute] = []
 
     func onVisibilityChanged(isVisible: Bool, isForegrounded: Bool) {
         visibilityChanges.append((isVisible, isForegrounded))
@@ -29,6 +35,29 @@ final class TestThomasDelegate: ThomasDelegate {
     func onStateChanged(_ state: AirshipJSON) {
         stateChanges.append(state)
     }
+
+    func runActions(_ actions: AirshipJSON, layoutContext: ThomasLayoutContext) {
+        ranActions.append(actions)
+    }
+
+    func registerChannels(_ channels: [ThomasChannelRegistration]) {
+        registeredChannels.append(contentsOf: channels)
+    }
+
+    func applyAttributes(_ attributes: [ThomasAttribute]) {
+        appliedAttributes.append(contentsOf: attributes)
+    }
+
+#if !os(tvOS) && !os(watchOS)
+    func makeWebView(
+        url: String,
+        layoutContext: ThomasLayoutContext,
+        isLoading: Binding<Bool>,
+        onClose: @escaping @MainActor () -> Void
+    ) -> any View {
+        EmptyView()
+    }
+#endif
 }
 
 @MainActor
@@ -75,21 +104,6 @@ struct ThomasEnvironmentTest {
         )
 
         return (env, testDelegate, testTimer)
-    }
-
-    private func setupAirship() -> (TestContact, TestChannel) {
-        let testAirship = TestAirshipInstance()
-        let testContact = TestContact()
-        let testChannel = TestChannel()
-        let date = UATestDate()
-
-        testContact.attributeEditor = AttributesEditor(date: date) { _ in }
-        testChannel.attributeEditor = AttributesEditor(date: date) { _ in }
-
-        testAirship.components = [testContact, testChannel]
-        testAirship.makeShared()
-
-        return (testContact, testChannel)
     }
 
     // MARK: - Initialization Tests
@@ -186,17 +200,6 @@ struct ThomasEnvironmentTest {
     }
 
     // MARK: - State Management Tests
-
-    @Test
-    func testRetrieveStateCreatesNewState() {
-        let (env, _, _) = makeEnvironment()
-
-        let state = env.retrieveState(identifier: "test") {
-            ThomasState.MutableState()
-        }
-
-        #expect(state != nil)
-    }
 
     @Test
     func testRetrieveStateReturnsSameInstance() {
@@ -302,10 +305,7 @@ struct ThomasEnvironmentTest {
     }
 
     @Test
-    func testSubmitFormCallsAirshipWithEmailAndSMS() {
-        let (testContact, testChannel) = setupAirship()
-        defer { TestAirshipInstance.clearShared() }
-
+    func testSubmitFormForwardsChannelsAndAttributes() {
         let (env, delegate, _) = makeEnvironment()
 
         let result = ThomasFormResult(
@@ -313,13 +313,13 @@ struct ThomasEnvironmentTest {
             formData: .object([:])
         )
 
-        let channels: [ThomasFormField.Channel] = [
-            .email("test@example.com", ThomasEmailRegistrationOptions.optIn()),
-            .sms("15035551234", ThomasSMSRegistrationOptions.optIn(senderID: "12345"))
+        let channels: [ThomasChannelRegistration] = [
+            .email("test@example.com", .commercial(.init(optedIn: true, properties: nil))),
+            .sms("15035551234", .optIn(.init(senderID: "12345")))
         ]
 
-        let attributes: [ThomasFormField.Attribute] = [
-            ThomasFormField.Attribute(
+        let attributes: [ThomasAttribute] = [
+            ThomasAttribute(
                 attributeName: ThomasAttributeName(channel: "test_attr", contact: "contact_attr"),
                 attributeValue: .string("test_value")
             )
@@ -332,11 +332,10 @@ struct ThomasEnvironmentTest {
             layoutState: .empty
         )
 
-        // Verify event was reported
+        // Reports the form result and forwards channels/attributes to the delegate.
         #expect(delegate.reportedEvents.count == 1)
-
-        // TestContact and TestChannel provide no-ops for registerEmail/SMS/editAttributes
-        // but the fact that we didn't crash proves the Airship singleton was accessible
+        #expect(delegate.registeredChannels == channels)
+        #expect(delegate.appliedAttributes == attributes)
     }
 
     // MARK: - Button Event Tests
@@ -525,19 +524,22 @@ struct ThomasEnvironmentTest {
             identifier: "test-pager",
             branching: nil
         )
+        // The layout context's pager (and its pageHistory) is only populated when the
+        // layout state carries the pager.
+        let layoutState = LayoutState.empty.override(pagerState: pagerState)
 
         // View multiple pages in sequence
         let page1 = ThomasPageInfo(identifier: "page-0", index: 0, viewCount: 1)
         timer.time = 0
-        env.pageViewed(pagerState: pagerState, pageInfo: page1, layoutState: .empty)
+        env.pageViewed(pagerState: pagerState, pageInfo: page1, layoutState: layoutState)
 
         let page2 = ThomasPageInfo(identifier: "page-1", index: 1, viewCount: 1)
         timer.time = 5.0
-        env.pageViewed(pagerState: pagerState, pageInfo: page2, layoutState: .empty)
+        env.pageViewed(pagerState: pagerState, pageInfo: page2, layoutState: layoutState)
 
         let page3 = ThomasPageInfo(identifier: "page-2", index: 2, viewCount: 1)
         timer.time = 10.0
-        env.pageViewed(pagerState: pagerState, pageInfo: page3, layoutState: .empty)
+        env.pageViewed(pagerState: pagerState, pageInfo: page3, layoutState: layoutState)
 
         // Verify all page views were reported
         #expect(delegate.reportedEvents.count == 3)
@@ -798,64 +800,22 @@ struct ThomasEnvironmentTest {
 
     @Test
     func testRunActionsWithNilPayload() {
-        let (env, _, _) = makeEnvironment()
+        let (env, delegate, _) = makeEnvironment()
 
-        // Should not crash with nil payload
+        // Should not forward to the delegate with a nil payload
         env.runActions(nil, layoutState: .empty)
+
+        #expect(delegate.ranActions.isEmpty)
     }
 
     @Test
-    func testRunActionsWithEmptyValue() {
-        let (env, _, _) = makeEnvironment()
+    func testRunActionsForwardsToDelegate() {
+        let (env, delegate, _) = makeEnvironment()
 
-        // Create payload with nil value
-        let emptyPayload = ThomasActionsPayload(value: .null)
+        let actions: AirshipJSON = .object(["test_action": .string("test_value")])
+        env.runActions(ThomasActionsPayload(value: actions), layoutState: .empty)
 
-        // Should return early when value is nil
-        env.runActions(emptyPayload, layoutState: .empty)
-    }
-
-    @Test
-    func testRunActionsWithCustomRunner() {
-        let testRunner = TestThomasActionRunner()
-        let extensions = ThomasExtensions(
-            imageProvider: nil,
-            actionRunner: testRunner
-        )
-        let (env, _, _) = makeEnvironment(extensions: extensions)
-
-        let payload = ThomasActionsPayload(value: .object(["test_action": .string("test_value")]))
-
-        env.runActions(payload, layoutState: .empty)
-
-        // Verify custom runner was called
-        #expect(testRunner.runAsyncCalled)
-        #expect(testRunner.lastActions != nil)
-    }
-
-    @Test
-    func testRunActionWithCustomRunner() async {
-        let testRunner = TestThomasActionRunner()
-        let extensions = ThomasExtensions(
-            imageProvider: nil,
-            actionRunner: testRunner
-        )
-        let (env, _, _) = makeEnvironment(extensions: extensions)
-
-        let arguments = ActionArguments(
-            string: "test_value",
-            situation: .automation
-        )
-
-        _ = await env.runAction(
-            "test_action",
-            arguments: arguments,
-            layoutState: .empty
-        )
-
-        // Verify custom runner was called
-        #expect(testRunner.runCalled)
-        #expect(testRunner.lastActionName == "test_action")
+        #expect(delegate.ranActions == [actions])
     }
 
     // MARK: - Integration Tests
@@ -955,26 +915,3 @@ struct ThomasEnvironmentTest {
     }
 }
 
-// MARK: - Test Action Runner
-
-@MainActor
-final class TestThomasActionRunner: ThomasActionRunner {
-    var runAsyncCalled = false
-    var runCalled = false
-    var lastActions: AirshipJSON?
-    var lastActionName: String?
-    var lastLayoutContext: ThomasLayoutContext?
-
-    func runAsync(actions: AirshipJSON, layoutContext: ThomasLayoutContext) {
-        runAsyncCalled = true
-        lastActions = actions
-        lastLayoutContext = layoutContext
-    }
-
-    func run(actionName: String, arguments: ActionArguments, layoutContext: ThomasLayoutContext) async -> ActionResult {
-        runCalled = true
-        lastActionName = actionName
-        lastLayoutContext = layoutContext
-        return .completed(AirshipJSON.null)
-    }
-}

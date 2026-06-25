@@ -4,12 +4,13 @@ import Foundation
 import AirshipBasement
 import AirshipCore
 
-enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
+@_spi(AirshipInternal)
+public enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
     case doubleOptIn(DoubleOptIn)
     case commercial(Commercial)
     case transactional(Transactional)
 
-    struct DoubleOptIn: ThomasSerializable, Hashable {
+    public struct DoubleOptIn: ThomasSerializable, Hashable {
         let type: EmailRegistrationType = .doubleOptIn
         var properties: AirshipJSON?
 
@@ -19,7 +20,7 @@ enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
         }
     }
 
-    struct Commercial: ThomasSerializable, Hashable {
+    public struct Commercial: ThomasSerializable, Hashable {
         let type: EmailRegistrationType = .commercial
         var optedIn: Bool
         var properties: AirshipJSON?
@@ -31,7 +32,7 @@ enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
         }
     }
 
-    struct Transactional: ThomasSerializable, Hashable {
+    public struct Transactional: ThomasSerializable, Hashable {
         let type: EmailRegistrationType = .transactional
         var properties: AirshipJSON?
 
@@ -51,7 +52,7 @@ enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
         case type
     }
 
-    func encode(to encoder: any Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         switch self {
         case .doubleOptIn(let properties):
             try properties.encode(to: encoder)
@@ -62,7 +63,7 @@ enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
         }
     }
 
-    init(from decoder: any Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(EmailRegistrationType.self, forKey: .type)
         switch type {

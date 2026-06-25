@@ -47,10 +47,11 @@ struct ThomasSMSLocale: ThomasSerializable {
     }
 }
 
-enum ThomasSMSRegistrationOption: ThomasSerializable, Hashable {
+@_spi(AirshipInternal)
+public enum ThomasSMSRegistrationOption: ThomasSerializable, Hashable {
     case optIn(OptIn)
 
-    struct OptIn: ThomasSerializable, Hashable {
+    public struct OptIn: ThomasSerializable, Hashable {
 
         let type: RegistrationType = .optIn
         var senderID: String
@@ -69,14 +70,14 @@ enum ThomasSMSRegistrationOption: ThomasSerializable, Hashable {
         case type
     }
 
-    func encode(to encoder: any Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         switch self {
         case .optIn(let properties):
             try properties.encode(to: encoder)
         }
     }
 
-    init(from decoder: any Decoder) throws {
+    public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(RegistrationType.self, forKey: .type)
         switch type {

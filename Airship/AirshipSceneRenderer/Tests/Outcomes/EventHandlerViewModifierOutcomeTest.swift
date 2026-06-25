@@ -6,7 +6,7 @@ import Testing
 @_spi(AirshipInternal) import AirshipBasement
 
 @testable import AirshipCore
-@testable import AirshipSceneRenderer
+@testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
 @Suite("Outcomes", .timeLimit(.minutes(1)))
 @MainActor
@@ -98,6 +98,8 @@ private final class EventHandlerOutcomeTestDelegate: ThomasDelegate {
     }
 
     func runActions(_ actions: AirshipJSON, layoutContext: ThomasLayoutContext) {}
+    func registerChannels(_ channels: [ThomasChannelRegistration]) {}
+    func applyAttributes(_ attributes: [ThomasAttribute]) {}
 
 #if !os(tvOS) && !os(watchOS)
     func makeWebView(

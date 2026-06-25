@@ -117,56 +117,8 @@ class ThomasEnvironment: ObservableObject {
             )
         )
 
-        applyAttributes(attributes)
-        registerChannels(channels)
-    }
-
-    private func registerChannels(
-        _ channels: [ThomasFormField.Channel]
-    ) {
-        channels.forEach { channelRegistration in
-            switch(channelRegistration) {
-            case .email(let address, let options):
-                Airship.contact.registerEmail(
-                    address,
-                    options: options.makeContactOptions()
-                )
-            case .sms(let address, let options):
-                Airship.contact.registerSMS(
-                    address,
-                    options: options.makeContactOptions()
-                )
-            }
-            
-        }
-    }
-
-    private func applyAttributes(
-        _ attributes: [ThomasFormField.Attribute]
-    ) {
-        guard !attributes.isEmpty else { return }
-        let channelEditor = Airship.channel.editAttributes()
-        let contactEditor = Airship.contact.editAttributes()
-
-        attributes.forEach { attribute in
-
-            if let name = attribute.attributeName.channel {
-                channelEditor.set(
-                    attributeValue: attribute.attributeValue,
-                    attribute: name
-                )
-            }
-
-            if let name = attribute.attributeName.contact {
-                contactEditor.set(
-                    attributeValue: attribute.attributeValue,
-                    attribute: name
-                )
-            }
-        }
-
-        channelEditor.apply()
-        contactEditor.apply()
+        self.delegate.applyAttributes(attributes)
+        self.delegate.registerChannels(channels)
     }
 
     @MainActor
@@ -496,21 +448,6 @@ extension ThomasFormState {
             return "form"
         case .nps(_):
             return "nps"
-        }
-    }
-}
-
-extension AttributesEditor {
-    fileprivate func set(
-        attributeValue: ThomasAttributeValue,
-        attribute: String
-    ) {
-        switch attributeValue {
-        case .string(let value):
-            self.set(string: value, attribute: attribute)
-
-        case .number(let value):
-            self.set(double: value, attribute: attribute)
         }
     }
 }

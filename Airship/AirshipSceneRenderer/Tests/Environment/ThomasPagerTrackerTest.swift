@@ -2,7 +2,7 @@
 
 import Testing
 @testable import AirshipCore
-@testable import AirshipSceneRenderer
+@testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
 @MainActor
 struct ThomasPagerTrackerTest {

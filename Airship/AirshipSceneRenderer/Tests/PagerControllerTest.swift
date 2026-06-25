@@ -4,7 +4,7 @@ import Testing
 import Foundation
 
 @testable import AirshipCore
-@testable import AirshipSceneRenderer
+@testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
 @Suite(.timeLimit(.minutes(1)))
 struct PagerControllerTest {

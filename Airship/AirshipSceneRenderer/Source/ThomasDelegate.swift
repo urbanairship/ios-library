@@ -5,6 +5,7 @@ public import SwiftUI
 public import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol ThomasDelegate: Sendable {
 
     @MainActor
@@ -22,6 +23,14 @@ public protocol ThomasDelegate: Sendable {
     /// Runs the given actions. The delegate owns whatever runner is used.
     @MainActor
     func runActions(_ actions: AirshipJSON, layoutContext: ThomasLayoutContext)
+
+    /// Registers channels (email/SMS) produced by a form submission.
+    @MainActor
+    func registerChannels(_ channels: [ThomasChannelRegistration])
+
+    /// Applies channel/contact attributes produced by a form submission.
+    @MainActor
+    func applyAttributes(_ attributes: [ThomasAttribute])
 
 #if !os(tvOS) && !os(watchOS)
     /// Builds a view that loads the given URL. The web view, its native bridge, and action running

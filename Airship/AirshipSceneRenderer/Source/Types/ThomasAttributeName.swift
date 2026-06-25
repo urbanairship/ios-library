@@ -2,7 +2,8 @@
 
 import Foundation
 
-struct ThomasAttributeName: ThomasSerializable, Hashable {
-    var channel: String?
-    var contact: String?
+@_spi(AirshipInternal)
+public struct ThomasAttributeName: ThomasSerializable, Hashable {
+    public var channel: String?
+    public var contact: String?
 }

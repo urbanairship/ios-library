@@ -12,8 +12,8 @@ public protocol ThomasLayoutMessageAnalyticsProtocol: AnyObject, Sendable {
     )
 }
 
-/// - Note: For internal use only. :nodoc:
 @MainActor
+@_spi(AirshipInternal)
 public final class ThomasDisplayListener: ThomasDelegate {
     
     /// - Note: For internal use only. :nodoc:
@@ -174,4 +174,61 @@ public final class ThomasDisplayListener: ThomasDelegate {
         )
     }
 #endif
+
+    public func registerChannels(_ channels: [ThomasChannelRegistration]) {
+        channels.forEach { channelRegistration in
+            switch channelRegistration {
+            case .email(let address, let options):
+                Airship.contact.registerEmail(
+                    address,
+                    options: options.makeContactOptions()
+                )
+            case .sms(let address, let options):
+                Airship.contact.registerSMS(
+                    address,
+                    options: options.makeContactOptions()
+                )
+            }
+        }
+    }
+
+    public func applyAttributes(_ attributes: [ThomasAttribute]) {
+        guard !attributes.isEmpty else { return }
+        let channelEditor = Airship.channel.editAttributes()
+        let contactEditor = Airship.contact.editAttributes()
+
+        attributes.forEach { attribute in
+            if let name = attribute.attributeName.channel {
+                channelEditor.set(
+                    attributeValue: attribute.attributeValue,
+                    attribute: name
+                )
+            }
+
+            if let name = attribute.attributeName.contact {
+                contactEditor.set(
+                    attributeValue: attribute.attributeValue,
+                    attribute: name
+                )
+            }
+        }
+
+        channelEditor.apply()
+        contactEditor.apply()
+    }
+}
+
+extension AttributesEditor {
+    fileprivate func set(
+        attributeValue: ThomasAttributeValue,
+        attribute: String
+    ) {
+        switch attributeValue {
+        case .string(let value):
+            self.set(string: value, attribute: attribute)
+
+        case .number(let value):
+            self.set(double: value, attribute: attribute)
+        }
+    }
 }

@@ -3,6 +3,27 @@
 import Foundation
 import AirshipBasement
 
+/// A channel registration produced by a form (email or SMS), to be handled by the host.
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
+public enum ThomasChannelRegistration: Sendable, Equatable, Hashable {
+    case email(String, ThomasEmailRegistrationOption)
+    case sms(String, ThomasSMSRegistrationOption)
+}
+
+/// An attribute update produced by a form, to be handled by the host.
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
+public struct ThomasAttribute: Sendable, Equatable, Hashable {
+    public let attributeName: ThomasAttributeName
+    public let attributeValue: ThomasAttributeValue
+
+    init(attributeName: ThomasAttributeName, attributeValue: ThomasAttributeValue) {
+        self.attributeName = attributeName
+        self.attributeValue = attributeValue
+    }
+}
+
 @MainActor
 final class ThomasFormField: Sendable {
 
@@ -34,15 +55,8 @@ final class ThomasFormField: Sendable {
         }
     }
 
-    enum Channel: Sendable, Equatable, Hashable {
-        case email(String, ThomasEmailRegistrationOption)
-        case sms(String, ThomasSMSRegistrationOption)
-    }
-
-    struct Attribute: Sendable, Equatable, Hashable {
-        let attributeName: ThomasAttributeName
-        let attributeValue: ThomasAttributeValue
-    }
+    typealias Channel = ThomasChannelRegistration
+    typealias Attribute = ThomasAttribute
 
     enum Value: ThomasSerializable {
         case toggle(Bool)
