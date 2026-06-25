@@ -52,6 +52,7 @@ final class LandingPageActionTest: XCTestCase {
                     borderRadius: 10
                 )
             ),
+            source: .pushAction,
             isReportingEnabled: false,
             displayBehavior: .immediate
         )
@@ -101,6 +102,7 @@ final class LandingPageActionTest: XCTestCase {
                     borderRadius: 10
                 )
             ),
+            source: .pushAction,
             isReportingEnabled: false,
             displayBehavior: .immediate
         )
@@ -156,6 +158,7 @@ final class LandingPageActionTest: XCTestCase {
                     borderRadius: 10
                 )
             ),
+            source: .pushAction,
             isReportingEnabled: false,
             displayBehavior: .immediate
         )
@@ -200,6 +203,7 @@ final class LandingPageActionTest: XCTestCase {
                     borderRadius: 20
                 )
             ),
+            source: .pushAction,
             isReportingEnabled: false,
             displayBehavior: .immediate
         )
@@ -278,6 +282,7 @@ final class LandingPageActionTest: XCTestCase {
                     borderRadius: 10
                 )
             ),
+            source: .pushAction,
             isReportingEnabled: true,
             displayBehavior: .immediate
         )
@@ -297,6 +302,7 @@ final class LandingPageActionTest: XCTestCase {
                 XCTAssertEqual(schedule.productID, "landing_page")
                 XCTAssertEqual(schedule.priority, Int.min)
                 XCTAssertEqual(schedule.identifier, "some-send-ID")
+                XCTAssertNil(schedule.sendMetadata)
                 scheduled.fulfill()
             }
         )
@@ -305,6 +311,65 @@ final class LandingPageActionTest: XCTestCase {
             value: "https://some-url",
             situation: .manualInvocation,
             metadata: [ActionArguments.pushPayloadJSONMetadataKey: pushMetadata]
+        )
+
+        let result = try await action.perform(arguments: args)
+        XCTAssertNil(result)
+
+        await self.fulfillment(of: [scheduled])
+    }
+
+    func testSendMetadataPropagatedToSchedule() async throws {
+        let pushMetadata: AirshipJSON = [
+            "_": "some-send-ID",
+            "com.urbanairship.metadata": "encoded-send-metadata"
+        ]
+
+        let scheduled = expectation(description: "scheduled")
+
+        let action = LandingPageAction(
+            borderRadius: 10,
+            scheduleExtender: nil,
+            allowListChecker: { _ in true },
+            scheduler: { schedule in
+                XCTAssertEqual(schedule.sendMetadata, "encoded-send-metadata")
+                XCTAssertEqual(schedule.identifier, "some-send-ID")
+                scheduled.fulfill()
+            }
+        )
+
+        let args = ActionArguments(
+            value: "https://some-url",
+            situation: .manualInvocation,
+            metadata: [ActionArguments.pushPayloadJSONMetadataKey: pushMetadata]
+        )
+
+        let result = try await action.perform(arguments: args)
+        XCTAssertNil(result)
+
+        await self.fulfillment(of: [scheduled])
+    }
+
+    func testMessageSourceIsPushAction() async throws {
+        let scheduled = expectation(description: "scheduled")
+
+        let action = LandingPageAction(
+            borderRadius: 10,
+            scheduleExtender: nil,
+            allowListChecker: { _ in true },
+            scheduler: { schedule in
+                guard case .inAppMessage(let message) = schedule.data else {
+                    XCTFail("Expected inAppMessage schedule data")
+                    return
+                }
+                XCTAssertEqual(message.source, .pushAction)
+                scheduled.fulfill()
+            }
+        )
+
+        let args = ActionArguments(
+            value: "https://some-url",
+            situation: .manualInvocation
         )
 
         let result = try await action.perform(arguments: args)

@@ -75,6 +75,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     /// internal
     let additionalAudienceCheckOverrides: AdditionalAudienceCheckOverrides?
     var metadata: AirshipJSON?
+    var sendMetadata: String?
     var frequencyConstraintIDs: [String]?
     var messageType: String?
     var campaigns: AirshipJSON?
@@ -91,6 +92,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         case created
         case group
         case metadata
+        case sendMetadata = "send_metadata"
         case priority
         case limit
         case start
@@ -171,6 +173,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.editGracePeriodDays = editGracePeriodDays
 
         self.metadata = nil
+        self.sendMetadata = nil
         self.frequencyConstraintIDs = nil
         self.messageType = nil
         self.campaigns = nil
@@ -198,6 +201,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         bypassHoldoutGroups: Bool? = nil,
         editGracePeriodDays: UInt? = nil,
         metadata: AirshipJSON? = nil,
+        sendMetadata: String? = nil,
         campaigns: AirshipJSON? = nil,
         reportingContext: AirshipJSON? = nil,
         productID: String? = nil,
@@ -222,6 +226,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.bypassHoldoutGroups = bypassHoldoutGroups
         self.editGracePeriodDays = editGracePeriodDays
         self.metadata = metadata
+        self.sendMetadata = sendMetadata
         self.campaigns = campaigns
         self.reportingContext = reportingContext
         self.productID = productID
@@ -240,6 +245,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.triggers = try container.decode([AutomationTrigger].self, forKey: .triggers)
         self.group = try container.decodeIfPresent(String.self, forKey: .group)
         self.metadata = try container.decodeIfPresent(AirshipJSON.self, forKey: .metadata)
+        self.sendMetadata = try container.decodeIfPresent(String.self, forKey: .sendMetadata)
         self.priority = try container.decodeIfPresent(Int.self, forKey: .priority)
         self.limit = try container.decodeIfPresent(UInt.self, forKey: .limit)
         self.start = try container.decodeIfPresent(String.self, forKey: .start)?.toDate()
@@ -296,6 +302,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         try container.encodeIfPresent(self.created?.toISOString(), forKey: .created)
         try container.encodeIfPresent(self.group, forKey: .group)
         try container.encodeIfPresent(self.metadata, forKey: .metadata)
+        try container.encodeIfPresent(self.sendMetadata, forKey: .sendMetadata)
         try container.encodeIfPresent(self.priority, forKey: .priority)
         try container.encodeIfPresent(self.limit, forKey: .limit)
         try container.encodeIfPresent(self.start?.toISOString(), forKey: .start)

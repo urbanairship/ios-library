@@ -59,4 +59,38 @@ class ThomasLayoutEventMessageIDTest: XCTestCase {
 
         XCTAssertEqual(try AirshipJSON.wrap(messageID), try AirshipJSON.from(json: expectedJSON))
     }
+
+    func testAirshipWithSendMetadata() async throws {
+        let messageID = ThomasLayoutEventMessageID.airship(
+            identifier: scheduleID,
+            campaigns: self.campaigns,
+            sendMetadata: "encoded-send-metadata"
+        )
+
+        let expectedJSON = """
+           {
+              "message_id": "\(scheduleID)",
+              "campaigns": \(try self.campaigns.toString()),
+              "com.urbanairship.metadata": "encoded-send-metadata"
+           }
+        """
+
+        XCTAssertEqual(try AirshipJSON.wrap(messageID), try AirshipJSON.from(json: expectedJSON))
+    }
+
+    func testAirshipSendMetadataOmittedWhenNil() async throws {
+        let messageID = ThomasLayoutEventMessageID.airship(
+            identifier: scheduleID,
+            campaigns: nil,
+            sendMetadata: nil
+        )
+
+        let expectedJSON = """
+           {
+              "message_id": "\(scheduleID)"
+           }
+        """
+
+        XCTAssertEqual(try AirshipJSON.wrap(messageID), try AirshipJSON.from(json: expectedJSON))
+    }
 }

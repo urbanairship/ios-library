@@ -11,6 +11,7 @@ public final class LandingPageAction: AirshipAction {
 
     private static let productID: String = "landing_page"
     private static let queue: String = "landing_page"
+    private static let sendMetadataKey: String = "com.urbanairship.metadata"
 
     /// Landing page action names.
     public static let defaultNames: [String] = ["landing_page_action", "^p"]
@@ -75,8 +76,9 @@ public final class LandingPageAction: AirshipAction {
 
     @MainActor
     public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
-        let pushMetadata = arguments.metadata[ActionArguments.pushPayloadJSONMetadataKey] as? AirshipJSON
-        let messageID = pushMetadata?.object?["_"]?.string
+        let pushPayload = arguments.metadata[ActionArguments.pushPayloadJSONMetadataKey] as? AirshipJSON
+        let messageID = pushPayload?.object?["_"]?.string
+        let sendMetadata = pushPayload?.object?[LandingPageAction.sendMetadataKey]?.string
         let args: LandingPageArgs = try arguments.value.decode()
 
         guard self.allowListChecker(args.url) else {
@@ -95,6 +97,7 @@ public final class LandingPageAction: AirshipAction {
                     borderRadius: self.borderRadius
                 )
             ),
+            source: .pushAction,
             isReportingEnabled: messageID != nil,
             displayBehavior: .immediate
         )
@@ -108,6 +111,8 @@ public final class LandingPageAction: AirshipAction {
             productID: Self.productID,
             queue: Self.queue
         )
+
+        schedule.sendMetadata = sendMetadata
 
         self.scheduleExtender?(arguments, &schedule)
         try await self.scheduler(schedule)

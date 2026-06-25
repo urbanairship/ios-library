@@ -15,6 +15,7 @@ final class SceneAction: AirshipAction {
 
     private static let productID: String = "scene_page"
     private static let queue: String = "landing_page"
+    private static let sendMetadataKey: String = "com.urbanairship.metadata"
 
     /// Scene action names.
     public static let defaultNames: [String] = ["scene_action", "^sc"]
@@ -63,8 +64,9 @@ final class SceneAction: AirshipAction {
 
     @MainActor
     public func perform(arguments: ActionArguments) async throws -> AirshipJSON? {
-        let pushMetadata = arguments.metadata[ActionArguments.pushPayloadJSONMetadataKey] as? AirshipJSON
-        let messageID = pushMetadata?.object?["_"]?.string
+        let pushPayload = arguments.metadata[ActionArguments.pushPayloadJSONMetadataKey] as? AirshipJSON
+        let messageID = pushPayload?.object?["_"]?.string
+        let sendMetadata = pushPayload?.object?[SceneAction.sendMetadataKey]?.string
 
         // Decode the action arguments object
         let args: ActionArgs = try arguments.value.decode()
@@ -80,11 +82,12 @@ final class SceneAction: AirshipAction {
             displayContent: .airshipLayoutIntermediate(
                 AirshipLayoutIntermediate(layoutJSON: wrappedLayoutJSON)
             ),
+            source: .pushAction,
             isReportingEnabled: messageID != nil,
             displayBehavior: .immediate
         )
 
-        let schedule = AutomationSchedule(
+        var schedule = AutomationSchedule(
             identifier: messageID ?? UUID().uuidString,
             data: .inAppMessage(message),
             triggers: [AutomationTrigger.activeSession(count: 1)],
@@ -93,6 +96,8 @@ final class SceneAction: AirshipAction {
             productID: Self.productID,
             queue: Self.queue
         )
+
+        schedule.sendMetadata = sendMetadata
 
         try await self.scheduler(schedule)
         return nil

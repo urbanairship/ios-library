@@ -73,7 +73,8 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
         self.messageID = Self.makeMessageID(
             message: message,
             scheduleID: preparedScheduleInfo.scheduleID,
-            campaigns: preparedScheduleInfo.campaigns
+            campaigns: preparedScheduleInfo.campaigns,
+            sendMetadata: preparedScheduleInfo.sendMetadata
         )
         self.source = Self.makeEventSource(message: message)
         self.renderedLocale = message.renderedLocale
@@ -205,12 +206,14 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
     private static func makeMessageID(
         message: InAppMessage,
         scheduleID: String,
-        campaigns: AirshipJSON?
+        campaigns: AirshipJSON?,
+        sendMetadata: String?
     ) -> ThomasLayoutEventMessageID {
         switch (message.source ?? .remoteData) {
         case .appDefined: return .appDefined(identifier: scheduleID)
-        case .remoteData: return .airship(identifier: scheduleID, campaigns: campaigns)
+        case .remoteData: return .airship(identifier: scheduleID, campaigns: campaigns, sendMetadata: sendMetadata)
         case .legacyPush: return .legacy(identifier: scheduleID)
+        case .pushAction: return .airship(identifier: scheduleID, campaigns: campaigns, sendMetadata: sendMetadata)
         }
     }
 
@@ -221,6 +224,7 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
         case .appDefined: return .appDefined
         case .remoteData: return .airship
         case .legacyPush: return .airship
+        case .pushAction: return .airship
         }
     }
 }
