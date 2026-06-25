@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import SwiftUI
 import Testing
 @_spi(AirshipInternal) import AirshipBasement
 
@@ -95,6 +96,19 @@ private final class EventHandlerOutcomeTestDelegate: ThomasDelegate {
     func onDismissed(cancel: Bool) {
         dismissals.append(cancel)
     }
+
+    func runActions(_ actions: AirshipJSON, layoutContext: ThomasLayoutContext) {}
+
+#if !os(tvOS) && !os(watchOS)
+    func makeWebView(
+        url: String,
+        layoutContext: ThomasLayoutContext,
+        isLoading: Binding<Bool>,
+        onClose: @escaping @MainActor () -> Void
+    ) -> any View {
+        EmptyView()
+    }
+#endif
 }
 
 @MainActor

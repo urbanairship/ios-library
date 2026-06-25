@@ -1,5 +1,7 @@
 import Foundation
-import AirshipBasement
+public import SwiftUI
+public import AirshipBasement
+public import AirshipCore
 
 /// - Note: For internal use only. :nodoc:
 public protocol ThomasLayoutMessageAnalyticsProtocol: AnyObject, Sendable {
@@ -22,14 +24,32 @@ public final class ThomasDisplayListener: ThomasDelegate {
     
     private let analytics: any ThomasLayoutMessageAnalyticsProtocol
     private var onDismiss: (@MainActor @Sendable (DisplayResult) -> Void)?
+    private let actionRunner: (any ThomasActionRunner)?
+#if !os(tvOS) && !os(watchOS)
+    private let nativeBridgeExtension: (any NativeBridgeExtensionDelegate)?
 
     public init(
         analytics: any ThomasLayoutMessageAnalyticsProtocol,
+        actionRunner: (any ThomasActionRunner)? = nil,
+        nativeBridgeExtension: (any NativeBridgeExtensionDelegate)? = nil,
         onDismiss: @escaping @MainActor @Sendable (DisplayResult) -> Void
     ) {
         self.analytics = analytics
+        self.actionRunner = actionRunner
+        self.nativeBridgeExtension = nativeBridgeExtension
         self.onDismiss = onDismiss
     }
+#else
+    public init(
+        analytics: any ThomasLayoutMessageAnalyticsProtocol,
+        actionRunner: (any ThomasActionRunner)? = nil,
+        onDismiss: @escaping @MainActor @Sendable (DisplayResult) -> Void
+    ) {
+        self.analytics = analytics
+        self.actionRunner = actionRunner
+        self.onDismiss = onDismiss
+    }
+#endif
 
     public func onVisibilityChanged(isVisible: Bool, isForegrounded: Bool) {
         if isVisible, isForegrounded {
@@ -122,4 +142,36 @@ public final class ThomasDisplayListener: ThomasDelegate {
         self.onDismiss?(cancel ? .cancel : .finished)
         self.onDismiss = nil
     }
+
+    public func runActions(_ actions: AirshipJSON, layoutContext: ThomasLayoutContext) {
+        guard let actionRunner else {
+            Task {
+                await ActionRunner.run(
+                    actionsPayload: actions,
+                    situation: .automation,
+                    metadata: [:]
+                )
+            }
+            return
+        }
+        actionRunner.runAsync(actions: actions, layoutContext: layoutContext)
+    }
+
+#if !os(tvOS) && !os(watchOS)
+    public func makeWebView(
+        url: String,
+        layoutContext: ThomasLayoutContext,
+        isLoading: Binding<Bool>,
+        onClose: @escaping @MainActor () -> Void
+    ) -> any View {
+        AirshipThomasWebView(
+            url: url,
+            layoutContext: layoutContext,
+            actionRunner: actionRunner,
+            nativeBridgeExtension: nativeBridgeExtension,
+            isLoading: isLoading,
+            onClose: onClose
+        )
+    }
+#endif
 }

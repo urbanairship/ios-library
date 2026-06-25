@@ -2,6 +2,7 @@
 
 import Combine
 import Foundation
+import SwiftUI
 @_spi(AirshipInternal) import AirshipBasement
 import AirshipCore
 
@@ -395,36 +396,29 @@ class ThomasEnvironment: ObservableObject {
         _ actionsPayload: ThomasActionsPayload?,
         layoutState: LayoutState?
     ) {
-        guard let actionsPayload = actionsPayload?.value else { return }
-        guard let runner = extensions?.actionRunner else {
-            Task {
-                await ActionRunner.run(actionsPayload: actionsPayload, situation: .automation, metadata: [:])
-            }
-            return
-        }
-
-        runner.runAsync(
-            actions: actionsPayload,
+        guard let actions = actionsPayload?.value else { return }
+        self.delegate.runActions(
+            actions,
             layoutContext: makeLayoutContext(layoutState: layoutState)
         )
     }
 
+#if !os(tvOS) && !os(watchOS)
     @MainActor
-    func runAction(
-        _ actionName: String,
-        arguments: ActionArguments,
-        layoutState: LayoutState?
-    ) async -> ActionResult {
-        guard let runner = extensions?.actionRunner else {
-            return await ActionRunner.run(actionName: actionName, arguments: arguments)
-        }
-
-        return await runner.run(
-            actionName: actionName,
-            arguments: arguments,
-            layoutContext: makeLayoutContext(layoutState: layoutState)
+    func makeWebView(
+        url: String,
+        layoutState: LayoutState?,
+        isLoading: Binding<Bool>,
+        onClose: @escaping @MainActor () -> Void
+    ) -> any View {
+        self.delegate.makeWebView(
+            url: url,
+            layoutContext: makeLayoutContext(layoutState: layoutState),
+            isLoading: isLoading,
+            onClose: onClose
         )
     }
+#endif
 
     private func makeLayoutContext(layoutState: LayoutState?) -> ThomasLayoutContext {
         var context = ThomasLayoutContext()

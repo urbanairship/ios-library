@@ -141,33 +141,13 @@ public final class Thomas {
 @_spi(AirshipInternal)
 public struct ThomasExtensions {
 
-    #if !os(tvOS) && !os(watchOS)
-    var nativeBridgeExtension: (any NativeBridgeExtensionDelegate)?
-    #endif
-
     var imageProvider: (any AirshipImageProvider)?
 
-    var actionRunner: (any ThomasActionRunner)?
-
-    #if os(tvOS) || os(watchOS)
     public init(
-        imageProvider: (any AirshipImageProvider)? = nil,
-        actionRunner: (any ThomasActionRunner)? = nil
+        imageProvider: (any AirshipImageProvider)? = nil
     ) {
         self.imageProvider = imageProvider
     }
-    #else
-
-    public init(
-        nativeBridgeExtension: (any NativeBridgeExtensionDelegate)? = nil,
-        imageProvider: (any AirshipImageProvider)? = nil,
-        actionRunner: (any ThomasActionRunner)? = nil
-    ) {
-        self.nativeBridgeExtension = nativeBridgeExtension
-        self.imageProvider = imageProvider
-        self.actionRunner = actionRunner
-    }
-    #endif
 }
 
 /// Thomas action runner

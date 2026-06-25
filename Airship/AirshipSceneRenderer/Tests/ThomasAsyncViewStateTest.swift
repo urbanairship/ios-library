@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import SwiftUI
 import Testing
 
 @testable @_spi(AirshipInternal) import AirshipCore
@@ -71,6 +72,17 @@ private final class StubThomasDelegate: ThomasDelegate {
     func onVisibilityChanged(isVisible: Bool, isForegrounded: Bool) {}
     func onReportingEvent(_ event: ThomasReportingEvent) {}
     func onDismissed(cancel: Bool) {}
+    func runActions(_ actions: AirshipJSON, layoutContext: ThomasLayoutContext) {}
+#if !os(tvOS) && !os(watchOS)
+    func makeWebView(
+        url: String,
+        layoutContext: ThomasLayoutContext,
+        isLoading: Binding<Bool>,
+        onClose: @escaping @MainActor () -> Void
+    ) -> any View {
+        EmptyView()
+    }
+#endif
 }
 
 // MARK: - Tests

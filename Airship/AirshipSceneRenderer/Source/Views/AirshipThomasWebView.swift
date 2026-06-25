@@ -7,67 +7,50 @@ import SwiftUI
 import WebKit
 import AirshipCore
 
-/// Airship Webview
-struct AirshipWebView: View {
-    
-    let info: ThomasViewInfo.WebView
-    
-    let constraints: ViewConstraints
-    
-    @State var isWebViewLoading: Bool = false
-    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @Environment(\.layoutState) var layoutState
-    
+/// Default Airship web view: a `NativeBridge`-backed `WKWebView`. Built by the host delegate so
+/// the renderer never needs to know about WebKit or the native bridge.
+struct AirshipThomasWebView: View {
+
+    let url: String
+    let layoutContext: ThomasLayoutContext
+    let actionRunner: (any ThomasActionRunner)?
+    let nativeBridgeExtension: (any NativeBridgeExtensionDelegate)?
+    @Binding var isLoading: Bool
+    let onClose: @MainActor () -> Void
+
     var body: some View {
-        
-        ZStack {
-            WebViewView(
-                url: self.info.properties.url,
-                nativeBridgeExtension: self.thomasEnvironment.extensions?
-                    .nativeBridgeExtension,
-                isWebViewLoading: self.$isWebViewLoading,
-                onRunActions: { name, value, _ in
-                    return await thomasEnvironment.runAction(name, arguments: value, layoutState: layoutState)
-                },
-                onDismiss: {
-                    thomasEnvironment.dismiss(layoutState: layoutState)
-                }
-            )
-            .opacity(self.isWebViewLoading ? 0.0 : 1.0)
-            
-            if self.isWebViewLoading {
-                AirshipProgressView()
-            }
-        }
-        .constraints(constraints)
-        .thomasCommon(self.info)
+        WebViewRepresentable(
+            url: url,
+            layoutContext: layoutContext,
+            actionRunner: actionRunner,
+            nativeBridgeExtension: nativeBridgeExtension,
+            isLoading: $isLoading,
+            onClose: onClose
+        )
     }
 }
 
-/// Webview
-struct WebViewView: AirshipNativeViewRepresentable {
+private struct WebViewRepresentable: AirshipNativeViewRepresentable {
 
 #if os(macOS)
     typealias NSViewType = WKWebView
 #else
     typealias UIViewType = WKWebView
 #endif
-    
+
     let url: String
+    let layoutContext: ThomasLayoutContext
+    let actionRunner: (any ThomasActionRunner)?
     let nativeBridgeExtension: (any NativeBridgeExtensionDelegate)?
-    @Binding var isWebViewLoading: Bool
-    let onRunActions: @MainActor (String, ActionArguments, WKWebView) async -> ActionResult
-    let onDismiss: () -> Void
-    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
+    @Binding var isLoading: Bool
+    let onClose: @MainActor () -> Void
 
 #if os(macOS)
     func makeNSView(context: Context) -> WKWebView {
         return makeWebView(context: context)
     }
 
-    func updateNSView(_ nsView: WKWebView, context: Context) {
-        updateView(context: context)
-    }
+    func updateNSView(_ nsView: WKWebView, context: Context) {}
 
     static func dismantleNSView(_ nsView: WKWebView, coordinator: Coordinator) {
         coordinator.teardown()
@@ -77,22 +60,14 @@ struct WebViewView: AirshipNativeViewRepresentable {
         return makeWebView(context: context)
     }
 
-    func updateUIView(_ uiView: WKWebView, context: Context) {
-        updateView(context: context)
-    }
+    func updateUIView(_ uiView: WKWebView, context: Context) {}
 
     static func dismantleUIView(_ uiView: WKWebView, coordinator: Coordinator) {
         coordinator.teardown()
     }
 #endif
 
-    private func updateView(context: Context) {
-        if thomasEnvironment.isDismissed {
-            context.coordinator.teardown()
-        }
-    }
-
-    func makeWebView(context: Context) -> WKWebView {
+    private func makeWebView(context: Context) -> WKWebView {
         let webView = WKWebView()
         webView.navigationDelegate = context.coordinator.nativeBridge
         context.coordinator.configure(webView: webView)
@@ -110,40 +85,48 @@ struct WebViewView: AirshipNativeViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(self, actionRunner: BlockNativeBridgeActionRunner(onRun: onRunActions))
+        let bridgeActionRunner = BlockNativeBridgeActionRunner { [actionRunner, layoutContext] name, arguments, _ in
+            if let actionRunner {
+                return await actionRunner.run(
+                    actionName: name,
+                    arguments: arguments,
+                    layoutContext: layoutContext
+                )
+            }
+            return await ActionRunner.run(actionName: name, arguments: arguments)
+        }
+        return Coordinator(self, actionRunner: bridgeActionRunner)
     }
 
-    func updateLoading(_ isWebViewLoading: Bool) {
+    func updateLoading(_ loading: Bool) {
         DispatchQueue.main.async {
-            self.isWebViewLoading = isWebViewLoading
+            self.isLoading = loading
         }
     }
-
 
     class Coordinator: NSObject, AirshipWKNavigationDelegate,
                        JavaScriptCommandDelegate, NativeBridgeDelegate
     {
-        private let parent: WebViewView
+        private let parent: WebViewRepresentable
         private let challengeResolver: ChallengeResolver
         private weak var webView: WKWebView?
         let nativeBridge: NativeBridge
 
-        init(_ parent: WebViewView, actionRunner: any NativeBridgeActionRunner, resolver: ChallengeResolver = .shared) {
+        init(_ parent: WebViewRepresentable, actionRunner: any NativeBridgeActionRunner, resolver: ChallengeResolver = .shared) {
             self.parent = parent
             self.nativeBridge = NativeBridge(actionRunner: actionRunner)
             self.challengeResolver = resolver
 
             super.init()
-            AirshipLogger.trace("WebViewView Coordinator init")
-            self.nativeBridge.nativeBridgeExtensionDelegate =
-            self.parent.nativeBridgeExtension
+            AirshipLogger.trace("AirshipThomasWebView Coordinator init")
+            self.nativeBridge.nativeBridgeExtensionDelegate = parent.nativeBridgeExtension
             self.nativeBridge.forwardNavigationDelegate = self
             self.nativeBridge.javaScriptCommandDelegate = self
             self.nativeBridge.nativeBridgeDelegate = self
         }
 
         deinit {
-            AirshipLogger.trace("WebViewView Coordinator deinit")
+            AirshipLogger.trace("AirshipThomasWebView Coordinator deinit")
         }
 
         func configure(webView: WKWebView) {
@@ -185,16 +168,15 @@ struct WebViewView: AirshipNativeViewRepresentable {
             withError error: any Error
         ) {
             parent.updateLoading(true)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
-                [weak webView] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { [weak webView] in
                 webView?.reload()
             }
         }
 
         func webView(
             _ webView: WKWebView,
-            respondTo challenge: URLAuthenticationChallenge)
-        async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+            respondTo challenge: URLAuthenticationChallenge
+        ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
             return await challengeResolver.resolve(challenge)
         }
 
@@ -204,7 +186,7 @@ struct WebViewView: AirshipNativeViewRepresentable {
 
         nonisolated func close() {
             DispatchQueue.main.async {
-                self.parent.onDismiss()
+                self.parent.onClose()
             }
         }
     }

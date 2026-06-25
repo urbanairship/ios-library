@@ -43,7 +43,7 @@ struct ViewFactory {
             Pager(info: info, constraints: constraints)
         #if !os(tvOS) && !os(watchOS)
         case .webView(let info):
-            AirshipWebView(info: info, constraints: constraints)
+            ThomasWebViewWrapper(info: info, constraints: constraints)
         #endif
         case .imageButton(let info):
             ImageButton(info: info, constraints: constraints)
