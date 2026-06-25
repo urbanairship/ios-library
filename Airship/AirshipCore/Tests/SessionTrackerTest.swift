@@ -5,6 +5,7 @@ import XCTest
 import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
+@MainActor
 final class SessionTrackerTest: XCTestCase {
 
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
@@ -15,8 +16,6 @@ final class SessionTrackerTest: XCTestCase {
     var tracker: SessionTracker!
 
     var sessionCount = AirshipAtomicValue<Int>(1)
-
-    @MainActor
     override func setUp() async throws {
         self.tracker = SessionTracker(
             date: date,
@@ -64,7 +63,7 @@ final class SessionTrackerTest: XCTestCase {
     }
 
     func testLaunchFromPushEmitsAppInit() async throws {
-        await self.tracker.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
+        self.tracker.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
 
         let expectedSessionState = SessionState(
             sessionID: "1",

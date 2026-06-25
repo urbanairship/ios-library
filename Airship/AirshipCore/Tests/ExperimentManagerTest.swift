@@ -6,6 +6,7 @@ import XCTest
 import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
+@MainActor
 final class ExperimentManagerTest: XCTestCase {
 
     private var deviceInfo: TestAudienceDeviceInfoProvider = TestAudienceDeviceInfoProvider()
@@ -15,7 +16,7 @@ final class ExperimentManagerTest: XCTestCase {
 
     private let testDate: UATestDate = UATestDate(offset: 0, dateOverride: Date())
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         self.deviceInfo.channelID = "channel-id"
         self.deviceInfo.stableContactInfo = StableContactInfo(contactID: "some-contact-id")
 
@@ -308,7 +309,7 @@ final class ExperimentManagerTest: XCTestCase {
 }
 
 private extension MessageInfo {
-    static let empty = MessageInfo(messageType: "", campaigns: nil)
+    static nonisolated(unsafe) let empty = MessageInfo(messageType: "", campaigns: nil)
 }
 
 fileprivate extension Experiment {

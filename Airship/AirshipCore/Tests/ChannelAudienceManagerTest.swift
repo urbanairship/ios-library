@@ -6,6 +6,7 @@ import XCTest
 @testable import AirshipCore
 import Combine
 
+@MainActor
 class ChannelAudienceManagerTest: XCTestCase {
 
     private let workManager = TestWorkManager()
@@ -19,8 +20,6 @@ class ChannelAudienceManagerTest: XCTestCase {
     private let audienceOverridesProvider: DefaultAudienceOverridesProvider = DefaultAudienceOverridesProvider()
     private var privacyManager: TestPrivacyManager!
     private var audienceManager: ChannelAudienceManager!
-
-    @MainActor
     override func setUp() async throws {
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,

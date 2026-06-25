@@ -5,14 +5,14 @@ import XCTest
 @testable
 import AirshipCore
 
+@MainActor
 final class AddCustomEventActionTest: AirshipBaseTest {
 
     private let analytics = TestAnalytics()
     private var airship: TestAirshipInstance!
-    private let action = AddCustomEventAction()
-
-    @MainActor
-    override func setUpWithError() throws {
+    private var action: AddCustomEventAction!
+    override func setUp() async throws {
+        self.action = AddCustomEventAction()
         airship = TestAirshipInstance()
         self.airship.components = [analytics]
         self.airship.makeShared()

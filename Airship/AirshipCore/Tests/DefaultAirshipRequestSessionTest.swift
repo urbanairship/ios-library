@@ -5,6 +5,7 @@ import XCTest
 @_spi(AirshipInternal) import AirshipBasement
 @testable import AirshipCore
 
+@MainActor
 final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
 
     private let testURLSession = TestURLRequestSession()
@@ -13,14 +14,15 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
 
     private var date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
+        let nonce = self.nonce
         self.airshipSession = DefaultAirshipRequestSession(
             appKey: "testAppKey",
             appSecret: "testAppSecret",
             session: self.testURLSession,
             date: date
         ) {
-            return self.nonce
+            return nonce
         }
     }
 

@@ -5,6 +5,7 @@ import XCTest
 @testable import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
+@MainActor
 final class LegacyInAppMessagingTest: XCTestCase {
     
     private let analytics = TestLegacyAnalytics()
@@ -14,8 +15,6 @@ final class LegacyInAppMessagingTest: XCTestCase {
     private var airshipTestInstance: TestAirshipInstance!
 
     private var subject: DefaultLegacyInAppMessaging!
-
-    @MainActor
     override func setUp() async throws {
         airshipTestInstance = TestAirshipInstance()
         let push = TestPush()
@@ -67,14 +66,12 @@ final class LegacyInAppMessagingTest: XCTestCase {
     }
     
     func testAsapFlagStorage() async {
-        var value = await subject.displayASAPEnabled
+        var value = subject.displayASAPEnabled
         XCTAssertTrue(value)
         
-        await MainActor.run { [messaging = self.subject!] in
-            messaging.displayASAPEnabled = false
-        }
+        subject.displayASAPEnabled = false
         
-        value = await subject.displayASAPEnabled
+        value = subject.displayASAPEnabled
         XCTAssertFalse(value)
     }
     
@@ -353,9 +350,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
             ]
         ]
         
-        await MainActor.run { [messaging = self.subject!] in
-            messaging.displayASAPEnabled = false
-        }
+        subject.displayASAPEnabled = false
         
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
@@ -385,13 +380,11 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         let overridenId = "converter override id"
         
-        await MainActor.run { [messaging = self.subject!] in
-            messaging.customMessageConverter = { input in
-                return AutomationSchedule(
-                    identifier: overridenId,
-                    triggers: [],
-                    data: .inAppMessage(InAppMessage(name: "overriden", displayContent: .banner(InAppMessageDisplayContent.Banner()))))
-            }
+        subject.customMessageConverter = { input in
+            return AutomationSchedule(
+                identifier: overridenId,
+                triggers: [],
+                data: .inAppMessage(InAppMessage(name: "overriden", displayContent: .banner(InAppMessageDisplayContent.Banner()))))
         }
         
         let result = await subject.receivedRemoteNotification(
@@ -414,10 +407,8 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         let extendedMessageName = "extended message name"
         
-        await MainActor.run { [messaging = self.subject!] in
-            messaging.messageExtender = { input in
-                input.name = extendedMessageName
-            }
+        subject.messageExtender = { input in
+            input.name = extendedMessageName
         }
         
         let result = await subject.receivedRemoteNotification(
@@ -447,10 +438,8 @@ final class LegacyInAppMessagingTest: XCTestCase {
         ]
 
         
-        await MainActor.run { [messaging = self.subject!] in
-            messaging.scheduleExtender = { input in
-                input.limit = 10
-            }
+        subject.scheduleExtender = { input in
+            input.limit = 10
         }
         
         let result = await subject.receivedRemoteNotification(

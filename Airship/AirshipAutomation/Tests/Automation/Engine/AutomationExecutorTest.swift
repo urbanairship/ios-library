@@ -7,6 +7,7 @@ import AirshipAutomation
 import AirshipCore
 import AirshipScenes
 
+@MainActor
 final class AutomationExecutorTest: XCTestCase {
 
     private let actionExecutor: TestExecutorDelegate<AirshipJSON> = TestExecutorDelegate()
@@ -17,8 +18,6 @@ final class AutomationExecutorTest: XCTestCase {
     private var executor: AutomationExecutor!
 
     private var preparedMessageData: PreparedInAppMessageData!
-
-    @MainActor
     override func setUp() async throws {
         self.preparedMessageData = PreparedInAppMessageData(
             message: InAppMessage(
@@ -53,7 +52,7 @@ final class AutomationExecutorTest: XCTestCase {
                 return readyResult
             }
 
-            let result = await self.executor.isReady(
+            let result = self.executor.isReady(
                 preparedSchedule: messageSchedule
             )
 
@@ -78,7 +77,7 @@ final class AutomationExecutorTest: XCTestCase {
                 return readyResult
             }
 
-            let result = await self.executor.isReady(
+            let result = self.executor.isReady(
                 preparedSchedule: actionSchedule
             )
 
@@ -104,7 +103,7 @@ final class AutomationExecutorTest: XCTestCase {
             return false
         }
 
-        let result = await self.executor.isReady(
+        let result = self.executor.isReady(
             preparedSchedule: schedule
         )
 
@@ -129,7 +128,7 @@ final class AutomationExecutorTest: XCTestCase {
             return false
         }
 
-        let result = await self.executor.isReady(
+        let result = self.executor.isReady(
             preparedSchedule: schedule
         )
 
@@ -154,7 +153,7 @@ final class AutomationExecutorTest: XCTestCase {
             return .ready
         }
 
-        let result = await self.executor.isReady(
+        let result = self.executor.isReady(
             preparedSchedule: schedule
         )
 

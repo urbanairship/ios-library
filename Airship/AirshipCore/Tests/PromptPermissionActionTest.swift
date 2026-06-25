@@ -4,14 +4,16 @@ import XCTest
 
 @testable import AirshipCore
 
+@MainActor
 class PromptPermissionActionTest: XCTestCase {
 
     let testPrompter = TestPermissionPrompter()
     var action: PromptPermissionAction!
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
+        let testPrompter = self.testPrompter
         self.action = PromptPermissionAction {
-            return self.testPrompter
+            return testPrompter
         }
     }
 

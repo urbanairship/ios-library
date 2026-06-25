@@ -3,9 +3,8 @@
 import XCTest
 @testable import AirshipCore
 
+@MainActor
 final class ChallengeResolverTest: XCTestCase {
-    
-    @MainActor
     override func tearDown() async throws {
         ChallengeResolver.shared.resolver = nil
     }
@@ -110,7 +109,7 @@ final class ChallengeResolverTest: XCTestCase {
     }
 }
 
-private class ChallengeSender: NSObject, URLAuthenticationChallengeSender {
+private final class ChallengeSender: NSObject, URLAuthenticationChallengeSender, @unchecked Sendable {
     func use(_ credential: URLCredential, for challenge: URLAuthenticationChallenge) { }
     
     func continueWithoutCredential(for challenge: URLAuthenticationChallenge) { }

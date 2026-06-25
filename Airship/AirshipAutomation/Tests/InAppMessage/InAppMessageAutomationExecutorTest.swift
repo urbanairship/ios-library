@@ -5,6 +5,7 @@ import XCTest
 import AirshipCore
 import AirshipScenes
 
+@MainActor
 final class InAppMessageAutomationExecutorTest: XCTestCase {
 
     private let sceneManager: TestSceneManager = TestSceneManager()
@@ -29,8 +30,6 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
     private var displayCoordinator: TestDisplayCoordinator!
     private var preparedData: PreparedInAppMessageData!
     private var executor: InAppMessageAutomationExecutor!
-
-    @MainActor
     override func setUp() async throws {
         self.displayAdapter = TestDisplayAdapter()
         self.conditionsChangedNotifier = ScheduleConditionsChangedNotifier()
@@ -54,8 +53,9 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
             scheduleConditionsChangedNotifier: conditionsChangedNotifier
         )
 
+        let analytics = self.analytics
         self.analyticsFactory.setOnMake { _, _ in
-            return self.analytics
+            analytics
         }
     }
 
@@ -281,6 +281,9 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
 
 fileprivate final class TestDisplayDelegate: InAppMessageDisplayDelegate, @unchecked Sendable {
     @MainActor
+    init() {}
+
+    @MainActor
     var onIsReady: ((InAppMessage, String) -> Bool)?
 
     @MainActor
@@ -320,6 +323,9 @@ fileprivate final class TestScene: WindowSceneHolder {
 }
 
 fileprivate final class TestSceneManager: InAppMessageSceneManagerProtocol, @unchecked Sendable {
+    @MainActor
+    init() {}
+
     var delegate: InAppMessageSceneDelegate?
     
     @MainActor
@@ -332,12 +338,15 @@ fileprivate final class TestSceneManager: InAppMessageSceneManagerProtocol, @unc
 
 
 final class TestAnalyticsFactory: InAppMessageAnalyticsFactoryProtocol, @unchecked Sendable {
+    @MainActor
+    init() {}
+
     func makeAnalytics(preparedScheduleInfo: PreparedScheduleInfo, message: InAppMessage) async -> any InAppMessageAnalyticsProtocol {
         return await self.onMake!(preparedScheduleInfo, message)
     }
 
     @MainActor
-    var onMake: ((PreparedScheduleInfo, InAppMessage) async -> InAppMessageAnalyticsProtocol)?
+    var onMake: (@Sendable (PreparedScheduleInfo, InAppMessage) async -> any InAppMessageAnalyticsProtocol)?
 
 
     @MainActor

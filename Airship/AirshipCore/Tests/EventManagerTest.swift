@@ -5,6 +5,7 @@ import XCTest
 @testable
 import AirshipCore
 
+@MainActor
 final class EventManagerTest: XCTestCase {
 
     private let eventAPIClient = TestEventAPIClient()
@@ -19,8 +20,6 @@ final class EventManagerTest: XCTestCase {
         appKey: UUID().uuidString
     )
     private var eventManager: EventManager!
-
-    @MainActor
     override func setUp() async throws {
         self.eventManager = EventManager(
             dataStore: dataStore,
@@ -87,7 +86,7 @@ final class EventManagerTest: XCTestCase {
 
         let headers = ["some": "header"]
 
-        await self.eventManager.addHeaderProvider {
+        self.eventManager.addHeaderProvider {
             return headers
         }
 
@@ -171,11 +170,11 @@ final class EventManagerTest: XCTestCase {
         self.eventManager.uploadsEnabled = true
         var requestCalled = false
 
-        await self.eventManager.addHeaderProvider {
+        self.eventManager.addHeaderProvider {
             ["foo": "1", "baz": "1"]
         }
 
-        await self.eventManager.addHeaderProvider {
+        self.eventManager.addHeaderProvider {
             ["foo": "2", "bar": "2"]
         }
 

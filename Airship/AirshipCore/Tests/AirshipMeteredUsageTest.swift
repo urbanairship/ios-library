@@ -4,6 +4,7 @@ import XCTest
 
 @testable import AirshipCore
 
+@MainActor
 final class AirshipMeteredUsageTest: XCTestCase {
     
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
@@ -16,8 +17,6 @@ final class AirshipMeteredUsageTest: XCTestCase {
     private let workManager = TestWorkManager()
     private var config: RuntimeConfig = RuntimeConfig.testConfig()
     private var target: DefaultAirshipMeteredUsage!
-
-    @MainActor
     override func setUp() async throws {
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
@@ -49,7 +48,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
 
     func testUpdateConfig() async {
         var newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: nil, initialDelayMilliseconds: nil, intervalMilliseconds: nil)
-        await config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
+        config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
         XCTAssertEqual(0, workManager.workRequests.count)
         
         var limit = workManager.rateLimits["MeteredUsage.rateLimit"]
@@ -59,7 +58,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         XCTAssertEqual(1, limit?.rate)
         
         newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: nil, initialDelayMilliseconds: nil, intervalMilliseconds: 2000)
-        await config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
+        config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
 
         XCTAssertEqual(0, workManager.workRequests.count)
         limit = workManager.rateLimits["MeteredUsage.rateLimit"]
@@ -69,7 +68,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         XCTAssertEqual(1, limit?.rate)
         
         newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: false, initialDelayMilliseconds: 1000, intervalMilliseconds: 2000)
-        await config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
+        config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
 
         XCTAssertEqual(0, workManager.workRequests.count)
         limit = workManager.rateLimits["MeteredUsage.rateLimit"]
@@ -79,7 +78,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         XCTAssertEqual(1, limit?.rate)
         
         newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: 1000, intervalMilliseconds: 2000)
-        await config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
+        config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
 
         var workRequest = workManager.workRequests.last
         XCTAssertNotNil(workRequest)
@@ -94,7 +93,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         workManager.workRequests.removeAll()
         
         newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: false, initialDelayMilliseconds: 1000, intervalMilliseconds: 2000)
-        await config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
+        config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
 
         XCTAssertEqual(0, workManager.workRequests.count)
         limit = workManager.rateLimits["MeteredUsage.rateLimit"]
@@ -104,7 +103,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         XCTAssertEqual(1, limit?.rate)
         
         newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: nil, intervalMilliseconds: 2000)
-        await config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
+        config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
 
         workRequest = workManager.workRequests.last
         XCTAssertNotNil(workRequest)
@@ -129,7 +128,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         privacyManager.enabledFeatures = [.analytics]
 
         let newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: 1, intervalMilliseconds: nil)
-        await config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
+        config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
 
         workManager.workRequests.removeAll()
         
@@ -162,7 +161,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
 
     func testAddEventConfigDisabled() async throws {
         let newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: false, initialDelayMilliseconds: 1, intervalMilliseconds: nil)
-        await config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
+        config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
 
         workManager.workRequests.removeAll()
 
@@ -185,7 +184,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
 
     func testEventStoreStripsDataIfAnalyticsDisabled() async throws {
         let newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: 1, intervalMilliseconds: nil)
-        await config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
+        config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
         workManager.workRequests.removeAll()
         
         let event = AirshipMeteredUsageEvent(
@@ -222,7 +221,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
 
         privacyManager.enableFeatures(.analytics)
         let newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: 1, intervalMilliseconds: nil)
-        await config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
+        config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
 
         try await self.target.addEvent(
             AirshipMeteredUsageEvent(
@@ -284,7 +283,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         XCTAssertEqual(0, workManager.workRequests.count)
         
         let newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: 1, intervalMilliseconds: 2000)
-        await config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
+        config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
         workManager.workRequests.removeAll()
         target.scheduleWork()
         

@@ -4,6 +4,7 @@ import XCTest
 
 @testable import AirshipCore
 
+@MainActor
 class OpenExternalURLActionTest: XCTestCase {
 
     private let testURLOpener: TestURLOpener = TestURLOpener()
@@ -11,9 +12,7 @@ class OpenExternalURLActionTest: XCTestCase {
     private var airship: TestAirshipInstance!
 
     private var action: OpenExternalURLAction!
-
-    @MainActor
-    override func setUp() {
+    override func setUp() async throws {
         airship = TestAirshipInstance()
         self.action = OpenExternalURLAction(urlOpener: self.testURLOpener)
         self.airship.urlAllowList = self.urlAllowList

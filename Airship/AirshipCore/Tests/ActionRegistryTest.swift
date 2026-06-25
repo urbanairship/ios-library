@@ -4,13 +4,11 @@ import XCTest
 
 @testable import AirshipCore
 
+@MainActor
 class ActionRegistryTest: AirshipBaseTest {
 
     private var registry: DefaultAirshipActionRegistry!
-
-    @MainActor
-    override func setUpWithError() throws {
-        try super.setUpWithError()
+    override func setUp() async throws {
         self.registry = DefaultAirshipActionRegistry()
     }
 
@@ -23,7 +21,7 @@ class ActionRegistryTest: AirshipBaseTest {
             entry: ActionEntry(action: action)
         )
 
-        await validateIsRegistered(
+        validateIsRegistered(
             action: action,
             names: ["name", "alias", "another-name"]
         )
@@ -41,7 +39,7 @@ class ActionRegistryTest: AirshipBaseTest {
             return ActionEntry(action: action)
         }
 
-        await validateIsRegistered(
+        validateIsRegistered(
             action: action,
             names: ["name", "alias", "another-name"]
         )
@@ -59,7 +57,7 @@ class ActionRegistryTest: AirshipBaseTest {
             entry: ActionEntry(action: action)
         )
 
-        await validateIsRegistered(
+        validateIsRegistered(
             action: action,
             names: ["name", "alias", "another-name"]
         )
@@ -70,13 +68,13 @@ class ActionRegistryTest: AirshipBaseTest {
         )
 
 
-        await validateIsRegistered(
+        validateIsRegistered(
             action: anotherAction,
             names: ["name", "what"]
         )
 
         // First entry should still be registered under 'alias' and 'another-name'
-        await validateIsRegistered(
+        validateIsRegistered(
             action: action,
             names: ["alias", "another-name"]
         )
@@ -93,7 +91,7 @@ class ActionRegistryTest: AirshipBaseTest {
         )
 
         registry.updateEntry(name: "alias", action: other)
-        await validateIsRegistered(
+        validateIsRegistered(
             action: other,
             names: ["name", "alias", "another-name"]
         )
@@ -110,7 +108,7 @@ class ActionRegistryTest: AirshipBaseTest {
         )
 
         registry.updateEntry(name: "alias", situation: .manualInvocation, action: other)
-        await validateIsRegistered(
+        validateIsRegistered(
             action: action,
             names: ["name", "alias", "another-name"]
         )
@@ -119,12 +117,13 @@ class ActionRegistryTest: AirshipBaseTest {
         XCTAssertTrue(other === entry.action(situation: .manualInvocation))
     }
 
+    @MainActor
     func validateIsRegistered (
         action: AirshipAction,
         names: [String]
-    ) async {
+    ) {
         for name in names {
-            let entry = await self.registry.entry(name: name)
+            let entry = registry.entry(name: name)
             XCTAssertTrue(entry?.action === action)
         }
     }

@@ -6,6 +6,7 @@ import XCTest
 import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
+@MainActor
 final class EventSchedulerTest: XCTestCase {
 
     private let date = UATestDate()
@@ -13,8 +14,6 @@ final class EventSchedulerTest: XCTestCase {
     private let appStateTracker = TestAppStateTracker()
     private var eventScheduler: EventUploadScheduler!
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
-
-    @MainActor
     override func setUp() async throws {
         self.eventScheduler = EventUploadScheduler(
             appStateTracker: appStateTracker,

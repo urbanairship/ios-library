@@ -6,9 +6,9 @@ import AirshipCore
 import Foundation
 
 final actor TestDeferredResolver: AirshipDeferredResolverProtocol {
-    var dataCallback: ((DeferredRequest) async -> AirshipDeferredResult<Data>)?
+    var dataCallback: (@Sendable (DeferredRequest) async -> AirshipDeferredResult<Data>)?
 
-    func onData(_ onData: @escaping (DeferredRequest) async -> AirshipDeferredResult<Data>) {
+    func onData(_ onData: @escaping @Sendable (DeferredRequest) async -> AirshipDeferredResult<Data>) {
         self.dataCallback = onData
     }
 

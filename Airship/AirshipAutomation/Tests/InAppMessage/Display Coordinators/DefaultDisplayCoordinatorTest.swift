@@ -6,6 +6,7 @@ import XCTest
 import AirshipAutomation
 import AirshipCore
 
+@MainActor
 final class DefaultDisplayCoordinatorTest: XCTestCase {
 
     private let stateTracker: TestAppStateTracker = TestAppStateTracker()
@@ -13,8 +14,6 @@ final class DefaultDisplayCoordinatorTest: XCTestCase {
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
 
     let fooSchedule = InAppMessage(name: "foo", displayContent: .custom(.string("foo")))
-
-    @MainActor
     override func setUp() async throws {
         displayCoordinator = DefaultDisplayCoordinator(
             displayInterval: 10.0,

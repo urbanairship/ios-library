@@ -389,8 +389,11 @@ private final class EventTestPush: AirshipPush, @unchecked Sendable {
     }
 }
 
-private final class InternalPush: InternalAirshipPush {
-    
+private final class InternalPush: InternalAirshipPush, @unchecked Sendable {
+
+    @MainActor
+    init() {}
+
     var deviceToken: String? = "a12312ad"
 
     func dispatchUpdateAuthorizedNotificationTypes() {}

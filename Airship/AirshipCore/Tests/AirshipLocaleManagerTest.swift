@@ -5,6 +5,7 @@ import XCTest
 @testable
 import AirshipCore
 
+@MainActor
 final class AirshipLocaleManagerTest: XCTestCase {
 
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(

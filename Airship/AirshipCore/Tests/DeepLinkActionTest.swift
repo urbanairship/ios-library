@@ -4,6 +4,7 @@ import XCTest
 
 @testable import AirshipCore
 
+@MainActor
 class DeepLinkActionTest: XCTestCase {
 
     private let testURLOpener: TestURLOpener = TestURLOpener()
@@ -11,9 +12,7 @@ class DeepLinkActionTest: XCTestCase {
     private var airship: TestAirshipInstance!
 
     private var action: DeepLinkAction!
-
-    @MainActor
-    override func setUp() {
+    override func setUp() async throws {
         airship = TestAirshipInstance()
         self.action = DeepLinkAction(urlOpener: self.testURLOpener)
         self.airship.urlAllowList = self.urlAllowList

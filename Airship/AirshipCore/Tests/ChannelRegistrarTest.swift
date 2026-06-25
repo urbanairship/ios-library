@@ -113,8 +113,9 @@ struct ChannelRegistrarTest {
 
         let payload = await payloadProvider.getPayload()
 
+        let registrar = channelRegistrar
         await MainActor.run {
-            self.channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
+            registrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
                 return payload
             }
         }
@@ -146,16 +147,22 @@ struct ChannelRegistrarTest {
     func createChannelRestores() async throws {
         let restoredUUID = UUID().uuidString
 
+        let dataStore = self.dataStore
+        let client = self.client
+        let date = self.date
+        let workManager = self.workManager
+        let appStateTracker = self.appStateTracker
+
         let channelRegistrar = await MainActor.run {
             ChannelRegistrar(
-                dataStore: self.dataStore,
-                channelAPIClient: self.client,
-                date: self.date,
-                workManager: self.workManager,
-                appStateTracker: self.appStateTracker,
+                dataStore: dataStore,
+                channelAPIClient: client,
+                date: date,
+                workManager: workManager,
+                appStateTracker: appStateTracker,
                 channelCreateMethod: { return .restore(channelID: restoredUUID) },
                 privacyManager: TestPrivacyManager(
-                    dataStore: self.dataStore,
+                    dataStore: dataStore,
                     config: RuntimeConfig.testConfig(),
                     defaultEnabledFeatures: AirshipFeature.all
                 )
@@ -208,16 +215,22 @@ struct ChannelRegistrarTest {
 
     @Test("Restore fall back to create on invalid ID")
     func restoreFallBackToCreateOnInvalidID() async throws {
+        let dataStore = self.dataStore
+        let client = self.client
+        let date = self.date
+        let workManager = self.workManager
+        let appStateTracker = self.appStateTracker
+
         let channelRegistrar = await MainActor.run {
             ChannelRegistrar(
-                dataStore: self.dataStore,
-                channelAPIClient: self.client,
-                date: self.date,
-                workManager: self.workManager,
-                appStateTracker: self.appStateTracker,
+                dataStore: dataStore,
+                channelAPIClient: client,
+                date: date,
+                workManager: workManager,
+                appStateTracker: appStateTracker,
                 channelCreateMethod: { return .restore(channelID: "invalid-uuid") },
                 privacyManager: TestPrivacyManager(
-                    dataStore: self.dataStore,
+                    dataStore: dataStore,
                     config: RuntimeConfig.testConfig(),
                     defaultEnabledFeatures: AirshipFeature.all
                 )
@@ -311,8 +324,9 @@ struct ChannelRegistrarTest {
 
 
         let payload = await payloadProvider.getPayload()
+        let registrar = channelRegistrar
         await MainActor.run {
-            self.channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
+            registrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
                 return payload
             }
         }
@@ -367,8 +381,9 @@ struct ChannelRegistrarTest {
         }
 
         let payload = await payloadProvider.getPayload()
+        let registrar = channelRegistrar
         await MainActor.run {
-            self.channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
+            registrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
                 return payload
             }
         }
@@ -474,8 +489,9 @@ struct ChannelRegistrarTest {
 
         let payload = await payloadProvider.getPayload()
 
+        let registrar = channelRegistrar
         await MainActor.run {
-            self.channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
+            registrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
                 return payload
             }
         }
@@ -523,8 +539,9 @@ struct ChannelRegistrarTest {
     func skipUpdateChannelUpToDate() async throws {
         let payload = await payloadProvider.getPayload()
 
+        let registrar = channelRegistrar
         await MainActor.run {
-            self.channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
+            registrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
                 return payload
             }
         }

@@ -6,6 +6,7 @@ import XCTest
 import AirshipAutomation
 import AirshipCore
 
+@MainActor
 final class AutomationPreparerTest: XCTestCase {
 
     private let actionPreparer: TestPreparerDelegate<AirshipJSON, AirshipJSON> = TestPreparerDelegate()
@@ -23,8 +24,6 @@ final class AutomationPreparerTest: XCTestCase {
 
     private var preparedMessageData: PreparedInAppMessageData!
     private let runtimeConfig: RuntimeConfig = .testConfig()
-
-    @MainActor
     override func setUp() async throws {
         self.preparedMessageData = PreparedInAppMessageData(
             message: InAppMessage(
@@ -811,11 +810,12 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         let preparedData = self.preparedMessageData!
+        let contactID = self.deviceInfoProvider.stableContactInfo.contactID
         self.messagePreparer.prepareBlock = { inAppMessage, info in
             XCTAssertEqual(inAppMessage, message)
             XCTAssertEqual(automationSchedule.identifier, info.scheduleID)
             XCTAssertEqual(automationSchedule.campaigns, info.campaigns)
-            XCTAssertEqual(self.deviceInfoProvider.stableContactInfo.contactID, info.contactID)
+            XCTAssertEqual(contactID, info.contactID)
             return preparedData
         }
 

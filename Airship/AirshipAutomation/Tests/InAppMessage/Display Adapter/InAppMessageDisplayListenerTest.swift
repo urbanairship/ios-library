@@ -6,15 +6,14 @@ import AirshipCore
 import AirshipScenes
 
 
+@MainActor
 class InAppMessageDisplayListenerTests: XCTestCase {
 
     private let analytics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
     private var listener: InAppMessageDisplayListener!
     private let result: AirshipMainActorValue<DisplayResult?> = AirshipMainActorValue(nil)
     private var timer: TestActiveTimer!
-
-    @MainActor
-    override func setUp() {
+    override func setUp() async throws {
         self.timer = TestActiveTimer()
         listener = InAppMessageDisplayListener(analytics: analytics, timer: timer) { [result] displayResult in
             result.set(displayResult)

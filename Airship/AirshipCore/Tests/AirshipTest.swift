@@ -3,12 +3,11 @@ import XCTest
 @testable
 import AirshipCore
 
+@MainActor
 class UAirshipTest: XCTestCase {
     private var airshipInstance: TestAirshipInstance!
     private let deepLinkHandler: TestDeepLinkDelegateHandler = TestDeepLinkDelegateHandler()
-
-    @MainActor
-    override func setUp() {
+    override func setUp() async throws {
         airshipInstance = TestAirshipInstance()
         self.airshipInstance.makeShared()
     }

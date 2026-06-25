@@ -4,13 +4,15 @@ import XCTest
 
 @testable import AirshipCore
 
+@MainActor
 class EnableFeatureActionTest: XCTestCase {
 
     let testPrompter = TestPermissionPrompter()
     var action: EnableFeatureAction!
 
-    override func setUpWithError() throws {
-        self.action = EnableFeatureAction { return self.testPrompter }
+    override func setUp() async throws {
+        let testPrompter = self.testPrompter
+        self.action = EnableFeatureAction { return testPrompter }
     }
 
     func testAcceptsArguments() async throws {

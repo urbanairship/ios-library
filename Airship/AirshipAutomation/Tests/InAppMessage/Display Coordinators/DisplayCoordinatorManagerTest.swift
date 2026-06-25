@@ -5,12 +5,11 @@ import XCTest
 import AirshipCore
 import AirshipScenes
 
+@MainActor
 final class DisplayCoordinatorManagerTest: XCTestCase {
 
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private var manager: DisplayCoordinatorManager!
-    
-    @MainActor
     override func setUp() async throws {
         manager = DisplayCoordinatorManager(dataStore: dataStore)
     }

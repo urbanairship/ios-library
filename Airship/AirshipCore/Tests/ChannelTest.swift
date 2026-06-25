@@ -19,6 +19,7 @@ struct ChannelTest {
     let channel: DefaultAirshipChannel
 
     // Helper to wait for async conditions with timeout
+    @MainActor
     private func waitForCondition(
         timeout: Duration = .seconds(2),
         pollingInterval: Duration = .milliseconds(10),
@@ -248,10 +249,9 @@ struct ChannelTest {
             "display_notifications": "denied"
         ]
 
-        await MainActor.run { [expectedPayload] in
-            self.channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
-                return expectedPayload
-            }
+        let expected = expectedPayload
+        channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
+            return expected
         }
 
         let payload = await self.channelRegistrar.channelPayload
@@ -288,10 +288,9 @@ struct ChannelTest {
         expectedPayload.channel.setTags = true
         expectedPayload.channel.permissions = nil
 
-        await MainActor.run { [expectedPayload] in
-            self.channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
-                return expectedPayload
-            }
+        let expected = expectedPayload
+        channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
+            return expected
         }
 
         let payload = await self.channelRegistrar.channelPayload
@@ -330,10 +329,9 @@ struct ChannelTest {
             "display_notifications": "denied"
         ]
 
-        await MainActor.run { [expectedPayload] in
-            self.channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
-                return expectedPayload
-            }
+        let expected = expectedPayload
+        channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
+            return expected
         }
 
         let payload = await self.channelRegistrar.channelPayload
@@ -347,17 +345,14 @@ struct ChannelTest {
             "location": "granted",
         ]
 
-        await MainActor.run { [expectedMinimized] in
-            self.channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
-                return expectedMinimized
-            }
+        let expectedMinimizedPayload = expectedMinimized
+        channelRegistrar.payloadCreateBlock = { @Sendable () async -> ChannelRegistrationPayload? in
+            return expectedMinimizedPayload
         }
 
         let minimized = await self.channelRegistrar.channelPayload.minimizePayload(previous: payload)
 
-        await MainActor.run { [expectedMinimized] in
-            #expect(expectedMinimized == minimized)
-        }
+        #expect(expectedMinimized == minimized)
     }
 
     @Test("CRA payload disabled device tags")

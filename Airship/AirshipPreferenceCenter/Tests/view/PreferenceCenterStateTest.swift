@@ -8,12 +8,12 @@ import SwiftUI
 @testable
 import AirshipPreferenceCenter
 
+@MainActor
 @Suite("Preference Center State")
 struct PreferenceCenterStateTest {
     let subscriber = TestPreferenceSubscriber()
     let state: PreferenceCenterState!
 
-    @MainActor
     init() {
         state = PreferenceCenterState(
             config: PreferenceCenterConfig(

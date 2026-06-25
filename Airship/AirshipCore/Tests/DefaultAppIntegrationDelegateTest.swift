@@ -5,6 +5,7 @@ import Combine
 
 @testable import AirshipCore
 
+@MainActor
 class DefaultAppIntegrationdelegateTest: XCTestCase {
 
     private var delegate: DefaultAppIntegrationDelegate!
@@ -12,8 +13,6 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
     private let analytics = TestAnalytics()
     private let pushableComponent = TestPushableComponent()
     private var airshipInstance: TestAirshipInstance!
-
-    @MainActor
     override func setUp() async throws {
         airshipInstance = TestAirshipInstance()
         self.airshipInstance.actionRegistry = DefaultAirshipActionRegistry()

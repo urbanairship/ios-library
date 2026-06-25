@@ -4,6 +4,7 @@ import XCTest
 @_spi(AirshipInternal) @testable import AirshipAutomation
 import AirshipCore
 
+@MainActor
 final class InAppMessageAutomationPreparerTest: XCTestCase {
 
     private let displayCoordinatorManager: TestDisplayCoordinatorManager = TestDisplayCoordinatorManager()
@@ -29,7 +30,7 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
     )
 
     override func setUp() async throws {
-        await analyticsFactory.setOnMake { [analytics] _, _ in
+        analyticsFactory.setOnMake { [analytics] _, _ in
             return analytics
         }
         self.preparer = InAppMessageAutomationPreparer(
@@ -54,13 +55,13 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
             return cachedAssets
         }
 
-        let displayCoordinator = await TestDisplayCoordinator()
+        let displayCoordinator = TestDisplayCoordinator()
         self.displayCoordinatorManager.onCoordinator = { [message] incoming in
             XCTAssertEqual(message, incoming)
             return displayCoordinator
         }
 
-        let displayAdapter = await TestDisplayAdapter()
+        let displayAdapter = TestDisplayAdapter()
         self.displayAdapterFactory.onMake = { [message] args in
             XCTAssertEqual(message, args.message)
             let incomingAssets = args.assets as? TestCachedAssets
@@ -79,8 +80,8 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
     }
 
     func testPrepareFailedAssets() async throws {
-        let displayCoordinator = await TestDisplayCoordinator()
-        let adapter = await TestDisplayAdapter()
+        let displayCoordinator = TestDisplayCoordinator()
+        let adapter = TestDisplayAdapter()
         
         self.displayCoordinatorManager.onCoordinator = { _ in
             return displayCoordinator
@@ -101,7 +102,7 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
     }
 
     func testPrepareFailedAdapter() async throws {
-        let displayCoordinator = await TestDisplayCoordinator()
+        let displayCoordinator = TestDisplayCoordinator()
         self.displayCoordinatorManager.onCoordinator = { _ in
             return displayCoordinator
         }
@@ -152,15 +153,13 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
     }
 
     func testLocalAudienceCheckMatch() async throws {
-        let coordinator = await TestDisplayCoordinator()
-        let adapter = await TestDisplayAdapter()
+        let coordinator = TestDisplayCoordinator()
+        let adapter = TestDisplayAdapter()
         await self.assetManager.setOnCache { _, _ in TestCachedAssets() }
         self.displayCoordinatorManager.onCoordinator = { _ in coordinator }
         self.displayAdapterFactory.onMake = { _ in adapter }
 
-        await MainActor.run {
-            self.preparer.onCheckLocalAudience = { _, _ in .match }
-        }
+        preparer.onCheckLocalAudience = { _, _ in .match }
 
         guard case .prepared = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo) else {
             return XCTFail("Expected .prepared")
@@ -169,36 +168,28 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
 
     func testLocalAudienceCheckMissSkip() async throws {
         // onCache intentionally not set — if assets are prepared the force-unwrap crashes
-        await MainActor.run {
-            self.preparer.onCheckLocalAudience = { _, _ in .miss(.skip) }
-        }
+        preparer.onCheckLocalAudience = { _, _ in .miss(.skip) }
 
         let result = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
         guard case .skip = result else { return XCTFail("Expected .skip, got \(result)") }
     }
 
     func testLocalAudienceCheckMissCancel() async throws {
-        await MainActor.run {
-            self.preparer.onCheckLocalAudience = { _, _ in .miss(.cancel) }
-        }
+        preparer.onCheckLocalAudience = { _, _ in .miss(.cancel) }
 
         let result = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
         guard case .cancel = result else { return XCTFail("Expected .cancel, got \(result)") }
     }
 
     func testLocalAudienceCheckMissPenalize() async throws {
-        await MainActor.run {
-            self.preparer.onCheckLocalAudience = { _, _ in .miss(.penalize) }
-        }
+        preparer.onCheckLocalAudience = { _, _ in .miss(.penalize) }
 
         let result = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
         guard case .penalize = result else { return XCTFail("Expected .penalize, got \(result)") }
     }
 
     func testLocalAudienceCheckThrows() async throws {
-        await MainActor.run {
-            self.preparer.onCheckLocalAudience = { _, _ in throw AirshipErrors.error("LLM unavailable") }
-        }
+        preparer.onCheckLocalAudience = { _, _ in throw AirshipErrors.error("LLM unavailable") }
 
         do {
             _ = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
@@ -207,32 +198,30 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
     }
 
     func testLocalAudienceCheckReceivesMessageAndScheduleID() async throws {
-        let coordinator = await TestDisplayCoordinator()
-        let adapter = await TestDisplayAdapter()
+        let coordinator = TestDisplayCoordinator()
+        let adapter = TestDisplayAdapter()
         await self.assetManager.setOnCache { _, _ in TestCachedAssets() }
         self.displayCoordinatorManager.onCoordinator = { _ in coordinator }
         self.displayAdapterFactory.onMake = { _ in adapter }
 
-        var receivedMessage: InAppMessage?
-        var receivedScheduleID: String?
+        let receivedMessage = AirshipAtomicValue<InAppMessage?>(nil)
+        let receivedScheduleID = AirshipAtomicValue<String?>(nil)
 
-        await MainActor.run {
-            self.preparer.onCheckLocalAudience = { message, scheduleID in
-                receivedMessage = message
-                receivedScheduleID = scheduleID
-                return .match
-            }
+        self.preparer.onCheckLocalAudience = { message, scheduleID in
+            receivedMessage.value = message
+            receivedScheduleID.value = scheduleID
+            return .match
         }
 
         _ = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
 
-        XCTAssertEqual(receivedMessage, message)
-        XCTAssertEqual(receivedScheduleID, preparedScheduleInfo.scheduleID)
+        XCTAssertEqual(receivedMessage.value, message)
+        XCTAssertEqual(receivedScheduleID.value, preparedScheduleInfo.scheduleID)
     }
 
     func testLocalAudienceCheckNilSkipsHook() async throws {
-        let coordinator = await TestDisplayCoordinator()
-        let adapter = await TestDisplayAdapter()
+        let coordinator = TestDisplayCoordinator()
+        let adapter = TestDisplayAdapter()
         await self.assetManager.setOnCache { _, _ in TestCachedAssets() }
         self.displayCoordinatorManager.onCoordinator = { _ in coordinator }
         self.displayAdapterFactory.onMake = { _ in adapter }

@@ -6,6 +6,7 @@ import XCTest
 import AirshipAutomation
 import AirshipCore
 
+@MainActor
 final class ExecutionWindowProcessorTest: XCTestCase {
 
     fileprivate struct Evaluated : Equatable, Sendable{
@@ -21,20 +22,22 @@ final class ExecutionWindowProcessorTest: XCTestCase {
     private let window: ExecutionWindow = try! ExecutionWindow(include: [.weekly(daysOfWeek: [1])])
 
     private var evaluatedWindows: AirshipAtomicValue<[Evaluated]> = .init([])
-    private var onResult: AirshipAtomicValue<(() throws -> ExecutionWindowResult)?> = .init(nil)
+    private var onResult: AirshipAtomicValue<(@Sendable () throws -> ExecutionWindowResult)?> = .init(nil)
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
+        let evaluatedWindows = self.evaluatedWindows
+        let onResult = self.onResult
         processor = ExecutionWindowProcessor(
             taskSleeper: taskSleeper,
             date: date,
             notificationCenter: notificationCenter,
             onEvaluate: { window, date in
-                self.evaluatedWindows.update { t in
+                evaluatedWindows.update { t in
                     var mutated = t
                     mutated.append(Evaluated(window: window, date: date))
                     return mutated
                 }
-                return try self.onResult.value!()
+                return try onResult.value!()
             }
         )
     }

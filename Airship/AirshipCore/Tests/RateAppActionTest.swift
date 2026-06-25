@@ -2,16 +2,18 @@ import XCTest
 
 @testable import AirshipCore
 
+@MainActor
 class RateAppActionTest: XCTestCase {
     private let testAppRater = TestAppRater()
-    private var configItunesID: String? = nil
+    private let configItunesID = AirshipAtomicValue<String?>(nil)
     private var action: RateAppAction!
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
+        let configItunesID = self.configItunesID
         self.action = RateAppAction(
             appRater: self.testAppRater
         ) {
-            return self.configItunesID
+            return configItunesID.value
         }
     }
 
@@ -49,7 +51,7 @@ class RateAppActionTest: XCTestCase {
     }
 
     func testOpenAppStoreFallbackItunesID() async throws {
-        self.configItunesID = "config iTunes ID"
+        configItunesID.value = "config iTunes ID"
         let args: [String: Any] = [:]
 
         let result = try await action.perform(arguments:
@@ -60,11 +62,11 @@ class RateAppActionTest: XCTestCase {
         )
         XCTAssertNil(result)
         XCTAssertFalse(testAppRater.showPromptCalled)
-        XCTAssertEqual(configItunesID, testAppRater.openStoreItunesID)
+        XCTAssertEqual(configItunesID.value, testAppRater.openStoreItunesID)
     }
 
     func testNilConfig() async throws {
-        self.configItunesID = "config iTunes ID"
+        configItunesID.value = "config iTunes ID"
 
         let result = try await action.perform(arguments:
             ActionArguments(
@@ -74,11 +76,11 @@ class RateAppActionTest: XCTestCase {
         )
         XCTAssertNil(result)
         XCTAssertFalse(testAppRater.showPromptCalled)
-        XCTAssertEqual(configItunesID, testAppRater.openStoreItunesID)
+        XCTAssertEqual(configItunesID.value, testAppRater.openStoreItunesID)
     }
 
     func testNoItunesID() async throws {
-        self.configItunesID = nil
+        configItunesID.value = nil
 
         do {
             _ = try await action.perform(arguments:
@@ -95,7 +97,7 @@ class RateAppActionTest: XCTestCase {
     }
 
     func testInvalidArgs() async throws {
-        self.configItunesID = "config id"
+        configItunesID.value = "config id"
         do {
             _ = try await action.perform(arguments:
                 ActionArguments(

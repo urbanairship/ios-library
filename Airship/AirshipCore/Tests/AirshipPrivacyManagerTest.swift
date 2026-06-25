@@ -100,22 +100,23 @@ class DefaultAirshipPrivacyManagerTest: XCTestCase {
         XCTAssertTrue(self.privacyManager.isEnabled(.analytics))
     }
 
+    @MainActor
     func testRemoteConfigOverrides() async {
         XCTAssertEqual(AirshipFeature.all, self.privacyManager.enabledFeatures)
 
-        await self.config.updateRemoteConfig(
+        self.config.updateRemoteConfig(
             RemoteConfig(disabledFeatures: .push)
         )
 
         XCTAssertEqual(AirshipFeature.all.subtracting(.push), self.privacyManager.enabledFeatures)
 
-        await self.config.updateRemoteConfig(
+        self.config.updateRemoteConfig(
             RemoteConfig(disabledFeatures: [])
         )
 
         XCTAssertEqual(AirshipFeature.all, self.privacyManager.enabledFeatures)
 
-        await self.config.updateRemoteConfig(
+        self.config.updateRemoteConfig(
             RemoteConfig(disabledFeatures: .all)
         )
 

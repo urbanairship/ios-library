@@ -7,6 +7,7 @@ import XCTest
 import Combine
 import Foundation
 
+@MainActor
 class AirshipContactTest: XCTestCase {
     private let channel: TestChannel = TestChannel()
     private let apiClient: TestContactSubscriptionListAPIClient = TestContactSubscriptionListAPIClient()
@@ -26,7 +27,7 @@ class AirshipContactTest: XCTestCase {
     private var subscriptionProvider: SubscriptionListProviderProtocol!
 
     override func setUp() async throws {
-        self.privacyManager = await DefaultAirshipPrivacyManager(
+        self.privacyManager = DefaultAirshipPrivacyManager(
             dataStore: self.dataStore,
             config: self.config,
             defaultEnabledFeatures: .all,
@@ -40,7 +41,7 @@ class AirshipContactTest: XCTestCase {
             privacyManager: self.privacyManager)
 
         self.channel.identifier = "channel id"
-        await setupContact()
+        setupContact()
         self.contact.airshipReady()
         await self.waitOnContactQueue() // waits for the initial setup task
     }
@@ -104,7 +105,7 @@ class AirshipContactTest: XCTestCase {
             forKey: DefaultAirshipContact.legacyNamedUserKey
         )
 
-        await setupContact()
+        setupContact()
 
         await verifyOperations(
             [
@@ -140,7 +141,7 @@ class AirshipContactTest: XCTestCase {
             ContactIDInfo(contactID: "some contact ID", isStable: false, namedUserID: nil)
         )
 
-        await setupContact()
+        setupContact()
 
         let _ = await contact.namedUserID
 
@@ -335,7 +336,7 @@ class AirshipContactTest: XCTestCase {
     }
 
     func testForegroundSkipsResolvesConfigValue() async throws {
-        await self.config.updateRemoteConfig(
+        self.config.updateRemoteConfig(
             RemoteConfig(
                 contactConfig: .init(
                     foregroundIntervalMilliseconds: 1000,

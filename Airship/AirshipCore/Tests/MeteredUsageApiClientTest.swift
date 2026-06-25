@@ -4,14 +4,13 @@ import XCTest
 @testable import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
+@MainActor
 final class MeteredUsageApiClientTest: XCTestCase {
     
     private let requestSession = TestAirshipRequestSession()
     private let configDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private var target: MeteredUsageAPIClient!
     private var config: RuntimeConfig = RuntimeConfig.testConfig()
-
-    @MainActor
     override func setUp() async throws {
         self.config.updateRemoteConfig(
             RemoteConfig(
@@ -28,7 +27,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
     }
 
     func testUploadEventsNoConfig() async throws {
-        await self.config.updateRemoteConfig(RemoteConfig())
+        self.config.updateRemoteConfig(RemoteConfig())
         let timestamp = Date()
 
         let events = [
@@ -76,7 +75,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
             httpVersion: "1",
             headerFields: nil)
 
-        await self.config.updateRemoteConfig(RemoteConfig())
+        self.config.updateRemoteConfig(RemoteConfig())
         do {
             let _ = try await target.uploadEvents(events, channelID: "test.channel.id")
             XCTFail("Should throw")

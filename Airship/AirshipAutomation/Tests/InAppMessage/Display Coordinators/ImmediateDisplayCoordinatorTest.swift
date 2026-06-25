@@ -6,12 +6,11 @@ import XCTest
 import AirshipAutomation
 import AirshipCore
 
+@MainActor
 final class ImmediateDisplayCoordinatorTest: XCTestCase {
 
     private let stateTracker: TestAppStateTracker = TestAppStateTracker()
     private var displayCoordinator: ImmediateDisplayCoordinator!
-
-    @MainActor
     override func setUp() async throws {
         displayCoordinator = ImmediateDisplayCoordinator(
             appStateTracker: self.stateTracker

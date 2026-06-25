@@ -5,6 +5,7 @@ import XCTest
 @testable
 import AirshipCore
 
+@MainActor
 final class ChannelCaptureTest: XCTestCase {
 
     private var config: AirshipConfig = AirshipConfig()
@@ -13,9 +14,7 @@ final class ChannelCaptureTest: XCTestCase {
     private let notificationCenter: NotificationCenter = NotificationCenter()
     private let date: UATestDate = UATestDate()
     private var channelCapture: (any AirshipChannelCapture)!
-
-    @MainActor
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         self.date.dateOverride = Date()
         self.config.isChannelCaptureEnabled = true
         self.channel.identifier = UUID().uuidString

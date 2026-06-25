@@ -6,6 +6,7 @@ public import AirshipCore
 
 import WebKit
 
+@MainActor
 final class NativeBridgeActionHandlerTest: XCTestCase {
 
     private let metadata: [String: String] = ["some": UUID().uuidString]
@@ -14,7 +15,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
 
     private let webView = WKWebView()
     private var actionHandler: NativeBridgeActionHandler!
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         self.actionHandler = NativeBridgeActionHandler(actionRunner: testActionRunner)
     }
 

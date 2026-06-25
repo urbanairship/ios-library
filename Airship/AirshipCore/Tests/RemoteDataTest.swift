@@ -6,6 +6,7 @@ import XCTest
 import AirshipCore
 import Combine
 
+@MainActor
 final class RemoteDataTest: AirshipBaseTest {
 
     private static let RefreshTask = "RemoteData.refresh"
@@ -34,7 +35,7 @@ final class RemoteDataTest: AirshipBaseTest {
 
         self.testDate.dateOverride = Date()
         self.testLocaleManager.currentLocale =  Locale(identifier: "en-US")
-        self.remoteData = await RemoteData(
+        self.remoteData = RemoteData(
             config: config,
             dataStore: self.dataStore,
             localeManager: self.testLocaleManager,
@@ -55,7 +56,7 @@ final class RemoteDataTest: AirshipBaseTest {
 
     func testRemoteConfigUpdatedEnqueuesRefresh() async {
         XCTAssertEqual(0, testWorkManager.workRequests.count)
-        await self.config.updateRemoteConfig(
+        self.config.updateRemoteConfig(
             RemoteConfig(
                 airshipConfig: .init(
                     remoteDataURL: "someURL",
@@ -106,7 +107,7 @@ final class RemoteDataTest: AirshipBaseTest {
 
     func testAirshipReadyEnqueuesRefresh() async {
         XCTAssertEqual(0, testWorkManager.workRequests.count)
-        await self.remoteData.airshipReady()
+        self.remoteData.airshipReady()
         XCTAssertEqual(1, testWorkManager.workRequests.count)
     }
 
@@ -606,8 +607,8 @@ final class RemoteDataTest: AirshipBaseTest {
 }
 
 fileprivate actor TestRemoteDataProvider: RemoteDataProviderProtocol {
-    private var statusCallback: ((String, Locale, Int) async -> RemoteDataSourceStatus)?
-    func setStatusCallback(callback: @escaping (String, Locale, Int) async -> RemoteDataSourceStatus) {
+    private var statusCallback: (@Sendable (String, Locale, Int) async -> RemoteDataSourceStatus)?
+    func setStatusCallback(callback: @escaping @Sendable (String, Locale, Int) async -> RemoteDataSourceStatus) {
         self.statusCallback = callback
     }
 
@@ -620,18 +621,18 @@ fileprivate actor TestRemoteDataProvider: RemoteDataProviderProtocol {
     private var payloads: [RemoteDataPayload] = []
     var enabled: Bool
 
-    private var notifyOutdatedCallback: ((RemoteDataInfo) -> Bool)?
-    func setNotifyOutdatedCallback(callback: @escaping (RemoteDataInfo) -> Bool) {
+    private var notifyOutdatedCallback: (@Sendable (RemoteDataInfo) -> Bool)?
+    func setNotifyOutdatedCallback(callback: @escaping @Sendable (RemoteDataInfo) -> Bool) {
         self.notifyOutdatedCallback = callback
     }
 
-    private var isCurrentCallback: ((Locale, Int, RemoteDataInfo) async -> Bool)?
-    func setIsCurrentCallback(callback: @escaping (Locale, Int, RemoteDataInfo) async -> Bool) {
+    private var isCurrentCallback: (@Sendable (Locale, Int, RemoteDataInfo) async -> Bool)?
+    func setIsCurrentCallback(callback: @escaping @Sendable (Locale, Int, RemoteDataInfo) async -> Bool) {
         self.isCurrentCallback = callback
     }
 
-    private var refreshCallback: ((String, Locale, Int) async -> RemoteDataRefreshResult)?
-    func setRefreshCallback(callback: @escaping (String, Locale, Int) async -> RemoteDataRefreshResult) {
+    private var refreshCallback: (@Sendable (String, Locale, Int) async -> RemoteDataRefreshResult)?
+    func setRefreshCallback(callback: @escaping @Sendable (String, Locale, Int) async -> RemoteDataRefreshResult) {
         self.refreshCallback = callback
     }
 

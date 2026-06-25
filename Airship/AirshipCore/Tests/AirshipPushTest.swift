@@ -5,6 +5,7 @@ import XCTest
 @testable import AirshipCore
 import Combine
 
+@MainActor
 class AirshipPushTest: XCTestCase {
 
     private static let validDeviceToken = "0123456789abcdef0123456789abcdef"
@@ -27,9 +28,9 @@ class AirshipPushTest: XCTestCase {
     private var serialQueue: AirshipAsyncSerialQueue = AirshipAsyncSerialQueue(priority: .high)
 
     override func setUp() async throws {
-        self.pushDelegate = await TestPushNotificationDelegate()
-        self.apnsRegistrar = await TestAPNSRegistrar()
-        self.permissionsManager = await DefaultAirshipPermissionsManager()
+        self.pushDelegate = TestPushNotificationDelegate()
+        self.apnsRegistrar = TestAPNSRegistrar()
+        self.permissionsManager = DefaultAirshipPermissionsManager()
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: .testConfig(),
@@ -37,7 +38,7 @@ class AirshipPushTest: XCTestCase {
             notificationCenter: self.notificationCenter
         )
 
-        self.push = await createPush()
+        self.push = createPush()
         await self.serialQueue.waitForCurrentOperations()
         self.channel.updateRegistrationCalled = false
     }
@@ -275,7 +276,7 @@ class AirshipPushTest: XCTestCase {
 
     func testEnableUserNotificationsAppHandlingAuth() async throws {
         self.config.requestAuthorizationToUseNotifications = false
-        self.push = await createPush()
+        self.push = createPush()
 
         self.permissionsManager.addRequestExtender(
             permission: .displayNotifications
@@ -577,7 +578,7 @@ class AirshipPushTest: XCTestCase {
     }
 
     func testAnalyticsHeadersPushDisabled() async throws {
-        await self.push.didRegisterForRemoteNotifications(
+        self.push.didRegisterForRemoteNotifications(
             AirshipPushTest.validDeviceToken.hexData
         )
         self.privacyManager.disableFeatures(.push)

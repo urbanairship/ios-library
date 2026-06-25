@@ -5,6 +5,7 @@ import Combine
 
 @testable import AirshipCore
 
+@MainActor
 class AnalyticsTest: XCTestCase {
 
     private let appStateTracker = TestAppStateTracker()
@@ -22,9 +23,6 @@ class AnalyticsTest: XCTestCase {
     private var privacyManager: TestPrivacyManager!
     private var analytics: DefaultAirshipAnalytics!
     private var testAirship: TestAirshipInstance!
-
-
-    @MainActor
     override func setUp() async throws {
         testAirship = TestAirshipInstance()
         self.permissionsManager = DefaultAirshipPermissionsManager()
@@ -335,7 +333,7 @@ class AnalyticsTest: XCTestCase {
 
     func testScreenEventFeed() async throws {
         var feed = await self.analytics.eventFeed.updates.makeAsyncIterator()
-        await self.analytics.trackScreen("some screen")
+        self.analytics.trackScreen("some screen")
 
         let next = await feed.next()
         XCTAssertEqual(next, .screen(screen: "some screen"))
@@ -439,7 +437,7 @@ class AnalyticsTest: XCTestCase {
         self.channel.identifier = "someChannelID"
         self.locale.currentLocale = Locale(identifier: "en-US-POSIX")
 
-        let expected = await [
+        let expected = [
             "X-UA-Channel-ID": "someChannelID",
             "X-UA-Timezone": NSTimeZone.default.identifier,
             "X-UA-Locale-Language": "en",
@@ -461,7 +459,7 @@ class AnalyticsTest: XCTestCase {
     }
 
     func testAnalyticsHeaderExtension() async throws {
-        await self.analytics.addHeaderProvider {
+        self.analytics.addHeaderProvider {
             return ["neat": "story"]
         }
 

@@ -21,6 +21,7 @@ final class TestScheduleConditionsChangedNotifier: ScheduleConditionsChangedNoti
     }
 }
 
+@MainActor
 final class AutomationEngineTest: XCTestCase {
     
     private var engine: AutomationEngine!
@@ -46,8 +47,6 @@ final class AutomationEngineTest: XCTestCase {
     private let runtimeConfig: RuntimeConfig = .testConfig()
 
     private var scheduleConditionsChangedNotifier: TestScheduleConditionsChangedNotifier!
-
-    @MainActor
     override func setUp() async throws {
         let history = DefaultAutomationEventsHistory(clock: UATestDate())
         self.privacyManager = TestPrivacyManager(

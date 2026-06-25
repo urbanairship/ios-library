@@ -4,9 +4,10 @@ import Testing
 
 @testable
 import AirshipNotificationServiceExtension
-import UserNotifications
+@preconcurrency import UserNotifications
 import Foundation
 
+@MainActor
 @Suite("U A Notification Service Extension")
 struct UANotificationServiceExtensionTests {
     

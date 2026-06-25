@@ -5,17 +5,14 @@ import XCTest
 @testable import AirshipCore
 @testable import AirshipBasement
 
+@MainActor
 class AppIntegrationTests: XCTestCase {
     private var testDelegate: TestIntegrationDelegate!
-
-    @MainActor
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         self.testDelegate = TestIntegrationDelegate()
         AppIntegration.integrationDelegate = self.testDelegate
     }
-
-    @MainActor
-    override func tearDownWithError() throws {
+    override func tearDown() async throws {
         AppIntegration.integrationDelegate = nil
     }
 

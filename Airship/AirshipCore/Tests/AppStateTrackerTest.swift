@@ -3,13 +3,12 @@
 import XCTest
 @testable import AirshipCore
 
+@MainActor
 final class AppStateTrackerTest: XCTestCase {
 
     private let adapter = TestAppStateAdapter()
     private let notificationCenter = NotificationCenter()
     private var tracker: AppStateTracker!
-
-    @MainActor
     override func setUp() async throws {
         self.tracker = AppStateTracker(
             adapter: adapter,

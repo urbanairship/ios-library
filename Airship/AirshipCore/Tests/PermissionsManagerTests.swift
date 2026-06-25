@@ -4,6 +4,7 @@ import XCTest
 
 @testable public import AirshipCore
 
+@MainActor
 class PermissionsManagerTests: XCTestCase {
 
     var delegate: TestPermissionsDelegate!
@@ -11,7 +12,6 @@ class PermissionsManagerTests: XCTestCase {
     var systemSettingsNavigator: TestSystemSettingsNavigator!
     var permissionsManager: DefaultAirshipPermissionsManager!
     let appStateTracker = TestAppStateTracker()
-    @MainActor
     override func setUp() async throws {
         self.systemSettingsNavigator = TestSystemSettingsNavigator()
         permissionsManager = DefaultAirshipPermissionsManager(
