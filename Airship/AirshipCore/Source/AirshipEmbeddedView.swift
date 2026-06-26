@@ -3,6 +3,11 @@
 public import SwiftUI
 import Combine
 
+/// A closure used to sort the available embedded contents for an embedded ID.
+///
+/// Return `.orderedAscending` to display `lhs` before `rhs`. When set, this replaces the default priority ordering.
+public typealias AirshipEmbeddedComparator = @Sendable (_ lhs: AirshipEmbeddedInfo, _ rhs: AirshipEmbeddedInfo) -> ComparisonResult
+
 /// Airship embedded view - a scene that can be embedded in an app and managed remotely
 public struct AirshipEmbeddedView<PlaceHolder: View>: View {
 
@@ -15,20 +20,24 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     private let placeholder: () -> PlaceHolder
     private let embeddedID: String
     private let embeddedSize: AirshipEmbeddedSize?
+    private let comparator: AirshipEmbeddedComparator?
 
     /// Creates a new AirshipEmbeddedView.
     ///
     /// - Parameters:
     ///   - embeddedID: The embedded ID.
     ///   - size: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
+    ///   - comparator: Optional comparator used to sort the available embedded contents. Defaults to priority ordering.
     ///   - placeholder: The place holder block.
     public init(
         embeddedID: String,
         embeddedSize: AirshipEmbeddedSize? = nil,
-        @ViewBuilder placeholder: @escaping () -> PlaceHolder = { EmptyView()}
+        comparator: AirshipEmbeddedComparator? = nil,
+        @ViewBuilder placeholder: @escaping () -> PlaceHolder
     ) {
         self.embeddedID = embeddedID
         self.embeddedSize = embeddedSize
+        self.comparator = comparator
         self.placeholder = placeholder
         self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(embeddedID: embeddedID))
     }
@@ -38,12 +47,15 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     /// - Parameters:
     ///   - embeddedID: The embedded ID.
     ///   - size: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
+    ///   - comparator: Optional comparator used to sort the available embedded contents. Defaults to priority ordering.
     public init(
         embeddedID: String,
-        embeddedSize: AirshipEmbeddedSize? = nil
+        embeddedSize: AirshipEmbeddedSize? = nil,
+        comparator: AirshipEmbeddedComparator? = nil
     ) where PlaceHolder == EmptyView {
         self.embeddedID = embeddedID
         self.embeddedSize = embeddedSize
+        self.comparator = comparator
         self.placeholder = { EmptyView() }
         self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(embeddedID: embeddedID))
     }
@@ -70,7 +82,8 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
                     onDismiss: { item.dismissHandle.dismiss() }
                 )
             },
-            placeHolder: AnyView(self.placeholder())
+            placeHolder: AnyView(self.placeholder()),
+            comparator: comparator
         )
 
         return self.style.makeBody(configuration: configuration)
@@ -148,6 +161,9 @@ public struct AirshipEmbeddedViewStyleConfiguration {
     public let pending: [Pending]
     public let placeHolder: AnyView
 
+    /// Optional comparator used to sort the available embedded contents.
+    public let comparator: AirshipEmbeddedComparator?
+
     /// Deprecated: Use `pending` instead.
     @available(*, deprecated, message: "Use `pending` which includes dismissal logic per-view.")
     public var views: [AirshipEmbeddedContentView] {
@@ -157,11 +173,13 @@ public struct AirshipEmbeddedViewStyleConfiguration {
     internal init(
         embeddedID: String,
         pending: [Pending],
-        placeHolder: AnyView
+        placeHolder: AnyView,
+        comparator: AirshipEmbeddedComparator? = nil
     ) {
         self.embeddedID = embeddedID
         self.pending = pending
         self.placeHolder = placeHolder
+        self.comparator = comparator
     }
 }
 
@@ -187,7 +205,8 @@ public struct DefaultAirshipEmbeddedViewStyle: AirshipEmbeddedViewStyle {
     private func nextView(configuration: Configuration) -> AirshipEmbeddedContentView? {
         return EmbeddedViewSelector.shared.selectView(
             embeddedID: configuration.embeddedID,
-            views: configuration.pending.map { $0.content }
+            views: configuration.pending.map { $0.content },
+            comparator: configuration.comparator
        )
     }
 
