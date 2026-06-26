@@ -336,7 +336,7 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
 
         /// Upload
         do {
-            let eventType: EventType = switch(event.boundaryEvent) {
+            let eventType: AirshipEventType = switch(event.boundaryEvent) {
             case .enter: .regionEnter
             case .exit: .regionExit
             }

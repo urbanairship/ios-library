@@ -262,7 +262,7 @@ actor EventStore {
         guard let sessionID = internalEventData.sessionID,
               let id = internalEventData.identifier,
               let type = internalEventData.type,
-              let convertedType = EventType.allCases.first(where: { $0.reportingName == type }),
+              let convertedType = AirshipEventType.allCases.first(where: { $0.reportingName == type }),
               let date = date(internalEventData: internalEventData)
         else {
             throw AirshipErrors.error("Invalid event data")

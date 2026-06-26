@@ -5,7 +5,7 @@ import Foundation
 /**
  * Airship event types
  */
-public enum EventType: CaseIterable, Sendable, Equatable, Hashable {
+public enum AirshipEventType: CaseIterable, Sendable, Equatable, Hashable {
     case appInit
     case appForeground
     case appBackground

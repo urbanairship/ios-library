@@ -4,7 +4,7 @@ import Foundation
 import AirshipCore
 
 struct ThomasLayoutFormDisplayEvent: ThomasLayoutEvent {
-    public let name: EventType = EventType.inAppFormDisplay
+    public let name: AirshipEventType = AirshipEventType.inAppFormDisplay
     public let data: (any Sendable & Encodable)?
 
     public init(data: ThomasReportingEvent.FormDisplayEvent) {

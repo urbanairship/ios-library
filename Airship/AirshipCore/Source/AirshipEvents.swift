@@ -172,7 +172,7 @@ fileprivate extension SessionEvent {
         }
     }
 
-    var eventType: EventType {
+    var eventType: AirshipEventType {
         switch self.type {
         case .foregroundInit, .backgroundInit: return .appInit
         case .background: return .appBackground

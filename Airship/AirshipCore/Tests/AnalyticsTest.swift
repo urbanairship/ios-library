@@ -558,10 +558,10 @@ class AnalyticsTest: XCTestCase {
 
         XCTAssertEqual(
             [
-                EventType.appBackground.reportingName,
-                EventType.appForeground.reportingName,
-                EventType.appInit.reportingName,
-                EventType.appInit.reportingName
+                AirshipEventType.appBackground.reportingName,
+                AirshipEventType.appForeground.reportingName,
+                AirshipEventType.appInit.reportingName,
+                AirshipEventType.appInit.reportingName
             ],
             events.map { $0.type.reportingName }
         )
@@ -624,7 +624,7 @@ final class TestEventManager: EventManagerProtocol, @unchecked Sendable {
 
 final class TestSessionEventFactory: SessionEventFactoryProtocol, @unchecked Sendable {
     func make(event: SessionEvent) -> AirshipEvent {
-        let eventType: EventType = switch(event.type) {
+        let eventType: AirshipEventType = switch(event.type) {
         case .backgroundInit, .foregroundInit: .appInit
         case .background: .appBackground
         case .foreground: .appForeground

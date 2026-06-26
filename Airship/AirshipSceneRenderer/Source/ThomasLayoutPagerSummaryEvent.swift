@@ -4,7 +4,7 @@ import Foundation
 import AirshipCore
 
 struct ThomasLayoutPagerSummaryEvent: ThomasLayoutEvent {
-    public let name: EventType = EventType.inAppPagerSummary
+    public let name: AirshipEventType = AirshipEventType.inAppPagerSummary
     public let data: (any Sendable & Encodable)?
 
     public init(data: ThomasReportingEvent.PagerSummaryEvent) {

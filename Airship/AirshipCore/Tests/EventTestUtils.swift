@@ -5,7 +5,7 @@ import AirshipCore
 
 extension AirshipEventData {
    
-    static func makeTestData(type: EventType = .appInit) -> AirshipEventData {
+    static func makeTestData(type: AirshipEventType = .appInit) -> AirshipEventData {
         return AirshipEventData(
             body: try! AirshipJSON.wrap(["cool": "story"]),
             id: UUID().uuidString,

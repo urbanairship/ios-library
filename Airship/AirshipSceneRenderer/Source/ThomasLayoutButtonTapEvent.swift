@@ -4,7 +4,7 @@ import Foundation
 import AirshipCore
 
 struct ThomasLayoutButtonTapEvent: ThomasLayoutEvent {
-    public let name: EventType = EventType.inAppButtonTap
+    public let name: AirshipEventType = AirshipEventType.inAppButtonTap
     public let data: (any Sendable & Encodable)?
 
     public init(data: ThomasReportingEvent.ButtonTapEvent) {

@@ -40,7 +40,7 @@ struct LegacyInAppAnalytics : LegacyInAppAnalyticsProtocol {
 }
 
 struct LegacyResolutionEvent : ThomasLayoutEvent {
-    let name = EventType.inAppResolution
+    let name = AirshipEventType.inAppResolution
 
     let data: (any Encodable & Sendable)?
 

@@ -193,7 +193,7 @@ struct InAppMessageAnalyticsTest {
         let data = self.eventRecorder.eventData.first!
         #expect(data.context == expectedContext)
         #expect(data.renderedLocale == AirshipJSON.string("rendered locale"))
-        #expect(data.event.name == EventType.customEvent)
+        #expect(data.event.name == AirshipEventType.customEvent)
     }
     
     @Test

@@ -92,7 +92,7 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
         await subject.attach()
         await takeNext(count: 3)
         
-        let eventMap: [EventType: [EventAutomationTriggerType]] = [
+        let eventMap: [AirshipEventType: [EventAutomationTriggerType]] = [
             .customEvent: [.customEventCount, .customEventValue],
             .regionExit: [.regionExit],
             .regionEnter: [.regionEnter],
@@ -111,7 +111,7 @@ final class AutomationEventFeedTest: XCTestCase, @unchecked Sendable {
             .inAppPageAction: [.inAppPageAction]
         ]
         
-        for eventType in EventType.allCases {
+        for eventType in AirshipEventType.allCases {
             guard let expected = eventMap[eventType] else { continue }
             
             let data = AirshipJSON.string(UUID().uuidString)

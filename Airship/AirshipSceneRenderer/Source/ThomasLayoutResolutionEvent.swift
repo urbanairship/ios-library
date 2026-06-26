@@ -6,7 +6,7 @@ public import AirshipCore
 /// - Note: For internal use only. :nodoc:
 public struct ThomasLayoutResolutionEvent: ThomasLayoutEvent {
 
-    public let name: EventType = EventType.inAppResolution
+    public let name: AirshipEventType = AirshipEventType.inAppResolution
     public let data: (any Sendable & Encodable)?
 
     private init(data: any Sendable & Encodable) {
