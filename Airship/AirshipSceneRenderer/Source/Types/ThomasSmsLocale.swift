@@ -1,18 +1,18 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipCore
 
 /// Locale configuration for a phone number
-struct ThomasSMSLocale: ThomasSerializable {
+@_spi(AirshipInternal)
+public struct ThomasSMSLocale: ThomasSerializable {
     /// Country locale code (two letters)
-    let countryCode: String
-    
+    public let countryCode: String
+
     /// Country phone code
-    let prefix: String
-    
+    public let prefix: String
+
     /// Registration info
-    let registration: ThomasSMSRegistrationOption?
+    public let registration: ThomasSMSRegistrationOption?
 
     // Validation hints
     let validationHints: ValidationHints?
@@ -48,13 +48,14 @@ struct ThomasSMSLocale: ThomasSerializable {
 }
 
 @_spi(AirshipInternal)
+@frozen
 public enum ThomasSMSRegistrationOption: ThomasSerializable, Hashable {
     case optIn(OptIn)
 
     public struct OptIn: ThomasSerializable, Hashable {
 
-        let type: RegistrationType = .optIn
-        var senderID: String
+        public let type: RegistrationType = .optIn
+        public var senderID: String
 
         enum CodingKeys: String, CodingKey {
             case type
@@ -62,7 +63,7 @@ public enum ThomasSMSRegistrationOption: ThomasSerializable, Hashable {
         }
     }
 
-    enum RegistrationType: String, Codable {
+    public enum RegistrationType: String, Codable, Sendable {
         case optIn = "opt_in"
     }
 
@@ -89,11 +90,3 @@ public enum ThomasSMSRegistrationOption: ThomasSerializable, Hashable {
     }
 }
 
-extension ThomasSMSRegistrationOption {
-    func makeContactOptions(date: Date = Date.now) -> SMSRegistrationOptions {
-        switch (self) {
-        case .optIn(let properties):
-            return .optIn(senderID: properties.senderID)
-        }
-    }
-}

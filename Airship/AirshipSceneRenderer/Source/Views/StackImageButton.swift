@@ -4,7 +4,6 @@ import Foundation
 import SwiftUI
 import Combine
 @_spi(AirshipInternal) import AirshipBasement
-@_spi(AirshipInternal) import AirshipCore
 
 struct StackImageButton : View {
 

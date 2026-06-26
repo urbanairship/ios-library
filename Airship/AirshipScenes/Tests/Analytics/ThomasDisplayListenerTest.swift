@@ -3,6 +3,7 @@
 import Testing
 @testable import AirshipCore
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
+@testable @_spi(AirshipInternal) import AirshipScenes
 
 @MainActor
 struct ThomasDisplayListenerTest {

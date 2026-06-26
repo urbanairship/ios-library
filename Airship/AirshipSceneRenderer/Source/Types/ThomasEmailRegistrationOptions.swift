@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipBasement
-import AirshipCore
+public import AirshipBasement
 
 @_spi(AirshipInternal)
+@frozen
 public enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
     case doubleOptIn(DoubleOptIn)
     case commercial(Commercial)
@@ -12,7 +12,7 @@ public enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
 
     public struct DoubleOptIn: ThomasSerializable, Hashable {
         let type: EmailRegistrationType = .doubleOptIn
-        var properties: AirshipJSON?
+        public var properties: AirshipJSON?
 
         enum CodingKeys: String, CodingKey {
             case type
@@ -22,8 +22,8 @@ public enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
 
     public struct Commercial: ThomasSerializable, Hashable {
         let type: EmailRegistrationType = .commercial
-        var optedIn: Bool
-        var properties: AirshipJSON?
+        public var optedIn: Bool
+        public var properties: AirshipJSON?
 
         enum CodingKeys: String, CodingKey {
             case type
@@ -34,7 +34,7 @@ public enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
 
     public struct Transactional: ThomasSerializable, Hashable {
         let type: EmailRegistrationType = .transactional
-        var properties: AirshipJSON?
+        public var properties: AirshipJSON?
 
         enum CodingKeys: String, CodingKey {
             case type
@@ -83,26 +83,3 @@ public enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
     }
 }
 
-extension ThomasEmailRegistrationOption {
-    func makeContactOptions(date: Date = Date.now) -> EmailRegistrationOptions {
-        switch (self) {
-        case .commercial(let properties):
-            return .commercialOptions(
-                transactionalOptedIn: nil,
-                commercialOptedIn: properties.optedIn ? date : nil,
-                properties: properties.properties?.unWrap() as? [String: Any]
-            )
-        case .doubleOptIn(let properties):
-            return .options(
-                properties: properties.properties?.unWrap() as? [String: Any],
-                doubleOptIn: true
-            )
-        case .transactional(let properties):
-            return .options(
-                transactionalOptedIn: nil,
-                properties: properties.properties?.unWrap() as? [String: Any],
-                doubleOptIn: false
-            )
-        }
-    }
-}

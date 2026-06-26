@@ -4,7 +4,6 @@ import Foundation
 import SwiftUI
 import Combine
 @_spi(AirshipInternal) import AirshipBasement
-@_spi(AirshipInternal) import AirshipCore
 
 struct Score: View {
     private let info: ThomasViewInfo.Score
@@ -25,12 +24,12 @@ struct Score: View {
         @Published
         var index: Int?
 
-        var accessibilityValue: String? {
+        func accessibilityValue(format: String) -> String? {
             guard let index else { return nil }
             switch(style) {
             case .numberRange(let rangeStyle):
                 let totalItems = rangeStyle.end - rangeStyle.start + 1
-                return String(format: "ua_x_of_y".airshipLocalizedString(fallback: "%@ of %@"), index.airshipLocalizedForVoiceOver(), totalItems.airshipLocalizedForVoiceOver())
+                return String(format: format, index.airshipLocalizedForVoiceOver(), totalItems.airshipLocalizedForVoiceOver())
             }
         }
 
@@ -86,6 +85,9 @@ struct Score: View {
 
     @EnvironmentObject
     private var validatableHelper: ValidatableHelper
+
+    @EnvironmentObject
+    private var thomasEnvironment: ThomasEnvironment
 
     @Environment(\.thomasAssociatedLabelResolver)
     private var associatedLabelResolver
@@ -180,7 +182,7 @@ struct Score: View {
                     break
                 }
             }
-            .accessibilityValue(self.viewModel.accessibilityValue ?? "")
+            .accessibilityValue(self.viewModel.accessibilityValue(format: self.thomasEnvironment.localizedString(key: "ua_x_of_y", fallback: "%@ of %@")) ?? "")
             .formElement()
             .airshipOnChangeOf(self.viewModel.score) { score in
                 self.updateScore(score)

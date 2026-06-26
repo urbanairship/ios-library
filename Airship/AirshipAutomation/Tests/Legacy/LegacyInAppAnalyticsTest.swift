@@ -4,7 +4,7 @@ import Testing
 @testable import AirshipAutomation
 @testable import AirshipCore
 @testable import AirshipSceneRenderer
-import AirshipScenes
+@testable import AirshipScenes
 
 @MainActor
 struct LegacyInAppAnalyticsTest {

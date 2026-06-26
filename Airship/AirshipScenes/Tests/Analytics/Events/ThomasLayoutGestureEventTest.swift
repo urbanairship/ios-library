@@ -4,6 +4,7 @@ import Testing
 
 @testable import AirshipCore
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
+@testable import AirshipScenes
 
 struct ThomasLayoutGestureEventTest {
 

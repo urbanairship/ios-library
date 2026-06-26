@@ -3,7 +3,6 @@
 import Foundation
 import SwiftUI
 @_spi(AirshipInternal) import AirshipBasement
-@_spi(AirshipInternal) import AirshipCore
 
 struct StoryIndicator: View {
 
@@ -15,6 +14,7 @@ struct StoryIndicator: View {
     let constraints: ViewConstraints
 
     @EnvironmentObject var pagerState: PagerState
+    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
     @Environment(\.colorScheme) var colorScheme
     
     func announcePage(info: ThomasViewInfo.StoryIndicator) -> Bool {
@@ -56,7 +56,8 @@ struct StoryIndicator: View {
                         }
                     }
                 }.airshipApplyIf(announcePage(info: info), transform: { view in
-                    view.accessibilityLabel(String(format: "ua_pager_progress".airshipLocalizedString(
+                    view.accessibilityLabel(String(format: self.thomasEnvironment.localizedString(
+                        key: "ua_pager_progress",
                         fallback: "Page %@ of %@"
                     ), (self.pagerState.pageIndex + 1).airshipLocalizedForVoiceOver(), self.pagerState.pageStates.count.airshipLocalizedForVoiceOver()))
                 })

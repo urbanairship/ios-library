@@ -2,15 +2,7 @@ import Foundation
 public import SwiftUI
 @_spi(AirshipInternal) public import AirshipBasement
 @_spi(AirshipInternal) public import AirshipCore
-
-/// - Note: For internal use only. :nodoc:
-public protocol ThomasLayoutMessageAnalyticsProtocol: AnyObject, Sendable {
-    @MainActor
-    func recordEvent(
-        _ event: any ThomasLayoutEvent,
-        layoutContext: ThomasLayoutContext?
-    )
-}
+@_spi(AirshipInternal) public import AirshipSceneRenderer
 
 @MainActor
 @_spi(AirshipInternal)
@@ -219,6 +211,8 @@ public final class ThomasDisplayListener: ThomasDelegate {
                     address,
                     options: options.makeContactOptions()
                 )
+            @unknown default:
+                AirshipLogger.error("Unexpected channel registration \(channelRegistration)")
             }
         }
     }
@@ -295,17 +289,3 @@ public final class ThomasDisplayListener: ThomasDelegate {
     }
 }
 
-extension AttributesEditor {
-    fileprivate func set(
-        attributeValue: ThomasAttributeValue,
-        attribute: String
-    ) {
-        switch attributeValue {
-        case .string(let value):
-            self.set(string: value, attribute: attribute)
-
-        case .number(let value):
-            self.set(double: value, attribute: attribute)
-        }
-    }
-}

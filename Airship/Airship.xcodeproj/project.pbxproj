@@ -64,7 +64,6 @@
 		27CCF77F2F16DA500018058F /* MessageViewAnalyticsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CCF77E2F16DA500018058F /* MessageViewAnalyticsTest.swift */; };
 		27E4194A2EF59F9800D5C1A6 /* MessageCenterThomasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E419492EF59F9800D5C1A6 /* MessageCenterThomasView.swift */; };
 		27F1E19D2F0E836000E317DB /* InAppMessageAnalyticsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6AAE52B58A9D3002FEA75 /* InAppMessageAnalyticsTest.swift */; };
-		27F1E19F2F0E848B00E317DB /* TestThomasLayoutEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6AAD42B58A977002FEA75 /* TestThomasLayoutEvent.swift */; };
 		322AAB1E2B5AB65700652DAC /* AddChannelPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DDC0562AF1055300D23EBE /* AddChannelPromptView.swift */; };
 		322AAB212B5ACB2800652DAC /* ChannelListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322AAB202B5ACB2800652DAC /* ChannelListView.swift */; };
 		322AAB222B5FCB6B00652DAC /* ContactManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322AAB1C2B5A869000652DAC /* ContactManagementView.swift */; };
@@ -448,28 +447,8 @@
 		6E21C4032FEC3F3100EA3E56 /* AirshipFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4012FEC3F3100EA3E56 /* AirshipFont.swift */; };
 		6E21C4042FEC3FAB00EA3E56 /* AirshipNativePlatform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1472D42F526DC600320A36 /* AirshipNativePlatform.swift */; };
 		6E21C4072FEC407800EA3E56 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
-		6E21C4202FEC40BA00EA3E56 /* ThomasLayoutEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C40B2FEC40BA00EA3E56 /* ThomasLayoutEvent.swift */; };
-		6E21C4212FEC40BA00EA3E56 /* ThomasLayoutPermissionResultEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4142FEC40BA00EA3E56 /* ThomasLayoutPermissionResultEvent.swift */; };
-		6E21C4222FEC40BA00EA3E56 /* ThomasLayoutPageSwipeEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4122FEC40BA00EA3E56 /* ThomasLayoutPageSwipeEvent.swift */; };
-		6E21C4232FEC40BA00EA3E56 /* ThomasLayoutEventRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4182FEC40BA00EA3E56 /* ThomasLayoutEventRecorder.swift */; };
-		6E21C4242FEC40BA00EA3E56 /* ThomasLayoutResolutionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4152FEC40BA00EA3E56 /* ThomasLayoutResolutionEvent.swift */; };
-		6E21C4252FEC40BA00EA3E56 /* ThomasLayoutPageViewEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4132FEC40BA00EA3E56 /* ThomasLayoutPageViewEvent.swift */; };
-		6E21C4262FEC40BA00EA3E56 /* ThomasLayoutFormDisplayEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C40C2FEC40BA00EA3E56 /* ThomasLayoutFormDisplayEvent.swift */; };
-		6E21C4272FEC40BA00EA3E56 /* ThomasLayoutPageActionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C40F2FEC40BA00EA3E56 /* ThomasLayoutPageActionEvent.swift */; };
-		6E21C4282FEC40BA00EA3E56 /* ThomasLayoutFormResultEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C40D2FEC40BA00EA3E56 /* ThomasLayoutFormResultEvent.swift */; };
-		6E21C4292FEC40BA00EA3E56 /* ThomasLayoutPagerSummaryEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4112FEC40BA00EA3E56 /* ThomasLayoutPagerSummaryEvent.swift */; };
-		6E21C42A2FEC40BA00EA3E56 /* ThomasDisplayListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C41B2FEC40BA00EA3E56 /* ThomasDisplayListener.swift */; };
-		6E21C42B2FEC40BA00EA3E56 /* ThomasLayoutEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C41A2FEC40BA00EA3E56 /* ThomasLayoutEventSource.swift */; };
-		6E21C42C2FEC40BA00EA3E56 /* ThomasLayoutPagerCompletedEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4102FEC40BA00EA3E56 /* ThomasLayoutPagerCompletedEvent.swift */; };
 		6E21C42D2FEC40BA00EA3E56 /* UrlInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C41F2FEC40BA00EA3E56 /* UrlInfo.swift */; };
-		6E21C42E2FEC40BA00EA3E56 /* Thomas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C41E2FEC40BA00EA3E56 /* Thomas.swift */; };
-		6E21C42F2FEC40BA00EA3E56 /* ThomasLayoutEventContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4172FEC40BA00EA3E56 /* ThomasLayoutEventContext.swift */; };
-		6E21C4302FEC40BA00EA3E56 /* MessageDisplayHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4082FEC40BA00EA3E56 /* MessageDisplayHistory.swift */; };
-		6E21C4312FEC40BA00EA3E56 /* ThomasLayoutDisplayEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C40A2FEC40BA00EA3E56 /* ThomasLayoutDisplayEvent.swift */; };
 		6E21C4322FEC40BA00EA3E56 /* ThomasEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C41D2FEC40BA00EA3E56 /* ThomasEvent.swift */; };
-		6E21C4332FEC40BA00EA3E56 /* ThomasLayoutEventMessageID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4192FEC40BA00EA3E56 /* ThomasLayoutEventMessageID.swift */; };
-		6E21C4342FEC40BA00EA3E56 /* ThomasLayoutButtonTapEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4092FEC40BA00EA3E56 /* ThomasLayoutButtonTapEvent.swift */; };
-		6E21C4352FEC40BA00EA3E56 /* ThomasLayoutGestureEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C40E2FEC40BA00EA3E56 /* ThomasLayoutGestureEvent.swift */; };
 		6E21C4372FEC4F3B00EA3E56 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4362FEC4F3A00EA3E56 /* Utils.swift */; };
 		6E21C45A2FEC585400EA3E56 /* ThomasOutcomeProcessorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4502FEC585400EA3E56 /* ThomasOutcomeProcessorTest.swift */; };
 		6E21C45B2FEC585400EA3E56 /* ThomasAccessibilityActionOutcomeTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4552FEC585400EA3E56 /* ThomasAccessibilityActionOutcomeTest.swift */; };
@@ -498,23 +477,6 @@
 		6E21C4832FEC587900EA3E56 /* ThomasEventHandlerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C47F2FEC587900EA3E56 /* ThomasEventHandlerTest.swift */; };
 		6E21C4842FEC587900EA3E56 /* ThomasEmailRegistrationOptionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C47C2FEC587900EA3E56 /* ThomasEmailRegistrationOptionsTest.swift */; };
 		6E21C4852FEC587900EA3E56 /* PagerDisableSwipeSelectorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C47D2FEC587900EA3E56 /* PagerDisableSwipeSelectorTest.swift */; };
-		6E21C4962FEC589800EA3E56 /* ThomasLayoutGestureEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C48E2FEC589800EA3E56 /* ThomasLayoutGestureEventTest.swift */; };
-		6E21C4972FEC589800EA3E56 /* ThomasLayoutDisplayEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C48A2FEC589800EA3E56 /* ThomasLayoutDisplayEventTest.swift */; };
-		6E21C4982FEC589800EA3E56 /* ThomasLayoutFormResultEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C48D2FEC589800EA3E56 /* ThomasLayoutFormResultEventTest.swift */; };
-		6E21C4992FEC589800EA3E56 /* ThomasLayoutPermissionResultEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4942FEC589800EA3E56 /* ThomasLayoutPermissionResultEventTest.swift */; };
-		6E21C49A2FEC589800EA3E56 /* ThomasLayoutButtonTapEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4892FEC589800EA3E56 /* ThomasLayoutButtonTapEventTest.swift */; };
-		6E21C49B2FEC589800EA3E56 /* ThomasLayoutPagerCompletedEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4902FEC589800EA3E56 /* ThomasLayoutPagerCompletedEventTest.swift */; };
-		6E21C49C2FEC589800EA3E56 /* ThomasLayoutPagerSummaryEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4912FEC589800EA3E56 /* ThomasLayoutPagerSummaryEventTest.swift */; };
-		6E21C49D2FEC589800EA3E56 /* ThomasLayoutResolutionEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4952FEC589800EA3E56 /* ThomasLayoutResolutionEventTest.swift */; };
-		6E21C49E2FEC589800EA3E56 /* ThomasLayoutPageActionEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C48F2FEC589800EA3E56 /* ThomasLayoutPageActionEventTest.swift */; };
-		6E21C49F2FEC589800EA3E56 /* ThomasLayoutEventTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C48B2FEC589800EA3E56 /* ThomasLayoutEventTestUtils.swift */; };
-		6E21C4A02FEC589800EA3E56 /* ThomasLayoutPageSwipeEventAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4922FEC589800EA3E56 /* ThomasLayoutPageSwipeEventAction.swift */; };
-		6E21C4A12FEC589800EA3E56 /* ThomasLayoutFormDisplayEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C48C2FEC589800EA3E56 /* ThomasLayoutFormDisplayEventTest.swift */; };
-		6E21C4A22FEC589800EA3E56 /* ThomasLayoutPageViewEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4932FEC589800EA3E56 /* ThomasLayoutPageViewEventTest.swift */; };
-		6E21C4A72FEC58A000EA3E56 /* ThomasLayoutEventRecorderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4A52FEC58A000EA3E56 /* ThomasLayoutEventRecorderTest.swift */; };
-		6E21C4A82FEC58A000EA3E56 /* ThomasDisplayListenerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4A62FEC58A000EA3E56 /* ThomasDisplayListenerTest.swift */; };
-		6E21C4A92FEC58A000EA3E56 /* ThomasLayoutEventContextTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4A32FEC58A000EA3E56 /* ThomasLayoutEventContextTest.swift */; };
-		6E21C4AA2FEC58A000EA3E56 /* ThomasLayoutEventMessageIDTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4A42FEC58A000EA3E56 /* ThomasLayoutEventMessageIDTest.swift */; };
 		6E21C4B22FEC58A500EA3E56 /* ThomasFormPayloadGeneratorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4B12FEC58A500EA3E56 /* ThomasFormPayloadGeneratorTest.swift */; };
 		6E21C4B32FEC58A500EA3E56 /* ThomasStateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4AC2FEC58A500EA3E56 /* ThomasStateTest.swift */; };
 		6E21C4B42FEC58A500EA3E56 /* ThomasFormDataCollectorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4AE2FEC58A500EA3E56 /* ThomasFormDataCollectorTest.swift */; };
@@ -523,11 +485,9 @@
 		6E21C4B72FEC58A500EA3E56 /* ThomasFormStateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4AF2FEC58A500EA3E56 /* ThomasFormStateTest.swift */; };
 		6E21C4B82FEC58A500EA3E56 /* ThomasFormFieldProcessorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4B02FEC58A500EA3E56 /* ThomasFormFieldProcessorTest.swift */; };
 		6E21C4B92FEC59DC00EA3E56 /* TestAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1726E2C5940005D20D /* TestAnalytics.swift */; };
-		6E21C4BB2FEC5A0200EA3E56 /* TestThomasLayoutEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6AAD42B58A977002FEA75 /* TestThomasLayoutEvent.swift */; };
 		6E21C4BC2FEC5AF600EA3E56 /* TestTaskSleeper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E581C1D2FB3AE3300CED5C8 /* TestTaskSleeper.swift */; };
 		6E21C4BD2FEC5B3B00EA3E56 /* TestDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */; };
 		6E21C4BE2FEC5C2700EA3E56 /* TestAirshipRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */; };
-		6E21C5332FEDBE3200EA3E56 /* AirshipThomasWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C5322FEDBE3200EA3E56 /* AirshipThomasWebView.swift */; };
 		6E21C5352FEDE17200EA3E56 /* ThomasEnvironmentTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C5342FEDE17200EA3E56 /* ThomasEnvironmentTest.swift */; };
 		6E2486DF28945D3900657CE4 /* PreferenceCenterState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486DE28945D3900657CE4 /* PreferenceCenterState.swift */; };
 		6E2486EC2894901E00657CE4 /* ConditionsViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2486EB2894901E00657CE4 /* ConditionsViewModifier.swift */; };
@@ -919,19 +879,64 @@
 		6EB721712FEB1F27001FBB9F /* TestDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */; };
 		6EB7232F2FEB3FF7001FBB9F /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		6EB7236E2FEB4091001FBB9F /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E43204826EA814F009228AB /* AirshipBasement.framework */; };
-		6EB723792FEB41DC001FBB9F /* StubTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB723782FEB41DC001FBB9F /* StubTest.swift */; };
-		6EB7237C2FEB420E001FBB9F /* AirshipSceneRenderer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB7231A2FEB3FF5001FBB9F /* AirshipSceneRenderer.framework */; };
 		6EB7237F2FEB42A1001FBB9F /* AirshipSceneRenderer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB7231A2FEB3FF5001FBB9F /* AirshipSceneRenderer.framework */; };
 		6EB723802FEB43AD001FBB9F /* AirshipBasement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E43204826EA814F009228AB /* AirshipBasement.framework */; };
-		6EB723872FEB450D001FBB9F /* Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB723812FEB450D001FBB9F /* Stub.swift */; };
+		6EB723872FEB450D001FBB9F /* AirshipSceneRendererExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB723812FEB450D001FBB9F /* AirshipSceneRendererExport.swift */; };
 		6EB7238B2FEB452F001FBB9F /* StubTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB7238A2FEB452F001FBB9F /* StubTest.swift */; };
-		6EB7238E2FEB4589001FBB9F /* AirshipScenes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB723342FEB3FF7001FBB9F /* AirshipScenes.framework */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		6EB7238E2FEB4589001FBB9F /* AirshipScenes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB723342FEB3FF7001FBB9F /* AirshipScenes.framework */; };
 		6EB727AF2FEB5774001FBB9F /* AirshipScenes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB723342FEB3FF7001FBB9F /* AirshipScenes.framework */; };
 		6EB727B02FEB577B001FBB9F /* AirshipScenes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB723342FEB3FF7001FBB9F /* AirshipScenes.framework */; };
 		6EB839472BC83B9D006611C4 /* DefaultInAppActionRunnerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB839452BC83B96006611C4 /* DefaultInAppActionRunnerTest.swift */; };
 		6EB839492BC8898E006611C4 /* AirshipAsyncChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB839482BC8898E006611C4 /* AirshipAsyncChannel.swift */; };
 		6EB8394C2BC8AB51006611C4 /* TestWorkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63A567528F449D8004B8951 /* TestWorkManager.swift */; };
 		6EB8394E2BC8B1F4006611C4 /* AirshipAsyncChannelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB8394D2BC8B1F4006611C4 /* AirshipAsyncChannelTest.swift */; };
+		6EB9661F2FEEE38000459ED3 /* MessageDisplayHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9661E2FEEE38000459ED3 /* MessageDisplayHistory.swift */; };
+		6EB966212FEEE3A800459ED3 /* ThomasDisplayListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966202FEEE3A800459ED3 /* ThomasDisplayListener.swift */; };
+		6EB9662A2FEEE42C00459ED3 /* ThomasLayoutEventMessageID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966272FEEE42C00459ED3 /* ThomasLayoutEventMessageID.swift */; };
+		6EB9662B2FEEE42C00459ED3 /* ThomasLayoutEventRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966262FEEE42C00459ED3 /* ThomasLayoutEventRecorder.swift */; };
+		6EB9662C2FEEE42C00459ED3 /* ThomasLayoutEventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966282FEEE42C00459ED3 /* ThomasLayoutEventSource.swift */; };
+		6EB9662D2FEEE42C00459ED3 /* ThomasLayoutMessageAnalyticsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966292FEEE42C00459ED3 /* ThomasLayoutMessageAnalyticsProtocol.swift */; };
+		6EB9662E2FEEE42C00459ED3 /* ThomasLayoutEventContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966252FEEE42C00459ED3 /* ThomasLayoutEventContext.swift */; };
+		6EB9663F2FEEE44A00459ED3 /* ThomasLayoutPageSwipeEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9663B2FEEE44A00459ED3 /* ThomasLayoutPageSwipeEvent.swift */; };
+		6EB966402FEEE44A00459ED3 /* ThomasLayoutPageViewEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9663C2FEEE44A00459ED3 /* ThomasLayoutPageViewEvent.swift */; };
+		6EB966412FEEE44A00459ED3 /* ThomasLayoutResolutionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9663E2FEEE44A00459ED3 /* ThomasLayoutResolutionEvent.swift */; };
+		6EB966422FEEE44A00459ED3 /* ThomasLayoutFormDisplayEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966352FEEE44A00459ED3 /* ThomasLayoutFormDisplayEvent.swift */; };
+		6EB966432FEEE44A00459ED3 /* ThomasLayoutFormResultEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966362FEEE44A00459ED3 /* ThomasLayoutFormResultEvent.swift */; };
+		6EB966442FEEE44A00459ED3 /* ThomasLayoutPagerCompletedEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966392FEEE44A00459ED3 /* ThomasLayoutPagerCompletedEvent.swift */; };
+		6EB966452FEEE44A00459ED3 /* ThomasLayoutPermissionResultEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9663D2FEEE44A00459ED3 /* ThomasLayoutPermissionResultEvent.swift */; };
+		6EB966462FEEE44A00459ED3 /* ThomasLayoutDisplayEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966332FEEE44A00459ED3 /* ThomasLayoutDisplayEvent.swift */; };
+		6EB966472FEEE44A00459ED3 /* ThomasLayoutPagerSummaryEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9663A2FEEE44A00459ED3 /* ThomasLayoutPagerSummaryEvent.swift */; };
+		6EB966482FEEE44A00459ED3 /* ThomasLayoutButtonTapEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966322FEEE44A00459ED3 /* ThomasLayoutButtonTapEvent.swift */; };
+		6EB966492FEEE44A00459ED3 /* ThomasLayoutEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966342FEEE44A00459ED3 /* ThomasLayoutEvent.swift */; };
+		6EB9664A2FEEE44A00459ED3 /* ThomasLayoutPageActionEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966382FEEE44A00459ED3 /* ThomasLayoutPageActionEvent.swift */; };
+		6EB9664B2FEEE44A00459ED3 /* ThomasLayoutGestureEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966372FEEE44A00459ED3 /* ThomasLayoutGestureEvent.swift */; };
+		6EB9664D2FEEE46D00459ED3 /* AirshipThomasWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9664C2FEEE46D00459ED3 /* AirshipThomasWebView.swift */; };
+		6EB966502FEEEA9D00459ED3 /* Thomas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9664F2FEEEA9D00459ED3 /* Thomas.swift */; };
+		6EB966572FEEED1700459ED3 /* ThomasLayoutEventContextTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966532FEEED1700459ED3 /* ThomasLayoutEventContextTest.swift */; };
+		6EB966582FEEED1700459ED3 /* ThomasLayoutEventMessageIDTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966542FEEED1700459ED3 /* ThomasLayoutEventMessageIDTest.swift */; };
+		6EB966592FEEED1700459ED3 /* ThomasDisplayListenerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966562FEEED1700459ED3 /* ThomasDisplayListenerTest.swift */; };
+		6EB9665A2FEEED1700459ED3 /* ThomasLayoutEventRecorderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966552FEEED1700459ED3 /* ThomasLayoutEventRecorderTest.swift */; };
+		6EB966692FEEED2100459ED3 /* ThomasLayoutDisplayEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9665D2FEEED2100459ED3 /* ThomasLayoutDisplayEventTest.swift */; };
+		6EB9666A2FEEED2100459ED3 /* ThomasLayoutPageActionEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966622FEEED2100459ED3 /* ThomasLayoutPageActionEventTest.swift */; };
+		6EB9666B2FEEED2100459ED3 /* ThomasLayoutGestureEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966612FEEED2100459ED3 /* ThomasLayoutGestureEventTest.swift */; };
+		6EB9666C2FEEED2100459ED3 /* ThomasLayoutPagerSummaryEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966642FEEED2100459ED3 /* ThomasLayoutPagerSummaryEventTest.swift */; };
+		6EB9666D2FEEED2100459ED3 /* ThomasLayoutPageSwipeEventAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966652FEEED2100459ED3 /* ThomasLayoutPageSwipeEventAction.swift */; };
+		6EB9666E2FEEED2100459ED3 /* ThomasLayoutButtonTapEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9665C2FEEED2100459ED3 /* ThomasLayoutButtonTapEventTest.swift */; };
+		6EB9666F2FEEED2100459ED3 /* ThomasLayoutResolutionEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966682FEEED2100459ED3 /* ThomasLayoutResolutionEventTest.swift */; };
+		6EB966702FEEED2100459ED3 /* ThomasLayoutEventTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9665E2FEEED2100459ED3 /* ThomasLayoutEventTestUtils.swift */; };
+		6EB966712FEEED2100459ED3 /* ThomasLayoutFormResultEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966602FEEED2100459ED3 /* ThomasLayoutFormResultEventTest.swift */; };
+		6EB966722FEEED2100459ED3 /* ThomasLayoutPagerCompletedEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966632FEEED2100459ED3 /* ThomasLayoutPagerCompletedEventTest.swift */; };
+		6EB966732FEEED2100459ED3 /* ThomasLayoutPageViewEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966662FEEED2100459ED3 /* ThomasLayoutPageViewEventTest.swift */; };
+		6EB966742FEEED2100459ED3 /* ThomasLayoutPermissionResultEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966672FEEED2100459ED3 /* ThomasLayoutPermissionResultEventTest.swift */; };
+		6EB966752FEEED2100459ED3 /* ThomasLayoutFormDisplayEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9665F2FEEED2100459ED3 /* ThomasLayoutFormDisplayEventTest.swift */; };
+		6EB966772FEEEDD800459ED3 /* TestThomasLayoutEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966762FEEEDD800459ED3 /* TestThomasLayoutEvent.swift */; };
+		6EB966782FEEEDDE00459ED3 /* TestThomasLayoutEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966762FEEEDD800459ED3 /* TestThomasLayoutEvent.swift */; };
+		6EB9667A2FEEEE1800459ED3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966792FEEEE1500459ED3 /* Extensions.swift */; };
+		6EB9667D2FEEEE1F00459ED3 /* ExtensionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9667B2FEEEE1D00459ED3 /* ExtensionsTest.swift */; };
+		6EB9667E2FEEEEB800459ED3 /* TestAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1726E2C5940005D20D /* TestAnalytics.swift */; };
+		6EB966812FEEF3C600459ED3 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
+		6EB966872FEEF43400459ED3 /* AirshipSceneRenderer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB7231A2FEB3FF5001FBB9F /* AirshipSceneRenderer.framework */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
+		6EB9668A2FEEF44300459ED3 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		6EBFA9AD2D15DA73002BA3E9 /* HashChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBFA9AC2D15DA70002BA3E9 /* HashChecker.swift */; };
 		6EBFA9AF2D15E04D002BA3E9 /* AirshipDeviceAudienceResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBFA9AE2D15E04B002BA3E9 /* AirshipDeviceAudienceResult.swift */; };
 		6EBFA9B12D15F499002BA3E9 /* HashCheckerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBFA9B02D15F491002BA3E9 /* HashCheckerTest.swift */; };
@@ -1334,13 +1339,6 @@
 			remoteGlobalIDString = 6E431F6B26EA814F009228AB;
 			remoteInfo = AirshipBasement;
 		};
-		6EB7237A2FEB4200001FBB9F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6EB723022FEB3FF5001FBB9F;
-			remoteInfo = AirshipSceneRenderer;
-		};
 		6EB7237D2FEB429D001FBB9F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
@@ -1417,6 +1415,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 6E0B8729294A9C120064B7BD;
 			remoteInfo = AirshipAutomation;
+		};
+		6EB9667F2FEEF3C000459ED3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = AirshipCore;
+		};
+		6EB966852FEEF43000459ED3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6EB723022FEB3FF5001FBB9F;
+			remoteInfo = AirshipSceneRenderer;
+		};
+		6EB966882FEEF44000459ED3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 494DD9561B0EB677009C134E;
+			remoteInfo = AirshipCore;
 		};
 		6ECCAD292CF55BC700423D86 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1933,27 +1952,7 @@
 		6E21C3FA2FEC3CF500EA3E56 /* VideoGroupState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoGroupState.swift; sourceTree = "<group>"; };
 		6E21C4002FEC3F3100EA3E56 /* AirshipColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipColor.swift; sourceTree = "<group>"; };
 		6E21C4012FEC3F3100EA3E56 /* AirshipFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipFont.swift; sourceTree = "<group>"; };
-		6E21C4082FEC40BA00EA3E56 /* MessageDisplayHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDisplayHistory.swift; sourceTree = "<group>"; };
-		6E21C4092FEC40BA00EA3E56 /* ThomasLayoutButtonTapEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutButtonTapEvent.swift; sourceTree = "<group>"; };
-		6E21C40A2FEC40BA00EA3E56 /* ThomasLayoutDisplayEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutDisplayEvent.swift; sourceTree = "<group>"; };
-		6E21C40B2FEC40BA00EA3E56 /* ThomasLayoutEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEvent.swift; sourceTree = "<group>"; };
-		6E21C40C2FEC40BA00EA3E56 /* ThomasLayoutFormDisplayEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutFormDisplayEvent.swift; sourceTree = "<group>"; };
-		6E21C40D2FEC40BA00EA3E56 /* ThomasLayoutFormResultEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutFormResultEvent.swift; sourceTree = "<group>"; };
-		6E21C40E2FEC40BA00EA3E56 /* ThomasLayoutGestureEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutGestureEvent.swift; sourceTree = "<group>"; };
-		6E21C40F2FEC40BA00EA3E56 /* ThomasLayoutPageActionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPageActionEvent.swift; sourceTree = "<group>"; };
-		6E21C4102FEC40BA00EA3E56 /* ThomasLayoutPagerCompletedEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPagerCompletedEvent.swift; sourceTree = "<group>"; };
-		6E21C4112FEC40BA00EA3E56 /* ThomasLayoutPagerSummaryEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPagerSummaryEvent.swift; sourceTree = "<group>"; };
-		6E21C4122FEC40BA00EA3E56 /* ThomasLayoutPageSwipeEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPageSwipeEvent.swift; sourceTree = "<group>"; };
-		6E21C4132FEC40BA00EA3E56 /* ThomasLayoutPageViewEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPageViewEvent.swift; sourceTree = "<group>"; };
-		6E21C4142FEC40BA00EA3E56 /* ThomasLayoutPermissionResultEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPermissionResultEvent.swift; sourceTree = "<group>"; };
-		6E21C4152FEC40BA00EA3E56 /* ThomasLayoutResolutionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutResolutionEvent.swift; sourceTree = "<group>"; };
-		6E21C4172FEC40BA00EA3E56 /* ThomasLayoutEventContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventContext.swift; sourceTree = "<group>"; };
-		6E21C4182FEC40BA00EA3E56 /* ThomasLayoutEventRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventRecorder.swift; sourceTree = "<group>"; };
-		6E21C4192FEC40BA00EA3E56 /* ThomasLayoutEventMessageID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventMessageID.swift; sourceTree = "<group>"; };
-		6E21C41A2FEC40BA00EA3E56 /* ThomasLayoutEventSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventSource.swift; sourceTree = "<group>"; };
-		6E21C41B2FEC40BA00EA3E56 /* ThomasDisplayListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasDisplayListener.swift; sourceTree = "<group>"; };
 		6E21C41D2FEC40BA00EA3E56 /* ThomasEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasEvent.swift; sourceTree = "<group>"; };
-		6E21C41E2FEC40BA00EA3E56 /* Thomas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thomas.swift; sourceTree = "<group>"; };
 		6E21C41F2FEC40BA00EA3E56 /* UrlInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlInfo.swift; sourceTree = "<group>"; };
 		6E21C4362FEC4F3A00EA3E56 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		6E21C44F2FEC585400EA3E56 /* ThomasOutcomeTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasOutcomeTest.swift; sourceTree = "<group>"; };
@@ -1983,23 +1982,6 @@
 		6E21C47E2FEC587900EA3E56 /* ThomasButtonClickBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasButtonClickBehavior.swift; sourceTree = "<group>"; };
 		6E21C47F2FEC587900EA3E56 /* ThomasEventHandlerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasEventHandlerTest.swift; sourceTree = "<group>"; };
 		6E21C4802FEC587900EA3E56 /* ThomasStateTriggerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasStateTriggerTest.swift; sourceTree = "<group>"; };
-		6E21C4892FEC589800EA3E56 /* ThomasLayoutButtonTapEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutButtonTapEventTest.swift; sourceTree = "<group>"; };
-		6E21C48A2FEC589800EA3E56 /* ThomasLayoutDisplayEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutDisplayEventTest.swift; sourceTree = "<group>"; };
-		6E21C48B2FEC589800EA3E56 /* ThomasLayoutEventTestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventTestUtils.swift; sourceTree = "<group>"; };
-		6E21C48C2FEC589800EA3E56 /* ThomasLayoutFormDisplayEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutFormDisplayEventTest.swift; sourceTree = "<group>"; };
-		6E21C48D2FEC589800EA3E56 /* ThomasLayoutFormResultEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutFormResultEventTest.swift; sourceTree = "<group>"; };
-		6E21C48E2FEC589800EA3E56 /* ThomasLayoutGestureEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutGestureEventTest.swift; sourceTree = "<group>"; };
-		6E21C48F2FEC589800EA3E56 /* ThomasLayoutPageActionEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPageActionEventTest.swift; sourceTree = "<group>"; };
-		6E21C4902FEC589800EA3E56 /* ThomasLayoutPagerCompletedEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPagerCompletedEventTest.swift; sourceTree = "<group>"; };
-		6E21C4912FEC589800EA3E56 /* ThomasLayoutPagerSummaryEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPagerSummaryEventTest.swift; sourceTree = "<group>"; };
-		6E21C4922FEC589800EA3E56 /* ThomasLayoutPageSwipeEventAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPageSwipeEventAction.swift; sourceTree = "<group>"; };
-		6E21C4932FEC589800EA3E56 /* ThomasLayoutPageViewEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPageViewEventTest.swift; sourceTree = "<group>"; };
-		6E21C4942FEC589800EA3E56 /* ThomasLayoutPermissionResultEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPermissionResultEventTest.swift; sourceTree = "<group>"; };
-		6E21C4952FEC589800EA3E56 /* ThomasLayoutResolutionEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutResolutionEventTest.swift; sourceTree = "<group>"; };
-		6E21C4A32FEC58A000EA3E56 /* ThomasLayoutEventContextTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventContextTest.swift; sourceTree = "<group>"; };
-		6E21C4A42FEC58A000EA3E56 /* ThomasLayoutEventMessageIDTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventMessageIDTest.swift; sourceTree = "<group>"; };
-		6E21C4A52FEC58A000EA3E56 /* ThomasLayoutEventRecorderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventRecorderTest.swift; sourceTree = "<group>"; };
-		6E21C4A62FEC58A000EA3E56 /* ThomasDisplayListenerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasDisplayListenerTest.swift; sourceTree = "<group>"; };
 		6E21C4AB2FEC58A500EA3E56 /* ThomasPagerTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasPagerTrackerTest.swift; sourceTree = "<group>"; };
 		6E21C4AC2FEC58A500EA3E56 /* ThomasStateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasStateTest.swift; sourceTree = "<group>"; };
 		6E21C4AD2FEC58A500EA3E56 /* ThomasFormFieldTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormFieldTest.swift; sourceTree = "<group>"; };
@@ -2007,7 +1989,6 @@
 		6E21C4AF2FEC58A500EA3E56 /* ThomasFormStateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormStateTest.swift; sourceTree = "<group>"; };
 		6E21C4B02FEC58A500EA3E56 /* ThomasFormFieldProcessorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormFieldProcessorTest.swift; sourceTree = "<group>"; };
 		6E21C4B12FEC58A500EA3E56 /* ThomasFormPayloadGeneratorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormPayloadGeneratorTest.swift; sourceTree = "<group>"; };
-		6E21C5322FEDBE3200EA3E56 /* AirshipThomasWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipThomasWebView.swift; sourceTree = "<group>"; };
 		6E21C5342FEDE17200EA3E56 /* ThomasEnvironmentTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasEnvironmentTest.swift; sourceTree = "<group>"; };
 		6E2486DE28945D3900657CE4 /* PreferenceCenterState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceCenterState.swift; sourceTree = "<group>"; };
 		6E2486EB2894901E00657CE4 /* ConditionsViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionsViewModifier.swift; sourceTree = "<group>"; };
@@ -2424,12 +2405,53 @@
 		6EB723342FEB3FF7001FBB9F /* AirshipScenes.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipScenes.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EB723502FEB402E001FBB9F /* AirshipSceneRendererTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipSceneRendererTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EB7236B2FEB4030001FBB9F /* AirshipScenesTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipScenesTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6EB723782FEB41DC001FBB9F /* StubTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubTest.swift; sourceTree = "<group>"; };
-		6EB723812FEB450D001FBB9F /* Stub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stub.swift; sourceTree = "<group>"; };
+		6EB723812FEB450D001FBB9F /* AirshipSceneRendererExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSceneRendererExport.swift; sourceTree = "<group>"; };
 		6EB7238A2FEB452F001FBB9F /* StubTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StubTest.swift; sourceTree = "<group>"; };
 		6EB839452BC83B96006611C4 /* DefaultInAppActionRunnerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultInAppActionRunnerTest.swift; sourceTree = "<group>"; };
 		6EB839482BC8898E006611C4 /* AirshipAsyncChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAsyncChannel.swift; sourceTree = "<group>"; };
 		6EB8394D2BC8B1F4006611C4 /* AirshipAsyncChannelTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAsyncChannelTest.swift; sourceTree = "<group>"; };
+		6EB9661E2FEEE38000459ED3 /* MessageDisplayHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDisplayHistory.swift; sourceTree = "<group>"; };
+		6EB966202FEEE3A800459ED3 /* ThomasDisplayListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasDisplayListener.swift; sourceTree = "<group>"; };
+		6EB966252FEEE42C00459ED3 /* ThomasLayoutEventContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventContext.swift; sourceTree = "<group>"; };
+		6EB966262FEEE42C00459ED3 /* ThomasLayoutEventRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventRecorder.swift; sourceTree = "<group>"; };
+		6EB966272FEEE42C00459ED3 /* ThomasLayoutEventMessageID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventMessageID.swift; sourceTree = "<group>"; };
+		6EB966282FEEE42C00459ED3 /* ThomasLayoutEventSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventSource.swift; sourceTree = "<group>"; };
+		6EB966292FEEE42C00459ED3 /* ThomasLayoutMessageAnalyticsProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutMessageAnalyticsProtocol.swift; sourceTree = "<group>"; };
+		6EB966322FEEE44A00459ED3 /* ThomasLayoutButtonTapEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutButtonTapEvent.swift; sourceTree = "<group>"; };
+		6EB966332FEEE44A00459ED3 /* ThomasLayoutDisplayEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutDisplayEvent.swift; sourceTree = "<group>"; };
+		6EB966342FEEE44A00459ED3 /* ThomasLayoutEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEvent.swift; sourceTree = "<group>"; };
+		6EB966352FEEE44A00459ED3 /* ThomasLayoutFormDisplayEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutFormDisplayEvent.swift; sourceTree = "<group>"; };
+		6EB966362FEEE44A00459ED3 /* ThomasLayoutFormResultEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutFormResultEvent.swift; sourceTree = "<group>"; };
+		6EB966372FEEE44A00459ED3 /* ThomasLayoutGestureEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutGestureEvent.swift; sourceTree = "<group>"; };
+		6EB966382FEEE44A00459ED3 /* ThomasLayoutPageActionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPageActionEvent.swift; sourceTree = "<group>"; };
+		6EB966392FEEE44A00459ED3 /* ThomasLayoutPagerCompletedEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPagerCompletedEvent.swift; sourceTree = "<group>"; };
+		6EB9663A2FEEE44A00459ED3 /* ThomasLayoutPagerSummaryEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPagerSummaryEvent.swift; sourceTree = "<group>"; };
+		6EB9663B2FEEE44A00459ED3 /* ThomasLayoutPageSwipeEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPageSwipeEvent.swift; sourceTree = "<group>"; };
+		6EB9663C2FEEE44A00459ED3 /* ThomasLayoutPageViewEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPageViewEvent.swift; sourceTree = "<group>"; };
+		6EB9663D2FEEE44A00459ED3 /* ThomasLayoutPermissionResultEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPermissionResultEvent.swift; sourceTree = "<group>"; };
+		6EB9663E2FEEE44A00459ED3 /* ThomasLayoutResolutionEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutResolutionEvent.swift; sourceTree = "<group>"; };
+		6EB9664C2FEEE46D00459ED3 /* AirshipThomasWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipThomasWebView.swift; sourceTree = "<group>"; };
+		6EB9664F2FEEEA9D00459ED3 /* Thomas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thomas.swift; sourceTree = "<group>"; };
+		6EB966532FEEED1700459ED3 /* ThomasLayoutEventContextTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventContextTest.swift; sourceTree = "<group>"; };
+		6EB966542FEEED1700459ED3 /* ThomasLayoutEventMessageIDTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventMessageIDTest.swift; sourceTree = "<group>"; };
+		6EB966552FEEED1700459ED3 /* ThomasLayoutEventRecorderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventRecorderTest.swift; sourceTree = "<group>"; };
+		6EB966562FEEED1700459ED3 /* ThomasDisplayListenerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasDisplayListenerTest.swift; sourceTree = "<group>"; };
+		6EB9665C2FEEED2100459ED3 /* ThomasLayoutButtonTapEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutButtonTapEventTest.swift; sourceTree = "<group>"; };
+		6EB9665D2FEEED2100459ED3 /* ThomasLayoutDisplayEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutDisplayEventTest.swift; sourceTree = "<group>"; };
+		6EB9665E2FEEED2100459ED3 /* ThomasLayoutEventTestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutEventTestUtils.swift; sourceTree = "<group>"; };
+		6EB9665F2FEEED2100459ED3 /* ThomasLayoutFormDisplayEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutFormDisplayEventTest.swift; sourceTree = "<group>"; };
+		6EB966602FEEED2100459ED3 /* ThomasLayoutFormResultEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutFormResultEventTest.swift; sourceTree = "<group>"; };
+		6EB966612FEEED2100459ED3 /* ThomasLayoutGestureEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutGestureEventTest.swift; sourceTree = "<group>"; };
+		6EB966622FEEED2100459ED3 /* ThomasLayoutPageActionEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPageActionEventTest.swift; sourceTree = "<group>"; };
+		6EB966632FEEED2100459ED3 /* ThomasLayoutPagerCompletedEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPagerCompletedEventTest.swift; sourceTree = "<group>"; };
+		6EB966642FEEED2100459ED3 /* ThomasLayoutPagerSummaryEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPagerSummaryEventTest.swift; sourceTree = "<group>"; };
+		6EB966652FEEED2100459ED3 /* ThomasLayoutPageSwipeEventAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPageSwipeEventAction.swift; sourceTree = "<group>"; };
+		6EB966662FEEED2100459ED3 /* ThomasLayoutPageViewEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPageViewEventTest.swift; sourceTree = "<group>"; };
+		6EB966672FEEED2100459ED3 /* ThomasLayoutPermissionResultEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPermissionResultEventTest.swift; sourceTree = "<group>"; };
+		6EB966682FEEED2100459ED3 /* ThomasLayoutResolutionEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutResolutionEventTest.swift; sourceTree = "<group>"; };
+		6EB966762FEEEDD800459ED3 /* TestThomasLayoutEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestThomasLayoutEvent.swift; sourceTree = "<group>"; };
+		6EB966792FEEEE1500459ED3 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		6EB9667B2FEEEE1D00459ED3 /* ExtensionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionsTest.swift; sourceTree = "<group>"; };
 		6EBFA9AC2D15DA70002BA3E9 /* HashChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashChecker.swift; sourceTree = "<group>"; };
 		6EBFA9AE2D15E04B002BA3E9 /* AirshipDeviceAudienceResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDeviceAudienceResult.swift; sourceTree = "<group>"; };
 		6EBFA9B02D15F491002BA3E9 /* HashCheckerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashCheckerTest.swift; sourceTree = "<group>"; };
@@ -2532,7 +2554,6 @@
 		6EE6AA292B50C976002FEA75 /* TestAutomationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAutomationEngine.swift; sourceTree = "<group>"; };
 		6EE6AA2B2B51DB1E002FEA75 /* AutomationSourceInfoStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationSourceInfoStore.swift; sourceTree = "<group>"; };
 		6EE6AA372B572897002FEA75 /* AutomationSourceInfoStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationSourceInfoStoreTest.swift; sourceTree = "<group>"; };
-		6EE6AAD42B58A977002FEA75 /* TestThomasLayoutEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestThomasLayoutEvent.swift; sourceTree = "<group>"; };
 		6EE6AAE52B58A9D3002FEA75 /* InAppMessageAnalyticsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppMessageAnalyticsTest.swift; sourceTree = "<group>"; };
 		6EE6AAFE2B58AB66002FEA75 /* LegacyInAppAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppAnalytics.swift; sourceTree = "<group>"; };
 		6EE6AB002B58B5AE002FEA75 /* LegacyInAppAnalyticsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyInAppAnalyticsTest.swift; sourceTree = "<group>"; };
@@ -2767,7 +2788,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EB7237C2FEB420E001FBB9F /* AirshipSceneRenderer.framework in Frameworks */,
+				6EB966872FEEF43400459ED3 /* AirshipSceneRenderer.framework in Frameworks */,
+				6EB966812FEEF3C600459ED3 /* AirshipCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2775,6 +2797,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EB9668A2FEEF44300459ED3 /* AirshipCore.framework in Frameworks */,
 				6EB7238E2FEB4589001FBB9F /* AirshipScenes.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3484,7 +3507,6 @@
 		6E21C3282FEC3BB100EA3E56 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				6E21C5322FEDBE3200EA3E56 /* AirshipThomasWebView.swift */,
 				6E21C3642FEC3C1E00EA3E56 /* AsyncViewController.swift */,
 				6E21C3652FEC3C1E00EA3E56 /* StackImageButton.swift */,
 				6E21C3662FEC3C1E00EA3E56 /* IconView.swift */,
@@ -3626,39 +3648,6 @@
 			path = ViewModifiers;
 			sourceTree = "<group>";
 		};
-		6E21C4162FEC40BA00EA3E56 /* Events */ = {
-			isa = PBXGroup;
-			children = (
-				6E21C4092FEC40BA00EA3E56 /* ThomasLayoutButtonTapEvent.swift */,
-				6E21C40A2FEC40BA00EA3E56 /* ThomasLayoutDisplayEvent.swift */,
-				6E21C40B2FEC40BA00EA3E56 /* ThomasLayoutEvent.swift */,
-				6E21C40C2FEC40BA00EA3E56 /* ThomasLayoutFormDisplayEvent.swift */,
-				6E21C40D2FEC40BA00EA3E56 /* ThomasLayoutFormResultEvent.swift */,
-				6E21C40E2FEC40BA00EA3E56 /* ThomasLayoutGestureEvent.swift */,
-				6E21C40F2FEC40BA00EA3E56 /* ThomasLayoutPageActionEvent.swift */,
-				6E21C4102FEC40BA00EA3E56 /* ThomasLayoutPagerCompletedEvent.swift */,
-				6E21C4112FEC40BA00EA3E56 /* ThomasLayoutPagerSummaryEvent.swift */,
-				6E21C4122FEC40BA00EA3E56 /* ThomasLayoutPageSwipeEvent.swift */,
-				6E21C4132FEC40BA00EA3E56 /* ThomasLayoutPageViewEvent.swift */,
-				6E21C4142FEC40BA00EA3E56 /* ThomasLayoutPermissionResultEvent.swift */,
-				6E21C4152FEC40BA00EA3E56 /* ThomasLayoutResolutionEvent.swift */,
-			);
-			name = Events;
-			sourceTree = "<group>";
-		};
-		6E21C41C2FEC40BA00EA3E56 /* Analytics */ = {
-			isa = PBXGroup;
-			children = (
-				6E21C4162FEC40BA00EA3E56 /* Events */,
-				6E21C4172FEC40BA00EA3E56 /* ThomasLayoutEventContext.swift */,
-				6E21C4182FEC40BA00EA3E56 /* ThomasLayoutEventRecorder.swift */,
-				6E21C4192FEC40BA00EA3E56 /* ThomasLayoutEventMessageID.swift */,
-				6E21C41A2FEC40BA00EA3E56 /* ThomasLayoutEventSource.swift */,
-				6E21C41B2FEC40BA00EA3E56 /* ThomasDisplayListener.swift */,
-			);
-			name = Analytics;
-			sourceTree = "<group>";
-		};
 		6E21C44E2FEC583B00EA3E56 /* Outcomes */ = {
 			isa = PBXGroup;
 			children = (
@@ -3702,38 +3691,6 @@
 				6E21C4B12FEC58A500EA3E56 /* ThomasFormPayloadGeneratorTest.swift */,
 			);
 			path = Environment;
-			sourceTree = "<group>";
-		};
-		6E21C4872FEC588900EA3E56 /* Analytics */ = {
-			isa = PBXGroup;
-			children = (
-				6E21C4A32FEC58A000EA3E56 /* ThomasLayoutEventContextTest.swift */,
-				6E21C4A42FEC58A000EA3E56 /* ThomasLayoutEventMessageIDTest.swift */,
-				6E21C4A52FEC58A000EA3E56 /* ThomasLayoutEventRecorderTest.swift */,
-				6E21C4A62FEC58A000EA3E56 /* ThomasDisplayListenerTest.swift */,
-				6E21C4882FEC589100EA3E56 /* Events */,
-			);
-			path = Analytics;
-			sourceTree = "<group>";
-		};
-		6E21C4882FEC589100EA3E56 /* Events */ = {
-			isa = PBXGroup;
-			children = (
-				6E21C4892FEC589800EA3E56 /* ThomasLayoutButtonTapEventTest.swift */,
-				6E21C48A2FEC589800EA3E56 /* ThomasLayoutDisplayEventTest.swift */,
-				6E21C48B2FEC589800EA3E56 /* ThomasLayoutEventTestUtils.swift */,
-				6E21C48C2FEC589800EA3E56 /* ThomasLayoutFormDisplayEventTest.swift */,
-				6E21C48D2FEC589800EA3E56 /* ThomasLayoutFormResultEventTest.swift */,
-				6E21C48E2FEC589800EA3E56 /* ThomasLayoutGestureEventTest.swift */,
-				6E21C48F2FEC589800EA3E56 /* ThomasLayoutPageActionEventTest.swift */,
-				6E21C4902FEC589800EA3E56 /* ThomasLayoutPagerCompletedEventTest.swift */,
-				6E21C4912FEC589800EA3E56 /* ThomasLayoutPagerSummaryEventTest.swift */,
-				6E21C4922FEC589800EA3E56 /* ThomasLayoutPageSwipeEventAction.swift */,
-				6E21C4932FEC589800EA3E56 /* ThomasLayoutPageViewEventTest.swift */,
-				6E21C4942FEC589800EA3E56 /* ThomasLayoutPermissionResultEventTest.swift */,
-				6E21C4952FEC589800EA3E56 /* ThomasLayoutResolutionEventTest.swift */,
-			);
-			path = Events;
 			sourceTree = "<group>";
 		};
 		6E2486FA2899BB0E00657CE4 /* view */ = {
@@ -4700,11 +4657,9 @@
 		6EB723702FEB4108001FBB9F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6EB9664F2FEEEA9D00459ED3 /* Thomas.swift */,
 				6E21C4362FEC4F3A00EA3E56 /* Utils.swift */,
-				6E21C4082FEC40BA00EA3E56 /* MessageDisplayHistory.swift */,
-				6E21C41C2FEC40BA00EA3E56 /* Analytics */,
 				6E21C41D2FEC40BA00EA3E56 /* ThomasEvent.swift */,
-				6E21C41E2FEC40BA00EA3E56 /* Thomas.swift */,
 				6E21C41F2FEC40BA00EA3E56 /* UrlInfo.swift */,
 				6E21C3F62FEC3CE000EA3E56 /* ThomasConstants.swift */,
 				6E21C3F72FEC3CE000EA3E56 /* ThomasDelegate.swift */,
@@ -4730,7 +4685,6 @@
 		6EB723752FEB411A001FBB9F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				6E21C4872FEC588900EA3E56 /* Analytics */,
 				6E21C4862FEC588500EA3E56 /* Environment */,
 				6E21C47B2FEC587300EA3E56 /* Types */,
 				6E21C4672FEC586A00EA3E56 /* LayoutModelsTest.swift */,
@@ -4745,7 +4699,6 @@
 				6E21C4702FEC586A00EA3E56 /* PagerStateLastPageTest.swift */,
 				6E21C4652FEC585F00EA3E56 /* VideoMediaWebViewTests.swift */,
 				6E21C44E2FEC583B00EA3E56 /* Outcomes */,
-				6EB723782FEB41DC001FBB9F /* StubTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -4753,7 +4706,12 @@
 		6EB723822FEB450D001FBB9F /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				6EB723812FEB450D001FBB9F /* Stub.swift */,
+				6EB966792FEEEE1500459ED3 /* Extensions.swift */,
+				6EB9664C2FEEE46D00459ED3 /* AirshipThomasWebView.swift */,
+				6EB966242FEEE41A00459ED3 /* Analytics */,
+				6EB966202FEEE3A800459ED3 /* ThomasDisplayListener.swift */,
+				6EB9661E2FEEE38000459ED3 /* MessageDisplayHistory.swift */,
+				6EB723812FEB450D001FBB9F /* AirshipSceneRendererExport.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -4761,6 +4719,9 @@
 		6EB723842FEB450D001FBB9F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6EB9667B2FEEEE1D00459ED3 /* ExtensionsTest.swift */,
+				6EB966762FEEEDD800459ED3 /* TestThomasLayoutEvent.swift */,
+				6EB966522FEEED0B00459ED3 /* Analytics */,
 				6EB7238A2FEB452F001FBB9F /* StubTest.swift */,
 			);
 			path = Tests;
@@ -4773,6 +4734,71 @@
 				6EB723842FEB450D001FBB9F /* Tests */,
 			);
 			path = AirshipScenes;
+			sourceTree = "<group>";
+		};
+		6EB966242FEEE41A00459ED3 /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				6EB966312FEEE44400459ED3 /* Events */,
+				6EB966252FEEE42C00459ED3 /* ThomasLayoutEventContext.swift */,
+				6EB966262FEEE42C00459ED3 /* ThomasLayoutEventRecorder.swift */,
+				6EB966272FEEE42C00459ED3 /* ThomasLayoutEventMessageID.swift */,
+				6EB966282FEEE42C00459ED3 /* ThomasLayoutEventSource.swift */,
+				6EB966292FEEE42C00459ED3 /* ThomasLayoutMessageAnalyticsProtocol.swift */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
+		6EB966312FEEE44400459ED3 /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				6EB966322FEEE44A00459ED3 /* ThomasLayoutButtonTapEvent.swift */,
+				6EB966332FEEE44A00459ED3 /* ThomasLayoutDisplayEvent.swift */,
+				6EB966342FEEE44A00459ED3 /* ThomasLayoutEvent.swift */,
+				6EB966352FEEE44A00459ED3 /* ThomasLayoutFormDisplayEvent.swift */,
+				6EB966362FEEE44A00459ED3 /* ThomasLayoutFormResultEvent.swift */,
+				6EB966372FEEE44A00459ED3 /* ThomasLayoutGestureEvent.swift */,
+				6EB966382FEEE44A00459ED3 /* ThomasLayoutPageActionEvent.swift */,
+				6EB966392FEEE44A00459ED3 /* ThomasLayoutPagerCompletedEvent.swift */,
+				6EB9663A2FEEE44A00459ED3 /* ThomasLayoutPagerSummaryEvent.swift */,
+				6EB9663B2FEEE44A00459ED3 /* ThomasLayoutPageSwipeEvent.swift */,
+				6EB9663C2FEEE44A00459ED3 /* ThomasLayoutPageViewEvent.swift */,
+				6EB9663D2FEEE44A00459ED3 /* ThomasLayoutPermissionResultEvent.swift */,
+				6EB9663E2FEEE44A00459ED3 /* ThomasLayoutResolutionEvent.swift */,
+			);
+			path = Events;
+			sourceTree = "<group>";
+		};
+		6EB966522FEEED0B00459ED3 /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				6EB9665B2FEEED1D00459ED3 /* Events */,
+				6EB966532FEEED1700459ED3 /* ThomasLayoutEventContextTest.swift */,
+				6EB966542FEEED1700459ED3 /* ThomasLayoutEventMessageIDTest.swift */,
+				6EB966552FEEED1700459ED3 /* ThomasLayoutEventRecorderTest.swift */,
+				6EB966562FEEED1700459ED3 /* ThomasDisplayListenerTest.swift */,
+			);
+			path = Analytics;
+			sourceTree = "<group>";
+		};
+		6EB9665B2FEEED1D00459ED3 /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				6EB9665C2FEEED2100459ED3 /* ThomasLayoutButtonTapEventTest.swift */,
+				6EB9665D2FEEED2100459ED3 /* ThomasLayoutDisplayEventTest.swift */,
+				6EB9665E2FEEED2100459ED3 /* ThomasLayoutEventTestUtils.swift */,
+				6EB9665F2FEEED2100459ED3 /* ThomasLayoutFormDisplayEventTest.swift */,
+				6EB966602FEEED2100459ED3 /* ThomasLayoutFormResultEventTest.swift */,
+				6EB966612FEEED2100459ED3 /* ThomasLayoutGestureEventTest.swift */,
+				6EB966622FEEED2100459ED3 /* ThomasLayoutPageActionEventTest.swift */,
+				6EB966632FEEED2100459ED3 /* ThomasLayoutPagerCompletedEventTest.swift */,
+				6EB966642FEEED2100459ED3 /* ThomasLayoutPagerSummaryEventTest.swift */,
+				6EB966652FEEED2100459ED3 /* ThomasLayoutPageSwipeEventAction.swift */,
+				6EB966662FEEED2100459ED3 /* ThomasLayoutPageViewEventTest.swift */,
+				6EB966672FEEED2100459ED3 /* ThomasLayoutPermissionResultEventTest.swift */,
+				6EB966682FEEED2100459ED3 /* ThomasLayoutResolutionEventTest.swift */,
+			);
+			path = Events;
 			sourceTree = "<group>";
 		};
 		6EC0CA4D2B48985B00333A87 /* RemoteData */ = {
@@ -5330,7 +5356,6 @@
 				6ED2F5282B7FC59F000AFC80 /* AirshipColorTests.swift */,
 				6EB8394D2BC8B1F4006611C4 /* AirshipAsyncChannelTest.swift */,
 				6032695A2BF75D69007F7F75 /* AirshipHTTPResponseTest.swift */,
-				6EE6AAD42B58A977002FEA75 /* TestThomasLayoutEvent.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -5747,7 +5772,8 @@
 			buildRules = (
 			);
 			dependencies = (
-				6EB7237B2FEB4200001FBB9F /* PBXTargetDependency */,
+				6EB966862FEEF43000459ED3 /* PBXTargetDependency */,
+				6EB966802FEEF3C000459ED3 /* PBXTargetDependency */,
 			);
 			name = AirshipSceneRendererTests;
 			productName = AirshipSceneRendererTests;
@@ -5765,6 +5791,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				6EB966892FEEF44000459ED3 /* PBXTargetDependency */,
 				6EB7238D2FEB4580001FBB9F /* PBXTargetDependency */,
 			);
 			name = AirshipScenesTest;
@@ -6778,8 +6805,8 @@
 				6EE6AB022B58B6E9002FEA75 /* LegacyInAppAnalyticsTest.swift in Sources */,
 				60D1D9BB2B6A53F000EBE0A4 /* PreparedTriggerTest.swift in Sources */,
 				A6AC44832B923ACB00769ED2 /* TestInAppMessageAutomationExecutor.swift in Sources */,
+				6EB966782FEEEDDE00459ED3 /* TestThomasLayoutEvent.swift in Sources */,
 				6EC0CA6B2B4B698000333A87 /* AutomationExecutorTest.swift in Sources */,
-				27F1E19F2F0E848B00E317DB /* TestThomasLayoutEvent.swift in Sources */,
 				6E1620932B3118D9009240B2 /* ImmediateDisplayCoordinatorTest.swift in Sources */,
 				6E1D90022B2D1AB4004BA130 /* RetryingQueueTests.swift in Sources */,
 				6E1528402B4F153900DF1377 /* TestDisplayAdapter.swift in Sources */,
@@ -6905,6 +6932,7 @@
 				6E21C3122FEC3B9900EA3E56 /* ThomasSerializable.swift in Sources */,
 				6E21C3132FEC3B9900EA3E56 /* ThomasOutcome.swift in Sources */,
 				6E21C3142FEC3B9900EA3E56 /* ThomasMarkdownOptions.swift in Sources */,
+				6EB966502FEEEA9D00459ED3 /* Thomas.swift in Sources */,
 				6E21C3152FEC3B9900EA3E56 /* ThomasEventHandler.swift in Sources */,
 				6E21C3162FEC3B9900EA3E56 /* ThomasMargin.swift in Sources */,
 				6E21C3172FEC3B9900EA3E56 /* ThomasMediaUrlSelector.swift in Sources */,
@@ -6936,32 +6964,11 @@
 				6E21C35C2FEC3BEF00EA3E56 /* CheckboxToggleLayout.swift in Sources */,
 				6E21C31C2FEC3B9900EA3E56 /* ThomasOrientation.swift in Sources */,
 				6E21C38A2FEC3C1E00EA3E56 /* AsyncViewController.swift in Sources */,
-				6E21C4202FEC40BA00EA3E56 /* ThomasLayoutEvent.swift in Sources */,
-				6E21C4212FEC40BA00EA3E56 /* ThomasLayoutPermissionResultEvent.swift in Sources */,
-				6E21C4222FEC40BA00EA3E56 /* ThomasLayoutPageSwipeEvent.swift in Sources */,
-				6E21C4232FEC40BA00EA3E56 /* ThomasLayoutEventRecorder.swift in Sources */,
 				6E21C4372FEC4F3B00EA3E56 /* Utils.swift in Sources */,
-				6E21C4242FEC40BA00EA3E56 /* ThomasLayoutResolutionEvent.swift in Sources */,
-				6E21C4252FEC40BA00EA3E56 /* ThomasLayoutPageViewEvent.swift in Sources */,
-				6E21C4262FEC40BA00EA3E56 /* ThomasLayoutFormDisplayEvent.swift in Sources */,
-				6E21C4272FEC40BA00EA3E56 /* ThomasLayoutPageActionEvent.swift in Sources */,
-				6E21C4282FEC40BA00EA3E56 /* ThomasLayoutFormResultEvent.swift in Sources */,
-				6E21C4292FEC40BA00EA3E56 /* ThomasLayoutPagerSummaryEvent.swift in Sources */,
-				6E21C42A2FEC40BA00EA3E56 /* ThomasDisplayListener.swift in Sources */,
-				6E21C42B2FEC40BA00EA3E56 /* ThomasLayoutEventSource.swift in Sources */,
-				6E21C42C2FEC40BA00EA3E56 /* ThomasLayoutPagerCompletedEvent.swift in Sources */,
 				6E21C42D2FEC40BA00EA3E56 /* UrlInfo.swift in Sources */,
-				6E21C42E2FEC40BA00EA3E56 /* Thomas.swift in Sources */,
-				6E21C42F2FEC40BA00EA3E56 /* ThomasLayoutEventContext.swift in Sources */,
-				6E21C4302FEC40BA00EA3E56 /* MessageDisplayHistory.swift in Sources */,
-				6E21C4312FEC40BA00EA3E56 /* ThomasLayoutDisplayEvent.swift in Sources */,
 				6E21C4322FEC40BA00EA3E56 /* ThomasEvent.swift in Sources */,
-				6E21C4332FEC40BA00EA3E56 /* ThomasLayoutEventMessageID.swift in Sources */,
-				6E21C4342FEC40BA00EA3E56 /* ThomasLayoutButtonTapEvent.swift in Sources */,
-				6E21C4352FEC40BA00EA3E56 /* ThomasLayoutGestureEvent.swift in Sources */,
 				6E21C38B2FEC3C1E00EA3E56 /* ThomasAsyncImage.swift in Sources */,
 				6E21C3EA2FEC3C5F00EA3E56 /* BackgroundColorViewModifier.swift in Sources */,
-				6E21C5332FEDBE3200EA3E56 /* AirshipThomasWebView.swift in Sources */,
 				6E21C3EB2FEC3C5F00EA3E56 /* EventHandlerViewModifier.swift in Sources */,
 				6E21C3EC2FEC3C5F00EA3E56 /* VisibilityViewModifier.swift in Sources */,
 				6E21C3ED2FEC3C5F00EA3E56 /* FormInputViewModifier.swift in Sources */,
@@ -7049,7 +7056,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EB723872FEB450D001FBB9F /* Stub.swift in Sources */,
+				6EB9667A2FEEEE1800459ED3 /* Extensions.swift in Sources */,
+				6EB966212FEEE3A800459ED3 /* ThomasDisplayListener.swift in Sources */,
+				6EB723872FEB450D001FBB9F /* AirshipSceneRendererExport.swift in Sources */,
+				6EB9661F2FEEE38000459ED3 /* MessageDisplayHistory.swift in Sources */,
+				6EB9662A2FEEE42C00459ED3 /* ThomasLayoutEventMessageID.swift in Sources */,
+				6EB9662B2FEEE42C00459ED3 /* ThomasLayoutEventRecorder.swift in Sources */,
+				6EB9662C2FEEE42C00459ED3 /* ThomasLayoutEventSource.swift in Sources */,
+				6EB9662D2FEEE42C00459ED3 /* ThomasLayoutMessageAnalyticsProtocol.swift in Sources */,
+				6EB9662E2FEEE42C00459ED3 /* ThomasLayoutEventContext.swift in Sources */,
+				6EB9663F2FEEE44A00459ED3 /* ThomasLayoutPageSwipeEvent.swift in Sources */,
+				6EB966402FEEE44A00459ED3 /* ThomasLayoutPageViewEvent.swift in Sources */,
+				6EB966412FEEE44A00459ED3 /* ThomasLayoutResolutionEvent.swift in Sources */,
+				6EB966422FEEE44A00459ED3 /* ThomasLayoutFormDisplayEvent.swift in Sources */,
+				6EB966432FEEE44A00459ED3 /* ThomasLayoutFormResultEvent.swift in Sources */,
+				6EB966442FEEE44A00459ED3 /* ThomasLayoutPagerCompletedEvent.swift in Sources */,
+				6EB966452FEEE44A00459ED3 /* ThomasLayoutPermissionResultEvent.swift in Sources */,
+				6EB966462FEEE44A00459ED3 /* ThomasLayoutDisplayEvent.swift in Sources */,
+				6EB9664D2FEEE46D00459ED3 /* AirshipThomasWebView.swift in Sources */,
+				6EB966472FEEE44A00459ED3 /* ThomasLayoutPagerSummaryEvent.swift in Sources */,
+				6EB966482FEEE44A00459ED3 /* ThomasLayoutButtonTapEvent.swift in Sources */,
+				6EB966492FEEE44A00459ED3 /* ThomasLayoutEvent.swift in Sources */,
+				6EB9664A2FEEE44A00459ED3 /* ThomasLayoutPageActionEvent.swift in Sources */,
+				6EB9664B2FEEE44A00459ED3 /* ThomasLayoutGestureEvent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7062,9 +7091,6 @@
 				6E21C4712FEC586A00EA3E56 /* ThomasViewModelTest.swift in Sources */,
 				6E21C4722FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift in Sources */,
 				6E21C4732FEC586A00EA3E56 /* PagerStateLastPageTest.swift in Sources */,
-				6E21C4A72FEC58A000EA3E56 /* ThomasLayoutEventRecorderTest.swift in Sources */,
-				6E21C4A82FEC58A000EA3E56 /* ThomasDisplayListenerTest.swift in Sources */,
-				6E21C4A92FEC58A000EA3E56 /* ThomasLayoutEventContextTest.swift in Sources */,
 				6E21C4B22FEC58A500EA3E56 /* ThomasFormPayloadGeneratorTest.swift in Sources */,
 				6E21C4B32FEC58A500EA3E56 /* ThomasStateTest.swift in Sources */,
 				6E21C4B42FEC58A500EA3E56 /* ThomasFormDataCollectorTest.swift in Sources */,
@@ -7073,7 +7099,6 @@
 				6E21C4BE2FEC5C2700EA3E56 /* TestAirshipRequestSession.swift in Sources */,
 				6E21C4B72FEC58A500EA3E56 /* ThomasFormStateTest.swift in Sources */,
 				6E21C4B82FEC58A500EA3E56 /* ThomasFormFieldProcessorTest.swift in Sources */,
-				6E21C4AA2FEC58A000EA3E56 /* ThomasLayoutEventMessageIDTest.swift in Sources */,
 				6E21C4742FEC586A00EA3E56 /* ThomasAssociatedLabelResolverTest.swift in Sources */,
 				6E21C4752FEC586A00EA3E56 /* LayoutModelsTest.swift in Sources */,
 				6E21C4762FEC586A00EA3E56 /* ThomasAsyncViewStateTest.swift in Sources */,
@@ -7096,24 +7121,9 @@
 				6E21C4612FEC585400EA3E56 /* StateTriggerEvaluationTest.swift in Sources */,
 				6E21C4BC2FEC5AF600EA3E56 /* TestTaskSleeper.swift in Sources */,
 				6E21C4622FEC585400EA3E56 /* ThomasAutomatedActionOutcomeTest.swift in Sources */,
-				6E21C4962FEC589800EA3E56 /* ThomasLayoutGestureEventTest.swift in Sources */,
-				6E21C4972FEC589800EA3E56 /* ThomasLayoutDisplayEventTest.swift in Sources */,
-				6E21C4982FEC589800EA3E56 /* ThomasLayoutFormResultEventTest.swift in Sources */,
-				6E21C4992FEC589800EA3E56 /* ThomasLayoutPermissionResultEventTest.swift in Sources */,
-				6E21C4BB2FEC5A0200EA3E56 /* TestThomasLayoutEvent.swift in Sources */,
-				6E21C49A2FEC589800EA3E56 /* ThomasLayoutButtonTapEventTest.swift in Sources */,
-				6E21C49B2FEC589800EA3E56 /* ThomasLayoutPagerCompletedEventTest.swift in Sources */,
-				6E21C49C2FEC589800EA3E56 /* ThomasLayoutPagerSummaryEventTest.swift in Sources */,
-				6E21C49D2FEC589800EA3E56 /* ThomasLayoutResolutionEventTest.swift in Sources */,
-				6E21C49E2FEC589800EA3E56 /* ThomasLayoutPageActionEventTest.swift in Sources */,
-				6E21C49F2FEC589800EA3E56 /* ThomasLayoutEventTestUtils.swift in Sources */,
-				6E21C4A02FEC589800EA3E56 /* ThomasLayoutPageSwipeEventAction.swift in Sources */,
-				6E21C4A12FEC589800EA3E56 /* ThomasLayoutFormDisplayEventTest.swift in Sources */,
 				6E21C4B92FEC59DC00EA3E56 /* TestAnalytics.swift in Sources */,
-				6E21C4A22FEC589800EA3E56 /* ThomasLayoutPageViewEventTest.swift in Sources */,
 				6E21C4632FEC585400EA3E56 /* ThomasViewInfoOutcomeFieldsCodingTest.swift in Sources */,
 				6E21C4642FEC585400EA3E56 /* EventHandlerViewModifierOutcomeTest.swift in Sources */,
-				6EB723792FEB41DC001FBB9F /* StubTest.swift in Sources */,
 				6E21C4BD2FEC5B3B00EA3E56 /* TestDate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7123,6 +7133,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EB7238B2FEB452F001FBB9F /* StubTest.swift in Sources */,
+				6EB966692FEEED2100459ED3 /* ThomasLayoutDisplayEventTest.swift in Sources */,
+				6EB9666A2FEEED2100459ED3 /* ThomasLayoutPageActionEventTest.swift in Sources */,
+				6EB9666B2FEEED2100459ED3 /* ThomasLayoutGestureEventTest.swift in Sources */,
+				6EB9666C2FEEED2100459ED3 /* ThomasLayoutPagerSummaryEventTest.swift in Sources */,
+				6EB9666D2FEEED2100459ED3 /* ThomasLayoutPageSwipeEventAction.swift in Sources */,
+				6EB9666E2FEEED2100459ED3 /* ThomasLayoutButtonTapEventTest.swift in Sources */,
+				6EB9666F2FEEED2100459ED3 /* ThomasLayoutResolutionEventTest.swift in Sources */,
+				6EB966702FEEED2100459ED3 /* ThomasLayoutEventTestUtils.swift in Sources */,
+				6EB966712FEEED2100459ED3 /* ThomasLayoutFormResultEventTest.swift in Sources */,
+				6EB966722FEEED2100459ED3 /* ThomasLayoutPagerCompletedEventTest.swift in Sources */,
+				6EB9667D2FEEEE1F00459ED3 /* ExtensionsTest.swift in Sources */,
+				6EB966732FEEED2100459ED3 /* ThomasLayoutPageViewEventTest.swift in Sources */,
+				6EB966742FEEED2100459ED3 /* ThomasLayoutPermissionResultEventTest.swift in Sources */,
+				6EB966752FEEED2100459ED3 /* ThomasLayoutFormDisplayEventTest.swift in Sources */,
+				6EB966572FEEED1700459ED3 /* ThomasLayoutEventContextTest.swift in Sources */,
+				6EB966582FEEED1700459ED3 /* ThomasLayoutEventMessageIDTest.swift in Sources */,
+				6EB966592FEEED1700459ED3 /* ThomasDisplayListenerTest.swift in Sources */,
+				6EB966772FEEEDD800459ED3 /* TestThomasLayoutEvent.swift in Sources */,
+				6EB9665A2FEEED1700459ED3 /* ThomasLayoutEventRecorderTest.swift in Sources */,
+				6EB9667E2FEEEEB800459ED3 /* TestAnalytics.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7521,11 +7551,6 @@
 			target = 6E431F6B26EA814F009228AB /* AirshipBasement */;
 			targetProxy = 6EB7236C2FEB4082001FBB9F /* PBXContainerItemProxy */;
 		};
-		6EB7237B2FEB4200001FBB9F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6EB723022FEB3FF5001FBB9F /* AirshipSceneRenderer */;
-			targetProxy = 6EB7237A2FEB4200001FBB9F /* PBXContainerItemProxy */;
-		};
 		6EB7237E2FEB429D001FBB9F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6EB723022FEB3FF5001FBB9F /* AirshipSceneRenderer */;
@@ -7580,6 +7605,21 @@
 			isa = PBXTargetDependency;
 			target = 6E0B8729294A9C120064B7BD /* AirshipAutomation */;
 			targetProxy = 6EB727BB2FEB57ED001FBB9F /* PBXContainerItemProxy */;
+		};
+		6EB966802FEEF3C000459ED3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 494DD9561B0EB677009C134E /* AirshipCore */;
+			targetProxy = 6EB9667F2FEEF3C000459ED3 /* PBXContainerItemProxy */;
+		};
+		6EB966862FEEF43000459ED3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6EB723022FEB3FF5001FBB9F /* AirshipSceneRenderer */;
+			targetProxy = 6EB966852FEEF43000459ED3 /* PBXContainerItemProxy */;
+		};
+		6EB966892FEEF44000459ED3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 494DD9561B0EB677009C134E /* AirshipCore */;
+			targetProxy = 6EB966882FEEF44000459ED3 /* PBXContainerItemProxy */;
 		};
 		6ECCAD282CF55BC700423D86 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

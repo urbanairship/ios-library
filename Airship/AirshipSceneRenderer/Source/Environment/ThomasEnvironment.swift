@@ -305,6 +305,11 @@ class ThomasEnvironment: ObservableObject {
     }
 
     @MainActor
+    func localizedString(key: String, fallback: String) -> String {
+        localizedString(key: key) ?? fallback
+    }
+
+    @MainActor
     func resolveLocalized(_ localized: ThomasAccessibleInfo.Localized) -> String {
         if let refs = localized.refs {
             for ref in refs {

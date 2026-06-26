@@ -4,27 +4,32 @@ import Testing
 
 @testable import AirshipCore
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
+@testable import AirshipScenes
 
-struct ThomasLayoutPagerCompletedEventTest {
+struct ThomasLayoutPageViewEventTest {
 
     @Test
     func testEvent() throws {
-        let thomasEvent = ThomasReportingEvent.PagerCompletedEvent(
+        let thomasEvent = ThomasReportingEvent.PageViewEvent(
             identifier: "pager identifier",
+            pageIdentifier: "page identifier",
             pageIndex: 3,
+            pageViewCount: 31,
             pageCount: 12,
-            pageIdentifier: "page identifier"
+            completed: false
         )
 
-        let event = ThomasLayoutPagerCompletedEvent(data: thomasEvent)
-        #expect(event.name.reportingName == "in_app_pager_completed")
+        let event = ThomasLayoutPageViewEvent(data: thomasEvent)
+        #expect(event.name.reportingName == "in_app_page_view")
 
         let expectedJSON = """
         {
+           "page_identifier":"page identifier",
+           "page_index":3,
+           "viewed_count":31,
            "page_count":12,
            "pager_identifier":"pager identifier",
-           "page_index":3,
-           "page_identifier":"page identifier"
+           "completed":false
         }
         """
 
@@ -32,4 +37,5 @@ struct ThomasLayoutPagerCompletedEventTest {
         let actual = try event.bodyJSON
         #expect(actual == expected)
     }
+
 }

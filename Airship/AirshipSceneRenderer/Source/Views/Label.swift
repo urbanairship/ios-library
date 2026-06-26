@@ -2,7 +2,7 @@
 
 import Foundation
 import SwiftUI
-@_spi(AirshipInternal) import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 #if canImport(UIKit)
 import UIKit

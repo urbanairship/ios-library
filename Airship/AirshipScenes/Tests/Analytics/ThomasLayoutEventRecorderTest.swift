@@ -4,6 +4,7 @@ import XCTest
 
 @testable import AirshipCore
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
+@testable import AirshipScenes
 
 class ThomasLayoutEventRecorderTest: XCTestCase {
 
