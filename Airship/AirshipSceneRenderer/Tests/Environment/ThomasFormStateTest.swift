@@ -4,7 +4,7 @@ import Testing
 import Foundation
 @preconcurrency import Combine
 
-@testable import AirshipCore
+@testable import AirshipBasement
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
 @MainActor

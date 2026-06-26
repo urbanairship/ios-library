@@ -2,7 +2,7 @@
 
 import XCTest
 
-@testable import AirshipCore
+@testable import AirshipBasement
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
 final class ThomasViewModelTest: XCTestCase {

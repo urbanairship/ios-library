@@ -3,7 +3,7 @@
 import Foundation
 import Testing
 
-@testable import AirshipCore
+@testable import AirshipBasement
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
 @Suite(.timeLimit(.minutes(1)))
