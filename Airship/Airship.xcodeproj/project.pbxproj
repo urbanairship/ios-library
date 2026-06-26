@@ -937,6 +937,7 @@
 		6EB968312FEF03DD00459ED3 /* AirshipCancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB968302FEF03DD00459ED3 /* AirshipCancellable.swift */; };
 		6EB968332FEF040A00459ED3 /* AirshipActorValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB968322FEF040A00459ED3 /* AirshipActorValue.swift */; };
 		6EB968352FEF041200459ED3 /* AirshipLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB968342FEF041200459ED3 /* AirshipLock.swift */; };
+		6EB968932FEF105F00459ED3 /* ThomasWindowScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB968922FEF105C00459ED3 /* ThomasWindowScene.swift */; };
 		6EBFA9AD2D15DA73002BA3E9 /* HashChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBFA9AC2D15DA70002BA3E9 /* HashChecker.swift */; };
 		6EBFA9AF2D15E04D002BA3E9 /* AirshipDeviceAudienceResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBFA9AE2D15E04B002BA3E9 /* AirshipDeviceAudienceResult.swift */; };
 		6EBFA9B12D15F499002BA3E9 /* HashCheckerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBFA9B02D15F491002BA3E9 /* HashCheckerTest.swift */; };
@@ -2453,6 +2454,7 @@
 		6EB968302FEF03DD00459ED3 /* AirshipCancellable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCancellable.swift; sourceTree = "<group>"; };
 		6EB968322FEF040A00459ED3 /* AirshipActorValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipActorValue.swift; sourceTree = "<group>"; };
 		6EB968342FEF041200459ED3 /* AirshipLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipLock.swift; sourceTree = "<group>"; };
+		6EB968922FEF105C00459ED3 /* ThomasWindowScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasWindowScene.swift; sourceTree = "<group>"; };
 		6EBFA9AC2D15DA70002BA3E9 /* HashChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashChecker.swift; sourceTree = "<group>"; };
 		6EBFA9AE2D15E04B002BA3E9 /* AirshipDeviceAudienceResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDeviceAudienceResult.swift; sourceTree = "<group>"; };
 		6EBFA9B02D15F491002BA3E9 /* HashCheckerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashCheckerTest.swift; sourceTree = "<group>"; };
@@ -4658,6 +4660,7 @@
 		6EB723702FEB4108001FBB9F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6EB968922FEF105C00459ED3 /* ThomasWindowScene.swift */,
 				6EB9682A2FEF037E00459ED3 /* ThomasViewControllerFactory.swift */,
 				6E21C4362FEC4F3A00EA3E56 /* Utils.swift */,
 				6E21C41D2FEC40BA00EA3E56 /* ThomasEvent.swift */,
@@ -6992,6 +6995,7 @@
 				6E21C3972FEC3C1E00EA3E56 /* ButtonLayout.swift in Sources */,
 				6E21C3982FEC3C1E00EA3E56 /* Media.swift in Sources */,
 				6E21C3992FEC3C1E00EA3E56 /* StoryIndicator.swift in Sources */,
+				6EB968932FEF105F00459ED3 /* ThomasWindowScene.swift in Sources */,
 				6E21C39A2FEC3C1E00EA3E56 /* AirshipSimpleLayoutView.swift in Sources */,
 				6E21C39B2FEC3C1E00EA3E56 /* Icons.swift in Sources */,
 				6E21C39C2FEC3C1E00EA3E56 /* ViewFactory.swift in Sources */,

@@ -58,10 +58,16 @@ public final class Thomas {
 
         var dismiss: (@MainActor @Sendable () -> Void)?
         try displayable.display { windowInfo in
+#if !os(macOS)
+            let windowScene = ThomasWindowScene(try? displayTarget.sceneProvider())
+#else
+            let windowScene = ThomasWindowScene()
+#endif
             let made = ThomasViewControllerFactory.makeBannerViewController(
                 presentation: presentation,
                 layout: layout,
                 delegate: delegate,
+                windowScene: windowScene,
                 windowSize: windowInfo.size,
                 onDismiss: { displayable.dismiss() }
             )
@@ -84,10 +90,16 @@ public final class Thomas {
 
         var dismiss: (@MainActor @Sendable () -> Void)?
         try displayable.display { _ in
+#if !os(macOS)
+            let windowScene = ThomasWindowScene(try? displayTarget.sceneProvider())
+#else
+            let windowScene = ThomasWindowScene()
+#endif
             let made = ThomasViewControllerFactory.makeModalViewController(
                 presentation: presentation,
                 layout: layout,
                 delegate: delegate,
+                windowScene: windowScene,
                 onDismiss: { displayable.dismiss() }
             )
             dismiss = made.dismiss

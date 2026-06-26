@@ -9,6 +9,7 @@ public import UIKit
 public import AppKit
 #endif
 
+
 /// Builds Thomas view controllers from layout inputs, independent of how or where
 /// they are presented. Core-free: depends only on the renderer's own view layer.
 /// - Note: For internal use only. :nodoc:
@@ -22,11 +23,12 @@ public struct ThomasViewControllerFactory {
         presentation: ThomasPresentationInfo.Banner,
         layout: AirshipLayout,
         delegate: any ThomasDelegate,
+        windowScene: ThomasWindowScene = ThomasWindowScene(),
         windowSize: CGSize,
         onDismiss: @escaping @MainActor () -> Void
     ) -> (viewController: AirshipNativeViewController, dismiss: @MainActor @Sendable () -> Void) {
         let options = ThomasViewControllerOptions()
-        let environment = ThomasEnvironment(delegate: delegate)
+        let environment = ThomasEnvironment(delegate: delegate, windowScene: windowScene)
         let bannerConstraints = ThomasBannerConstraints(windowSize: windowSize)
 
         let rootView = BannerView(
@@ -55,11 +57,12 @@ public struct ThomasViewControllerFactory {
         presentation: ThomasPresentationInfo.Modal,
         layout: AirshipLayout,
         delegate: any ThomasDelegate,
+        windowScene: ThomasWindowScene = ThomasWindowScene(),
         onDismiss: @escaping @MainActor () -> Void
     ) -> (viewController: AirshipNativeViewController, dismiss: @MainActor @Sendable () -> Void) {
         let options = ThomasViewControllerOptions()
         options.orientation = presentation.defaultPlacement.device?.orientationLock
-        let environment = ThomasEnvironment(delegate: delegate)
+        let environment = ThomasEnvironment(delegate: delegate, windowScene: windowScene)
 
         let rootView = ModalView(
             presentation: presentation,
