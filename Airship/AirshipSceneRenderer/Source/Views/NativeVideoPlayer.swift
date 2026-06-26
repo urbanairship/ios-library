@@ -8,7 +8,6 @@ import AVKit
 import AVFoundation
 import UIKit
 import AirshipBasement
-import AirshipCore
 
 @MainActor
 struct NativeVideoPlayer: UIViewRepresentable {

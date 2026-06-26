@@ -2,7 +2,7 @@
 
 import Foundation
 import SwiftUI
-import AirshipCore
+import AirshipBasement
 
 struct RootView<Content: View>: View {
 
