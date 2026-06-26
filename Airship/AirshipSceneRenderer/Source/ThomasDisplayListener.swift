@@ -287,6 +287,12 @@ public final class ThomasDisplayListener: ThomasDelegate {
             Task { await assetCacheManager.clearCache(identifier: identifier) }
         }
     }
+
+
+    @MainActor
+    public func localizedString(key: String) -> String? {
+        AirshipResources.localizedString(key: key)
+    }
 }
 
 extension AttributesEditor {

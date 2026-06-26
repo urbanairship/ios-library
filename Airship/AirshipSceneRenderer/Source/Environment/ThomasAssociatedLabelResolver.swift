@@ -6,13 +6,13 @@ import Foundation
 struct ThomasAssociatedLabelResolver: Sendable {
     var labelMap: [String: (ThomasState) -> String?] = [:]
 
-    init(layout: AirshipLayout) {
+    init(layout: AirshipLayout, environment: ThomasEnvironment) {
         var labelMap: [String: (ThomasState) -> String?] = [:]
         let labels = layout.labels ?? []
         labels.forEach { info in
             if let labels = info.properties.labels, labels.type == .labels {
                 labelMap[Self.makeKey(for: labels.viewID, viewType: labels.viewType)] = { state in
-                    let resolvedString = info.resolveLabelString(thomasState: state)
+                    let resolvedString = info.resolveLabelString(thomasState: state, environment: environment)
                     return if info.properties.markdown?.disabled == true {
                         resolvedString
                     } else {
@@ -36,14 +36,14 @@ struct ThomasAssociatedLabelResolver: Sendable {
         return labelMap[Self.makeKey(for: identifier, viewType: viewType)]?(thomasState)
     }
 
-    func merging(viewInfo: ThomasViewInfo) -> ThomasAssociatedLabelResolver {
+    func merging(viewInfo: ThomasViewInfo, environment: ThomasEnvironment) -> ThomasAssociatedLabelResolver {
         var merged = self
         viewInfo.extractDescendants { info -> ThomasViewInfo.Label? in
             if case let .label(label) = info { label } else { nil }
         }.forEach { info in
             if let labels = info.properties.labels, labels.type == .labels {
                 merged.labelMap[Self.makeKey(for: labels.viewID, viewType: labels.viewType)] = { state in
-                    let resolvedString = info.resolveLabelString(thomasState: state)
+                    let resolvedString = info.resolveLabelString(thomasState: state, environment: environment)
                     return if info.properties.markdown?.disabled == true {
                         resolvedString
                     } else {

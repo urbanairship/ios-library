@@ -59,6 +59,7 @@ private final class StubThomasDelegate: ThomasDelegate {
     }
 
     func releasePrefetchedImages(token: String) {}
+    func localizedString(key: String) -> String? { nil }
 
 #if !os(tvOS) && !os(watchOS)
     func makeWebView(

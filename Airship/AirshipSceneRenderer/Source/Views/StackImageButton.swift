@@ -56,12 +56,12 @@ struct StackImageButton : View {
 
         if let refs = localized.refs {
             for ref in refs {
-                if let string = AirshipResources.localizedString(key: ref) {
+                if let string = thomasEnvironment.localizedString(key: ref) {
                     return string
                 }
             }
         } else if let ref = localized.ref {
-            if let string = AirshipResources.localizedString(key: ref) {
+            if let string = thomasEnvironment.localizedString(key: ref) {
                 return string
             }
         }

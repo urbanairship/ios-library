@@ -44,7 +44,7 @@ final class ScoreState: ObservableObject {
         }
     }
 
-    var accessibilityValue: String? {
+    func accessibilityValue(environment: ThomasEnvironment) -> String? {
         guard
             let currentIndex,
             entries.isEmpty == false
@@ -52,7 +52,7 @@ final class ScoreState: ObservableObject {
             return nil
         }
 
-        return entries[currentIndex].accessible.resolveContentDescription
+        return environment.resolveContentDescription(for: entries[currentIndex].accessible)
     }
 
     func incrementScore() {

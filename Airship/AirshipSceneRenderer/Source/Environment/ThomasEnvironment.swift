@@ -299,6 +299,41 @@ class ThomasEnvironment: ObservableObject {
         self.delegate.onStateChanged(state)
     }
 
+    @MainActor
+    func localizedString(key: String) -> String? {
+        delegate.localizedString(key: key)
+    }
+
+    @MainActor
+    func resolveLocalized(_ localized: ThomasAccessibleInfo.Localized) -> String {
+        if let refs = localized.refs {
+            for ref in refs {
+                if let string = localizedString(key: ref) {
+                    return string
+                }
+            }
+        } else if let ref = localized.ref {
+            if let string = localizedString(key: ref) {
+                return string
+            }
+        }
+
+        return localized.fallback
+    }
+
+    @MainActor
+    func resolveContentDescription(for accessible: ThomasAccessibleInfo) -> String? {
+        if let contentDescription = accessible.contentDescription {
+            return contentDescription
+        }
+
+        guard let localized = accessible.localizedContentDescription else {
+            return nil
+        }
+
+        return resolveLocalized(localized)
+    }
+
     private func emitPagerSummaryEvents(layoutState: LayoutState?) {
         pagerTracker.summary.forEach { summary in
             delegate.onReportingEvent(

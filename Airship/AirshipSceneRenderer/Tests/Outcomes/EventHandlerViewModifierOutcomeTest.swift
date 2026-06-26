@@ -103,6 +103,7 @@ private final class EventHandlerOutcomeTestDelegate: ThomasDelegate {
     func loadImage(url: String) async throws -> AirshipImageData { throw CancellationError() }
     func prefetchImages(_ urls: [String]) async throws -> String? { nil }
     func releasePrefetchedImages(token: String) {}
+    func localizedString(key: String) -> String? { nil }
 
 #if !os(tvOS) && !os(watchOS)
     func makeWebView(

@@ -38,7 +38,7 @@ struct ImageButton : View {
         AirshipButton(
             identifier: self.info.properties.identifier,
             reportingMetadata: self.info.properties.reportingMetadata,
-            description: self.info.accessible.resolveContentDescription,
+            description: thomasEnvironment.resolveContentDescription(for: self.info.accessible),
             outcomes: makeOutcomes(),
             eventHandlers: self.info.commonProperties.eventHandlers,
             tapEffect: self.info.properties.tapEffect

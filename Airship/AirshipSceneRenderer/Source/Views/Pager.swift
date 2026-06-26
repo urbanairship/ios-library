@@ -330,7 +330,7 @@ struct Pager: View {
                     self.process(action.preparedOutcomes())
                 } label: {
                     Text(
-                        action.accessible.resolveContentDescription ?? "unknown"
+                        thomasEnvironment.resolveContentDescription(for: action.accessible) ?? "unknown"
                     )
                 }
                 .accessibilityRemoveTraits(.isButton)

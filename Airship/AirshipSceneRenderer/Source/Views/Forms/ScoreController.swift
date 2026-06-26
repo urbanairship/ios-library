@@ -35,6 +35,7 @@ struct ScoreController: View {
         @EnvironmentObject private var thomasState: ThomasState
         @ObservedObject private var scoreState: ScoreState
         @EnvironmentObject private var validatableHelper: ValidatableHelper
+        @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
         @Environment(\.thomasAssociatedLabelResolver) private var associatedLabelResolver
 
         private var associatedLabel: String? {
@@ -89,7 +90,7 @@ struct ScoreController: View {
                         break
                     }
                 }
-                .accessibilityValue(self.scoreState.accessibilityValue ?? "")
+                .accessibilityValue(self.scoreState.accessibilityValue(environment: thomasEnvironment) ?? "")
                 .environmentObject(scoreState)
                 .airshipOnChangeOf(self.scoreState.selected) { incoming in
                     updateFormState(selected: incoming)

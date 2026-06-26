@@ -46,6 +46,10 @@ public protocol ThomasDelegate: Sendable {
     @MainActor
     func applyAttributes(_ attributes: [ThomasAttribute])
 
+    /// Resolves a localized string for the given key.
+    @MainActor
+    func localizedString(key: String) -> String?
+
 #if !os(tvOS) && !os(watchOS)
     /// Builds a view that loads the given URL. The web view, its native bridge, and action running
     /// are entirely owned by the returned view; it reports load state via `isLoading` so the
@@ -65,6 +69,7 @@ public extension ThomasDelegate {
     func onStateChanged(_ state: AirshipJSON) {
         // no-op
     }
+
 }
 
 @MainActor

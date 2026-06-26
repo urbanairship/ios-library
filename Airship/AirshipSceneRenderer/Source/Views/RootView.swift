@@ -67,7 +67,10 @@ struct RootView<Content: View>: View {
                 thomasEnvironment?.onStateChange(state)
             }
         )
-        self.associatedLabelResolver = ThomasAssociatedLabelResolver(layout: layout)
+        self.associatedLabelResolver = ThomasAssociatedLabelResolver(
+            layout: layout,
+            environment: thomasEnvironment
+        )
     }
 
     @ViewBuilder

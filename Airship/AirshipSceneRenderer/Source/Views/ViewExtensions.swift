@@ -97,20 +97,45 @@ extension View {
         fallbackContentDescription: String? = nil,
         hideIfDescriptionIsMissing: Bool
     ) -> some View {
-        let contentDescription = accessible?.resolveContentDescription ?? fallbackContentDescription
+        AccessibleModifier(
+            content: self,
+            accessible: accessible,
+            associatedLabel: associatedLabel,
+            fallbackContentDescription: fallbackContentDescription,
+            hideIfDescriptionIsMissing: hideIfDescriptionIsMissing
+        )
+    }
+}
+
+@MainActor
+private struct AccessibleModifier<Content: View>: View {
+    @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
+
+    let content: Content
+    let accessible: ThomasAccessibleInfo?
+    let associatedLabel: String?
+    let fallbackContentDescription: String?
+    let hideIfDescriptionIsMissing: Bool
+
+    @ViewBuilder
+    var body: some View {
+        let contentDescription = accessible.map {
+            thomasEnvironment.resolveContentDescription(for: $0)
+        } ?? fallbackContentDescription
+
         if accessible?.accessibilityHidden == true {
-            self.accessibilityHidden(true)
+            content.accessibilityHidden(true)
         } else if let contentDescription, let associatedLabel {
-            self.accessibilityLabel(associatedLabel)
+            content.accessibilityLabel(associatedLabel)
                 .accessibilityHint(contentDescription)
         } else if let contentDescription {
-            self.accessibilityLabel(contentDescription)
+            content.accessibilityLabel(contentDescription)
         } else if let associatedLabel {
-            self.accessibilityLabel(associatedLabel)
-        }else if hideIfDescriptionIsMissing {
-            self.accessibilityHidden(true)
+            content.accessibilityLabel(associatedLabel)
+        } else if hideIfDescriptionIsMissing {
+            content.accessibilityHidden(true)
         } else {
-            self
+            content
         }
     }
 }

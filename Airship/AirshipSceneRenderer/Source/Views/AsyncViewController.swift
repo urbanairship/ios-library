@@ -61,7 +61,10 @@ struct AsyncViewController: View {
         .id(info.properties.identifier)
         .airshipOnChangeOf(state.status) { status in
             guard case .loaded = status, let response = state.response else { return }
-            resolverForResponse = associatedLabelResolver?.merging(viewInfo: response)
+            resolverForResponse = associatedLabelResolver?.merging(
+                viewInfo: response,
+                environment: thomasEnvironment
+            )
         }
     }
 }

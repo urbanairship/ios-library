@@ -42,7 +42,7 @@ struct ButtonLayout : View {
     var body: some View {
         if isVoiceOverRunning, !isButtonForAccessibility {
             // Container mode
-            if let contentDescription = info.accessible.resolveContentDescription {
+            if let contentDescription = thomasEnvironment.resolveContentDescription(for: info.accessible) {
                 // Container WITH content description: Add accessibility action
                 ViewFactory.createView(self.info.properties.view, constraints: constraints)
                     .thomasCommon(self.info, scope: [.background, .visibility])
@@ -66,7 +66,7 @@ struct ButtonLayout : View {
             AirshipButton(
                 identifier: self.info.properties.identifier,
                 reportingMetadata: self.info.properties.reportingMetadata,
-                description: self.info.accessible.resolveContentDescription,
+                description: thomasEnvironment.resolveContentDescription(for: self.info.accessible),
                 outcomes: makeOutcomes(),
                 eventHandlers: self.info.commonProperties.eventHandlers,
                 tapEffect: self.info.properties.tapEffect

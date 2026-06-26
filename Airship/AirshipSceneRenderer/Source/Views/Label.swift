@@ -21,6 +21,7 @@ struct Label: View {
     private let constraints: ViewConstraints
 
     @EnvironmentObject private var thomasState: ThomasState
+    @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.sizeCategory) private var sizeCategory
 
@@ -68,13 +69,13 @@ struct Label: View {
         guard
             self.info.properties.markdown?.disabled != true
         else {
-            return Text(verbatim: info.resolveLabelString(thomasState: thomasState))
+            return Text(verbatim: info.resolveLabelString(thomasState: thomasState, environment: thomasEnvironment))
         }
 
         do {
             return try markdownText
         } catch {
-            let resolved = info.resolveLabelString(thomasState: thomasState)
+            let resolved = info.resolveLabelString(thomasState: thomasState, environment: thomasEnvironment)
             AirshipLogger.error("Failed to parse markdown text \(error) text \(resolved)")
             return Text(verbatim: resolved)
         }
@@ -130,7 +131,7 @@ struct Label: View {
         .accessibilityRole(self.info.properties.accessibilityRole)
         .onAppear {
             if self.info.properties.isAccessibilityAlert == true {
-                let message = self.info.resolveLabelString(thomasState: self.thomasState)
+                let message = self.info.resolveLabelString(thomasState: self.thomasState, environment: thomasEnvironment)
 #if !os(watchOS) && !os(macOS)
                 UIAccessibility.post(notification: .announcement, argument: message)
 #endif
@@ -197,7 +198,7 @@ extension View {
 
 extension ThomasViewInfo.Label {
     @MainActor
-    func resolveLabelString(thomasState: ThomasState) -> String {
+    func resolveLabelString(thomasState: ThomasState, environment: ThomasEnvironment) -> String {
         let resolvedRefs = ThomasPropertyOverride.resolveOptional(
             state: thomasState,
             overrides: overrides?.refs,
@@ -212,12 +213,12 @@ extension ThomasViewInfo.Label {
 
         if let refs = resolvedRefs {
             for ref in refs {
-                if let string = AirshipResources.localizedString(key: ref) {
+                if let string = environment.localizedString(key: ref) {
                     return string
                 }
             }
         } else if let ref = resolvedRef {
-            if let string = AirshipResources.localizedString(key: ref) {
+            if let string = environment.localizedString(key: ref) {
                 return string
             }
         }
@@ -360,7 +361,7 @@ extension Label {
 
     private var markdownText: Text {
         get throws {
-            let resolved = info.resolveLabelString(thomasState: thomasState)
+            let resolved = info.resolveLabelString(thomasState: thomasState, environment: thomasEnvironment)
 
             // Parse markdown into attributed
             let attributed = try AttributedString(

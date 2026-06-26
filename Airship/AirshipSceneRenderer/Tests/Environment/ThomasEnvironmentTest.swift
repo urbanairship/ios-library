@@ -5,13 +5,14 @@ import Foundation
 import SwiftUI
 
 @_spi(AirshipInternal) import AirshipBasement
-@testable import AirshipCore
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
 // MARK: - Test Doubles
 
 @MainActor
 final class TestThomasDelegate: ThomasDelegate {
+
+    
     var visibilityChanges: [(isVisible: Bool, isForegrounded: Bool)] = []
     var reportedEvents: [ThomasReportingEvent] = []
     var dismissals: [Bool] = []
@@ -51,6 +52,7 @@ final class TestThomasDelegate: ThomasDelegate {
     var loadedImageURLs: [String] = []
     var prefetchedImages: [[String]] = []
     var releasedTokens: [String] = []
+    var localizedStrings: [String: String] = [:]
 
     func loadImage(url: String) async throws -> AirshipImageData {
         loadedImageURLs.append(url)
@@ -64,6 +66,10 @@ final class TestThomasDelegate: ThomasDelegate {
 
     func releasePrefetchedImages(token: String) {
         releasedTokens.append(token)
+    }
+
+    func localizedString(key: String) -> String? {
+        localizedStrings[key]
     }
 
 #if !os(tvOS) && !os(watchOS)
@@ -94,6 +100,7 @@ final class TestTimer: AirshipTimerProtocol {
         isStarted = false
         stopCount += 1
     }
+    
 }
 
 // MARK: - Tests
@@ -928,5 +935,169 @@ struct ThomasEnvironmentTest {
         }
         #expect(env2Summaries.count == 1)
     }
+
+    // MARK: - Localization
+
+    @Test
+    func localizedStringComesFromDelegate() {
+        let delegate = TestThomasDelegate()
+        delegate.localizedStrings = ["greeting": "Hello"]
+        let (env, _, _) = makeEnvironment(delegate: delegate)
+
+        #expect(env.localizedString(key: "greeting") == "Hello")
+        #expect(env.localizedString(key: "not_a_key") == nil)
+    }
+
+    @Test
+    func localizedStringUsesCustomDelegateWhenOverridden() {
+        let delegate = CustomLocalizingDelegate()
+        let env = ThomasEnvironment(delegate: delegate)
+
+        #expect(env.localizedString(key: "any_key") == "custom-any_key")
+        #expect(delegate.localizedKeys == ["any_key"])
+    }
+
+    @Test
+    func resolveLocalizedUsesFirstMatchingRef() {
+        let delegate = CustomLocalizingDelegate(strings: [
+            "missing": nil,
+            "found": "Found"
+        ])
+        let env = ThomasEnvironment(delegate: delegate)
+
+        let localized = ThomasAccessibleInfo.Localized(
+            ref: nil,
+            refs: ["missing", "found"],
+            fallback: "Fallback"
+        )
+
+        #expect(env.resolveLocalized(localized) == "Found")
+    }
+
+    @Test
+    func resolveLocalizedFallsBackWhenNoRefMatches() {
+        let (env, _, _) = makeEnvironment()
+
+        let localized = ThomasAccessibleInfo.Localized(
+            ref: "not_a_key",
+            refs: nil,
+            fallback: "Fallback text"
+        )
+
+        #expect(env.resolveLocalized(localized) == "Fallback text")
+    }
+
+    @Test
+    func resolveContentDescriptionPrefersPlainDescription() {
+        let (env, _, _) = makeEnvironment()
+
+        let accessible = ThomasAccessibleInfo(
+            contentDescription: "Plain description",
+            localizedContentDescription: ThomasAccessibleInfo.Localized(
+                ref: "ua_notification_button_yes",
+                refs: nil,
+                fallback: "Fallback"
+            ),
+            accessibilityHidden: nil
+        )
+
+        #expect(env.resolveContentDescription(for: accessible) == "Plain description")
+    }
+
+    @Test
+    func resolveContentDescriptionUsesLocalizedRef() {
+        let delegate = CustomLocalizingDelegate(strings: [
+            "content_key": "Localized description"
+        ])
+        let env = ThomasEnvironment(delegate: delegate)
+
+        let accessible = ThomasAccessibleInfo(
+            contentDescription: nil,
+            localizedContentDescription: ThomasAccessibleInfo.Localized(
+                ref: "content_key",
+                refs: nil,
+                fallback: "Fallback"
+            ),
+            accessibilityHidden: nil
+        )
+
+        #expect(env.resolveContentDescription(for: accessible) == "Localized description")
+    }
+
+    @Test
+    func resolveLabelStringUsesLocalizedRef() throws {
+        let delegate = CustomLocalizingDelegate(strings: [
+            "label_key": "Localized label"
+        ])
+        let env = ThomasEnvironment(delegate: delegate)
+        let thomasState = ThomasState(onStateChange: { _ in })
+
+        let labelJSON = """
+        {
+          "type": "label",
+          "ref": "label_key",
+          "text": "Fallback",
+          "text_appearance": {
+            "font_size": 14,
+            "color": {
+              "default": { "type": "hex", "hex": "#000000", "alpha": 1.0 }
+            }
+          }
+        }
+        """
+        let label = try JSONDecoder().decode(
+            ThomasViewInfo.self,
+            from: Data(labelJSON.utf8)
+        )
+
+        guard case let .label(labelInfo) = label else {
+            Issue.record("Expected label view info")
+            return
+        }
+
+        #expect(
+            labelInfo.resolveLabelString(thomasState: thomasState, environment: env)
+                == "Localized label"
+        )
+    }
+}
+
+@MainActor
+private final class CustomLocalizingDelegate: ThomasDelegate {
+    private let strings: [String: String?]
+    private(set) var localizedKeys: [String] = []
+
+    init(strings: [String: String?] = [:]) {
+        self.strings = strings
+    }
+
+    func onVisibilityChanged(isVisible: Bool, isForegrounded: Bool) {}
+    func onReportingEvent(_ event: ThomasReportingEvent) {}
+    func onDismissed(cancel: Bool) {}
+    func runActions(_ actions: AirshipJSON, layoutContext: ThomasLayoutContext) {}
+    func registerChannels(_ channels: [ThomasChannelRegistration]) {}
+    func applyAttributes(_ attributes: [ThomasAttribute]) {}
+    func loadImage(url: String) async throws -> AirshipImageData { throw CancellationError() }
+    func prefetchImages(_ urls: [String]) async throws -> String? { nil }
+    func releasePrefetchedImages(token: String) {}
+
+    func localizedString(key: String) -> String? {
+        localizedKeys.append(key)
+        if strings.keys.contains(key) {
+            return strings[key] ?? nil
+        }
+        return "custom-\(key)"
+    }
+
+#if !os(tvOS) && !os(watchOS)
+    func makeWebView(
+        url: String,
+        layoutContext: ThomasLayoutContext,
+        isLoading: Binding<Bool>,
+        onClose: @escaping @MainActor () -> Void
+    ) -> any View {
+        EmptyView()
+    }
+#endif
 }
 
