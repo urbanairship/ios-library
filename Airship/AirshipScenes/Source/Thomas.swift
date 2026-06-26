@@ -82,18 +82,20 @@ public final class Thomas {
     ) throws -> any AirshipMainActorCancellable {
         let displayable = displayTarget.prepareDisplay(for: .modal, windowAnimated: false)
 
-        let made = ThomasViewControllerFactory.makeModalViewController(
-            presentation: presentation,
-            layout: layout,
-            delegate: delegate,
-            onDismiss: { displayable.dismiss() }
-        )
-
+        var dismiss: (@MainActor @Sendable () -> Void)?
         try displayable.display { _ in
+            let made = ThomasViewControllerFactory.makeModalViewController(
+                presentation: presentation,
+                layout: layout,
+                delegate: delegate,
+                onDismiss: { displayable.dismiss() }
+            )
+            dismiss = made.dismiss
             return made.viewController
         }
 
-        return AirshipMainActorCancellableBlock(block: made.dismiss)
+        let resolvedDismiss = dismiss
+        return AirshipMainActorCancellableBlock { resolvedDismiss?() }
     }
 
     #endif
