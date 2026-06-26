@@ -4,6 +4,7 @@ import SwiftUI
 @_spi(AirshipInternal) import AirshipBasement
 
 struct ModalView: View {
+    @Environment(\.viewFactory) private var viewFactory
 
     @Environment(\.colorScheme) var colorScheme
 
@@ -137,7 +138,7 @@ struct ModalView: View {
         }
         
         return VStack {
-            ViewFactory.createView(
+            viewFactory.createView(
                 self.layout.view,
                 constraints: contentConstraints
             )

@@ -15,6 +15,7 @@ import AppKit
 
 @MainActor
 struct Pager: View {
+    @Environment(\.viewFactory) private var viewFactory
 
     private enum PagerEvent {
         case gesture(identifier: String, reportingMetadata: AirshipJSON?)
@@ -176,7 +177,7 @@ struct Pager: View {
 
     @ViewBuilder
     private func makeSinglePagePager() -> some View {
-        ViewFactory.createView(
+        viewFactory.createView(
             pagerState.pageItems[0].view,
             constraints: constraints
         )
@@ -286,7 +287,7 @@ struct Pager: View {
         let isCurrentPage = self.isVisible && pageItem.identifier == pagerState.currentPageId
 
         VStack {
-            ViewFactory.createView(
+            viewFactory.createView(
                 pageItem.view,
                 constraints: childConstraints
             )

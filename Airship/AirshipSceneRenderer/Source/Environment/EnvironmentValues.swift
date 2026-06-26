@@ -35,6 +35,10 @@ private struct LayoutStateEnvironmentKey: EnvironmentKey {
     static let defaultValue: LayoutState = LayoutState.empty
 }
 
+private struct ViewFactoryKey: EnvironmentKey {
+    static let defaultValue: ViewFactory = ViewFactory()
+}
+
 extension EnvironmentValues {
     var orientation: ThomasOrientation? {
         get { self[OrientationKey.self] }
@@ -75,6 +79,11 @@ extension EnvironmentValues {
     internal var layoutState: LayoutState {
         get { self[LayoutStateEnvironmentKey.self] }
         set { self[LayoutStateEnvironmentKey.self] = newValue }
+    }
+
+    var viewFactory: ViewFactory {
+        get { self[ViewFactoryKey.self] }
+        set { self[ViewFactoryKey.self] = newValue }
     }
 }
 

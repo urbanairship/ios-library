@@ -5,6 +5,7 @@ import SwiftUI
 
 @MainActor
 struct ScoreToggleLayout: View {
+    @Environment(\.viewFactory) private var viewFactory
     @EnvironmentObject private var formState: ThomasFormState
     @EnvironmentObject private var scoreState: ScoreState
     @EnvironmentObject private var thomasState: ThomasState
@@ -49,7 +50,7 @@ struct ScoreToggleLayout: View {
             onToggleOn: self.info.properties.onToggleOn,
             onToggleOff: self.info.properties.onToggleOff
         ) {
-            ViewFactory.createView(
+            viewFactory.createView(
                 self.info.properties.view,
                 constraints: constraints
             )

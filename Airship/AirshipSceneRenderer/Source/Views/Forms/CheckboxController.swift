@@ -27,6 +27,7 @@ struct CheckboxController: View {
 
     @MainActor
     struct Content: View {
+        @Environment(\.viewFactory) private var viewFactory
         private let info: ThomasViewInfo.CheckboxController
         private let constraints: ViewConstraints
 
@@ -67,7 +68,7 @@ struct CheckboxController: View {
         }
 
         var body: some View {
-            ViewFactory.createView(self.info.properties.view, constraints: constraints)
+            viewFactory.createView(self.info.properties.view, constraints: constraints)
                 .constraints(constraints)
                 .thomasCommon(self.info, formInputID: self.info.properties.identifier)
                 .accessible(

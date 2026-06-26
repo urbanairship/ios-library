@@ -100,6 +100,7 @@ struct EmbeddedView: View {
     private let embeddedSize: AirshipEmbeddedSize?
     @State private var viewConstraints: ViewConstraints?
     @Environment(\.isVoiceOverRunning) private var isVoiceOverRunning
+    @Environment(\.viewFactory) private var viewFactory
 
     init(
         presentation: ThomasPresentationInfo.Embedded,
@@ -157,7 +158,7 @@ struct EmbeddedView: View {
         constraints: ViewConstraints,
         placement: ThomasPresentationInfo.Embedded.Placement
     ) -> some View {
-        return ViewFactory
+        return viewFactory
             .createView(layout.view, constraints: constraints)
             .thomasBackground(
                 color: placement.backgroundColor,

@@ -7,6 +7,7 @@ import SwiftUI
 /// Scroll view layout
 
 struct ScrollLayout: View {
+    @Environment(\.viewFactory) private var viewFactory
     
     /// ScrollLayout model.
     private let info: ThomasViewInfo.ScrollLayout
@@ -103,7 +104,7 @@ struct ScrollLayout: View {
     @ViewBuilder
     func makeContent() -> some View {
         ZStack {
-            ViewFactory.createView(
+            viewFactory.createView(
                 self.info.properties.view,
                 constraints: self.childConstraints()
             )

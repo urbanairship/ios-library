@@ -3,12 +3,25 @@
 import Foundation
 import SwiftUI
 
-/// View factory. Inflates views based on type.
+/// Host-provided capabilities the renderer consumes at construction time (e.g. services that
+/// can't be reached through the SwiftUI environment because they're needed in `init`). Carried
+/// by `ViewFactory` so it reaches any view the factory builds. Empty for now — plumbing only.
+struct ThomasExtensions: Sendable {
+    init() {}
+}
 
-struct ViewFactory {
+/// View factory. Inflates views based on type. Threaded via the environment (`\.viewFactory`)
+/// so it carries `ThomasExtensions` into every view it builds.
+struct ViewFactory: Sendable {
+    let extensions: ThomasExtensions
+
+    init(extensions: ThomasExtensions = ThomasExtensions()) {
+        self.extensions = extensions
+    }
+
     @MainActor
     @ViewBuilder
-    static func createView(
+    func createView(
         _ viewInfo: ThomasViewInfo,
         constraints: ViewConstraints
     ) -> some View {

@@ -5,6 +5,7 @@ import SwiftUI
 
 @MainActor
 struct CheckboxToggleLayout: View {
+    @Environment(\.viewFactory) private var viewFactory
     @EnvironmentObject private var formState: ThomasFormState
     @EnvironmentObject private var checkboxState: CheckboxState
     @EnvironmentObject private var thomasState: ThomasState
@@ -47,7 +48,7 @@ struct CheckboxToggleLayout: View {
             onToggleOn: self.info.properties.onToggleOn,
             onToggleOff: self.info.properties.onToggleOff
         ) {
-            ViewFactory.createView(
+            viewFactory.createView(
                 self.info.properties.view,
                 constraints: constraints
             )

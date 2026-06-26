@@ -28,6 +28,7 @@ struct RadioInputController: View {
 
     @MainActor
     struct Content: View {
+        @Environment(\.viewFactory) private var viewFactory
         private let info: ThomasViewInfo.RadioInputController
         private let constraints: ViewConstraints
 
@@ -66,7 +67,7 @@ struct RadioInputController: View {
         }
 
         var body: some View {
-            ViewFactory.createView(self.info.properties.view, constraints: constraints)
+            viewFactory.createView(self.info.properties.view, constraints: constraints)
                 .constraints(constraints)
                 .thomasCommon(self.info, formInputID: self.info.properties.identifier)
                 .accessible(

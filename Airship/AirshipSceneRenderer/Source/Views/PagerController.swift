@@ -31,6 +31,7 @@ struct PagerController: View {
 
     @MainActor
     struct Content: View {
+        @Environment(\.viewFactory) private var viewFactory
         private let info: ThomasViewInfo.PagerController
         private let constraints: ViewConstraints
 
@@ -74,7 +75,7 @@ struct PagerController: View {
         }
 
         var body: some View {
-            ViewFactory.createView(self.info.properties.view, constraints: constraints)
+            viewFactory.createView(self.info.properties.view, constraints: constraints)
                 .constraints(constraints)
                 .airshipOnChangeOf(self.isVoiceOverRunning, initial: true) { value in
                     pagerState.isVoiceOverRunning = value

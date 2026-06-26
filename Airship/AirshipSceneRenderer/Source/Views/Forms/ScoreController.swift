@@ -26,6 +26,7 @@ struct ScoreController: View {
 
     @MainActor
     struct Content: View {
+        @Environment(\.viewFactory) private var viewFactory
         private let info: ThomasViewInfo.ScoreController
         private let constraints: ViewConstraints
 
@@ -65,7 +66,7 @@ struct ScoreController: View {
 
 
         var body: some View {
-            ViewFactory.createView(self.info.properties.view, constraints: constraints)
+            viewFactory.createView(self.info.properties.view, constraints: constraints)
                 .constraints(constraints)
                 .thomasCommon(self.info, formInputID: self.info.properties.identifier)
                 .accessible(

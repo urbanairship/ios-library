@@ -34,7 +34,9 @@ struct StateController: View {
 
         @EnvironmentObject
         private var state: ThomasState
-        
+
+        @Environment(\.viewFactory) private var viewFactory
+
         @StateObject
         private var scopedStateCache: ScopedStateCache
         
@@ -66,7 +68,7 @@ struct StateController: View {
         }
         
         var body: some View {
-            ViewFactory
+            viewFactory
                 .createView(self.info.properties.view, constraints: constraints)
                 .constraints(constraints)
                 .thomasCommon(self.info)

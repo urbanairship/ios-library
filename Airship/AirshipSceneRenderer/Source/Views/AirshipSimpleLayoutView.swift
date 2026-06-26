@@ -21,6 +21,8 @@ public struct AirshipSimpleLayoutView: View {
     @State
     private var viewConstraints: ViewConstraints?
 
+    @Environment(\.viewFactory) private var viewFactory
+
     /// - Parameter viewModel: Owns the layout environment and state. Create one per layout session and reuse it so state is preserved across view updates.
     public init(layout: AirshipLayout, viewModel: AirshipSimpleLayoutViewModel) {
         self.layout = layout
@@ -54,7 +56,7 @@ public struct AirshipSimpleLayoutView: View {
         constraints: ViewConstraints,
         placement: ThomasPresentationInfo.Embedded.Placement
     ) -> some View {
-        return ViewFactory
+        return viewFactory
             .createView(layout.view, constraints: constraints)
             .thomasBackground(
                 color: placement.backgroundColor,

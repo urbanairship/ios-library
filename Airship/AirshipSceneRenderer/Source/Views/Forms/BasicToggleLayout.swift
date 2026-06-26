@@ -6,6 +6,7 @@ import SwiftUI
 
 @MainActor
 struct BasicToggleLayout: View {
+    @Environment(\.viewFactory) private var viewFactory
 
     @Environment(\.pageIdentifier) private var pageID
     @EnvironmentObject private var formState: ThomasFormState
@@ -37,7 +38,7 @@ struct BasicToggleLayout: View {
             onToggleOn: self.info.properties.onToggleOn,
             onToggleOff: self.info.properties.onToggleOff
         ) {
-            ViewFactory.createView(
+            viewFactory.createView(
                 self.info.properties.view,
                 constraints: constraints
             )

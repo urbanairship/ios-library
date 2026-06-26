@@ -5,6 +5,7 @@ import SwiftUI
 
 @MainActor
 struct RadioInputToggleLayout: View {
+    @Environment(\.viewFactory) private var viewFactory
     @EnvironmentObject private var formState: ThomasFormState
     @EnvironmentObject private var radioInputState: RadioInputState
     @EnvironmentObject private var thomasState: ThomasState
@@ -40,7 +41,7 @@ struct RadioInputToggleLayout: View {
             onToggleOn: self.info.properties.onToggleOn,
             onToggleOff: self.info.properties.onToggleOff
         ) {
-            ViewFactory.createView(
+            viewFactory.createView(
                 self.info.properties.view,
                 constraints: constraints
             )

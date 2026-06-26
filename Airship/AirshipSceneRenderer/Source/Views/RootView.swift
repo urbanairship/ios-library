@@ -52,15 +52,18 @@ struct RootView<Content: View>: View {
     let content: (ThomasOrientation, ThomasWindowSize) -> Content
 
     let associatedLabelResolver: ThomasAssociatedLabelResolver
+    let viewFactory: ViewFactory
 
     init(
         thomasEnvironment: ThomasEnvironment,
         layout: AirshipLayout,
+        extensions: ThomasExtensions = ThomasExtensions(),
         @ViewBuilder content: @escaping (ThomasOrientation, ThomasWindowSize) -> Content
     ) {
         self.thomasEnvironment = thomasEnvironment
         self.layout = layout
         self.content = content
+        self.viewFactory = ViewFactory(extensions: extensions)
         self._isForeground = State(initialValue: AppStateTracker.shared.isForegrounded)
         self._currentOrientation = State(initialValue: thomasEnvironment.windowScene.orientation)
         self._thomasState = StateObject(
@@ -85,6 +88,7 @@ struct RootView<Content: View>: View {
             .environmentObject(self.defaultFormState)
             .environmentObject(self.defaultVideoState)
             .environmentObject(self.defaultAsyncViewState)
+            .environment(\.viewFactory, viewFactory)
             .environment(\.orientation, currentOrientation)
             .environment(\.windowSize, resolveWindowSize())
             .environment(\.isVisible, isVisible)
