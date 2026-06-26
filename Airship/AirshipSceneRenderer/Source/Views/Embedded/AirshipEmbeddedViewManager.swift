@@ -1,11 +1,12 @@
 /* Copyright Airship and Contributors */
 
 @preconcurrency
-import Combine
+public import Combine
 import SwiftUI
-import AirshipCore
+public import AirshipBasement
 
-protocol AirshipEmbeddedViewManagerProtocol: Sendable {
+@_spi(AirshipInternal)
+public protocol AirshipEmbeddedViewManagerProtocol: Sendable {
     @MainActor
     func addPending(
         presentation: ThomasPresentationInfo.Embedded,
@@ -19,7 +20,8 @@ protocol AirshipEmbeddedViewManagerProtocol: Sendable {
     func publisher(embeddedViewID: String) -> AnyPublisher<[PendingEmbedded], Never>
 }
 
-final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
+@_spi(AirshipInternal)
+public final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
 
     public static let shared = AirshipEmbeddedViewManager()
 
@@ -27,12 +29,12 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
     private var pending: [PendingEmbedded] = []
     private let viewSubject = CurrentValueSubject<[PendingEmbedded], Never>([])
 
-    var publisher: AnyPublisher<[PendingEmbedded], Never> {
+    public var publisher: AnyPublisher<[PendingEmbedded], Never> {
         viewSubject.eraseToAnyPublisher()
     }
 
     @MainActor
-    func addPending(
+    public func addPending(
         presentation: ThomasPresentationInfo.Embedded,
         layout: AirshipLayout,
         delegate: any ThomasDelegate,
@@ -72,7 +74,7 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
         }
     }
 
-    func publisher(embeddedViewID: String) -> AnyPublisher<[PendingEmbedded], Never> {
+    public func publisher(embeddedViewID: String) -> AnyPublisher<[PendingEmbedded], Never> {
         return viewSubject
             .map { array in
                 array.filter { value in value.presentation.embeddedID == embeddedViewID }
@@ -81,7 +83,8 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
     }
 }
 
-struct PendingEmbedded: Sendable {
+@_spi(AirshipInternal)
+public struct PendingEmbedded: Sendable {
     fileprivate let id: String
     let presentation: ThomasPresentationInfo.Embedded
     let layout: AirshipLayout

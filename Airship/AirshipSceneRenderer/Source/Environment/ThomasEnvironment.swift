@@ -17,6 +17,11 @@ class ThomasEnvironment: ObservableObject {
     private let stateStorage: (any ThomasStateStorage)?
     private var prefetchTokens: Set<String> = []
 
+    /// The window scene this layout is presented in, captured by the host at display time.
+    /// Exposes orientation / status bar style without a global scene lookup; holds the scene
+    /// weakly internally so a disconnected scene falls back to defaults.
+    let windowScene: ThomasWindowScene
+
     private var state: [String: Any] = [:]
 
     func retrieveState<T: ThomasStateProvider>(identifier: String, create: () -> T) -> T {
@@ -54,6 +59,7 @@ class ThomasEnvironment: ObservableObject {
     @MainActor
     init(
         delegate: any ThomasDelegate,
+        windowScene: ThomasWindowScene = ThomasWindowScene(),
         pagerTracker: ThomasPagerTracker? = nil,
         timer: (any AirshipTimerProtocol)? = nil,
         stateStorage: (any ThomasStateStorage)? = nil,
@@ -61,6 +67,7 @@ class ThomasEnvironment: ObservableObject {
         onDismiss: (() -> Void)? = nil
     ) {
         self.delegate = delegate
+        self.windowScene = windowScene
         self.pagerTracker = pagerTracker ?? ThomasPagerTracker()
         self.timer = timer ?? AirshipTimer()
         self.onDismiss = onDismiss

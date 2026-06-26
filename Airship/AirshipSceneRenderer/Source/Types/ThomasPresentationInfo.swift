@@ -2,6 +2,7 @@
 
 import Foundation
 
+@frozen
 public enum ThomasPresentationInfo: ThomasSerializable {
     case banner(Banner)
     case modal(Modal)

@@ -3,6 +3,7 @@
 import Foundation
 import SwiftUI
 @_spi(AirshipInternal) public import AirshipBasement
+@_spi(AirshipInternal) public import AirshipSceneRenderer
 public import AirshipCore
 
 /// Airship rendering engine.
@@ -55,37 +56,27 @@ public final class Thomas {
     ) throws -> any AirshipMainActorCancellable {
         let displayable = displayTarget.prepareDisplay(for: .banner)
 
-        let options = ThomasViewControllerOptions()
-        let environment = ThomasEnvironment(
-            delegate: delegate
-        )
-
+        var dismiss: (@MainActor @Sendable () -> Void)?
         try displayable.display { windowInfo in
-            let bannerConstraints = ThomasBannerConstraints(
-                windowSize: windowInfo.size
-            )
-
-            let rootView = BannerView(
-                viewControllerOptions: options,
+#if !os(macOS)
+            let windowScene = ThomasWindowScene(try? displayTarget.sceneProvider())
+#else
+            let windowScene = ThomasWindowScene()
+#endif
+            let made = ThomasViewControllerFactory.makeBannerViewController(
                 presentation: presentation,
                 layout: layout,
-                thomasEnvironment: environment,
-                bannerConstraints: bannerConstraints,
-            ) {
-                displayable.dismiss()
-            }
-
-            return ThomasBannerViewController(
-                rootView: rootView,
-                position: presentation.defaultPlacement.position,
-                options: options,
-                constraints: bannerConstraints
+                delegate: delegate,
+                windowScene: windowScene,
+                windowSize: windowInfo.size,
+                onDismiss: { displayable.dismiss() }
             )
+            dismiss = made.dismiss
+            return made.viewController
         }
 
-        return AirshipMainActorCancellableBlock { [weak environment] in
-            environment?.dismiss()
-        }
+        let resolvedDismiss = dismiss
+        return AirshipMainActorCancellableBlock { resolvedDismiss?() }
     }
 
     @MainActor
@@ -97,32 +88,26 @@ public final class Thomas {
     ) throws -> any AirshipMainActorCancellable {
         let displayable = displayTarget.prepareDisplay(for: .modal, windowAnimated: false)
 
-        let options = ThomasViewControllerOptions()
-        options.orientation = presentation.defaultPlacement.device?.orientationLock
-
-        let environment = ThomasEnvironment(
-            delegate: delegate
-        )
-
-        let rootView = ModalView(
-            presentation: presentation,
-            layout: layout,
-            thomasEnvironment: environment,
-            viewControllerOptions: options
-        ) {
-            displayable.dismiss()
-        }
-
-        try displayable.display { window in
-            return ThomasModalViewController(
-                rootView: rootView,
-                options: options
+        var dismiss: (@MainActor @Sendable () -> Void)?
+        try displayable.display { _ in
+#if !os(macOS)
+            let windowScene = ThomasWindowScene(try? displayTarget.sceneProvider())
+#else
+            let windowScene = ThomasWindowScene()
+#endif
+            let made = ThomasViewControllerFactory.makeModalViewController(
+                presentation: presentation,
+                layout: layout,
+                delegate: delegate,
+                windowScene: windowScene,
+                onDismiss: { displayable.dismiss() }
             )
+            dismiss = made.dismiss
+            return made.viewController
         }
 
-        return AirshipMainActorCancellableBlock { [weak environment] in
-            environment?.dismiss()
-        }
+        let resolvedDismiss = dismiss
+        return AirshipMainActorCancellableBlock { resolvedDismiss?() }
     }
 
     #endif

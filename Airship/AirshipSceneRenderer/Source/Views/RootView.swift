@@ -11,7 +11,7 @@ struct RootView<Content: View>: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
 
-    @State private var currentOrientation: ThomasOrientation = RootViewResolver.resolveOrientation()
+    @State private var currentOrientation: ThomasOrientation
 
     @State private var isForeground: Bool = true
     @State private var isVisible: Bool = false
@@ -62,6 +62,7 @@ struct RootView<Content: View>: View {
         self.layout = layout
         self.content = content
         self._isForeground = State(initialValue: AppStateTracker.shared.isForegrounded)
+        self._currentOrientation = State(initialValue: thomasEnvironment.windowScene.orientation)
         self._thomasState = StateObject(
             wrappedValue: ThomasState() { [weak thomasEnvironment] state in
                 thomasEnvironment?.onStateChange(state)
@@ -109,7 +110,7 @@ struct RootView<Content: View>: View {
 #endif
             .onAppear {
                 updateVoiceoverRunningState()
-                self.currentOrientation = RootViewResolver.resolveOrientation()
+                self.currentOrientation = thomasEnvironment.windowScene.orientation
                 self.isVisible = true
                 self.thomasEnvironment.onVisibilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)
             }
@@ -123,7 +124,7 @@ struct RootView<Content: View>: View {
                     for: UIDevice.orientationDidChangeNotification
                 )
             ) { _ in
-                self.currentOrientation = RootViewResolver.resolveOrientation()
+                self.currentOrientation = thomasEnvironment.windowScene.orientation
             }
 #endif
     }
@@ -158,23 +159,6 @@ struct RootView<Content: View>: View {
 /// metatype, which would surface `Content`'s isolated `View` conformance.
 @MainActor
 private enum RootViewResolver {
-    static func resolveOrientation() -> ThomasOrientation {
-#if os(tvOS) || os(watchOS) || os(macOS)
-        return .landscape
-#else
-        let scene = try? AirshipSceneManager.shared.lastActiveScene
-
-        if let scene = scene {
-            if scene.interfaceOrientation.isLandscape {
-                return .landscape
-            } else if scene.interfaceOrientation.isPortrait {
-                return .portrait
-            }
-        }
-        return .portrait
-#endif
-    }
-
     static func resolveIsVoiceOverRunning() -> Bool {
 #if os(watchOS)
         // watchOS does not expose a public property to check VoiceOver status

@@ -2,7 +2,6 @@
 
 import SwiftUI
 @_spi(AirshipInternal) import AirshipBasement
-import AirshipCore
 
 struct ModalView: View {
 
@@ -235,15 +234,7 @@ struct ModalView: View {
         #if os(tvOS) || os(watchOS) || os(macOS)
         return Color.clear
         #else
-
-        var statusBarStyle = UIStatusBarStyle.default
-
-        if let scene = try? AirshipSceneManager.shared.lastActiveScene,
-           let sceneStyle = scene.statusBarManager?.statusBarStyle
-        {
-            statusBarStyle = sceneStyle
-        }
-
+        let statusBarStyle = thomasEnvironment.windowScene.statusBarStyle ?? .default
         switch statusBarStyle {
         case .darkContent:
             return Color.white
