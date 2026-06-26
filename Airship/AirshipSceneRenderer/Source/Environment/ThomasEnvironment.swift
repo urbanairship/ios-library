@@ -4,7 +4,6 @@ import Combine
 import Foundation
 import SwiftUI
 @_spi(AirshipInternal) import AirshipBasement
-import AirshipCore
 
 #if canImport(UIKit)
 import UIKit
@@ -16,8 +15,7 @@ class ThomasEnvironment: ObservableObject {
     private let pagerTracker: ThomasPagerTracker
     private let timer: any AirshipTimerProtocol
     private let stateStorage: (any ThomasStateStorage)?
-    let extensions: ThomasExtensions?
-    let imageLoader: AirshipImageLoader
+    private var prefetchTokens: Set<String> = []
 
     private var state: [String: Any] = [:]
 
@@ -56,7 +54,6 @@ class ThomasEnvironment: ObservableObject {
     @MainActor
     init(
         delegate: any ThomasDelegate,
-        extensions: ThomasExtensions?,
         pagerTracker: ThomasPagerTracker? = nil,
         timer: (any AirshipTimerProtocol)? = nil,
         stateStorage: (any ThomasStateStorage)? = nil,
@@ -64,14 +61,9 @@ class ThomasEnvironment: ObservableObject {
         onDismiss: (() -> Void)? = nil
     ) {
         self.delegate = delegate
-        self.extensions = extensions
         self.pagerTracker = pagerTracker ?? ThomasPagerTracker()
         self.timer = timer ?? AirshipTimer()
         self.onDismiss = onDismiss
-        self.imageLoader = AirshipImageLoader(
-            imageProvider: extensions?.imageProvider,
-            session: URLSession.airshipSecureSession
-        )
         self.stateStorage = stateStorage
         
         #if !os(tvOS) && !os(watchOS) && !os(macOS)
@@ -337,6 +329,10 @@ class ThomasEnvironment: ObservableObject {
             dismissCleanupHandlers.removeAll()
             cleanups.forEach { $0() }
 
+            let tokens = prefetchTokens
+            prefetchTokens.removeAll()
+            tokens.forEach { delegate.releasePrefetchedImages(token: $0) }
+
             callback(timer.time)
             onDismiss?()
             self.onDismiss = nil
@@ -371,6 +367,21 @@ class ThomasEnvironment: ObservableObject {
         )
     }
 #endif
+
+    @MainActor
+    func loadImage(url: String) async throws -> AirshipImageData {
+        try await delegate.loadImage(url: url)
+    }
+
+    /// Prefetches images for the layout. The environment owns the prefetched assets and releases
+    /// them automatically when the layout dismisses.
+    @MainActor
+    func prefetch(images: [String]) async throws {
+        guard !images.isEmpty else { return }
+        if let token = try await delegate.prefetchImages(images) {
+            prefetchTokens.insert(token)
+        }
+    }
 
     private func makeLayoutContext(layoutState: LayoutState?) -> ThomasLayoutContext {
         var context = ThomasLayoutContext()

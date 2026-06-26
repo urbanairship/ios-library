@@ -16,7 +16,6 @@ public final class Thomas {
     public class func display(
         layout: AirshipLayout,
         displayTarget: AirshipDisplayTarget,
-        extensions: ThomasExtensions? = nil,
         delegate: any ThomasDelegate,
         extras: AirshipJSON?,
         priority: Int
@@ -27,7 +26,6 @@ public final class Thomas {
                 presentation,
                 displayTarget: displayTarget,
                 layout: layout,
-                extensions: extensions,
                 delegate: delegate
             )
         case .modal(let presentation):
@@ -35,14 +33,12 @@ public final class Thomas {
                 presentation,
                 displayTarget: displayTarget,
                 layout: layout,
-                extensions: extensions,
                 delegate: delegate
             )
         case .embedded(let presentation):
             return AirshipEmbeddedViewManager.shared.addPending(
                 presentation: presentation,
                 layout: layout,
-                extensions: extensions,
                 delegate: delegate,
                 extras: extras,
                 priority: priority
@@ -55,15 +51,13 @@ public final class Thomas {
         _ presentation: ThomasPresentationInfo.Banner,
         displayTarget: AirshipDisplayTarget,
         layout: AirshipLayout,
-        extensions: ThomasExtensions?,
         delegate: any ThomasDelegate
     ) throws -> any AirshipMainActorCancellable {
         let displayable = displayTarget.prepareDisplay(for: .banner)
 
         let options = ThomasViewControllerOptions()
         let environment = ThomasEnvironment(
-            delegate: delegate,
-            extensions: extensions
+            delegate: delegate
         )
 
         try displayable.display { windowInfo in
@@ -99,7 +93,6 @@ public final class Thomas {
         _ presentation: ThomasPresentationInfo.Modal,
         displayTarget: AirshipDisplayTarget,
         layout: AirshipLayout,
-        extensions: ThomasExtensions?,
         delegate: any ThomasDelegate
     ) throws -> any AirshipMainActorCancellable {
         let displayable = displayTarget.prepareDisplay(for: .modal, windowAnimated: false)
@@ -108,8 +101,7 @@ public final class Thomas {
         options.orientation = presentation.defaultPlacement.device?.orientationLock
 
         let environment = ThomasEnvironment(
-            delegate: delegate,
-            extensions: extensions
+            delegate: delegate
         )
 
         let rootView = ModalView(
@@ -134,20 +126,6 @@ public final class Thomas {
     }
 
     #endif
-}
-
-/// Airship rendering engine extensions.
-/// - Note: For internal use only. :nodoc:
-@_spi(AirshipInternal)
-public struct ThomasExtensions {
-
-    var imageProvider: (any AirshipImageProvider)?
-
-    public init(
-        imageProvider: (any AirshipImageProvider)? = nil
-    ) {
-        self.imageProvider = imageProvider
-    }
 }
 
 /// Thomas action runner

@@ -18,63 +18,48 @@ private actor RecordingTaskSleeper: AirshipTaskSleeper {
     }
 }
 
-private struct EmptyCachedAssetsForTest: AirshipCachedAssetsProtocol {
-    func cachedURL(remoteURL: URL) -> URL? { nil }
-    func isCached(remoteURL: URL) -> Bool { false }
-}
-
-/// Records `cacheAssets` calls; can throw to simulate failed prefetch/download.
-private actor MockAssetCacheManager: AssetCacheManagerProtocol {
-    private(set) var cacheAssetsInvocations: [(identifier: String, assets: [String])] = []
-    private let prefetchError: (any Error)?
-
-    /// - Parameter prefetchError: Pass non-`nil` to make `cacheAssets` throw; `nil` means success.
-    init(prefetchError: (any Error)? = nil) {
-        self.prefetchError = prefetchError
-    }
-
-    func cacheAssets(
-        identifier: String,
-        assets: [String]
-    ) async throws -> any AirshipCachedAssetsProtocol {
-        cacheAssetsInvocations.append((identifier, assets))
-        if let prefetchError {
-            throw prefetchError
-        }
-        return EmptyCachedAssetsForTest()
-    }
-
-    func clearCache(identifier: String) async {}
-}
-
-/// Fails the first `cacheAssets` call, then succeeds (for prefetch-only retry tests).
-private actor MockAssetCacheManagerFailOnce: AssetCacheManagerProtocol {
-    private(set) var cacheAssetsInvocationCount = 0
-    private(set) var cacheAssetsInvocations: [(identifier: String, assets: [String])] = []
-
-    func cacheAssets(
-        identifier: String,
-        assets: [String]
-    ) async throws -> any AirshipCachedAssetsProtocol {
-        cacheAssetsInvocationCount += 1
-        cacheAssetsInvocations.append((identifier, assets))
-        if cacheAssetsInvocationCount == 1 {
-            throw URLError(.cannotConnectToHost)
-        }
-        return EmptyCachedAssetsForTest()
-    }
-
-    func clearCache(identifier: String) async {}
-}
-
+/// Spy delegate that records `prefetchImages` calls and can simulate prefetch failures.
 @MainActor
 private final class StubThomasDelegate: ThomasDelegate {
+    private(set) var prefetchInvocations: [[String]] = []
+    private let prefetchError: (any Error)?
+    private var prefetchFailuresRemaining: Int
+    /// When false, `prefetchImages` returns nil (simulating no image cache).
+    private let prefetchProducesToken: Bool
+
+    init(
+        prefetchError: (any Error)? = nil,
+        prefetchFailuresRemaining: Int = 0,
+        prefetchProducesToken: Bool = true
+    ) {
+        self.prefetchError = prefetchError
+        self.prefetchFailuresRemaining = prefetchFailuresRemaining
+        self.prefetchProducesToken = prefetchProducesToken
+    }
+
     func onVisibilityChanged(isVisible: Bool, isForegrounded: Bool) {}
     func onReportingEvent(_ event: ThomasReportingEvent) {}
     func onDismissed(cancel: Bool) {}
     func runActions(_ actions: AirshipJSON, layoutContext: ThomasLayoutContext) {}
     func registerChannels(_ channels: [ThomasChannelRegistration]) {}
     func applyAttributes(_ attributes: [ThomasAttribute]) {}
+
+    func loadImage(url: String) async throws -> AirshipImageData { throw CancellationError() }
+
+    func prefetchImages(_ urls: [String]) async throws -> String? {
+        prefetchInvocations.append(urls)
+        if prefetchFailuresRemaining > 0 {
+            prefetchFailuresRemaining -= 1
+            throw URLError(.cannotConnectToHost)
+        }
+        if let prefetchError {
+            throw prefetchError
+        }
+        return prefetchProducesToken ? "token-\(prefetchInvocations.count)" : nil
+    }
+
+    func releasePrefetchedImages(token: String) {}
+
 #if !os(tvOS) && !os(watchOS)
     func makeWebView(
         url: String,
@@ -169,13 +154,8 @@ struct ThomasAsyncViewStateTest {
     }
 
     /// Retain the returned value for the duration of the test: `ThomasAsyncViewState` only keeps a weak reference.
-    private func environmentWithImageCache() -> ThomasEnvironment {
-        ThomasEnvironment(
-            delegate: StubThomasDelegate(),
-            extensions: ThomasExtensions(
-                imageProvider: ExtendableAssetCacheImageProvider()
-            )
-        )
+    private func environment(delegate: StubThomasDelegate) -> ThomasEnvironment {
+        ThomasEnvironment(delegate: delegate)
     }
 
     @Test
@@ -357,14 +337,13 @@ struct ThomasAsyncViewStateTest {
     func resolveFailsWhenImageAssetPrefetchFailsAndKeepsPendingLayout() async throws {
         let testSession = TestAirshipRequestSession()
         testSession.responseScript = [(response: httpResponse(statusCode: 200), data: invalidImageUrlViewInfoJSONData)]
-        let cacheManager = MockAssetCacheManager(prefetchError: URLError(.cannotConnectToHost))
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
             taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession,
-            assetCacheManager: cacheManager
+            requestSession: testSession
         )
-        let thomasEnvironment = environmentWithImageCache()
+        let delegate = StubThomasDelegate(prefetchError: URLError(.cannotConnectToHost))
+        let thomasEnvironment = environment(delegate: delegate)
         state.configure(thomasEnvironment: thomasEnvironment)
 
         await #expect(throws: (any Error).self) {
@@ -374,24 +353,21 @@ struct ThomasAsyncViewStateTest {
         #expect(state.resolvedLayoutAwaitingPrefetch != nil)
         #expect(testSession.requestInvocationCount == 1)
 
-        let invocations = await cacheManager.cacheAssetsInvocations
-        #expect(invocations.count == 1)
-        #expect(invocations[0].identifier == "test-async-resolve")
-        #expect(invocations[0].assets == [":::invalid"])
+        #expect(delegate.prefetchInvocations.count == 1)
+        #expect(delegate.prefetchInvocations[0] == [":::invalid"])
     }
 
     @Test
     func retryAfterPrefetchFailureRetriesPrefetchWithoutSecondHTTPRequest() async throws {
         let testSession = TestAirshipRequestSession()
         testSession.responseScript = [(response: httpResponse(statusCode: 200), data: invalidImageUrlViewInfoJSONData)]
-        let cacheManager = MockAssetCacheManagerFailOnce()
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
             taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession,
-            assetCacheManager: cacheManager
+            requestSession: testSession
         )
-        let thomasEnvironment = environmentWithImageCache()
+        let delegate = StubThomasDelegate(prefetchFailuresRemaining: 1)
+        let thomasEnvironment = environment(delegate: delegate)
         state.configure(thomasEnvironment: thomasEnvironment)
 
         await #expect(throws: (any Error).self) {
@@ -409,7 +385,7 @@ struct ThomasAsyncViewStateTest {
         #expect(state.status == .loaded)
         #expect(state.resolvedLayoutAwaitingPrefetch == nil)
         #expect(testSession.requestInvocationCount == 1)
-        #expect(await cacheManager.cacheAssetsInvocationCount == 2)
+        #expect(delegate.prefetchInvocations.count == 2)
     }
 
     // MARK: - Async view assets
@@ -418,99 +394,87 @@ struct ThomasAsyncViewStateTest {
     func resolvePrefetchInvokesCacheWithDecodedImageUrlsBeforePublishingResponse() async throws {
         let testSession = TestAirshipRequestSession()
         testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validImageUrlMediaViewInfoJSONData)]
-        let cacheManager = MockAssetCacheManager()
         let state = ThomasAsyncViewState(
             properties: try makeProperties(identifier: "scene-asset-id"),
             taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession,
-            assetCacheManager: cacheManager
+            requestSession: testSession
         )
-        let thomasEnvironment = environmentWithImageCache()
+        let delegate = StubThomasDelegate()
+        let thomasEnvironment = environment(delegate: delegate)
         state.configure(thomasEnvironment: thomasEnvironment)
 
         try await state.resolve()
 
         #expect(state.response != nil)
         #expect(state.resolvedLayoutAwaitingPrefetch == nil)
-        let invocations = await cacheManager.cacheAssetsInvocations
-        #expect(invocations.count == 1)
-        #expect(invocations[0].identifier == "scene-asset-id")
-        #expect(invocations[0].assets == ["https://cdn.example.com/async-asset.png"])
+        #expect(delegate.prefetchInvocations.count == 1)
+        #expect(delegate.prefetchInvocations[0] == ["https://cdn.example.com/async-asset.png"])
     }
 
     @Test
-    func resolveWithNoImageUrlsDoesNotInvokeAssetCacheWhenImageProviderPresent() async throws {
+    func resolveWithNoImageUrlsDoesNotPrefetch() async throws {
         let testSession = TestAirshipRequestSession()
         testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validViewInfoJSONData)]
-        let cacheManager = MockAssetCacheManager()
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
             taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession,
-            assetCacheManager: cacheManager
+            requestSession: testSession
         )
-        let thomasEnvironment = environmentWithImageCache()
+        let delegate = StubThomasDelegate()
+        let thomasEnvironment = environment(delegate: delegate)
         state.configure(thomasEnvironment: thomasEnvironment)
 
         try await state.resolve()
 
         #expect(state.response != nil)
-        #expect(await cacheManager.cacheAssetsInvocations.isEmpty)
+        #expect(delegate.prefetchInvocations.isEmpty)
     }
 
     @Test
     func resolveSkipsPrefetchWhenThomasEnvironmentNotConfigured() async throws {
         let testSession = TestAirshipRequestSession()
         testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validImageUrlMediaViewInfoJSONData)]
-        let cacheManager = MockAssetCacheManager()
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
             taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession,
-            assetCacheManager: cacheManager
+            requestSession: testSession
         )
 
         try await state.resolve()
 
         #expect(state.response != nil)
-        #expect(await cacheManager.cacheAssetsInvocations.isEmpty)
     }
 
     @Test
-    func resolveSkipsPrefetchWhenImageProviderIsNil() async throws {
+    func resolveSucceedsWhenPrefetchReturnsNoToken() async throws {
         let testSession = TestAirshipRequestSession()
         testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validImageUrlMediaViewInfoJSONData)]
-        let cacheManager = MockAssetCacheManager()
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
             taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession,
-            assetCacheManager: cacheManager
+            requestSession: testSession
         )
-        let env = ThomasEnvironment(
-            delegate: StubThomasDelegate(),
-            extensions: ThomasExtensions(imageProvider: nil)
-        )
-        state.configure(thomasEnvironment: env)
+        let delegate = StubThomasDelegate(prefetchProducesToken: false)
+        let thomasEnvironment = environment(delegate: delegate)
+        state.configure(thomasEnvironment: thomasEnvironment)
 
         try await state.resolve()
 
         #expect(state.response != nil)
-        #expect(await cacheManager.cacheAssetsInvocations.isEmpty)
+        #expect(delegate.prefetchInvocations.count == 1)
     }
 
     @Test
     func retryMapsAssetPrefetchFailureToImagePrefetchFailedStatus() async throws {
         let testSession = TestAirshipRequestSession()
         testSession.responseScript = [(response: httpResponse(statusCode: 200), data: invalidImageUrlViewInfoJSONData)]
-        let cacheManager = MockAssetCacheManager(prefetchError: URLError(.cannotConnectToHost))
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
             taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession,
-            assetCacheManager: cacheManager
+            requestSession: testSession
         )
-        let thomasEnvironment = environmentWithImageCache()
+        let delegate = StubThomasDelegate(prefetchError: URLError(.cannotConnectToHost))
+        let thomasEnvironment = environment(delegate: delegate)
         state.configure(thomasEnvironment: thomasEnvironment)
 
         state.retry()

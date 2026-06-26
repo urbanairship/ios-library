@@ -148,7 +148,7 @@ private struct StackImageButtonContent: View {
                 case .imageURL(let info):
                     ThomasAsyncImage(
                         url: info.urlSelectors?.resolve(colorScheme: colorScheme) ?? info.url,
-                        imageLoader: thomasEnvironment.imageLoader,
+                        loadImage: thomasEnvironment.loadImage,
                         image: { image, imageSize in
                             image.fitMedia(
                                 mediaFit: info.mediaFit,

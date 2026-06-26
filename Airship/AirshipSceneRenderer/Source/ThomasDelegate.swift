@@ -2,7 +2,7 @@
 
 import Foundation
 public import SwiftUI
-public import AirshipBasement
+@_spi(AirshipInternal) public import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
 @_spi(AirshipInternal)
@@ -19,6 +19,20 @@ public protocol ThomasDelegate: Sendable {
 
     @MainActor
     func onStateChanged(_ state: AirshipJSON)
+
+    /// Loads the image at the given URL (from cache if available).
+    @MainActor
+    func loadImage(url: String) async throws -> AirshipImageData
+
+    /// Prefetches the given image assets so subsequent `loadImage` calls resolve from cache.
+    /// Returns an opaque token used to release the prefetched assets, or `nil` if there was
+    /// nothing to prefetch (no assets or no image cache).
+    @MainActor
+    func prefetchImages(_ urls: [String]) async throws -> String?
+
+    /// Releases assets previously prefetched under the given token.
+    @MainActor
+    func releasePrefetchedImages(token: String)
 
     /// Runs the given actions. The delegate owns whatever runner is used.
     @MainActor

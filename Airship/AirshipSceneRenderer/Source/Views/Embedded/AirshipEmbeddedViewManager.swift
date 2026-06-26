@@ -10,7 +10,6 @@ protocol AirshipEmbeddedViewManagerProtocol: Sendable {
     func addPending(
         presentation: ThomasPresentationInfo.Embedded,
         layout: AirshipLayout,
-        extensions: ThomasExtensions?,
         delegate: any ThomasDelegate,
         extras: AirshipJSON?,
         priority: Int
@@ -36,7 +35,6 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
     func addPending(
         presentation: ThomasPresentationInfo.Embedded,
         layout: AirshipLayout,
-        extensions: ThomasExtensions?,
         delegate: any ThomasDelegate,
         extras: AirshipJSON?,
         priority: Int
@@ -45,7 +43,7 @@ final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
 
         let dismissHandle = ThomasDismissHandle()
 
-        let environment = ThomasEnvironment(delegate: delegate, extensions: extensions, dismissHandle: dismissHandle) {
+        let environment = ThomasEnvironment(delegate: delegate, dismissHandle: dismissHandle) {
             self.pending.removeAll { $0.id == id }
             self.viewSubject.send(self.pending)
         }

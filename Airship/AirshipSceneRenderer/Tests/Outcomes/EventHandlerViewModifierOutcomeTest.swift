@@ -67,7 +67,7 @@ struct EventHandlerViewModifierOutcomeTest {
     func processOutcomesDelegatesDismissToEnvironment() async {
         let delegate = EventHandlerOutcomeTestDelegate()
         let timer = EventHandlerOutcomeTestTimer()
-        let env = ThomasEnvironment(delegate: delegate, extensions: nil, pagerTracker: nil, timer: timer, onDismiss: nil)
+        let env = ThomasEnvironment(delegate: delegate, pagerTracker: nil, timer: timer, onDismiss: nil)
         let thomasState = ThomasState(mutableState: .init(initialState: [:]), onStateChange: { _ in })
 
         await EventHandlerViewModifier.processOutcomes(
@@ -100,6 +100,9 @@ private final class EventHandlerOutcomeTestDelegate: ThomasDelegate {
     func runActions(_ actions: AirshipJSON, layoutContext: ThomasLayoutContext) {}
     func registerChannels(_ channels: [ThomasChannelRegistration]) {}
     func applyAttributes(_ attributes: [ThomasAttribute]) {}
+    func loadImage(url: String) async throws -> AirshipImageData { throw CancellationError() }
+    func prefetchImages(_ urls: [String]) async throws -> String? { nil }
+    func releasePrefetchedImages(token: String) {}
 
 #if !os(tvOS) && !os(watchOS)
     func makeWebView(

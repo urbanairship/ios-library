@@ -343,33 +343,32 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         analytics: any InAppMessageAnalyticsProtocol
     ) async throws -> DisplayResult {
         return try await withCheckedThrowingContinuation { continuation in
+            let imageProvider = ExtendableAssetCacheImageProvider(parent: self.provider)
 #if !os(tvOS) && !os(watchOS)
             let listener = ThomasDisplayListener(
                 analytics: analytics,
                 actionRunner: actionRunner,
                 nativeBridgeExtension: InAppMessageNativeBridgeExtension(
                     message: message
-                )
+                ),
+                imageProvider: imageProvider
             ) { result in
                 continuation.resume(returning: result.automationDisplayResult)
             }
 #else
             let listener = ThomasDisplayListener(
                 analytics: analytics,
-                actionRunner: actionRunner
+                actionRunner: actionRunner,
+                imageProvider: imageProvider
             ) { result in
                 continuation.resume(returning: result.automationDisplayResult)
             }
 #endif
 
-            let extensions = ThomasExtensions(
-                imageProvider: ExtendableAssetCacheImageProvider(parent: self.provider)
-            )
             do {
                 try Thomas.display(
                     layout: layout,
                     displayTarget: displayTarget,
-                    extensions: extensions,
                     delegate: listener,
                     extras: message.extras,
                     priority: priority

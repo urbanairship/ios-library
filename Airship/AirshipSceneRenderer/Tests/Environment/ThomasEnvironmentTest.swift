@@ -48,6 +48,24 @@ final class TestThomasDelegate: ThomasDelegate {
         appliedAttributes.append(contentsOf: attributes)
     }
 
+    var loadedImageURLs: [String] = []
+    var prefetchedImages: [[String]] = []
+    var releasedTokens: [String] = []
+
+    func loadImage(url: String) async throws -> AirshipImageData {
+        loadedImageURLs.append(url)
+        throw CancellationError()
+    }
+
+    func prefetchImages(_ urls: [String]) async throws -> String? {
+        prefetchedImages.append(urls)
+        return urls.isEmpty ? nil : "token-\(prefetchedImages.count)"
+    }
+
+    func releasePrefetchedImages(token: String) {
+        releasedTokens.append(token)
+    }
+
 #if !os(tvOS) && !os(watchOS)
     func makeWebView(
         url: String,
@@ -89,7 +107,6 @@ struct ThomasEnvironmentTest {
         delegate: TestThomasDelegate? = nil,
         timer: TestTimer? = nil,
         pagerTracker: ThomasPagerTracker? = nil,
-        extensions: ThomasExtensions? = nil,
         onDismiss: (() -> Void)? = nil
     ) -> (ThomasEnvironment, TestThomasDelegate, TestTimer) {
         let testDelegate = delegate ?? TestThomasDelegate()
@@ -97,7 +114,6 @@ struct ThomasEnvironmentTest {
 
         let env = ThomasEnvironment(
             delegate: testDelegate,
-            extensions: extensions,
             pagerTracker: pagerTracker,
             timer: testTimer,
             onDismiss: onDismiss
@@ -681,7 +697,6 @@ struct ThomasEnvironmentTest {
 
         env = ThomasEnvironment(
             delegate: delegate,
-            extensions: nil,
             pagerTracker: nil,
             timer: timer,
             onDismiss: {

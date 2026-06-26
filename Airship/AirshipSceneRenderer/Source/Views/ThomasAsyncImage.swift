@@ -3,25 +3,24 @@
 import Foundation
 public import SwiftUI
 @_spi(AirshipInternal) public import AirshipBasement
-import AirshipCore
 
 @_spi(AirshipInternal)
 public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
 
     let url: String
-    let imageLoader: AirshipImageLoader
+    let loadImage: @MainActor (String) async throws -> AirshipImageData
     let image: (Image, CGSize) -> ImageView
     let placeholder: () -> Placeholder
 
     @_spi(AirshipInternal)
     public init(
         url: String,
-        imageLoader: AirshipImageLoader? = nil,
+        loadImage: @escaping @MainActor (String) async throws -> AirshipImageData,
         image: @escaping (Image, CGSize) -> ImageView,
         placeholder: @escaping () -> Placeholder
     ) {
         self.url = url
-        self.imageLoader = imageLoader ?? AirshipImageLoader(session: URLSession.airshipSecureSession)
+        self.loadImage = loadImage
         self.image = image
         self.placeholder = placeholder
     }
@@ -51,7 +50,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
                 self.currentImage = nil
 
                 do {
-                    let image = try await imageLoader.load(url: url)
+                    let image = try await loadImage(url)
                     self.loadedURL = url
                     self.loadedImage = image
                     animateIfNeeded()

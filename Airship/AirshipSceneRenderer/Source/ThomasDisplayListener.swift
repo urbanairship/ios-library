@@ -1,7 +1,7 @@
 import Foundation
 public import SwiftUI
-public import AirshipBasement
-public import AirshipCore
+@_spi(AirshipInternal) public import AirshipBasement
+@_spi(AirshipInternal) public import AirshipCore
 
 /// - Note: For internal use only. :nodoc:
 public protocol ThomasLayoutMessageAnalyticsProtocol: AnyObject, Sendable {
@@ -22,9 +22,15 @@ public final class ThomasDisplayListener: ThomasDelegate {
         case finished
     }
     
+    private static let assetCacheRootComponent = "com.airship.layout.assets"
+
     private let analytics: any ThomasLayoutMessageAnalyticsProtocol
     private var onDismiss: (@MainActor @Sendable (DisplayResult) -> Void)?
     private let actionRunner: (any ThomasActionRunner)?
+    private let imageProvider: (any AirshipImageProvider)?
+    private let imageLoader: AirshipImageLoader
+    private let assetCacheManager: any AssetCacheManagerProtocol
+    private var prefetchCacheIdentifiers: [String: String] = [:]
 #if !os(tvOS) && !os(watchOS)
     private let nativeBridgeExtension: (any NativeBridgeExtensionDelegate)?
 
@@ -32,24 +38,49 @@ public final class ThomasDisplayListener: ThomasDelegate {
         analytics: any ThomasLayoutMessageAnalyticsProtocol,
         actionRunner: (any ThomasActionRunner)? = nil,
         nativeBridgeExtension: (any NativeBridgeExtensionDelegate)? = nil,
+        imageProvider: (any AirshipImageProvider)? = nil,
+        assetCacheManager: (any AssetCacheManagerProtocol)? = nil,
         onDismiss: @escaping @MainActor @Sendable (DisplayResult) -> Void
     ) {
         self.analytics = analytics
         self.actionRunner = actionRunner
         self.nativeBridgeExtension = nativeBridgeExtension
+        self.imageProvider = imageProvider
+        self.imageLoader = AirshipImageLoader(
+            imageProvider: imageProvider,
+            session: URLSession.airshipSecureSession
+        )
+        self.assetCacheManager = assetCacheManager ?? Self.makeAssetCacheManager()
         self.onDismiss = onDismiss
     }
 #else
     public init(
         analytics: any ThomasLayoutMessageAnalyticsProtocol,
         actionRunner: (any ThomasActionRunner)? = nil,
+        imageProvider: (any AirshipImageProvider)? = nil,
+        assetCacheManager: (any AssetCacheManagerProtocol)? = nil,
         onDismiss: @escaping @MainActor @Sendable (DisplayResult) -> Void
     ) {
         self.analytics = analytics
         self.actionRunner = actionRunner
+        self.imageProvider = imageProvider
+        self.imageLoader = AirshipImageLoader(
+            imageProvider: imageProvider,
+            session: URLSession.airshipSecureSession
+        )
+        self.assetCacheManager = assetCacheManager ?? Self.makeAssetCacheManager()
         self.onDismiss = onDismiss
     }
 #endif
+
+    private static func makeAssetCacheManager() -> any AssetCacheManagerProtocol {
+        AssetCacheManager(
+            assetFileManager: DefaultAssetFileManager(
+                rootPathComponent: assetCacheRootComponent,
+                rootLocation: .temporaryDirectory
+            )
+        )
+    }
 
     public func onVisibilityChanged(isVisible: Bool, isForegrounded: Bool) {
         if isVisible, isForegrounded {
@@ -215,6 +246,46 @@ public final class ThomasDisplayListener: ThomasDelegate {
 
         channelEditor.apply()
         contactEditor.apply()
+    }
+
+    public func loadImage(url: String) async throws -> AirshipImageData {
+        try await imageLoader.load(url: url)
+    }
+
+    public func prefetchImages(_ urls: [String]) async throws -> String? {
+        guard let imageProvider, !urls.isEmpty else { return nil }
+
+        let identifier = UUID().uuidString
+        let cachedAssets = try await assetCacheManager.cacheAssets(
+            identifier: identifier,
+            assets: urls
+        )
+
+        let child = NonExtendableAssetCacheImageProvider { url in
+            guard
+                let url = cachedAssets.cachedURL(remoteURL: url),
+                let data = FileManager.default.contents(atPath: url.path),
+                let imageData = try? AirshipImageData(data: data)
+            else {
+                return nil
+            }
+            return imageData
+        }
+
+        guard let token = imageProvider.tryAddChild(child) else {
+            await assetCacheManager.clearCache(identifier: identifier)
+            return nil
+        }
+
+        prefetchCacheIdentifiers[token] = identifier
+        return token
+    }
+
+    public func releasePrefetchedImages(token: String) {
+        imageProvider?.removeChild(token: token)
+        if let identifier = prefetchCacheIdentifiers.removeValue(forKey: token) {
+            Task { await assetCacheManager.clearCache(identifier: identifier) }
+        }
     }
 }
 

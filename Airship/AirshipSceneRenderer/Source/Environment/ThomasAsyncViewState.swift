@@ -7,18 +7,14 @@ import Foundation
 
 @MainActor
 final class ThomasAsyncViewState: ObservableObject {
-    
-    private static let assetCacheRootComponent = "com.airship.layout.assets"
-    
+
     let properties: ThomasViewInfo.AsyncViewController.Properties?
 
     private let taskSleeper: any AirshipTaskSleeper
     private let requestSession: any AirshipRequestSession
     private let channelIdFetcher: (() async throws -> String)
     private let contactIdFetcher: (() async throws -> String)
-    private let assetCacheManager: (any AssetCacheManagerProtocol)?
     private var resolveTask: Task<Void, Never>?
-    private var imageCacheChildId: String?
     private(set) weak var thomasEnvironment: ThomasEnvironment?
 
     /// Layout decoded from HTTP that still needs a successful image prefetch before `response` is published.
@@ -29,18 +25,11 @@ final class ThomasAsyncViewState: ObservableObject {
         taskSleeper: any AirshipTaskSleeper = DefaultAirshipTaskSleeper.shared,
         requestSession: (any AirshipRequestSession)? = nil,
         channelIdFetcher: (() async throws -> String)? = nil,
-        contactIdFetcher: (() async throws -> String)? = nil,
-        assetCacheManager: (any AssetCacheManagerProtocol)? = nil
+        contactIdFetcher: (() async throws -> String)? = nil
     ) {
         self.properties = properties
         self.taskSleeper = taskSleeper
         self.requestSession = requestSession ?? Airship.config.requestSession
-        self.assetCacheManager = assetCacheManager ?? AssetCacheManager(
-            assetFileManager: DefaultAssetFileManager(
-                rootPathComponent: Self.assetCacheRootComponent,
-                rootLocation: .temporaryDirectory
-            )
-        )
         self.channelIdFetcher = channelIdFetcher ?? {
             // Wait for channel ID from identifierUpdates stream
             var iterator = Airship.channel.identifierUpdates.makeAsyncIterator()
@@ -56,49 +45,13 @@ final class ThomasAsyncViewState: ObservableObject {
     }
     
     func configure(thomasEnvironment: ThomasEnvironment) {
+        // The environment owns prefetched-image lifecycle: tokens passed with `clearOnDismiss`
+        // are released automatically when the layout dismisses.
         self.thomasEnvironment = thomasEnvironment
-        thomasEnvironment.registerDismissCleanup(for: self) { [weak self] in
-            guard let self else { return }
-            Self.removeImageChildAndClearCache(
-                childId: self.imageCacheChildId,
-                environment: self.thomasEnvironment,
-                cacheIdentifier: self.properties?.identifier,
-                manager: self.assetCacheManager
-            )
-        }
     }
 
     deinit {
         resolveTask?.cancel()
-        let childId = imageCacheChildId
-        let environment = thomasEnvironment
-        let cacheIdentifier = properties?.identifier
-        let manager = assetCacheManager
-        Task { @MainActor in
-            Self.removeImageChildAndClearCache(
-                childId: childId,
-                environment: environment,
-                cacheIdentifier: cacheIdentifier,
-                manager: manager
-            )
-        }
-    }
-    
-    @MainActor
-    private static func removeImageChildAndClearCache(
-        childId: String?,
-        environment: ThomasEnvironment?,
-        cacheIdentifier: String?,
-        manager: (any AssetCacheManagerProtocol)?
-    ) {
-        if let childId {
-            environment?.extensions?.imageProvider?.removeChild(token: childId)
-        }
-        if let cacheIdentifier, let manager {
-            Task {
-                await manager.clearCache(identifier: cacheIdentifier)
-            }
-        }
     }
     
     enum Status: Encodable, Sendable, Equatable, Hashable {
@@ -268,74 +221,18 @@ final class ThomasAsyncViewState: ObservableObject {
         }
     }
 
-    /// Publishes `response` only after any required image prefetch and provider registration complete.
+    /// Publishes `response` only after any required image prefetch completes. The environment owns
+    /// the prefetched assets and releases them on dismiss.
     private func commitResolvedLayout(_ viewInfo: ThomasViewInfo) async throws {
-        if let imageCache = thomasEnvironment?.extensions?.imageProvider {
-            if let current = imageCacheChildId {
-                imageCache.removeChild(token: current)
-                imageCacheChildId = nil
-            }
-
-            let assets = imageURLStrings(from: viewInfo)
-            let mustPrefetch = !assets.isEmpty
-                && assetCacheManager != nil
-                && properties?.identifier != nil
-
-            do {
-                if let child = try await prefetchImageChild(
-                    assets: assets,
-                    blocking: mustPrefetch
-                ) {
-                    imageCacheChildId = imageCache.tryAddChild(child)
-                }
-            } catch {
-                if mustPrefetch {
-                    resolvedLayoutAwaitingPrefetch = viewInfo
-                }
-                throw error
-            }
+        do {
+            try await thomasEnvironment?.prefetch(images: imageURLStrings(from: viewInfo))
+        } catch {
+            resolvedLayoutAwaitingPrefetch = viewInfo
+            throw AsyncRequestError.prefetchFailed
         }
 
         resolvedLayoutAwaitingPrefetch = nil
         self.response = viewInfo
-    }
-
-    /// When `blocking` is true, a failed download prevents publishing `response` until retry.
-    private func prefetchImageChild(
-        assets: [String],
-        blocking: Bool
-    ) async throws -> (any AirshipImageProvider)? {
-        guard !assets.isEmpty else { return nil }
-
-        guard let manager = assetCacheManager,
-              let identifier = properties?.identifier
-        else {
-            return nil
-        }
-
-        let cachedAssets: any AirshipCachedAssetsProtocol
-        do {
-            cachedAssets = try await manager.cacheAssets(
-                identifier: identifier,
-                assets: assets
-            )
-        } catch {
-            if blocking {
-                throw AsyncRequestError.prefetchFailed
-            }
-            return nil
-        }
-
-        return NonExtendableAssetCacheImageProvider { url in
-            guard
-                let url = cachedAssets.cachedURL(remoteURL: url),
-                let data = FileManager.default.contents(atPath: url.path),
-                let imageData = try? AirshipImageData(data: data)
-            else {
-                return nil
-            }
-            return imageData
-        }
     }
 
 
