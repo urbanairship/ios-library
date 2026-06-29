@@ -3,7 +3,7 @@
 import Foundation
 import Combine
 
-@testable import AirshipAutomation
+@testable @_spi(AirshipInternal) import AirshipAutomation
 @testable import AirshipCore
 
 actor TestAutomationEngine: AutomationEngineProtocol {

@@ -118,6 +118,7 @@ public final class Thomas {
 
 /// Thomas action runner
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol ThomasActionRunner: Sendable {
     @MainActor
     func runAsync(actions: AirshipJSON, layoutContext: ThomasLayoutContext)

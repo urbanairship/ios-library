@@ -4,6 +4,7 @@ import Foundation
 
 /// Layout-level options for native layouts (e.g. state restoration across displays).
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct NativeLayoutControlOptions {
 
     /// When set, controls restoring state across displays.

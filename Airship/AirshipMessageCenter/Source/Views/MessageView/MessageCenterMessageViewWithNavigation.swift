@@ -6,7 +6,7 @@ public import SwiftUI
 
 @_spi(AirshipInternal) import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
-import AirshipScenes
+@_spi(AirshipInternal) import AirshipScenes
 
 /// A view that displays a message as well as modifies the toolbars and navigation title.
 @MainActor

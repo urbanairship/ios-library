@@ -4,7 +4,7 @@ import Testing
 
 @testable import AirshipCore
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
-@testable import AirshipScenes
+@testable @_spi(AirshipInternal) import AirshipScenes
 
 struct ThomasLayoutFormDisplayEventTest {
 

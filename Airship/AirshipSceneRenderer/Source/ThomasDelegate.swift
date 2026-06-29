@@ -64,6 +64,7 @@ public protocol ThomasDelegate: Sendable {
 #endif
 }
 
+@_spi(AirshipInternal)
 public extension ThomasDelegate {
     @MainActor
     func onStateChanged(_ state: AirshipJSON) {
@@ -72,6 +73,8 @@ public extension ThomasDelegate {
 
 }
 
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 @MainActor
 public final class ThomasDismissHandle {
     private var onDismissBlocks: [(Bool) -> Void] = []

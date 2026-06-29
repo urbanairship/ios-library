@@ -3,7 +3,7 @@
 import Foundation
 
 import AirshipCore
-import AirshipScenes
+@_spi(AirshipInternal) import AirshipScenes
 
 
 protocol LegacyInAppAnalyticsProtocol: Sendable {

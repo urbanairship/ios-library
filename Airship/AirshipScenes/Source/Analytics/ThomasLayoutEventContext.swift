@@ -1,10 +1,12 @@
 /* Copyright Airship and Contributors */
 
+@_spi(AirshipInternal) import AirshipSceneRenderer
 import Foundation
 import AirshipBasement
 public import AirshipCore
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct ThomasLayoutEventContext: Encodable, Equatable, Sendable {
     public struct Display: Encodable, Equatable, Sendable {
         public var triggerSessionID: String

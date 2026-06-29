@@ -1,5 +1,5 @@
 public import AirshipCore
-import AirshipScenes
+@_spi(AirshipInternal) import AirshipScenes
 
 import Foundation
 

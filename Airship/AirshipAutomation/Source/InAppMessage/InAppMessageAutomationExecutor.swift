@@ -3,7 +3,7 @@
 import Foundation
 
 @_spi(AirshipInternal) import AirshipCore
-import AirshipScenes
+@_spi(AirshipInternal) import AirshipScenes
 
 final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     typealias ExecutionData = PreparedInAppMessageData

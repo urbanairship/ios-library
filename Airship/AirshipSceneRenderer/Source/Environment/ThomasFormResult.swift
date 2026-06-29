@@ -4,6 +4,7 @@ import Foundation
 public import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct ThomasFormResult: Sendable, Hashable, Equatable {
     public var identifier: String
     public var formData: AirshipJSON

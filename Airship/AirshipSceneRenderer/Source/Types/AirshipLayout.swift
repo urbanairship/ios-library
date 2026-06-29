@@ -3,6 +3,8 @@
 import SwiftUI
 
 /// AirshipLayout
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct AirshipLayout: ThomasSerializable {
     /// The view DSL
     let view: ThomasViewInfo

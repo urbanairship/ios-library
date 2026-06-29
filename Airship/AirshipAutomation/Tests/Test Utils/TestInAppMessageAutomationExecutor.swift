@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-@testable import AirshipAutomation
+@testable @_spi(AirshipInternal) import AirshipAutomation
 @testable import AirshipCore
 
 final class TestInAppMessageAutomationExecutor: AutomationExecutorDelegate, @unchecked Sendable {  typealias ExecutionData = PreparedInAppMessageData

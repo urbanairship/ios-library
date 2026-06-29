@@ -2,7 +2,7 @@
 
 import XCTest
 
-@testable
+@testable @_spi(AirshipInternal)
 import AirshipAutomation
 
 final class PreparedScheduleInfoTest: XCTestCase {

@@ -2,10 +2,10 @@
 
 import XCTest
 
-@testable
+@testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
-import AirshipScenes
+@_spi(AirshipInternal) import AirshipScenes
 
 final class DefaultInAppDisplayImpressionRuleProviderTest: XCTestCase {
 

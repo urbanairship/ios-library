@@ -3,6 +3,7 @@
 public import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct ThomasViewedPageInfo: Encodable, Sendable, Equatable, Hashable {
     public var identifier: String
     public var index: Int

@@ -1,10 +1,10 @@
 /* Copyright Airship and Contributors */
 
 import Testing
-@testable import AirshipAutomation
+@testable @_spi(AirshipInternal) import AirshipAutomation
 @testable import AirshipCore
-@testable import AirshipSceneRenderer
-@testable import AirshipScenes
+@testable @_spi(AirshipInternal) import AirshipSceneRenderer
+@testable @_spi(AirshipInternal) import AirshipScenes
 
 @MainActor
 struct LegacyInAppAnalyticsTest {

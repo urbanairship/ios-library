@@ -1,9 +1,9 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-@testable import AirshipAutomation
+@testable @_spi(AirshipInternal) import AirshipAutomation
 @testable import AirshipCore
-import AirshipScenes
+@_spi(AirshipInternal) import AirshipScenes
 
 final class TestInAppMessageAnalytics: InAppMessageAnalyticsProtocol, @unchecked Sendable {
 

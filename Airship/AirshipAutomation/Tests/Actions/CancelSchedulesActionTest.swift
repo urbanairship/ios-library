@@ -2,7 +2,7 @@
 
 import XCTest
 
-@_spi(AirshipInternal) @testable
+@_spi(AirshipInternal) @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 

@@ -3,10 +3,12 @@
 public import Foundation
 
 @_spi(AirshipInternal) public import AirshipCore
-public import AirshipScenes
+@_spi(AirshipInternal) public import AirshipScenes
 
 /// Partially-decoded Airship layout. isEmbedded and validate() are available
 /// without a full decode; the full view tree is decoded at prepare time.
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct AirshipLayoutIntermediate: Sendable, Equatable {
     /// Raw display JSON (AirshipLayoutWrapper format). Internal — used by the preparer.
     internal let layoutJSON: AirshipJSON
@@ -45,10 +47,14 @@ public enum InAppMessageDisplayContent: Sendable, Equatable {
     case custom(AirshipJSON)
 
     /// Airship layout messages
+    /// - Note: For internal use only. :nodoc:
+    @_spi(AirshipInternal)
     case airshipLayout(AirshipLayout)
 
     /// Airship layout (Thomas) with isEmbedded/validate available without a full decode.
     /// The full view tree is decoded at prepare time via AirshipLayoutIntermediate.resolve().
+    /// - Note: For internal use only. :nodoc:
+    @_spi(AirshipInternal)
     case airshipLayoutIntermediate(AirshipLayoutIntermediate)
 
     public func validate() -> Bool {

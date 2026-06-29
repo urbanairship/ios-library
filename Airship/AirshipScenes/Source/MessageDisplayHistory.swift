@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+@_spi(AirshipInternal) import AirshipSceneRenderer
 public import Foundation
 public import AirshipCore
 

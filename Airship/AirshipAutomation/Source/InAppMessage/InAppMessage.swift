@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 @_spi(AirshipInternal) public import AirshipCore
-import AirshipScenes
+@_spi(AirshipInternal) import AirshipScenes
 
 enum InAppMessageSource: String, Codable, Equatable, Sendable {
     case remoteData = "remote-data"

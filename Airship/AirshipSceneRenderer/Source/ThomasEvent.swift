@@ -4,6 +4,7 @@ public import Foundation
 public import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public enum ThomasReportingEvent: Sendable {
     case buttonTap(ButtonTapEvent, ThomasLayoutContext)
     case formDisplay(FormDisplayEvent, ThomasLayoutContext)

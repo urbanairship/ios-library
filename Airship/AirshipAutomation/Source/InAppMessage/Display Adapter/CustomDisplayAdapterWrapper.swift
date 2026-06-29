@@ -3,7 +3,7 @@
 import Foundation
 
 import AirshipCore
-import AirshipScenes
+@_spi(AirshipInternal) import AirshipScenes
 
 /// Wraps a custom display adapter as a DisplayAdapter
 final class CustomDisplayAdapterWrapper: DisplayAdapter {

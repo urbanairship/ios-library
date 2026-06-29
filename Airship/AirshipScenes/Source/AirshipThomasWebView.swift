@@ -2,6 +2,7 @@
 
 #if !os(tvOS) && !os(watchOS)
 
+@_spi(AirshipInternal) import AirshipSceneRenderer
 import Foundation
 import SwiftUI
 import WebKit

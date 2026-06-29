@@ -3,6 +3,7 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct ThomasLayoutContext: Encodable, Equatable, Sendable {
     public struct Pager: Encodable, Equatable, Sendable {
         public var identifier: String

@@ -3,7 +3,7 @@
 import XCTest
 
 import AirshipCore
-@testable
+@testable @_spi(AirshipInternal)
 import AirshipAutomation
 
 final class AutomationRemoteDataSubscriberTest: XCTestCase {

@@ -1,9 +1,9 @@
 /* Copyright Airship and Contributors */
 
 import XCTest
-@testable import AirshipAutomation
+@testable @_spi(AirshipInternal) import AirshipAutomation
 import AirshipCore
-import AirshipScenes
+@_spi(AirshipInternal) import AirshipScenes
 
 @MainActor
 final class DisplayCoordinatorManagerTest: XCTestCase {

@@ -4,6 +4,7 @@ import Foundation
 
 /// Url Info
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public enum URLInfo: Sendable, Equatable {
     case web(url: String, requireNetwork: Bool = true)
     case video(url: String, requireNetwork: Bool = true)

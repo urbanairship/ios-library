@@ -2,6 +2,8 @@
 
 import Foundation
 
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 @frozen
 public enum ThomasPresentationInfo: ThomasSerializable {
     case banner(Banner)

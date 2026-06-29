@@ -5,7 +5,7 @@ public import Combine
 public import Foundation
 
 public import AirshipCore
-import AirshipScenes
+@_spi(AirshipInternal) import AirshipScenes
 @_spi(AirshipInternal) import AirshipBasement
 
 /// Errors that can occur when loading or refreshing Message Center Inbox.

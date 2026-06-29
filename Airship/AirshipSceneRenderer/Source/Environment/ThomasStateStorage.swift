@@ -13,6 +13,8 @@ protocol ThomasStateProvider: ObservableObject {
     func restorePersistentState(_ state: SnapshotType)
 }
 
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 @MainActor
 public protocol LayoutDataStorage: Sendable {
     var messageID: String { get }

@@ -3,7 +3,7 @@
 import Foundation
 
 import AirshipCore
-import AirshipScenes
+@_spi(AirshipInternal) import AirshipScenes
 
 @MainActor
 final class NativeLayoutPersistentDataStore: LayoutDataStorage {

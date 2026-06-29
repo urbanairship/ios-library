@@ -3,7 +3,7 @@
 import Foundation
 import Combine
 
-@testable
+@testable @_spi(AirshipInternal)
 import AirshipAutomation
 
 @testable

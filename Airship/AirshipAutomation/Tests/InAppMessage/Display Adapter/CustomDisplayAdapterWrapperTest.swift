@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import XCTest
-@testable import AirshipAutomation
+@testable @_spi(AirshipInternal) import AirshipAutomation
 import AirshipCore
 
 

@@ -6,6 +6,7 @@ public import Foundation
 
 /// Auth requirement for an async-view request, neutral to whoever resolves it.
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 @frozen
 public enum ThomasAsyncViewAuth: Sendable, Equatable {
     case app
