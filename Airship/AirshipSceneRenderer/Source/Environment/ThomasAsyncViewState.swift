@@ -1,9 +1,47 @@
 /* Copyright Airship and Contributors */
 
 import Combine
-import Foundation
+public import Foundation
 @_spi(AirshipInternal) import AirshipBasement
-@_spi(AirshipInternal) import AirshipCore
+
+/// Auth requirement for an async-view request, neutral to whoever resolves it.
+/// - Note: For internal use only. :nodoc:
+@frozen
+public enum ThomasAsyncViewAuth: Sendable, Equatable {
+    case app
+    case channel
+    case contact
+    case none
+}
+
+/// Error surfaced by an `AsyncViewResolver`. The renderer uses these to drive retry/status.
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
+public enum AsyncViewResolverError: Error, Sendable {
+    case client
+    case server(statusCode: Int)
+    case timedOut
+}
+
+/// Resolves an async-view request to its raw layout payload. Implemented by the host, which
+/// owns the network session, auth tokens, and channel/contact identifiers — keeping that
+/// "knows about the world" code out of the renderer.
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
+public protocol AsyncViewResolver: Sendable {
+    @MainActor
+    func resolve(url: URL, auth: ThomasAsyncViewAuth) async throws -> Data
+}
+
+/// Resolves WKWebView authentication challenges. Implemented by the host so the renderer doesn't
+/// depend on the SDK's challenge-resolution machinery (server-trust pinning, etc.).
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
+public protocol AirshipWebViewChallengeResolver: Sendable {
+    func resolve(
+        _ challenge: URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?)
+}
 
 @MainActor
 final class ThomasAsyncViewState: ObservableObject {
@@ -11,39 +49,23 @@ final class ThomasAsyncViewState: ObservableObject {
     let properties: ThomasViewInfo.AsyncViewController.Properties?
 
     private let taskSleeper: any AirshipTaskSleeper
-    private let requestSession: any AirshipRequestSession
-    private let channelIdFetcher: (() async throws -> String)
-    private let contactIdFetcher: (() async throws -> String)
+    private let resolver: (any AsyncViewResolver)?
     private var resolveTask: Task<Void, Never>?
     private(set) weak var thomasEnvironment: ThomasEnvironment?
 
     /// Layout decoded from HTTP that still needs a successful image prefetch before `response` is published.
     private(set) var resolvedLayoutAwaitingPrefetch: ThomasViewInfo?
-    
+
     init(
         properties: ThomasViewInfo.AsyncViewController.Properties? = nil,
-        taskSleeper: any AirshipTaskSleeper = DefaultAirshipTaskSleeper.shared,
-        requestSession: (any AirshipRequestSession)? = nil,
-        channelIdFetcher: (() async throws -> String)? = nil,
-        contactIdFetcher: (() async throws -> String)? = nil
+        resolver: (any AsyncViewResolver)? = nil,
+        taskSleeper: any AirshipTaskSleeper = DefaultAirshipTaskSleeper.shared
     ) {
         self.properties = properties
+        self.resolver = resolver
         self.taskSleeper = taskSleeper
-        self.requestSession = requestSession ?? Airship.config.requestSession
-        self.channelIdFetcher = channelIdFetcher ?? {
-            // Wait for channel ID from identifierUpdates stream
-            var iterator = Airship.channel.identifierUpdates.makeAsyncIterator()
-            guard let channelID = await iterator.next() else {
-                throw AsyncRequestError.client
-            }
-            return channelID
-        }
-        
-        self.contactIdFetcher = contactIdFetcher ?? {
-            return await Airship.contact.getStableContactID()
-        }
     }
-    
+
     func configure(thomasEnvironment: ThomasEnvironment) {
         // The environment owns prefetched-image lifecycle: tokens passed with `clearOnDismiss`
         // are released automatically when the layout dismisses.
@@ -53,17 +75,17 @@ final class ThomasAsyncViewState: ObservableObject {
     deinit {
         resolveTask?.cancel()
     }
-    
+
     enum Status: Encodable, Sendable, Equatable, Hashable {
         case loading
         case loaded
         case error(ErrorInfo)
-        
+
         enum CodingKeys: CodingKey {
             case status
             case error
         }
-        
+
         func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
@@ -77,18 +99,18 @@ final class ThomasAsyncViewState: ObservableObject {
             }
         }
     }
-    
+
     enum ErrorInfo: Encodable, Sendable, Equatable, Hashable {
         case client
         case timedOut
         case server(statusCode: Int)
         case imagePrefetchFailed
-        
+
         enum CodingKeys: String, CodingKey {
             case type
             case statusCode = "http_status_code"
         }
-        
+
         func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
@@ -104,13 +126,13 @@ final class ThomasAsyncViewState: ObservableObject {
             }
         }
     }
-    
+
     @Published
     var response: ThomasViewInfo?
-    
+
     @Published
     var status: Status = .loading
-    
+
     func retry() {
         guard resolveTask == nil, response == nil else { return }
         status = .loading
@@ -134,65 +156,61 @@ final class ThomasAsyncViewState: ObservableObject {
             }
         }
     }
-    
+
     private func categorizeError(_ error: any Error) -> ErrorInfo {
-        if let urlError = error as? URLError {
-            switch urlError.code {
-            case .timedOut:
-                return .timedOut
-            default:
-                return .client
-            }
+        if let urlError = error as? URLError, urlError.code == .timedOut {
+            return .timedOut
         }
-        
-        if let asyncError = error as? AsyncRequestError {
-            switch asyncError {
+
+        if let resolverError = error as? AsyncViewResolverError {
+            switch resolverError {
             case .client:
                 return .client
             case .server(let statusCode):
                 return .server(statusCode: statusCode)
-            case .prefetchFailed:
-                return .imagePrefetchFailed
+            case .timedOut:
+                return .timedOut
             }
         }
-        
+
+        if error is PrefetchError {
+            return .imagePrefetchFailed
+        }
+
         return .client
     }
-    
+
     /// Only HTTP 5xx responses are retried; 4xx and other errors fail immediately.
     private func isRetryableServerError(_ error: any Error) -> Bool {
-        guard let asyncError = error as? AsyncRequestError,
-              case .server(let statusCode) = asyncError else {
+        guard let resolverError = error as? AsyncViewResolverError,
+              case .server(let statusCode) = resolverError else {
             return false
         }
         return (500..<600).contains(statusCode)
     }
-    
+
     func resolve() async throws {
         try Task.checkCancellation()
-        
+
         guard let properties else {
-            throw AsyncRequestError.client
+            throw AsyncViewResolverError.client
         }
-        
+
         guard case .content(let info) = properties.request else {
-            throw AsyncRequestError.client
+            throw AsyncViewResolverError.client
         }
-        
+
         let retry = properties.retry
         var lastError: (any Error)?
-        
+
         for attempt in 0...retry.maxRetries {
             try Task.checkCancellation()
 
             let delay = calculateBackoff(attempt: attempt, retryPolicy: retry)
             try await taskSleeper.sleep(timeInterval: delay)
-            
+
             do {
-                let httpResponse = try await makeRequest(info)
-                guard let viewInfo = httpResponse.result else {
-                    throw AsyncRequestError.client
-                }
+                let viewInfo = try await makeRequest(info)
                 resolvedLayoutAwaitingPrefetch = nil
                 try await commitResolvedLayout(viewInfo)
                 return
@@ -200,18 +218,18 @@ final class ThomasAsyncViewState: ObservableObject {
                 if error is CancellationError {
                     throw error
                 }
-                
+
                 lastError = error
-                
+
                 guard isRetryableServerError(error) else {
                     throw error
                 }
             }
         }
-        
-        throw lastError ?? AsyncRequestError.client
+
+        throw lastError ?? AsyncViewResolverError.client
     }
-    
+
     private func imageURLStrings(from layout: ThomasViewInfo) -> [String] {
         layout.urlInfos.compactMap { info in
             if case .image(let url, _) = info {
@@ -228,16 +246,13 @@ final class ThomasAsyncViewState: ObservableObject {
             try await thomasEnvironment?.prefetch(images: imageURLStrings(from: viewInfo))
         } catch {
             resolvedLayoutAwaitingPrefetch = viewInfo
-            throw AsyncRequestError.prefetchFailed
+            throw PrefetchError()
         }
 
         resolvedLayoutAwaitingPrefetch = nil
         self.response = viewInfo
     }
 
-
-    // MARK: - HTTP
-    
     /// Delay before each resolve attempt. `attempt` is the loop index (sleep-then-request).
     /// - `attempt == 0`: no wait before the first request.
     /// - `attempt >= 1`: `min(initialBackoff * 2^(attempt - 1), maxBackoff)` before subsequent attempts.
@@ -254,52 +269,32 @@ final class ThomasAsyncViewState: ObservableObject {
             retryPolicy.maxBackoff
         )
     }
-    
+
+    /// Resolves the request through the host-provided resolver and decodes the layout. Decoding
+    /// stays in the renderer; the resolver only returns the raw payload.
     private func makeRequest(
         _ info: ThomasViewInfo.AsyncViewController.Request.ContentRequest
-    ) async throws -> AirshipHTTPResponse<ThomasViewInfo> {
-        
-        let resolvedAuth: AirshipRequestAuth?
-        switch info.auth {
-        case .app:
-            resolvedAuth = .generatedAppToken
-        case .channel:
-            let channelID = try await channelIdFetcher()
-            resolvedAuth = .generatedChannelToken(identifier: channelID)
-        case .contact:
-            let contactID = try await contactIdFetcher()
-            resolvedAuth = .contactAuthToken(identifier: contactID)
-        case .none:
-            resolvedAuth = nil
+    ) async throws -> ThomasViewInfo {
+        guard let resolver else {
+            throw AsyncViewResolverError.client
         }
-        
-        let airshipRequest = AirshipRequest(
-            url: info.url,
-            method: "GET",
-            auth: resolvedAuth
-        )
-        
-        return try await requestSession.performHTTPRequest(airshipRequest) { (data, response) in
-            guard let data = data, response.isSuccessfulHTTPStatus else {
-                throw AsyncRequestError.server(statusCode: response.statusCode)
-            }
-            do {
-                return try JSONDecoder().decode(ThomasViewInfo.self, from: data)
-            } catch {
-                throw AsyncRequestError.client
-            }
+
+        let auth: ThomasAsyncViewAuth = switch info.auth {
+        case .app?: .app
+        case .channel?: .channel
+        case .contact?: .contact
+        case nil: .none
+        }
+
+        let data = try await resolver.resolve(url: info.url, auth: auth)
+
+        do {
+            return try JSONDecoder().decode(ThomasViewInfo.self, from: data)
+        } catch {
+            throw AsyncViewResolverError.client
         }
     }
 }
 
-private enum AsyncRequestError: Error {
-    case client
-    case server(statusCode: Int)
-    case prefetchFailed
-}
-
-private extension HTTPURLResponse {
-    var isSuccessfulHTTPStatus: Bool {
-        (200...299).contains(statusCode)
-    }
-}
+/// Internal marker for an image prefetch failure during async-view resolution.
+private struct PrefetchError: Error {}

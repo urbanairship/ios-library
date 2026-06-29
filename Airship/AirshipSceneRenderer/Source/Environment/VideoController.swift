@@ -33,7 +33,7 @@ struct VideoController: View {
 
     @MainActor
     struct Content: View {
-        @Environment(\.viewFactory) private var viewFactory
+        @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
         let info: ThomasViewInfo.VideoController
         let constraints: ViewConstraints
 
@@ -82,7 +82,7 @@ struct VideoController: View {
         }
 
         var body: some View {
-            viewFactory.createView(self.info.properties.view, constraints: constraints)
+            thomasEnvironment.viewFactory.createView(self.info.properties.view, constraints: constraints)
                 .constraints(constraints)
                 .thomasCommon(self.info)
                 .environmentObject(self.videoState)

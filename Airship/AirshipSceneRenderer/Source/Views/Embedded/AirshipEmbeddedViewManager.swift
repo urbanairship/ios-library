@@ -13,7 +13,8 @@ public protocol AirshipEmbeddedViewManagerProtocol: Sendable {
         layout: AirshipLayout,
         delegate: any ThomasDelegate,
         extras: AirshipJSON?,
-        priority: Int
+        priority: Int,
+        extensions: any ThomasExtensions
     ) -> any AirshipMainActorCancellable
 
     var publisher: AnyPublisher<[PendingEmbedded], Never> { get }
@@ -39,17 +40,17 @@ public final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtoco
         layout: AirshipLayout,
         delegate: any ThomasDelegate,
         extras: AirshipJSON?,
-        priority: Int
+        priority: Int,
+        extensions: any ThomasExtensions
     ) -> any AirshipMainActorCancellable {
         let id = UUID().uuidString
 
         let dismissHandle = ThomasDismissHandle()
 
-        let environment = ThomasEnvironment(delegate: delegate, dismissHandle: dismissHandle) {
+        let environment = ThomasEnvironment(delegate: delegate, extensions: extensions, dismissHandle: dismissHandle) {
             self.pending.removeAll { $0.id == id }
             self.viewSubject.send(self.pending)
         }
-
 
         self.pending.append(
             PendingEmbedded(

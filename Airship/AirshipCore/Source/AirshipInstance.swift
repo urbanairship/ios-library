@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 protocol AirshipInstance: Sendable {
     var config: RuntimeConfig { get }

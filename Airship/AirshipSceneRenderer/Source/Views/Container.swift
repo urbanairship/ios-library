@@ -24,7 +24,7 @@ struct Container: View {
 }
 
 fileprivate struct NewContainer: View {
-    @Environment(\.viewFactory) private var viewFactory
+    @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutDirection) private var layoutDirection
 
     /// Container model.
@@ -67,7 +67,7 @@ fileprivate struct NewContainer: View {
             safeAreaInsetsMode: consumeSafeAreaInsets ? .consumeMargin : .ignore
         )
 
-        viewFactory.createView(
+        thomasEnvironment.viewFactory.createView(
             item.view,
             constraints: childConstraints
         )

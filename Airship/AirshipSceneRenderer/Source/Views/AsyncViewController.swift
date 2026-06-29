@@ -7,7 +7,6 @@ import Combine
 
 @MainActor
 struct AsyncViewController: View {
-    @Environment(\.viewFactory) private var viewFactory
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
     @EnvironmentObject var thomasState: ThomasState
@@ -27,13 +26,15 @@ struct AsyncViewController: View {
 
     init(
         info: ThomasViewInfo.AsyncViewController,
-        constraints: ViewConstraints
+        constraints: ViewConstraints,
+        resolver: any AsyncViewResolver
     ) {
         self.info = info
         self.constraints = constraints
         self._state = StateObject(
             wrappedValue: ThomasAsyncViewState(
-                properties: info.properties
+                properties: info.properties,
+                resolver: resolver
             )
         )
     }
@@ -41,10 +42,10 @@ struct AsyncViewController: View {
     var body: some View {
         Group {
             if let response = state.response {
-                viewFactory.createView(response, constraints: constraints)
+                thomasEnvironment.viewFactory.createView(response, constraints: constraints)
                     .environment(\.thomasAssociatedLabelResolver, resolverForResponse)
             } else {
-                viewFactory.createView(info.properties.placeholder, constraints: constraints)
+                thomasEnvironment.viewFactory.createView(info.properties.placeholder, constraints: constraints)
                     .constraints(constraints)
                     .thomasCommon(info)
                     .onAppear {

@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 import Testing
 
-@testable @_spi(AirshipInternal) import AirshipCore
+@testable @_spi(AirshipInternal) import AirshipBasement
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
 // MARK: - Utils
@@ -15,6 +15,28 @@ private actor RecordingTaskSleeper: AirshipTaskSleeper {
 
     func sleep(timeInterval: TimeInterval) async throws {
         sleepIntervals.append(timeInterval)
+    }
+}
+
+/// Scriptable async-view resolver: returns canned payloads or throws per call, recording the
+/// auth it was asked for. Replaces the old request-session mock now that network/auth lives in
+/// the host resolver.
+@MainActor
+private final class TestAsyncViewResolver: AsyncViewResolver {
+    var script: [Result<Data, AsyncViewResolverError>] = []
+    private(set) var receivedAuths: [ThomasAsyncViewAuth] = []
+    private(set) var callCount = 0
+
+    func resolve(url: URL, auth: ThomasAsyncViewAuth) async throws -> Data {
+        receivedAuths.append(auth)
+        let result = script[min(callCount, script.count - 1)]
+        callCount += 1
+        switch result {
+        case .success(let data):
+            return data
+        case .failure(let error):
+            throw error
+        }
     }
 }
 
@@ -121,15 +143,6 @@ struct ThomasAsyncViewStateTest {
         return Data(json.utf8)
     }
 
-    private func httpResponse(statusCode: Int) -> HTTPURLResponse {
-        HTTPURLResponse(
-            url: URL(string: "https://example.com/async-view")!,
-            statusCode: statusCode,
-            httpVersion: nil,
-            headerFields: [:]
-        )!
-    }
-
     private func makeProperties(
         retry: ThomasViewInfo.AsyncViewController.RetryingConfig? = nil,
         auth: ThomasViewInfo.AsyncViewController.Request.Auth? = nil,
@@ -154,74 +167,85 @@ struct ThomasAsyncViewStateTest {
         )
     }
 
+    private func resolver(_ script: [Result<Data, AsyncViewResolverError>]) -> TestAsyncViewResolver {
+        let resolver = TestAsyncViewResolver()
+        resolver.script = script
+        return resolver
+    }
+
     /// Retain the returned value for the duration of the test: `ThomasAsyncViewState` only keeps a weak reference.
     private func environment(delegate: StubThomasDelegate) -> ThomasEnvironment {
-        ThomasEnvironment(delegate: delegate)
+        ThomasEnvironment(delegate: delegate, extensions: TestThomasExtensions())
     }
 
     @Test
     func appAuth() async throws {
-        let testSession = TestAirshipRequestSession()
-        testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validViewInfoJSONData)]
+        let testResolver = resolver([.success(validViewInfoJSONData)])
         let state = ThomasAsyncViewState(
             properties: try makeProperties(auth: .app),
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
         )
         try await state.resolve()
-        #expect(testSession.lastRequest?.auth == .generatedAppToken)
+        #expect(testResolver.receivedAuths.last == .app)
     }
 
     @Test
     func channelAuth() async throws {
-        let testSession = TestAirshipRequestSession()
-        testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validViewInfoJSONData)]
+        let testResolver = resolver([.success(validViewInfoJSONData)])
         let state = ThomasAsyncViewState(
             properties: try makeProperties(auth: .channel),
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession,
-            channelIdFetcher: { "injected-channel-id" }
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
         )
         try await state.resolve()
-        #expect(testSession.lastRequest?.auth == .generatedChannelToken(identifier: "injected-channel-id"))
+        #expect(testResolver.receivedAuths.last == .channel)
     }
 
     @Test
     func contactAuth() async throws {
-        let testSession = TestAirshipRequestSession()
-        testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validViewInfoJSONData)]
+        let testResolver = resolver([.success(validViewInfoJSONData)])
         let state = ThomasAsyncViewState(
             properties: try makeProperties(auth: .contact),
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession,
-            contactIdFetcher: { "injected-contact-id" }
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
         )
         try await state.resolve()
-        #expect(testSession.lastRequest?.auth == .contactAuthToken(identifier: "injected-contact-id"))
+        #expect(testResolver.receivedAuths.last == .contact)
+    }
+
+    @Test
+    func noAuthMapsToNone() async throws {
+        let testResolver = resolver([.success(validViewInfoJSONData)])
+        let state = ThomasAsyncViewState(
+            properties: try makeProperties(auth: nil),
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
+        )
+        try await state.resolve()
+        #expect(testResolver.receivedAuths.last == ThomasAsyncViewAuth.none)
     }
 
     @Test
     func resolveSucceedsOnFirstAttempt() async throws {
-        let testSession = TestAirshipRequestSession()
-        testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validViewInfoJSONData)]
+        let testResolver = resolver([.success(validViewInfoJSONData)])
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
         )
         try await state.resolve()
         #expect(state.response != nil)
-        #expect(testSession.requestInvocationCount == 1)
+        #expect(testResolver.callCount == 1)
     }
 
     @Test
     func resolveDoesNotRetryOnNonServerHTTPError() async throws {
-        let testSession = TestAirshipRequestSession()
         let sleeper = RecordingTaskSleeper()
-        testSession.responseScript = [
-            (response: httpResponse(statusCode: 404), data: nil),
-            (response: httpResponse(statusCode: 200), data: validViewInfoJSONData)
-        ]
+        let testResolver = resolver([
+            .failure(.server(statusCode: 404)),
+            .success(validViewInfoJSONData)
+        ])
         let retry = ThomasViewInfo.AsyncViewController.RetryingConfig(
             maxRetries: 3,
             initialBackoff: 0.25,
@@ -229,13 +253,13 @@ struct ThomasAsyncViewStateTest {
         )
         let state = ThomasAsyncViewState(
             properties: try makeProperties(retry: retry),
-            taskSleeper: sleeper,
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: sleeper
         )
         await #expect(throws: (any Error).self) {
             try await state.resolve()
         }
-        #expect(testSession.requestInvocationCount == 1)
+        #expect(testResolver.callCount == 1)
         let intervals = await sleeper.sleepIntervals
         #expect(intervals.count == 1)
         #expect(intervals[0] == 0)
@@ -243,13 +267,12 @@ struct ThomasAsyncViewStateTest {
 
     @Test
     func resolveRetriesWithExponentialBackoffThenSucceeds() async throws {
-        let testSession = TestAirshipRequestSession()
         let sleeper = RecordingTaskSleeper()
-        testSession.responseScript = [
-            (response: httpResponse(statusCode: 500), data: nil),
-            (response: httpResponse(statusCode: 500), data: nil),
-            (response: httpResponse(statusCode: 200), data: validViewInfoJSONData)
-        ]
+        let testResolver = resolver([
+            .failure(.server(statusCode: 500)),
+            .failure(.server(statusCode: 500)),
+            .success(validViewInfoJSONData)
+        ])
         let retry = ThomasViewInfo.AsyncViewController.RetryingConfig(
             maxRetries: 3,
             initialBackoff: 0.25,
@@ -257,12 +280,12 @@ struct ThomasAsyncViewStateTest {
         )
         let state = ThomasAsyncViewState(
             properties: try makeProperties(retry: retry),
-            taskSleeper: sleeper,
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: sleeper
         )
         try await state.resolve()
         #expect(state.response != nil)
-        #expect(testSession.requestInvocationCount == 3)
+        #expect(testResolver.callCount == 3)
         let intervals = await sleeper.sleepIntervals
         #expect(intervals.count == 3)
         #expect(intervals[0] == 0)
@@ -272,12 +295,11 @@ struct ThomasAsyncViewStateTest {
 
     @Test
     func resolveExhaustsRetriesAndThrowsServerError() async throws {
-        let testSession = TestAirshipRequestSession()
         let sleeper = RecordingTaskSleeper()
-        testSession.responseScript = [
-            (response: httpResponse(statusCode: 503), data: nil),
-            (response: httpResponse(statusCode: 503), data: nil)
-        ]
+        let testResolver = resolver([
+            .failure(.server(statusCode: 503)),
+            .failure(.server(statusCode: 503))
+        ])
         let retry = ThomasViewInfo.AsyncViewController.RetryingConfig(
             maxRetries: 1,
             initialBackoff: 0.1,
@@ -285,25 +307,23 @@ struct ThomasAsyncViewStateTest {
         )
         let state = ThomasAsyncViewState(
             properties: try makeProperties(retry: retry),
-            taskSleeper: sleeper,
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: sleeper
         )
         await #expect(throws: (any Error).self) {
             try await state.resolve()
         }
         #expect(state.response == nil)
-        #expect(testSession.requestInvocationCount == 2)
+        #expect(testResolver.callCount == 2)
         let intervals = await sleeper.sleepIntervals
         #expect(intervals.count == 2)
         #expect(intervals[0] == 0)
-        
     }
 
     @Test
     func resolveWithMaxRetriesZeroPerformsSingleAttempt() async throws {
-        let testSession = TestAirshipRequestSession()
         let sleeper = RecordingTaskSleeper()
-        testSession.responseScript = [(response: httpResponse(statusCode: 500), data: nil)]
+        let testResolver = resolver([.failure(.server(statusCode: 500))])
         let retry = ThomasViewInfo.AsyncViewController.RetryingConfig(
             maxRetries: 0,
             initialBackoff: 1.0,
@@ -311,13 +331,13 @@ struct ThomasAsyncViewStateTest {
         )
         let state = ThomasAsyncViewState(
             properties: try makeProperties(retry: retry),
-            taskSleeper: sleeper,
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: sleeper
         )
         await #expect(throws: (any Error).self) {
             try await state.resolve()
         }
-        #expect(testSession.requestInvocationCount == 1)
+        #expect(testResolver.callCount == 1)
         #expect(await sleeper.sleepIntervals.count == 1)
     }
 
@@ -325,8 +345,8 @@ struct ThomasAsyncViewStateTest {
     func resolveNilPropertiesThrows() async throws {
         let state = ThomasAsyncViewState(
             properties: nil,
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: TestAirshipRequestSession()
+            resolver: resolver([.success(validViewInfoJSONData)]),
+            taskSleeper: RecordingTaskSleeper()
         )
         await #expect(throws: (any Error).self) {
             try await state.resolve()
@@ -336,12 +356,11 @@ struct ThomasAsyncViewStateTest {
     /// When prefetch is required, a failed download does not publish `response`; layout is retained for retry.
     @Test
     func resolveFailsWhenImageAssetPrefetchFailsAndKeepsPendingLayout() async throws {
-        let testSession = TestAirshipRequestSession()
-        testSession.responseScript = [(response: httpResponse(statusCode: 200), data: invalidImageUrlViewInfoJSONData)]
+        let testResolver = resolver([.success(invalidImageUrlViewInfoJSONData)])
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
         )
         let delegate = StubThomasDelegate(prefetchError: URLError(.cannotConnectToHost))
         let thomasEnvironment = environment(delegate: delegate)
@@ -352,7 +371,7 @@ struct ThomasAsyncViewStateTest {
         }
         #expect(state.response == nil)
         #expect(state.resolvedLayoutAwaitingPrefetch != nil)
-        #expect(testSession.requestInvocationCount == 1)
+        #expect(testResolver.callCount == 1)
 
         #expect(delegate.prefetchInvocations.count == 1)
         #expect(delegate.prefetchInvocations[0] == [":::invalid"])
@@ -360,12 +379,11 @@ struct ThomasAsyncViewStateTest {
 
     @Test
     func retryAfterPrefetchFailureRetriesPrefetchWithoutSecondHTTPRequest() async throws {
-        let testSession = TestAirshipRequestSession()
-        testSession.responseScript = [(response: httpResponse(statusCode: 200), data: invalidImageUrlViewInfoJSONData)]
+        let testResolver = resolver([.success(invalidImageUrlViewInfoJSONData)])
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
         )
         let delegate = StubThomasDelegate(prefetchFailuresRemaining: 1)
         let thomasEnvironment = environment(delegate: delegate)
@@ -374,7 +392,7 @@ struct ThomasAsyncViewStateTest {
         await #expect(throws: (any Error).self) {
             try await state.resolve()
         }
-        #expect(testSession.requestInvocationCount == 1)
+        #expect(testResolver.callCount == 1)
         #expect(state.resolvedLayoutAwaitingPrefetch != nil)
 
         state.retry()
@@ -385,7 +403,7 @@ struct ThomasAsyncViewStateTest {
         #expect(state.response != nil)
         #expect(state.status == .loaded)
         #expect(state.resolvedLayoutAwaitingPrefetch == nil)
-        #expect(testSession.requestInvocationCount == 1)
+        #expect(testResolver.callCount == 1)
         #expect(delegate.prefetchInvocations.count == 2)
     }
 
@@ -393,12 +411,11 @@ struct ThomasAsyncViewStateTest {
 
     @Test
     func resolvePrefetchInvokesCacheWithDecodedImageUrlsBeforePublishingResponse() async throws {
-        let testSession = TestAirshipRequestSession()
-        testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validImageUrlMediaViewInfoJSONData)]
+        let testResolver = resolver([.success(validImageUrlMediaViewInfoJSONData)])
         let state = ThomasAsyncViewState(
             properties: try makeProperties(identifier: "scene-asset-id"),
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
         )
         let delegate = StubThomasDelegate()
         let thomasEnvironment = environment(delegate: delegate)
@@ -414,12 +431,11 @@ struct ThomasAsyncViewStateTest {
 
     @Test
     func resolveWithNoImageUrlsDoesNotPrefetch() async throws {
-        let testSession = TestAirshipRequestSession()
-        testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validViewInfoJSONData)]
+        let testResolver = resolver([.success(validViewInfoJSONData)])
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
         )
         let delegate = StubThomasDelegate()
         let thomasEnvironment = environment(delegate: delegate)
@@ -433,12 +449,11 @@ struct ThomasAsyncViewStateTest {
 
     @Test
     func resolveSkipsPrefetchWhenThomasEnvironmentNotConfigured() async throws {
-        let testSession = TestAirshipRequestSession()
-        testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validImageUrlMediaViewInfoJSONData)]
+        let testResolver = resolver([.success(validImageUrlMediaViewInfoJSONData)])
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
         )
 
         try await state.resolve()
@@ -448,12 +463,11 @@ struct ThomasAsyncViewStateTest {
 
     @Test
     func resolveSucceedsWhenPrefetchReturnsNoToken() async throws {
-        let testSession = TestAirshipRequestSession()
-        testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validImageUrlMediaViewInfoJSONData)]
+        let testResolver = resolver([.success(validImageUrlMediaViewInfoJSONData)])
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
         )
         let delegate = StubThomasDelegate(prefetchProducesToken: false)
         let thomasEnvironment = environment(delegate: delegate)
@@ -467,12 +481,11 @@ struct ThomasAsyncViewStateTest {
 
     @Test
     func retryMapsAssetPrefetchFailureToImagePrefetchFailedStatus() async throws {
-        let testSession = TestAirshipRequestSession()
-        testSession.responseScript = [(response: httpResponse(statusCode: 200), data: invalidImageUrlViewInfoJSONData)]
+        let testResolver = resolver([.success(invalidImageUrlViewInfoJSONData)])
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
         )
         let delegate = StubThomasDelegate(prefetchError: URLError(.cannotConnectToHost))
         let thomasEnvironment = environment(delegate: delegate)
@@ -490,12 +503,11 @@ struct ThomasAsyncViewStateTest {
 
     @Test
     func startResolveLoadsContentAndSetsLoadedStatus() async throws {
-        let testSession = TestAirshipRequestSession()
-        testSession.responseScript = [(response: httpResponse(statusCode: 200), data: validViewInfoJSONData)]
+        let testResolver = resolver([.success(validViewInfoJSONData)])
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
         )
         state.retry()
         for _ in 0..<400 {
@@ -504,30 +516,28 @@ struct ThomasAsyncViewStateTest {
         }
         #expect(state.response != nil)
         #expect(state.status == .loaded)
-        #expect(testSession.requestInvocationCount == 1)
+        #expect(testResolver.callCount == 1)
     }
 
     @Test
     func startResolveDoesNothingAfterSuccessfulResolve() async throws {
-        let testSession = TestAirshipRequestSession()
-        testSession.responseScript = [(response: httpResponse(statusCode: 200), data: invalidImageUrlViewInfoJSONData)]
+        let testResolver = resolver([.success(invalidImageUrlViewInfoJSONData)])
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
         )
         try await state.resolve()
-        #expect(testSession.requestInvocationCount == 1)
+        #expect(testResolver.callCount == 1)
         state.retry()
         try await Task.sleep(nanoseconds: 20_000_000)
-        #expect(testSession.requestInvocationCount == 1)
+        #expect(testResolver.callCount == 1)
         #expect(state.response != nil)
     }
 
     @Test
     func startResolveMapsFinalServerErrorToStatus() async throws {
-        let testSession = TestAirshipRequestSession()
-        testSession.responseScript = [(response: httpResponse(statusCode: 404), data: nil)]
+        let testResolver = resolver([.failure(.server(statusCode: 404))])
         let retry = ThomasViewInfo.AsyncViewController.RetryingConfig(
             maxRetries: 0,
             initialBackoff: 0.01,
@@ -535,8 +545,8 @@ struct ThomasAsyncViewStateTest {
         )
         let state = ThomasAsyncViewState(
             properties: try makeProperties(retry: retry),
-            taskSleeper: RecordingTaskSleeper(),
-            requestSession: testSession
+            resolver: testResolver,
+            taskSleeper: RecordingTaskSleeper()
         )
         state.retry()
         for _ in 0..<400 {

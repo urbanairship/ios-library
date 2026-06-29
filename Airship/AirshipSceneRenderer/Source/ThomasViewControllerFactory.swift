@@ -24,11 +24,12 @@ public struct ThomasViewControllerFactory {
         layout: AirshipLayout,
         delegate: any ThomasDelegate,
         windowScene: ThomasWindowScene = ThomasWindowScene(),
+        extensions: any ThomasExtensions,
         windowSize: CGSize,
         onDismiss: @escaping @MainActor () -> Void
     ) -> (viewController: AirshipNativeViewController, dismiss: @MainActor @Sendable () -> Void) {
         let options = ThomasViewControllerOptions()
-        let environment = ThomasEnvironment(delegate: delegate, windowScene: windowScene)
+        let environment = ThomasEnvironment(delegate: delegate, windowScene: windowScene, extensions: extensions)
         let bannerConstraints = ThomasBannerConstraints(windowSize: windowSize)
 
         let rootView = BannerView(
@@ -58,11 +59,12 @@ public struct ThomasViewControllerFactory {
         layout: AirshipLayout,
         delegate: any ThomasDelegate,
         windowScene: ThomasWindowScene = ThomasWindowScene(),
+        extensions: any ThomasExtensions,
         onDismiss: @escaping @MainActor () -> Void
     ) -> (viewController: AirshipNativeViewController, dismiss: @MainActor @Sendable () -> Void) {
         let options = ThomasViewControllerOptions()
         options.orientation = presentation.defaultPlacement.device?.orientationLock
-        let environment = ThomasEnvironment(delegate: delegate, windowScene: windowScene)
+        let environment = ThomasEnvironment(delegate: delegate, windowScene: windowScene, extensions: extensions)
 
         let rootView = ModalView(
             presentation: presentation,

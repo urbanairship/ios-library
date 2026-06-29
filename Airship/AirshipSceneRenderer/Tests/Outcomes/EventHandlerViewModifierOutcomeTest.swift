@@ -66,7 +66,7 @@ struct EventHandlerViewModifierOutcomeTest {
     func processOutcomesDelegatesDismissToEnvironment() async {
         let delegate = EventHandlerOutcomeTestDelegate()
         let timer = EventHandlerOutcomeTestTimer()
-        let env = ThomasEnvironment(delegate: delegate, pagerTracker: nil, timer: timer, onDismiss: nil)
+        let env = ThomasEnvironment(delegate: delegate, extensions: TestThomasExtensions(), pagerTracker: nil, timer: timer, onDismiss: nil)
         let thomasState = ThomasState(mutableState: .init(initialState: [:]), onStateChange: { _ in })
 
         await EventHandlerViewModifier.processOutcomes(

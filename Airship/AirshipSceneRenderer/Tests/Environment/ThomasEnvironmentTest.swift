@@ -121,6 +121,7 @@ struct ThomasEnvironmentTest {
 
         let env = ThomasEnvironment(
             delegate: testDelegate,
+            extensions: TestThomasExtensions(),
             pagerTracker: pagerTracker,
             timer: testTimer,
             onDismiss: onDismiss
@@ -704,6 +705,7 @@ struct ThomasEnvironmentTest {
 
         env = ThomasEnvironment(
             delegate: delegate,
+            extensions: TestThomasExtensions(),
             pagerTracker: nil,
             timer: timer,
             onDismiss: {
@@ -951,7 +953,7 @@ struct ThomasEnvironmentTest {
     @Test
     func localizedStringUsesCustomDelegateWhenOverridden() {
         let delegate = CustomLocalizingDelegate()
-        let env = ThomasEnvironment(delegate: delegate)
+        let env = ThomasEnvironment(delegate: delegate, extensions: TestThomasExtensions())
 
         #expect(env.localizedString(key: "any_key") == "custom-any_key")
         #expect(delegate.localizedKeys == ["any_key"])
@@ -963,7 +965,7 @@ struct ThomasEnvironmentTest {
             "missing": nil,
             "found": "Found"
         ])
-        let env = ThomasEnvironment(delegate: delegate)
+        let env = ThomasEnvironment(delegate: delegate, extensions: TestThomasExtensions())
 
         let localized = ThomasAccessibleInfo.Localized(
             ref: nil,
@@ -1009,7 +1011,7 @@ struct ThomasEnvironmentTest {
         let delegate = CustomLocalizingDelegate(strings: [
             "content_key": "Localized description"
         ])
-        let env = ThomasEnvironment(delegate: delegate)
+        let env = ThomasEnvironment(delegate: delegate, extensions: TestThomasExtensions())
 
         let accessible = ThomasAccessibleInfo(
             contentDescription: nil,
@@ -1029,7 +1031,7 @@ struct ThomasEnvironmentTest {
         let delegate = CustomLocalizingDelegate(strings: [
             "label_key": "Localized label"
         ])
-        let env = ThomasEnvironment(delegate: delegate)
+        let env = ThomasEnvironment(delegate: delegate, extensions: TestThomasExtensions())
         let thomasState = ThomasState(onStateChange: { _ in })
 
         let labelJSON = """
@@ -1099,5 +1101,28 @@ private final class CustomLocalizingDelegate: ThomasDelegate {
         EmptyView()
     }
 #endif
+}
+
+/// Minimal `ThomasExtensions` for tests that don't exercise async views. Shared across the
+/// SceneRenderer test target.
+struct TestThomasExtensions: ThomasExtensions {
+    let asyncViewResolver: any AsyncViewResolver = StubAsyncViewResolver()
+    let webViewChallengeResolver: any AirshipWebViewChallengeResolver = StubWebViewChallengeResolver()
+    let inputValidator: (any AirshipInputValidation.Validator)? = nil
+}
+
+struct StubAsyncViewResolver: AsyncViewResolver {
+    @MainActor
+    func resolve(url: URL, auth: ThomasAsyncViewAuth) async throws -> Data {
+        Data()
+    }
+}
+
+struct StubWebViewChallengeResolver: AirshipWebViewChallengeResolver {
+    func resolve(
+        _ challenge: URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+        (.performDefaultHandling, nil)
+    }
 }
 

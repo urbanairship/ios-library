@@ -121,6 +121,7 @@ private final class ViewModel: ObservableObject {
     private func makeSimpleLayoutViewModel(with storage: (any LayoutDataStorage)?) -> AirshipSimpleLayoutViewModel {
         AirshipSimpleLayoutViewModel(
             delegate: displayListener,
+            extensions: DefaultThomasExtensions(),
             dismissHandle: dismissHandle,
             stateStorage: storage
         )

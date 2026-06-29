@@ -7,7 +7,7 @@ import Foundation
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 @testable @_spi(AirshipInternal) import AirshipScenes
 
-struct ExtensionsTest {
+struct AirshipExtensionsTest {
 
     private let date: Date = Date.now
 

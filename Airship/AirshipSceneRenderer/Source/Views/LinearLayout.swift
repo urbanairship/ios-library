@@ -7,7 +7,7 @@ import SwiftUI
 /// Linear Layout - either a VStack or HStack depending on the direction.
 
 struct LinearLayout: View {
-    @Environment(\.viewFactory) private var viewFactory
+    @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
 
     /// LinearLayout model.
     private let info: ThomasViewInfo.LinearLayout
@@ -142,7 +142,7 @@ struct LinearLayout: View {
             safeAreaInsetsMode: .consume
         )
 
-        viewFactory.createView(item.view, constraints: constraints)
+        thomasEnvironment.viewFactory.createView(item.view, constraints: constraints)
             .margin(item.margin)
 #if os(tvOS)
             .focusSection()

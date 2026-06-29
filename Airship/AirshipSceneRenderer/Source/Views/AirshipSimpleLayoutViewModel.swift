@@ -16,6 +16,7 @@ public final class AirshipSimpleLayoutViewModel: ObservableObject {
 
     public init(
         delegate: any ThomasDelegate,
+        extensions: any ThomasExtensions,
         timer: (any AirshipTimerProtocol)? = nil,
         dismissHandle: ThomasDismissHandle? = nil,
         stateStorage: (any LayoutDataStorage)? = nil
@@ -29,6 +30,7 @@ public final class AirshipSimpleLayoutViewModel: ObservableObject {
 
         self.environment = ThomasEnvironment(
             delegate: delegate,
+            extensions: extensions,
             timer: timer,
             stateStorage: dataStore,
             dismissHandle: dismissHandle

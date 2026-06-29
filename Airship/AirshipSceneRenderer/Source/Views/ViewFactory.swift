@@ -2,20 +2,32 @@
 
 import Foundation
 import SwiftUI
+public import AirshipBasement
 
 /// Host-provided capabilities the renderer consumes at construction time (e.g. services that
 /// can't be reached through the SwiftUI environment because they're needed in `init`). Carried
-/// by `ViewFactory` so it reaches any view the factory builds. Empty for now — plumbing only.
-struct ThomasExtensions: Sendable {
-    init() {}
+/// by `ViewFactory` so it reaches any view the factory builds.
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
+public protocol ThomasExtensions: Sendable {
+    /// Resolves async-view requests. Required (no default) so every conformer must wire one up;
+    /// the "no extensions at all" case is expressed by a nil `ThomasExtensions`, not a nil resolver.
+    var asyncViewResolver: any AsyncViewResolver { get }
+
+    /// Resolves WKWebView authentication challenges (server-trust pinning, etc.).
+    var webViewChallengeResolver: any AirshipWebViewChallengeResolver { get }
+
+    /// Validates text-input fields (email/SMS). `nil` when validation is unavailable (e.g. the SDK
+    /// isn't flying), in which case those fields resolve as invalid.
+    var inputValidator: (any AirshipInputValidation.Validator)? { get }
 }
 
-/// View factory. Inflates views based on type. Threaded via the environment (`\.viewFactory`)
-/// so it carries `ThomasExtensions` into every view it builds.
+/// View factory. Inflates views based on type. Carried by `ThomasEnvironment` so it reaches every
+/// view (`thomasEnvironment.viewFactory`) with the host-provided `ThomasExtensions`.
 struct ViewFactory: Sendable {
-    let extensions: ThomasExtensions
+    let extensions: any ThomasExtensions
 
-    init(extensions: ThomasExtensions = ThomasExtensions()) {
+    init(extensions: any ThomasExtensions) {
         self.extensions = extensions
     }
 
@@ -45,7 +57,7 @@ struct ViewFactory: Sendable {
         case .npsController(let info):
             FormController(info: .nps(info), constraints: constraints)
         case .textInput(let info):
-            TextInput(info: info, constraints: constraints)
+            TextInput(info: info, constraints: constraints, inputValidator: extensions.inputValidator)
         case .pagerController(let info):
             PagerController(info: info, constraints: constraints)
         case .pagerIndicator(let info):
@@ -93,7 +105,7 @@ struct ViewFactory: Sendable {
         case .scoreToggleLayout(let info):
             ScoreToggleLayout(info: info, constraints: constraints)
         case .asyncViewController(let info):
-            AsyncViewController(info: info, constraints: constraints)
+            AsyncViewController(info: info, constraints: constraints, resolver: extensions.asyncViewResolver)
         case .videoController(let info):
             VideoController(info: info, constraints: constraints)
         }

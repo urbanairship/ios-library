@@ -39,7 +39,6 @@ struct FormController: View {
     }
 
     private struct Content: View {
-        @Environment(\.viewFactory) private var viewFactory
 
         private let info: FormController.FormInfo
         private let constraints: ViewConstraints
@@ -115,7 +114,7 @@ struct FormController: View {
         }
 
         var body: some View {
-            viewFactory.createView(self.info.view, constraints: constraints)
+            thomasEnvironment.viewFactory.createView(self.info.view, constraints: constraints)
                 .thomasCommon(self.info.thomasInfo, formInputID: self.info.identifier)
                 .thomasEnableBehaviors(self.info.formEnableBehaviors) { enabled in
                     self.formState.isEnabled = enabled

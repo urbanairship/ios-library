@@ -4,7 +4,6 @@ import Combine
 import Foundation
 import SwiftUI
 @_spi(AirshipInternal) import AirshipBasement
-@_spi(AirshipInternal) import AirshipCore
 
 struct TextInput: View {
 
@@ -41,7 +40,8 @@ struct TextInput: View {
 
     init(
         info: ThomasViewInfo.TextInput,
-        constraints: ViewConstraints
+        constraints: ViewConstraints,
+        inputValidator: (any AirshipInputValidation.Validator)?
     ) {
         self.info = info
         self.constraints = constraints
@@ -49,7 +49,8 @@ struct TextInput: View {
         self._viewModel = StateObject(
             wrappedValue: ViewModel(
                 inputProperties: info.properties,
-                isRequired: info.validation.isRequired ?? false
+                isRequired: info.validation.isRequired ?? false,
+                inputValidator: inputValidator
             )
         )
     }
@@ -246,10 +247,7 @@ struct TextInput: View {
         private let inputProperties: ThomasViewInfo.TextInput.Properties
         private let isRequired: Bool
 
-        private var inputValidator: (any AirshipInputValidation.Validator)? {
-            guard Airship.isFlying else { return nil }
-            return Airship.inputValidator
-        }
+        private let inputValidator: (any AirshipInputValidation.Validator)?
 
         @Published
         var formField: ThomasFormField?
@@ -275,9 +273,11 @@ struct TextInput: View {
         init(
             inputProperties: ThomasViewInfo.TextInput.Properties,
             isRequired: Bool,
+            inputValidator: (any AirshipInputValidation.Validator)?
         ) {
             self.inputProperties = inputProperties
             self.isRequired = isRequired
+            self.inputValidator = inputValidator
             self.availableLocales = inputProperties.smsLocales
             self.selectedSMSLocale = inputProperties.smsLocales?.first
         }

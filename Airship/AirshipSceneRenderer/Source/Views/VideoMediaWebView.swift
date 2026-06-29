@@ -5,8 +5,7 @@
 import Foundation
 import SwiftUI
 import WebKit
-import AirshipCore
-
+import AirshipBasement
 
 @MainActor
 private class WeakScriptMessageHandler: NSObject, WKScriptMessageHandler {
@@ -147,10 +146,6 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
 
         webView.navigationDelegate = context.coordinator
         context.coordinator.configure(webView: webView)
-
-        if #available(iOS 16.4, *) {
-            webView.isInspectable = Airship.isFlying && Airship.config.airshipConfig.isWebViewInspectionEnabled
-        }
 
         loadMediaContent(webView: webView)
 
@@ -340,6 +335,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             autoResetPosition: video?.autoResetPosition ?? ((video?.autoplay ?? false) && !(video?.showControls ?? true)),
             isLooping: video?.loop ?? false,
             isMuted: video?.muted ?? false,
+            resolver: thomasEnvironment.extensions.webViewChallengeResolver,
             onMediaReady: onMediaReady
         )
     }
@@ -351,7 +347,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
         private var videoIdentifier: String?
         private var videoState: VideoState
         private var onMediaReady: @MainActor () -> Void
-        private let challengeResolver: ChallengeResolver
+        private let challengeResolver: any AirshipWebViewChallengeResolver
         private weak var webView: WKWebView?
 
         private var lastIsVisible: Bool = false
@@ -386,7 +382,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             autoResetPosition: Bool,
             isLooping: Bool,
             isMuted: Bool,
-            resolver: ChallengeResolver = .shared,
+            resolver: any AirshipWebViewChallengeResolver,
             onMediaReady: @escaping @MainActor () -> Void
         ) {
             self.isLoaded = isLoaded

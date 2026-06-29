@@ -12,7 +12,7 @@ import Testing
 struct ThomasAssociatedLabelResolverTest {
 
     private let thomasState = ThomasState(onStateChange: { _ in })
-    private let thomasEnvironment = ThomasEnvironment(delegate: StubThomasDelegate())
+    private let thomasEnvironment = ThomasEnvironment(delegate: StubThomasDelegate(), extensions: TestThomasExtensions())
 
     private final class StubThomasDelegate: ThomasDelegate {
         func onVisibilityChanged(isVisible: Bool, isForegrounded: Bool) {}

@@ -166,7 +166,7 @@ let package = Package(
         ),
         .target(
             name: "AirshipSceneRenderer",
-            dependencies: [.target(name: "AirshipBasement"), .target(name: "AirshipCore")],
+            dependencies: [.target(name: "AirshipBasement")],
             path: "Airship/AirshipSceneRenderer",
             exclude: [
                 "Info.plist",

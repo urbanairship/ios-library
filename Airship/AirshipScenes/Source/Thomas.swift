@@ -42,7 +42,8 @@ public final class Thomas {
                 layout: layout,
                 delegate: delegate,
                 extras: extras,
-                priority: priority
+                priority: priority,
+                extensions: DefaultThomasExtensions()
             )
         }
     }
@@ -68,6 +69,7 @@ public final class Thomas {
                 layout: layout,
                 delegate: delegate,
                 windowScene: windowScene,
+                extensions: DefaultThomasExtensions(),
                 windowSize: windowInfo.size,
                 onDismiss: { displayable.dismiss() }
             )
@@ -100,6 +102,7 @@ public final class Thomas {
                 layout: layout,
                 delegate: delegate,
                 windowScene: windowScene,
+                extensions: DefaultThomasExtensions(),
                 onDismiss: { displayable.dismiss() }
             )
             dismiss = made.dismiss

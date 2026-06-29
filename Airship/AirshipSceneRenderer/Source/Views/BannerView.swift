@@ -8,7 +8,6 @@ import UIKit
 #endif
 
 struct BannerView: View {
-    @Environment(\.viewFactory) private var viewFactory
     @Environment(\.layoutState) private var layoutState
     @Environment(\.windowSize) private var windowSize
     @Environment(\.orientation) private var orientation
@@ -173,7 +172,7 @@ struct BannerView: View {
          * viewController to avoid margins being touchable dead areas.
          */
         return VStack {
-            viewFactory.createView(
+            thomasEnvironment.viewFactory.createView(
                 layout.view,
                 constraints: contentConstraints
             )

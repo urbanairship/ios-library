@@ -22,6 +22,18 @@ class ThomasEnvironment: ObservableObject {
     /// weakly internally so a disconnected scene falls back to defaults.
     let windowScene: ThomasWindowScene
 
+    /// Host-provided capabilities the renderer consumes. Carried here (rather than on the SwiftUI
+    /// environment) so every view — including wrappers that sit *above* `RootView` — reaches the
+    /// same factory by holding the environment, instead of resolving `@Environment` at their own
+    /// (often wrong) position in the tree.
+    let extensions: any ThomasExtensions
+
+    /// View factory built from `extensions`. The single source of truth for inflating child views;
+    /// reach it via the environment (`thomasEnvironment.viewFactory`), never the SwiftUI environment.
+    var viewFactory: ViewFactory {
+        ViewFactory(extensions: extensions)
+    }
+
     private var state: [String: Any] = [:]
 
     func retrieveState<T: ThomasStateProvider>(identifier: String, create: () -> T) -> T {
@@ -60,6 +72,7 @@ class ThomasEnvironment: ObservableObject {
     init(
         delegate: any ThomasDelegate,
         windowScene: ThomasWindowScene = ThomasWindowScene(),
+        extensions: any ThomasExtensions,
         pagerTracker: ThomasPagerTracker? = nil,
         timer: (any AirshipTimerProtocol)? = nil,
         stateStorage: (any ThomasStateStorage)? = nil,
@@ -68,6 +81,7 @@ class ThomasEnvironment: ObservableObject {
     ) {
         self.delegate = delegate
         self.windowScene = windowScene
+        self.extensions = extensions
         self.pagerTracker = pagerTracker ?? ThomasPagerTracker()
         self.timer = timer ?? AirshipTimer()
         self.onDismiss = onDismiss

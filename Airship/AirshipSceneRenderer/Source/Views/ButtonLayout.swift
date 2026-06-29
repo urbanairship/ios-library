@@ -6,7 +6,6 @@ import SwiftUI
 
 /// Button layout view.
 struct ButtonLayout : View {
-    @Environment(\.viewFactory) private var viewFactory
     @Environment(\.isVoiceOverRunning) private var isVoiceOverRunning
     @Environment(\.layoutState) private var layoutState
     @EnvironmentObject private var formState: ThomasFormState
@@ -45,7 +44,7 @@ struct ButtonLayout : View {
             // Container mode
             if let contentDescription = thomasEnvironment.resolveContentDescription(for: info.accessible) {
                 // Container WITH content description: Add accessibility action
-                viewFactory.createView(self.info.properties.view, constraints: constraints)
+                thomasEnvironment.viewFactory.createView(self.info.properties.view, constraints: constraints)
                     .thomasCommon(self.info, scope: [.background, .visibility])
                     .accessibilityElement(children: .contain)
                     .accessibilityLabel(contentDescription)
@@ -59,7 +58,7 @@ struct ButtonLayout : View {
                     .accessibilityHidden(info.accessible.accessibilityHidden ?? false)
             } else {
                 // Container WITHOUT content description: Transparent parent
-                viewFactory.createView(self.info.properties.view, constraints: constraints)
+                thomasEnvironment.viewFactory.createView(self.info.properties.view, constraints: constraints)
                     .thomasCommon(self.info, scope: [.background, .visibility])
                     .accessibilityHidden(info.accessible.accessibilityHidden ?? false)
             }
@@ -72,7 +71,7 @@ struct ButtonLayout : View {
                 eventHandlers: self.info.commonProperties.eventHandlers,
                 tapEffect: self.info.properties.tapEffect
             ) {
-                viewFactory.createView(self.info.properties.view, constraints: constraints)
+                thomasEnvironment.viewFactory.createView(self.info.properties.view, constraints: constraints)
                     .thomasCommon(self.info, scope: [.background])
                     .background(Color.airshipTappableClear)
             }
