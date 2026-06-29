@@ -121,7 +121,10 @@ actor MessageCenterStore {
                 name: "UAInbox",
                 modelURL: modelURL,
                 inMemory: false,
-                stores: [storeName]
+                stores: [storeName],
+                // Inbox is a server cache: if an old store can't be migrated,
+                // rebuild it so the inbox re-syncs instead of staying empty.
+                recoverOnMigrationError: true
             )
         } else {
             self.coreData = nil
