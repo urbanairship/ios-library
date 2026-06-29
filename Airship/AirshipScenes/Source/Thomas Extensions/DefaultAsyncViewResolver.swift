@@ -2,19 +2,14 @@
 
 @_spi(AirshipInternal) import AirshipSceneRenderer
 @_spi(AirshipInternal) import AirshipCore
-public import AirshipBasement
-
-public import Foundation
+import Foundation
 
 /// Resolves async-view requests using the SDK's request session, applying app/channel/contact
 /// auth. Owns the network + identity work so the renderer doesn't have to.
-/// - Note: For internal use only. :nodoc:
-@_spi(AirshipInternal)
-public struct DefaultAsyncViewResolver: AsyncViewResolver {
-    public init() {}
+struct DefaultAsyncViewResolver: AsyncViewResolver {
 
     @MainActor
-    public func resolve(url: URL, auth: ThomasAsyncViewAuth) async throws -> Data {
+    func resolve(url: URL, auth: ThomasAsyncViewAuth) async throws -> Data {
         let resolvedAuth: AirshipRequestAuth?
         switch auth {
         case .app:
@@ -54,27 +49,5 @@ public struct DefaultAsyncViewResolver: AsyncViewResolver {
     @MainActor
     private func contactID() async -> String {
         await Airship.contact.getStableContactID()
-    }
-}
-
-/// The Thomas extensions the SDK wires up by default — currently the async-view resolver backed
-/// by the real request session. Hosts pass this into the renderer so async views resolve for real.
-/// - Note: For internal use only. :nodoc:
-@_spi(AirshipInternal)
-public struct DefaultThomasExtensions: ThomasExtensions {
-    public let asyncViewResolver: (any AsyncViewResolver) = DefaultAsyncViewResolver()
-    public let webViewChallengeResolver: (any AirshipWebViewChallengeResolver) = DefaultWebViewChallengeResolver()
-    public var inputValidator: (any AirshipInputValidation.Validator)? {
-        Airship.isFlying ? Airship.inputValidator : nil
-    }
-    public init() {}
-}
-
-/// Wraps the SDK's `ChallengeResolver` so the renderer doesn't reference it directly.
-struct DefaultWebViewChallengeResolver: AirshipWebViewChallengeResolver {
-    func resolve(
-        _ challenge: URLAuthenticationChallenge
-    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
-        await ChallengeResolver.shared.resolve(challenge)
     }
 }

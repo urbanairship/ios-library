@@ -77,7 +77,7 @@ struct ImageButton : View {
         case .url(let info):
             ThomasAsyncImage(
                 url: info.urlSelectors?.resolve(colorScheme: colorScheme) ?? info.url,
-                loadImage: thomasEnvironment.loadImage,
+                loadImage: thomasEnvironment.imageLoader.load,
                 image: { image, imageSize in
                     image.fitMedia(
                         mediaFit: info.mediaFit ?? .centerInside,

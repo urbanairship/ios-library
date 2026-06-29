@@ -40,35 +40,32 @@ private final class TestAsyncViewResolver: AsyncViewResolver {
     }
 }
 
-/// Spy delegate that records `prefetchImages` calls and can simulate prefetch failures.
+/// No-op delegate; image prefetching is exercised via `StubThomasImageLoader`.
 @MainActor
 private final class StubThomasDelegate: ThomasDelegate {
-    private(set) var prefetchInvocations: [[String]] = []
-    private let prefetchError: (any Error)?
-    private var prefetchFailuresRemaining: Int
-    /// When false, `prefetchImages` returns nil (simulating no image cache).
-    private let prefetchProducesToken: Bool
-
-    init(
-        prefetchError: (any Error)? = nil,
-        prefetchFailuresRemaining: Int = 0,
-        prefetchProducesToken: Bool = true
-    ) {
-        self.prefetchError = prefetchError
-        self.prefetchFailuresRemaining = prefetchFailuresRemaining
-        self.prefetchProducesToken = prefetchProducesToken
-    }
-
     func onVisibilityChanged(isVisible: Bool, isForegrounded: Bool) {}
     func onReportingEvent(_ event: ThomasReportingEvent) {}
     func onDismissed(cancel: Bool) {}
-    func runActions(_ actions: AirshipJSON, layoutContext: ThomasLayoutContext) {}
-    func registerChannels(_ channels: [ThomasChannelRegistration]) {}
-    func applyAttributes(_ attributes: [ThomasAttribute]) {}
+}
 
-    func loadImage(url: String) async throws -> AirshipImageData { throw CancellationError() }
+/// Spy image loader that records `prefetch` calls and can simulate prefetch failures.
+@MainActor
+private final class StubThomasImageLoader: ThomasImageLoader {
+    private(set) var prefetchInvocations: [[String]] = []
+    private let prefetchError: (any Error)?
+    private var prefetchFailuresRemaining: Int
 
-    func prefetchImages(_ urls: [String]) async throws -> String? {
+    init(
+        prefetchError: (any Error)? = nil,
+        prefetchFailuresRemaining: Int = 0
+    ) {
+        self.prefetchError = prefetchError
+        self.prefetchFailuresRemaining = prefetchFailuresRemaining
+    }
+
+    func load(url: String) async throws -> AirshipImageData { throw CancellationError() }
+
+    func prefetch(urls: [String]) async throws {
         prefetchInvocations.append(urls)
         if prefetchFailuresRemaining > 0 {
             prefetchFailuresRemaining -= 1
@@ -77,22 +74,9 @@ private final class StubThomasDelegate: ThomasDelegate {
         if let prefetchError {
             throw prefetchError
         }
-        return prefetchProducesToken ? "token-\(prefetchInvocations.count)" : nil
     }
 
-    func releasePrefetchedImages(token: String) {}
-    func localizedString(key: String) -> String? { nil }
-
-#if !os(tvOS) && !os(watchOS)
-    func makeWebView(
-        url: String,
-        layoutContext: ThomasLayoutContext,
-        isLoading: Binding<Bool>,
-        onClose: @escaping @MainActor () -> Void
-    ) -> any View {
-        EmptyView()
-    }
-#endif
+    func releaseAll() {}
 }
 
 // MARK: - Tests
@@ -174,8 +158,8 @@ struct ThomasAsyncViewStateTest {
     }
 
     /// Retain the returned value for the duration of the test: `ThomasAsyncViewState` only keeps a weak reference.
-    private func environment(delegate: StubThomasDelegate) -> ThomasEnvironment {
-        ThomasEnvironment(delegate: delegate, extensions: TestThomasExtensions())
+    private func environment(imageLoader: any ThomasImageLoader = StubThomasImageLoader()) -> ThomasEnvironment {
+        ThomasEnvironment(delegate: StubThomasDelegate(), extensions: TestThomasExtensions(imageLoader: imageLoader))
     }
 
     @Test
@@ -362,8 +346,8 @@ struct ThomasAsyncViewStateTest {
             resolver: testResolver,
             taskSleeper: RecordingTaskSleeper()
         )
-        let delegate = StubThomasDelegate(prefetchError: URLError(.cannotConnectToHost))
-        let thomasEnvironment = environment(delegate: delegate)
+        let imageLoader = StubThomasImageLoader(prefetchError: URLError(.cannotConnectToHost))
+        let thomasEnvironment = environment(imageLoader: imageLoader)
         state.configure(thomasEnvironment: thomasEnvironment)
 
         await #expect(throws: (any Error).self) {
@@ -373,8 +357,8 @@ struct ThomasAsyncViewStateTest {
         #expect(state.resolvedLayoutAwaitingPrefetch != nil)
         #expect(testResolver.callCount == 1)
 
-        #expect(delegate.prefetchInvocations.count == 1)
-        #expect(delegate.prefetchInvocations[0] == [":::invalid"])
+        #expect(imageLoader.prefetchInvocations.count == 1)
+        #expect(imageLoader.prefetchInvocations[0] == [":::invalid"])
     }
 
     @Test
@@ -385,8 +369,8 @@ struct ThomasAsyncViewStateTest {
             resolver: testResolver,
             taskSleeper: RecordingTaskSleeper()
         )
-        let delegate = StubThomasDelegate(prefetchFailuresRemaining: 1)
-        let thomasEnvironment = environment(delegate: delegate)
+        let imageLoader = StubThomasImageLoader(prefetchFailuresRemaining: 1)
+        let thomasEnvironment = environment(imageLoader: imageLoader)
         state.configure(thomasEnvironment: thomasEnvironment)
 
         await #expect(throws: (any Error).self) {
@@ -404,7 +388,7 @@ struct ThomasAsyncViewStateTest {
         #expect(state.status == .loaded)
         #expect(state.resolvedLayoutAwaitingPrefetch == nil)
         #expect(testResolver.callCount == 1)
-        #expect(delegate.prefetchInvocations.count == 2)
+        #expect(imageLoader.prefetchInvocations.count == 2)
     }
 
     // MARK: - Async view assets
@@ -417,16 +401,16 @@ struct ThomasAsyncViewStateTest {
             resolver: testResolver,
             taskSleeper: RecordingTaskSleeper()
         )
-        let delegate = StubThomasDelegate()
-        let thomasEnvironment = environment(delegate: delegate)
+        let imageLoader = StubThomasImageLoader()
+        let thomasEnvironment = environment(imageLoader: imageLoader)
         state.configure(thomasEnvironment: thomasEnvironment)
 
         try await state.resolve()
 
         #expect(state.response != nil)
         #expect(state.resolvedLayoutAwaitingPrefetch == nil)
-        #expect(delegate.prefetchInvocations.count == 1)
-        #expect(delegate.prefetchInvocations[0] == ["https://cdn.example.com/async-asset.png"])
+        #expect(imageLoader.prefetchInvocations.count == 1)
+        #expect(imageLoader.prefetchInvocations[0] == ["https://cdn.example.com/async-asset.png"])
     }
 
     @Test
@@ -437,14 +421,14 @@ struct ThomasAsyncViewStateTest {
             resolver: testResolver,
             taskSleeper: RecordingTaskSleeper()
         )
-        let delegate = StubThomasDelegate()
-        let thomasEnvironment = environment(delegate: delegate)
+        let imageLoader = StubThomasImageLoader()
+        let thomasEnvironment = environment(imageLoader: imageLoader)
         state.configure(thomasEnvironment: thomasEnvironment)
 
         try await state.resolve()
 
         #expect(state.response != nil)
-        #expect(delegate.prefetchInvocations.isEmpty)
+        #expect(imageLoader.prefetchInvocations.isEmpty)
     }
 
     @Test
@@ -469,14 +453,14 @@ struct ThomasAsyncViewStateTest {
             resolver: testResolver,
             taskSleeper: RecordingTaskSleeper()
         )
-        let delegate = StubThomasDelegate(prefetchProducesToken: false)
-        let thomasEnvironment = environment(delegate: delegate)
+        let imageLoader = StubThomasImageLoader()
+        let thomasEnvironment = environment(imageLoader: imageLoader)
         state.configure(thomasEnvironment: thomasEnvironment)
 
         try await state.resolve()
 
         #expect(state.response != nil)
-        #expect(delegate.prefetchInvocations.count == 1)
+        #expect(imageLoader.prefetchInvocations.count == 1)
     }
 
     @Test
@@ -487,8 +471,8 @@ struct ThomasAsyncViewStateTest {
             resolver: testResolver,
             taskSleeper: RecordingTaskSleeper()
         )
-        let delegate = StubThomasDelegate(prefetchError: URLError(.cannotConnectToHost))
-        let thomasEnvironment = environment(delegate: delegate)
+        let imageLoader = StubThomasImageLoader(prefetchError: URLError(.cannotConnectToHost))
+        let thomasEnvironment = environment(imageLoader: imageLoader)
         state.configure(thomasEnvironment: thomasEnvironment)
 
         state.retry()

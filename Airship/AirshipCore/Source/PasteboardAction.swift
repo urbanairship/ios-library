@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 #if !os(watchOS)
-
+import AirshipBasement
 import Foundation
 
 /// Sets the pasteboard's string.
@@ -34,6 +34,8 @@ public final class PasteboardAction: AirshipAction {
              .automation:
             return pasteboardString(arguments) != nil
         case .backgroundPush, .foregroundPush:
+            return false
+        @unknown default:
             return false
         }
     }

@@ -1,48 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import Combine
-public import Foundation
+import Foundation
 @_spi(AirshipInternal) import AirshipBasement
-
-/// Auth requirement for an async-view request, neutral to whoever resolves it.
-/// - Note: For internal use only. :nodoc:
-@_spi(AirshipInternal)
-@frozen
-public enum ThomasAsyncViewAuth: Sendable, Equatable {
-    case app
-    case channel
-    case contact
-    case none
-}
-
-/// Error surfaced by an `AsyncViewResolver`. The renderer uses these to drive retry/status.
-/// - Note: For internal use only. :nodoc:
-@_spi(AirshipInternal)
-public enum AsyncViewResolverError: Error, Sendable {
-    case client
-    case server(statusCode: Int)
-    case timedOut
-}
-
-/// Resolves an async-view request to its raw layout payload. Implemented by the host, which
-/// owns the network session, auth tokens, and channel/contact identifiers — keeping that
-/// "knows about the world" code out of the renderer.
-/// - Note: For internal use only. :nodoc:
-@_spi(AirshipInternal)
-public protocol AsyncViewResolver: Sendable {
-    @MainActor
-    func resolve(url: URL, auth: ThomasAsyncViewAuth) async throws -> Data
-}
-
-/// Resolves WKWebView authentication challenges. Implemented by the host so the renderer doesn't
-/// depend on the SDK's challenge-resolution machinery (server-trust pinning, etc.).
-/// - Note: For internal use only. :nodoc:
-@_spi(AirshipInternal)
-public protocol AirshipWebViewChallengeResolver: Sendable {
-    func resolve(
-        _ challenge: URLAuthenticationChallenge
-    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?)
-}
 
 @MainActor
 final class ThomasAsyncViewState: ObservableObject {
@@ -240,11 +200,14 @@ final class ThomasAsyncViewState: ObservableObject {
         }
     }
 
-    /// Publishes `response` only after any required image prefetch completes. The environment owns
+    /// Publishes `response` only after any required image prefetch completes. The image loader owns
     /// the prefetched assets and releases them on dismiss.
     private func commitResolvedLayout(_ viewInfo: ThomasViewInfo) async throws {
+        let imageURLs = imageURLStrings(from: viewInfo)
         do {
-            try await thomasEnvironment?.prefetch(images: imageURLStrings(from: viewInfo))
+            if !imageURLs.isEmpty {
+                try await thomasEnvironment?.imageLoader.prefetch(urls: imageURLs)
+            }
         } catch {
             resolvedLayoutAwaitingPrefetch = viewInfo
             throw PrefetchError()

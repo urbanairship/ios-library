@@ -199,6 +199,11 @@ final class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
                 errorMessage: "Action \(actionName) rejected arguments.",
                 callbackID: callbackID
             )
+        @unknown default:
+            return errorResponse(
+                errorMessage: "Action \(actionName) returned an unknown result.",
+                callbackID: callbackID
+            )
         }
     }
     

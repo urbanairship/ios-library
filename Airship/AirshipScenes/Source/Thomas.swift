@@ -18,6 +18,7 @@ public final class Thomas {
         layout: AirshipLayout,
         displayTarget: AirshipDisplayTarget,
         delegate: any ThomasDelegate,
+        extensions: any ThomasExtensions,
         extras: AirshipJSON?,
         priority: Int
     ) throws -> any AirshipMainActorCancellable {
@@ -27,14 +28,16 @@ public final class Thomas {
                 presentation,
                 displayTarget: displayTarget,
                 layout: layout,
-                delegate: delegate
+                delegate: delegate,
+                extensions: extensions
             )
         case .modal(let presentation):
             return try displayModal(
                 presentation,
                 displayTarget: displayTarget,
                 layout: layout,
-                delegate: delegate
+                delegate: delegate,
+                extensions: extensions
             )
         case .embedded(let presentation):
             return AirshipEmbeddedViewManager.shared.addPending(
@@ -43,7 +46,7 @@ public final class Thomas {
                 delegate: delegate,
                 extras: extras,
                 priority: priority,
-                extensions: DefaultThomasExtensions()
+                extensions: extensions
             )
         }
     }
@@ -53,7 +56,8 @@ public final class Thomas {
         _ presentation: ThomasPresentationInfo.Banner,
         displayTarget: AirshipDisplayTarget,
         layout: AirshipLayout,
-        delegate: any ThomasDelegate
+        delegate: any ThomasDelegate,
+        extensions: any ThomasExtensions
     ) throws -> any AirshipMainActorCancellable {
         let displayable = displayTarget.prepareDisplay(for: .banner)
 
@@ -69,7 +73,7 @@ public final class Thomas {
                 layout: layout,
                 delegate: delegate,
                 windowScene: windowScene,
-                extensions: DefaultThomasExtensions(),
+                extensions: extensions,
                 windowSize: windowInfo.size,
                 onDismiss: { displayable.dismiss() }
             )
@@ -86,7 +90,8 @@ public final class Thomas {
         _ presentation: ThomasPresentationInfo.Modal,
         displayTarget: AirshipDisplayTarget,
         layout: AirshipLayout,
-        delegate: any ThomasDelegate
+        delegate: any ThomasDelegate,
+        extensions: any ThomasExtensions
     ) throws -> any AirshipMainActorCancellable {
         let displayable = displayTarget.prepareDisplay(for: .modal, windowAnimated: false)
 
@@ -102,7 +107,7 @@ public final class Thomas {
                 layout: layout,
                 delegate: delegate,
                 windowScene: windowScene,
-                extensions: DefaultThomasExtensions(),
+                extensions: extensions,
                 onDismiss: { displayable.dismiss() }
             )
             dismiss = made.dismiss
@@ -116,15 +121,5 @@ public final class Thomas {
     #endif
 }
 
-/// Thomas action runner
-/// - Note: For internal use only. :nodoc:
-@_spi(AirshipInternal)
-public protocol ThomasActionRunner: Sendable {
-    @MainActor
-    func runAsync(actions: AirshipJSON, layoutContext: ThomasLayoutContext)
-
-    @MainActor
-    func run(actionName: String, arguments: ActionArguments, layoutContext: ThomasLayoutContext) async -> ActionResult
-}
 
 

@@ -10,8 +10,8 @@ import SwiftUI
 struct ThomasWebViewWrapper: View {
 
     let info: ThomasViewInfo.WebView
-
     let constraints: ViewConstraints
+    let webViewFactory: any ThomasWebViewFactory
 
     @State private var isLoading: Bool = true
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
@@ -20,9 +20,13 @@ struct ThomasWebViewWrapper: View {
     var body: some View {
         ZStack {
             AnyView(
-                thomasEnvironment.makeWebView(
+                self.webViewFactory.makeWebView(
                     url: self.info.properties.url,
-                    layoutState: self.layoutState,
+                    // Provider, not a snapshot: actions triggered from the web view run with the layout
+                    // context as it is *when the action fires*, not as it was when the view was built.
+                    layoutContext: { [weak thomasEnvironment, layoutState] in
+                        thomasEnvironment?.makeLayoutContext(layoutState: layoutState) ?? ThomasLayoutContext()
+                    },
                     isLoading: self.$isLoading,
                     onClose: {
                         self.thomasEnvironment.dismiss(layoutState: self.layoutState)

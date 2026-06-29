@@ -15,7 +15,10 @@ class ThomasEnvironment: ObservableObject {
     private let pagerTracker: ThomasPagerTracker
     private let timer: any AirshipTimerProtocol
     private let stateStorage: (any ThomasStateStorage)?
-    private var prefetchTokens: Set<String> = []
+
+    /// Loads and prefetches images for this layout, sourced from `extensions`. The environment
+    /// doesn't track tokens — the loader owns what it prefetched and releases it on dismiss.
+    var imageLoader: any ThomasImageLoader { extensions.imageLoader }
 
     /// The window scene this layout is presented in, captured by the host at display time.
     /// Exposes orientation / status bar style without a global scene lookup; holds the scene
@@ -130,8 +133,8 @@ class ThomasEnvironment: ObservableObject {
             )
         )
 
-        self.delegate.applyAttributes(attributes)
-        self.delegate.registerChannels(channels)
+        self.extensions.audienceEditor.applyAttributes(attributes)
+        self.extensions.audienceEditor.registerChannels(channels)
     }
 
     @MainActor
@@ -322,7 +325,7 @@ class ThomasEnvironment: ObservableObject {
 
     @MainActor
     func localizedString(key: String) -> String? {
-        delegate.localizedString(key: key)
+        extensions.localizer.localizedString(key: key)
     }
 
     @MainActor
@@ -390,9 +393,7 @@ class ThomasEnvironment: ObservableObject {
             dismissCleanupHandlers.removeAll()
             cleanups.forEach { $0() }
 
-            let tokens = prefetchTokens
-            prefetchTokens.removeAll()
-            tokens.forEach { delegate.releasePrefetchedImages(token: $0) }
+            imageLoader.releaseAll()
 
             callback(timer.time)
             onDismiss?()
@@ -406,45 +407,13 @@ class ThomasEnvironment: ObservableObject {
         layoutState: LayoutState?
     ) {
         guard let actions = actionsPayload?.value else { return }
-        self.delegate.runActions(
-            actions,
+        self.extensions.actionRunner.runAsync(
+            actions: actions,
             layoutContext: makeLayoutContext(layoutState: layoutState)
         )
     }
 
-#if !os(tvOS) && !os(watchOS)
-    @MainActor
-    func makeWebView(
-        url: String,
-        layoutState: LayoutState?,
-        isLoading: Binding<Bool>,
-        onClose: @escaping @MainActor () -> Void
-    ) -> any View {
-        self.delegate.makeWebView(
-            url: url,
-            layoutContext: makeLayoutContext(layoutState: layoutState),
-            isLoading: isLoading,
-            onClose: onClose
-        )
-    }
-#endif
-
-    @MainActor
-    func loadImage(url: String) async throws -> AirshipImageData {
-        try await delegate.loadImage(url: url)
-    }
-
-    /// Prefetches images for the layout. The environment owns the prefetched assets and releases
-    /// them automatically when the layout dismisses.
-    @MainActor
-    func prefetch(images: [String]) async throws {
-        guard !images.isEmpty else { return }
-        if let token = try await delegate.prefetchImages(images) {
-            prefetchTokens.insert(token)
-        }
-    }
-
-    private func makeLayoutContext(layoutState: LayoutState?) -> ThomasLayoutContext {
+    func makeLayoutContext(layoutState: LayoutState?) -> ThomasLayoutContext {
         var context = ThomasLayoutContext()
         if let pager = layoutState?.pagerState {
             context.pager = .init(

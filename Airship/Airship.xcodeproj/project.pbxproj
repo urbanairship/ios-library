@@ -207,7 +207,6 @@
 		6E1185C62C3328A10071334E /* ExecutionWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1185C52C3328A10071334E /* ExecutionWindow.swift */; };
 		6E12539129A81ACE0009EE58 /* AirshipCoreDataPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */; };
 		6E146C502F5214D900320A36 /* AirshipDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E146C4F2F5214D900320A36 /* AirshipDevice.swift */; };
-		6E146EDD2F52537000320A36 /* AishipFontTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E146EDC2F52536C00320A36 /* AishipFontTests.swift */; };
 		6E146FF32F525E7300320A36 /* AirshipPasteboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E146FF22F525E7300320A36 /* AirshipPasteboard.swift */; };
 		6E1473EA2F527C4D00320A36 /* TestURLOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECB62812A36A45F0095C85C /* TestURLOpener.swift */; };
 		6E1476CC2F5643A100320A36 /* MessageCenterNavigationAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1476CB2F56439A00320A36 /* MessageCenterNavigationAppearance.swift */; };
@@ -797,6 +796,28 @@
 		6EAD3AFA2F4530BE00FF274E /* AutoIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD3AF92F4530AD00FF274E /* AutoIntegration.swift */; };
 		6EAD3AFC2F4530F600FF274E /* UAAppIntegrationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD3AFB2F4530E400FF274E /* UAAppIntegrationDelegate.swift */; };
 		6EAD7CE526B216DB00B88EA7 /* DeepLinkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD7CE426B216DB00B88EA7 /* DeepLinkAction.swift */; };
+		6EAFC2562FF2DE15005FA58D /* ThomasLocalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2552FF2DE15005FA58D /* ThomasLocalizer.swift */; };
+		6EAFC2592FF2DE20005FA58D /* ThomasExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2582FF2DE1E005FA58D /* ThomasExtensions.swift */; };
+		6EAFC25B2FF2DEC8005FA58D /* AsyncViewResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC25A2FF2DEC5005FA58D /* AsyncViewResolver.swift */; };
+		6EAFC25D2FF2DEE5005FA58D /* AirshipWebViewChallengeResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC25C2FF2DEE3005FA58D /* AirshipWebViewChallengeResolver.swift */; };
+		6EAFC2642FF2DFDB005FA58D /* DefaultThomasExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2632FF2DFDB005FA58D /* DefaultThomasExtensions.swift */; };
+		6EAFC2662FF2DFDD005FA58D /* DefaultAsyncViewResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2652FF2DFDD005FA58D /* DefaultAsyncViewResolver.swift */; };
+		6EAFC2682FF2DFF5005FA58D /* DefaultThomasLocalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2672FF2DFF5005FA58D /* DefaultThomasLocalizer.swift */; };
+		6EAFC26A2FF2E026005FA58D /* DefaultWebViewChallengeResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2692FF2E026005FA58D /* DefaultWebViewChallengeResolver.swift */; };
+		6EAFC26C2FF2E32E005FA58D /* DefaultThomasImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC26B2FF2E32E005FA58D /* DefaultThomasImageLoader.swift */; };
+		6EAFC26E2FF2E34C005FA58D /* ThomasImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC26D2FF2E34C005FA58D /* ThomasImageLoader.swift */; };
+		6EAFC2712FF2EA87005FA58D /* ThomasWebViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2702FF2EA87005FA58D /* ThomasWebViewFactory.swift */; };
+		6EAFC2732FF2EAB0005FA58D /* DefaultThomasWebViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2722FF2EAB0005FA58D /* DefaultThomasWebViewFactory.swift */; };
+		6EAFC2762FF2ECEE005FA58D /* ThomasActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2752FF2ECEC005FA58D /* ThomasActionRunner.swift */; };
+		6EAFC27A2FF2EE5C005FA58D /* ActionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2792FF2EE5C005FA58D /* ActionResult.swift */; };
+		6EAFC27B2FF2EE5C005FA58D /* ActionArguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2782FF2EE5C005FA58D /* ActionArguments.swift */; };
+		6EAFC27D2FF2EEBB005FA58D /* AirshipAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC27C2FF2EEBB005FA58D /* AirshipAction.swift */; };
+		6EAFC27F2FF2EFD2005FA58D /* DefaultThomasActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC27E2FF2EFD2005FA58D /* DefaultThomasActionRunner.swift */; };
+		6EAFC2812FF2F451005FA58D /* ThomasAudienceEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2802FF2F451005FA58D /* ThomasAudienceEditor.swift */; };
+		6EAFC2832FF2F46E005FA58D /* DefaultThomasAudienceEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2822FF2F46E005FA58D /* DefaultThomasAudienceEditor.swift */; };
+		6EAFC2932FF2F9B2005FA58D /* DefaultThomasImageLoaderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2922FF2F9B2005FA58D /* DefaultThomasImageLoaderTest.swift */; };
+		6EAFC2952FF2F9F0005FA58D /* AishipFontTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2942FF2F9F0005FA58D /* AishipFontTests.swift */; };
+		6EAFC2972FF2FA08005FA58D /* AirshipColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC2962FF2FA08005FA58D /* AirshipColorTests.swift */; };
 		6EB11C872697ACBF00DC698F /* ContactOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C862697ACBF00DC698F /* ContactOperation.swift */; };
 		6EB11C892697AF5600DC698F /* TagGroupUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */; };
 		6EB11C8B2697AFC700DC698F /* AttributeUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */; };
@@ -917,7 +938,6 @@
 		6EB966752FEEED2100459ED3 /* ThomasLayoutFormDisplayEventTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9665F2FEEED2100459ED3 /* ThomasLayoutFormDisplayEventTest.swift */; };
 		6EB966772FEEEDD800459ED3 /* TestThomasLayoutEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966762FEEEDD800459ED3 /* TestThomasLayoutEvent.swift */; };
 		6EB966782FEEEDDE00459ED3 /* TestThomasLayoutEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966762FEEEDD800459ED3 /* TestThomasLayoutEvent.swift */; };
-		6EB9667A2FEEEE1800459ED3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB966792FEEEE1500459ED3 /* Extensions.swift */; };
 		6EB9667D2FEEEE1F00459ED3 /* AirshipExtensionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB9667B2FEEEE1D00459ED3 /* AirshipExtensionsTest.swift */; };
 		6EB9667E2FEEEEB800459ED3 /* TestAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E87BE1726E2C5940005D20D /* TestAnalytics.swift */; };
 		6EB966812FEEF3C600459ED3 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
@@ -935,7 +955,6 @@
 		6EB969AF2FEF2D0C00459ED3 /* AppStateTrackerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB969AD2FEF2D0C00459ED3 /* AppStateTrackerAdapter.swift */; };
 		6EB969B02FEF2D0C00459ED3 /* AppStateTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB969AC2FEF2D0C00459ED3 /* AppStateTracker.swift */; };
 		6EB969B32FEF2D4B00459ED3 /* AppStateTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB969B22FEF2D4B00459ED3 /* AppStateTrackerTest.swift */; };
-		6EB96AD12FEF4A5500459ED3 /* AirshipExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB96AD02FEF4A5200459ED3 /* AirshipExtensions.swift */; };
 		6EB96AD32FEF4D8200459ED3 /* AirshipInputValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB96AD22FEF4D8200459ED3 /* AirshipInputValidator.swift */; };
 		6EBFA9AD2D15DA73002BA3E9 /* HashChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBFA9AC2D15DA70002BA3E9 /* HashChecker.swift */; };
 		6EBFA9AF2D15E04D002BA3E9 /* AirshipDeviceAudienceResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBFA9AE2D15E04B002BA3E9 /* AirshipDeviceAudienceResult.swift */; };
@@ -986,7 +1005,6 @@
 		6ECDDE7429B80462009D79DB /* ChannelAuthTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECDDE7329B80462009D79DB /* ChannelAuthTokenProvider.swift */; };
 		6ECDDE7929B804FB009D79DB /* ChannelAuthTokenAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ECDDE7829B804FB009D79DB /* ChannelAuthTokenAPIClient.swift */; };
 		6ED2F5252B7EE648000AFC80 /* AirshipBase64Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F5242B7EE648000AFC80 /* AirshipBase64Test.swift */; };
-		6ED2F5292B7FC59F000AFC80 /* AirshipColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F5282B7FC59F000AFC80 /* AirshipColorTests.swift */; };
 		6ED2F52B2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F52A2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift */; };
 		6ED2F52D2B7FD403000AFC80 /* JavaScriptCommandTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F52C2B7FD403000AFC80 /* JavaScriptCommandTest.swift */; };
 		6ED2F52F2B7FD49B000AFC80 /* AirshipURLAllowListTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED2F52E2B7FD49B000AFC80 /* AirshipURLAllowListTest.swift */; };
@@ -1148,9 +1166,6 @@
 		A6AC44832B923ACB00769ED2 /* TestInAppMessageAutomationExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AC44822B923ACB00769ED2 /* TestInAppMessageAutomationExecutor.swift */; };
 		A6AF8D2D27E8D4910068C7EE /* SubscriptionListActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AF8D2C27E8D4910068C7EE /* SubscriptionListActionTest.swift */; };
 		A6CDD8D0269491BE0040A673 /* ContactAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CDD8CF269491BE0040A673 /* ContactAPIClientTest.swift */; };
-		A6D6D48F2A0253AA0072A5CA /* ActionArguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D6D48E2A0253AA0072A5CA /* ActionArguments.swift */; };
-		A6D6D49D2A0260780072A5CA /* AirshipAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D6D49C2A0260780072A5CA /* AirshipAction.swift */; };
-		A6D6D49F2A02608C0072A5CA /* ActionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D6D49E2A02608C0072A5CA /* ActionResult.swift */; };
 		A6E9AD982D4D12D00091BBAF /* FeatureFlagUpdateStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6E9AD972D4D12C60091BBAF /* FeatureFlagUpdateStatus.swift */; };
 		A6E9ADED2D4D204B0091BBAF /* InAppAutomationUpdateStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6E9ADEC2D4D20300091BBAF /* InAppAutomationUpdateStatus.swift */; };
 		A6F0B1912B83CD9B002D10A4 /* AutomationEngineTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F0B18F2B837E36002D10A4 /* AutomationEngineTest.swift */; };
@@ -1707,7 +1722,6 @@
 		6E1185C52C3328A10071334E /* ExecutionWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutionWindow.swift; sourceTree = "<group>"; };
 		6E12539029A81ACE0009EE58 /* AirshipCoreDataPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCoreDataPredicate.swift; sourceTree = "<group>"; };
 		6E146C4F2F5214D900320A36 /* AirshipDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDevice.swift; sourceTree = "<group>"; };
-		6E146EDC2F52536C00320A36 /* AishipFontTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AishipFontTests.swift; sourceTree = "<group>"; };
 		6E146FF22F525E7300320A36 /* AirshipPasteboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipPasteboard.swift; sourceTree = "<group>"; };
 		6E1472D42F526DC600320A36 /* AirshipNativePlatform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipNativePlatform.swift; sourceTree = "<group>"; };
 		6E1476CB2F56439A00320A36 /* MessageCenterNavigationAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterNavigationAppearance.swift; sourceTree = "<group>"; };
@@ -2316,6 +2330,28 @@
 		6EAD3AF92F4530AD00FF274E /* AutoIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoIntegration.swift; sourceTree = "<group>"; };
 		6EAD3AFB2F4530E400FF274E /* UAAppIntegrationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAAppIntegrationDelegate.swift; sourceTree = "<group>"; };
 		6EAD7CE426B216DB00B88EA7 /* DeepLinkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkAction.swift; sourceTree = "<group>"; };
+		6EAFC2552FF2DE15005FA58D /* ThomasLocalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLocalizer.swift; sourceTree = "<group>"; };
+		6EAFC2582FF2DE1E005FA58D /* ThomasExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasExtensions.swift; sourceTree = "<group>"; };
+		6EAFC25A2FF2DEC5005FA58D /* AsyncViewResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncViewResolver.swift; sourceTree = "<group>"; };
+		6EAFC25C2FF2DEE3005FA58D /* AirshipWebViewChallengeResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipWebViewChallengeResolver.swift; sourceTree = "<group>"; };
+		6EAFC2632FF2DFDB005FA58D /* DefaultThomasExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultThomasExtensions.swift; sourceTree = "<group>"; };
+		6EAFC2652FF2DFDD005FA58D /* DefaultAsyncViewResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAsyncViewResolver.swift; sourceTree = "<group>"; };
+		6EAFC2672FF2DFF5005FA58D /* DefaultThomasLocalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultThomasLocalizer.swift; sourceTree = "<group>"; };
+		6EAFC2692FF2E026005FA58D /* DefaultWebViewChallengeResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultWebViewChallengeResolver.swift; sourceTree = "<group>"; };
+		6EAFC26B2FF2E32E005FA58D /* DefaultThomasImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultThomasImageLoader.swift; sourceTree = "<group>"; };
+		6EAFC26D2FF2E34C005FA58D /* ThomasImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasImageLoader.swift; sourceTree = "<group>"; };
+		6EAFC2702FF2EA87005FA58D /* ThomasWebViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasWebViewFactory.swift; sourceTree = "<group>"; };
+		6EAFC2722FF2EAB0005FA58D /* DefaultThomasWebViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultThomasWebViewFactory.swift; sourceTree = "<group>"; };
+		6EAFC2752FF2ECEC005FA58D /* ThomasActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasActionRunner.swift; sourceTree = "<group>"; };
+		6EAFC2782FF2EE5C005FA58D /* ActionArguments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionArguments.swift; sourceTree = "<group>"; };
+		6EAFC2792FF2EE5C005FA58D /* ActionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionResult.swift; sourceTree = "<group>"; };
+		6EAFC27C2FF2EEBB005FA58D /* AirshipAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAction.swift; sourceTree = "<group>"; };
+		6EAFC27E2FF2EFD2005FA58D /* DefaultThomasActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultThomasActionRunner.swift; sourceTree = "<group>"; };
+		6EAFC2802FF2F451005FA58D /* ThomasAudienceEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasAudienceEditor.swift; sourceTree = "<group>"; };
+		6EAFC2822FF2F46E005FA58D /* DefaultThomasAudienceEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultThomasAudienceEditor.swift; sourceTree = "<group>"; };
+		6EAFC2922FF2F9B2005FA58D /* DefaultThomasImageLoaderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultThomasImageLoaderTest.swift; sourceTree = "<group>"; };
+		6EAFC2942FF2F9F0005FA58D /* AishipFontTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AishipFontTests.swift; sourceTree = "<group>"; };
+		6EAFC2962FF2FA08005FA58D /* AirshipColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipColorTests.swift; sourceTree = "<group>"; };
 		6EB11C862697ACBF00DC698F /* ContactOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactOperation.swift; sourceTree = "<group>"; };
 		6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagGroupUpdate.swift; sourceTree = "<group>"; };
 		6EB11C8A2697AFC700DC698F /* AttributeUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeUpdate.swift; sourceTree = "<group>"; };
@@ -2431,7 +2467,6 @@
 		6EB966672FEEED2100459ED3 /* ThomasLayoutPermissionResultEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutPermissionResultEventTest.swift; sourceTree = "<group>"; };
 		6EB966682FEEED2100459ED3 /* ThomasLayoutResolutionEventTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasLayoutResolutionEventTest.swift; sourceTree = "<group>"; };
 		6EB966762FEEEDD800459ED3 /* TestThomasLayoutEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestThomasLayoutEvent.swift; sourceTree = "<group>"; };
-		6EB966792FEEEE1500459ED3 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		6EB9667B2FEEEE1D00459ED3 /* AirshipExtensionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipExtensionsTest.swift; sourceTree = "<group>"; };
 		6EB9682A2FEF037E00459ED3 /* ThomasViewControllerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewControllerFactory.swift; sourceTree = "<group>"; };
 		6EB9682C2FEF038F00459ED3 /* Thomas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thomas.swift; sourceTree = "<group>"; };
@@ -2445,7 +2480,6 @@
 		6EB969AC2FEF2D0C00459ED3 /* AppStateTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateTracker.swift; sourceTree = "<group>"; };
 		6EB969AD2FEF2D0C00459ED3 /* AppStateTrackerAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateTrackerAdapter.swift; sourceTree = "<group>"; };
 		6EB969B22FEF2D4B00459ED3 /* AppStateTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateTrackerTest.swift; sourceTree = "<group>"; };
-		6EB96AD02FEF4A5200459ED3 /* AirshipExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipExtensions.swift; sourceTree = "<group>"; };
 		6EB96AD22FEF4D8200459ED3 /* AirshipInputValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipInputValidator.swift; sourceTree = "<group>"; };
 		6EBFA9AC2D15DA70002BA3E9 /* HashChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashChecker.swift; sourceTree = "<group>"; };
 		6EBFA9AE2D15E04B002BA3E9 /* AirshipDeviceAudienceResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDeviceAudienceResult.swift; sourceTree = "<group>"; };
@@ -2492,7 +2526,6 @@
 		6ECDDE7329B80462009D79DB /* ChannelAuthTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAuthTokenProvider.swift; sourceTree = "<group>"; };
 		6ECDDE7829B804FB009D79DB /* ChannelAuthTokenAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelAuthTokenAPIClient.swift; sourceTree = "<group>"; };
 		6ED2F5242B7EE648000AFC80 /* AirshipBase64Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipBase64Test.swift; sourceTree = "<group>"; };
-		6ED2F5282B7FC59F000AFC80 /* AirshipColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipColorTests.swift; sourceTree = "<group>"; };
 		6ED2F52A2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipIvyVersionMatcherTest.swift; sourceTree = "<group>"; };
 		6ED2F52C2B7FD403000AFC80 /* JavaScriptCommandTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptCommandTest.swift; sourceTree = "<group>"; };
 		6ED2F52E2B7FD49B000AFC80 /* AirshipURLAllowListTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipURLAllowListTest.swift; sourceTree = "<group>"; };
@@ -2660,9 +2693,6 @@
 		A6AC44822B923ACB00769ED2 /* TestInAppMessageAutomationExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestInAppMessageAutomationExecutor.swift; sourceTree = "<group>"; };
 		A6AF8D2C27E8D4910068C7EE /* SubscriptionListActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionListActionTest.swift; sourceTree = "<group>"; };
 		A6CDD8CF269491BE0040A673 /* ContactAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAPIClientTest.swift; sourceTree = "<group>"; };
-		A6D6D48E2A0253AA0072A5CA /* ActionArguments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionArguments.swift; sourceTree = "<group>"; };
-		A6D6D49C2A0260780072A5CA /* AirshipAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAction.swift; sourceTree = "<group>"; };
-		A6D6D49E2A02608C0072A5CA /* ActionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionResult.swift; sourceTree = "<group>"; };
 		A6E9AD972D4D12C60091BBAF /* FeatureFlagUpdateStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagUpdateStatus.swift; sourceTree = "<group>"; };
 		A6E9ADEC2D4D20300091BBAF /* InAppAutomationUpdateStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppAutomationUpdateStatus.swift; sourceTree = "<group>"; };
 		A6F0B18F2B837E36002D10A4 /* AutomationEngineTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEngineTest.swift; sourceTree = "<group>"; };
@@ -3768,9 +3798,6 @@
 				A69C987E27E247B20063A101 /* SubscriptionListAction.swift */,
 				6E92EC89284933750038802D /* PromptPermissionAction.swift */,
 				6E92EC8C2849378E0038802D /* PermissionPrompter.swift */,
-				A6D6D48E2A0253AA0072A5CA /* ActionArguments.swift */,
-				A6D6D49C2A0260780072A5CA /* AirshipAction.swift */,
-				A6D6D49E2A02608C0072A5CA /* ActionResult.swift */,
 				6E4A4FD92A30358F0049FEFC /* TagsActionArgs.swift */,
 				271B38642DB2866200495D9F /* TagActionMutation.swift */,
 				27AFE70E2E733F4400767044 /* ModifyTagsAction.swift */,
@@ -4048,6 +4075,7 @@
 		6E43212926EA847D009228AB /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6EAFC2772FF2EE45005FA58D /* Actions */,
 				6EB969AA2FEF2D0100459ED3 /* App State */,
 				6EB721622FEB0D2B001FBB9F /* UI */,
 				6EDAB53B2FE9A18100FD8194 /* Json */,
@@ -4302,13 +4330,6 @@
 			name = LiveActivities;
 			sourceTree = "<group>";
 		};
-		6E7DB38C28ECFCDB002725F6 /* JSON */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = JSON;
-			sourceTree = "<group>";
-		};
 		6E87BD9B26DD78B40005D20D /* Integration */ = {
 			isa = PBXGroup;
 			children = (
@@ -4436,6 +4457,54 @@
 				6EE6AA2B2B51DB1E002FEA75 /* AutomationSourceInfoStore.swift */,
 			);
 			path = RemoteData;
+			sourceTree = "<group>";
+		};
+		6EAFC2572FF2DE17005FA58D /* Thomas Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6EAFC2752FF2ECEC005FA58D /* ThomasActionRunner.swift */,
+				6EAFC2802FF2F451005FA58D /* ThomasAudienceEditor.swift */,
+				6EAFC2582FF2DE1E005FA58D /* ThomasExtensions.swift */,
+				6EAFC2702FF2EA87005FA58D /* ThomasWebViewFactory.swift */,
+				6EAFC26D2FF2E34C005FA58D /* ThomasImageLoader.swift */,
+				6EAFC25C2FF2DEE3005FA58D /* AirshipWebViewChallengeResolver.swift */,
+				6EAFC25A2FF2DEC5005FA58D /* AsyncViewResolver.swift */,
+				6EAFC2552FF2DE15005FA58D /* ThomasLocalizer.swift */,
+			);
+			path = "Thomas Extensions";
+			sourceTree = "<group>";
+		};
+		6EAFC2602FF2DFBD005FA58D /* Thomas Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6EAFC2632FF2DFDB005FA58D /* DefaultThomasExtensions.swift */,
+				6EAFC2822FF2F46E005FA58D /* DefaultThomasAudienceEditor.swift */,
+				6EAFC27E2FF2EFD2005FA58D /* DefaultThomasActionRunner.swift */,
+				6EAFC2722FF2EAB0005FA58D /* DefaultThomasWebViewFactory.swift */,
+				6EAFC26B2FF2E32E005FA58D /* DefaultThomasImageLoader.swift */,
+				6EAFC2692FF2E026005FA58D /* DefaultWebViewChallengeResolver.swift */,
+				6EAFC2672FF2DFF5005FA58D /* DefaultThomasLocalizer.swift */,
+				6EAFC2652FF2DFDD005FA58D /* DefaultAsyncViewResolver.swift */,
+			);
+			path = "Thomas Extensions";
+			sourceTree = "<group>";
+		};
+		6EAFC26F2FF2E939005FA58D /* Thomas Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6EAFC2922FF2F9B2005FA58D /* DefaultThomasImageLoaderTest.swift */,
+			);
+			path = "Thomas Extensions";
+			sourceTree = "<group>";
+		};
+		6EAFC2772FF2EE45005FA58D /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				6EAFC27C2FF2EEBB005FA58D /* AirshipAction.swift */,
+				6EAFC2782FF2EE5C005FA58D /* ActionArguments.swift */,
+				6EAFC2792FF2EE5C005FA58D /* ActionResult.swift */,
+			);
+			path = Actions;
 			sourceTree = "<group>";
 		};
 		6EB21A392E81BB6E001A5660 /* Analytics */ = {
@@ -4634,6 +4703,7 @@
 		6EB723702FEB4108001FBB9F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				6EAFC2572FF2DE17005FA58D /* Thomas Extensions */,
 				6EB968922FEF105C00459ED3 /* ThomasWindowScene.swift */,
 				6EB9682A2FEF037E00459ED3 /* ThomasViewControllerFactory.swift */,
 				6E21C4362FEC4F3A00EA3E56 /* Utils.swift */,
@@ -4683,9 +4753,8 @@
 		6EB723822FEB450D001FBB9F /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				6EB96AD02FEF4A5200459ED3 /* AirshipExtensions.swift */,
+				6EAFC2602FF2DFBD005FA58D /* Thomas Extensions */,
 				6EB9682C2FEF038F00459ED3 /* Thomas.swift */,
-				6EB966792FEEEE1500459ED3 /* Extensions.swift */,
 				6EB9664C2FEEE46D00459ED3 /* AirshipThomasWebView.swift */,
 				6EB966242FEEE41A00459ED3 /* Analytics */,
 				6EB966202FEEE3A800459ED3 /* ThomasDisplayListener.swift */,
@@ -4698,6 +4767,7 @@
 		6EB723842FEB450D001FBB9F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				6EAFC26F2FF2E939005FA58D /* Thomas Extensions */,
 				6EB9667B2FEEEE1D00459ED3 /* AirshipExtensionsTest.swift */,
 				6EB966762FEEEDD800459ED3 /* TestThomasLayoutEvent.swift */,
 				6EB966522FEEED0B00459ED3 /* Analytics */,
@@ -4918,6 +4988,8 @@
 		6EDAB53A2FE9A16700FD8194 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				6EAFC2962FF2FA08005FA58D /* AirshipColorTests.swift */,
+				6EAFC2942FF2F9F0005FA58D /* AishipFontTests.swift */,
 				6EB7216F2FEB1F13001FBB9F /* DefaultTaskSleeperTest.swift */,
 				6EB721632FEB1BCD001FBB9F /* AirshipObservableTimerTest.swift */,
 				6EDAB5372FE99F0500FD8194 /* AirshipVersionUtilsTest.swift */,
@@ -5342,7 +5414,6 @@
 			isa = PBXGroup;
 			children = (
 				6EB9694C2FEF13A400459ED3 /* AssetCacheImageProviderTest.swift */,
-				6E146EDC2F52536C00320A36 /* AishipFontTests.swift */,
 				6E07B5F72D925ED30087EC47 /* TestPrivacyManager.swift */,
 				6E6C3F8C27A26992007F55C7 /* CachedValueTest.swift */,
 				6E92ECB3284ED6F10038802D /* CachedListTest.swift */,
@@ -5350,7 +5421,6 @@
 				6E1767F929B92F1700D65F60 /* AirshipUtilsTest.swift */,
 				6EF553E22B7EE40B00901A22 /* AirshipLocalizationUtilsTest.swift */,
 				6ED2F5242B7EE648000AFC80 /* AirshipBase64Test.swift */,
-				6ED2F5282B7FC59F000AFC80 /* AirshipColorTests.swift */,
 				6EB8394D2BC8B1F4006611C4 /* AirshipAsyncChannelTest.swift */,
 				6032695A2BF75D69007F7F75 /* AirshipHTTPResponseTest.swift */,
 			);
@@ -5378,7 +5448,6 @@
 				6058771B2AC73C550021628E /* MeteredUsage */,
 				6EC755AD2A4FCD7000851ABB /* Audience Checks */,
 				6079511E2A1CD1880086578F /* Experiments */,
-				6E7DB38C28ECFCDB002725F6 /* JSON */,
 				6E49D7CB284028A900C7BB9D /* PermissionsManager */,
 				6E64C87F27331ABA000EB887 /* PreferenceDataStoreTest.swift */,
 				6E87BD9B26DD78B40005D20D /* Integration */,
@@ -6392,7 +6461,6 @@
 				6E664BE726C5B21600A2C8E5 /* ModifyAttributesAction.swift in Sources */,
 				6E664BD926C4CD8700A2C8E5 /* PasteboardAction.swift in Sources */,
 				6E15B71426CEB4190099C92D /* RemoteDataStorePayload.swift in Sources */,
-				A6D6D49F2A02608C0072A5CA /* ActionResult.swift in Sources */,
 				6E91B43C26868A6300DDB1A8 /* CircularRegion.swift in Sources */,
 				6E1589582AFF023400954A04 /* SessionEvent.swift in Sources */,
 				6014AD672C1B5F540072DCF0 /* ChallengeResolver.swift in Sources */,
@@ -6483,7 +6551,6 @@
 				6EC7559F2A4E5AB200851ABB /* DeviceAudienceChecker.swift in Sources */,
 				6E15B6F426CD85C40099C92D /* RuntimeConfig.swift in Sources */,
 				6E15B6DB26CC749F0099C92D /* RemoteConfigManager.swift in Sources */,
-				A6D6D48F2A0253AA0072A5CA /* ActionArguments.swift in Sources */,
 				6E6BD24E2AEAFEC500B9DFC9 /* AirshipStateOverrides.swift in Sources */,
 				6E49D7C228401D2E00C7BB9D /* PermissionStatus.swift in Sources */,
 				6E6C3F8A27A266C0007F55C7 /* CachedValue.swift in Sources */,
@@ -6491,7 +6558,6 @@
 				E99605A727A075C600365AE4 /* OpenRegistrationOptions.swift in Sources */,
 				6E664BDB26C4CD8700A2C8E5 /* EnableFeatureAction.swift in Sources */,
 				6EB839492BC8898E006611C4 /* AirshipAsyncChannel.swift in Sources */,
-				A6D6D49D2A0260780072A5CA /* AirshipAction.swift in Sources */,
 				6E87BD6726D6A39A0005D20D /* AirshipConfig.swift in Sources */,
 				6E57CE3228DB8BDA00287601 /* LiveActivityUpdate.swift in Sources */,
 				6E78848F29B9643C00ACAE45 /* AirshipContact.swift in Sources */,
@@ -6821,8 +6887,10 @@
 				6E6524502A4FD8D30019F353 /* JSONPredicateTest.swift in Sources */,
 				6EB721702FEB1F13001FBB9F /* DefaultTaskSleeperTest.swift in Sources */,
 				60E09FDB2B2780DB005A16EA /* JsonMatcherTest.swift in Sources */,
+				6EAFC2952FF2F9F0005FA58D /* AishipFontTests.swift in Sources */,
 				6087DB882B278F7600449BA8 /* JsonValueMatcherTest.swift in Sources */,
 				6EDAB5382FE99F0D00FD8194 /* AirshipVersionUtilsTest.swift in Sources */,
+				6EAFC2972FF2FA08005FA58D /* AirshipColorTests.swift in Sources */,
 				6ED2F52B2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6843,6 +6911,7 @@
 				6EDFBBC82F5780EA0043D9EF /* LogLevel.swift in Sources */,
 				6E21C4042FEC3FAB00EA3E56 /* AirshipNativePlatform.swift in Sources */,
 				6EB969AE2FEF2D0C00459ED3 /* ApplicationState.swift in Sources */,
+				6EAFC27D2FF2EEBB005FA58D /* AirshipAction.swift in Sources */,
 				6EB969AF2FEF2D0C00459ED3 /* AppStateTrackerAdapter.swift in Sources */,
 				6EB969B02FEF2D0C00459ED3 /* AppStateTracker.swift in Sources */,
 				6E6C3F9E27A4C3D4007F55C7 /* AirshipJSON.swift in Sources */,
@@ -6857,6 +6926,8 @@
 				6EDAB5362FE99EF600FD8194 /* AirshipVersionUtils.swift in Sources */,
 				6E21C4022FEC3F3100EA3E56 /* AirshipColor.swift in Sources */,
 				6E21C4032FEC3F3100EA3E56 /* AirshipFont.swift in Sources */,
+				6EAFC27A2FF2EE5C005FA58D /* ActionResult.swift in Sources */,
+				6EAFC27B2FF2EE5C005FA58D /* ActionArguments.swift in Sources */,
 				6EA11A0F2F7E100100FD8194 /* AirshipImageData.swift in Sources */,
 				A658DE2B272AFB0400007672 /* AirshipImageLoader.swift in Sources */,
 				6EB968352FEF041200459ED3 /* AirshipLock.swift in Sources */,
@@ -6899,6 +6970,7 @@
 				6E21C2FD2FEC3B9900EA3E56 /* ThomasPlatform.swift in Sources */,
 				6E21C2FE2FEC3B9900EA3E56 /* ThomasStateTrigger.swift in Sources */,
 				6E21C2FF2FEC3B9900EA3E56 /* ThomasValidationInfo.swift in Sources */,
+				6EAFC25B2FF2DEC8005FA58D /* AsyncViewResolver.swift in Sources */,
 				6E21C3F32FEC3C9700EA3E56 /* ThomasViewController.swift in Sources */,
 				6E21C3002FEC3B9900EA3E56 /* ThomasEmailRegistrationOptions.swift in Sources */,
 				6E21C3012FEC3B9900EA3E56 /* ThomasAutomatedAccessibilityAction.swift in Sources */,
@@ -6918,6 +6990,7 @@
 				6E21C3072FEC3B9900EA3E56 /* ThomasPropertyOverride.swift in Sources */,
 				6E21C3082FEC3B9900EA3E56 /* ThomasAccessibilityAction.swift in Sources */,
 				6E21C3092FEC3B9900EA3E56 /* ThomasButtonTapEffect.swift in Sources */,
+				6EAFC2812FF2F451005FA58D /* ThomasAudienceEditor.swift in Sources */,
 				6E21C30A2FEC3B9900EA3E56 /* ThomasSmsLocale.swift in Sources */,
 				6E21C30B2FEC3B9900EA3E56 /* ThomasActionsPayload.swift in Sources */,
 				6E21C30C2FEC3B9900EA3E56 /* NativeLayoutControlOptions.swift in Sources */,
@@ -6953,9 +7026,11 @@
 				6E21C3542FEC3BEF00EA3E56 /* ToggleLayout.swift in Sources */,
 				6E21C3552FEC3BEF00EA3E56 /* RadioInputController.swift in Sources */,
 				6E21C3562FEC3BEF00EA3E56 /* AirshipToggle.swift in Sources */,
+				6EAFC2562FF2DE15005FA58D /* ThomasLocalizer.swift in Sources */,
 				6E21C3572FEC3BEF00EA3E56 /* ScoreToggleLayout.swift in Sources */,
 				6E21C3582FEC3BEF00EA3E56 /* AirshipSwitchToggleStyle.swift in Sources */,
 				6E21C3592FEC3BEF00EA3E56 /* RadioInput.swift in Sources */,
+				6EAFC26E2FF2E34C005FA58D /* ThomasImageLoader.swift in Sources */,
 				6E21C35A2FEC3BEF00EA3E56 /* BasicToggleLayout.swift in Sources */,
 				6E21C35B2FEC3BEF00EA3E56 /* RadioInputToggleLayout.swift in Sources */,
 				6E21C35C2FEC3BEF00EA3E56 /* CheckboxToggleLayout.swift in Sources */,
@@ -6969,8 +7044,10 @@
 				6E21C3EB2FEC3C5F00EA3E56 /* EventHandlerViewModifier.swift in Sources */,
 				6E21C3EC2FEC3C5F00EA3E56 /* VisibilityViewModifier.swift in Sources */,
 				6E21C3ED2FEC3C5F00EA3E56 /* FormInputViewModifier.swift in Sources */,
+				6EAFC2592FF2DE20005FA58D /* ThomasExtensions.swift in Sources */,
 				6E21C3EE2FEC3C5F00EA3E56 /* EnableBehaviorModifiers.swift in Sources */,
 				6E21C3EF2FEC3C5F00EA3E56 /* StateSubscriptionsModifier.swift in Sources */,
+				6EAFC2712FF2EA87005FA58D /* ThomasWebViewFactory.swift in Sources */,
 				6E21C3F02FEC3C5F00EA3E56 /* FontViewModifier.swift in Sources */,
 				6E21C3F12FEC3C5F00EA3E56 /* TouchViewModifier.swift in Sources */,
 				6E21C38C2FEC3C1E00EA3E56 /* NativeVideoPlayer.swift in Sources */,
@@ -7011,6 +7088,7 @@
 				6E21C3AE2FEC3C1E00EA3E56 /* ViewExtensions.swift in Sources */,
 				6E21C3C92FEC3C4600EA3E56 /* PagerState.swift in Sources */,
 				6E21C3CA2FEC3C4600EA3E56 /* ThomasFormFieldProcessor.swift in Sources */,
+				6EAFC2762FF2ECEE005FA58D /* ThomasActionRunner.swift in Sources */,
 				6E21C3CB2FEC3C4600EA3E56 /* RadioInputState.swift in Sources */,
 				6E21C3CC2FEC3C4600EA3E56 /* EnvironmentValues.swift in Sources */,
 				6E21C3FB2FEC3CF500EA3E56 /* VideoGroupState.swift in Sources */,
@@ -7036,6 +7114,7 @@
 				6E21C3DF2FEC3C4600EA3E56 /* ThomasOutcomeProcessor.swift in Sources */,
 				6E21C3E02FEC3C4600EA3E56 /* ThomasFormPayloadGenerator.swift in Sources */,
 				6E21C3AF2FEC3C1E00EA3E56 /* PagerSwipeDirection.swift in Sources */,
+				6EAFC25D2FF2DEE5005FA58D /* AirshipWebViewChallengeResolver.swift in Sources */,
 				6E21C31D2FEC3B9900EA3E56 /* ThomasViewInfo.swift in Sources */,
 				6E21C31E2FEC3B9900EA3E56 /* ThomasAttributeName.swift in Sources */,
 				6E21C31F2FEC3B9900EA3E56 /* ThomasFormValidationMode.swift in Sources */,
@@ -7054,9 +7133,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EB9667A2FEEEE1800459ED3 /* Extensions.swift in Sources */,
+				6EAFC2642FF2DFDB005FA58D /* DefaultThomasExtensions.swift in Sources */,
 				6EB966212FEEE3A800459ED3 /* ThomasDisplayListener.swift in Sources */,
 				6EB723872FEB450D001FBB9F /* AirshipSceneRendererExport.swift in Sources */,
+				6EAFC26A2FF2E026005FA58D /* DefaultWebViewChallengeResolver.swift in Sources */,
 				6EB9682D2FEF038F00459ED3 /* Thomas.swift in Sources */,
 				6EB9661F2FEEE38000459ED3 /* MessageDisplayHistory.swift in Sources */,
 				6EB9662A2FEEE42C00459ED3 /* ThomasLayoutEventMessageID.swift in Sources */,
@@ -7064,15 +7144,20 @@
 				6EB9662C2FEEE42C00459ED3 /* ThomasLayoutEventSource.swift in Sources */,
 				6EB9662D2FEEE42C00459ED3 /* ThomasLayoutMessageAnalyticsProtocol.swift in Sources */,
 				6EB9662E2FEEE42C00459ED3 /* ThomasLayoutEventContext.swift in Sources */,
+				6EAFC2682FF2DFF5005FA58D /* DefaultThomasLocalizer.swift in Sources */,
+				6EAFC2662FF2DFDD005FA58D /* DefaultAsyncViewResolver.swift in Sources */,
 				6EB9663F2FEEE44A00459ED3 /* ThomasLayoutPageSwipeEvent.swift in Sources */,
 				6EB966402FEEE44A00459ED3 /* ThomasLayoutPageViewEvent.swift in Sources */,
-				6EB96AD12FEF4A5500459ED3 /* AirshipExtensions.swift in Sources */,
 				6EB966412FEEE44A00459ED3 /* ThomasLayoutResolutionEvent.swift in Sources */,
 				6EB966422FEEE44A00459ED3 /* ThomasLayoutFormDisplayEvent.swift in Sources */,
+				6EAFC27F2FF2EFD2005FA58D /* DefaultThomasActionRunner.swift in Sources */,
+				6EAFC2732FF2EAB0005FA58D /* DefaultThomasWebViewFactory.swift in Sources */,
 				6EB966432FEEE44A00459ED3 /* ThomasLayoutFormResultEvent.swift in Sources */,
 				6EB966442FEEE44A00459ED3 /* ThomasLayoutPagerCompletedEvent.swift in Sources */,
+				6EAFC2832FF2F46E005FA58D /* DefaultThomasAudienceEditor.swift in Sources */,
 				6EB966452FEEE44A00459ED3 /* ThomasLayoutPermissionResultEvent.swift in Sources */,
 				6EB966462FEEE44A00459ED3 /* ThomasLayoutDisplayEvent.swift in Sources */,
+				6EAFC26C2FF2E32E005FA58D /* DefaultThomasImageLoader.swift in Sources */,
 				6EB9664D2FEEE46D00459ED3 /* AirshipThomasWebView.swift in Sources */,
 				6EB966472FEEE44A00459ED3 /* ThomasLayoutPagerSummaryEvent.swift in Sources */,
 				6EB966482FEEE44A00459ED3 /* ThomasLayoutButtonTapEvent.swift in Sources */,
@@ -7150,6 +7235,7 @@
 				6EB966772FEEEDD800459ED3 /* TestThomasLayoutEvent.swift in Sources */,
 				6EB9665A2FEEED1700459ED3 /* ThomasLayoutEventRecorderTest.swift in Sources */,
 				6EB9667E2FEEEEB800459ED3 /* TestAnalytics.swift in Sources */,
+				6EAFC2932FF2F9B2005FA58D /* DefaultThomasImageLoaderTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7278,7 +7364,6 @@
 				6E6ED1432683B8FA00A2CBD0 /* TestDate.swift in Sources */,
 				6E92ECA7284AC1120038802D /* EnableFeatureActionTest.swift in Sources */,
 				6E6EF9E7270625C400D30C35 /* AirshipEventsTest.swift in Sources */,
-				6ED2F5292B7FC59F000AFC80 /* AirshipColorTests.swift in Sources */,
 				6E4A468028EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */,
 				6E66DDA62E95A68300D44555 /* WorkRateLimiterTests.swift in Sources */,
 				6E4007182A153AFE0013C2DE /* RemoteDataURLFactoryTest.swift in Sources */,
@@ -7295,7 +7380,6 @@
 				6EE49C262A1446B100AB1CF4 /* RemoteDataTestUtils.swift in Sources */,
 				6E96ED1429417A600053CC91 /* EventStoreTest.swift in Sources */,
 				6E299FD528D13D00001305A7 /* DefaultAirshipRequestSessionTest.swift in Sources */,
-				6E146EDD2F52537000320A36 /* AishipFontTests.swift in Sources */,
 				6E92ECA5284A7A5C0038802D /* TestPermissionPrompter.swift in Sources */,
 				6068E0062B2A190300349E82 /* CustomEventTest.swift in Sources */,
 				6E664BE526C5817B00A2C8E5 /* TestContact.swift in Sources */,

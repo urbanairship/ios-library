@@ -96,24 +96,6 @@ private final class EventHandlerOutcomeTestDelegate: ThomasDelegate {
         dismissals.append(cancel)
     }
 
-    func runActions(_ actions: AirshipJSON, layoutContext: ThomasLayoutContext) {}
-    func registerChannels(_ channels: [ThomasChannelRegistration]) {}
-    func applyAttributes(_ attributes: [ThomasAttribute]) {}
-    func loadImage(url: String) async throws -> AirshipImageData { throw CancellationError() }
-    func prefetchImages(_ urls: [String]) async throws -> String? { nil }
-    func releasePrefetchedImages(token: String) {}
-    func localizedString(key: String) -> String? { nil }
-
-#if !os(tvOS) && !os(watchOS)
-    func makeWebView(
-        url: String,
-        layoutContext: ThomasLayoutContext,
-        isLoading: Binding<Bool>,
-        onClose: @escaping @MainActor () -> Void
-    ) -> any View {
-        EmptyView()
-    }
-#endif
 }
 
 @MainActor

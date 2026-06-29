@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Testing
-@testable import AirshipCore
+@testable import AirshipBasement
 import SwiftUI
 
 #if canImport(UIKit)

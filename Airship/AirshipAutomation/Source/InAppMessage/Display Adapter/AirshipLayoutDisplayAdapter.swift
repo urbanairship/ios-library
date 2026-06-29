@@ -345,31 +345,29 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         return try await withCheckedThrowingContinuation { continuation in
             let imageProvider = ExtendableAssetCacheImageProvider(parent: self.provider)
 #if !os(tvOS) && !os(watchOS)
-            let listener = ThomasDisplayListener(
-                analytics: analytics,
+            let extensions = DefaultThomasExtensions(
+                imageProvider: imageProvider,
                 actionRunner: actionRunner,
-                nativeBridgeExtension: InAppMessageNativeBridgeExtension(
-                    message: message
-                ),
-                imageProvider: imageProvider
-            ) { result in
-                continuation.resume(returning: result.automationDisplayResult)
-            }
+                nativeBridgeExtension: InAppMessageNativeBridgeExtension(message: message)
+            )
 #else
+            let extensions = DefaultThomasExtensions(
+                imageProvider: imageProvider,
+                actionRunner: actionRunner
+            )
+#endif
             let listener = ThomasDisplayListener(
-                analytics: analytics,
-                actionRunner: actionRunner,
-                imageProvider: imageProvider
+                analytics: analytics
             ) { result in
                 continuation.resume(returning: result.automationDisplayResult)
             }
-#endif
 
             do {
                 try Thomas.display(
                     layout: layout,
                     displayTarget: displayTarget,
                     delegate: listener,
+                    extensions: extensions,
                     extras: message.extras,
                     priority: priority
                 )

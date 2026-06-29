@@ -13,7 +13,7 @@ import AirshipCore
 struct AirshipThomasWebView: View {
 
     let url: String
-    let layoutContext: ThomasLayoutContext
+    let layoutContext: @MainActor () -> ThomasLayoutContext
     let actionRunner: (any ThomasActionRunner)?
     let nativeBridgeExtension: (any NativeBridgeExtensionDelegate)?
     @Binding var isLoading: Bool
@@ -40,7 +40,7 @@ private struct WebViewRepresentable: AirshipNativeViewRepresentable {
 #endif
 
     let url: String
-    let layoutContext: ThomasLayoutContext
+    let layoutContext: @MainActor () -> ThomasLayoutContext
     let actionRunner: (any ThomasActionRunner)?
     let nativeBridgeExtension: (any NativeBridgeExtensionDelegate)?
     @Binding var isLoading: Bool
@@ -91,7 +91,7 @@ private struct WebViewRepresentable: AirshipNativeViewRepresentable {
                 return await actionRunner.run(
                     actionName: name,
                     arguments: arguments,
-                    layoutContext: layoutContext
+                    layoutContext: layoutContext()
                 )
             }
             return await ActionRunner.run(actionName: name, arguments: arguments)

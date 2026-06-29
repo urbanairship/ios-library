@@ -17,9 +17,6 @@ final class TestThomasDelegate: ThomasDelegate {
     var reportedEvents: [ThomasReportingEvent] = []
     var dismissals: [Bool] = []
     var stateChanges: [AirshipJSON] = []
-    var ranActions: [AirshipJSON] = []
-    var registeredChannels: [ThomasChannelRegistration] = []
-    var appliedAttributes: [ThomasAttribute] = []
 
     func onVisibilityChanged(isVisible: Bool, isForegrounded: Bool) {
         visibilityChanges.append((isVisible, isForegrounded))
@@ -36,52 +33,6 @@ final class TestThomasDelegate: ThomasDelegate {
     func onStateChanged(_ state: AirshipJSON) {
         stateChanges.append(state)
     }
-
-    func runActions(_ actions: AirshipJSON, layoutContext: ThomasLayoutContext) {
-        ranActions.append(actions)
-    }
-
-    func registerChannels(_ channels: [ThomasChannelRegistration]) {
-        registeredChannels.append(contentsOf: channels)
-    }
-
-    func applyAttributes(_ attributes: [ThomasAttribute]) {
-        appliedAttributes.append(contentsOf: attributes)
-    }
-
-    var loadedImageURLs: [String] = []
-    var prefetchedImages: [[String]] = []
-    var releasedTokens: [String] = []
-    var localizedStrings: [String: String] = [:]
-
-    func loadImage(url: String) async throws -> AirshipImageData {
-        loadedImageURLs.append(url)
-        throw CancellationError()
-    }
-
-    func prefetchImages(_ urls: [String]) async throws -> String? {
-        prefetchedImages.append(urls)
-        return urls.isEmpty ? nil : "token-\(prefetchedImages.count)"
-    }
-
-    func releasePrefetchedImages(token: String) {
-        releasedTokens.append(token)
-    }
-
-    func localizedString(key: String) -> String? {
-        localizedStrings[key]
-    }
-
-#if !os(tvOS) && !os(watchOS)
-    func makeWebView(
-        url: String,
-        layoutContext: ThomasLayoutContext,
-        isLoading: Binding<Bool>,
-        onClose: @escaping @MainActor () -> Void
-    ) -> any View {
-        EmptyView()
-    }
-#endif
 }
 
 @MainActor
@@ -330,7 +281,12 @@ struct ThomasEnvironmentTest {
 
     @Test
     func testSubmitFormForwardsChannelsAndAttributes() {
-        let (env, delegate, _) = makeEnvironment()
+        let delegate = TestThomasDelegate()
+        let audienceEditor = StubThomasAudienceEditor()
+        let env = ThomasEnvironment(
+            delegate: delegate,
+            extensions: TestThomasExtensions(audienceEditor: audienceEditor)
+        )
 
         let result = ThomasFormResult(
             identifier: "test-form",
@@ -356,10 +312,10 @@ struct ThomasEnvironmentTest {
             layoutState: .empty
         )
 
-        // Reports the form result and forwards channels/attributes to the delegate.
+        // Reports the form result to the delegate; forwards channels/attributes to the audience editor.
         #expect(delegate.reportedEvents.count == 1)
-        #expect(delegate.registeredChannels == channels)
-        #expect(delegate.appliedAttributes == attributes)
+        #expect(audienceEditor.registeredChannels == channels)
+        #expect(audienceEditor.appliedAttributes == attributes)
     }
 
     // MARK: - Button Event Tests
@@ -824,22 +780,30 @@ struct ThomasEnvironmentTest {
 
     @Test
     func testRunActionsWithNilPayload() {
-        let (env, delegate, _) = makeEnvironment()
+        let actionRunner = StubThomasActionRunner()
+        let env = ThomasEnvironment(
+            delegate: TestThomasDelegate(),
+            extensions: TestThomasExtensions(actionRunner: actionRunner)
+        )
 
-        // Should not forward to the delegate with a nil payload
+        // Should not forward to the action runner with a nil payload
         env.runActions(nil, layoutState: .empty)
 
-        #expect(delegate.ranActions.isEmpty)
+        #expect(actionRunner.ranActions.isEmpty)
     }
 
     @Test
-    func testRunActionsForwardsToDelegate() {
-        let (env, delegate, _) = makeEnvironment()
+    func testRunActionsForwardsToActionRunner() {
+        let actionRunner = StubThomasActionRunner()
+        let env = ThomasEnvironment(
+            delegate: TestThomasDelegate(),
+            extensions: TestThomasExtensions(actionRunner: actionRunner)
+        )
 
         let actions: AirshipJSON = .object(["test_action": .string("test_value")])
         env.runActions(ThomasActionsPayload(value: actions), layoutState: .empty)
 
-        #expect(delegate.ranActions == [actions])
+        #expect(actionRunner.ranActions == [actions])
     }
 
     // MARK: - Integration Tests
@@ -941,31 +905,32 @@ struct ThomasEnvironmentTest {
     // MARK: - Localization
 
     @Test
-    func localizedStringComesFromDelegate() {
-        let delegate = TestThomasDelegate()
-        delegate.localizedStrings = ["greeting": "Hello"]
-        let (env, _, _) = makeEnvironment(delegate: delegate)
+    func localizedStringComesFromLocalizer() {
+        let extensions = TestThomasExtensions(
+            localizer: TestThomasLocalizer(strings: ["greeting": "Hello"])
+        )
+        let env = ThomasEnvironment(delegate: TestThomasDelegate(), extensions: extensions)
 
         #expect(env.localizedString(key: "greeting") == "Hello")
         #expect(env.localizedString(key: "not_a_key") == nil)
     }
 
     @Test
-    func localizedStringUsesCustomDelegateWhenOverridden() {
-        let delegate = CustomLocalizingDelegate()
-        let env = ThomasEnvironment(delegate: delegate, extensions: TestThomasExtensions())
+    func localizedStringUsesCustomLocalizerWhenOverridden() {
+        let extensions = TestThomasExtensions(
+            localizer: TestThomasLocalizer(unknownKeyPrefix: "custom-")
+        )
+        let env = ThomasEnvironment(delegate: TestThomasDelegate(), extensions: extensions)
 
         #expect(env.localizedString(key: "any_key") == "custom-any_key")
-        #expect(delegate.localizedKeys == ["any_key"])
     }
 
     @Test
     func resolveLocalizedUsesFirstMatchingRef() {
-        let delegate = CustomLocalizingDelegate(strings: [
-            "missing": nil,
-            "found": "Found"
-        ])
-        let env = ThomasEnvironment(delegate: delegate, extensions: TestThomasExtensions())
+        let extensions = TestThomasExtensions(
+            localizer: TestThomasLocalizer(strings: ["missing": nil, "found": "Found"])
+        )
+        let env = ThomasEnvironment(delegate: TestThomasDelegate(), extensions: extensions)
 
         let localized = ThomasAccessibleInfo.Localized(
             ref: nil,
@@ -1008,10 +973,10 @@ struct ThomasEnvironmentTest {
 
     @Test
     func resolveContentDescriptionUsesLocalizedRef() {
-        let delegate = CustomLocalizingDelegate(strings: [
-            "content_key": "Localized description"
-        ])
-        let env = ThomasEnvironment(delegate: delegate, extensions: TestThomasExtensions())
+        let extensions = TestThomasExtensions(
+            localizer: TestThomasLocalizer(strings: ["content_key": "Localized description"])
+        )
+        let env = ThomasEnvironment(delegate: TestThomasDelegate(), extensions: extensions)
 
         let accessible = ThomasAccessibleInfo(
             contentDescription: nil,
@@ -1028,10 +993,10 @@ struct ThomasEnvironmentTest {
 
     @Test
     func resolveLabelStringUsesLocalizedRef() throws {
-        let delegate = CustomLocalizingDelegate(strings: [
-            "label_key": "Localized label"
-        ])
-        let env = ThomasEnvironment(delegate: delegate, extensions: TestThomasExtensions())
+        let extensions = TestThomasExtensions(
+            localizer: TestThomasLocalizer(strings: ["label_key": "Localized label"])
+        )
+        let env = ThomasEnvironment(delegate: TestThomasDelegate(), extensions: extensions)
         let thomasState = ThomasState(onStateChange: { _ in })
 
         let labelJSON = """
@@ -1064,51 +1029,87 @@ struct ThomasEnvironmentTest {
     }
 }
 
+/// Minimal `ThomasExtensions` for tests that don't exercise async views. Shared across the
+/// SceneRenderer test target.
+struct TestThomasExtensions: ThomasExtensions {
+    var asyncViewResolver: any AsyncViewResolver = StubAsyncViewResolver()
+    var webViewChallengeResolver: any AirshipWebViewChallengeResolver = StubWebViewChallengeResolver()
+    var inputValidator: (any AirshipInputValidation.Validator)? = nil
+    var localizer: any ThomasLocalizer = TestThomasLocalizer()
+    var imageLoader: any ThomasImageLoader = EmptyThomasImageLoader()
+    var actionRunner: any ThomasActionRunner = StubThomasActionRunner()
+    var audienceEditor: any ThomasAudienceEditor = StubThomasAudienceEditor()
+#if !os(tvOS) && !os(watchOS)
+    var webViewFactory: any ThomasWebViewFactory = StubThomasWebViewFactory()
+#endif
+}
+
 @MainActor
-private final class CustomLocalizingDelegate: ThomasDelegate {
-    private let strings: [String: String?]
-    private(set) var localizedKeys: [String] = []
+final class StubThomasActionRunner: ThomasActionRunner {
+    private(set) var ranActions: [AirshipJSON] = []
+    nonisolated init() {}
 
-    init(strings: [String: String?] = [:]) {
-        self.strings = strings
+    func runAsync(actions: AirshipJSON, layoutContext: ThomasLayoutContext) {
+        ranActions.append(actions)
     }
 
-    func onVisibilityChanged(isVisible: Bool, isForegrounded: Bool) {}
-    func onReportingEvent(_ event: ThomasReportingEvent) {}
-    func onDismissed(cancel: Bool) {}
-    func runActions(_ actions: AirshipJSON, layoutContext: ThomasLayoutContext) {}
-    func registerChannels(_ channels: [ThomasChannelRegistration]) {}
-    func applyAttributes(_ attributes: [ThomasAttribute]) {}
-    func loadImage(url: String) async throws -> AirshipImageData { throw CancellationError() }
-    func prefetchImages(_ urls: [String]) async throws -> String? { nil }
-    func releasePrefetchedImages(token: String) {}
-
-    func localizedString(key: String) -> String? {
-        localizedKeys.append(key)
-        if strings.keys.contains(key) {
-            return strings[key] ?? nil
-        }
-        return "custom-\(key)"
+    func run(actionName: String, arguments: ActionArguments, layoutContext: ThomasLayoutContext) async -> ActionResult {
+        .completed(.null)
     }
+}
+
+@MainActor
+final class StubThomasAudienceEditor: ThomasAudienceEditor {
+    private(set) var registeredChannels: [ThomasChannelRegistration] = []
+    private(set) var appliedAttributes: [ThomasAttribute] = []
+    nonisolated init() {}
+
+    func registerChannels(_ channels: [ThomasChannelRegistration]) {
+        registeredChannels.append(contentsOf: channels)
+    }
+
+    func applyAttributes(_ attributes: [ThomasAttribute]) {
+        appliedAttributes.append(contentsOf: attributes)
+    }
+}
+
+/// No-op image loader for tests that don't exercise image loading.
+struct EmptyThomasImageLoader: ThomasImageLoader {
+    func load(url: String) async throws -> AirshipImageData {
+        throw AirshipErrors.error("No image loader configured")
+    }
+    func prefetch(urls: [String]) async throws {}
+    func releaseAll() {}
+}
 
 #if !os(tvOS) && !os(watchOS)
+struct StubThomasWebViewFactory: ThomasWebViewFactory {
     func makeWebView(
         url: String,
-        layoutContext: ThomasLayoutContext,
+        layoutContext: @escaping @MainActor () -> ThomasLayoutContext,
         isLoading: Binding<Bool>,
         onClose: @escaping @MainActor () -> Void
     ) -> any View {
         EmptyView()
     }
-#endif
 }
+#endif
 
-/// Minimal `ThomasExtensions` for tests that don't exercise async views. Shared across the
-/// SceneRenderer test target.
-struct TestThomasExtensions: ThomasExtensions {
-    let asyncViewResolver: any AsyncViewResolver = StubAsyncViewResolver()
-    let webViewChallengeResolver: any AirshipWebViewChallengeResolver = StubWebViewChallengeResolver()
-    let inputValidator: (any AirshipInputValidation.Validator)? = nil
+/// Configurable localizer for tests: returns mapped strings, optionally a `"<prefix><key>"` for
+/// unmapped keys (else `nil`).
+struct TestThomasLocalizer: ThomasLocalizer {
+    var strings: [String: String?] = [:]
+    var unknownKeyPrefix: String? = nil
+
+    func localizedString(key: String) -> String? {
+        if strings.keys.contains(key) {
+            return strings[key] ?? nil
+        }
+        if let unknownKeyPrefix {
+            return "\(unknownKeyPrefix)\(key)"
+        }
+        return nil
+    }
 }
 
 struct StubAsyncViewResolver: AsyncViewResolver {

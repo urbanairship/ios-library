@@ -50,7 +50,7 @@ struct Media: View {
         case .image:
             ThomasAsyncImage(
                 url: resolvedURLSelectors?.resolve(colorScheme: colorScheme) ?? resolvedURL,
-                loadImage: thomasEnvironment.loadImage
+                loadImage: thomasEnvironment.imageLoader.load
             ) { image, imageSize in
                 image.fitMedia(
                     mediaFit: self.info.properties.mediaFit,
