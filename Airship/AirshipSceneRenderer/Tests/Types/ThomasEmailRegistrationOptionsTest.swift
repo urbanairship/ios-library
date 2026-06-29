@@ -1,15 +1,16 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AirshipBasement
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
-class ThomasEmailRegistrationOptionsTest: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct ThomasEmailRegistrationOptionsTest {
 
-    private let date: Date = Date.now
-
-    func testCommercialFromJSON() throws {
+    @Test
+    func commercialFromJSON() throws {
         let json = """
         {
            "type": "commercial",
@@ -28,10 +29,11 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
                 properties: try AirshipJSON.wrap(["cool": "prop"])
             )
         )
-        XCTAssertEqual(expected, options)
+        #expect(expected == options)
     }
 
-    func testCommercialNoPropertiesFromJSON() throws {
+    @Test
+    func commercialNoPropertiesFromJSON() throws {
         let json = """
         {
            "type": "commercial",
@@ -47,10 +49,11 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
                 properties: nil
             )
         )
-        XCTAssertEqual(expected, options)
+        #expect(expected == options)
     }
 
-    func testTransactionalFromJSON() throws {
+    @Test
+    func transactionalFromJSON() throws {
         let json = """
         {
            "type": "transactional",
@@ -67,10 +70,11 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
                 properties: try AirshipJSON.wrap(["cool": "prop"])
             )
         )
-        XCTAssertEqual(expected, options)
+        #expect(expected == options)
     }
 
-    func testTransactionalNoPropertiesFromJSON() throws {
+    @Test
+    func transactionalNoPropertiesFromJSON() throws {
         let json = """
         {
            "type": "transactional"
@@ -84,10 +88,11 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
                 properties: nil
             )
         )
-        XCTAssertEqual(expected, options)
+        #expect(expected == options)
     }
 
-    func testDoubleOptInFromJSON() throws {
+    @Test
+    func doubleOptInFromJSON() throws {
         let json = """
         {
            "type": "double_opt_in",
@@ -104,10 +109,11 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
                 properties: try AirshipJSON.wrap(["cool": "prop"])
             )
         )
-        XCTAssertEqual(expected, options)
+        #expect(expected == options)
     }
 
-    func testDoubleOptInNoPropertiesFromJSON() throws {
+    @Test
+    func doubleOptInNoPropertiesFromJSON() throws {
         let json = """
         {
            "type": "double_opt_in"
@@ -121,7 +127,6 @@ class ThomasEmailRegistrationOptionsTest: XCTestCase {
                 properties: nil
             )
         )
-        XCTAssertEqual(expected, options)
+        #expect(expected == options)
     }
-
 }

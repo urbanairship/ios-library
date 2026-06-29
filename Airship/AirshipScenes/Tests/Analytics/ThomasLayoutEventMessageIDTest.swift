@@ -1,12 +1,14 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Foundation
+import Testing
 
 import AirshipCore
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 @testable import AirshipScenes
 
-class ThomasLayoutEventMessageIDTest: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct ThomasLayoutEventMessageIDTest {
 
     private let campaigns = try! AirshipJSON.wrap(
         ["campaign1": "data1", "campaign2": "data2"]
@@ -14,18 +16,21 @@ class ThomasLayoutEventMessageIDTest: XCTestCase {
 
     private let scheduleID = UUID().uuidString
 
-
-    func testLegacy() async throws {
+    @Test
+    func legacy() async throws {
         let messageID = ThomasLayoutEventMessageID.legacy(identifier: scheduleID)
 
         let expectedJSON = """
            "\(scheduleID)"
         """
 
-        XCTAssertEqual(try AirshipJSON.wrap(messageID), try AirshipJSON.from(json: expectedJSON))
+        let actual = try AirshipJSON.wrap(messageID)
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        #expect(actual == expected)
     }
 
-    func testAppDefined() async throws {
+    @Test
+    func appDefined() async throws {
         let messageID = ThomasLayoutEventMessageID.appDefined(identifier: scheduleID)
 
         let expectedJSON = """
@@ -34,23 +39,29 @@ class ThomasLayoutEventMessageIDTest: XCTestCase {
            }
         """
 
-        XCTAssertEqual(try AirshipJSON.wrap(messageID), try AirshipJSON.from(json: expectedJSON))
+        let actual = try AirshipJSON.wrap(messageID)
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        #expect(actual == expected)
     }
 
-    func testAirship() async throws {
-        let messageID = ThomasLayoutEventMessageID.airship(identifier: scheduleID, campaigns: self.campaigns)
+    @Test
+    func airship() async throws {
+        let messageID = ThomasLayoutEventMessageID.airship(identifier: scheduleID, campaigns: campaigns)
 
         let expectedJSON = """
            {
               "message_id": "\(scheduleID)",
-              "campaigns": \(try self.campaigns.toString()),
+              "campaigns": \(try campaigns.toString()),
            }
         """
 
-        XCTAssertEqual(try AirshipJSON.wrap(messageID), try AirshipJSON.from(json: expectedJSON))
+        let actual = try AirshipJSON.wrap(messageID)
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        #expect(actual == expected)
     }
 
-    func testAirshipNoCampaigns() async throws {
+    @Test
+    func airshipNoCampaigns() async throws {
         let messageID = ThomasLayoutEventMessageID.airship(identifier: scheduleID, campaigns: nil)
 
         let expectedJSON = """
@@ -59,28 +70,34 @@ class ThomasLayoutEventMessageIDTest: XCTestCase {
            }
         """
 
-        XCTAssertEqual(try AirshipJSON.wrap(messageID), try AirshipJSON.from(json: expectedJSON))
+        let actual = try AirshipJSON.wrap(messageID)
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        #expect(actual == expected)
     }
 
-    func testAirshipWithSendMetadata() async throws {
+    @Test
+    func airshipWithSendMetadata() async throws {
         let messageID = ThomasLayoutEventMessageID.airship(
             identifier: scheduleID,
-            campaigns: self.campaigns,
+            campaigns: campaigns,
             sendMetadata: "encoded-send-metadata"
         )
 
         let expectedJSON = """
            {
               "message_id": "\(scheduleID)",
-              "campaigns": \(try self.campaigns.toString()),
+              "campaigns": \(try campaigns.toString()),
               "com.urbanairship.metadata": "encoded-send-metadata"
            }
         """
 
-        XCTAssertEqual(try AirshipJSON.wrap(messageID), try AirshipJSON.from(json: expectedJSON))
+        let actual = try AirshipJSON.wrap(messageID)
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        #expect(actual == expected)
     }
 
-    func testAirshipSendMetadataOmittedWhenNil() async throws {
+    @Test
+    func airshipSendMetadataOmittedWhenNil() async throws {
         let messageID = ThomasLayoutEventMessageID.airship(
             identifier: scheduleID,
             campaigns: nil,
@@ -93,6 +110,8 @@ class ThomasLayoutEventMessageIDTest: XCTestCase {
            }
         """
 
-        XCTAssertEqual(try AirshipJSON.wrap(messageID), try AirshipJSON.from(json: expectedJSON))
+        let actual = try AirshipJSON.wrap(messageID)
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        #expect(actual == expected)
     }
 }

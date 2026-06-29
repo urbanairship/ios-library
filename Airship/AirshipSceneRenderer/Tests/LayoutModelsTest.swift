@@ -1,13 +1,16 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AirshipBasement
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
-class LayoutModelsTest: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct LayoutModelsTest {
 
-    func testSize() throws {
+    @Test
+    func size() throws {
         let json = """
             {
                 "presentation": {
@@ -45,19 +48,20 @@ class LayoutModelsTest: XCTestCase {
             }
             """
 
-        let layout = try! self.decode(json.data(using: .utf8)!)
+        let layout = try decode(json.data(using: .utf8)!)
         guard case .container(let container) = layout.view else {
-            XCTFail()
+            Issue.record("Expected container view")
             return
         }
 
         let size = container.properties.items.first?.size
 
-        XCTAssertEqual(ThomasSizeConstraint.auto, size?.height)
-        XCTAssertEqual(ThomasSizeConstraint.percent(75), size?.width)
+        #expect(ThomasSizeConstraint.auto == size?.height)
+        #expect(ThomasSizeConstraint.percent(75) == size?.width)
     }
 
-    func testComplexExample() throws {
+    @Test
+    func complexExample() throws {
         let json = """
             {
                 "presentation": {
@@ -136,13 +140,10 @@ class LayoutModelsTest: XCTestCase {
             }
             """
 
-        let layout = try self.decode(json.data(using: .utf8)!)
-        XCTAssertNotNil(layout)
+        _ = try decode(json.data(using: .utf8)!)
     }
 
     private func decode(_ data: Data) throws -> AirshipLayout {
         try JSONDecoder().decode(AirshipLayout.self, from: data)
     }
-
 }
-

@@ -1,36 +1,35 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AirshipBasement
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
-class ThomasValidationTests: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct ThomasValidationTests {
 
-    func testValidVersions() throws {
+    @Test
+    func validVersions() throws {
         try (AirshipLayout.minLayoutVersion...AirshipLayout.maxLayoutVersion)
-            .map { self.layout(version: $0).data(using: .utf8)! }
+            .map { layout(version: $0).data(using: .utf8)! }
             .forEach {
                 let layout = try JSONDecoder().decode(AirshipLayout.self, from: $0)
-
-                XCTAssertTrue(
-                    layout.validate()
-                )
+                #expect(layout.validate())
             }
     }
 
-    func testInvalidVersions() throws {
+    @Test
+    func invalidVersions() throws {
         try ([AirshipLayout.minLayoutVersion - 1, AirshipLayout.maxLayoutVersion + 1])
-            .map { self.layout(version: $0).data(using: .utf8)! }
+            .map { layout(version: $0).data(using: .utf8)! }
             .forEach {
                 let layout = try JSONDecoder().decode(AirshipLayout.self, from: $0)
-                XCTAssertFalse(
-                    layout.validate()
-                )
+                #expect(!layout.validate())
             }
     }
 
-    func layout(version: Int) -> String {
+    private func layout(version: Int) -> String {
         """
         {
             "presentation": {

@@ -1,19 +1,20 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AirshipCore
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 @testable import AirshipScenes
 
-class ThomasLayoutEventRecorderTest: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct ThomasLayoutEventRecorderTest {
 
-    private let airshipAnalytics: TestAnalytics = TestAnalytics()
-    private let meteredUsage: TestMeteredUsage = TestMeteredUsage()
+    private let airshipAnalytics = TestAnalytics()
+    private let meteredUsage = TestMeteredUsage()
+    private let eventRecorder: ThomasLayoutEventRecorder
 
-    private var eventRecorder: ThomasLayoutEventRecorder!
-
-    private let campaigns =  try! AirshipJSON.wrap(
+    private let campaigns = try! AirshipJSON.wrap(
         ["campaign1": "data1", "campaign2": "data2"]
     )
     private let experimentResult = ExperimentResult(
@@ -26,14 +27,15 @@ class ThomasLayoutEventRecorderTest: XCTestCase {
     private let reportingMetadata = AirshipJSON.string("reporting info")
     private let renderedLocale = try! AirshipJSON.wrap(["en-US"])
 
-    override func setUp() async throws {
+    init() {
         self.eventRecorder = ThomasLayoutEventRecorder(
-            airshipAnalytics:  airshipAnalytics,
+            airshipAnalytics: airshipAnalytics,
             meteredUsage: meteredUsage
         )
     }
 
-    func testEventData() async throws {
+    @Test
+    func eventData() async throws {
         let layoutEvent = TestThomasLayoutEvent(
             name: .appInit,
             data: TestData(field: "something", anotherField: "something something")
@@ -42,16 +44,15 @@ class ThomasLayoutEventRecorderTest: XCTestCase {
         let data = ThomasLayoutEventData(
             event: layoutEvent,
             context: ThomasLayoutEventContext(
-                reportingContext: self.reportingMetadata,
-                experimentsReportingData: self.experimentResult.reportingMetadata
+                reportingContext: reportingMetadata,
+                experimentsReportingData: experimentResult.reportingMetadata
             ),
             source: .airship,
-            messageID: .airship(identifier: self.scheduleID, campaigns: self.campaigns),
-            renderedLocale: self.renderedLocale
+            messageID: .airship(identifier: scheduleID, campaigns: campaigns),
+            renderedLocale: renderedLocale
         )
 
-
-        self.eventRecorder.recordEvent(thomasLayoutEventData: data)
+        eventRecorder.recordEvent(thomasLayoutEventData: data)
 
         let expectedJSON = """
         {
@@ -77,35 +78,35 @@ class ThomasLayoutEventRecorderTest: XCTestCase {
         }
         """
 
-        let event = self.airshipAnalytics.events.first!
+        let event = airshipAnalytics.events.first!
 
-        XCTAssertEqual(event.eventType, layoutEvent.name)
-        XCTAssertEqual(event.eventData, try AirshipJSON.from(json: expectedJSON))
+        #expect(event.eventType == layoutEvent.name)
+        let expectedEventData = try AirshipJSON.from(json: expectedJSON)
+        #expect(event.eventData == expectedEventData)
     }
 
-    func testConversionIDs() async throws {
+    @Test
+    func conversionIDs() async throws {
         let layoutEvent = TestThomasLayoutEvent(
             name: .featureFlagInteraction,
             data: TestData(field: "something", anotherField: "something something")
         )
 
-        self.airshipAnalytics.conversionSendID = UUID().uuidString
-        self.airshipAnalytics.conversionPushMetadata = UUID().uuidString
+        airshipAnalytics.conversionSendID = UUID().uuidString
+        airshipAnalytics.conversionPushMetadata = UUID().uuidString
 
         let data = ThomasLayoutEventData(
             event: layoutEvent,
             context: ThomasLayoutEventContext(
-                reportingContext: self.reportingMetadata,
-                experimentsReportingData: self.experimentResult.reportingMetadata
+                reportingContext: reportingMetadata,
+                experimentsReportingData: experimentResult.reportingMetadata
             ),
             source: .airship,
-            messageID: .airship(identifier: self.scheduleID, campaigns: self.campaigns),
-            renderedLocale: self.renderedLocale
+            messageID: .airship(identifier: scheduleID, campaigns: campaigns),
+            renderedLocale: renderedLocale
         )
 
-
-        self.eventRecorder.recordEvent(thomasLayoutEventData: data)
-
+        eventRecorder.recordEvent(thomasLayoutEventData: data)
 
         let expectedJSON = """
         {
@@ -128,18 +129,20 @@ class ThomasLayoutEventRecorderTest: XCTestCase {
            },
            "field":"something",
            "anotherField":"something something",
-           "conversion_send_id": "\(self.airshipAnalytics.conversionSendID!)",
-           "conversion_metadata": "\(self.airshipAnalytics.conversionPushMetadata!)"
+           "conversion_send_id": "\(airshipAnalytics.conversionSendID!)",
+           "conversion_metadata": "\(airshipAnalytics.conversionPushMetadata!)"
         }
         """
 
-        let event = self.airshipAnalytics.events.first!
+        let event = airshipAnalytics.events.first!
 
-        XCTAssertEqual(event.eventType, layoutEvent.name)
-        XCTAssertEqual(event.eventData, try AirshipJSON.from(json: expectedJSON))
+        #expect(event.eventType == layoutEvent.name)
+        let expectedEventData = try AirshipJSON.from(json: expectedJSON)
+        #expect(event.eventData == expectedEventData)
     }
 
-    func testEventDataError() async throws {
+    @Test
+    func eventDataError() async throws {
         let layoutEvent = TestThomasLayoutEvent(
             name: .appForeground,
             data: ErrorData(field: "something", anotherField: "something something")
@@ -148,20 +151,19 @@ class ThomasLayoutEventRecorderTest: XCTestCase {
         let data = ThomasLayoutEventData(
             event: layoutEvent,
             context: ThomasLayoutEventContext(
-                reportingContext: self.reportingMetadata,
-                experimentsReportingData: self.experimentResult.reportingMetadata
+                reportingContext: reportingMetadata,
+                experimentsReportingData: experimentResult.reportingMetadata
             ),
             source: .airship,
-            messageID: .airship(identifier: self.scheduleID, campaigns: self.campaigns),
-            renderedLocale: self.renderedLocale
+            messageID: .airship(identifier: scheduleID, campaigns: campaigns),
+            renderedLocale: renderedLocale
         )
 
-        self.eventRecorder.recordEvent(thomasLayoutEventData: data)
+        eventRecorder.recordEvent(thomasLayoutEventData: data)
 
-        XCTAssertTrue(self.airshipAnalytics.events.isEmpty)
+        #expect(airshipAnalytics.events.isEmpty)
     }
 }
-
 
 fileprivate struct TestData: Encodable, Sendable {
     var field: String
@@ -181,7 +183,6 @@ fileprivate struct ErrorData: Encodable, Sendable {
         throw AirshipErrors.error("Failed")
     }
 }
-
 
 actor TestMeteredUsage: AirshipMeteredUsage {
     var events: [AirshipMeteredUsageEvent] = []

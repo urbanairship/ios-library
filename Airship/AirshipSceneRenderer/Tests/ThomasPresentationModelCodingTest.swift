@@ -1,12 +1,14 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Foundation
+import Testing
 
 @testable import AirshipBasement
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
-final class ThomasPresentationModelCodingTest: XCTestCase {
-    
+@Suite(.timeLimit(.minutes(1)))
+struct ThomasPresentationModelCodingTest {
+
     private let simpleContentViewJson = """
     {
        "type":"label",
@@ -30,8 +32,9 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
        }
     }
     """
-    
-    func testBannerPresentationModelCodable() throws {
+
+    @Test
+    func bannerPresentationModelCodable() throws {
         let json = """
         {
           "type": "banner",
@@ -67,8 +70,9 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasPresentationInfo.self)
     }
-    
-    func testModalPresentationModelCodable() throws {
+
+    @Test
+    func modalPresentationModelCodable() throws {
         let json = """
         {
           "default_placement": {
@@ -111,8 +115,9 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasPresentationInfo.self)
     }
-    
-    func testEmbeddedPresentationModelCodable() throws {
+
+    @Test
+    func embeddedPresentationModelCodable() throws {
         let json = """
         {
           "type": "embedded",
@@ -133,8 +138,9 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasPresentationInfo.Embedded.self)
     }
-    
-    func testPresentationModelCodable() throws {
+
+    @Test
+    func presentationModelCodable() throws {
         let json = """
         {
           "default_placement": {
@@ -168,8 +174,9 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: ThomasPresentationInfo.self)
     }
-    
-    func testAirshipLayoutCodable() throws {
+
+    @Test
+    func airshipLayoutCodable() throws {
         let json = """
         {
           "version": 1,
@@ -279,10 +286,9 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
         """
         try decodeEncodeCompare(source: json, type: AirshipLayout.self)
     }
-    
-    
-    // MARK: - KeyboardAvoidanceMethod Tests
-    func testModalPresentationWithKeyboardAvoidanceSafeArea() throws {
+
+    @Test
+    func modalPresentationWithKeyboardAvoidanceSafeArea() throws {
         let json = """
         {
           "default_placement": {
@@ -298,28 +304,31 @@ final class ThomasPresentationModelCodingTest: XCTestCase {
         }
         """
         try decodeEncodeCompare(source: json, type: ThomasPresentationInfo.self)
-        
+
         let decoded = try JSONDecoder().decode(ThomasPresentationInfo.self, from: json.data(using: .utf8)!)
         if case .modal(let modal) = decoded {
-            XCTAssertEqual(modal.ios?.keyboardAvoidance, .safeArea)
+            #expect(modal.ios?.keyboardAvoidance == .safeArea)
         } else {
-            XCTFail("Expected modal presentation")
+            Issue.record("Expected modal presentation")
         }
     }
-    
+
     private func decodeEncodeCompare<T: Codable & Equatable>(source: String, type: T.Type) throws {
         let decoder = JSONDecoder()
         let encoder = JSONEncoder()
-        
+
         let decoded = try decoder.decode(type, from: source.data(using: .utf8)!)
         let json = try encoder.encode(decoded)
         let restored = try decoder.decode(type, from: json)
-        
-        XCTAssertEqual(restored, decoded)
-        
+
+        #expect(restored == decoded)
+
         let inputJson = try JSONSerialization.jsonObject(with: source.data(using: .utf8)!) as! [String: Any]
         let encodedJson = try JSONSerialization.jsonObject(with: json) as! [String: Any]
-        
-        XCTAssertEqual(try AirshipJSON.wrap(inputJson), try AirshipJSON.wrap(encodedJson))
+
+        let input = try AirshipJSON.wrap(inputJson)
+        let output = try AirshipJSON.wrap(encodedJson)
+
+        #expect(input == output)
     }
 }
