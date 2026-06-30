@@ -1,13 +1,14 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable import AirshipCore
 @testable import AirshipMessageCenter
 
-final class MessageCenterAPIClientTest: XCTestCase {
+struct MessageCenterAPIClientTest {
 
-    private var client: MessageCenterAPIClient! = nil
+    private let client: MessageCenterAPIClient
     private let session = TestAirshipRequestSession()
     private let user = MessageCenterUser(
         username: "username",
@@ -30,7 +31,7 @@ final class MessageCenterAPIClientTest: XCTestCase {
         )
     ]
 
-    override func setUpWithError() throws {
+    init() {
         self.client = MessageCenterAPIClient(
             config: .testConfig(),
             session: session
@@ -38,6 +39,7 @@ final class MessageCenterAPIClientTest: XCTestCase {
     }
 
     /// Tests retrieving the message list with success.
+    @Test
     func testRetrieveMessageListSuccess() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -78,16 +80,16 @@ final class MessageCenterAPIClientTest: XCTestCase {
 
         let messages = response.result!
         let message = messages[0] as MessageCenterMessage
-        XCTAssertEqual(message.id, "some_mesg_id")
-        XCTAssertEqual(message.title, "Message title")
-        XCTAssertEqual(message.contentType, .html)
+        #expect(message.id == "some_mesg_id")
+        #expect(message.title == "Message title")
+        #expect(message.contentType == .html)
 
         let request = self.session.lastRequest!
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/user/username/messages/",
+        #expect(
+            "https://device-api.urbanairship.com/api/user/username/messages/" ==
             request.url!.absoluteString
         )
-        XCTAssertEqual("GET", request.method)
+        #expect("GET" == request.method)
 
         let expectedHeaders = [
             "X-UA-Channel-ID": "some channel",
@@ -95,10 +97,11 @@ final class MessageCenterAPIClientTest: XCTestCase {
             "Accept": "application/vnd.urbanairship+json; version=3;"
         ]
 
-        XCTAssertEqual(expectedHeaders, request.headers)
+        #expect(expectedHeaders == request.headers)
     }
 
     /// Tests retrieving the message list with missing body failure
+    @Test
     func testRetrieveMessageMissingBody() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -107,19 +110,17 @@ final class MessageCenterAPIClientTest: XCTestCase {
             headerFields: [:]
         )
 
-        do {
-            let _ = try await self.client.retrieveMessageList(
+        await #expect(throws: (any Error).self) {
+            _ = try await self.client.retrieveMessageList(
                 user: self.user,
                 channelID: "some channel",
                 lastModified: nil
             )
-            XCTFail("Expected error")
-        } catch {
-            XCTAssertNotNil(error)
         }
     }
 
     /// Tests retrieving the message list with status code failure
+    @Test
     func testRetrieveMessageFailure() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -136,11 +137,12 @@ final class MessageCenterAPIClientTest: XCTestCase {
             lastModified: nil
         )
 
-        XCTAssertEqual(response.statusCode, 500)
-        XCTAssertNil(response.result)
+        #expect(response.statusCode == 500)
+        #expect(response.result == nil)
     }
 
     /// Tests retrieving the message list with parsing failure
+    @Test
     func testRetrieveMessageJSONParseFailure() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -151,19 +153,17 @@ final class MessageCenterAPIClientTest: XCTestCase {
 
         self.session.data = "{\"ok\":true}".data(using: .utf8)
 
-        do {
-            let _ = try await self.client.retrieveMessageList(
+        await #expect(throws: (any Error).self) {
+            _ = try await self.client.retrieveMessageList(
                 user: self.user,
                 channelID: "some channel",
                 lastModified: nil
             )
-            XCTFail("Expected error")
-        } catch {
-            XCTAssertNotNil(error)
         }
     }
 
     /// Tests batch mark as read success.
+    @Test
     func testBatchMarkAsReadSuccess() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -188,13 +188,14 @@ final class MessageCenterAPIClientTest: XCTestCase {
             "messages": [["foo": "reporting"]]
         ]
 
-        XCTAssertEqual(
-            expected as NSDictionary,
+        #expect(
+            expected as NSDictionary ==
             requestPayload as! NSDictionary
         )
     }
 
     /// Tests batch mark as read failure.
+    @Test
     func testBatchMarkAsReadFailure() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -209,10 +210,11 @@ final class MessageCenterAPIClientTest: XCTestCase {
             user: self.user,
             channelID: "some channel"
         )
-        XCTAssertEqual(500, response.statusCode)
+        #expect(500 == response.statusCode)
     }
 
     /// Tests batch delete success.
+    @Test
     func testBatchDeleteSuccess() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -237,13 +239,14 @@ final class MessageCenterAPIClientTest: XCTestCase {
             "messages": [["foo": "reporting"]]
         ]
 
-        XCTAssertEqual(
-            expected as NSDictionary,
+        #expect(
+            expected as NSDictionary ==
             requestPayload as! NSDictionary
         )
     }
 
     /// Tests batch delete failure.
+    @Test
     func testBatchDeleteAsReadFailure() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -258,10 +261,11 @@ final class MessageCenterAPIClientTest: XCTestCase {
             user: self.user,
             channelID: "some channel"
         )
-        XCTAssertEqual(500, response.statusCode)
+        #expect(500 == response.statusCode)
     }
 
     /// Tests creating user with success.
+    @Test
     func testCreateUserSuccess() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -281,19 +285,19 @@ final class MessageCenterAPIClientTest: XCTestCase {
             withChannelID: "some channel"
         )
         let request = self.session.lastRequest!
-        XCTAssertEqual(response.statusCode, 201)
-        XCTAssertNotNil(response.result)
-        XCTAssertEqual(response.result?.username, "some user id")
-        XCTAssertEqual(response.result?.password, "some password")
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/user/",
+        #expect(response.statusCode == 201)
+        #expect(response.result != nil)
+        #expect(response.result?.username == "some user id")
+        #expect(response.result?.password == "some password")
+        #expect(
+            "https://device-api.urbanairship.com/api/user/" ==
             request.url?.absoluteString
         )
-        XCTAssertEqual(
-            AirshipRequestAuth.channelAuthToken(identifier: "some channel"),
+        #expect(
+            AirshipRequestAuth.channelAuthToken(identifier: "some channel") ==
             request.auth
         )
-        XCTAssertEqual("POST", request.method)
+        #expect("POST" == request.method)
 
         let requestPayload = try JSONSerialization.jsonObject(
             with: request.body!
@@ -303,13 +307,14 @@ final class MessageCenterAPIClientTest: XCTestCase {
             "ios_channels": ["some channel"]
         ]
 
-        XCTAssertEqual(
-            expected as NSDictionary,
+        #expect(
+            expected as NSDictionary ==
             requestPayload as! NSDictionary
         )
     }
 
     /// Tests creating user with status code failure
+    @Test
     func testCreateUserFailure() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -321,11 +326,12 @@ final class MessageCenterAPIClientTest: XCTestCase {
         let response = try await self.client.createUser(
             withChannelID: "channelID"
         )
-        XCTAssertEqual(response.statusCode, 400)
-        XCTAssertNil(response.result)
+        #expect(response.statusCode == 400)
+        #expect(response.result == nil)
     }
 
     /// Tests create user with parsing failure
+    @Test
     func testCreateUserFailureJSONParseError() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -335,15 +341,13 @@ final class MessageCenterAPIClientTest: XCTestCase {
         )
 
         self.session.data = (try? AirshipJSON.wrap([:]).toData()) ?? Data()
-        do {
-            let _ = try await self.client.createUser(withChannelID: "channelID")
-            XCTFail("Expected error")
-        } catch {
-            XCTAssertNotNil(error)
+        await #expect(throws: (any Error).self) {
+            _ = try await self.client.createUser(withChannelID: "channelID")
         }
     }
 
     /// Tests updating user with success.
+    @Test
     func testUpdateUserSuccess() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -358,13 +362,13 @@ final class MessageCenterAPIClientTest: XCTestCase {
         )
 
         let request = self.session.lastRequest!
-        XCTAssertEqual(response.statusCode, 200)
-        XCTAssertNil(response.result)
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/user/username",
+        #expect(response.statusCode == 200)
+        #expect(response.result == nil)
+        #expect(
+            "https://device-api.urbanairship.com/api/user/username" ==
             request.url!.absoluteString
         )
-        XCTAssertEqual("POST", request.method)
+        #expect("POST" == request.method)
 
         let requestPayload = try JSONSerialization.jsonObject(
             with: request.body!
@@ -375,12 +379,13 @@ final class MessageCenterAPIClientTest: XCTestCase {
             ]
         ]
 
-        XCTAssertEqual(
-            expected as NSDictionary,
+        #expect(
+            expected as NSDictionary ==
             requestPayload as! NSDictionary
         )
     }
 
+    @Test
     func testRetrieveMessageListInvalidContentTypeBecomesUnknown() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -420,10 +425,11 @@ final class MessageCenterAPIClientTest: XCTestCase {
         )
 
         let messages = response.result!
-        XCTAssertEqual(messages.count, 1)
-        XCTAssertEqual(messages[0].contentType, .unknown("application/x-unknown"))
+        #expect(messages.count == 1)
+        #expect(messages[0].contentType == .unknown("application/x-unknown"))
     }
 
+    @Test
     func testRetrieveMessageListMissingContentTypeBecomesUnknown() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -462,11 +468,12 @@ final class MessageCenterAPIClientTest: XCTestCase {
         )
 
         let messages = response.result!
-        XCTAssertEqual(messages.count, 1)
-        XCTAssertEqual(messages[0].contentType, .unknown(nil))
+        #expect(messages.count == 1)
+        #expect(messages[0].contentType == .unknown(nil))
     }
 
     /// Tests creating user with status code failure
+    @Test
     func testUpdateUserFailure() async throws {
         self.session.response = HTTPURLResponse(
             url: URL(string: "www.anyurl.com")!,
@@ -479,8 +486,8 @@ final class MessageCenterAPIClientTest: XCTestCase {
                 self.user,
                 channelID: "some channel"
             )
-            XCTAssertEqual(response.statusCode, 400)
-            XCTAssertNil(response.result)
+            #expect(response.statusCode == 400)
+            #expect(response.result == nil)
         }
     }
 

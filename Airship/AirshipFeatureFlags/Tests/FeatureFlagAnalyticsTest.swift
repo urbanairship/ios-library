@@ -1,18 +1,20 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @testable
 import AirshipFeatureFlags
 @testable import AirshipCore
 
-final class FeatureFlagAnalyticsTest: XCTestCase {
+struct FeatureFlagAnalyticsTest {
     private let airshipAnalytics: TestAnalytics = TestAnalytics()
-    private var analytics: FeatureFlagAnalytics!
+    private let analytics: FeatureFlagAnalytics
 
-    override func setUp() {
+    init() {
         self.analytics = FeatureFlagAnalytics(airshipAnalytics: airshipAnalytics)
     }
 
+    @Test
     func testTrackInteractionDoesNotExist() {
         let flag = FeatureFlag(
             name: "foo",
@@ -27,9 +29,10 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
         )
 
         self.analytics.trackInteraction(flag: flag)
-        XCTAssertEqual(0, self.airshipAnalytics.events.count)
+        #expect(self.airshipAnalytics.events.count == 0)
     }
 
+    @Test
     func testTrackInteractionNoReportingInfo() {
         let flag = FeatureFlag(
             name: "foo",
@@ -40,9 +43,10 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
         )
 
         self.analytics.trackInteraction(flag: flag)
-        XCTAssertEqual(0, self.airshipAnalytics.events.count)
+        #expect(self.airshipAnalytics.events.count == 0)
     }
 
+    @Test
     func testTrackInteraction() throws {
         let flag = FeatureFlag(
             name: "some_flag",
@@ -68,14 +72,15 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
         """
 
         self.analytics.trackInteraction(flag: flag)
-        XCTAssertEqual(1, self.airshipAnalytics.events.count)
+        #expect(self.airshipAnalytics.events.count == 1)
 
         let event = self.airshipAnalytics.events.first!
-        XCTAssertEqual("feature_flag_interaction", event.eventType.reportingName)
-        XCTAssertEqual(AirshipEventPriority.normal, event.priority)
-        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
+        #expect(event.eventType.reportingName == "feature_flag_interaction")
+        #expect(event.priority == AirshipEventPriority.normal)
+        #expect(try AirshipJSON.from(json: expectedBody) == event.eventData)
     }
     
+    @Test
     func testTrackInteractionSupersede() throws {
         let flag = FeatureFlag(
             name: "some_flag",
@@ -103,14 +108,15 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
         """
 
         self.analytics.trackInteraction(flag: flag)
-        XCTAssertEqual(1, self.airshipAnalytics.events.count)
+        #expect(self.airshipAnalytics.events.count == 1)
 
         let event = self.airshipAnalytics.events.first!
-        XCTAssertEqual("feature_flag_interaction", event.eventType.reportingName)
-        XCTAssertEqual(AirshipEventPriority.normal, event.priority)
-        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
+        #expect(event.eventType.reportingName == "feature_flag_interaction")
+        #expect(event.priority == AirshipEventPriority.normal)
+        #expect(try AirshipJSON.from(json: expectedBody) == event.eventData)
     }
 
+    @Test
     func testTrackInteractionNoDeviceInfo() throws {
         let flag = FeatureFlag(
             name: "some_flag",
@@ -130,14 +136,15 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
         """
 
         self.analytics.trackInteraction(flag: flag)
-        XCTAssertEqual(1, self.airshipAnalytics.events.count)
+        #expect(self.airshipAnalytics.events.count == 1)
 
         let event = self.airshipAnalytics.events.first!
-        XCTAssertEqual("feature_flag_interaction", event.eventType.reportingName)
-        XCTAssertEqual(AirshipEventPriority.normal, event.priority)
-        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
+        #expect(event.eventType.reportingName == "feature_flag_interaction")
+        #expect(event.priority == AirshipEventPriority.normal)
+        #expect(try AirshipJSON.from(json: expectedBody) == event.eventData)
     }
 
+    @Test
     func testTrackInteractionEventFeed() async throws {
         let flag = FeatureFlag(
             name: "some_flag",
@@ -153,9 +160,9 @@ final class FeatureFlagAnalyticsTest: XCTestCase {
         self.analytics.trackInteraction(flag: flag)
 
         let event = self.airshipAnalytics.events.first!
-        XCTAssertEqual(1, self.airshipAnalytics.events.count)
+        #expect(self.airshipAnalytics.events.count == 1)
         
         let next = await feed.next()
-        XCTAssertEqual(next, .analytics(eventType: .featureFlagInteraction, body: event.eventData))
+        #expect(next == .analytics(eventType: .featureFlagInteraction, body: event.eventData))
     }
 }

@@ -1,10 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 import AirshipCore
 @testable import AirshipMessageCenter
 
-final class MessageCenterMessageTest: XCTestCase {
+struct MessageCenterMessageTest {
+    @Test
     func testHashing() throws {
         let date = Date()
         let m1 = MessageCenterMessage(title: "title",
@@ -31,14 +33,15 @@ final class MessageCenterMessageTest: XCTestCase {
                                       messageURL:  URL(string: "www.myspace.com")!,
                                       rawMessageObject: ["raw": "message object"])
 
-        XCTAssertTrue(m1 == m2)
+        #expect(m1 == m2)
 
         var dictionary = [MessageCenterMessage: String]()
         dictionary[m1] = "keyed with m1"
         dictionary[m2] = "keyed with m2"
-        XCTAssertEqual(dictionary.count, 1, "dictionary should only contain one entry since m1 and m2 are equal.")
+        #expect(dictionary.count == 1, "dictionary should only contain one entry since m1 and m2 are equal.")
     }
     
+    @Test
     func testEqualityConsidersUnreadState() {
         let date = Date()
         let unread = MessageCenterMessage(
@@ -69,15 +72,16 @@ final class MessageCenterMessageTest: XCTestCase {
             rawMessageObject: ["raw": "message object"]
         )
 
-        XCTAssertNotEqual(unread, read)
-        XCTAssertNotEqual(unread.hashValue, read.hashValue)
+        #expect(unread != read)
+        #expect(unread.hashValue != read.hashValue)
 
         var readCopy = unread
         readCopy.unread = false
-        XCTAssertEqual(read, readCopy)
-        XCTAssertEqual(read.hashValue, readCopy.hashValue)
+        #expect(read == readCopy)
+        #expect(read.hashValue == readCopy.hashValue)
     }
 
+    @Test
     func testContentTypeDecoding() throws {
         let validCases: [String: MessageCenterMessage.ContentType] = [
             "text/html": .html,
@@ -101,9 +105,8 @@ final class MessageCenterMessageTest: XCTestCase {
             let data = try JSONEncoder().encode(input)
             let result = try JSONDecoder().decode(MessageCenterMessage.ContentType.self, from: data)
 
-            XCTAssertEqual(
-                result,
-                expected,
+            #expect(
+                result == expected,
                 "Failed to decode valid input: '\(input)'"
             )
 
@@ -111,9 +114,8 @@ final class MessageCenterMessageTest: XCTestCase {
                 MessageCenterMessage.ContentType.self,
                 from: JSONEncoder().encode(result)
             )
-            XCTAssertEqual(
-                roundTripped,
-                expected,
+            #expect(
+                roundTripped == expected,
                 "Round-trip Codable failed for '\(input)'"
             )
         }
@@ -121,14 +123,14 @@ final class MessageCenterMessageTest: XCTestCase {
         for input in unknownCases {
             let data = try JSONEncoder().encode(input)
             let result = try JSONDecoder().decode(MessageCenterMessage.ContentType.self, from: data)
-            XCTAssertEqual(
-                result,
-                .unknown(input),
+            #expect(
+                result == .unknown(input),
                 "Expected .unknown for unrecognized input: '\(input)'"
             )
         }
     }
 
+    @Test
     func testMessageProductIDNilWhenNotProvided() throws {
         let date = Date()
         let message = MessageCenterMessage(
@@ -145,9 +147,10 @@ final class MessageCenterMessageTest: XCTestCase {
             rawMessageObject: ["raw": "message object"]
         )
 
-        XCTAssertNil(message.productID)
+        #expect(message.productID == nil)
     }
 
+    @Test
     func testNativeMessageCenterUsesExplicitProductIDWhenProvided() throws {
         let date = Date()
         let message = MessageCenterMessage(
@@ -167,6 +170,6 @@ final class MessageCenterMessageTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(message.productID, "custom_product_id")
+        #expect(message.productID == "custom_product_id")
     }
 }

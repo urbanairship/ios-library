@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import CoreData
-import XCTest
+import Testing
+import Foundation
 
 @testable import AirshipCore
 @testable import AirshipMessageCenter
@@ -10,10 +11,10 @@ import XCTest
 /// current Core Data model is recovered (rebuilt) instead of leaving the inbox
 /// permanently unreadable - matching the Android SDK's destructive-migration
 /// fallback. See MOBILE-5681.
-final class InboxStoreMigrationRecoveryTest: XCTestCase {
+final class InboxStoreMigrationRecoveryTest: Sendable {
 
-    private var storeName: String = ""
-    private var storeURL: URL!
+    private let storeName: String
+    private let storeURL: URL
 
     private var modelURL: URL {
         AirshipMessageCenterResources.bundle.url(
@@ -22,30 +23,30 @@ final class InboxStoreMigrationRecoveryTest: XCTestCase {
         )!
     }
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        storeName = "Inbox-\(UUID().uuidString).sqlite"
+    init() throws {
+        let storeName = "Inbox-\(UUID().uuidString).sqlite"
         let directory = try Self.noBackupDirectory()
         try FileManager.default.createDirectory(
             at: directory,
             withIntermediateDirectories: true
         )
-        storeURL = directory.appendingPathComponent(storeName)
+        self.storeName = storeName
+        self.storeURL = directory.appendingPathComponent(storeName)
     }
 
-    override func tearDownWithError() throws {
+    deinit {
         // Remove the sqlite plus its -wal/-shm sidecars.
         for suffix in ["", "-wal", "-shm"] {
             let path = storeURL.path + suffix
             if FileManager.default.fileExists(atPath: path) {
-                try FileManager.default.removeItem(atPath: path)
+                try? FileManager.default.removeItem(atPath: path)
             }
         }
-        try super.tearDownWithError()
     }
 
     /// A legacy (V2) store that cannot be migrated must throw - and must NOT be
     /// silently wiped - when recovery is disabled (every store except the inbox).
+    @Test
     func testUnmigratableStoreThrowsWithoutRecovery() async throws {
         try writeLegacyV2Store(at: storeURL)
 
@@ -59,18 +60,19 @@ final class InboxStoreMigrationRecoveryTest: XCTestCase {
 
         do {
             _ = try await messageCount(coreData)
-            XCTFail("Expected an un-migratable store to throw when recovery is off")
+            Issue.record("Expected an un-migratable store to throw when recovery is off")
         } catch {
             // Expected: the store cannot be opened with the current model.
         }
 
         // The store file must still be on disk - recovery off never deletes.
-        XCTAssertTrue(FileManager.default.fileExists(atPath: storeURL.path))
+        #expect(FileManager.default.fileExists(atPath: storeURL.path))
     }
 
     /// With recovery enabled (the inbox), the same un-migratable store is rebuilt
     /// and is usable afterwards. The rebuilt store is empty because inbox
     /// contents are re-synced from the server.
+    @Test
     func testUnmigratableStoreIsRecovered() async throws {
         try writeLegacyV2Store(at: storeURL)
 
@@ -84,7 +86,7 @@ final class InboxStoreMigrationRecoveryTest: XCTestCase {
 
         // Loads without throwing, and the rebuilt store is empty + writable.
         let initialCount = try await messageCount(coreData)
-        XCTAssertEqual(initialCount, 0)
+        #expect(initialCount == 0)
 
         try await coreData.perform { context in
             let message = NSEntityDescription.insertNewObject(
@@ -95,13 +97,14 @@ final class InboxStoreMigrationRecoveryTest: XCTestCase {
         }
 
         let countAfterWrite = try await messageCount(coreData)
-        XCTAssertEqual(countAfterWrite, 1)
+        #expect(countAfterWrite == 1)
     }
 
     /// The classifier is what protects against data loss: only Core Data
     /// migration failures may trigger a rebuild. Transient I/O failures (disk
     /// full, locked file) must be reported as non-recoverable so the store is
     /// left intact for a later attempt.
+    @Test
     func testMigrationErrorClassification() {
         let recoverable = [
             NSPersistentStoreIncompatibleVersionHashError,
@@ -113,7 +116,7 @@ final class InboxStoreMigrationRecoveryTest: XCTestCase {
         ]
         for code in recoverable {
             let error = NSError(domain: NSCocoaErrorDomain, code: code)
-            XCTAssertTrue(
+            #expect(
                 UACoreData.isMigrationError(error),
                 "Code \(code) should be treated as a migration error"
             )
@@ -127,8 +130,8 @@ final class InboxStoreMigrationRecoveryTest: XCTestCase {
         ]
         for code in transient {
             let error = NSError(domain: NSCocoaErrorDomain, code: code)
-            XCTAssertFalse(
-                UACoreData.isMigrationError(error),
+            #expect(
+                !UACoreData.isMigrationError(error),
                 "Code \(code) is transient and must NOT trigger a wipe"
             )
         }
@@ -144,14 +147,14 @@ final class InboxStoreMigrationRecoveryTest: XCTestCase {
                 )
             ]
         )
-        XCTAssertTrue(UACoreData.isMigrationError(nested))
+        #expect(UACoreData.isMigrationError(nested))
     }
 
     // MARK: - Helpers
 
     private func messageCount(_ coreData: UACoreData) async throws -> Int {
         try await coreData.performWithResult { context in
-            let request = NSFetchRequest<NSFetchRequestResult>(
+            let request = NSFetchRequest<any NSFetchRequestResult>(
                 entityName: "UAInboxMessage"
             )
             return try context.count(for: request)
@@ -163,7 +166,7 @@ final class InboxStoreMigrationRecoveryTest: XCTestCase {
     /// MOBILE-5681), reproducing the customer's NSMigrationMissingMappingModelError.
     private func writeLegacyV2Store(at url: URL) throws {
         let v2URL = modelURL.appendingPathComponent("UAInbox 2.mom")
-        let v2Model = try XCTUnwrap(
+        let v2Model = try #require(
             NSManagedObjectModel(contentsOf: v2URL),
             "Could not load legacy V2 model from \(v2URL)"
         )
@@ -183,21 +186,15 @@ final class InboxStoreMigrationRecoveryTest: XCTestCase {
         )
         context.persistentStoreCoordinator = coordinator
 
-        var thrown: Error?
-        context.performAndWait {
-            do {
-                let message = NSEntityDescription.insertNewObject(
-                    forEntityName: "UAInboxMessage",
-                    into: context
-                )
-                message.setValue("legacy-message", forKey: "messageID")
-                message.setValue("Legacy Title", forKey: "title")
-                try context.save()
-            } catch {
-                thrown = error
-            }
+        try context.performAndWait {
+            let message = NSEntityDescription.insertNewObject(
+                forEntityName: "UAInboxMessage",
+                into: context
+            )
+            message.setValue("legacy-message", forKey: "messageID")
+            message.setValue("Legacy Title", forKey: "title")
+            try context.save()
         }
-        if let thrown { throw thrown }
 
         if let store = coordinator.persistentStores.first {
             try coordinator.remove(store)
@@ -205,7 +202,7 @@ final class InboxStoreMigrationRecoveryTest: XCTestCase {
     }
 
     private static func noBackupDirectory() throws -> URL {
-        let base = try XCTUnwrap(
+        let base = try #require(
             FileManager.default.urls(
                 for: .libraryDirectory,
                 in: .userDomainMask

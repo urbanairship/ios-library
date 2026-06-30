@@ -1,25 +1,37 @@
 /* Copyright Airship and Contributors */
 
 import Combine
-import XCTest
+import Testing
+import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 @testable import AirshipCore
 @testable import AirshipMessageCenter
 
 @MainActor
-final class MessageCenterListTest: XCTestCase {
+struct MessageCenterListTest {
 
-    private var disposables = Set<AnyCancellable>()
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let config: RuntimeConfig = .testConfig()
 
-    private lazy var store: MessageCenterStore = {
+    private let store: MessageCenterStore
+
+    private let channel = TestChannel()
+    private let workManager: TestWorkManager = TestWorkManager()
+    private let client: TestMessageCenterAPIClient = TestMessageCenterAPIClient()
+    private let sleeper = TestTaskSleeper()
+    private let notificationCenter = NotificationCenter()
+    private let date = UATestDate(offset: 0, dateOverride: Date())
+
+    private let inbox: DefaultMessageCenterInbox
+
+    init() {
         let modelURL = AirshipMessageCenterResources.bundle
             .url(
                 forResource: "UAInbox",
                 withExtension: "momd"
             )
+        let store: MessageCenterStore
         if let modelURL = modelURL {
             let storeName = String(
                 format: "Inbox-%@.sqlite",
@@ -31,39 +43,34 @@ final class MessageCenterListTest: XCTestCase {
                 inMemory: true,
                 stores: [storeName]
             )
-            return MessageCenterStore(
+            store = MessageCenterStore(
                 config: self.config,
                 dataStore: self.dataStore,
                 coreData: coreData,
                 date: self.date
             )
+        } else {
+            store = MessageCenterStore(
+                config: self.config,
+                dataStore: self.dataStore,
+                date: self.date
+            )
         }
-        return MessageCenterStore(
-            config: self.config,
-            dataStore: self.dataStore,
-            date: self.date
+        self.store = store
+
+        self.inbox = DefaultMessageCenterInbox(
+            channel: channel,
+            client: client,
+            config: config,
+            store: store,
+            notificationCenter: notificationCenter,
+            date: date,
+            workManager: workManager,
+            taskSleeper: sleeper
         )
-    }()
+    }
 
-    private let channel = TestChannel()
-    private let workManager: TestWorkManager = TestWorkManager()
-    private let client: TestMessageCenterAPIClient = TestMessageCenterAPIClient()
-    private let sleeper = TestTaskSleeper()
-    private let notificationCenter = NotificationCenter()
-    private let date = UATestDate(offset: 0, dateOverride: Date())
-
-
-    private lazy var inbox = DefaultMessageCenterInbox(
-        channel: channel,
-        client: client,
-        config: config,
-        store: store,
-        notificationCenter: notificationCenter,
-        date: date,
-        workManager: workManager,
-        taskSleeper: sleeper
-    )
-
+    @Test
     func testMessageCenterInboxUser() async throws {
 
         let expectedUser = MessageCenterUser(
@@ -76,21 +83,22 @@ final class MessageCenterListTest: XCTestCase {
 
         self.inbox.enabled = true
         var user = await self.inbox.user
-        XCTAssertNotNil(user)
-        XCTAssertEqual(user!.username, expectedUser.username)
-        XCTAssertEqual(user!.password, expectedUser.password)
+        #expect(user != nil)
+        #expect(user!.username == expectedUser.username)
+        #expect(user!.password == expectedUser.password)
 
         self.inbox.enabled = false
         user = await self.inbox.user
-        XCTAssertNil(user)
+        #expect(user == nil)
 
         // Reset User
         await store.resetUser()
 
         let resetedUser = await self.inbox.user
-        XCTAssertNil(resetedUser)
+        #expect(resetedUser == nil)
     }
 
+    @Test
     func testMessageCenterIdenityHint() async throws {
         let user = MessageCenterUser(
             username: "AnyName",
@@ -102,11 +110,12 @@ final class MessageCenterListTest: XCTestCase {
 
         self.inbox.enabled = true
 
-        XCTAssertEqual(1, self.channel.extenders.count)
+        #expect(1 == self.channel.extenders.count)
         let payload = await self.channel.channelPayload
-        XCTAssertEqual(user.username, payload.identityHints?.userID)
+        #expect(user.username == payload.identityHints?.userID)
     }
 
+    @Test
     func testMessageCenterIdenityHintRestoreMessageCenterDisabled() async throws {
         self.channel.extenders.removeAll()
         var airshipConfig = AirshipConfig()
@@ -130,11 +139,12 @@ final class MessageCenterListTest: XCTestCase {
 
         inbox.enabled = true
 
-        XCTAssertEqual(1, self.channel.extenders.count)
+        #expect(1 == self.channel.extenders.count)
         let payload = await self.channel.channelPayload
-        XCTAssertNil(payload.identityHints?.userID)
+        #expect(payload.identityHints?.userID == nil)
     }
 
+    @Test
     func testRestoreMessageCenterDisabled() async throws {
         self.channel.extenders.removeAll()
         var airshipConfig = AirshipConfig()
@@ -161,10 +171,11 @@ final class MessageCenterListTest: XCTestCase {
         let fromInbox = await self.inbox.user
         let fromStore = await self.store.user
 
-        XCTAssertNil(fromInbox)
-        XCTAssertNil(fromStore)
+        #expect(fromInbox == nil)
+        #expect(fromStore == nil)
     }
 
+    @Test
     func testMessageRetrieve() async throws {
         self.inbox.enabled = true
 
@@ -175,11 +186,11 @@ final class MessageCenterListTest: XCTestCase {
 
         let messages = await self.inbox.messages
 
-        XCTAssertNotNil(messages)
-        XCTAssertEqual(messages.count, 3)
+        #expect(messages.count == 3)
 
     }
 
+    @Test
     func testMessageRetrieveWithId() async throws {
         self.inbox.enabled = true
 
@@ -189,67 +200,66 @@ final class MessageCenterListTest: XCTestCase {
             lastModifiedTime: ""
         )
 
-        let message = try XCTUnwrap(messages.first)
+        let message = try #require(messages.first)
 
         let fetchedMessage = await self.inbox.message(forID: message.id)
 
-        XCTAssertNotNil(fetchedMessage)
-        XCTAssertEqual(message.id, fetchedMessage?.id)
-        XCTAssertEqual(message.sentDate, fetchedMessage?.sentDate)
-        XCTAssertEqual(message.bodyURL, fetchedMessage?.bodyURL)
-        XCTAssertEqual(message.expirationDate, fetchedMessage?.expirationDate)
-        XCTAssertEqual(message.messageURL, fetchedMessage?.messageURL)
+        #expect(fetchedMessage != nil)
+        #expect(message.id == fetchedMessage?.id)
+        #expect(message.sentDate == fetchedMessage?.sentDate)
+        #expect(message.bodyURL == fetchedMessage?.bodyURL)
+        #expect(message.expirationDate == fetchedMessage?.expirationDate)
+        #expect(message.messageURL == fetchedMessage?.messageURL)
 
     }
 
+    @Test
     @MainActor
     func testUpdateMessages() async throws {
         self.inbox.enabled = true
 
-
-
         let messages = MessageCenterMessage.generateMessages(1)
-        let message = try XCTUnwrap(messages.first)
+        let message = try #require(messages.first)
 
         // The message does not exists on the store yet
         let fetchedMessage = await self.inbox.message(forID: message.id)
-        XCTAssertNil(fetchedMessage)
+        #expect(fetchedMessage == nil)
 
-        let expectation = self.expectation(
-            description: "waiting for message publisher"
-        )
-        self.inbox.messagePublisher
-            .receive(on: RunLoop.main)
-            .sink { _ in
-                expectation.fulfill()
-            }
-            .store(in: &disposables)
+        try await confirmation("waiting for message publisher", expectedCount: 1...) { confirmation in
+            var disposables = Set<AnyCancellable>()
+            self.inbox.messagePublisher
+                .receive(on: RunLoop.main)
+                .sink { _ in
+                    confirmation()
+                }
+                .store(in: &disposables)
 
-        // Add the message to the store
-        try await self.store.updateMessages(
-            messages: messages,
-            lastModifiedTime: ""
-        )
+            // Add the message to the store
+            try await self.store.updateMessages(
+                messages: messages,
+                lastModifiedTime: ""
+            )
 
-        await fulfillment(of: [expectation], timeout: 3.0)
+            // Give the main run loop time to deliver the publisher value
+            try await Task.sleep(nanoseconds: 500 * NSEC_PER_MSEC)
+            _ = disposables
+        }
 
         let updatedMessage = await self.inbox.message(forID: message.id)
-        XCTAssertNotNil(updatedMessage)
+        #expect(updatedMessage != nil)
     }
 
+    @Test
     func testRefreshMessages() async throws {
         self.channel.identifier = UUID().uuidString
 
-        let expectations = self.expectation(description: "client called")
-        expectations.expectedFulfillmentCount = 2
-
         var messageUpdates = self.inbox.messageUpdates.makeAsyncIterator()
         var messageUpdate = await messageUpdates.next()
-        XCTAssertEqual(messageUpdate, [])
+        #expect(messageUpdate == [])
 
         var unreadCountUpdates = self.inbox.unreadCountUpdates.makeAsyncIterator()
         var unreadCountUpdate = await unreadCountUpdates.next()
-        XCTAssertEqual(unreadCountUpdate, 0)
+        #expect(unreadCountUpdate == 0)
 
 
         let messages = MessageCenterMessage.generateMessages(1)
@@ -258,104 +268,106 @@ final class MessageCenterListTest: XCTestCase {
             password: UUID().uuidString
         )
 
-        self.client.onCreateUser = { channelID in
-            XCTAssertEqual(channelID, self.channel.identifier)
-            expectations.fulfill()
-            return AirshipHTTPResponse(
-                result: mcUser,
-                statusCode: 200,
-                headers: [:]
-            )
+        await confirmation(expectedCount: 2) { confirmation in
+            self.client.onCreateUser = { channelID in
+                #expect(channelID == self.channel.identifier)
+                confirmation()
+                return AirshipHTTPResponse(
+                    result: mcUser,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            self.client.onRetrieve = { user, channelID, lastModified in
+                #expect(channelID == self.channel.identifier)
+                #expect(user == mcUser)
+                #expect(lastModified == nil)
+
+                confirmation()
+                return AirshipHTTPResponse(
+                    result: messages,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            self.inbox.enabled = true
+            self.workManager.autoLaunchRequests = true
+
+            let result = await self.inbox.refreshMessages()
+            #expect(result)
+            #expect(!self.workManager.workRequests.last!.requiresNetwork)
+            #expect(self.workManager.workRequests.last!.conflictPolicy == .replace)
         }
-
-        self.client.onRetrieve = { user, channelID, lastModified in
-            XCTAssertEqual(channelID, self.channel.identifier)
-            XCTAssertEqual(user, mcUser)
-            XCTAssertNil(lastModified)
-
-            expectations.fulfill()
-            return AirshipHTTPResponse(
-                result: messages,
-                statusCode: 200,
-                headers: [:]
-            )
-        }
-
-        self.inbox.enabled = true
-        self.workManager.autoLaunchRequests = true
-
-        let result = await self.inbox.refreshMessages()
-        XCTAssertTrue(result)
-        XCTAssertFalse(self.workManager.workRequests.last!.requiresNetwork)
-        XCTAssertEqual(self.workManager.workRequests.last!.conflictPolicy, .replace)
-        await self.fulfillment(of: [expectations])
 
         messageUpdate = await messageUpdates.next()
-        XCTAssertEqual(messageUpdate, messages)
+        #expect(messageUpdate == messages)
 
         unreadCountUpdate = await unreadCountUpdates.next()
-        XCTAssertEqual(unreadCountUpdate, 1)
+        #expect(unreadCountUpdate == 1)
     }
 
+    @Test
     func testRefreshMessagesThrowingSuccess() async throws {
         self.channel.identifier = UUID().uuidString
 
-        let expectations = self.expectation(description: "client called")
-        expectations.expectedFulfillmentCount = 2
-
         let messages = MessageCenterMessage.generateMessages(1)
         let mcUser = MessageCenterUser(
             username: UUID().uuidString,
             password: UUID().uuidString
         )
 
-        self.client.onCreateUser = { channelID in
-            XCTAssertEqual(channelID, self.channel.identifier)
-            expectations.fulfill()
-            return AirshipHTTPResponse(
-                result: mcUser,
-                statusCode: 200,
-                headers: [:]
-            )
+        try await confirmation(expectedCount: 2) { confirmation in
+            self.client.onCreateUser = { channelID in
+                #expect(channelID == self.channel.identifier)
+                confirmation()
+                return AirshipHTTPResponse(
+                    result: mcUser,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            self.client.onRetrieve = { user, channelID, lastModified in
+                #expect(channelID == self.channel.identifier)
+                #expect(user == mcUser)
+                #expect(lastModified == nil)
+
+                confirmation()
+                return AirshipHTTPResponse(
+                    result: messages,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            self.inbox.enabled = true
+            self.workManager.autoLaunchRequests = true
+
+            try await self.inbox.refreshMessagesThrowing()
         }
-
-        self.client.onRetrieve = { user, channelID, lastModified in
-            XCTAssertEqual(channelID, self.channel.identifier)
-            XCTAssertEqual(user, mcUser)
-            XCTAssertNil(lastModified)
-
-            expectations.fulfill()
-            return AirshipHTTPResponse(
-                result: messages,
-                statusCode: 200,
-                headers: [:]
-            )
-        }
-
-        self.inbox.enabled = true
-        self.workManager.autoLaunchRequests = true
-
-        try await self.inbox.refreshMessagesThrowing()
-        await self.fulfillment(of: [expectations])
 
         let inboxMessages = await self.inbox.messages
-        XCTAssertEqual(inboxMessages, messages)
+        #expect(inboxMessages == messages)
     }
 
+    @Test
     func testRefreshMessagesThrowingThrowsDisabled() async throws {
         self.inbox.enabled = false
         self.workManager.autoLaunchRequests = true
 
         do {
             try await self.inbox.refreshMessagesThrowing()
-            XCTFail("Expected MessageCenterInboxError.disabled")
+            Issue.record("Expected MessageCenterInboxError.disabled")
         } catch let error as MessageCenterInboxError {
-            XCTAssertEqual(error, .disabled)
+            #expect(error == .disabled)
         } catch {
-            XCTFail("Unexpected error: \(error)")
+            Issue.record("Unexpected error: \(error)")
         }
     }
 
+    @Test
     func testRefreshMessagesThrowingThrowsFailedToFetchWhenNoChannel() async throws {
         self.channel.identifier = nil
         self.inbox.enabled = true
@@ -363,14 +375,15 @@ final class MessageCenterListTest: XCTestCase {
 
         do {
             try await self.inbox.refreshMessagesThrowing()
-            XCTFail("Expected MessageCenterInboxError.failedToFetchMessage")
+            Issue.record("Expected MessageCenterInboxError.failedToFetchMessage")
         } catch let error as MessageCenterInboxError {
-            XCTAssertEqual(error, .failedToFetchMessage)
+            #expect(error == .failedToFetchMessage)
         } catch {
-            XCTFail("Unexpected error: \(error)")
+            Issue.record("Unexpected error: \(error)")
         }
     }
 
+    @Test
     func testRefreshMessagesThrowingThrowsFailedToFetchWhenRetrieveFails() async throws {
         self.channel.identifier = UUID().uuidString
 
@@ -380,7 +393,7 @@ final class MessageCenterListTest: XCTestCase {
         )
 
         self.client.onCreateUser = { channelID in
-            XCTAssertEqual(channelID, self.channel.identifier)
+            #expect(channelID == self.channel.identifier)
             return AirshipHTTPResponse(
                 result: mcUser,
                 statusCode: 200,
@@ -389,9 +402,9 @@ final class MessageCenterListTest: XCTestCase {
         }
 
         self.client.onRetrieve = { user, channelID, lastModified in
-            XCTAssertEqual(channelID, self.channel.identifier)
-            XCTAssertEqual(user, mcUser)
-            XCTAssertNil(lastModified)
+            #expect(channelID == self.channel.identifier)
+            #expect(user == mcUser)
+            #expect(lastModified == nil)
 
             return AirshipHTTPResponse(
                 result: [],
@@ -405,19 +418,17 @@ final class MessageCenterListTest: XCTestCase {
 
         do {
             try await self.inbox.refreshMessagesThrowing()
-            XCTFail("Expected MessageCenterInboxError.failedToFetchMessage")
+            Issue.record("Expected MessageCenterInboxError.failedToFetchMessage")
         } catch let error as MessageCenterInboxError {
-            XCTAssertEqual(error, .failedToFetchMessage)
+            #expect(error == .failedToFetchMessage)
         } catch {
-            XCTFail("Unexpected error: \(error)")
+            Issue.record("Unexpected error: \(error)")
         }
     }
 
+    @Test
     func testRefreshMessagesWithTimeout() async throws {
         self.channel.identifier = UUID().uuidString
-
-        let expectations = self.expectation(description: "client called")
-        expectations.expectedFulfillmentCount = 2
 
         let messages = MessageCenterMessage.generateMessages(1)
         let mcUser = MessageCenterUser(
@@ -425,39 +436,41 @@ final class MessageCenterListTest: XCTestCase {
             password: UUID().uuidString
         )
 
-        self.client.onCreateUser = { channelID in
-            XCTAssertEqual(channelID, self.channel.identifier)
-            expectations.fulfill()
-            return AirshipHTTPResponse(
-                result: mcUser,
-                statusCode: 200,
-                headers: [:]
-            )
+        try await confirmation(expectedCount: 2) { confirmation in
+            self.client.onCreateUser = { channelID in
+                #expect(channelID == self.channel.identifier)
+                confirmation()
+                return AirshipHTTPResponse(
+                    result: mcUser,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            self.client.onRetrieve = { user, channelID, lastModified in
+                #expect(channelID == self.channel.identifier)
+                #expect(user == mcUser)
+                #expect(lastModified == nil)
+
+                confirmation()
+                return AirshipHTTPResponse(
+                    result: messages,
+                    statusCode: 200,
+                    headers: [:]
+                )
+            }
+
+            self.inbox.enabled = true
+            self.workManager.autoLaunchRequests = true
+
+            let result = try await self.inbox.refreshMessages(timeout: 4.0)
+            #expect(result)
+            #expect(!self.workManager.workRequests.last!.requiresNetwork)
+            #expect(self.workManager.workRequests.last!.conflictPolicy == .replace)
         }
-
-        self.client.onRetrieve = { user, channelID, lastModified in
-            XCTAssertEqual(channelID, self.channel.identifier)
-            XCTAssertEqual(user, mcUser)
-            XCTAssertNil(lastModified)
-
-            expectations.fulfill()
-            return AirshipHTTPResponse(
-                result: messages,
-                statusCode: 200,
-                headers: [:]
-            )
-        }
-
-        self.inbox.enabled = true
-        self.workManager.autoLaunchRequests = true
-
-        let result = try await self.inbox.refreshMessages(timeout: 4.0)
-        XCTAssertTrue(result)
-        XCTAssertFalse(self.workManager.workRequests.last!.requiresNetwork)
-        XCTAssertEqual(self.workManager.workRequests.last!.conflictPolicy, .replace)
-        await self.fulfillment(of: [expectations])
     }
-    
+
+    @Test
     func testRefreshMessagesNoChannel() async throws {
         self.channel.identifier = nil
 
@@ -465,14 +478,15 @@ final class MessageCenterListTest: XCTestCase {
         self.workManager.autoLaunchRequests = true
 
         let result = await self.inbox.refreshMessages()
-        XCTAssertFalse(result)
+        #expect(!result)
     }
 
+    @Test
     func testRefreshMessagesUserCreationFailed() async throws {
         self.channel.identifier = UUID().uuidString
 
         self.client.onCreateUser = { channelID in
-            XCTAssertEqual(channelID, self.channel.identifier)
+            #expect(channelID == self.channel.identifier)
             return AirshipHTTPResponse(
                 result: nil,
                 statusCode: 400,
@@ -484,9 +498,10 @@ final class MessageCenterListTest: XCTestCase {
         self.workManager.autoLaunchRequests = true
 
         let result = await self.inbox.refreshMessages()
-        XCTAssertFalse(result)
+        #expect(!result)
     }
 
+    @Test
     func testRefreshMessagesRetrieveFailed() async throws {
         self.channel.identifier = UUID().uuidString
 
@@ -496,7 +511,7 @@ final class MessageCenterListTest: XCTestCase {
         )
 
         self.client.onCreateUser = { channelID in
-            XCTAssertEqual(channelID, self.channel.identifier)
+            #expect(channelID == self.channel.identifier)
             return AirshipHTTPResponse(
                 result: mcUser,
                 statusCode: 200,
@@ -505,9 +520,9 @@ final class MessageCenterListTest: XCTestCase {
         }
 
         self.client.onRetrieve = { user, channelID, lastModified in
-            XCTAssertEqual(channelID, self.channel.identifier)
-            XCTAssertEqual(user, mcUser)
-            XCTAssertNil(lastModified)
+            #expect(channelID == self.channel.identifier)
+            #expect(user == mcUser)
+            #expect(lastModified == nil)
 
             return AirshipHTTPResponse(
                 result: [],
@@ -520,18 +535,19 @@ final class MessageCenterListTest: XCTestCase {
         self.workManager.autoLaunchRequests = true
 
         let result = await self.inbox.refreshMessages()
-        XCTAssertFalse(result)
+        #expect(!result)
     }
-    
+
+    @Test
     func testRefreshOnMessageExpiresOnAfterUpdate() async throws {
         var sleeps = await self.sleeper.sleepUpdates.makeStream().makeAsyncIterator()
         self.channel.identifier = UUID().uuidString
-        
+
         let mcUser = MessageCenterUser(
             username: UUID().uuidString,
             password: UUID().uuidString
         )
-        
+
         let message = MessageCenterMessage.generateMessage(
             sentDate: self.date.now.advanced(by: -1),
             expiry: self.date.now.advanced(by: 1)
@@ -570,32 +586,33 @@ final class MessageCenterListTest: XCTestCase {
         }.makeAsyncIterator()
 
 
-        XCTAssert(self.workManager.workRequests.isEmpty)
-        
+        #expect(self.workManager.workRequests.isEmpty)
+
         self.inbox.enabled = true
         self.workManager.autoLaunchRequests = true
         await self.inbox.refreshMessages()
         _ = await refreshes.next()
 
         var fetched = await self.inbox.message(forID: message.id)
-        XCTAssertNotNil(fetched)
+        #expect(fetched != nil)
 
         let sleep = await sleeps.next()
-        XCTAssertEqual(1, sleep)
+        #expect(1 == sleep)
         _ = await refreshes.next()
 
         fetched = await self.inbox.message(forID: message.id)
-        XCTAssertNil(fetched)
+        #expect(fetched == nil)
     }
-    
+
+    @Test
     func testRefreshOnMessageExpiresTakesEarliestDate() async throws {
         self.channel.identifier = UUID().uuidString
-        
+
         let mcUser = MessageCenterUser(
             username: UUID().uuidString,
             password: UUID().uuidString
         )
-        
+
         let messages = [
             MessageCenterMessage.generateMessage(
                 sentDate: self.date.now.advanced(by: -1),
@@ -606,10 +623,7 @@ final class MessageCenterListTest: XCTestCase {
                 expiry: self.date.now.advanced(by: 3)
             )
         ]
-        
-        let refresh = self.expectation(description: "client called")
-        refresh.assertForOverFulfill = false
-        
+
         self.client.onCreateUser = { _ in
             return AirshipHTTPResponse(
                 result: mcUser,
@@ -617,45 +631,43 @@ final class MessageCenterListTest: XCTestCase {
                 headers: [:]
             )
         }
-        
+
         var isRefreshed = false
         self.client.onRetrieve = { _, _, _ in
             defer { isRefreshed = true }
-            
-            refresh.fulfill()
+
             return AirshipHTTPResponse(
                 result: isRefreshed ? [] : messages,
                 statusCode: 200,
                 headers: [:]
             )
         }
-        
-        
-        XCTAssert(self.workManager.workRequests.isEmpty)
-        
+
+
+        #expect(self.workManager.workRequests.isEmpty)
+
         self.inbox.enabled = true
         self.workManager.autoLaunchRequests = true
-        
+
         await self.inbox.refreshMessages()
-        
-        await fulfillment(of: [refresh], timeout: 5)
-        
+
         let saved = await self.inbox.message(forID: messages.first!.id)
-        XCTAssertNotNil(saved)
-        
+        #expect(saved != nil)
+
         try await Task.sleep(nanoseconds: 1 * NSEC_PER_SEC)
 
-        XCTAssertEqual(3, self.workManager.workRequests.count)
+        #expect(3 == self.workManager.workRequests.count)
     }
-    
+
+    @Test
     func testNoRefreshWithNoExpirationDate() async throws {
         self.channel.identifier = UUID().uuidString
-        
+
         let mcUser = MessageCenterUser(
             username: UUID().uuidString,
             password: UUID().uuidString
         )
-        
+
         let messages = [
             MessageCenterMessage.generateMessage(
                 sentDate: self.date.now.advanced(by: -1)
@@ -664,10 +676,7 @@ final class MessageCenterListTest: XCTestCase {
                 sentDate: self.date.now.advanced(by: -2)
             )
         ]
-        
-        let refresh = self.expectation(description: "client called")
-        refresh.assertForOverFulfill = false
-        
+
         self.client.onCreateUser = { _ in
             return AirshipHTTPResponse(
                 result: mcUser,
@@ -675,34 +684,31 @@ final class MessageCenterListTest: XCTestCase {
                 headers: [:]
             )
         }
-        
+
         var isRefreshed = false
         self.client.onRetrieve = { _, _, _ in
             defer { isRefreshed = true }
-            
-            refresh.fulfill()
+
             return AirshipHTTPResponse(
                 result: isRefreshed ? [] : messages,
                 statusCode: 200,
                 headers: [:]
             )
         }
-        
-        XCTAssert(self.workManager.workRequests.isEmpty)
-        
+
+        #expect(self.workManager.workRequests.isEmpty)
+
         self.inbox.enabled = true
         self.workManager.autoLaunchRequests = true
-        
+
         await self.inbox.refreshMessages()
-        
-        await fulfillment(of: [refresh], timeout: 5)
-        
+
         let saved = await self.inbox.message(forID: messages.first!.id)
-        XCTAssertNotNil(saved)
-        
+        #expect(saved != nil)
+
         self.date.advance(by: 1)
 
-        XCTAssertEqual(2, self.workManager.workRequests.count)
+        #expect(2 == self.workManager.workRequests.count)
     }
 }
 

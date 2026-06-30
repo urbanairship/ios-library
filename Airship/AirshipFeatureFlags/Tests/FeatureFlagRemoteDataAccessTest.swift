@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable
 import AirshipCore
@@ -10,32 +11,33 @@ import AirshipFeatureFlags
 
 @_spi(AirshipInternal) import AirshipBasement
 
-final class FeatureFlagRemoteDataAccessTest: XCTestCase {
+struct FeatureFlagRemoteDataAccessTest {
 
     private let remoteData: TestRemoteData = TestRemoteData()
     private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
-    private var remoteDataAccess: FeatureFlagRemoteDataAccess!
+    private let remoteDataAccess: FeatureFlagRemoteDataAccess
 
-    override func setUp() {
+    init() {
         self.remoteDataAccess = FeatureFlagRemoteDataAccess(
             remoteData: self.remoteData,
             date: date
         )
     }
 
+    @Test
     func testBestEffortRefresh() async throws {
-        
-        let expectation = XCTestExpectation()
-        self.remoteData.waitForRefreshBlock = { source, time in
-            XCTAssertEqual(source, .app)
-            XCTAssertEqual(time, 15.0)
-            expectation.fulfill()
-        }
+        await confirmation { confirmation in
+            self.remoteData.waitForRefreshBlock = { source, time in
+                #expect(source == .app)
+                #expect(time == 15.0)
+                confirmation()
+            }
 
-        await self.remoteDataAccess.bestEffortRefresh()
-        await self.fulfillment(of: [expectation])
+            await self.remoteDataAccess.bestEffortRefresh()
+        }
     }
 
+    @Test
     func testFeatureFlags() async throws {
         let json = """
         {
@@ -88,10 +90,11 @@ final class FeatureFlagRemoteDataAccessTest: XCTestCase {
             )
         ]
 
-        XCTAssertEqual(remoteDataInfo.flagInfos, expected)
-        XCTAssertEqual(remoteDataInfo.remoteDataInfo, self.remoteData.payloads.first?.remoteDataInfo)
+        #expect(remoteDataInfo.flagInfos == expected)
+        #expect(remoteDataInfo.remoteDataInfo == self.remoteData.payloads.first?.remoteDataInfo)
     }
 
+    @Test
     func testFeatureFlagsIgnoreInvalid() async throws {
         let json = """
         {
@@ -147,10 +150,11 @@ final class FeatureFlagRemoteDataAccessTest: XCTestCase {
             )
         ]
 
-        XCTAssertEqual(flagInfos, expected)
+        #expect(flagInfos == expected)
     }
 
     
+    @Test
     func testFeatureFlagsIgnoreContact() async throws {
         let json = """
         {
@@ -188,9 +192,10 @@ final class FeatureFlagRemoteDataAccessTest: XCTestCase {
         ]
 
         let flagInfos = await self.remoteDataAccess.remoteDataFlagInfo(name: "cool_flag").flagInfos
-        XCTAssertTrue(flagInfos.isEmpty)
+        #expect(flagInfos.isEmpty)
     }
 
+    @Test
     func testFeatureFlagsIgnoreInActive() async throws {
         let nowMs = self.date.now.airshipMillisecondsSince1970
         let json = """
@@ -230,14 +235,14 @@ final class FeatureFlagRemoteDataAccessTest: XCTestCase {
         ]
 
         var flagInfos = await self.remoteDataAccess.remoteDataFlagInfo(name: "cool_flag").flagInfos
-        XCTAssertFalse(flagInfos.isEmpty)
+        #expect(!flagInfos.isEmpty)
 
         self.date.offset = 4.9
         flagInfos = await self.remoteDataAccess.remoteDataFlagInfo(name: "cool_flag").flagInfos
-        XCTAssertFalse(flagInfos.isEmpty)
+        #expect(!flagInfos.isEmpty)
 
         self.date.offset = 5.0
         flagInfos = await self.remoteDataAccess.remoteDataFlagInfo(name: "cool_flag").flagInfos
-        XCTAssertTrue(flagInfos.isEmpty)
+        #expect(flagInfos.isEmpty)
     }
 }

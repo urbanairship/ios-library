@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable
 import AirshipCore
@@ -8,8 +9,9 @@ import AirshipCore
 @testable
 import AirshipFeatureFlags
 
-final class FeatureFlagVariablesTest: XCTestCase {
+struct FeatureFlagVariablesTest {
 
+    @Test
     func testCodableVariant() throws {
         let json = """
               {
@@ -173,12 +175,13 @@ final class FeatureFlagVariablesTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(decoded, expected)
+        #expect(decoded == expected)
 
         let encoded = String(data: try JSONEncoder().encode(decoded), encoding: .utf8)
-        XCTAssertEqual(try AirshipJSON.from(json: json), try AirshipJSON.from(json: encoded))
+        #expect(try AirshipJSON.from(json: json) == AirshipJSON.from(json: encoded))
     }
 
+    @Test
     func testCodableFixed() throws {
         let json = """
           {
@@ -205,12 +208,13 @@ final class FeatureFlagVariablesTest: XCTestCase {
         )
 
 
-        XCTAssertEqual(decoded, expected)
+        #expect(decoded == expected)
 
         let encoded = String(data: try JSONEncoder().encode(decoded), encoding: .utf8)
-        XCTAssertEqual(try AirshipJSON.from(json: json), try AirshipJSON.from(json: encoded))
+        #expect(try AirshipJSON.from(json: json) == AirshipJSON.from(json: encoded))
     }
 
+    @Test
     func testCodableFixedNullData() throws {
         let json = """
           {
@@ -225,10 +229,10 @@ final class FeatureFlagVariablesTest: XCTestCase {
 
         let expected = FeatureFlagVariables.fixed(nil)
 
-        XCTAssertEqual(decoded, expected)
+        #expect(decoded == expected)
 
         let encoded = String(data: try JSONEncoder().encode(decoded), encoding: .utf8)
-        XCTAssertEqual(try AirshipJSON.from(json: json), try AirshipJSON.from(json: encoded))
+        #expect(try AirshipJSON.from(json: json) == AirshipJSON.from(json: encoded))
     }
 }
 

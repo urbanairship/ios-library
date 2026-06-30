@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable
 import AirshipCore
@@ -10,8 +11,9 @@ import AirshipFeatureFlags
 
 @_spi(AirshipInternal) import AirshipBasement
 
-final class FeatureFlagInfoTest: XCTestCase {
-    
+struct FeatureFlagInfoTest {
+
+    @Test
     func testDecode() throws {
         let json = """
         {
@@ -238,9 +240,10 @@ final class FeatureFlagInfoTest: XCTestCase {
             )
         )
 
-        XCTAssertEqual(decoded, expected)
+        #expect(decoded == expected)
     }
 
+    @Test
     func testDecodeWithCompoundAudience() throws {
         let json = """
         {
@@ -500,9 +503,10 @@ final class FeatureFlagInfoTest: XCTestCase {
             )
         )
 
-        XCTAssertEqual(decoded, expected)
+        #expect(decoded == expected)
     }
 
+    @Test
     func testDecodeControl() throws {
         let json = """
         {
@@ -545,7 +549,7 @@ final class FeatureFlagInfoTest: XCTestCase {
             controlType: .variables(.string("variables_override"))
         )
 
-        XCTAssertEqual(expected, decoded)
+        #expect(expected == decoded)
     }
 }
 

@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable
 import AirshipCore
@@ -8,7 +9,7 @@ import AirshipCore
 @testable
 import AirshipFeatureFlags
 
-final class AirshipFeatureFlagsTest: XCTestCase {
+struct AirshipFeatureFlagsTest {
 
     private let remoteDataAccess: TestFeatureFlagRemoteDataAccess = TestFeatureFlagRemoteDataAccess()
     private let remoteData: TestRemoteData = TestRemoteData()
@@ -18,13 +19,13 @@ final class AirshipFeatureFlagsTest: XCTestCase {
     private let analytics: TestFeatureFlagAnalytics = TestFeatureFlagAnalytics()
     private let deviceInfoProvider: TestDeviceInfoProvider = TestDeviceInfoProvider()
     private let deferredResolver: TestFeatureFlagResolver = TestFeatureFlagResolver()
-    private var privacyManager: TestPrivacyManager!
+    private let privacyManager: TestPrivacyManager
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let resultCache: DefaultFeatureFlagResultCache = DefaultFeatureFlagResultCache(cache: TestCache())
 
-    private var featureFlagManager: DefaultFeatureFlagManager!
+    private let featureFlagManager: DefaultFeatureFlagManager
 
-    override func setUp() async throws {
+    init() async throws {
         let config: RuntimeConfig = .testConfig()
         self.privacyManager = TestPrivacyManager(
             dataStore: dataStore,
@@ -45,74 +46,79 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         )
     }
 
+    @Test
     func testFlagAccessWaitsForRefreshIfOutOfDateAndStaleNotAllowed() async throws {
-        let expectation = XCTestExpectation()
-        self.remoteDataAccess.bestEffortRefresh = {
-            expectation.fulfill()
+        await confirmation { confirmation in
+            self.remoteDataAccess.bestEffortRefresh = {
+                confirmation()
+            }
+            self.remoteDataAccess.flagInfos = [
+                FeatureFlagInfo(
+                    id: "some ID",
+                    created: Date(),
+                    lastUpdated: Date(),
+                    name: "foo",
+                    reportingMetadata: "reporting",
+                    flagPayload: .staticPayload(
+                        FeatureFlagPayload.StaticInfo(variables: nil)
+                    ),
+                    evaluationOptions: EvaluationOptions(disallowStaleValue: true)
+                )
+            ]
+            self.remoteDataAccess.status = .outOfDate
+            let _ = try? await featureFlagManager.flag(name: "foo")
         }
-        self.remoteDataAccess.flagInfos = [
-            FeatureFlagInfo(
-                id: "some ID",
-                created: Date(),
-                lastUpdated: Date(),
-                name: "foo",
-                reportingMetadata: "reporting",
-                flagPayload: .staticPayload(
-                    FeatureFlagPayload.StaticInfo(variables: nil)
-                ),
-                evaluationOptions: EvaluationOptions(disallowStaleValue: true)
-            )
-        ]
-        self.remoteDataAccess.status = .outOfDate
-        let _ = try? await featureFlagManager.flag(name: "foo")
-        await self.fulfillment(of: [expectation])
     }
 
+    @Test
     func testFlagAccessWaitsForRefreshIfFlagNotFound() async throws {
-        let expectation = XCTestExpectation()
-        self.remoteDataAccess.bestEffortRefresh = {
-            expectation.fulfill()
+        await confirmation { confirmation in
+            self.remoteDataAccess.bestEffortRefresh = {
+                confirmation()
+            }
+            self.remoteDataAccess.status = .outOfDate
+            let _ = try? await featureFlagManager.flag(name: "foo")
         }
-        self.remoteDataAccess.status = .outOfDate
-        let _ = try? await featureFlagManager.flag(name: "foo")
-        await self.fulfillment(of: [expectation])
     }
 
+    @Test
     func testFlagAccessWaitsForRefreshIfStaleNotAllowed() async throws {
-        let expectation = XCTestExpectation()
-        self.remoteDataAccess.bestEffortRefresh = {
-            self.remoteDataAccess.status = .upToDate
-            expectation.fulfill()
+        let flag = try await confirmation { confirmation in
+            self.remoteDataAccess.bestEffortRefresh = {
+                self.remoteDataAccess.status = .upToDate
+                confirmation()
+            }
+
+            self.remoteDataAccess.flagInfos = [
+                FeatureFlagInfo(
+                    id: "some ID",
+                    created: Date(),
+                    lastUpdated: Date(),
+                    name: "foo",
+                    reportingMetadata: "reporting",
+                    flagPayload: .staticPayload(
+                        FeatureFlagPayload.StaticInfo(variables: nil)
+                    ),
+                    evaluationOptions: EvaluationOptions(disallowStaleValue: true)
+                )
+            ]
+
+            self.remoteDataAccess.status = .stale
+            return try await featureFlagManager.flag(name: "foo")
         }
 
-        self.remoteDataAccess.flagInfos = [
-            FeatureFlagInfo(
-                id: "some ID",
-                created: Date(),
-                lastUpdated: Date(),
-                name: "foo",
-                reportingMetadata: "reporting",
-                flagPayload: .staticPayload(
-                    FeatureFlagPayload.StaticInfo(variables: nil)
-                ),
-                evaluationOptions: EvaluationOptions(disallowStaleValue: true)
-            )
-        ]
-
-        self.remoteDataAccess.status = .stale
-        let flag = try await featureFlagManager.flag(name: "foo")
-        await self.fulfillment(of: [expectation])
-
-        XCTAssertTrue(flag.exists)
+        #expect(flag.exists)
     }
 
+    @Test
     func testNoFlags() async throws {
         self.remoteDataAccess.status = .upToDate
         let flag = try await featureFlagManager.flag(name: "foo")
         let expected = FeatureFlag(name: "foo", isEligible: false, exists: false, variables: nil)
-        XCTAssertEqual(expected, flag)
+        #expect(expected == flag)
     }
 
+    @Test
     func testFlagNoAudience() async throws {
         self.remoteDataAccess.status = .upToDate
         self.remoteDataAccess.flagInfos = [
@@ -141,9 +147,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             )
         )
 
-        XCTAssertEqual(expected, flag)
+        #expect(expected == flag)
     }
 
+    @Test
     func testFlagAudienceMatch() async throws {
         let flagInfo = FeatureFlagInfo(
             id: "some ID",
@@ -164,8 +171,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         ]
 
         self.audienceChecker.onEvaluate = { selector, newUserDate, _ in
-            XCTAssertEqual(selector, .combine(compoundSelector: flagInfo.compoundAudience?.selector, deviceSelector: flagInfo.audienceSelector)!)
-            XCTAssertEqual(newUserDate, flagInfo.created)
+            #expect(selector == .combine(compoundSelector: flagInfo.compoundAudience?.selector, deviceSelector: flagInfo.audienceSelector)!)
+            #expect(newUserDate == flagInfo.created)
             return .match
         }
 
@@ -181,9 +188,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 channelID: self.deviceInfoProvider.channelID
             )
         )
-        XCTAssertEqual(expected, flag)
+        #expect(expected == flag)
     }
 
+    @Test
     func testFlagAudienceNoMatch() async throws {
         let flagInfo = FeatureFlagInfo(
             id: "some ID",
@@ -218,9 +226,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 channelID: self.deviceInfoProvider.channelID
             )
         )
-        XCTAssertEqual(expected, flag)
+        #expect(expected == flag)
     }
 
+    @Test
     func testAudienceMissLastInfoStatic() async throws {
         self.remoteDataAccess.status = .upToDate
         self.remoteDataAccess.flagInfos = [
@@ -267,9 +276,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 channelID: self.deviceInfoProvider.channelID
             )
         )
-        XCTAssertEqual(expected, flag)
+        #expect(expected == flag)
     }
 
+    @Test
     func testAudienceMissLastInfoDeferred() async throws {
         self.remoteDataAccess.status = .upToDate
         self.remoteDataAccess.flagInfos = [
@@ -316,9 +326,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 channelID: self.deviceInfoProvider.channelID
             )
         )
-        XCTAssertEqual(expected, flag)
+        #expect(expected == flag)
     }
 
+    @Test
     func testMultipleFlags() async throws {
         let flagInfo1 = FeatureFlagInfo(
             id: "some ID",
@@ -373,9 +384,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             )
         )
 
-        XCTAssertEqual(expected, flag)
+        #expect(expected == flag)
     }
     
+    @Test
     func testMultipleFlagsCompound() async throws {
         let flagInfo1 = FeatureFlagInfo(
             id: "some ID",
@@ -431,9 +443,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             )
         )
 
-        XCTAssertEqual(expected, flag)
+        #expect(expected == flag)
     }
 
+    @Test
     func testVariantVariables() async throws {
         let variables: [FeatureFlagVariables.VariablesVariant] = [
             FeatureFlagVariables.VariablesVariant(
@@ -495,9 +508,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             )
         )
 
-        XCTAssertEqual(expected, flag)
+        #expect(expected == flag)
     }
     
+    @Test
     func testControlFlag() async throws {
         
         let controlAudience = DeviceAudienceSelector(
@@ -555,7 +569,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             )
         )
         
-        XCTAssertEqual(expected, noControlFlag)
+        #expect(expected == noControlFlag)
         
         audienceMatched = true
         
@@ -573,9 +587,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 channelID: self.deviceInfoProvider.channelID
             )
         )
-        XCTAssertEqual(expected, controlFlag)
+        #expect(expected == controlFlag)
     }
     
+    @Test
     func testControlVariables() async throws {
         
         let controlAudience = DeviceAudienceSelector(
@@ -631,7 +646,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             )
         )
         
-        XCTAssertEqual(expected, noControlFlag)
+        #expect(expected == noControlFlag)
         
         audienceMatched = true
         
@@ -649,9 +664,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
                 channelID: self.deviceInfoProvider.channelID
             )
         )
-        XCTAssertEqual(expected, controlFlag)
+        #expect(expected == controlFlag)
     }
     
+    @Test
     func testVariantVariablesDeferred() async throws {
         let variables: [FeatureFlagVariables.VariablesVariant] = [
             FeatureFlagVariables.VariablesVariant(
@@ -719,9 +735,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         }
 
         let result = try await featureFlagManager.flag(name: "foo")
-        XCTAssertEqual(result, expectedFlag)
+        #expect(result == expectedFlag)
     }
 
+    @Test
     func testVariantVariablesDeferredNoMatch() async throws {
         let variables: [FeatureFlagVariables.VariablesVariant] = [
             FeatureFlagVariables.VariablesVariant(
@@ -777,10 +794,11 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         }
 
         let result = try await featureFlagManager.flag(name: "foo")
-        XCTAssertEqual(result, expectedFlag)
+        #expect(result == expectedFlag)
     }
 
 
+    @Test
     func testVariantVariablesNoMatch() async throws {
         let variables: [FeatureFlagVariables.VariablesVariant] = [
             FeatureFlagVariables.VariablesVariant(
@@ -826,9 +844,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
             )
         )
 
-        XCTAssertEqual(expected, flag)
+        #expect(expected == flag)
     }
 
+    @Test
     func testStaleNotDefined() async throws {
         self.remoteDataAccess.status = .stale
         self.remoteDataAccess.flagInfos = [
@@ -847,8 +866,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         ]
 
         let flag = try await featureFlagManager.flag(name: "foo")
-        XCTAssertEqual(
-            flag,
+        #expect(
+            flag ==
             FeatureFlag(
                 name: "foo",
                 isEligible: true,
@@ -863,6 +882,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         )
     }
 
+    @Test
     func testStaleAllowed() async throws {
         self.remoteDataAccess.status = .stale
         self.remoteDataAccess.flagInfos = [
@@ -882,8 +902,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         ]
 
         let flag = try await featureFlagManager.flag(name: "foo")
-        XCTAssertEqual(
-            flag,
+        #expect(
+            flag ==
             FeatureFlag(
                 name: "foo",
                 isEligible: true,
@@ -898,6 +918,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         )
     }
 
+    @Test
     func testStaleNotAllowed() async throws {
         self.remoteDataAccess.status = .stale
         self.remoteDataAccess.flagInfos = [
@@ -918,14 +939,15 @@ final class AirshipFeatureFlagsTest: XCTestCase {
 
         do {
             let _ = try await featureFlagManager.flag(name: "foo")
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch FeatureFlagError.staleData {
             // No-op
         } catch {
-            XCTFail("Should throw staleData")
+            Issue.record("Should throw staleData")
         }
     }
 
+    @Test
     func testStaleNotAllowedMultipleFlags() async throws {
         self.remoteDataAccess.status = .stale
 
@@ -961,14 +983,15 @@ final class AirshipFeatureFlagsTest: XCTestCase {
 
         do {
             let _ = try await featureFlagManager.flag(name: "foo")
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         }catch FeatureFlagError.staleData {
             // No-op
         } catch {
-            XCTFail("Should throw staleData")
+            Issue.record("Should throw staleData")
         }
     }
 
+    @Test
     func testStaleAllowedOutOfDate() async throws {
         self.remoteDataAccess.status = .outOfDate
         self.remoteDataAccess.flagInfos = [
@@ -988,8 +1011,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         ]
 
         let flag = try await featureFlagManager.flag(name: "foo")
-        XCTAssertEqual(
-            flag,
+        #expect(
+            flag ==
             FeatureFlag(
                 name: "foo",
                 isEligible: true,
@@ -1004,6 +1027,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         )
     }
 
+    @Test
     func testOutOfDate() async throws {
         self.remoteDataAccess.status = .outOfDate
 
@@ -1038,14 +1062,15 @@ final class AirshipFeatureFlagsTest: XCTestCase {
 
         do {
             let _ = try await featureFlagManager.flag(name: "foo")
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch FeatureFlagError.outOfDate {
             // No-op
         } catch {
-            XCTFail("Should throw outOfDate")
+            Issue.record("Should throw outOfDate")
         }
     }
 
+    @Test
     func testMultipleFlagsNotEligible() async throws {
         self.audienceChecker.onEvaluate = { _, _, _ in
             return .miss
@@ -1081,8 +1106,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         ]
 
         let flag = try await featureFlagManager.flag(name: "foo")
-        XCTAssertEqual(
-            flag,
+        #expect(
+            flag ==
             FeatureFlag(
                 name: "foo",
                 isEligible: false,
@@ -1097,6 +1122,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         )
     }
 
+    @Test
     func testTrackInteractive() async throws {
         self.audienceChecker.onEvaluate = { _, _, _ in
             return .miss
@@ -1132,8 +1158,8 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         ]
 
         let flag = try await featureFlagManager.flag(name: "foo")
-        XCTAssertEqual(
-            flag,
+        #expect(
+            flag ==
             FeatureFlag(
                 name: "foo",
                 isEligible: false,
@@ -1148,6 +1174,7 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         )
     }
 
+    @Test
     func testTrackInteraction() {
         let flag = FeatureFlag(
             name: "foo",
@@ -1162,9 +1189,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         )
 
         self.featureFlagManager.trackInteraction(flag: flag)
-        XCTAssertEqual(self.analytics.trackedInteractions, [flag])
+        #expect(self.analytics.trackedInteractions == [flag])
     }
 
+    @Test
     func testDeferred() async throws {
         let flagInfo = FeatureFlagInfo(
             id: "some ID",
@@ -1205,19 +1233,20 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         }
 
         await self.deferredResolver.setOnResolve { [deviceInfoProvider] request, info in
-            XCTAssertEqual(request.url, URL(string: "some-url://"))
-            XCTAssertEqual(request.contactID, deviceInfoProvider.stableContactInfo.contactID)
-            XCTAssertEqual(request.channelID, deviceInfoProvider.channelID)
-            XCTAssertEqual(request.locale, deviceInfoProvider.locale)
-            XCTAssertEqual(request.notificationOptIn, deviceInfoProvider.isUserOptedInPushNotifications)
-            XCTAssertEqual(flagInfo, info)
+            #expect(request.url == URL(string: "some-url://"))
+            #expect(request.contactID == deviceInfoProvider.stableContactInfo.contactID)
+            #expect(request.channelID == deviceInfoProvider.channelID)
+            #expect(request.locale == deviceInfoProvider.locale)
+            #expect(request.notificationOptIn == deviceInfoProvider.isUserOptedInPushNotifications)
+            #expect(flagInfo == info)
             return deferredResponse
         }
 
         let result = try await featureFlagManager.flag(name: "foo")
-        XCTAssertEqual(result, expectedFlag)
+        #expect(result == expectedFlag)
     }
 
+    @Test
     func testDeferredLocalAudience() async throws {
         let flagInfo = FeatureFlagInfo(
             id: "some ID",
@@ -1242,14 +1271,15 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         }
 
         await self.deferredResolver.setOnResolve { _, _ in
-            XCTFail()
+            Issue.record("Unexpected")
             throw AirshipErrors.error("Failed")
         }
 
         let result = try await featureFlagManager.flag(name: "foo")
-        XCTAssertFalse(result.isEligible)
+        #expect(!result.isEligible)
     }
 
+    @Test
     func testMultipleDeferred() async throws {
         self.remoteDataAccess.flagInfos = [
             FeatureFlagInfo(
@@ -1323,19 +1353,19 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         )
 
         let result = try await featureFlagManager.flag(name: "foo")
-        XCTAssertEqual(expectedFlag, result)
+        #expect(expectedFlag == result)
 
         let resolved = await self.deferredResolver.resolvedFlagInfos
-        XCTAssertEqual(
+        #expect(
             [
                 self.remoteDataAccess.flagInfos[1],
                 self.remoteDataAccess.flagInfos[2]
-            ],
-            resolved
+            ] == resolved
         )
     }
 
 
+    @Test
     func testDeferredOutOfDate() async throws {
         let flagInfo = FeatureFlagInfo(
             id: "some ID",
@@ -1372,12 +1402,13 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         do {
             _ = try await featureFlagManager.flag(name: "foo")
         } catch {
-            XCTAssertEqual(error as! FeatureFlagError, FeatureFlagError.outOfDate)
+            #expect(error as! FeatureFlagError == FeatureFlagError.outOfDate)
         }
 
-        XCTAssertEqual(remoteDataAccess.lastOutdatedRemoteInfo, self.remoteDataAccess.remoteDataInfo)
+        #expect(remoteDataAccess.lastOutdatedRemoteInfo == self.remoteDataAccess.remoteDataInfo)
     }
 
+    @Test
     func testDeferredConnectionIssue() async throws {
         let flagInfo = FeatureFlagInfo(
             id: "some ID",
@@ -1414,12 +1445,13 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         do {
             _ = try await featureFlagManager.flag(name: "foo")
         } catch {
-            XCTAssertEqual(error as! FeatureFlagError, FeatureFlagError.connectionError(errorMessage: "Failed to resolve flag."))
+            #expect(error as! FeatureFlagError == FeatureFlagError.connectionError(errorMessage: "Failed to resolve flag."))
         }
 
-        XCTAssertNil(remoteDataAccess.lastOutdatedRemoteInfo)
+        #expect(remoteDataAccess.lastOutdatedRemoteInfo == nil)
     }
 
+    @Test
     func testDeferredOtherError() async throws {
         let flagInfo = FeatureFlagInfo(
             id: "some ID",
@@ -1456,12 +1488,13 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         do {
             _ = try await featureFlagManager.flag(name: "foo")
         } catch {
-            XCTAssertEqual(error as! FeatureFlagError, FeatureFlagError.failedToFetchData)
+            #expect(error as! FeatureFlagError == FeatureFlagError.failedToFetchData)
         }
 
-        XCTAssertNil(remoteDataAccess.lastOutdatedRemoteInfo)
+        #expect(remoteDataAccess.lastOutdatedRemoteInfo == nil)
     }
 
+    @Test
     func testResultCacheFlagDoesNotExist() async throws {
         let cachedValue = FeatureFlag(
             name: "does-not-exist",
@@ -1479,10 +1512,11 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         let flag = try await featureFlagManager.flag(name: "does-not-exist")
         let flagNoCache = try await featureFlagManager.flag(name: "does-not-exist", useResultCache: false)
 
-        XCTAssertEqual(flag, cachedValue)
-        XCTAssertNotEqual(flagNoCache, cachedValue)
+        #expect(flag == cachedValue)
+        #expect(flagNoCache != cachedValue)
     }
 
+    @Test
     func testResultCacheThrows() async throws {
         let cachedValue = FeatureFlag(
             name: "foo",
@@ -1520,10 +1554,10 @@ final class AirshipFeatureFlagsTest: XCTestCase {
         let flag = try await featureFlagManager.flag(name: "foo")
         do {
             _ = try await featureFlagManager.flag(name: "foo", useResultCache: false)
-            XCTFail()
+            Issue.record("Unexpected")
         } catch {}
 
-        XCTAssertEqual(flag, cachedValue)
+        #expect(flag == cachedValue)
     }
 }
 

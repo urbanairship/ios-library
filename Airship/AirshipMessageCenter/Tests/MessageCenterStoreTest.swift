@@ -1,15 +1,18 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable import AirshipCore
 @testable import AirshipMessageCenter
 
-final class MessageCenterStoreTest: XCTestCase {
-    private var dataStore = PreferenceDataStore(appKey: UUID().uuidString)
+struct MessageCenterStoreTest {
+    private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let config: RuntimeConfig = .testConfig()
-        
-    private lazy var store: MessageCenterStore = {
+
+    private let store: MessageCenterStore
+
+    init() {
         let modelURL = AirshipMessageCenterResources.bundle
             .url(
                 forResource: "UAInbox",
@@ -26,18 +29,20 @@ final class MessageCenterStoreTest: XCTestCase {
                 inMemory: true,
                 stores: [storeName]
             )
-            return MessageCenterStore(
+            self.store = MessageCenterStore(
                 config: self.config,
                 dataStore: self.dataStore,
                 coreData: coreData
             )
+        } else {
+            self.store = MessageCenterStore(
+                config: self.config,
+                dataStore: self.dataStore
+            )
         }
-        return MessageCenterStore(
-            config: self.config,
-            dataStore: self.dataStore
-        )
-    }()
+    }
 
+    @Test
     func testMessageCenterStoreSaveAndResetUser() async throws {
 
         let expectedUser = MessageCenterUser(
@@ -49,29 +54,31 @@ final class MessageCenterStoreTest: XCTestCase {
         await store.saveUser(expectedUser, channelID: "987654433")
 
         let user = await store.user
-        XCTAssertNotNil(user)
-        XCTAssertEqual(user!.username, expectedUser.username)
-        XCTAssertEqual(user!.password, expectedUser.password)
+        #expect(user != nil)
+        #expect(user!.username == expectedUser.username)
+        #expect(user!.password == expectedUser.password)
 
         // Reset User
         await store.resetUser()
 
         let resetedUser = await store.user
-        XCTAssertNil(resetedUser)
+        #expect(resetedUser == nil)
     }
 
+    @Test
     func testUserRequiredUpdate() async throws {
         // Set setUserRequireUpdate true
         await store.setUserRequireUpdate(true)
         var requiredUpdate = await store.userRequiredUpdate
-        XCTAssertTrue(requiredUpdate)
+        #expect(requiredUpdate)
 
         // Set Required update false
         await store.setUserRequireUpdate(false)
         requiredUpdate = await store.userRequiredUpdate
-        XCTAssertFalse(requiredUpdate)
+        #expect(!requiredUpdate)
     }
 
+    @Test
     func testFetchMessages() async throws {
         let messages = MessageCenterMessage.generateMessages(3)
 
@@ -81,6 +88,7 @@ final class MessageCenterStoreTest: XCTestCase {
         )
     }
 
+    @Test
     func testUpdateAssociatedDataPersistsMutation() async throws {
         let messages = MessageCenterMessage.generateMessages(1)
         try await store.updateMessages(messages: messages, lastModifiedTime: "")
@@ -92,9 +100,10 @@ final class MessageCenterStoreTest: XCTestCase {
         try await store.updateAssociatedData(for: messages[0].id) { $0.viewState = viewState }
 
         let fetched = await store.associatedData(for: messages[0].id)
-        XCTAssertEqual(fetched.viewState, viewState)
+        #expect(fetched.viewState == viewState)
     }
 
+    @Test
     func testUpdateAssociatedDataDoesNotAffectOtherMessages() async throws {
         let messages = MessageCenterMessage.generateMessages(3)
         try await store.updateMessages(messages: messages, lastModifiedTime: "")
@@ -105,19 +114,21 @@ final class MessageCenterStoreTest: XCTestCase {
 
         let second = await store.associatedData(for: messages[1].id)
         let third = await store.associatedData(for: messages[2].id)
-        XCTAssertNil(second.viewState)
-        XCTAssertNil(third.viewState)
+        #expect(second.viewState == nil)
+        #expect(third.viewState == nil)
     }
 
+    @Test
     func testUpdateAssociatedDataThrowsForMissingMessage() async throws {
         do {
             try await store.updateAssociatedData(for: "nonexistent-id") { $0.viewState = nil }
-            XCTFail("Expected an error to be thrown")
+            Issue.record("Expected an error to be thrown")
         } catch MessageCenterStoreError.coreDataError {
             // expected
         }
     }
 
+    @Test
     func testSyncMessages() async throws {
         let generated = MessageCenterMessage.generateMessages(5)
         var messages = Array(generated[0...2])
@@ -128,7 +139,7 @@ final class MessageCenterStoreTest: XCTestCase {
         )
 
         var fetchedMessage = await store.messages
-        XCTAssertEqual(messages, fetchedMessage)
+        #expect(messages == fetchedMessage)
 
         messages.remove(at: 0)
         messages.append(contentsOf: generated[3...4])
@@ -139,7 +150,7 @@ final class MessageCenterStoreTest: XCTestCase {
         )
 
         fetchedMessage = await store.messages
-        XCTAssertEqual(messages, fetchedMessage)
+        #expect(messages == fetchedMessage)
     }
 }
 

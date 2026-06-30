@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable
 import AirshipCore
@@ -8,52 +9,54 @@ import AirshipCore
 @testable
 import AirshipFeatureFlags
 
-final class FeatureFlagResultCacheTest: XCTestCase {
+struct FeatureFlagResultCacheTest {
     private let airshipCache: TestCache = TestCache()
-    private var resultCache: DefaultFeatureFlagResultCache!
+    private let resultCache: DefaultFeatureFlagResultCache
 
-    override func setUp() {
+    init() {
         self.resultCache = DefaultFeatureFlagResultCache(cache: self.airshipCache)
     }
 
-    public func testSet() async {
+    @Test
+    func testSet() async throws {
         let flag = FeatureFlag(name: UUID().uuidString, isEligible: true, exists: true)
         await resultCache.cache(flag: flag, ttl: 100)
 
         let entry = await airshipCache.entry(key: "FeatureFlagResultCache:\(flag.name)")!
-        XCTAssertEqual(
-            try JSONDecoder().decode(FeatureFlag.self, from: entry.data),
-            flag
+        #expect(
+            try JSONDecoder().decode(FeatureFlag.self, from: entry.data) == flag
         )
-        XCTAssertEqual(entry.ttl, 100)
+        #expect(entry.ttl == 100)
     }
 
-    public func testUpdate() async {
+    @Test
+    func testUpdate() async throws {
         var flag = FeatureFlag(name: UUID().uuidString, isEligible: true, exists: true)
         await resultCache.cache(flag: flag, ttl: 100)
         flag.isEligible = false
         await resultCache.cache(flag: flag, ttl: 99)
 
         let entry = await airshipCache.entry(key: "FeatureFlagResultCache:\(flag.name)")!
-        XCTAssertEqual(
-            try JSONDecoder().decode(FeatureFlag.self, from: entry.data),
-            flag
+        #expect(
+            try JSONDecoder().decode(FeatureFlag.self, from: entry.data) == flag
         )
-        XCTAssertEqual(entry.ttl, 99)
+        #expect(entry.ttl == 99)
     }
 
-    public func testDeleteDoesNotExist() async {
+    @Test
+    func testDeleteDoesNotExist() async {
         await resultCache.removeCachedFlag(name: "does not exist")
     }
 
-    public func testDelete() async {
+    @Test
+    func testDelete() async {
         let flag = FeatureFlag(name: UUID().uuidString, isEligible: true, exists: true)
         await resultCache.cache(flag: flag, ttl: 100)
         var entry = await airshipCache.entry(key: "FeatureFlagResultCache:\(flag.name)")
-        XCTAssertNotNil(entry)
+        #expect(entry != nil)
 
         await resultCache.removeCachedFlag(name: flag.name)
         entry = await airshipCache.entry(key: "FeatureFlagResultCache:\(flag.name)")
-        XCTAssertNil(entry)
+        #expect(entry == nil)
     }
 }
