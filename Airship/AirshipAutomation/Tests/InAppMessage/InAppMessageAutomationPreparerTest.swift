@@ -1,11 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @_spi(AirshipInternal) @testable @_spi(AirshipInternal) import AirshipAutomation
 import AirshipCore
 
 @MainActor
-final class InAppMessageAutomationPreparerTest: XCTestCase {
+struct InAppMessageAutomationPreparerTest {
 
     private let displayCoordinatorManager: TestDisplayCoordinatorManager = TestDisplayCoordinatorManager()
     private let displayAdapterFactory: TestDisplayAdapterFactory = TestDisplayAdapterFactory()
@@ -14,7 +15,7 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
     private let analytics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
     private let actionRunnerFactory: TestInAppActionRunnerFactory = TestInAppActionRunnerFactory()
 
-    private var preparer: InAppMessageAutomationPreparer!
+    private let preparer: InAppMessageAutomationPreparer
     private let message: InAppMessage = InAppMessage(
         name: "",
         displayContent: .banner(.init(media: .init(url: "some-url", type: .image)))
@@ -29,7 +30,7 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
         priority: 0
     )
 
-    override func setUp() async throws {
+    init() {
         analyticsFactory.setOnMake { [analytics] _, _ in
             return analytics
         }
@@ -44,41 +45,44 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
         actionRunnerFactory.onMake = { _, _ in return TestInAppActionRunner() }
     }
 
+    @Test
     func testPrepare() async throws {
         let runner = TestInAppActionRunner()
         actionRunnerFactory.onMake = { _, _ in return runner }
 
         let cachedAssets = TestCachedAssets()
         await self.assetManager.setOnCache { [preparedScheduleInfo] identifier, assets in
-            XCTAssertEqual(identifier, preparedScheduleInfo.scheduleID)
-            XCTAssertEqual(["some-url"], assets)
+            #expect(identifier == preparedScheduleInfo.scheduleID)
+            #expect(["some-url"] == assets)
             return cachedAssets
         }
 
         let displayCoordinator = TestDisplayCoordinator()
         self.displayCoordinatorManager.onCoordinator = { [message] incoming in
-            XCTAssertEqual(message, incoming)
+            #expect(message == incoming)
             return displayCoordinator
         }
 
         let displayAdapter = TestDisplayAdapter()
         self.displayAdapterFactory.onMake = { [message] args in
-            XCTAssertEqual(message, args.message)
+            #expect(message == args.message)
             let incomingAssets = args.assets as? TestCachedAssets
-            XCTAssertTrue(incomingAssets === cachedAssets)
+            #expect(incomingAssets === cachedAssets)
             return displayAdapter
         }
 
         guard case .prepared(let results) = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo) else {
-            return XCTFail("Expected .prepared result")
+            Issue.record("Expected .prepared result")
+            return
         }
 
-        XCTAssertEqual(self.message, results.message)
-        XCTAssertTrue(displayCoordinator === results.displayCoordinator)
-        XCTAssertTrue(displayAdapter === (results.displayAdapter as? TestDisplayAdapter))
-        XCTAssertTrue(runner === (results.actionRunner as? TestInAppActionRunner))
+        #expect(self.message == results.message)
+        #expect(displayCoordinator === results.displayCoordinator)
+        #expect(displayAdapter === (results.displayAdapter as? TestDisplayAdapter))
+        #expect(runner === (results.actionRunner as? TestInAppActionRunner))
     }
 
+    @Test
     func testPrepareFailedAssets() async throws {
         let displayCoordinator = TestDisplayCoordinator()
         let adapter = TestDisplayAdapter()
@@ -97,10 +101,11 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
 
         do {
             _ = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
-            XCTFail("should throw")
+            Issue.record("should throw")
         } catch {}
     }
 
+    @Test
     func testPrepareFailedAdapter() async throws {
         let displayCoordinator = TestDisplayCoordinator()
         self.displayCoordinatorManager.onCoordinator = { _ in
@@ -117,10 +122,11 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
 
         do {
             _ = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
-            XCTFail("should throw")
+            Issue.record("should throw")
         } catch {}
     }
 
+    @Test
     func testPrepareIntermediateLayoutResolveFails_appDefined_cancels() async throws {
         // A broken layout JSON (not a valid AirshipLayoutWrapper) on an app-defined
         // schedule should return .cancel — the payload won't be updated by remote data.
@@ -129,9 +135,13 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
             displayContent: .airshipLayoutIntermediate(AirshipLayoutIntermediate(layoutJSON: .string("not a layout")))
         )
         let result = try await self.preparer.prepare(data: badMessage, preparedScheduleInfo: preparedScheduleInfo)
-        guard case .cancel = result else { return XCTFail("Expected .cancel, got \(result)") }
+        guard case .cancel = result else {
+            Issue.record("Expected .cancel, got \(result)")
+            return
+        }
     }
 
+    @Test
     func testPrepareIntermediateLayoutResolveFails_remoteData_skips() async throws {
         // A broken layout JSON on a remote-data schedule should return .skip so the
         // schedule goes back to idle and retries after the server pushes a fix.
@@ -141,17 +151,22 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
             source: .remoteData
         )
         let result = try await self.preparer.prepare(data: badMessage, preparedScheduleInfo: preparedScheduleInfo)
-        guard case .skip = result else { return XCTFail("Expected .skip, got \(result)") }
+        guard case .skip = result else {
+            Issue.record("Expected .skip, got \(result)")
+            return
+        }
     }
 
+    @Test
     func testCancelled() async throws {
         let scheduleID = UUID().uuidString
         await self.preparer.cancelled(scheduleID: scheduleID)
 
         let cleared = await self.assetManager.cleared
-        XCTAssertEqual(cleared, [scheduleID])
+        #expect(cleared == [scheduleID])
     }
 
+    @Test
     func testLocalAudienceCheckMatch() async throws {
         let coordinator = TestDisplayCoordinator()
         let adapter = TestDisplayAdapter()
@@ -162,41 +177,56 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
         preparer.onCheckLocalAudience = { _, _ in .match }
 
         guard case .prepared = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo) else {
-            return XCTFail("Expected .prepared")
+            Issue.record("Expected .prepared")
+            return
         }
     }
 
+    @Test
     func testLocalAudienceCheckMissSkip() async throws {
         // onCache intentionally not set — if assets are prepared the force-unwrap crashes
         preparer.onCheckLocalAudience = { _, _ in .miss(.skip) }
 
         let result = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
-        guard case .skip = result else { return XCTFail("Expected .skip, got \(result)") }
+        guard case .skip = result else {
+            Issue.record("Expected .skip, got \(result)")
+            return
+        }
     }
 
+    @Test
     func testLocalAudienceCheckMissCancel() async throws {
         preparer.onCheckLocalAudience = { _, _ in .miss(.cancel) }
 
         let result = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
-        guard case .cancel = result else { return XCTFail("Expected .cancel, got \(result)") }
+        guard case .cancel = result else {
+            Issue.record("Expected .cancel, got \(result)")
+            return
+        }
     }
 
+    @Test
     func testLocalAudienceCheckMissPenalize() async throws {
         preparer.onCheckLocalAudience = { _, _ in .miss(.penalize) }
 
         let result = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
-        guard case .penalize = result else { return XCTFail("Expected .penalize, got \(result)") }
+        guard case .penalize = result else {
+            Issue.record("Expected .penalize, got \(result)")
+            return
+        }
     }
 
+    @Test
     func testLocalAudienceCheckThrows() async throws {
         preparer.onCheckLocalAudience = { _, _ in throw AirshipErrors.error("LLM unavailable") }
 
         do {
             _ = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
-            XCTFail("Expected throw")
+            Issue.record("Expected throw")
         } catch {}
     }
 
+    @Test
     func testLocalAudienceCheckReceivesMessageAndScheduleID() async throws {
         let coordinator = TestDisplayCoordinator()
         let adapter = TestDisplayAdapter()
@@ -215,10 +245,11 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
 
         _ = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
 
-        XCTAssertEqual(receivedMessage.value, message)
-        XCTAssertEqual(receivedScheduleID.value, preparedScheduleInfo.scheduleID)
+        #expect(receivedMessage.value == message)
+        #expect(receivedScheduleID.value == preparedScheduleInfo.scheduleID)
     }
 
+    @Test
     func testLocalAudienceCheckNilSkipsHook() async throws {
         let coordinator = TestDisplayCoordinator()
         let adapter = TestDisplayAdapter()
@@ -228,7 +259,8 @@ final class InAppMessageAutomationPreparerTest: XCTestCase {
 
         // no hook set — should prepare normally
         guard case .prepared = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo) else {
-            return XCTFail("Expected .prepared")
+            Issue.record("Expected .prepared")
+            return
         }
     }
 

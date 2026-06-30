@@ -1,13 +1,15 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 
-class AutomationScheduleTests: XCTestCase {
+struct AutomationScheduleTests {
 
+    @Test
     func testParseActions() throws {
         let jsonString = """
            {
@@ -71,6 +73,7 @@ class AutomationScheduleTests: XCTestCase {
         try verify(json: jsonString, expected: expectedSchedule)
     }
 
+    @Test
     func testParseDeferred() throws {
         let jsonString = """
            {
@@ -134,6 +137,7 @@ class AutomationScheduleTests: XCTestCase {
         try verify(json: jsonString, expected: expectedSchedule)
     }
 
+    @Test
     func testParseInAppMessage() throws {
         let jsonString = """
            {
@@ -205,6 +209,7 @@ class AutomationScheduleTests: XCTestCase {
         try verify(json: jsonString, expected: expectedSchedule)
     }
     
+    @Test
     func testParseInAppMessageCompoundAudience() throws {
         let jsonString = """
            {
@@ -296,10 +301,10 @@ class AutomationScheduleTests: XCTestCase {
         let encoder = JSONEncoder()
 
         let fromJSON = try decoder.decode(AutomationSchedule.self, from: json.data(using: .utf8)!)
-        XCTAssertEqual(fromJSON, expected)
+        #expect(fromJSON == expected)
 
         let roundTrip = try decoder.decode(AutomationSchedule.self, from: try encoder.encode(fromJSON))
-        XCTAssertEqual(roundTrip, fromJSON)
+        #expect(roundTrip == fromJSON)
     }
 
 }

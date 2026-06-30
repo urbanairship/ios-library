@@ -1,16 +1,18 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 import AirshipCore
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 @_spi(AirshipInternal) import AirshipBasement
 
-final class RetryingQueueTests: XCTestCase {
+struct RetryingQueueTests {
 
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
 
+    @Test
     func testState() async throws {
         let queue = RetryingQueue<Int>(
             id: "test",
@@ -28,9 +30,10 @@ final class RetryingQueueTests: XCTestCase {
             return .retry
         }
 
-        XCTAssertEqual(6, result)
+        #expect(6 == result)
     }
     
+    @Test
     func testExecutionOrderPriorities() async throws {
         
         let queue = RetryingQueue<Int>(
@@ -67,9 +70,10 @@ final class RetryingQueueTests: XCTestCase {
             return result
         }
         
-        XCTAssertEqual([1, 2, 3], numbers)
+        #expect([1, 2, 3] == numbers)
     }
 
+    @Test
     func testRetryAfter0() async throws {
         let queue = RetryingQueue<Int>(
             id: "test",
@@ -94,10 +98,11 @@ final class RetryingQueueTests: XCTestCase {
 
         }
 
-        XCTAssertEqual(0, result)
-        XCTAssertEqual([0, 10], self.taskSleeper.sleeps)
+        #expect(0 == result)
+        #expect([0, 10] == self.taskSleeper.sleeps)
     }
 
+    @Test
     func testBackOff() async throws {
         let queue = RetryingQueue<Int>(
             id: "test",
@@ -118,10 +123,11 @@ final class RetryingQueueTests: XCTestCase {
 
         }
 
-        XCTAssertEqual(0, result)
-        XCTAssertEqual([10, 20, 40, 60, 60], self.taskSleeper.sleeps)
+        #expect(0 == result)
+        #expect([10, 20, 40, 60, 60] == self.taskSleeper.sleeps)
     }
 
+    @Test
     func testRetryAfterCanExceedMaxBackOff() async throws {
         let queue = RetryingQueue<Int>(
             id: "test",
@@ -145,10 +151,11 @@ final class RetryingQueueTests: XCTestCase {
             return .retry
         }
 
-        XCTAssertEqual(0, result)
-        XCTAssertEqual([10, 10000, 60], self.taskSleeper.sleeps)
+        #expect(0 == result)
+        #expect([10, 10000, 60] == self.taskSleeper.sleeps)
     }
 
+    @Test
     func testThrowsRetries() async throws {
         let queue = RetryingQueue<Int>(
             id: "test",
@@ -168,10 +175,11 @@ final class RetryingQueueTests: XCTestCase {
             return .success(result: 0)
         }
 
-        XCTAssertEqual(0, result)
-        XCTAssertEqual([10], self.taskSleeper.sleeps)
+        #expect(0 == result)
+        #expect([10] == self.taskSleeper.sleeps)
     }
 
+    @Test
     func testDeadLock() async throws {
            let queue = RetryingQueue<String>(
             id: "test",
@@ -181,35 +189,38 @@ final class RetryingQueueTests: XCTestCase {
 
            let coordinator = DeadlockTestCoordinator()
 
-           let expectationA = XCTestExpectation(description: "Task A completed")
-           let expectationB = XCTestExpectation(description: "Task B completed")
+           await confirmation("Task A completed") { taskACompleted in
+               await confirmation("Task B completed") { taskBCompleted in
+                   let taskA = Task {
+                       let result = await queue.run(name: "Task A", priority: 10) { _ in
+                           print("\(Date()): Task A: Started work.")
+                           await coordinator.signalTaskBShouldBeAdded()
+                           await coordinator.waitForTaskAFinishWork()
+                           return .success(result: "A")
+                       }
+                       #expect(result == "A")
+                       taskACompleted()
+                   }
 
-           Task {
-               let result = await queue.run(name: "Task A", priority: 10) { _ in
-                   print("\(Date()): Task A: Started work.")
-                   await coordinator.signalTaskBShouldBeAdded()
-                   await coordinator.waitForTaskAFinishWork()
-                   return .success(result: "A")
+                   await coordinator.waitForTaskBToBeAdded()
+
+                   let taskB = Task {
+                       let result = await queue.run(name: "Task B", priority: 0) { _ in
+                           return .success(result: "B")
+                       }
+                       #expect(result == "B")
+                       taskBCompleted()
+                   }
+
+                   await coordinator.signalTaskAFinishWork()
+
+                   await taskA.value
+                   await taskB.value
                }
-               XCTAssertEqual(result, "A")
-               expectationA.fulfill()
            }
-
-           await coordinator.waitForTaskBToBeAdded()
-
-           Task {
-               let result = await queue.run(name: "Task B", priority: 0) { _ in
-                   return .success(result: "B")
-               }
-               XCTAssertEqual(result, "B")
-               expectationB.fulfill()
-           }
-
-           await coordinator.signalTaskAFinishWork()
-
-           await fulfillment(of: [expectationA, expectationB], timeout: 2.0)
        }
 
+    @Test
     func testRetryDoesNotBlock() async throws {
 
         let queue = RetryingQueue<Int>(
@@ -222,53 +233,57 @@ final class RetryingQueueTests: XCTestCase {
         let startedTasks = ActorValue<Int>(0)
         let results = ActorValue<[Int]>([])
 
-        let completed = expectation(description: "Completed")
-
-        for _ in 1...2 {
-            Task { @MainActor in
-                let myTaskNumber = await taskNumber.getAndUpdate { task in
-                    task + 1
-                }
-
-                let result = await queue.run(name: "Task \(myTaskNumber)") { state in
-                    let isFirstRun = await state.value(key: "isFirstRun") ?? true
-                    await state.setValue(false, key: "isFirstRun")
-
-                    if (isFirstRun) {
-                        await startedTasks.update { task in
-                           task + 1
-                       }
+        await confirmation("Completed") { completed in
+            var tasks: [Task<Void, Never>] = []
+            for _ in 1...2 {
+                let task = Task { @MainActor in
+                    let myTaskNumber = await taskNumber.getAndUpdate { task in
+                        task + 1
                     }
 
-                    while (await startedTasks.get() != 2) {
-                        await Task.yield()
-                    }
+                    let result = await queue.run(name: "Task \(myTaskNumber)") { state in
+                        let isFirstRun = await state.value(key: "isFirstRun") ?? true
+                        await state.setValue(false, key: "isFirstRun")
 
-                    if (myTaskNumber == 1 && isFirstRun) {
-                        return .retryAfter(0.2)
-                    }
-
-                    return .success(result: myTaskNumber)
-                }
-
-                await results.update { current in
-                    var current = current
-                    current.append(result)
-
-                    defer {
-                        if (current.count == 2) {
-                            completed.fulfill()
+                        if (isFirstRun) {
+                            await startedTasks.update { task in
+                               task + 1
+                           }
                         }
+
+                        while (await startedTasks.get() != 2) {
+                            await Task.yield()
+                        }
+
+                        if (myTaskNumber == 1 && isFirstRun) {
+                            return .retryAfter(0.2)
+                        }
+
+                        return .success(result: myTaskNumber)
                     }
 
-                    return current
+                    await results.update { current in
+                        var current = current
+                        current.append(result)
+
+                        defer {
+                            if (current.count == 2) {
+                                completed()
+                            }
+                        }
+
+                        return current
+                    }
                 }
+                tasks.append(task)
+            }
+
+            for task in tasks {
+                await task.value
             }
         }
-
-        await fulfillment(of: [completed])
         let resultsValue = await results.get()
-        XCTAssertEqual(resultsValue, [2,1])
+        #expect(resultsValue == [2,1])
     }
 }
 
@@ -335,4 +350,3 @@ private actor DeadlockTestCoordinator {
         taskAFinishWorkContinuation?.resume()
     }
 }
-

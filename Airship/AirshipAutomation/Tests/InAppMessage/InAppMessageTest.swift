@@ -1,13 +1,15 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 
-final class InAppMessageTest: XCTestCase {
-    
+struct InAppMessageTest {
+
+    @Test
     func testBanner() throws {
         let json = """
           {
@@ -124,6 +126,7 @@ final class InAppMessageTest: XCTestCase {
         try verify(json: json, expected: expected)
     }
 
+    @Test
     func testModal() throws {
         let json = """
           {
@@ -237,6 +240,7 @@ final class InAppMessageTest: XCTestCase {
         try verify(json: json, expected: expected)
     }
 
+    @Test
     func testFullscreen() throws {
         let json = """
           {
@@ -346,6 +350,7 @@ final class InAppMessageTest: XCTestCase {
         try verify(json: json, expected: expected)
     }
 
+    @Test
     func testHTML() throws {
         let json = """
          {
@@ -378,6 +383,7 @@ final class InAppMessageTest: XCTestCase {
         try verify(json: json, expected: expected)
     }
 
+    @Test
     func testCustom() throws {
         let json = """
           {
@@ -401,6 +407,7 @@ final class InAppMessageTest: XCTestCase {
         try verify(json: json, expected: expected)
     }
 
+    @Test
     func testAirshipLayout() throws {
         let airshipLayout = """
         {
@@ -443,6 +450,7 @@ final class InAppMessageTest: XCTestCase {
         try verify(json: json, expected: expected)
     }
     
+    @Test
     func testNamePropertyDefaultsToEmptyString() throws {
         let json = """
            {
@@ -470,9 +478,9 @@ final class InAppMessageTest: XCTestCase {
         let encoder = JSONEncoder()
 
         let fromJSON = try decoder.decode(InAppMessage.self, from: json.data(using: .utf8)!)
-        XCTAssertEqual(fromJSON, expected)
+        #expect(fromJSON == expected)
 
         let roundTrip = try decoder.decode(InAppMessage.self, from: try encoder.encode(fromJSON))
-        XCTAssertEqual(roundTrip, fromJSON)
+        #expect(roundTrip == fromJSON)
     }
 }

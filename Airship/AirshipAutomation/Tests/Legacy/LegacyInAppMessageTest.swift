@@ -1,13 +1,15 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @testable @_spi(AirshipInternal) import AirshipAutomation
 @testable import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
-final class LegacyInAppMessageTest: XCTestCase {
+struct LegacyInAppMessageTest {
     let date = UATestDate(offset: 0, dateOverride: Date())
     
+    @Test
     func testParseMinPayload() {
         let payload: [String: Any] = [
             "identifier": "test-id",
@@ -19,20 +21,21 @@ final class LegacyInAppMessageTest: XCTestCase {
         
         let message = LegacyInAppMessage(payload: payload, date: date)!
         
-        XCTAssertNil(message.campaigns)
-        XCTAssertNil(message.messageType)
-        XCTAssertEqual(60 * 60 * 24 * 30, message.expiry.timeIntervalSince(date.now))
-        XCTAssertEqual(15, message.duration)
-        XCTAssertNil(message.extra)
-        XCTAssertEqual(LegacyInAppMessage.DisplayType.banner, message.displayType)
-        XCTAssertEqual(LegacyInAppMessage.Position.bottom, message.position)
-        XCTAssertNil(message.primaryColor)
-        XCTAssertNil(message.secondaryColor)
-        XCTAssertNil(message.buttonGroup)
-        XCTAssertNil(message.buttonActions)
-        XCTAssertNil(message.onClick)
+        #expect(message.campaigns == nil)
+        #expect(message.messageType == nil)
+        #expect(60 * 60 * 24 * 30 == message.expiry.timeIntervalSince(date.now))
+        #expect(15 == message.duration)
+        #expect(message.extra == nil)
+        #expect(LegacyInAppMessage.DisplayType.banner == message.displayType)
+        #expect(LegacyInAppMessage.Position.bottom == message.position)
+        #expect(message.primaryColor == nil)
+        #expect(message.secondaryColor == nil)
+        #expect(message.buttonGroup == nil)
+        #expect(message.buttonActions == nil)
+        #expect(message.onClick == nil)
     }
     
+    @Test
     func testParseMaxPayload() {
         date.offset = 1
         
@@ -59,23 +62,24 @@ final class LegacyInAppMessageTest: XCTestCase {
         
         let message = LegacyInAppMessage(payload: payload, date: date)!
         
-        XCTAssertEqual(try! AirshipJSON.wrap(["test-campaing": "json"]), message.campaigns)
-        XCTAssertEqual("test-message", message.messageType)
-        XCTAssertEqual(
-            AirshipDateFormatter.string(fromDate: date.now, format: .iso8601),
+        #expect(try! AirshipJSON.wrap(["test-campaing": "json"]) == message.campaigns)
+        #expect("test-message" == message.messageType)
+        #expect(
+            AirshipDateFormatter.string(fromDate: date.now, format: .iso8601) ==
             AirshipDateFormatter.string(fromDate: message.expiry, format: .iso8601)
         )
-        XCTAssertEqual(100, message.duration)
-        XCTAssertEqual(try! AirshipJSON.wrap(["extra_value": "some text"]), message.extra)
-        XCTAssertEqual(LegacyInAppMessage.DisplayType.banner, message.displayType)
-        XCTAssertEqual(LegacyInAppMessage.Position.top, message.position)
-        XCTAssertEqual("#ABCDEF", message.primaryColor)
-        XCTAssertEqual("#FEDCBA", message.secondaryColor)
-        XCTAssertEqual("button group", message.buttonGroup)
-        XCTAssertEqual(["name": try! AirshipJSON.wrap(["test": "json"])], message.buttonActions)
-        XCTAssertEqual(try! AirshipJSON.wrap(["onclick": "action"]), message.onClick)
+        #expect(100 == message.duration)
+        #expect(try! AirshipJSON.wrap(["extra_value": "some text"]) == message.extra)
+        #expect(LegacyInAppMessage.DisplayType.banner == message.displayType)
+        #expect(LegacyInAppMessage.Position.top == message.position)
+        #expect("#ABCDEF" == message.primaryColor)
+        #expect("#FEDCBA" == message.secondaryColor)
+        #expect("button group" == message.buttonGroup)
+        #expect(["name": try! AirshipJSON.wrap(["test": "json"])] == message.buttonActions)
+        #expect(try! AirshipJSON.wrap(["onclick": "action"]) == message.onClick)
     }
     
+    @Test
     func testOverrideId() {
         let payload: [String : Any] = [
             "identifier": "test-id",
@@ -88,9 +92,10 @@ final class LegacyInAppMessageTest: XCTestCase {
         let overridId = "override"
         
         let message = LegacyInAppMessage(payload: payload, overrideId: overridId)!
-        XCTAssertEqual(overridId, message.identifier)
+        #expect(overridId == message.identifier)
     }
     
+    @Test
     func testOverrideOnClick() {
         let payload: [String: Any] = [
             "identifier": "test-id",
@@ -103,9 +108,10 @@ final class LegacyInAppMessageTest: XCTestCase {
         let overridJson = try! AirshipJSON.wrap(["test": "json"])
         
         let message = LegacyInAppMessage(payload: payload, overrideOnClick: overridJson)!
-        XCTAssertEqual(overridJson, message.onClick)
+        #expect(overridJson == message.onClick)
     }
     
+    @Test
     func testMissingRequiredFields() {
         var payload: [String: Any] = [
             "display": [
@@ -113,7 +119,7 @@ final class LegacyInAppMessageTest: XCTestCase {
                 "alert": "test alert"
             ]
         ]
-        XCTAssertNil(LegacyInAppMessage(payload: payload))
+        #expect(LegacyInAppMessage(payload: payload) == nil)
         
         payload = [
             "identifier": "test-id",
@@ -121,7 +127,7 @@ final class LegacyInAppMessageTest: XCTestCase {
                 "alert": "test alert"
             ]
         ]
-        XCTAssertNil(LegacyInAppMessage(payload: payload))
+        #expect(LegacyInAppMessage(payload: payload) == nil)
         
         payload = [
             "identifier": "test-id",
@@ -129,7 +135,7 @@ final class LegacyInAppMessageTest: XCTestCase {
                 "type": "banner",
             ]
         ]
-        XCTAssertNil(LegacyInAppMessage(payload: payload))
+        #expect(LegacyInAppMessage(payload: payload) == nil)
         
         payload = [
             "identifier": "test-id",
@@ -138,7 +144,7 @@ final class LegacyInAppMessageTest: XCTestCase {
                 "alert": "test alert"
             ]
         ]
-        XCTAssertNil(LegacyInAppMessage(payload: payload))
+        #expect(LegacyInAppMessage(payload: payload) == nil)
     }
 }
 

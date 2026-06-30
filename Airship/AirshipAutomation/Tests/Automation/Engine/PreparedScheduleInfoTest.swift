@@ -1,11 +1,13 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Foundation
+import Testing
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 
-final class PreparedScheduleInfoTest: XCTestCase {
+struct PreparedScheduleInfoTest {
+    @Test
     func testMissingTriggerSessionID() throws {
         let json = """
         {
@@ -18,10 +20,11 @@ final class PreparedScheduleInfoTest: XCTestCase {
             from: json.data(using: .utf8)!
         )
 
-        XCTAssertEqual("some schedule", info.scheduleID)
-        XCTAssertFalse(info.triggerSessionID.isEmpty)
+        #expect("some schedule" == info.scheduleID)
+        #expect(!(info.triggerSessionID.isEmpty))
     }
 
+    @Test
     func testSendMetadataRoundtrip() throws {
         let original = PreparedScheduleInfo(
             scheduleID: "some-schedule",
@@ -33,9 +36,10 @@ final class PreparedScheduleInfoTest: XCTestCase {
         let data = try JSONEncoder().encode(original)
         let decoded = try JSONDecoder().decode(PreparedScheduleInfo.self, from: data)
 
-        XCTAssertEqual("encoded-send-metadata", decoded.sendMetadata)
+        #expect("encoded-send-metadata" == decoded.sendMetadata)
     }
 
+    @Test
     func testSendMetadataAbsentWhenNil() throws {
         let original = PreparedScheduleInfo(
             scheduleID: "some-schedule",
@@ -46,7 +50,7 @@ final class PreparedScheduleInfoTest: XCTestCase {
         let data = try JSONEncoder().encode(original)
         let decoded = try JSONDecoder().decode(PreparedScheduleInfo.self, from: data)
 
-        XCTAssertNil(decoded.sendMetadata)
+        #expect(decoded.sendMetadata == nil)
     }
 }
 

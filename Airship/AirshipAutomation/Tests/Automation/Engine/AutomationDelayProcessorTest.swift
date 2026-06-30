@@ -1,24 +1,26 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 
 
-final class AutomationDelayProcessorTest: XCTestCase {
+struct AutomationDelayProcessorTest {
 
     private let analytics: TestAnalytics = TestAnalytics()
     private let stateTracker: TestAppStateTracker = TestAppStateTracker()
     private let date: UATestDate = UATestDate()
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
 
-    private var processor: AutomationDelayProcessor!
-    private var executionWindowProcessor: TestExecutionWindowProcessor!
+    private let processor: AutomationDelayProcessor
+    private let executionWindowProcessor: TestExecutionWindowProcessor
 
-    override func setUp() async throws {
-        self.executionWindowProcessor = TestExecutionWindowProcessor()
+    init() async throws {
+        let executionWindowProcessor = TestExecutionWindowProcessor()
+        self.executionWindowProcessor = executionWindowProcessor
         self.date.dateOverride = Date()
         self.processor = await AutomationDelayProcessor(
             analytics: analytics,
@@ -30,6 +32,7 @@ final class AutomationDelayProcessorTest: XCTestCase {
     }
 
     @MainActor
+    @Test
     func testProcess() async throws {
         let executionWindow = try ExecutionWindow(
             include: [ .weekly(daysOfWeek: [1]) ]
@@ -42,41 +45,42 @@ final class AutomationDelayProcessorTest: XCTestCase {
             executionWindow: executionWindow
         )
 
-        let finished = AirshipMainActorValue<Bool>(false)
-        let started = expectation(description: "delay started")
-        let ended = expectation(description: "delay processed")
-
-        let now = date.now
-        Task { @MainActor [processor] in
-            started.fulfill()
-            await processor!.process(delay: delay, triggerDate: now)
-            finished.set(true)
-            ended.fulfill()
-        }
-
-        await self.fulfillment(of: [started])
-
-        XCTAssertFalse(finished.value)
-
         self.analytics.setScreen("screen1")
         self.analytics.setRegions(Set(["region1"]))
-        self.analytics.setRegions(Set(["region1"]))
         self.stateTracker.currentState = .active
+
+        // Report the window as inactive on the first check so the processor
+        // enters its condition-wait loop and processes the window once, then
+        // active so the loop exits.
+        let isActiveChecks = AirshipMainActorValue<Int>(0)
         self.executionWindowProcessor.onIsActive = { window in
-            XCTAssertEqual(window, executionWindow)
-            return true
+            #expect(window == executionWindow)
+            let checks = isActiveChecks.value
+            isActiveChecks.set(checks + 1)
+            return checks > 0
         }
 
-        await self.fulfillment(of: [ended])
-        XCTAssertTrue(finished.value)
+        let finished = AirshipMainActorValue<Bool>(false)
+
+        let now = date.now
+        let task = Task { @MainActor [processor] in
+            await processor.process(delay: delay, triggerDate: now)
+            finished.set(true)
+        }
+
+        #expect(!(finished.value))
+
+        await task.value
+        #expect(finished.value)
 
         let sleeps = self.taskSleeper.sleeps
-        XCTAssertEqual(sleeps, [100.0])
+        #expect(sleeps == [100.0])
         let processed = await self.executionWindowProcessor.getProcessed()
-        XCTAssertEqual(processed, [executionWindow])
+        #expect(processed == [executionWindow])
     }
 
     @MainActor
+    @Test
     func testPreprocess() async throws {
         let executionWindow = try ExecutionWindow(
             include: [ .weekly(daysOfWeek: [1]) ]
@@ -91,188 +95,193 @@ final class AutomationDelayProcessorTest: XCTestCase {
         )
 
         let finished = AirshipMainActorValue<Bool>(false)
-        let ended = expectation(description: "delay processed")
 
         let now = date.now
-        Task { @MainActor [processor] in
-            try! await processor!.preprocess(delay: delay, triggerDate: now)
-            finished.set(true)
-            ended.fulfill()
+        await confirmation("delay processed") { ended in
+            let task = Task { @MainActor [processor] in
+                try! await processor.preprocess(delay: delay, triggerDate: now)
+                finished.set(true)
+                ended()
+            }
+            await task.value
         }
-
-        await self.fulfillment(of: [ended])
-        XCTAssertTrue(finished.value)
+        #expect(finished.value)
 
         let sleeps = self.taskSleeper.sleeps
-        XCTAssertEqual(sleeps, [70.0])
+        #expect(sleeps == [70.0])
 
         let processed = await self.executionWindowProcessor.getProcessed()
-        XCTAssertEqual(processed, [executionWindow])
+        #expect(processed == [executionWindow])
     }
 
     @MainActor
+    @Test
     func testTaskSleep() async throws {
         let delay = AutomationDelay(
             seconds: 100.0
         )
 
-        let ended = expectation(description: "delay processed")
-
         let now = date.now
-        Task { @MainActor [processor] in
-            await processor!.process(delay: delay, triggerDate: now)
-            ended.fulfill()
+        await confirmation("delay processed") { ended in
+            let task = Task { @MainActor [processor] in
+                await processor.process(delay: delay, triggerDate: now)
+                ended()
+            }
+            await task.value
         }
 
-        await self.fulfillment(of: [ended])
-
         let sleeps = self.taskSleeper.sleeps
-        XCTAssertEqual(sleeps, [100.0])
+        #expect(sleeps == [100.0])
     }
 
     @MainActor
+    @Test
     func testRemainingSleep() async throws {
         let delay = AutomationDelay(
             seconds: 100.0
         )
 
-        let ended = expectation(description: "delay processed")
-
         let now = date.now
-        Task { @MainActor [processor] in
-            await processor!.process(delay: delay, triggerDate: now - 50.0)
-            ended.fulfill()
+        await confirmation("delay processed") { ended in
+            let task = Task { @MainActor [processor] in
+                await processor.process(delay: delay, triggerDate: now - 50.0)
+                ended()
+            }
+            await task.value
         }
 
-        await self.fulfillment(of: [ended])
-
         let sleeps = self.taskSleeper.sleeps
-        XCTAssertEqual(sleeps, [50.0])
+        #expect(sleeps == [50.0])
     }
 
     @MainActor
+    @Test
     func testSkipSleep() async throws {
         let delay = AutomationDelay(
             seconds: 100.0
         )
 
-        let ended = expectation(description: "delay processed")
-
         let now = date.now
-        Task { @MainActor [processor] in
-            await processor!.process(delay: delay, triggerDate: now - 100.0)
-            ended.fulfill()
+        await confirmation("delay processed") { ended in
+            let task = Task { @MainActor [processor] in
+                await processor.process(delay: delay, triggerDate: now - 100.0)
+                ended()
+            }
+            await task.value
         }
 
-        await self.fulfillment(of: [ended])
-
         let sleeps = self.taskSleeper.sleeps
-        XCTAssertEqual(sleeps, [])
+        #expect(sleeps == [])
     }
 
     @MainActor
+    @Test
     func testEmptyDelay() async throws {
         let delay = AutomationDelay()
 
-        let ended = expectation(description: "delay processed")
-
         let now = date.now
-        Task { @MainActor [processor] in
-            await processor!.process(delay: delay, triggerDate: now - 100.0)
-            ended.fulfill()
+        await confirmation("delay processed") { ended in
+            let task = Task { @MainActor [processor] in
+                await processor.process(delay: delay, triggerDate: now - 100.0)
+                ended()
+            }
+            await task.value
         }
 
-        await self.fulfillment(of: [ended])
-
         let sleeps = self.taskSleeper.sleeps
-        XCTAssertEqual(sleeps, [])
+        #expect(sleeps == [])
 
-        XCTAssertTrue(self.processor.areConditionsMet(delay: delay))
+        #expect(self.processor.areConditionsMet(delay: delay))
     }
 
     @MainActor
+    @Test
     func testNilDelay() async throws {
-        let ended = expectation(description: "delay processed")
-
         let now = date.now
-        Task { @MainActor [processor] in
-            await processor!.process(delay: nil, triggerDate: now - 100.0)
-            ended.fulfill()
+        await confirmation("delay processed") { ended in
+            let task = Task { @MainActor [processor] in
+                await processor.process(delay: nil, triggerDate: now - 100.0)
+                ended()
+            }
+            await task.value
         }
 
-        await self.fulfillment(of: [ended])
-
         let sleeps = self.taskSleeper.sleeps
-        XCTAssertEqual(sleeps, [])
+        #expect(sleeps == [])
 
-        XCTAssertTrue(self.processor.areConditionsMet(delay: nil))
+        #expect(self.processor.areConditionsMet(delay: nil))
     }
 
 
     @MainActor
+    @Test
     func testScreenConditions() async throws {
         let delay = AutomationDelay(
             screens: ["screen1", "screen2"]
         )
 
-        XCTAssertFalse(self.processor.areConditionsMet(delay: delay))
+        #expect(!(self.processor.areConditionsMet(delay: delay)))
 
         self.analytics.setScreen("screen1")
-        XCTAssertTrue(self.processor.areConditionsMet(delay: delay))
+        #expect(self.processor.areConditionsMet(delay: delay))
 
         self.analytics.setScreen("screen3")
-        XCTAssertFalse(self.processor.areConditionsMet(delay: delay))
+        #expect(!(self.processor.areConditionsMet(delay: delay)))
     }
 
     @MainActor
+    @Test
     func testRegionCondition() async throws {
         let delay = AutomationDelay(
             regionID: "foo"
         )
 
-        XCTAssertFalse(self.processor.areConditionsMet(delay: delay))
+        #expect(!(self.processor.areConditionsMet(delay: delay)))
 
         self.analytics.setRegions(Set(["foo", "baz"]))
-        XCTAssertTrue(self.processor.areConditionsMet(delay: delay))
+        #expect(self.processor.areConditionsMet(delay: delay))
 
         self.analytics.setRegions(Set(["bar", "baz"]))
-        XCTAssertFalse(self.processor.areConditionsMet(delay: delay))
+        #expect(!(self.processor.areConditionsMet(delay: delay)))
     }
 
 
     @MainActor
+    @Test
     func testForegroundAppState() async throws {
         let delay = AutomationDelay(
             appState: .foreground
         )
 
         self.stateTracker.currentState = .background
-        XCTAssertFalse(self.processor.areConditionsMet(delay: delay))
+        #expect(!(self.processor.areConditionsMet(delay: delay)))
 
         self.stateTracker.currentState = .inactive
-        XCTAssertFalse(self.processor.areConditionsMet(delay: delay))
+        #expect(!(self.processor.areConditionsMet(delay: delay)))
 
         self.stateTracker.currentState = .active
-        XCTAssertTrue(self.processor.areConditionsMet(delay: delay))
+        #expect(self.processor.areConditionsMet(delay: delay))
     }
 
     @MainActor
+    @Test
     func testBackgroundAppState() async throws {
         let delay = AutomationDelay(
             appState: .background
         )
 
         self.stateTracker.currentState = .background
-        XCTAssertTrue(self.processor.areConditionsMet(delay: delay))
+        #expect(self.processor.areConditionsMet(delay: delay))
 
         self.stateTracker.currentState = .inactive
-        XCTAssertTrue(self.processor.areConditionsMet(delay: delay))
+        #expect(self.processor.areConditionsMet(delay: delay))
 
         self.stateTracker.currentState = .active
-        XCTAssertFalse(self.processor.areConditionsMet(delay: delay))
+        #expect(!(self.processor.areConditionsMet(delay: delay)))
     }
 
     @MainActor
+    @Test
     func testExecutionWindow() async throws {
         let executionWindow = try ExecutionWindow(
             include: [ .weekly(daysOfWeek: [1]) ]
@@ -285,12 +294,12 @@ final class AutomationDelayProcessorTest: XCTestCase {
         self.executionWindowProcessor.onIsActive = { _ in
             return false
         }
-        XCTAssertFalse(self.processor.areConditionsMet(delay: delay))
+        #expect(!(self.processor.areConditionsMet(delay: delay)))
 
         self.executionWindowProcessor.onIsActive = { _ in
             return true
         }
-        XCTAssertTrue(self.processor.areConditionsMet(delay: delay))
+        #expect(self.processor.areConditionsMet(delay: delay))
     }
 }
 

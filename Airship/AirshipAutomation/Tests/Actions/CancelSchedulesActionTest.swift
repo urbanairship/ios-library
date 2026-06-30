@@ -1,17 +1,19 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @_spi(AirshipInternal) @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
+import UserNotifications
 
-final class CancelSchedulesActionTest: XCTestCase {
+struct CancelSchedulesActionTest {
     
     let automation = TestAutomationEngine()
-    var action: CancelSchedulesAction!
+    let action: CancelSchedulesAction
     
-    override func setUp() async throws {
+    init() async throws {
         let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         let config = RuntimeConfig.testConfig()
         
@@ -31,6 +33,7 @@ final class CancelSchedulesActionTest: XCTestCase {
         action = CancelSchedulesAction(overrideAutomation: inAppAutomation)
     }
     
+    @Test
     func testAcceptsArguments() async throws {
         let valid: [ActionSituation] = [
             .foregroundPush, .backgroundPush, .manualInvocation, .webViewInvocation, .automation
@@ -43,21 +46,22 @@ final class CancelSchedulesActionTest: XCTestCase {
         for situation in valid {
             let args = ActionArguments(value: AirshipJSON.null, situation: situation)
             let result = await action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result)
         }
 
         for situation in rejected {
             let args = ActionArguments(value: AirshipJSON.null, situation: situation)
             let result = await action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!(result))
         }
     }
     
+    @Test
     func testArguments() async throws {
         //should accept all
         var args = ActionArguments(value: try AirshipJSON.wrap("all"), situation: .automation)
         var result = try await action.perform(arguments: args)
-        XCTAssertNil(result)
+        #expect(result == nil)
         
         //should fail other strings
         args = ActionArguments(value: try AirshipJSON.wrap("invalid"), situation: .automation)
@@ -66,27 +70,27 @@ final class CancelSchedulesActionTest: XCTestCase {
         //should accept dictionaries with groups
         args = ActionArguments(value: try AirshipJSON.wrap(["groups": "test"]), situation: .automation)
         result = try await action.perform(arguments: args)
-        XCTAssertNil(result)
+        #expect(result == nil)
         
         //should accept dictionaries with groups array
         args = ActionArguments(value: try AirshipJSON.wrap(["groups": ["test"]]), situation: .automation)
         result = try await action.perform(arguments: args)
-        XCTAssertNil(result)
+        #expect(result == nil)
         
         //should accept dictionaries with ids
         args = ActionArguments(value: try AirshipJSON.wrap(["ids": "test"]), situation: .automation)
         result = try await action.perform(arguments: args)
-        XCTAssertNil(result)
+        #expect(result == nil)
         
         //should accept dictionaries with ids array
         args = ActionArguments(value: try AirshipJSON.wrap(["ids": ["test"]]), situation: .automation)
         result = try await action.perform(arguments: args)
-        XCTAssertNil(result)
+        #expect(result == nil)
         
         //should accept dictionaries with ids and groups
         args = ActionArguments(value: try AirshipJSON.wrap(["ids": ["test"], "groups": "test1"]), situation: .automation)
         result = try await action.perform(arguments: args)
-        XCTAssertNil(result)
+        #expect(result == nil)
         
         //should fail if neither groups nor ids key found
         args = ActionArguments(value: try AirshipJSON.wrap(["key": "invalid"]), situation: .automation)
@@ -96,10 +100,11 @@ final class CancelSchedulesActionTest: XCTestCase {
     func assertThrowsAsync(_ block: () async throws -> Void) async {
         do {
             try await block()
-            XCTFail()
+            Issue.record()
         } catch { }
     }
     
+    @Test
     func testCancellAll() async throws {
         await automation.setSchedules([
             AutomationSchedule(identifier: "action1", data: .actions(.null), triggers: []),
@@ -108,15 +113,16 @@ final class CancelSchedulesActionTest: XCTestCase {
         ])
         
         var count = await automation.schedules.count
-        XCTAssertEqual(3, count)
+        #expect(3 == count)
         
         _ = try await action.perform(arguments: ActionArguments(value: AirshipJSON.string("all")))
         count = await automation.schedules.count
-        XCTAssertEqual(1, count)
+        #expect(1 == count)
         let schedule = await automation.schedules.first
-        XCTAssertEqual("message", schedule?.identifier)
+        #expect("message" == schedule?.identifier)
     }
     
+    @Test
     func testCancelGroups() async throws {
         await automation.setSchedules([
             AutomationSchedule(identifier: "group1", triggers: [], data: .actions(.null), group: "group-1"),
@@ -125,23 +131,24 @@ final class CancelSchedulesActionTest: XCTestCase {
         ])
         
         let count = await automation.schedules.count
-        XCTAssertEqual(3, count)
+        #expect(3 == count)
         
         _ = try await action.perform(
             arguments: ActionArguments(
                 value: ["groups": "group-1"]))
         
         var scheduleIds = await automation.schedules.map({ $0.identifier })
-        XCTAssertEqual(["group2", "group3"], scheduleIds)
+        #expect(["group2", "group3"] == scheduleIds)
         
         _ = try await action.perform(
             arguments: ActionArguments(
                 value: ["groups": ["group-2", "group-3"]]))
         
         scheduleIds = await automation.schedules.map({ $0.identifier })
-        XCTAssert(scheduleIds.isEmpty)
+        #expect(scheduleIds.isEmpty)
     }
     
+    @Test
     func testCancelWithIds() async throws {
         await automation.setSchedules([
             AutomationSchedule(identifier: "id-1", triggers: [], data: .actions(.null)),
@@ -150,23 +157,24 @@ final class CancelSchedulesActionTest: XCTestCase {
         ])
         
         let count = await automation.schedules.count
-        XCTAssertEqual(3, count)
+        #expect(3 == count)
         
         _ = try await action.perform(
             arguments: ActionArguments(
                 value: ["ids": "id-1"]))
         
         var scheduleIds = await automation.schedules.map({ $0.identifier })
-        XCTAssertEqual(["id-2", "id-3"], scheduleIds)
+        #expect(["id-2", "id-3"] == scheduleIds)
         
         _ = try await action.perform(
             arguments: ActionArguments(
                 value: ["ids": ["id-2", "id-3"]]))
         
         scheduleIds = await automation.schedules.map({ $0.identifier })
-        XCTAssert(scheduleIds.isEmpty)
+        #expect(scheduleIds.isEmpty)
     }
     
+    @Test
     func testBothGroupsAndIds() async throws {
         await automation.setSchedules([
             AutomationSchedule(identifier: "id-1", triggers: [], data: .actions(.null)),
@@ -174,14 +182,14 @@ final class CancelSchedulesActionTest: XCTestCase {
         ])
         
         let count = await automation.schedules.count
-        XCTAssertEqual(2, count)
+        #expect(2 == count)
         
         _ = try await action.perform(
             arguments: ActionArguments(
                 value: ["ids": "id-1", "groups": "group"]))
         
         let scheduleIds = await automation.schedules.map({ $0.identifier })
-        XCTAssert(scheduleIds.isEmpty)
+        #expect(scheduleIds.isEmpty)
     }
 }
 

@@ -1,14 +1,16 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 import WebKit
 
-final class InAppMessageNativeBridgeExtensionTest: XCTestCase {
+struct InAppMessageNativeBridgeExtensionTest {
 
+    @Test
     func testExtras() async throws {
         let message = InAppMessage(
             name: "some name",
@@ -21,9 +23,10 @@ final class InAppMessageNativeBridgeExtensionTest: XCTestCase {
         await bridgeExtension.extendJavaScriptEnvironment(jsProtocol, webView: WKWebView())
 
 
-        XCTAssertEqual(jsProtocol.getters, ["getMessageExtras": message.extras])
+        #expect(jsProtocol.getters == ["getMessageExtras": message.extras])
     }
 
+    @Test
     func testExtrasWrongType() async throws {
         let message = InAppMessage(
             name: "some name",
@@ -36,10 +39,11 @@ final class InAppMessageNativeBridgeExtensionTest: XCTestCase {
         await bridgeExtension.extendJavaScriptEnvironment(jsProtocol, webView: WKWebView())
 
 
-        XCTAssertEqual(jsProtocol.getters, ["getMessageExtras": .object([:])])
+        #expect(jsProtocol.getters == ["getMessageExtras": .object([:])])
     }
 
 
+    @Test
     func testExtrasMissing() async throws {
         let message = InAppMessage(
             name: "some name",
@@ -52,7 +56,7 @@ final class InAppMessageNativeBridgeExtensionTest: XCTestCase {
         await bridgeExtension.extendJavaScriptEnvironment(jsProtocol, webView: WKWebView())
 
 
-        XCTAssertEqual(jsProtocol.getters, ["getMessageExtras": .object([:])])
+        #expect(jsProtocol.getters == ["getMessageExtras": .object([:])])
     }
 }
 

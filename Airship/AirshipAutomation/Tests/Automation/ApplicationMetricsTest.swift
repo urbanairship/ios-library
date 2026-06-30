@@ -1,20 +1,21 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal) import AirshipAutomation
 @testable import AirshipCore
 
-final class ApplicationMetricsTest: XCTestCase {
+struct ApplicationMetricsTest {
 
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(
         notificationCenter: NotificationCenter()
     )
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private var privacyManager: TestPrivacyManager!
-    private var metrics: ApplicationMetrics!
+    private let privacyManager: TestPrivacyManager
+    private let metrics: ApplicationMetrics
 
-    override func setUp() async throws {
+    init() {
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: .testConfig(),
@@ -31,21 +32,23 @@ final class ApplicationMetricsTest: XCTestCase {
     }
 
 
+    @Test
     func testAppVersionUpdated() throws {
+        var metrics = self.metrics
         // Fresh install
-        XCTAssertFalse(self.metrics.isAppVersionUpdated)
+        #expect(!(metrics.isAppVersionUpdated))
 
         // No change
-        self.metrics = ApplicationMetrics(
+        metrics = ApplicationMetrics(
             dataStore: self.dataStore,
             privacyManager: self.privacyManager,
             notificationCenter: self.notificationCenter,
             appVersion: "1.0.0"
         )
-        XCTAssertFalse(self.metrics.isAppVersionUpdated)
+        #expect(!(metrics.isAppVersionUpdated))
 
         // Update
-        self.metrics = ApplicationMetrics(
+        metrics = ApplicationMetrics(
             dataStore: self.dataStore,
             privacyManager: self.privacyManager,
             notificationCenter: self.notificationCenter,
@@ -53,27 +56,28 @@ final class ApplicationMetricsTest: XCTestCase {
         )
 
 
-        XCTAssertTrue(self.metrics.isAppVersionUpdated)
+        #expect(metrics.isAppVersionUpdated)
     }
 
+    @Test
     func testOptedOut() {
         // Update
-        self.metrics = ApplicationMetrics(
+        let metrics = ApplicationMetrics(
             dataStore: self.dataStore,
             privacyManager: self.privacyManager,
             notificationCenter: self.notificationCenter,
             appVersion: "2.0.0"
         )
 
-        XCTAssertTrue(self.metrics.isAppVersionUpdated)
+        #expect(metrics.isAppVersionUpdated)
 
         self.privacyManager.enabledFeatures = [.analytics, .push]
-        XCTAssertTrue(self.metrics.isAppVersionUpdated)
+        #expect(metrics.isAppVersionUpdated)
 
         self.privacyManager.enabledFeatures = [.inAppAutomation, .push]
-        XCTAssertTrue(self.metrics.isAppVersionUpdated)
+        #expect(metrics.isAppVersionUpdated)
 
         self.privacyManager.enabledFeatures = .push
-        XCTAssertFalse(self.metrics.isAppVersionUpdated)
+        #expect(!(metrics.isAppVersionUpdated))
     }
 }

@@ -1,41 +1,43 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @testable @_spi(AirshipInternal) import AirshipAutomation
 import AirshipCore
 @_spi(AirshipInternal) import AirshipScenes
 
 
 @MainActor
-class InAppMessageDisplayListenerTests: XCTestCase {
+struct InAppMessageDisplayListenerTests {
 
     private let analytics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
-    private var listener: InAppMessageDisplayListener!
+    private let listener: InAppMessageDisplayListener
     private let result: AirshipMainActorValue<DisplayResult?> = AirshipMainActorValue(nil)
-    private var timer: TestActiveTimer!
-    override func setUp() async throws {
+    private let timer: TestActiveTimer
+
+    init() {
         self.timer = TestActiveTimer()
         listener = InAppMessageDisplayListener(analytics: analytics, timer: timer) { [result] displayResult in
             result.set(displayResult)
         }
     }
 
-    @MainActor
+    @Test
     func testOnAppear() async {
-        XCTAssertFalse(timer.isStarted)
+        #expect(!(timer.isStarted))
 
         listener.onAppear()
 
         verifyEvents([ThomasLayoutDisplayEvent()])
-        XCTAssertTrue(timer.isStarted)
+        #expect(timer.isStarted)
 
         listener.onAppear()
 
         verifyEvents([ThomasLayoutDisplayEvent(), ThomasLayoutDisplayEvent()])
-        XCTAssertNil(self.result.value)
+        #expect(self.result.value == nil)
     }
 
-    @MainActor
+    @Test
     func testOnButtonDismissed() {
         self.timer.start()
         self.timer.time = 10
@@ -58,11 +60,11 @@ class InAppMessageDisplayListenerTests: XCTestCase {
             ]
         )
 
-        XCTAssertFalse(timer.isStarted)
-        XCTAssertEqual(self.result.value, .finished)
+        #expect(!(timer.isStarted))
+        #expect(self.result.value == .finished)
     }
 
-    @MainActor
+    @Test
     func testOnButtonCancel() {
         self.timer.start()
         self.timer.time = 10
@@ -85,11 +87,11 @@ class InAppMessageDisplayListenerTests: XCTestCase {
             ]
         )
 
-        XCTAssertFalse(timer.isStarted)
-        XCTAssertEqual(self.result.value, .cancel)
+        #expect(!(timer.isStarted))
+        #expect(self.result.value == .cancel)
     }
 
-    @MainActor
+    @Test
     func testOnTimedOut() {
         self.timer.start()
         self.timer.time = 3
@@ -97,11 +99,11 @@ class InAppMessageDisplayListenerTests: XCTestCase {
         listener.onTimedOut()
 
         verifyEvents([ThomasLayoutResolutionEvent.timedOut(displayTime: 3)])
-        XCTAssertFalse(timer.isStarted)
-        XCTAssertEqual(self.result.value, .finished)
+        #expect(!(timer.isStarted))
+        #expect(self.result.value == .finished)
     }
 
-    @MainActor
+    @Test
     func testOnUserDismissed() {
         self.timer.start()
         self.timer.time = 3
@@ -109,11 +111,11 @@ class InAppMessageDisplayListenerTests: XCTestCase {
         listener.onUserDismissed()
 
         verifyEvents([ThomasLayoutResolutionEvent.userDismissed(displayTime: 3)])
-        XCTAssertFalse(timer.isStarted)
-        XCTAssertEqual(self.result.value, .finished)
+        #expect(!(timer.isStarted))
+        #expect(self.result.value == .finished)
     }
 
-    @MainActor
+    @Test
     func testOnMessageTapDismissed() {
         self.timer.start()
         self.timer.time = 2
@@ -121,17 +123,17 @@ class InAppMessageDisplayListenerTests: XCTestCase {
         listener.onMessageTapDismissed()
 
         verifyEvents([ThomasLayoutResolutionEvent.messageTap(displayTime: 2)])
-        XCTAssertEqual(self.result.value, .finished)
+        #expect(self.result.value == .finished)
     }
 
-    private func verifyEvents(_ expected: [ThomasLayoutEvent], line: UInt = #line) {
-        XCTAssertEqual(expected.count, self.analytics.events.count, line: line)
+    private func verifyEvents(_ expected: [ThomasLayoutEvent], sourceLocation: SourceLocation = #_sourceLocation) {
+        #expect(expected.count == self.analytics.events.count, sourceLocation: sourceLocation)
 
         expected.indices.forEach { index in
             let expectedEvent = expected[index]
             let event = analytics.events[index].0
-            XCTAssertEqual(event.name, expectedEvent.name, line: line)
-            XCTAssertEqual(try! AirshipJSON.wrap(event.data), try! AirshipJSON.wrap(expectedEvent.data), line: line)
+            #expect(event.name == expectedEvent.name, sourceLocation: sourceLocation)
+            #expect(try! AirshipJSON.wrap(event.data) == (try! AirshipJSON.wrap(expectedEvent.data)), sourceLocation: sourceLocation)
         }
     }
 }

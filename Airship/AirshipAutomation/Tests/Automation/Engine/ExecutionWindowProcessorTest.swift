@@ -1,13 +1,14 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 
 @MainActor
-final class ExecutionWindowProcessorTest: XCTestCase {
+struct ExecutionWindowProcessorTest {
 
     fileprivate struct Evaluated : Equatable, Sendable{
         let window: ExecutionWindow
@@ -17,14 +18,14 @@ final class ExecutionWindowProcessorTest: XCTestCase {
     private let date: UATestDate = UATestDate(dateOverride: Date())
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
     private let notificationCenter: NotificationCenter = NotificationCenter()
-    private var processor: ExecutionWindowProcessor!
+    private let processor: ExecutionWindowProcessor
 
     private let window: ExecutionWindow = try! ExecutionWindow(include: [.weekly(daysOfWeek: [1])])
 
     private var evaluatedWindows: AirshipAtomicValue<[Evaluated]> = .init([])
     private var onResult: AirshipAtomicValue<(@Sendable () throws -> ExecutionWindowResult)?> = .init(nil)
 
-    override func setUp() async throws {
+    init() {
         let evaluatedWindows = self.evaluatedWindows
         let onResult = self.onResult
         processor = ExecutionWindowProcessor(
@@ -42,26 +43,24 @@ final class ExecutionWindowProcessorTest: XCTestCase {
         )
     }
 
-    @MainActor
+    @Test
     func testIsAvailable() throws {
         onResult.value = { throw AirshipErrors.error("Error!") }
-        XCTAssertFalse(processor.isActive(window: window))
+        #expect(!(processor.isActive(window: window)))
 
         onResult.value = { return .retry(100) }
-        XCTAssertFalse(processor.isActive(window: window))
+        #expect(!(processor.isActive(window: window)))
 
         onResult.value = { return .now }
-        XCTAssertTrue(processor.isActive(window: window))
+        #expect(processor.isActive(window: window))
 
         let evaluated = Evaluated(window: window, date: date.now)
-        XCTAssertEqual(evaluatedWindows.value, [evaluated, evaluated, evaluated])
+        #expect(evaluatedWindows.value == [evaluated, evaluated, evaluated])
     }
 
+    @Test
     func testProcessError() async throws {
-        let setup = expectation(description: "setup")
-
         let task = Task {
-            await self.fulfillment(of: [setup])
             await processor.process(window: window)
         }
 
@@ -72,20 +71,17 @@ final class ExecutionWindowProcessorTest: XCTestCase {
         onResult.value = {
             throw AirshipErrors.error("Error!")
         }
-        setup.fulfill()
 
         await task.value
 
-        XCTAssertEqual(taskSleeper.sleeps, [24.0 * 60 * 60])
+        #expect(taskSleeper.sleeps == [24.0 * 60 * 60])
         let evaluated = Evaluated(window: window, date: date.now)
-        XCTAssertEqual(evaluatedWindows.value, [evaluated])
+        #expect(evaluatedWindows.value == [evaluated])
     }
 
+    @Test
     func testProcessRetry() async throws {
-        let setup = expectation(description: "setup")
-
         let task = Task {
-            await self.fulfillment(of: [setup])
             await processor.process(window: window)
         }
 
@@ -96,20 +92,17 @@ final class ExecutionWindowProcessorTest: XCTestCase {
         onResult.value = {
             .retry(100.0)
         }
-        setup.fulfill()
 
         await task.value
 
-        XCTAssertEqual(taskSleeper.sleeps, [100.0])
+        #expect(taskSleeper.sleeps == [100.0])
         let evaluated = Evaluated(window: window, date: date.now)
-        XCTAssertEqual(evaluatedWindows.value, [evaluated])
+        #expect(evaluatedWindows.value == [evaluated])
     }
 
+    @Test
     func testLocaleChangeRechecks() async throws {
-        let setup = expectation(description: "setup")
-
         let task = Task {
-            await self.fulfillment(of: [setup])
             await processor.process(window: window)
         }
 
@@ -126,15 +119,13 @@ final class ExecutionWindowProcessorTest: XCTestCase {
             .retry(1000.0)
         }
 
-        setup.fulfill()
-
         notificationCenter.post(name: .NSSystemTimeZoneDidChange, object: nil)
 
         await task.value
 
-        XCTAssertEqual(taskSleeper.sleeps, [1000.0, 1000.0])
+        #expect(taskSleeper.sleeps == [1000.0, 1000.0])
         let evaluated = Evaluated(window: window, date: date.now)
-        XCTAssertEqual(evaluatedWindows.value, [evaluated, evaluated])
+        #expect(evaluatedWindows.value == [evaluated, evaluated])
     }
 
 }

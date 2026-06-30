@@ -1,11 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal) import AirshipAutomation
 import AirshipCore
 
-final class ExectutionWindowTest: XCTestCase {
+struct ExectutionWindowTest {
     private var defaultTimeZone: TimeZone = TimeZone(secondsFromGMT: 0)!
 
     private var calendar: Calendar  {
@@ -28,6 +29,7 @@ final class ExectutionWindowTest: XCTestCase {
         )!
     }
 
+    @Test
     func testCodable() throws {
         let json = """
         {
@@ -84,6 +86,7 @@ final class ExectutionWindowTest: XCTestCase {
         try verify(json: json, expected: expected)
     }
 
+    @Test
     func testDaily() throws {
         let json = """
         {
@@ -113,6 +116,7 @@ final class ExectutionWindowTest: XCTestCase {
         try verify(json: json, expected: expected)
     }
 
+    @Test
     func testInvalidDaily() throws {
         let json = """
         {
@@ -126,10 +130,11 @@ final class ExectutionWindowTest: XCTestCase {
 
         do {
             _ = try JSONDecoder().decode(ExecutionWindow.self, from: json.data(using: .utf8)!)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testInvalidTimeRange() throws {
         let json = """
         {
@@ -148,10 +153,11 @@ final class ExectutionWindowTest: XCTestCase {
 
         do {
             _ = try JSONDecoder().decode(ExecutionWindow.self, from: json.data(using: .utf8)!)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testInvalidTimeZoneType() throws {
         let json = """
         {
@@ -174,10 +180,11 @@ final class ExectutionWindowTest: XCTestCase {
 
         do {
             _ = try JSONDecoder().decode(ExecutionWindow.self, from: json.data(using: .utf8)!)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testTimeZoneIdentifiers() throws {
         let json = """
         {
@@ -213,6 +220,7 @@ final class ExectutionWindowTest: XCTestCase {
 
     }
 
+    @Test
     func testMonthly() throws {
         let json = """
         {
@@ -235,6 +243,7 @@ final class ExectutionWindowTest: XCTestCase {
         try verify(json: json, expected: expected)
     }
 
+    @Test
     func testMonthlyOnlyMonths() throws {
         let json = """
         {
@@ -256,6 +265,7 @@ final class ExectutionWindowTest: XCTestCase {
         try verify(json: json, expected: expected)
     }
 
+    @Test
     func testMonthlyOnlyDays() throws {
         let json = """
         {
@@ -277,6 +287,7 @@ final class ExectutionWindowTest: XCTestCase {
         try verify(json: json, expected: expected)
     }
 
+    @Test
     func testInvalidMonthly() throws {
         let json = """
         {
@@ -290,10 +301,11 @@ final class ExectutionWindowTest: XCTestCase {
 
         do {
             _ = try JSONDecoder().decode(ExecutionWindow.self, from: json.data(using: .utf8)!)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testInvalidMonthlyEmpty() throws {
         let json = """
         {
@@ -309,10 +321,11 @@ final class ExectutionWindowTest: XCTestCase {
 
         do {
             _ = try JSONDecoder().decode(ExecutionWindow.self, from: json.data(using: .utf8)!)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testInvalidMonthlyMonthsBelow1() throws {
         let json = """
         {
@@ -327,10 +340,11 @@ final class ExectutionWindowTest: XCTestCase {
 
         do {
             _ = try JSONDecoder().decode(ExecutionWindow.self, from: json.data(using: .utf8)!)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testInvalidMonthlyMonthAbove12() throws {
         let json = """
         {
@@ -345,10 +359,11 @@ final class ExectutionWindowTest: XCTestCase {
 
         do {
             _ = try JSONDecoder().decode(ExecutionWindow.self, from: json.data(using: .utf8)!)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testInvalidMonthlyDaysAbove31() throws {
         let json = """
         {
@@ -363,10 +378,11 @@ final class ExectutionWindowTest: XCTestCase {
 
         do {
             _ = try JSONDecoder().decode(ExecutionWindow.self, from: json.data(using: .utf8)!)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testInvalidMonthlyDaysBelow1() throws {
         let json = """
         {
@@ -381,10 +397,11 @@ final class ExectutionWindowTest: XCTestCase {
 
         do {
             _ = try JSONDecoder().decode(ExecutionWindow.self, from: json.data(using: .utf8)!)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testWeekly() throws {
         let json = """
         {
@@ -407,6 +424,7 @@ final class ExectutionWindowTest: XCTestCase {
     }
 
 
+    @Test
     func testWeeklyInvalidEmptyDaysOfWeek() throws {
         let json = """
         {
@@ -421,10 +439,11 @@ final class ExectutionWindowTest: XCTestCase {
 
         do {
             _ = try JSONDecoder().decode(ExecutionWindow.self, from: json.data(using: .utf8)!)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testWeeklyInvalidEmptyDaysOfWeekBelow1() throws {
         let json = """
         {
@@ -439,10 +458,11 @@ final class ExectutionWindowTest: XCTestCase {
 
         do {
             _ = try JSONDecoder().decode(ExecutionWindow.self, from: json.data(using: .utf8)!)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testWeeklyInvalidEmptyDaysOfAbove7() throws {
         let json = """
         {
@@ -457,10 +477,11 @@ final class ExectutionWindowTest: XCTestCase {
 
         do {
             _ = try JSONDecoder().decode(ExecutionWindow.self, from: json.data(using: .utf8)!)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testReturnNowOnMatch() throws {
         let window = try ExecutionWindow(
             include: [
@@ -469,14 +490,16 @@ final class ExectutionWindowTest: XCTestCase {
             exclude: []
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: referenceDate), .now)
+        #expect(windowAvailibility(window, date: referenceDate) == .now)
     }
 
+    @Test
     func testEmptyWindow() throws {
         let window = try ExecutionWindow()
-        XCTAssertEqual(windowAvailibility(window, date: Date()), .now)
+        #expect(windowAvailibility(window, date: Date()) == .now)
     }
 
+    @Test
     func testIncludeTimeRangeSameStartAndEnd() throws {
         var date = referenceDate
         let window = try ExecutionWindow(
@@ -485,15 +508,16 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: referenceDate), .now)
+        #expect(windowAvailibility(window, date: referenceDate) == .now)
 
         date += 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(1.days - 1.seconds))
+        #expect(windowAvailibility(window, date: date) == .retry(1.days - 1.seconds))
 
         date -= 2.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(1.seconds))
+        #expect(windowAvailibility(window, date: date) == .retry(1.seconds))
     }
 
+    @Test
     func testIncludeTimeRange() throws {
         var date = referenceDate
         let window = try ExecutionWindow(
@@ -507,15 +531,16 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(3.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(3.hours))
 
         date += 3.hours
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 1.hours
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(23.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(23.hours))
     }
 
+    @Test
     func testExcludeTimeRangeSameStartAndEnd() throws {
         var date = referenceDate
         let window = try ExecutionWindow(
@@ -523,15 +548,16 @@ final class ExectutionWindowTest: XCTestCase {
                 .daily(timeRange: .init(startHour: 0, endHour: 0))
             ]
         )
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(1.seconds))
+        #expect(windowAvailibility(window, date: date) == .retry(1.seconds))
 
         date += 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date -= 2.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
     }
 
+    @Test
     func testExcludeEndOfTimeRange() throws {
         var date = referenceDate + 3.hours
         let window = try ExecutionWindow(
@@ -545,12 +571,13 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
         
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(21.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(21.hours))
 
         date += 21.hours
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
     }
 
+    @Test
     func testExcludeTimeRangeWrap() throws {
         var date = calendar.date(
             from: DateComponents(
@@ -574,15 +601,16 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(2.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(2.hours))
 
         date += 1.hours
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(1.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(1.hours))
 
         date += 1.hours
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
     }
 
+    @Test
     func testIncludeAndExcludeSameRule() throws {
         let date = referenceDate + 3.hours
         let window = try ExecutionWindow(
@@ -607,9 +635,10 @@ final class ExectutionWindowTest: XCTestCase {
         let startNextDay = calendar.startOfDay(for: date + 1.days)
         let delay = startNextDay.timeIntervalSince(date)
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(delay))
+        #expect(windowAvailibility(window, date: date) == .retry(delay))
     }
 
+    @Test
     func testIncludeWeekly() throws {
         var date = calendar.date(bySetting: .weekday, value: 4, of: referenceDate)!
         let window = try ExecutionWindow(
@@ -618,21 +647,22 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(1.days))
+        #expect(windowAvailibility(window, date: date) == .retry(1.days))
 
         date += 1.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 1.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(4.days))
+        #expect(windowAvailibility(window, date: date) == .retry(4.days))
 
         date += 3.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(1.days))
+        #expect(windowAvailibility(window, date: date) == .retry(1.days))
 
         date += 1.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
     }
 
+    @Test
     func testIncludeWeeklyTimeRange() throws {
         var date = calendar.date(bySetting: .weekday, value: 4, of: referenceDate)!
         let window = try ExecutionWindow(
@@ -647,21 +677,22 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(1.days + 3.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(1.days + 3.hours))
 
         date += 1.days + 3.hours - 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(1.seconds))
+        #expect(windowAvailibility(window, date: date) == .retry(1.seconds))
 
         date += 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 21.hours - 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(4.days + 3.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(4.days + 3.hours))
     }
 
+    @Test
     func testIncludeWeeklyTimeRangeWithTimeZone() throws {
         var date = calendar.date(bySetting: .weekday, value: 4, of: referenceDate)!
         let window = try ExecutionWindow(
@@ -677,21 +708,22 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(1.days + 2.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(1.days + 2.hours))
 
         date += 1.days + 2.hours - 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(1.seconds))
+        #expect(windowAvailibility(window, date: date) == .retry(1.seconds))
 
         date += 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 21.hours - 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(4.days + 3.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(4.days + 3.hours))
     }
 
+    @Test
     func testExcludeWeeklyTimeRange() throws {
         var date = calendar.date(bySetting: .weekday, value: 4, of: referenceDate)!
         let window = try ExecutionWindow(
@@ -706,21 +738,22 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 1.days + 3.hours - 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(21.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(21.hours))
 
         date += 21.hours - 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(1.seconds))
+        #expect(windowAvailibility(window, date: date) == .retry(1.seconds))
 
         date += 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
     }
 
+    @Test
     func testIncludeMonthly() throws {
         var date = calendar.date(bySetting: .month, value: 1, of: referenceDate)!
         date = calendar.date(bySetting: .day, value: 1, of: date)!
@@ -731,27 +764,28 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(40.days))
+        #expect(windowAvailibility(window, date: date) == .retry(40.days))
 
         date += 40.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 1.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(4.days))
+        #expect(windowAvailibility(window, date: date) == .retry(4.days))
 
         date += 4.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 1.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(54.days))
+        #expect(windowAvailibility(window, date: date) == .retry(54.days))
 
         date += 55.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(4.days))
+        #expect(windowAvailibility(window, date: date) == .retry(4.days))
 
         date += 5.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(300.days))
+        #expect(windowAvailibility(window, date: date) == .retry(300.days))
     }
 
+    @Test
     func testMonthlyNoMonthsAfterDay() throws {
         let date = calendar.date(bySetting: .day, value: 16, of: referenceDate)!
 
@@ -761,9 +795,10 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(30.days))
+        #expect(windowAvailibility(window, date: date) == .retry(30.days))
     }
 
+    @Test
     func testMonthlyNextMonth() throws {
         // Feb 16
         var date = calendar.date(bySetting: .month, value: 2, of: referenceDate)!
@@ -776,9 +811,10 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(15.days))
+        #expect(windowAvailibility(window, date: date) == .retry(15.days))
     }
 
+    @Test
     func testMonthlyNextMonthNoDays() throws {
         // Feb 16
         var date = calendar.date(bySetting: .month, value: 2, of: referenceDate)!
@@ -790,9 +826,10 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(14.days))
+        #expect(windowAvailibility(window, date: date) == .retry(14.days))
     }
 
+    @Test
     func testMonthlyNextYear() throws {
         // Feb 15
         var date = calendar.date(bySetting: .month, value: 2, of: referenceDate)!
@@ -805,9 +842,10 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(334.days))
+        #expect(windowAvailibility(window, date: date) == .retry(334.days))
     }
 
+    @Test
     func testIncludeMonthlyWithTimeZone() throws {
         var date = calendar.date(bySetting: .month, value: 1, of: referenceDate)!
         date = calendar.date(bySetting: .day, value: 1, of: date)!
@@ -822,28 +860,29 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(40.days - 7.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(40.days - 7.hours))
 
         date += 40.days - 7.hours
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 1.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(4.days))
+        #expect(windowAvailibility(window, date: date) == .retry(4.days))
 
         date += 4.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 1.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(54.days))
+        #expect(windowAvailibility(window, date: date) == .retry(54.days))
 
         date += 55.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(4.days))
+        #expect(windowAvailibility(window, date: date) == .retry(4.days))
 
         date += 5.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(300.days))
+        #expect(windowAvailibility(window, date: date) == .retry(300.days))
     }
 
 
+    @Test
     func testImpossibleMonthlyInclude() throws {
         var date = calendar.date(bySetting: .month, value: 1, of: referenceDate)!
         date = calendar.date(bySetting: .day, value: 1, of: date)!
@@ -855,9 +894,10 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(Date.distantFuture.timeIntervalSince(referenceDate) + 5.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(Date.distantFuture.timeIntervalSince(referenceDate) + 5.hours))
     }
 
+    @Test
     func testMonthlySkipsInvalidMonths() throws {
         var date = calendar.date(bySetting: .month, value: 1, of: referenceDate)!
         date = calendar.date(bySetting: .day, value: 1, of: date)!
@@ -869,9 +909,10 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(304.days))
+        #expect(windowAvailibility(window, date: date) == .retry(304.days))
     }
 
+    @Test
     func testImpossibleMonthlyExclude() throws {
         var date = calendar.date(bySetting: .month, value: 1, of: referenceDate)!
         date = calendar.date(bySetting: .day, value: 1, of: date)!
@@ -883,9 +924,10 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
     }
 
+    @Test
     func testMonthlyWithoutMonths() throws {
         var date = calendar.date(bySetting: .month, value: 1, of: referenceDate)!
         date = calendar.date(bySetting: .day, value: 1, of: date)!
@@ -896,12 +938,13 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(30.days))
+        #expect(windowAvailibility(window, date: date) == .retry(30.days))
 
         date += 31.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(30.days))
+        #expect(windowAvailibility(window, date: date) == .retry(30.days))
     }
 
+    @Test
     func testMonthlyWithOnlyMonths() throws {
         var date = calendar.date(bySetting: .month, value: 1, of: referenceDate)!
         date = calendar.date(bySetting: .day, value: 1, of: date)!
@@ -912,20 +955,21 @@ final class ExectutionWindowTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(274.days))
+        #expect(windowAvailibility(window, date: date) == .retry(274.days))
 
         date += 274.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         for _ in 0..<30 {
             date += 1.days
-            XCTAssertEqual(windowAvailibility(window, date: date), .now)
+            #expect(windowAvailibility(window, date: date) == .now)
         }
 
         date += 1.days
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(30.days))
+        #expect(windowAvailibility(window, date: date) == .retry(30.days))
     }
 
+    @Test
     func testEmptyMonthlyIncludeThrows() throws {
         do {
             _ = try ExecutionWindow(
@@ -933,10 +977,11 @@ final class ExectutionWindowTest: XCTestCase {
                     .monthly()
                 ]
             )
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testEmptyMonthlyExcludeThrows() throws {
         do {
             _ = try ExecutionWindow(
@@ -944,10 +989,11 @@ final class ExectutionWindowTest: XCTestCase {
                     .monthly()
                 ]
             )
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testComplexRule() throws {
         var date = calendar.date(bySetting: .month, value: 1, of: referenceDate)!
         date = calendar.date(bySetting: .day, value: 1, of: date)!
@@ -974,49 +1020,50 @@ final class ExectutionWindowTest: XCTestCase {
         )
 
         // Exclude monthly without days is only 1 day at a time
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(1.days))
+        #expect(windowAvailibility(window, date: date) == .retry(1.days))
 
         for _ in 0..<30 {
             date += 1.days
-            XCTAssertEqual(windowAvailibility(window, date: date), .retry(1.days))
+            #expect(windowAvailibility(window, date: date) == .retry(1.days))
         }
 
         // Feb 1
         date += 1.days
         // Timezone offset for the daily rule is 1, so its makes it [0-1]
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 1.hours
         // 2 hour until weekly rule for DOW 5
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(2.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(2.hours))
 
         date += 2.hours
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 2.hours
         // 19 hours until the daily rule again
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(19.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(19.hours))
 
         date += 19.hours
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 1.hours
         // 9 hours until the monthly rule
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(9.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(9.hours))
 
         date += 9.hours
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date += 12.hours - 1.seconds
-        XCTAssertEqual(windowAvailibility(window, date: date), .now)
+        #expect(windowAvailibility(window, date: date) == .now)
 
         date +=  1.seconds
         // 2 hour until the daily rule again
-        XCTAssertEqual(windowAvailibility(window, date: date), .retry(2.hours))
+        #expect(windowAvailibility(window, date: date) == .retry(2.hours))
     }
 
 
-    func testTransitionOutOfDST() throws {
+    @Test
+    mutating func testTransitionOutOfDST() throws {
         // Sun March 10 2024 we transition from PDT to PST
         self.defaultTimeZone = TimeZone(identifier: "America/Los_Angeles")!
 
@@ -1058,16 +1105,17 @@ final class ExectutionWindowTest: XCTestCase {
         )
 
         // 12:00 PST
-        XCTAssertEqual(windowAvailibility(window, date: midnightOf), .retry(2.hours))
+        #expect(windowAvailibility(window, date: midnightOf) == .retry(2.hours))
 
         // 3:00 PDT
-        XCTAssertEqual(windowAvailibility(window, date: transition), .now)
+        #expect(windowAvailibility(window, date: transition) == .now)
 
         // 4:00 PDT
-        XCTAssertEqual(windowAvailibility(window, date: transition + 1.hours), .retry(22.hours))
+        #expect(windowAvailibility(window, date: transition + 1.hours) == .retry(22.hours))
     }
 
-    func testTransitionToDST() throws {
+    @Test
+    mutating func testTransitionToDST() throws {
         // Sun Nov 3 2024 we transition from PST to PDT
         self.defaultTimeZone = TimeZone(identifier: "America/Los_Angeles")!
 
@@ -1109,15 +1157,16 @@ final class ExectutionWindowTest: XCTestCase {
         )
 
         // 12:00 PDT
-        XCTAssertEqual(windowAvailibility(window, date: midnightOf), .retry(3.hours))
+        #expect(windowAvailibility(window, date: midnightOf) == .retry(3.hours))
 
         // 1:00 PST
-        XCTAssertEqual(windowAvailibility(window, date: transition), .retry(1.hours))
+        #expect(windowAvailibility(window, date: transition) == .retry(1.hours))
 
         // 2:00 PDT
-        XCTAssertEqual(windowAvailibility(window, date: transition + 1.hours), .now)
+        #expect(windowAvailibility(window, date: transition + 1.hours) == .now)
     }
 
+    @Test
     func testErrorTimeZoneIdentifiersFailed() throws {
         let window = try ExecutionWindow(
             include: [
@@ -1133,10 +1182,11 @@ final class ExectutionWindowTest: XCTestCase {
 
         do {
             _ = try window.nextAvailability(date: referenceDate)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testSkipTimeZoneIdentifiersFailed() throws {
         let window = try ExecutionWindow(
             include: [
@@ -1151,22 +1201,22 @@ final class ExectutionWindowTest: XCTestCase {
         )
 
         let result = try window.nextAvailability(date: referenceDate)
-        XCTAssertEqual(result, .now)
+        #expect(result == .now)
     }
 
     private func windowAvailibility(_ window: ExecutionWindow, date: Date) -> ExecutionWindowResult {
         try! window.nextAvailability(date: date, currentTimeZone: defaultTimeZone)
     }
 
-    func verify(json: String, expected: ExecutionWindow, line: UInt = #line) throws {
+    func verify(json: String, expected: ExecutionWindow, sourceLocation: SourceLocation = #_sourceLocation) throws {
         let decoder = JSONDecoder()
         let encoder = JSONEncoder()
 
         let fromJSON = try decoder.decode(ExecutionWindow.self, from: json.data(using: .utf8)!)
-        XCTAssertEqual(fromJSON, expected, line: line)
+        #expect(fromJSON == expected, sourceLocation: sourceLocation)
 
         let roundTrip = try decoder.decode(ExecutionWindow.self, from: try encoder.encode(fromJSON))
-        XCTAssertEqual(roundTrip, fromJSON, line: line)
+        #expect(roundTrip == fromJSON, sourceLocation: sourceLocation)
     }
 }
 

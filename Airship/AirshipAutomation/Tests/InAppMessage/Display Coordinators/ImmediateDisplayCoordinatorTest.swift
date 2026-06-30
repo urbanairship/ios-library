@@ -1,47 +1,49 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 
 @MainActor
-final class ImmediateDisplayCoordinatorTest: XCTestCase {
+struct ImmediateDisplayCoordinatorTest {
 
     private let stateTracker: TestAppStateTracker = TestAppStateTracker()
-    private var displayCoordinator: ImmediateDisplayCoordinator!
-    override func setUp() async throws {
+    private let displayCoordinator: ImmediateDisplayCoordinator
+
+    init() {
         displayCoordinator = ImmediateDisplayCoordinator(
             appStateTracker: self.stateTracker
         )
     }
 
-    @MainActor
+    @Test
     func testIsReady() throws {
         self.stateTracker.currentState = .active
-        XCTAssertTrue(self.displayCoordinator.isReady)
+        #expect(self.displayCoordinator.isReady)
 
         self.stateTracker.currentState = .background
-        XCTAssertFalse(self.displayCoordinator.isReady)
+        #expect(!(self.displayCoordinator.isReady))
 
         self.stateTracker.currentState = .inactive
-        XCTAssertFalse(self.displayCoordinator.isReady)
+        #expect(!(self.displayCoordinator.isReady))
     }
 
-    @MainActor
+    @Test
     func testWaitForReady() async throws {
         self.stateTracker.currentState = .background
 
         let ready = Task { [displayCoordinator] in
-            await displayCoordinator!.waitForReady()
+            await displayCoordinator.waitForReady()
         }
 
         self.stateTracker.currentState = .active
         await ready.value
     }
 
-    @MainActor
+    @Test
     func testDisplayMultiple() throws {
         self.stateTracker.currentState = .active
 
@@ -50,16 +52,16 @@ final class ImmediateDisplayCoordinatorTest: XCTestCase {
 
 
         self.displayCoordinator.messageWillDisplay(foo)
-        XCTAssertTrue(self.displayCoordinator.isReady)
+        #expect(self.displayCoordinator.isReady)
 
 
         self.displayCoordinator.messageWillDisplay(bar)
-        XCTAssertTrue(self.displayCoordinator.isReady)
+        #expect(self.displayCoordinator.isReady)
 
         self.displayCoordinator.messageFinishedDisplaying(foo)
-        XCTAssertTrue(self.displayCoordinator.isReady)
+        #expect(self.displayCoordinator.isReady)
 
         self.displayCoordinator.messageFinishedDisplaying(bar)
-        XCTAssertTrue(self.displayCoordinator.isReady)
+        #expect(self.displayCoordinator.isReady)
     }
 }

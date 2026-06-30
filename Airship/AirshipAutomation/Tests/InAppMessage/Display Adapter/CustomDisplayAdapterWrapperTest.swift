@@ -1,45 +1,47 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @testable @_spi(AirshipInternal) import AirshipAutomation
 import AirshipCore
+import UIKit
 
 
-final class CustomDisplayAdapterWrapperTest: XCTestCase {
+struct CustomDisplayAdapterWrapperTest {
     private let testAdapter: TestCustomDisplayAdapter = TestCustomDisplayAdapter()
-    private var wrapper: CustomDisplayAdapterWrapper!
+    private let wrapper: CustomDisplayAdapterWrapper
 
-    override func setUp() async throws {
+    init() {
         self.wrapper = CustomDisplayAdapterWrapper(adapter: testAdapter)
     }
 
+    @Test
     func testIsReady() async {
         await self.testAdapter.setReady(true)
         var isReady = await self.wrapper.isReady
-        XCTAssertTrue(isReady)
+        #expect(isReady)
 
         await self.testAdapter.setReady(false)
         isReady = await self.wrapper.isReady
-        XCTAssertFalse(isReady)
+        #expect(!(isReady))
     }
 
+    @Test
     func testWaitForReady() async {
         await self.testAdapter.setReady(false)
 
-        let waitingReady = expectation(description: "waiting is ready")
-        let isReady = expectation(description: "is ready")
-        Task { [wrapper] in
-            waitingReady.fulfill()
-            await wrapper!.waitForReady()
-            isReady.fulfill()
-        }
+        await confirmation { isReady in
+            let task = Task { [wrapper] in
+                await wrapper.waitForReady()
+                isReady()
+            }
 
-        await self.fulfillment(of: [waitingReady])
-        Task { [testAdapter] in
-            await testAdapter.setReady(true)
-        }
+            Task { [testAdapter] in
+                await testAdapter.setReady(true)
+            }
 
-        await self.fulfillment(of: [isReady])
+            await task.value
+        }
     }
 }
 

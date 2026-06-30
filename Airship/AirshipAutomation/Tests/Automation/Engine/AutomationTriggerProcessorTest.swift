@@ -1,22 +1,25 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 
-final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
+struct AutomationTriggerProcessorTest: @unchecked Sendable {
     private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
     private let store: TestTriggerStore = TestTriggerStore()
-    private var processor: AutomationTriggerProcessor!
-    private var history: (any AutomationEventsHistory)!
+    private let processor: AutomationTriggerProcessor
+    private let history: any AutomationEventsHistory
 
-    override func setUp() async throws {
-        self.history = DefaultAutomationEventsHistory(clock: date)
-        self.processor = AutomationTriggerProcessor(store: store, history: self.history, date: date)
+    init() {
+        let history = DefaultAutomationEventsHistory(clock: date)
+        self.history = history
+        self.processor = AutomationTriggerProcessor(store: store, history: history, date: date)
     }
     
+    @Test
     func testRestoreSchedule() async throws {
         self.store.stored = [
             TriggerData(
@@ -29,23 +32,24 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
 
         let trigger = AutomationTrigger.event(.init(id: "trigger-id", type: .activeSession, goal: 1))
 
-        XCTAssertEqual(1, self.store.stored.count)
+        #expect(1 == self.store.stored.count)
         try await restoreSchedules(trigger: trigger)
-        XCTAssertEqual(0, self.store.stored.count)
+        #expect(0 == self.store.stored.count)
         
         await self.processor.processEvent(.stateChanged(state: TriggerableState(appSessionID: "foreground")))
 
         let result = await takeNext().first
-        XCTAssertEqual("schedule-id", result?.scheduleID)
-        XCTAssertEqual(TriggerExecutionType.execution, result?.triggerExecutionType)
-        XCTAssertEqual(TriggeringInfo(
+        #expect("schedule-id" == result?.scheduleID)
+        #expect(TriggerExecutionType.execution == result?.triggerExecutionType)
+        #expect(TriggeringInfo(
             context: AirshipTriggerContext(
                 type: "active_session",
                 goal: 1.0,
                 event: .null),
-            date: self.date.now), result?.triggerInfo)
+            date: self.date.now) == result?.triggerInfo)
     }
     
+    @Test
     func testUpdateTriggersResendsStatus() async throws {
         let trigger = AutomationTrigger.event(.init(id: "trigger-id", type: .activeSession, goal: 1))
 
@@ -59,41 +63,43 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
         await self.processor.updateScheduleState(scheduleID: "schedule-id", state: .idle)
 
         let result = await takeNext(count: 2).last
-        XCTAssertEqual("schedule-id", result?.scheduleID)
-        XCTAssertEqual(TriggerExecutionType.execution, result?.triggerExecutionType)
-        XCTAssertEqual(TriggeringInfo(
+        #expect("schedule-id" == result?.scheduleID)
+        #expect(TriggerExecutionType.execution == result?.triggerExecutionType)
+        #expect(TriggeringInfo(
             context: AirshipTriggerContext(
                 type: "active_session",
                 goal: 1.0,
                 event: .null),
-            date: self.date.now), result?.triggerInfo)
+            date: self.date.now) == result?.triggerInfo)
     }
     
+    @Test
     func testCancelSchedule() async throws {
         
         try await restoreSchedules()
         
         await self.processor.processEvent(.event(type: .appInit))
         
-        XCTAssertEqual(
+        #expect(
             TriggerData(
                 scheduleID: "schedule-id",
                 triggerID: "default-trigger",
                 count: 1,
                 children: [:]
-            ),
+            ) ==
             self.store.stored.last
         )
         
         await self.processor.cancel(scheduleIDs: ["schedule-id"])
-        XCTAssert(self.store.stored.isEmpty)
+        #expect(self.store.stored.isEmpty)
 
         await self.processor.processEvent(.event(type: .appInit))
         
         let result = await takeNext()
-        XCTAssert(result.isEmpty)
+        #expect(result.isEmpty)
     }
     
+    @Test
     func testCancelWithGroup() async throws {
         let trigger = AutomationTrigger.event(.init(id: "trigger-id-2", type: .appInit, goal: 2))
         let schedule = defaultSchedule(trigger: trigger, group: "test-group")
@@ -101,25 +107,26 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
         try await self.processor.restoreSchedules([schedule])
         await self.processor.processEvent(.event(type: .appInit))
         
-        XCTAssertEqual(
+        #expect(
             TriggerData(
                 scheduleID: "schedule-id",
                 triggerID: "trigger-id-2",
                 count: 1,
                 children: [:]
-            ),
+            ) ==
             self.store.stored.last
         )
 
         await self.processor.cancel(group: "test-group")
-        XCTAssert(self.store.stored.isEmpty)
+        #expect(self.store.stored.isEmpty)
 
         await self.processor.processEvent(.event(type: .appInit))
         
         let result = await takeNext()
-        XCTAssert(result.isEmpty)
+        #expect(result.isEmpty)
     }
     
+    @Test
     func testProcessEventEmitsResults() async throws {
         let trigger = AutomationTrigger.event(.init(id: "trigger-id", type: .appInit, goal: 1))
 
@@ -127,21 +134,22 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
         
         await self.processor.processEvent(.event(type: .appInit))
         
-        XCTAssertEqual(
+        #expect(
             TriggerData(
                 scheduleID: "schedule-id",
                 triggerID: "trigger-id",
                 count: 0,
                 children: [:]
-            ),
+            ) ==
             self.store.stored.last
         )
 
         let result = await takeNext()
-        XCTAssertNotNil(result)
+        #expect(!result.isEmpty)
     }
     
     @MainActor
+    @Test
     func testProcessEventEmitsNothingOnPause() async throws {
         let trigger = AutomationTrigger.event(.init(id: "trigger-id", type: .appInit, goal: 1))
 
@@ -150,21 +158,22 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
         await self.processor.processEvent(.event(type: .appInit))
         
         var result = await takeNext()
-        XCTAssertNotNil(result)
+        #expect(!result.isEmpty)
         
         await self.processor.processEvent(.event(type: .appInit))
         
         result = await takeNext()
-        XCTAssertNotNil(result)
+        #expect(!result.isEmpty)
         
         self.processor.setPaused(true)
         
         await self.processor.processEvent(.event(type: .appInit))
         
         result = await takeNext()
-        XCTAssert(result.isEmpty)
+        #expect(result.isEmpty)
     }
     
+    @Test
     func testReplayEvents() async {
         let triggerOld = AutomationTrigger.event(.init(id: "trigger-id", type: .appInit, goal: 2))
         let oldSchedule = defaultSchedule(trigger: triggerOld)
@@ -192,9 +201,9 @@ final class AutomationTriggerProcessorTest: XCTestCase, @unchecked Sendable {
         
         await self.processor.updateSchedules([oldSchedule, scheduleNew])
         let results = await takeNext()
-        XCTAssertEqual(results.count, 1)
-        XCTAssertEqual("new-schedule-id", results.first?.scheduleID)
-        XCTAssertEqual(TriggerExecutionType.execution, results.first?.triggerExecutionType)
+        #expect(results.count == 1)
+        #expect("new-schedule-id" == results.first?.scheduleID)
+        #expect(TriggerExecutionType.execution == results.first?.triggerExecutionType)
     }
     
     private func restoreSchedules(trigger: AutomationTrigger? = nil) async throws {

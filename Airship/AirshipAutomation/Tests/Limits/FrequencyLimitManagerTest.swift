@@ -1,19 +1,20 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @testable @_spi(AirshipInternal) import AirshipAutomation
 @testable import AirshipCore
 
-final class FrequencyLimitManagerTest: AirshipBaseTest {
+struct FrequencyLimitManagerTest {
 
-    private var manager: FrequencyLimitManager!
+    private let manager: FrequencyLimitManager
     private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date(timeIntervalSince1970: 0))
     private let store: FrequencyLimitStore = FrequencyLimitStore(
         appKey: UUID().uuidString,
         inMemory: true
     )
 
-    override func setUpWithError() throws {
+    init() {
         self.manager = FrequencyLimitManager(
             dataStore: self.store,
             date: self.date
@@ -21,14 +22,15 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
     }
     
     @MainActor
+    @Test
     func testGetCheckerNoLimits() async throws {
         let frequencyChecker = try await self.manager.getFrequencyChecker(constraintIDs: [])
-        XCTAssertNotNil(frequencyChecker)
-        XCTAssertTrue(frequencyChecker.checkAndIncrement())
-        XCTAssertFalse(frequencyChecker.isOverLimit)
+        #expect(frequencyChecker.checkAndIncrement())
+        #expect(!(frequencyChecker.isOverLimit))
     }
     
     @MainActor
+    @Test
     func testSingleChecker() async throws {
         let constraint = FrequencyConstraint(
             identifier: "foo",
@@ -39,7 +41,7 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
         try await self.manager.setConstraints([constraint])
 
         var constraints = try await self.store.fetchConstraints()
-        XCTAssertEqual(constraints.count, 1);
+        #expect(constraints.count == 1)
         
         let startDate = Date(timeIntervalSince1970: 0)
         self.date.dateOverride = startDate
@@ -47,25 +49,25 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
         let frequencyChecker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])
 
         constraints = try await self.store.fetchConstraints()
-        XCTAssertEqual(constraints.count, 1)
-        XCTAssertFalse(frequencyChecker.isOverLimit)
-        XCTAssertTrue(frequencyChecker.checkAndIncrement())
+        #expect(constraints.count == 1)
+        #expect(!(frequencyChecker.isOverLimit))
+        #expect(frequencyChecker.checkAndIncrement())
 
         self.date.offset = 1
-        XCTAssertFalse(frequencyChecker.isOverLimit)
-        XCTAssertTrue(frequencyChecker.checkAndIncrement())
+        #expect(!(frequencyChecker.isOverLimit))
+        #expect(frequencyChecker.checkAndIncrement())
 
         // We should now be over the limit
-        XCTAssertTrue(frequencyChecker.isOverLimit)
-        XCTAssertFalse(frequencyChecker.checkAndIncrement())
+        #expect(frequencyChecker.isOverLimit)
+        #expect(!(frequencyChecker.checkAndIncrement()))
 
         // After the range has passed we should no longer be over the limit
         self.date.offset = 11
-        XCTAssertFalse(frequencyChecker.isOverLimit)
+        #expect(!(frequencyChecker.isOverLimit))
 
         // One more increment should push us back over the limit
-        XCTAssertTrue(frequencyChecker.checkAndIncrement())
-        XCTAssertTrue(frequencyChecker.isOverLimit)
+        #expect(frequencyChecker.checkAndIncrement())
+        #expect(frequencyChecker.isOverLimit)
 
         await self.manager.writePending()
 
@@ -77,10 +79,11 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
             }
 
         // We should only have three occurrences, since the last check and increment should be a no-op
-        XCTAssertEqual(Set<Double>([0, 1, 11]), Set(occurrences))
+        #expect(Set<Double>([0, 1, 11]) == Set(occurrences))
     }
 
     @MainActor
+    @Test
     func testMultipleCheckers() async throws {
         let constraint = FrequencyConstraint(
             identifier: "foo",
@@ -94,30 +97,30 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
         let checker2 = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])
 
         let constraints = try await self.store.fetchConstraints()
-        XCTAssertEqual(constraints.count, 1)
+        #expect(constraints.count == 1)
 
-        XCTAssertFalse(checker1.isOverLimit)
-        XCTAssertFalse(checker2.isOverLimit)
+        #expect(!(checker1.isOverLimit))
+        #expect(!(checker2.isOverLimit))
 
-        XCTAssertTrue(checker1.checkAndIncrement())
+        #expect(checker1.checkAndIncrement())
 
         self.date.offset = 1
-        XCTAssertTrue(checker2.checkAndIncrement())
+        #expect(checker2.checkAndIncrement())
 
         // We should now be over the limit
-        XCTAssertTrue(checker1.isOverLimit)
-        XCTAssertTrue(checker2.isOverLimit)
+        #expect(checker1.isOverLimit)
+        #expect(checker2.isOverLimit)
 
         // After the range has passed we should no longer be over the limit
         self.date.offset = 11
-        XCTAssertFalse(checker1.isOverLimit)
-        XCTAssertFalse(checker2.isOverLimit)
+        #expect(!(checker1.isOverLimit))
+        #expect(!(checker2.isOverLimit))
 
         // The first check and increment should succeed, and the next should put us back over the limit again
-        XCTAssertTrue(checker1.checkAndIncrement())
+        #expect(checker1.checkAndIncrement())
 
         self.date.offset = 1
-        XCTAssertFalse(checker2.checkAndIncrement())
+        #expect(!(checker2.checkAndIncrement()))
 
         await self.manager.writePending()
 
@@ -129,10 +132,11 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
             }
 
         // We should only have three occurrences, since the last check and increment should be a no-op
-        XCTAssertEqual(Set<Double>([0, 1, 11]), Set(occurrences))
+        #expect(Set<Double>([0, 1, 11]) == Set(occurrences))
     }
 
     @MainActor
+    @Test
     func testMultipleConstraints() async throws {
         let constraint1 = FrequencyConstraint(
             identifier: "foo",
@@ -149,39 +153,40 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
 
         let checker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo", "bar"])
 
-        XCTAssertFalse(checker.isOverLimit)
+        #expect(!(checker.isOverLimit))
         var result = checker.checkAndIncrement()
-        XCTAssertTrue(result)
+        #expect(result)
 
         self.date.offset = 1
         // We should now be violating constraint 2
-        XCTAssertTrue(checker.isOverLimit)
+        #expect(checker.isOverLimit)
         result = checker.checkAndIncrement()
-        XCTAssertFalse(result)
+        #expect(!(result))
 
         self.date.offset = 3
         // We should no longer be violating constraint 2
-        XCTAssertFalse(checker.isOverLimit)
+        #expect(!(checker.isOverLimit))
         result = checker.checkAndIncrement()
-        XCTAssertTrue(result)
+        #expect(result)
 
         // We should now be violating constraint 1
         self.date.offset = 9
-        XCTAssertTrue(checker.isOverLimit)
+        #expect(checker.isOverLimit)
         result = checker.checkAndIncrement()
-        XCTAssertFalse(result)
+        #expect(!(result))
 
         // We should now be violating neither constraint
         self.date.offset = 11
-        XCTAssertFalse(checker.isOverLimit)
+        #expect(!(checker.isOverLimit))
 
         // One more increment should hit the limit
         result = checker.checkAndIncrement()
-        XCTAssertTrue(result)
-        XCTAssertTrue(checker.isOverLimit)
+        #expect(result)
+        #expect(checker.isOverLimit)
     }
 
     @MainActor
+    @Test
     func testConstraintRemovedMidCheck() async throws {
         let constraint1 = FrequencyConstraint(
             identifier: "foo",
@@ -209,24 +214,25 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
             ]
         )
 
-        XCTAssertTrue(checker.checkAndIncrement())
+        #expect(checker.checkAndIncrement())
         self.date.offset = 1
-        XCTAssertTrue(checker.checkAndIncrement())
+        #expect(checker.checkAndIncrement())
         self.date.offset = 1
-        XCTAssertTrue(checker.checkAndIncrement())
+        #expect(checker.checkAndIncrement())
 
         await self.manager.writePending()
 
         // Foo should not exist
         let fooInfo = try await self.store.fetchConstraints(["foo"])
-        XCTAssertEqual(fooInfo.count, 0)
+        #expect(fooInfo.count == 0)
 
         // Bar should have the two occurences
         let barInfo = try await self.store.fetchConstraints(["bar"])
-        XCTAssertEqual(barInfo.first?.occurrences.count, 3);
+        #expect(barInfo.first?.occurrences.count == 3)
     }
 
     @MainActor
+    @Test
     func testUpdateConstraintRangeClearsOccurrences() async throws {
         try await self.manager.setConstraints(
             [
@@ -255,9 +261,10 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
         await self.manager.writePending()
 
         let fooInfo = try await self.store.fetchConstraints(["foo"])
-        XCTAssertEqual(fooInfo.first?.occurrences.count, 0);
+        #expect(fooInfo.first?.occurrences.count == 0)
     }
 
+    @Test
     func testUpdateConstraintCountDoesNotClearCount() async throws {
         try await self.manager.setConstraints(
             [
@@ -271,7 +278,7 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
 
         let checker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])
         let result = await checker.checkAndIncrement()
-        XCTAssertTrue(result)
+        #expect(result)
 
         try await self.manager.setConstraints(
             [
@@ -286,7 +293,7 @@ final class FrequencyLimitManagerTest: AirshipBaseTest {
         await self.manager.writePending()
 
         let fooInfo = try await self.store.fetchConstraints(["foo"])
-        XCTAssertEqual(fooInfo.first?.occurrences.count, 1);
+        #expect(fooInfo.first?.occurrences.count == 1)
     }
     
 }

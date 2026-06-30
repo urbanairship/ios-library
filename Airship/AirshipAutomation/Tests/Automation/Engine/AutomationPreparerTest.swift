@@ -1,13 +1,14 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 
 @MainActor
-final class AutomationPreparerTest: XCTestCase {
+struct AutomationPreparerTest {
 
     private let actionPreparer: TestPreparerDelegate<AirshipJSON, AirshipJSON> = TestPreparerDelegate()
     private let messagePreparer: TestPreparerDelegate<InAppMessage, PreparedInAppMessageData> = TestPreparerDelegate()
@@ -16,15 +17,15 @@ final class AutomationPreparerTest: XCTestCase {
     private let experiments: TestExperimentDataProvider = TestExperimentDataProvider()
     private let frequencyLimits: TestFrequencyLimitManager = TestFrequencyLimitManager()
     private let audienceChecker: TestAudienceChecker = TestAudienceChecker()
-    private var preparer: AutomationPreparer!
+    private let preparer: AutomationPreparer!
     private let deviceInfoProvider = TestDeviceInfoProvider()
     private let audienceAdditionalResolver = TestAdditionalAudienceResolver()
 
     private let triggerContext = AirshipTriggerContext(type: "some type", goal: 10, event: .null)
 
-    private var preparedMessageData: PreparedInAppMessageData!
+    private let preparedMessageData: PreparedInAppMessageData!
     private let runtimeConfig: RuntimeConfig = .testConfig()
-    override func setUp() async throws {
+    init() async throws {
         self.preparedMessageData = PreparedInAppMessageData(
             message: InAppMessage(
                 name: "some name",
@@ -54,6 +55,7 @@ final class AutomationPreparerTest: XCTestCase {
     
     }
 
+    @Test
     func testRequiresUpdate() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -64,12 +66,12 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         self.remoteDataAccess.requiresUpdateBlock = { schedule in
-            XCTAssertEqual(automationSchedule, schedule)
+            #expect(automationSchedule == schedule)
             return true
         }
 
         self.remoteDataAccess.waitFullRefreshBlock = { schedule in
-            XCTAssertEqual(automationSchedule, schedule)
+            #expect(automationSchedule == schedule)
         }
 
         let prepareResult = await self.preparer.prepare(
@@ -78,9 +80,10 @@ final class AutomationPreparerTest: XCTestCase {
             triggerSessionID: UUID().uuidString
         )
         
-        XCTAssertTrue(prepareResult.isInvalidate)
+        #expect(prepareResult.isInvalidate)
     }
 
+    @Test
     func testBestEfforRefreshNotCurrent() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -95,7 +98,7 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         self.remoteDataAccess.bestEffortRefreshBlock = { schedule in
-            XCTAssertEqual(automationSchedule, schedule)
+            #expect(automationSchedule == schedule)
             return false
         }
 
@@ -105,9 +108,10 @@ final class AutomationPreparerTest: XCTestCase {
             triggerSessionID: UUID().uuidString
         )
 
-        XCTAssertTrue(prepareResult.isInvalidate)
+        #expect(prepareResult.isInvalidate)
     }
 
+    @Test
     func testAudienceMismatchSkip() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -136,14 +140,14 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         self.audienceChecker.onEvaluate = { audience, created, _ in
-            XCTAssertEqual(
-                audience,
+            #expect(
+                audience ==
                 CompoundDeviceAudienceSelector.combine(
                     compoundSelector: automationSchedule.compoundAudience!.selector,
                     deviceSelector: automationSchedule.audience!.audienceSelector
                 )
             )
-            XCTAssertEqual(created, automationSchedule.created)
+            #expect(created == automationSchedule.created)
             return .miss
         }
 
@@ -154,9 +158,10 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         /// Uses compound selector if available
-        XCTAssertTrue(prepareResult.isCancelled)
+        #expect(prepareResult.isCancelled)
     }
     
+    @Test
     func testAudienceMismatchPenalize() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -183,8 +188,8 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         self.audienceChecker.onEvaluate = { audience, created, _ in
-            XCTAssertEqual(audience, .atomic(automationSchedule.audience!.audienceSelector))
-            XCTAssertEqual(created, automationSchedule.created)
+            #expect(audience == .atomic(automationSchedule.audience!.audienceSelector))
+            #expect(created == automationSchedule.created)
             return .miss
         }
 
@@ -194,9 +199,10 @@ final class AutomationPreparerTest: XCTestCase {
             triggerSessionID: UUID().uuidString
         )
 
-        XCTAssertTrue(prepareResult.isPenalize)
+        #expect(prepareResult.isPenalize)
     }
     
+    @Test
     func testAudienceCheckFirst() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -226,14 +232,14 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         self.audienceChecker.onEvaluate = { audience, created, _ in
-            XCTAssertEqual(
-                audience,
+            #expect(
+                audience ==
                 CompoundDeviceAudienceSelector.combine(
                     compoundSelector: automationSchedule.compoundAudience!.selector,
                     deviceSelector: automationSchedule.audience!.audienceSelector
                 )
             )
-            XCTAssertEqual(created, automationSchedule.created)
+            #expect(created == automationSchedule.created)
             return .miss
         }
 
@@ -243,9 +249,10 @@ final class AutomationPreparerTest: XCTestCase {
             triggerSessionID: UUID().uuidString
         )
 
-        XCTAssertTrue(prepareResult.isCancelled)
+        #expect(prepareResult.isCancelled)
     }
     
+    @Test
     func testCompoundAudienceCheck() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -271,8 +278,8 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         self.audienceChecker.onEvaluate = { audience, created, provider in
-            XCTAssertEqual(audience, automationSchedule.compoundAudience?.selector)
-            XCTAssertEqual(created, automationSchedule.created)
+            #expect(audience == automationSchedule.compoundAudience?.selector)
+            #expect(created == automationSchedule.created)
             return .miss
         }
 
@@ -282,10 +289,11 @@ final class AutomationPreparerTest: XCTestCase {
             triggerSessionID: UUID().uuidString
         )
 
-        XCTAssertTrue(prepareResult.isCancelled)
+        #expect(prepareResult.isCancelled)
     }
 
 
+    @Test
     func testAudienceMismatchCancel() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -306,13 +314,14 @@ final class AutomationPreparerTest: XCTestCase {
         self.remoteDataAccess.requiresUpdateBlock = { _ in
             return false
         }
+
         self.remoteDataAccess.bestEffortRefreshBlock = { _ in
             return true
         }
 
         self.audienceChecker.onEvaluate = { audience, created, _ in
-            XCTAssertEqual(audience, .atomic(automationSchedule.audience!.audienceSelector))
-            XCTAssertEqual(created, automationSchedule.created)
+            #expect(audience == .atomic(automationSchedule.audience!.audienceSelector))
+            #expect(created == automationSchedule.created)
             return .miss
         }
 
@@ -322,9 +331,10 @@ final class AutomationPreparerTest: XCTestCase {
             triggerSessionID: UUID().uuidString
         )
 
-        XCTAssertTrue(prepareResult.isCancelled)
+        #expect(prepareResult.isCancelled)
     }
 
+    @Test
     func testContactIDAudienceChecks() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -351,7 +361,7 @@ final class AutomationPreparerTest: XCTestCase {
 
         self.audienceChecker.onEvaluate = { _, _, provider in
             let contactID = await provider.stableContactInfo.contactID
-            XCTAssertEqual("contact ID", contactID)
+            #expect("contact ID" == contactID)
             return .miss
         }
 
@@ -362,6 +372,7 @@ final class AutomationPreparerTest: XCTestCase {
         )
     }
 
+    @Test
     func testPrepareMessage() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -403,10 +414,10 @@ final class AutomationPreparerTest: XCTestCase {
         let preparedData = self.preparedMessageData!
 
         self.messagePreparer.prepareBlock = { message, info in
-            XCTAssertEqual(.inAppMessage(message), automationSchedule.data)
-            XCTAssertEqual(automationSchedule.identifier, info.scheduleID)
-            XCTAssertEqual(automationSchedule.campaigns, info.campaigns)
-            XCTAssertEqual("contact ID", info.contactID)
+            #expect(.inAppMessage(message) == automationSchedule.data)
+            #expect(automationSchedule.identifier == info.scheduleID)
+            #expect(automationSchedule.campaigns == info.campaigns)
+            #expect("contact ID" == info.contactID)
 
             return preparedData
         }
@@ -420,18 +431,19 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         guard case .prepared(let prepared) = result else {
-            XCTFail()
+            Issue.record()
             return
         }
 
-        XCTAssertEqual(automationSchedule.identifier, prepared.info.scheduleID)
-        XCTAssertEqual(automationSchedule.campaigns, prepared.info.campaigns)
-        XCTAssertEqual(prepared.data, .inAppMessage(preparedData))
-        XCTAssertEqual(triggerSessionID, prepared.info.triggerSessionID)
+        #expect(automationSchedule.identifier == prepared.info.scheduleID)
+        #expect(automationSchedule.campaigns == prepared.info.campaigns)
+        #expect(prepared.data == .inAppMessage(preparedData))
+        #expect(triggerSessionID == prepared.info.triggerSessionID)
 
-        XCTAssertNotNil(prepared.frequencyChecker)
+        #expect(prepared.frequencyChecker != nil)
     }
     
+    @Test
     func testPrepareMessageCheckerError() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -477,9 +489,10 @@ final class AutomationPreparerTest: XCTestCase {
             triggerSessionID: triggerSessionID
         )
 
-        XCTAssertTrue(result.isSkipped)
+        #expect(result.isSkipped)
     }
 
+    @Test
     func testAdditionalAudienceMiss() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -513,7 +526,7 @@ final class AutomationPreparerTest: XCTestCase {
         let preparedData = self.preparedMessageData!
 
         self.messagePreparer.prepareBlock = { message, info in
-            XCTAssertFalse(info.additionalAudienceCheckResult)
+            #expect(!(info.additionalAudienceCheckResult))
             return preparedData
         }
 
@@ -524,12 +537,13 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         guard case .prepared(let prepared) = prepareResult else {
-            XCTFail()
+            Issue.record()
             return
         }
-        XCTAssertFalse(prepared.info.additionalAudienceCheckResult)
+        #expect(!(prepared.info.additionalAudienceCheckResult))
     }
 
+    @Test
     func testPrepareInvalidMessage() async throws {
         let invalidBanner = InAppMessageDisplayContent.Banner(
             heading: nil,
@@ -585,10 +599,10 @@ final class AutomationPreparerTest: XCTestCase {
         let preparedData = self.preparedMessageData!
 
         self.messagePreparer.prepareBlock = { message, info in
-            XCTAssertEqual(.inAppMessage(message), automationSchedule.data)
-            XCTAssertEqual(automationSchedule.identifier, info.scheduleID)
-            XCTAssertEqual(automationSchedule.campaigns, info.campaigns)
-            XCTAssertEqual("contact ID", info.contactID)
+            #expect(.inAppMessage(message) == automationSchedule.data)
+            #expect(automationSchedule.identifier == info.scheduleID)
+            #expect(automationSchedule.campaigns == info.campaigns)
+            #expect("contact ID" == info.contactID)
 
             return preparedData
         }
@@ -599,9 +613,10 @@ final class AutomationPreparerTest: XCTestCase {
             triggerSessionID: UUID().uuidString
         )
 
-        XCTAssertTrue(result.isSkipped)
+        #expect(result.isSkipped)
     }
 
+    @Test
     func testPrepareActions() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -642,10 +657,10 @@ final class AutomationPreparerTest: XCTestCase {
 
 
         self.actionPreparer.prepareBlock = { actions, info in
-            XCTAssertEqual(.actions(actions), automationSchedule.data)
-            XCTAssertEqual(automationSchedule.identifier, info.scheduleID)
-            XCTAssertEqual(automationSchedule.campaigns, info.campaigns)
-            XCTAssertEqual("contact ID", info.contactID)
+            #expect(.actions(actions) == automationSchedule.data)
+            #expect(automationSchedule.identifier == info.scheduleID)
+            #expect(automationSchedule.campaigns == info.campaigns)
+            #expect("contact ID" == info.contactID)
             return actions
         }
 
@@ -656,16 +671,17 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         guard case .prepared(let prepared) = result else {
-            XCTFail()
+            Issue.record()
             return
         }
 
-        XCTAssertEqual(automationSchedule.identifier, prepared.info.scheduleID)
-        XCTAssertEqual(automationSchedule.campaigns, prepared.info.campaigns)
-        XCTAssertEqual(prepared.data, .actions(AirshipJSON.string("actions payload")))
-        XCTAssertNotNil(prepared.frequencyChecker)
+        #expect(automationSchedule.identifier == prepared.info.scheduleID)
+        #expect(automationSchedule.campaigns == prepared.info.campaigns)
+        #expect(prepared.data == .actions(AirshipJSON.string("actions payload")))
+        #expect(prepared.frequencyChecker != nil)
     }
 
+    @Test
     func testPrepareDeferredActions() async throws {
         let actions = try! AirshipJSON.wrap(["some": "action"])
         let automationSchedule = AutomationSchedule(
@@ -718,10 +734,10 @@ final class AutomationPreparerTest: XCTestCase {
         }
         
         self.actionPreparer.prepareBlock = { actionsPayload, info in
-            XCTAssertEqual(actionsPayload, actions)
-            XCTAssertEqual(automationSchedule.identifier, info.scheduleID)
-            XCTAssertEqual(automationSchedule.campaigns, info.campaigns)
-            XCTAssertEqual("contact ID", info.contactID)
+            #expect(actionsPayload == actions)
+            #expect(automationSchedule.identifier == info.scheduleID)
+            #expect(automationSchedule.campaigns == info.campaigns)
+            #expect("contact ID" == info.contactID)
             return actions
         }
 
@@ -732,16 +748,17 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         guard case .prepared(let prepared) = result else {
-            XCTFail()
+            Issue.record()
             return
         }
 
-        XCTAssertEqual(automationSchedule.identifier, prepared.info.scheduleID)
-        XCTAssertEqual(automationSchedule.campaigns, prepared.info.campaigns)
-        XCTAssertEqual(prepared.data, .actions(actions))
-        XCTAssertNotNil(prepared.frequencyChecker)
+        #expect(automationSchedule.identifier == prepared.info.scheduleID)
+        #expect(automationSchedule.campaigns == prepared.info.campaigns)
+        #expect(prepared.data == .actions(actions))
+        #expect(prepared.frequencyChecker != nil)
     }
 
+    @Test
     func testPrepareDeferredMessage() async throws {
 
         let message = InAppMessage(
@@ -801,7 +818,7 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         await self.deferredResolver.onData { request in
-            XCTAssertEqual(request, expectedRequest)
+            #expect(request == expectedRequest)
             let data = try! AirshipJSON.wrap([
                 "audience_match": true,
                 "message": message
@@ -812,10 +829,10 @@ final class AutomationPreparerTest: XCTestCase {
         let preparedData = self.preparedMessageData!
         let contactID = self.deviceInfoProvider.stableContactInfo.contactID
         self.messagePreparer.prepareBlock = { inAppMessage, info in
-            XCTAssertEqual(inAppMessage, message)
-            XCTAssertEqual(automationSchedule.identifier, info.scheduleID)
-            XCTAssertEqual(automationSchedule.campaigns, info.campaigns)
-            XCTAssertEqual(contactID, info.contactID)
+            #expect(inAppMessage == message)
+            #expect(automationSchedule.identifier == info.scheduleID)
+            #expect(automationSchedule.campaigns == info.campaigns)
+            #expect(contactID == info.contactID)
             return preparedData
         }
 
@@ -826,15 +843,16 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         guard case .prepared(let prepared) = result else {
-            XCTFail()
+            Issue.record()
             return
         }
 
-        XCTAssertEqual(automationSchedule.identifier, prepared.info.scheduleID)
-        XCTAssertEqual(automationSchedule.campaigns, prepared.info.campaigns)
-        XCTAssertNotNil(prepared.frequencyChecker)
+        #expect(automationSchedule.identifier == prepared.info.scheduleID)
+        #expect(automationSchedule.campaigns == prepared.info.campaigns)
+        #expect(prepared.frequencyChecker != nil)
     }
 
+    @Test
     func testPrepareDeferredAudienceMismatchResult() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -883,9 +901,10 @@ final class AutomationPreparerTest: XCTestCase {
             triggerSessionID: UUID().uuidString
         )
 
-        XCTAssertTrue(result.isSkipped)
+        #expect(result.isSkipped)
     }
 
+    @Test
     func testExperiements() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -927,10 +946,10 @@ final class AutomationPreparerTest: XCTestCase {
         let preparedData = self.preparedMessageData!
 
         self.messagePreparer.prepareBlock = { message, info in
-            XCTAssertEqual(.inAppMessage(message), automationSchedule.data)
-            XCTAssertEqual(automationSchedule.identifier, info.scheduleID)
-            XCTAssertEqual(automationSchedule.campaigns, info.campaigns)
-            XCTAssertEqual("contact ID", info.contactID)
+            #expect(.inAppMessage(message) == automationSchedule.data)
+            #expect(automationSchedule.identifier == info.scheduleID)
+            #expect(automationSchedule.campaigns == info.campaigns)
+            #expect("contact ID" == info.contactID)
 
             return preparedData
         }
@@ -942,16 +961,17 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         guard case .prepared(let prepared) = result else {
-            XCTFail()
+            Issue.record()
             return
         }
 
-        XCTAssertEqual(automationSchedule.identifier, prepared.info.scheduleID)
-        XCTAssertEqual(automationSchedule.campaigns, prepared.info.campaigns)
-        XCTAssertEqual(prepared.data, .inAppMessage(preparedData))
-        XCTAssertNotNil(prepared.frequencyChecker)
+        #expect(automationSchedule.identifier == prepared.info.scheduleID)
+        #expect(automationSchedule.campaigns == prepared.info.campaigns)
+        #expect(prepared.data == .inAppMessage(preparedData))
+        #expect(prepared.frequencyChecker != nil)
     }
 
+    @Test
     func testExperiments() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -994,22 +1014,22 @@ final class AutomationPreparerTest: XCTestCase {
 
         self.experiments.onEvaluate = { info, provider in
             let contactID = await provider.stableContactInfo.contactID
-            XCTAssertEqual(
-                info,
+            #expect(
+                info ==
                 MessageInfo(
                     messageType: automationSchedule.messageType!,
                     campaigns: automationSchedule.campaigns
                 )
             )
-            XCTAssertEqual(contactID, "contact ID")
+            #expect(contactID == "contact ID")
             return experimentResult
         }
         
         let preparedData = self.preparedMessageData!
 
         self.messagePreparer.prepareBlock = { message, info in
-            XCTAssertEqual(automationSchedule.identifier, info.scheduleID)
-            XCTAssertEqual(experimentResult, info.experimentResult)
+            #expect(automationSchedule.identifier == info.scheduleID)
+            #expect(experimentResult == info.experimentResult)
             return preparedData
         }
 
@@ -1020,12 +1040,13 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         guard case .prepared(let prepared) = result else {
-            XCTFail()
+            Issue.record()
             return
         }
-        XCTAssertEqual(experimentResult, prepared.info.experimentResult)
+        #expect(experimentResult == prepared.info.experimentResult)
     }
 
+    @Test
     func testExperimentsDefaultMessageType() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -1067,22 +1088,22 @@ final class AutomationPreparerTest: XCTestCase {
 
         self.experiments.onEvaluate = { info, provider in
             let contactID = await provider.stableContactInfo.contactID
-            XCTAssertEqual(
-                info,
+            #expect(
+                info ==
                 MessageInfo(
                     messageType: "transactional",
                     campaigns: automationSchedule.campaigns
                 )
             )
-            XCTAssertEqual(contactID, "contact ID")
+            #expect(contactID == "contact ID")
             return experimentResult
         }
 
         let preparedData = self.preparedMessageData!
 
         self.messagePreparer.prepareBlock = { message, info in
-            XCTAssertEqual(automationSchedule.identifier, info.scheduleID)
-            XCTAssertEqual(experimentResult, info.experimentResult)
+            #expect(automationSchedule.identifier == info.scheduleID)
+            #expect(experimentResult == info.experimentResult)
             return preparedData
         }
 
@@ -1093,12 +1114,13 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         guard case .prepared(let prepared) = result else {
-            XCTFail()
+            Issue.record()
             return
         }
-        XCTAssertEqual(experimentResult, prepared.info.experimentResult)
+        #expect(experimentResult == prepared.info.experimentResult)
     }
 
+    @Test
     func testByPassExperiments() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -1134,14 +1156,14 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         self.experiments.onEvaluate = { info, provider in
-            XCTFail()
+            Issue.record()
             return nil
         }
 
         let preparedData = self.preparedMessageData!
 
         self.messagePreparer.prepareBlock = { message, info in
-            XCTAssertNil(info.experimentResult)
+            #expect(info.experimentResult == nil)
             return preparedData
         }
 
@@ -1152,13 +1174,14 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         guard case .prepared(let prepared) = result else {
-            XCTFail()
+            Issue.record()
             return
         }
 
-        XCTAssertNil(prepared.info.experimentResult)
+        #expect(prepared.info.experimentResult == nil)
     }
 
+    @Test
     func testByPassExperimentsActions() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,
@@ -1194,12 +1217,12 @@ final class AutomationPreparerTest: XCTestCase {
         }
 
         self.experiments.onEvaluate = { info, provider in
-            XCTFail()
+            Issue.record()
             return nil
         }
 
         self.actionPreparer.prepareBlock = { actions, info in
-            XCTAssertNil(info.experimentResult)
+            #expect(info.experimentResult == nil)
             return actions
         }
 
@@ -1210,11 +1233,11 @@ final class AutomationPreparerTest: XCTestCase {
         )
 
         guard case .prepared(let prepared) = result else {
-            XCTFail()
+            Issue.record()
             return
         }
 
-        XCTAssertNil(prepared.info.experimentResult)
+        #expect(prepared.info.experimentResult == nil)
     }
 }
 
@@ -1312,4 +1335,3 @@ final class TestDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Senda
     }
 
 }
-

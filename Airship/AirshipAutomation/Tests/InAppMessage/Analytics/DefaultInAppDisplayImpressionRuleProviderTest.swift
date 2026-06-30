@@ -1,23 +1,26 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 @_spi(AirshipInternal) import AirshipScenes
 
-final class DefaultInAppDisplayImpressionRuleProviderTest: XCTestCase {
+struct DefaultInAppDisplayImpressionRuleProviderTest {
 
     let provider = DefaultInAppDisplayImpressionRuleProvider()
 
+    @Test
     func testCustomMessage() throws {
         let rule = provider.impressionRules(
             for: InAppMessage(name: "woot", displayContent: .custom(.string("neat")))
         )
-        XCTAssertEqual(rule, .once)
+        #expect(rule == .once)
     }
 
+    @Test
     func testFullscreenMessage() throws {
         let rule = provider.impressionRules(
             for: InAppMessage(
@@ -25,9 +28,10 @@ final class DefaultInAppDisplayImpressionRuleProviderTest: XCTestCase {
                 displayContent: .fullscreen(.init(buttons: [], template: .headerBodyMedia))
             )
         )
-        XCTAssertEqual(rule, .once)
+        #expect(rule == .once)
     }
 
+    @Test
     func testModalMessage() throws {
         let rule = provider.impressionRules(
             for: InAppMessage(
@@ -35,9 +39,10 @@ final class DefaultInAppDisplayImpressionRuleProviderTest: XCTestCase {
                 displayContent: .modal(.init(buttons: [], template: .headerBodyMedia))
             )
         )
-        XCTAssertEqual(rule, .once)
+        #expect(rule == .once)
     }
 
+    @Test
     func testBannerMessage() throws {
         let rule = provider.impressionRules(
             for: InAppMessage(
@@ -45,9 +50,10 @@ final class DefaultInAppDisplayImpressionRuleProviderTest: XCTestCase {
                 displayContent: .banner(.init(buttons: [], template: .mediaLeft))
             )
         )
-        XCTAssertEqual(rule, .once)
+        #expect(rule == .once)
     }
 
+    @Test
     func testModalThomas() throws {
         let airshipLayout = """
         {
@@ -77,9 +83,10 @@ final class DefaultInAppDisplayImpressionRuleProviderTest: XCTestCase {
                 )
             )
         )
-        XCTAssertEqual(rule, .once)
+        #expect(rule == .once)
     }
 
+    @Test
     func testBannerThomas() throws {
         let airshipLayout = """
         {
@@ -112,9 +119,10 @@ final class DefaultInAppDisplayImpressionRuleProviderTest: XCTestCase {
                 )
             )
         )
-        XCTAssertEqual(rule, .once)
+        #expect(rule == .once)
     }
 
+    @Test
     func testEmbeddedThomas() throws {
         let airshipLayout = """
         {
@@ -144,6 +152,6 @@ final class DefaultInAppDisplayImpressionRuleProviderTest: XCTestCase {
                 )
             )
         )
-        XCTAssertEqual(rule, .interval(1800.0))
+        #expect(rule == .interval(1800.0))
     }
 }

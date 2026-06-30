@@ -1,25 +1,29 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @testable @_spi(AirshipInternal) import AirshipAutomation
 import AirshipCore
 @_spi(AirshipInternal) import AirshipScenes
 
 @MainActor
-final class DisplayCoordinatorManagerTest: XCTestCase {
+struct DisplayCoordinatorManagerTest {
 
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private var manager: DisplayCoordinatorManager!
-    override func setUp() async throws {
+    private let manager: DisplayCoordinatorManager
+
+    init() {
         manager = DisplayCoordinatorManager(dataStore: dataStore)
     }
 
+    @Test
     func testDefaultAdapter() throws {
         let message = InAppMessage(name: "", displayContent: .custom(.string("")))
         let adapter = manager.displayCoordinator(message: message)
-        XCTAssertNotNil(adapter as? DefaultDisplayCoordinator)
+        #expect(adapter as? DefaultDisplayCoordinator != nil)
     }
 
+    @Test
     func testDefaultAdapterEmbedded() throws {
         let airshipLayout = """
         {
@@ -48,9 +52,10 @@ final class DisplayCoordinatorManagerTest: XCTestCase {
             )
         )
         let adapter = manager.displayCoordinator(message: message)
-        XCTAssertNotNil(adapter as? ImmediateDisplayCoordinator)
+        #expect(adapter as? ImmediateDisplayCoordinator != nil)
     }
 
+    @Test
     func testStandardBehavior() throws {
         let message = InAppMessage(
             name: "",
@@ -59,9 +64,10 @@ final class DisplayCoordinatorManagerTest: XCTestCase {
         )
 
         let adapter = manager.displayCoordinator(message: message)
-        XCTAssertNotNil(adapter as? DefaultDisplayCoordinator)
+        #expect(adapter as? DefaultDisplayCoordinator != nil)
     }
 
+    @Test
     func testImmediateBehavior() throws {
         let message = InAppMessage(
             name: "",
@@ -70,7 +76,7 @@ final class DisplayCoordinatorManagerTest: XCTestCase {
         )
 
         let adapter = manager.displayCoordinator(message: message)
-        XCTAssertNotNil(adapter as? ImmediateDisplayCoordinator)
+        #expect(adapter as? ImmediateDisplayCoordinator != nil)
     }
 
 }

@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
@@ -22,7 +23,7 @@ final class TestScheduleConditionsChangedNotifier: ScheduleConditionsChangedNoti
 }
 
 @MainActor
-final class AutomationEngineTest: XCTestCase {
+final class AutomationEngineTest {
     
     private var engine: AutomationEngine!
     private var dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
@@ -47,7 +48,7 @@ final class AutomationEngineTest: XCTestCase {
     private let runtimeConfig: RuntimeConfig = .testConfig()
 
     private var scheduleConditionsChangedNotifier: TestScheduleConditionsChangedNotifier!
-    override func setUp() async throws {
+    init() async throws {
         let history = DefaultAutomationEventsHistory(clock: UATestDate())
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
@@ -99,51 +100,55 @@ final class AutomationEngineTest: XCTestCase {
         )
     }
     
-    override func tearDown() async throws {
-        await self.engine.stop()
+    deinit {
+        let engine = self.engine
+        Task {
+            await engine?.stop()
+        }
     }
     
+    @Test
     func testStart() async throws {
         await self.engine.start()
         let startTask = await self.engine.startTask
         let listenTask = await self.engine.listenerTask
         
-        XCTAssertNotNil(startTask)
-        XCTAssertNotNil(listenTask)
+        #expect(startTask != nil)
+        #expect(listenTask != nil)
     }
     
+    @Test
     func testStop() async throws {
         await self.engine.stop()
         let startTask = await self.engine.startTask
         let listenTask = await self.engine.listenerTask
-        XCTAssertNil(startTask)
-        XCTAssertNil(listenTask)
+        #expect(startTask == nil)
+        #expect(listenTask == nil)
     }
     
-    @MainActor
+    @Test
     func testSetEnginePaused() async throws {
         self.engine.setEnginePaused(true)
-        XCTAssertTrue(self.engine.isEnginePaused.value)
+        #expect(self.engine.isEnginePaused.value)
     }
     
-    @MainActor
+    @Test
     func testSetExecutionPaused() async throws {
-        let onNotifyExpectation = expectation(description: "Schedule conditions changed notifiers should be notified when pause state changes.")
+        await confirmation("Schedule conditions changed notifiers should be notified when pause state changes.") { confirm in
+            self.scheduleConditionsChangedNotifier.onNotify = {
+                confirm()
+            }
 
-        self.scheduleConditionsChangedNotifier.onNotify = {
-            onNotifyExpectation.fulfill()
+            self.engine.setExecutionPaused(true)
+            #expect(self.engine.isExecutionPaused.value)
+
+
+            self.engine.setExecutionPaused(false)
+            #expect(!(self.engine.isExecutionPaused.value))
         }
-
-        self.engine.setExecutionPaused(true)
-        XCTAssertTrue(self.engine.isExecutionPaused.value)
-
-
-        self.engine.setExecutionPaused(false)
-        XCTAssertFalse(self.engine.isExecutionPaused.value)
-
-        await fulfillment(of: [onNotifyExpectation], timeout: 1)
     }
     
+    @Test
     func testStopSchedules() async throws {
         try await self.engine.upsertSchedules([AutomationSchedule(identifier: "test", triggers: [], data: .inAppMessage(
             InAppMessage(
@@ -151,18 +156,19 @@ final class AutomationEngineTest: XCTestCase {
                 displayContent: .custom(.string("test"))
             )))])
         var schedule = try await self.engine.getSchedule(identifier: "test")
-        XCTAssertNotNil(schedule)
+        #expect(schedule != nil)
         try await self.engine.stopSchedules(identifiers: ["test"])
         schedule = try await self.engine.getSchedule(identifier: "test")
-        XCTAssertNil(schedule)
+        #expect(schedule == nil)
     }
     
+    @Test
     func testUpsertSchedules() async throws {
         var schedule = try await self.engine.getSchedule(identifier: "test")
-        XCTAssertNil(schedule)
+        #expect(schedule == nil)
 
         var storedSchedule = try await self.automationStore.getSchedule(scheduleID: "test")
-        XCTAssertNil(storedSchedule)
+        #expect(storedSchedule == nil)
 
         let beforeDate = AirshipDate().now
 
@@ -175,10 +181,11 @@ final class AutomationEngineTest: XCTestCase {
 
         storedSchedule = try await self.automationStore.getSchedule(scheduleID: "test")
 
-        XCTAssertGreaterThan(storedSchedule!.lastScheduleModifiedDate, beforeDate)
-        XCTAssertNotNil(schedule)
+        #expect(storedSchedule!.lastScheduleModifiedDate > beforeDate)
+        #expect(schedule != nil)
     }
     
+    @Test
     func testCancelSchedule() async throws {
         try await self.engine.upsertSchedules([AutomationSchedule(identifier: "test", triggers: [], data: .inAppMessage(
             InAppMessage(
@@ -187,7 +194,7 @@ final class AutomationEngineTest: XCTestCase {
             )))])
         try await self.engine.cancelSchedules(identifiers: ["test"])
         let schedule = try await self.engine.getSchedule(identifier: "test")
-        XCTAssertNil(schedule)
+        #expect(schedule == nil)
     }
 }
 

@@ -1,17 +1,18 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @testable @_spi(AirshipInternal) import AirshipAutomation
 import AirshipCore
 
-final class InAppMessageContentValidationTest: XCTestCase {
+struct InAppMessageContentValidationTest {
 
-    private var validHeading: InAppMessageTextInfo!
-    private var validBody: InAppMessageTextInfo!
-    private var validMedia: InAppMessageMediaInfo!
+    private let validHeading: InAppMessageTextInfo
+    private let validBody: InAppMessageTextInfo
+    private let validMedia: InAppMessageMediaInfo
     // Assuming invalid media would have an invalid URL or type, but keeping it simple here
-    private var validButtonLabel: InAppMessageTextInfo!
-    private var validButton: InAppMessageButtonInfo!
+    private let validButtonLabel: InAppMessageTextInfo
+    private let validButton: InAppMessageButtonInfo
 
     private let validText = "Valid Text"
     private let validIdentifier = "d17a055c-ed67-4101-b65f-cd28b5904c84"
@@ -22,17 +23,16 @@ final class InAppMessageContentValidationTest: XCTestCase {
     private let validFontFam = ["sans-serif"]
 
 
-    private var emptyHeading: InAppMessageTextInfo!
-    private var emptyBody: InAppMessageTextInfo!
-    private var emptyMedia: InAppMessageMediaInfo!
-    private var emptyButtonLabel: InAppMessageTextInfo!
-    private var emptyButton: InAppMessageButtonInfo!
+    private let emptyHeading: InAppMessageTextInfo
+    private let emptyBody: InAppMessageTextInfo
+    private let emptyMedia: InAppMessageMediaInfo
+    private let emptyButtonLabel: InAppMessageTextInfo
+    private let emptyButton: InAppMessageButtonInfo
 
-    private var validVideoMedia: InAppMessageMediaInfo!
-    private var validYoutubeMedia: InAppMessageMediaInfo!
+    private let validVideoMedia: InAppMessageMediaInfo
+    private let validYoutubeMedia: InAppMessageMediaInfo
 
-    override func setUp() {
-        super.setUp()
+    init() {
         // Valid components
         validHeading = InAppMessageTextInfo(text: validText, color: validColor, size: 22.0, fontFamilies: validFontFam, alignment: .center)
         validBody = InAppMessageTextInfo(text: validText, color: validColor, size: 16.0, fontFamilies: validFontFam, alignment: .center)
@@ -51,6 +51,7 @@ final class InAppMessageContentValidationTest: XCTestCase {
         validYoutubeMedia = InAppMessageMediaInfo(url: validURL, type: .video, description: validText)
     }
 
+    @Test
     func testBanner() {
         let valid = InAppMessageDisplayContent.Banner(
             heading: validHeading,
@@ -66,9 +67,10 @@ final class InAppMessageContentValidationTest: XCTestCase {
             placement: .top
         )
 
-        XCTAssertTrue(valid.validate())
+        #expect(valid.validate())
     }
 
+    @Test
     func testInvalidBanner() {
         /// No heading or body
         let noHeaderOrBodyContent = InAppMessageDisplayContent.Banner(
@@ -99,10 +101,11 @@ final class InAppMessageContentValidationTest: XCTestCase {
             placement: .top
         )
 
-        XCTAssertFalse(noHeaderOrBodyContent.validate())
-        XCTAssertFalse(tooManyButtons.validate())
+        #expect(!(noHeaderOrBodyContent.validate()))
+        #expect(!(tooManyButtons.validate()))
     }
 
+    @Test
     func testModal() {
         let valid = InAppMessageDisplayContent.Modal(
             heading: validHeading,
@@ -118,9 +121,10 @@ final class InAppMessageContentValidationTest: XCTestCase {
             allowFullscreenDisplay: true
         )
 
-        XCTAssertTrue(valid.validate())
+        #expect(valid.validate())
     }
 
+    @Test
     func testInvalidModal() {
         let emptyHeadingAndBody = InAppMessageDisplayContent.Modal(
             heading: emptyHeading,
@@ -150,10 +154,11 @@ final class InAppMessageContentValidationTest: XCTestCase {
             allowFullscreenDisplay: true
         )
 
-        XCTAssertFalse(tooManyButtons.validate())
-        XCTAssertFalse(emptyHeadingAndBody.validate())
+        #expect(!(tooManyButtons.validate()))
+        #expect(!(emptyHeadingAndBody.validate()))
     }
 
+    @Test
     func testFullscreen() {
         let valid = InAppMessageDisplayContent.Fullscreen(
             heading: validHeading,
@@ -167,9 +172,10 @@ final class InAppMessageContentValidationTest: XCTestCase {
             backgroundColor: validColor
         )
 
-        XCTAssertTrue(valid.validate())
+        #expect(valid.validate())
     }
 
+    @Test
     func testInvalidFullscreen() {
         let emptyHeadingAndBody = InAppMessageDisplayContent.Fullscreen(
             heading: emptyHeading,
@@ -182,9 +188,10 @@ final class InAppMessageContentValidationTest: XCTestCase {
             dismissButtonColor: validColor,
             backgroundColor: validColor)
 
-        XCTAssertFalse(emptyHeadingAndBody.validate())
+        #expect(!(emptyHeadingAndBody.validate()))
     }
 
+    @Test
     func testHTML() {
         let valid = InAppMessageDisplayContent.HTML(
             url: validURL,
@@ -198,9 +205,10 @@ final class InAppMessageContentValidationTest: XCTestCase {
             allowFullscreen: true
         )
 
-        XCTAssertTrue(valid.validate())
+        #expect(valid.validate())
     }
 
+    @Test
     func testInvalidHTML() {
         let emptyURL = InAppMessageDisplayContent.HTML(
             url: "",
@@ -214,18 +222,20 @@ final class InAppMessageContentValidationTest: XCTestCase {
             allowFullscreen: true
         )
 
-        XCTAssertFalse(emptyURL.validate())
+        #expect(!(emptyURL.validate()))
     }
 
+    @Test
     func testTextInfo() {
-        XCTAssertTrue(validHeading.validate())
-        XCTAssertTrue(validBody.validate())
-        XCTAssertFalse(emptyHeading.validate())
-        XCTAssertFalse(emptyBody.validate())
+        #expect(validHeading.validate())
+        #expect(validBody.validate())
+        #expect(!(emptyHeading.validate()))
+        #expect(!(emptyBody.validate()))
     }
 
+    @Test
     func testButtonInfo() {
-        XCTAssertTrue(validButton.validate())
-        XCTAssertFalse(emptyButton.validate())
+        #expect(validButton.validate())
+        #expect(!(emptyButton.validate()))
     }
 }

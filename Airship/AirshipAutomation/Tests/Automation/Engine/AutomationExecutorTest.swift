@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
@@ -8,17 +9,18 @@ import AirshipCore
 @_spi(AirshipInternal) import AirshipScenes
 
 @MainActor
-final class AutomationExecutorTest: XCTestCase {
+struct AutomationExecutorTest {
 
     private let actionExecutor: TestExecutorDelegate<AirshipJSON> = TestExecutorDelegate()
     private let messageExecutor: TestExecutorDelegate<PreparedInAppMessageData> = TestExecutorDelegate()
     private let remoteDataAccess: TestRemoteDataAccess = TestRemoteDataAccess()
     private let messageAnalyitics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
 
-    private var executor: AutomationExecutor!
+    private let executor: AutomationExecutor
 
-    private var preparedMessageData: PreparedInAppMessageData!
-    override func setUp() async throws {
+    private let preparedMessageData: PreparedInAppMessageData
+
+    init() async throws {
         self.preparedMessageData = PreparedInAppMessageData(
             message: InAppMessage(
                 name: "some name",
@@ -37,6 +39,7 @@ final class AutomationExecutorTest: XCTestCase {
         )
     }
 
+    @Test
     func testMessageIsReady() async throws {
         let messageSchedule = PreparedSchedule(
             info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString, priority: 0),
@@ -47,8 +50,8 @@ final class AutomationExecutorTest: XCTestCase {
         for readyResult in ScheduleReadyResult.allResults {
             self.messageExecutor.isReadyCalled = false
             self.messageExecutor.isReadyBlock = { data, info in
-                XCTAssertEqual(.inAppMessage(data), messageSchedule.data)
-                XCTAssertEqual(info, messageSchedule.info)
+                #expect(.inAppMessage(data) == messageSchedule.data)
+                #expect(info == messageSchedule.info)
                 return readyResult
             }
 
@@ -56,11 +59,12 @@ final class AutomationExecutorTest: XCTestCase {
                 preparedSchedule: messageSchedule
             )
 
-            XCTAssertEqual(readyResult, result)
-            XCTAssertTrue(messageExecutor.isReadyCalled)
+            #expect(readyResult == result)
+            #expect(messageExecutor.isReadyCalled)
         }
     }
 
+    @Test
     func testActionIsReady() async throws {
         let actionSchedule = PreparedSchedule(
             info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString, priority: 0),
@@ -72,8 +76,8 @@ final class AutomationExecutorTest: XCTestCase {
             self.actionExecutor.isReadyCalled = false
 
             self.actionExecutor.isReadyBlock = { data, info in
-                XCTAssertEqual(.actions(data), actionSchedule.data)
-                XCTAssertEqual(info, actionSchedule.info)
+                #expect(.actions(data) == actionSchedule.data)
+                #expect(info == actionSchedule.info)
                 return readyResult
             }
 
@@ -81,11 +85,12 @@ final class AutomationExecutorTest: XCTestCase {
                 preparedSchedule: actionSchedule
             )
 
-            XCTAssertEqual(readyResult, result)
-            XCTAssertTrue(actionExecutor.isReadyCalled)
+            #expect(readyResult == result)
+            #expect(actionExecutor.isReadyCalled)
         }
     }
 
+    @Test
     func testFrequencyChekerNotCheckedIfDelegateNotReady() async throws {
         let frequencyChecker = TestFrequencyChecker()
 
@@ -107,10 +112,11 @@ final class AutomationExecutorTest: XCTestCase {
             preparedSchedule: schedule
         )
 
-        XCTAssertEqual(result, .notReady)
-        XCTAssertFalse(frequencyChecker.checkAndIncrementCalled)
+        #expect(result == .notReady)
+        #expect(!(frequencyChecker.checkAndIncrementCalled))
     }
 
+    @Test
     func testFrequencyCheckerCheckFailed() async throws {
         let frequencyChecker = TestFrequencyChecker()
 
@@ -132,10 +138,11 @@ final class AutomationExecutorTest: XCTestCase {
             preparedSchedule: schedule
         )
 
-        XCTAssertEqual(result, .skip)
-        XCTAssertTrue(frequencyChecker.checkAndIncrementCalled)
+        #expect(result == .skip)
+        #expect(frequencyChecker.checkAndIncrementCalled)
     }
 
+    @Test
     func testFrequencyCheckerCheckSuccess() async throws {
         let frequencyChecker = TestFrequencyChecker()
 
@@ -157,11 +164,12 @@ final class AutomationExecutorTest: XCTestCase {
             preparedSchedule: schedule
         )
 
-        XCTAssertEqual(result, .ready)
-        XCTAssertTrue(frequencyChecker.checkAndIncrementCalled)
-        XCTAssertTrue(actionExecutor.isReadyCalled)
+        #expect(result == .ready)
+        #expect(frequencyChecker.checkAndIncrementCalled)
+        #expect(actionExecutor.isReadyCalled)
     }
 
+    @Test
     func testIsValid() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: "some schedule",
@@ -170,14 +178,15 @@ final class AutomationExecutorTest: XCTestCase {
         )
 
         self.remoteDataAccess.isCurrentBlock = { schedule in
-            XCTAssertEqual(schedule, automationSchedule)
+            #expect(schedule == automationSchedule)
             return true
         }
 
         let result = await self.executor.isValid(schedule: automationSchedule)
-        XCTAssertTrue(result)
+        #expect(result)
     }
 
+    @Test
     func testIsValidFals() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: "some schedule",
@@ -186,14 +195,15 @@ final class AutomationExecutorTest: XCTestCase {
         )
 
         self.remoteDataAccess.isCurrentBlock = { schedule in
-            XCTAssertEqual(schedule, automationSchedule)
+            #expect(schedule == automationSchedule)
             return false
         }
 
         let result = await self.executor.isValid(schedule: automationSchedule)
-        XCTAssertFalse(result)
+        #expect(!(result))
     }
 
+    @Test
     func testExecuteActions() async throws {
         let actionSchedule = PreparedSchedule(
             info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString, priority: 0),
@@ -202,17 +212,18 @@ final class AutomationExecutorTest: XCTestCase {
         )
 
         self.actionExecutor.executeBlock = { data, info in
-            XCTAssertEqual(.actions(data), actionSchedule.data)
-            XCTAssertEqual(info, actionSchedule.info)
+            #expect(.actions(data) == actionSchedule.data)
+            #expect(info == actionSchedule.info)
             return .finished
         }
 
         let result = await self.executor.execute(preparedSchedule: actionSchedule)
 
-        XCTAssertTrue(actionExecutor.executeCalled)
-        XCTAssertEqual(result, .finished)
+        #expect(actionExecutor.executeCalled)
+        #expect(result == .finished)
     }
 
+    @Test
     func testExecuteMessage() async throws {
         let messageSchedule = PreparedSchedule(
             info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString, priority: 0),
@@ -221,16 +232,17 @@ final class AutomationExecutorTest: XCTestCase {
         )
 
         self.messageExecutor.executeBlock = { data, info in
-            XCTAssertEqual(.inAppMessage(data), messageSchedule.data)
-            XCTAssertEqual(info, messageSchedule.info)
+            #expect(.inAppMessage(data) == messageSchedule.data)
+            #expect(info == messageSchedule.info)
             return .finished
         }
 
         let result = await self.executor.execute(preparedSchedule: messageSchedule)
-        XCTAssertTrue(messageExecutor.executeCalled)
-        XCTAssertEqual(result, .finished)
+        #expect(messageExecutor.executeCalled)
+        #expect(result == .finished)
     }
 
+    @Test
     func testExecuteDelegateThrows() async throws {
         let messageSchedule = PreparedSchedule(
             info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString, priority: 0),
@@ -243,11 +255,12 @@ final class AutomationExecutorTest: XCTestCase {
         }
 
         let result = await self.executor.execute(preparedSchedule: messageSchedule)
-        XCTAssertTrue(messageExecutor.executeCalled)
-        XCTAssertEqual(result, .retry)
+        #expect(messageExecutor.executeCalled)
+        #expect(result == .retry)
     }
 
 
+    @Test
     func testInterruptedAction() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: "some schedule",
@@ -258,7 +271,7 @@ final class AutomationExecutorTest: XCTestCase {
         let preparedScheduleInfo = PreparedScheduleInfo(scheduleID: "some schedule", triggerSessionID: UUID().uuidString, priority: 0)
 
         self.actionExecutor.interruptedBlock = { info in
-            XCTAssertEqual(info, preparedScheduleInfo)
+            #expect(info == preparedScheduleInfo)
             return .retry
         }
 
@@ -267,10 +280,11 @@ final class AutomationExecutorTest: XCTestCase {
             preparedScheduleInfo: preparedScheduleInfo
         )
 
-        XCTAssertTrue(self.actionExecutor.interruptCalled)
-        XCTAssertEqual(result, .retry)
+        #expect(self.actionExecutor.interruptCalled)
+        #expect(result == .retry)
     }
 
+    @Test
     func testInterruptedMessage() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: "some schedule",
@@ -283,7 +297,7 @@ final class AutomationExecutorTest: XCTestCase {
         let preparedScheduleInfo = PreparedScheduleInfo(scheduleID: "some schedule",  triggerSessionID: UUID().uuidString, priority: 0)
 
         self.messageExecutor.interruptedBlock = { info in
-            XCTAssertEqual(info, preparedScheduleInfo)
+            #expect(info == preparedScheduleInfo)
             return .finish
         }
 
@@ -292,8 +306,8 @@ final class AutomationExecutorTest: XCTestCase {
             preparedScheduleInfo: preparedScheduleInfo
         )
 
-        XCTAssertTrue(self.messageExecutor.interruptCalled)
-        XCTAssertEqual(result, .finish)
+        #expect(self.messageExecutor.interruptCalled)
+        #expect(result == .finish)
     }
 }
 

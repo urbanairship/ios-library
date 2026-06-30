@@ -1,20 +1,22 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 
 @MainActor
-final class DefaultDisplayCoordinatorTest: XCTestCase {
+struct DefaultDisplayCoordinatorTest {
 
     private let stateTracker: TestAppStateTracker = TestAppStateTracker()
-    private var displayCoordinator: DefaultDisplayCoordinator!
+    private let displayCoordinator: DefaultDisplayCoordinator
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
 
     let fooSchedule = InAppMessage(name: "foo", displayContent: .custom(.string("foo")))
-    override func setUp() async throws {
+
+    init() {
         displayCoordinator = DefaultDisplayCoordinator(
             displayInterval: 10.0,
             appStateTracker: self.stateTracker,
@@ -22,39 +24,39 @@ final class DefaultDisplayCoordinatorTest: XCTestCase {
         )
     }
 
-    @MainActor
+    @Test
     func testIsReady() throws {
         self.stateTracker.currentState = .active
-        XCTAssertTrue(self.displayCoordinator.isReady)
+        #expect(self.displayCoordinator.isReady)
 
         self.stateTracker.currentState = .background
-        XCTAssertFalse(self.displayCoordinator.isReady)
+        #expect(!(self.displayCoordinator.isReady))
 
         self.stateTracker.currentState = .inactive
-        XCTAssertFalse(self.displayCoordinator.isReady)
+        #expect(!(self.displayCoordinator.isReady))
     }
 
-    @MainActor
+    @Test
     func testIsReadyLocking() async throws {
         self.stateTracker.currentState = .active
-        XCTAssertTrue(self.displayCoordinator.isReady)
+        #expect(self.displayCoordinator.isReady)
 
         self.displayCoordinator.messageWillDisplay(fooSchedule)
-        XCTAssertFalse(self.displayCoordinator.isReady)
+        #expect(!(self.displayCoordinator.isReady))
 
         self.displayCoordinator.messageFinishedDisplaying(fooSchedule)
         await self.displayCoordinator.waitForReady()
-        XCTAssertTrue(self.displayCoordinator.isReady)
+        #expect(self.displayCoordinator.isReady)
 
-        XCTAssertEqual([10], self.taskSleeper.sleeps)
+        #expect([10] == self.taskSleeper.sleeps)
     }
 
-    @MainActor
+    @Test
     func testWaitForReady() async throws {
         self.stateTracker.currentState = .background
 
         let ready = Task { [displayCoordinator] in
-            await displayCoordinator!.waitForReady()
+            await displayCoordinator.waitForReady()
         }
 
         self.stateTracker.currentState = .active

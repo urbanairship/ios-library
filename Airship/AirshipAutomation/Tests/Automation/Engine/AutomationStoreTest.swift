@@ -1,38 +1,41 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 
-final class AutomationStoreTest: XCTestCase {
+struct AutomationStoreTest {
 
     private let store: AutomationStore = AutomationStore(
         appKey: UUID().uuidString,
         inMemory: true
     )
 
+    @Test
     func testUpsertNewSchedules() async throws {
         let data = ["foo": makeSchedule(identifer: "foo"), "bar": makeSchedule(identifer: "bar")]
 
         let result = try await self.store.upsertSchedules(scheduleIDs: ["foo", "bar"]) { identifier, existing in
-            XCTAssertNil(existing)
+            #expect(existing == nil)
             return data[identifier]!
         }
 
-        XCTAssertEqual(result, [data["foo"], data["bar"]])
+        #expect(result == [data["foo"], data["bar"]])
     }
 
+    @Test
     func testUpsertMixedSchedules() async throws {
         let original = ["foo": makeSchedule(identifer: "foo"), "bar": makeSchedule(identifer: "bar")]
 
         var result = try await self.store.upsertSchedules(scheduleIDs: ["foo", "bar"]) { identifier, existing in
-            XCTAssertNil(existing)
+            #expect(existing == nil)
             return original[identifier]!
         }
 
-        XCTAssertEqual(result, [original["foo"], original["bar"]])
+        #expect(result == [original["foo"], original["bar"]])
 
         var updated = original
         updated["baz"] = makeSchedule(identifer: "baz")
@@ -40,14 +43,15 @@ final class AutomationStoreTest: XCTestCase {
 
         result = try await self.store.upsertSchedules(scheduleIDs: ["foo", "bar", "baz"]) { [updated] identifier, existing in
             if let existing = existing {
-                XCTAssertTrue(existing.equalsIgnoringLastModified(original[identifier]!))
+                #expect(existing.equalsIgnoringLastModified(original[identifier]!))
             }
             return updated[identifier]!
         }
 
-        XCTAssertEqual(result, [updated["foo"], updated["bar"], updated["baz"]])
+        #expect(result == [updated["foo"], updated["bar"], updated["baz"]])
     }
 
+    @Test
     func testUpdate() async throws {
         let originalFoo = makeSchedule(identifer: "foo")
 
@@ -92,9 +96,10 @@ final class AutomationStoreTest: XCTestCase {
         expected.preparedScheduleInfo = preparedInfo
         expected.scheduleStateChangeDate = date
         expected.scheduleState = .paused
-        XCTAssert(result!.equalsIgnoringLastModified(expected))
+        #expect(result!.equalsIgnoringLastModified(expected))
     }
 
+    @Test
     func testUpsertFullData() async throws {
         var schedule = self.makeSchedule(identifer: "full")
         schedule.triggerInfo = TriggeringInfo(
@@ -122,21 +127,23 @@ final class AutomationStoreTest: XCTestCase {
             return schedule
         }
 
-        XCTAssertEqual(batchUpsertResult.count, 1)
+        #expect(batchUpsertResult.count == 1)
 
         let fetchResult = try await self.store.getSchedule(scheduleID: "full")
-        XCTAssertNotNil(fetchResult)
-        XCTAssertGreaterThanOrEqual(fetchResult!.lastScheduleModifiedDate, batchUpsertResult[0].lastScheduleModifiedDate)
+        #expect(fetchResult != nil)
+        #expect(fetchResult!.lastScheduleModifiedDate >= batchUpsertResult[0].lastScheduleModifiedDate)
     }
 
+    @Test
     func testUpdateDoesNotExist() async throws {
         let result = try await self.store.updateSchedule(scheduleID: "baz") { data in
-            XCTFail()
+            Issue.record()
         }
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
+    @Test
     func testGetSchedules() async throws {
         let original = ["foo": makeSchedule(identifer: "foo"), "bar": makeSchedule(identifer: "bar")]
         let _ = try await self.store.upsertSchedules(scheduleIDs: ["foo", "bar"]) { identifier, existing in
@@ -144,15 +151,16 @@ final class AutomationStoreTest: XCTestCase {
         }
 
         let foo = try await self.store.getSchedule(scheduleID: "foo")
-        XCTAssertTrue(foo!.equalsIgnoringLastModified(original["foo"]!))
+        #expect(foo!.equalsIgnoringLastModified(original["foo"]!))
 
         let bar = try await self.store.getSchedule(scheduleID: "bar")
-        XCTAssertTrue(bar!.equalsIgnoringLastModified(original["bar"]!))
+        #expect(bar!.equalsIgnoringLastModified(original["bar"]!))
 
         let doesNotExist = try await self.store.getSchedule(scheduleID: "doesNotExist")
-        XCTAssertNil(doesNotExist)
+        #expect(doesNotExist == nil)
     }
 
+    @Test
     func testGetSchedulesByGroup() async throws {
         let original = [
             "foo": makeSchedule(identifer: "foo", group: "groupA"),
@@ -168,9 +176,10 @@ final class AutomationStoreTest: XCTestCase {
             return l.schedule.identifier > r.schedule.identifier
         }
 
-        XCTAssertTrue([original["foo"]!, original["baz"]!].equalsIgnoringLastModified(groupA))
+        #expect([original["foo"]!, original["baz"]!].equalsIgnoringLastModified(groupA))
     }
 
+    @Test
     func testDeleteIdentifiers() async throws {
         let original = [
             "foo": makeSchedule(identifer: "foo", group: "groupA"),
@@ -188,9 +197,10 @@ final class AutomationStoreTest: XCTestCase {
             return l.schedule.identifier > r.schedule.identifier
         }
 
-        XCTAssertTrue([original["baz"]!, original["bar"]!].equalsIgnoringLastModified(remaining))
+        #expect([original["baz"]!, original["bar"]!].equalsIgnoringLastModified(remaining))
     }
 
+    @Test
     func testDeleteGroup() async throws {
         let original = [
             "foo": makeSchedule(identifer: "foo", group: "groupA"),
@@ -208,9 +218,10 @@ final class AutomationStoreTest: XCTestCase {
             return l.schedule.identifier > r.schedule.identifier
         }
 
-        XCTAssertTrue([original["bar"]!].equalsIgnoringLastModified(remaining))
+        #expect([original["bar"]!].equalsIgnoringLastModified(remaining))
     }
 
+    @Test
     func testAssociatedData() async throws {
         let associatedData = try AirshipJSON.string("some data").toData()
         var schedule = self.makeSchedule(identifer: "bar")
@@ -222,9 +233,10 @@ final class AutomationStoreTest: XCTestCase {
 
         let fromStore = try await self.store.getAssociatedData(scheduleID: "bar")
 
-        XCTAssertEqual(fromStore, associatedData)
+        #expect(fromStore == associatedData)
     }
 
+    @Test
     func testAssociatedDataNull() async throws {
         let schedule = self.makeSchedule(identifer: "bar")
 
@@ -234,14 +246,16 @@ final class AutomationStoreTest: XCTestCase {
 
         let fromStore = try await self.store.getAssociatedData(scheduleID: "bar")
 
-        XCTAssertNil(fromStore)
+        #expect(fromStore == nil)
     }
 
+    @Test
     func testAssociatedNoSchedule() async throws {
         let fromStore = try await self.store.getAssociatedData(scheduleID: "bar")
-        XCTAssertNil(fromStore)
+        #expect(fromStore == nil)
     }
 
+    @Test
     func testIsCurrent() async throws {
         let schedule = makeSchedule(identifer: "test")
         let _ = try await self.store.upsertSchedules(scheduleIDs: ["test"]) { identifier, existing in
@@ -255,30 +269,31 @@ final class AutomationStoreTest: XCTestCase {
             lastScheduleModifiedDate: fullSchedule.lastScheduleModifiedDate,
             scheduleState: .idle
         )
-        XCTAssertTrue(isCurrent)
+        #expect(isCurrent)
 
         isCurrent = try await self.store.isCurrent(
             scheduleID: "test",
             lastScheduleModifiedDate: fullSchedule.lastScheduleModifiedDate,
             scheduleState: .paused
         )
-        XCTAssertFalse(isCurrent)
+        #expect(!(isCurrent))
 
         isCurrent = try await self.store.isCurrent(
             scheduleID: "test",
             lastScheduleModifiedDate: fullSchedule.lastScheduleModifiedDate.addingTimeInterval(1),
             scheduleState: .idle
         )
-        XCTAssertFalse(isCurrent)
+        #expect(!(isCurrent))
     }
 
+    @Test
     func testIsCurrentNoSchedule() async throws {
         let isCurrent = try await self.store.isCurrent(
             scheduleID: "fake identifier",
             lastScheduleModifiedDate: Date(),
             scheduleState: .paused
         )
-        XCTAssertFalse(isCurrent)
+        #expect(!(isCurrent))
     }
 
     private func makeSchedule(identifer: String, group: String? = nil) -> AutomationScheduleData {

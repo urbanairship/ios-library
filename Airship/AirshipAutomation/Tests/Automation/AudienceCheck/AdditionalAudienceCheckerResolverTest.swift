@@ -1,42 +1,44 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 
-class AdditionalAudienceCheckerResolverTest: XCTestCase {
+struct AdditionalAudienceCheckerResolverTest {
     
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let date = UATestDate(dateOverride: Date())
     private let apiClient = TestAudienceApiClient()
-    private var cache: AirshipCache!
+    private let cache: AirshipCache
     
     private var resolver: AdditionalAudienceCheckerResolver!
-    private var deviceInfoProvider: TestDeviceInfoProvider = TestDeviceInfoProvider()
+    private let deviceInfoProvider: TestDeviceInfoProvider = TestDeviceInfoProvider()
 
     private let defaultAudienceConfig = RemoteConfig.AdditionalAudienceCheckConfig(
         isEnabled: true,
         context: "remote config context",
         url: "https://test.config")
     
-    override func setUp() async throws {
+    init() async throws {
         cache = TestAirshipCoreDataCache.makeCache(date: date)
     }
     
-    func testHappyPath() async throws {
+    @Test
+    mutating func testHappyPath() async throws {
         makeResolver(config: defaultAudienceConfig)
         
         deviceInfoProvider.stableContactInfo = StableContactInfo(contactID: "existing-contact-id", namedUserID: "some user id")
         deviceInfoProvider.channelID = "channel-id"
 
         apiClient.onResponse = { request in
-            XCTAssertEqual("channel-id", request.channelID)
-            XCTAssertEqual("existing-contact-id", request.contactID)
-            XCTAssertEqual("some user id", request.namedUserID)
-            XCTAssertEqual(AirshipJSON.string("default context"), request.context)
-            XCTAssertEqual("https://test.config", request.url.absoluteString)
+            #expect("channel-id" == request.channelID)
+            #expect("existing-contact-id" == request.contactID)
+            #expect("some user id" == request.namedUserID)
+            #expect(AirshipJSON.string("default context") == request.context)
+            #expect("https://test.config" == request.url.absoluteString)
             
             return AirshipHTTPResponse.make(
                 result: AdditionalAudienceCheckResult(isMatched: true, cacheTTL: 10),
@@ -47,7 +49,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         let cacheKey = "https://test.config:\"default context\":existing-contact-id:channel-id"
         
         var cached: AdditionalAudienceCheckResult? = await cache.getCachedValue(key: cacheKey)
-        XCTAssertNil(cached)
+        #expect(cached == nil)
         
         let result = try await resolver.resolve(
             deviceInfoProvider: deviceInfoProvider,
@@ -59,12 +61,13 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         )
 
         cached = await cache.getCachedValue(key: cacheKey)
-        XCTAssertEqual(true, cached?.isMatched)
-        XCTAssertEqual(10, cached?.cacheTTL)
-        XCTAssert(result)
+        #expect(true == cached?.isMatched)
+        #expect(10 == cached?.cacheTTL)
+        #expect(result)
     }
     
-    func testResolverReturnsTrueOnNoConfigOrDisabled() async throws {
+    @Test
+    mutating func testResolverReturnsTrueOnNoConfigOrDisabled() async throws {
         makeResolver(config: nil)
         
         var result = try await resolver.resolve(
@@ -76,7 +79,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
             )
         )
 
-        XCTAssert(result)
+        #expect(result)
         
         makeResolver(config: .init(isEnabled: false, context: .null, url: "test"))
         result = try await resolver.resolve(
@@ -88,10 +91,11 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
             )
         )
 
-        XCTAssert(result)
+        #expect(result)
     }
     
-    func testResolverThrowsOnNoUrlProvided() async throws {
+    @Test
+    mutating func testResolverThrowsOnNoUrlProvided() async throws {
         date.offset = 0
         makeResolver(config: defaultAudienceConfig)
         apiClient.onResponse = { _ in
@@ -108,7 +112,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
                 context: "default context",
                 url: nil))
         
-        XCTAssert(result)
+        #expect(result)
         
         date.offset = 2
         makeResolver(config: .init(isEnabled: true, context: .null, url: nil))
@@ -119,7 +123,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
                 context: "default context",
                 url: "https://test.url"))
         
-        XCTAssert(result)
+        #expect(result)
         
         date.offset += 2
         do {
@@ -129,13 +133,14 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
                     bypass: false,
                     context: "default context",
                     url: nil))
-            XCTFail()
+            Issue.record()
         } catch {
             
         }
     }
     
-    func testOverridesBypass() async throws {
+    @Test
+    mutating func testOverridesBypass() async throws {
         makeResolver(config: defaultAudienceConfig)
         apiClient.onResponse = { _ in
             AirshipHTTPResponse.make(result: nil, statusCode: 400, headers: [:])
@@ -148,14 +153,15 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
                 context: .null,
                 url: nil))
         
-        XCTAssert(result)
+        #expect(result)
     }
     
-    func testContextDefaultsToConfig() async throws {
+    @Test
+    mutating func testContextDefaultsToConfig() async throws {
         makeResolver(config: defaultAudienceConfig)
         
         apiClient.onResponse = { request in
-            XCTAssertEqual(AirshipJSON.string("remote config context"), request.context)
+            #expect(AirshipJSON.string("remote config context") == request.context)
             
             return AirshipHTTPResponse.make(
                 result: AdditionalAudienceCheckResult(isMatched: true, cacheTTL: 10),
@@ -172,10 +178,11 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
             )
         )
 
-        XCTAssert(result)
+        #expect(result)
     }
     
-    func testReturnsCachedIfAvailable() async throws {
+    @Test
+    mutating func testReturnsCachedIfAvailable() async throws {
         makeResolver(config: defaultAudienceConfig)
         
         deviceInfoProvider.stableContactInfo = StableContactInfo(contactID: "existing-contact-id", namedUserID: "some user id")
@@ -201,10 +208,11 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
             )
         )
 
-        XCTAssert(result)
+        #expect(result)
     }
     
-    func testIsNotCachedOnError() async throws {
+    @Test
+    mutating func testIsNotCachedOnError() async throws {
         makeResolver(config: defaultAudienceConfig)
         
         deviceInfoProvider.stableContactInfo = StableContactInfo(contactID: "existing-contact-id", namedUserID: "some user id")
@@ -220,7 +228,7 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
         let cacheKey = "https://test.config:\"default context\":existing-contact-id:channel-id"
         
         var cached: AdditionalAudienceCheckResult? = await cache.getCachedValue(key: cacheKey)
-        XCTAssertNil(cached)
+        #expect(cached == nil)
         
         let result = try await resolver.resolve(
             deviceInfoProvider: deviceInfoProvider,
@@ -231,13 +239,14 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
             )
         )
 
-        XCTAssertFalse(result)
+        #expect(!(result))
         
         cached = await cache.getCachedValue(key: cacheKey)
-        XCTAssertNil(cached)
+        #expect(cached == nil)
     }
     
-    func testThrowsOnServerError() async throws {
+    @Test
+    mutating func testThrowsOnServerError() async throws {
         makeResolver(config: defaultAudienceConfig)
         
         apiClient.onResponse = { request in
@@ -256,11 +265,11 @@ class AdditionalAudienceCheckerResolverTest: XCTestCase {
                     url: nil
                 )
             )
-            XCTFail()
+            Issue.record()
         } catch {}
     }
     
-    private func makeResolver(
+    private mutating func makeResolver(
         config: RemoteConfig.AdditionalAudienceCheckConfig?
     ) {
         resolver = AdditionalAudienceCheckerResolver(

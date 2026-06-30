@@ -1,21 +1,24 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
+import UserNotifications
 @testable @_spi(AirshipInternal) import AirshipAutomation
 @testable import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
-final class LegacyInAppMessagingTest: XCTestCase {
+@Suite(.serialized)
+final class LegacyInAppMessagingTest {
     
     private let analytics = TestLegacyAnalytics()
     private let engine = TestAutomationEngine()
     private let datastore = PreferenceDataStore(appKey: UUID().uuidString)
     private let date = UATestDate(offset: 0, dateOverride: Date())
-    private var airshipTestInstance: TestAirshipInstance!
+    private let airshipTestInstance: TestAirshipInstance
 
     private var subject: DefaultLegacyInAppMessaging!
-    override func setUp() async throws {
+    init() async throws {
         airshipTestInstance = TestAirshipInstance()
         let push = TestPush()
         push.combinedCategories = NotificationCategories.defaultCategories()
@@ -26,7 +29,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         createSubject()
     }
 
-    override func tearDown() {
+    deinit {
         TestAirshipInstance.clearShared()
     }
 
@@ -39,6 +42,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         )
     }
     
+    @Test
     func testOldDataCleanedUpOnInit() {
         
         let keys = ["UAPendingInAppMessage", "UAAutoDisplayInAppMessageDataStoreKey", "UALastDisplayedInAppMessageID"]
@@ -48,37 +52,40 @@ final class LegacyInAppMessagingTest: XCTestCase {
         }
         
         keys.forEach { key in
-            XCTAssert(datastore.keyExists(key))
+            #expect(datastore.keyExists(key))
         }
         
         createSubject()
         
         keys.forEach { key in
-            XCTAssertFalse(datastore.keyExists(key))
+            #expect(!(datastore.keyExists(key)))
         }
     }
 
+    @Test
     func testPendingMessageStorage() {
-        XCTAssertNil(subject.pendingMessageID)
+        #expect(subject.pendingMessageID == nil)
 
         subject.pendingMessageID = "message-id"
-        XCTAssertEqual("message-id", subject.pendingMessageID)
+        #expect("message-id" == subject.pendingMessageID)
     }
     
+    @Test
     func testAsapFlagStorage() async {
         var value = subject.displayASAPEnabled
-        XCTAssertTrue(value)
+        #expect(value)
         
         subject.displayASAPEnabled = false
         
         value = subject.displayASAPEnabled
-        XCTAssertFalse(value)
+        #expect(!(value))
     }
     
+    @Test
     func testNotificationResponseCancelsPendingMessage() async throws {
         let pendingMessageID = "pending"
         
-        XCTAssertNil(subject.pendingMessageID)
+        #expect(subject.pendingMessageID == nil)
         await assertLastCancalledScheduleIDEquals(nil)
         
         subject.pendingMessageID = pendingMessageID
@@ -91,9 +98,10 @@ final class LegacyInAppMessagingTest: XCTestCase {
         await subject.receivedNotificationResponse(response)
         
         await assertLastCancalledScheduleIDEquals(pendingMessageID)
-        XCTAssertNil(subject.pendingMessageID)
+        #expect(subject.pendingMessageID == nil)
     }
 
+    @Test
     func testNotificationResponseRecordsDirectOpen() async throws {
         let pendingMessageID = "pending"
         subject.pendingMessageID = pendingMessageID
@@ -105,12 +113,13 @@ final class LegacyInAppMessagingTest: XCTestCase {
 
         await subject.receivedNotificationResponse(response)
 
-        XCTAssertEqual([pendingMessageID], self.analytics.directOpen)
+        #expect([pendingMessageID] == self.analytics.directOpen)
     }
 
+    @Test
     func testNotificationResponseDoesNothingOnIdMismatch() async throws {
         
-        XCTAssertNil(subject.pendingMessageID)
+        #expect(subject.pendingMessageID == nil)
         await assertLastCancalledScheduleIDEquals(nil)
         
         subject.pendingMessageID = "mismatched"
@@ -122,13 +131,14 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await subject.receivedNotificationResponse(response)
         
-        XCTAssertEqual("mismatched", subject.pendingMessageID)
+        #expect("mismatched" == subject.pendingMessageID)
         await assertLastCancalledScheduleIDEquals(nil)
     }
     
+    @Test
     func testNotificationResponseDoesNothingIfNoPending() async throws {
         
-        XCTAssertNil(subject.pendingMessageID)
+        #expect(subject.pendingMessageID == nil)
         await assertLastCancalledScheduleIDEquals(nil)
         
         let response = try UNNotificationResponse.with(userInfo: [
@@ -138,10 +148,11 @@ final class LegacyInAppMessagingTest: XCTestCase {
         
         await subject.receivedNotificationResponse(response)
         
-        XCTAssertNil(subject.pendingMessageID)
+        #expect(subject.pendingMessageID == nil)
         await assertLastCancalledScheduleIDEquals(nil)
     }
     
+    @Test
     func testReceiveRemoteNotificationSchedulesMessageWithDefaults() async throws {
         let messageId = "test-id"
         let payload: [String: Any] = [
@@ -160,29 +171,29 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
         )
-        XCTAssertEqual(UABackgroundFetchResult.noData, result)
+        #expect(UABackgroundFetchResult.noData == result)
 
         let schedule = try await requireFirstSchedule()
         
         await assertLastCancalledScheduleIDEquals("some-pending")
-        XCTAssertEqual(messageId, subject.pendingMessageID)
+        #expect(messageId == subject.pendingMessageID)
         
-        XCTAssertEqual(messageId, schedule.identifier)
-        XCTAssertEqual(1, schedule.triggers.count)
+        #expect(messageId == schedule.identifier)
+        #expect(1 == schedule.triggers.count)
         
         guard case .event(let trigger) = schedule.triggers.first else {
-            XCTFail()
+            Issue.record()
             return
         }
-        XCTAssertEqual(1.0, trigger.goal)
-        XCTAssertNil(trigger.predicate)
-        XCTAssertEqual(EventAutomationTriggerType.activeSession, trigger.type)
+        #expect(1.0 == trigger.goal)
+        #expect(trigger.predicate == nil)
+        #expect(EventAutomationTriggerType.activeSession == trigger.type)
 
-        XCTAssertEqual(date.now, schedule.created)
+        #expect(date.now == schedule.created)
         let month: TimeInterval = 60 * 60 * 24 * 30.0
-        XCTAssertEqual(schedule.end, date.now + month)
-        XCTAssertNil(schedule.campaigns)
-        XCTAssertNil(schedule.messageType)
+        #expect(schedule.end == date.now + month)
+        #expect(schedule.campaigns == nil)
+        #expect(schedule.messageType == nil)
         
         let inAppMessage: InAppMessage
         switch schedule.data {
@@ -192,9 +203,9 @@ final class LegacyInAppMessagingTest: XCTestCase {
             fatalError("unsupported schedule data")
         }
         
-        XCTAssertEqual("test alert", inAppMessage.name)
-        XCTAssertEqual(InAppMessageSource.legacyPush, inAppMessage.source)
-        XCTAssertNil(inAppMessage.extras)
+        #expect("test alert" == inAppMessage.name)
+        #expect(InAppMessageSource.legacyPush == inAppMessage.source)
+        #expect(inAppMessage.extras == nil)
         
         let banner: InAppMessageDisplayContent.Banner
         switch inAppMessage.displayContent {
@@ -204,18 +215,19 @@ final class LegacyInAppMessagingTest: XCTestCase {
             fatalError("unsupported display content")
         }
         
-        XCTAssertEqual("test alert", banner.body?.text)
-        XCTAssertEqual("#1C1C1C", banner.body?.color?.hexColorString)
-        XCTAssertEqual(InAppMessageButtonLayoutType.separate, banner.buttonLayoutType)
-        XCTAssertEqual("#FFFFFF", banner.backgroundColor?.hexColorString)
-        XCTAssertEqual("#1C1C1C", banner.dismissButtonColor?.hexColorString)
-        XCTAssertEqual(2, banner.borderRadius)
-        XCTAssertEqual(15, banner.duration)
-        XCTAssertEqual(InAppMessageDisplayContent.Banner.Placement.bottom, banner.placement)
-        XCTAssertEqual(nil, banner.actions)
-        XCTAssertNil(banner.buttons)
+        #expect("test alert" == banner.body?.text)
+        #expect("#1C1C1C" == banner.body?.color?.hexColorString)
+        #expect(InAppMessageButtonLayoutType.separate == banner.buttonLayoutType)
+        #expect("#FFFFFF" == banner.backgroundColor?.hexColorString)
+        #expect("#1C1C1C" == banner.dismissButtonColor?.hexColorString)
+        #expect(2 == banner.borderRadius)
+        #expect(15 == banner.duration)
+        #expect(InAppMessageDisplayContent.Banner.Placement.bottom == banner.placement)
+        #expect(nil == banner.actions)
+        #expect(banner.buttons == nil)
     }
 
+    @Test
     func testReceiveNotificationRecordsReplacement() async throws {
         subject.pendingMessageID = "some-pending"
 
@@ -230,12 +242,13 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
         )
-        XCTAssertEqual(UABackgroundFetchResult.noData, result)
+        #expect(UABackgroundFetchResult.noData == result)
         
-        XCTAssertEqual("some-pending", self.analytics.replaced.first!.0)
-        XCTAssertEqual("test-id", self.analytics.replaced.first!.1)
+        #expect("some-pending" == self.analytics.replaced.first!.0)
+        #expect("test-id" == self.analytics.replaced.first!.1)
     }
 
+    @Test
     func testReceiveRemoteNotificationSchedulesMessage() async throws {
         let messageId = "test-id"
         let payload: [String: Any] = [
@@ -267,29 +280,29 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
         )
-        XCTAssertEqual(UABackgroundFetchResult.noData, result)
+        #expect(UABackgroundFetchResult.noData == result)
 
         let schedule = try await requireFirstSchedule()
         
         await assertLastCancalledScheduleIDEquals("some-pending")
-        XCTAssertEqual(messageId, subject.pendingMessageID)
+        #expect(messageId == subject.pendingMessageID)
         
-        XCTAssertEqual(messageId, schedule.identifier)
-        XCTAssertEqual(1, schedule.triggers.count)
+        #expect(messageId == schedule.identifier)
+        #expect(1 == schedule.triggers.count)
         
         guard case .event(let trigger) = schedule.triggers.first else {
-            XCTFail()
+            Issue.record()
             return
         }
-        XCTAssertEqual(1.0, trigger.goal)
-        XCTAssertNil(trigger.predicate)
-        XCTAssertEqual(EventAutomationTriggerType.activeSession, trigger.type)
+        #expect(1.0 == trigger.goal)
+        #expect(trigger.predicate == nil)
+        #expect(EventAutomationTriggerType.activeSession == trigger.type)
 
-        XCTAssertEqual(date.now, schedule.created)
+        #expect(date.now == schedule.created)
         let timeDiff = schedule.end?.timeIntervalSince(date.now) ?? 0
-        XCTAssert(fabs(timeDiff) < 1)
-        XCTAssertEqual(try! AirshipJSON.wrap(["test-campaing": "json"]), schedule.campaigns)
-        XCTAssertEqual("test-message", schedule.messageType)
+        #expect(fabs(timeDiff) < 1)
+        #expect(try! AirshipJSON.wrap(["test-campaing": "json"]) == schedule.campaigns)
+        #expect("test-message" == schedule.messageType)
         
         let inAppMessage: InAppMessage
         switch schedule.data {
@@ -299,9 +312,9 @@ final class LegacyInAppMessagingTest: XCTestCase {
             fatalError("unsupported schedule data")
         }
         
-        XCTAssertEqual("test alert", inAppMessage.name)
-        XCTAssertEqual(InAppMessageSource.legacyPush, inAppMessage.source)
-        XCTAssertEqual(try! AirshipJSON.wrap(["extra_value": "some text"]), inAppMessage.extras)
+        #expect("test alert" == inAppMessage.name)
+        #expect(InAppMessageSource.legacyPush == inAppMessage.source)
+        #expect(try! AirshipJSON.wrap(["extra_value": "some text"]) == inAppMessage.extras)
         
         let banner: InAppMessageDisplayContent.Banner
         switch inAppMessage.displayContent {
@@ -311,36 +324,37 @@ final class LegacyInAppMessagingTest: XCTestCase {
             fatalError("unsupported display content")
         }
         
-        XCTAssertEqual("test alert", banner.body?.text)
-        XCTAssertEqual("#FEDCBA", banner.body?.color?.hexColorString)
-        XCTAssertEqual(InAppMessageButtonLayoutType.separate, banner.buttonLayoutType)
-        XCTAssertEqual("#ABCDEF", banner.backgroundColor?.hexColorString)
-        XCTAssertEqual("#FEDCBA", banner.dismissButtonColor?.hexColorString)
-        XCTAssertEqual(2, banner.borderRadius)
-        XCTAssertEqual(100, banner.duration)
-        XCTAssertEqual(InAppMessageDisplayContent.Banner.Placement.top, banner.placement)
-        XCTAssertEqual(try! AirshipJSON.wrap(["onclick": "action"]), banner.actions)
+        #expect("test alert" == banner.body?.text)
+        #expect("#FEDCBA" == banner.body?.color?.hexColorString)
+        #expect(InAppMessageButtonLayoutType.separate == banner.buttonLayoutType)
+        #expect("#ABCDEF" == banner.backgroundColor?.hexColorString)
+        #expect("#FEDCBA" == banner.dismissButtonColor?.hexColorString)
+        #expect(2 == banner.borderRadius)
+        #expect(100 == banner.duration)
+        #expect(InAppMessageDisplayContent.Banner.Placement.top == banner.placement)
+        #expect(try! AirshipJSON.wrap(["onclick": "action"]) == banner.actions)
         
-        let buttons = try! XCTUnwrap(banner.buttons)
-        XCTAssertEqual(2, buttons.count)
+        let buttons = try! #require(banner.buttons)
+        #expect(2 == buttons.count)
         
         let shopNowButton = buttons[0]
-        XCTAssertEqual("shop_now", shopNowButton.identifier)
-        XCTAssertEqual("Shop Now", shopNowButton.label.text)
-        XCTAssertEqual("#ABCDEF", shopNowButton.label.color?.hexColorString)
-        XCTAssertEqual(try! AirshipJSON.wrap(["test": "json"]), shopNowButton.actions)
-        XCTAssertEqual("#FEDCBA", shopNowButton.backgroundColor?.hexColorString)
-        XCTAssertEqual(2, shopNowButton.borderRadius)
+        #expect("shop_now" == shopNowButton.identifier)
+        #expect("Shop Now" == shopNowButton.label.text)
+        #expect("#ABCDEF" == shopNowButton.label.color?.hexColorString)
+        #expect(try! AirshipJSON.wrap(["test": "json"]) == shopNowButton.actions)
+        #expect("#FEDCBA" == shopNowButton.backgroundColor?.hexColorString)
+        #expect(2 == shopNowButton.borderRadius)
         
         let share = buttons[1]
-        XCTAssertEqual("share", share.identifier)
-        XCTAssertEqual("Share", share.label.text)
-        XCTAssertEqual("#ABCDEF", share.label.color?.hexColorString)
-        XCTAssertEqual(try! AirshipJSON.wrap(["test-2": "json-2"]), share.actions)
-        XCTAssertEqual("#FEDCBA", share.backgroundColor?.hexColorString)
-        XCTAssertEqual(2, share.borderRadius)
+        #expect("share" == share.identifier)
+        #expect("Share" == share.label.text)
+        #expect("#ABCDEF" == share.label.color?.hexColorString)
+        #expect(try! AirshipJSON.wrap(["test-2": "json-2"]) == share.actions)
+        #expect("#FEDCBA" == share.backgroundColor?.hexColorString)
+        #expect(2 == share.borderRadius)
     }
     
+    @Test
     func testTriggertIsLessAgressiveIfNotDisplayAsap() async throws {
         let payload: [String: Any] = [
             "identifier": "test-id",
@@ -355,20 +369,21 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
         )
-        XCTAssertEqual(UABackgroundFetchResult.noData, result)
+        #expect(UABackgroundFetchResult.noData == result)
 
         let schedule = try await requireFirstSchedule()
         
         guard case .event(let trigger) = schedule.triggers.first else {
-            XCTFail()
+            Issue.record()
             return
         }
 
-        XCTAssertEqual(1.0, trigger.goal)
-        XCTAssertNil(trigger.predicate)
-        XCTAssertEqual(EventAutomationTriggerType.foreground, trigger.type)
+        #expect(1.0 == trigger.goal)
+        #expect(trigger.predicate == nil)
+        #expect(EventAutomationTriggerType.foreground == trigger.type)
     }
     
+    @Test
     func testCustomMessageConverter() async throws {
         let payload: [String: Any] = [
             "identifier": "test-id",
@@ -390,12 +405,13 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
         )
-        XCTAssertEqual(UABackgroundFetchResult.noData, result)
+        #expect(UABackgroundFetchResult.noData == result)
         
         let schedule = try await requireFirstSchedule()
-        XCTAssertEqual(overridenId, schedule.identifier)
+        #expect(overridenId == schedule.identifier)
     }
     
+    @Test
     func testMessageExtenderFunction() async throws {
         let payload: [String: Any] = [
             "identifier": "test-id",
@@ -414,7 +430,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
         )
-        XCTAssertEqual(UABackgroundFetchResult.noData, result)
+        #expect(UABackgroundFetchResult.noData == result)
 
         let schedule = try await requireFirstSchedule()
         let inAppMessage: InAppMessage
@@ -425,9 +441,10 @@ final class LegacyInAppMessagingTest: XCTestCase {
             fatalError("unsupported schedule data")
         }
         
-        XCTAssertEqual(extendedMessageName, inAppMessage.name)
+        #expect(extendedMessageName == inAppMessage.name)
     }
     
+    @Test
     func testScheduleExtendFunction() async throws {
         let payload: [String: Any] = [
             "identifier": "test-id",
@@ -445,12 +462,13 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap(["com.urbanairship.in_app": payload])
         )
-        XCTAssertEqual(UABackgroundFetchResult.noData, result)
+        #expect(UABackgroundFetchResult.noData == result)
 
         let schedule = try await requireFirstSchedule()
-        XCTAssertEqual(10, schedule.limit)
+        #expect(10 == schedule.limit)
     }
     
+    @Test
     func testReceiveRemoteIgnoresNonlegacyMessages() async throws {
         
         await assertLastCancalledScheduleIDEquals(nil)
@@ -461,13 +479,14 @@ final class LegacyInAppMessagingTest: XCTestCase {
         let result = await subject.receivedRemoteNotification(
             try! AirshipJSON.wrap([:])
         )
-        XCTAssertEqual(UABackgroundFetchResult.noData, result)
+        #expect(UABackgroundFetchResult.noData == result)
 
         await assertLastCancalledScheduleIDEquals(nil)
         await assertEmptySchedules()
-        XCTAssertEqual("some-pending", subject.pendingMessageID)
+        #expect("some-pending" == subject.pendingMessageID)
     }
     
+    @Test
     func testReceiveRemoteNotificationHandlesMessageIdOverride() async throws {
         let messageId = "overriden"
         let payload: [String: Any] = [
@@ -486,13 +505,14 @@ final class LegacyInAppMessagingTest: XCTestCase {
                 "_": messageId
             ])
         )
-        XCTAssertEqual(UABackgroundFetchResult.noData, result)
+        #expect(UABackgroundFetchResult.noData == result)
 
         let schedules = await engine.schedules
-        XCTAssertTrue(schedules.contains(where: { $0.identifier == messageId }))
-        XCTAssertEqual(messageId, subject.pendingMessageID)
+        #expect(schedules.contains(where: { $0.identifier == messageId }))
+        #expect(messageId == subject.pendingMessageID)
     }
     
+    @Test
     func testReceiveRemoteNotificationOverridesOnClick() async throws {
         let payload: [String: Any] = [
             "identifier": "test-id",
@@ -512,7 +532,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
                 "_uamid": onClickJson.unWrap()!
             ])
         )
-        XCTAssertEqual(UABackgroundFetchResult.noData, result)
+        #expect(UABackgroundFetchResult.noData == result)
         
         let schedule = try await requireFirstSchedule()
         
@@ -520,7 +540,7 @@ final class LegacyInAppMessagingTest: XCTestCase {
         case .inAppMessage(let message):
             switch message.displayContent {
             case .banner(let banner):
-                XCTAssertEqual(onClickJson, banner.actions)
+                #expect(onClickJson == banner.actions)
             default:
                 fatalError("unsupported display content")
             }
@@ -529,19 +549,19 @@ final class LegacyInAppMessagingTest: XCTestCase {
         }
     }
 
-    private func requireFirstSchedule(line: UInt = #line) async throws -> AutomationSchedule {
+    private func requireFirstSchedule(sourceLocation: SourceLocation = #_sourceLocation) async throws -> AutomationSchedule {
         let schedule = await engine.schedules.first
-        return try XCTUnwrap(schedule)
+        return try #require(schedule, sourceLocation: sourceLocation)
     }
 
-    private func assertEmptySchedules(line: UInt = #line) async {
+    private func assertEmptySchedules(sourceLocation: SourceLocation = #_sourceLocation) async {
         let schedules = await engine.schedules
-        XCTAssert(schedules.isEmpty)
+        #expect(schedules.isEmpty, sourceLocation: sourceLocation)
     }
 
     private func assertLastCancalledScheduleIDEquals(_ value: String?) async {
         let lastCancelledScheduleId = await engine.cancelledSchedules.last
-        XCTAssertEqual(lastCancelledScheduleId, value)
+        #expect(lastCancelledScheduleId == value)
     }
 
 }
@@ -569,10 +589,10 @@ private extension UNNotificationResponse {
         
         let coder = KeyedArchiver(requiringSecureCoding: false)
 
-        let notification = try XCTUnwrap(UNNotification(coder: coder))
+        let notification = try #require(UNNotification(coder: coder))
         notification.setValue(request, forKey: "request")
 
-        let response = try XCTUnwrap(UNNotificationResponse(coder: coder))
+        let response = try #require(UNNotificationResponse(coder: coder))
         response.setValue(notification, forKey: "notification")
         response.setValue(actionIdentifier, forKey: "actionIdentifier")
         

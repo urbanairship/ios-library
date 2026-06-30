@@ -1,18 +1,19 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
-final class ScheduleActionTest: XCTestCase {
+struct ScheduleActionTest {
     
     let automation = TestAutomationEngine()
-    var action: ScheduleAction!
+    let action: ScheduleAction
     
-    override func setUp() async throws {
+    init() async throws {
         let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
         let config = RuntimeConfig.testConfig()
         
@@ -32,6 +33,7 @@ final class ScheduleActionTest: XCTestCase {
         action = ScheduleAction(overrideAutomation: inAppAutomation)
     }
     
+    @Test
     func testAcceptsArguments() async throws {
         let valid: [ActionSituation] = [
             .foregroundPush, .backgroundPush, .manualInvocation, .webViewInvocation, .automation
@@ -44,16 +46,17 @@ final class ScheduleActionTest: XCTestCase {
         for situation in valid {
             let args = ActionArguments(value: AirshipJSON.null, situation: situation)
             let result = await action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result)
         }
 
         for situation in rejected {
             let args = ActionArguments(value: AirshipJSON.null, situation: situation)
             let result = await action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!(result))
         }
     }
     
+    @Test
     func testSchedule() async throws {
         let start = Date(timeIntervalSince1970: 1709138610)
         let end = Date(timeIntervalSince1970: 1709138610).advanced(by: 1)
@@ -74,24 +77,24 @@ final class ScheduleActionTest: XCTestCase {
         ]
         
         var count = await automation.schedules.count
-        XCTAssertEqual(0, count)
+        #expect(0 == count)
         
         let scheduleId = try await action.perform(arguments: ActionArguments(value: json))
-        XCTAssertEqual("test-id", scheduleId?.string)
+        #expect("test-id" == scheduleId?.string)
         
         count = await automation.schedules.count
-        XCTAssertEqual(1, count)
+        #expect(1 == count)
         
         let schedule = await automation.schedules.first
         
-        XCTAssertEqual("test-id", schedule?.identifier)
-        XCTAssertEqual("test-group", schedule?.group)
-        XCTAssertEqual(1, schedule?.limit)
-        XCTAssertEqual(end, schedule?.end)
-        XCTAssertEqual(start, schedule?.start)
-        XCTAssertEqual(1, schedule?.triggers.count)
-        XCTAssertEqual(EventAutomationTriggerType.foreground.rawValue, schedule?.triggers.first?.type)
-        XCTAssertEqual(2, schedule?.triggers.first?.goal)
+        #expect("test-id" == schedule?.identifier)
+        #expect("test-group" == schedule?.group)
+        #expect(1 == schedule?.limit)
+        #expect(end == schedule?.end)
+        #expect(start == schedule?.start)
+        #expect(1 == schedule?.triggers.count)
+        #expect(EventAutomationTriggerType.foreground.rawValue == schedule?.triggers.first?.type)
+        #expect(2 == schedule?.triggers.first?.goal)
         
         let actionJson: AirshipJSON
         switch schedule?.data {
@@ -99,13 +102,14 @@ final class ScheduleActionTest: XCTestCase {
         default: actionJson = .null
         }
         
-        XCTAssertEqual(AirshipJSON.object(["action-name": "action-value"]), actionJson)
+        #expect(AirshipJSON.object(["action-name": "action-value"]) == actionJson)
     }
     
+    @Test
     func testScheduleThrowsOnInvalidSource() async throws {
         do {
             _ = try await action.perform(arguments: ActionArguments(value: [:]))
-            XCTFail()
+            Issue.record()
         } catch { }
     }
 }

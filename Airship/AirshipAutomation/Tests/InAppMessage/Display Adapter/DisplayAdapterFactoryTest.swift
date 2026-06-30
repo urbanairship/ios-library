@@ -1,15 +1,18 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @testable @_spi(AirshipInternal) import AirshipAutomation
 import AirshipCore
 @_spi(AirshipInternal) import AirshipScenes
+import UIKit
 
-final class DisplayAdapterFactoryTest: XCTestCase {
+struct DisplayAdapterFactoryTest {
 
     private let factory: DisplayAdapterFactory = DisplayAdapterFactory()
     private let assets: TestCachedAssets = TestCachedAssets()
 
+    @Test
     func testAirshipAdapter() async throws {
         try await verifyAirshipAdapter(
             displayContent: .modal(.init(buttons: [], template: .headerBodyMedia))
@@ -54,6 +57,7 @@ final class DisplayAdapterFactoryTest: XCTestCase {
         )
     }
 
+    @Test
     func testCustomAdapters() async throws {
         try await verifyCustomAdapter(
             forType: .modal,
@@ -81,6 +85,7 @@ final class DisplayAdapterFactoryTest: XCTestCase {
         )
     }
 
+    @Test
     func testCustomThrowsNoAdapter() async throws {
         let message = InAppMessage(
             name: "Airship layout",
@@ -93,14 +98,14 @@ final class DisplayAdapterFactoryTest: XCTestCase {
                     message: message, assets: assets, priority: 0, _actionRunner: TestInAppActionRunner()
                 )
             )
-            XCTFail("Wrong adapter")
+            Issue.record("Wrong adapter")
         } catch {}
     }
 
 
     private func verifyAirshipAdapter(
         displayContent: InAppMessageDisplayContent,
-        line: UInt = #line
+        sourceLocation: SourceLocation = #_sourceLocation
     ) async throws {
         let message = InAppMessage(
             name: "",
@@ -114,7 +119,7 @@ final class DisplayAdapterFactoryTest: XCTestCase {
         )
 
         guard adapter as? AirshipLayoutDisplayAdapter != nil else {
-            XCTFail("Wrong adapter", line: line)
+            Issue.record("Wrong adapter", sourceLocation: sourceLocation)
             return
         }
     }
@@ -122,7 +127,7 @@ final class DisplayAdapterFactoryTest: XCTestCase {
     private func verifyCustomAdapter(
         forType type: CustomDisplayAdapterType,
         displayContent: InAppMessageDisplayContent,
-        line: UInt = #line
+        sourceLocation: SourceLocation = #_sourceLocation
     ) async throws {
         let message = InAppMessage(
             name: "",
@@ -137,7 +142,7 @@ final class DisplayAdapterFactoryTest: XCTestCase {
                 incomingAssets === assets,
                 message == args.message
             else {
-                XCTFail("Invalid args", line: line)
+                Issue.record("Invalid args", sourceLocation: sourceLocation)
                 return nil
             }
 
@@ -155,7 +160,7 @@ final class DisplayAdapterFactoryTest: XCTestCase {
             let unwrapped = wrappedAdapter.adapter as? TestCustomDisplayAdapter,
             unwrapped === adapter
         else {
-            XCTFail("Wrong adapter", line: line)
+            Issue.record("Wrong adapter", sourceLocation: sourceLocation)
             return
         }
     }

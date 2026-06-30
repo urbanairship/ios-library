@@ -1,50 +1,55 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 import AirshipCore
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 @_spi(AirshipInternal) import AirshipBasement
 
-final class AutomationRemoteDataAccessTest: XCTestCase {
+struct AutomationRemoteDataAccessTest {
     private let remoteData: TestRemoteData = TestRemoteData()
     private let networkChecker: TestNetworkChecker = TestNetworkChecker()
-    private var subject: AutomationRemoteDataAccess!
+    private let subject: AutomationRemoteDataAccess
 
-    override func setUpWithError() throws {
+    init() throws {
         subject = AutomationRemoteDataAccess(
             remoteData: remoteData,
             network: networkChecker
         )
     }
 
+    @Test
     func testIsCurrentTrue() async {
         let info = makeRemoteDataInfo()
         let schedule = makeSchedule(remoteDataInfo: info)
 
         remoteData.isCurrent = true
         let isCurrent = await subject.isCurrent(schedule: schedule)
-        XCTAssertTrue(isCurrent)
+        #expect(isCurrent)
     }
 
+    @Test
     func testIsCurrentFalse() async {
         let info = makeRemoteDataInfo()
         let schedule = makeSchedule(remoteDataInfo: info)
 
         remoteData.isCurrent = false
         let isCurrent = await subject.isCurrent(schedule: schedule)
-        XCTAssertFalse(isCurrent)
+        #expect(!(isCurrent))
     }
 
+    @Test
     func testIsCurrentNilRemoteDataInfo() async {
         let schedule = makeSchedule(remoteDataInfo: nil)
 
         remoteData.isCurrent = true
         let isCurrent = await subject.isCurrent(schedule: schedule)
-        XCTAssertFalse(isCurrent)
+        #expect(!(isCurrent))
     }
 
+    @Test
     func testRequiresUpdateUpToDate() async {
         let info = makeRemoteDataInfo(.app)
         let schedule = makeSchedule(remoteDataInfo: info)
@@ -53,9 +58,10 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
         remoteData.status[.app] = .upToDate
 
         let requiresUpdate = await subject.requiresUpdate(schedule: schedule)
-        XCTAssertFalse(requiresUpdate)
+        #expect(!(requiresUpdate))
     }
 
+    @Test
     func testRequiresUpdateStale() async {
         let info = makeRemoteDataInfo(.app)
         let schedule = makeSchedule(remoteDataInfo: info)
@@ -64,9 +70,10 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
         remoteData.status[.app] = .stale
 
         let requiresUpdate = await subject.requiresUpdate(schedule: schedule)
-        XCTAssertFalse(requiresUpdate)
+        #expect(!(requiresUpdate))
     }
 
+    @Test
     func testRequiresUpdateOutOfDate() async {
         let info = makeRemoteDataInfo(.app)
         let schedule = makeSchedule(remoteDataInfo: info)
@@ -75,9 +82,10 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
         remoteData.status[.app] = .outOfDate
 
         let requiresUpdate = await subject.requiresUpdate(schedule: schedule)
-        XCTAssertTrue(requiresUpdate)
+        #expect(requiresUpdate)
     }
 
+    @Test
     func testRequiresUpdateNotCurrent() async {
         let info = makeRemoteDataInfo(.app)
         let schedule = makeSchedule(remoteDataInfo: info)
@@ -86,9 +94,10 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
         remoteData.status[.app] = .upToDate
 
         let requiresUpdate = await subject.requiresUpdate(schedule: schedule)
-        XCTAssertTrue(requiresUpdate)
+        #expect(requiresUpdate)
     }
 
+    @Test
     func testRequiresUpdateNilRemoteDataInfo() async {
         remoteData.isCurrent = false
         remoteData.status[.app] = .upToDate
@@ -96,9 +105,10 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
         let schedule = makeSchedule(remoteDataInfo: nil)
 
         let requiresUpdate = await subject.requiresUpdate(schedule: schedule)
-        XCTAssertTrue(requiresUpdate)
+        #expect(requiresUpdate)
     }
 
+    @Test
     func testRequiresUpdateRightSource() async {
         remoteData.isCurrent = true
         remoteData.status[.app] = .outOfDate
@@ -107,43 +117,46 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
         let requiresUpdateContact = await subject.requiresUpdate(
             schedule: makeSchedule(remoteDataInfo: makeRemoteDataInfo(.contact))
         )
-        XCTAssertFalse(requiresUpdateContact)
+        #expect(!(requiresUpdateContact))
 
         let requiresUpdateApp = await subject.requiresUpdate(
             schedule: makeSchedule(remoteDataInfo: makeRemoteDataInfo(.app))
         )
-        XCTAssertTrue(requiresUpdateApp)
+        #expect(requiresUpdateApp)
     }
 
+    @Test
     func testWaitForFullRefresh() async {
         let info = makeRemoteDataInfo(.contact)
         let schedule = makeSchedule(remoteDataInfo: info)
 
-        let expectation = XCTestExpectation()
-        self.remoteData.waitForRefreshBlock = { source, maxTime in
-            XCTAssertEqual(source, .contact)
-            XCTAssertNil(maxTime)
-            expectation.fulfill()
-        }
-        
+        await confirmation { confirmed in
+            self.remoteData.waitForRefreshBlock = { source, maxTime in
+                #expect(source == .contact)
+                #expect(maxTime == nil)
+                confirmed()
+            }
 
-        await subject.waitFullRefresh(schedule: schedule)
-        await self.fulfillment(of: [expectation])
+
+            await subject.waitFullRefresh(schedule: schedule)
+        }
     }
 
+    @Test
     func testWaitForFullRefreshNilInfo() async {
-        let expectation = XCTestExpectation()
-        self.remoteData.waitForRefreshBlock = { source, maxTime in
-            XCTAssertEqual(source, .app)
-            XCTAssertNil(maxTime)
-            expectation.fulfill()
-        }
+        await confirmation { confirmed in
+            self.remoteData.waitForRefreshBlock = { source, maxTime in
+                #expect(source == .app)
+                #expect(maxTime == nil)
+                confirmed()
+            }
 
-        let schedule = makeSchedule(remoteDataInfo: nil)
-        await subject.waitFullRefresh(schedule: schedule)
-        await self.fulfillment(of: [expectation])
+            let schedule = makeSchedule(remoteDataInfo: nil)
+            await subject.waitFullRefresh(schedule: schedule)
+        }
     }
 
+    @Test
     func testBestEffortRefresh() async {
         await self.networkChecker.setConnected(true)
         remoteData.isCurrent = true
@@ -152,18 +165,19 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
 
         let schedule = makeSchedule(remoteDataInfo: info)
 
-        let expectation = XCTestExpectation()
-        self.remoteData.waitForRefreshAttemptBlock = { source, maxTime in
-            XCTAssertEqual(source, .contact)
-            XCTAssertNil(maxTime)
-            expectation.fulfill()
-        }
+        let result = await confirmation { confirmed in
+            self.remoteData.waitForRefreshAttemptBlock = { source, maxTime in
+                #expect(source == .contact)
+                #expect(maxTime == nil)
+                confirmed()
+            }
 
-        let result = await subject.bestEffortRefresh(schedule: schedule)
-        await self.fulfillment(of: [expectation])
-        XCTAssertTrue(result)
+            return await subject.bestEffortRefresh(schedule: schedule)
+        }
+        #expect(result)
     }
 
+    @Test
     func testBestEffortRefreshNotCurrentAfterAttempt() async {
         await self.networkChecker.setConnected(true)
         remoteData.isCurrent = true
@@ -172,17 +186,18 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
 
         let schedule = makeSchedule(remoteDataInfo: info)
 
-        let expectation = XCTestExpectation()
-        self.remoteData.waitForRefreshAttemptBlock = { source, maxTime in
-            self.remoteData.isCurrent = false
-            expectation.fulfill()
-        }
+        let result = await confirmation { confirmed in
+            self.remoteData.waitForRefreshAttemptBlock = { source, maxTime in
+                self.remoteData.isCurrent = false
+                confirmed()
+            }
 
-        let result = await subject.bestEffortRefresh(schedule: schedule)
-        await self.fulfillment(of: [expectation])
-        XCTAssertFalse(result)
+            return await subject.bestEffortRefresh(schedule: schedule)
+        }
+        #expect(!(result))
     }
 
+    @Test
     func testBestEffortRefreshNotCurrentReturnsNil() async {
         await self.networkChecker.setConnected(true)
         remoteData.isCurrent = false
@@ -192,13 +207,14 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
         self.remoteData.status[.contact] = .stale
 
         self.remoteData.waitForRefreshAttemptBlock = { _, _ in
-            XCTFail()
+            Issue.record()
         }
 
         let result = await subject.bestEffortRefresh(schedule: schedule)
-        XCTAssertFalse(result)
+        #expect(!(result))
     }
 
+    @Test
     func testBestEffortRefreshNotConnected() async {
         await self.networkChecker.setConnected(false)
         remoteData.isCurrent = true
@@ -208,21 +224,23 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
         self.remoteData.status[.contact] = .stale
 
         self.remoteData.waitForRefreshAttemptBlock = { _, _ in
-            XCTFail()
+            Issue.record()
         }
 
         let result = await subject.bestEffortRefresh(schedule: schedule)
-        XCTAssertTrue(result)
+        #expect(result)
     }
 
+    @Test
     func testNotifyOutdated() async {
         let info = makeRemoteDataInfo(.contact)
         let schedule = makeSchedule(remoteDataInfo: info)
 
         await self.subject.notifyOutdated(schedule: schedule)
-        XCTAssertEqual(self.remoteData.notifiedOutdatedInfos, [info])
+        #expect(self.remoteData.notifiedOutdatedInfos == [info])
     }
     
+    @Test
     func testRemoteDataInfoIgnoresInvalidSchedules() throws {
              let validSchedule = """
                 {
@@ -286,12 +304,13 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
                  remoteDataInfo: nil)
 
              let decoded: InAppRemoteData.Data = try payload.data.decode()
-             XCTAssertEqual(1, decoded.schedules.count)
-             XCTAssertEqual("test_schedule", decoded.schedules.first?.identifier)
+             #expect(1 == decoded.schedules.count)
+             #expect("test_schedule" == decoded.schedules.first?.identifier)
              // Invalid schedule without ID can't be tracked
-             XCTAssertTrue(decoded.failedSchedules.isEmpty)
+             #expect(decoded.failedSchedules.isEmpty)
          }
     
+    @Test
     func testRemoteDataInfoTracksFailedSchedules() throws {
         let validSchedule = """
            {
@@ -329,15 +348,16 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
             remoteDataInfo: nil)
 
         let decoded: InAppRemoteData.Data = try payload.data.decode()
-        XCTAssertEqual(1, decoded.schedules.count)
-        XCTAssertEqual("valid_schedule", decoded.schedules.first?.identifier)
+        #expect(1 == decoded.schedules.count)
+        #expect("valid_schedule" == decoded.schedules.first?.identifier)
         // Failed schedule with ID should be tracked
-        XCTAssertEqual(decoded.failedSchedules.map { $0.identifier}, ["failed_schedule_id"])
+        #expect(decoded.failedSchedules.map { $0.identifier} == ["failed_schedule_id"])
         // Verify created date is captured as createdDate
         let expectedCreatedDate = AirshipDateFormatter.date(from: "2023-12-20T12:00:00Z")
-        XCTAssertEqual(decoded.failedSchedules.first?.createdDate, expectedCreatedDate)
+        #expect(decoded.failedSchedules.first?.createdDate == expectedCreatedDate)
     }
     
+    @Test
     func testFromPayloadsAggregatesFailedSchedules() throws {
         let validSchedule = """
            {
@@ -382,10 +402,10 @@ final class AutomationRemoteDataAccessTest: XCTestCase {
         let inAppRemoteData = InAppRemoteData.fromPayloads([payload])
         
         // Verify aggregate failedSchedules on InAppRemoteData
-        XCTAssertEqual(inAppRemoteData.failedSchedules.map { $0.identifier}, ["failed_schedule_id"])
+        #expect(inAppRemoteData.failedSchedules.map { $0.identifier} == ["failed_schedule_id"])
         // Verify created date is captured as createdDate
         let expectedCreatedDate = AirshipDateFormatter.date(from: "2023-12-20T12:00:00Z")
-        XCTAssertEqual(inAppRemoteData.failedSchedules.first?.createdDate, expectedCreatedDate)
+        #expect(inAppRemoteData.failedSchedules.first?.createdDate == expectedCreatedDate)
     }
     
     private func makeSchedule(remoteDataInfo: RemoteDataInfo?) -> AutomationSchedule {

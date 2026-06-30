@@ -1,20 +1,22 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @testable @_spi(AirshipInternal) import AirshipAutomation
 import AirshipCore
 @_spi(AirshipInternal) import AirshipScenes
+import UIKit
 
 @MainActor
-final class InAppMessageAutomationExecutorTest: XCTestCase {
+struct InAppMessageAutomationExecutorTest {
 
     private let sceneManager: TestSceneManager = TestSceneManager()
     private let assetManager: TestAssetManager = TestAssetManager()
     private let analyticsFactory: TestAnalyticsFactory = TestAnalyticsFactory()
-    private var conditionsChangedNotifier: ScheduleConditionsChangedNotifier!
+    private let conditionsChangedNotifier: ScheduleConditionsChangedNotifier
     private let analytics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
     private let actionRunner: TestInAppActionRunner = TestInAppActionRunner()
-    private var displayAdapter: TestDisplayAdapter!
+    private let displayAdapter: TestDisplayAdapter
 
 
     private let preparedInfo: PreparedScheduleInfo = PreparedScheduleInfo(
@@ -27,10 +29,11 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         priority: 0
     )
 
-    private var displayCoordinator: TestDisplayCoordinator!
-    private var preparedData: PreparedInAppMessageData!
-    private var executor: InAppMessageAutomationExecutor!
-    override func setUp() async throws {
+    private let displayCoordinator: TestDisplayCoordinator
+    private let preparedData: PreparedInAppMessageData!
+    private let executor: InAppMessageAutomationExecutor
+
+    init() async throws {
         self.displayAdapter = TestDisplayAdapter()
         self.conditionsChangedNotifier = ScheduleConditionsChangedNotifier()
         self.displayCoordinator = TestDisplayCoordinator()
@@ -59,66 +62,62 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         }
     }
 
-    @MainActor
+    @Test
     func testIsReady() {
         self.displayAdapter.isReady = true
         self.displayCoordinator.isReady = true
-        XCTAssertEqual(
-            self.executor.isReady(data: preparedData, preparedScheduleInfo: preparedInfo),
-            .ready
+        #expect(
+            self.executor.isReady(data: preparedData, preparedScheduleInfo: preparedInfo) == .ready
         )
     }
 
-    @MainActor
+    @Test
     func testNotReadyAdapter() {
         self.displayAdapter.isReady = false
         self.displayCoordinator.isReady = true
-        XCTAssertEqual(
-            self.executor.isReady(data: preparedData, preparedScheduleInfo: preparedInfo),
-            .notReady
+        #expect(
+            self.executor.isReady(data: preparedData, preparedScheduleInfo: preparedInfo) == .notReady
         )
     }
 
-    @MainActor
+    @Test
     func testNotReadyCoordinator() {
         self.displayAdapter.isReady = true
         self.displayCoordinator.isReady = false
-        XCTAssertEqual(
-            self.executor.isReady(data: preparedData, preparedScheduleInfo: preparedInfo),
-            .notReady
+        #expect(
+            self.executor.isReady(data: preparedData, preparedScheduleInfo: preparedInfo) == .notReady
         )
     }
 
-    @MainActor
+    @Test
     func testIsReadyDelegate() {
         self.displayAdapter.isReady = true
         self.displayCoordinator.isReady = true
 
         let delegate = TestDisplayDelegate()
         delegate.onIsReady = { [preparedData, preparedInfo] message, scheduleID in
-            XCTAssertEqual(message, preparedData!.message)
-            XCTAssertEqual(scheduleID, preparedInfo.scheduleID)
+            #expect(message == preparedData!.message)
+            #expect(scheduleID == preparedInfo.scheduleID)
             return true
         }
         self.executor.displayDelegate = delegate
 
-        XCTAssertEqual(
-            self.executor.isReady(data: preparedData, preparedScheduleInfo: preparedInfo),
-            .ready
+        #expect(
+            self.executor.isReady(data: preparedData, preparedScheduleInfo: preparedInfo) == .ready
         )
 
         delegate.onIsReady = { [preparedData, preparedInfo] message, scheduleID in
-            XCTAssertEqual(message, preparedData!.message)
-            XCTAssertEqual(scheduleID, preparedInfo.scheduleID)
+            #expect(message == preparedData!.message)
+            #expect(scheduleID == preparedInfo.scheduleID)
             return false
         }
 
-        XCTAssertEqual(
-            self.executor.isReady(data: preparedData, preparedScheduleInfo: preparedInfo),
-            .notReady
+        #expect(
+            self.executor.isReady(data: preparedData, preparedScheduleInfo: preparedInfo) == .notReady
         )
     }
 
+    @Test
     func testInterrupted() async throws {
         let schedule = AutomationSchedule(
             identifier: preparedInfo.scheduleID,
@@ -128,27 +127,27 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
 
         _ = await self.executor.interrupted(schedule: schedule, preparedScheduleInfo: preparedInfo)
         let cleared = await self.assetManager.cleared
-        XCTAssertEqual([self.preparedInfo.scheduleID], cleared)
-        XCTAssertEqual(analytics.events.first!.0.name, ThomasLayoutResolutionEvent.interrupted().name)
+        #expect([self.preparedInfo.scheduleID] == cleared)
+        #expect(analytics.events.first!.0.name == ThomasLayoutResolutionEvent.interrupted().name)
     }
 
-    @MainActor
+    @Test
     func testExecute() async throws  {
         self.displayAdapter.onDisplay = { [preparedData] displayTarget, incomingAnalytics in
-            XCTAssertTrue(preparedData!.analytics === incomingAnalytics)
+            #expect(preparedData!.analytics === incomingAnalytics)
             return .finished
         }
 
         let result =  try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
-        XCTAssertTrue(self.displayAdapter.displayed)
-        XCTAssertEqual(result, .finished)
+        #expect(self.displayAdapter.displayed)
+        #expect(result == .finished)
     }
 
-    @MainActor
+    @Test
     func testExecuteInControlGroup() async throws  {
         let scene = TestScene()
         self.sceneManager.onScene = { [preparedData] message in
-            XCTAssertEqual(message, preparedData!.message)
+            #expect(message == preparedData!.message)
             return scene
         }
 
@@ -163,25 +162,25 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
 
         let result = try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
 
-        XCTAssertEqual(analytics.events.first!.0.name, ThomasLayoutResolutionEvent.control(experimentResult: experimentResult).name)
-        XCTAssertFalse(self.displayAdapter.displayed)
-        XCTAssertEqual(result, .finished)
-        XCTAssertTrue(self.actionRunner.actionPayloads.isEmpty)
+        #expect(analytics.events.first!.0.name == ThomasLayoutResolutionEvent.control(experimentResult: experimentResult).name)
+        #expect(!(self.displayAdapter.displayed))
+        #expect(result == .finished)
+        #expect(self.actionRunner.actionPayloads.isEmpty)
     }
 
-    @MainActor
+    @Test
     func testExecuteDisplayAdapter() async throws  {
         let delegate = TestDisplayDelegate()
         self.executor.displayDelegate = delegate
 
         delegate.onWillDisplay = { [preparedData, preparedInfo] message, scheduleID in
-            XCTAssertEqual(message, preparedData!.message)
-            XCTAssertEqual(scheduleID, preparedInfo.scheduleID)
+            #expect(message == preparedData!.message)
+            #expect(scheduleID == preparedInfo.scheduleID)
         }
 
         delegate.onFinishedDisplaying = { [preparedData, preparedInfo] message, scheduleID in
-            XCTAssertEqual(message, preparedData!.message)
-            XCTAssertEqual(scheduleID, preparedInfo.scheduleID)
+            #expect(message == preparedData!.message)
+            #expect(scheduleID == preparedInfo.scheduleID)
         }
 
         self.sceneManager.onScene = { _ in
@@ -189,30 +188,30 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         }
 
         self.displayAdapter.onDisplay = { _, _ in
-            XCTAssertTrue(delegate.onWillDisplayCalled)
-            XCTAssertFalse(delegate.onFinishedDisplayingCalled)
+            #expect(delegate.onWillDisplayCalled)
+            #expect(!(delegate.onFinishedDisplayingCalled))
             return .finished
         }
 
         let result = try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
-        XCTAssertTrue(delegate.onWillDisplayCalled)
-        XCTAssertTrue(delegate.onWillDisplayCalled)
-        XCTAssertTrue(self.displayAdapter.displayed)
-        XCTAssertEqual(result, .finished)
+        #expect(delegate.onWillDisplayCalled)
+        #expect(delegate.onWillDisplayCalled)
+        #expect(self.displayAdapter.displayed)
+        #expect(result == .finished)
     }
 
-    @MainActor
+    @Test
     func testExecuteDisplayException() async throws  {
         let scene = TestScene()
         self.sceneManager.onScene = { [preparedData] message in
-            XCTAssertEqual(message, preparedData!.message)
+            #expect(message == preparedData!.message)
             return scene
         }
 
         let analytics = TestInAppMessageAnalytics()
         self.analyticsFactory.onMake = { [preparedData, preparedInfo] incomingInfo, incomingMessage in
-            XCTAssertEqual(incomingInfo, preparedInfo)
-            XCTAssertEqual(incomingMessage, preparedData!.message)
+            #expect(incomingInfo == preparedInfo)
+            #expect(incomingMessage == preparedData!.message)
             return analytics
         }
 
@@ -223,12 +222,12 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
 
         let result =  try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
 
-        XCTAssertTrue(self.displayAdapter.displayed)
-        XCTAssertEqual(result, .cancel)
-        XCTAssertTrue(self.actionRunner.actionPayloads.isEmpty)
+        #expect(self.displayAdapter.displayed)
+        #expect(result == .cancel)
+        #expect(self.actionRunner.actionPayloads.isEmpty)
     }
 
-    @MainActor
+    @Test
     func testAdditionalAudienceCheckMiss() async throws  {
         self.displayAdapter.onDisplay = { incomingScene, incomingAnalytics in
             throw AirshipErrors.error("Failed")
@@ -241,13 +240,13 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
             preparedScheduleInfo: preparedInfo
         )
 
-        XCTAssertEqual(analytics.events.first!.0.name, ThomasLayoutResolutionEvent.audienceExcluded().name)
-        XCTAssertFalse(self.displayAdapter.displayed)
-        XCTAssertEqual(result, .finished)
-        XCTAssertTrue(self.actionRunner.actionPayloads.isEmpty)
+        #expect(analytics.events.first!.0.name == ThomasLayoutResolutionEvent.audienceExcluded().name)
+        #expect(!(self.displayAdapter.displayed))
+        #expect(result == .finished)
+        #expect(self.actionRunner.actionPayloads.isEmpty)
     }
 
-    @MainActor
+    @Test
     func testDisplayTargetNoScene() async throws  {
         self.sceneManager.onScene = { _ in
             throw AirshipErrors.error("Fail")
@@ -259,22 +258,22 @@ final class InAppMessageAutomationExecutorTest: XCTestCase {
         }
 
         let result = try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
-        XCTAssertEqual(result, .cancel)
+        #expect(result == .cancel)
     }
 
-    @MainActor
+    @Test
     func testExecuteCancel() async throws  {
 
         self.displayAdapter.onDisplay = { [preparedData] displayTarget, incomingAnalytics in
-            XCTAssertTrue(preparedData!.analytics === incomingAnalytics)
+            #expect(preparedData!.analytics === incomingAnalytics)
             return .cancel
         }
 
         let result =  try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
 
-        XCTAssertTrue(self.displayAdapter.displayed)
-        XCTAssertEqual(result, .cancel)
-        XCTAssertEqual(self.actionRunner.actionPayloads.first!.0, self.preparedData.message.actions)
+        #expect(self.displayAdapter.displayed)
+        #expect(result == .cancel)
+        #expect(self.actionRunner.actionPayloads.first!.0 == self.preparedData.message.actions)
     }
 }
 

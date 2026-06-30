@@ -1,138 +1,137 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @testable @_spi(AirshipInternal) import AirshipAutomation
 @testable import AirshipCore
 
-final class ActiveTimerTest: XCTestCase {
-    var subject: ActiveTimer!
-    
+@MainActor
+struct ActiveTimerTest {
     private let date = UATestDate(offset: 0, dateOverride: Date())
     private let notificationCenter = NotificationCenter()
     private let stateTracker = TestAppStateTracker()
     
-    @MainActor
-    private func createSubject(state: AirshipCore.ApplicationState = .active) {
+    private func createSubject(state: AirshipCore.ApplicationState = .active) -> ActiveTimer {
         stateTracker.currentState = state
         
-        subject = ActiveTimer(
+        return ActiveTimer(
             appStateTracker: stateTracker,
             notificationCenter: AirshipNotificationCenter(notificationCenter: notificationCenter),
             date: date
         )
     }
 
-    @MainActor
+    @Test
     func testManualStartStopWorks() {
-        createSubject()
+        let subject = createSubject()
         
         subject.start()
         date.offset = 2
         
-        XCTAssertEqual(2, subject.time)
+        #expect(2 == subject.time)
         
         date.offset = 3
         subject.stop()
-        XCTAssertEqual(3, subject.time)
+        #expect(3 == subject.time)
     }
     
-    @MainActor
+    @Test
     func testMultipleSessions() {
-        createSubject()
+        let subject = createSubject()
         subject.start()
         date.offset = 1
-        XCTAssertEqual(1, subject.time)
+        #expect(1 == subject.time)
         subject.stop()
         
         date.offset += 1
-        XCTAssertEqual(1, subject.time)
+        #expect(1 == subject.time)
         subject.start()
         date.offset += 2
         subject.stop()
-        XCTAssertEqual(3, subject.time)
+        #expect(3 == subject.time)
         
         date.offset += 1
-        XCTAssertEqual(3, subject.time)
+        #expect(3 == subject.time)
     }
     
-    @MainActor
+    @Test
     func testStartDoesntWorkIfAppInBackground() {
-        createSubject(state: .background)
+        let subject = createSubject(state: .background)
         subject.start()
         date.offset = 2
         
-        XCTAssertEqual(0, subject.time)
+        #expect(0 == subject.time)
     }
     
-    @MainActor
+    @Test
     func testDoubleStartDoesntRestCounter() {
-        createSubject()
+        let subject = createSubject()
         
         subject.start()
         date.offset = 2
-        XCTAssertEqual(2, subject.time)
+        #expect(2 == subject.time)
         date.offset = 3
         subject.start()
         date.offset = 2
         subject.stop()
-        XCTAssertEqual(2, subject.time)
+        #expect(2 == subject.time)
     }
     
-    @MainActor
+    @Test
     func testDoubleStopDoesntDoubleCounter() {
-        createSubject()
+        let subject = createSubject()
         subject.start()
         date.offset = 3
         subject.stop()
         
-        XCTAssertEqual(3, subject.time)
+        #expect(3 == subject.time)
         
         date.offset = 5
         subject.stop()
         
-        XCTAssertEqual(3, subject.time)
+        #expect(3 == subject.time)
     }
     
-    @MainActor
+    @Test
     func testHandlingAppState() {
-        createSubject(state: .background)
+        let subject = createSubject(state: .background)
         
         subject.start()
         date.offset = 3
-        XCTAssertEqual(0, subject.time)
+        #expect(0 == subject.time)
         notificationCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
         date.offset += 3
-        XCTAssertEqual(3, subject.time)
+        #expect(3 == subject.time)
         
         notificationCenter.post(name: AppStateTracker.willResignActiveNotification, object: nil)
         date.offset = 5
-        XCTAssertEqual(3, subject.time)
+        #expect(3 == subject.time)
     }
     
-    @MainActor
+    @Test
     func testActiveNotificationDoesNothingOnDisabledTimer() {
-        createSubject(state: .background)
-        XCTAssertEqual(0, subject.time)
+        let subject = createSubject(state: .background)
+        #expect(0 == subject.time)
         
         notificationCenter.post(name: AppStateTracker.didBecomeActiveNotification, object: nil)
         date.offset += 3
-        XCTAssertEqual(0, subject.time)
+        #expect(0 == subject.time)
         
     }
     
-    @MainActor
+    @Test
     func testTimerStopsOnEnteringBackground() {
-        createSubject()
+        let subject = createSubject()
         subject.start()
         date.offset = 2
-        XCTAssertEqual(2, subject.time)
+        #expect(2 == subject.time)
         
         notificationCenter.post(name: AppStateTracker.willResignActiveNotification, object: nil)
         date.offset = 5
-        XCTAssertEqual(2, subject.time)
+        #expect(2 == subject.time)
         
         subject.stop()
-        XCTAssertEqual(2, subject.time)
+        #expect(2 == subject.time)
     }
     
 }

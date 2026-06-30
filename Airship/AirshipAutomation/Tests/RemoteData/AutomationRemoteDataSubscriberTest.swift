@@ -1,20 +1,21 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 import AirshipCore
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 
-final class AutomationRemoteDataSubscriberTest: XCTestCase {
+struct AutomationRemoteDataSubscriberTest {
     private let remoteDataAccess: TestRemoteDataAccess = TestRemoteDataAccess()
     private let engine: TestAutomationEngine = TestAutomationEngine()
     private let frequencyLimits: TestFrequencyLimitManager = TestFrequencyLimitManager()
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
 
-    private var subscriber: AutomationRemoteDataSubscriber!
+    private var subscriber: AutomationRemoteDataSubscriber
 
-    override func setUp() async throws {
+    init() {
         self.subscriber = AutomationRemoteDataSubscriber(
             dataStore: dataStore,
             remoteDataAccess: remoteDataAccess,
@@ -23,6 +24,7 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         )
     }
 
+    @Test
     func testSchedulingAutomations() async throws {
         let appSchedules = makeSchedules(source: .app)
         let contactSchedules = makeSchedules(source: .contact)
@@ -48,23 +50,25 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
 
         await self.subscriber.subscribe()
 
-        let appExpectation = expectation(description: "schedules saved")
-        let contactExpectation = expectation(description: "schedules saved")
-
-        await self.engine.setOnUpsert { schedules in
-            if (schedules == appSchedules) {
-                appExpectation.fulfill()
-            } else if (schedules == contactSchedules) {
-                contactExpectation.fulfill()
-            } else {
-                XCTFail()
+        await confirmation(expectedCount: 2) { confirm in
+            let latch = Latch(2)
+            await self.engine.setOnUpsert { schedules in
+                if (schedules == appSchedules) {
+                    confirm()
+                } else if (schedules == contactSchedules) {
+                    confirm()
+                } else {
+                    Issue.record()
+                }
+                await latch.signal()
             }
-        }
 
-        self.remoteDataAccess.updatesSubject.send(data)
-        await self.fulfillment(of: [appExpectation, contactExpectation])
+            self.remoteDataAccess.updatesSubject.send(data)
+            await latch.wait()
+        }
     }
 
+    @Test
     func testEmptyPayloadStopsSchedules() async throws {
         let appSchedules = makeSchedules(source: .app)
 
@@ -76,16 +80,20 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
 
         await self.subscriber.subscribe()
 
-        let stopExpectation = expectation(description: "schedules stopped")
-        await self.engine.setOnStop { schedules in
-            XCTAssertEqual(schedules, appSchedules)
-            stopExpectation.fulfill()
-        }
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnStop { schedules in
+                #expect(schedules == appSchedules)
+                confirm()
+                await latch.signal()
+            }
 
-        self.remoteDataAccess.updatesSubject.send(emptyData)
-        await self.fulfillment(of: [stopExpectation])
+            self.remoteDataAccess.updatesSubject.send(emptyData)
+            await latch.wait()
+        }
     }
 
+    @Test
     func testIgnoreSchedulesNoLongerScheduled() async throws {
         await self.subscriber.subscribe()
 
@@ -109,14 +117,17 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             ]
         )
 
-        let firstUpdateExpectation = expectation(description: "schedules saved")
-        await self.engine.setOnUpsert { schedules in
-            XCTAssertEqual(schedules, firstUpdateSchedules)
-            firstUpdateExpectation.fulfill()
-        }
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { schedules in
+                #expect(schedules == firstUpdateSchedules)
+                confirm()
+                await latch.signal()
+            }
 
-        self.remoteDataAccess.updatesSubject.send(firstUpdate)
-        await self.fulfillment(of: [firstUpdateExpectation])
+            self.remoteDataAccess.updatesSubject.send(firstUpdate)
+            await latch.wait()
+        }
 
         await self.engine.setSchedules(firstUpdateSchedules)
 
@@ -138,18 +149,22 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             ]
         )
 
-        let secondUpdateExpectation = expectation(description: "schedules saved")
-        await self.engine.setOnUpsert { schedules in
-            // Should still be the first update schedules since the second updates are older
-            XCTAssertEqual(schedules, firstUpdateSchedules)
-            secondUpdateExpectation.fulfill()
-        }
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { schedules in
+                // Should still be the first update schedules since the second updates are older
+                #expect(schedules == firstUpdateSchedules)
+                confirm()
+                await latch.signal()
+            }
 
-        self.remoteDataAccess.updatesSubject.send(secondUpdate)
-        await self.fulfillment(of: [secondUpdateExpectation])
+            self.remoteDataAccess.updatesSubject.send(secondUpdate)
+            await latch.wait()
+        }
     }
 
-    func testOlderSchedulesMinSDKVersion() async throws {
+    @Test
+    mutating func testOlderSchedulesMinSDKVersion() async throws {
 
         self.subscriber = AutomationRemoteDataSubscriber(
             dataStore: dataStore,
@@ -182,14 +197,17 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
 
 
 
-        let firstUpdateExpectation = expectation(description: "schedules saved")
-        await self.engine.setOnUpsert { schedules in
-            XCTAssertEqual(schedules, firstUpdateSchedules)
-            firstUpdateExpectation.fulfill()
-        }
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { schedules in
+                #expect(schedules == firstUpdateSchedules)
+                confirm()
+                await latch.signal()
+            }
 
-        self.remoteDataAccess.updatesSubject.send(firstUpdate)
-        await self.fulfillment(of: [firstUpdateExpectation])
+            self.remoteDataAccess.updatesSubject.send(firstUpdate)
+            await latch.wait()
+        }
 
         await self.subscriber.unsubscribe()
         // Update sdk version
@@ -223,16 +241,20 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             ]
         )
 
-        let secondUpdateExpectation = expectation(description: "schedules saved")
-        await self.engine.setOnUpsert { schedules in
-            XCTAssertEqual(schedules, secondUpdateSchedules)
-            secondUpdateExpectation.fulfill()
-        }
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { schedules in
+                #expect(schedules == secondUpdateSchedules)
+                confirm()
+                await latch.signal()
+            }
 
-        self.remoteDataAccess.updatesSubject.send(secondUpdate)
-        await self.fulfillment(of: [secondUpdateExpectation])
+            self.remoteDataAccess.updatesSubject.send(secondUpdate)
+            await latch.wait()
+        }
     }
 
+    @Test
     func testSamePayloadSkipsAutomations() async throws {
         await self.subscriber.subscribe()
 
@@ -255,17 +277,21 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             ]
         )
 
-        let expecation = expectation(description: "schedules saved")
-        await self.engine.setOnUpsert { scheduled in
-            XCTAssertEqual(scheduled, schedules)
-            expecation.fulfill()
-        }
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { scheduled in
+                #expect(scheduled == schedules)
+                confirm()
+                await latch.signal()
+            }
 
-        self.remoteDataAccess.updatesSubject.send(update)
-        self.remoteDataAccess.updatesSubject.send(update)
-        await self.fulfillment(of: [expecation])
+            self.remoteDataAccess.updatesSubject.send(update)
+            self.remoteDataAccess.updatesSubject.send(update)
+            await latch.wait()
+        }
     }
 
+    @Test
     func testRemoteDataInfoChangeUpdatesSchedules() async throws {
         await self.subscriber.subscribe()
 
@@ -282,28 +308,31 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             return mutable
         }
 
-        let firstExpectation = expectation(description: "schedules saved")
-        await self.engine.setOnUpsert { scheduled in
-            XCTAssertEqual(scheduled, schedules)
-            firstExpectation.fulfill()
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { scheduled in
+                #expect(scheduled == schedules)
+                confirm()
+                await latch.signal()
+            }
+
+
+
+            self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+                payloads: [
+                    .app: .init(
+                        data: .init(
+                            schedules: schedules,
+                            constraints: []
+                        ),
+                        timestamp: date,
+                        remoteDataInfo: remoteDataInfo
+                    )
+                ]
+            ))
+
+            await latch.wait()
         }
-
-
-
-        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
-            payloads: [
-                .app: .init(
-                    data: .init(
-                        schedules: schedules,
-                        constraints: []
-                    ),
-                    timestamp: date,
-                    remoteDataInfo: remoteDataInfo
-                )
-            ]
-        ))
-
-        await self.fulfillment(of: [firstExpectation])
 
         await self.engine.setSchedules(schedules)
 
@@ -319,41 +348,39 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             return mutable
         }
 
-        let secondExpectation = expectation(description: "schedules saved")
-        await self.engine.setOnUpsert { scheduled in
-            XCTAssertEqual(scheduled, updatedSchedules)
-            secondExpectation.fulfill()
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { scheduled in
+                #expect(scheduled == updatedSchedules)
+                confirm()
+                await latch.signal()
+            }
+
+            // udpate again with different remote-data info
+            self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+                payloads: [
+                    .app: .init(
+                        data: .init(
+                            schedules: updatedSchedules,
+                            constraints: []
+                        ),
+                        timestamp: date,
+                        remoteDataInfo: updatedRemoteDataInfo
+                    )
+                ]
+            ))
+
+            await latch.wait()
         }
-
-        // udpate again with different remote-data info
-        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
-            payloads: [
-                .app: .init(
-                    data: .init(
-                        schedules: updatedSchedules,
-                        constraints: []
-                    ),
-                    timestamp: date,
-                    remoteDataInfo: updatedRemoteDataInfo
-                )
-            ]
-        ))
-
-        await self.fulfillment(of: [secondExpectation])
     }
     
 
+    @Test
     func testPayloadDateChangeAutomations() async throws {
         await self.subscriber.subscribe()
 
         let date = Date()
         let schedules = makeSchedules(source: .app, count: 4)
-
-        let firstExpectation = expectation(description: "schedules saved")
-        await self.engine.setOnUpsert { scheduled in
-            XCTAssertEqual(scheduled, schedules)
-            firstExpectation.fulfill()
-        }
 
         let remoteDateInfo = RemoteDataInfo(
             url: URL(string: "some-other-url")!,
@@ -361,46 +388,59 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             source: .app
         )
 
-        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
-            payloads: [
-                .app: .init(
-                    data: .init(
-                        schedules: schedules,
-                        constraints: []
-                    ),
-                    timestamp: date,
-                    remoteDataInfo: remoteDateInfo
-                )
-            ]
-        ))
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { scheduled in
+                #expect(scheduled == schedules)
+                confirm()
+                await latch.signal()
+            }
 
-        await self.fulfillment(of: [firstExpectation])
+            self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+                payloads: [
+                    .app: .init(
+                        data: .init(
+                            schedules: schedules,
+                            constraints: []
+                        ),
+                        timestamp: date,
+                        remoteDataInfo: remoteDateInfo
+                    )
+                ]
+            ))
+
+            await latch.wait()
+        }
 
         await self.engine.setSchedules(schedules)
 
-        let secondExpectation = expectation(description: "schedules saved")
-        await self.engine.setOnUpsert { scheduled in
-            XCTAssertEqual(scheduled, schedules)
-            secondExpectation.fulfill()
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { scheduled in
+                #expect(scheduled == schedules)
+                confirm()
+                await latch.signal()
+            }
+
+
+            // update again with different date
+            self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+                payloads: [
+                    .app: .init(
+                        data: .init(
+                            schedules: schedules,
+                            constraints: []
+                        ),
+                        timestamp: date + 1,
+                        remoteDataInfo: remoteDateInfo
+                    )
+                ]
+            ))
+            await latch.wait()
         }
-
-
-        // update again with different date
-        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
-            payloads: [
-                .app: .init(
-                    data: .init(
-                        schedules: schedules,
-                        constraints: []
-                    ),
-                    timestamp: date + 1,
-                    remoteDataInfo: remoteDateInfo
-                )
-            ]
-        ))
-        await self.fulfillment(of: [secondExpectation])
     }
 
+    @Test
     func testConstraints() async throws {
         let appConstraints = [
             FrequencyConstraint(identifier: "foo", range: 100, count: 10),
@@ -432,19 +472,23 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
 
         await self.subscriber.subscribe()
 
-        let expectation = expectation(description: "constraints saved")
-        await self.frequencyLimits.setOnConstraints { constraints in
-            XCTAssertEqual(constraints, appConstraints + contactConstraints)
-            expectation.fulfill()
-        }
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.frequencyLimits.setOnConstraints { constraints in
+                #expect(constraints == appConstraints + contactConstraints)
+                confirm()
+                await latch.signal()
+            }
 
-        self.remoteDataAccess.updatesSubject.send(data)
-        await self.fulfillment(of: [expectation])
+            self.remoteDataAccess.updatesSubject.send(data)
+            await latch.wait()
+        }
     }
 
     // MARK: - Failed schedule tracking tests
 
-    func testFailedScheduleCarriedForwardAndRetriedOnSDKUpdate() async throws {
+    @Test
+    mutating func testFailedScheduleCarriedForwardAndRetriedOnSDKUpdate() async throws {
         let date = Date()
         let scheduleA = makeSchedule(source: .app, created: date)
         let failedB = FailedScheduleRecord(
@@ -463,32 +507,35 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         )
         await self.subscriber.subscribe()
 
-        let firstExpectation = expectation(description: "first sync upsert")
-        await self.engine.setOnUpsert { schedules in
-            XCTAssertEqual(schedules, [scheduleA])
-            firstExpectation.fulfill()
-        }
-
         let remoteDataInfo = RemoteDataInfo(
             url: URL(string: "some-url")!,
             lastModifiedTime: nil,
             source: .app
         )
 
-        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
-            payloads: [
-                .app: .init(
-                    data: .init(
-                        schedules: [scheduleA],
-                        constraints: [],
-                        failedSchedules: [failedB]
-                    ),
-                    timestamp: date,
-                    remoteDataInfo: remoteDataInfo
-                )
-            ]
-        ))
-        await self.fulfillment(of: [firstExpectation])
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { schedules in
+                #expect(schedules == [scheduleA])
+                confirm()
+                await latch.signal()
+            }
+
+            self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+                payloads: [
+                    .app: .init(
+                        data: .init(
+                            schedules: [scheduleA],
+                            constraints: [],
+                            failedSchedules: [failedB]
+                        ),
+                        timestamp: date,
+                        remoteDataInfo: remoteDataInfo
+                    )
+                ]
+            ))
+            await latch.wait()
+        }
 
         // Now simulate SDK update: recreate subscriber with new version
         await self.subscriber.unsubscribe()
@@ -510,29 +557,33 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             created: date
         )
 
-        let secondExpectation = expectation(description: "retry sync upsert")
-        await self.engine.setOnUpsert { schedules in
-            let ids = Set(schedules.map { $0.identifier })
-            XCTAssertTrue(ids.contains("failed_schedule_B"))
-            secondExpectation.fulfill()
-        }
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { schedules in
+                let ids = Set(schedules.map { $0.identifier })
+                #expect(ids.contains("failed_schedule_B"))
+                confirm()
+                await latch.signal()
+            }
 
-        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
-            payloads: [
-                .app: .init(
-                    data: .init(
-                        schedules: [scheduleA, scheduleB],
-                        constraints: [],
-                        failedSchedules: []
-                    ),
-                    timestamp: date,
-                    remoteDataInfo: remoteDataInfo
-                )
-            ]
-        ))
-        await self.fulfillment(of: [secondExpectation])
+            self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+                payloads: [
+                    .app: .init(
+                        data: .init(
+                            schedules: [scheduleA, scheduleB],
+                            constraints: [],
+                            failedSchedules: []
+                        ),
+                        timestamp: date,
+                        remoteDataInfo: remoteDataInfo
+                    )
+                ]
+            ))
+            await latch.wait()
+        }
     }
 
+    @Test
     func testFailedScheduleNowParsesOnServerFix() async throws {
         let date = Date()
         let scheduleA = makeSchedule(source: .app, created: date)
@@ -551,26 +602,29 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         )
 
         // First sync: A succeeds, B fails
-        let firstExpectation = expectation(description: "first sync")
-        await self.engine.setOnUpsert { schedules in
-            XCTAssertEqual(schedules.map { $0.identifier }, [scheduleA.identifier])
-            firstExpectation.fulfill()
-        }
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { schedules in
+                #expect(schedules.map { $0.identifier } == [scheduleA.identifier])
+                confirm()
+                await latch.signal()
+            }
 
-        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
-            payloads: [
-                .app: .init(
-                    data: .init(
-                        schedules: [scheduleA],
-                        constraints: [],
-                        failedSchedules: [failedB]
-                    ),
-                    timestamp: date,
-                    remoteDataInfo: remoteDataInfo
-                )
-            ]
-        ))
-        await self.fulfillment(of: [firstExpectation])
+            self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+                payloads: [
+                    .app: .init(
+                        data: .init(
+                            schedules: [scheduleA],
+                            constraints: [],
+                            failedSchedules: [failedB]
+                        ),
+                        timestamp: date,
+                        remoteDataInfo: remoteDataInfo
+                    )
+                ]
+            ))
+            await latch.wait()
+        }
 
         await self.engine.setSchedules([scheduleA])
 
@@ -581,29 +635,33 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             created: date
         )
 
-        let secondExpectation = expectation(description: "server fix sync")
-        await self.engine.setOnUpsert { schedules in
-            let ids = Set(schedules.map { $0.identifier })
-            XCTAssertTrue(ids.contains("failed_schedule_B"))
-            secondExpectation.fulfill()
-        }
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { schedules in
+                let ids = Set(schedules.map { $0.identifier })
+                #expect(ids.contains("failed_schedule_B"))
+                confirm()
+                await latch.signal()
+            }
 
-        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
-            payloads: [
-                .app: .init(
-                    data: .init(
-                        schedules: [scheduleA, scheduleB],
-                        constraints: [],
-                        failedSchedules: []
-                    ),
-                    timestamp: date + 100,
-                    remoteDataInfo: remoteDataInfo
-                )
-            ]
-        ))
-        await self.fulfillment(of: [secondExpectation])
+            self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+                payloads: [
+                    .app: .init(
+                        data: .init(
+                            schedules: [scheduleA, scheduleB],
+                            constraints: [],
+                            failedSchedules: []
+                        ),
+                        timestamp: date + 100,
+                        remoteDataInfo: remoteDataInfo
+                    )
+                ]
+            ))
+            await latch.wait()
+        }
     }
 
+    @Test
     func testFailedScheduleRemovedFromRemoteData() async throws {
         let date = Date()
         let scheduleA = makeSchedule(source: .app, created: date)
@@ -622,52 +680,59 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
         )
 
         // First sync: A succeeds, B fails
-        let firstExpectation = expectation(description: "first sync")
-        await self.engine.setOnUpsert { _ in
-            firstExpectation.fulfill()
-        }
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { _ in
+                confirm()
+                await latch.signal()
+            }
 
-        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
-            payloads: [
-                .app: .init(
-                    data: .init(
-                        schedules: [scheduleA],
-                        constraints: [],
-                        failedSchedules: [failedB]
-                    ),
-                    timestamp: date,
-                    remoteDataInfo: remoteDataInfo
-                )
-            ]
-        ))
-        await self.fulfillment(of: [firstExpectation])
+            self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+                payloads: [
+                    .app: .init(
+                        data: .init(
+                            schedules: [scheduleA],
+                            constraints: [],
+                            failedSchedules: [failedB]
+                        ),
+                        timestamp: date,
+                        remoteDataInfo: remoteDataInfo
+                    )
+                ]
+            ))
+            await latch.wait()
+        }
 
         await self.engine.setSchedules([scheduleA])
 
         // Second sync: B removed entirely from remote data, new timestamp
-        let secondExpectation = expectation(description: "second sync")
-        await self.engine.setOnUpsert { schedules in
-            let ids = schedules.map { $0.identifier }
-            XCTAssertFalse(ids.contains("failed_schedule_B"))
-            secondExpectation.fulfill()
-        }
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { schedules in
+                let ids = schedules.map { $0.identifier }
+                #expect(!(ids.contains("failed_schedule_B")))
+                confirm()
+                await latch.signal()
+            }
 
-        self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
-            payloads: [
-                .app: .init(
-                    data: .init(
-                        schedules: [scheduleA],
-                        constraints: [],
-                        failedSchedules: []
-                    ),
-                    timestamp: date + 100,
-                    remoteDataInfo: remoteDataInfo
-                )
-            ]
-        ))
-        await self.fulfillment(of: [secondExpectation])
+            self.remoteDataAccess.updatesSubject.send(InAppRemoteData(
+                payloads: [
+                    .app: .init(
+                        data: .init(
+                            schedules: [scheduleA],
+                            constraints: [],
+                            failedSchedules: []
+                        ),
+                        timestamp: date + 100,
+                        remoteDataInfo: remoteDataInfo
+                    )
+                ]
+            ))
+            await latch.wait()
+        }
     }
 
+    @Test
     func testSamePayloadWithFailuresSkipsProcessing() async throws {
         let date = Date()
         let scheduleA = makeSchedule(source: .app, created: date)
@@ -699,15 +764,18 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             ]
         )
 
-        let upsertExpectation = expectation(description: "upsert called once")
-        await self.engine.setOnUpsert { _ in
-            upsertExpectation.fulfill()
-        }
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnUpsert { _ in
+                confirm()
+                await latch.signal()
+            }
 
-        // Send the same payload twice — upsert should only fire once
-        self.remoteDataAccess.updatesSubject.send(payload)
-        self.remoteDataAccess.updatesSubject.send(payload)
-        await self.fulfillment(of: [upsertExpectation])
+            // Send the same payload twice — upsert should only fire once
+            self.remoteDataAccess.updatesSubject.send(payload)
+            self.remoteDataAccess.updatesSubject.send(payload)
+            await latch.wait()
+        }
     }
 
     // MARK: - Helpers
@@ -744,5 +812,29 @@ final class AutomationRemoteDataSubscriberTest: XCTestCase {
             ]),
             minSDKVersion: minSDKVersion
         )
+    }
+}
+
+private actor Latch {
+    private var remaining: Int
+    private var continuation: CheckedContinuation<Void, Never>?
+
+    init(_ count: Int) {
+        self.remaining = count
+    }
+
+    func signal() {
+        remaining -= 1
+        if remaining <= 0, let continuation {
+            self.continuation = nil
+            continuation.resume()
+        }
+    }
+
+    func wait() async {
+        if remaining <= 0 {
+            return
+        }
+        await withCheckedContinuation { self.continuation = $0 }
     }
 }

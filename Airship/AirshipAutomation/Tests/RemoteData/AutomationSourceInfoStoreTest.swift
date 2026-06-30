@@ -1,20 +1,22 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 import AirshipCore
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 
-final class AutomationSourceInfoStoreTest: XCTestCase {
+struct AutomationSourceInfoStoreTest {
 
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private var infoStore: AutomationSourceInfoStore!
+    private let infoStore: AutomationSourceInfoStore
 
-    override func setUp() async throws {
+    init() {
         self.infoStore = AutomationSourceInfoStore(dataStore: dataStore)
     }
 
+    @Test
     func testMigrateChannel() throws {
         let lastPayloadTimestamp = Date() - 1000.0
         let remoteDataInfo = RemoteDataInfo(
@@ -36,9 +38,10 @@ final class AutomationSourceInfoStoreTest: XCTestCase {
 
         let actual = self.infoStore.getSourceInfo(source: .app, contactID: nil)
 
-        XCTAssertEqual(expected, actual)
+        #expect(expected == actual)
     }
 
+    @Test
     func testMigrateContact() throws {
         let lastPayloadTimestamp = Date() - 1000.0
         let remoteDataInfo = RemoteDataInfo(
@@ -60,9 +63,10 @@ final class AutomationSourceInfoStoreTest: XCTestCase {
 
         let actual = self.infoStore.getSourceInfo(source: .contact, contactID: "foo")
 
-        XCTAssertEqual(expected, actual)
+        #expect(expected == actual)
     }
 
+    @Test
     func testAppStoreIgnoreContactID() throws {
         let sourceInfo = AutomationSourceInfo(
             remoteDataInfo: nil,
@@ -72,22 +76,23 @@ final class AutomationSourceInfoStoreTest: XCTestCase {
         )
         self.infoStore.setSourceInfo(sourceInfo, source: .app, contactID: "foo")
 
-        XCTAssertEqual(
-            sourceInfo,
+        #expect(
+            sourceInfo ==
             self.infoStore.getSourceInfo(source: .app, contactID: nil)
         )
 
-        XCTAssertEqual(
-            sourceInfo,
+        #expect(
+            sourceInfo ==
             self.infoStore.getSourceInfo(source: .app, contactID: "foo")
         )
 
-        XCTAssertEqual(
-            sourceInfo,
+        #expect(
+            sourceInfo ==
             self.infoStore.getSourceInfo(source: .app, contactID: UUID().uuidString)
         )
     }
 
+    @Test
     func testContactStoreRespectsContactID() throws {
         let sourceInfo = AutomationSourceInfo(
             remoteDataInfo: nil,
@@ -97,16 +102,16 @@ final class AutomationSourceInfoStoreTest: XCTestCase {
         )
         self.infoStore.setSourceInfo(sourceInfo, source: .contact, contactID: "foo")
 
-        XCTAssertNil(
-            self.infoStore.getSourceInfo(source: .contact, contactID: nil)
+        #expect(
+            self.infoStore.getSourceInfo(source: .contact, contactID: nil) == nil
         )
 
-        XCTAssertNil(
-            self.infoStore.getSourceInfo(source: .contact, contactID: UUID().uuidString)
+        #expect(
+            self.infoStore.getSourceInfo(source: .contact, contactID: UUID().uuidString) == nil
         )
 
-        XCTAssertEqual(
-            sourceInfo,
+        #expect(
+            sourceInfo ==
             self.infoStore.getSourceInfo(source: .contact, contactID: "foo")
         )
     }

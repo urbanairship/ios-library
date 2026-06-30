@@ -1,13 +1,15 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 import AirshipCore
 
-final class LandingPageActionTest: XCTestCase {
+struct LandingPageActionTest {
 
+    @Test
     func testAcceptsArguments() async throws {
         let action = LandingPageAction()
 
@@ -29,20 +31,18 @@ final class LandingPageActionTest: XCTestCase {
         for situation in validSituations {
             let args = ActionArguments(value: AirshipJSON.null, situation: situation)
             let result = await action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result)
         }
 
         for situation in rejectedSituations {
             let args = ActionArguments(value: AirshipJSON.null, situation: situation)
             let result = await action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!(result))
         }
     }
 
+    @Test
     func testSimpleURLArg() async throws {
-        let urlChecked = expectation(description: "url checked")
-        let scheduled = expectation(description: "scheduled")
-
         let expectedMessage = InAppMessage(
             name: "Landing Page https://some-url",
             displayContent: .html(
@@ -57,39 +57,39 @@ final class LandingPageActionTest: XCTestCase {
             displayBehavior: .immediate
         )
 
-        let action = LandingPageAction(
-            borderRadius: 10,
-            scheduleExtender: nil,
-            allowListChecker: { url in
-                XCTAssertEqual("https://some-url", url.absoluteString)
-                urlChecked.fulfill()
-                return true
-            },
-            scheduler: { schedule in
-                XCTAssertEqual(schedule.data, .inAppMessage(expectedMessage))
-                XCTAssertEqual(schedule.triggers.count, 1)
-                XCTAssertEqual(schedule.triggers[0].type, EventAutomationTriggerType.activeSession.rawValue)
-                XCTAssertEqual(schedule.triggers[0].goal, 1.0)
-                XCTAssertTrue(schedule.bypassHoldoutGroups!)
-                XCTAssertEqual(schedule.productID, "landing_page")
-                XCTAssertEqual(schedule.queue, "landing_page")
-                XCTAssertEqual(schedule.priority, Int.min)
-                scheduled.fulfill()
+        try await confirmation("url checked") { urlChecked in
+            try await confirmation("scheduled") { scheduled in
+                let action = LandingPageAction(
+                    borderRadius: 10,
+                    scheduleExtender: nil,
+                    allowListChecker: { url in
+                        #expect("https://some-url" == url.absoluteString)
+                        urlChecked()
+                        return true
+                    },
+                    scheduler: { schedule in
+                        #expect(schedule.data == .inAppMessage(expectedMessage))
+                        #expect(schedule.triggers.count == 1)
+                        #expect(schedule.triggers[0].type == EventAutomationTriggerType.activeSession.rawValue)
+                        #expect(schedule.triggers[0].goal == 1.0)
+                        #expect(schedule.bypassHoldoutGroups!)
+                        #expect(schedule.productID == "landing_page")
+                        #expect(schedule.queue == "landing_page")
+                        #expect(schedule.priority == Int.min)
+                        scheduled()
+                    }
+                )
+
+                let args = ActionArguments(value: "https://some-url", situation: .manualInvocation)
+
+                let result = try await action.perform(arguments: args)
+                #expect(result == nil)
             }
-        )
-
-        let args = ActionArguments(value: "https://some-url", situation: .manualInvocation)
-
-        let result = try await action.perform(arguments: args)
-        XCTAssertNil(result)
-
-        await self.fulfillment(of: [urlChecked, scheduled])
+        }
     }
 
+    @Test
     func testDictionaryArgs() async throws {
-        let urlChecked = expectation(description: "url checked")
-        let scheduled = expectation(description: "scheduled")
-
         let expectedMessage = InAppMessage(
             name: "Landing Page https://some-url",
             displayContent: .html(
@@ -107,48 +107,48 @@ final class LandingPageActionTest: XCTestCase {
             displayBehavior: .immediate
         )
 
-        let action = LandingPageAction(
-            borderRadius: 10,
-            scheduleExtender: nil,
-            allowListChecker: { url in
-                XCTAssertEqual("https://some-url", url.absoluteString)
-                urlChecked.fulfill()
-                return true
-            },
-            scheduler: { schedule in
-                XCTAssertEqual(schedule.data, .inAppMessage(expectedMessage))
-                XCTAssertEqual(schedule.triggers.count, 1)
-                XCTAssertEqual(schedule.triggers[0].type, EventAutomationTriggerType.activeSession.rawValue)
-                XCTAssertEqual(schedule.triggers[0].goal, 1.0)
-                XCTAssertTrue(schedule.bypassHoldoutGroups!)
-                XCTAssertEqual(schedule.productID, "landing_page")
-                XCTAssertEqual(schedule.queue, "landing_page")
-                XCTAssertEqual(schedule.priority, Int.min)
-                scheduled.fulfill()
+        try await confirmation("url checked") { urlChecked in
+            try await confirmation("scheduled") { scheduled in
+                let action = LandingPageAction(
+                    borderRadius: 10,
+                    scheduleExtender: nil,
+                    allowListChecker: { url in
+                        #expect("https://some-url" == url.absoluteString)
+                        urlChecked()
+                        return true
+                    },
+                    scheduler: { schedule in
+                        #expect(schedule.data == .inAppMessage(expectedMessage))
+                        #expect(schedule.triggers.count == 1)
+                        #expect(schedule.triggers[0].type == EventAutomationTriggerType.activeSession.rawValue)
+                        #expect(schedule.triggers[0].goal == 1.0)
+                        #expect(schedule.bypassHoldoutGroups!)
+                        #expect(schedule.productID == "landing_page")
+                        #expect(schedule.queue == "landing_page")
+                        #expect(schedule.priority == Int.min)
+                        scheduled()
+                    }
+                )
+
+                let argsJSON = """
+                {
+                    "url": "https://some-url",
+                    "width": 10.0,
+                    "height": 20.0,
+                    "aspect_lock": true
+                }
+                """
+
+                let args = ActionArguments(value: try AirshipJSON.from(json: argsJSON), situation: .manualInvocation)
+
+                let result = try await action.perform(arguments: args)
+                #expect(result == nil)
             }
-        )
-
-        let argsJSON = """
-        {
-            "url": "https://some-url",
-            "width": 10.0,
-            "height": 20.0,
-            "aspect_lock": true
         }
-        """
-
-        let args = ActionArguments(value: try AirshipJSON.from(json: argsJSON), situation: .manualInvocation)
-
-        let result = try await action.perform(arguments: args)
-        XCTAssertNil(result)
-
-        await self.fulfillment(of: [urlChecked, scheduled])
     }
 
+    @Test
     func testAppendSchema() async throws {
-        let urlChecked = expectation(description: "url checked")
-        let scheduled = expectation(description: "scheduled")
-
         let expectedMessage = InAppMessage(
             name: "Landing Page https://some-url",
             displayContent: .html(
@@ -163,37 +163,37 @@ final class LandingPageActionTest: XCTestCase {
             displayBehavior: .immediate
         )
 
-        let action = LandingPageAction(
-            borderRadius: 10,
-            scheduleExtender: nil,
-            allowListChecker: { url in
-                XCTAssertEqual("https://some-url", url.absoluteString)
-                urlChecked.fulfill()
-                return true
-            },
-            scheduler: { schedule in
-                XCTAssertEqual(schedule.data, .inAppMessage(expectedMessage))
-                XCTAssertEqual(schedule.triggers.count, 1)
-                XCTAssertEqual(schedule.triggers[0].type, EventAutomationTriggerType.activeSession.rawValue)
-                XCTAssertEqual(schedule.triggers[0].goal, 1.0)
-                XCTAssertTrue(schedule.bypassHoldoutGroups!)
-                XCTAssertEqual(schedule.productID, "landing_page")
-                XCTAssertEqual(schedule.priority, Int.min)
-                scheduled.fulfill()
+        try await confirmation("url checked") { urlChecked in
+            try await confirmation("scheduled") { scheduled in
+                let action = LandingPageAction(
+                    borderRadius: 10,
+                    scheduleExtender: nil,
+                    allowListChecker: { url in
+                        #expect("https://some-url" == url.absoluteString)
+                        urlChecked()
+                        return true
+                    },
+                    scheduler: { schedule in
+                        #expect(schedule.data == .inAppMessage(expectedMessage))
+                        #expect(schedule.triggers.count == 1)
+                        #expect(schedule.triggers[0].type == EventAutomationTriggerType.activeSession.rawValue)
+                        #expect(schedule.triggers[0].goal == 1.0)
+                        #expect(schedule.bypassHoldoutGroups!)
+                        #expect(schedule.productID == "landing_page")
+                        #expect(schedule.priority == Int.min)
+                        scheduled()
+                    }
+                )
+
+                let args = ActionArguments(value: "some-url", situation: .manualInvocation)
+                let result = try await action.perform(arguments: args)
+                #expect(result == nil)
             }
-        )
-
-        let args = ActionArguments(value: "some-url", situation: .manualInvocation)
-        let result = try await action.perform(arguments: args)
-        XCTAssertNil(result)
-
-        await self.fulfillment(of: [urlChecked, scheduled])
+        }
     }
 
+    @Test
     func testExtendSchedule() async throws {
-        let urlChecked = expectation(description: "url checked")
-        let scheduled = expectation(description: "scheduled")
-
         let expectedMessage = InAppMessage(
             name: "Landing Page https://some-url",
             displayContent: .html(
@@ -208,70 +208,71 @@ final class LandingPageActionTest: XCTestCase {
             displayBehavior: .immediate
         )
 
-        let action = LandingPageAction(
-            borderRadius: 10,
-            scheduleExtender: { args, schedule in
-                schedule.group = "some-group"
-                guard case .inAppMessage(var message) = schedule.data else { return }
-                guard case .html(var html) = message.displayContent else { return }
-                html.borderRadius = 20.0
+        try await confirmation("url checked") { urlChecked in
+            try await confirmation("scheduled") { scheduled in
+                let action = LandingPageAction(
+                    borderRadius: 10,
+                    scheduleExtender: { args, schedule in
+                        schedule.group = "some-group"
+                        guard case .inAppMessage(var message) = schedule.data else { return }
+                        guard case .html(var html) = message.displayContent else { return }
+                        html.borderRadius = 20.0
 
-                message.displayContent = .html(html)
-                schedule.data = .inAppMessage(message)
-            },
-            allowListChecker: { url in
-                XCTAssertEqual("https://some-url", url.absoluteString)
-                urlChecked.fulfill()
-                return true
-            },
-            scheduler: { schedule in
-                XCTAssertEqual(schedule.data, .inAppMessage(expectedMessage))
-                XCTAssertEqual(schedule.triggers.count, 1)
-                XCTAssertEqual(schedule.triggers[0].type, EventAutomationTriggerType.activeSession.rawValue)
-                XCTAssertEqual(schedule.triggers[0].goal, 1.0)
-                XCTAssertTrue(schedule.bypassHoldoutGroups!)
-                XCTAssertEqual(schedule.productID, "landing_page")
-                XCTAssertEqual(schedule.priority, Int.min)
-                scheduled.fulfill()
+                        message.displayContent = .html(html)
+                        schedule.data = .inAppMessage(message)
+                    },
+                    allowListChecker: { url in
+                        #expect("https://some-url" == url.absoluteString)
+                        urlChecked()
+                        return true
+                    },
+                    scheduler: { schedule in
+                        #expect(schedule.data == .inAppMessage(expectedMessage))
+                        #expect(schedule.triggers.count == 1)
+                        #expect(schedule.triggers[0].type == EventAutomationTriggerType.activeSession.rawValue)
+                        #expect(schedule.triggers[0].goal == 1.0)
+                        #expect(schedule.bypassHoldoutGroups!)
+                        #expect(schedule.productID == "landing_page")
+                        #expect(schedule.priority == Int.min)
+                        scheduled()
+                    }
+                )
+
+                let args = ActionArguments(value: "some-url", situation: .manualInvocation)
+                let result = try await action.perform(arguments: args)
+                #expect(result == nil)
             }
-        )
-
-        let args = ActionArguments(value: "some-url", situation: .manualInvocation)
-        let result = try await action.perform(arguments: args)
-        XCTAssertNil(result)
-
-        await self.fulfillment(of: [urlChecked, scheduled])
+        }
     }
 
+    @Test
     func testRejectsURL() async throws {
-        let expectation = expectation(description: "url checked")
-        let action = LandingPageAction(
-            borderRadius: 2,
-            scheduleExtender: nil,
-            allowListChecker: { url in
-                XCTAssertEqual("https://some-url", url.absoluteString)
-                expectation.fulfill()
-                return false
-            },
-            scheduler: { schedule in
-                XCTFail("Should skip scheduling")
-            }
-        )
+        await confirmation("url checked") { confirmed in
+            let action = LandingPageAction(
+                borderRadius: 2,
+                scheduleExtender: nil,
+                allowListChecker: { url in
+                    #expect("https://some-url" == url.absoluteString)
+                    confirmed()
+                    return false
+                },
+                scheduler: { schedule in
+                    Issue.record("Should skip scheduling")
+                }
+            )
 
-        let args = ActionArguments(value: "https://some-url", situation: .manualInvocation)
+            let args = ActionArguments(value: "https://some-url", situation: .manualInvocation)
 
-        do {
-            _ = try await action.perform(arguments: args)
-            XCTFail("should throw")
-        } catch {}
-
-        await self.fulfillment(of: [expectation])
+            do {
+                _ = try await action.perform(arguments: args)
+                Issue.record("should throw")
+            } catch {}
+        }
     }
 
+    @Test
     func testReportingEnabled() async throws {
         let pushMetadata: AirshipJSON = ["_": "some-send-ID"]
-
-        let scheduled = expectation(description: "scheduled")
 
         let expectedMessage = InAppMessage(
             name: "Landing Page https://some-url",
@@ -287,94 +288,92 @@ final class LandingPageActionTest: XCTestCase {
             displayBehavior: .immediate
         )
 
-        let action = LandingPageAction(
-            borderRadius: 10,
-            scheduleExtender: nil,
-            allowListChecker: { url in
-                return true
-            },
-            scheduler: { schedule in
-                XCTAssertEqual(schedule.data, .inAppMessage(expectedMessage))
-                XCTAssertEqual(schedule.triggers.count, 1)
-                XCTAssertEqual(schedule.triggers[0].type, EventAutomationTriggerType.activeSession.rawValue)
-                XCTAssertEqual(schedule.triggers[0].goal, 1.0)
-                XCTAssertTrue(schedule.bypassHoldoutGroups!)
-                XCTAssertEqual(schedule.productID, "landing_page")
-                XCTAssertEqual(schedule.priority, Int.min)
-                XCTAssertEqual(schedule.identifier, "some-send-ID")
-                XCTAssertNil(schedule.sendMetadata)
-                scheduled.fulfill()
-            }
-        )
+        try await confirmation("scheduled") { scheduled in
+            let action = LandingPageAction(
+                borderRadius: 10,
+                scheduleExtender: nil,
+                allowListChecker: { url in
+                    return true
+                },
+                scheduler: { schedule in
+                    #expect(schedule.data == .inAppMessage(expectedMessage))
+                    #expect(schedule.triggers.count == 1)
+                    #expect(schedule.triggers[0].type == EventAutomationTriggerType.activeSession.rawValue)
+                    #expect(schedule.triggers[0].goal == 1.0)
+                    #expect(schedule.bypassHoldoutGroups!)
+                    #expect(schedule.productID == "landing_page")
+                    #expect(schedule.priority == Int.min)
+                    #expect(schedule.identifier == "some-send-ID")
+                    #expect(schedule.sendMetadata == nil)
+                    scheduled()
+                }
+            )
 
-        let args = ActionArguments(
-            value: "https://some-url",
-            situation: .manualInvocation,
-            metadata: [ActionArguments.pushPayloadJSONMetadataKey: pushMetadata]
-        )
+            let args = ActionArguments(
+                value: "https://some-url",
+                situation: .manualInvocation,
+                metadata: [ActionArguments.pushPayloadJSONMetadataKey: pushMetadata]
+            )
 
-        let result = try await action.perform(arguments: args)
-        XCTAssertNil(result)
-
-        await self.fulfillment(of: [scheduled])
+            let result = try await action.perform(arguments: args)
+            #expect(result == nil)
+        }
     }
 
+    @Test
     func testSendMetadataPropagatedToSchedule() async throws {
         let pushMetadata: AirshipJSON = [
             "_": "some-send-ID",
             "com.urbanairship.metadata": "encoded-send-metadata"
         ]
 
-        let scheduled = expectation(description: "scheduled")
+        try await confirmation("scheduled") { scheduled in
+            let action = LandingPageAction(
+                borderRadius: 10,
+                scheduleExtender: nil,
+                allowListChecker: { _ in true },
+                scheduler: { schedule in
+                    #expect(schedule.sendMetadata == "encoded-send-metadata")
+                    #expect(schedule.identifier == "some-send-ID")
+                    scheduled()
+                }
+            )
 
-        let action = LandingPageAction(
-            borderRadius: 10,
-            scheduleExtender: nil,
-            allowListChecker: { _ in true },
-            scheduler: { schedule in
-                XCTAssertEqual(schedule.sendMetadata, "encoded-send-metadata")
-                XCTAssertEqual(schedule.identifier, "some-send-ID")
-                scheduled.fulfill()
-            }
-        )
+            let args = ActionArguments(
+                value: "https://some-url",
+                situation: .manualInvocation,
+                metadata: [ActionArguments.pushPayloadJSONMetadataKey: pushMetadata]
+            )
 
-        let args = ActionArguments(
-            value: "https://some-url",
-            situation: .manualInvocation,
-            metadata: [ActionArguments.pushPayloadJSONMetadataKey: pushMetadata]
-        )
-
-        let result = try await action.perform(arguments: args)
-        XCTAssertNil(result)
-
-        await self.fulfillment(of: [scheduled])
+            let result = try await action.perform(arguments: args)
+            #expect(result == nil)
+        }
     }
 
+    @Test
     func testMessageSourceIsPushAction() async throws {
-        let scheduled = expectation(description: "scheduled")
-
-        let action = LandingPageAction(
-            borderRadius: 10,
-            scheduleExtender: nil,
-            allowListChecker: { _ in true },
-            scheduler: { schedule in
-                guard case .inAppMessage(let message) = schedule.data else {
-                    XCTFail("Expected inAppMessage schedule data")
-                    return
+        try await confirmation("scheduled") { scheduled in
+            let action = LandingPageAction(
+                borderRadius: 10,
+                scheduleExtender: nil,
+                allowListChecker: { _ in true },
+                scheduler: { schedule in
+                    guard case .inAppMessage(let message) = schedule.data else {
+                        Issue.record("Expected inAppMessage schedule data")
+                        return
+                    }
+                    #expect(message.source == .pushAction)
+                    scheduled()
                 }
-                XCTAssertEqual(message.source, .pushAction)
-                scheduled.fulfill()
-            }
-        )
+            )
 
-        let args = ActionArguments(
-            value: "https://some-url",
-            situation: .manualInvocation
-        )
+            let args = ActionArguments(
+                value: "https://some-url",
+                situation: .manualInvocation
+            )
 
-        let result = try await action.perform(arguments: args)
-        XCTAssertNil(result)
-
-        await self.fulfillment(of: [scheduled])
+            let result = try await action.perform(arguments: args)
+            #expect(result == nil)
+        }
     }
 }

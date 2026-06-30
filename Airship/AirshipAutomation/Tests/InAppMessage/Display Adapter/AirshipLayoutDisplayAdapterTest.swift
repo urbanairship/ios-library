@@ -1,28 +1,31 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @testable @_spi(AirshipInternal) import AirshipAutomation
 import AirshipCore
 
-final class AirshipLayoutDisplayAdapterTest: XCTestCase {
+struct AirshipLayoutDisplayAdapterTest {
 
     private let networkChecker: TestNetworkChecker = TestNetworkChecker()
     private let assets: TestCachedAssets = TestCachedAssets()
 
+    @Test
     func testIsReadyNoAssets() async throws {
         let message = InAppMessage(
             name: "no assets", 
             displayContent: .banner(.init())
         )
-        XCTAssertTrue(message.urlInfos.isEmpty)
+        #expect(message.urlInfos.isEmpty)
 
         let adapter = try makeAdapter(message)
 
         await networkChecker.setConnected(false)
         let isReady = await adapter.isReady
-        XCTAssertTrue(isReady)
+        #expect(isReady)
     }
 
+    @Test
     func testIsReadyImageAsset() async throws {
         let message = InAppMessage(
             name: "image assets",
@@ -35,21 +38,22 @@ final class AirshipLayoutDisplayAdapterTest: XCTestCase {
 
         await networkChecker.setConnected(false)
         var isReady = await adapter.isReady
-        XCTAssertFalse(isReady)
+        #expect(!(isReady))
 
         self.assets.cached.append(URL(string: "some-url")!)
         isReady = await adapter.isReady
-        XCTAssertTrue(isReady)
+        #expect(isReady)
 
         self.assets.cached.removeAll()
         isReady = await adapter.isReady
-        XCTAssertFalse(isReady)
+        #expect(!(isReady))
 
         await networkChecker.setConnected(true)
         isReady = await adapter.isReady
-        XCTAssertTrue(isReady)
+        #expect(isReady)
     }
 
+    @Test
     func testIsReadyVideoAsset() async throws {
         let message = InAppMessage(
             name: "video assets",
@@ -65,13 +69,14 @@ final class AirshipLayoutDisplayAdapterTest: XCTestCase {
 
         await networkChecker.setConnected(false)
         var isReady = await adapter.isReady
-        XCTAssertFalse(isReady)
+        #expect(!(isReady))
 
         await networkChecker.setConnected(true)
         isReady = await adapter.isReady
-        XCTAssertTrue(isReady)
+        #expect(isReady)
     }
 
+    @Test
     func testIsReadyHTMLAsset() async throws {
         let message = InAppMessage(
             name: "video assets",
@@ -87,13 +92,14 @@ final class AirshipLayoutDisplayAdapterTest: XCTestCase {
 
         await networkChecker.setConnected(false)
         var isReady = await adapter.isReady
-        XCTAssertFalse(isReady)
+        #expect(!(isReady))
 
         await networkChecker.setConnected(true)
         isReady = await adapter.isReady
-        XCTAssertTrue(isReady)
+        #expect(isReady)
     }
 
+    @Test
     func testWaitForReadyNetwork() async throws {
         let message = InAppMessage(
             name: "video assets",
@@ -103,21 +109,18 @@ final class AirshipLayoutDisplayAdapterTest: XCTestCase {
         )
         let adapter = try makeAdapter(message)
 
-        let waitingReady = expectation(description: "waiting is ready")
-        let isReady = expectation(description: "is ready")
+        await confirmation { isReady in
+            let task = Task {
+                await adapter.waitForReady()
+                isReady()
+            }
 
-        Task {
-            waitingReady.fulfill()
-            await adapter.waitForReady()
-            isReady.fulfill()
+            Task { [networkChecker] in
+                await networkChecker.setConnected(true)
+            }
+
+            await task.value
         }
-
-        await self.fulfillment(of: [waitingReady])
-        Task { [networkChecker] in
-            await networkChecker.setConnected(true)
-        }
-
-        await self.fulfillment(of: [isReady])
     }
 
     private func makeAdapter(
