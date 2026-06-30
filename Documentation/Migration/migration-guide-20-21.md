@@ -29,7 +29,7 @@ required to migrate an app from SDK 20.x to SDK 21.0.
   - [Embedded Views](#embedded-views)
   - [Custom Views](#custom-views)
 - [Hidden APIs](#hidden-apis)
-- [Deprecated APIs](#deprecated-apis)
+- [Removed APIs](#removed-apis)
 - [Troubleshooting](#troubleshooting)
 
 ## Requirements
@@ -193,23 +193,26 @@ codebase rather than relying on it from the SDK. Alternatively,
 [open an issue](https://github.com/urbanairship/ios-library/issues) describing your
 use case — if it's something other apps need, we may expose it as a supported API.
 
-## Deprecated APIs
+## Removed APIs
 
-### Version Comparison
+A handful of utility and app-integration methods that were unintentionally public
+— or that wrapped Apple APIs deprecated years ago — have been removed. None had a
+supported public use; replacements are noted below where relevant.
 
-`AirshipUtils.compareVersion(_:toVersion:maxVersionParts:)` is deprecated and will
-be removed in SDK 22. This was an internal utility that was unintentionally
-exposed; there is no public replacement. If your app relied on it, implement your
-own version comparison.
+### AirshipUtils helpers
 
-```swift
-// Removed in SDK 22 — replace with your own comparison.
-let result = AirshipUtils.compareVersion("1.2.0", toVersion: "1.3.0")
-```
+The following `AirshipUtils` methods have been removed: `compareVersion(_:toVersion:maxVersionParts:)`,
+`hasNetworkConnection()`, `deviceModelName()`, and `mergeFetchResults(_:)`. These
+were internal utilities that were unintentionally exposed and have no public
+replacement — implement the equivalent in your own code if you depended on one.
 
-> **Note**
-> No previously-deprecated public APIs have been removed yet in SDK 21.0. This
-> section will be updated as removals land.
+### Background-fetch app integration
+
+`AppIntegration.application(_:performFetchWithCompletionHandler:)` and its
+`UAAppIntegration` Objective-C equivalent have been removed. They forwarded
+`UIApplicationDelegate.application(_:performFetchWithCompletionHandler:)`, which
+Apple deprecated in iOS 13. Remove the corresponding call from your app delegate;
+use background push or a `BGAppRefreshTask` (BackgroundTasks framework) instead.
 
 ## Troubleshooting
 

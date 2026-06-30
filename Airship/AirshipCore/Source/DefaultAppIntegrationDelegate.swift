@@ -28,12 +28,6 @@ final class DefaultAppIntegrationDelegate: AppIntegrationDelegate, Sendable {
     }
 
     @MainActor
-    public func onBackgroundAppRefresh() {
-        AirshipLogger.info("Application received background app refresh")
-        self.push.dispatchUpdateAuthorizedNotificationTypes()
-    }
-
-    @MainActor
     public func didRegisterForRemoteNotifications(deviceToken: Data) {
         let tokenString = AirshipUtils.deviceTokenStringFromDeviceToken(deviceToken)
         AirshipLogger.info("Application registered device token: \(tokenString)")

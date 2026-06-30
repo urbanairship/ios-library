@@ -19,13 +19,6 @@ public final class AirshipUtils {
 
     // MARK: Device Utilities
 
-    /// Get the device model name (e.g.,` iPhone3,1`).
-    ///
-    /// - Returns: The device model name.
-    @available(*, deprecated, message: "This method is no longer supported and will be removed in a future SDK version.")
-    public class func deviceModelName() -> String? {
-        return AirshipDevice.modelIdentifier
-    }
 
     /// Gets the short bundle version string.
     ///
@@ -34,57 +27,6 @@ public final class AirshipUtils {
         return Bundle.main.infoDictionary?["CFBundleShortVersionString"]
             as? String
     }
-
-
-    #if !os(watchOS)
-    /// Checks if the device has network connection.
-    ///
-    /// - Returns: The true if it has connection, false otherwise.
-    public class func hasNetworkConnection() -> Bool {
-        var zeroAddress = sockaddr_in()
-        zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
-        zeroAddress.sin_family = sa_family_t(AF_INET)
-
-        guard
-            let reachability = withUnsafePointer(
-                to: &zeroAddress,
-                {
-                    $0.withMemoryRebound(
-                        to: sockaddr.self,
-                        capacity: MemoryLayout<sockaddr>.size
-                    ) { ptr in
-                        SCNetworkReachabilityCreateWithAddress(nil, ptr)
-                    }
-                }
-            )
-        else {
-            return false
-        }
-
-        var flags = SCNetworkReachabilityFlags()
-        let isSuccess = SCNetworkReachabilityGetFlags(reachability, &flags)
-        return isSuccess && flags.contains(.reachable)
-    }
-
-    #endif
-
-    /// Compares two version strings and determines their order.
-    ///
-    /// - Parameters:
-    ///   - fromVersion: The first version.
-    ///   - toVersion: The second version.
-    ///   - maxVersionParts: Max number of version parts to compare. Use 3 to only compare major.minor.patch
-    ///
-    /// - Returns: a `ComparisonResult`.
-    @available(*, deprecated, renamed: "AirshipVersionUtils.compareVersions", message: "Deprecated in SDK 21, will be removed in SDK 22.")
-    public class func compareVersion(
-        _ fromVersion: String,
-        toVersion: String,
-        maxVersionParts: Int? = nil
-    ) -> ComparisonResult {
-        return AirshipVersionUtils.compareVersions(fromVersion, toVersion: toVersion, maxVersionParts: maxVersionParts)
-    }
-
 
     // MARK: UI Utilities
 
@@ -128,50 +70,6 @@ public final class AirshipUtils {
     }
 
 
-    #endif
-
-    // MARK: Fetch Results
-
-    #if !os(watchOS) && !os(macOS)
-    ///  Takes an array of fetch results and returns the merged result.
-    ///
-    /// - Parameter results: An `Array` of fetch results.
-    ///
-    /// - Returns: The merged fetch result.
-    public class func mergeFetchResults(
-        _ results: [UInt]
-    ) -> UIBackgroundFetchResult {
-        var mergedResult: UIBackgroundFetchResult = .noData
-        for r in results {
-            if r == UIBackgroundFetchResult.newData.rawValue {
-                return .newData
-            } else if r == UIBackgroundFetchResult.failed.rawValue {
-                mergedResult = .failed
-            }
-        }
-        return mergedResult
-    }
-    #endif
-    
-    #if os(watchOS)
-    ///  Takes an array of fetch results and returns the merged result.
-    ///
-    /// - Parameter results: An `Array` of fetch results.
-    ///
-    /// - Returns: The merged fetch result.
-    public class func mergeFetchResults(_ results: [UInt])
-        -> WKBackgroundFetchResult
-    {
-        var mergedResult: WKBackgroundFetchResult = .noData
-        for r in results {
-            if r == WKBackgroundFetchResult.newData.rawValue {
-                return .newData
-            } else if r == WKBackgroundFetchResult.failed.rawValue {
-                mergedResult = .failed
-            }
-        }
-        return mergedResult
-    }
     #endif
 
     // MARK: Notification Payload

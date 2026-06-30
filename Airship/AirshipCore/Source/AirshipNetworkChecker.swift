@@ -53,9 +53,7 @@ public final class AirshipNetworkChecker: AirshipNetworkCheckerProtocol, Sendabl
     }
 
     public init() {
-        self._isConnected = AirshipMainActorValue(
-            AirshipUtils.hasNetworkConnection()
-        )
+        self._isConnected = AirshipMainActorValue(true)
 
         let monitor = NWPathMonitor()
         self.pathMonitor = monitor

@@ -12,5 +12,6 @@ First beta of the 21.0.0 major release. This release splits the Scene/layout ren
 - Removed CocoaPods support. Integrate via Swift Package Manager (recommended) or the prebuilt XCFrameworks.
 - Xcode 27 will be required for the final 21.0 release.
 - Tightened the public API surface: internal-only helpers that were unintentionally exposed are now `internal` or `@_spi(AirshipInternal)`.
-- Deprecated `AirshipUtils.compareVersion(_:toVersion:maxVersionParts:)`; it will be removed in SDK 22.
+- Removed public `AirshipUtils` helper methods: `compareVersion(_:toVersion:maxVersionParts:)`, `hasNetworkConnection()`, `deviceModelName()`, and `mergeFetchResults(_:)`.
+- Removed the background-fetch app-integration method `AppIntegration.application(_:performFetchWithCompletionHandler:)` and its `UAAppIntegration` Objective-C equivalent. `UIApplicationDelegate.application(_:performFetchWithCompletionHandler:)` was deprecated by Apple in iOS 13; use background push or `BGAppRefreshTask` instead.
 

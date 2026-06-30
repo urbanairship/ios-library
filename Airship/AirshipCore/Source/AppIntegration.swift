@@ -169,30 +169,6 @@ public class AppIntegration {
         )
     }
 #else
-    /**
-     * Must be called by the UIApplicationDelegate's
-     * application:performFetchWithCompletionHandler:.
-     *
-     * - Parameters:
-     *   - application: The application
-     *   - completionHandler: The completion handler.
-     */
-    @MainActor
-    public class func application(
-        _ application: UIApplication,
-        performFetchWithCompletionHandler completionHandler: @escaping (
-            UIBackgroundFetchResult
-        ) -> Void
-    ) {
-        guard let delegate = integrationDelegate else {
-            logIgnoringCall()
-            completionHandler(.noData)
-            return
-        }
-
-        delegate.onBackgroundAppRefresh()
-        completionHandler(.noData)
-    }
 
     /**
      * Must be called by the UIApplicationDelegate's

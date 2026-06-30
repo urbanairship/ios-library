@@ -22,20 +22,6 @@ struct AppIntegrationTests {
         AppIntegration.integrationDelegate = self.testDelegate
     }
 
-    @Test
-    @MainActor
-    func testPerformFetchWithCompletionHandler() async throws {
-        let appCallbackCalled = AirshipTestExpectation(description: "Callback called")
-        AppIntegration.application(
-            UIApplication.shared,
-            performFetchWithCompletionHandler: { result in
-                #expect(result == .noData)
-                appCallbackCalled.fulfill()
-            }
-        )
-        await fulfillment(of: [appCallbackCalled], timeout: 10)
-        #expect(self.testDelegate.onBackgroundAppRefreshCalled!)
-    }
 
     @Test
     @MainActor
@@ -87,14 +73,10 @@ struct AppIntegrationTests {
 
 @MainActor
 final class TestIntegrationDelegate: NSObject, AppIntegrationDelegate {
-    var onBackgroundAppRefreshCalled: Bool?
     var deviceToken: Data?
     var registrationError: Error?
     var didReceiveRemoteNotificationCallback: (@MainActor ([AnyHashable: Any], Bool) async -> UIBackgroundFetchResult)?
 
-    func onBackgroundAppRefresh() {
-        self.onBackgroundAppRefreshCalled = true
-    }
 
     func didRegisterForRemoteNotifications(deviceToken: Data) {
         self.deviceToken = deviceToken

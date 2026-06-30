@@ -22,24 +22,6 @@ public final class UAAppIntegration: NSObject {
     
     /**
      * Must be called by the UIApplicationDelegate's
-     * application:performFetchWithCompletionHandler:.
-     *
-     * - Parameters:
-     *   - application: The application
-     *   - completionHandler: The completion handler.
-     */
-    @objc(application:performFetchWithCompletionHandler:)
-    public class func application(
-        _ application: UIApplication,
-        performFetchWithCompletionHandler completionHandler: @Sendable @escaping (
-            UIBackgroundFetchResult
-        ) -> Void
-    ) {
-        AppIntegration.application(application, performFetchWithCompletionHandler: completionHandler)
-    }
-    
-    /**
-     * Must be called by the UIApplicationDelegate's
      * application:didRegisterForRemoteNotificationsWithDeviceToken:.
      *
      * - Parameters:
@@ -109,7 +91,7 @@ public final class UAAppIntegration: NSObject {
      */
     @objc
     public class func didFailToRegisterForRemoteNotificationsWithError(
-        error: Error
+        error: any Error
     ) {
         AppIntegration.didFailToRegisterForRemoteNotificationsWithError(error)
     }

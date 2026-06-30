@@ -20,9 +20,6 @@ protocol AppIntegrationDelegate: AnyObject, Sendable {
     func didFailToRegisterForRemoteNotifications(error: any Error)
     
     @MainActor
-    func onBackgroundAppRefresh()
-    
-    @MainActor
     func presentationOptions(for notification: UNNotification, completionHandler: @Sendable @escaping (UNNotificationPresentationOptions) -> Void)
     
     @MainActor

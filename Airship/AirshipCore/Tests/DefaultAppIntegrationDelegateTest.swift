@@ -28,12 +28,6 @@ import UserNotifications
         )
     }
 
-    @Test
-    @MainActor
-    func testOnBackgroundAppRefresh() throws {
-        delegate.onBackgroundAppRefresh()
-        #expect(push.updateAuthorizedNotificationTypesCalled)
-    }
 
     @Test
     @MainActor

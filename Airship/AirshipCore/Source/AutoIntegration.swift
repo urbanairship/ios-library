@@ -120,9 +120,6 @@ final class AutoIntegration {
         self.swizzler.swizzleDidFailToRegister(appDelegate, delegate: delegate)
         self.swizzler.swizzleDidReceiveRemoteNotification(appDelegate, delegate: delegate)
 
-#if !os(visionOS)
-        self.swizzler.swizzleBackgroundFetch(appDelegate, delegate: delegate)
-#endif
     }
 
 #endif
@@ -497,28 +494,6 @@ fileprivate extension AirshipSwizzler {
         )
     }
 
-#if !os(visionOS)
-    func swizzleBackgroundFetch(_ appDelegate: any UIApplicationDelegate, delegate: any AppIntegrationDelegate) {
-        let backgroundSelector = #selector((any UIApplicationDelegate).application(_:performFetchWithCompletionHandler:))
-        let backgroundBlock: BackgroundFetchBlock = { [weak self] (receiver, app, handler) in
-            delegate.onBackgroundAppRefresh()
-            if let strongSelf = self, let original = strongSelf.originalImplementation(backgroundSelector, forClass: runtimeClass(receiver)) {
-                let fn = unsafeBitCast(original, to: (@convention(c) (NSObject, Selector, UIApplication, @escaping (UIBackgroundFetchResult) -> Void) -> Void).self)
-                let safeCompletion = strongSelf.ensureOnce(selector: backgroundSelector, completion: handler)
-                fn(receiver, backgroundSelector, app, safeCompletion)
-            } else {
-                handler(.noData)
-            }
-        }
-
-        self.swizzleInstance(
-            appDelegate,
-            selector: backgroundSelector,
-            protocol: (any UIApplicationDelegate).self,
-            implementation: imp_implementationWithBlock(backgroundBlock)
-        )
-    }
-#endif
 }
 #endif
 
