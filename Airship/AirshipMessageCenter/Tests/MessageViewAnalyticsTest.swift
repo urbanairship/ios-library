@@ -68,14 +68,17 @@ struct DefaultMessageViewAnalyticsTests {
         let messageID = "test-message-id"
         
         let message = createStubMessage(id: messageID)
-        
-        let analytics = makeAnalytics(message: message, sessionID: "current-session")
-        
-        let layoutContext = ThomasLayoutContext()
+
+        // Seed history before constructing analytics: the initializer reads it
+        // asynchronously, so setting it afterward races that read.
         self.historyStorage.currentValue = MessageDisplayHistory(
             lastImpression: .init(date: clock.now.advanced(by: -100), triggerSessionID: "impression-session"),
             lastDisplay: .init(triggerSessionID: "previous-session")
         )
+
+        let analytics = makeAnalytics(message: message, sessionID: "current-session")
+
+        let layoutContext = ThomasLayoutContext()
         analytics.recordEvent(mockEvent, layoutContext: layoutContext)
         await operationsQueue.waitForCurrentOperations()
         
@@ -90,13 +93,17 @@ struct DefaultMessageViewAnalyticsTests {
         let messageID = "test-message-id"
         
         let message = createStubMessage(id: messageID)
-        let analytics = makeAnalytics(message: message, sessionID: "current-session")
-        let layoutContext = ThomasLayoutContext()
-        
+
+        // Seed history before constructing analytics: the initializer reads it
+        // asynchronously, so setting it afterward races that read.
         self.historyStorage.currentValue = MessageDisplayHistory(
             lastImpression: .init(date: clock.now.advanced(by: -100), triggerSessionID: "last-session"),
             lastDisplay: .init(triggerSessionID: "last-session")
         )
+
+        let analytics = makeAnalytics(message: message, sessionID: "current-session")
+        let layoutContext = ThomasLayoutContext()
+
         analytics.recordEvent(mockEvent, layoutContext: layoutContext)
         await operationsQueue.waitForCurrentOperations()
         

@@ -8,42 +8,21 @@ if [ -z "$1" ]
     exit 1
 fi
 
+# Strip any pre-release suffix (e.g. 21.0.0-beta.1 -> 21.0.0) for the numeric
+# build version. CURRENT_PROJECT_VERSION feeds CFBundleVersion, which must be
+# period-separated integers. The full version (with suffix) lives in
+# AirshipVersion.swift.
+BUILD_VERSION="${VERSION%%-*}"
+
 # Initialize counters
 FAILED_COUNT=0
 SUCCESS_COUNT=0
 
-echo "Updating version to $VERSION"
+echo "Updating version to $VERSION (build version $BUILD_VERSION)"
 echo ""
 
-# Pods
-if sed -i '' "s/\(^AIRSHIP_VERSION *= *\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/Airship.podspec 2>/dev/null; then
-  echo "✓ Airship.podspec"
-  SUCCESS_COUNT=$((SUCCESS_COUNT+1))
-else
-  echo "✗ Airship.podspec"
-  FAILED_COUNT=$((FAILED_COUNT+1))
-fi
-
-if [ -f "$ROOT_PATH/AirshipDebug.podspec" ]; then
-  if sed -i '' "s/\(^AIRSHIP_VERSION *= *\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/AirshipDebug.podspec 2>/dev/null; then
-    echo "✓ AirshipDebug.podspec"
-    SUCCESS_COUNT=$((SUCCESS_COUNT+1))
-  else
-    echo "✗ AirshipDebug.podspec"
-    FAILED_COUNT=$((FAILED_COUNT+1))
-  fi
-fi
-
-if sed -i '' "s/\(^AIRSHIP_VERSION *= *\)\".*\"/\1\"$VERSION\"/g" $ROOT_PATH/AirshipServiceExtension.podspec 2>/dev/null; then
-  echo "✓ AirshipServiceExtension.podspec"
-  SUCCESS_COUNT=$((SUCCESS_COUNT+1))
-else
-  echo "✗ AirshipServiceExtension.podspec"
-  FAILED_COUNT=$((FAILED_COUNT+1))
-fi
-
 # Airship Config
-if sed -i '' "s/\CURRENT_PROJECT_VERSION.*/CURRENT_PROJECT_VERSION = $VERSION/g" $ROOT_PATH/Airship/AirshipConfig.xcconfig 2>/dev/null; then
+if sed -i '' "s/\CURRENT_PROJECT_VERSION.*/CURRENT_PROJECT_VERSION = $BUILD_VERSION/g" $ROOT_PATH/Airship/AirshipConfig.xcconfig 2>/dev/null; then
   echo "✓ Airship/AirshipConfig.xcconfig"
   SUCCESS_COUNT=$((SUCCESS_COUNT+1))
 else

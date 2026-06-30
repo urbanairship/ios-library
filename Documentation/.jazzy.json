@@ -1,8 +1,0 @@
-{
-    "author":"Urban Airship",
-    "author_url":"https://urbanairship.com",
-    "github_url":"https://github.com/urbanairship/ios-library",
-    "readme":"readme-for-jazzy.md",
-    "documentation":"Documentation/Migration/M*md",
-    "abstract":"Documentation/abstracts/*md"
-}

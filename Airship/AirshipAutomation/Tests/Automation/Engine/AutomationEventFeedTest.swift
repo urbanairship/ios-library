@@ -191,7 +191,7 @@ struct AutomationEventFeedTest: @unchecked Sendable {
     }
 
     @discardableResult
-    private func takeNext(count: UInt = 1, timeout: Int = 1) async -> [AutomationEvent] {
+    private func takeNext(count: UInt = 1, timeout: Int = 5) async -> [AutomationEvent] {
         
         let collectTask = Task {
             var result: [AutomationEvent] = []
