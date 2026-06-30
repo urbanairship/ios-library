@@ -1,99 +1,104 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
+import Foundation
 
-final class AirshipConfigTest: XCTestCase {
+@Suite
+struct AirshipConfigTest {
+    @Test
     func testEmptyConfig() {
         let config = AirshipConfig()
         verifyDefaultConfig(config)
     }
 
+    @Test
     func testConfigFromEmptyJSON() throws {
         let config: AirshipConfig = try AirshipJSON.wrap([:]).decode()
         verifyDefaultConfig(config)
     }
 
+    @Test
     func testOldPlistFormat() throws {
-        let path = Bundle(for: self.classForCoder).path(
+        let path = Bundle(for: AirshipConfigTestBundleLocator.self).path(
             forResource: "AirshipConfig-Valid-Legacy",
             ofType: "plist"
         )
         let config = try AirshipConfig(fromPlist: path!)
-        XCTAssertEqual(config.productionAppKey, "0A00000000000000000000")
-        XCTAssertEqual(config.productionAppSecret, "0A00000000000000000000")
-        XCTAssertEqual(config.developmentAppKey, "0A00000000000000000000")
-        XCTAssertEqual(config.developmentAppSecret, "0A00000000000000000000")
-        XCTAssertEqual(config.developmentLogLevel, .verbose)
-        XCTAssertEqual(config.inProduction, true)
+        #expect(config.productionAppKey == "0A00000000000000000000")
+        #expect(config.productionAppSecret == "0A00000000000000000000")
+        #expect(config.developmentAppKey == "0A00000000000000000000")
+        #expect(config.developmentAppSecret == "0A00000000000000000000")
+        #expect(config.developmentLogLevel == .verbose)
+        #expect(config.inProduction == true)
     }
 
+    @Test
     func testPlistParsing() throws {
-        let path = Bundle(for: self.classForCoder).path(
+        let path = Bundle(for: AirshipConfigTestBundleLocator.self).path(
             forResource: "AirshipConfig-Valid",
             ofType: "plist"
         )
 
         let config = try AirshipConfig(fromPlist: path!)
-        XCTAssertEqual(config.productionAppKey, "0A00000000000000000000")
-        XCTAssertEqual(config.productionAppSecret, "0A00000000000000000000")
-        XCTAssertEqual(config.developmentAppKey, "0A00000000000000000000")
-        XCTAssertEqual(config.developmentAppSecret, "0A00000000000000000000")
-        XCTAssertEqual(config.developmentLogLevel, .error)
-        XCTAssertEqual(config.developmentLogPrivacyLevel, .private)
-        XCTAssertEqual(config.productionLogLevel, .verbose)
-        XCTAssertEqual(config.productionLogPrivacyLevel, .public)
-        XCTAssertTrue(config.isChannelCreationDelayEnabled)
-        XCTAssertTrue(config.isExtendedBroadcastsEnabled)
-        XCTAssertEqual(config.inProduction, true)
-        XCTAssertEqual(config.enabledFeatures, [.inAppAutomation, .push])
-        XCTAssertTrue(config.resetEnabledFeatures)
-        XCTAssertEqual(config.messageCenterStyleConfig, "ValidUAMessageCenterDefaultStyle")
+        #expect(config.productionAppKey == "0A00000000000000000000")
+        #expect(config.productionAppSecret == "0A00000000000000000000")
+        #expect(config.developmentAppKey == "0A00000000000000000000")
+        #expect(config.developmentAppSecret == "0A00000000000000000000")
+        #expect(config.developmentLogLevel == .error)
+        #expect(config.developmentLogPrivacyLevel == .private)
+        #expect(config.productionLogLevel == .verbose)
+        #expect(config.productionLogPrivacyLevel == .public)
+        #expect(config.isChannelCreationDelayEnabled)
+        #expect(config.isExtendedBroadcastsEnabled)
+        #expect(config.inProduction == true)
+        #expect(config.enabledFeatures == [.inAppAutomation, .push])
+        #expect(config.resetEnabledFeatures)
+        #expect(config.messageCenterStyleConfig == "ValidUAMessageCenterDefaultStyle")
     }
 
     private func verifyDefaultConfig(
-        _ config: AirshipConfig,
-        file: StaticString = #filePath,
-        line: UInt = #line
+        _ config: AirshipConfig
     ) {
-        XCTAssertNil(config.developmentAppKey)
-        XCTAssertNil(config.developmentAppSecret)
-        XCTAssertNil(config.productionAppKey)
-        XCTAssertNil(config.productionAppSecret)
-        XCTAssertNil(config.defaultAppKey)
-        XCTAssertNil(config.defaultAppSecret)
-        XCTAssertNil(config.logHandler)
-        XCTAssertEqual(config.site, .us)
-        XCTAssertEqual(config.developmentLogLevel, .debug)
-        XCTAssertEqual(config.developmentLogPrivacyLevel, .private)
-        XCTAssertEqual(config.productionLogLevel, .error)
-        XCTAssertEqual(config.productionLogPrivacyLevel, .private)
-        XCTAssertNil(config.inProduction)
-        XCTAssertTrue(config.isAutomaticSetupEnabled)
-        XCTAssertTrue(config.isAnalyticsEnabled)
-        XCTAssertFalse(config.clearUserOnAppRestore)
-        XCTAssertNil(config.urlAllowList)
-        XCTAssertNil(config.urlAllowListScopeJavaScriptInterface)
-        XCTAssertNil(config.urlAllowListScopeOpenURL)
-        XCTAssertFalse(config.clearNamedUserOnAppRestore)
-        XCTAssertTrue(config.isChannelCaptureEnabled)
-        XCTAssertFalse(config.isChannelCreationDelayEnabled)
-        XCTAssertFalse(config.isExtendedBroadcastsEnabled)
-        XCTAssertTrue(config.requestAuthorizationToUseNotifications)
-        XCTAssertTrue(config.requireInitialRemoteConfigEnabled)
-        XCTAssertFalse(config.autoPauseInAppAutomationOnLaunch)
-        XCTAssertFalse(config.resetEnabledFeatures)
-        XCTAssertFalse(config.isWebViewInspectionEnabled)
-        XCTAssertNil(config.connectionChallengeResolver)
-        XCTAssertNil(config.restoreChannelID)
-        XCTAssertNil(config.itunesID)
-        XCTAssertNil(config.messageCenterStyleConfig)
-        XCTAssertEqual(config.enabledFeatures, .all)
-        XCTAssertNil(config.initialConfigURL)
-        XCTAssertFalse(config.useUserPreferredLocale)
-        XCTAssertTrue(config.restoreMessageCenterOnReinstall)
+        #expect(config.developmentAppKey == nil)
+        #expect(config.developmentAppSecret == nil)
+        #expect(config.productionAppKey == nil)
+        #expect(config.productionAppSecret == nil)
+        #expect(config.defaultAppKey == nil)
+        #expect(config.defaultAppSecret == nil)
+        #expect(config.logHandler == nil)
+        #expect(config.site == .us)
+        #expect(config.developmentLogLevel == .debug)
+        #expect(config.developmentLogPrivacyLevel == .private)
+        #expect(config.productionLogLevel == .error)
+        #expect(config.productionLogPrivacyLevel == .private)
+        #expect(config.inProduction == nil)
+        #expect(config.isAutomaticSetupEnabled)
+        #expect(config.isAnalyticsEnabled)
+        #expect(!(config.clearUserOnAppRestore))
+        #expect(config.urlAllowList == nil)
+        #expect(config.urlAllowListScopeJavaScriptInterface == nil)
+        #expect(config.urlAllowListScopeOpenURL == nil)
+        #expect(!(config.clearNamedUserOnAppRestore))
+        #expect(config.isChannelCaptureEnabled)
+        #expect(!(config.isChannelCreationDelayEnabled))
+        #expect(!(config.isExtendedBroadcastsEnabled))
+        #expect(config.requestAuthorizationToUseNotifications)
+        #expect(config.requireInitialRemoteConfigEnabled)
+        #expect(!(config.autoPauseInAppAutomationOnLaunch))
+        #expect(!(config.resetEnabledFeatures))
+        #expect(!(config.isWebViewInspectionEnabled))
+        #expect(config.connectionChallengeResolver == nil)
+        #expect(config.restoreChannelID == nil)
+        #expect(config.itunesID == nil)
+        #expect(config.messageCenterStyleConfig == nil)
+        #expect(config.enabledFeatures == .all)
+        #expect(config.initialConfigURL == nil)
+        #expect(!(config.useUserPreferredLocale))
+        #expect(config.restoreMessageCenterOnReinstall)
     }
 
+    @Test
     func testValidation() throws {
         var config = AirshipConfig()
 
@@ -149,13 +154,13 @@ final class AirshipConfigTest: XCTestCase {
     }
 
     private func verifyThrows(
-        block: () throws -> Void,
-        file: StaticString = #filePath,
-        line: UInt = #line
+        block: () throws -> Void
     ) {
         do {
             try block()
-            XCTFail()
+            Issue.record("Should throw")
         } catch {}
     }
 }
+
+private final class AirshipConfigTestBundleLocator {}

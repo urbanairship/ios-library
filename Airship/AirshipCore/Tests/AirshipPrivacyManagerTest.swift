@@ -1,16 +1,19 @@
-import XCTest
+import Testing
+import Foundation
 
 @testable
 import AirshipCore
 
-class DefaultAirshipPrivacyManagerTest: XCTestCase {
+@Suite
+struct DefaultAirshipPrivacyManagerTest {
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
 
-    private var config: RuntimeConfig = RuntimeConfig.testConfig()
+    private let config: RuntimeConfig = RuntimeConfig.testConfig()
 
-    private var privacyManager: DefaultAirshipPrivacyManager!
-    override func setUp() async throws {
+    private let privacyManager: DefaultAirshipPrivacyManager
+
+    init() async throws {
         self.privacyManager = await DefaultAirshipPrivacyManager(
             dataStore: dataStore,
             config: self.config,
@@ -19,111 +22,120 @@ class DefaultAirshipPrivacyManagerTest: XCTestCase {
         )
     }
 
+    @Test
     func testDefaultFeatures() async {
-        XCTAssertEqual(self.privacyManager.enabledFeatures, .all)
+        #expect(self.privacyManager.enabledFeatures == .all)
 
-        self.privacyManager = await DefaultAirshipPrivacyManager(
+        let privacyManager = await DefaultAirshipPrivacyManager(
             dataStore: dataStore,
             config: self.config,
             defaultEnabledFeatures: [],
             notificationCenter: notificationCenter
         )
 
-        XCTAssertEqual(self.privacyManager.enabledFeatures, [])
+        #expect(privacyManager.enabledFeatures == [])
     }
 
+    @Test
     func testEnableFeatures() {
         self.privacyManager.disableFeatures(.all)
 
-        XCTAssertEqual(self.privacyManager.enabledFeatures, [])
+        #expect(self.privacyManager.enabledFeatures == [])
 
         self.privacyManager.enableFeatures(.push)
-        XCTAssertEqual(self.privacyManager.enabledFeatures, [.push])
+        #expect(self.privacyManager.enabledFeatures == [.push])
 
         self.privacyManager.enableFeatures([.push, .contacts])
-        XCTAssertEqual(self.privacyManager.enabledFeatures, [.push, .contacts])
+        #expect(self.privacyManager.enabledFeatures == [.push, .contacts])
     }
 
+    @Test
     func testDisableFeatures() {
-        XCTAssertEqual(self.privacyManager.enabledFeatures, .all)
+        #expect(self.privacyManager.enabledFeatures == .all)
 
         self.privacyManager.disableFeatures(.push)
-        XCTAssertNotEqual(self.privacyManager.enabledFeatures, .all)
+        #expect(self.privacyManager.enabledFeatures != .all)
 
         self.privacyManager.disableFeatures([.analytics, .messageCenter, .tagsAndAttributes])
-        XCTAssertEqual(self.privacyManager.enabledFeatures, [.inAppAutomation, .contacts, .featureFlags])
+        #expect(self.privacyManager.enabledFeatures == [.inAppAutomation, .contacts, .featureFlags])
     }
 
+    @Test
     func testIsEnabled() {
         self.privacyManager.disableFeatures(.all)
 
-        XCTAssertFalse(self.privacyManager.isEnabled(.analytics))
+        #expect(!(self.privacyManager.isEnabled(.analytics)))
 
         self.privacyManager.enableFeatures(.contacts)
-        XCTAssertTrue(self.privacyManager.isEnabled(.contacts))
+        #expect(self.privacyManager.isEnabled(.contacts))
 
         self.privacyManager.enableFeatures(.analytics)
-        XCTAssertTrue(self.privacyManager.isEnabled(.analytics))
+        #expect(self.privacyManager.isEnabled(.analytics))
 
         self.privacyManager.enableFeatures(.all)
-        XCTAssertTrue(self.privacyManager.isEnabled(.inAppAutomation))
+        #expect(self.privacyManager.isEnabled(.inAppAutomation))
     }
 
+    @Test
     func testIsAnyEnabled() {
-        XCTAssertTrue(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
+        #expect(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
 
         self.privacyManager.disableFeatures([.push, .contacts])
-        XCTAssertTrue(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
+        #expect(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
 
         self.privacyManager.disableFeatures(.all)
-        XCTAssertFalse(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
+        #expect(!(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false)))
     }
 
+    @Test
     func testNoneEnabled() {
         self.privacyManager.enabledFeatures = []
-        XCTAssertFalse(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
+        #expect(!(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false)))
 
         self.privacyManager.enableFeatures([.push, .tagsAndAttributes])
-        XCTAssertTrue(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
+        #expect(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
 
         self.privacyManager.enabledFeatures = []
-        XCTAssertFalse(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false))
+        #expect(!(self.privacyManager.isAnyFeatureEnabled(ignoringRemoteConfig: false)))
     }
 
+    @Test
     func testSetEnabled() {
         self.privacyManager.enabledFeatures = .contacts
 
-        XCTAssertTrue(self.privacyManager.isEnabled(.contacts))
-        XCTAssertFalse(self.privacyManager.isEnabled(.analytics))
+        #expect(self.privacyManager.isEnabled(.contacts))
+        #expect(!(self.privacyManager.isEnabled(.analytics)))
 
         self.privacyManager.enabledFeatures = .analytics
-        XCTAssertTrue(self.privacyManager.isEnabled(.analytics))
+        #expect(self.privacyManager.isEnabled(.analytics))
     }
 
+    @Test
     @MainActor
     func testRemoteConfigOverrides() async {
-        XCTAssertEqual(AirshipFeature.all, self.privacyManager.enabledFeatures)
+        #expect(AirshipFeature.all == self.privacyManager.enabledFeatures)
 
         self.config.updateRemoteConfig(
             RemoteConfig(disabledFeatures: .push)
         )
 
-        XCTAssertEqual(AirshipFeature.all.subtracting(.push), self.privacyManager.enabledFeatures)
+        #expect(AirshipFeature.all.subtracting(.push) == self.privacyManager.enabledFeatures)
 
         self.config.updateRemoteConfig(
             RemoteConfig(disabledFeatures: [])
         )
 
-        XCTAssertEqual(AirshipFeature.all, self.privacyManager.enabledFeatures)
+        #expect(AirshipFeature.all == self.privacyManager.enabledFeatures)
 
         self.config.updateRemoteConfig(
             RemoteConfig(disabledFeatures: .all)
         )
 
-        XCTAssertEqual([], self.privacyManager.enabledFeatures)
+        #expect([] == self.privacyManager.enabledFeatures)
     }
 
 
+    @Test
     @MainActor
     func testNotifiedOnChange() {
         let counter = AirshipAtomicValue(0)
@@ -135,24 +147,24 @@ class DefaultAirshipPrivacyManagerTest: XCTestCase {
         self.privacyManager.disableFeatures([])
         self.privacyManager.enableFeatures(.all)
         self.privacyManager.enableFeatures(.analytics)
-        XCTAssertEqual(counter.value, 0)
+        #expect(counter.value == 0)
 
         self.privacyManager.disableFeatures(.analytics)
-        XCTAssertEqual(counter.value, 1)
+        #expect(counter.value == 1)
 
         self.privacyManager.enableFeatures(.analytics)
-        XCTAssertEqual(counter.value, 2)
+        #expect(counter.value == 2)
 
         self.config.updateRemoteConfig(
             RemoteConfig(disabledFeatures: [])
         )
-        XCTAssertEqual(counter.value, 2)
+        #expect(counter.value == 2)
 
 
         self.config.updateRemoteConfig(
             RemoteConfig(disabledFeatures: [.analytics])
         )
-        XCTAssertEqual(counter.value, 3)
+        #expect(counter.value == 3)
 
 
         notificationCenter.removeObserver(observer)

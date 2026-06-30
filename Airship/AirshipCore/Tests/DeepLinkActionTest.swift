@@ -1,29 +1,30 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable import AirshipCore
 
 @MainActor
-class DeepLinkActionTest: XCTestCase {
+@Suite
+struct DeepLinkActionTest {
 
     private let testURLOpener: TestURLOpener = TestURLOpener()
     private let urlAllowList: TestURLAllowList = TestURLAllowList()
-    private var airship: TestAirshipInstance!
+    private let airship: TestAirshipInstance
+    private let action: DeepLinkAction
 
-    private var action: DeepLinkAction!
-    override func setUp() async throws {
-        airship = TestAirshipInstance()
+    init() {
+        self.airship = TestAirshipInstance()
         self.action = DeepLinkAction(urlOpener: self.testURLOpener)
         self.airship.urlAllowList = self.urlAllowList
         self.airship.makeShared()
     }
 
-    override func tearDown() async throws {
-        TestAirshipInstance.clearShared()
-    }
-
+    @Test
     func testAcceptsArguments() async throws {
+        defer { TestAirshipInstance.clearShared() }
+
         let validSituations = [
             ActionSituation.foregroundInteractiveButton,
             ActionSituation.launchedFromPush,
@@ -41,18 +42,20 @@ class DeepLinkActionTest: XCTestCase {
         for situation in validSituations {
             let args = ActionArguments(situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result)
         }
 
         for situation in rejectedSituations {
             let args = ActionArguments(situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!(result))
         }
     }
 
-    @MainActor
+    @Test
     func testPerformDeepLinkDelegate() async throws {
+        defer { TestAirshipInstance.clearShared() }
+
         let deepLinkDelegate = TestDeepLinkDelegate()
         self.urlAllowList.isAllowedReturnValue = false
         self.testURLOpener.returnValue = false
@@ -66,12 +69,14 @@ class DeepLinkActionTest: XCTestCase {
 
         _ = try await action.perform(arguments: args)
 
-        XCTAssertEqual("http://some-valid-url", deepLinkDelegate.lastDeepLink?.absoluteString)
-        XCTAssertNil(self.testURLOpener.lastURL)
+        #expect("http://some-valid-url" == deepLinkDelegate.lastDeepLink?.absoluteString)
+        #expect(self.testURLOpener.lastURL == nil)
     }
 
-    @MainActor
+    @Test
     func testPerformFallback() async throws {
+        defer { TestAirshipInstance.clearShared() }
+
         self.urlAllowList.isAllowedReturnValue = true
         self.testURLOpener.returnValue = true
 
@@ -81,11 +86,13 @@ class DeepLinkActionTest: XCTestCase {
         )
 
         _ = try await action.perform(arguments: args)
-        XCTAssertEqual("http://some-valid-url", self.testURLOpener.lastURL?.absoluteString)
+        #expect("http://some-valid-url" == self.testURLOpener.lastURL?.absoluteString)
     }
 
-    @MainActor
+    @Test
     func testPerformFallbackRejectsURL() async throws {
+        defer { TestAirshipInstance.clearShared() }
+
         self.urlAllowList.isAllowedReturnValue = false
         self.testURLOpener.returnValue = true
 
@@ -96,14 +103,16 @@ class DeepLinkActionTest: XCTestCase {
 
         do {
             _ = try await action.perform(arguments: args)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
 
-        XCTAssertNil(self.testURLOpener.lastURL)
+        #expect(self.testURLOpener.lastURL == nil)
     }
 
-    @MainActor
+    @Test
     func testPerformFallbackUnableToOpenURL() async throws {
+        defer { TestAirshipInstance.clearShared() }
+
         self.urlAllowList.isAllowedReturnValue = true
         self.testURLOpener.returnValue = false
 
@@ -114,14 +123,16 @@ class DeepLinkActionTest: XCTestCase {
 
         do {
             _ = try await action.perform(arguments: args)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
 
-        XCTAssertEqual("http://some-valid-url", self.testURLOpener.lastURL?.absoluteString)
+        #expect("http://some-valid-url" == self.testURLOpener.lastURL?.absoluteString)
     }
 
-    @MainActor
+    @Test
     func testPerformInvalidURL() async throws {
+        defer { TestAirshipInstance.clearShared() }
+
         self.urlAllowList.isAllowedReturnValue = true
         self.testURLOpener.returnValue = true
 
@@ -132,10 +143,10 @@ class DeepLinkActionTest: XCTestCase {
 
         do {
             _ = try await action.perform(arguments: args)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
 
-        XCTAssertNil(self.testURLOpener.lastURL)
+        #expect(self.testURLOpener.lastURL == nil)
     }
 }
 

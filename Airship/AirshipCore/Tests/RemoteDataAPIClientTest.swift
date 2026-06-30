@@ -1,13 +1,17 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @_spi(AirshipInternal) import AirshipBasement
 @testable
 import AirshipCore
+import Foundation
 
-final class RemoteDataAPIClientTest: AirshipBaseTest {
-    var remoteDataAPIClient: RemoteDataAPIClient!
+@Suite
+struct RemoteDataAPIClientTest {
+    let config: RuntimeConfig = RuntimeConfig.testConfig()
+
+    let remoteDataAPIClient: RemoteDataAPIClient
     private let testSession: TestAirshipRequestSession = TestAirshipRequestSession()
 
     private static let validData = """
@@ -34,13 +38,14 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
 
     private let exampleURL: URL = URL(string: "exampleurl://")!
 
-    override func setUpWithError() throws {
+    init() {
         self.remoteDataAPIClient = RemoteDataAPIClient(
             config: self.config,
             session: self.testSession
         )
     }
 
+    @Test
     func testFetch() async throws {
         self.testSession.response = HTTPURLResponse(
             url: URL(string: "https://neat")!,
@@ -56,7 +61,7 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
             auth: .contactAuthToken(identifier: "some contact ID"),
             lastModified: "current last modified"
         ) { lastModified in
-            XCTAssertEqual(lastModified, "new last modified")
+            #expect(lastModified == "new last modified")
             return RemoteDataInfo(url: exampleURL, lastModifiedTime: lastModified, source: .contact)
         }
 
@@ -86,15 +91,16 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
             "Accept": "application/vnd.urbanairship+json; version=3;"
         ]
 
-        XCTAssertEqual(200, response.statusCode)
-        XCTAssertEqual(expectedResult, response.result)
+        #expect(200 == response.statusCode)
+        #expect(expectedResult == response.result)
 
-        XCTAssertEqual("GET", self.testSession.lastRequest?.method)
-        XCTAssertEqual(self.exampleURL, self.testSession.lastRequest?.url)
-        XCTAssertEqual(expectedHeaders, self.testSession.lastRequest?.headers)
-        XCTAssertEqual(AirshipRequestAuth.contactAuthToken(identifier: "some contact ID"), self.testSession.lastRequest?.auth)
+        #expect("GET" == self.testSession.lastRequest?.method)
+        #expect(self.exampleURL == self.testSession.lastRequest?.url)
+        #expect(expectedHeaders == self.testSession.lastRequest?.headers)
+        #expect(AirshipRequestAuth.contactAuthToken(identifier: "some contact ID") == self.testSession.lastRequest?.auth)
     }
 
+    @Test
     func testFetch304() async throws {
         self.testSession.response = HTTPURLResponse(
             url: URL(string: "https://neat")!,
@@ -109,14 +115,15 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
             auth: .contactAuthToken(identifier: "some contact ID"),
             lastModified: "current last modified"
         ) { lastModified in
-            XCTFail("Should not be reached")
+            Issue.record("Should not be reached")
             return RemoteDataInfo(url: exampleURL, lastModifiedTime: lastModified, source: .contact)
         }
 
-        XCTAssertEqual(304, response.statusCode)
-        XCTAssertNil(response.result)
+        #expect(304 == response.statusCode)
+        #expect(response.result == nil)
     }
 
+    @Test
     func testEmptyResponse() async throws {
         self.testSession.response = HTTPURLResponse(
             url: URL(string: "https://neat")!,
@@ -145,10 +152,11 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
             )
         )
 
-        XCTAssertEqual(200, response.statusCode)
-        XCTAssertEqual(expectedResult, response.result)
+        #expect(200 == response.statusCode)
+        #expect(expectedResult == response.result)
     }
 
+    @Test
     func testNoLastModified() async throws {
         self.testSession.response = HTTPURLResponse(
             url: URL(string: "https://neat")!,
@@ -165,7 +173,7 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
             auth: .basicAppAuth,
             lastModified: nil
         ) { lastModified in
-            XCTAssertNil(lastModified)
+            #expect(lastModified == nil)
             return RemoteDataInfo(url: exampleURL, lastModifiedTime: lastModified, source: .app)
         }
 
@@ -183,9 +191,9 @@ final class RemoteDataAPIClientTest: AirshipBaseTest {
             "Accept": "application/vnd.urbanairship+json; version=3;"
         ]
 
-        XCTAssertEqual(200, response.statusCode)
-        XCTAssertEqual(expectedResult, response.result)
-        XCTAssertEqual(expectedHeaders, self.testSession.lastRequest?.headers)
+        #expect(200 == response.statusCode)
+        #expect(expectedResult == response.result)
+        #expect(expectedHeaders == self.testSession.lastRequest?.headers)
     }
 
 }

@@ -1,13 +1,17 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
+import Foundation
 
-final class ChannelRegistrationPayloadTest: XCTestCase {
+@Suite
+struct ChannelRegistrationPayloadTest {
 
-    private lazy var fullPayload: ChannelRegistrationPayload = {
+    private let fullPayload: ChannelRegistrationPayload
+
+    init() {
         let quietTime = ChannelRegistrationPayload.QuietTime(
             start: "16:00",
             end: "16:01"
@@ -35,9 +39,10 @@ final class ChannelRegistrationPayloadTest: XCTestCase {
         fullPayload.channel.deviceModel = "deviceModel"
         fullPayload.channel.deviceOS = "deviceOS"
 
-        return fullPayload
-    }()
+        self.fullPayload = fullPayload
+    }
 
+    @Test
     func testMinimalUpdatePayloadSameValues() {
         let minPayload = self.fullPayload.minimizePayload(
             previous: self.fullPayload
@@ -57,9 +62,10 @@ final class ChannelRegistrationPayloadTest: XCTestCase {
         expected.channel.iOSChannelSettings?.isTimeSensitive = nil
         expected.channel.iOSChannelSettings?.isScheduledSummary = nil
 
-        XCTAssertEqual(expected, minPayload)
+        #expect(expected == minPayload)
     }
 
+    @Test
     func testMinimalUpdateDifferentValues() {
         var otherPayload = self.fullPayload
         otherPayload.channel.appVersion = UUID().uuidString
@@ -85,9 +91,10 @@ final class ChannelRegistrationPayloadTest: XCTestCase {
             removes: fullPayload.channel.tags!
         )
 
-        XCTAssertEqual(expected, minPayload)
+        #expect(expected == minPayload)
     }
 
+    @Test
     func testMinimalUpdateDifferentContact() {
         var otherPayload = self.fullPayload
         otherPayload.channel.contactID = UUID().uuidString
@@ -103,6 +110,6 @@ final class ChannelRegistrationPayloadTest: XCTestCase {
         expected.channel.iOSChannelSettings?.isTimeSensitive = nil
         expected.channel.iOSChannelSettings?.isScheduledSummary = nil
 
-        XCTAssertEqual(expected, minPayload)
+        #expect(expected == minPayload)
     }
 }

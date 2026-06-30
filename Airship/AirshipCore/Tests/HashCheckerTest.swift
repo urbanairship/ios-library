@@ -1,17 +1,20 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
-final class HashCheckerTest: XCTestCase {
+import Foundation
+
+@Suite struct HashCheckerTest {
     private let cache: TestCache = TestCache()
     private let testDeviceInfo: TestAudienceDeviceInfoProvider = TestAudienceDeviceInfoProvider()
 
-    private var checker: HashChecker!
+    private let checker: HashChecker
 
-    override func setUp() async throws {
+    init() {
         self.checker = HashChecker(cache: cache)
     }
 
+    @Test
     func testStickyCacheMatch() async throws {
         self.testDeviceInfo.channelID = "some channel"
         self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "match")
@@ -39,20 +42,21 @@ final class HashCheckerTest: XCTestCase {
             deviceInfoProvider: self.testDeviceInfo
         )
 
-        XCTAssertEqual(
+        #expect(
             AirshipDeviceAudienceResult(
                 isMatch: true,
                 reportingMetadata: [.string("sticky reporting")]
-            ),
+            ) ==
             result
         )
 
         let entry = await self.cache.entry(key: "StickyHash:match:some channel:sticky ID")!
-        XCTAssertEqual(entry.ttl, 100.0)
+        #expect(entry.ttl == 100.0)
         let decodedData = try JSONDecoder().decode(AirshipDeviceAudienceResult.self, from: entry.data)
-        XCTAssertEqual(decodedData, result)
+        #expect(decodedData == result)
     }
 
+    @Test
     func testStickyHashFromCacheStillCaches() async throws {
         self.testDeviceInfo.channelID = "some channel"
         self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "match")
@@ -80,16 +84,16 @@ final class HashCheckerTest: XCTestCase {
             deviceInfoProvider: self.testDeviceInfo
         )
 
-        XCTAssertEqual(
+        #expect(
             AirshipDeviceAudienceResult(
                 isMatch: true,
                 reportingMetadata: [.string("sticky reporting")]
-            ),
+            ) ==
             result
         )
 
         var entry = await self.cache.entry(key: "StickyHash:match:some channel:sticky ID")!
-        XCTAssertEqual(entry.ttl, 100.0)
+        #expect(entry.ttl == 100.0)
 
         stickyHash.sticky = AudienceHashSelector.Sticky(
             id: "sticky ID",
@@ -102,19 +106,20 @@ final class HashCheckerTest: XCTestCase {
             deviceInfoProvider: self.testDeviceInfo
         )
 
-        XCTAssertEqual(
+        #expect(
             AirshipDeviceAudienceResult(
                 isMatch: true,
                 reportingMetadata: [.string("sticky reporting")]
-            ),
+            ) ==
             result
         )
 
         entry = await self.cache.entry(key: "StickyHash:match:some channel:sticky ID")!
-        XCTAssertEqual(entry.ttl, 50.0)
+        #expect(entry.ttl == 50.0)
 
     }
 
+    @Test
     func testStickyCacheMiss() async throws {
         self.testDeviceInfo.channelID = "some channel"
         self.testDeviceInfo.stableContactInfo = StableContactInfo(contactID: "not a match")
@@ -141,17 +146,17 @@ final class HashCheckerTest: XCTestCase {
             deviceInfoProvider: self.testDeviceInfo
         )
 
-        XCTAssertEqual(
+        #expect(
             AirshipDeviceAudienceResult(
                 isMatch: false,
                 reportingMetadata: [.string("sticky reporting")]
-            ),
+            ) ==
             result
         )
 
         let entry = await self.cache.entry(key: "StickyHash:not a match:some channel:sticky ID")!
-        XCTAssertEqual(entry.ttl, 100.0)
+        #expect(entry.ttl == 100.0)
         let decodedData = try JSONDecoder().decode(AirshipDeviceAudienceResult.self, from: entry.data)
-        XCTAssertEqual(decodedData, result)
+        #expect(decodedData == result)
     }
 }

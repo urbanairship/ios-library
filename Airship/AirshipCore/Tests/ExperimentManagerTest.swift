@@ -1,22 +1,23 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
+import Foundation
 
 @MainActor
-final class ExperimentManagerTest: XCTestCase {
+@Suite struct ExperimentManagerTest {
 
-    private var deviceInfo: TestAudienceDeviceInfoProvider = TestAudienceDeviceInfoProvider()
+    private let deviceInfo: TestAudienceDeviceInfoProvider = TestAudienceDeviceInfoProvider()
     private let remoteData: TestRemoteData = TestRemoteData()
-    private var subject: ExperimentManager!
+    private let subject: ExperimentManager
     private let audienceChecker: TestAudienceChecker = TestAudienceChecker()
 
     private let testDate: UATestDate = UATestDate(offset: 0, dateOverride: Date())
 
-    override func setUp() async throws {
+    init() async throws {
         self.deviceInfo.channelID = "channel-id"
         self.deviceInfo.stableContactInfo = StableContactInfo(contactID: "some-contact-id")
 
@@ -28,6 +29,7 @@ final class ExperimentManagerTest: XCTestCase {
         )
     }
 
+    @Test
     func testExperimentManagerOmitsInvalidExperiments() async throws {
         let experiment = Experiment.generate(id: "valid")
         self.remoteData.payloads = [createPayload([experiment.toString, "{ \"not valid\": true }"])]
@@ -41,14 +43,15 @@ final class ExperimentManagerTest: XCTestCase {
             deviceInfoProvider: self.deviceInfo
         )!
 
-        XCTAssertEqual(
+        #expect(
             [
                 experiment.reportingMetadata
-            ],
+            ] ==
             result.reportingMetadata
         )
     }
 
+    @Test
     func testExperimentManagerParseMultipleExperiments() async throws {
         let experiment1 = Experiment.generate(id: "id1")
         let experiment2 = Experiment.generate(id: "id2")
@@ -67,15 +70,16 @@ final class ExperimentManagerTest: XCTestCase {
             deviceInfoProvider: self.deviceInfo
         )!
 
-        XCTAssertEqual(
+        #expect(
             [
                 experiment1.reportingMetadata,
                 experiment2.reportingMetadata
-            ],
+            ] ==
             result.reportingMetadata
         )
     }
 
+    @Test
     func testExperimentManagerHandleNoExperimentsPayload() async throws {
         self.remoteData.payloads = [createPayload(["{}"])]
 
@@ -83,9 +87,10 @@ final class ExperimentManagerTest: XCTestCase {
             info: MessageInfo.empty,
             deviceInfoProvider: self.deviceInfo
         )
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
+    @Test
     func testExperimentManagerHandleInvalidPayload() async throws {
         let experiment = "{\"invalid\": \"experiment\"}"
         self.remoteData.payloads = [createPayload([experiment])]
@@ -94,9 +99,10 @@ final class ExperimentManagerTest: XCTestCase {
             info: MessageInfo.empty,
             deviceInfoProvider: self.deviceInfo
         )
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
+    @Test
     func testResultNoExperiments() async throws {
         self.remoteData.payloads = [createPayload([])]
 
@@ -105,9 +111,10 @@ final class ExperimentManagerTest: XCTestCase {
             deviceInfoProvider: self.deviceInfo
         )
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
+    @Test
     func testResultNoMatch() async throws {
         let experiment = Experiment.generate(id: "fake-id", reportingMetadata: AirshipJSON.string("reporting data!"))
         self.remoteData.payloads = [createPayload([experiment.toString])]
@@ -121,18 +128,19 @@ final class ExperimentManagerTest: XCTestCase {
             deviceInfoProvider: self.deviceInfo
         )!
 
-        XCTAssertFalse(result.isMatch)
-        XCTAssertEqual(self.deviceInfo.stableContactInfo.contactID, result.contactID)
-        XCTAssertEqual(self.deviceInfo.channelID, result.channelID)
+        #expect(!(result.isMatch))
+        #expect(self.deviceInfo.stableContactInfo.contactID == result.contactID)
+        #expect(self.deviceInfo.channelID == result.channelID)
 
-        XCTAssertEqual(
+        #expect(
             [
                 experiment.reportingMetadata
-            ],
+            ] ==
             result.reportingMetadata
         )
     }
 
+    @Test
     func testResultMatch() async throws {
         let audienceSelector1 = DeviceAudienceSelector(newUser: true)
         let experiment1 = Experiment.generate(
@@ -164,19 +172,20 @@ final class ExperimentManagerTest: XCTestCase {
             deviceInfoProvider: self.deviceInfo
         )!
 
-        XCTAssertTrue(result.isMatch)
-        XCTAssertEqual("active-contact-id", result.contactID)
-        XCTAssertEqual("channel-id", result.channelID)
+        #expect(result.isMatch)
+        #expect("active-contact-id" == result.contactID)
+        #expect("channel-id" == result.channelID)
 
-        XCTAssertEqual(
+        #expect(
             [
                 experiment1.reportingMetadata,
                 experiment2.reportingMetadata
-            ],
+            ] ==
             result.reportingMetadata
         )
     }
 
+    @Test
     func testResultMatchExcludesInactive() async throws {
         let audienceSelector1 = DeviceAudienceSelector(newUser: true)
         let experiment1 = Experiment.generate(
@@ -216,18 +225,19 @@ final class ExperimentManagerTest: XCTestCase {
             deviceInfoProvider: self.deviceInfo
         )!
 
-        XCTAssertTrue(result.isMatch)
-        XCTAssertEqual("active-contact-id", result.contactID)
-        XCTAssertEqual("channel-id", result.channelID)
+        #expect(result.isMatch)
+        #expect("active-contact-id" == result.contactID)
+        #expect("channel-id" == result.channelID)
 
-        XCTAssertEqual(
+        #expect(
             [
                 experiment2.reportingMetadata
-            ],
+            ] ==
             result.reportingMetadata
         )
     }
 
+    @Test
     func testResultMatchExclusions() async throws {
         let messageTypePredicate = JSONPredicate(
             jsonMatcher: JSONMatcher(valueMatcher: .matcherWhereStringEquals("transactional"))
@@ -270,15 +280,15 @@ final class ExperimentManagerTest: XCTestCase {
             deviceInfoProvider: self.deviceInfo
         )!
 
-        XCTAssertTrue(result.isMatch)
-        XCTAssertEqual([experiment.reportingMetadata], result.reportingMetadata)
+        #expect(result.isMatch)
+        #expect([experiment.reportingMetadata] == result.reportingMetadata)
 
         var emptyResult = try await subject.evaluateExperiments(
             info: MessageInfo(messageType: "transactional"),
             deviceInfoProvider: self.deviceInfo
         )
 
-        XCTAssertNil(emptyResult)
+        #expect(emptyResult == nil)
 
         emptyResult = try await subject.evaluateExperiments(
             info: MessageInfo(
@@ -288,7 +298,7 @@ final class ExperimentManagerTest: XCTestCase {
             deviceInfoProvider: self.deviceInfo
         )
 
-        XCTAssertNil(emptyResult)
+        #expect(emptyResult == nil)
     }
     
     private func createPayload(_ json: [String], type: String = "experiments") -> RemoteDataPayload {

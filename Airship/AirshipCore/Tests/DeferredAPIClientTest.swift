@@ -1,26 +1,30 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @_spi(AirshipInternal) import AirshipBasement
 
 @testable
 import AirshipCore
 
-final class DeferredAPIClientTest: AirshipBaseTest {
-    var apiClient: DeferredAPIClient!
+@Suite
+struct DeferredAPIClientTest {
+    let config = RuntimeConfig.testConfig()
+    let apiClient: DeferredAPIClient
     private let testSession: TestAirshipRequestSession = TestAirshipRequestSession()
     private let exampleURL: URL = URL(string: "exampleurl://")!
 
     let date = AirshipDateFormatter.date(from: "2023-10-27T21:18:15.123Z")!
 
-    override func setUpWithError() throws {
+    init() {
         self.apiClient = DeferredAPIClient(
             config: self.config,
             session: self.testSession
         )
     }
 
+    @Test
     func testResolve() async throws {
         self.testSession.response = HTTPURLResponse(
             url: exampleURL,
@@ -116,18 +120,19 @@ final class DeferredAPIClientTest: AirshipBaseTest {
         }
         """
 
-        XCTAssertEqual(200, response.statusCode)
-        XCTAssertEqual(responseBody, response.result)
-        XCTAssertEqual("POST", self.testSession.lastRequest?.method)
-        XCTAssertEqual(self.exampleURL, self.testSession.lastRequest?.url)
-        XCTAssertEqual(["Accept": "application/vnd.urbanairship+json; version=3;"], self.testSession.lastRequest?.headers)
-        XCTAssertEqual(AirshipRequestAuth.channelAuthToken(identifier: "some channel id"), self.testSession.lastRequest?.auth)
-        XCTAssertEqual(
-            try AirshipJSON.from(json: expectedBody),
-            try AirshipJSON.from(data:self.testSession.lastRequest?.body)
+        #expect(200 == response.statusCode)
+        #expect(responseBody == response.result)
+        #expect("POST" == self.testSession.lastRequest?.method)
+        #expect(self.exampleURL == self.testSession.lastRequest?.url)
+        #expect(["Accept": "application/vnd.urbanairship+json; version=3;"] == self.testSession.lastRequest?.headers)
+        #expect(AirshipRequestAuth.channelAuthToken(identifier: "some channel id") == self.testSession.lastRequest?.auth)
+        #expect(
+            try AirshipJSON.from(json: expectedBody) ==
+            (try AirshipJSON.from(data:self.testSession.lastRequest?.body))
         )
     }
 
+    @Test
     func testResolveMinimal() async throws {
         self.testSession.response = HTTPURLResponse(
             url: exampleURL,
@@ -164,9 +169,9 @@ final class DeferredAPIClientTest: AirshipBaseTest {
         }
         """
 
-        XCTAssertEqual(
-            try AirshipJSON.from(json: expectedBody),
-            try AirshipJSON.from(data:self.testSession.lastRequest?.body)
+        #expect(
+            try AirshipJSON.from(json: expectedBody) ==
+            (try AirshipJSON.from(data:self.testSession.lastRequest?.body))
         )
     }
 }

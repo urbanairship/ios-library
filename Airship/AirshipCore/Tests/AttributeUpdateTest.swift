@@ -1,11 +1,13 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
+import Foundation
 
-class AttributeUpdateTest: XCTestCase {
+@Suite struct AttributeUpdateTest {
 
+    @Test
     func testNumberCoding() throws {
         let original = AttributeUpdate(
             attribute: "some attribute",
@@ -18,15 +20,13 @@ class AttributeUpdateTest: XCTestCase {
         let decoded = try JSONDecoder()
             .decode(AttributeUpdate.self, from: encoded)
 
-        XCTAssertEqual(original.attribute, decoded.attribute)
-        XCTAssertEqual(
-            original.jsonValue!,
-            decoded.jsonValue!
-        )
-        XCTAssertEqual(original.date, decoded.date)
+        #expect(original.attribute == decoded.attribute)
+        #expect(original.jsonValue! == decoded.jsonValue!)
+        #expect(original.date == decoded.date)
 
     }
 
+    @Test
     func testStringCoding() throws {
         let original = AttributeUpdate(
             attribute: "some attribute",
@@ -39,12 +39,9 @@ class AttributeUpdateTest: XCTestCase {
         let decoded = try JSONDecoder()
             .decode(AttributeUpdate.self, from: encoded)
 
-        XCTAssertEqual(original.attribute, decoded.attribute)
-        XCTAssertEqual(
-            original.jsonValue!,
-            decoded.jsonValue!
-        )
-        XCTAssertEqual(original.date, decoded.date)
+        #expect(original.attribute == decoded.attribute)
+        #expect(original.jsonValue! == decoded.jsonValue!)
+        #expect(original.date == decoded.date)
 
     }
 }

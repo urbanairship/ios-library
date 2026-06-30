@@ -1,10 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
+import Foundation
 
-final class CompoundDeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable {
+@Suite struct CompoundDeviceAudienceSelectorTest {
 
+    @Test
     func testCombing() {
         let selector = DeviceAudienceSelector(newUser: true)
         let compound = CompoundDeviceAudienceSelector.atomic(DeviceAudienceSelector(newUser: false))
@@ -16,9 +18,10 @@ final class CompoundDeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable 
                 .atomic(DeviceAudienceSelector(newUser: false))
             ]
         )
-        XCTAssertEqual(expected, combined)
+        #expect(expected == combined)
     }
     
+    @Test
     func testParsing() throws {
         [
             (
@@ -61,9 +64,9 @@ final class CompoundDeviceAudienceSelectorTest: XCTestCase, @unchecked Sendable 
         let decoder = JSONDecoder()
         let fromSource = try! decoder.decode(CompoundDeviceAudienceSelector.self, from: json.data(using: .utf8)!)
 
-        XCTAssertEqual(original, fromSource)
+        #expect(original == fromSource)
         
         let roundTrip = try! decoder.decode(CompoundDeviceAudienceSelector.self, from: try JSONEncoder().encode(fromSource))
-        XCTAssertEqual(original, roundTrip)
+        #expect(original == roundTrip)
     }
 }

@@ -1,30 +1,36 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 import Combine
+import Foundation
+#if !os(watchOS)
+import UIKit
+#endif
 
 @testable import AirshipCore
 
 @MainActor
-class AnalyticsTest: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct AnalyticsTest {
 
     private let appStateTracker = TestAppStateTracker()
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let config = RuntimeConfig.testConfig()
     private let channel = TestChannel()
     private let locale = TestLocaleManager()
-    private var permissionsManager: DefaultAirshipPermissionsManager!
+    private let permissionsManager: DefaultAirshipPermissionsManager
     private let notificationCenter = AirshipNotificationCenter(notificationCenter: NotificationCenter())
     private let date = UATestDate()
     private let eventManager = TestEventManager()
     private let sessionEventFactory = TestSessionEventFactory()
     private let sessionTracker = TestSessionTracker()
 
-    private var privacyManager: TestPrivacyManager!
-    private var analytics: DefaultAirshipAnalytics!
-    private var testAirship: TestAirshipInstance!
-    override func setUp() async throws {
-        testAirship = TestAirshipInstance()
+    private let privacyManager: TestPrivacyManager
+    private let analytics: DefaultAirshipAnalytics
+    private let testAirship: TestAirshipInstance
+
+    init() {
+        self.testAirship = TestAirshipInstance()
         self.permissionsManager = DefaultAirshipPermissionsManager()
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
@@ -32,14 +38,8 @@ class AnalyticsTest: XCTestCase {
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
         )
-        
 
-        self.analytics = makeAnalytics()
-    }
-
-    @MainActor
-    func makeAnalytics() -> DefaultAirshipAnalytics {
-        return DefaultAirshipAnalytics(
+        self.analytics = DefaultAirshipAnalytics(
             config: config,
             dataStore: dataStore,
             channel: channel,
@@ -54,11 +54,7 @@ class AnalyticsTest: XCTestCase {
         )
     }
 
-    override class func tearDown() {
-        TestAirshipInstance.clearShared()
-    }
-
-    @MainActor
+    @Test
     func testScreenTrackingBackground() async throws {
         let notificationCenter = self.notificationCenter
         // Foreground
@@ -73,10 +69,10 @@ class AnalyticsTest: XCTestCase {
             )
         }
 
-        XCTAssertEqual("screen_tracking", events[0].type.reportingName)
+        #expect("screen_tracking" == events[0].type.reportingName)
     }
 
-    @MainActor
+    @Test
     func testScreenTrackingTerminate() async throws {
         let notificationCenter = self.notificationCenter
 
@@ -92,9 +88,10 @@ class AnalyticsTest: XCTestCase {
             notificationCenter.post(name: AppStateTracker.didEnterBackgroundNotification)
         }
 
-        XCTAssertEqual("screen_tracking", events[0].type.reportingName)
+        #expect("screen_tracking" == events[0].type.reportingName)
     }
 
+    @Test
     func testScreenTracking() async throws {
         let date = self.date
         let analytics = self.analytics
@@ -102,16 +99,16 @@ class AnalyticsTest: XCTestCase {
         let timeOffset = 3.0
 
         let events = try await self.produceEvents(count: 1) { @MainActor in
-            analytics?.trackScreen("test_screen")
+            analytics.trackScreen("test_screen")
             date.offset = timeOffset
-            analytics?.trackScreen("another_screen")
+            analytics.trackScreen("another_screen")
         }
 
         let body: AirshipJSON = events[0].body
 
-        XCTAssertEqual("screen_tracking", events[0].type.reportingName)
-        XCTAssertEqual("test_screen", body.object?["screen"]?.string)
-        XCTAssertEqual("3.000", body.object?["duration"]?.string)
+        #expect("screen_tracking" == events[0].type.reportingName)
+        #expect("test_screen" == body.object?["screen"]?.string)
+        #expect("3.000" == body.object?["duration"]?.string)
 
         compareTimestamps(value: body.object?["entered_time"]?.string, expectedValue: currentTime)
         compareTimestamps(value: body.object?["exited_time"]?.string, expectedValue: currentTime + timeOffset)
@@ -119,66 +116,66 @@ class AnalyticsTest: XCTestCase {
 
     private func compareTimestamps(value: String?, expectedValue: TimeInterval) {
         if let value = value, let actualValue = Double(value) {
-            XCTAssertEqual(actualValue, expectedValue, accuracy: 1)
+            #expect(abs(actualValue - expectedValue) <= 1)
         } else {
-            XCTFail("Not a double")
+            Issue.record("Not a double")
         }
     }
 
-    @MainActor
-    func testDisablingAnalytics() throws {
+    @Test
+    func testDisablingAnalytics() async throws {
         self.channel.identifier = "test channel"
         self.analytics.airshipReady()
 
-        XCTAssertTrue(self.eventManager.uploadsEnabled)
+        #expect(self.eventManager.uploadsEnabled)
 
-        let expectation = XCTestExpectation()
+        let expectation = AirshipTestExpectation()
         self.eventManager.deleteEventsCallback = {
             expectation.fulfill()
         }
 
         self.privacyManager.disableFeatures(.analytics)
-        wait(for: [expectation], timeout: 5.0)
-        XCTAssertFalse(self.eventManager.uploadsEnabled)
+        await fulfillment(of: [expectation], timeout: 5.0)
+        #expect(!(self.eventManager.uploadsEnabled))
 
     }
 
 
-    @MainActor
-    func testEnableAnalytics() throws {
+    @Test
+    func testEnableAnalytics() async throws {
         self.channel.identifier = "test channel"
         self.analytics.airshipReady()
 
-        XCTAssertTrue(self.eventManager.uploadsEnabled)
+        #expect(self.eventManager.uploadsEnabled)
         
         self.privacyManager.disableFeatures(.analytics)
-        XCTAssertFalse(self.eventManager.uploadsEnabled)
+        #expect(!(self.eventManager.uploadsEnabled))
 
-        let expectation = XCTestExpectation()
+        let expectation = AirshipTestExpectation()
         self.eventManager.scheduleUploadCallback = { priority in
-            XCTAssertEqual(AirshipEventPriority.normal, priority)
+            #expect(AirshipEventPriority.normal == priority)
             expectation.fulfill()
         }
         self.privacyManager.enableFeatures(.analytics)
-        XCTAssertTrue(self.eventManager.uploadsEnabled)
-        wait(for: [expectation], timeout: 5.0)
+        #expect(self.eventManager.uploadsEnabled)
+        await fulfillment(of: [expectation], timeout: 5.0)
     }
 
-    @MainActor
+    @Test
     func testCurrentScreen() throws {
         self.analytics.trackScreen("foo")
-        XCTAssertEqual("foo", self.analytics.currentScreen)
+        #expect("foo" == self.analytics.currentScreen)
 
         self.analytics.trackScreen("bar")
-        XCTAssertEqual("bar", self.analytics.currentScreen)
+        #expect("bar" == self.analytics.currentScreen)
 
         self.analytics.trackScreen(nil)
-        XCTAssertEqual(nil, self.analytics.currentScreen)
+        #expect(nil == self.analytics.currentScreen)
     }
 
-    @MainActor
+    @Test
     func testScreenUpdates() async throws {
-        let expectation = expectation(description: "updates received")
+        let expectation = AirshipTestExpectation(description: "updates received")
 
         let screenUpdates = analytics.screenUpdates
         Task {
@@ -190,123 +187,124 @@ class AnalyticsTest: XCTestCase {
                 }
             }
 
-            XCTAssertEqual([nil, "foo", "bar", nil], updates)
+            #expect([nil, "foo", "bar", nil] == updates)
             expectation.fulfill()
         }
 
         self.analytics.trackScreen("foo")
-        XCTAssertEqual("foo", self.analytics.currentScreen)
+        #expect("foo" == self.analytics.currentScreen)
 
 
         self.analytics.trackScreen("bar")
-        XCTAssertEqual("bar", self.analytics.currentScreen)
+        #expect("bar" == self.analytics.currentScreen)
 
         self.analytics.trackScreen("bar")
         self.analytics.trackScreen("bar")
 
 
         self.analytics.trackScreen(nil)
-        XCTAssertEqual(nil, self.analytics.currentScreen)
+        #expect(nil == self.analytics.currentScreen)
 
-        await self.fulfillment(of: [expectation])
+        await fulfillment(of: [expectation])
     }
 
-    @MainActor
+    @Test
     func testRegions() async throws {
         var updates = self.analytics.regionUpdates.makeAsyncIterator()
         var update = await updates.next()
-        XCTAssertEqual(Set(), update)
+        #expect(Set<String>() == update)
 
         self.analytics.recordRegionEvent(
             RegionEvent(regionID: "foo", source: "source", boundaryEvent: .enter)!
         )
         
         update = await updates.next()
-        XCTAssertEqual(Set(["foo"]), update)
-        XCTAssertEqual(Set(["foo"]), self.analytics.currentRegions)
+        #expect(Set(["foo"]) == update)
+        #expect(Set(["foo"]) == self.analytics.currentRegions)
 
         self.analytics.recordRegionEvent(
             RegionEvent(regionID: "bar", source: "source", boundaryEvent: .enter)!
         )
 
         update = await updates.next()
-        XCTAssertEqual(Set(["foo", "bar"]), update)
-        XCTAssertEqual(Set(["foo", "bar"]), self.analytics.currentRegions)
+        #expect(Set(["foo", "bar"]) == update)
+        #expect(Set(["foo", "bar"]) == self.analytics.currentRegions)
 
         self.analytics.recordRegionEvent(
             RegionEvent(regionID: "bar", source: "source", boundaryEvent: .exit)!
         )
 
         update = await updates.next()
-        XCTAssertEqual(Set(["foo"]), update)
-        XCTAssertEqual(Set(["foo"]), self.analytics.currentRegions)
+        #expect(Set(["foo"]) == update)
+        #expect(Set(["foo"]) == self.analytics.currentRegions)
 
         self.analytics.recordRegionEvent(
             RegionEvent(regionID: "baz", source: "source", boundaryEvent: .exit)!
         )
 
         update = await updates.next()
-        XCTAssertEqual(Set(["foo"]), update)
-        XCTAssertEqual(Set(["foo"]), self.analytics.currentRegions)
+        #expect(Set(["foo"]) == update)
+        #expect(Set(["foo"]) == self.analytics.currentRegions)
 
         self.analytics.recordRegionEvent(
             RegionEvent(regionID: "foo", source: "source", boundaryEvent: .exit)!
         )
 
         update = await updates.next()
-        XCTAssertEqual(Set(), update)
-        XCTAssertEqual(Set(), self.analytics.currentRegions)
+        #expect(Set<String>() == update)
+        #expect(Set<String>() == self.analytics.currentRegions)
     }
 
-    func testAddEvent() throws {
-        let expectation = XCTestExpectation()
+    @Test
+    func testAddEvent() async throws {
+        let expectation = AirshipTestExpectation()
         self.eventManager.addEventCallabck = { event in
-            XCTAssertEqual("app_background", event.type.reportingName)
+            #expect("app_background" == event.type.reportingName)
             expectation.fulfill()
         }
 
         self.analytics.recordEvent(AirshipEvent(priority: .normal, eventType: .appBackground, eventData: "body"))
 
-        wait(for: [expectation], timeout: 5.0)
+        await fulfillment(of: [expectation], timeout: 5.0)
     }
 
+    @Test
     func testAssociateDeviceIdentifiers() async throws {
         let analytics = self.analytics
         let events = try await self.produceEvents(count: 1) {
             let ids = AssociatedIdentifiers(identifiers: ["neat": "id"])
-            analytics?.associateDeviceIdentifiers(ids)
+            analytics.associateDeviceIdentifiers(ids)
         }
 
         let expectedData = [
             "neat": "id",
         ]
 
-        XCTAssertEqual("associate_identifiers", events[0].type.reportingName)
-        XCTAssertEqual(
-            try AirshipJSON.wrap(expectedData),
-            events[0].body
+        #expect("associate_identifiers" == events[0].type.reportingName)
+        #expect(
+            (try AirshipJSON.wrap(expectedData)) == events[0].body
         )
     }
 
-    @MainActor
+    @Test
     func testMissingSendID() throws {
         let notification = ["aps": ["alert": "neat"]]
         self.analytics.launched(fromNotification: notification)
-        XCTAssertEqual("MISSING_SEND_ID", self.analytics.conversionSendID)
-        XCTAssertNil(self.analytics.conversionPushMetadata)
+        #expect("MISSING_SEND_ID" == self.analytics.conversionSendID)
+        #expect(self.analytics.conversionPushMetadata == nil)
     }
     
-    @MainActor
+    @Test
     func testConversionSendID() throws {
         let notification: [String: AnyHashable] = [
             "aps": ["alert": "neat"],
             "_": "some conversionSendID",
         ]
         self.analytics.launched(fromNotification: notification)
-        XCTAssertEqual("some conversionSendID", self.analytics.conversionSendID)
+        #expect("some conversionSendID" == self.analytics.conversionSendID)
     }
 
-    @MainActor
+    @Test
     func testConversationMetadata() throws {
         let notification: [String: AnyHashable] = [
             "aps": ["alert": "neat"],
@@ -315,10 +313,10 @@ class AnalyticsTest: XCTestCase {
         ]
 
         self.analytics.launched(fromNotification: notification)
-        XCTAssertEqual("some metadata", self.analytics.conversionPushMetadata)
+        #expect("some metadata" == self.analytics.conversionPushMetadata)
     }
 
-    @MainActor
+    @Test
     func testLaunchedFromSilentPush() throws {
         let notification: [String: AnyHashable] = [
             "aps": ["neat": "neat"],
@@ -327,19 +325,20 @@ class AnalyticsTest: XCTestCase {
         ]
 
         self.analytics.launched(fromNotification: notification)
-        XCTAssertNil(self.analytics.conversionPushMetadata)
-        XCTAssertNil(self.analytics.conversionSendID)
+        #expect(self.analytics.conversionPushMetadata == nil)
+        #expect(self.analytics.conversionSendID == nil)
     }
 
+    @Test
     func testScreenEventFeed() async throws {
         var feed = await self.analytics.eventFeed.updates.makeAsyncIterator()
         self.analytics.trackScreen("some screen")
 
         let next = await feed.next()
-        XCTAssertEqual(next, .screen(screen: "some screen"))
+        #expect(next == .screen(screen: "some screen"))
     }
 
-    @MainActor
+    @Test
     func testForegroundDoesNotReEmitScreenEvent() async throws {
         var feed = await self.analytics.eventFeed.updates.makeAsyncIterator()
 
@@ -348,7 +347,7 @@ class AnalyticsTest: XCTestCase {
         self.notificationCenter.post(name: AppStateTracker.willEnterForegroundNotification)
 
         // The previous screen should be restored for duration tracking.
-        XCTAssertEqual("foo", self.analytics.currentScreen)
+        #expect("foo" == self.analytics.currentScreen)
 
         self.analytics.trackScreen("bar")
 
@@ -363,9 +362,10 @@ class AnalyticsTest: XCTestCase {
             }
         }
 
-        XCTAssertEqual(screenEvents, ["foo", nil, "bar"])
+        #expect(screenEvents == ["foo", nil, "bar"])
     }
 
+    @Test
     func testRegionEventEventFeed() async throws {
         let event = RegionEvent(
             regionID: "foo",
@@ -377,9 +377,10 @@ class AnalyticsTest: XCTestCase {
         self.analytics.recordRegionEvent(event)
 
         let next = await feed.next()
-        XCTAssertEqual(next, .analytics(eventType: .regionEnter, body: try event.eventBody(stringifyFields: false), value: nil))
+        #expect(next == .analytics(eventType: .regionEnter, body: try event.eventBody(stringifyFields: false), value: nil))
     }
 
+    @Test
     func testForwardCustomEvents() async throws {
         let event = CustomEvent(name: "foo", value: 10.0)
 
@@ -387,8 +388,8 @@ class AnalyticsTest: XCTestCase {
         self.analytics.recordCustomEvent(event)
 
         let next = await feed.next()
-        XCTAssertEqual(
-            next,
+        #expect(
+            next ==
             .analytics(
                 eventType: .customEvent,
                 body: event.eventBody(
@@ -401,6 +402,7 @@ class AnalyticsTest: XCTestCase {
         )
     }
 
+    @Test
     func testForwardCustomEventNoValue() async throws {
         let event = CustomEvent(name: "foo")
 
@@ -408,8 +410,8 @@ class AnalyticsTest: XCTestCase {
         self.analytics.recordCustomEvent(event)
 
         let next = await feed.next()
-        XCTAssertEqual(
-            next,
+        #expect(
+            next ==
             .analytics(
                 eventType: .customEvent,
                 body: event.eventBody(
@@ -422,17 +424,18 @@ class AnalyticsTest: XCTestCase {
         )
     }
 
+    @Test
     func testSDKExtensions() async throws {
         self.analytics.registerSDKExtension(.cordova, version: "1.2.3")
         self.analytics.registerSDKExtension(.unity, version: "5,.6,.7,,,")
 
         let headers = await self.eventManager.headers
-        XCTAssertEqual(
-            "cordova:1.2.3, unity:5.6.7",
-            headers["X-UA-Frameworks"]
+        #expect(
+            "cordova:1.2.3, unity:5.6.7" == headers["X-UA-Frameworks"]
         )
     }
 
+    @Test
     func testAnalyticsHeaders() async throws {
         self.channel.identifier = "someChannelID"
         self.locale.currentLocale = Locale(identifier: "en-US-POSIX")
@@ -455,22 +458,22 @@ class AnalyticsTest: XCTestCase {
         ]
 
         let headers = await self.eventManager.headers
-        XCTAssertEqual(expected, headers)
+        #expect(expected == headers)
     }
 
+    @Test
     func testAnalyticsHeaderExtension() async throws {
         self.analytics.addHeaderProvider {
             return ["neat": "story"]
         }
 
         let headers = await self.eventManager.headers
-        XCTAssertEqual(
-            "story",
-            headers["neat"]
+        #expect(
+            "story" == headers["neat"]
         )
     }
     
-    @MainActor
+    @Test
     func testPermissionHeaders() async throws {
         let testPushDelegate = TestPermissionsDelegate()
         testPushDelegate.permissionStatus = .denied
@@ -488,11 +491,10 @@ class AnalyticsTest: XCTestCase {
 
         let headers = await self.eventManager.headers
 
-        XCTAssertEqual(
-            "denied",
-            headers["X-UA-Permission-display_notifications"]
+        #expect(
+            "denied" == headers["X-UA-Permission-display_notifications"]
         )
-        XCTAssertEqual("granted", headers["X-UA-Permission-location"])
+        #expect("granted" == headers["X-UA-Permission-location"])
     }
 
     @MainActor
@@ -535,6 +537,7 @@ class AnalyticsTest: XCTestCase {
         return result
     }
 
+    @Test
     func testSessionEvents() async throws {
         let date = Date()
         let sessionTracker = self.sessionTracker
@@ -556,25 +559,25 @@ class AnalyticsTest: XCTestCase {
             )
         }
 
-        XCTAssertEqual(
+        #expect(
             [
                 AirshipEventType.appBackground.reportingName,
                 AirshipEventType.appForeground.reportingName,
                 AirshipEventType.appInit.reportingName,
                 AirshipEventType.appInit.reportingName
-            ],
+            ] ==
             events.map { $0.type.reportingName }
         )
-        XCTAssertEqual(
+        #expect(
             [
                 "app_background",
                 "app_foreground",
                 "app_foreground_init",
                 "app_background_init"
-            ],
+            ] ==
             events.map { $0.body }
         )
-        XCTAssertEqual([date, date, date, date], events.map { $0.date })
+        #expect([date, date, date, date] == events.map { $0.date })
     }
 }
 

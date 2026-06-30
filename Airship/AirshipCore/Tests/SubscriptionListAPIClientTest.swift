@@ -1,23 +1,26 @@
 /* Copyright Airship and Contributors */
 
 import SwiftUI
-import XCTest
+import Testing
 
 @testable import AirshipCore
+import Foundation
 
-class SubscriptionListAPIClientTest: XCTestCase {
+@Suite
+struct SubscriptionListAPIClientTest {
 
-    var config: RuntimeConfig = .testConfig()
-    var session: TestAirshipRequestSession = TestAirshipRequestSession()
-    var client: SubscriptionListAPIClient!
+    let config: RuntimeConfig = .testConfig()
+    let session: TestAirshipRequestSession = TestAirshipRequestSession()
+    let client: SubscriptionListAPIClient
 
-    override func setUpWithError() throws {
+    init() {
         self.client = SubscriptionListAPIClient(
             config: self.config,
             session: self.session
         )
     }
 
+    @Test
     func testGet() async throws {
         let responseBody = """
                 {
@@ -36,19 +39,18 @@ class SubscriptionListAPIClientTest: XCTestCase {
 
         let response = try await self.client.get(channelID: "some-channel")
 
-        XCTAssertEqual(response.statusCode, 200)
-        XCTAssertEqual(
-            ["example_listId-1", "example_listId-2"],
-            response.result
+        #expect(response.statusCode == 200)
+        #expect(
+            ["example_listId-1", "example_listId-2"] == response.result
         )
 
-        XCTAssertEqual("GET", self.session.lastRequest?.method)
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/subscription_lists/channels/some-channel",
-            self.session.lastRequest?.url?.absoluteString
+        #expect("GET" == self.session.lastRequest?.method)
+        #expect(
+            "https://device-api.urbanairship.com/api/subscription_lists/channels/some-channel" == self.session.lastRequest?.url?.absoluteString
         )
     }
 
+    @Test
     func testGetParseError() async throws {
         let responseBody = "What?"
 
@@ -63,20 +65,21 @@ class SubscriptionListAPIClientTest: XCTestCase {
 
         do {
             _ = try await self.client.get(channelID: "some-channel")
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {
         }
     }
 
+    @Test
     func testGetError() async throws {
         let sessionError = AirshipErrors.error("error!")
         self.session.error = sessionError
 
         do {
             _ = try await self.client.get(channelID: "some-channel")
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {
-            XCTAssertEqual(sessionError as NSError, error as NSError)
+            #expect(sessionError as NSError == error as NSError)
         }
     }
 }

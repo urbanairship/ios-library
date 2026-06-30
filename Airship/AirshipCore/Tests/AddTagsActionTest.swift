@@ -1,11 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
 
-final class AddTagsActionTest: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct AddTagsActionTest {
 
     private let simpleValue = ["tag", "another tag"]
     private let complexValue: [String: AnyHashable] = [
@@ -22,15 +23,16 @@ final class AddTagsActionTest: XCTestCase {
 
     private let channel = TestChannel()
     private let contact = TestContact()
-    private var action: AddTagsAction!
+    private let action: AddTagsAction
 
-    override func setUp() async throws {
+    init() async throws {
         action = AddTagsAction(
             channel: { [channel] in return channel },
             contact: { [contact] in return contact }
         )
     }
 
+    @Test
     func testAcceptsArguments() async throws {
         let validSituations = [
             ActionSituation.foregroundInteractiveButton,
@@ -49,22 +51,23 @@ final class AddTagsActionTest: XCTestCase {
         for situation in validSituations {
             let args = ActionArguments(value: try! AirshipJSON.wrap(simpleValue), situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result)
         }
 
         for situation in validSituations {
             let args = ActionArguments(value: try! AirshipJSON.wrap(complexValue), situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result)
         }
 
         for situation in rejectedSituations {
             let args = ActionArguments(value: try! AirshipJSON.wrap(simpleValue), situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!(result))
         }
     }
 
+    @Test
     func testPerformSimple() async throws {
         self.channel.tags = ["foo", "bar"]
         
@@ -79,18 +82,19 @@ final class AddTagsActionTest: XCTestCase {
         
         var iterator = updates.makeAsyncIterator()
         let tagsAction = await iterator.next()
-        XCTAssertEqual(TagActionMutation.channelTags(simpleValue), tagsAction)
+        #expect(TagActionMutation.channelTags(simpleValue) == tagsAction)
 
-        XCTAssertEqual(
-            ["foo", "bar", "tag", "another tag"],
+        #expect(
+            ["foo", "bar", "tag", "another tag"] ==
             channel.tags
         )
     }
 
+    @Test
     func testPerformComplex() async throws {
         self.channel.tags = ["foo", "bar"]
 
-        let tagGroupsSet = self.expectation(description: "tagGroupsSet")
+        let tagGroupsSet = AirshipTestExpectation(description: "tagGroupsSet")
         tagGroupsSet.expectedFulfillmentCount = 2
 
         self.channel.tagGroupEditor = TagGroupsEditor { updates in
@@ -107,7 +111,7 @@ final class AddTagsActionTest: XCTestCase {
                 )
             ]
 
-            XCTAssertEqual(Set(expected), Set(updates))
+            #expect(Set(expected) == Set(updates))
             tagGroupsSet.fulfill()
         }
 
@@ -125,7 +129,7 @@ final class AddTagsActionTest: XCTestCase {
                 )
             ]
 
-            XCTAssertEqual(Set(expected), Set(updates))
+            #expect(Set(expected) == Set(updates))
             tagGroupsSet.fulfill()
         }
         
@@ -145,18 +149,16 @@ final class AddTagsActionTest: XCTestCase {
         ]
         
         for await item in updates {
-            XCTAssertEqual(item, expectedActions.removeFirst())
+            #expect(item == expectedActions.removeFirst())
             if (expectedActions.isEmpty) {
                 break
             }
         }
 
-        XCTAssertEqual(
-            ["foo", "bar", "tag", "another_tag"],
+        #expect(
+            ["foo", "bar", "tag", "another_tag"] ==
             channel.tags
         )
         await fulfillment(of: [tagGroupsSet])
     }
 }
-
-

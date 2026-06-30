@@ -1,17 +1,19 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
+import Foundation
 
-final class EventStoreTest: XCTestCase {
+@Suite struct EventStoreTest {
 
     private let eventStore = EventStore(
         appKey: UUID().uuidString,
         inMemory: true
     )
 
+    @Test
     func testAdd() async throws {
         let events = generateEvents(count: 2)
         for event in events {
@@ -21,9 +23,10 @@ final class EventStoreTest: XCTestCase {
         let storedEvents = try await eventStore.fetchEvents(
             maxBatchSizeKB: 1000
         )
-        XCTAssertEqual(events, storedEvents)
+        #expect(events == storedEvents)
     }
 
+    @Test
     func testDeleteAll() async throws {
         let events = generateEvents(count: 10)
         for event in events {
@@ -37,9 +40,10 @@ final class EventStoreTest: XCTestCase {
         )
 
 
-        XCTAssertTrue(storedEvents.isEmpty)
+        #expect(storedEvents.isEmpty)
     }
 
+    @Test
     func testDeleteEventIDs() async throws {
         let events = generateEvents(count: 10)
         for event in events {
@@ -59,7 +63,7 @@ final class EventStoreTest: XCTestCase {
         )
 
         let expectedEvents = Array(events[3...9])
-        XCTAssertEqual(expectedEvents, storedEvents)
+        #expect(expectedEvents == storedEvents)
     }
 
     func generateEvents(
@@ -76,6 +80,3 @@ final class EventStoreTest: XCTestCase {
         return events
     }
 }
-
-
-

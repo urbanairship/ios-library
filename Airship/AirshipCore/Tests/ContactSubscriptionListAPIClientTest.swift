@@ -1,23 +1,25 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
+import Foundation
 
-final class ContactSubscriptionListAPIClientTest: XCTestCase {
+@Suite struct ContactSubscriptionListAPIClientTest {
 
     private let session: TestAirshipRequestSession = TestAirshipRequestSession()
-    private var contactAPIClient: ContactSubscriptionListAPIClient!
-    private var config: RuntimeConfig = RuntimeConfig.testConfig()
+    private let contactAPIClient: ContactSubscriptionListAPIClient
+    private let config: RuntimeConfig = RuntimeConfig.testConfig()
 
-    override func setUpWithError() throws {
+    init() {
         self.contactAPIClient = ContactSubscriptionListAPIClient(
             config: self.config,
             session: self.session
         )
     }
 
+    @Test
     func testGetContactLists() async throws {
         let responseBody = """
             {
@@ -57,17 +59,18 @@ final class ContactSubscriptionListAPIClientTest: XCTestCase {
         let response = try await self.contactAPIClient.fetchSubscriptionLists(
             contactID: "some-contact"
         )
-        XCTAssertTrue(response.isSuccess)
+        #expect(response.isSuccess)
 
-        XCTAssertEqual(expected, response.result!)
+        #expect(expected == response.result!)
 
-        XCTAssertEqual("GET", self.session.lastRequest?.method)
-        XCTAssertEqual(
-            "\(self.config.deviceAPIURL!)/api/subscription_lists/contacts/some-contact",
+        #expect("GET" == self.session.lastRequest?.method)
+        #expect(
+            "\(self.config.deviceAPIURL!)/api/subscription_lists/contacts/some-contact" ==
             self.session.lastRequest?.url?.absoluteString
         )
     }
 
+    @Test
     func testGetContactListParseError() async throws {
         let responseBody = "What?"
 
@@ -84,13 +87,14 @@ final class ContactSubscriptionListAPIClientTest: XCTestCase {
             _ = try await self.contactAPIClient.fetchSubscriptionLists(
                 contactID: "some-contact"
             )
-            XCTFail()
+            Issue.record("Should throw")
         }
         catch {
 
         }
     }
 
+    @Test
     func testGetContactListError() async throws {
         let sessionError = AirshipErrors.error("error!")
         self.session.error = sessionError
@@ -99,7 +103,7 @@ final class ContactSubscriptionListAPIClientTest: XCTestCase {
             _ = try await self.contactAPIClient.fetchSubscriptionLists(
                 contactID: "some-contact"
             )
-            XCTFail()
+            Issue.record("Should throw")
         }
         catch {
 

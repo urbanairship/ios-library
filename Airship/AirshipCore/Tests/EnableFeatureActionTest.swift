@@ -1,20 +1,22 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
 
+@Suite(.timeLimit(.minutes(1)))
 @MainActor
-class EnableFeatureActionTest: XCTestCase {
+struct EnableFeatureActionTest {
 
     let testPrompter = TestPermissionPrompter()
-    var action: EnableFeatureAction!
+    let action: EnableFeatureAction
 
-    override func setUp() async throws {
+    init() {
         let testPrompter = self.testPrompter
         self.action = EnableFeatureAction { return testPrompter }
     }
 
+    @Test
     func testAcceptsArguments() async throws {
         let validSituations = [
             ActionSituation.foregroundInteractiveButton,
@@ -37,7 +39,7 @@ class EnableFeatureActionTest: XCTestCase {
                 situation: situation
             )
             let result = await self.action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result)
         }
 
         for situation in rejectedSituations {
@@ -46,77 +48,81 @@ class EnableFeatureActionTest: XCTestCase {
                 situation: situation
             )
             let result = await self.action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!(result))
         }
     }
 
+    @Test
     func testLocation() async throws {
         let arguments = ActionArguments(
             string: EnableFeatureAction.locationActionValue,
             situation: .manualInvocation
         )
 
-        let prompted = self.expectation(description: "Prompted")
+        let prompted = AirshipTestExpectation(description: "Prompted")
         testPrompter.onPrompt = {
             permission,
             enableAirshipUsage,
             fallbackSystemSetting in
-            XCTAssertEqual(permission, .location)
-            XCTAssertTrue(enableAirshipUsage)
-            XCTAssertTrue(fallbackSystemSetting)
+            #expect(permission == .location)
+            #expect(enableAirshipUsage)
+            #expect(fallbackSystemSetting)
             prompted.fulfill()
             return AirshipPermissionResult(startStatus: .notDetermined, endStatus: .notDetermined)
         }
 
-      
+
         _ = try await self.action.perform(arguments: arguments)
-        await self.fulfillment(of: [prompted], timeout: 10)
+        await fulfillment(of: [prompted], timeout: 10)
     }
 
+    @Test
     func testBackgroundLocation() async throws {
         let arguments = ActionArguments(
             string: EnableFeatureAction.backgroundLocationActionValue,
             situation: .manualInvocation
         )
 
-        let prompted = self.expectation(description: "Prompted")
+        let prompted = AirshipTestExpectation(description: "Prompted")
         testPrompter.onPrompt = {
             permission,
             enableAirshipUsage,
             fallbackSystemSetting in
-            XCTAssertEqual(permission, .location)
-            XCTAssertTrue(enableAirshipUsage)
-            XCTAssertTrue(fallbackSystemSetting)
+            #expect(permission == .location)
+            #expect(enableAirshipUsage)
+            #expect(fallbackSystemSetting)
             prompted.fulfill()
             return AirshipPermissionResult(startStatus: .notDetermined, endStatus: .notDetermined)
         }
 
         _ = try await self.action.perform(arguments: arguments)
-        await self.fulfillment(of: [prompted], timeout: 10)
+        await fulfillment(of: [prompted], timeout: 10)
     }
 
+    @Test
     func testNotifications() async throws {
         let arguments = ActionArguments(
             string: EnableFeatureAction.userNotificationsActionValue,
             situation: .manualInvocation
         )
 
-        let prompted = self.expectation(description: "Prompted")
+        let prompted = AirshipTestExpectation(description: "Prompted")
         testPrompter.onPrompt = {
             permission,
             enableAirshipUsage,
             fallbackSystemSetting in
-            XCTAssertEqual(permission, .displayNotifications)
-            XCTAssertTrue(enableAirshipUsage)
-            XCTAssertTrue(fallbackSystemSetting)
+            #expect(permission == .displayNotifications)
+            #expect(enableAirshipUsage)
+            #expect(fallbackSystemSetting)
             prompted.fulfill()
             return AirshipPermissionResult(startStatus: .notDetermined, endStatus: .notDetermined)
         }
 
         _ = try await self.action.perform(arguments: arguments)
-        await self.fulfillment(of: [prompted], timeout: 10)
+        await fulfillment(of: [prompted], timeout: 10)
     }
 
+    @Test
     func testInvalidArgument() async throws {
         let arguments = ActionArguments(
             string: "invalid",
@@ -127,27 +133,28 @@ class EnableFeatureActionTest: XCTestCase {
             permission,
             enableAirshipUsage,
             fallbackSystemSetting in
-            XCTFail()
+            Issue.record()
             return AirshipPermissionResult(startStatus: .notDetermined, endStatus: .notDetermined)
         }
 
         do {
             _ = try await self.action.perform(arguments: arguments)
-            XCTFail("should throw")
+            Issue.record("should throw")
         } catch {}
     }
 
+    @Test
     func testResultReceiver() async throws {
-        let resultReceived = self.expectation(description: "Result received")
+        let resultReceived = AirshipTestExpectation(description: "Result received")
 
         let resultRecevier:
          @Sendable (AirshipPermission, AirshipPermissionStatus, AirshipPermissionStatus) async -> Void = {
                 permission,
                 start,
                 end in
-                XCTAssertEqual(.notDetermined, start)
-                XCTAssertEqual(.granted, end)
-                XCTAssertEqual(.location, permission)
+                #expect(.notDetermined == start)
+                #expect(.granted == end)
+                #expect(.location == permission)
                 resultReceived.fulfill()
             }
 
@@ -160,15 +167,15 @@ class EnableFeatureActionTest: XCTestCase {
             situation: .manualInvocation,
             metadata: metadata
         )
-        
+
         testPrompter.onPrompt = {
             permission,
             enableAirshipUsage,
             fallbackSystemSetting in
             return AirshipPermissionResult(startStatus: .notDetermined, endStatus: .granted)
         }
-      
+
         _ = try await self.action.perform(arguments: arguments)
-        await self.fulfillment(of: [resultReceived], timeout: 10)
+        await fulfillment(of: [resultReceived], timeout: 10)
     }
 }

@@ -1,12 +1,14 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
+import Foundation
 
 @MainActor
-final class AirshipLocaleManagerTest: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct AirshipLocaleManagerTest {
 
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter(
         notificationCenter: NotificationCenter()
@@ -24,39 +26,42 @@ final class AirshipLocaleManagerTest: XCTestCase {
         )
     }
 
+    @Test
     func testLocale() throws {
         let localeManager = makeLocaleManager()
-        XCTAssertEqual(localeManager.currentLocale, Locale.autoupdatingCurrent)
+        #expect(localeManager.currentLocale == Locale.autoupdatingCurrent)
 
         let french = Locale(identifier: "fr")
         localeManager.currentLocale = french
-        XCTAssertEqual(localeManager.currentLocale, french)
+        #expect(localeManager.currentLocale == french)
 
         let english = Locale(identifier: "en")
         localeManager.currentLocale = english
-        XCTAssertEqual(localeManager.currentLocale, english)
+        #expect(localeManager.currentLocale == english)
 
         localeManager.clearLocale()
-        XCTAssertEqual(localeManager.currentLocale, Locale.autoupdatingCurrent)
+        #expect(localeManager.currentLocale == Locale.autoupdatingCurrent)
     }
     
+    @Test
     func testLocaleWithUseUserPreferredLocale() throws {
         let localeManager = makeLocaleManager(useUserPreferredLocale: true)
         let preferredLocale = Locale(identifier: Locale.preferredLanguages[0])
-        XCTAssertEqual(localeManager.currentLocale, preferredLocale)
+        #expect(localeManager.currentLocale == preferredLocale)
         
         let french = Locale(identifier: "fr")
         localeManager.currentLocale = french
-        XCTAssertEqual(localeManager.currentLocale, french)
+        #expect(localeManager.currentLocale == french)
         
         localeManager.clearLocale()
-        XCTAssertEqual(localeManager.currentLocale, preferredLocale)
+        #expect(localeManager.currentLocale == preferredLocale)
     }
 
-    func testNotificationWhenOverrideChanges() {
+    @Test
+    func testNotificationWhenOverrideChanges() async {
         let localeManager = makeLocaleManager()
 
-        let expectation = self.expectation(description: "update called")
+        let expectation = AirshipTestExpectation(description: "update called")
         self.notificationCenter.addObserver(
             forName: AirshipNotifications.LocaleUpdated.name
         ) { _ in
@@ -65,15 +70,16 @@ final class AirshipLocaleManagerTest: XCTestCase {
 
         localeManager.currentLocale = Locale(identifier: "fr")
 
-        self.waitForExpectations(timeout: 10.0)
+        await fulfillment(of: [expectation], timeout: 10.0)
     }
 
-    func testNotificationWhenOverrideClears() {
+    @Test
+    func testNotificationWhenOverrideClears() async {
         let localeManager = makeLocaleManager()
 
         localeManager.currentLocale = Locale(identifier: "fr")
 
-        let expectation = self.expectation(description: "update called")
+        let expectation = AirshipTestExpectation(description: "update called")
         
         self.notificationCenter.addObserver(
             forName: AirshipNotifications.LocaleUpdated.name
@@ -83,12 +89,13 @@ final class AirshipLocaleManagerTest: XCTestCase {
 
         localeManager.clearLocale()
 
-        self.waitForExpectations(timeout: 10.0)
+        await fulfillment(of: [expectation], timeout: 10.0)
     }
 
-    func testNotificationWhenAutoUpdateChanges() {
+    @Test
+    func testNotificationWhenAutoUpdateChanges() async {
         let localeManager = makeLocaleManager()
-        let expectation = self.expectation(description: "update called")
+        let expectation = AirshipTestExpectation(description: "update called")
         self.notificationCenter.addObserver(
             forName: AirshipNotifications.LocaleUpdated.name
         ) { _ in
@@ -97,7 +104,7 @@ final class AirshipLocaleManagerTest: XCTestCase {
 
         self.notificationCenter.post(name: NSLocale.currentLocaleDidChangeNotification)
 
-        self.waitForExpectations(timeout: 10.0)
+        await fulfillment(of: [expectation], timeout: 10.0)
         _ = localeManager
     }
 

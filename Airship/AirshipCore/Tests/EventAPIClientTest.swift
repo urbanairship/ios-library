@@ -1,13 +1,14 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
+import Foundation
 
-final class EventAPIClientTest: XCTestCase {
+@Suite struct EventAPIClientTest {
     private let requestSession = TestAirshipRequestSession()
-    private var client: EventAPIClient!
+    private let client: EventAPIClient
 
     private let eventData = [
         AirshipEventData.makeTestData()
@@ -17,13 +18,14 @@ final class EventAPIClientTest: XCTestCase {
         "some": "header"
     ]
 
-    override func setUpWithError() throws {
+    init() throws {
         client = EventAPIClient(
             config: .testConfig(),
             session: requestSession
         )
     }
 
+    @Test
     func testUpload() async throws {
         let responseHeaders = [
             "X-UA-Max-Total": "200",
@@ -44,14 +46,15 @@ final class EventAPIClientTest: XCTestCase {
             headers: self.headers
         )
 
-        XCTAssertEqual(100, response.result!.maxBatchSizeKB)
-        XCTAssertEqual(200, response.result!.maxTotalStoreSizeKB)
-        XCTAssertEqual(10.4, response.result!.minBatchInterval)
-        XCTAssertEqual(self.requestSession.lastRequest?.auth, .channelAuthToken(identifier: "some channel"))
+        #expect(100 == response.result!.maxBatchSizeKB)
+        #expect(200 == response.result!.maxTotalStoreSizeKB)
+        #expect(10.4 == response.result!.minBatchInterval)
+        #expect(self.requestSession.lastRequest?.auth == .channelAuthToken(identifier: "some channel"))
 
 
     }
 
+    @Test
     func testUploadBadHeaders() async throws {
         let responseHeaders = [
             "X-UA-Max-Total": "string",
@@ -71,11 +74,12 @@ final class EventAPIClientTest: XCTestCase {
             headers: self.headers
         )
 
-        XCTAssertNil(response.result!.maxBatchSizeKB)
-        XCTAssertNil(response.result!.maxTotalStoreSizeKB)
-        XCTAssertNil(response.result!.minBatchInterval)
+        #expect(response.result!.maxBatchSizeKB == nil)
+        #expect(response.result!.maxTotalStoreSizeKB == nil)
+        #expect(response.result!.minBatchInterval == nil)
     }
 
+    @Test
     func testUploadFailed() async throws {
 
         self.requestSession.response = HTTPURLResponse(
@@ -91,8 +95,8 @@ final class EventAPIClientTest: XCTestCase {
             headers: self.headers
         )
 
-        XCTAssertNil(response.result!.maxBatchSizeKB)
-        XCTAssertNil(response.result!.maxTotalStoreSizeKB)
-        XCTAssertNil(response.result!.minBatchInterval)
+        #expect(response.result!.maxBatchSizeKB == nil)
+        #expect(response.result!.maxTotalStoreSizeKB == nil)
+        #expect(response.result!.minBatchInterval == nil)
     }
 }

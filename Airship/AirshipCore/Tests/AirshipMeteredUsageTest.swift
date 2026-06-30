@@ -1,23 +1,26 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
+import Foundation
 
 @MainActor
-final class AirshipMeteredUsageTest: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct AirshipMeteredUsageTest {
     
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let channel: TestChannel = TestChannel()
     private let contact: TestContact = TestContact()
 
-    private var privacyManager: TestPrivacyManager!
+    private let privacyManager: TestPrivacyManager
     private let apiClient: MeteredUsageAPIClientProtocol = MeteredTestApiClient()
     private let storage = MeteredUsageStore(appKey: "test.app.key", inMemory: true)
     private let workManager = TestWorkManager()
-    private var config: RuntimeConfig = RuntimeConfig.testConfig()
-    private var target: DefaultAirshipMeteredUsage!
-    override func setUp() async throws {
+    private let config: RuntimeConfig = RuntimeConfig.testConfig()
+    private let target: DefaultAirshipMeteredUsage
+
+    init() async throws {
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config:self.config,
@@ -36,94 +39,98 @@ final class AirshipMeteredUsageTest: XCTestCase {
         )
     }
     
+    @Test
     func testInit() {
         let worker = workManager.workers.first
-        XCTAssertNotNil(worker)
-        XCTAssertEqual("MeteredUsage.upload", worker?.workID)
+        #expect(worker != nil)
+        #expect("MeteredUsage.upload" == worker?.workID)
 
         // should set a default rate limit from the config
-        XCTAssertEqual(1, workManager.rateLimits.count)
-        XCTAssertEqual(0, workManager.workRequests.count)
+        #expect(1 == workManager.rateLimits.count)
+        #expect(0 == workManager.workRequests.count)
     }
 
+    @Test
     func testUpdateConfig() async {
         var newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: nil, initialDelayMilliseconds: nil, intervalMilliseconds: nil)
         config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
-        XCTAssertEqual(0, workManager.workRequests.count)
+        #expect(0 == workManager.workRequests.count)
         
         var limit = workManager.rateLimits["MeteredUsage.rateLimit"]
-        XCTAssertNotNil(limit)
+        #expect(limit != nil)
         
-        XCTAssertEqual(30, limit?.timeInterval)
-        XCTAssertEqual(1, limit?.rate)
+        #expect(30 == limit?.timeInterval)
+        #expect(1 == limit?.rate)
         
         newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: nil, initialDelayMilliseconds: nil, intervalMilliseconds: 2000)
         config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
 
-        XCTAssertEqual(0, workManager.workRequests.count)
+        #expect(0 == workManager.workRequests.count)
         limit = workManager.rateLimits["MeteredUsage.rateLimit"]
-        XCTAssertNotNil(limit)
+        #expect(limit != nil)
         
-        XCTAssertEqual(2, limit?.timeInterval)
-        XCTAssertEqual(1, limit?.rate)
+        #expect(2 == limit?.timeInterval)
+        #expect(1 == limit?.rate)
         
         newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: false, initialDelayMilliseconds: 1000, intervalMilliseconds: 2000)
         config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
 
-        XCTAssertEqual(0, workManager.workRequests.count)
+        #expect(0 == workManager.workRequests.count)
         limit = workManager.rateLimits["MeteredUsage.rateLimit"]
-        XCTAssertNotNil(limit)
+        #expect(limit != nil)
         
-        XCTAssertEqual(2, limit?.timeInterval)
-        XCTAssertEqual(1, limit?.rate)
+        #expect(2 == limit?.timeInterval)
+        #expect(1 == limit?.rate)
         
         newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: 1000, intervalMilliseconds: 2000)
         config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
 
         var workRequest = workManager.workRequests.last
-        XCTAssertNotNil(workRequest)
-        XCTAssertEqual(1, workRequest?.initialDelay)
+        #expect(workRequest != nil)
+        #expect(1 == workRequest?.initialDelay)
 
         limit = workManager.rateLimits["MeteredUsage.rateLimit"]
-        XCTAssertNotNil(limit)
+        #expect(limit != nil)
         
-        XCTAssertEqual(2, limit?.timeInterval)
-        XCTAssertEqual(1, limit?.rate)
+        #expect(2 == limit?.timeInterval)
+        #expect(1 == limit?.rate)
         
         workManager.workRequests.removeAll()
         
         newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: false, initialDelayMilliseconds: 1000, intervalMilliseconds: 2000)
         config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
 
-        XCTAssertEqual(0, workManager.workRequests.count)
+        #expect(0 == workManager.workRequests.count)
         limit = workManager.rateLimits["MeteredUsage.rateLimit"]
-        XCTAssertNotNil(limit)
+        #expect(limit != nil)
         
-        XCTAssertEqual(2, limit?.timeInterval)
-        XCTAssertEqual(1, limit?.rate)
+        #expect(2 == limit?.timeInterval)
+        #expect(1 == limit?.rate)
         
         newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: nil, intervalMilliseconds: 2000)
         config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
 
         workRequest = workManager.workRequests.last
-        XCTAssertNotNil(workRequest)
-        XCTAssertEqual(15, workRequest?.initialDelay)
+        #expect(workRequest != nil)
+        #expect(15 == workRequest?.initialDelay)
         
         limit = workManager.rateLimits["MeteredUsage.rateLimit"]
-        XCTAssertNotNil(limit)
+        #expect(limit != nil)
         
-        XCTAssertEqual(2, limit?.timeInterval)
-        XCTAssertEqual(1, limit?.rate)
+        #expect(2 == limit?.timeInterval)
+        #expect(1 == limit?.rate)
     }
     
+    @Test
     func testManagerUploadsDataOnBackground() {
-        XCTAssertEqual(1, workManager.backgroundWorkRequests.count)
+        #expect(1 == workManager.backgroundWorkRequests.count)
         let work = workManager.backgroundWorkRequests.last
-        XCTAssertNotNil(work)
-        XCTAssertEqual("MeteredUsage.upload", work?.workID)
-        XCTAssertEqual(0, work?.initialDelay)
+        #expect(work != nil)
+        #expect("MeteredUsage.upload" == work?.workID)
+        #expect(0 == work?.initialDelay)
     }
     
+    @Test
     func testEventStoreTheEventAndSendsData() async throws {
         privacyManager.enabledFeatures = [.analytics]
 
@@ -142,10 +149,10 @@ final class AirshipMeteredUsageTest: XCTestCase {
             contactID: "test-contact-id"
         )
         
-        XCTAssertEqual(0, workManager.workRequests.count)
+        #expect(0 == workManager.workRequests.count)
         let storedEvents = try await storage.getEvents()
-        XCTAssertEqual(0, storedEvents.count)
-        let expectation = XCTestExpectation(description: "adding new event")
+        #expect(0 == storedEvents.count)
+        let expectation = AirshipTestExpectation(description: "adding new event")
         workManager.onNewWorkRequestAdded = { _ in
             expectation.fulfill()
         }
@@ -153,12 +160,13 @@ final class AirshipMeteredUsageTest: XCTestCase {
         try await self.target.addEvent(event)
         
         await fulfillment(of: [expectation], timeout: 30)
-        XCTAssertEqual(1, workManager.workRequests.count)
+        #expect(1 == workManager.workRequests.count)
         
         let storedEvent = try await storage.getEvents().first
-        XCTAssertEqual(event, storedEvent)
+        #expect(event == storedEvent)
     }
 
+    @Test
     func testAddEventConfigDisabled() async throws {
         let newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: false, initialDelayMilliseconds: 1, intervalMilliseconds: nil)
         config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
@@ -176,12 +184,13 @@ final class AirshipMeteredUsageTest: XCTestCase {
         )
 
         try await self.target.addEvent(event)
-        XCTAssertEqual(0, workManager.workRequests.count)
+        #expect(0 == workManager.workRequests.count)
 
         let events = try await storage.getEvents()
-        XCTAssertTrue(events.isEmpty)
+        #expect(events.isEmpty)
     }
 
+    @Test
     func testEventStoreStripsDataIfAnalyticsDisabled() async throws {
         let newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: 1, intervalMilliseconds: nil)
         config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
@@ -197,10 +206,10 @@ final class AirshipMeteredUsageTest: XCTestCase {
             contactID: "test-contact-id"
         )
         
-        XCTAssertEqual(0, workManager.workRequests.count)
+        #expect(0 == workManager.workRequests.count)
         let storedEvents = try await storage.getEvents()
-        XCTAssertEqual(0, storedEvents.count)
-        let expectation = XCTestExpectation(description: "adding new event")
+        #expect(0 == storedEvents.count)
+        let expectation = AirshipTestExpectation(description: "adding new event")
         workManager.onNewWorkRequestAdded = { _ in
             expectation.fulfill()
         }
@@ -208,14 +217,15 @@ final class AirshipMeteredUsageTest: XCTestCase {
         try await self.target.addEvent(event)
         
         await fulfillment(of: [expectation], timeout: 30)
-        XCTAssertEqual(1, workManager.workRequests.count)
+        #expect(1 == workManager.workRequests.count)
         
         let storedEvent = try await storage.getEvents().first
-        XCTAssertNotNil(storedEvent)
-        XCTAssertNotEqual(storedEvent, event)
-        XCTAssertEqual(storedEvent, event.withDisabledAnalytics())
+        #expect(storedEvent != nil)
+        #expect(storedEvent != event)
+        #expect(storedEvent == event.withDisabledAnalytics())
     }
 
+    @Test
     func testContactIDAddedIfNotSet() async throws {
         self.contact.contactID = "from-contact"
 
@@ -236,7 +246,7 @@ final class AirshipMeteredUsageTest: XCTestCase {
         )
 
         var fromStore = try await storage.getEvents().first!
-        XCTAssertEqual(fromStore.contactID, "test-contact-id")
+        #expect(fromStore.contactID == "test-contact-id")
 
         try await self.target.addEvent(
             AirshipMeteredUsageEvent(
@@ -251,10 +261,11 @@ final class AirshipMeteredUsageTest: XCTestCase {
         )
 
         fromStore = try await storage.getEvents().first!
-        XCTAssertEqual(fromStore.contactID, "from-contact")
+        #expect(fromStore.contactID == "from-contact")
 
     }
 
+    @Test
     func testEventStripDataOnDisabledAnalytics() {
         let timeStamp = Date()
         let event = AirshipMeteredUsageEvent(
@@ -268,19 +279,20 @@ final class AirshipMeteredUsageTest: XCTestCase {
         )
             .withDisabledAnalytics()
         
-        XCTAssertEqual(event.eventID, "test.id")
-        XCTAssertEqual(event.usageType, .inAppExperienceImpression)
-        XCTAssertEqual(event.product, "Story")
-        XCTAssertNil(event.entityID)
-        XCTAssertNil(event.reportingContext)
-        XCTAssertNil(event.timestamp)
-        XCTAssertNil(event.contactID)
+        #expect(event.eventID == "test.id")
+        #expect(event.usageType == .inAppExperienceImpression)
+        #expect(event.product == "Story")
+        #expect(event.entityID == nil)
+        #expect(event.reportingContext == nil)
+        #expect(event.timestamp == nil)
+        #expect(event.contactID == nil)
     }
     
+    @Test
     func testScheduleWorkRespectsConfig() async {
-        XCTAssertEqual(0, workManager.workRequests.count)
+        #expect(0 == workManager.workRequests.count)
         target.scheduleWork()
-        XCTAssertEqual(0, workManager.workRequests.count)
+        #expect(0 == workManager.workRequests.count)
         
         let newConfig = RemoteConfig.MeteredUsageConfig(isEnabled: true, initialDelayMilliseconds: 1, intervalMilliseconds: 2000)
         config.updateRemoteConfig(RemoteConfig(meteredUsageConfig: newConfig))
@@ -288,35 +300,35 @@ final class AirshipMeteredUsageTest: XCTestCase {
         target.scheduleWork()
         
         var lastWork = workManager.workRequests.last
-        XCTAssertNotNil(lastWork)
-        XCTAssertEqual("MeteredUsage.upload", lastWork?.workID)
-        XCTAssertEqual(0, lastWork?.initialDelay)
-        XCTAssertEqual(true, lastWork?.requiresNetwork)
-        XCTAssertEqual(AirshipWorkRequestConflictPolicy.keepIfNotStarted, lastWork?.conflictPolicy)
+        #expect(lastWork != nil)
+        #expect("MeteredUsage.upload" == lastWork?.workID)
+        #expect(0 == lastWork?.initialDelay)
+        #expect(true == lastWork?.requiresNetwork)
+        #expect(AirshipWorkRequestConflictPolicy.keepIfNotStarted == lastWork?.conflictPolicy)
         
         workManager.workRequests.removeAll()
         target.scheduleWork(initialDelay: 2)
 
         lastWork = workManager.workRequests.last
-        XCTAssertNotNil(lastWork)
-        XCTAssertEqual("MeteredUsage.upload", lastWork?.workID)
-        XCTAssertEqual(2, lastWork?.initialDelay)
-        XCTAssertEqual(true, lastWork?.requiresNetwork)
-        XCTAssertEqual(AirshipWorkRequestConflictPolicy.keepIfNotStarted, lastWork?.conflictPolicy)
+        #expect(lastWork != nil)
+        #expect("MeteredUsage.upload" == lastWork?.workID)
+        #expect(2 == lastWork?.initialDelay)
+        #expect(true == lastWork?.requiresNetwork)
+        #expect(AirshipWorkRequestConflictPolicy.keepIfNotStarted == lastWork?.conflictPolicy)
         
         workManager.workRequests.removeAll()
         target.scheduleWork(initialDelay: 2)
 
         lastWork = workManager.workRequests.last
-        XCTAssertNotNil(lastWork)
-        XCTAssertEqual("MeteredUsage.upload", lastWork?.workID)
-        XCTAssertEqual(2, lastWork?.initialDelay)
-        XCTAssertEqual(true, lastWork?.requiresNetwork)
-        XCTAssertEqual(AirshipWorkRequestConflictPolicy.keepIfNotStarted, lastWork?.conflictPolicy)
+        #expect(lastWork != nil)
+        #expect("MeteredUsage.upload" == lastWork?.workID)
+        #expect(2 == lastWork?.initialDelay)
+        #expect(true == lastWork?.requiresNetwork)
+        #expect(AirshipWorkRequestConflictPolicy.keepIfNotStarted == lastWork?.conflictPolicy)
     }
 }
 
-final class MeteredTestApiClient: MeteredUsageAPIClientProtocol {
+fileprivate final class MeteredTestApiClient: MeteredUsageAPIClientProtocol {
     
     func uploadEvents(_ events: [AirshipCore.AirshipMeteredUsageEvent],
                       channelID: String?) async throws -> AirshipCore.AirshipHTTPResponse<Void> {

@@ -1,51 +1,57 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
+import Foundation
 
-class RuntimeConfigTest: XCTestCase {
+@Suite struct RuntimeConfigTest {
+    @Test
     func testUSSiteURLS() throws {
         let config = RuntimeConfig.testConfig(site: .us)
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com",
+        #expect(
+            "https://device-api.urbanairship.com" ==
             config.deviceAPIURL
         )
-        XCTAssertEqual("https://combine.urbanairship.com", config.analyticsURL)
-        XCTAssertEqual(
-            "https://remote-data.urbanairship.com",
+        #expect("https://combine.urbanairship.com" == config.analyticsURL)
+        #expect(
+            "https://remote-data.urbanairship.com" ==
             config.remoteDataAPIURL
         )
     }
 
+    @Test
     func testEUSiteURLS() throws {
         let config = RuntimeConfig.testConfig(site: .eu)
-        XCTAssertEqual("https://device-api.asnapieu.com", config.deviceAPIURL)
-        XCTAssertEqual("https://combine.asnapieu.com", config.analyticsURL)
-        XCTAssertEqual(
-            "https://remote-data.asnapieu.com",
+        #expect("https://device-api.asnapieu.com" == config.deviceAPIURL)
+        #expect("https://combine.asnapieu.com" == config.analyticsURL)
+        #expect(
+            "https://remote-data.asnapieu.com" ==
             config.remoteDataAPIURL
         )
     }
 
+    @Test
     func testInitialConfigURL() throws {
         let config = RuntimeConfig.testConfig(initialConfigURL: "cool://remote")
-        XCTAssertEqual("cool://remote", config.remoteDataAPIURL)
+        #expect("cool://remote" == config.remoteDataAPIURL)
     }
 
+    @Test
     func testRequireInitialRemoteConfigEnabled() throws {
         let config = RuntimeConfig.testConfig(
             requireInitialRemoteConfigEnabled: true
         )
 
-        XCTAssertNil(config.deviceAPIURL)
-        XCTAssertNil(config.analyticsURL)
-        XCTAssertEqual(
-            "https://remote-data.urbanairship.com",
+        #expect(config.deviceAPIURL == nil)
+        #expect(config.analyticsURL == nil)
+        #expect(
+            "https://remote-data.urbanairship.com" ==
             config.remoteDataAPIURL
         )
     }
 
+    @Test
     func testRemoteConfigOverride() async throws {
         let notificationCenter = NotificationCenter()
 
@@ -71,21 +77,21 @@ class RuntimeConfigTest: XCTestCase {
             RemoteConfig(airshipConfig: airshipConfig)
         )
 
-        XCTAssertEqual("cool://devices", config.deviceAPIURL)
-        XCTAssertEqual("cool://analytics", config.analyticsURL)
-        XCTAssertEqual("cool://remote", config.remoteDataAPIURL)
-        XCTAssertEqual("cool://meteredUsage", config.meteredUsageURL)
-        XCTAssertEqual(1, updatedCount.value)
+        #expect("cool://devices" == config.deviceAPIURL)
+        #expect("cool://analytics" == config.analyticsURL)
+        #expect("cool://remote" == config.remoteDataAPIURL)
+        #expect("cool://meteredUsage" == config.meteredUsageURL)
+        #expect(1 == updatedCount.value)
 
         await config.updateRemoteConfig(
             RemoteConfig(airshipConfig: airshipConfig)
         )
 
-        XCTAssertEqual("cool://devices", config.deviceAPIURL)
-        XCTAssertEqual("cool://analytics", config.analyticsURL)
-        XCTAssertEqual("cool://remote", config.remoteDataAPIURL)
-        XCTAssertEqual("cool://meteredUsage", config.meteredUsageURL)
-        XCTAssertEqual(1, updatedCount.value)
+        #expect("cool://devices" == config.deviceAPIURL)
+        #expect("cool://analytics" == config.analyticsURL)
+        #expect("cool://remote" == config.remoteDataAPIURL)
+        #expect("cool://meteredUsage" == config.meteredUsageURL)
+        #expect(1 == updatedCount.value)
 
         let differentConfig = RemoteConfig.AirshipConfig(
             remoteDataURL: "neat://remote",
@@ -98,10 +104,10 @@ class RuntimeConfigTest: XCTestCase {
             RemoteConfig(airshipConfig: differentConfig)
         )
 
-        XCTAssertEqual("neat://devices", config.deviceAPIURL)
-        XCTAssertEqual("neat://analytics", config.analyticsURL)
-        XCTAssertEqual("neat://remote", config.remoteDataAPIURL)
-        XCTAssertEqual("neat://meteredUsage", config.meteredUsageURL)
-        XCTAssertEqual(2, updatedCount.value)
+        #expect("neat://devices" == config.deviceAPIURL)
+        #expect("neat://analytics" == config.analyticsURL)
+        #expect("neat://remote" == config.remoteDataAPIURL)
+        #expect("neat://meteredUsage" == config.meteredUsageURL)
+        #expect(2 == updatedCount.value)
     }
 }

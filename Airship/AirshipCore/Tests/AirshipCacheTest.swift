@@ -1,21 +1,22 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable
 import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
-final class AirshipCacheTest: XCTestCase {
+@Suite struct AirshipCacheTest {
 
     private let date = UATestDate(offset: 0, dateOverride: Date())
     private let coreData: UACoreData = CoreDataAirshipCache.makeCoreData(
         appKey: UUID().uuidString,
         inMemory: true
     )!
-    private var cache: CoreDataAirshipCache!
+    private let cache: CoreDataAirshipCache
 
-    override func setUpWithError() throws {
+    init() {
         self.cache = CoreDataAirshipCache(
             coreData: coreData,
             appVersion: "some-app-version",
@@ -24,78 +25,84 @@ final class AirshipCacheTest: XCTestCase {
         )
     }
 
+    @Test
     func testCacheTTL() async throws {
         await self.cache.setCachedValue("cache value", key: "some key", ttl: 10.0)
         var value: String? = await self.cache.getCachedValue(key: "some key")
-        XCTAssertEqual("cache value", value)
+        #expect("cache value" == value)
 
         date.offset += 9.9
         value = await self.cache.getCachedValue(key: "some key")
-        XCTAssertEqual("cache value", value)
+        #expect("cache value" == value)
 
         date.offset += 0.1
         value = await self.cache.getCachedValue(key: "some key")
-        XCTAssertNil(value)
+        #expect(value == nil)
     }
 
+    @Test
     func testCacheNil() async throws {
         await self.cache.setCachedValue("cache value", key: "some key", ttl: 10.0)
         var value: String? = await self.cache.getCachedValue(key: "some key")
-        XCTAssertEqual("cache value", value)
+        #expect("cache value" == value)
 
         value = nil
         await self.cache.setCachedValue(value, key: "some key", ttl: 10.0)
-        XCTAssertNil(value)
+        #expect(value == nil)
     }
 
+    @Test
     func testOverwriteCache() async throws {
         await self.cache.setCachedValue("cache value", key: "some key", ttl: 10.0)
         await self.cache.setCachedValue("some other cache value", key: "some key", ttl: 10.0)
 
         let value: String? = await self.cache.getCachedValue(key: "some key")
-        XCTAssertEqual("some other cache value", value)
+        #expect("some other cache value" == value)
     }
 
+    @Test
     func testCache() async throws {
         await self.cache.setCachedValue("some value", key: "some key", ttl: 10.0)
         await self.cache.setCachedValue("some other value", key: "some other key", ttl: 10.0)
 
         var value: String? = await self.cache.getCachedValue(key: "some key")
-        XCTAssertEqual("some value", value)
+        #expect("some value" == value)
 
         value = await self.cache.getCachedValue(key: "some other key")
-        XCTAssertEqual("some other value", value)
+        #expect("some other value" == value)
 
         value = await self.cache.getCachedValue(key: "some null key")
-        XCTAssertNil(value)
+        #expect(value == nil)
     }
 
+    @Test
     func testOverwriteCacheClearedSDKVersionChange() async throws {
         await self.cache.setCachedValue("cache value", key: "some key", ttl: 10.0)
 
-        self.cache = CoreDataAirshipCache(
+        let newCache = CoreDataAirshipCache(
             coreData: coreData,
             appVersion: "some-app-version",
             sdkVersion: "some-other-sdk-version",
             date: self.date
         )
 
-        let value: String? = await self.cache.getCachedValue(key: "some key")
-        XCTAssertNil(value)
+        let value: String? = await newCache.getCachedValue(key: "some key")
+        #expect(value == nil)
     }
 
+    @Test
     func testOverwriteCacheClearedAppVersionChange() async throws {
         await self.cache.setCachedValue("cache value", key: "some key", ttl: 10.0)
 
-        self.cache = CoreDataAirshipCache(
+        let newCache = CoreDataAirshipCache(
             coreData: coreData,
             appVersion: "some-other-app-version",
             sdkVersion: "some-sdk-version",
             date: self.date
         )
 
-        let value: String? = await self.cache.getCachedValue(key: "some key")
-        XCTAssertNil(value)
+        let value: String? = await newCache.getCachedValue(key: "some key")
+        #expect(value == nil)
     }
 }
 

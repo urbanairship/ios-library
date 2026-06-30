@@ -1,23 +1,25 @@
-import XCTest
+import Testing
+import Foundation
 
 @testable
 import AirshipCore
 
-final class DeferredResolverTest: XCTestCase {
+@Suite struct DeferredResolverTest {
 
-    private var resolver: AirshipDeferredResolver!
+    private let resolver: AirshipDeferredResolver
     private let audienceOverridesProvider: DefaultAudienceOverridesProvider = DefaultAudienceOverridesProvider()
     private let client: TestDeferredAPIClient = TestDeferredAPIClient()
     private let exampleURL: URL = URL(string: "exampleurl://")!
     private let altExampleURL: URL = URL(string: "altexampleurl://")!
 
-    override func setUp() {
+    init() {
         self.resolver = AirshipDeferredResolver(
             client: client,
             audienceOverrides: audienceOverridesProvider
         )
     }
 
+    @Test
     func testResolve() async throws {
         let request = DeferredRequest(
             url: exampleURL,
@@ -79,13 +81,13 @@ final class DeferredResolverTest: XCTestCase {
                 subscriptionLists: []
             )
 
-            XCTAssertEqual(url, request.url)
-            XCTAssertEqual(channel, request.channelID)
-            XCTAssertEqual(contact, request.contactID)
-            XCTAssertEqual(trigger, request.triggerContext)
-            XCTAssertEqual(trigger, request.triggerContext)
-            XCTAssertEqual(stateOverrides, expectedStateOverrides)
-            XCTAssertEqual(audienceOverrides, expectedAudienceOverrides)
+            #expect(url == request.url)
+            #expect(channel == request.channelID)
+            #expect(contact == request.contactID)
+            #expect(trigger == request.triggerContext)
+            #expect(trigger == request.triggerContext)
+            #expect(stateOverrides == expectedStateOverrides)
+            #expect(audienceOverrides == expectedAudienceOverrides)
             return AirshipHTTPResponse(result: body, statusCode: 200, headers: [:])
         }
 
@@ -93,9 +95,10 @@ final class DeferredResolverTest: XCTestCase {
             return data
         }
 
-        XCTAssertEqual(result, .success(body))
+        #expect(result == .success(body))
     }
 
+    @Test
     func testResolveNoAudienceOverrides() async throws {
         let request = DeferredRequest(
             url: exampleURL,
@@ -112,7 +115,7 @@ final class DeferredResolverTest: XCTestCase {
                 subscriptionLists: []
             )
 
-            XCTAssertEqual(audienceOverrides, expectedAudienceOverrides)
+            #expect(audienceOverrides == expectedAudienceOverrides)
             return AirshipHTTPResponse(result: body, statusCode: 200, headers: [:])
         }
 
@@ -121,6 +124,7 @@ final class DeferredResolverTest: XCTestCase {
         }
     }
 
+    @Test
     func testResolveParseError() async throws {
         let request = DeferredRequest(
             url: exampleURL,
@@ -140,9 +144,10 @@ final class DeferredResolverTest: XCTestCase {
             throw AirshipErrors.error("parse error")
         }
 
-        XCTAssertEqual(result, .retriableError(statusCode: statusCode))
+        #expect(result == .retriableError(statusCode: statusCode))
     }
 
+    @Test
     func testResolveTimedOut() async throws {
         let request = DeferredRequest(
             url: exampleURL,
@@ -159,9 +164,10 @@ final class DeferredResolverTest: XCTestCase {
             return data
         }
 
-        XCTAssertEqual(result, .timedOut)
+        #expect(result == .timedOut)
     }
 
+    @Test
     func testResolve404() async throws {
         let request = DeferredRequest(
             url: exampleURL,
@@ -179,9 +185,10 @@ final class DeferredResolverTest: XCTestCase {
             return data
         }
 
-        XCTAssertEqual(result, .notFound)
+        #expect(result == .notFound)
     }
 
+    @Test
     func testResolve409() async throws {
         let request = DeferredRequest(
             url: exampleURL,
@@ -199,9 +206,10 @@ final class DeferredResolverTest: XCTestCase {
             return data
         }
 
-        XCTAssertEqual(result, .outOfDate)
+        #expect(result == .outOfDate)
     }
 
+    @Test
     func testResolveOutOfDateURL() async throws {
         let request = DeferredRequest(
             url: exampleURL,
@@ -218,10 +226,10 @@ final class DeferredResolverTest: XCTestCase {
         var result: AirshipDeferredResult<Data> = await resolver.resolve(request: request) { data in
             return data
         }
-        XCTAssertEqual(result, .outOfDate)
+        #expect(result == .outOfDate)
 
         self.client.onResolve = { _, _, _, _, _, _ in
-            XCTFail()
+            Issue.record()
             throw AirshipErrors.error("Failed")
         }
 
@@ -229,9 +237,10 @@ final class DeferredResolverTest: XCTestCase {
             return data
         }
 
-        XCTAssertEqual(result, .outOfDate)
+        #expect(result == .outOfDate)
     }
 
+    @Test
     func testResolve429() async throws {
         let request = DeferredRequest(
             url: exampleURL,
@@ -250,10 +259,10 @@ final class DeferredResolverTest: XCTestCase {
             return data
         }
 
-        XCTAssertEqual(result, .retriableError(statusCode: statusCode))
+        #expect(result == .retriableError(statusCode: statusCode))
 
         self.client.onResolve = { url, _, _, _, _, _ in
-            XCTAssertEqual(url, self.altExampleURL)
+            #expect(url == self.altExampleURL)
             return AirshipHTTPResponse(result: body, statusCode: 200, headers: [:])
         }
 
@@ -261,10 +270,11 @@ final class DeferredResolverTest: XCTestCase {
             return data
         }
 
-        XCTAssertEqual(anotherResult, .success(body))
+        #expect(anotherResult == .success(body))
 
     }
 
+    @Test
     func testResolve429RetryAfter() async throws {
         let request = DeferredRequest(
             url: exampleURL,
@@ -283,9 +293,10 @@ final class DeferredResolverTest: XCTestCase {
             return data
         }
 
-        XCTAssertEqual(result, .retriableError(retryAfter: 100.0,  statusCode: statusCode))
+        #expect(result == .retriableError(retryAfter: 100.0,  statusCode: statusCode))
     }
 
+    @Test
     func testResolve307() async throws {
         let request = DeferredRequest(
             url: exampleURL,
@@ -307,9 +318,10 @@ final class DeferredResolverTest: XCTestCase {
             return data
         }
 
-        XCTAssertEqual(result, .success(body))
+        #expect(result == .success(body))
     }
     
+    @Test
     func testRedirectTwice() async throws {
         let request = DeferredRequest(
             url: exampleURL,
@@ -331,10 +343,10 @@ final class DeferredResolverTest: XCTestCase {
             return data
         }
         
-        XCTAssertEqual(result, .retriableError(retryAfter: nil, statusCode: 307))
+        #expect(result == .retriableError(retryAfter: nil, statusCode: 307))
 
         self.client.onResolve = { url, _, _, _, _, _ in
-            XCTAssertEqual(url.absoluteString, "altexampleurl://2")
+            #expect(url.absoluteString == "altexampleurl://2")
             return AirshipHTTPResponse(result: body, statusCode: 200, headers: [:])
         }
         
@@ -342,9 +354,10 @@ final class DeferredResolverTest: XCTestCase {
             return data
         }
 
-        XCTAssertEqual(result, .success(body))
+        #expect(result == .success(body))
     }
 
+    @Test
     func testResolve307RetryAfter() async throws {
         let request = DeferredRequest(
             url: exampleURL,
@@ -375,13 +388,13 @@ final class DeferredResolverTest: XCTestCase {
             return data
         }
 
-        XCTAssertEqual(result, .retriableError(retryAfter: 20.0, statusCode: statusCode))
+        #expect(result == .retriableError(retryAfter: 20.0, statusCode: statusCode))
 
         let anotherResult: AirshipDeferredResult<Data> = await resolver.resolve(request: request) { data in
             return data
         }
 
-        XCTAssertEqual(anotherResult, .success(body))
+        #expect(anotherResult == .success(body))
     }
 }
 
@@ -400,4 +413,3 @@ fileprivate class TestDeferredAPIClient: DeferredAPIClientProtocol, @unchecked S
         try onResolve!(url, channelID, contactID, stateOverrides, audienceOverrides, triggerContext)
     }
 }
-

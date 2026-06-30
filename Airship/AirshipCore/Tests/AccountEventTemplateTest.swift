@@ -1,37 +1,41 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
 
-final class AccountEventTemplateTest: XCTestCase {
+@Suite struct AccountEventTemplateTest {
 
+    @Test
     func testRegistered() {
         let event = CustomEvent(accountTemplate: .registered)
-        XCTAssertEqual("registered_account", event.eventName)
-        XCTAssertEqual("account", event.templateType)
+        #expect("registered_account" == event.eventName)
+        #expect("account" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = ["ltv": false]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testLoggedIn() {
         let event = CustomEvent(accountTemplate: .loggedIn)
-        XCTAssertEqual("logged_in", event.eventName)
-        XCTAssertEqual("account", event.templateType)
+        #expect("logged_in" == event.eventName)
+        #expect("account" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = ["ltv": false]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testLoggedOut() {
         let event = CustomEvent(accountTemplate: .loggedOut)
-        XCTAssertEqual("logged_out", event.eventName)
-        XCTAssertEqual("account", event.templateType)
+        #expect("logged_out" == event.eventName)
+        #expect("account" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = ["ltv": false]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testProperties() {
         let properties = CustomEvent.AccountProperties(
             category: "some category",
@@ -48,7 +52,7 @@ final class AccountEventTemplateTest: XCTestCase {
             "type": "some type",
             "ltv": true
         ]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
 }

@@ -1,29 +1,29 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
 
 @MainActor
-class OpenExternalURLActionTest: XCTestCase {
+@Suite
+struct OpenExternalURLActionTest {
 
     private let testURLOpener: TestURLOpener = TestURLOpener()
     private let urlAllowList: TestURLAllowList = TestURLAllowList()
-    private var airship: TestAirshipInstance!
+    private let airship: TestAirshipInstance
+    private let action: OpenExternalURLAction
 
-    private var action: OpenExternalURLAction!
-    override func setUp() async throws {
-        airship = TestAirshipInstance()
+    init() {
+        self.airship = TestAirshipInstance()
         self.action = OpenExternalURLAction(urlOpener: self.testURLOpener)
         self.airship.urlAllowList = self.urlAllowList
         self.airship.makeShared()
     }
 
-    override func tearDown() async throws {
-        TestAirshipInstance.clearShared()
-    }
-
+    @Test
     func testAcceptsArguments() async throws {
+        defer { TestAirshipInstance.clearShared() }
+
         let validSituations = [
             ActionSituation.foregroundInteractiveButton,
             ActionSituation.launchedFromPush,
@@ -41,18 +41,20 @@ class OpenExternalURLActionTest: XCTestCase {
         for situation in validSituations {
             let args = ActionArguments(situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result)
         }
 
         for situation in rejectedSituations {
             let args = ActionArguments(situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!(result))
         }
     }
 
-    @MainActor
+    @Test
     func testPerform() async throws {
+        defer { TestAirshipInstance.clearShared() }
+
         self.urlAllowList.isAllowedReturnValue = true
         self.testURLOpener.returnValue = true
 
@@ -62,12 +64,14 @@ class OpenExternalURLActionTest: XCTestCase {
         )
 
         let result = try await action.perform(arguments: args)
-        XCTAssertEqual(args.value, result)
-        XCTAssertEqual("http://some-valid-url", self.testURLOpener.lastURL?.absoluteString)
+        #expect(args.value == result)
+        #expect("http://some-valid-url" == self.testURLOpener.lastURL?.absoluteString)
     }
 
-    @MainActor
+    @Test
     func testPerformRejectsURL() async throws {
+        defer { TestAirshipInstance.clearShared() }
+
         self.urlAllowList.isAllowedReturnValue = false
         self.testURLOpener.returnValue = true
 
@@ -78,14 +82,16 @@ class OpenExternalURLActionTest: XCTestCase {
 
         do {
             _ = try await action.perform(arguments: args)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
 
-        XCTAssertNil(self.testURLOpener.lastURL)
+        #expect(self.testURLOpener.lastURL == nil)
     }
 
-    @MainActor
+    @Test
     func testPerformUnableToOpenURL() async throws {
+        defer { TestAirshipInstance.clearShared() }
+
         self.urlAllowList.isAllowedReturnValue = true
         self.testURLOpener.returnValue = false
 
@@ -96,14 +102,16 @@ class OpenExternalURLActionTest: XCTestCase {
 
         do {
             _ = try await action.perform(arguments: args)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
 
-        XCTAssertEqual("http://some-valid-url", self.testURLOpener.lastURL?.absoluteString)
+        #expect("http://some-valid-url" == self.testURLOpener.lastURL?.absoluteString)
     }
 
-    @MainActor
+    @Test
     func testPerformInvalidURL() async throws {
+        defer { TestAirshipInstance.clearShared() }
+
         self.urlAllowList.isAllowedReturnValue = true
         self.testURLOpener.returnValue = true
 
@@ -114,12 +122,9 @@ class OpenExternalURLActionTest: XCTestCase {
 
         do {
             _ = try await action.perform(arguments: args)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
 
-        XCTAssertNil(self.testURLOpener.lastURL)
+        #expect(self.testURLOpener.lastURL == nil)
     }
 }
-
-
-

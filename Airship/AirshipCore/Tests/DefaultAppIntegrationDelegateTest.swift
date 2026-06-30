@@ -1,19 +1,22 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 import Combine
 
 @testable import AirshipCore
+import Foundation
+import UserNotifications
 
 @MainActor
-class DefaultAppIntegrationdelegateTest: XCTestCase {
+@Suite struct DefaultAppIntegrationdelegateTest {
 
-    private var delegate: DefaultAppIntegrationDelegate!
+    private let delegate: DefaultAppIntegrationDelegate
     private let push = TestPush()
     private let analytics = TestAnalytics()
     private let pushableComponent = TestPushableComponent()
-    private var airshipInstance: TestAirshipInstance!
-    override func setUp() async throws {
+    private let airshipInstance: TestAirshipInstance
+
+    init() async throws {
         airshipInstance = TestAirshipInstance()
         self.airshipInstance.actionRegistry = DefaultAirshipActionRegistry()
         self.airshipInstance.makeShared()
@@ -25,27 +28,31 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
         )
     }
 
+    @Test
     @MainActor
     func testOnBackgroundAppRefresh() throws {
         delegate.onBackgroundAppRefresh()
-        XCTAssertTrue(push.updateAuthorizedNotificationTypesCalled)
+        #expect(push.updateAuthorizedNotificationTypesCalled)
     }
 
+    @Test
     @MainActor
     func testDidRegisterForRemoteNotifications() async throws {
         let data = Data()
         delegate.didRegisterForRemoteNotifications(deviceToken: data)
         let token = push.deviceToken?.data(using: .utf8)
-        XCTAssertEqual(data, token)
+        #expect(data == token)
     }
 
+    @Test
     @MainActor
     func testDidFailToRegisterForRemoteNotifications() throws {
         let error = AirshipErrors.error("some error")
         delegate.didFailToRegisterForRemoteNotifications(error: error)
-        XCTAssertEqual("some error", error.localizedDescription)
+        #expect("some error" == error.localizedDescription)
     }
 
+    @Test
     @MainActor
     func testDidReceiveRemoteNotification() async throws {
         let expectedUserInfo = ["neat": "story"]
@@ -53,19 +60,19 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
         self.push.didReceiveRemoteNotificationCallback = {
             userInfo,
             isForeground in
-            XCTAssertEqual(
-                expectedUserInfo as NSDictionary,
-                userInfo as NSDictionary
+            #expect(
+                (expectedUserInfo as NSDictionary) ==
+                (userInfo as NSDictionary)
             )
-            XCTAssertTrue(isForeground)
+            #expect(isForeground)
             return .noData
         }
 
         self.pushableComponent.didReceiveRemoteNotificationCallback = {
             userInfo in
-            XCTAssertEqual(
-                expectedUserInfo as NSDictionary,
-                userInfo as NSDictionary
+            #expect(
+                (expectedUserInfo as NSDictionary) ==
+                (userInfo as NSDictionary)
             )
             return .newData
         }
@@ -79,12 +86,12 @@ class DefaultAppIntegrationdelegateTest: XCTestCase {
             }
         }
         
-        XCTAssertEqual(result, .newData)
+        #expect(result == .newData)
     }
 }
 
 
-class TestPushableComponent: AirshipPushableComponent, @unchecked Sendable {
+fileprivate class TestPushableComponent: AirshipPushableComponent, @unchecked Sendable {
     
     var didReceiveRemoteNotificationCallback:(
         ([AnyHashable: Any]) -> UABackgroundFetchResult

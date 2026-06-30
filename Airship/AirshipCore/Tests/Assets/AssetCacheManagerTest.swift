@@ -1,12 +1,14 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 @_spi(AirshipInternal) import AirshipCore
+import Foundation
 
-final class AssetCacheManagerTest: XCTestCase {
-    class TestAssetDownloader: AssetDownloader, @unchecked Sendable {
+@Suite(.timeLimit(.minutes(1)))
+struct AssetCacheManagerTest {
+    final class TestAssetDownloader: AssetDownloader, @unchecked Sendable {
         var downloadResult: Result<URL, Error>?
         var downloadDelaySeconds: TimeInterval = 0
         var customDownloadHandler: ((URL) async throws -> URL)?
@@ -33,7 +35,7 @@ final class AssetCacheManagerTest: XCTestCase {
         }
     }
 
-    class TestAssetFileManager: AssetFileManager, @unchecked Sendable {
+    final class TestAssetFileManager: AssetFileManager, @unchecked Sendable {
         var onEnsureCacheRootDirectory: ((_ rootPathComponent: String) -> URL)?
         var onEnsureDirectory: ((_ identifier: String) -> URL)?
         var onMoveAsset: ((_ tempURL: URL, _ cacheURL: URL) throws -> ())?
@@ -48,7 +50,7 @@ final class AssetCacheManagerTest: XCTestCase {
 
         func ensureCacheDirectory(identifier: String) throws -> URL {
             if onEnsureDirectory == nil {
-                XCTFail("Testing block onEnsureDirectory testing block must be implemented and return a URL")
+                Issue.record("Testing block onEnsureDirectory testing block must be implemented and return a URL")
             }
 
             return self.onEnsureDirectory!(identifier)
@@ -56,7 +58,7 @@ final class AssetCacheManagerTest: XCTestCase {
 
         func ensureCacheRootDirectory(rootPathComponent: String) throws -> URL {
             if onEnsureCacheRootDirectory == nil {
-                XCTFail("Testing block onEnsureCacheRootDirectory must be implemented and return a URL")
+                Issue.record("Testing block onEnsureCacheRootDirectory must be implemented and return a URL")
             }
 
             return self.onEnsureCacheRootDirectory!(rootPathComponent)
@@ -72,6 +74,7 @@ final class AssetCacheManagerTest: XCTestCase {
     }
 
     /// Tests that calling cache assets on two remote URLs will result in a file move to the correct directory with those two assets
+    @Test
     func testCacheTwoAssets() async throws {
         let downloader = TestAssetDownloader()
         downloader.downloadResult = .success(URL(fileURLWithPath: "/temp/asset"))
@@ -98,13 +101,13 @@ final class AssetCacheManagerTest: XCTestCase {
 
         fileManager.onEnsureCacheRootDirectory = { rootPathComponent in
             /// Check root path component is used for the root directory
-            XCTAssertEqual(rootPathComponent, expectedRootPathComponent)
+            #expect(rootPathComponent == expectedRootPathComponent)
             return expectedRootCacheDirectory
         }
 
         fileManager.onEnsureDirectory = { identifier in
             /// Check cache directory is the root path + expected schedule identifier
-            XCTAssertEqual(identifier, expectedCacheDirectory.lastPathComponent)
+            #expect(identifier == expectedCacheDirectory.lastPathComponent)
             return expectedCacheDirectory
         }
 
@@ -125,14 +128,14 @@ final class AssetCacheManagerTest: XCTestCase {
             }
             
             if shouldExist {
-                XCTFail()
+                Issue.record()
             }
             
             return false
         }
 
-        let asset1MovedToCache = expectation(description: "Test asset 1 moved to cache")
-        let asset2MovedToCache = expectation(description: "Test asset 2 moved to cache")
+        let asset1MovedToCache = AirshipTestExpectation(description: "Test asset 1 moved to cache")
+        let asset2MovedToCache = AirshipTestExpectation(description: "Test asset 2 moved to cache")
 
         fileManager.onMoveAsset = { tempURL, cachedURL in
             if expectedAsset1Filename == cachedURL.lastPathComponent {
@@ -152,19 +155,20 @@ final class AssetCacheManagerTest: XCTestCase {
             
             shouldExist = true
 
-            XCTAssertTrue(cachedAssets.isCached(remoteURL: assetRemoteURL1))
-            XCTAssertTrue(cachedAssets.isCached(remoteURL: assetRemoteURL2))
+            #expect(cachedAssets.isCached(remoteURL: assetRemoteURL1))
+            #expect(cachedAssets.isCached(remoteURL: assetRemoteURL2))
 
-            XCTAssertEqual(cachedAssets.cachedURL(remoteURL: assetRemoteURL1), expectedFile1URL)
-            XCTAssertEqual(cachedAssets.cachedURL(remoteURL: assetRemoteURL2), expectedFile2URL)
+            #expect(cachedAssets.cachedURL(remoteURL: assetRemoteURL1) == expectedFile1URL)
+            #expect(cachedAssets.cachedURL(remoteURL: assetRemoteURL2) == expectedFile2URL)
 
             await fulfillment(of: [asset1MovedToCache, asset2MovedToCache], timeout: 1)
 
         } catch {
-            XCTFail("Caching assets should succeed: \(error)")
+            Issue.record("Caching assets should succeed: \(error)")
         }
     }
 
+    @Test
     func testClearCacheDuringActiveDownload() async throws {
         let downloader = TestAssetDownloader()
         downloader.downloadResult = .success(URL(fileURLWithPath: "/temp/asset"))
@@ -202,13 +206,14 @@ final class AssetCacheManagerTest: XCTestCase {
             if (error as? CancellationError) != nil {
                 isCancelled = true
             } else {
-                XCTFail("Expected a CancellationError, but received: \(error)")
+                Issue.record("Expected a CancellationError, but received: \(error)")
             }
         }
-        XCTAssertTrue(isCancelled, "The caching task should be canceled after clearing the cache.")
+        #expect(isCancelled, "The caching task should be canceled after clearing the cache.")
     }
 
     /// Tests that duplicate URLs in the assets array are deduplicated before processing
+    @Test
     func testCacheDuplicateAssets() async throws {
         let downloader = TestAssetDownloader()
         downloader.downloadResult = .success(URL(fileURLWithPath: "/temp/asset"))
@@ -249,7 +254,7 @@ final class AssetCacheManagerTest: XCTestCase {
 
         fileManager.onMoveAsset = { tempURL, cachedURL in
             moveCount += 1
-            XCTAssertEqual(cachedURL, expectedFileURL)
+            #expect(cachedURL == expectedFileURL)
         }
 
         let manager = AssetCacheManager(assetDownloader: downloader, assetFileManager: fileManager)
@@ -261,13 +266,13 @@ final class AssetCacheManagerTest: XCTestCase {
             let cachedAssets = try await manager.cacheAssets(identifier: testScheduleIdentifier, assets: duplicateAssets)
 
             // Should only download and move once despite duplicate URLs
-            XCTAssertEqual(downloadCount, 1, "Should only download once for duplicate URLs")
-            XCTAssertEqual(moveCount, 1, "Should only move once for duplicate URLs")
+            #expect(downloadCount == 1, "Should only download once for duplicate URLs")
+            #expect(moveCount == 1, "Should only move once for duplicate URLs")
 
-            XCTAssertTrue(cachedAssets.isCached(remoteURL: assetRemoteURL))
-            XCTAssertEqual(cachedAssets.cachedURL(remoteURL: assetRemoteURL), expectedFileURL)
+            #expect(cachedAssets.isCached(remoteURL: assetRemoteURL))
+            #expect(cachedAssets.cachedURL(remoteURL: assetRemoteURL) == expectedFileURL)
         } catch {
-            XCTFail("Caching duplicate assets should succeed: \(error)")
+            Issue.record("Caching duplicate assets should succeed: \(error)")
         }
     }
 
@@ -331,17 +336,14 @@ final class AssetCacheManagerTest: XCTestCase {
 
         do {
             // Both should succeed despite potential race condition
-            let (result1, result2) = try await (cache1, cache2)
-
-            XCTAssertNotNil(result1)
-            XCTAssertNotNil(result2)
+            _ = try await (cache1, cache2)
 
             // At least 2 move attempts should have been made
             let finalMoveAttempts = moveAttemptsLock.withLock { moveAttempts }
 
-            XCTAssertGreaterThanOrEqual(finalMoveAttempts, 1, "Should have attempted to move at least once")
+            #expect(finalMoveAttempts >= 1, "Should have attempted to move at least once")
         } catch {
-            XCTFail("Concurrent caching should handle race conditions gracefully: \(error)")
+            Issue.record("Concurrent caching should handle race conditions gracefully: \(error)")
         }
     }
 }
@@ -351,4 +353,3 @@ fileprivate extension URL {
         return AirshipUtils.sha256Hash(input: self.path)
     }
 }
-

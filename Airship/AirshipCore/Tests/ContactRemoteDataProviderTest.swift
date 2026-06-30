@@ -1,18 +1,19 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable
 import AirshipCore
+import Foundation
 
-final class ContactRemoteDataProviderDelegateTest: XCTestCase {
+@Suite struct ContactRemoteDataProviderDelegateTest {
 
     private let contact: TestContact = TestContact()
     private let client: TestRemoteDataAPIClient = TestRemoteDataAPIClient()
     private let config: RuntimeConfig = RuntimeConfig.testConfig()
 
-    private var delegate: ContactRemoteDataProviderDelegate!
+    private let delegate: ContactRemoteDataProviderDelegate
 
-    override func setUpWithError() throws {
+    init() {
         delegate = ContactRemoteDataProviderDelegate(
             config: config,
             apiClient: client,
@@ -20,6 +21,7 @@ final class ContactRemoteDataProviderDelegateTest: XCTestCase {
         )
     }
 
+    @Test
     func testIsRemoteDataInfoUpToDate() async throws {
         contact.contactIDInfo = ContactIDInfo(contactID: "some-contact-id", isStable: true, namedUserID: nil)
 
@@ -43,7 +45,7 @@ final class ContactRemoteDataProviderDelegateTest: XCTestCase {
             locale: locale,
             randomValue: randomValue
         )
-        XCTAssertTrue(isUpToDate)
+        #expect(isUpToDate)
 
         // Different locale
         isUpToDate = await self.delegate.isRemoteDataInfoUpToDate(
@@ -51,7 +53,7 @@ final class ContactRemoteDataProviderDelegateTest: XCTestCase {
             locale: Locale(identifier: "en"),
             randomValue: randomValue
         )
-        XCTAssertFalse(isUpToDate)
+        #expect(!(isUpToDate))
 
         // Different randomValue
         isUpToDate = await self.delegate.isRemoteDataInfoUpToDate(
@@ -59,7 +61,7 @@ final class ContactRemoteDataProviderDelegateTest: XCTestCase {
             locale: locale,
             randomValue: randomValue + 1
         )
-        XCTAssertFalse(isUpToDate)
+        #expect(!(isUpToDate))
 
         // Different contact ID
         contact.contactIDInfo = ContactIDInfo(contactID: "some-other-contact-id", isStable: true, namedUserID: nil)
@@ -68,7 +70,7 @@ final class ContactRemoteDataProviderDelegateTest: XCTestCase {
             locale: locale,
             randomValue: randomValue
         )
-        XCTAssertFalse(isUpToDate)
+        #expect(!(isUpToDate))
 
         // Unstable contact ID
         contact.contactIDInfo = ContactIDInfo(contactID: "some-contact-id", isStable: false, namedUserID: nil)
@@ -77,9 +79,10 @@ final class ContactRemoteDataProviderDelegateTest: XCTestCase {
             locale: locale,
             randomValue: randomValue
         )
-        XCTAssertFalse(isUpToDate)
+        #expect(!(isUpToDate))
     }
 
+    @Test
     func testFetch() async throws {
         contact.contactID = "some-contact-id"
 
@@ -100,24 +103,22 @@ final class ContactRemoteDataProviderDelegateTest: XCTestCase {
 
         client.lastModified = "some other time"
         client.fetchData = { url, auth, lastModified, info in
-            XCTAssertEqual(remoteDatInfo.url, url)
-            XCTAssertEqual(AirshipRequestAuth.contactAuthToken(identifier: "some-contact-id"), auth)
-            XCTAssertEqual("some time", lastModified)
+            #expect(remoteDatInfo.url == url)
+            #expect(AirshipRequestAuth.contactAuthToken(identifier: "some-contact-id") == auth)
+            #expect("some time" == lastModified)
 
-            XCTAssertEqual(
-                RemoteDataInfo(
-                    url: try RemoteDataURLFactory.makeURL(
-                        config: self.config,
-                        path: "/api/remote-data-contact/ios/some-contact-id",
-                        locale: locale,
-                        randomValue: randomValue
-                    ),
-                    lastModifiedTime: "some other time",
-                    source: .contact,
-                    contactID: "some-contact-id"
+            let expectedInfo = RemoteDataInfo(
+                url: try RemoteDataURLFactory.makeURL(
+                    config: self.config,
+                    path: "/api/remote-data-contact/ios/some-contact-id",
+                    locale: locale,
+                    randomValue: randomValue
                 ),
-                info
+                lastModifiedTime: "some other time",
+                source: .contact,
+                contactID: "some-contact-id"
             )
+            #expect(expectedInfo == info)
 
             return AirshipHTTPResponse(
                 result: RemoteDataResult(
@@ -135,9 +136,10 @@ final class ContactRemoteDataProviderDelegateTest: XCTestCase {
             lastRemoteDataInfo: remoteDatInfo
         )
 
-        XCTAssertEqual(result.statusCode, 200)
+        #expect(result.statusCode == 200)
     }
 
+    @Test
     func testFetchLastModifiedOutOfDate() async throws {
         contact.contactID = "some-other-contact-id"
 
@@ -157,7 +159,7 @@ final class ContactRemoteDataProviderDelegateTest: XCTestCase {
         )
 
         client.fetchData = { _, _, lastModified, _ in
-            XCTAssertNil(lastModified)
+            #expect(lastModified == nil)
             return AirshipHTTPResponse(
                 result: nil,
                 statusCode: 400,
@@ -171,6 +173,6 @@ final class ContactRemoteDataProviderDelegateTest: XCTestCase {
             lastRemoteDataInfo: remoteDatInfo
         )
 
-        XCTAssertEqual(result.statusCode, 400)
+        #expect(result.statusCode == 400)
     }
 }

@@ -1,34 +1,35 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
+import Foundation
 
-final class AirshipDeviceIDTest: XCTestCase {
+@Suite struct AirshipDeviceIDTest {
 
     private let appKey: String = UUID().uuidString
     private let keychain: TestKeyChainAccess = TestKeyChainAccess()
-    private var deviceID: AirshipDeviceID!
+    private let deviceID: AirshipDeviceID
 
-    override func setUp() async throws {
+    init() {
         self.deviceID = AirshipDeviceID(appKey: self.appKey, keychain: keychain)
     }
 
+    @Test
     func testGenerateDeviceID() async {
         let id = await deviceID.value
-        XCTAssertNotNil(id)
         let fromStore = await self.keychain.readCredentails(identifier: "com.urbanairship.deviceID", appKey: appKey)
-        XCTAssertEqual(fromStore?.password, id)
+        #expect(fromStore?.password == id)
     }
 
+    @Test
     func testRestoreFromKeychain() async {
         let first = await deviceID.value
-        XCTAssertNotNil(first)
 
-        self.deviceID = AirshipDeviceID(appKey: self.appKey, keychain: keychain)
-        let second = await deviceID.value
+        let restored = AirshipDeviceID(appKey: self.appKey, keychain: keychain)
+        let second = await restored.value
 
-        XCTAssertEqual(first, second)
+        #expect(first == second)
     }
 }

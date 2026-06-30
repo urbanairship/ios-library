@@ -1,22 +1,25 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable
 import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
+import Foundation
 
 @MainActor
-final class SessionTrackerTest: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct SessionTrackerTest {
 
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
     private let notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter()
     private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
     private let appStateTracker: TestAppStateTracker = TestAppStateTracker()
 
-    var tracker: SessionTracker!
+    let tracker: SessionTracker
 
-    var sessionCount = AirshipAtomicValue<Int>(1)
-    override func setUp() async throws {
+    let sessionCount = AirshipAtomicValue<Int>(1)
+
+    init() {
         self.tracker = SessionTracker(
             date: date,
             taskSleeper: taskSleeper,
@@ -29,6 +32,7 @@ final class SessionTrackerTest: XCTestCase {
         )
     }
 
+    @Test
     func testDidBecomeActiveAppInit() async throws {
         Task { @MainActor [notificationCenter] in
             notificationCenter.post(
@@ -39,10 +43,11 @@ final class SessionTrackerTest: XCTestCase {
 
         var asyncIterator  = self.tracker.events.makeAsyncIterator()
         let event = await asyncIterator.next()!
-        XCTAssertEqual(.foregroundInit, event.type)
-        XCTAssertEqual(self.date.now, event.date)
+        #expect(.foregroundInit == event.type)
+        #expect(self.date.now == event.date)
     }
 
+    @Test
     func testBackgroundBeforeForegroundEmitsAppInit() async throws {
         Task { @MainActor [notificationCenter] in
             notificationCenter.post(
@@ -59,9 +64,10 @@ final class SessionTrackerTest: XCTestCase {
             ),
         ])
 
-        XCTAssertEqual(self.tracker.sessionState.sessionID, "1")
+        #expect(self.tracker.sessionState.sessionID == "1")
     }
 
+    @Test
     func testLaunchFromPushEmitsAppInit() async throws {
         self.tracker.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
 
@@ -79,10 +85,10 @@ final class SessionTrackerTest: XCTestCase {
             )
         ])
 
-        XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
+        #expect(self.tracker.sessionState == expectedSessionState)
     }
 
-    @MainActor
+    @Test
     func testAirshipReadyEmitsAppInitActiveState() async throws {
         self.appStateTracker.currentState = .active
 
@@ -100,11 +106,11 @@ final class SessionTrackerTest: XCTestCase {
         ])
 
         let sleeps = await self.taskSleeper.sleeps
-        XCTAssertEqual([1.0], sleeps)
-        XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
+        #expect([1.0] == sleeps)
+        #expect(self.tracker.sessionState == expectedSessionState)
     }
 
-    @MainActor
+    @Test
     func testAirshipReadyEmitsAppInitInActiveState() async throws {
         self.appStateTracker.currentState = .inactive
 
@@ -122,11 +128,11 @@ final class SessionTrackerTest: XCTestCase {
         ])
 
         let sleeps = await self.taskSleeper.sleeps
-        XCTAssertEqual([1.0], sleeps)
-        XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
+        #expect([1.0] == sleeps)
+        #expect(self.tracker.sessionState == expectedSessionState)
     }
 
-    @MainActor
+    @Test
     func testAirshipReadyEmitsAppBackgroundState() async throws {
         self.appStateTracker.currentState = .background
 
@@ -144,11 +150,11 @@ final class SessionTrackerTest: XCTestCase {
         ])
 
         let sleeps = await self.taskSleeper.sleeps
-        XCTAssertEqual([1.0], sleeps)
-        XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
+        #expect([1.0] == sleeps)
+        #expect(self.tracker.sessionState == expectedSessionState)
     }
 
-    @MainActor
+    @Test
     func testLaunchFromPushAppBackgroundState() async throws {
         self.appStateTracker.currentState = .background
 
@@ -160,10 +166,10 @@ final class SessionTrackerTest: XCTestCase {
 
         Task {  @MainActor [tracker, notificationCenter] in
             // launch from push
-            tracker?.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
+            tracker.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
 
             // This would normally be called with a delay, so calling it after
-            tracker?.airshipReady()
+            tracker.airshipReady()
 
             // Foreground
             notificationCenter.post(
@@ -180,10 +186,10 @@ final class SessionTrackerTest: XCTestCase {
             )
         ])
 
-        XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
+        #expect(self.tracker.sessionState == expectedSessionState)
     }
 
-    @MainActor
+    @Test
     func testLaunchFromPushAppInActiveState() async throws {
         self.appStateTracker.currentState = .inactive
 
@@ -195,10 +201,10 @@ final class SessionTrackerTest: XCTestCase {
 
         Task { @MainActor [tracker, notificationCenter] in
             // launch from push
-            tracker?.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
+            tracker.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
 
             // This would normally be called with a delay, so calling it after
-            tracker?.airshipReady()
+            tracker.airshipReady()
 
             // Foreground
             notificationCenter.post(
@@ -215,10 +221,10 @@ final class SessionTrackerTest: XCTestCase {
             )
         ])
 
-        XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
+        #expect(self.tracker.sessionState == expectedSessionState)
     }
 
-    @MainActor
+    @Test
     func testLaunchAppBackgroundState() async throws {
         self.appStateTracker.currentState = .background
 
@@ -268,11 +274,11 @@ final class SessionTrackerTest: XCTestCase {
         ])
 
         // Background should reset state
-        XCTAssertEqual(self.tracker.sessionState, SessionState(sessionID: "3"))
+        #expect(self.tracker.sessionState == SessionState(sessionID: "3"))
 
     }
 
-    @MainActor
+    @Test
     func testLaunchAppInactiveState() async throws {
         self.appStateTracker.currentState = .inactive
 
@@ -314,10 +320,10 @@ final class SessionTrackerTest: XCTestCase {
         ])
 
         // Background should reset state
-        XCTAssertEqual(self.tracker.sessionState, SessionState(sessionID: "2"))
+        #expect(self.tracker.sessionState == SessionState(sessionID: "2"))
     }
 
-    @MainActor
+    @Test
     func testLaunchAppActiveState() async throws {
         appStateTracker.currentState = .active
 
@@ -359,10 +365,10 @@ final class SessionTrackerTest: XCTestCase {
         ])
 
         // Background should reset state
-        XCTAssertEqual(self.tracker.sessionState, SessionState(sessionID: "2"))
+        #expect(self.tracker.sessionState == SessionState(sessionID: "2"))
     }
 
-    @MainActor
+    @Test
     func testLaunchContentAvailablePush() async throws {
         self.appStateTracker.currentState = .background
 
@@ -382,7 +388,7 @@ final class SessionTrackerTest: XCTestCase {
 
         Task { @MainActor [tracker, notificationCenter] in
             // launch from push
-            tracker?.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
+            tracker.launchedFromPush(sendID: "some sendID", metadata: "some metadata")
 
             // Foreground
             notificationCenter.post(
@@ -406,10 +412,10 @@ final class SessionTrackerTest: XCTestCase {
         ])
 
         // Foreground should generate new session ID
-        XCTAssertEqual(self.tracker.sessionState, expectedSessionState)
+        #expect(self.tracker.sessionState == expectedSessionState)
     }
 
-    @MainActor
+    @Test
     func testBackgroundClearPush() async throws {
         self.appStateTracker.currentState = .background
 
@@ -462,26 +468,26 @@ final class SessionTrackerTest: XCTestCase {
         ])
 
         // Foreground should generate new session ID
-        XCTAssertEqual(self.tracker.sessionState, SessionState(sessionID: "3"))
+        #expect(self.tracker.sessionState == SessionState(sessionID: "3"))
     }
 
-    private func ensureEvents(_ events: [SessionEvent], line: UInt = #line) async {
+    private func ensureEvents(_ events: [SessionEvent], sourceLocation: SourceLocation = #_sourceLocation) async {
         let verifyTask = Task { [tracker] in
-            var asyncIterator = tracker!.events.makeAsyncIterator()
+            var asyncIterator = tracker.events.makeAsyncIterator()
             for expected in events {
                 if Task.isCancelled {
                     break
                 }
 
                 let next = await asyncIterator.next()
-                XCTAssertEqual(expected, next, line: line)
+                #expect(expected == next, sourceLocation: sourceLocation)
             }
         }
 
         let timeoutTask = Task {
             try? await DefaultAirshipTaskSleeper.shared.sleep(timeInterval:2.0)
             if Task.isCancelled == false {
-                XCTFail("Failed to get events", line: line)
+                Issue.record("Failed to get events", sourceLocation: sourceLocation)
                 verifyTask.cancel()
             }
         }

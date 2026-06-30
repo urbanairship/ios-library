@@ -1,20 +1,23 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable
 import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
-final class EventSchedulerTest: XCTestCase {
+@Suite
+struct EventSchedulerTest {
 
     private let date = UATestDate()
     private let workManager = TestWorkManager()
     private let appStateTracker = TestAppStateTracker()
     private var eventScheduler: EventUploadScheduler!
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
-    override func setUp() async throws {
+
+    init() {
         self.eventScheduler = EventUploadScheduler(
             appStateTracker: appStateTracker,
             workManager: workManager,
@@ -23,6 +26,7 @@ final class EventSchedulerTest: XCTestCase {
         )
     }
 
+    @Test
     @MainActor
     func testScheduleNormalPriority() async throws  {
         self.appStateTracker.currentState = .active
@@ -31,10 +35,11 @@ final class EventSchedulerTest: XCTestCase {
             minBatchInterval: 60.0
         )
 
-        XCTAssertEqual(1, self.workManager.workRequests.count)
-        XCTAssertEqual(15.0, self.workManager.workRequests[0].initialDelay)
+        #expect(1 == self.workManager.workRequests.count)
+        #expect(15.0 == self.workManager.workRequests[0].initialDelay)
     }
 
+    @Test
     @MainActor
     func testScheduleHighPriority() async throws  {
         self.appStateTracker.currentState = .active
@@ -43,10 +48,11 @@ final class EventSchedulerTest: XCTestCase {
             minBatchInterval: 60.0
         )
 
-        XCTAssertEqual(1, self.workManager.workRequests.count)
-        XCTAssertEqual(0, self.workManager.workRequests[0].initialDelay)
+        #expect(1 == self.workManager.workRequests.count)
+        #expect(0 == self.workManager.workRequests[0].initialDelay)
     }
 
+    @Test
     @MainActor
     func testScheduleNormalPriorityBackground() async throws  {
         self.appStateTracker.currentState = .background
@@ -55,10 +61,11 @@ final class EventSchedulerTest: XCTestCase {
             minBatchInterval: 60.0
         )
 
-        XCTAssertEqual(1, self.workManager.workRequests.count)
-        XCTAssertEqual(0, self.workManager.workRequests[0].initialDelay)
+        #expect(1 == self.workManager.workRequests.count)
+        #expect(0 == self.workManager.workRequests[0].initialDelay)
     }
 
+    @Test
     @MainActor
     func testAlreadyScheduled() async throws  {
         self.appStateTracker.currentState = .active
@@ -72,10 +79,11 @@ final class EventSchedulerTest: XCTestCase {
             minBatchInterval: 60.0
         )
 
-        XCTAssertEqual(1, self.workManager.workRequests.count)
-        XCTAssertEqual(15.0, self.workManager.workRequests[0].initialDelay)
+        #expect(1 == self.workManager.workRequests.count)
+        #expect(15.0 == self.workManager.workRequests[0].initialDelay)
     }
 
+    @Test
     @MainActor
     func testScheduleEarlier() async throws  {
         self.appStateTracker.currentState = .active
@@ -89,11 +97,12 @@ final class EventSchedulerTest: XCTestCase {
             minBatchInterval: 60.0
         )
 
-        XCTAssertEqual(2, self.workManager.workRequests.count)
-        XCTAssertEqual(15.0, self.workManager.workRequests[0].initialDelay)
-        XCTAssertEqual(0, self.workManager.workRequests[1].initialDelay)
+        #expect(2 == self.workManager.workRequests.count)
+        #expect(15.0 == self.workManager.workRequests[0].initialDelay)
+        #expect(0 == self.workManager.workRequests[1].initialDelay)
     }
 
+    @Test
     @MainActor
     func testBatchInterval() async throws {
         self.date.dateOverride = Date()
@@ -106,10 +115,11 @@ final class EventSchedulerTest: XCTestCase {
             minBatchInterval: 60.0
         )
 
-        XCTAssertEqual(1, self.workManager.workRequests.count)
-        XCTAssertEqual(60.0, self.workManager.workRequests[0].initialDelay)
+        #expect(1 == self.workManager.workRequests.count)
+        #expect(60.0 == self.workManager.workRequests[0].initialDelay)
     }
 
+    @Test
     @MainActor
     func testSmallerBatchInterval() async throws {
         self.date.dateOverride = Date()
@@ -132,17 +142,19 @@ final class EventSchedulerTest: XCTestCase {
             minBatchInterval: 30.0
         )
 
-        XCTAssertEqual(2, self.workManager.workRequests.count)
-        XCTAssertEqual(60.0, self.workManager.workRequests[0].initialDelay)
-        XCTAssertEqual(30.0, self.workManager.workRequests[1].initialDelay)
+        #expect(2 == self.workManager.workRequests.count)
+        #expect(60.0 == self.workManager.workRequests[0].initialDelay)
+        #expect(30.0 == self.workManager.workRequests[1].initialDelay)
     }
 
+    @Test
     func testWorkHandlerNotSet() async throws {
         let request = AirshipWorkRequest(workID: "neat")
         let result = try await self.workManager.workers[0].workHandler(request)
-        XCTAssertEqual(AirshipWorkResult.success, result)
+        #expect(AirshipWorkResult.success == result)
     }
 
+    @Test
     func testWorkBlockFailed() async throws {
         let called = AirshipAtomicValue<Bool>(false)
         await self.eventScheduler.setWorkBlock {
@@ -152,10 +164,11 @@ final class EventSchedulerTest: XCTestCase {
 
         let request = AirshipWorkRequest(workID: "neat")
         let result = try await self.workManager.workers[0].workHandler(request)
-        XCTAssertEqual(AirshipWorkResult.failure, result)
-        XCTAssertTrue(called.value)
+        #expect(AirshipWorkResult.failure == result)
+        #expect(called.value)
     }
 
+    @Test
     func testWorkBlockSuccess() async throws {
         let called = AirshipAtomicValue<Bool>(false)
         await self.eventScheduler.setWorkBlock {
@@ -165,28 +178,30 @@ final class EventSchedulerTest: XCTestCase {
 
         let request = AirshipWorkRequest(workID: "neat")
         let result = try await self.workManager.workers[0].workHandler(request)
-        XCTAssertEqual(AirshipWorkResult.success, result)
-        XCTAssertTrue(called.value)
+        #expect(AirshipWorkResult.success == result)
+        #expect(called.value)
     }
 
+    @Test
     @MainActor
     func testBatchDelay() async throws {
         self.appStateTracker.currentState = .inactive
         let request = AirshipWorkRequest(workID: "neat")
         let result = try await self.workManager.workers[0].workHandler(request)
-        XCTAssertEqual(AirshipWorkResult.success, result)
+        #expect(AirshipWorkResult.success == result)
         let sleeps = await self.taskSleeper.sleeps
-        XCTAssertEqual([1.0], sleeps)
+        #expect([1.0] == sleeps)
     }
 
+    @Test
     @MainActor
     func testActiveBatchDelay() async throws {
         self.appStateTracker.currentState = .active
         let request = AirshipWorkRequest(workID: "neat")
         let result = try await self.workManager.workers[0].workHandler(request)
-        XCTAssertEqual(AirshipWorkResult.success, result)
+        #expect(AirshipWorkResult.success == result)
 
         let sleeps = await self.taskSleeper.sleeps
-        XCTAssertEqual([5.0], sleeps)
+        #expect([5.0] == sleeps)
     }
 }

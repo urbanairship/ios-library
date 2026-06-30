@@ -1,10 +1,10 @@
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
 
-final class FarmHashFingerprint64Test: XCTestCase {
+@Suite struct FarmHashFingerprint64Test {
 
     private let testData: [String: UInt64] = [
         "dXB@tDQ-v5<H]rq2Pcc*s>nC-[Mdy": 8365906589669344754,
@@ -96,32 +96,35 @@ final class FarmHashFingerprint64Test: XCTestCase {
            "girded_heave:30aebf7f-8a0c-4b89-adbc-b010b0619f94": 4262921022933957472,
        ]
 
+    @Test
     func testKnownOutputs() throws {
         self.testData.forEach { (key: String, value: UInt64) in
-            XCTAssertEqual(value, key.farmHashFingerprint64)
+            #expect(value == key.farmHashFingerprint64)
         }
     }
 
+    @Test
     func testCrossPlatformCases() throws {
         self.crossPlatformCases.forEach { (key: String, value: UInt64) in
-            XCTAssertEqual(value, key.farmHashFingerprint64)
+            #expect(value == key.farmHashFingerprint64)
         }
     }
 
     /**
      * Based on https://github.com/google/guava/blob/master/guava-tests/test/com/google/common/hash/FarmHashFingerprint64Test.java#L38
      */
+    @Test
     func testReallySimpleFingerprints() throws {
-        XCTAssertEqual(
-            8581389452482819506,
+        #expect(
+            8581389452482819506 ==
             "test".farmHashFingerprint64
         )
-        XCTAssertEqual(
-            UInt64(bitPattern: -4196240717365766262),
+        #expect(
+            UInt64(bitPattern: -4196240717365766262) ==
             String(repeating: "test", count: 8).farmHashFingerprint64
         )
-        XCTAssertEqual(
-            3500507768004279527,
+        #expect(
+            3500507768004279527 ==
             String(repeating: "test", count: 64).farmHashFingerprint64
         )
     }
@@ -129,6 +132,7 @@ final class FarmHashFingerprint64Test: XCTestCase {
     /**
      * Based on https://github.com/google/guava/blob/master/guava-tests/test/com/google/common/hash/FarmHashFingerprint64Test.java#L158
      */
+    @Test
     func testMultipleLengths() throws {
         let iterations = 800
         var buf = [UInt8](repeating: 0, count: iterations * 4)
@@ -165,7 +169,7 @@ final class FarmHashFingerprint64Test: XCTestCase {
             buf[((x0 << 16) + (x1 << 8) + x2) % bufLen] ^= UInt8(x3)
             buf[((x1 << 16) + (x2 << 8) + x3) % bufLen] ^= UInt8(i % 256)
         }
-        XCTAssertEqual(0x7a1d67c50ec7e167, h)
+        #expect(0x7a1d67c50ec7e167 == h)
     }
 
     private func remix(_ v: UInt64) -> UInt64 {

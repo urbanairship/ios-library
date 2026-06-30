@@ -1,13 +1,15 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
 
-final class AirshipAsyncChannelTest: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct AirshipAsyncChannelTest {
 
     private let channel = AirshipAsyncChannel<Int>()
 
+    @Test
     func testSingleListener() async throws {
         var stream = await channel.makeStream().makeAsyncIterator()
 
@@ -22,9 +24,10 @@ final class AirshipAsyncChannelTest: XCTestCase {
             received.append(await stream.next()!)
         }
 
-        XCTAssertEqual(sent, received)
+        #expect(sent == received)
     }
 
+    @Test
     func testMultipleListeners() async throws {
         let streams = [
             await channel.makeStream().makeAsyncIterator(),
@@ -43,10 +46,11 @@ final class AirshipAsyncChannelTest: XCTestCase {
             for _ in 0...5 {
                 received.append(await stream.next()!)
             }
-            XCTAssertEqual(sent, received)
+            #expect(sent == received)
         }
     }
 
+    @Test
     func testNonIsolatedDedupingStreamMapped() async throws {
         var updates = channel.makeNonIsolatedDedupingStream(
             initialValue: {
@@ -59,7 +63,7 @@ final class AirshipAsyncChannelTest: XCTestCase {
 
         // Wait for first so we know the task is setup to listen for changes
         let first = await updates.next()
-        XCTAssertEqual(first, "1")
+        #expect(first == "1")
 
         await channel.send(2)
         await channel.send(2)
@@ -74,9 +78,10 @@ final class AirshipAsyncChannelTest: XCTestCase {
             received.append(await updates.next()!)
         }
 
-        XCTAssertEqual(["2", "3", "4"], received)
+        #expect(["2", "3", "4"] == received)
     }
 
+    @Test
     func testNonIsolatedDedupingStream() async throws {
         var updates = channel.makeNonIsolatedDedupingStream(
             initialValue: {
@@ -87,7 +92,7 @@ final class AirshipAsyncChannelTest: XCTestCase {
 
         // Wait for first so we know the task is setup to listen for changes
         let first = await updates.next()
-        XCTAssertEqual(first, 1)
+        #expect(first == 1)
 
         await channel.send(1)
         await channel.send(1)
@@ -101,9 +106,10 @@ final class AirshipAsyncChannelTest: XCTestCase {
             received.append(await updates.next()!)
         }
 
-        XCTAssertEqual([2, 3], received)
+        #expect([2, 3] == received)
     }
 
+    @Test
     func testNonIsolatedStreamMapped() async throws {
         var updates = channel.makeNonIsolatedStream(
             initialValue: {
@@ -116,7 +122,7 @@ final class AirshipAsyncChannelTest: XCTestCase {
 
         // Wait for first so we know the task is setup to listen for changes
         let first = await updates.next()
-        XCTAssertEqual(first, "1")
+        #expect(first == "1")
 
         await channel.send(1)
         await channel.send(2)
@@ -130,9 +136,10 @@ final class AirshipAsyncChannelTest: XCTestCase {
             received.append(await updates.next()!)
         }
 
-        XCTAssertEqual(["1", "2", "2", "3", "4"], received)
+        #expect(["1", "2", "2", "3", "4"] == received)
     }
 
+    @Test
     func testNonIsolatedStream() async throws {
         var updates = channel.makeNonIsolatedStream(
             initialValue: { 1 }
@@ -140,7 +147,7 @@ final class AirshipAsyncChannelTest: XCTestCase {
 
         // Wait for first so we know the task is setup to listen for changes
         let first = await updates.next()
-        XCTAssertEqual(first, 1)
+        #expect(first == 1)
 
         await channel.send(1)
         await channel.send(1)
@@ -155,7 +162,7 @@ final class AirshipAsyncChannelTest: XCTestCase {
             received.append(await updates.next()!)
         }
 
-        XCTAssertEqual([1, 1, 1, 2, 2, 3], received)
+        #expect([1, 1, 1, 2, 2, 3] == received)
     }
 
 }

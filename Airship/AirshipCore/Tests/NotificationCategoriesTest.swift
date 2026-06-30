@@ -1,152 +1,162 @@
 // Copyright Airship and Contributors
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
+import Foundation
+import UserNotifications
 
-final class NotificationCategoriesTest: XCTestCase {
-    
+@Suite struct NotificationCategoriesTest {
+
+    @Test
     func testDefaultCategories() {
         let categories = NotificationCategories.defaultCategories()
-        XCTAssertEqual(37, categories.count)
-        
+        #expect(37 == categories.count)
+
         // Require auth defaults to true for background actions
         categories.forEach { category in
             category.actions
                 .filter({ !$0.options.contains(.foreground) })
                 .forEach { action in
-                    XCTAssert(action.options.contains(.authenticationRequired))
+                    #expect(action.options.contains(.authenticationRequired))
                 }
         }
     }
-    
+
+    @Test
     func testDefaultCategoriesOverrideAuth() {
         let categories = NotificationCategories.defaultCategories(withRequireAuth: false)
-        XCTAssertEqual(37, categories.count)
-        
+        #expect(37 == categories.count)
+
         // Verify require auth is false for background actions
         categories.forEach { category in
             category.actions
                 .filter({ !$0.options.contains(.foreground) })
                 .forEach { action in
-                    XCTAssertFalse(action.options.contains(.authenticationRequired))
+                    #expect(!(action.options.contains(.authenticationRequired)))
                 }
         }
     }
-    
-    
+
+
+    @Test
     func testCreateFromPlist() {
-        let plist = Bundle(for: self.classForCoder).path(forResource: "CustomNotificationCategories", ofType: "plist")!
+        let plist = Bundle(for: BundleToken.self).path(forResource: "CustomNotificationCategories", ofType: "plist")!
         let categories = NotificationCategories.createCategories(fromFile: plist)
-        
-        XCTAssertEqual(4, categories.count)
-        
+
+        #expect(4 == categories.count)
+
         // Share category
         let share = categories.first(where: { $0.identifier == "share_category" })
-        XCTAssertNotNil(share)
-        XCTAssertEqual(1, share?.actions.count)
+        #expect(share != nil)
+        #expect(1 == share?.actions.count)
 
         // Share action in share category
         let shareAction = share?.actions.first(where: { $0.identifier == "share_button" })
-        XCTAssertNotNil(shareAction)
-        XCTAssertEqual("Share", shareAction?.title)
-        XCTAssertTrue(shareAction!.options.contains(.foreground))
-        XCTAssertFalse(shareAction!.options.contains(.authenticationRequired))
-        XCTAssertFalse(shareAction!.options.contains(.destructive))
+        #expect(shareAction != nil)
+        #expect("Share" == shareAction?.title)
+        #expect(shareAction!.options.contains(.foreground))
+        #expect(!(shareAction!.options.contains(.authenticationRequired)))
+        #expect(!(shareAction!.options.contains(.destructive)))
 
         // Yes no category
         let yesNo = categories.first(where: { $0.identifier == "yes_no_category" })
-        XCTAssertNotNil(yesNo)
-        XCTAssertEqual(2, yesNo?.actions.count)
+        #expect(yesNo != nil)
+        #expect(2 == yesNo?.actions.count)
 
         // Yes action in yes no category
         let yesAction = yesNo?.actions.first(where: { $0.identifier == "yes_button" })
-        XCTAssertNotNil(yesAction)
-        XCTAssertEqual("Yes", yesAction?.title)
-        XCTAssertTrue(yesAction!.options.contains(.foreground))
-        XCTAssertFalse(yesAction!.options.contains(.authenticationRequired))
-        XCTAssertFalse(yesAction!.options.contains(.destructive))
+        #expect(yesAction != nil)
+        #expect("Yes" == yesAction?.title)
+        #expect(yesAction!.options.contains(.foreground))
+        #expect(!(yesAction!.options.contains(.authenticationRequired)))
+        #expect(!(yesAction!.options.contains(.destructive)))
 
         // No action in yes no category
         let noAction = yesNo?.actions.first(where: { $0.identifier == "no_button" })
-        XCTAssertNotNil(noAction)
-        XCTAssertEqual("No", noAction?.title)
+        #expect(noAction != nil)
+        #expect("No" == noAction?.title)
 
-        XCTAssertFalse(noAction!.options.contains(.foreground))
-        XCTAssertTrue(noAction!.options.contains(.authenticationRequired))
-        XCTAssertTrue(noAction!.options.contains(.destructive))
+        #expect(!(noAction!.options.contains(.foreground)))
+        #expect(noAction!.options.contains(.authenticationRequired))
+        #expect(noAction!.options.contains(.destructive))
 
         // text_input category
         let textInput = categories.first(where: { $0.identifier == "text_input_category" })
-        XCTAssertNotNil(textInput)
-        XCTAssertEqual(1, textInput?.actions.count)
-        
+        #expect(textInput != nil)
+        #expect(1 == textInput?.actions.count)
+
         // Follow action in follow category
         let textInputAction = textInput?.actions.first(where: { $0.identifier == "text_input" }) as? UNTextInputNotificationAction
-        XCTAssertNotNil(textInputAction)
-        
+        #expect(textInputAction != nil)
+
         // Test when 'title_resource' value does not exist will fall back to 'title' value
-        XCTAssertEqual("TextInput", textInputAction?.title)
-        XCTAssertEqual("text_input_button", textInputAction?.textInputButtonTitle)
-        XCTAssertEqual("placeholder_text", textInputAction?.textInputPlaceholder)
-        XCTAssertTrue(textInputAction!.options.contains(.foreground))
-        XCTAssertFalse(textInputAction!.options.contains(.authenticationRequired))
-        XCTAssertFalse(textInputAction!.options.contains(.destructive))
-        
+        #expect("TextInput" == textInputAction?.title)
+        #expect("text_input_button" == textInputAction?.textInputButtonTitle)
+        #expect("placeholder_text" == textInputAction?.textInputPlaceholder)
+        #expect(textInputAction!.options.contains(.foreground))
+        #expect(!(textInputAction!.options.contains(.authenticationRequired)))
+        #expect(!(textInputAction!.options.contains(.destructive)))
+
         // Follow category
         let follow = categories.first(where: { $0.identifier == "follow_category" })
-        XCTAssertNotNil(follow)
-        XCTAssertEqual(1, follow?.actions.count)
+        #expect(follow != nil)
+        #expect(1 == follow?.actions.count)
 
         // Follow action in follow category
         let followAction = follow?.actions.first(where: { $0.identifier == "follow_button" })
-        XCTAssertNotNil(followAction)
+        #expect(followAction != nil)
 
         // Test when 'title_resource' value does not exist will fall back to 'title' value
-        XCTAssertEqual("FollowMe", followAction?.title)
-        XCTAssertTrue(followAction!.options .contains(.foreground))
-        XCTAssertFalse(followAction!.options.contains(.authenticationRequired))
-        XCTAssertFalse(followAction!.options.contains(.destructive))
+        #expect("FollowMe" == followAction?.title)
+        #expect(followAction!.options .contains(.foreground))
+        #expect(!(followAction!.options.contains(.authenticationRequired)))
+        #expect(!(followAction!.options.contains(.destructive)))
     }
-    
+
+    @Test
     func testDoesNotCreateCategoryMissingTitle() {
         let actions = [
             ["identifier": "yes", "foreground": true, "authenticationRequired": true],
             ["identifier": "no", "foreground": false, "destructive": true, "authenticationRequired": false]
         ]
-        
-        XCTAssertNil(NotificationCategories.createCategory("category", actions: actions))
+
+        #expect(NotificationCategories.createCategory("category", actions: actions) == nil)
     }
-    
+
+    @Test
     func testCreateFromInvalidPlist() {
         let categories = NotificationCategories.createCategories(fromFile: "no file")
-        XCTAssertEqual(0, categories.count, "No categories should be created.")
+        #expect(0 == categories.count, "No categories should be created.")
     }
-    
+
+    @Test
     func testCreateCategory() {
         let actions = [
             ["identifier": "yes", "foreground": true, "title": "Yes", "authenticationRequired": true],
             ["identifier": "no", "foreground": false, "title": "No", "destructive": true, "authenticationRequired": false]
         ]
-        
+
         let category = NotificationCategories.createCategory("category", actions: actions)
-        
+
         // Yes action
         let yesAction = category?.actions.first(where: { $0.identifier == "yes" })
-        XCTAssertNotNil(yesAction)
-        XCTAssertEqual("Yes", yesAction?.title)
+        #expect(yesAction != nil)
+        #expect("Yes" == yesAction?.title)
 
-        XCTAssertTrue(yesAction!.options.contains(.foreground))
-        XCTAssertTrue(yesAction!.options.contains(.authenticationRequired))
-        XCTAssertFalse(yesAction!.options.contains(.destructive))
+        #expect(yesAction!.options.contains(.foreground))
+        #expect(yesAction!.options.contains(.authenticationRequired))
+        #expect(!(yesAction!.options.contains(.destructive)))
 
         // No action
         let noAction = category?.actions.first(where: { $0.identifier == "no" })
-        XCTAssertNotNil(noAction)
-        XCTAssertEqual("No", noAction?.title)
+        #expect(noAction != nil)
+        #expect("No" == noAction?.title)
 
-        XCTAssertFalse(noAction!.options.contains(.foreground))
-        XCTAssertFalse(noAction!.options.contains(.authenticationRequired))
-        XCTAssertTrue(noAction!.options.contains(.destructive))
+        #expect(!(noAction!.options.contains(.foreground)))
+        #expect(!(noAction!.options.contains(.authenticationRequired)))
+        #expect(noAction!.options.contains(.destructive))
     }
 }
+
+private final class BundleToken {}

@@ -1,17 +1,20 @@
-import XCTest
+import Testing
+import Foundation
 
 @testable import AirshipCore
 
-class RemoteConfigManagerTest: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct RemoteConfigManagerTest {
 
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let testRemoteData = TestRemoteData()
     private let notificationCenter = AirshipNotificationCenter.shared
 
-    private var privacyManager: TestPrivacyManager!
-    private var remoteConfigManager: RemoteConfigManager!
-    private var config: RuntimeConfig = RuntimeConfig.testConfig()
-    override func setUp() async throws {
+    private let privacyManager: TestPrivacyManager
+    private let remoteConfigManager: RemoteConfigManager
+    private let config: RuntimeConfig = RuntimeConfig.testConfig()
+
+    init() async throws {
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: self.config,
@@ -29,8 +32,9 @@ class RemoteConfigManagerTest: XCTestCase {
         self.remoteConfigManager.airshipReady()
     }
 
+    @Test
     @MainActor
-    func testEmptyConfig() throws {
+    func testEmptyConfig() async throws {
         self.config.updateRemoteConfig(
             RemoteConfig(
                 airshipConfig: RemoteConfig.AirshipConfig(
@@ -49,18 +53,19 @@ class RemoteConfigManagerTest: XCTestCase {
             remoteDataInfo: nil
         )
 
-        let expectation = expectation(description: "config updated")
+        let expectation = AirshipTestExpectation(description: "config updated")
         self.config.addRemoteConfigListener(notifyCurrent: false) { _, new in
-            XCTAssertEqual(RemoteConfig(), new)
+            #expect(RemoteConfig() == new)
             expectation.fulfill()
         }
 
         self.testRemoteData.payloads = [payload]
-        wait(for: [expectation], timeout: 10.0)
+        await fulfillment(of: [expectation], timeout: 10.0)
     }
 
+    @Test
     @MainActor
-    func testRemoteConfig() throws {
+    func testRemoteConfig() async throws {
         let remoteConfig = RemoteConfig(
             airshipConfig: RemoteConfig.AirshipConfig(
                 remoteDataURL: "cool://remote",
@@ -82,18 +87,19 @@ class RemoteConfigManagerTest: XCTestCase {
             remoteDataInfo: nil
         )
 
-        let expectation = expectation(description: "config updated")
+        let expectation = AirshipTestExpectation(description: "config updated")
         self.config.addRemoteConfigListener(notifyCurrent: false) { _, new in
-            XCTAssertEqual(remoteConfig, new)
+            #expect(remoteConfig == new)
             expectation.fulfill()
         }
 
         self.testRemoteData.payloads = [payload]
-        wait(for: [expectation], timeout: 10.0)
+        await fulfillment(of: [expectation], timeout: 10.0)
     }
 
+    @Test
     @MainActor
-    func testCombienConfig() throws {
+    func testCombienConfig() async throws {
         let iosConfig = RemoteConfig(
             airshipConfig: RemoteConfig.AirshipConfig(
                 remoteDataURL: "ios://remote",
@@ -136,13 +142,13 @@ class RemoteConfigManagerTest: XCTestCase {
             remoteDataInfo: nil
         )
 
-        let expectation = expectation(description: "config updated")
+        let expectation = AirshipTestExpectation(description: "config updated")
         self.config.addRemoteConfigListener(notifyCurrent: false) { _, new in
-            XCTAssertEqual(expectedConfig, new)
+            #expect(expectedConfig == new)
             expectation.fulfill()
         }
 
         self.testRemoteData.payloads = [commonPayload, platformPayload]
-        wait(for: [expectation], timeout: 10.0)
+        await fulfillment(of: [expectation], timeout: 10.0)
     }
 }

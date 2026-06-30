@@ -1,19 +1,21 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
 
-final class SearchEventTemplateTest: XCTestCase {
+@Suite struct SearchEventTemplateTest {
 
+    @Test
     func testSearch() {
         let event = CustomEvent(searchTemplate: .search)
-        XCTAssertEqual("search", event.eventName)
-        XCTAssertEqual("search", event.templateType)
+        #expect("search" == event.eventName)
+        #expect("search" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = ["ltv": false]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testProperties() {
         let event = CustomEvent(
             searchTemplate: .search,
@@ -27,8 +29,8 @@ final class SearchEventTemplateTest: XCTestCase {
             )
         )
 
-        XCTAssertEqual("search", event.eventName)
-        XCTAssertEqual("search", event.templateType)
+        #expect("search" == event.eventName)
+        #expect("search" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = [
             "id": "some id",
@@ -39,6 +41,6 @@ final class SearchEventTemplateTest: XCTestCase {
             "total_results": 20
 
         ]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 }

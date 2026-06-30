@@ -1,35 +1,43 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
 @testable import AirshipBasement
+import Foundation
+import UserNotifications
+#if !os(watchOS)
+import UIKit
+#else
+import WatchKit
+#endif
 
+@Suite(.timeLimit(.minutes(1)))
 @MainActor
-class AppIntegrationTests: XCTestCase {
-    private var testDelegate: TestIntegrationDelegate!
-    override func setUp() async throws {
+struct AppIntegrationTests {
+    private let testDelegate: TestIntegrationDelegate
+
+    init() {
         self.testDelegate = TestIntegrationDelegate()
         AppIntegration.integrationDelegate = self.testDelegate
     }
-    override func tearDown() async throws {
-        AppIntegration.integrationDelegate = nil
-    }
 
+    @Test
     @MainActor
-    func testPerformFetchWithCompletionHandler() throws {
-        let appCallbackCalled = expectation(description: "Callback called")
+    func testPerformFetchWithCompletionHandler() async throws {
+        let appCallbackCalled = AirshipTestExpectation(description: "Callback called")
         AppIntegration.application(
             UIApplication.shared,
             performFetchWithCompletionHandler: { result in
-                XCTAssertEqual(result, .noData)
+                #expect(result == .noData)
                 appCallbackCalled.fulfill()
             }
         )
-        wait(for: [appCallbackCalled], timeout: 10)
-        XCTAssertTrue(self.testDelegate.onBackgroundAppRefreshCalled!)
+        await fulfillment(of: [appCallbackCalled], timeout: 10)
+        #expect(self.testDelegate.onBackgroundAppRefreshCalled!)
     }
 
+    @Test
     @MainActor
     func testDidRegisterForRemoteNotificationsWithDeviceToken() throws {
         let token = Data("some token".utf8)
@@ -37,9 +45,10 @@ class AppIntegrationTests: XCTestCase {
             UIApplication.shared,
             didRegisterForRemoteNotificationsWithDeviceToken: token
         )
-        XCTAssertEqual(token, self.testDelegate.deviceToken)
+        #expect(token == self.testDelegate.deviceToken)
     }
 
+    @Test
     @MainActor
     func testDidFailToRegisterForRemoteNotificationsWithError() throws {
         let error = AirshipErrors.error("some error") as NSError
@@ -47,17 +56,18 @@ class AppIntegrationTests: XCTestCase {
             UIApplication.shared,
             didFailToRegisterForRemoteNotificationsWithError: error
         )
-        XCTAssertEqual(error, self.testDelegate.registrationError as NSError?)
+        #expect(error == self.testDelegate.registrationError as NSError?)
     }
 
+    @Test
     @MainActor
     func testDidReceiveRemoteNotifications() async throws {
         let notification = ["some": "alert"]
 
-        let testHookCalled = expectation(description: "Callback called")
+        let testHookCalled = AirshipTestExpectation(description: "Callback called")
         self.testDelegate.didReceiveRemoteNotificationCallback = { userInfo, isForeground in
-            XCTAssertEqual(
-                notification as NSDictionary,
+            #expect(
+                notification as NSDictionary ==
                 userInfo as NSDictionary
             )
             testHookCalled.fulfill()
@@ -69,7 +79,7 @@ class AppIntegrationTests: XCTestCase {
             didReceiveRemoteNotification: notification
         )
 
-        XCTAssertEqual(result, .newData)
+        #expect(result == .newData)
 
         await fulfillment(of: [testHookCalled], timeout: 10)
     }

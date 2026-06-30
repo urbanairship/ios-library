@@ -1,14 +1,14 @@
-import XCTest
+import Testing
 
 @testable import AirshipCore
 
 @MainActor
-class RateAppActionTest: XCTestCase {
+@Suite struct RateAppActionTest {
     private let testAppRater = TestAppRater()
     private let configItunesID = AirshipAtomicValue<String?>(nil)
-    private var action: RateAppAction!
+    private let action: RateAppAction
 
-    override func setUp() async throws {
+    init() async throws {
         let configItunesID = self.configItunesID
         self.action = RateAppAction(
             appRater: self.testAppRater
@@ -17,6 +17,7 @@ class RateAppActionTest: XCTestCase {
         }
     }
 
+    @Test
     func testShowPrompt() async throws {
         let args: [String: Any] = [
             "show_link_prompt": true,
@@ -29,11 +30,12 @@ class RateAppActionTest: XCTestCase {
                 situation: .manualInvocation
             )
         )
-        XCTAssertNil(result)
-        XCTAssertTrue(testAppRater.showPromptCalled)
-        XCTAssertNil(testAppRater.openStoreItunesID)
+        #expect(result == nil)
+        #expect(testAppRater.showPromptCalled)
+        #expect(testAppRater.openStoreItunesID == nil)
     }
 
+    @Test
     func testOpenAppStore() async throws {
         let args: [String: Any] = [
             "itunes_id": "test id"
@@ -45,11 +47,12 @@ class RateAppActionTest: XCTestCase {
                 situation: .manualInvocation
             )
         )
-        XCTAssertNil(result)
-        XCTAssertFalse(testAppRater.showPromptCalled)
-        XCTAssertEqual("test id", testAppRater.openStoreItunesID)
+        #expect(result == nil)
+        #expect(!(testAppRater.showPromptCalled))
+        #expect("test id" == testAppRater.openStoreItunesID)
     }
 
+    @Test
     func testOpenAppStoreFallbackItunesID() async throws {
         configItunesID.value = "config iTunes ID"
         let args: [String: Any] = [:]
@@ -60,11 +63,12 @@ class RateAppActionTest: XCTestCase {
                 situation: .manualInvocation
             )
         )
-        XCTAssertNil(result)
-        XCTAssertFalse(testAppRater.showPromptCalled)
-        XCTAssertEqual(configItunesID.value, testAppRater.openStoreItunesID)
+        #expect(result == nil)
+        #expect(!(testAppRater.showPromptCalled))
+        #expect(configItunesID.value == testAppRater.openStoreItunesID)
     }
 
+    @Test
     func testNilConfig() async throws {
         configItunesID.value = "config iTunes ID"
 
@@ -74,11 +78,12 @@ class RateAppActionTest: XCTestCase {
                 situation: .manualInvocation
             )
         )
-        XCTAssertNil(result)
-        XCTAssertFalse(testAppRater.showPromptCalled)
-        XCTAssertEqual(configItunesID.value, testAppRater.openStoreItunesID)
+        #expect(result == nil)
+        #expect(!(testAppRater.showPromptCalled))
+        #expect(configItunesID.value == testAppRater.openStoreItunesID)
     }
 
+    @Test
     func testNoItunesID() async throws {
         configItunesID.value = nil
 
@@ -89,13 +94,14 @@ class RateAppActionTest: XCTestCase {
                     situation: .manualInvocation
                 )
             )
-            XCTFail("should throw")
+            Issue.record("should throw")
         } catch {}
 
-        XCTAssertFalse(testAppRater.showPromptCalled)
-        XCTAssertNil(testAppRater.openStoreItunesID)
+        #expect(!(testAppRater.showPromptCalled))
+        #expect(testAppRater.openStoreItunesID == nil)
     }
 
+    @Test
     func testInvalidArgs() async throws {
         configItunesID.value = "config id"
         do {
@@ -104,12 +110,13 @@ class RateAppActionTest: XCTestCase {
                     string: "invalid"
                 )
             )
-            XCTFail("should throw")
+            Issue.record("should throw")
         } catch {}
-        XCTAssertFalse(testAppRater.showPromptCalled)
-        XCTAssertNil(testAppRater.openStoreItunesID)
+        #expect(!(testAppRater.showPromptCalled))
+        #expect(testAppRater.openStoreItunesID == nil)
     }
 
+    @Test
     func testAcceptsArguments() async throws {
         let validSituations: [ActionSituation] = [
             .manualInvocation,
@@ -123,10 +130,11 @@ class RateAppActionTest: XCTestCase {
         for situation in validSituations {
             let args = ActionArguments(situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result)
         }
     }
 
+    @Test
     func testRejectsArguments() async throws {
         let invalidSituations: [ActionSituation] = [
             .backgroundPush,
@@ -136,7 +144,7 @@ class RateAppActionTest: XCTestCase {
         for situation in invalidSituations {
             let args = ActionArguments(situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!(result))
         }
     }
 

@@ -1,11 +1,13 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable
 @_spi(AirshipInternal) import AirshipCore
 
-final class DefaultAssetFileManagerTest: XCTestCase {
+@Suite struct DefaultAssetFileManagerTest {
+    @Test
     func testEnsureCacheRootDirectory() {
         let rootPathComponent = "testCacheRoot"
         let assetManager = DefaultAssetFileManager(rootPathComponent: rootPathComponent)
@@ -17,18 +19,19 @@ final class DefaultAssetFileManagerTest: XCTestCase {
         try? fileManager.removeItem(at: expectedCacheRootDirectory)
 
         /// Test when nothing is there
-        XCTAssertEqual(assetManager.rootDirectory, expectedCacheRootDirectory, "The method did not return the expected URL when the directory was not present initially.")
+        #expect(assetManager.rootDirectory == expectedCacheRootDirectory, "The method did not return the expected URL when the directory was not present initially.")
 
         /// Remove root and create a file in its place
         try? fileManager.removeItem(at: expectedCacheRootDirectory)
         fileManager.createFile(atPath: expectedCacheRootDirectory.path, contents: Data("TestData".utf8), attributes: nil)
 
         /// Test when a file is in the directory
-        XCTAssertEqual(assetManager.rootDirectory, expectedCacheRootDirectory, "The method did not return the expected URL when a file was present at the directory location.")
+        #expect(assetManager.rootDirectory == expectedCacheRootDirectory, "The method did not return the expected URL when a file was present at the directory location.")
         var isDir: ObjCBool = false
-        XCTAssertTrue(fileManager.fileExists(atPath: expectedCacheRootDirectory.path, isDirectory: &isDir) && isDir.boolValue, "A directory was not created in place of the file.")
+        #expect(fileManager.fileExists(atPath: expectedCacheRootDirectory.path, isDirectory: &isDir) && isDir.boolValue, "A directory was not created in place of the file.")
     }
 
+    @Test
     func testEnsureCacheDirectory() {
         let rootPathComponent = "testCacheRoot"
         let testIdentifier = "testIdentifier"
@@ -39,9 +42,10 @@ final class DefaultAssetFileManagerTest: XCTestCase {
         let expectedCacheRootDirectory = cacheDirectory.appendingPathComponent(rootPathComponent, isDirectory: true)
         let expectedCacheDirectory = expectedCacheRootDirectory.appendingPathComponent(testIdentifier, isDirectory: true)
 
-        XCTAssertEqual(try? assetManager.ensureCacheDirectory(identifier: testIdentifier), expectedCacheDirectory)
+        #expect((try? assetManager.ensureCacheDirectory(identifier: testIdentifier)) == expectedCacheDirectory)
     }
 
+    @Test
     func testClearAssetsSuccess() throws {
         let rootPathComponent = "testCacheRoot"
         let assetManager = DefaultAssetFileManager(rootPathComponent: rootPathComponent)
@@ -55,12 +59,13 @@ final class DefaultAssetFileManagerTest: XCTestCase {
         try assetManager.clearAssets(cacheURL: cacheURL)
 
         let directoryExists: Bool = FileManager.default.fileExists(atPath: assetsPath.path)
-        XCTAssertFalse(directoryExists, "Not all assets were cleared for the identifier.")
+        #expect(!(directoryExists), "Not all assets were cleared for the identifier.")
 
         /// Cleanup
         try? FileManager.default.removeItem(at: cacheURL)
     }
 
+    @Test
     func testMoveAssetSuccess() {
         let rootPathComponent = "testCacheRoot"
         let assetManager = DefaultAssetFileManager(rootPathComponent: rootPathComponent)
@@ -71,10 +76,10 @@ final class DefaultAssetFileManagerTest: XCTestCase {
 
         do {
             try assetManager.moveAsset(from: tempURL, to: cacheURL)
-            XCTAssertTrue(FileManager.default.fileExists(atPath: cacheURL.path), "The file was not successfully moved to the cache URL.")
-            XCTAssertFalse(FileManager.default.fileExists(atPath: tempURL.path), "The temp was not successfully cleaned up after being moved to the cache URL.")
+            #expect(FileManager.default.fileExists(atPath: cacheURL.path), "The file was not successfully moved to the cache URL.")
+            #expect(!(FileManager.default.fileExists(atPath: tempURL.path)), "The temp was not successfully cleaned up after being moved to the cache URL.")
         } catch {
-            XCTFail("Failed to move asset: \(error)")
+            Issue.record("Failed to move asset: \(error)")
         }
 
         /// Cleanup

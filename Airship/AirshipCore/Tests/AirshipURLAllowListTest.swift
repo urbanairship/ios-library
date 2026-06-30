@@ -1,208 +1,223 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
+import UIKit
 
 @testable
 import AirshipCore
 
 @MainActor
-class AirshipURLAllowListTest: XCTestCase {
+@Suite
+struct AirshipURLAllowListTest {
 
-    private var allowList: DefaultAirshipURLAllowList = DefaultAirshipURLAllowList()
+    private let allowList: DefaultAirshipURLAllowList = DefaultAirshipURLAllowList()
     private let scopes: [URLAllowListScope] = [.javaScriptInterface, .openURL, .all]
 
+    @Test
     func testDefaultURLAllowList() {
         var airshipConfig = AirshipConfig()
         airshipConfig.urlAllowListScopeOpenURL = []
 
-        allowList = DefaultAirshipURLAllowList(airshipConfig: airshipConfig)
+        let allowList = DefaultAirshipURLAllowList(airshipConfig: airshipConfig)
 
         for scope in scopes {
-            XCTAssertTrue(allowList.isAllowed(URL(string: "https://device-api.urbanairship.com/api/user/")!, scope: scope))
-            XCTAssertTrue(allowList.isAllowed(URL(string: "https://dl.urbanairship.com/aaa/message_id")!, scope: scope))
-            XCTAssertTrue(allowList.isAllowed(URL(string: "https://device-api.asnapieu.com/api/user/")!, scope: scope))
-            XCTAssertTrue(allowList.isAllowed(URL(string: "https://dl.asnapieu.com/aaa/message_id")!, scope: scope))
+            #expect(allowList.isAllowed(URL(string: "https://device-api.urbanairship.com/api/user/")!, scope: scope))
+            #expect(allowList.isAllowed(URL(string: "https://dl.urbanairship.com/aaa/message_id")!, scope: scope))
+            #expect(allowList.isAllowed(URL(string: "https://device-api.asnapieu.com/api/user/")!, scope: scope))
+            #expect(allowList.isAllowed(URL(string: "https://dl.asnapieu.com/aaa/message_id")!, scope: scope))
         }
 
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://*.youtube.com")!, scope: .openURL))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://*.youtube.com")!, scope: .javaScriptInterface))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://*.youtube.com")!, scope: .all))
+        #expect(!(allowList.isAllowed(URL(string: "https://*.youtube.com")!, scope: .openURL)))
+        #expect(!(allowList.isAllowed(URL(string: "https://*.youtube.com")!, scope: .javaScriptInterface)))
+        #expect(!(allowList.isAllowed(URL(string: "https://*.youtube.com")!, scope: .all)))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "sms:+18675309?body=Hi%20you")!, scope: .openURL))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "sms:8675309")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "sms:+18675309?body=Hi%20you")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "sms:8675309")!, scope: .openURL))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "tel:+18675309")!, scope: .openURL))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "tel:867-5309")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "tel:+18675309")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "tel:867-5309")!, scope: .openURL))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "mailto:name@example.com?subject=The%20subject%20of%20the%20mail")!, scope: .openURL))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "mailto:name@example.com")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "mailto:name@example.com?subject=The%20subject%20of%20the%20mail")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "mailto:name@example.com")!, scope: .openURL))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: UIApplication.openSettingsURLString)!, scope: .openURL))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "app-settings:")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: UIApplication.openSettingsURLString)!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "app-settings:")!, scope: .openURL))
 
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://some-random-url.com")!, scope: .openURL))
+        #expect(!(allowList.isAllowed(URL(string: "https://some-random-url.com")!, scope: .openURL)))
     }
 
+    @Test
     @MainActor
     func testDefaultURLAllowListNoOpenScopeSet() {
-        allowList = DefaultAirshipURLAllowList(airshipConfig: .init())
+        let allowList = DefaultAirshipURLAllowList(airshipConfig: .init())
 
         for scope in scopes {
-            XCTAssertTrue(allowList.isAllowed(URL(string: "https://device-api.urbanairship.com/api/user/")!, scope: scope))
-            XCTAssertTrue(allowList.isAllowed(URL(string: "https://dl.urbanairship.com/aaa/message_id")!, scope: scope))
-            XCTAssertTrue(allowList.isAllowed(URL(string: "https://device-api.asnapieu.com/api/user/")!, scope: scope))
-            XCTAssertTrue(allowList.isAllowed(URL(string: "https://dl.asnapieu.com/aaa/message_id")!, scope: scope))
+            #expect(allowList.isAllowed(URL(string: "https://device-api.urbanairship.com/api/user/")!, scope: scope))
+            #expect(allowList.isAllowed(URL(string: "https://dl.urbanairship.com/aaa/message_id")!, scope: scope))
+            #expect(allowList.isAllowed(URL(string: "https://device-api.asnapieu.com/api/user/")!, scope: scope))
+            #expect(allowList.isAllowed(URL(string: "https://dl.asnapieu.com/aaa/message_id")!, scope: scope))
         }
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://*.youtube.com")!, scope: .openURL))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://*.youtube.com")!, scope: .javaScriptInterface))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://*.youtube.com")!, scope: .all))
+        #expect(allowList.isAllowed(URL(string: "https://*.youtube.com")!, scope: .openURL))
+        #expect(!(allowList.isAllowed(URL(string: "https://*.youtube.com")!, scope: .javaScriptInterface)))
+        #expect(!(allowList.isAllowed(URL(string: "https://*.youtube.com")!, scope: .all)))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "sms:+18675309?body=Hi%20you")!, scope: .openURL))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "sms:8675309")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "sms:+18675309?body=Hi%20you")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "sms:8675309")!, scope: .openURL))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "tel:+18675309")!, scope: .openURL))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "tel:867-5309")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "tel:+18675309")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "tel:867-5309")!, scope: .openURL))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "mailto:name@example.com?subject=The%20subject%20of%20the%20mail")!, scope: .openURL))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "mailto:name@example.com")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "mailto:name@example.com?subject=The%20subject%20of%20the%20mail")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "mailto:name@example.com")!, scope: .openURL))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: UIApplication.openSettingsURLString)!, scope: .openURL))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "app-settings:")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: UIApplication.openSettingsURLString)!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "app-settings:")!, scope: .openURL))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://some-random-url.com")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "https://some-random-url.com")!, scope: .openURL))
     }
 
+    @Test
     func testInvalidPatterns() {
         // Not a URL
-        XCTAssertFalse(allowList.addEntry("not a url"))
+        #expect(!(allowList.addEntry("not a url")))
 
         // Missing schemes
-        XCTAssertFalse(allowList.addEntry("www.urbanairship.com"))
-        XCTAssertFalse(allowList.addEntry("://www.urbanairship.com"))
+        #expect(!(allowList.addEntry("www.urbanairship.com")))
+        #expect(!(allowList.addEntry("://www.urbanairship.com")))
 
         // White space in scheme
-        XCTAssertFalse(allowList.addEntry(" file://*"))
+        #expect(!(allowList.addEntry(" file://*")))
 
         // Invalid hosts
-        XCTAssertFalse(allowList.addEntry("*://what*"))
-        XCTAssertFalse(allowList.addEntry("*://*what"))
+        #expect(!(allowList.addEntry("*://what*")))
+        #expect(!(allowList.addEntry("*://*what")))
     }
 
+    @Test
     func testSchemeWildcard() {
         allowList.addEntry("*://www.urbanairship.com")
 
-        XCTAssertTrue(allowList.addEntry("*://www.urbanairship.com"))
-        XCTAssertTrue(allowList.addEntry("cool*story://rad"))
+        #expect(allowList.addEntry("*://www.urbanairship.com"))
+        #expect(allowList.addEntry("cool*story://rad"))
 
         // Reject
-        XCTAssertFalse(allowList.isAllowed(URL(string: "")))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "urbanairship.com")!))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "www.urbanairship.com")!))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "cool://rad")!))
+        #expect(!(allowList.isAllowed(URL(string: ""))))
+        #expect(!(allowList.isAllowed(URL(string: "urbanairship.com")!)))
+        #expect(!(allowList.isAllowed(URL(string: "www.urbanairship.com")!)))
+        #expect(!(allowList.isAllowed(URL(string: "cool://rad")!)))
 
         // Accept
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://www.urbanairship.com")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "http://www.urbanairship.com")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "file://www.urbanairship.com")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "valid://www.urbanairship.com")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "cool----story://rad")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "coolstory://rad")!))
+        #expect(allowList.isAllowed(URL(string: "https://www.urbanairship.com")!))
+        #expect(allowList.isAllowed(URL(string: "http://www.urbanairship.com")!))
+        #expect(allowList.isAllowed(URL(string: "file://www.urbanairship.com")!))
+        #expect(allowList.isAllowed(URL(string: "valid://www.urbanairship.com")!))
+        #expect(allowList.isAllowed(URL(string: "cool----story://rad")!))
+        #expect(allowList.isAllowed(URL(string: "coolstory://rad")!))
     }
 
+    @Test
     func testScheme() {
         allowList.addEntry("https://www.urbanairship.com")
         allowList.addEntry("file:///asset.html")
 
         // Reject
-        XCTAssertFalse(allowList.isAllowed(URL(string: "http://www.urbanairship.com")!))
+        #expect(!(allowList.isAllowed(URL(string: "http://www.urbanairship.com")!)))
 
         // Accept
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://www.urbanairship.com")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "file:///asset.html")!))
+        #expect(allowList.isAllowed(URL(string: "https://www.urbanairship.com")!))
+        #expect(allowList.isAllowed(URL(string: "file:///asset.html")!))
     }
 
+    @Test
     func testHost() {
-        XCTAssertTrue(allowList.addEntry("http://www.urbanairship.com"))
-        XCTAssertTrue(allowList.addEntry("http://oh.hi.marc"))
+        #expect(allowList.addEntry("http://www.urbanairship.com"))
+        #expect(allowList.addEntry("http://oh.hi.marc"))
 
         // Reject
-        XCTAssertFalse(allowList.isAllowed(URL(string: "http://oh.bye.marc")!))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "http://www.urbanairship.com.hackers.io")!))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "http://omg.www.urbanairship.com.hackers.io")!))
+        #expect(!(allowList.isAllowed(URL(string: "http://oh.bye.marc")!)))
+        #expect(!(allowList.isAllowed(URL(string: "http://www.urbanairship.com.hackers.io")!)))
+        #expect(!(allowList.isAllowed(URL(string: "http://omg.www.urbanairship.com.hackers.io")!)))
 
         // Accept
-        XCTAssertTrue(allowList.isAllowed(URL(string: "http://www.urbanairship.com")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "http://oh.hi.marc")!))
+        #expect(allowList.isAllowed(URL(string: "http://www.urbanairship.com")!))
+        #expect(allowList.isAllowed(URL(string: "http://oh.hi.marc")!))
     }
 
+    @Test
     func testHostWildcard() {
-        XCTAssertTrue(allowList.addEntry("http://*"))
-        XCTAssertTrue(allowList.addEntry("https://*.coolstory"))
+        #expect(allowList.addEntry("http://*"))
+        #expect(allowList.addEntry("https://*.coolstory"))
 
         // * is only available at the beginning
-        XCTAssertFalse(allowList.addEntry("https://*.coolstory.*"))
+        #expect(!(allowList.addEntry("https://*.coolstory.*")))
 
         // Reject
-        XCTAssertFalse(allowList.isAllowed(URL(string: "")))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://cool")!))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://story")!))
+        #expect(!(allowList.isAllowed(URL(string: ""))))
+        #expect(!(allowList.isAllowed(URL(string: "https://cool")!)))
+        #expect(!(allowList.isAllowed(URL(string: "https://story")!)))
 
         // Accept
-        XCTAssertTrue(allowList.isAllowed(URL(string: "http://what.urbanairship.com")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "http:///android-asset/test.html")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "http://www.anything.com")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://coolstory")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://what.coolstory")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://what.what.coolstory")!))
+        #expect(allowList.isAllowed(URL(string: "http://what.urbanairship.com")!))
+        #expect(allowList.isAllowed(URL(string: "http:///android-asset/test.html")!))
+        #expect(allowList.isAllowed(URL(string: "http://www.anything.com")!))
+        #expect(allowList.isAllowed(URL(string: "https://coolstory")!))
+        #expect(allowList.isAllowed(URL(string: "https://what.coolstory")!))
+        #expect(allowList.isAllowed(URL(string: "https://what.what.coolstory")!))
     }
 
+    @Test
     func testHostWildcardSubdomain() {
-        XCTAssertTrue(allowList.addEntry("http://*.urbanairship.com"))
+        #expect(allowList.addEntry("http://*.urbanairship.com"))
 
         // Accept
-        XCTAssertTrue(allowList.isAllowed(URL(string: "http://what.urbanairship.com")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "http://hi.urbanairship.com")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "http://urbanairship.com")!))
+        #expect(allowList.isAllowed(URL(string: "http://what.urbanairship.com")!))
+        #expect(allowList.isAllowed(URL(string: "http://hi.urbanairship.com")!))
+        #expect(allowList.isAllowed(URL(string: "http://urbanairship.com")!))
 
         // Reject
-        XCTAssertFalse(allowList.isAllowed(URL(string: "http://lololurbanairship.com")!))
+        #expect(!(allowList.isAllowed(URL(string: "http://lololurbanairship.com")!)))
     }
 
+    @Test
     func testWildcardMatcher() {
-        XCTAssertTrue(allowList.addEntry("*"))
+        #expect(allowList.addEntry("*"))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "file:///what/oh/hi")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://hi.urbanairship.com/path")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "http://urbanairship.com")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "cool.story://urbanairship.com")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "sms:+18664504185?body=Hi")!))
+        #expect(allowList.isAllowed(URL(string: "file:///what/oh/hi")!))
+        #expect(allowList.isAllowed(URL(string: "https://hi.urbanairship.com/path")!))
+        #expect(allowList.isAllowed(URL(string: "http://urbanairship.com")!))
+        #expect(allowList.isAllowed(URL(string: "cool.story://urbanairship.com")!))
+        #expect(allowList.isAllowed(URL(string: "sms:+18664504185?body=Hi")!))
     }
 
+    @Test
     func testFilePaths() {
-        XCTAssertTrue(allowList.addEntry("file:///foo/index.html"))
+        #expect(allowList.addEntry("file:///foo/index.html"))
 
         // Reject
-        XCTAssertFalse(allowList.isAllowed(URL(string: "file:///foo/test.html")!))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "file:///foo/bar/index.html")!))
+        #expect(!(allowList.isAllowed(URL(string: "file:///foo/test.html")!)))
+        #expect(!(allowList.isAllowed(URL(string: "file:///foo/bar/index.html")!)))
 
         // Accept
-        XCTAssertTrue(allowList.isAllowed(URL(string: "file:///foo/index.html")!))
+        #expect(allowList.isAllowed(URL(string: "file:///foo/index.html")!))
     }
 
+    @Test
     func testFilePathsWildCard() {
-        XCTAssertTrue(allowList.addEntry("file:///foo/bar.html"))
-        XCTAssertTrue(allowList.addEntry("file:///foo/*"))
+        #expect(allowList.addEntry("file:///foo/bar.html"))
+        #expect(allowList.addEntry("file:///foo/*"))
 
         // Reject
-        XCTAssertFalse(allowList.isAllowed(URL(string: "file:///foooooooo/bar.html")!))
+        #expect(!(allowList.isAllowed(URL(string: "file:///foooooooo/bar.html")!)))
 
         // Accept
-        XCTAssertTrue(allowList.isAllowed(URL(string: "file:///foo/test.html")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "file:///foo/bar/index.html")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "file:///foo/bar.html")!))
+        #expect(allowList.isAllowed(URL(string: "file:///foo/test.html")!))
+        #expect(allowList.isAllowed(URL(string: "file:///foo/bar/index.html")!))
+        #expect(allowList.isAllowed(URL(string: "file:///foo/bar.html")!))
     }
 
+    @Test
     func testURLPaths() {
         allowList.addEntry("*://*.urbanairship.com/accept.html")
         allowList.addEntry("*://*.urbanairship.com/anythingHTML/*.html")
@@ -210,107 +225,114 @@ class AirshipURLAllowListTest: XCTestCase {
         allowList.addEntry("wild://cool/*")
 
         // Reject
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://what.urbanairship.com/reject.html")!))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://what.urbanairship.com/anythingHTML/image.png")!))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://what.urbanairship.com/anythingHTML/image.png")!))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "wile:///whatever")!))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "wile:///cool")!))
+        #expect(!(allowList.isAllowed(URL(string: "https://what.urbanairship.com/reject.html")!)))
+        #expect(!(allowList.isAllowed(URL(string: "https://what.urbanairship.com/anythingHTML/image.png")!)))
+        #expect(!(allowList.isAllowed(URL(string: "https://what.urbanairship.com/anythingHTML/image.png")!)))
+        #expect(!(allowList.isAllowed(URL(string: "wile:///whatever")!)))
+        #expect(!(allowList.isAllowed(URL(string: "wile:///cool")!)))
 
         // Accept
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://what.urbanairship.com/anythingHTML/index.html")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://what.urbanairship.com/anythingHTML/test.html")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://what.urbanairship.com/anythingHTML/foo/bar/index.html")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://urbanairship.com/what/index.html")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "wild://cool")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "wild://cool/")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "wild://cool/path")!))
+        #expect(allowList.isAllowed(URL(string: "https://what.urbanairship.com/anythingHTML/index.html")!))
+        #expect(allowList.isAllowed(URL(string: "https://what.urbanairship.com/anythingHTML/test.html")!))
+        #expect(allowList.isAllowed(URL(string: "https://what.urbanairship.com/anythingHTML/foo/bar/index.html")!))
+        #expect(allowList.isAllowed(URL(string: "https://urbanairship.com/what/index.html")!))
+        #expect(allowList.isAllowed(URL(string: "wild://cool")!))
+        #expect(allowList.isAllowed(URL(string: "wild://cool/")!))
+        #expect(allowList.isAllowed(URL(string: "wild://cool/path")!))
     }
 
+    @Test
     func testScope() {
         allowList.addEntry("*://*.urbanairship.com/accept-js.html", scope: .javaScriptInterface)
         allowList.addEntry("*://*.urbanairship.com/accept-url.html", scope: .openURL)
         allowList.addEntry("*://*.urbanairship.com/accept-all.html", scope: .all)
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-js.html")!, scope: .javaScriptInterface))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-js.html")!, scope: .openURL))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-js.html")!, scope: .all))
+        #expect(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-js.html")!, scope: .javaScriptInterface))
+        #expect(!(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-js.html")!, scope: .openURL)))
+        #expect(!(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-js.html")!, scope: .all)))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-url.html")!, scope: .openURL))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-url.html")!, scope: .javaScriptInterface))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-url.html")!, scope: .all))
+        #expect(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-url.html")!, scope: .openURL))
+        #expect(!(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-url.html")!, scope: .javaScriptInterface)))
+        #expect(!(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-url.html")!, scope: .all)))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-all.html")!, scope: .all))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-all.html")!, scope: .javaScriptInterface))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-all.html")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-all.html")!, scope: .all))
+        #expect(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-all.html")!, scope: .javaScriptInterface))
+        #expect(allowList.isAllowed(URL(string: "https://urbanairship.com/accept-all.html")!, scope: .openURL))
     }
 
+    @Test
     func testDisableOpenURLScopeAllowList() {
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://someurl.com")!, scope: .openURL))
+        #expect(!(allowList.isAllowed(URL(string: "https://someurl.com")!, scope: .openURL)))
 
         allowList.addEntry("*", scope: .openURL)
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://someurl.com")!, scope: .openURL))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://someurl.com")!, scope: .javaScriptInterface))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "https://someurl.com")!, scope: .all))
+        #expect(allowList.isAllowed(URL(string: "https://someurl.com")!, scope: .openURL))
+        #expect(!(allowList.isAllowed(URL(string: "https://someurl.com")!, scope: .javaScriptInterface)))
+        #expect(!(allowList.isAllowed(URL(string: "https://someurl.com")!, scope: .all)))
     }
 
+    @Test
     func testAddAllScopesSeparately() {
         allowList.addEntry("*://*.urbanairship.com/all.html", scope: .openURL)
         allowList.addEntry("*://*.urbanairship.com/all.html", scope: .javaScriptInterface)
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://urbanairship.com/all.html")!, scope: .all))
+        #expect(allowList.isAllowed(URL(string: "https://urbanairship.com/all.html")!, scope: .all))
     }
 
+    @Test
     func testAllScopeMatchesInnerScopes() {
         allowList.addEntry("*://*.urbanairship.com/all.html", scope: .all)
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://urbanairship.com/all.html")!, scope: .javaScriptInterface))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "https://urbanairship.com/all.html")!, scope: .openURL))
+        #expect(allowList.isAllowed(URL(string: "https://urbanairship.com/all.html")!, scope: .javaScriptInterface))
+        #expect(allowList.isAllowed(URL(string: "https://urbanairship.com/all.html")!, scope: .openURL))
     }
 
+    @Test
     func testDeepLinks() {
         // Test any path and undefined host
-        XCTAssertTrue(allowList.addEntry("com.urbanairship.one:/*"))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.one://cool")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.one:cool")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.one:/cool")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.one:///cool")!))
+        #expect(allowList.addEntry("com.urbanairship.one:/*"))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.one://cool")!))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.one:cool")!))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.one:/cool")!))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.one:///cool")!))
 
         // Test any host and undefined path
-        XCTAssertTrue(allowList.addEntry("com.urbanairship.two://*"))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.two:cool")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.two://cool")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.two:/cool")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.two:///cool")!))
+        #expect(allowList.addEntry("com.urbanairship.two://*"))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.two:cool")!))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.two://cool")!))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.two:/cool")!))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.two:///cool")!))
 
         // Test any host and any path
-        XCTAssertTrue(allowList.addEntry("com.urbanairship.three://*/*"))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.three:cool")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.three://cool")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.three:/cool")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.three:///cool")!))
+        #expect(allowList.addEntry("com.urbanairship.three://*/*"))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.three:cool")!))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.three://cool")!))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.three:/cool")!))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.three:///cool")!))
 
         // Test specific host and path
-        XCTAssertTrue(allowList.addEntry("com.urbanairship.four://*.cool/whatever/*"))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "com.urbanairship.four:cool")!))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "com.urbanairship.four://cool")!))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "com.urbanairship.four:/cool")!))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "com.urbanairship.four:///cool")!))
+        #expect(allowList.addEntry("com.urbanairship.four://*.cool/whatever/*"))
+        #expect(!(allowList.isAllowed(URL(string: "com.urbanairship.four:cool")!)))
+        #expect(!(allowList.isAllowed(URL(string: "com.urbanairship.four://cool")!)))
+        #expect(!(allowList.isAllowed(URL(string: "com.urbanairship.four:/cool")!)))
+        #expect(!(allowList.isAllowed(URL(string: "com.urbanairship.four:///cool")!)))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.four://whatever.cool/whatever/")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.four://cool/whatever/indeed")!))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.four://whatever.cool/whatever/")!))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.four://cool/whatever/indeed")!))
     }
 
 
+    @Test
     func testRootPath() {
-        XCTAssertTrue(allowList.addEntry("com.urbanairship.five:/"))
+        #expect(allowList.addEntry("com.urbanairship.five:/"))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.five:/")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "com.urbanairship.five:///")!))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.five:/")!))
+        #expect(allowList.isAllowed(URL(string: "com.urbanairship.five:///")!))
 
-        XCTAssertFalse(allowList.isAllowed(URL(string: "com.urbanairship.five:/cool")!))
+        #expect(!(allowList.isAllowed(URL(string: "com.urbanairship.five:/cool")!)))
     }
 
+    @Test
     func testDelegate() {
         // set up a simple URL allow list
         allowList.addEntry("https://*.urbanairship.com")
@@ -324,9 +346,9 @@ class AirshipURLAllowListTest: XCTestCase {
         let scope: URLAllowListScope = .openURL
 
         // Allow listing when delegate is off
-        XCTAssertTrue(allowList.isAllowed(matchingURLToReject, scope: scope))
-        XCTAssertTrue(allowList.isAllowed(matchingURLToAccept, scope: scope))
-        XCTAssertFalse(allowList.isAllowed(nonMatchingURL, scope: scope))
+        #expect(allowList.isAllowed(matchingURLToReject, scope: scope))
+        #expect(allowList.isAllowed(matchingURLToAccept, scope: scope))
+        #expect(!(allowList.isAllowed(nonMatchingURL, scope: scope)))
 
         // Enable URL allow list delegate
         let delegate = TestDelegate()
@@ -339,26 +361,27 @@ class AirshipURLAllowListTest: XCTestCase {
                 return false
             }
 
-            XCTFail()
+            Issue.record()
             return false
         }
 
         allowList.delegate = delegate
 
         // rejected URL should now fail URL allow list test, others should be unchanged
-        XCTAssertFalse(allowList.isAllowed(matchingURLToReject, scope: scope))
-        XCTAssertTrue(allowList.isAllowed(matchingURLToAccept, scope: scope))
-        XCTAssertFalse(allowList.isAllowed(nonMatchingURL, scope: scope))
+        #expect(!(allowList.isAllowed(matchingURLToReject, scope: scope)))
+        #expect(allowList.isAllowed(matchingURLToAccept, scope: scope))
+        #expect(!(allowList.isAllowed(nonMatchingURL, scope: scope)))
 
         // Disable URL allow list delegate
         allowList.delegate = nil
 
         // Should go back to original state when delegate was off
-        XCTAssertTrue(allowList.isAllowed(matchingURLToReject, scope: scope))
-        XCTAssertTrue(allowList.isAllowed(matchingURLToAccept, scope: scope))
-        XCTAssertFalse(allowList.isAllowed(nonMatchingURL, scope: scope))
+        #expect(allowList.isAllowed(matchingURLToReject, scope: scope))
+        #expect(allowList.isAllowed(matchingURLToAccept, scope: scope))
+        #expect(!(allowList.isAllowed(nonMatchingURL, scope: scope)))
     }
 
+    @Test
     func testOnAllowBlock() {
         // set up a simple URL allow list
         allowList.addEntry("https://*.urbanairship.com")
@@ -372,14 +395,14 @@ class AirshipURLAllowListTest: XCTestCase {
         let scope: URLAllowListScope = .openURL
 
         // Allow listing when delegate is off
-        XCTAssertTrue(allowList.isAllowed(matchingURLToReject, scope: scope))
-        XCTAssertTrue(allowList.isAllowed(matchingURLToAccept, scope: scope))
-        XCTAssertFalse(allowList.isAllowed(nonMatchingURL, scope: scope))
+        #expect(allowList.isAllowed(matchingURLToReject, scope: scope))
+        #expect(allowList.isAllowed(matchingURLToAccept, scope: scope))
+        #expect(!(allowList.isAllowed(nonMatchingURL, scope: scope)))
 
         // Delegate should be ignored
         let delegate = TestDelegate()
         delegate.onAllow = { url, scope in
-            XCTFail()
+            Issue.record()
             return false
         }
 
@@ -394,34 +417,35 @@ class AirshipURLAllowListTest: XCTestCase {
                 return false
             }
 
-            XCTFail()
+            Issue.record()
             return false
         }
 
 
         // rejected URL should now fail URL allow list test, others should be unchanged
-        XCTAssertFalse(allowList.isAllowed(matchingURLToReject, scope: scope))
-        XCTAssertTrue(allowList.isAllowed(matchingURLToAccept, scope: scope))
-        XCTAssertFalse(allowList.isAllowed(nonMatchingURL, scope: scope))
+        #expect(!(allowList.isAllowed(matchingURLToReject, scope: scope)))
+        #expect(allowList.isAllowed(matchingURLToAccept, scope: scope))
+        #expect(!(allowList.isAllowed(nonMatchingURL, scope: scope)))
 
         // Disable URL allow list delegate
         allowList.delegate = nil
         allowList.onAllowURL = nil
 
         // Should go back to original state when delegate was off
-        XCTAssertTrue(allowList.isAllowed(matchingURLToReject, scope: scope))
-        XCTAssertTrue(allowList.isAllowed(matchingURLToAccept, scope: scope))
-        XCTAssertFalse(allowList.isAllowed(nonMatchingURL, scope: scope))
+        #expect(allowList.isAllowed(matchingURLToReject, scope: scope))
+        #expect(allowList.isAllowed(matchingURLToAccept, scope: scope))
+        #expect(!(allowList.isAllowed(nonMatchingURL, scope: scope)))
     }
 
+    @Test
     func testSMSPath() {
-        XCTAssertTrue(allowList.addEntry("sms:86753*9*"))
+        #expect(allowList.addEntry("sms:86753*9*"))
 
-        XCTAssertFalse(allowList.isAllowed(URL(string: "sms:86753")!))
-        XCTAssertFalse(allowList.isAllowed(URL(string: "sms:867530")!))
+        #expect(!(allowList.isAllowed(URL(string: "sms:86753")!)))
+        #expect(!(allowList.isAllowed(URL(string: "sms:867530")!)))
 
-        XCTAssertTrue(allowList.isAllowed(URL(string: "sms:86753191")!))
-        XCTAssertTrue(allowList.isAllowed(URL(string: "sms:8675309")!))
+        #expect(allowList.isAllowed(URL(string: "sms:86753191")!))
+        #expect(allowList.isAllowed(URL(string: "sms:8675309")!))
     }
 }
 

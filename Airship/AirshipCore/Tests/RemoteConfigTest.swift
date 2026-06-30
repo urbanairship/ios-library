@@ -1,22 +1,25 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
+import Foundation
 
-final class RemoteConfigTest: XCTestCase {
+@Suite struct RemoteConfigTest {
 
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
 
+    @Test
     func testParseEmpty() throws {
         let json = "{}"
 
         let emptyConfig = try self.decoder.decode(RemoteConfig.self, from: json.data(using: .utf8)!)
-        XCTAssertEqual(emptyConfig, RemoteConfig())
+        #expect(emptyConfig == RemoteConfig())
     }
 
+    @Test
     func testJson() throws {
         let json = """
             {
@@ -72,9 +75,9 @@ final class RemoteConfigTest: XCTestCase {
         )
 
         let config = try self.decoder.decode(RemoteConfig.self, from: json.data(using: .utf8)!)
-        XCTAssertEqual(config, expected)
+        #expect(config == expected)
 
         let roundTrip = try self.decoder.decode(RemoteConfig.self, from: try self.encoder.encode(expected))
-        XCTAssertEqual(roundTrip, expected)
+        #expect(roundTrip == expected)
     }
 }

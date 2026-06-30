@@ -1,11 +1,13 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
+import Foundation
 
-class AudienceUtilsTest: XCTestCase {
+@Suite struct AudienceUtilsTest {
 
+    @Test
     func testCollapseTagGroupUpdates() throws {
         let updates = [
             TagGroupUpdate(
@@ -28,20 +30,21 @@ class AudienceUtilsTest: XCTestCase {
 
         let collapsed = AudienceUtils.collapse(updates)
 
-        XCTAssertEqual(3, collapsed.count)
-        XCTAssertEqual("some-group", collapsed[0].group)
-        XCTAssertEqual(Set(["6", "4"]), Set(collapsed[0].tags))
-        XCTAssertEqual(.set, collapsed[0].type)
+        #expect(3 == collapsed.count)
+        #expect("some-group" == collapsed[0].group)
+        #expect(Set(["6", "4"]) == Set(collapsed[0].tags))
+        #expect(.set == collapsed[0].type)
 
-        XCTAssertEqual("some-other-group", collapsed[1].group)
-        XCTAssertEqual(Set(["12", "10"]), Set(collapsed[1].tags))
-        XCTAssertEqual(.add, collapsed[1].type)
+        #expect("some-other-group" == collapsed[1].group)
+        #expect(Set(["12", "10"]) == Set(collapsed[1].tags))
+        #expect(.add == collapsed[1].type)
 
-        XCTAssertEqual("some-other-group", collapsed[2].group)
-        XCTAssertEqual(Set(["11"]), Set(collapsed[2].tags))
-        XCTAssertEqual(.remove, collapsed[2].type)
+        #expect("some-other-group" == collapsed[2].group)
+        #expect(Set(["11"]) == Set(collapsed[2].tags))
+        #expect(.remove == collapsed[2].type)
     }
 
+    @Test
     func testCollapseTagGroupUpdatesEmptyTags() throws {
         let updates = [
             TagGroupUpdate(group: "set-group", tags: [], type: .set),
@@ -52,12 +55,13 @@ class AudienceUtilsTest: XCTestCase {
 
         let collapsed = AudienceUtils.collapse(updates)
 
-        XCTAssertEqual(1, collapsed.count)
-        XCTAssertEqual("set-group", collapsed[0].group)
-        XCTAssertEqual(Set([]), Set(collapsed[0].tags))
-        XCTAssertEqual(.set, collapsed[0].type)
+        #expect(1 == collapsed.count)
+        #expect("set-group" == collapsed[0].group)
+        #expect(Set([]) == Set(collapsed[0].tags))
+        #expect(.set == collapsed[0].type)
     }
 
+    @Test
     func testCollapseAttributeUpdates() throws {
         let date = Date()
         let updates = [
@@ -80,18 +84,19 @@ class AudienceUtilsTest: XCTestCase {
 
         let collapsed = AudienceUtils.collapse(updates)
 
-        XCTAssertEqual(2, collapsed.count)
-        XCTAssertEqual("some-attribute", collapsed[0].attribute)
-        XCTAssertEqual("neat", collapsed[0].jsonValue?.unWrap() as! String)
-        XCTAssertEqual(.set, collapsed[0].type)
-        XCTAssertEqual(date, collapsed[0].date)
+        #expect(2 == collapsed.count)
+        #expect("some-attribute" == collapsed[0].attribute)
+        #expect((collapsed[0].jsonValue?.unWrap() as! String) == "neat")
+        #expect(.set == collapsed[0].type)
+        #expect(date == collapsed[0].date)
 
-        XCTAssertEqual("some-other-attribute", collapsed[1].attribute)
-        XCTAssertNil(collapsed[1].jsonValue?.unWrap())
-        XCTAssertEqual(.remove, collapsed[1].type)
-        XCTAssertEqual(.set, collapsed[0].type)
+        #expect("some-other-attribute" == collapsed[1].attribute)
+        #expect(collapsed[1].jsonValue?.unWrap() == nil)
+        #expect(.remove == collapsed[1].type)
+        #expect(.set == collapsed[0].type)
     }
 
+    @Test
     func testCollapseSubscriptionListUpdates() throws {
         let updates = [
             SubscriptionListUpdate(listId: "coffee", type: .unsubscribe),
@@ -107,9 +112,10 @@ class AudienceUtilsTest: XCTestCase {
 
         let collapsed = AudienceUtils.collapse(updates)
 
-        XCTAssertEqual(expected, collapsed)
+        #expect(expected == collapsed)
     }
 
+    @Test
     func testCollapseScopedSubscriptionListUpdates() throws {
         let now = Date()
 
@@ -189,9 +195,10 @@ class AudienceUtilsTest: XCTestCase {
 
         let collapsed = AudienceUtils.collapse(updates)
 
-        XCTAssertEqual(expected, collapsed)
+        #expect(expected == collapsed)
     }
 
+    @Test
     func testApplyScopedSubscriptionListsEmptyPayload() throws {
         let now = Date()
 
@@ -227,16 +234,17 @@ class AudienceUtilsTest: XCTestCase {
             "bar": [.web],
         ]
 
-        XCTAssertEqual(
-            expected,
+        #expect(
+            expected ==
             AudienceUtils.applySubscriptionListsUpdates(nil, updates: updates)
         )
-        XCTAssertEqual(
-            expected,
+        #expect(
+            expected ==
             AudienceUtils.applySubscriptionListsUpdates([:], updates: updates)
         )
     }
 
+    @Test
     func testApplyScopedSubscriptionLists() throws {
         let now = Date()
 
@@ -279,8 +287,8 @@ class AudienceUtilsTest: XCTestCase {
             "foo": [.app, .web],
         ]
 
-        XCTAssertEqual(
-            expected,
+        #expect(
+            expected ==
             AudienceUtils.applySubscriptionListsUpdates(
                 payload,
                 updates: updates

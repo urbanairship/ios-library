@@ -1,15 +1,20 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
 import Combine
+import Foundation
 
 @MainActor
-final class RemoteDataTest: AirshipBaseTest {
+@Suite(.timeLimit(.minutes(1)))
+struct RemoteDataTest {
 
     private static let RefreshTask = "RemoteData.refresh"
+
+    let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
+    let config = RuntimeConfig.testConfig()
 
     private let contactProvider: TestRemoteDataProvider = TestRemoteDataProvider(source: .contact, enabled: false)
     private let appProvider: TestRemoteDataProvider = TestRemoteDataProvider(source: .app, enabled: true)
@@ -23,10 +28,10 @@ final class RemoteDataTest: AirshipBaseTest {
     private let testWorkManager: TestWorkManager = TestWorkManager()
     private let testAppStateTracker: TestAppStateTracker = TestAppStateTracker()
     private let testTaskSleeper: TestTaskSleeper = TestTaskSleeper()
-    private var remoteData: RemoteData!
-    private var privacyManager: TestPrivacyManager!
+    private let remoteData: RemoteData
+    private let privacyManager: TestPrivacyManager
 
-    override func setUp() async throws {
+    init() async throws {
         self.privacyManager = TestPrivacyManager(
             dataStore: self.dataStore,
             config: self.config,
@@ -54,8 +59,9 @@ final class RemoteDataTest: AirshipBaseTest {
         await self.contactProvider.setStatusCallback { _, _, _ in return .upToDate }
     }
 
+    @Test
     func testRemoteConfigUpdatedEnqueuesRefresh() async {
-        XCTAssertEqual(0, testWorkManager.workRequests.count)
+        #expect(0 == testWorkManager.workRequests.count)
         self.config.updateRemoteConfig(
             RemoteConfig(
                 airshipConfig: .init(
@@ -67,57 +73,62 @@ final class RemoteDataTest: AirshipBaseTest {
             )
         )
         await self.remoteData.serialQueue.waitForCurrentOperations()
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
+        #expect(1 == testWorkManager.workRequests.count)
     }
 
+    @Test
     func testContactUpdateEnqueuesRefresh() {
-        XCTAssertEqual(0, testWorkManager.workRequests.count)
+        #expect(0 == testWorkManager.workRequests.count)
         self.testContact.contactIDUpdatesSubject.send(
             ContactIDInfo(contactID: "some id", isStable: true, namedUserID: nil)
         )
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
+        #expect(1 == testWorkManager.workRequests.count)
     }
 
+    @Test
     func testLocaleUpdatesEnqueuesRefresh() {
-        XCTAssertEqual(0, testWorkManager.workRequests.count)
+        #expect(0 == testWorkManager.workRequests.count)
         notificationCenter.post(
             name: AirshipNotifications.LocaleUpdated.name
         )
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
+        #expect(1 == testWorkManager.workRequests.count)
     }
 
+    @Test
     func testForegroundRefreshEnqueuesRefresh() {
-        XCTAssertEqual(0, testWorkManager.workRequests.count)
+        #expect(0 == testWorkManager.workRequests.count)
         notificationCenter.post(
             name: AppStateTracker.didTransitionToForeground
         )
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
+        #expect(1 == testWorkManager.workRequests.count)
 
         notificationCenter.post(
             name: AppStateTracker.didTransitionToForeground
         )
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
+        #expect(1 == testWorkManager.workRequests.count)
 
         self.testDate.offset += self.remoteData.refreshInterval
         notificationCenter.post(
             name: AppStateTracker.didTransitionToForeground
         )
-        XCTAssertEqual(2, testWorkManager.workRequests.count)
+        #expect(2 == testWorkManager.workRequests.count)
     }
 
+    @Test
     func testAirshipReadyEnqueuesRefresh() async {
-        XCTAssertEqual(0, testWorkManager.workRequests.count)
+        #expect(0 == testWorkManager.workRequests.count)
         self.remoteData.airshipReady()
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
+        #expect(1 == testWorkManager.workRequests.count)
     }
 
+    @Test
     @MainActor
     func testForegroundStartsPolling() async {
         await self.testTaskSleeper.pause()
         self.testAppStateTracker.currentState = .active
 
         notificationCenter.post(name: AppStateTracker.didTransitionToForeground)
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
+        #expect(1 == testWorkManager.workRequests.count)
 
         // Polling task started → requests a sleep at the configured interval.
         await self.testTaskSleeper.waitForSleep(self.remoteData.foregroundPollingInterval)
@@ -125,31 +136,34 @@ final class RemoteDataTest: AirshipBaseTest {
         await self.cancelPolling()
     }
 
+    @Test
     @MainActor
     func testAirshipReadyStartsPollingWhenForegrounded() async {
         await self.testTaskSleeper.pause()
         self.testAppStateTracker.currentState = .active
 
         self.remoteData.airshipReady()
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
+        #expect(1 == testWorkManager.workRequests.count)
 
         await self.testTaskSleeper.waitForSleep(self.remoteData.foregroundPollingInterval)
 
         await self.cancelPolling()
     }
 
+    @Test
     @MainActor
     func testAirshipReadyDoesNotStartPollingWhenBackgrounded() async {
         self.testAppStateTracker.currentState = .background
 
         self.remoteData.airshipReady()
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
+        #expect(1 == testWorkManager.workRequests.count)
 
         for _ in 0..<5 { await Task.yield() }
         let sleeps = await self.testTaskSleeper.sleeps
-        XCTAssertTrue(sleeps.isEmpty)
+        #expect(sleeps.isEmpty)
     }
 
+    @Test
     @MainActor
     func testBackgroundStopsPolling() async {
         await self.testTaskSleeper.pause()
@@ -165,10 +179,11 @@ final class RemoteDataTest: AirshipBaseTest {
         for _ in 0..<10 { await Task.yield() }
 
         let sleepsAfter = await self.testTaskSleeper.sleeps.count
-        XCTAssertEqual(sleepsBefore, sleepsAfter, "no additional sleep after polling is cancelled")
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
+        #expect(sleepsBefore == sleepsAfter, "no additional sleep after polling is cancelled")
+        #expect(1 == testWorkManager.workRequests.count)
     }
 
+    @Test
     @MainActor
     func testForegroundPollingUsesRemoteConfigInterval() async {
         self.config.updateRemoteConfig(
@@ -192,6 +207,7 @@ final class RemoteDataTest: AirshipBaseTest {
         await self.testTaskSleeper.resume()
     }
 
+    @Test
     func testNotifyOutdatedContact() async {
         let remoteDataInfo = RemoteDataInfo(
             url: URL(string: "example://")!,
@@ -199,18 +215,19 @@ final class RemoteDataTest: AirshipBaseTest {
             source: .contact
         )
 
-        let expectation = XCTestExpectation()
+        let expectation = AirshipTestExpectation()
         await self.contactProvider.setNotifyOutdatedCallback { @Sendable info in
-            XCTAssertEqual(remoteDataInfo, info)
+            #expect(remoteDataInfo == info)
             expectation.fulfill()
             return true
         }
 
         await self.remoteData.notifyOutdated(remoteDataInfo: remoteDataInfo)
 
-        await self.fulfillment(of: [expectation], timeout: 10)
+        await fulfillment(of: [expectation], timeout: 10)
     }
 
+    @Test
     func testNotifyOutdatedApp() async {
         let remoteDataInfo = RemoteDataInfo(
             url: URL(string: "example://")!,
@@ -218,18 +235,19 @@ final class RemoteDataTest: AirshipBaseTest {
             source: .app
         )
 
-        let expectation = XCTestExpectation()
+        let expectation = AirshipTestExpectation()
         await self.appProvider.setNotifyOutdatedCallback { @Sendable info in
-            XCTAssertEqual(remoteDataInfo, info)
+            #expect(remoteDataInfo == info)
             expectation.fulfill()
             return true
         }
 
         await self.remoteData.notifyOutdated(remoteDataInfo: remoteDataInfo)
 
-        await self.fulfillment(of: [expectation], timeout: 10)
+        await fulfillment(of: [expectation], timeout: 10)
     }
 
+    @Test
     func testNotifyOutdatedEnqueusRefreshTask() async {
         let remoteDataInfo = RemoteDataInfo(
             url: URL(string: "example://")!,
@@ -237,17 +255,18 @@ final class RemoteDataTest: AirshipBaseTest {
             source: .app
         )
 
-        XCTAssertEqual(0, testWorkManager.workRequests.count)
+        #expect(0 == testWorkManager.workRequests.count)
 
         await self.appProvider.setNotifyOutdatedCallback { _ in return false }
         await self.remoteData.notifyOutdated(remoteDataInfo: remoteDataInfo)
-        XCTAssertEqual(0, testWorkManager.workRequests.count)
+        #expect(0 == testWorkManager.workRequests.count)
 
         await self.appProvider.setNotifyOutdatedCallback { _ in return true }
         await self.remoteData.notifyOutdated(remoteDataInfo: remoteDataInfo)
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
+        #expect(1 == testWorkManager.workRequests.count)
     }
 
+    @Test
     func testIsCurrentContact() async {
         let remoteDataInfo = RemoteDataInfo(
             url: URL(string: "example://")!,
@@ -255,20 +274,21 @@ final class RemoteDataTest: AirshipBaseTest {
             source: .contact
         )
 
-        let expectation = XCTestExpectation()
+        let expectation = AirshipTestExpectation()
         let testLocaleManager = self.testLocaleManager
         await self.contactProvider.setIsCurrentCallback { @Sendable locale, _, _ in
-            XCTAssertEqual(testLocaleManager.currentLocale, locale)
+            #expect(testLocaleManager.currentLocale == locale)
             expectation.fulfill()
             return false
         }
 
         let result = await self.remoteData.isCurrent(remoteDataInfo: remoteDataInfo)
-        await self.fulfillment(of: [expectation], timeout: 10)
+        await fulfillment(of: [expectation], timeout: 10)
 
-        XCTAssertFalse(result)
+        #expect(!(result))
     }
 
+    @Test
     func testIsCurrentApp() async {
         let remoteDataInfo = RemoteDataInfo(
             url: URL(string: "example://")!,
@@ -276,73 +296,78 @@ final class RemoteDataTest: AirshipBaseTest {
             source: .app
         )
 
-        let expectation = XCTestExpectation()
+        let expectation = AirshipTestExpectation()
         let testLocaleManager = self.testLocaleManager
         await self.appProvider.setIsCurrentCallback { @Sendable locale, _, _ in
-            XCTAssertEqual(testLocaleManager.currentLocale, locale)
+            #expect(testLocaleManager.currentLocale == locale)
             expectation.fulfill()
             return true
         }
 
         let result = await self.remoteData.isCurrent(remoteDataInfo: remoteDataInfo)
-        await self.fulfillment(of: [expectation], timeout: 10)
+        await fulfillment(of: [expectation], timeout: 10)
 
-        XCTAssertTrue(result)
+        #expect(result)
     }
 
+    @Test
     func testContactStatus() async {
-        let expectation = XCTestExpectation()
+        let expectation = AirshipTestExpectation()
         let testLocaleManager = self.testLocaleManager
 
         await self.contactProvider.setStatusCallback { @Sendable _, locale, _ in
-            XCTAssertEqual(testLocaleManager.currentLocale, locale)
+            #expect(testLocaleManager.currentLocale == locale)
             expectation.fulfill()
             return .upToDate
         }
 
         let result = await self.remoteData.status(source: .contact)
-        await self.fulfillment(of: [expectation], timeout: 10)
+        await fulfillment(of: [expectation], timeout: 10)
 
-        XCTAssertEqual(.upToDate, result)
+        #expect(.upToDate == result)
     }
 
+    @Test
     func testAppStatus() async {
-        let expectation = XCTestExpectation()
+        let expectation = AirshipTestExpectation()
         let testLocaleManager = self.testLocaleManager
 
         await self.appProvider.setStatusCallback { @Sendable _, locale, _ in
-            XCTAssertEqual(testLocaleManager.currentLocale, locale)
+            #expect(testLocaleManager.currentLocale == locale)
             expectation.fulfill()
             return .stale
         }
 
         let result = await self.remoteData.status(source: .app)
-        await self.fulfillment(of: [expectation], timeout: 10)
+        await fulfillment(of: [expectation], timeout: 10)
 
-        XCTAssertEqual(.stale, result)
+        #expect(.stale == result)
     }
 
+    @Test
     @MainActor
     func testContentAvailableRefresh() async {
-        XCTAssertEqual(0, self.testWorkManager.workRequests.count)
+        #expect(0 == self.testWorkManager.workRequests.count)
 
         let json = try! AirshipJSON.wrap([
             "com.urbanairship.remote-data.update": NSNumber(value: true)
         ])
         
         let result = await self.remoteData.receivedRemoteNotification(json)
-        XCTAssertEqual(.newData, result)
+        #expect(.newData == result)
 
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
+        #expect(1 == testWorkManager.workRequests.count)
     }
 
+    @Test
     @MainActor
     func testSettingRefreshInterval() {
-        XCTAssertEqual(self.remoteData.refreshInterval, 10)
+        #expect(self.remoteData.refreshInterval == 10)
         self.config.updateRemoteConfig(RemoteConfig(remoteDataRefreshIntervalMilliseconds: 9999 * 1000))
-        XCTAssertEqual(self.remoteData.refreshInterval, 9999)
+        #expect(self.remoteData.refreshInterval == 9999)
     }
 
+    @Test
     func testPayloads() async {
         let contactPayloads = [
             RemoteDataTestUtils.generatePayload(
@@ -372,18 +397,19 @@ final class RemoteDataTest: AirshipBaseTest {
         await self.appProvider.setPayloads(appPayloads)
 
         let barResult = await self.remoteData.payloads(types: ["bar"])
-        XCTAssertEqual(barResult, [appPayloads[1]])
+        #expect(barResult == [appPayloads[1]])
 
         let fooResult = await self.remoteData.payloads(types: ["foo"])
-        XCTAssertEqual(fooResult, [appPayloads[0], contactPayloads[0]])
+        #expect(fooResult == [appPayloads[0], contactPayloads[0]])
 
         let barFooResult = await self.remoteData.payloads(types: ["bar", "foo"])
-        XCTAssertEqual(barFooResult, [appPayloads[1], appPayloads[0], contactPayloads[0]])
+        #expect(barFooResult == [appPayloads[1], appPayloads[0], contactPayloads[0]])
 
         let bazResult = await self.remoteData.payloads(types: ["baz"])
-        XCTAssertEqual(bazResult, [])
+        #expect(bazResult == [])
     }
 
+    @Test
     func testPayloadUpdates() async {
         await self.contactProvider.setRefreshCallback { @Sendable _, _, _ in
             return .newData
@@ -392,11 +418,10 @@ final class RemoteDataTest: AirshipBaseTest {
             return .newData
         }
 
-        let expectation = XCTestExpectation()
+        let expectation = AirshipTestExpectation()
         expectation.expectedFulfillmentCount = 2   // baseline + ≥1 refresh
-        expectation.assertForOverFulfill = false   // tolerate extra publishes
 
-        let first = XCTestExpectation()
+        let first = AirshipTestExpectation()
         let isFirst = AirshipAtomicValue<Bool>(false)
 
         let subscription = self.remoteData.publisher(types: ["foo"])
@@ -405,16 +430,17 @@ final class RemoteDataTest: AirshipBaseTest {
                     first.fulfill()
                 }
                 expectation.fulfill()
-                XCTAssertTrue(payloads.isEmpty)
+                #expect(payloads.isEmpty)
             }
 
-        await self.fulfillment(of: [first], timeout: 10)
+        await fulfillment(of: [first], timeout: 10)
         await self.launchRefreshTask()
-        await self.fulfillment(of: [expectation], timeout: 10)
+        await fulfillment(of: [expectation], timeout: 10)
         subscription.cancel()
     }
 
 
+    @Test
     func testForceRefresh() async {
         await self.contactProvider.setRefreshCallback { @Sendable _, _, _ in
             return .newData
@@ -424,66 +450,69 @@ final class RemoteDataTest: AirshipBaseTest {
         }
 
         self.testWorkManager.autoLaunchRequests = true
-        let refreshFinished = expectation(description: "refresh finished")
+        let refreshFinished = AirshipTestExpectation(description: "refresh finished")
 
         let remoteData = self.remoteData
         Task.detached {
-            await remoteData?.forceRefresh()
+            await remoteData.forceRefresh()
             refreshFinished.fulfill()
         }
 
-        await self.fulfillment(of: [refreshFinished])
+        await fulfillment(of: [refreshFinished])
 
-        XCTAssertEqual(1, testWorkManager.workRequests.count)
+        #expect(1 == testWorkManager.workRequests.count)
     }
 
+    @Test
     func testRefreshProviders() async {
-        let expectation = XCTestExpectation()
+        let expectation = AirshipTestExpectation()
         expectation.expectedFulfillmentCount = 2
         let testLocaleManager = self.testLocaleManager
 
         await self.contactProvider.setRefreshCallback { @Sendable _, locale, _ in
-            XCTAssertEqual(testLocaleManager.currentLocale, locale)
+            #expect(testLocaleManager.currentLocale == locale)
             expectation.fulfill()
             return .skipped
         }
 
         await self.appProvider.setRefreshCallback{ @Sendable _, locale, _ in
-            XCTAssertEqual(testLocaleManager.currentLocale, locale)
+            #expect(testLocaleManager.currentLocale == locale)
             expectation.fulfill()
             return .newData
         }
         
 
         let result = await self.launchRefreshTask()
-        await self.fulfillment(of: [expectation], timeout: 10)
+        await fulfillment(of: [expectation], timeout: 10)
 
-        XCTAssertEqual(result, .success)
+        #expect(result == .success)
     }
 
+    @Test
     func testRefreshProviderFailed() async {
-        let expectation = XCTestExpectation()
+        let expectation = AirshipTestExpectation()
         expectation.expectedFulfillmentCount = 2
         let testLocaleManager = self.testLocaleManager
 
         await self.contactProvider.setRefreshCallback { @Sendable _, locale, _ in
-            XCTAssertEqual(testLocaleManager.currentLocale, locale)
+            #expect(testLocaleManager.currentLocale == locale)
             expectation.fulfill()
             return .failed
         }
 
         await self.appProvider.setRefreshCallback{ @Sendable _, locale, _ in
-            XCTAssertEqual(testLocaleManager.currentLocale, locale)
+            #expect(testLocaleManager.currentLocale == locale)
             expectation.fulfill()
             return .newData
         }
 
         let result = await self.launchRefreshTask()
-        await self.fulfillment(of: [expectation], timeout: 10)
+        await fulfillment(of: [expectation], timeout: 10)
 
-        XCTAssertEqual(result, .failure)
+        #expect(result == .failure)
     }
 
+    @Test
     @MainActor
     func testChangeTokenBgPush() async {
         let changeToken = AirshipAtomicValue<String?>(nil)
@@ -492,7 +521,7 @@ final class RemoteDataTest: AirshipBaseTest {
         let testLocaleManager = self.testLocaleManager
         await self.contactProvider.setRefreshCallback { @Sendable change, locale, _ in
             changeToken.value = change
-            XCTAssertEqual(testLocaleManager.currentLocale, locale)
+            #expect(testLocaleManager.currentLocale == locale)
             return .failed
         }
         await self.appProvider.setRefreshCallback{ @Sendable _, locale, _ in
@@ -500,11 +529,11 @@ final class RemoteDataTest: AirshipBaseTest {
         }
 
         await self.launchRefreshTask()
-        XCTAssertNotNil(changeToken.value)
+        #expect(changeToken.value != nil)
 
         let last = changeToken.value
         await self.launchRefreshTask()
-        XCTAssertEqual(last, changeToken.value)
+        #expect(last == changeToken.value)
 
         // Send bg push
         _ = await self.remoteData.receivedRemoteNotification(
@@ -516,9 +545,10 @@ final class RemoteDataTest: AirshipBaseTest {
         )
 
         await self.launchRefreshTask()
-        XCTAssertNotEqual(last, changeToken.value)
+        #expect(last != changeToken.value)
     }
 
+    @Test
     @MainActor
     func testChangeTokenAppForeground() async {
         let changeToken = AirshipAtomicValue<String?>(nil)
@@ -527,7 +557,7 @@ final class RemoteDataTest: AirshipBaseTest {
         let testLocaleManager = self.testLocaleManager
         await self.contactProvider.setRefreshCallback { @Sendable change, locale, _ in
             changeToken.value = change
-            XCTAssertEqual(testLocaleManager.currentLocale, locale)
+            #expect(testLocaleManager.currentLocale == locale)
             return .failed
         }
         await self.appProvider.setRefreshCallback{ @Sendable _, locale, _ in
@@ -535,7 +565,7 @@ final class RemoteDataTest: AirshipBaseTest {
         }
 
         await self.launchRefreshTask()
-        XCTAssertNotNil(changeToken.value)
+        #expect(changeToken.value != nil)
 
         var last = changeToken.value
 
@@ -545,7 +575,7 @@ final class RemoteDataTest: AirshipBaseTest {
         )
 
         await self.launchRefreshTask()
-        XCTAssertNotEqual(last, changeToken.value)
+        #expect(last != changeToken.value)
 
         // Foreground again without changing clock
         last = changeToken.value
@@ -554,7 +584,7 @@ final class RemoteDataTest: AirshipBaseTest {
         )
         await self.launchRefreshTask()
         // Should not change
-        XCTAssertEqual(last, changeToken.value)
+        #expect(last == changeToken.value)
 
         // Foreground after refresh interval
         self.testDate.offset += self.remoteData.refreshInterval
@@ -563,9 +593,10 @@ final class RemoteDataTest: AirshipBaseTest {
         )
 
         await self.launchRefreshTask()
-        XCTAssertNotEqual(last, changeToken.value)
+        #expect(last != changeToken.value)
     }
 
+    @Test
     @MainActor
     func testWaitForRefresh() async {
         await self.contactProvider.setRefreshCallback{ _, _, _ in
@@ -584,7 +615,7 @@ final class RemoteDataTest: AirshipBaseTest {
 
         await self.launchRefreshTask()
         var isFinished = finished.value
-        XCTAssertFalse(isFinished)
+        #expect(!(isFinished))
 
         await self.appProvider.setRefreshCallback{ _, _, _ in
             return .newData
@@ -593,7 +624,7 @@ final class RemoteDataTest: AirshipBaseTest {
         await self.launchRefreshTask()
         await task.value
         isFinished = finished.value
-        XCTAssertTrue(isFinished)
+        #expect(isFinished)
     }
 
     @discardableResult
@@ -670,5 +701,3 @@ fileprivate actor TestRemoteDataProvider: RemoteDataProviderProtocol {
         return true
     }
 }
-
-

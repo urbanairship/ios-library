@@ -1,35 +1,38 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable import AirshipCore
 
-class CachedValueTest: XCTestCase {
+@Suite struct CachedValueTest {
 
     let date = UATestDate(offset: 0, dateOverride: Date())
 
+    @Test
     func testValue() throws {
         let cachedValue = CachedValue<String>(date: date)
         cachedValue.set(value: "Hello!", expiresIn: 100)
 
-        XCTAssertEqual(100.0, cachedValue.timeRemaining)
-        XCTAssertEqual("Hello!", cachedValue.value)
+        #expect(100.0 == cachedValue.timeRemaining)
+        #expect("Hello!" == cachedValue.value)
 
         date.offset += 99
 
-        XCTAssertEqual(1.0, cachedValue.timeRemaining)
-        XCTAssertEqual("Hello!", cachedValue.value)
+        #expect(1.0 == cachedValue.timeRemaining)
+        #expect("Hello!" == cachedValue.value)
 
         date.offset += 1
-        XCTAssertEqual(0, cachedValue.timeRemaining)
-        XCTAssertNil(cachedValue.value)
+        #expect(0 == cachedValue.timeRemaining)
+        #expect(cachedValue.value == nil)
     }
 
+    @Test
     func testValueExpiration() throws {
         let cachedValue = CachedValue<String>(date: date)
         cachedValue.set(value: "Hello!", expiration: date.now.advanced(by: 1.0))
 
-        XCTAssertEqual(1.0, cachedValue.timeRemaining)
-        XCTAssertEqual("Hello!", cachedValue.value)
+        #expect(1.0 == cachedValue.timeRemaining)
+        #expect("Hello!" == cachedValue.value)
     }
 }

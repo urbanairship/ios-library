@@ -1,20 +1,22 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable
 import AirshipCore
+import Foundation
 
-final class AppRemoteDataProviderDelegateTest: XCTestCase {
+@Suite struct AppRemoteDataProviderDelegateTest {
 
     private let client: TestRemoteDataAPIClient = TestRemoteDataAPIClient()
     private let config: RuntimeConfig = RuntimeConfig.testConfig()
 
-    private var delegate: AppRemoteDataProviderDelegate!
+    private let delegate: AppRemoteDataProviderDelegate
 
-    override func setUpWithError() throws {
+    init() {
         delegate = AppRemoteDataProviderDelegate(config: config, apiClient: client)
     }
 
+    @Test
     func testIsRemoteDataInfoUpToDate() async throws {
         let locale = Locale(identifier: "br")
         let randomValue = 1003
@@ -35,7 +37,7 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
             locale: locale,
             randomValue: randomValue
         )
-        XCTAssertTrue(isUpToDate)
+        #expect(isUpToDate)
 
         // Different locale
         isUpToDate = await self.delegate.isRemoteDataInfoUpToDate(
@@ -43,7 +45,7 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
             locale: Locale(identifier: "en"),
             randomValue: randomValue
         )
-        XCTAssertFalse(isUpToDate)
+        #expect(!(isUpToDate))
 
         // Different randomValue
         isUpToDate = await self.delegate.isRemoteDataInfoUpToDate(
@@ -51,9 +53,10 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
             locale: locale,
             randomValue: randomValue + 1
         )
-        XCTAssertFalse(isUpToDate)
+        #expect(!(isUpToDate))
     }
 
+    @Test
     func testIsRemoteDataInfoUpToDateDifferentURL() async throws {
         let locale = Locale(identifier: "br")
         let randomValue = 1003
@@ -75,9 +78,10 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
             randomValue: randomValue
         )
 
-        XCTAssertFalse(isUpToDate)
+        #expect(!(isUpToDate))
     }
 
+    @Test
     func testFetch() async throws {
         let locale = Locale(identifier: "br")
         let randomValue = 1003
@@ -95,23 +99,21 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
 
         client.lastModified = "some other time"
         client.fetchData = { url, auth, lastModified, info in
-            XCTAssertEqual(remoteDatInfo.url, url)
-            XCTAssertEqual(AirshipRequestAuth.generatedAppToken, auth)
-            XCTAssertEqual("some time", lastModified)
+            #expect(remoteDatInfo.url == url)
+            #expect(AirshipRequestAuth.generatedAppToken == auth)
+            #expect("some time" == lastModified)
 
-            XCTAssertEqual(
-                RemoteDataInfo(
-                    url: try RemoteDataURLFactory.makeURL(
-                        config: self.config,
-                        path: "/api/remote-data/app/\(self.config.appCredentials.appKey)/ios",
-                        locale: locale,
-                        randomValue: randomValue
-                    ),
-                    lastModifiedTime: "some other time",
-                    source: .app
+            let expectedInfo = RemoteDataInfo(
+                url: try RemoteDataURLFactory.makeURL(
+                    config: self.config,
+                    path: "/api/remote-data/app/\(self.config.appCredentials.appKey)/ios",
+                    locale: locale,
+                    randomValue: randomValue
                 ),
-                info
+                lastModifiedTime: "some other time",
+                source: .app
             )
+            #expect(expectedInfo == info)
 
             return AirshipHTTPResponse(
                 result: RemoteDataResult(
@@ -129,9 +131,10 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
             lastRemoteDataInfo: remoteDatInfo
         )
 
-        XCTAssertEqual(result.statusCode, 200)
+        #expect(result.statusCode == 200)
     }
 
+    @Test
     func testFetchLastModifiedOutOfDate() async throws {
         let locale = Locale(identifier: "br")
         let randomValue = 1003
@@ -148,7 +151,7 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
         )
 
         client.fetchData = { _, _, lastModified, _ in
-            XCTAssertNil(lastModified)
+            #expect(lastModified == nil)
             return AirshipHTTPResponse(
                 result: nil,
                 statusCode: 400,
@@ -162,6 +165,6 @@ final class AppRemoteDataProviderDelegateTest: XCTestCase {
             lastRemoteDataInfo: remoteDatInfo
         )
 
-        XCTAssertEqual(result.statusCode, 400)
+        #expect(result.statusCode == 400)
     }
 }

@@ -1,17 +1,19 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable import AirshipCore
 
-class AttributeEditorTest: XCTestCase {
+@Suite struct AttributeEditorTest {
 
-    var date: UATestDate!
+    let date: UATestDate
 
-    override func setUp() {
+    init() {
         self.date = UATestDate()
     }
 
+    @Test
     func testEditor() throws {
         var out: [AttributeUpdate]?
 
@@ -29,20 +31,21 @@ class AttributeEditorTest: XCTestCase {
         self.date.dateOverride = applyDate
         editor.apply()
 
-        XCTAssertEqual(2, out?.count)
+        #expect(2 == out?.count)
 
         let foo = out?.first { $0.attribute == "foo" }
         let bar = out?.first { $0.attribute == "bar" }
 
-        XCTAssertEqual(AttributeUpdateType.remove, foo?.type)
-        XCTAssertEqual(applyDate, foo?.date)
-        XCTAssertNil(foo?.jsonValue?.unWrap())
+        #expect(AttributeUpdateType.remove == foo?.type)
+        #expect(applyDate == foo?.date)
+        #expect(foo?.jsonValue?.unWrap() == nil)
 
-        XCTAssertEqual(AttributeUpdateType.set, bar?.type)
-        XCTAssertEqual("neat", bar?.jsonValue?.unWrap() as? String)
-        XCTAssertEqual(applyDate, foo?.date)
+        #expect(AttributeUpdateType.set == bar?.type)
+        #expect("neat" == bar?.jsonValue?.unWrap() as? String)
+        #expect(applyDate == foo?.date)
     }
 
+    @Test
     func testDateAttribute() throws {
         var out: [AttributeUpdate]?
 
@@ -57,14 +60,14 @@ class AttributeEditorTest: XCTestCase {
 
         let attribute = out?.first
 
-        XCTAssertEqual(AttributeUpdateType.set, attribute?.type)
-        XCTAssertEqual(applyDate, attribute?.date)
-        XCTAssertEqual(
-            "1970-01-01T02:46:40Z",
-            attribute?.jsonValue?.unWrap() as! String
+        #expect(AttributeUpdateType.set == attribute?.type)
+        #expect(applyDate == attribute?.date)
+        #expect(
+            "1970-01-01T02:46:40Z" == attribute?.jsonValue?.unWrap() as! String
         )
     }
 
+    @Test
     func testEditorNoAttributes() throws {
         var out: [AttributeUpdate]?
 
@@ -74,9 +77,10 @@ class AttributeEditorTest: XCTestCase {
 
         editor.apply()
 
-        XCTAssertEqual(0, out?.count)
+        #expect(0 == out?.count)
     }
 
+    @Test
     func testEditorEmptyString() throws {
         var out: [AttributeUpdate]?
         let editor = AttributesEditor(date: self.date) { updates in
@@ -86,9 +90,10 @@ class AttributeEditorTest: XCTestCase {
         editor.set(string: "cool", attribute: "")
         editor.apply()
 
-        XCTAssertEqual(0, out?.count)
+        #expect(0 == out?.count)
     }
 
+    @Test
     func testSetJSONAttributeNoExpiration() throws {
         var out: [AttributeUpdate]?
         let editor = AttributesEditor(date: self.date) { updates in
@@ -111,24 +116,25 @@ class AttributeEditorTest: XCTestCase {
         self.date.dateOverride = now
         editor.apply()
 
-        XCTAssertEqual(1, out?.count)
+        #expect(1 == out?.count)
         guard let first = out?.first else {
-            XCTFail("missing update")
+            Issue.record("missing update")
             return
         }
 
-        XCTAssertEqual(AttributeUpdateType.set, first.type)
-        XCTAssertEqual("icecream#store-123", first.attribute)
-        XCTAssertEqual(now, first.date)
+        #expect(AttributeUpdateType.set == first.type)
+        #expect("icecream#store-123" == first.attribute)
+        #expect(now == first.date)
 
         let unwrapped = first.jsonValue?.unWrap() as? [String: AnyHashable]
-        XCTAssertEqual(3, unwrapped?.count)
-        XCTAssertEqual("vanilla", unwrapped?["flavor"] as? String)
-        XCTAssertEqual(5.0, unwrapped?["rating"] as? Double)
-        XCTAssertEqual(true, unwrapped?["available"] as? Bool)
-        XCTAssertNil(unwrapped?["exp"], "Unexpected expiry key present")
+        #expect(3 == unwrapped?.count)
+        #expect("vanilla" == unwrapped?["flavor"] as? String)
+        #expect(5.0 == unwrapped?["rating"] as? Double)
+        #expect(true == unwrapped?["available"] as? Bool)
+        #expect(unwrapped?["exp"] == nil, "Unexpected expiry key present")
     }
 
+    @Test
     func testSetJSONAttributeWithExpiration() throws {
         var out: [AttributeUpdate]? = nil
         let editor = AttributesEditor(date: self.date) { updates in
@@ -152,23 +158,24 @@ class AttributeEditorTest: XCTestCase {
         editor.apply()
 
         guard let update = out?.first else {
-            XCTFail("Missing update")
+            Issue.record("Missing update")
             return
         }
 
-        XCTAssertEqual("coffee#order-123", update.attribute)
-        XCTAssertEqual(AttributeUpdateType.set, update.type)
+        #expect("coffee#order-123" == update.attribute)
+        #expect(AttributeUpdateType.set == update.type)
 
         let dict = update.jsonValue?.unWrap() as? [String: AnyHashable]
-        XCTAssertEqual("large", dict?["size"] as? String)
+        #expect("large" == dict?["size"] as? String)
 
         if let exp = dict?["exp"] as? Double {
-            XCTAssertEqual(expiration.timeIntervalSince1970, exp, accuracy: 0.001)
+            #expect(abs(expiration.timeIntervalSince1970 - exp) <= 0.001)
         } else {
-            XCTFail("Missing expiration key in payload")
+            Issue.record("Missing expiration key in payload")
         }
     }
 
+    @Test
     func testRemoveJSONAttribute() throws {
         var out: [AttributeUpdate]?
         let editor = AttributesEditor(date: self.date) { updates in
@@ -180,56 +187,69 @@ class AttributeEditorTest: XCTestCase {
         self.date.dateOverride = Date(timeIntervalSince1970: 30)
         editor.apply()
 
-        XCTAssertEqual(1, out?.count)
-        XCTAssertEqual(AttributeUpdateType.remove, out?.first?.type)
-        XCTAssertEqual("coffee#order-123", out?.first?.attribute)
+        #expect(1 == out?.count)
+        #expect(AttributeUpdateType.remove == out?.first?.type)
+        #expect("coffee#order-123" == out?.first?.attribute)
     }
 
+    @Test
     func testJSONAttributeValidation() throws {
         let editor = AttributesEditor(date: self.date) { _ in }
 
         // Empty JSON
-        XCTAssertThrowsError(try editor.set(
-            json: [:],
-            attribute: "test",
-            instanceID: "id"
-        ))
+        #expect(throws: (any Error).self) {
+            try editor.set(
+                json: [:],
+                attribute: "test",
+                instanceID: "id"
+            )
+        }
 
         // JSON contains reserved key
         let badPayload: [String: AirshipJSON] = [
             "exp": 100
         ]
-        XCTAssertThrowsError(try editor.set(
-            json: badPayload,
-            attribute: "test",
-            instanceID: "id"
-        ))
+        #expect(throws: (any Error).self) {
+            try editor.set(
+                json: badPayload,
+                attribute: "test",
+                instanceID: "id"
+            )
+        }
 
         // Attribute or instanceID validation
         let payload: [String: AirshipJSON] = ["k": .string("v")]
-        XCTAssertThrowsError(try editor.set(
-            json: payload,
-            attribute: "has#pound",
-            instanceID: "id"
-        ))
+        #expect(throws: (any Error).self) {
+            try editor.set(
+                json: payload,
+                attribute: "has#pound",
+                instanceID: "id"
+            )
+        }
 
-        XCTAssertThrowsError(try editor.set(
-            json: payload,
-            attribute: "",
-            instanceID: "id"
-        ))
+        #expect(throws: (any Error).self) {
+            try editor.set(
+                json: payload,
+                attribute: "",
+                instanceID: "id"
+            )
+        }
 
-        XCTAssertThrowsError(try editor.set(
-            json: payload,
-            attribute: "valid",
-            instanceID: "bad#id"
-        ))
+        #expect(throws: (any Error).self) {
+            try editor.set(
+                json: payload,
+                attribute: "valid",
+                instanceID: "bad#id"
+            )
+        }
 
-        XCTAssertThrowsError(try editor.set(
-            json: payload,
-            attribute: "valid",
-            instanceID: ""
-        ))
+        #expect(throws: (any Error).self) {
+            try editor.set(
+                json: payload,
+                attribute: "valid",
+                instanceID: ""
+            )
+        }
     }
 
 }

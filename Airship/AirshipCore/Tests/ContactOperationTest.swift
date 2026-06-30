@@ -1,10 +1,11 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
+import Foundation
 
-class ContactOperationTests: XCTestCase {
+@Suite struct ContactOperationTests {
 
     // SDK 16 payload
     private let legacyPayload = """
@@ -17,26 +18,29 @@ class ContactOperationTests: XCTestCase {
     {\"type\":\"verify\",\"payload\":{\"date\":500.0}}]
 """
 
+    @Test
     func testLegacyDecode() throws {
         let fromJSON = try JSONDecoder().decode([ContactOperation].self, from: legacyPayload.data(using: .utf8)!)
         let toJSON = try JSONEncoder().encode(fromJSON)
 
-        XCTAssertEqual(
-            try AirshipJSON.from(json: String(data: toJSON, encoding: .utf8)),
-            try AirshipJSON.from(json: legacyPayload)
+        #expect(
+            try AirshipJSON.from(json: String(data: toJSON, encoding: .utf8)) ==
+            (try AirshipJSON.from(json: legacyPayload))
         )
     }
 
+    @Test
     func testDecode() throws {
         let fromJSON = try JSONDecoder().decode([ContactOperation].self, from: updatedPayload.data(using: .utf8)!)
         let toJSON = try JSONEncoder().encode(fromJSON)
 
-        XCTAssertEqual(
-            try AirshipJSON.from(json: String(data: toJSON, encoding: .utf8)),
-            try AirshipJSON.from(json: updatedPayload)
+        #expect(
+            try AirshipJSON.from(json: String(data: toJSON, encoding: .utf8)) ==
+            (try AirshipJSON.from(json: updatedPayload))
         )
     }
 
+    @Test
     func testEncode() throws {
         let expected = [
             ContactOperation.update(tagUpdates: [
@@ -69,9 +73,9 @@ class ContactOperationTests: XCTestCase {
 
         let fromExpected = try JSONEncoder().encode(expected)
 
-        XCTAssertEqual(
-            try AirshipJSON.from(json: String(data: fromExpected, encoding: .utf8)),
-            try AirshipJSON.from(json: updatedPayload)
+        #expect(
+            try AirshipJSON.from(json: String(data: fromExpected, encoding: .utf8)) ==
+            (try AirshipJSON.from(json: updatedPayload))
         )
     }
 

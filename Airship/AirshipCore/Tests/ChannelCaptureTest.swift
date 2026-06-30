@@ -1,20 +1,22 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
+import Foundation
 
-@MainActor
-final class ChannelCaptureTest: XCTestCase {
+@Suite @MainActor
+struct ChannelCaptureTest {
 
     private var config: AirshipConfig = AirshipConfig()
     private let channel: TestChannel = TestChannel()
     private let pasteboard: TestPasteboard = TestPasteboard()
     private let notificationCenter: NotificationCenter = NotificationCenter()
     private let date: UATestDate = UATestDate()
-    private var channelCapture: (any AirshipChannelCapture)!
-    override func setUp() async throws {
+    private let channelCapture: (any AirshipChannelCapture)
+
+    init() async throws {
         self.date.dateOverride = Date()
         self.config.isChannelCaptureEnabled = true
         self.channel.identifier = UUID().uuidString
@@ -28,41 +30,45 @@ final class ChannelCaptureTest: XCTestCase {
         )
     }
 
+    @Test
     func testCapture() throws {
         knock(times: 6)
 
         let (text, expiry) = self.pasteboard.lastCopy!
 
-        XCTAssertEqual("ua:\(self.channel.identifier!)", text)
-        XCTAssertEqual(expiry, 60)
+        #expect("ua:\(self.channel.identifier!)" == text)
+        #expect(expiry == 60)
     }
 
+    @Test
     func testCaptureNilIdentifier() throws {
         self.channel.identifier = nil
         knock(times: 6)
 
         let (text, expiry) = self.pasteboard.lastCopy!
 
-        XCTAssertEqual("ua:", text)
-        XCTAssertEqual(expiry, 60)
+        #expect("ua:" == text)
+        #expect(expiry == 60)
     }
 
+    @Test
     func testKnock() throws {
         knock(times: 5)
-        XCTAssertNil(self.pasteboard.lastCopy)
+        #expect(self.pasteboard.lastCopy == nil)
         self.date.offset += 30
-        XCTAssertNil(self.pasteboard.lastCopy)
+        #expect(self.pasteboard.lastCopy == nil)
         knock(times: 1)
-        XCTAssertNotNil(self.pasteboard.lastCopy)
+        #expect(self.pasteboard.lastCopy != nil)
     }
 
+    @Test
     func testKnockTooSlow() throws {
         knock(times: 5)
-        XCTAssertNil(self.pasteboard.lastCopy)
+        #expect(self.pasteboard.lastCopy == nil)
         self.date.offset += 31
-        XCTAssertNil(self.pasteboard.lastCopy)
+        #expect(self.pasteboard.lastCopy == nil)
         knock(times: 1)
-        XCTAssertNil(self.pasteboard.lastCopy)
+        #expect(self.pasteboard.lastCopy == nil)
     }
 
     private func knock(times: UInt = 1) {

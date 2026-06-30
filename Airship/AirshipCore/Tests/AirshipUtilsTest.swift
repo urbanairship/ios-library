@@ -1,25 +1,28 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
+import Foundation
 
-final class AirshipUtilsTest: XCTestCase {
+@Suite struct AirshipUtilsTest {
 
+    @Test
     func testSignedToken() throws {
 
-        XCTAssertEqual(
-            "VWtkZq18HZM3GWzD/q27qPSVszysSyoQfQ6tDEAcAko=",
-            try! AirshipUtils.generateSignedToken(secret: "appSecret", tokenParams: ["appKey", "some channel"])
+        #expect(
+            "VWtkZq18HZM3GWzD/q27qPSVszysSyoQfQ6tDEAcAko=" ==
+            (try! AirshipUtils.generateSignedToken(secret: "appSecret", tokenParams: ["appKey", "some channel"]))
         )
 
-        XCTAssertEqual(
-            "Npyqy5OZxMEVv4bt64S3aUE4NwUQVLX50vGrEegohFE=",
-            try! AirshipUtils.generateSignedToken(secret: "test-app-secret", tokenParams: ["test-app-key", "channel ID"])
+        #expect(
+            "Npyqy5OZxMEVv4bt64S3aUE4NwUQVLX50vGrEegohFE=" ==
+            (try! AirshipUtils.generateSignedToken(secret: "test-app-secret", tokenParams: ["test-app-key", "channel ID"]))
         )
     }
 
+    @Test
     func testIsSilentPush() {
         let emptyNotification: [String: Any] = [
             "aps": [
@@ -49,12 +52,13 @@ final class AirshipUtilsTest: XCTestCase {
             ]
         ]
 
-        XCTAssertTrue(AirshipUtils.isSilentPush(emptyNotification))
-        XCTAssertTrue(AirshipUtils.isSilentPush(emptyAlert))
-        XCTAssertTrue(AirshipUtils.isSilentPush(emptyLocKey))
-        XCTAssertTrue(AirshipUtils.isSilentPush(emptyBody))
+        #expect(AirshipUtils.isSilentPush(emptyNotification))
+        #expect(AirshipUtils.isSilentPush(emptyAlert))
+        #expect(AirshipUtils.isSilentPush(emptyLocKey))
+        #expect(AirshipUtils.isSilentPush(emptyBody))
     }
 
+    @Test
     func testIsSilentPushNo() {
         let alertNotification: [String: Any] = [
             "aps": [
@@ -98,14 +102,15 @@ final class AirshipUtilsTest: XCTestCase {
             ]
         ]
 
-        XCTAssertFalse(AirshipUtils.isSilentPush(alertNotification))
-        XCTAssertFalse(AirshipUtils.isSilentPush(badgeNotification))
-        XCTAssertFalse(AirshipUtils.isSilentPush(soundNotification))
-        XCTAssertFalse(AirshipUtils.isSilentPush(notification))
-        XCTAssertFalse(AirshipUtils.isSilentPush(locKeyNotification))
-        XCTAssertFalse(AirshipUtils.isSilentPush(bodyNotification))
+        #expect(!(AirshipUtils.isSilentPush(alertNotification)))
+        #expect(!(AirshipUtils.isSilentPush(badgeNotification)))
+        #expect(!(AirshipUtils.isSilentPush(soundNotification)))
+        #expect(!(AirshipUtils.isSilentPush(notification)))
+        #expect(!(AirshipUtils.isSilentPush(locKeyNotification)))
+        #expect(!(AirshipUtils.isSilentPush(bodyNotification)))
     }
 
+    @Test
     func testIsAlertingPush() {
         let alertNotification: [String: Any] = [
             "aps": [
@@ -137,12 +142,13 @@ final class AirshipUtilsTest: XCTestCase {
             ]
         ]
 
-        XCTAssertTrue(AirshipUtils.isAlertingPush(alertNotification))
-        XCTAssertTrue(AirshipUtils.isAlertingPush(notification))
-        XCTAssertTrue(AirshipUtils.isAlertingPush(locKeyNotification))
-        XCTAssertTrue(AirshipUtils.isAlertingPush(bodyNotification))
+        #expect(AirshipUtils.isAlertingPush(alertNotification))
+        #expect(AirshipUtils.isAlertingPush(notification))
+        #expect(AirshipUtils.isAlertingPush(locKeyNotification))
+        #expect(AirshipUtils.isAlertingPush(bodyNotification))
     }
 
+    @Test
     func testIsAlertingPushNo() {
         let emptyNotification: [String: Any] = [
             "aps": [
@@ -184,30 +190,31 @@ final class AirshipUtilsTest: XCTestCase {
             ]
         ]
 
-        XCTAssertFalse(AirshipUtils.isAlertingPush(emptyNotification))
-        XCTAssertFalse(AirshipUtils.isAlertingPush(emptyAlert))
-        XCTAssertFalse(AirshipUtils.isAlertingPush(emptyLocKey))
-        XCTAssertFalse(AirshipUtils.isAlertingPush(emptyBody))
-        XCTAssertFalse(AirshipUtils.isAlertingPush(badgeNotification))
-        XCTAssertFalse(AirshipUtils.isAlertingPush(soundNotification))
+        #expect(!(AirshipUtils.isAlertingPush(emptyNotification)))
+        #expect(!(AirshipUtils.isAlertingPush(emptyAlert)))
+        #expect(!(AirshipUtils.isAlertingPush(emptyLocKey)))
+        #expect(!(AirshipUtils.isAlertingPush(emptyBody)))
+        #expect(!(AirshipUtils.isAlertingPush(badgeNotification)))
+        #expect(!(AirshipUtils.isAlertingPush(soundNotification)))
     }
 
+    @Test
     func testParseURL() {
         var originalUrl = "https://advswift.com/api/v1?page=url+components"
         var url = AirshipUtils.parseURL(originalUrl)
-        XCTAssertNotNil(url)
-        XCTAssertEqual(originalUrl, url?.absoluteString)
+        #expect(url != nil)
+        #expect(originalUrl == url?.absoluteString)
 
         originalUrl = "rtlmost://szakaszó.com/main/típus/v1?page=azonosító"
         url = AirshipUtils.parseURL(originalUrl)
-        XCTAssertNotNil(url)
+        #expect(url != nil)
 
         if #available(iOS 17.0, tvOS 17.0, *) {
             let encodedUrl = "rtlmost://xn--szakasz-r0a.com/main/t%C3%ADpus/v1?page=azonos%C3%ADt%C3%B3"
-            XCTAssertEqual(encodedUrl, url?.absoluteString)
+            #expect(encodedUrl == url?.absoluteString)
         } else {
             let encodedUrl = "rtlmost://szakasz%C3%B3.com/main/t%C3%ADpus/v1?page=azonos%C3%ADt%C3%B3"
-            XCTAssertEqual(encodedUrl, url?.absoluteString)
+            #expect(encodedUrl == url?.absoluteString)
         }
     }
 }

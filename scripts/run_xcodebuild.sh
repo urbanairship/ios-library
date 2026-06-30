@@ -27,6 +27,17 @@ if [[ -z "$SCHEME" || -z "$DERIVED_DATA_PATH" ]]; then
     exit 1
 fi
 
+# Some test targets (e.g. AirshipCore) exercise the process-global `Airship`
+# singleton via `TestAirshipInstance.makeShared()`. These suites must run
+# serially, otherwise Swift Testing's default parallel execution races on the
+# shared instance. Disable test parallelization for those schemes.
+EXTRA_TEST_FLAGS=()
+case "$SCHEME" in
+    AirshipCore)
+        EXTRA_TEST_FLAGS+=(-parallel-testing-enabled NO)
+        ;;
+esac
+
 if [[ "$TARGET_TYPE" == "test" ]]; then
     echo -ne "\n\n *********** RUNNING TESTS $SCHEME *********** \n\n"
     
@@ -35,6 +46,7 @@ if [[ "$TARGET_TYPE" == "test" ]]; then
     -workspace "${ROOT_PATH}/Airship.xcworkspace" \
     -scheme $SCHEME \
     -derivedDataPath $DERIVED_DATA_PATH \
+    "${EXTRA_TEST_FLAGS[@]}" \
     test | xcbeautify --renderer $XCBEAUTIFY_RENDERER
 else
     echo -ne "\n\n *********** BUILDING $SCHEME *********** \n\n"

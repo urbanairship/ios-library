@@ -1,13 +1,15 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
+import Foundation
 
-final class CustomEventTest: XCTestCase {
+@Suite struct CustomEventTest {
 
     /**
      * Test creating a custom event.
      */
+    @Test
     func testCustomEvent() {
         let eventName = "".padding(toLength: 255, withPad: "EVENT_NAME", startingAt: 0)
         let transactionId = "".padding(toLength: 255, withPad: "TRANSACTION_ID", startingAt: 0)
@@ -21,135 +23,142 @@ final class CustomEventTest: XCTestCase {
         event.interactionType = interactionType
         event.templateType = templateType
         
-        XCTAssertEqual(eventName, event.data["event_name"] as? String, "Unexpected event name.")
-        XCTAssertEqual(transactionId, event.data["transaction_id"] as? String, "Unexpected transaction ID.")
-        XCTAssertEqual(interactionId, event.data["interaction_id"] as? String, "Unexpected interaction ID.")
-        XCTAssertEqual(interactionType, event.data["interaction_type"] as? String, "Unexpected interaction type.")
-        XCTAssertEqual(templateType, event.data["template_type"] as? String, "Unexpected template type.")
-        XCTAssertEqual(NSNumber(value: -2147483648000000), event.data["event_value"] as? NSNumber, "Unexpected event value.")
+        #expect(eventName == event.data["event_name"] as? String, "Unexpected event name.")
+        #expect(transactionId == event.data["transaction_id"] as? String, "Unexpected transaction ID.")
+        #expect(interactionId == event.data["interaction_id"] as? String, "Unexpected interaction ID.")
+        #expect(interactionType == event.data["interaction_type"] as? String, "Unexpected interaction type.")
+        #expect(templateType == event.data["template_type"] as? String, "Unexpected template type.")
+        #expect(NSNumber(value: -2147483648000000) == event.data["event_value"] as? NSNumber, "Unexpected event value.")
     }
     
     /**
      * Test setting an event name.
      */
+    @Test
     func testSetCustomEventName() {
         var event = CustomEvent(name: "event name")
-        XCTAssert(event.isValid())
+        #expect(event.isValid())
         
         let largeName = "".padding(toLength: 255, withPad: "event-name", startingAt: 0)
         event.eventName = largeName
-        XCTAssert(event.isValid())
+        #expect(event.isValid())
     }
     
     /**
      * Test setting the interaction ID.
      */
+    @Test
     func testSetInteractionID() {
         var event = CustomEvent(name: "event name")
-        XCTAssertNil(event.interactionID, "Interaction ID should default to nil")
+        #expect(event.interactionID == nil, "Interaction ID should default to nil")
         
         let longInteractionId = "".padding(toLength: 255, withPad: "INTERACTION_ID", startingAt: 0)
         event.interactionID = longInteractionId
-        XCTAssert(event.isValid())
+        #expect(event.isValid())
         
         event.interactionID = nil
-        XCTAssert(event.isValid())
+        #expect(event.isValid())
     }
     
     /**
      * Test setting the interaction type.
      */
+    @Test
     func testSetInteractionType() {
         var event = CustomEvent(name: "event name")
-        XCTAssertNil(event.interactionType, "Interaction type should default to nil")
+        #expect(event.interactionType == nil, "Interaction type should default to nil")
         
         let longInteractionType = "".padding(toLength: 255, withPad: "INTERACTION_TYPE", startingAt: 0)
         event.interactionType = longInteractionType
-        XCTAssert(event.isValid())
+        #expect(event.isValid())
         
         event.interactionType = nil
-        XCTAssert(event.isValid())
+        #expect(event.isValid())
     }
     
     /**
      * Test setting the transaction ID
      */
+    @Test
     func testSetTransactionID() {
         var event = CustomEvent(name: "event name")
-        XCTAssertNil(event.transactionID, "Transaction ID should default to nil")
+        #expect(event.transactionID == nil, "Transaction ID should default to nil")
 
         let longTransactionID = "".padding(toLength: 255, withPad: "TRANSACTION_ID", startingAt: 0)
 
         event.transactionID = longTransactionID
-        XCTAssertTrue(event.isValid())
+        #expect(event.isValid())
 
         event.transactionID = nil
-        XCTAssertTrue(event.isValid())
+        #expect(event.isValid())
     }
     
     /**
      * Test set template type
      */
+    @Test
     func testSetTemplateType() {
         var event = CustomEvent(name: "event name")
-        XCTAssertNil(event.templateType, "Template type should default to nil")
+        #expect(event.templateType == nil, "Template type should default to nil")
 
         let longTemplateType = "".padding(toLength: 255, withPad: "TEMPLATE_TYPE", startingAt: 0)
 
         event.templateType = longTemplateType
-        XCTAssertTrue(event.isValid())
+        #expect(event.isValid())
 
         event.templateType = nil
-        XCTAssertTrue(event.isValid())
+        #expect(event.isValid())
     }
 
+    @Test
     func testEventValue() {
         var event = CustomEvent(name: "event name", value: 100)
-        XCTAssertEqual(100, event.eventValue)
-        XCTAssert(event.isValid())
+        #expect(100 == event.eventValue)
+        #expect(event.isValid())
         
         // Max value
         let maxValue = Double(Int32.max)
         event = CustomEvent(name: "event name", value: maxValue)
-        XCTAssertEqual(NSNumber(value: 2147483647000000), event.data["event_value"] as? NSNumber)
-        XCTAssertTrue(event.isValid())
+        #expect(NSNumber(value: 2147483647000000) == event.data["event_value"] as? NSNumber)
+        #expect(event.isValid())
 
         // Above Max
         let aboveMax = Decimal(maxValue).advanced(by: 0.0001).doubleValue
         event = CustomEvent(name: "event name", value: aboveMax)
-        XCTAssertFalse(event.isValid())
+        #expect(!(event.isValid()))
 
         // Min value
         let minValue = Double(Int32.min)
         event = CustomEvent(name: "event name", value: minValue)
-        XCTAssertEqual(NSNumber(value: -2147483648000000), event.data["event_value"] as? NSNumber)
-        XCTAssertTrue(event.isValid())
+        #expect(NSNumber(value: -2147483648000000) == event.data["event_value"] as? NSNumber)
+        #expect(event.isValid())
 
         // Below min
         let belowMin = Decimal(minValue).advanced(by: -0.000001).doubleValue
         event = CustomEvent(name: "event name", value: belowMin)
-        XCTAssertFalse(event.isValid())
+        #expect(!(event.isValid()))
 
         // 0
         event = CustomEvent(name: "event name", value: 0)
-        XCTAssertEqual(NSNumber(value: 0), event.data["event_value"] as? NSNumber)
-        XCTAssertTrue(event.isValid())
+        #expect(NSNumber(value: 0) == event.data["event_value"] as? NSNumber)
+        #expect(event.isValid())
 
         // NaN
         event = CustomEvent(name: "event name", value: Double.nan)
-        XCTAssertEqual(event.eventValue, Decimal(1.0))
-        XCTAssertTrue(event.isValid())
+        #expect(event.eventValue == Decimal(1.0))
+        #expect(event.isValid())
 
         // Infinity
         event = CustomEvent(name: "event name", value: Double.infinity)
-        XCTAssertEqual(event.eventValue, Decimal(1.0))
-        XCTAssertTrue(event.isValid())
+        #expect(event.eventValue == Decimal(1.0))
+        #expect(event.isValid())
     }
     
     /**
      * Test event value to data conversion.  The value should be a decimal multiplied by
      * 10^6 and cast to a long.
      */
+    @Test
     func testEventValueToData() {
         let eventValues: [Decimal: Int64] = [
             123.123456789: 123123456,
@@ -164,28 +173,31 @@ final class CustomEventTest: XCTestCase {
 
         eventValues.forEach { value, expected in
             let event = CustomEvent(name: "event name", decimalValue: value)
-            XCTAssertTrue(event.isValid())
-            XCTAssertEqual(NSNumber(value: expected), event.data["event_value"] as? NSNumber)
+            #expect(event.isValid())
+            #expect(NSNumber(value: expected) == event.data["event_value"] as? NSNumber)
         }
     }
 
+    @Test
     func testConversionSendID() {
         let data = CustomEvent(name: "event name")
             .eventBody(sendID: "send id", metadata: "metadata", formatValue: false)
-        XCTAssertEqual("send id", data.object?["conversion_send_id"]?.string)
-        XCTAssertEqual("metadata", data.object?["conversion_metadata"]?.string)
+        #expect("send id" == data.object?["conversion_send_id"]?.string)
+        #expect("metadata" == data.object?["conversion_metadata"]?.string)
     }
 
+    @Test
     func testConversionSendIDSet() {
         var event = CustomEvent(name: "event name")
         event.conversionSendID = "some other send id"
         event.conversionPushMetadata = "some other metadata"
 
         let data = event.eventBody(sendID: "send id", metadata: "metadata", formatValue: false)
-        XCTAssertEqual("some other send id", data.object?["conversion_send_id"]?.string)
-        XCTAssertEqual("some other metadata", data.object?["conversion_metadata"]?.string)
+        #expect("some other send id" == data.object?["conversion_send_id"]?.string)
+        #expect("some other metadata" == data.object?["conversion_metadata"]?.string)
     }
 
+    @Test
     func testMaxTotalPropertySize() throws {
         var event = CustomEvent(name: "event name")
 
@@ -193,14 +205,15 @@ final class CustomEventTest: XCTestCase {
         (0...5000).forEach({ properties["\($0)"] = 324 })
         try event.setProperties(properties)
 
-        XCTAssertTrue(event.isValid())
+        #expect(event.isValid())
         
         (0...2000).forEach({ properties["\(5000 + $0)"] = 324 })
         try event.setProperties(properties)
 
-        XCTAssertFalse(event.isValid())
+        #expect(!(event.isValid()))
     }
 
+    @Test
     func testInApp() {
         var event = CustomEvent(name: "event name")
 
@@ -211,9 +224,10 @@ final class CustomEventTest: XCTestCase {
 
         let result = try! AirshipJSON.wrap(event.data["in_app"])
 
-        XCTAssertEqual(event.inApp, result)
+        #expect(event.inApp == result)
     }
 
+    @Test
     func testCodableProperties() throws {
         var event = CustomEvent(name: "event name")
 
@@ -223,10 +237,11 @@ final class CustomEventTest: XCTestCase {
         let properties = event.data["properties"] as! [String: Any]
         let someCodable = properties["some-codable"] as! [String: Any]
 
-        XCTAssertEqual("foo", someCodable["string"] as! String)
-        XCTAssertEqual(false, someCodable["bool"] as! Bool)
+        #expect("foo" == someCodable["string"] as! String)
+        #expect(false == someCodable["bool"] as! Bool)
     }
 
+    @Test
     func testDateProperties() throws {
         var event = CustomEvent(name: "event name")
         try event.setProperties([
@@ -234,7 +249,7 @@ final class CustomEventTest: XCTestCase {
         ])
 
         let properties = event.data["properties"] as! [String: Any]
-        XCTAssertEqual("1970-01-01T02:46:40Z", properties["some-date"] as! String)
+        #expect("1970-01-01T02:46:40Z" == properties["some-date"] as! String)
     }
 }
 

@@ -1,18 +1,19 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable import AirshipCore
 
-final class ChannelAuthTokenProviderTest: XCTestCase {
+@Suite struct ChannelAuthTokenProviderTest {
     
-    var client = TestChannelAuthTokenAPIClient()
-    var channel = TestChannel()
-    var channelID = "channel ID"
-    var testDate = UATestDate(offset: 0, dateOverride: Date())
+    let client = TestChannelAuthTokenAPIClient()
+    let channel = TestChannel()
+    let channelID = "channel ID"
+    let testDate = UATestDate(offset: 0, dateOverride: Date())
     var provider: ChannelAuthTokenProvider!
     
-    override func setUpWithError() throws {
+    init() {
         self.channel.identifier = "channel ID"
         self.provider = ChannelAuthTokenProvider(
             channel: channel,
@@ -21,6 +22,7 @@ final class ChannelAuthTokenProviderTest: XCTestCase {
         )
     }
     
+    @Test
     func testFetchToken() async throws {
         self.client.handler = { channelId in
             let response = ChannelAuthTokenResponse(
@@ -36,6 +38,7 @@ final class ChannelAuthTokenProviderTest: XCTestCase {
         try await verifyToken(expected: "my token")
     }
 
+    @Test
     func testTokenCached() async throws {
         self.client.handler = { channelId in
             let response = ChannelAuthTokenResponse(
@@ -57,6 +60,7 @@ final class ChannelAuthTokenProviderTest: XCTestCase {
         try await verifyToken(expected: "my token")
     }
 
+    @Test
     func testTokenCachedExpired() async throws {
         self.client.handler = { channelId in
             let response = ChannelAuthTokenResponse(
@@ -93,28 +97,31 @@ final class ChannelAuthTokenProviderTest: XCTestCase {
     }
 
 
-    private func verifyToken(expected: String, file: StaticString = #filePath, line: UInt = #line) async throws {
+    private func verifyToken(expected: String, sourceLocation: SourceLocation = #_sourceLocation) async throws {
         let token = try await self.provider.resolveAuth(identifier: "channel ID")
-        XCTAssertEqual(expected, token, file: file, line: line)
+        #expect(expected == token, sourceLocation: sourceLocation)
     }
 
 
+    @Test
     func testTokenWithNilChannelID() async {
         self.channel.identifier = nil
         do {
             let _ = try await self.provider.resolveAuth(identifier: "channel ID")
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
 
+    @Test
     func testTokenMismatchChannelID() async {
         do {
             let _ = try await self.provider.resolveAuth(identifier: "some other channel ID")
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testClientError() async {
         self.client.handler = { channelId in
             throw AirshipErrors.error("some error")
@@ -122,8 +129,7 @@ final class ChannelAuthTokenProviderTest: XCTestCase {
 
         do {
             let _ = try await self.provider.resolveAuth(identifier: "some other channel ID")
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 }
-

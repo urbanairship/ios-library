@@ -1,42 +1,50 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
+import Foundation
 
-final class APNSEnvironmentTest: XCTestCase {
+@Suite
+struct APNSEnvironmentTest {
 
+    @Test
     func testProductionProfileParsing() throws {
-        let profilePath = Bundle(for: self.classForCoder).path(
+        let profilePath = Bundle(for: APNSEnvironmentTestBundleLocator.self).path(
             forResource: "production-embedded",
             ofType: "mobileprovision"
         )
 
         let isProduction = try APNSEnvironment.isProduction(profilePath)
-        XCTAssertTrue(isProduction)
+        #expect(isProduction)
     }
 
+    @Test
     func testDevelopmentProfileParsing() throws {
-        let profilePath = Bundle(for: self.classForCoder).path(
+        let profilePath = Bundle(for: APNSEnvironmentTestBundleLocator.self).path(
             forResource: "development-embedded",
             ofType: "mobileprovision"
         )
 
         let isProduction = try APNSEnvironment.isProduction(profilePath)
-        XCTAssertFalse(isProduction)
+        #expect(!(isProduction))
     }
 
+    @Test
     func testMissingEmbeddedProfile() {
         do {
             _ = try APNSEnvironment.isProduction(nil)
-            XCTFail()
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testInvalidEmbeddedProfilePath() {
         do {
             _ = try APNSEnvironment.isProduction("Neat")
-            XCTFail()
+            Issue.record("Should throw")
         } catch {}
     }
 
 }
+
+private final class APNSEnvironmentTestBundleLocator {}

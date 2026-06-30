@@ -1,37 +1,42 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable import AirshipCore
 
-class SubscriptionListActionTests: XCTestCase {
+@Suite struct SubscriptionListActionTests {
 
     private let channel = TestChannel()
     private let contact = TestContact()
     private let date = UATestDate(offset: 0, dateOverride: Date())
-    private var action: SubscriptionListAction!
+    private let action: SubscriptionListAction
 
-    private var channelEdits: [SubscriptionListUpdate] = []
-    private var contactEdits: [ScopedSubscriptionListUpdate] = []
+    private let edits = SubscriptionListActionEdits()
 
-    override func setUp() {
+    init() {
+        let channel = self.channel
+        let contact = self.contact
+        let date = self.date
+        let edits = self.edits
+
         self.action = SubscriptionListAction(
-            channel: { [channel] in return channel },
-            contact: { [contact] in return contact }
+            channel: { channel },
+            contact: { contact }
         )
 
-        self.channel.subscriptionListEditor = SubscriptionListEditor {
-            updates in
-            self.channelEdits.append(contentsOf: updates)
+        channel.subscriptionListEditor = SubscriptionListEditor { updates in
+            edits.appendChannel(updates)
         }
 
-        self.contact.subscriptionListEditor = ScopedSubscriptionListEditor(
+        contact.subscriptionListEditor = ScopedSubscriptionListEditor(
             date: date
         ) { updates in
-            self.contactEdits.append(contentsOf: updates)
+            edits.appendContact(updates)
         }
     }
 
+    @Test
     func testAcceptsArguments() async throws {
         let validSituations = [
             ActionSituation.foregroundInteractiveButton,
@@ -50,24 +55,26 @@ class SubscriptionListActionTests: XCTestCase {
         for situation in validSituations {
             let args = ActionArguments(situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result)
         }
 
         for situation in rejectedSituations {
             let args = ActionArguments(situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!(result))
         }
     }
 
+    @Test
     func testPerformWithoutArgs() async throws {
         let args = ActionArguments()
         do {
             _ = try await action.perform(arguments: args)
-            XCTFail("should throw")
+            Issue.record("should throw")
         } catch {}
     }
 
+    @Test
     func testPerformWithValidPayload() async throws {
         let actionValue: [[String: String]] = [
             [
@@ -92,7 +99,7 @@ class SubscriptionListActionTests: XCTestCase {
         let expectedChannelEdits = [
             SubscriptionListUpdate(listId: "456", type: .subscribe)
         ]
-        XCTAssertEqual(expectedChannelEdits, self.channelEdits)
+        #expect(expectedChannelEdits == self.edits.channelEdits)
 
         let expectedContactEdits = [
             ScopedSubscriptionListUpdate(
@@ -102,9 +109,10 @@ class SubscriptionListActionTests: XCTestCase {
                 date: self.date.now
             )
         ]
-        XCTAssertEqual(expectedContactEdits, self.contactEdits)
+        #expect(expectedContactEdits == self.edits.contactEdits)
     }
 
+    @Test
     func testPerformWithAltValidPayload() async throws {
         let actionValue: [String: Any] = [
             "edits": [
@@ -132,7 +140,7 @@ class SubscriptionListActionTests: XCTestCase {
         let expectedChannelEdits = [
             SubscriptionListUpdate(listId: "456", type: .subscribe)
         ]
-        XCTAssertEqual(expectedChannelEdits, self.channelEdits)
+        #expect(expectedChannelEdits == self.edits.channelEdits)
 
         let expectedContactEdits = [
             ScopedSubscriptionListUpdate(
@@ -142,9 +150,10 @@ class SubscriptionListActionTests: XCTestCase {
                 date: self.date.now
             )
         ]
-        XCTAssertEqual(expectedContactEdits, self.contactEdits)
+        #expect(expectedContactEdits == self.edits.contactEdits)
     }
 
+    @Test
     func testPerformWithInvalidPayload() async throws {
         let actionValue: [String: Any] = [
             "edits": [
@@ -169,11 +178,33 @@ class SubscriptionListActionTests: XCTestCase {
 
         do {
             _ = try await action.perform(arguments: args)
-            XCTFail("should throw")
+            Issue.record("should throw")
         } catch {}
 
-        XCTAssertTrue(self.channelEdits.isEmpty)
-        XCTAssertTrue(self.contactEdits.isEmpty)
+        #expect(self.edits.channelEdits.isEmpty)
+        #expect(self.edits.contactEdits.isEmpty)
     }
 
+}
+
+fileprivate final class SubscriptionListActionEdits: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _channelEdits: [SubscriptionListUpdate] = []
+    private var _contactEdits: [ScopedSubscriptionListUpdate] = []
+
+    var channelEdits: [SubscriptionListUpdate] {
+        lock.withLock { _channelEdits }
+    }
+
+    var contactEdits: [ScopedSubscriptionListUpdate] {
+        lock.withLock { _contactEdits }
+    }
+
+    func appendChannel(_ updates: [SubscriptionListUpdate]) {
+        lock.withLock { _channelEdits.append(contentsOf: updates) }
+    }
+
+    func appendContact(_ updates: [ScopedSubscriptionListUpdate]) {
+        lock.withLock { _contactEdits.append(contentsOf: updates) }
+    }
 }

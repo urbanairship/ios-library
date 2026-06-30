@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Foundation
 @testable import AirshipCore
 
 final class TestChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol, @unchecked Sendable {

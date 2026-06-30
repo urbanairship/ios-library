@@ -1,21 +1,24 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
+import Foundation
 
-final class ChannelAuthTokenAPIClientTest: AirshipBaseTest {
-    
-    private var client: ChannelAuthTokenAPIClient!
+@Suite struct ChannelAuthTokenAPIClientTest {
+
+    let config = RuntimeConfig.testConfig()
     private let session = TestAirshipRequestSession()
+    private let client: ChannelAuthTokenAPIClient
 
-    override func setUpWithError() throws {
+    init() {
         self.client = ChannelAuthTokenAPIClient(
             config: self.config,
             session: self.session
         )
     }
-    
+
+    @Test
     func testTokenWithChannelID() async throws {
         self.session.data = (try? AirshipJSON.wrap([
             "token": "abc123",
@@ -27,20 +30,20 @@ final class ChannelAuthTokenAPIClientTest: AirshipBaseTest {
             httpVersion: nil,
             headerFields: nil)
 
-        let token = try await self.client.fetchToken(channelID: "channel ID")
-        XCTAssertNotNil(token)
-        
-        let request = try XCTUnwrap(self.session.lastRequest)
-        
-        XCTAssertEqual(request.method, "GET")
-        XCTAssertEqual(request.url!.absoluteString, "\(self.config.deviceAPIURL!)/api/auth/device")
-        XCTAssertEqual(
-            AirshipRequestAuth.generatedChannelToken(identifier: "channel ID"),
+        _ = try await self.client.fetchToken(channelID: "channel ID")
+
+        let request = try #require(self.session.lastRequest)
+
+        #expect(request.method == "GET")
+        #expect(request.url!.absoluteString == "\(self.config.deviceAPIURL!)/api/auth/device")
+        #expect(
+            AirshipRequestAuth.generatedChannelToken(identifier: "channel ID") ==
             request.auth
         )
-        XCTAssertEqual(request.headers["Accept"], "application/vnd.urbanairship+json; version=3;")
+        #expect(request.headers["Accept"] == "application/vnd.urbanairship+json; version=3;")
     }
-    
+
+    @Test
     func testTokenWithChannelIDMalformedPayload() async throws {
         self.session.data = (try? AirshipJSON.wrap([
             "not a token": "abc123",
@@ -51,16 +54,15 @@ final class ChannelAuthTokenAPIClientTest: AirshipBaseTest {
             statusCode: 200,
             httpVersion: nil,
             headerFields: nil)
-        
+
         do {
             let _ = try await self.client.fetchToken(channelID: "channel ID")
-            XCTFail("Should throw")
-        } catch {
-            XCTAssertNotNil(error)
-        }
-        
+            Issue.record("Should throw")
+        } catch {}
+
     }
-    
+
+    @Test
     func testTokenWithChannelIDClientError() async throws {
         self.session.data = (try? AirshipJSON.wrap([
             "too": "bad"
@@ -70,12 +72,10 @@ final class ChannelAuthTokenAPIClientTest: AirshipBaseTest {
             statusCode: 400,
             httpVersion: nil,
             headerFields: nil)
-        
-        let response = try await self.client.fetchToken(channelID: "channel ID")
-        let unwrapResponse = try XCTUnwrap(response)
-        XCTAssertNil(unwrapResponse.result?.token)
-        XCTAssertTrue(unwrapResponse.isClientError)
-        XCTAssertFalse(unwrapResponse.isSuccess)
+
+        let unwrapResponse = try await self.client.fetchToken(channelID: "channel ID")
+        #expect(unwrapResponse.result?.token == nil)
+        #expect(unwrapResponse.isClientError)
+        #expect(!(unwrapResponse.isSuccess))
     }
 }
-

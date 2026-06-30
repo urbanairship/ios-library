@@ -1,18 +1,23 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
+import Foundation
 
 @MainActor
-final class ChallengeResolverTest: XCTestCase {
-    override func tearDown() async throws {
+@Suite
+struct ChallengeResolverTest {
+
+    init() {
         ChallengeResolver.shared.resolver = nil
     }
-    
+
+    @Test
     func testResolverReturnsDefaultIfNotConfigured() async {
         await assertResolve(disposition: .performDefaultHandling, credentials: nil)
     }
     
+    @Test
     @MainActor
     func testResolverClosure() async {
         let credentials = URLCredential()
@@ -40,6 +45,7 @@ final class ChallengeResolverTest: XCTestCase {
         )
     }
     
+    @Test
     @MainActor
     func testResolverClosureNotCalledOnNonServerTrust() async {
         let credentials = URLCredential()
@@ -67,6 +73,7 @@ final class ChallengeResolverTest: XCTestCase {
         )
     }
     
+    @Test
     @MainActor
     func testResolverClosureNotCalledOnNoPublicKey() async {
         let credentials = URLCredential()
@@ -104,8 +111,8 @@ final class ChallengeResolverTest: XCTestCase {
     ) async {
         let actual = await ChallengeResolver.shared.resolve(challenge ?? URLAuthenticationChallenge())
         
-        XCTAssertEqual(disposition, actual.0)
-        XCTAssertEqual(credentials, actual.1)
+        #expect(disposition == actual.0)
+        #expect(credentials == actual.1)
     }
 }
 

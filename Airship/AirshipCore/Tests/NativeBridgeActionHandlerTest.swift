@@ -1,24 +1,28 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable
 public import AirshipCore
 
 import WebKit
+import Foundation
 
 @MainActor
-final class NativeBridgeActionHandlerTest: XCTestCase {
+@Suite
+struct NativeBridgeActionHandlerTest {
 
     private let metadata: [String: String] = ["some": UUID().uuidString]
 
     private let testActionRunner = TestActionRunner()
 
     private let webView = WKWebView()
-    private var actionHandler: NativeBridgeActionHandler!
-    override func setUp() async throws {
+    private let actionHandler: NativeBridgeActionHandler
+
+    init() {
         self.actionHandler = NativeBridgeActionHandler(actionRunner: testActionRunner)
     }
 
+    @Test
     @MainActor
     func testRunActionsMultiple() async throws {
         let command = JavaScriptCommand(
@@ -29,16 +33,17 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
 
 
         let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
-        XCTAssertNil(result)
+        #expect(result == nil)
 
         let expecteActions: [String: [ActionArguments]] = [
             "test%20action": [ActionArguments(string: "hi", situation: .webViewInvocation, metadata: metadata)],
             "also_test_action": [ActionArguments(situation: .webViewInvocation, metadata: metadata)]
         ]
 
-        XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
+        #expect(expecteActions == self.testActionRunner.ranActions)
     }
 
+    @Test
     @MainActor
     func testRunActionsMultipleArgs() async throws {
         let command = JavaScriptCommand(
@@ -48,7 +53,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
         )
 
         let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
-        XCTAssertNil(result)
+        #expect(result == nil)
 
         let expecteActions: [String: [ActionArguments]] = [
             "test_action": [
@@ -57,9 +62,10 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
             ]
         ]
 
-        XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
+        #expect(expecteActions == self.testActionRunner.ranActions)
     }
 
+    @Test
     @MainActor
     func testRunActionsInvalidArgs() async throws {
         let command = JavaScriptCommand(
@@ -69,11 +75,12 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
         )
 
         let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
-        XCTAssertNil(result)
+        #expect(result == nil)
 
-        XCTAssertEqual([:], self.testActionRunner.ranActions)
+        #expect([:] == self.testActionRunner.ranActions)
     }
 
+    @Test
     @MainActor
     func testRunActionCBNullResult() async throws {
         self.testActionRunner.actionResult = .completed(AirshipJSON.null)
@@ -85,15 +92,16 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
 
         let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         let expectedResult = "UAirship.finishAction(null, null, \"callback-ID-1\");"
-        XCTAssertEqual(expectedResult, result)
+        #expect(expectedResult == result)
 
         let expecteActions: [String: [ActionArguments]] = [
             "test_action": [ActionArguments(string: "hi", situation: .webViewInvocation, metadata: metadata)]
         ]
 
-        XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
+        #expect(expecteActions == self.testActionRunner.ranActions)
     }
 
+    @Test
     @MainActor
     func testRunActionCBValueResult() async throws {
         self.testActionRunner.actionResult = .completed(AirshipJSON.string("neat"))
@@ -105,15 +113,16 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
 
         let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         let expectedResult = "UAirship.finishAction(null, \"neat\", \"callback-ID-2\");"
-        XCTAssertEqual(expectedResult, result)
+        #expect(expectedResult == result)
 
         let expecteActions: [String: [ActionArguments]] = [
             "test_action": [ActionArguments(string: "hi", situation: .webViewInvocation, metadata: metadata)]
         ]
 
-        XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
+        #expect(expecteActions == self.testActionRunner.ranActions)
     }
 
+    @Test
     @MainActor
     func testRunActionCBError() async throws {
         self.testActionRunner.actionResult = .error(AirshipErrors.error("Some error"))
@@ -125,15 +134,16 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
 
         let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         let expectedResult = "var error = new Error(); error.message = \"Some error\"; UAirship.finishAction(error, null, \"callback-ID-2\");"
-        XCTAssertEqual(expectedResult, result)
+        #expect(expectedResult == result)
 
         let expecteActions: [String: [ActionArguments]] = [
             "test_action": [ActionArguments(string: "hi", situation: .webViewInvocation, metadata: metadata)]
         ]
 
-        XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
+        #expect(expecteActions == self.testActionRunner.ranActions)
     }
 
+    @Test
     @MainActor
     func testRunActionCBActionNotFound() async throws {
         self.testActionRunner.actionResult = .actionNotFound
@@ -145,15 +155,16 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
 
         let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         let expectedResult = "var error = new Error(); error.message = \"No action found with name test_action, skipping action.\"; UAirship.finishAction(error, null, \"callback-ID-2\");"
-        XCTAssertEqual(expectedResult, result)
+        #expect(expectedResult == result)
 
         let expecteActions: [String: [ActionArguments]] = [
             "test_action": [ActionArguments(string: "hi", situation: .webViewInvocation, metadata: metadata)]
         ]
 
-        XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
+        #expect(expecteActions == self.testActionRunner.ranActions)
     }
 
+    @Test
     @MainActor
     func testRunActionCBActionArgsRejected() async throws {
         self.testActionRunner.actionResult = .argumentsRejected
@@ -165,15 +176,16 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
 
         let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
         let expectedResult = "var error = new Error(); error.message = \"Action test_action rejected arguments.\"; UAirship.finishAction(error, null, \"callback-ID-2\");"
-        XCTAssertEqual(expectedResult, result)
+        #expect(expectedResult == result)
 
         let expecteActions: [String: [ActionArguments]] = [
             "test_action": [ActionArguments(string: "hi", situation: .webViewInvocation, metadata: metadata)]
         ]
 
-        XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
+        #expect(expecteActions == self.testActionRunner.ranActions)
     }
 
+    @Test
     @MainActor
     func testRunBasicActions() async throws {
         let command = JavaScriptCommand(
@@ -183,16 +195,17 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
         )
 
         let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
-        XCTAssertNil(result)
+        #expect(result == nil)
 
         let expecteActions: [String: [ActionArguments]] = [
             "test_action": [ActionArguments(string: "hi", situation: .webViewInvocation, metadata: metadata)],
             "also_test_action": [ActionArguments(situation: .webViewInvocation, metadata: metadata)]
         ]
 
-        XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
+        #expect(expecteActions == self.testActionRunner.ranActions)
     }
 
+    @Test
     @MainActor
     func testRunBasicActionsMultipleArgs() async throws {
         let command = JavaScriptCommand(
@@ -202,7 +215,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
         )
 
         let result = await self.actionHandler.runActionsForCommand(command: command, metadata: metadata, webView: self.webView)
-        XCTAssertNil(result)
+        #expect(result == nil)
 
         let expecteActions: [String: [ActionArguments]] = [
             "test_action": [
@@ -211,7 +224,7 @@ final class NativeBridgeActionHandlerTest: XCTestCase {
             ]
         ]
 
-        XCTAssertEqual(expecteActions, self.testActionRunner.ranActions)
+        #expect(expecteActions == self.testActionRunner.ranActions)
     }
 }
 

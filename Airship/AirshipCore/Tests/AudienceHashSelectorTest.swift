@@ -1,9 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
-final class AudienceHashSelectorTest: XCTestCase {
+import Foundation
 
+@Suite struct AudienceHashSelectorTest {
+
+    @Test
     func testCodable() throws {
         let json: String = """
         {
@@ -41,12 +44,13 @@ final class AudienceHashSelectorTest: XCTestCase {
             bucket: AudienceHashSelector.Bucket(min: 10, max: 100)
         )
 
-        XCTAssertEqual(decoded, expected)
+        #expect(decoded == expected)
 
         let encoded = String(data: try JSONEncoder().encode(decoded), encoding: .utf8)
-        XCTAssertEqual(try AirshipJSON.from(json: json), try AirshipJSON.from(json: encoded))
+        #expect(try AirshipJSON.from(json: json) == AirshipJSON.from(json: encoded))
     }
     
+    @Test
     func testCodableWithSticky() throws {
         let json: String = """
         {
@@ -94,12 +98,13 @@ final class AudienceHashSelectorTest: XCTestCase {
             )
         )
 
-        XCTAssertEqual(decoded, expected)
+        #expect(decoded == expected)
 
         let encoded = String(data: try JSONEncoder().encode(decoded), encoding: .utf8)
-        XCTAssertEqual(try AirshipJSON.from(json: json), try AirshipJSON.from(json: encoded))
+        #expect(try AirshipJSON.from(json: json) == AirshipJSON.from(json: encoded))
     }
 
+    @Test
     func testBoundaries() throws {
         let selectorGenerator: (UInt64, UInt64) throws -> AudienceHashSelector = { min, max in
             let json = """
@@ -125,7 +130,7 @@ final class AudienceHashSelectorTest: XCTestCase {
 
 
         // contactId = 9908
-        XCTAssertTrue(
+        #expect(
             try selectorGenerator(9908, 9908)
                 .evaluate(
                     channelID: "",
@@ -133,7 +138,7 @@ final class AudienceHashSelectorTest: XCTestCase {
                 )
         )
 
-        XCTAssertTrue(
+        #expect(
             try selectorGenerator(9907, 9908)
                 .evaluate(
                     channelID: "",
@@ -141,7 +146,7 @@ final class AudienceHashSelectorTest: XCTestCase {
                 )
         )
 
-        XCTAssertTrue(
+        #expect(
             try selectorGenerator(9908, 9909)
                 .evaluate(
                     channelID: "",
@@ -149,23 +154,24 @@ final class AudienceHashSelectorTest: XCTestCase {
                 )
         )
 
-        XCTAssertFalse(
-            try selectorGenerator(9907, 9907)
+        #expect(
+            !(try selectorGenerator(9907, 9907)
                 .evaluate(
                     channelID: "",
                     contactID: "contactId"
-                )
+                ))
         )
 
-        XCTAssertFalse(
-            try selectorGenerator(9909, 9909)
+        #expect(
+            !(try selectorGenerator(9909, 9909)
                 .evaluate(
                     channelID: "",
                     contactID: "contactId"
-                )
+                ))
         )
     }
 
+    @Test
     func testEvaluateChannel() throws {
         let experiment = AudienceHashSelector(
             hash: AudienceHashSelector.Hash(
@@ -180,11 +186,12 @@ final class AudienceHashSelectorTest: XCTestCase {
         )
 
         // match = 12443
-        XCTAssertTrue(experiment.evaluate(channelID: "match", contactID: "not used"))
+        #expect(experiment.evaluate(channelID: "match", contactID: "not used"))
         // not a match = 11599
-        XCTAssertFalse(experiment.evaluate(channelID: "not a match", contactID: "not used"))
+        #expect(!experiment.evaluate(channelID: "not a match", contactID: "not used"))
     }
 
+    @Test
     func testEvaluateContact() throws {
         let experiment = AudienceHashSelector(
             hash: AudienceHashSelector.Hash(
@@ -200,11 +207,12 @@ final class AudienceHashSelectorTest: XCTestCase {
 
 
         // match = 12443
-        XCTAssertTrue(experiment.evaluate(channelID: "not used", contactID: "match"))
+        #expect(experiment.evaluate(channelID: "not used", contactID: "match"))
         // not a match = 11599
-        XCTAssertFalse(experiment.evaluate(channelID: "not used", contactID: "not a match"))
+        #expect(!experiment.evaluate(channelID: "not used", contactID: "not a match"))
     }
 
+    @Test
     func testEvaluateOverrides() throws {
         let experiment = AudienceHashSelector(
             hash: AudienceHashSelector.Hash(
@@ -221,8 +229,8 @@ final class AudienceHashSelectorTest: XCTestCase {
         )
 
         // match = 12443
-        XCTAssertTrue(experiment.evaluate(channelID: "not used", contactID: "match"))
+        #expect(experiment.evaluate(channelID: "not used", contactID: "match"))
         // not a match = 11599
-        XCTAssertTrue(experiment.evaluate(channelID: "not used", contactID: "not a match"))
+        #expect(experiment.evaluate(channelID: "not used", contactID: "not a match"))
     }
 }

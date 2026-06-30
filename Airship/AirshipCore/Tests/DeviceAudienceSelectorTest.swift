@@ -1,9 +1,10 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
+import Foundation
 
-final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
+@Suite struct DefaultDeviceAudienceCheckerTest {
 
     private let testDeviceInfo: TestAudienceDeviceInfoProvider = TestAudienceDeviceInfoProvider()
     private let audienceChecker = DefaultDeviceAudienceChecker(cache: TestCache())
@@ -42,6 +43,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     )
 
+    @Test
     func testAirshipNotReadyThrows() async throws {
         testDeviceInfo.isAirshipReady = false
         do {
@@ -50,10 +52,11 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
                 newUserEvaluationDate: .now,
                 deviceInfoProvider: self.testDeviceInfo
             )
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testEmptyAudience() async throws {
         try await self.assert(
             audienceSelector: DeviceAudienceSelector(),
@@ -61,6 +64,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testNewUserCondition() async throws {
         let now = Date()
         testDeviceInfo.installDate = now
@@ -85,6 +89,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testNotifiicationOptIn() async throws {
         self.testDeviceInfo.isUserOptedInPushNotifications = false
         let audience = DeviceAudienceSelector(notificationOptIn: true)
@@ -102,6 +107,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testNotifiicationOptOut() async throws {
         self.testDeviceInfo.isUserOptedInPushNotifications = true
 
@@ -118,6 +124,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testRequireAnalyticsTrue() async throws {
         self.testDeviceInfo.analyticsEnabled = true
 
@@ -134,6 +141,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testRequireAnalyticsFalse() async throws {
         self.testDeviceInfo.analyticsEnabled = true
 
@@ -150,12 +158,13 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testLocale() async throws {
         self.testDeviceInfo.locale = Locale(identifier: "de")
         let audience = DeviceAudienceSelector(
             languageIDs: [ "fr", "en-CA"]
         )
-        
+
         try await self.assert(
             audienceSelector: audience,
             isMatch: false
@@ -192,6 +201,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testTags() async throws {
         let audience = DeviceAudienceSelector(
             tagSelector: .and([.tag("bar"), .tag("foo")])
@@ -215,6 +225,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testTestDevices() async throws {
         let audience = DeviceAudienceSelector(
             testDevices: ["obIvSbh47TjjqfCrPatbXQ==\n"] // test channel
@@ -238,6 +249,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testVersion() async throws {
         let audience = DeviceAudienceSelector(
             versionPredicate: JSONPredicate(
@@ -266,6 +278,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testPermissions() async throws {
         let audience = DeviceAudienceSelector(
             permissionPredicate: JSONPredicate(
@@ -294,6 +307,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testLocationOptIn() async throws {
         let audience = DeviceAudienceSelector(
             locationOptIn: true
@@ -317,6 +331,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testLocationOptOut() async throws {
         let audience = DeviceAudienceSelector(
             locationOptIn: false
@@ -340,6 +355,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testContactHash() async throws {
         let hash = AudienceHashSelector(
             hash: AudienceHashSelector.Hash(
@@ -372,6 +388,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testChannelHash() async throws {
         let hash = AudienceHashSelector(
             hash: AudienceHashSelector.Hash(
@@ -403,6 +420,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testDeviceTypes() async throws {
         let audience = DeviceAudienceSelector(
             deviceTypes: ["android", "ios"]
@@ -414,6 +432,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testDeviceTypesNoIOS() async throws {
         let audience = DeviceAudienceSelector(
             deviceTypes: ["android", "web"]
@@ -425,6 +444,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testEmtpyDeviceTypes() async throws {
         let audience = DeviceAudienceSelector(
             deviceTypes: []
@@ -436,6 +456,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testStickyHash() async throws {
         self.testDeviceInfo.channelID = UUID().uuidString
 
@@ -487,6 +508,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testORMatch() async throws {
         self.testDeviceInfo.analyticsEnabled = false
         let audience = CompoundDeviceAudienceSelector.or(
@@ -502,6 +524,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testORMatchFirstNoMatch() async throws {
         self.testDeviceInfo.analyticsEnabled = false
         let audience = CompoundDeviceAudienceSelector.or(
@@ -517,6 +540,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testORMiss() async throws {
         self.testDeviceInfo.analyticsEnabled = false
         self.testDeviceInfo.isUserOptedInPushNotifications = false
@@ -535,6 +559,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
     }
 
 
+    @Test
     func testEmptyOR() async throws {
         let audience = CompoundDeviceAudienceSelector.or([])
         try await self.assert(
@@ -543,6 +568,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testANDMatch() async throws {
         self.testDeviceInfo.analyticsEnabled = true
         self.testDeviceInfo.isUserOptedInPushNotifications = true
@@ -560,6 +586,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testANDMiss() async throws {
         self.testDeviceInfo.analyticsEnabled = false
         self.testDeviceInfo.isUserOptedInPushNotifications = true
@@ -577,6 +604,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testEmptyAND() async throws {
         let audience = CompoundDeviceAudienceSelector.and([])
         try await self.assert(
@@ -585,6 +613,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testNOT() async throws {
         self.testDeviceInfo.analyticsEnabled = false
         self.testDeviceInfo.isUserOptedInPushNotifications = true
@@ -604,6 +633,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testStickyHashShortCircuitOR() async throws {
         var stickyHashDiffID = stickyHash
         stickyHashDiffID.sticky = AudienceHashSelector.Sticky(
@@ -628,6 +658,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testStickyHashShortCircuitAND() async throws {
         var stickyHashDiffID = stickyHash
         stickyHashDiffID.sticky = AudienceHashSelector.Sticky(
@@ -652,6 +683,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         )
     }
 
+    @Test
     func testStickyHashMultiple() async throws {
         var stickyHashDiffID = stickyHash
         stickyHashDiffID.sticky = AudienceHashSelector.Sticky(
@@ -684,16 +716,14 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         newUserEvaluationDate: Date = Date.distantPast,
         isMatch: Bool,
         reportingMetadata: [AirshipJSON]? = nil,
-        file: StaticString = #filePath,
-        line: UInt = #line
+        sourceLocation: SourceLocation = #_sourceLocation
     ) async throws {
         try await self.assert(
             compoundSelector: .atomic(audienceSelector),
             newUserEvaluationDate: newUserEvaluationDate,
             isMatch: isMatch,
             reportingMetadata: reportingMetadata,
-            file: file,
-            line: line
+            sourceLocation: sourceLocation
         )
     }
 
@@ -702,8 +732,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
         newUserEvaluationDate: Date = Date.distantPast,
         isMatch: Bool,
         reportingMetadata: [AirshipJSON]? = nil,
-        file: StaticString = #filePath,
-        line: UInt = #line
+        sourceLocation: SourceLocation = #_sourceLocation
     ) async throws {
         let result = try await self.audienceChecker.evaluate(
             audienceSelector: compoundSelector,
@@ -711,10 +740,7 @@ final class DefaultDeviceAudienceCheckerTest: XCTestCase, @unchecked Sendable {
             deviceInfoProvider: self.testDeviceInfo
         )
 
-        XCTAssertEqual(result.isMatch, isMatch, file: file, line: line)
-        XCTAssertEqual(result.reportingMetadata, reportingMetadata, file: file, line: line)
+        #expect(result.isMatch == isMatch, sourceLocation: sourceLocation)
+        #expect(result.reportingMetadata == reportingMetadata, sourceLocation: sourceLocation)
     }
 }
-
-
-

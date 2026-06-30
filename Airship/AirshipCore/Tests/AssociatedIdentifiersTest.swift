@@ -1,12 +1,13 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
 
-final class AssociatedIdentifiersTest: XCTestCase {
+@Suite struct AssociatedIdentifiersTest {
 
+    @Test
     func testIDs() {
         let identifiers = AssociatedIdentifiers(identifiers: ["custom key": "custom value"])
         identifiers.vendorID = "vendor ID"
@@ -14,14 +15,14 @@ final class AssociatedIdentifiersTest: XCTestCase {
         identifiers.advertisingTrackingEnabled = false
         identifiers.set(identifier: "another custom value", key: "another custom key")
 
-        XCTAssertEqual("vendor ID", identifiers.allIDs["com.urbanairship.vendor"])
-        XCTAssertEqual("advertising ID", identifiers.allIDs["com.urbanairship.idfa"])
-        XCTAssertFalse(identifiers.advertisingTrackingEnabled)
-        XCTAssertEqual("true", identifiers.allIDs["com.urbanairship.limited_ad_tracking_enabled"])
-        XCTAssertEqual("another custom value", identifiers.allIDs["another custom key"])
+        #expect("vendor ID" == identifiers.allIDs["com.urbanairship.vendor"])
+        #expect("advertising ID" == identifiers.allIDs["com.urbanairship.idfa"])
+        #expect(!(identifiers.advertisingTrackingEnabled))
+        #expect("true" == identifiers.allIDs["com.urbanairship.limited_ad_tracking_enabled"])
+        #expect("another custom value" == identifiers.allIDs["another custom key"])
 
         identifiers.advertisingTrackingEnabled = true
-        XCTAssertTrue(identifiers.advertisingTrackingEnabled)
-        XCTAssertEqual("false", identifiers.allIDs["com.urbanairship.limited_ad_tracking_enabled"])
+        #expect(identifiers.advertisingTrackingEnabled)
+        #expect("false" == identifiers.allIDs["com.urbanairship.limited_ad_tracking_enabled"])
     }
 }

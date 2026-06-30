@@ -1,13 +1,15 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
+import Foundation
 
-final class ExperimentTest: XCTestCase {
+@Suite struct ExperimentTest {
 
+    @Test
     func testCodable() throws {
         let json: String =  """
         {
@@ -78,9 +80,10 @@ final class ExperimentTest: XCTestCase {
             timeCriteria: .init(start: Date(airshipMilliseconds: 1689012595000), end: Date(airshipMilliseconds: 1689091608000))
         )
 
-        XCTAssertEqual(expected, decoded)
+        #expect(expected == decoded)
     }
 
+    @Test
     func testCodableWithCompoundAudience() throws {
         let json: String =  """
         {
@@ -160,6 +163,6 @@ final class ExperimentTest: XCTestCase {
             timeCriteria: .init(start: Date(airshipMilliseconds: 1689012595000), end: Date(airshipMilliseconds: 1689091608000))
         )
 
-        XCTAssertEqual(expected, decoded)
+        #expect(expected == decoded)
     }
 }

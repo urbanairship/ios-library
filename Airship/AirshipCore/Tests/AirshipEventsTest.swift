@@ -1,12 +1,21 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 import Combine
+import Foundation
+import UserNotifications
+#if !os(watchOS)
+import UIKit
+#else
+import WatchKit
+#endif
 
 @testable import AirshipCore
 
-class AirshipEventsTest: XCTestCase {
+@Suite
+struct AirshipEventsTest {
 
+    @Test
     @MainActor
     func testForegroundAppInitEvent() throws {
         let sessionEvent = SessionEvent(
@@ -38,11 +47,12 @@ class AirshipEventsTest: XCTestCase {
             push: EventTestPush()
         )
 
-        XCTAssertEqual(event.eventType.reportingName, "app_init")
-        XCTAssertEqual(event.priority, .normal)
-        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
+        #expect(event.eventType.reportingName == "app_init")
+        #expect(event.priority == .normal)
+        #expect(try AirshipJSON.from(json: expectedBody) == event.eventData)
     }
 
+    @Test
     @MainActor
     func testBackgroundAppInitEvent() throws {
         let sessionEvent = SessionEvent(
@@ -74,11 +84,12 @@ class AirshipEventsTest: XCTestCase {
             push: EventTestPush()
         )
 
-        XCTAssertEqual(event.eventType.reportingName, "app_init")
-        XCTAssertEqual(event.priority, .normal)
-        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
+        #expect(event.eventType.reportingName == "app_init")
+        #expect(event.priority == .normal)
+        #expect(try AirshipJSON.from(json: expectedBody) == event.eventData)
     }
 
+    @Test
     @MainActor
     func testAppForegroundEvent() throws {
         let sessionEvent = SessionEvent(
@@ -109,11 +120,12 @@ class AirshipEventsTest: XCTestCase {
             push: EventTestPush()
         )
 
-        XCTAssertEqual(event.eventType.reportingName, "app_foreground")
-        XCTAssertEqual(event.priority, .normal)
-        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
+        #expect(event.eventType.reportingName == "app_foreground")
+        #expect(event.priority == .normal)
+        #expect(try AirshipJSON.from(json: expectedBody) == event.eventData)
     }
 
+    @Test
     @MainActor
     func testAppBackgroundEvent() throws {
         let sessionEvent = SessionEvent(
@@ -137,11 +149,12 @@ class AirshipEventsTest: XCTestCase {
             push: EventTestPush()
         )
 
-        XCTAssertEqual(event.eventType.reportingName, "app_background")
-        XCTAssertEqual(event.priority, .normal)
-        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
+        #expect(event.eventType.reportingName == "app_background")
+        #expect(event.priority == .normal)
+        #expect(try AirshipJSON.from(json: expectedBody) == event.eventData)
     }
 
+    @Test
     func testScreenTracking() throws {
         let expectedBody = """
         {
@@ -160,12 +173,13 @@ class AirshipEventsTest: XCTestCase {
             duration: 1
         )
 
-        XCTAssertEqual(event.eventType.reportingName, "screen_tracking")
-        XCTAssertEqual(event.priority, .normal)
-        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
+        #expect(event.eventType.reportingName == "screen_tracking")
+        #expect(event.priority == .normal)
+        #expect(try AirshipJSON.from(json: expectedBody) == event.eventData)
     }
 
 
+    @Test
     func testScreenValidation() throws {
         var screenName = ""
             .padding(
@@ -195,7 +209,7 @@ class AirshipEventsTest: XCTestCase {
                 startDate: Date(),
                 duration: 1
             )
-            XCTFail()
+            Issue.record("Should throw")
         } catch {}
 
 
@@ -206,11 +220,12 @@ class AirshipEventsTest: XCTestCase {
                 startDate: Date(),
                 duration: 1
             )
-            XCTFail()
+            Issue.record("Should throw")
         } catch {}
     }
 
 
+    @Test
     func testInstallAttributeTest() throws {
         let expectedBody = """
         {
@@ -223,12 +238,13 @@ class AirshipEventsTest: XCTestCase {
             appPurchaseDate: Date(timeIntervalSince1970: 100.0),
             iAdImpressionDate: Date(timeIntervalSince1970: 99.0)
         )
-        
-        XCTAssertEqual(event.eventType.reportingName, "install_attribution")
-        XCTAssertEqual(event.priority, .normal)
-        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
+
+        #expect(event.eventType.reportingName == "install_attribution")
+        #expect(event.priority == .normal)
+        #expect(try AirshipJSON.from(json: expectedBody) == event.eventData)
     }
 
+    @Test
     func testInstallAttributeNoDatesTest() throws {
         let expectedBody = """
         {
@@ -237,11 +253,12 @@ class AirshipEventsTest: XCTestCase {
 
         let event = AirshipEvents.installAttirbutionEvent()
 
-        XCTAssertEqual(event.eventType.reportingName, "install_attribution")
-        XCTAssertEqual(event.priority, .normal)
-        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
+        #expect(event.eventType.reportingName == "install_attribution")
+        #expect(event.priority == .normal)
+        #expect(try AirshipJSON.from(json: expectedBody) == event.eventData)
     }
 
+    @Test
     func testInteractiveNotificationEventTest() throws {
 
         let expectedBody = """
@@ -274,9 +291,9 @@ class AirshipEventsTest: XCTestCase {
             responseText: "some response text"
         )
 
-        XCTAssertEqual(event.eventType.reportingName, "interactive_notification_action")
-        XCTAssertEqual(event.priority, .high)
-        XCTAssertEqual(try AirshipJSON.from(json: expectedBody), event.eventData)
+        #expect(event.eventType.reportingName == "interactive_notification_action")
+        #expect(event.priority == .high)
+        #expect(try AirshipJSON.from(json: expectedBody) == event.eventData)
     }
 }
 

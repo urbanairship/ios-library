@@ -1,18 +1,21 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 @testable import AirshipCore
-class ContactChannelsProviderTest: XCTestCase {
-    private var audienceOverridesProvider: DefaultAudienceOverridesProvider!
-    private var provider: ContactChannelsProvider!
-    var apiClient: TestContactChannelsAPIClient!
-    private var privacyManager: TestPrivacyManager!
-    private var dataStore: PreferenceDataStore!
-    private var notificationCenter: AirshipNotificationCenter!
-    private var taskSleeper: TestSleeper!
-    private var date: UATestDate = UATestDate(dateOverride: Date())
+
+@Suite(.timeLimit(.minutes(1)))
+struct ContactChannelsProviderTest {
+    private let audienceOverridesProvider: DefaultAudienceOverridesProvider
+    private let provider: ContactChannelsProvider
+    private let apiClient: TestContactChannelsAPIClient
+    private let privacyManager: TestPrivacyManager
+    private let dataStore: PreferenceDataStore
+    private let notificationCenter: AirshipNotificationCenter
+    private let taskSleeper: TestSleeper
+    private let date: UATestDate = UATestDate(dateOverride: Date())
 
     private let testChannels1: [ContactChannel] = [
         .email(
@@ -68,9 +71,7 @@ class ContactChannelsProviderTest: XCTestCase {
         )
     ]
 
-    override func setUp() async throws {
-        try await super.setUp()
-
+    init() {
         self.audienceOverridesProvider = DefaultAudienceOverridesProvider()
         self.apiClient = TestContactChannelsAPIClient()
         self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
@@ -92,18 +93,7 @@ class ContactChannelsProviderTest: XCTestCase {
         )
     }
 
-    override func tearDown() async throws {
-        try await super.tearDown()
-
-        self.audienceOverridesProvider = nil
-        self.apiClient = nil
-        self.dataStore = nil
-        self.taskSleeper = nil
-        self.notificationCenter = nil
-        self.privacyManager = nil
-        self.provider = nil
-    }
-
+    @Test
     func testPrivacyManagerDisabled() async {
         self.privacyManager.disableFeatures(.contacts)
 
@@ -120,9 +110,10 @@ class ContactChannelsProviderTest: XCTestCase {
 
         var resultStream = provider.contactChannels(stableContactIDUpdates: contactIDStream).makeAsyncIterator()
         let result = await resultStream.next()
-        XCTAssertEqual(result, .error(.contactsDisabled))
+        #expect(result == .error(.contactsDisabled))
     }
 
+    @Test
     func testContactChannelsSuccess() async {
         let contactIDChannel = AirshipAsyncChannel<String>()
 
@@ -138,7 +129,7 @@ class ContactChannelsProviderTest: XCTestCase {
         )
         await contactIDChannel.send("test-contact-id-1")
         var result = await resultStream.next()
-        XCTAssertEqual(result, .success(self.testChannels1))
+        #expect(result == .success(self.testChannels1))
 
         self.apiClient.fetchResponse = AirshipHTTPResponse(
             result: self.testChannels2,
@@ -147,7 +138,7 @@ class ContactChannelsProviderTest: XCTestCase {
         )
         await contactIDChannel.send("test-contact-id-2")
         result = await resultStream.next()
-        XCTAssertEqual(result, .success(self.testChannels2))
+        #expect(result == .success(self.testChannels2))
 
         self.apiClient.fetchResponse = AirshipHTTPResponse(
             result: self.testChannels3,
@@ -156,11 +147,12 @@ class ContactChannelsProviderTest: XCTestCase {
         )
         await contactIDChannel.send("test-contact-id-3")
         result = await resultStream.next()
-        XCTAssertEqual(result, .success(self.testChannels3))
+        #expect(result == .success(self.testChannels3))
 
-        XCTAssertEqual(self.apiClient.fetchAssociatedChannelsCallCount, 3)
+        #expect(self.apiClient.fetchAssociatedChannelsCallCount == 3)
     }
     
+    @Test
     func testContactChannelsRefresh() async {
         let contactIDChannel = AirshipAsyncChannel<String>()
 
@@ -175,23 +167,24 @@ class ContactChannelsProviderTest: XCTestCase {
         )
         await contactIDChannel.send("test-contact-id-1")
         var result = await resultStream.next()
-        XCTAssertEqual(result, .success(self.testChannels1))
-        XCTAssertEqual(1, self.apiClient.fetchAssociatedChannelsCallCount)
+        #expect(result == .success(self.testChannels1))
+        #expect(1 == self.apiClient.fetchAssociatedChannelsCallCount)
 
         //from cache
         await contactIDChannel.send("test-contact-id-1")
         result = await resultStream.next()
-        XCTAssertEqual(result, .success(self.testChannels1))
-        XCTAssertEqual(1, self.apiClient.fetchAssociatedChannelsCallCount)
+        #expect(result == .success(self.testChannels1))
+        #expect(1 == self.apiClient.fetchAssociatedChannelsCallCount)
         
         await provider.refresh()
         
         await contactIDChannel.send("test-contact-id-1")
         result = await resultStream.next()
-        XCTAssertEqual(result, .success(self.testChannels1))
-        XCTAssertEqual(2, self.apiClient.fetchAssociatedChannelsCallCount)
+        #expect(result == .success(self.testChannels1))
+        #expect(2 == self.apiClient.fetchAssociatedChannelsCallCount)
     }
 
+    @Test
     func testContactChannelsFailure() async {
         let contactIDStream = AsyncStream<String> { continuation in
             continuation.yield("test-contact-id")
@@ -203,9 +196,10 @@ class ContactChannelsProviderTest: XCTestCase {
 
         var resultStream = provider.contactChannels(stableContactIDUpdates: contactIDStream).makeAsyncIterator()
         let result = await resultStream.next()
-        XCTAssertEqual(result, .error(.failedToFetchContacts))
+        #expect(result == .error(.failedToFetchContacts))
     }
 
+    @Test
     func testEmptyContactChannelUpdates() async {
         let contactIDStream = AsyncStream<String> { continuation in
             continuation.yield("test-contact-id-1")
@@ -216,9 +210,10 @@ class ContactChannelsProviderTest: XCTestCase {
 
         var resultStream = provider.contactChannels(stableContactIDUpdates: contactIDStream).makeAsyncIterator()
         let result = await resultStream.next()
-        XCTAssertEqual(result, .success([]))
+        #expect(result == .success([]))
     }
 
+    @Test
     func testBackoffOnFailure() async {
         let contactIDStream = AsyncStream<String> { continuation in
             continuation.yield("test-contact-id-1")
@@ -234,12 +229,13 @@ class ContactChannelsProviderTest: XCTestCase {
 
         for backoff in [8.0, 16.0, 32.0, 64.0, 64.0] {
             let next = await sleepUpdates.next()
-            XCTAssertEqual(next, backoff)
+            #expect(next == backoff)
             await self.taskSleeper.advance()
         }
 
     }
 
+    @Test
     func testRefreshRateOnSuccess() async {
         let contactIDStream = AsyncStream<String> { continuation in
             continuation.yield("test-contact-id-1")
@@ -253,12 +249,12 @@ class ContactChannelsProviderTest: XCTestCase {
         await self.taskSleeper.advance()
 
         let sleeps = await self.taskSleeper.sleeps
-        XCTAssertEqual(sleeps, [600])
+        #expect(sleeps == [600])
     }
 }
 
 
-class TestContactChannelsAPIClient: ContactChannelsAPIClientProtocol, @unchecked Sendable {
+fileprivate final class TestContactChannelsAPIClient: ContactChannelsAPIClientProtocol, @unchecked Sendable {
     internal init(
         fetchAssociatedChannelsCallCount: Int = 0,
         fetchedContactIDs: [String] = [],
@@ -292,19 +288,31 @@ private actor TestSleeper: AirshipTaskSleeper, @unchecked Sendable {
 
 
     func advance() {
-        continuations.forEach {
-            $0.resume()
+        if let continuation = continuations.first {
+            continuations.removeFirst()
+            continuation.resume()
+        } else {
+            // The sleeper sends its update before parking, so a consumer can
+            // call advance() before the continuation is registered. Bank the
+            // advance so the next sleep doesn't lose the wakeup and hang.
+            pendingAdvances += 1
         }
-        continuations.removeAll()
     }
 
 
     var sleeps: [TimeInterval] = []
     var continuations: [CheckedContinuation<Void, Never>] = []
+    private var pendingAdvances: Int = 0
 
     func sleep(timeInterval: TimeInterval) async throws {
         sleeps.append(timeInterval)
         await channel.send(timeInterval)
+
+        if pendingAdvances > 0 {
+            pendingAdvances -= 1
+            return
+        }
+
         await withCheckedContinuation { continuation in
             continuations.append(continuation)
         }

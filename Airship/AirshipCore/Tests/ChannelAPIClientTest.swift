@@ -1,22 +1,24 @@
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
+import Foundation
 
-final class ChannelAPIClientTest: XCTestCase {
-    private var config: RuntimeConfig = .testConfig()
+@Suite struct ChannelAPIClientTest {
+    private let config: RuntimeConfig = .testConfig()
     private let session = TestAirshipRequestSession()
-    private var client: ChannelAPIClient!
+    private let client: ChannelAPIClient
     private let encoder = JSONEncoder()
 
-    override func setUpWithError() throws {
+    init() {
         self.client = ChannelAPIClient(
             config: self.config,
             session: self.session
         )
     }
 
+    @Test
     func testCreate() async throws {
         let payload = ChannelRegistrationPayload()
 
@@ -32,19 +34,20 @@ final class ChannelAPIClientTest: XCTestCase {
         )
 
         let response = try await self.client.createChannel(payload: payload)
-        XCTAssertEqual("some-channel-id", response.result!.channelID)
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/channels/some-channel-id",
+        #expect("some-channel-id" == response.result!.channelID)
+        #expect(
+            "https://device-api.urbanairship.com/api/channels/some-channel-id" ==
             response.result!.location.absoluteString
         )
 
         let request = self.session.lastRequest!
-        XCTAssertEqual("POST", request.method)
-        XCTAssertEqual(AirshipRequestAuth.generatedAppToken, request.auth)
-        XCTAssertEqual("https://device-api.urbanairship.com/api/channels/", request.url?.absoluteString)
-        XCTAssertEqual(try! AirshipJSON.wrap(payload), try! AirshipJSON.from(data: request.body))
+        #expect("POST" == request.method)
+        #expect(AirshipRequestAuth.generatedAppToken == request.auth)
+        #expect("https://device-api.urbanairship.com/api/channels/" == request.url?.absoluteString)
+        #expect(try! AirshipJSON.wrap(payload) == AirshipJSON.from(data: request.body))
     }
 
+    @Test
     func testCreateInvalidResponse() async throws {
         let payload = ChannelRegistrationPayload()
 
@@ -61,19 +64,21 @@ final class ChannelAPIClientTest: XCTestCase {
 
         do {
             _ = try await self.client.createChannel(payload: payload)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testCreateError() async throws {
         let payload = ChannelRegistrationPayload()
         self.session.error = AirshipErrors.error("Error!")
         do {
             _ = try await self.client.createChannel(payload: payload)
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testCreateFailed() async throws {
         let payload = ChannelRegistrationPayload()
         self.session.response = HTTPURLResponse(
@@ -84,9 +89,10 @@ final class ChannelAPIClientTest: XCTestCase {
         )
 
         let response = try await self.client.createChannel(payload: payload)
-        XCTAssertEqual(400, response.statusCode)
+        #expect(400 == response.statusCode)
     }
 
+    @Test
     func testUpdate() async throws {
         let payload = ChannelRegistrationPayload()
 
@@ -102,20 +108,21 @@ final class ChannelAPIClientTest: XCTestCase {
             payload: payload
         )
 
-        XCTAssertEqual("some-channel-id", response.result!.channelID)
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/channels/some-channel-id",
+        #expect("some-channel-id" == response.result!.channelID)
+        #expect(
+            "https://device-api.urbanairship.com/api/channels/some-channel-id" ==
             response.result!.location.absoluteString
         )
 
         let request = self.session.lastRequest!
-        XCTAssertEqual("PUT", request.method)
+        #expect("PUT" == request.method)
 
-        XCTAssertEqual(AirshipRequestAuth.channelAuthToken(identifier: "some-channel-id"), request.auth)
-        XCTAssertEqual(try! AirshipJSON.wrap(payload), try! AirshipJSON.from(data: request.body))
-        XCTAssertEqual("https://device-api.urbanairship.com/api/channels/some-channel-id", request.url?.absoluteString)
+        #expect(AirshipRequestAuth.channelAuthToken(identifier: "some-channel-id") == request.auth)
+        #expect(try! AirshipJSON.wrap(payload) == AirshipJSON.from(data: request.body))
+        #expect("https://device-api.urbanairship.com/api/channels/some-channel-id" == request.url?.absoluteString)
 
     }
+    @Test
     func testUpdateError() async throws {
         let payload = ChannelRegistrationPayload()
         self.session.error = AirshipErrors.error("Error!")
@@ -124,10 +131,11 @@ final class ChannelAPIClientTest: XCTestCase {
                 "some-channel-id",
                 payload: payload
             )
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testUpdateFailed() async throws {
         let payload = ChannelRegistrationPayload()
         self.session.response = HTTPURLResponse(
@@ -141,7 +149,7 @@ final class ChannelAPIClientTest: XCTestCase {
             "some-channel-id",
             payload: payload
         )
-        XCTAssertEqual(400, response.statusCode)
+        #expect(400 == response.statusCode)
     }
 
 }

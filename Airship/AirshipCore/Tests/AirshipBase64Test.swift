@@ -1,9 +1,10 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
+import Foundation
 
-class AirshipBase64Test: XCTestCase {
+@Suite struct AirshipBase64Test {
 
     // Examples from Wikipedia page on base64 encoding
     // http://en.wikipedia.org/wiki/Base64
@@ -37,52 +38,55 @@ class AirshipBase64Test: XCTestCase {
     let easure64Newline = "ZWFzdXJlLg\n"
     let easure64InterstitialNewline = "ZWFzdXJlLg=\n="
 
+    @Test
     func testBase64Encode() {
         let dataToEncode = pleasure.data(using: .ascii)!
         let encoded = AirshipBase64.string(from: dataToEncode)
-        XCTAssertTrue(encoded == pleasure64)
+        #expect(encoded == pleasure64)
 
         let dataToEncode2 = leasure.data(using: .ascii)!
         let encoded2 = AirshipBase64.string(from: dataToEncode2)
-        XCTAssertTrue(encoded2 == leasure64)
+        #expect(encoded2 == leasure64)
 
         let dataToEncode3 = easure.data(using: .ascii)!
         let encoded3 = AirshipBase64.string(from: dataToEncode3)
-        XCTAssertTrue(encoded3 == easure64)
+        #expect(encoded3 == easure64)
     }
 
+    @Test
     func testBase64Decode() {
         var decodedData = AirshipBase64.data(from: pleasure64)!
         var decodedString = String(data: decodedData, encoding: .ascii)!
-        XCTAssertTrue(decodedString == pleasure)
+        #expect(decodedString == pleasure)
 
         decodedData = AirshipBase64.data(from: leasure64)!
         decodedString = String(data: decodedData, encoding: .ascii)!
-        XCTAssertTrue(decodedString == leasure)
+        #expect(decodedString == leasure)
 
         decodedData = AirshipBase64.data(from: easure64)!
         decodedString = String(data: decodedData, encoding: .ascii)!
-        XCTAssertTrue(decodedString == easure)
+        #expect(decodedString == easure)
 
         decodedData = AirshipBase64.data(from: easure64PartiallyPadded)!
         decodedString = String(data: decodedData, encoding: .ascii)!
-        XCTAssertTrue(decodedString == easure)
+        #expect(decodedString == easure)
 
         decodedData = AirshipBase64.data(from: easure64Unpadded)!
         decodedString = String(data: decodedData, encoding: .ascii)!
-        XCTAssertTrue(decodedString == easure)
+        #expect(decodedString == easure)
 
         decodedData = AirshipBase64.data(from: easure64Newline)!
         decodedString = String(data: decodedData, encoding: .ascii)!
-        XCTAssertTrue(decodedString == easure)
+        #expect(decodedString == easure)
 
         decodedData = AirshipBase64.data(from: easure64InterstitialNewline)!
         decodedString = String(data: decodedData, encoding: .ascii)!
-        XCTAssertTrue(decodedString == easure)
+        #expect(decodedString == easure)
     }
 
+    @Test
     func testBase64DecodeInvalidString() {
-        XCTAssertNoThrow(AirshipBase64.data(from: "."))
-        XCTAssertNoThrow(AirshipBase64.data(from: " "))
+        _ = AirshipBase64.data(from: ".")
+        _ = AirshipBase64.data(from: " ")
     }
 }

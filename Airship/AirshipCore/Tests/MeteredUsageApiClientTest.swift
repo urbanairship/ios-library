@@ -1,17 +1,20 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
+
 @testable import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
-final class MeteredUsageApiClientTest: XCTestCase {
-    
+@Suite struct MeteredUsageApiClientTest {
+
     private let requestSession = TestAirshipRequestSession()
     private let configDataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private var target: MeteredUsageAPIClient!
-    private var config: RuntimeConfig = RuntimeConfig.testConfig()
-    override func setUp() async throws {
+    private let target: MeteredUsageAPIClient
+    private let config: RuntimeConfig = RuntimeConfig.testConfig()
+
+    init() async throws {
         self.config.updateRemoteConfig(
             RemoteConfig(
                 airshipConfig: RemoteConfig.AirshipConfig(
@@ -26,6 +29,7 @@ final class MeteredUsageApiClientTest: XCTestCase {
         target = MeteredUsageAPIClient(config: config, session: requestSession)
     }
 
+    @Test
     func testUploadEventsNoConfig() async throws {
         self.config.updateRemoteConfig(RemoteConfig())
         let timestamp = Date()
@@ -78,11 +82,12 @@ final class MeteredUsageApiClientTest: XCTestCase {
         self.config.updateRemoteConfig(RemoteConfig())
         do {
             let _ = try await target.uploadEvents(events, channelID: "test.channel.id")
-            XCTFail("Should throw")
+            Issue.record("Should throw")
         } catch {
         }
     }
 
+    @Test
     func testUploadEvents() async throws {
         let timestamp = Date()
 
@@ -134,25 +139,25 @@ final class MeteredUsageApiClientTest: XCTestCase {
         let _ = try await target.uploadEvents(events, channelID: "test.channel.id")
 
         let request = requestSession.lastRequest
-        XCTAssertNotNil(request)
-        XCTAssertEqual("test://meteredUsage/api/metered-usage", request?.url?.absoluteString)
-        XCTAssertEqual([
+        #expect(request != nil)
+        #expect("test://meteredUsage/api/metered-usage" == request?.url?.absoluteString)
+        #expect([
             "Content-Type": "application/json",
             "X-UA-Lib-Version": AirshipVersion.version,
             "X-UA-Device-Family": "ios",
             "X-UA-Channel-ID": "test.channel.id",
             "Accept": "application/vnd.urbanairship+json; version=3;"
-        ], request?.headers)
-        XCTAssertEqual("POST", request?.method)
+        ] == request?.headers)
+        #expect("POST" == request?.method)
 
         let body = request?.body
-        XCTAssertNotNil(body)
+        #expect(body != nil)
 
         let decodedBody = try JSONSerialization.jsonObject(with: body!) as! [String : [[String: String]]]
 
         let timestampString = AirshipDateFormatter.string(fromDate: timestamp, format: .iso8601)
 
-        XCTAssertEqual([
+        #expect([
             [
                 "entity_id": "message.id",
                 "event_id": "event.1",
@@ -188,10 +193,11 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 "usage_type": "iax_impression",
                 "reporting_context": "event.4",
                 "contact_id": "contact-id-4"
-            ]], decodedBody["usage"])
+            ]] == decodedBody["usage"])
 
     }
     
+    @Test
     func testUploadStrippedEvents() async throws {
         let timestamp = Date()
         
@@ -243,23 +249,23 @@ final class MeteredUsageApiClientTest: XCTestCase {
         let _ = try await target.uploadEvents(events, channelID: "test.channel.id")
 
         let request = requestSession.lastRequest
-        XCTAssertNotNil(request)
-        XCTAssertEqual("test://meteredUsage/api/metered-usage", request?.url?.absoluteString)
-        XCTAssertEqual([
+        #expect(request != nil)
+        #expect("test://meteredUsage/api/metered-usage" == request?.url?.absoluteString)
+        #expect([
             "Content-Type": "application/json",
             "X-UA-Lib-Version": AirshipVersion.version,
             "X-UA-Device-Family": "ios",
             "X-UA-Channel-ID": "test.channel.id",
             "Accept": "application/vnd.urbanairship+json; version=3;"
-        ], request?.headers)
-        XCTAssertEqual("POST", request?.method)
+        ] == request?.headers)
+        #expect("POST" == request?.method)
 
         let body = request?.body
-        XCTAssertNotNil(body)
+        #expect(body != nil)
 
         let decodedBody = try JSONSerialization.jsonObject(with: body!) as! [String : [[String: String]]]
         
-        XCTAssertEqual([
+        #expect([
             [
                 "event_id": "event.1",
                 "product": "message",
@@ -279,6 +285,6 @@ final class MeteredUsageApiClientTest: XCTestCase {
                 "event_id": "event.4",
                 "product": "Survey",
                 "usage_type": "iax_impression",
-            ]], decodedBody["usage"])
+            ]] == decodedBody["usage"])
     }
 }

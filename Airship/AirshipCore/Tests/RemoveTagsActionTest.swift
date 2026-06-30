@@ -1,11 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
 
-final class RemoveTagsActionTest: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct RemoveTagsActionTest {
 
     private let simpleValue = ["tag", "another tag"]
     private let complexValue: [String: AnyHashable] = [
@@ -22,15 +23,18 @@ final class RemoveTagsActionTest: XCTestCase {
 
     private let channel = TestChannel()
     private let contact = TestContact()
-    private var action: RemoveTagsAction!
+    private let action: RemoveTagsAction
 
-    override func setUp() async throws {
+    init() async throws {
+        let channel = self.channel
+        let contact = self.contact
         action = RemoveTagsAction(
-            channel: { [channel] in return channel },
-            contact: { [contact] in return contact }
+            channel: { channel },
+            contact: { contact }
         )
     }
 
+    @Test
     func testAcceptsArguments() async throws {
         let validSituations = [
             ActionSituation.foregroundInteractiveButton,
@@ -49,22 +53,23 @@ final class RemoveTagsActionTest: XCTestCase {
         for situation in validSituations {
             let args = ActionArguments(value: try! AirshipJSON.wrap(simpleValue), situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result)
         }
 
         for situation in validSituations {
             let args = ActionArguments(value: try! AirshipJSON.wrap(complexValue), situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result)
         }
 
         for situation in rejectedSituations {
             let args = ActionArguments(value: try! AirshipJSON.wrap(simpleValue), situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!(result))
         }
     }
 
+    @Test
     func testPerformSimple() async throws {
         self.channel.tags = ["foo", "bar", "tag", "another tag"]
         
@@ -76,20 +81,20 @@ final class RemoveTagsActionTest: XCTestCase {
                 situation: .manualInvocation
             )
         )
-        XCTAssertEqual(
-            ["foo", "bar"],
-            channel.tags
+        #expect(
+            ["foo", "bar"] == channel.tags
         )
         
         var iterator = updates.makeAsyncIterator()
         let mutation = await iterator.next()
-        XCTAssertEqual(TagActionMutation.channelTags(["tag", "another tag"]), mutation)
+        #expect(TagActionMutation.channelTags(["tag", "another tag"]) == mutation)
     }
 
+    @Test
     func testPerformComplex() async throws {
         self.channel.tags = ["foo", "bar", "tag"]
 
-        let tagGroupsSet = self.expectation(description: "tagGroupsSet")
+        let tagGroupsSet = AirshipTestExpectation(description: "tagGroupsSet")
         tagGroupsSet.expectedFulfillmentCount = 2
 
         self.channel.tagGroupEditor = TagGroupsEditor { updates in
@@ -106,7 +111,7 @@ final class RemoveTagsActionTest: XCTestCase {
                 )
             ]
 
-            XCTAssertEqual(Set(expected), Set(updates))
+            #expect(Set(expected) == Set(updates))
             tagGroupsSet.fulfill()
         }
 
@@ -124,7 +129,7 @@ final class RemoveTagsActionTest: XCTestCase {
                 )
             ]
 
-            XCTAssertEqual(Set(expected), Set(updates))
+            #expect(Set(expected) == Set(updates))
             tagGroupsSet.fulfill()
         }
         
@@ -144,20 +149,17 @@ final class RemoveTagsActionTest: XCTestCase {
         ]
         
         for await item in updates {
-            XCTAssertEqual(expected.removeFirst(), item)
+            #expect(expected.removeFirst() == item)
             if expected.isEmpty {
                 break
             }
         }
         
 
-        XCTAssertEqual(
-            ["foo", "bar"],
-            channel.tags
+        #expect(
+            ["foo", "bar"] == channel.tags
         )
         
-        await self.fulfillment(of: [tagGroupsSet], timeout: 10)
+        await fulfillment(of: [tagGroupsSet], timeout: 10)
     }
 }
-
-

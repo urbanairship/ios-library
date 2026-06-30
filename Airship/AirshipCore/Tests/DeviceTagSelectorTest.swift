@@ -1,10 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
+import Foundation
 
-final class DeviceTagSelectorTest: XCTestCase {
+@Suite struct DeviceTagSelectorTest {
 
+    @Test
     func testCodable() throws {
         let json: String = """
         {
@@ -40,12 +42,13 @@ final class DeviceTagSelectorTest: XCTestCase {
             ]
         )
 
-        XCTAssertEqual(decoded, expected)
+        #expect(decoded == expected)
 
         let encoded = String(data: try JSONEncoder().encode(decoded), encoding: .utf8)
-        XCTAssertEqual(try AirshipJSON.from(json: json), try AirshipJSON.from(json: encoded))
+        #expect(try AirshipJSON.from(json: json) == AirshipJSON.from(json: encoded))
     }
 
+    @Test
     func testEvaluate() {
         let selector = DeviceTagSelector.or(
             [
@@ -54,11 +57,11 @@ final class DeviceTagSelectorTest: XCTestCase {
             ]
         )
 
-        XCTAssertFalse(selector.evaluate(tags: Set()))
-        XCTAssertTrue(selector.evaluate(tags: Set<String>(["some-tag"])))
-        XCTAssertTrue(selector.evaluate(tags: Set<String>(["some-other-tag"])))
-        XCTAssertTrue(selector.evaluate(tags: Set<String>(["some-other-tag", "not-tag"])))
-        XCTAssertFalse(selector.evaluate(tags: Set<String>(["some-tag", "not-tag"])))
-        XCTAssertFalse(selector.evaluate(tags: Set<String>(["not-tag"])))
+        #expect(!(selector.evaluate(tags: Set())))
+        #expect(selector.evaluate(tags: Set<String>(["some-tag"])))
+        #expect(selector.evaluate(tags: Set<String>(["some-other-tag"])))
+        #expect(selector.evaluate(tags: Set<String>(["some-other-tag", "not-tag"])))
+        #expect(!(selector.evaluate(tags: Set<String>(["some-tag", "not-tag"]))))
+        #expect(!(selector.evaluate(tags: Set<String>(["not-tag"]))))
     }
 }

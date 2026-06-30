@@ -1,90 +1,99 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
 
-final class RetailEventTemplateTest: XCTestCase {
+@Suite struct RetailEventTemplateTest {
 
+    @Test
     func testBrowsed() {
         let event = CustomEvent(retailTemplate: .browsed)
-        XCTAssertEqual("browsed", event.eventName)
-        XCTAssertEqual("retail", event.templateType)
+        #expect("browsed" == event.eventName)
+        #expect("retail" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = ["ltv": false]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testAddedToCart() {
         let event = CustomEvent(retailTemplate: .addedToCart)
-        XCTAssertEqual("added_to_cart", event.eventName)
-        XCTAssertEqual("retail", event.templateType)
+        #expect("added_to_cart" == event.eventName)
+        #expect("retail" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = ["ltv": false]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testStarred() {
         let event = CustomEvent(retailTemplate: .starred)
-        XCTAssertEqual("starred_product", event.eventName)
-        XCTAssertEqual("retail", event.templateType)
+        #expect("starred_product" == event.eventName)
+        #expect("retail" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = ["ltv": false]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testPurchased() {
         let event = CustomEvent(retailTemplate: .purchased)
-        XCTAssertEqual("purchased", event.eventName)
-        XCTAssertEqual("retail", event.templateType)
+        #expect("purchased" == event.eventName)
+        #expect("retail" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = ["ltv": false]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testShared() {
         let event = CustomEvent(retailTemplate: .shared(source: "some source", medium: "some medium"))
-        XCTAssertEqual("shared_product", event.eventName)
-        XCTAssertEqual("retail", event.templateType)
+        #expect("shared_product" == event.eventName)
+        #expect("retail" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = [
             "ltv": false,
             "source": "some source",
             "medium": "some medium"
         ]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testSharedEmptyDetails() {
         let event = CustomEvent(retailTemplate: .shared())
-        XCTAssertEqual("shared_product", event.eventName)
-        XCTAssertEqual("retail", event.templateType)
+        #expect("shared_product" == event.eventName)
+        #expect("retail" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = ["ltv": false]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testWishlist() {
         let event = CustomEvent(retailTemplate: .wishlist(id: "some id", name: "some name"))
-        XCTAssertEqual("wishlist", event.eventName)
-        XCTAssertEqual("retail", event.templateType)
+        #expect("wishlist" == event.eventName)
+        #expect("retail" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = [
             "ltv": false,
             "wishlist_id": "some id",
             "wishlist_name": "some name"
         ]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testWishlistEmptyDetails() {
         let event = CustomEvent(retailTemplate: .wishlist())
-        XCTAssertEqual("wishlist", event.eventName)
-        XCTAssertEqual("retail", event.templateType)
+        #expect("wishlist" == event.eventName)
+        #expect("retail" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = ["ltv": false]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testProperties() {
         let properties = CustomEvent.RetailProperties(
             id: "some id",
@@ -98,8 +107,8 @@ final class RetailEventTemplateTest: XCTestCase {
         )
 
         let event = CustomEvent(retailTemplate: .wishlist(), properties: properties)
-        XCTAssertEqual("wishlist", event.eventName)
-        XCTAssertEqual("retail", event.templateType)
+        #expect("wishlist" == event.eventName)
+        #expect("retail" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = [
             "id": "some id",
@@ -112,6 +121,6 @@ final class RetailEventTemplateTest: XCTestCase {
             "currency": "cred",
         ]
 
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 }

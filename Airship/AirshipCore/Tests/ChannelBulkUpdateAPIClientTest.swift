@@ -1,23 +1,25 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @_spi(AirshipInternal) import AirshipBasement
 @testable import AirshipCore
+import Foundation
 
-class ChannelBulkUpdateAPIClientTest: XCTestCase {
+@Suite struct ChannelBulkUpdateAPIClientTest {
 
-    private var config: RuntimeConfig = .testConfig()
+    private let config: RuntimeConfig = .testConfig()
     private let session = TestAirshipRequestSession()
-    var client: ChannelBulkUpdateAPIClient!
+    let client: ChannelBulkUpdateAPIClient
 
-    override func setUpWithError() throws {
+    init() throws {
         self.client = ChannelBulkUpdateAPIClient(
             config: self.config,
             session: self.session
         )
     }
 
+    @Test
     func testUpdate() async throws {
         let date = Date()
         self.session.response = HTTPURLResponse(
@@ -66,7 +68,7 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
             channelID: "some-channel"
         )
 
-        XCTAssertEqual(response.statusCode, 200)
+        #expect(response.statusCode == 200)
 
         let expectedBody =
             [
@@ -99,19 +101,20 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
             ] as NSDictionary
 
         let lastRequest = self.session.lastRequest!
-        let bodyJSON = try AirshipJSON.from(data: XCTUnwrap(lastRequest.body))
+        let bodyJSON = try AirshipJSON.from(data: lastRequest.body)
         let expectedJSON = try AirshipJSON.wrap(expectedBody as! [String: Any])
           
-        XCTAssertEqual("PUT", lastRequest.method)
-        XCTAssertEqual(expectedJSON, bodyJSON)
+        #expect("PUT" == lastRequest.method)
+        #expect(expectedJSON == bodyJSON)
 
         let url = lastRequest.url
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/channels/sdk/batch/some-channel?platform=ios",
+        #expect(
+            "https://device-api.urbanairship.com/api/channels/sdk/batch/some-channel?platform=ios" ==
             url?.absoluteString
         )
     }
 
+    @Test
     func testUpdateError() async throws {
         let sessionError = AirshipErrors.error("error!")
         self.session.error = sessionError
@@ -136,7 +139,7 @@ class ChannelBulkUpdateAPIClientTest: XCTestCase {
                 channelID: "some-channel"
             )
         } catch {
-            XCTAssertEqual(sessionError as NSError, error as NSError)
+            #expect(sessionError as NSError == error as NSError)
 
         }
     }

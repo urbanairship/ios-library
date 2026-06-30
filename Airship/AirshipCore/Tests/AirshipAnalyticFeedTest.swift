@@ -1,14 +1,16 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 @testable
 import AirshipCore
 
-final class AirshipAnalyticFeedTest: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct AirshipAnalyticFeedTest {
     private let dataStore: PreferenceDataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private var privacyManager: TestPrivacyManager!
+    private let privacyManager: TestPrivacyManager
 
-    override func setUp() async throws {
+    init() {
         self.privacyManager = TestPrivacyManager(
             dataStore: dataStore,
             config: .testConfig(),
@@ -16,37 +18,40 @@ final class AirshipAnalyticFeedTest: XCTestCase {
         )
     }
 
+    @Test
     func testFeed() async throws {
         let feed = makeFeed()
         var updates = await feed.updates.makeAsyncIterator()
 
         let result = await feed.notifyEvent(.screen(screen: "foo"))
-        XCTAssertTrue(result)
+        #expect(result)
 
         let next = await updates.next()
-        XCTAssertEqual(next, .screen(screen: "foo"))
+        #expect(next == .screen(screen: "foo"))
     }
 
+    @Test
     func testFeedAnalyticsDisabled() async throws {
         let feed = makeFeed()
         privacyManager.disableFeatures(.analytics)
         var updates = await feed.updates.makeAsyncIterator()
 
         var result = await feed.notifyEvent(.screen(screen: "foo"))
-        XCTAssertFalse(result)
+        #expect(!(result))
 
         privacyManager.enableFeatures(.analytics)
         result = await feed.notifyEvent(.screen(screen: "bar"))
-        XCTAssertTrue(result)
+        #expect(result)
 
         let next = await updates.next()
-        XCTAssertEqual(next, .screen(screen: "bar"))
+        #expect(next == .screen(screen: "bar"))
     }
 
+    @Test
     func testFeedDisabled() async throws {
         let feed = makeFeed(enabled: false)
         let result = await feed.notifyEvent(.screen(screen: "foo"))
-        XCTAssertFalse(result)
+        #expect(!(result))
     }
 
     private func makeFeed(enabled: Bool = true) -> AirshipAnalyticsFeed  {

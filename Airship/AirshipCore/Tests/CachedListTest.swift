@@ -1,29 +1,31 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
+import Foundation
 
-class CachedListTest: XCTestCase {
+@Suite struct CachedListTest {
 
     let date = UATestDate(offset: 0, dateOverride: Date())
 
+    @Test
     func testValue() throws {
         let cachedList = CachedList<String>(date: date)
 
         cachedList.append("foo", expiresIn: 100)
-        XCTAssertEqual(["foo"], cachedList.values)
+        #expect(["foo"] == cachedList.values)
 
         date.offset += 99
 
         cachedList.append("bar", expiresIn: 2)
-        XCTAssertEqual(["foo", "bar"], cachedList.values)
+        #expect(["foo", "bar"] == cachedList.values)
 
         date.offset += 1
-        XCTAssertEqual(["bar"], cachedList.values)
+        #expect(["bar"] == cachedList.values)
 
         date.offset += 1
-        XCTAssertEqual([], cachedList.values)
+        #expect([] == cachedList.values)
 
     }
 }

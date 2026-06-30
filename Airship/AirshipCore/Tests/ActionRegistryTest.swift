@@ -1,17 +1,20 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
 
 @MainActor
-class ActionRegistryTest: AirshipBaseTest {
+@Suite
+struct ActionRegistryTest {
 
     private var registry: DefaultAirshipActionRegistry!
-    override func setUp() async throws {
+
+    init() {
         self.registry = DefaultAirshipActionRegistry()
     }
 
+    @Test
     @MainActor
     func testRegisterAction() async {
         let action = EmptyAction()
@@ -27,6 +30,7 @@ class ActionRegistryTest: AirshipBaseTest {
         )
     }
 
+    @Test
     @MainActor
     func testRegisterActionClosure() async {
         let action = EmptyAction()
@@ -44,9 +48,10 @@ class ActionRegistryTest: AirshipBaseTest {
             names: ["name", "alias", "another-name"]
         )
 
-        XCTAssertEqual(called, 1)
+        #expect(called == 1)
     }
 
+    @Test
     @MainActor
     func testRegisterActionNameConflict() async {
         let action = EmptyAction()
@@ -80,6 +85,7 @@ class ActionRegistryTest: AirshipBaseTest {
         )
     }
 
+    @Test
     @MainActor
     func testUpdateAction() async {
         let action = EmptyAction()
@@ -97,6 +103,7 @@ class ActionRegistryTest: AirshipBaseTest {
         )
     }
 
+    @Test
     @MainActor
     func testUpdateActionForSituation() async {
         let action = EmptyAction()
@@ -114,7 +121,7 @@ class ActionRegistryTest: AirshipBaseTest {
         )
 
         let entry = registry.entry(name: "name")!
-        XCTAssertTrue(other === entry.action(situation: .manualInvocation))
+        #expect(other === entry.action(situation: .manualInvocation))
     }
 
     @MainActor
@@ -124,7 +131,7 @@ class ActionRegistryTest: AirshipBaseTest {
     ) {
         for name in names {
             let entry = registry.entry(name: name)
-            XCTAssertTrue(entry?.action === action)
+            #expect(entry?.action === action)
         }
     }
 

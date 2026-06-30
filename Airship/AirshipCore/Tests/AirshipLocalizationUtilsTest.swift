@@ -1,30 +1,31 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
 
-class AirshipLocalizationUtilsTest: XCTestCase {
+@Suite struct AirshipLocalizationUtilsTest {
 
+    @Test
     func testLocalization() {
         let localizedString = AirshipLocalizationUtils.localizedString(
             "ua_notification_button_yes",
             withTable: "UrbanAirship",
             moduleBundle: AirshipCoreResources.bundle
         )
-        XCTAssertEqual(localizedString, "Yes")
+        #expect(localizedString == "Yes")
 
         let badKeyString = AirshipLocalizationUtils.localizedString(
             "not_a_key",
             withTable: "UrbanAirship",
             moduleBundle: AirshipCoreResources.bundle
         )
-        XCTAssertNil(badKeyString)
+        #expect(badKeyString == nil)
 
         let badTableString = AirshipLocalizationUtils.localizedString(
             "ua_notification_button_yes",
             withTable: "NotATable",
             moduleBundle: AirshipCoreResources.bundle
         )
-        XCTAssertNil(badTableString)
+        #expect(badTableString == nil)
     }
 }

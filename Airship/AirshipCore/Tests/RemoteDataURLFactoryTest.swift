@@ -1,13 +1,16 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable
 import AirshipCore
+import Foundation
 
-final class RemoteDataURLFactoryTest: XCTestCase {
+@Suite
+struct RemoteDataURLFactoryTest {
 
     private let config: RuntimeConfig = RuntimeConfig.testConfig()
 
+    @Test
     func testURL() throws {
         let remoteDataURL = try! RemoteDataURLFactory.makeURL(
             config: config,
@@ -17,12 +20,12 @@ final class RemoteDataURLFactoryTest: XCTestCase {
         )
 
         let sdkVersion = AirshipVersion.version
-        XCTAssertEqual(
-            "\(config.remoteDataAPIURL)/some-path?language=en&country=US&sdk_version=\(sdkVersion)&random_value=100",
-            remoteDataURL.absoluteString
+        #expect(
+            "\(config.remoteDataAPIURL)/some-path?language=en&country=US&sdk_version=\(sdkVersion)&random_value=100" == remoteDataURL.absoluteString
         )
     }
 
+    @Test
     func testURLNoCountry() throws {
         let remoteDataURL = try! RemoteDataURLFactory.makeURL(
             config: config,
@@ -32,9 +35,8 @@ final class RemoteDataURLFactoryTest: XCTestCase {
         )
 
         let sdkVersion = AirshipVersion.version
-        XCTAssertEqual(
-            "\(config.remoteDataAPIURL)/some-path?language=br&sdk_version=\(sdkVersion)&random_value=100",
-            remoteDataURL.absoluteString
+        #expect(
+            "\(config.remoteDataAPIURL)/some-path?language=br&sdk_version=\(sdkVersion)&random_value=100" == remoteDataURL.absoluteString
         )
     }
 

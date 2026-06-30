@@ -1,12 +1,14 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable
 import AirshipCore
 
 @MainActor
-final class EventManagerTest: XCTestCase {
+@Suite
+struct EventManagerTest {
 
     private let eventAPIClient = TestEventAPIClient()
     private let eventScheduler = TestEventUploadScheduler()
@@ -20,7 +22,8 @@ final class EventManagerTest: XCTestCase {
         appKey: UUID().uuidString
     )
     private var eventManager: EventManager!
-    override func setUp() async throws {
+
+    init() {
         self.eventManager = EventManager(
             dataStore: dataStore,
             channel: channel,
@@ -31,6 +34,7 @@ final class EventManagerTest: XCTestCase {
         channel.identifier = "some channel"
     }
 
+    @Test
     func testAddEvent() async throws {
         let eventData = AirshipEventData.makeTestData()
 
@@ -38,30 +42,33 @@ final class EventManagerTest: XCTestCase {
         let events = try await eventStore.fetchEvents(
             maxBatchSizeKB: 1000
         )
-        XCTAssertEqual([eventData], events)
+        #expect([eventData] == events)
     }
 
+    @Test
     func testScheduleUpload() async throws {
         self.eventManager.uploadsEnabled = true
         await self.eventManager.scheduleUpload(eventPriority: .high)
-        XCTAssertEqual(
-            60, // min batch interval
+        #expect(
+            60 == // min batch interval
             self.eventScheduler.lastMinBatchInterval
         )
 
-        XCTAssertEqual(
-            AirshipEventPriority.high,
+        #expect(
+            AirshipEventPriority.high ==
             self.eventScheduler.lastScheduleUploadPriority
         )
     }
 
+    @Test
     func testScheduleUploadDisabled() async throws {
         self.eventManager.uploadsEnabled = false
         await self.eventManager.scheduleUpload(eventPriority: .high)
-        XCTAssertNil(self.eventScheduler.lastMinBatchInterval)
-        XCTAssertNil(self.eventScheduler.lastScheduleUploadPriority)
+        #expect(self.eventScheduler.lastMinBatchInterval == nil)
+        #expect(self.eventScheduler.lastScheduleUploadPriority == nil)
     }
 
+    @Test
     func testDeleteAll() async throws {
         let eventData = AirshipEventData.makeTestData()
 
@@ -71,9 +78,10 @@ final class EventManagerTest: XCTestCase {
         let events = try await eventStore.fetchEvents(
             maxBatchSizeKB: 1000
         )
-        XCTAssertTrue(events.isEmpty)
+        #expect(events.isEmpty)
     }
 
+    @Test
     func testEventUpload() async throws {
         self.eventManager.uploadsEnabled = true
 
@@ -96,9 +104,9 @@ final class EventManagerTest: XCTestCase {
 
         self.eventAPIClient.requestBlock = { reqEvents, channelID, reqHeaders in
             requestCalled = true
-            XCTAssertEqual(events, reqEvents)
-            XCTAssertEqual(headers, reqHeaders)
-            XCTAssertEqual(channelID, "some channel")
+            #expect(events == reqEvents)
+            #expect(headers == reqHeaders)
+            #expect(channelID == "some channel")
 
             let tuningInfo = EventUploadTuningInfo(
                 maxTotalStoreSizeKB: nil,
@@ -114,15 +122,16 @@ final class EventManagerTest: XCTestCase {
         }
 
         let result = try await self.eventScheduler.workBlock?()
-        XCTAssertEqual(AirshipWorkResult.success, result)
-        XCTAssertTrue(requestCalled)
+        #expect(AirshipWorkResult.success == result)
+        #expect(requestCalled)
 
         let storedEvents = try await self.eventStore.fetchEvents(
             maxBatchSizeKB: 1000
         )
-        XCTAssertTrue(storedEvents.isEmpty)
+        #expect(storedEvents.isEmpty)
     }
 
+    @Test
     func testEventUploadFailed() async throws {
         self.eventManager.uploadsEnabled = true
 
@@ -139,14 +148,15 @@ final class EventManagerTest: XCTestCase {
         }
 
         let result = try await self.eventScheduler.workBlock?()
-        XCTAssertEqual(AirshipWorkResult.failure, result)
+        #expect(AirshipWorkResult.failure == result)
 
         let storedEvents = try await self.eventStore.fetchEvents(
             maxBatchSizeKB: 1000
         )
-        XCTAssertEqual(1, storedEvents.count)
+        #expect(1 == storedEvents.count)
     }
 
+    @Test
     func testEventUploadNoTuningInfo() async throws {
         self.eventManager.uploadsEnabled = true
 
@@ -163,9 +173,10 @@ final class EventManagerTest: XCTestCase {
         }
 
         let result = try await self.eventScheduler.workBlock?()
-        XCTAssertEqual(AirshipWorkResult.success, result)
+        #expect(AirshipWorkResult.success == result)
     }
 
+    @Test
     func testEventUploadHeaders() async throws {
         self.eventManager.uploadsEnabled = true
         var requestCalled = false
@@ -188,7 +199,7 @@ final class EventManagerTest: XCTestCase {
                 "bar": "2",
                 "baz": "1"
             ]
-            XCTAssertEqual(expectedHeaders, reqHeaders)
+            #expect(expectedHeaders == reqHeaders)
             requestCalled = true
             return AirshipHTTPResponse(
                 result: nil,
@@ -198,10 +209,11 @@ final class EventManagerTest: XCTestCase {
         }
 
         let result = try await self.eventScheduler.workBlock?()
-        XCTAssertEqual(AirshipWorkResult.success, result)
-        XCTAssertTrue(requestCalled)
+        #expect(AirshipWorkResult.success == result)
+        #expect(requestCalled)
     }
 
+    @Test
     func testEventUploadDisabled() async throws {
         self.eventManager.uploadsEnabled = false
 
@@ -210,7 +222,7 @@ final class EventManagerTest: XCTestCase {
         )
 
         self.eventAPIClient.requestBlock = { reqEvents, _, reqHeaders in
-            XCTFail("Should not be called")
+            Issue.record("Should not be called")
 
             return AirshipHTTPResponse(
                 result: nil,
@@ -220,9 +232,10 @@ final class EventManagerTest: XCTestCase {
         }
 
         let result = try await self.eventScheduler.workBlock?()
-        XCTAssertEqual(AirshipWorkResult.success, result)
+        #expect(AirshipWorkResult.success == result)
     }
 
+    @Test
     func testEventUploadUpdatedMinInterval() async throws {
         self.eventManager.uploadsEnabled = true
 
@@ -245,11 +258,11 @@ final class EventManagerTest: XCTestCase {
         }
 
         let result = try await self.eventScheduler.workBlock?()
-        XCTAssertEqual(AirshipWorkResult.success, result)
+        #expect(AirshipWorkResult.success == result)
 
         await self.eventManager.scheduleUpload(eventPriority: .normal)
-        XCTAssertEqual(
-            100, // min batch interval
+        #expect(
+            100 == // min batch interval
             self.eventScheduler.lastMinBatchInterval
         )
     }
@@ -289,4 +302,3 @@ final class TestEventUploadScheduler: EventUploadSchedulerProtocol, @unchecked S
         self.workBlock = workBlock
     }
 }
-

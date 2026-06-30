@@ -1,17 +1,19 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
+import Foundation
 
-final class RemoteDataStoreTest: XCTestCase {
+@Suite struct RemoteDataStoreTest {
 
     private let remoteDataStore: RemoteDataStore = RemoteDataStore(
         storeName: "RemoteDataStoreTest",
         inMemory: true
     )
 
+    @Test
     func testFirstRemoteData() async throws {
         let testPayload = createRemoteDataPayload()
 
@@ -19,9 +21,10 @@ final class RemoteDataStoreTest: XCTestCase {
 
         let remoteDataStorePayloads = try await self.remoteDataStore.fetchRemoteDataFromCache()
 
-        XCTAssertEqual([testPayload], remoteDataStorePayloads)
+        #expect([testPayload] == remoteDataStorePayloads)
     }
 
+    @Test
     func testNewRemoteData() async throws {
         let testPayloads = [
             createRemoteDataPayload(),
@@ -38,7 +41,7 @@ final class RemoteDataStoreTest: XCTestCase {
                 first.type > second.type
             })
 
-        XCTAssertEqual(testPayloads, remoteDataStorePayloads)
+        #expect(testPayloads == remoteDataStorePayloads)
 
         let testPayload = createRemoteDataPayload(withType: testPayloads[1].type)
 
@@ -48,7 +51,7 @@ final class RemoteDataStoreTest: XCTestCase {
         // Verify we only have the modified message with the updated title
         remoteDataStorePayloads = try await self.remoteDataStore.fetchRemoteDataFromCache()
 
-        XCTAssertEqual([testPayload], remoteDataStorePayloads)
+        #expect([testPayload] == remoteDataStorePayloads)
     }
 
 

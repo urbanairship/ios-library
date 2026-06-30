@@ -1,18 +1,19 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @_spi(AirshipInternal) import AirshipBasement
 @testable import AirshipCore
 
-class ContactAPIClientTest: XCTestCase {
+@Suite struct ContactAPIClientTest {
 
     private let session: TestAirshipRequestSession = TestAirshipRequestSession()
     private var contactAPIClient: ContactAPIClient!
-    private var config: RuntimeConfig = RuntimeConfig.testConfig()
+    private let config: RuntimeConfig = RuntimeConfig.testConfig()
     private let currentLocale = Locale(identifier: "fr-CA")
 
-    override func setUpWithError() throws {
+    init() {
         self.session.response = HTTPURLResponse(
             url: URL(string: "https://contacts_test")!,
             statusCode: 200,
@@ -26,6 +27,7 @@ class ContactAPIClientTest: XCTestCase {
         )
     }
 
+    @Test
     func testIdentify() async throws {
         self.session.data = """
             {
@@ -58,13 +60,13 @@ class ContactAPIClientTest: XCTestCase {
             tokenExpiresInMilliseconds: 3600000
         )
 
-        XCTAssertTrue(response.isSuccess)
-        XCTAssertEqual(response.result!, expected)
+        #expect(response.isSuccess)
+        #expect(response.result! == expected)
 
         let request = session.lastRequest!
 
         let requestBody = try AirshipJSON.from(data: request.body).unWrap() as! [String: AnyHashable]
-        let expectedBody = [
+        let expectedBody: [String: AnyHashable] = [
             "device_info": [
                 "device_type": "ios"
             ],
@@ -75,12 +77,12 @@ class ContactAPIClientTest: XCTestCase {
               ]
             ]
 
-        XCTAssertEqual(expectedBody, requestBody)
-        XCTAssertEqual(request.url?.absoluteString, "\(config.deviceAPIURL!)/api/contacts/identify/v2")
-        XCTAssertEqual(request.method, "POST")
-        XCTAssertEqual(request.auth, .generatedChannelToken(identifier: "test_channel"))
-        XCTAssertEqual(
-            request.headers,
+        #expect(expectedBody == requestBody)
+        #expect(request.url?.absoluteString == "\(config.deviceAPIURL!)/api/contacts/identify/v2")
+        #expect(request.method == "POST")
+        #expect(request.auth == .generatedChannelToken(identifier: "test_channel"))
+        #expect(
+            request.headers ==
             [
                 "Content-Type": "application/json",
                 "Accept": "application/vnd.urbanairship+json; version=3;",
@@ -88,6 +90,7 @@ class ContactAPIClientTest: XCTestCase {
         )
     }
 
+    @Test
     func testResolve() async throws {
         self.session.data = """
             {
@@ -119,13 +122,13 @@ class ContactAPIClientTest: XCTestCase {
             tokenExpiresInMilliseconds: 3600000
         )
 
-        XCTAssertTrue(response.isSuccess)
-        XCTAssertEqual(response.result!, expected)
+        #expect(response.isSuccess)
+        #expect(response.result! == expected)
 
         let request = session.lastRequest!
 
         let requestBody = try AirshipJSON.from(data: request.body).unWrap() as! [String: AnyHashable]
-        let expectedBody = [
+        let expectedBody: [String: AnyHashable] = [
             "device_info": [
                 "device_type": "ios"
             ],
@@ -136,12 +139,12 @@ class ContactAPIClientTest: XCTestCase {
               ]
             ]
 
-        XCTAssertEqual(expectedBody, requestBody)
-        XCTAssertEqual(request.url?.absoluteString, "https://device-api.urbanairship.com/api/contacts/identify/v2")
-        XCTAssertEqual(request.method, "POST")
-        XCTAssertEqual(request.auth, .generatedChannelToken(identifier: "test_channel"))
-        XCTAssertEqual(
-            request.headers,
+        #expect(expectedBody == requestBody)
+        #expect(request.url?.absoluteString == "https://device-api.urbanairship.com/api/contacts/identify/v2")
+        #expect(request.method == "POST")
+        #expect(request.auth == .generatedChannelToken(identifier: "test_channel"))
+        #expect(
+            request.headers ==
             [
                 "Content-Type": "application/json",
                 "Accept": "application/vnd.urbanairship+json; version=3;",
@@ -149,6 +152,7 @@ class ContactAPIClientTest: XCTestCase {
         )
     }
 
+    @Test
     func testReset() async throws {
         self.session.data = """
             {
@@ -179,13 +183,13 @@ class ContactAPIClientTest: XCTestCase {
             tokenExpiresInMilliseconds: 3600000
         )
 
-        XCTAssertTrue(response.isSuccess)
-        XCTAssertEqual(response.result!, expected)
+        #expect(response.isSuccess)
+        #expect(response.result! == expected)
 
         let request = session.lastRequest!
 
         let requestBody = try AirshipJSON.from(data: request.body).unWrap() as! [String: AnyHashable]
-        let expectedBody = [
+        let expectedBody: [String: AnyHashable] = [
             "device_info": [
                 "device_type": "ios"
             ],
@@ -195,12 +199,12 @@ class ContactAPIClientTest: XCTestCase {
               ]
             ]
 
-        XCTAssertEqual(expectedBody, requestBody)
-        XCTAssertEqual(request.url?.absoluteString, "\(config.deviceAPIURL!)/api/contacts/identify/v2")
-        XCTAssertEqual(request.method, "POST")
-        XCTAssertEqual(request.auth, .generatedChannelToken(identifier: "test_channel"))
-        XCTAssertEqual(
-            request.headers,
+        #expect(expectedBody == requestBody)
+        #expect(request.url?.absoluteString == "\(config.deviceAPIURL!)/api/contacts/identify/v2")
+        #expect(request.method == "POST")
+        #expect(request.auth == .generatedChannelToken(identifier: "test_channel"))
+        #expect(
+            request.headers ==
             [
                 "Content-Type": "application/json",
                 "Accept": "application/vnd.urbanairship+json; version=3;",
@@ -208,6 +212,7 @@ class ContactAPIClientTest: XCTestCase {
         )
     }
 
+    @Test
     func testRegisterEmail() async throws {
         self.session.data = """
             {
@@ -227,13 +232,12 @@ class ContactAPIClientTest: XCTestCase {
             locale: currentLocale
         )
 
-        XCTAssertTrue(response.isSuccess)
+        #expect(response.isSuccess)
         if let associatedChannel = response.result, case .email = associatedChannel.channelType {
-            XCTAssertEqual("some-channel", associatedChannel.channelID)
-            let previousRequest = self.session.previousRequest!
-            XCTAssertNotNil(previousRequest)
-            XCTAssertEqual(
-                "\(config.deviceAPIURL!)/api/channels/restricted/email",
+            #expect("some-channel" == associatedChannel.channelID)
+            let previousRequest = try #require(self.session.previousRequest)
+            #expect(
+                "\(config.deviceAPIURL!)/api/channels/restricted/email" ==
                 previousRequest.url!.absoluteString
             )
 
@@ -260,14 +264,14 @@ class ContactAPIClientTest: XCTestCase {
                 ],
             ]
 
-            XCTAssertEqual(
-                previousBody,
+            #expect(
+                previousBody ==
                 previousExpectedBody
             )
 
             let lastRequest = self.session.lastRequest!
-            XCTAssertEqual(
-                "\(config.deviceAPIURL!)/api/contacts/some-contact-id",
+            #expect(
+                "\(config.deviceAPIURL!)/api/contacts/some-contact-id" ==
                 lastRequest.url!.absoluteString
             )
 
@@ -284,17 +288,18 @@ class ContactAPIClientTest: XCTestCase {
                     ]
                 ]
             ]
-            XCTAssertEqual(
-                lastBody,
+            #expect(
+                lastBody ==
                 lastExpectedBody
             )
         } else {
-            XCTAssertThrowsError("Error: Invalid associated channel type")
+            Issue.record("Error: Invalid associated channel type")
         }
         
 
     }
 
+    @Test
     func testRegisterSMS() async throws {
         self.session.data = """
             {
@@ -310,15 +315,14 @@ class ContactAPIClientTest: XCTestCase {
             locale: currentLocale
         )
 
-        XCTAssertTrue(response.isSuccess)
+        #expect(response.isSuccess)
 
         if let associatedChannel = response.result, case .sms = associatedChannel.channelType {
-            XCTAssertEqual("some-channel", associatedChannel.channelID)
+            #expect("some-channel" == associatedChannel.channelID)
             
-            let previousRequest = self.session.previousRequest!
-            XCTAssertNotNil(previousRequest)
-            XCTAssertEqual(
-                "https://device-api.urbanairship.com/api/channels/restricted/sms",
+            let previousRequest = try #require(self.session.previousRequest)
+            #expect(
+                "https://device-api.urbanairship.com/api/channels/restricted/sms" ==
                 previousRequest.url!.absoluteString
             )
             
@@ -333,14 +337,14 @@ class ContactAPIClientTest: XCTestCase {
                 "locale_country": currentLocale.getRegionCode(),
                 "locale_language": currentLocale.getLanguageCode(),
             ]
-            XCTAssertEqual(
-                previousBody as! NSDictionary,
+            #expect(
+                previousBody as! NSDictionary ==
                 previousExpectedBody as! NSDictionary
             )
             
             let lastRequest = self.session.lastRequest!
-            XCTAssertEqual(
-                "https://device-api.urbanairship.com/api/contacts/some-contact-id",
+            #expect(
+                "https://device-api.urbanairship.com/api/contacts/some-contact-id" ==
                 lastRequest.url!.absoluteString
             )
             
@@ -356,15 +360,16 @@ class ContactAPIClientTest: XCTestCase {
                     ]
                 ]
             ]
-            XCTAssertEqual(
-                lastBody as! NSDictionary,
+            #expect(
+                lastBody as! NSDictionary ==
                 lastExpectedBody as! NSDictionary
             )
         } else {
-            XCTAssertThrowsError("Error: Invalid associated channel type")
+            Issue.record("Error: Invalid associated channel type")
         }
     }
 
+    @Test
     func testRegisterOpen() async throws {
         self.session.data = """
             {
@@ -383,14 +388,13 @@ class ContactAPIClientTest: XCTestCase {
             locale: currentLocale
         )
 
-        XCTAssertTrue(response.isSuccess)
+        #expect(response.isSuccess)
         if let associatedChannel = response.result, case .open = associatedChannel.channelType {
-            XCTAssertEqual("some-channel", associatedChannel.channelID)
+            #expect("some-channel" == associatedChannel.channelID)
             
-            let previousRequest = self.session.previousRequest!
-            XCTAssertNotNil(previousRequest)
-            XCTAssertEqual(
-                "https://device-api.urbanairship.com/api/channels/restricted/open",
+            let previousRequest = try #require(self.session.previousRequest)
+            #expect(
+                "https://device-api.urbanairship.com/api/channels/restricted/open" ==
                 previousRequest.url!.absoluteString
             )
             
@@ -415,14 +419,14 @@ class ContactAPIClientTest: XCTestCase {
                     ] as [String : Any],
                 ] as [String : Any]
             ]
-            XCTAssertEqual(
-                previousBody as! NSDictionary,
+            #expect(
+                previousBody as! NSDictionary ==
                 previousExpectedBody as NSDictionary
             )
             
             let lastRequest = self.session.lastRequest!
-            XCTAssertEqual(
-                "https://device-api.urbanairship.com/api/contacts/some-contact-id",
+            #expect(
+                "https://device-api.urbanairship.com/api/contacts/some-contact-id" ==
                 lastRequest.url!.absoluteString
             )
             
@@ -438,15 +442,16 @@ class ContactAPIClientTest: XCTestCase {
                     ]
                 ]
             ]
-            XCTAssertEqual(
-                lastBody as! NSDictionary,
+            #expect(
+                lastBody as! NSDictionary ==
                 lastExpectedBody as! NSDictionary
             )
         } else {
-            XCTAssertThrowsError("Error: Invalid associated channel type")
+            Issue.record("Error: Invalid associated channel type")
         }
     }
 
+    @Test
     func testAssociateChannel() async throws {
         let response = try await contactAPIClient.associateChannel(
             contactID: "some-contact-id",
@@ -454,14 +459,14 @@ class ContactAPIClientTest: XCTestCase {
             channelType: .sms
         )
 
-        XCTAssertTrue(response.isSuccess)
+        #expect(response.isSuccess)
 
         if let associatedChannel = response.result, case .sms = associatedChannel.channelType {
-            XCTAssertEqual("some-channel", associatedChannel.channelID)
+            #expect("some-channel" == associatedChannel.channelID)
             
             let request = self.session.lastRequest!
-            XCTAssertEqual(
-                "https://device-api.urbanairship.com/api/contacts/some-contact-id",
+            #expect(
+                "https://device-api.urbanairship.com/api/contacts/some-contact-id" ==
                 request.url!.absoluteString
             )
             
@@ -477,12 +482,13 @@ class ContactAPIClientTest: XCTestCase {
                     ]
                 ]
             ]
-            XCTAssertEqual(body as! NSDictionary, expectedBody as! NSDictionary)
+            #expect(body as! NSDictionary == expectedBody as! NSDictionary)
         } else {
-            XCTAssertThrowsError("Error: Invalid associated channel type")
+            Issue.record("Error: Invalid associated channel type")
         }
     }
 
+    @Test
     func testDisassociateRegistered() async throws {
         let expectedChannelType: ChannelType = .email
         let expectedChannelID: String = "some channel"
@@ -496,11 +502,11 @@ class ContactAPIClientTest: XCTestCase {
                 optOut: true
             )
         )
-        XCTAssertTrue(response.isSuccess)
+        #expect(response.isSuccess)
 
         let request = self.session.lastRequest!
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/contacts/disassociate/\(expectedContactID)",
+        #expect(
+            "https://device-api.urbanairship.com/api/contacts/disassociate/\(expectedContactID)" ==
             request.url!.absoluteString
         )
 
@@ -515,9 +521,10 @@ class ContactAPIClientTest: XCTestCase {
             "opt_out": true
         ] as [String : Any]
 
-        XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)
+        #expect(body as NSDictionary == expectedBody as NSDictionary)
     }
 
+    @Test
     func testDisassociatePendingEmail() async throws {
         let expectedChannelType: ChannelType = .email
         let expectedEmailAddress: String = "some@email.com"
@@ -531,11 +538,11 @@ class ContactAPIClientTest: XCTestCase {
             )
         )
 
-        XCTAssertTrue(response.isSuccess)
+        #expect(response.isSuccess)
 
         let request = self.session.lastRequest!
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/contacts/disassociate/\(expectedContactID)",
+        #expect(
+            "https://device-api.urbanairship.com/api/contacts/disassociate/\(expectedContactID)" ==
             request.url!.absoluteString
         )
 
@@ -550,9 +557,10 @@ class ContactAPIClientTest: XCTestCase {
             "opt_out": false
         ] as [String : Any]
 
-        XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)
+        #expect(body as NSDictionary == expectedBody as NSDictionary)
     }
 
+    @Test
     func testDisassociatePendingSMS() async throws {
         let expectedChannelType: ChannelType = .sms
         let expectedMSISDN: String = "12345"
@@ -562,11 +570,11 @@ class ContactAPIClientTest: XCTestCase {
 
         let response = try await contactAPIClient.disassociateChannel(contactID: expectedContactID, disassociateOptions: DisassociateOptions(msisdn: expectedMSISDN, senderID: expectedSender, optOut: false))
 
-        XCTAssertTrue(response.isSuccess)
+        #expect(response.isSuccess)
 
         let request = self.session.lastRequest!
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/contacts/disassociate/\(expectedContactID)",
+        #expect(
+            "https://device-api.urbanairship.com/api/contacts/disassociate/\(expectedContactID)" ==
             request.url!.absoluteString
         )
 
@@ -582,9 +590,10 @@ class ContactAPIClientTest: XCTestCase {
             "opt_out": false
         ] as [String : Any]
 
-        XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)
+        #expect(body as NSDictionary == expectedBody as NSDictionary)
     }
 
+    @Test
     func testResendEmail() async throws {
         let expectedChannelType: ChannelType = .email
         let expectedEmail: String = "test@email.com"
@@ -592,11 +601,11 @@ class ContactAPIClientTest: XCTestCase {
         let expectedResendOptions = ResendOptions(emailAddress: expectedEmail)
 
         let response = try await contactAPIClient.resend(resendOptions: expectedResendOptions)
-        XCTAssertTrue(response.isSuccess)
+        #expect(response.isSuccess)
 
         let request = self.session.lastRequest!
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/channels/resend",
+        #expect(
+            "https://device-api.urbanairship.com/api/channels/resend" ==
             request.url!.absoluteString
         )
 
@@ -610,9 +619,10 @@ class ContactAPIClientTest: XCTestCase {
             "email_address": expectedEmail
         ] as [String : Any]
 
-        XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)
+        #expect(body as NSDictionary == expectedBody as NSDictionary)
     }
 
+    @Test
     func testResendSMS() async throws {
         let expectedChannelType: ChannelType = .sms
         let expectedMSISDN: String = "1234"
@@ -621,11 +631,11 @@ class ContactAPIClientTest: XCTestCase {
         let expectedResendOptions = ResendOptions(msisdn: expectedMSISDN, senderID: expectedSenderID)
 
         let response = try await contactAPIClient.resend(resendOptions: expectedResendOptions)
-        XCTAssertTrue(response.isSuccess)
+        #expect(response.isSuccess)
 
         let request = self.session.lastRequest!
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/channels/resend",
+        #expect(
+            "https://device-api.urbanairship.com/api/channels/resend" ==
             request.url!.absoluteString
         )
 
@@ -640,20 +650,21 @@ class ContactAPIClientTest: XCTestCase {
             "msisdn": expectedMSISDN
         ] as [String : Any]
 
-        XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)
+        #expect(body as NSDictionary == expectedBody as NSDictionary)
     }
 
+    @Test
     func testResendChannel() async throws {
         let expectedChannelType: ChannelType = .email
         let expectedChannelID: String = "some channel"
         let expectedResendOptions = ResendOptions(channelID: expectedChannelID, channelType: expectedChannelType)
 
         let response = try await contactAPIClient.resend(resendOptions: expectedResendOptions)
-        XCTAssertTrue(response.isSuccess)
+        #expect(response.isSuccess)
 
         let request = self.session.lastRequest!
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/channels/resend",
+        #expect(
+            "https://device-api.urbanairship.com/api/channels/resend" ==
             request.url!.absoluteString
         )
 
@@ -667,9 +678,10 @@ class ContactAPIClientTest: XCTestCase {
             "channel_id": expectedChannelID
         ] as [String : Any]
 
-        XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)
+        #expect(body as NSDictionary == expectedBody as NSDictionary)
     }
 
+    @Test
     func testUpdate() async throws {
         let tagUpdates = [
             TagGroupUpdate(group: "tag-set", tags: [], type: .set),
@@ -723,11 +735,11 @@ class ContactAPIClientTest: XCTestCase {
             subscriptionListUpdates: listUpdates
         )
 
-        XCTAssertTrue(response.isSuccess)
+        #expect(response.isSuccess)
 
         let request = self.session.lastRequest!
-        XCTAssertEqual(
-            "https://device-api.urbanairship.com/api/contacts/some-contact-id",
+        #expect(
+            "https://device-api.urbanairship.com/api/contacts/some-contact-id" ==
             request.url!.absoluteString
         )
 
@@ -793,6 +805,6 @@ class ContactAPIClientTest: XCTestCase {
             ],
         ] as [String : Any]
 
-        XCTAssertEqual(body as NSDictionary, expectedBody as NSDictionary)
+        #expect(body as NSDictionary == expectedBody as NSDictionary)
     }
 }

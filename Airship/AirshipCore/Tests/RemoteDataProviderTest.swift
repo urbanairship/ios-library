@@ -1,23 +1,26 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable
 import AirshipCore
+import Foundation
 
-class RemoteDataProviderTest: XCTestCase {
+@Suite
+struct RemoteDataProviderTest {
     private let delegate = TestRemoteDataProviderDelegate(
         source: .app,
         storeName: "RemoteDataProviderTest"
     )
 
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
-    private var provider: RemoteDataProvider!
+    private let provider: RemoteDataProvider
 
-    override func setUpWithError() throws {
+    init() {
         self.provider = RemoteDataProvider(dataStore: self.dataStore, delegate: self.delegate)
     }
 
+    @Test
     func testRefresh() async throws {
         let locale = Locale(identifier: "bs")
         let randomValue = 100
@@ -47,9 +50,9 @@ class RemoteDataProviderTest: XCTestCase {
         )
         
         self.delegate.fetchRemoteDataCallback = { requestLocale, requestRandomValue, lastRemoteInfo in
-            XCTAssertNil(lastRemoteInfo)
-            XCTAssertEqual(locale, requestLocale)
-            XCTAssertEqual(randomValue, requestRandomValue)
+            #expect(lastRemoteInfo == nil)
+            #expect(locale == requestLocale)
+            #expect(randomValue == requestRandomValue)
             return AirshipHTTPResponse(result: refreshResult, statusCode: 200, headers: [:])
         }
 
@@ -58,12 +61,13 @@ class RemoteDataProviderTest: XCTestCase {
             locale: locale,
             randomeValue: randomValue
         )
-        XCTAssertEqual(result, .newData)
+        #expect(result == .newData)
 
         let payloads = await self.provider.payloads(types: ["some type", "some other type"])
-        XCTAssertEqual(refreshResult.payloads, payloads)
+        #expect(refreshResult.payloads == payloads)
     }
 
+    @Test
     func testRefreshDisabled() async throws {
         let source = self.delegate.source
         self.delegate.fetchRemoteDataCallback = { _, _, _ in
@@ -94,16 +98,16 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 100
         )
-        XCTAssertEqual(refreshResult, .newData)
+        #expect(refreshResult == .newData)
 
         var payloads = await self.provider.payloads(types: ["foo"])
-        XCTAssertFalse(payloads.isEmpty)
+        #expect(!(payloads.isEmpty))
 
 
         _ = await self.provider.setEnabled(false)
 
         payloads = await self.provider.payloads(types: ["foo"])
-        XCTAssertTrue(payloads.isEmpty)
+        #expect(payloads.isEmpty)
 
         // should clear data
         refreshResult = await self.provider.refresh(
@@ -111,7 +115,7 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 100
         )
-        XCTAssertEqual(refreshResult, .newData)
+        #expect(refreshResult == .newData)
 
         // should no-op
         refreshResult = await self.provider.refresh(
@@ -119,13 +123,14 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 100
         )
-        XCTAssertEqual(refreshResult, .skipped)
+        #expect(refreshResult == .skipped)
 
         _ = await self.provider.setEnabled(true)
         payloads = await self.provider.payloads(types: ["foo"])
-        XCTAssertTrue(payloads.isEmpty)
+        #expect(payloads.isEmpty)
     }
 
+    @Test
     func testRefreshSkipped() async throws {
         let remoteDataInfo = RemoteDataInfo(
             url: URL(string: "example://")!,
@@ -155,15 +160,15 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 100
         )
-        XCTAssertEqual(refreshResult, .newData)
+        #expect(refreshResult == .newData)
         var payloads = await self.provider.payloads(types: ["foo"])
-        XCTAssertFalse(payloads.isEmpty)
+        #expect(!(payloads.isEmpty))
 
         // Refresh same data
         self.delegate.isRemoteDataInfoUpToDateCallback = { info, locale, randomValue in
-            XCTAssertEqual(remoteDataInfo, info)
-            XCTAssertEqual(Locale.current, locale)
-            XCTAssertEqual(200, randomValue)
+            #expect(remoteDataInfo == info)
+            #expect(Locale.current == locale)
+            #expect(200 == randomValue)
             return true
         }
 
@@ -172,9 +177,9 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 200
         )
-        XCTAssertEqual(refreshResult, .skipped)
+        #expect(refreshResult == .skipped)
         payloads = await self.provider.payloads(types: ["foo"])
-        XCTAssertFalse(payloads.isEmpty)
+        #expect(!(payloads.isEmpty))
 
         // Change token update
         refreshResult = await self.provider.refresh(
@@ -182,15 +187,15 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 200
         )
-        XCTAssertEqual(refreshResult, .newData)
+        #expect(refreshResult == .newData)
         payloads = await self.provider.payloads(types: ["foo"])
-        XCTAssertFalse(payloads.isEmpty)
+        #expect(!(payloads.isEmpty))
 
         // Out of date
         self.delegate.isRemoteDataInfoUpToDateCallback = { info, locale, randomValue in
-            XCTAssertEqual(remoteDataInfo, info)
-            XCTAssertEqual(Locale.current, locale)
-            XCTAssertEqual(200, randomValue)
+            #expect(remoteDataInfo == info)
+            #expect(Locale.current == locale)
+            #expect(200 == randomValue)
             return false
         }
 
@@ -199,18 +204,19 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 200
         )
-        XCTAssertEqual(refreshResult, .newData)
+        #expect(refreshResult == .newData)
         payloads = await self.provider.payloads(types: ["foo"])
-        XCTAssertFalse(payloads.isEmpty)
+        #expect(!(payloads.isEmpty))
     }
 
+    @Test
     func testStatus() async throws {
         let de = Locale(identifier: "de")
 
         var status: RemoteDataSourceStatus!
         status = await self.provider.status(changeToken: "change", locale: de, randomeValue: 100)
         // No data
-        XCTAssertEqual(status, .outOfDate)
+        #expect(status == .outOfDate)
 
         let remoteDataInfo = RemoteDataInfo(
             url: URL(string: "example://")!,
@@ -248,11 +254,11 @@ class RemoteDataProviderTest: XCTestCase {
             return true
         }
         status = await self.provider.status(changeToken: "change", locale: de, randomeValue: 100)
-        XCTAssertEqual(status, .upToDate)
+        #expect(status == .upToDate)
 
         // Stale
         status = await self.provider.status(changeToken: "some other", locale: de, randomeValue: 100)
-        XCTAssertEqual(status, .stale)
+        #expect(status == .stale)
 
         self.delegate.isRemoteDataInfoUpToDateCallback = { info, locale, randomValue in
             return false
@@ -260,13 +266,14 @@ class RemoteDataProviderTest: XCTestCase {
 
         // Out of date from random value
         status = await self.provider.status(changeToken: "change", locale: de, randomeValue: 200)
-        XCTAssertEqual(status, .outOfDate)
+        #expect(status == .outOfDate)
 
         // Out of date check over stale
         status = await self.provider.status(changeToken: "some other", locale: de, randomeValue: 100)
-        XCTAssertEqual(status, .outOfDate)
+        #expect(status == .outOfDate)
     }
 
+    @Test
     func testRefresh304() async throws {
         let remoteDataInfo = RemoteDataInfo(
             url: URL(string: "example://")!,
@@ -296,7 +303,7 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 100
         )
-        XCTAssertEqual(refreshResult, .newData)
+        #expect(refreshResult == .newData)
 
         // 304
         self.delegate.fetchRemoteDataCallback = { _, _, _ in
@@ -308,9 +315,10 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 200
         )
-        XCTAssertEqual(refreshResult, .skipped)
+        #expect(refreshResult == .skipped)
     }
 
+    @Test
     func testRefresh304WithoutLastModifiedFails() async throws {
         self.delegate.fetchRemoteDataCallback = { _, _, _ in
             return AirshipHTTPResponse(result: nil, statusCode: 304, headers: [:])
@@ -321,10 +329,11 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 100
         )
-        XCTAssertEqual(refreshResult, .failed)
+        #expect(refreshResult == .failed)
     }
 
 
+    @Test
     func testRefreshClientError() async throws {
         self.delegate.fetchRemoteDataCallback = { _, _, _ in
             return AirshipHTTPResponse(result: nil, statusCode: 400, headers: [:])
@@ -335,9 +344,10 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 100
         )
-        XCTAssertEqual(refreshResult, .failed)
+        #expect(refreshResult == .failed)
     }
 
+    @Test
     func testRefreshServerError() async throws {
         self.delegate.fetchRemoteDataCallback = { _, _, _ in
             return AirshipHTTPResponse(result: nil, statusCode: 500, headers: [:])
@@ -348,9 +358,10 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 100
         )
-        XCTAssertEqual(refreshResult, .failed)
+        #expect(refreshResult == .failed)
     }
 
+    @Test
     func testRefreshThrows() async throws {
         self.delegate.fetchRemoteDataCallback = { _, _, _ in
             throw AirshipErrors.error("some error")
@@ -361,9 +372,10 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 100
         )
-        XCTAssertEqual(refreshResult, .failed)
+        #expect(refreshResult == .failed)
     }
 
+    @Test
     func testNotifyOutdated() async throws {
         let remoteDataInfo = RemoteDataInfo(
             url: URL(string: "example://")!,
@@ -399,8 +411,8 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 100
         )
-        XCTAssertEqual(refreshResult, .newData)
-        XCTAssertEqual(1, requestCount.value)
+        #expect(refreshResult == .newData)
+        #expect(1 == requestCount.value)
 
         // skipped
         refreshResult = await self.provider.refresh(
@@ -408,8 +420,8 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 100
         )
-        XCTAssertEqual(refreshResult, .skipped)
-        XCTAssertEqual(1, requestCount.value)
+        #expect(refreshResult == .skipped)
+        #expect(1 == requestCount.value)
 
 
         // Notify different outdated remote info
@@ -427,8 +439,8 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 100
         )
-        XCTAssertEqual(refreshResult, .skipped)
-        XCTAssertEqual(1, requestCount.value)
+        #expect(refreshResult == .skipped)
+        #expect(1 == requestCount.value)
 
         // Notify outdated remote info
         _ = await self.provider.notifyOutdated(
@@ -441,10 +453,11 @@ class RemoteDataProviderTest: XCTestCase {
             locale: Locale.current,
             randomeValue: 100
         )
-        XCTAssertEqual(refreshResult, .newData)
-        XCTAssertEqual(2, requestCount.value)
+        #expect(refreshResult == .newData)
+        #expect(2 == requestCount.value)
     }
 
+    @Test
     func testIsCurrent() async throws {
         let remoteDataInfo = RemoteDataInfo(
             url: URL(string: "example://")!,
@@ -458,7 +471,7 @@ class RemoteDataProviderTest: XCTestCase {
             randomeValue: 100,
             remoteDataInfo: remoteDataInfo
         )
-        XCTAssertFalse(isCurrent)
+        #expect(!(isCurrent))
 
 
         self.delegate.fetchRemoteDataCallback = { _, _, _ in
@@ -478,23 +491,24 @@ class RemoteDataProviderTest: XCTestCase {
         )
 
         self.delegate.isRemoteDataInfoUpToDateCallback = { currentInfo, locale, randomValue in
-            XCTAssertEqual(currentInfo, remoteDataInfo)
-            XCTAssertEqual(Locale.current, locale)
-            XCTAssertEqual(0, randomValue)
+            #expect(currentInfo == remoteDataInfo)
+            #expect(Locale.current == locale)
+            #expect(0 == randomValue)
             return true
         }
 
         isCurrent = await self.provider.isCurrent(locale: Locale.current, randomeValue: 0, remoteDataInfo: remoteDataInfo)
-        XCTAssertTrue(isCurrent)
+        #expect(isCurrent)
 
         self.delegate.isRemoteDataInfoUpToDateCallback = { _, _, _ in
             return false
         }
 
         isCurrent = await self.provider.isCurrent(locale: Locale.current, randomeValue: 0, remoteDataInfo: remoteDataInfo)
-        XCTAssertFalse(isCurrent)
+        #expect(!(isCurrent))
     }
 
+    @Test
     func testIsCurrentDifferentRemoteDataInfo() async throws {
         let remoteDataInfo = RemoteDataInfo(
             url: URL(string: "example://")!,
@@ -523,7 +537,7 @@ class RemoteDataProviderTest: XCTestCase {
         }
 
         var isCurrent = await self.provider.isCurrent(locale: Locale.current, randomeValue: 0, remoteDataInfo: remoteDataInfo)
-        XCTAssertTrue(isCurrent)
+        #expect(isCurrent)
 
         let updatedRemoteDataInfo = RemoteDataInfo(
             url: URL(string: "example://")!,
@@ -532,7 +546,7 @@ class RemoteDataProviderTest: XCTestCase {
         )
 
         isCurrent = await self.provider.isCurrent(locale: Locale.current, randomeValue: 0, remoteDataInfo: updatedRemoteDataInfo)
-        XCTAssertFalse(isCurrent)
+        #expect(!(isCurrent))
     }
 }
 

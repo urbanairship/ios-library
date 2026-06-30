@@ -1,26 +1,31 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @testable
 import AirshipCore
 
-final class ModifyAttributesActionTest: XCTestCase {
+@Suite(.timeLimit(.minutes(1)))
+struct ModifyAttributesActionTest {
 
     private let channel = TestChannel()
     private let contact = TestContact()
     private let push = TestPush()
     private let date = UATestDate()
-    private var action: ModifyAttributesAction!
+    private let action: ModifyAttributesAction
 
-    override func setUp() async throws {
+    init() async throws {
         date.dateOverride = Date()
+        let channel = self.channel
+        let contact = self.contact
         action = ModifyAttributesAction(
-            channel: { [channel] in return channel },
-            contact: { [contact] in return contact }
+            channel: { channel },
+            contact: { contact }
         )
     }
 
+    @Test
     func testAcceptsArguments() async throws {
         let validValue = [
             "channel": [
@@ -46,22 +51,23 @@ final class ModifyAttributesActionTest: XCTestCase {
         for situation in validSituations {
             let args = ActionArguments(value: try AirshipJSON.wrap(validValue), situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertTrue(result)
+            #expect(result)
         }
 
         for situation in validSituations {
             let args = ActionArguments(situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!(result))
         }
 
         for situation in rejectedSituations {
             let args = ActionArguments(value: try AirshipJSON.wrap(validValue), situation: situation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!(result))
         }
     }
     
+    @Test
     func testJsonValueNewFormat() async throws {
         // name carries "attributeName#instanceId", value is the plain JSON object
         let value = [
@@ -85,14 +91,14 @@ final class ModifyAttributesActionTest: XCTestCase {
             )
         ]
 
-        let attributesSet = self.expectation(description: "attributes")
+        let attributesSet = AirshipTestExpectation(description: "attributes")
 
         self.contact.attributeEditor = AttributesEditor(date: self.date) { _ in
-            XCTFail("shouldn't be called")
+            Issue.record("shouldn't be called")
         }
 
         self.channel.attributeEditor = AttributesEditor(date: self.date) { attributes in
-            XCTAssertEqual(expectedAttributes, attributes)
+            #expect(expectedAttributes == attributes)
             attributesSet.fulfill()
         }
 
@@ -106,6 +112,7 @@ final class ModifyAttributesActionTest: XCTestCase {
         await fulfillment(of: [attributesSet])
     }
 
+    @Test
     func testJsonValueNewFormatNoExpiration() async throws {
         let value = [
             [
@@ -127,14 +134,14 @@ final class ModifyAttributesActionTest: XCTestCase {
             )
         ]
 
-        let attributesSet = self.expectation(description: "attributes")
+        let attributesSet = AirshipTestExpectation(description: "attributes")
 
         self.contact.attributeEditor = AttributesEditor(date: self.date) { _ in
-            XCTFail("shouldn't be called")
+            Issue.record("shouldn't be called")
         }
 
         self.channel.attributeEditor = AttributesEditor(date: self.date) { attributes in
-            XCTAssertEqual(expectedAttributes, attributes)
+            #expect(expectedAttributes == attributes)
             attributesSet.fulfill()
         }
 
@@ -148,6 +155,7 @@ final class ModifyAttributesActionTest: XCTestCase {
         await fulfillment(of: [attributesSet])
     }
 
+    @Test
     func testAcceptReturnsFalseForInvalidJsonValue() async throws {
         let jsons: [[[String: Any]]] = [
             // value key has no "#" → not a valid instance attribute
@@ -209,10 +217,11 @@ final class ModifyAttributesActionTest: XCTestCase {
         for item in jsons {
             let args = ActionArguments(value: try AirshipJSON.wrap(item), situation: .manualInvocation)
             let result = await self.action.accepts(arguments: args)
-            XCTAssertFalse(result)
+            #expect(!(result))
         }
     }
 
+    @Test
     func testPerform() async throws {
         let value: [String: Any] = [
             "channel": [
@@ -255,13 +264,13 @@ final class ModifyAttributesActionTest: XCTestCase {
             )
         ]
 
-        let attributesSet = self.expectation(description: "attributes")
+        let attributesSet = AirshipTestExpectation(description: "attributes")
         attributesSet.expectedFulfillmentCount = 2
 
         self.channel.attributeEditor = AttributesEditor(
             date: self.date
         ) { attributes in
-            XCTAssertEqual(expectedChannelAttributes, attributes)
+            #expect(expectedChannelAttributes == attributes)
             attributesSet.fulfill()
         }
 
@@ -269,7 +278,7 @@ final class ModifyAttributesActionTest: XCTestCase {
         self.contact.attributeEditor = AttributesEditor(
             date: self.date
         ) { attributes in
-            XCTAssertEqual(expectedContactAttributes, attributes)
+            #expect(expectedContactAttributes == attributes)
             attributesSet.fulfill()
         }
 
@@ -285,6 +294,7 @@ final class ModifyAttributesActionTest: XCTestCase {
 
     }
     
+    @Test
     func testJsonValue() async throws {
         // name carries "attributeName#instanceId", value is the plain JSON object
         let value = [
@@ -308,18 +318,18 @@ final class ModifyAttributesActionTest: XCTestCase {
             )
         ]
         
-        let attributesSet = self.expectation(description: "attributes")
+        let attributesSet = AirshipTestExpectation(description: "attributes")
         
         self.contact.attributeEditor = AttributesEditor(
             date: self.date
         ) { attributes in
-            XCTFail("shouldn't be called")
+            Issue.record("shouldn't be called")
         }
 
         self.channel.attributeEditor = AttributesEditor(
             date: self.date
         ) { attributes in
-            XCTAssertEqual(expectedAttributes, attributes)
+            #expect(expectedAttributes == attributes)
             attributesSet.fulfill()
         }
         
@@ -333,6 +343,7 @@ final class ModifyAttributesActionTest: XCTestCase {
         await fulfillment(of: [attributesSet])
     }
     
+    @Test
     func testJsonValueNoExpiration() async throws {
         // name carries "attributeName#instanceId", value is the plain JSON object
         let value = [
@@ -355,18 +366,18 @@ final class ModifyAttributesActionTest: XCTestCase {
             )
         ]
         
-        let attributesSet = self.expectation(description: "attributes")
+        let attributesSet = AirshipTestExpectation(description: "attributes")
         
         self.contact.attributeEditor = AttributesEditor(
             date: self.date
         ) { attributes in
-            XCTFail("shouldn't be called")
+            Issue.record("shouldn't be called")
         }
 
         self.channel.attributeEditor = AttributesEditor(
             date: self.date
         ) { attributes in
-            XCTAssertEqual(expectedAttributes, attributes)
+            #expect(expectedAttributes == attributes)
             attributesSet.fulfill()
         }
         

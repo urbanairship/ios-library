@@ -1,12 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 import Foundation
 
 @testable
 @_spi(AirshipInternal) import AirshipCore
 
-final class TestAssetDownloaderSession: AssetDownloaderSession, @unchecked Sendable {
+fileprivate final class TestAssetDownloaderSession: AssetDownloaderSession, @unchecked Sendable {
     var nextData: Data?
     var nextError: Error?
     var nextResponse: URLResponse?
@@ -18,17 +18,18 @@ final class TestAssetDownloaderSession: AssetDownloaderSession, @unchecked Senda
     }
 }
 
-final class DefaultAssetDownloaderTest: XCTestCase {
-    var downloader: DefaultAssetDownloader!
-    var mockSession: TestAssetDownloaderSession!
+@Suite struct DefaultAssetDownloaderTest {
+    let downloader: DefaultAssetDownloader
+    fileprivate let mockSession: TestAssetDownloaderSession
     let testURL = URL(string: "https://airship.com/whatever")!
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        mockSession = TestAssetDownloaderSession()
-        downloader = DefaultAssetDownloader(session: mockSession)
+    init() throws {
+        let mockSession = TestAssetDownloaderSession()
+        self.mockSession = mockSession
+        self.downloader = DefaultAssetDownloader(session: mockSession)
     }
 
+    @Test
     func testDownloadAssetDataMatches() async throws {
         let expectedData = Data("Cool story".utf8)
         mockSession.nextData = expectedData
@@ -37,19 +38,7 @@ final class DefaultAssetDownloaderTest: XCTestCase {
 
         let downloadedData = try Data(contentsOf: tempURL)
 
-        XCTAssertTrue(FileManager.default.fileExists(atPath: tempURL.path), "Downloaded file should exist at the temp URL")
-        XCTAssertEqual(downloadedData, expectedData, "Downloaded data at the temp URL should match the expected data.")
-    }
-
-    override func tearDownWithError() throws {
-        let fileManager = FileManager.default
-        let tempFileURL = fileManager.temporaryDirectory.appendingPathComponent(testURL.lastPathComponent)
-        if fileManager.fileExists(atPath: tempFileURL.path) {
-            try fileManager.removeItem(at: tempFileURL)
-        }
-
-        downloader = nil
-        mockSession = nil
-        try super.tearDownWithError()
+        #expect(FileManager.default.fileExists(atPath: tempURL.path), "Downloaded file should exist at the temp URL")
+        #expect(downloadedData == expectedData, "Downloaded data at the temp URL should match the expected data.")
     }
 }

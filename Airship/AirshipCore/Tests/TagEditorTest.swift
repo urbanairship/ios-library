@@ -1,11 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
 
-class TagEditorTest: XCTestCase {
+@Suite struct TagEditorTest {
 
+    @Test
     func testEditor() throws {
         var tags = ["cool", "story"]
         let editor = TagEditor { tagApplicator in
@@ -16,13 +17,13 @@ class TagEditorTest: XCTestCase {
         editor.remove(["story"])
         editor.apply()
 
-        XCTAssertEqual(tags, ["cool", "dog", "cat"])
+        #expect(tags == ["cool", "dog", "cat"])
 
         editor.set(["what", "cool"])
         editor.add(["nice"])
         editor.remove(["cool"])
         editor.apply()
 
-        XCTAssertEqual(tags, ["what", "nice"])
+        #expect(tags == ["what", "nice"])
     }
 }

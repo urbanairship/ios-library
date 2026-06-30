@@ -1,20 +1,22 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
+import Foundation
 
 @_spi(AirshipInternal) import AirshipBasement
 @testable import AirshipCore
 
 @MainActor
-final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
+@Suite(.timeLimit(.minutes(1)))
+struct DefaultAirshipRequestSessionTest {
 
     private let testURLSession = TestURLRequestSession()
     private var airshipSession: DefaultAirshipRequestSession!
-    private var nonce: String = UUID().uuidString
+    private let nonce: String = UUID().uuidString
 
-    private var date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
+    private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
 
-    override func setUp() async throws {
+    init() {
         let nonce = self.nonce
         self.airshipSession = DefaultAirshipRequestSession(
             appKey: "testAppKey",
@@ -26,6 +28,7 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
         }
     }
 
+    @Test
     func testDefaultHeaders() async throws {
         let request = AirshipRequest(url: URL(string: "http://neat.com"))
 
@@ -38,9 +41,10 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
             "X-UA-App-Key": "testAppKey",
         ]
 
-        XCTAssertEqual(expected, headers)
+        #expect(expected == headers)
     }
 
+    @Test
     func testCombinedHeaders() async throws {
         let request = AirshipRequest(
             url: URL(string: "http://neat.com"),
@@ -60,9 +64,10 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
             "X-UA-App-Key": "testAppKey"
         ]
 
-        XCTAssertEqual(expected, headers)
+        #expect(expected == headers)
     }
 
+    @Test
     func testBasicAuth() async throws {
         let request = AirshipRequest(
             url: URL(string: "http://neat.com"),
@@ -74,9 +79,10 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
         let auth = testURLSession.requests.last?.allHTTPHeaderFields?[
             "Authorization"
         ]
-        XCTAssertEqual("Basic bmFtZTpwYXNzd29yZA==", auth)
+        #expect("Basic bmFtZTpwYXNzd29yZA==" == auth)
     }
 
+    @Test
     func testAppAuth() async throws {
         let request = AirshipRequest(
             url: URL(string: "http://neat.com"),
@@ -88,13 +94,14 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
         let auth = testURLSession.requests.last?.allHTTPHeaderFields?[
             "Authorization"
         ]
-        XCTAssertEqual("Basic dGVzdEFwcEtleTp0ZXN0QXBwU2VjcmV0", auth)
+        #expect("Basic dGVzdEFwcEtleTp0ZXN0QXBwU2VjcmV0" == auth)
     }
 
+    @Test
     @MainActor
     func testChannelAuthToken() async throws {
         let authProvider = TestAuthTokenProvider() { identifier in
-            XCTAssertEqual("some identifier", identifier)
+            #expect("some identifier" == identifier)
             return "some auth token"
         }
         airshipSession.channelAuthTokenProvider = authProvider
@@ -116,13 +123,14 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
             authHeaders[key] != nil
         })
 
-        XCTAssertEqual(authHeaders, headers)
+        #expect(authHeaders == headers)
     }
 
+    @Test
     @MainActor
     func testContactAuthToken() async throws {
         let authProvider = TestAuthTokenProvider() { identifier in
-            XCTAssertEqual("some contact", identifier)
+            #expect("some contact" == identifier)
             return "some auth token"
         }
         airshipSession.contactAuthTokenProvider = authProvider
@@ -144,9 +152,10 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
             authHeaders[key] != nil
         })
 
-        XCTAssertEqual(authHeaders, headers)
+        #expect(authHeaders == headers)
     }
 
+    @Test
     func testGeneratedAppToken() async throws {
         let request = AirshipRequest(
             url: URL(string: "http://neat.com"),
@@ -172,9 +181,10 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
             authHeaders[key] != nil
         })
 
-        XCTAssertEqual(authHeaders, headers)
+        #expect(authHeaders == headers)
     }
 
+    @Test
     func testGeneratedChannelToken() async throws {
         let request = AirshipRequest(
             url: URL(string: "http://neat.com"),
@@ -201,13 +211,14 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
             authHeaders[key] != nil
         })
 
-        XCTAssertEqual(authHeaders, headers)
+        #expect(authHeaders == headers)
     }
 
+    @Test
     @MainActor
     func testExpiredChannelAuth() async throws {
         let authProvider = TestAuthTokenProvider() { identifier in
-            XCTAssertEqual("some identifier", identifier)
+            #expect("some identifier" == identifier)
             return "some auth token"
         }
 
@@ -225,10 +236,11 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
 
         let _ = try? await self.airshipSession.performHTTPRequest(request)
 
-        XCTAssertEqual(2, authProvider.resolveAuthCount)
-        XCTAssertEqual(["some auth token", "some auth token"], authProvider.expiredTokens)
+        #expect(2 == authProvider.resolveAuthCount)
+        #expect(["some auth token", "some auth token"] == authProvider.expiredTokens)
     }
 
+    @Test
     @MainActor
     func testResolveAuthSequentially() async throws {
 
@@ -266,9 +278,10 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
             }
         }
 
-        XCTAssertEqual(1, authProvider.resolveAuthCount)
+        #expect(1 == authProvider.resolveAuthCount)
     }
 
+    @Test
     @MainActor
     func testNilChannelAuthProviderThrows() async throws {
         let request = AirshipRequest(
@@ -278,10 +291,11 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
 
         do {
             let _ = try await self.airshipSession.performHTTPRequest(request)
-            XCTFail()
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     @MainActor
     func testNilContactAuthProviderThrows() async throws {
         let request = AirshipRequest(
@@ -291,10 +305,11 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
 
         do {
             let _ = try await self.airshipSession.performHTTPRequest(request)
-            XCTFail()
+            Issue.record("Should throw")
         } catch {}
     }
 
+    @Test
     func testBearerAuth() async throws {
         let request = AirshipRequest(
             url: URL(string: "http://neat.com"),
@@ -306,9 +321,10 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
         let auth = testURLSession.requests.last?.allHTTPHeaderFields?[
             "Authorization"
         ]
-        XCTAssertEqual("Bearer some token", auth)
+        #expect("Bearer some token" == auth)
     }
 
+    @Test
     func testBody() async throws {
         let request = AirshipRequest(
             url: URL(string: "http://neat.com"),
@@ -318,9 +334,10 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
         let _ = try? await self.airshipSession.performHTTPRequest(request)
 
         let body = testURLSession.requests.last?.httpBody
-        XCTAssertEqual(request.body, body)
+        #expect(request.body == body)
     }
 
+    @Test
     func testMethod() async throws {
         let request = AirshipRequest(
             url: URL(string: "http://neat.com"),
@@ -330,9 +347,10 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
         let _ = try? await self.airshipSession.performHTTPRequest(request)
 
         let method = testURLSession.requests.last?.httpMethod
-        XCTAssertEqual("HEAD", method)
+        #expect("HEAD" == method)
     }
 
+    @Test
     func testDeflateBody() async throws {
         let request = AirshipRequest(
             url: URL(string: "http://neat.com"),
@@ -343,15 +361,16 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
         let _ = try? await self.airshipSession.performHTTPRequest(request)
 
         let body = testURLSession.requests.last?.httpBody
-        XCTAssertEqual(
-            "S8pPqQQA",
+        #expect(
+            "S8pPqQQA" ==
             body?.base64EncodedString()
         )
 
         let contentEncoding = testURLSession.requests.last?.allHTTPHeaderFields?["Content-Encoding"]
-        XCTAssertEqual("deflate", contentEncoding)
+        #expect("deflate" == contentEncoding)
     }
 
+    @Test
     func testDeflateRoundTrip() throws {
         let testInputs: [Data] = [
             "body".data(using: .utf8)!,
@@ -365,14 +384,15 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
             let compressed = try (input as NSData).compressed(using: .zlib) as Data
             let decompressed = try (compressed as NSData).decompressed(using: .zlib) as Data
 
-            XCTAssertEqual(
-                input,
+            #expect(
+                input ==
                 decompressed,
                 "Deflate round-trip failed for input \(index) (size \(input.count) bytes)"
             )
         }
     }
 
+    @Test
     func testRequest() async throws {
         let request = AirshipRequest(
             url: URL(string: "https://airship.com")
@@ -390,10 +410,11 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
             return String(data: data!, encoding: .utf8)
         }
 
-        XCTAssertEqual("Neat", response.result)
-        XCTAssertEqual(301, response.statusCode)
+        #expect("Neat" == response.result)
+        #expect(301 == response.statusCode)
     }
 
+    @Test
     func testNilURL() async throws {
         let request = AirshipRequest(
             url: nil,
@@ -403,12 +424,13 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
 
         do {
             let _ = try await self.airshipSession.performHTTPRequest(request)
-            XCTFail()
+            Issue.record("Should throw")
         } catch {
 
         }
     }
 
+    @Test
     func testParseError() async throws {
         let request = AirshipRequest(
             url: URL(string: "https://airship.com/something")!
@@ -425,7 +447,7 @@ final class DefaultAirshipRequestSessionTest: AirshipBaseTest {
                 _ in
                 throw AirshipErrors.error("NEAT!")
             }
-            XCTFail()
+            Issue.record("Should throw")
         } catch {
 
         }

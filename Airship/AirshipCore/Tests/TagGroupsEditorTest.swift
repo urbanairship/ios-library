@@ -1,11 +1,13 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 
 @testable import AirshipCore
 
-class TagGroupsEditorTest: XCTestCase {
+@Suite
+struct TagGroupsEditorTest {
 
+    @Test
     func testEditor() throws {
         var out: [TagGroupUpdate]?
 
@@ -17,9 +19,10 @@ class TagGroupsEditorTest: XCTestCase {
         editor.remove(["tag one"], group: "some group")
         editor.apply()
 
-        XCTAssertEqual(2, out?.count)
+        #expect(2 == out?.count)
     }
 
+    @Test
     func testInvalidTagGroup() throws {
         var out: [TagGroupUpdate]?
 
@@ -32,9 +35,10 @@ class TagGroupsEditorTest: XCTestCase {
         editor.remove(["tag one"], group: "")
         editor.apply()
 
-        XCTAssertTrue(out?.isEmpty ?? false)
+        #expect(out?.isEmpty ?? false)
     }
 
+    @Test
     func testEmptyTags() throws {
         var out: [TagGroupUpdate]?
 
@@ -47,11 +51,12 @@ class TagGroupsEditorTest: XCTestCase {
         editor.remove([], group: "group three")
         editor.apply()
 
-        XCTAssertEqual(1, out?.count)
-        XCTAssertEqual(out?.first?.group, "group two")
-        XCTAssertTrue(out?.first?.tags.isEmpty ?? false)
+        #expect(1 == out?.count)
+        #expect(out?.first?.group == "group two")
+        #expect(out?.first?.tags.isEmpty ?? false)
     }
 
+    @Test
     func testNormalizeTags() throws {
         var out: [TagGroupUpdate]?
 
@@ -65,13 +70,14 @@ class TagGroupsEditorTest: XCTestCase {
         )
         editor.apply()
 
-        XCTAssertEqual(1, out?.count)
-        XCTAssertEqual(out?.first?.group, "group one")
+        #expect(1 == out?.count)
+        #expect(out?.first?.group == "group one")
 
         let tags = ["foo", "bar", "neat tag", "cool"]
-        XCTAssertEqual(tags, out?.first?.tags)
+        #expect(tags == out?.first?.tags)
     }
 
+    @Test
     func testPreventDeviceTagGroup() throws {
         var out: [TagGroupUpdate]?
 
@@ -82,9 +88,10 @@ class TagGroupsEditorTest: XCTestCase {
         editor.add(["cool"], group: "ua_device")
         editor.apply()
 
-        XCTAssertTrue(out?.isEmpty ?? false)
+        #expect(out?.isEmpty ?? false)
     }
 
+    @Test
     func testAllowDeviceTagGroup() throws {
         var out: [TagGroupUpdate]?
 
@@ -95,6 +102,6 @@ class TagGroupsEditorTest: XCTestCase {
         editor.add(["cool"], group: "ua_device")
         editor.apply()
 
-        XCTAssertEqual(1, out?.count)
+        #expect(1 == out?.count)
     }
 }

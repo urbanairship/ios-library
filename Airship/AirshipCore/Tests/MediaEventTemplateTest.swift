@@ -1,59 +1,66 @@
 /* Copyright Airship and Contributors */
 
-import XCTest
+import Testing
 @testable import AirshipCore
+import Foundation
 
-final class MediaEventTemplateTest: XCTestCase {
+@Suite struct MediaEventTemplateTest {
 
+    @Test
     func testBrowsed() {
         let event = CustomEvent(mediaTemplate: .browsed)
-        XCTAssertEqual("browsed_content", event.eventName)
-        XCTAssertEqual("media", event.templateType)
+        #expect("browsed_content" == event.eventName)
+        #expect("media" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = ["ltv": false]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testConsumed() {
         let event = CustomEvent(mediaTemplate: .consumed)
-        XCTAssertEqual("consumed_content", event.eventName)
-        XCTAssertEqual("media", event.templateType)
+        #expect("consumed_content" == event.eventName)
+        #expect("media" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = ["ltv": false]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testShared() {
         let event = CustomEvent(mediaTemplate: .shared(source: "some source", medium: "some medium"))
-        XCTAssertEqual("shared_content", event.eventName)
-        XCTAssertEqual("media", event.templateType)
+        #expect("shared_content" == event.eventName)
+        #expect("media" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = [
             "ltv": false,
             "source": "some source",
             "medium": "some medium"
         ]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testSharedEmptyDetails() {
         let event = CustomEvent(mediaTemplate: .shared())
-        XCTAssertEqual("shared_content", event.eventName)
-        XCTAssertEqual("media", event.templateType)
+        #expect("shared_content" == event.eventName)
+        #expect("media" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = ["ltv": false]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testStarred() {
         let event = CustomEvent(mediaTemplate: .starred)
-        XCTAssertEqual("starred_content", event.eventName)
-        XCTAssertEqual("media", event.templateType)
+        #expect("starred_content" == event.eventName)
+        #expect("media" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = ["ltv": false]
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 
+    @Test
     func testProperties() {
         let date = Date.now
         let properties = CustomEvent.MediaProperties(
@@ -71,8 +78,8 @@ final class MediaEventTemplateTest: XCTestCase {
             mediaTemplate: .shared(source: "some source", medium: "some medium"),
             properties: properties
         )
-        XCTAssertEqual("shared_content", event.eventName)
-        XCTAssertEqual("media", event.templateType)
+        #expect("shared_content" == event.eventName)
+        #expect("media" == event.templateType)
 
         let expectedProperties: [String: AirshipJSON] = [
             "id": "some id",
@@ -87,6 +94,6 @@ final class MediaEventTemplateTest: XCTestCase {
             "medium": "some medium"
         ]
 
-        XCTAssertEqual(expectedProperties, event.properties)
+        #expect(expectedProperties == event.properties)
     }
 }
