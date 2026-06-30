@@ -63,7 +63,7 @@ public final class Thomas {
 
         var dismiss: (@MainActor @Sendable () -> Void)?
         try displayable.display { windowInfo in
-#if !os(macOS)
+#if !os(tvOS) && !os(watchOS) && !os(macOS)
             let windowScene = ThomasWindowScene(try? displayTarget.sceneProvider())
 #else
             let windowScene = ThomasWindowScene()
@@ -97,7 +97,7 @@ public final class Thomas {
 
         var dismiss: (@MainActor @Sendable () -> Void)?
         try displayable.display { _ in
-#if !os(macOS)
+#if !os(tvOS) && !os(watchOS) && !os(macOS)
             let windowScene = ThomasWindowScene(try? displayTarget.sceneProvider())
 #else
             let windowScene = ThomasWindowScene()

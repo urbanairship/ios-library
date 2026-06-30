@@ -70,7 +70,7 @@ struct ThomasAssociatedLabelResolverTest {
     func mergingAddsLabelFromResponse() throws {
         let resolver = ThomasAssociatedLabelResolver(
             layout: try makeLayout(viewJSON: #"{ "type": "empty_view" }"#),
-            environment: thomasEnvironment
+            localizer: thomasEnvironment.extensions.localizer
         )
 
         let labelViewInfo = try JSONDecoder().decode(
@@ -78,7 +78,7 @@ struct ThomasAssociatedLabelResolverTest {
             from: Data(makeLabelJSON(text: "Email Address", labelingViewID: "email-input", viewType: "text_input").utf8)
         )
 
-        let merged = resolver.merging(viewInfo: labelViewInfo, environment: thomasEnvironment)
+        let merged = resolver.merging(viewInfo: labelViewInfo, localizer: thomasEnvironment.extensions.localizer)
 
         #expect(merged.labelFor(identifier: "email-input", viewType: .textInput, thomasState: thomasState) == "Email Address")
     }
@@ -87,7 +87,7 @@ struct ThomasAssociatedLabelResolverTest {
     func mergingPreservesExistingLabels() throws {
         let resolver = ThomasAssociatedLabelResolver(
             layout: try makeLayout(viewJSON: makeLabelJSON(text: "Name", labelingViewID: "name-input", viewType: "text_input")),
-            environment: thomasEnvironment
+            localizer: thomasEnvironment.extensions.localizer
         )
 
         let newLabelViewInfo = try JSONDecoder().decode(
@@ -95,7 +95,7 @@ struct ThomasAssociatedLabelResolverTest {
             from: Data(makeLabelJSON(text: "Email", labelingViewID: "email-input", viewType: "text_input").utf8)
         )
 
-        let merged = resolver.merging(viewInfo: newLabelViewInfo, environment: thomasEnvironment)
+        let merged = resolver.merging(viewInfo: newLabelViewInfo, localizer: thomasEnvironment.extensions.localizer)
 
         #expect(merged.labelFor(identifier: "name-input", viewType: .textInput, thomasState: thomasState) == "Name")
         #expect(merged.labelFor(identifier: "email-input", viewType: .textInput, thomasState: thomasState) == "Email")
@@ -105,7 +105,7 @@ struct ThomasAssociatedLabelResolverTest {
     func mergingFindsNestedLabels() throws {
         let resolver = ThomasAssociatedLabelResolver(
             layout: try makeLayout(viewJSON: #"{ "type": "empty_view" }"#),
-            environment: thomasEnvironment
+            localizer: thomasEnvironment.extensions.localizer
         )
 
         let containerJSON = """
@@ -125,7 +125,7 @@ struct ThomasAssociatedLabelResolverTest {
             from: Data(containerJSON.utf8)
         )
 
-        let merged = resolver.merging(viewInfo: containerViewInfo, environment: thomasEnvironment)
+        let merged = resolver.merging(viewInfo: containerViewInfo, localizer: thomasEnvironment.extensions.localizer)
 
         #expect(merged.labelFor(identifier: "nested-view", viewType: .textInput, thomasState: thomasState) == "Nested Label")
     }
@@ -134,7 +134,7 @@ struct ThomasAssociatedLabelResolverTest {
     func mergingIgnoresDescribesAssociation() throws {
         let resolver = ThomasAssociatedLabelResolver(
             layout: try makeLayout(viewJSON: #"{ "type": "empty_view" }"#),
-            environment: thomasEnvironment
+            localizer: thomasEnvironment.extensions.localizer
         )
 
         let describesLabelViewInfo = try JSONDecoder().decode(
@@ -142,7 +142,7 @@ struct ThomasAssociatedLabelResolverTest {
             from: Data(makeLabelJSON(text: "Description", labelingViewID: "some-view", viewType: "text_input", associationType: "describes").utf8)
         )
 
-        let merged = resolver.merging(viewInfo: describesLabelViewInfo, environment: thomasEnvironment)
+        let merged = resolver.merging(viewInfo: describesLabelViewInfo, localizer: thomasEnvironment.extensions.localizer)
 
         #expect(merged.labelFor(identifier: "some-view", viewType: .textInput, thomasState: thomasState) == nil)
     }
@@ -151,7 +151,7 @@ struct ThomasAssociatedLabelResolverTest {
     func originalResolverIsUnmodified() throws {
         let resolver = ThomasAssociatedLabelResolver(
             layout: try makeLayout(viewJSON: #"{ "type": "empty_view" }"#),
-            environment: thomasEnvironment
+            localizer: thomasEnvironment.extensions.localizer
         )
 
         let labelViewInfo = try JSONDecoder().decode(
@@ -159,7 +159,7 @@ struct ThomasAssociatedLabelResolverTest {
             from: Data(makeLabelJSON(text: "Label", labelingViewID: "some-view", viewType: "text_input").utf8)
         )
 
-        _ = resolver.merging(viewInfo: labelViewInfo, environment: thomasEnvironment)
+        _ = resolver.merging(viewInfo: labelViewInfo, localizer: thomasEnvironment.extensions.localizer)
 
         #expect(resolver.labelFor(identifier: "some-view", viewType: .textInput, thomasState: thomasState) == nil)
     }

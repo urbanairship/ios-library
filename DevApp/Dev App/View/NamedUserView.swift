@@ -16,7 +16,7 @@ struct NamedUserView: View {
             .onSubmit {
                 viewModel.apply()
             }
-#if !os(macOS)
+#if !os(macOS) && !os(tvOS)
             .textInputAutocapitalization(.never)
 #endif
             .disableAutocorrection(true)

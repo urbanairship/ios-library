@@ -70,7 +70,7 @@ struct RootView<Content: View>: View {
         )
         self.associatedLabelResolver = ThomasAssociatedLabelResolver(
             layout: layout,
-            environment: thomasEnvironment
+            localizer: thomasEnvironment.extensions.localizer
         )
     }
 

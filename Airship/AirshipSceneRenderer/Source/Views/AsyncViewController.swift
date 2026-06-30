@@ -65,7 +65,7 @@ struct AsyncViewController: View {
             guard case .loaded = status, let response = state.response else { return }
             resolverForResponse = associatedLabelResolver?.merging(
                 viewInfo: response,
-                environment: thomasEnvironment
+                localizer: thomasEnvironment.extensions.localizer
             )
         }
     }

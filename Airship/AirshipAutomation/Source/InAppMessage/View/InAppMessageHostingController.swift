@@ -116,7 +116,7 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
     func createBannerConstraints() {
         guard let contentView = view.window?.contentView else { return }
         self.view.translatesAutoresizingMaskIntoConstraints = false
-        if let window = self.view.window {
+        if self.view.window != nil {
             centerXConstraint = self.view.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
             topConstraint = self.view.topAnchor.constraint(equalTo: contentView.topAnchor)
             bottomConstraint = self.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)

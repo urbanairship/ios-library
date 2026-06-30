@@ -238,7 +238,7 @@ struct HomeView: View {
             let pasteboard = NSPasteboard.general
             pasteboard.declareTypes([.string], owner: nil)
             pasteboard.setString(channelID, forType: .string)
-#else
+#elseif !os(tvOS)
             UIPasteboard.general.string = channelID
 #endif
         }

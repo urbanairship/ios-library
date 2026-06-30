@@ -1023,7 +1023,7 @@ struct ThomasEnvironmentTest {
         }
 
         #expect(
-            labelInfo.resolveLabelString(thomasState: thomasState, environment: env)
+            labelInfo.resolveLabelString(thomasState: thomasState, localizer: env.extensions.localizer)
                 == "Localized label"
         )
     }
