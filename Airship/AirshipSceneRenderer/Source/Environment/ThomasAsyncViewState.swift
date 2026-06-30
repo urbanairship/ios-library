@@ -11,8 +11,8 @@ final class ThomasAsyncViewState: ObservableObject {
 
     private let taskSleeper: any AirshipTaskSleeper
     private let resolver: (any AsyncViewResolver)?
+    private let imageLoader: (any ThomasImageLoader)?
     private var resolveTask: Task<Void, Never>?
-    private(set) weak var thomasEnvironment: ThomasEnvironment?
 
     /// Layout decoded from HTTP that still needs a successful image prefetch before `response` is published.
     private(set) var resolvedLayoutAwaitingPrefetch: ThomasViewInfo?
@@ -20,17 +20,13 @@ final class ThomasAsyncViewState: ObservableObject {
     init(
         properties: ThomasViewInfo.AsyncViewController.Properties? = nil,
         resolver: (any AsyncViewResolver)? = nil,
+        imageLoader: (any ThomasImageLoader)? = nil,
         taskSleeper: any AirshipTaskSleeper = DefaultAirshipTaskSleeper.shared
     ) {
         self.properties = properties
         self.resolver = resolver
+        self.imageLoader = imageLoader
         self.taskSleeper = taskSleeper
-    }
-
-    func configure(thomasEnvironment: ThomasEnvironment) {
-        // The environment owns prefetched-image lifecycle: tokens passed with `clearOnDismiss`
-        // are released automatically when the layout dismisses.
-        self.thomasEnvironment = thomasEnvironment
     }
 
     deinit {
@@ -206,7 +202,7 @@ final class ThomasAsyncViewState: ObservableObject {
         let imageURLs = imageURLStrings(from: viewInfo)
         do {
             if !imageURLs.isEmpty {
-                try await thomasEnvironment?.imageLoader.prefetch(urls: imageURLs)
+                try await imageLoader?.prefetch(urls: imageURLs)
             }
         } catch {
             resolvedLayoutAwaitingPrefetch = viewInfo

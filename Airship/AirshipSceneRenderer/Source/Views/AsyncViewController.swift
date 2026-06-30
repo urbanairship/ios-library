@@ -27,14 +27,16 @@ struct AsyncViewController: View {
     init(
         info: ThomasViewInfo.AsyncViewController,
         constraints: ViewConstraints,
-        resolver: any AsyncViewResolver
+        resolver: any AsyncViewResolver,
+        imageLoader: any ThomasImageLoader
     ) {
         self.info = info
         self.constraints = constraints
         self._state = StateObject(
             wrappedValue: ThomasAsyncViewState(
                 properties: info.properties,
-                resolver: resolver
+                resolver: resolver,
+                imageLoader: imageLoader
             )
         )
     }
@@ -49,7 +51,6 @@ struct AsyncViewController: View {
                     .constraints(constraints)
                     .thomasCommon(info)
                     .onAppear {
-                        state.configure(thomasEnvironment: thomasEnvironment)
                         state.retry()
                     }
             }

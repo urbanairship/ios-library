@@ -87,7 +87,7 @@ struct ViewFactory: Sendable {
         case .scoreToggleLayout(let info):
             ScoreToggleLayout(info: info, constraints: constraints)
         case .asyncViewController(let info):
-            AsyncViewController(info: info, constraints: constraints, resolver: extensions.asyncViewResolver)
+            AsyncViewController(info: info, constraints: constraints, resolver: extensions.asyncViewResolver, imageLoader: extensions.imageLoader)
         case .videoController(let info):
             VideoController(info: info, constraints: constraints)
         }
