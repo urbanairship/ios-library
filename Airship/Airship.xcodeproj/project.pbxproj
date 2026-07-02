@@ -417,6 +417,7 @@
 		6E2E3CA22B32723C00B8515B /* InAppMessageNativeBridgeExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2E3CA12B32723C00B8515B /* InAppMessageNativeBridgeExtension.swift */; };
 		6E2E3CA62B327A6C00B8515B /* InAppMessageNativeBridgeExtensionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2E3CA42B32726400B8515B /* InAppMessageNativeBridgeExtensionTest.swift */; };
 		6E2F5A742A60833700CABD3D /* FeatureFlagManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5A732A60833700CABD3D /* FeatureFlagManager.swift */; };
+		EAB57CAC0000000000000004 /* AirshipCoalescingCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAB57CAC0000000000000003 /* AirshipCoalescingCache.swift */; };
 		6E2F5A762A60871E00CABD3D /* FeatureFlagPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5A752A60871E00CABD3D /* FeatureFlagPayload.swift */; };
 		6E2F5A862A65F00200CABD3D /* RemoteDataSourceStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5A852A65F00200CABD3D /* RemoteDataSourceStatus.swift */; };
 		6E2F5A8A2A66088100CABD3D /* AudienceDeviceInfoProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2F5A892A66088100CABD3D /* AudienceDeviceInfoProvider.swift */; };
@@ -1090,6 +1091,7 @@
 		A61517B526AEEAAB008A41C4 /* SubscriptionListUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */; };
 		A61517C426B009D6008A41C4 /* SubscriptionListAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */; };
 		A61F3A752A5DA58500EE94CC /* FeatureFlagManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61F3A732A5D9D6800EE94CC /* FeatureFlagManagerTest.swift */; };
+		EAB57CAC0000000000000002 /* AirshipCoalescingCacheTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAB57CAC0000000000000001 /* AirshipCoalescingCacheTest.swift */; };
 		A61F3A782A5DBA1800EE94CC /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; platformFilters = (ios, maccatalyst, macos, tvos, xros, ); };
 		A62058712A5841330041FBF9 /* AirshipFeatureFlags.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A62058692A5841330041FBF9 /* AirshipFeatureFlags.framework */; };
 		A62058812A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62058802A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift */; };
@@ -1754,6 +1756,7 @@
 		6E2E3CA12B32723C00B8515B /* InAppMessageNativeBridgeExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppMessageNativeBridgeExtension.swift; sourceTree = "<group>"; };
 		6E2E3CA42B32726400B8515B /* InAppMessageNativeBridgeExtensionTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppMessageNativeBridgeExtensionTest.swift; sourceTree = "<group>"; };
 		6E2F5A732A60833700CABD3D /* FeatureFlagManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagManager.swift; sourceTree = "<group>"; };
+		EAB57CAC0000000000000003 /* AirshipCoalescingCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCoalescingCache.swift; sourceTree = "<group>"; };
 		6E2F5A752A60871E00CABD3D /* FeatureFlagPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagPayload.swift; sourceTree = "<group>"; };
 		6E2F5A852A65F00200CABD3D /* RemoteDataSourceStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataSourceStatus.swift; sourceTree = "<group>"; };
 		6E2F5A892A66088100CABD3D /* AudienceDeviceInfoProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudienceDeviceInfoProvider.swift; sourceTree = "<group>"; };
@@ -2472,6 +2475,7 @@
 		A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SubscriptionListUpdate.swift; path = AirshipCore/Source/SubscriptionListUpdate.swift; sourceTree = SOURCE_ROOT; };
 		A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionListAPIClient.swift; sourceTree = "<group>"; };
 		A61F3A732A5D9D6800EE94CC /* FeatureFlagManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagManagerTest.swift; sourceTree = "<group>"; };
+		EAB57CAC0000000000000001 /* AirshipCoalescingCacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCoalescingCacheTest.swift; sourceTree = "<group>"; };
 		A62058692A5841330041FBF9 /* AirshipFeatureFlags.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipFeatureFlags.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A62058702A5841330041FBF9 /* AirshipFeatureFlagsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipFeatureFlagsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A62058802A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipFeatureFlagsSDKModule.swift; sourceTree = "<group>"; };
@@ -4828,6 +4832,7 @@
 			children = (
 				6ED7BE642D13DA0400B6A124 /* FeatureFlagResultCacheTest.swift */,
 				A61F3A732A5D9D6800EE94CC /* FeatureFlagManagerTest.swift */,
+				EAB57CAC0000000000000001 /* AirshipCoalescingCacheTest.swift */,
 				6E8BDEFC2A67937E00F816D9 /* FeatureFlagInfoTest.swift */,
 				6E8BDEFF2A679CD100F816D9 /* FeatureFlagRemoteDataAccessTest.swift */,
 				6E938DBB2AC39A0500F691D9 /* FeatureFlagAnalyticsTest.swift */,
@@ -4853,6 +4858,7 @@
 				6ED7BE622D13D9FE00B6A124 /* FeatureFlagResultCache.swift */,
 				A62058802A5842200041FBF9 /* AirshipFeatureFlagsSDKModule.swift */,
 				6E2F5A732A60833700CABD3D /* FeatureFlagManager.swift */,
+				EAB57CAC0000000000000003 /* AirshipCoalescingCache.swift */,
 				6E2F5A752A60871E00CABD3D /* FeatureFlagPayload.swift */,
 				6E2F5AB02A67434B00CABD3D /* FeatureFlag.swift */,
 				6E2F5AB92A675D3600CABD3D /* FeatureFlagsRemoteDataAccess.swift */,
@@ -6689,6 +6695,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E2F5A742A60833700CABD3D /* FeatureFlagManager.swift in Sources */,
+				EAB57CAC0000000000000004 /* AirshipCoalescingCache.swift in Sources */,
 				6E2F5A762A60871E00CABD3D /* FeatureFlagPayload.swift in Sources */,
 				6E4325F62B7B2F5800A9B000 /* FeatureFlagAnalytics.swift in Sources */,
 				6ED7BE632D13D9FE00B6A124 /* FeatureFlagResultCache.swift in Sources */,
@@ -6707,6 +6714,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A61F3A752A5DA58500EE94CC /* FeatureFlagManagerTest.swift in Sources */,
+				EAB57CAC0000000000000002 /* AirshipCoalescingCacheTest.swift in Sources */,
 				6E9C2BD72D0269AE000089A9 /* TestAirshipRequestSession.swift in Sources */,
 				6E2811682BE406A50040D928 /* FeatureFlagDeferredResolverTest.swift in Sources */,
 				6E8BDF012A679E5000F816D9 /* FeatureFlagRemoteDataAccessTest.swift in Sources */,
