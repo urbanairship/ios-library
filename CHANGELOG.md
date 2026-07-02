@@ -4,6 +4,15 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.9.0 - July 2, 2026
+Minor release that adds display-order control for embedded content, improves feature flag resolution performance, and signs the XCFrameworks with a new Apple Distribution certificate.
+
+### Changes
+- Added a `comparator` to `AirshipEmbeddedView` to control the display order of embedded content.
+- Improved feature flag performance by decoding the flag payload once and caching it across concurrent resolutions.
+- Fixed orientation lock being incorrectly applied on iPad in Scenes.
+- Signed release artifacts with a new Apple Distribution certificate to address code signature verification issues.
+
 ## Version 20.8.1 - June 25, 2026
 Patch release with support for Xcode 27.
 
