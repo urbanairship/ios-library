@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.11.9 - July 2, 2026
+Patch release that signs the XCFrameworks with a new Apple Distribution certificate. No source changes since 19.11.8.
+
+### Changes
+- Signed release artifacts with a new Apple Distribution certificate to address code signature verification issues.
+
 ## Version 19.11.8 - April 21, 2026
 Patch release that fixes Xcode 26.4 build issues with whole module optimization.
 
