@@ -30,7 +30,10 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
 
 #if !os(tvOS)
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        guard let orientation = options.orientation else {
+        // iPad ignores supportedInterfaceOrientations unless UIRequiresFullScreen is set,
+        // so attempting to lock orientation there produces broken layouts. Allow free rotation.
+        guard let orientation = options.orientation,
+              UIDevice.current.userInterfaceIdiom != .pad else {
             return .all
         }
 
@@ -43,7 +46,7 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
     }
 
     override var shouldAutorotate: Bool {
-        return self.options.orientation == nil
+        return self.options.orientation == nil || UIDevice.current.userInterfaceIdiom == .pad
     }
 #endif
 
