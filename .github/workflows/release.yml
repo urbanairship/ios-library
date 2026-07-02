@@ -44,6 +44,23 @@ jobs:
         with:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
+      - name: Check Certificate Expiry Window
+        env:
+          CERT_BASE64: ${{ secrets.CERTIFICATEXC }}
+          CERT_PASS: ${{ secrets.CERTIFICATEXC_PASS }}
+        run: |
+          # Fails if the cert expires within 30 days, before we sign a release with it.
+          echo "$CERT_BASE64" | base64 --decode > cert.p12
+          openssl pkcs12 -in cert.p12 -passin pass:"$CERT_PASS" -nokeys -clcerts | openssl x509 -checkend 2592000
+          rm cert.p12
+      - name: Verify Certificate Is Not Revoked
+        run: |
+          # openssl only checks expiration dates - it can't see Apple's revocation status.
+          # Signing and verifying a binary exercises the same OCSP check Xcode does at build time.
+          echo 'int main(){return 0;}' > test.c
+          clang -o testbin test.c
+          codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" testbin
+          codesign --verify --strict -vvv testbin
       - name: Build SDK
         run: make build-package
       - name: Upload zip distribution
