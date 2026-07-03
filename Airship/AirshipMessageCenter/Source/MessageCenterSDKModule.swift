@@ -7,6 +7,7 @@ public import Foundation
 /// AirshipMessageCenter module loader.
 /// - Note: For internal use only. :nodoc:
 @objc(UAMessageCenterSDKModule)
+@_spi(AirshipInternal)
 public class MessageCenterSDKModule: NSObject, AirshipSDKModule {
 
     public let actionsManifest: (any ActionsManifest)? = MessageCenterActionsManifest()

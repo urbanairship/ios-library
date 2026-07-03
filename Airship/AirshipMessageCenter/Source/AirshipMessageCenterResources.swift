@@ -1,15 +1,16 @@
 /* Copyright Airship and Contributors */
 
-public import Foundation
+
 @_spi(AirshipInternal) import AirshipBasement
+import Foundation
 
 import AirshipCore
 
 /// Resources for AirshipMessageCenter
-public final class AirshipMessageCenterResources {
+final class AirshipMessageCenterResources {
     
     /// Module bundle
-    public static let bundle = resolveBundle()
+    static let bundle = resolveBundle()
 
     private static func resolveBundle() -> Bundle {
 #if SWIFT_PACKAGE
@@ -32,7 +33,7 @@ public final class AirshipMessageCenterResources {
         )
     }
 
-    public static func localizedString(key: String) -> String? {
+    static func localizedString(key: String) -> String? {
         return AirshipLocalizationUtils.localizedString(
             key,
             withTable: "UrbanAirship",

@@ -1,16 +1,16 @@
 /* Copyright Airship and Contributors */
 
-public import SwiftUI
+import SwiftUI
 
 /// Error text view that appears under the add channel fields when an error occurs
-public struct ErrorLabel: View {
+struct ErrorLabel: View {
     @Environment(\.colorScheme)
     private var colorScheme
 
-    public var message: String?
+    var message: String?
     var theme: PreferenceCenterTheme.ContactManagement?
 
-    public init(
+    init(
         message: String?,
         theme: PreferenceCenterTheme.ContactManagement?
     ) {
@@ -18,7 +18,7 @@ public struct ErrorLabel: View {
         self.theme = theme
     }
 
-    public var body: some View {
+    var body: some View {
         if let errorMessage = self.message {
             HStack (alignment: .top){
                 Text(errorMessage)

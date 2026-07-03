@@ -6,7 +6,7 @@ import Combine
 import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
-public enum AddChannelState {
+enum AddChannelState {
     case failedInvalid
     case failedDefault
     case succeeded

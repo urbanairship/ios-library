@@ -1,13 +1,13 @@
 /* Copyright Airship and Contributors */
 
-public import SwiftUI
+import SwiftUI
 import Combine
 
 import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
 // MARK: Channel text field
-public struct ChannelTextField: View {
+struct ChannelTextField: View {
     // MARK: - Constants
     private enum Layout {
 #if os(tvOS)
@@ -41,7 +41,7 @@ public struct ChannelTextField: View {
     /// The preference center theme
     var theme: PreferenceCenterTheme.ContactManagement?
 
-    public init(
+    init(
         platform: PreferenceCenterConfig.ContactManagementItem.Platform?,
         selectedSender: Binding<PreferenceCenterConfig.ContactManagementItem.SMSSenderInfo>,
         inputText: Binding<String>,
@@ -66,7 +66,7 @@ public struct ChannelTextField: View {
         self.placeholder = makePlaceholder()
     }
 
-    public var body: some View {
+    var body: some View {
         VStack(spacing: Layout.standardSpacing) {
             countryPicker
 
