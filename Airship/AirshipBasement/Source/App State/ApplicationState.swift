@@ -2,6 +2,7 @@
 
 /// Platform independent representation of application state.
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public enum ApplicationState: Int, Sendable {
     /// The active state.
     case active

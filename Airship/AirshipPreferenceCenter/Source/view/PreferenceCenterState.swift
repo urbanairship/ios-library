@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import Combine
+@_spi(AirshipInternal) import AirshipBasement
 import Foundation
 public import SwiftUI
 

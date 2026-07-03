@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 final class ChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol, Sendable {
     private let tokenPath: String = "/api/auth/device"

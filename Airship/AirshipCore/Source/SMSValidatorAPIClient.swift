@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 enum SMSValidatorAPIClientResult: Decodable, Equatable, Sendable {
     case valid(String)

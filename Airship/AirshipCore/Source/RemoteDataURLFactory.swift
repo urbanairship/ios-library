@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 struct RemoteDataURLFactory: Sendable {
     static func makeURL(config: RuntimeConfig, path: String, locale: Locale, randomValue: Int) throws -> URL {

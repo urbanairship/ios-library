@@ -1,4 +1,5 @@
 /* Copyright Airship and Contributors */
+@_spi(AirshipInternal) import AirshipBasement
 
 /// A  circular region defines a radius, and latitude and longitude from its center.
 public class CircularRegion {

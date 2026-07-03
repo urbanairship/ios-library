@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 @preconcurrency import Combine
+@_spi(AirshipInternal) import AirshipBasement
 import SwiftUI
 public import AirshipCore
 import UserNotifications

@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Represents the boundary crossing event type.
 public enum AirshipBoundaryEvent: Int, Sendable {

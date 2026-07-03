@@ -3,7 +3,7 @@
 import Testing
 
 @testable import AirshipCore
-@testable import AirshipBasement
+@_spi(AirshipInternal) @testable import AirshipBasement
 import Foundation
 import UserNotifications
 #if !os(watchOS)

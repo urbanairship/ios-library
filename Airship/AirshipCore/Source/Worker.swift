@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Combine
+@_spi(AirshipInternal) import AirshipBasement
 import Foundation
 
 /// Worker that handles queuing tasks and performing the actual work

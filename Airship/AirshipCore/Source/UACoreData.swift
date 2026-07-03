@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import CoreData
+@_spi(AirshipInternal) import AirshipBasement
 
 #if canImport(UIKit)
 import UIKit

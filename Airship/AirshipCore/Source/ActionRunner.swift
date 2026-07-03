@@ -1,4 +1,5 @@
 /* Copyright Airship and Contributors */
+@_spi(AirshipInternal) import AirshipBasement
 
 /// A helper class for running actions by name or by reference.
 public final class ActionRunner {

@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 protocol AirshipDeviceIDProtocol: Actor {
     var value: String { get async }

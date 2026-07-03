@@ -1,6 +1,7 @@
 
 
 @testable import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 import Foundation
 
 final class TestPrivacyManager: InternalAirshipPrivacyManager, @unchecked Sendable {

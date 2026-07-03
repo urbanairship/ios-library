@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 import Combine
 
 @testable @_spi(AirshipInternal) import AirshipAutomation

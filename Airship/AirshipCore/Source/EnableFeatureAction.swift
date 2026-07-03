@@ -1,4 +1,5 @@
 /* Copyright Airship and Contributors */
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Enables an Airship feature.
 ///

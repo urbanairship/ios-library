@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Network
+@_spi(AirshipInternal) import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
 public protocol AirshipNetworkCheckerProtocol: Sendable {

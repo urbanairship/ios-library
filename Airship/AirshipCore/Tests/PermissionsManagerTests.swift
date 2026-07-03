@@ -3,6 +3,7 @@
 import Testing
 
 @testable public import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
 @Suite(.timeLimit(.minutes(1)))

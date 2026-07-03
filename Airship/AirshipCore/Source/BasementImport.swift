@@ -1,1 +1,1 @@
-@_exported import AirshipBasement
+@_spi(AirshipInternal) @_exported import AirshipBasement

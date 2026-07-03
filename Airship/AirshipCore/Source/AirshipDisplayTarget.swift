@@ -3,6 +3,7 @@
 #if !os(watchOS)
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 public import SwiftUI
 
 /// A factory for creating display targets that manage the presentation of views in windows.

@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 protocol EventAPIClientProtocol: Sendable {
     func uploadEvents(

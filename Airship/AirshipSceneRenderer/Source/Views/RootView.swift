@@ -2,7 +2,7 @@
 
 import Foundation
 import SwiftUI
-import AirshipBasement
+@_spi(AirshipInternal) import AirshipBasement
 
 struct RootView<Content: View>: View {
 

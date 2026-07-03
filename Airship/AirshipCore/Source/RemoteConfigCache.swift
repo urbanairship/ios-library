@@ -1,4 +1,5 @@
 /* Copyright Airship and Contributors */
+@_spi(AirshipInternal) import AirshipBasement
 
 final class RemoteConfigCache: Sendable {
     private static let dataStoreKey: String = "com.urbanairship.config.remote_config_cache"

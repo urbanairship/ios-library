@@ -2,7 +2,7 @@
 
 import Foundation
 import SwiftUI
-import AirshipBasement
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Wrapping layout will attempt to wrap items with a specified max items per line when parent width
 /// is constrained. Display can break when parent height is exceeded - especially in landscape or when excessive

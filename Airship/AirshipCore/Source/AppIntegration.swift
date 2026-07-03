@@ -13,6 +13,7 @@ public import AppKit
 #endif
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 @preconcurrency
 public import UserNotifications
 

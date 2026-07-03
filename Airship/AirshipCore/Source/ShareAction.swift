@@ -12,6 +12,7 @@
 #if os(iOS)
 
 import UIKit
+@_spi(AirshipInternal) import AirshipBasement
 
 public final class ShareAction: AirshipAction {
     /// Default names - "share_action", "^s"

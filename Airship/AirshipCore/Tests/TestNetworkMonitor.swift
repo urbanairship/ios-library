@@ -1,4 +1,5 @@
 import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 import Foundation
 
 actor TestNetworkChecker: AirshipNetworkCheckerProtocol {

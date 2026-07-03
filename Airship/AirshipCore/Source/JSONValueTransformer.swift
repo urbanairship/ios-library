@@ -5,6 +5,7 @@
 // instead.
 
 public import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
 public class JSONValueTransformer: ValueTransformer {

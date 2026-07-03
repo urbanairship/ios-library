@@ -7,7 +7,7 @@ import SwiftUI
 import AVKit
 import AVFoundation
 import UIKit
-import AirshipBasement
+@_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
 struct NativeVideoPlayer: UIViewRepresentable {

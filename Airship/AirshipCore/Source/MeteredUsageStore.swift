@@ -1,4 +1,5 @@
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 import CoreData
 
 final class MeteredUsageStore: Sendable {

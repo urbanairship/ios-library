@@ -3,6 +3,7 @@
 #if !os(tvOS) && !os(watchOS)
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Protocol for building the Airship JavaScript environment injected into web views.
 public protocol JavaScriptEnvironmentProtocol: Sendable {

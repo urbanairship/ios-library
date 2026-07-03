@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// The privacy manager allow enabling/disabling features in the SDK.
 /// The SDK will not make any network requests or collect data if all features are disabled, with

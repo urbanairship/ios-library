@@ -1,7 +1,9 @@
 public import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 import Foundation
 @preconcurrency import Combine
 
+@_spi(AirshipInternal)
 public final class TestAppStateTracker: AppStateTrackerProtocol, Sendable {
     private let stateValue: AirshipMainActorValue<ApplicationState> = AirshipMainActorValue(.background)
 

@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// The Config object provides an interface for passing common configurable values to `Airship`.
 public struct AirshipConfig: Decodable, Sendable {

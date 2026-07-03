@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import CoreData
+@_spi(AirshipInternal) import AirshipBasement
 import Foundation
 
 import AirshipCore

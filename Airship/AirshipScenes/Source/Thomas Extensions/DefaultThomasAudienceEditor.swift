@@ -2,7 +2,7 @@
 
 @_spi(AirshipInternal) import AirshipSceneRenderer
 @_spi(AirshipInternal) import AirshipCore
-import AirshipBasement
+@_spi(AirshipInternal) import AirshipBasement
 import Foundation
 
 /// The audience editor the SDK wires up by default — applies form-submission results through the

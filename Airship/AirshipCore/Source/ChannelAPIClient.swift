@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 final class ChannelAPIClient: ChannelAPIClientProtocol, Sendable {
     private let channelPath: String = "/api/channels/"

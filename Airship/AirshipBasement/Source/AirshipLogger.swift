@@ -5,6 +5,7 @@ import os
 
 /// Airship logger.
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class AirshipLogger: Sendable {
     // Configuration for the logger
     private static let configuration: Configuration = Configuration()

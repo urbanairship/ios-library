@@ -1,4 +1,5 @@
 /* Copyright Airship and Contributors */
+@_spi(AirshipInternal) import AirshipBasement
 
 /// This protocol is responsible for runtime-persisting actions and associating
 /// them with names and predicates.

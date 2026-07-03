@@ -4,6 +4,7 @@ public import Foundation
 import Combine
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol AppStateTrackerProtocol: Sendable {
     /**
      * Current application state.
@@ -24,6 +25,7 @@ public protocol AppStateTrackerProtocol: Sendable {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class AppStateTracker: AppStateTrackerProtocol, Sendable {
 
 

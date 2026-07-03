@@ -1,4 +1,5 @@
 /* Copyright Airship and Contributors */
+@_spi(AirshipInternal) import AirshipBasement
 
 /// A proximity region defines an identifier, major and minor.
 public class ProximityRegion {

@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 import Combine
 
 /// Airship config needed for runtime. Generated from `AirshipConfig` during takeOff.

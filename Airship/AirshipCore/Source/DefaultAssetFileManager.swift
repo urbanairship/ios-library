@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// - NOTE: For internal use only. :nodoc:
 @_spi(AirshipInternal)

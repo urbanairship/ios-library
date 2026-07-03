@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipBasement
+@_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
 final class EmbeddedViewSelector {

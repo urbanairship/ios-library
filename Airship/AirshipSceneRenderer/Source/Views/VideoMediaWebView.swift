@@ -5,7 +5,7 @@
 import Foundation
 import SwiftUI
 import WebKit
-import AirshipBasement
+@_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
 private class WeakScriptMessageHandler: NSObject, WKScriptMessageHandler {

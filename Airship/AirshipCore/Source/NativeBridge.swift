@@ -4,6 +4,7 @@
 #if !os(tvOS) && !os(watchOS)
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 @preconcurrency
 public import WebKit
 

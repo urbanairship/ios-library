@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Resources for AirshipCore
 public final class AirshipCoreResources {

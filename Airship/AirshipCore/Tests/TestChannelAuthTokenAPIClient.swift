@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 @testable import AirshipCore
 
 final class TestChannelAuthTokenAPIClient: ChannelAuthTokenAPIClientProtocol, @unchecked Sendable {

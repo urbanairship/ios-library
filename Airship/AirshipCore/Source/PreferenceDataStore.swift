@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Preference data store.
 /// - Note: For internal use only. :nodoc:

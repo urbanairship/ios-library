@@ -3,6 +3,7 @@
 #if !os(tvOS) && !os(watchOS)
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 import WebKit
 
 protocol NativeBridgeActionHandlerProtocol: Sendable {

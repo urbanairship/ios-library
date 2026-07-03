@@ -3,7 +3,7 @@
 @preconcurrency
 public import Combine
 import SwiftUI
-public import AirshipBasement
+@_spi(AirshipInternal) public import AirshipBasement
 
 @_spi(AirshipInternal)
 public protocol AirshipEmbeddedViewManagerProtocol: Sendable {

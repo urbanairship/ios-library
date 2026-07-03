@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// - NOTE: For internal use only. :nodoc:
 /// Wrapper for the download tasks that is responsible for downloading assets

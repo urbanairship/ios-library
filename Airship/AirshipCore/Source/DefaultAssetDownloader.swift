@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// - NOTE: For internal use only. :nodoc:
 /// Data task wrapper used for testing the default asset downloader

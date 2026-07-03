@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 @testable import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 actor TestSMSValidatorAPIClient: SMSValidatorAPIClientProtocol {
     struct Request: Sendable, Equatable {

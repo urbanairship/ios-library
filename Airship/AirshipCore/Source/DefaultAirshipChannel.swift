@@ -2,6 +2,7 @@
 
 @preconcurrency
 import Combine
+@_spi(AirshipInternal) import AirshipBasement
 public import Foundation
 import UserNotifications
 #if canImport(UIKit)

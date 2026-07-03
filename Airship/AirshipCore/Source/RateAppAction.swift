@@ -3,6 +3,7 @@
 #if !os(tvOS) && !os(watchOS) && !os(macOS)
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 import StoreKit
 
 /// Links directly to app store review page or opens an app rating prompt.

@@ -1,4 +1,5 @@
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 protocol EventManagerProtocol: AnyObject, Sendable {
     var uploadsEnabled: Bool { get set }

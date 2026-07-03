@@ -2,7 +2,7 @@
 
 import Foundation
 import SwiftUI
-import AirshipBasement
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Button view.
 struct AirshipButton<Label> : View  where Label : View {

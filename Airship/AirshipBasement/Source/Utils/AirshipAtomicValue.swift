@@ -3,6 +3,7 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class AirshipAtomicValue<T: Sendable>: @unchecked Sendable {
 
     fileprivate let lock: AirshipLock = AirshipLock()
@@ -35,6 +36,7 @@ public final class AirshipAtomicValue<T: Sendable>: @unchecked Sendable {
     }
 }
 
+@_spi(AirshipInternal)
 public extension AirshipAtomicValue where T: Equatable {
 
     @discardableResult

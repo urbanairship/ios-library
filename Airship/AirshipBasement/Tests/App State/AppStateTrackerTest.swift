@@ -3,7 +3,7 @@
 import Testing
 import Foundation
 
-@testable import AirshipBasement
+@_spi(AirshipInternal) @testable import AirshipBasement
 
 @MainActor
 struct AppStateTrackerTest {

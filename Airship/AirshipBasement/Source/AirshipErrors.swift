@@ -3,6 +3,7 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class AirshipErrors {
     public class func parseError(_ message: String) -> any Error {
         return NSError(

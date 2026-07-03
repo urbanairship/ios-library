@@ -6,6 +6,7 @@ import Foundation
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
 @testable import AirshipCore
+@_spi(AirshipInternal) import AirshipBasement
 
 struct AutomationEventFeedTest: @unchecked Sendable {
     private let date = UATestDate(offset: 0, dateOverride: Date())

@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipBasement
+@_spi(AirshipInternal) import AirshipBasement
 
 struct ThomasActionsPayload: ThomasSerializable, Hashable {
     static let keyActionOverride = "platform_action_overrides"

@@ -1,4 +1,5 @@
 import Testing
+@_spi(AirshipInternal) import AirshipBasement
 
 @testable import AirshipCore
 

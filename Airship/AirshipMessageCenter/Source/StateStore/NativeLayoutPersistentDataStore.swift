@@ -1,6 +1,7 @@
 // Copyright Urban Airship and Contributors
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 import AirshipCore
 @_spi(AirshipInternal) import AirshipScenes

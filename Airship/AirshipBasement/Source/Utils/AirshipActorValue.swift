@@ -6,6 +6,7 @@ import Foundation
 import Combine
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public actor AirshipActorValue<T: Sendable> {
 
     private let subject: PassthroughSubject<T, Never> = PassthroughSubject()
@@ -52,6 +53,7 @@ public actor AirshipActorValue<T: Sendable> {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class AirshipMainActorValue<T: Sendable>: @unchecked Sendable {
 
     private let subject: PassthroughSubject<T, Never> = PassthroughSubject()

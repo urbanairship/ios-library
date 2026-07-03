@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 protocol SubscriptionListAPIClientProtocol: Sendable {
     func get(

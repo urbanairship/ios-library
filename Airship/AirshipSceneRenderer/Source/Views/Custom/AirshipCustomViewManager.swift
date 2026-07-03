@@ -2,7 +2,7 @@
 
 import Foundation
 public import SwiftUI
-public import AirshipBasement
+@_spi(AirshipInternal) public import AirshipBasement
 
 /// Type alias for the CustomView builder block
 public typealias AirshipCustomViewBuilder = @MainActor @Sendable (AirshipCustomViewArguments)  -> any View
