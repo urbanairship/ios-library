@@ -3,6 +3,7 @@
 public import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol AirshipWorkManagerProtocol: Sendable {
     func registerWorker(
         _ workID: String,

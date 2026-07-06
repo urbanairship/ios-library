@@ -3,6 +3,7 @@
 public import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class AirshipBase64 {
 
     public class func data(from base64String: String) -> Data? {

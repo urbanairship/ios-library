@@ -2,7 +2,7 @@ import Foundation
 import ActivityKit
 
 @testable
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 @preconcurrency import Combine
 
 class TestChannel: NSObject, AirshipChannel, AirshipComponent, @unchecked Sendable {

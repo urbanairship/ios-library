@@ -3,6 +3,7 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct AirshipDeviceAudienceResult: Sendable, Codable, Equatable {
     public var isMatch: Bool
     public var reportingMetadata: [AirshipJSON]?

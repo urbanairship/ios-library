@@ -4,7 +4,7 @@ import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 import Combine
 
-public import AirshipCore
+@_spi(AirshipInternal) public import AirshipCore
 
 #if canImport(UIKit)
 import UIKit

@@ -3,7 +3,7 @@
 import Testing
 
 @testable @_spi(AirshipInternal) import AirshipAutomation
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 @testable @_spi(AirshipInternal) import AirshipScenes
 import Foundation

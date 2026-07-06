@@ -7,7 +7,7 @@ import UserNotifications
 import UIKit
 #endif
 
-public import AirshipCore
+@_spi(AirshipInternal) public import AirshipCore
 
 
 /**

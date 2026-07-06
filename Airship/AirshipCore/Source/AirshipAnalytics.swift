@@ -64,6 +64,7 @@ public protocol AirshipAnalytics: AnyObject, Sendable {
 
 /// Internal Analytics protocol
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol InternalAirshipAnalytics: AirshipAnalytics {
     var eventFeed: AirshipAnalyticsFeed { get }
 

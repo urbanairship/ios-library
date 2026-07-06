@@ -5,6 +5,7 @@
 public import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public enum AirshipDeferredResult<T : Sendable&Equatable>: Sendable, Equatable {
     case success(T)
     case timedOut
@@ -14,6 +15,7 @@ public enum AirshipDeferredResult<T : Sendable&Equatable>: Sendable, Equatable {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct DeferredRequest: Sendable, Equatable {
     public var url: URL
     public var channelID: String
@@ -46,6 +48,7 @@ public struct DeferredRequest: Sendable, Equatable {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol AirshipDeferredResolverProtocol : Sendable {
     func resolve<T: Sendable>(
         request: DeferredRequest,

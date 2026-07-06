@@ -3,6 +3,7 @@
 public import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct AirshipNotificationCenter: Sendable {
 
     public static let shared: AirshipNotificationCenter = AirshipNotificationCenter()

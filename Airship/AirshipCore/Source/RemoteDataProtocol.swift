@@ -4,6 +4,7 @@ public import Combine
 public import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol RemoteDataProtocol: AnyObject, Sendable {
     /// Gets the update status for the given source
     /// - Parameter source: The source.

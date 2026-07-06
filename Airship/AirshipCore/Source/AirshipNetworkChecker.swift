@@ -4,6 +4,7 @@ import Network
 @_spi(AirshipInternal) import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol AirshipNetworkCheckerProtocol: Sendable {
     @MainActor
     var isConnected: Bool { get }
@@ -17,6 +18,7 @@ public protocol AirshipNetworkCheckerProtocol: Sendable {
 import WatchConnectivity
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class AirshipNetworkChecker: AirshipNetworkCheckerProtocol, Sendable {
     private let _isConnected: AirshipMainActorValue<Bool>
 
@@ -36,6 +38,7 @@ public final class AirshipNetworkChecker: AirshipNetworkCheckerProtocol, Sendabl
 }
 #else
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class AirshipNetworkChecker: AirshipNetworkCheckerProtocol, Sendable {
     private let pathMonitor: NWPathMonitor
     private let _isConnected: AirshipMainActorValue<Bool>

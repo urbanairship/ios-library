@@ -2,7 +2,7 @@
 
 import Foundation
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
 // This is only called from an actor `AutomationTriggerProcessor`

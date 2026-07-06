@@ -3,6 +3,7 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public enum AirshipEventPriority: Sendable {
     case normal
     case high
@@ -10,6 +11,7 @@ public enum AirshipEventPriority: Sendable {
 
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct AirshipEvent: Sendable {
     public var priority: AirshipEventPriority
     public var eventType: AirshipEventType

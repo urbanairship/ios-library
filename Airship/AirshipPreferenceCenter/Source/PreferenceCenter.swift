@@ -4,7 +4,7 @@ public import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 import SwiftUI
 
-public import AirshipCore
+@_spi(AirshipInternal) public import AirshipCore
 
 /// Open delegate.
 @MainActor

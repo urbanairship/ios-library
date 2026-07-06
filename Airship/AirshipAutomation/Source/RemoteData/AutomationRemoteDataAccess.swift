@@ -5,7 +5,7 @@ import Combine
 
 @_spi(AirshipInternal) import AirshipBasement
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 /// Remote data access for automation
 protocol AutomationRemoteDataAccessProtocol: Sendable {

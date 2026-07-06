@@ -4,6 +4,7 @@ public import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol AudienceDeviceInfoProvider: AnyObject, Sendable {
     var isAirshipReady: Bool { get }
     var tags: Set<String> { get }
@@ -20,6 +21,7 @@ public protocol AudienceDeviceInfoProvider: AnyObject, Sendable {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider, Sendable {
     private let deviceInfoProvider: any AudienceDeviceInfoProvider
 
@@ -134,6 +136,7 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
 
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider {
     
     private let contactID: String?

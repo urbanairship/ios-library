@@ -4,7 +4,7 @@
 @_spi(AirshipInternal) import AirshipBasement
 import Foundation
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 /// Resources for AirshipMessageCenter
 final class AirshipMessageCenterResources {

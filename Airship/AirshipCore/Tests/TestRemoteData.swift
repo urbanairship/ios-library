@@ -1,6 +1,6 @@
 
 @testable
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 import Foundation
 import Combine
 

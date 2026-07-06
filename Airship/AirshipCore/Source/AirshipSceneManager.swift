@@ -7,6 +7,7 @@ public import UIKit
 #endif
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol AirshipSceneManagerProtocol: Sendable {
 #if !os(watchOS) && !os(macOS)
     @MainActor
@@ -20,6 +21,7 @@ public protocol AirshipSceneManagerProtocol: Sendable {
  *  Monitors scene connection and disconnection notifications and associated scenes to allow retrieving the latest scene.
  */
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class AirshipSceneManager: AirshipSceneManagerProtocol, Sendable {
     public static let shared: AirshipSceneManager = AirshipSceneManager()
 

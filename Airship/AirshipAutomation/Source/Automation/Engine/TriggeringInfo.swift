@@ -2,7 +2,7 @@
 
 import Foundation
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 struct TriggeringInfo: Equatable, Sendable, Codable {
     var context: AirshipTriggerContext?

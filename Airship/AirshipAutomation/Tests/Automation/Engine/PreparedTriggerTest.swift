@@ -5,7 +5,7 @@ import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 struct PreparedTriggerTest {
     let date = UATestDate(offset: 0, dateOverride: Date())

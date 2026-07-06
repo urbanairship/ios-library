@@ -4,7 +4,7 @@ import Foundation
 import Combine
 
 @testable @_spi(AirshipInternal) import AirshipAutomation
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 
 final class TestRemoteDataAccess: AutomationRemoteDataAccessProtocol, @unchecked Sendable {
     func source(forSchedule schedule: AutomationSchedule) -> AirshipCore.RemoteDataSource? {

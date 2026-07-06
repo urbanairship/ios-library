@@ -8,6 +8,7 @@ public import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public class JSONValueTransformer: ValueTransformer {
 
     public override class func transformedValueClass() -> AnyClass {
@@ -55,6 +56,7 @@ public class JSONValueTransformer: ValueTransformer {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public class NSDictionaryValueTransformer: ValueTransformer {
 
     public override class func transformedValueClass() -> AnyClass {
@@ -109,6 +111,7 @@ public class NSDictionaryValueTransformer: ValueTransformer {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public class NSURLValueTransformer: ValueTransformer {
 
     public override class func transformedValueClass() -> AnyClass {
@@ -157,6 +160,7 @@ public class NSURLValueTransformer: ValueTransformer {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public class NSArrayValueTransformer: ValueTransformer {
 
     public override class func transformedValueClass() -> AnyClass {

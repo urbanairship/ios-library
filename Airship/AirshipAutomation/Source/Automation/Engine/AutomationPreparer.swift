@@ -3,7 +3,7 @@
 import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 protocol AutomationPreparerProtocol: Sendable {
     func prepare(

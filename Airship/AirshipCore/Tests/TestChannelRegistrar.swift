@@ -1,6 +1,6 @@
 import Foundation
 import Combine
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 
 class TestChannelRegistrar:  ChannelRegistrarProtocol, @unchecked Sendable {
     let registrationUpdates: AirshipAsyncChannel<ChannelRegistrationUpdate> = .init()

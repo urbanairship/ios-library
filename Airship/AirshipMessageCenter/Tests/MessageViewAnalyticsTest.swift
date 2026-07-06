@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Testing
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 @testable import AirshipMessageCenter
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 @testable @_spi(AirshipInternal) import AirshipScenes

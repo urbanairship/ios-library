@@ -4,7 +4,7 @@ import Testing
 import Foundation
 @testable
 import AirshipFeatureFlags
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 
 struct FeatureFlagAnalyticsTest {
     private let airshipAnalytics: TestAnalytics = TestAnalytics()

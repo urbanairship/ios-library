@@ -4,7 +4,7 @@ import Foundation
 
 @_spi(AirshipInternal) import AirshipBasement
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 struct FeatureFlagCompoundAudience: Codable, Sendable, Equatable {
     var selector: CompoundDeviceAudienceSelector

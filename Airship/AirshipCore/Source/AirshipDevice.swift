@@ -18,6 +18,7 @@ import WatchKit
 
 /// Internal helper for platform-specific device info.
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct AirshipDevice: Sendable {
 
     /// Returns the device model name (e.g., "iPhone14,3" or "MacBookPro18,1")

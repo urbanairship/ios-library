@@ -3,6 +3,7 @@
 public import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public enum AirshipWorkRequestConflictPolicy: Sendable {
     case append
     case replace
@@ -10,6 +11,7 @@ public enum AirshipWorkRequestConflictPolicy: Sendable {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct AirshipWorkRequest: Equatable, Sendable, Hashable {
     public let workID: String
     public let extras: [String: String]?

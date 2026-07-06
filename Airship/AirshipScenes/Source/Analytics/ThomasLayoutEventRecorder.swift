@@ -3,7 +3,7 @@
 @_spi(AirshipInternal) import AirshipSceneRenderer
 @_spi(AirshipInternal) import AirshipBasement
 import Foundation
-public import AirshipCore
+@_spi(AirshipInternal) public import AirshipCore
 
 /// - Note: For internal use only. :nodoc:
 @_spi(AirshipInternal)

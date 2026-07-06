@@ -1,6 +1,7 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct ChannelRegistrationPayload: Codable, Equatable, Sendable {
 
     public var channel: ChannelInfo

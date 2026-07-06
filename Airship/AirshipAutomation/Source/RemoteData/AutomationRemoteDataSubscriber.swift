@@ -6,7 +6,7 @@ import Foundation
 @preconcurrency
 import Combine
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 /// Protocol for subscribing to remote data updates and syncing automation schedules.
 protocol AutomationRemoteDataSubscriberProtocol: Sendable {

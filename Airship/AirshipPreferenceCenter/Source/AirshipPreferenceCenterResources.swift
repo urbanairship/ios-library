@@ -2,7 +2,7 @@
 
 import Foundation
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 /// Resources for AirshipPreferenceCenter.
 final class AirshipPreferenceCenterResources {

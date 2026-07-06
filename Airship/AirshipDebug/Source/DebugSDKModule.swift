@@ -1,10 +1,11 @@
 /* Copyright Airship and Contributors */
 
 public import Foundation
-public import AirshipCore
+@_spi(AirshipInternal) public import AirshipCore
 
 /// - Note: For internal use only. :nodoc:
 @objc(UADebugSDKModule)
+@_spi(AirshipInternal)
 public class DebugSDKModule: NSObject, AirshipSDKModule {
 
     public var actionsManifest: (any ActionsManifest)? = nil

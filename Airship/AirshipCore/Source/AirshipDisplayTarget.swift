@@ -30,6 +30,7 @@ public import SwiftUI
 
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 @MainActor
 public final class AirshipDisplayTarget {
 

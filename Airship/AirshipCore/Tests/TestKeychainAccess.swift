@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 import Foundation
 
 // Test keychain that performs its in the same queueing as the real AirshipKeyChainAccess

@@ -3,7 +3,7 @@
 import Testing
 @_spi(AirshipInternal) import AirshipBasement
 
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 import Combine
 import Foundation
 import UserNotifications

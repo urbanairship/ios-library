@@ -4,7 +4,7 @@
 import Foundation
 import UIKit
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 protocol InAppMessageSceneManagerProtocol: AnyObject, Sendable {
     @MainActor

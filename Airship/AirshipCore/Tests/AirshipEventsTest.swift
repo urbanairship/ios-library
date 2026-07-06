@@ -10,7 +10,7 @@ import UIKit
 import WatchKit
 #endif
 
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 
 @Suite
 struct AirshipEventsTest {

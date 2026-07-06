@@ -3,7 +3,7 @@
 import Foundation
 import CoreData
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
 actor LegacyAutomationStore {

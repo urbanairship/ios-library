@@ -4,7 +4,7 @@ import CoreData
 @_spi(AirshipInternal) import AirshipBasement
 import Foundation
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 enum FrequencyLimitStoreError: Error, Sendable {
     case coreDataUnavailable

@@ -3,6 +3,7 @@
 public import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct RemoteDataPayload: Sendable, Equatable, Hashable {
 
     /// The payload type

@@ -3,6 +3,7 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct AirshipTriggerContext: Codable, Sendable, Equatable {
     let type: String
     let goal: Double

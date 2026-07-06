@@ -4,6 +4,7 @@ import Foundation
 import Combine
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol AirshipMeteredUsage: Sendable {
     func addEvent(_ event: AirshipMeteredUsageEvent) async throws
 }

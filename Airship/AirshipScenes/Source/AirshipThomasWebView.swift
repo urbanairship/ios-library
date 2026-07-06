@@ -7,7 +7,7 @@
 import Foundation
 import SwiftUI
 import WebKit
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 /// Default Airship web view: a `NativeBridge`-backed `WKWebView`. Built by the host delegate so
 /// the renderer never needs to know about WebKit or the native bridge.

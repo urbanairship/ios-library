@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 
 class TestWorkManager: AirshipWorkManagerProtocol, @unchecked Sendable {
 

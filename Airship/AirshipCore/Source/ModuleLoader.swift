@@ -4,6 +4,7 @@ import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct AirshipModuleLoaderArgs {
     public let config: RuntimeConfig
     public let dataStore: PreferenceDataStore

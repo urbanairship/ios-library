@@ -4,6 +4,7 @@ public import Foundation
 
 /// Authentication challenge resolver class
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class ChallengeResolver: NSObject, Sendable  {
     
     public static let shared: ChallengeResolver = ChallengeResolver()

@@ -4,7 +4,7 @@ import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 import CoreData
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 protocol TriggerStoreProtocol: Sendable {
     func getTrigger(scheduleID: String, triggerID: String) async throws -> TriggerData?

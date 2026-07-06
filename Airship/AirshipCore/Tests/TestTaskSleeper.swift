@@ -1,4 +1,4 @@
-public import AirshipCore
+@_spi(AirshipInternal) public import AirshipCore
 public import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 

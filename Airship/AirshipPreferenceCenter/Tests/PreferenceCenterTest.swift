@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Testing
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 import Foundation
 
 @testable

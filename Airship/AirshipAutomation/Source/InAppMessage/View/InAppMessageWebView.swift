@@ -4,7 +4,7 @@
 import Foundation
 import SwiftUI
 import WebKit
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 struct InAppMessageWebView: View {
     let displayContent: InAppMessageDisplayContent.HTML

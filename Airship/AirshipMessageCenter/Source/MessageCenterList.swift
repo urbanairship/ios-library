@@ -4,7 +4,7 @@ public import Combine
 
 public import Foundation
 
-public import AirshipCore
+@_spi(AirshipInternal) public import AirshipCore
 @_spi(AirshipInternal) import AirshipScenes
 @_spi(AirshipInternal) import AirshipBasement
 

@@ -2,7 +2,7 @@
 
 import Foundation
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 /// Stores information about a remote-data source used for scheduling
 final class AutomationSourceInfoStore: Sendable {

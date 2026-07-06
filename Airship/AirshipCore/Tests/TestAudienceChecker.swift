@@ -3,7 +3,7 @@
 import Foundation
 
 @testable
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 final class TestAudienceChecker: DeviceAudienceChecker, @unchecked Sendable {
     func evaluate(

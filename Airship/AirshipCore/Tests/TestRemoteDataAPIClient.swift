@@ -1,7 +1,7 @@
 import Foundation
 
 @testable
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 final class TestRemoteDataAPIClient: RemoteDataAPIClientProtocol, @unchecked Sendable {
 

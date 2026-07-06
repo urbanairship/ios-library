@@ -5,7 +5,7 @@ import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 struct AutomationTriggerProcessorTest: @unchecked Sendable {
     private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date())

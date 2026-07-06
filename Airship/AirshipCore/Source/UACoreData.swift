@@ -8,6 +8,7 @@ import UIKit
 #endif
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public actor UACoreData {
     private static let managedContextStoreDirectory: String = "com.urbanairship.no-backup"
 

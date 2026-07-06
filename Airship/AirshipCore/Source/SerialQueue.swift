@@ -4,6 +4,7 @@ import Foundation
 
 // An actor that will run a task with a result in order.
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public actor AirshipSerialQueue {
     private var nextTaskNumber: Int = 0
     private var currentTaskNumber: Int = 0

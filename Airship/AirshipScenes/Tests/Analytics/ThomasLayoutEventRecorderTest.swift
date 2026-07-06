@@ -4,7 +4,7 @@ import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 import Testing
 
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 @testable @_spi(AirshipInternal) import AirshipScenes
 

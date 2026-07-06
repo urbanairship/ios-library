@@ -3,7 +3,7 @@
 @preconcurrency import Combine
 @_spi(AirshipInternal) import AirshipBasement
 import SwiftUI
-public import AirshipCore
+@_spi(AirshipInternal) public import AirshipCore
 import UserNotifications
 
 /// A protocol that provides access to Airship's debug interface functionality.

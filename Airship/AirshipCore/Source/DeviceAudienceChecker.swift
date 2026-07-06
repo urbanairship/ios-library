@@ -4,6 +4,7 @@ public import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol DeviceAudienceChecker: Sendable {
     func evaluate(
         audienceSelector: CompoundDeviceAudienceSelector?,

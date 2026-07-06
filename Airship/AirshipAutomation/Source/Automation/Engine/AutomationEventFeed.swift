@@ -3,7 +3,7 @@
 import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 protocol AutomationEventFeedProtocol: Sendable {
     var feed: AsyncStream<AutomationEvent> { get }

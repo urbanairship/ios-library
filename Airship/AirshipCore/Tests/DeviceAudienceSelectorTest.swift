@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Testing
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 import Foundation
 
 @Suite struct DefaultDeviceAudienceCheckerTest {

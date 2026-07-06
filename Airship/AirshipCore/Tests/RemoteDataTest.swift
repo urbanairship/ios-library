@@ -4,7 +4,7 @@ import Testing
 @_spi(AirshipInternal) import AirshipBasement
 
 @testable
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 import Combine
 import Foundation
 

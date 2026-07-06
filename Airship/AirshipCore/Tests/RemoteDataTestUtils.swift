@@ -2,8 +2,9 @@
 public import Foundation
 
 @testable
-public import AirshipCore
+@_spi(AirshipInternal) public import AirshipCore
 
+@_spi(AirshipInternal)
 public class RemoteDataTestUtils: NSObject {
     public class func generatePayload(
         type: String,

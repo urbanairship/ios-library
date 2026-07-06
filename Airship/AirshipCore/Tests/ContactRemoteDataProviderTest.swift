@@ -2,7 +2,7 @@
 
 import Testing
 @testable
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 import Foundation
 
 @Suite struct ContactRemoteDataProviderDelegateTest {

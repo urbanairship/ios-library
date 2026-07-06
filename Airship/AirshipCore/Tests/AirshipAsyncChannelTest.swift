@@ -2,7 +2,7 @@
 
 import Testing
 
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 
 @Suite(.timeLimit(.minutes(1)))
 struct AirshipAsyncChannelTest {

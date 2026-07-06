@@ -2,7 +2,7 @@ import Testing
 
 @_spi(AirshipInternal) import AirshipBasement
 @testable
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 import Foundation
 
 @Suite(.timeLimit(.minutes(1)))

@@ -8,7 +8,7 @@ import Foundation
 import UIKit
 #endif
 
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 
 @MainActor
 @Suite(.timeLimit(.minutes(1)))

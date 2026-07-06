@@ -1,6 +1,7 @@
 public import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct RemoteDataInfo: Sendable, Codable, Equatable, Hashable {
     public let url: URL
     public let lastModifiedTime: String?

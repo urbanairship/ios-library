@@ -5,6 +5,7 @@ public import Combine
 
 /// Simple implementation of a `channel` that allows multiple AsyncStreams of the same data.
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public actor AirshipAsyncChannel<T: Sendable> {
     public enum BufferPolicy: Sendable {
         case unbounded

@@ -150,6 +150,7 @@ public protocol AirshipChannel: AnyObject, Sendable {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol InternalAirshipChannel: AirshipChannel {
     @MainActor
     func addRegistrationExtender(

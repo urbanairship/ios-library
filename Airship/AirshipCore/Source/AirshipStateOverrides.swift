@@ -3,6 +3,7 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct AirshipStateOverrides: Encodable, Equatable, Sendable {
     let appVersion: String
     let sdkVersion: String

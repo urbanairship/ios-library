@@ -3,6 +3,7 @@
 import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol ExperimentDataProvider: Sendable {
     func evaluateExperiments(
         info: MessageInfo,
@@ -11,6 +12,7 @@ public protocol ExperimentDataProvider: Sendable {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct MessageInfo: Equatable, Hashable {
     let messageType: String
     let campaigns: AirshipJSON?

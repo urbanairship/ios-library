@@ -3,6 +3,7 @@
 public import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class AirshipLocalizationUtils {
 
     private static func sanitizedLocalizedString(

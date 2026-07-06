@@ -1,6 +1,6 @@
 import Foundation
 
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 
 class TestContactSubscriptionListAPIClient: ContactSubscriptionListAPIClientProtocol, @unchecked Sendable {
     var fetchSubscriptionListsCallback:

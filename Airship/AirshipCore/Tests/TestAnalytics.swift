@@ -2,10 +2,11 @@ import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 @testable
-public import AirshipCore
+@_spi(AirshipInternal) public import AirshipCore
 public import Combine
 public import UserNotifications
 
+@_spi(AirshipInternal)
 public class TestAnalytics: InternalAirshipAnalytics, AirshipComponent, @unchecked Sendable {
     public var eventFeed: AirshipAnalyticsFeed = AirshipAnalyticsFeed { true }
     

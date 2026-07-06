@@ -4,7 +4,7 @@ import Testing
 import Foundation
 
 @testable @_spi(AirshipInternal) import AirshipAutomation
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 
 
 struct AutomationScheduleDataTest {

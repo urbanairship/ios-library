@@ -3,7 +3,7 @@
 import Testing
 import Foundation
 @testable
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 @Suite(.timeLimit(.minutes(1)))
 struct AirshipAnalyticFeedTest {

@@ -4,6 +4,7 @@ public import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct AirshipTimeCriteria: Codable, Sendable, Equatable {
     private let start: Int64?
     private let end: Int64?
@@ -20,6 +21,7 @@ public struct AirshipTimeCriteria: Codable, Sendable, Equatable {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public extension AirshipTimeCriteria {
     func isActive(date: Date) -> Bool {
         let currentMS = date.airshipMillisecondsSince1970

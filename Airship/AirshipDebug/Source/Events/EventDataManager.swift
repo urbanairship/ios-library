@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import CoreData
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 final class EventDataManager: Sendable {
 

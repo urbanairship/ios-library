@@ -3,7 +3,7 @@
 import Testing
 import Foundation
 
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 @testable import AirshipMessageCenter
 
 struct MessageCenterStoreTest {

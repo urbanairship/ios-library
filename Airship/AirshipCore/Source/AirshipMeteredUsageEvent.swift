@@ -3,11 +3,13 @@
 public import Foundation
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public enum AirshipMeteredUsageType: String, Codable, Sendable {
     case inAppExperienceImpression = "iax_impression"
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct AirshipMeteredUsageEvent: Codable, Sendable, Equatable {
     var eventID: String
     var entityID: String?

@@ -4,7 +4,7 @@ import CoreData
 import Testing
 import Foundation
 
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 @testable import AirshipMessageCenter
 
 /// Verifies that a legacy inbox store which can no longer be migrated to the

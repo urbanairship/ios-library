@@ -4,7 +4,7 @@ import Testing
 import Foundation
 
 @testable
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 @testable
 import AirshipFeatureFlags

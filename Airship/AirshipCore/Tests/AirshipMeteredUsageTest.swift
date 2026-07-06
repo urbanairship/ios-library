@@ -2,7 +2,7 @@
 
 import Testing
 
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 import Foundation
 
 @MainActor

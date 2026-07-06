@@ -2,7 +2,7 @@
 
 import SwiftUI
 import Combine
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 fileprivate struct AppInfo: Sendable {
     let bundleId: String

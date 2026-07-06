@@ -8,6 +8,7 @@ public import Foundation
 
 /// - Note: For internal use only. :nodoc:
 @objc(UAAutomationSDKModule)
+@_spi(AirshipInternal)
 public class AutomationSDKModule: NSObject, AirshipSDKModule {
     public let components: [any AirshipComponent]
     public let actionsManifest: (any ActionsManifest)? = AutomationActionManifest()

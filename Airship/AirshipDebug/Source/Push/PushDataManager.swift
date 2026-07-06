@@ -2,7 +2,7 @@
 
 import CoreData
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 final class PushDataManager: Sendable {
 

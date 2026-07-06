@@ -4,7 +4,7 @@ import Testing
 @_spi(AirshipInternal) import AirshipBasement
 import Foundation
 @testable @_spi(AirshipInternal) import AirshipAutomation
-@testable import AirshipCore
+@_spi(AirshipInternal) @testable import AirshipCore
 
 @MainActor
 struct ActiveTimerTest {

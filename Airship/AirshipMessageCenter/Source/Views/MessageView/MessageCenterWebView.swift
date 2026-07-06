@@ -6,7 +6,7 @@ import SwiftUI
 import WebKit
 #endif
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 #if canImport(WebKit)
 struct MessageCenterWebView: AirshipNativeViewRepresentable {

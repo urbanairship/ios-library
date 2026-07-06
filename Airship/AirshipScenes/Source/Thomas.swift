@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 @_spi(AirshipInternal) public import AirshipBasement
 @_spi(AirshipInternal) public import AirshipSceneRenderer
-public import AirshipCore
+@_spi(AirshipInternal) public import AirshipCore
 
 /// Airship rendering engine.
 /// - Note: For internal use only. :nodoc:

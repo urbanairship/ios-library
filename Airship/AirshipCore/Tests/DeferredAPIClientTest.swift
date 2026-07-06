@@ -6,7 +6,7 @@ import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 @testable
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 @Suite
 struct DeferredAPIClientTest {

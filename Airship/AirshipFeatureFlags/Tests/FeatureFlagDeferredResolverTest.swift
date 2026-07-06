@@ -5,7 +5,7 @@ import Foundation
 @testable
 import AirshipFeatureFlags
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
 struct FeatureFlagDeferredResolverTest {

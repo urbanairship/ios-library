@@ -2,7 +2,7 @@
 
 import Foundation
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
 /// Manager protocol for keeping track of frequency limits and occurrence counts.
