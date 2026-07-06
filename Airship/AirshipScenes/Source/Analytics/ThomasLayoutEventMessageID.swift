@@ -6,6 +6,7 @@ import AirshipCore
 public import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public enum ThomasLayoutEventMessageID: Encodable, Equatable, Sendable {
     case legacy(identifier: String)
     case airship(identifier: String, campaigns: AirshipJSON?, sendMetadata: String? = nil)

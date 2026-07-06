@@ -5,6 +5,7 @@ import Foundation
 public import AirshipCore
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct ThomasLayoutPermissionResultEvent: ThomasLayoutEvent {
     public let name: AirshipEventType = AirshipEventType.inAppPermissionResult
     public let data: (any Sendable & Encodable)?

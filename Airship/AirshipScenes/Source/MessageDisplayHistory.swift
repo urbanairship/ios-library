@@ -6,6 +6,7 @@ public import Foundation
 public import AirshipCore
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct MessageDisplayHistory: Codable, Equatable, Sendable {
     public var lastImpression: LastImpression?
     public var lastDisplay: LastDisplay?
@@ -35,6 +36,7 @@ public struct MessageDisplayHistory: Codable, Equatable, Sendable {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public protocol MessageDisplayHistoryStoreProtocol: Sendable {
     func set(
         _ history: MessageDisplayHistory,
@@ -47,6 +49,7 @@ public protocol MessageDisplayHistoryStoreProtocol: Sendable {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class MessageDisplayHistoryStore: MessageDisplayHistoryStoreProtocol {
 
     private let storageGetter: @Sendable (String) async throws -> Data?
