@@ -49,6 +49,10 @@ let package = Package(
             name: "AirshipScenes",
             targets: ["AirshipScenes"]
         ),
+        .library(
+            name: "AirshipAIModels",
+            targets: ["AirshipAIModels"]
+        ),
     ],
     targets: [
         .target(
@@ -183,6 +187,15 @@ let package = Package(
             path: "Airship/AirshipScenes",
             exclude: [
                 "Info.plist",
+                "Tests",
+            ],
+            sources: ["Source"]
+        ),
+        .target(
+            name: "AirshipAIModels",
+            dependencies: [.target(name: "AirshipCore")],
+            path: "Airship/AirshipAIModels",
+            exclude: [
                 "Tests",
             ],
             sources: ["Source"]

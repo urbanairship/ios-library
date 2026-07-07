@@ -6,6 +6,10 @@ import Foundation
 import AirshipCore
 
 final class TestAirshipInstance: AirshipInstance, @unchecked Sendable {
+    var ai: any AirshipCore.AirshipAI.Manager {
+        fatalError("Not implemented")
+    }
+
     var inputValidator: any AirshipInputValidation.Validator {
         fatalError("Not implemented")
     }

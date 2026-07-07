@@ -153,6 +153,11 @@ public final class Airship: Sendable {
         return requireComponent(ofType: (any AirshipChannel).self)
     }
 
+    /// Shared AI manager.
+    public static var ai: any AirshipAI.Manager {
+        return shared.airshipInstance.ai
+    }
+
     @MainActor
     private static var onReadyCallbacks: [@MainActor @Sendable () -> Void] = []
 

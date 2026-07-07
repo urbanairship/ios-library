@@ -9,6 +9,7 @@ protocol AirshipInstance: Sendable {
     var permissionsManager: any AirshipPermissionsManager { get }
     var actionRegistry: any AirshipActionRegistry { get }
     var urlOpener: any URLOpenerProtocol { get }
+    var ai: any AirshipAI.Manager { get }
 
     #if !os(tvOS) && !os(watchOS)
     var javaScriptCommandDelegate: (any JavaScriptCommandDelegate)? { get set }
@@ -40,7 +41,8 @@ final class DefaultAirshipInstance: AirshipInstance {
     let inputValidator: any AirshipInputValidation.Validator
     public let permissionsManager: any AirshipPermissionsManager
     public let actionRegistry: any AirshipActionRegistry
-    
+    let ai: any AirshipAI.Manager
+
 #if !os(tvOS) && !os(watchOS)
     private let _jsDelegateHolder: AirshipAtomicValue<(any JavaScriptCommandDelegate)?> = AirshipAtomicValue<(any JavaScriptCommandDelegate)?>(nil)
     public var javaScriptCommandDelegate: (any JavaScriptCommandDelegate)? {
@@ -77,6 +79,9 @@ final class DefaultAirshipInstance: AirshipInstance {
             appSecret: appCredentials.appSecret
         )
 
+        let internalAIManager = AirshipAI.DefaultManager()
+        self.ai = internalAIManager
+        
         let dataStore = PreferenceDataStore(appKey: appCredentials.appKey)
         self.preferenceDataStore = dataStore
         self.permissionsManager = DefaultAirshipPermissionsManager()
@@ -205,7 +210,8 @@ final class DefaultAirshipInstance: AirshipInstance {
             deferredResolver: deferredResolver,
             cache: cache,
             audienceChecker: audienceChecker,
-            inputValidator: inputValidator
+            inputValidator: inputValidator,
+            aiManager: internalAIManager
         )
         
         var components: [any AirshipComponent] = [

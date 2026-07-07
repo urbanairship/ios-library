@@ -22,6 +22,7 @@ public struct AirshipModuleLoaderArgs {
     public let audienceChecker: any DeviceAudienceChecker
     public let workManager: any AirshipWorkManagerProtocol
     public let inputValidator: any AirshipInputValidation.Validator
+    public let aiManager: any AirshipAI.InternalManager
 
 }
 
@@ -31,6 +32,7 @@ enum SDKModuleNames: String, CaseIterable {
     case debug = "UADebugSDKModule"
     case featureFlags = "UAFeatureFlagsSDKModule"
     case automation = "UAAutomationSDKModule"
+    case aiModels = "UAAIModelsSDKModule"
 }
 
 class ModuleLoader {
@@ -56,7 +58,8 @@ class ModuleLoader {
         deferredResolver: any AirshipDeferredResolverProtocol,
         cache: any AirshipCache,
         audienceChecker: any DeviceAudienceChecker,
-        inputValidator: any AirshipInputValidation.Validator
+        inputValidator: any AirshipInputValidation.Validator,
+        aiManager: any AirshipAI.InternalManager
     ) {
 
         let args = AirshipModuleLoaderArgs(
@@ -75,7 +78,8 @@ class ModuleLoader {
             cache: cache,
             audienceChecker: audienceChecker,
             workManager: AirshipWorkManager.shared,
-            inputValidator: inputValidator
+            inputValidator: inputValidator,
+            aiManager: aiManager
         )
 
         let modules = ModuleLoader.loadModules(args)
