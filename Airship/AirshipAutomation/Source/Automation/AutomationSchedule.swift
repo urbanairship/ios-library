@@ -19,6 +19,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
 
         /// Deferred
         /// - Note: For internal use only. :nodoc:
+        @_spi(AirshipInternal)
         case deferred(DeferredAutomationData)
     }
 

@@ -296,6 +296,7 @@ public struct CompoundAutomationTrigger: Sendable, Codable, Equatable {
 }
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public extension AutomationTrigger {
     static func activeSession(count: UInt) -> AutomationTrigger {
         return .event(EventAutomationTrigger(type: .activeSession, goal: Double(count)))

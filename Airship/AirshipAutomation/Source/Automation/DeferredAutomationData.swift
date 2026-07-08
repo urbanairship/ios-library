@@ -5,6 +5,7 @@ import Foundation
 import AirshipCore
 
 /// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct DeferredAutomationData: Sendable, Codable, Equatable {
     enum DeferredType: String, Codable, Sendable {
         case inAppMessage = "in_app_message"

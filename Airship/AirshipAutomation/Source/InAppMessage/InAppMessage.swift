@@ -263,11 +263,12 @@ struct AirshipLayoutWrapper: Codable {
 }
 
 /// These are just for view testing purposes
-extension InAppMessage {
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
+public extension InAppMessage {
     /// We return a window since we are implementing display
-    /// - Note: For internal use only. :nodoc:
     @MainActor
-    public func _display() async throws {
+    func _display() async throws {
         let adapter = try AirshipLayoutDisplayAdapter(
             message: self,
             priority: 0,
