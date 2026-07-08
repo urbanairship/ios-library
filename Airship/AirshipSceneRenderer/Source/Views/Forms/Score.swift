@@ -330,6 +330,8 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
             maxHeight: viewConstraints.maxHeight,
             isHorizontalFixedSize: viewConstraints.isHorizontalFixedSize,
             isVerticalFixedSize: viewConstraints.isVerticalFixedSize,
+            isHorizontalAbsoluteSize: true,
+            isVerticalAbsoluteSize: true,
             safeAreaInsets: viewConstraints.safeAreaInsets
         )
 
