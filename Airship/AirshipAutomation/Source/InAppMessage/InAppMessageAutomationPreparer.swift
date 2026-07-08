@@ -24,7 +24,10 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
     private let assetManager: any AssetCacheManagerProtocol
     private let analyticsFactory: any InAppMessageAnalyticsFactoryProtocol
     private let actionRunnerFactory: any InAppActionRunnerFactoryProtocol
+    private let aiManager: any AirshipAI.InternalManager
     private let hooks = Hooks()
+    private let iaaFilterPromptExtrasKey = "ua_ai_filter"
+
 
     @MainActor
     var onCheckLocalAudience: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> LocalAudienceCheckResult)? {
@@ -42,18 +45,22 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
         }
     }
 
+    @MainActor
     init(
         assetManager: any AssetCacheManagerProtocol,
         displayCoordinatorManager: any DisplayCoordinatorManagerProtocol,
         displayAdapterFactory: any DisplayAdapterFactoryProtocol = DisplayAdapterFactory(),
         analyticsFactory: any InAppMessageAnalyticsFactoryProtocol,
-        actionRunnerFactory: any InAppActionRunnerFactoryProtocol = InAppActionRunnerFactory()
+        actionRunnerFactory: any InAppActionRunnerFactoryProtocol = InAppActionRunnerFactory(),
+        aiManager: any AirshipAI.InternalManager
     ) {
         self.assetManager = assetManager
         self.displayCoordinatorManager = displayCoordinatorManager
         self.displayAdapterFactory = displayAdapterFactory
         self.analyticsFactory = analyticsFactory
         self.actionRunnerFactory = actionRunnerFactory
+        self.aiManager = aiManager
+        aiManager.setSchema(InAppMessageFilterEvaluation.schema, for: InAppMessageFilterContext.filterUsage)
     }
 
     func prepare(
@@ -101,6 +108,24 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
                 case .penalize: .penalize
                 }
             }
+        }
+
+        if let filterPrompt = message.extras?.object?[iaaFilterPromptExtrasKey]?.string {
+            let result = await aiManager.evaluate(
+                InAppMessageFilterEvaluation(
+                    filterPrompt: filterPrompt,
+                    subject: .init(
+                        name: message.name,
+                        extras: message.extras,
+                        campaigns: preparedScheduleInfo.campaigns
+                    )
+                )
+            )
+            if result.output?.allow == false {
+                AirshipLogger.debug("AI filter suppressed message \(message.name): \(result.output?.reason ?? "")")
+                return .skip
+            }
+
         }
 
         let assets = try await self.prepareAssets(

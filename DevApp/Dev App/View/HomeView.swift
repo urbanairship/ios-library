@@ -4,6 +4,9 @@ import AirshipCore
 import Combine
 import SwiftUI
 import AirshipScenes
+#if DEBUG && canImport(AirshipDebug)
+import AirshipDebug
+#endif
 
 #if canImport(ActivityKit)
 import ActivityKit
@@ -100,14 +103,27 @@ struct HomeView: View {
 #endif
                 
                 Divider()
-                
+
                 NavigationLink(value: AppRouter.HomeRoute.thomas(.home)) {
                     makeQuickSettingItem(
                         title: "Thomas Layouts",
                         value: "Tap to preview layouts"
                     )
                 }
-                
+
+#if DEBUG && canImport(AirshipDebug)
+                if Airship.config.airshipConfig.isAirshipDebugEnabled {
+                    Divider()
+
+                    Button(action: { viewModel.isDebugPresented = true }) {
+                        makeQuickSettingItem(
+                            title: "Airship Debug",
+                            value: "Tap to open debug tools"
+                        )
+                    }
+                }
+#endif
+
             }
         }
     }
@@ -174,10 +190,17 @@ struct HomeView: View {
 #endif
                 .navigationDestination(for: AppRouter.HomeRoute.self) { $0.destination() }
         }
+#if DEBUG && canImport(AirshipDebug)
+        .sheet(isPresented: $viewModel.isDebugPresented) {
+            AirshipDebugView(onDismiss: { viewModel.isDebugPresented = false })
+        }
+#endif
     }
 
     @MainActor
     class ViewModel: ObservableObject {
+        @Published var isDebugPresented: Bool = false
+
         @Published
         var notificationStatus: AirshipNotificationStatus?
 

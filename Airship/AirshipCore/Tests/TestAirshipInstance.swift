@@ -2,11 +2,11 @@
 
 import Foundation
 
-@testable
+@testable @_spi(AirshipInternal)
 import AirshipCore
 
 final class TestAirshipInstance: AirshipInstance, @unchecked Sendable {
-    var ai: any AirshipCore.AirshipAI.Manager {
+    var ai: any AirshipCore.AirshipAI.InternalManager {
         fatalError("Not implemented")
     }
 

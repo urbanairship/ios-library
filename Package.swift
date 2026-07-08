@@ -196,6 +196,7 @@ let package = Package(
             dependencies: [.target(name: "AirshipCore")],
             path: "Airship/AirshipAIModels",
             exclude: [
+                "Info.plist",
                 "Tests",
             ],
             sources: ["Source"]

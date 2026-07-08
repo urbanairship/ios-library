@@ -5,19 +5,79 @@ import Foundation
 extension AirshipAI {
     final class ProviderRegistry: Sendable {
 
+        private struct AnyProvider: Sendable {
+            let fetch: @Sendable @MainActor (any Sendable) async -> AirshipAI.Context
+        }
+
         @MainActor
-        private var providers: [Usage: any ContextProvider] = [:]
+        private var providers: [String: AnyProvider] = [:]
+
+        @MainActor
+        private var defaultProvider: AnyProvider?
 
         init() {}
 
         @MainActor
-        func setProvider(_ provider: (any ContextProvider)?, for usage: Usage) {
-            providers[usage] = provider
+        func setProvider<S: Sendable>(_ provider: (any ContextProvider<S>)?, for usage: Usage<S>) {
+            if let provider {
+                providers[usage.rawValue] = AnyProvider { subject in
+                    guard let typed = subject as? S else { return .empty }
+                    return await provider.context(for: typed)
+                }
+            } else {
+                providers.removeValue(forKey: usage.rawValue)
+            }
         }
 
         @MainActor
-        func provider(for usage: Usage) -> (any ContextProvider)? {
-            providers[usage]
+        func setDefaultProvider(_ provider: (any ContextProvider<Void>)?) {
+            if let provider {
+                defaultProvider = AnyProvider { _ in
+                    await provider.context(for: ())
+                }
+            } else {
+                defaultProvider = nil
+            }
         }
+
+        /// Returns a type-erased context fetcher for the given usage raw value, or nil if
+        /// no provider is registered. The returned closure merges default and typed contexts;
+        /// the typed provider's values take precedence.
+        @MainActor
+        func contextFetcher(
+            for rawValue: String
+        ) -> (@Sendable @MainActor (any Sendable) async -> AirshipAI.Context)? {
+            let typed = providers[rawValue]
+            let def = defaultProvider
+
+            guard typed != nil || def != nil else { return nil }
+
+            return { subject in
+                let defCtx: AirshipAI.Context
+                if let def {
+                    defCtx = await def.fetch(subject)
+                } else {
+                    defCtx = .empty
+                }
+                let typedCtx: AirshipAI.Context
+                if let typed {
+                    typedCtx = await typed.fetch(subject)
+                } else {
+                    typedCtx = .empty
+                }
+                return defCtx.merged(overriddenBy: typedCtx)
+            }
+        }
+    }
+}
+
+private extension AirshipAI.Context {
+    func merged(overriddenBy other: AirshipAI.Context) -> AirshipAI.Context {
+        var result = self
+        if let otherSummary = other.summary {
+            result.summary = otherSummary
+        }
+        result.attributes.merge(other.attributes) { _, new in new }
+        return result
     }
 }

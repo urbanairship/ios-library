@@ -8,9 +8,12 @@ public enum AirshipAI {
     // MARK: - Usage
 
     /// Identifies what an on-device model evaluation is for.
-    /// Add cases here as AI features are wired up across modules.
-    public enum Usage: Sendable, Hashable, Codable {
-        case inAppMessageFilter
+    ///
+    /// `Subject` is a phantom type that ties a usage to its typed context provider,
+    /// giving compile-time guarantees at `setProvider` call sites.
+    public struct Usage<Subject: Sendable>: RawRepresentable, Hashable, Sendable {
+        public let rawValue: String
+        public init(rawValue: String) { self.rawValue = rawValue }
     }
 
     // MARK: - Context
@@ -24,12 +27,12 @@ public enum AirshipAI {
         /// Free-form natural language the model reads directly.
         public var summary: String?
 
-        /// Structured key/value hints (e.g. `["favorite_category": "hiking"]`).
-        public var attributes: [String: String]
+        /// Structured key/value hints (e.g. `["favorite_category": .string("hiking")]`).
+        public var attributes: [String: AirshipJSON]
 
         public init(
             summary: String? = nil,
-            attributes: [String: String] = [:]
+            attributes: [String: AirshipJSON] = [:]
         ) {
             self.summary = summary
             self.attributes = attributes
@@ -138,8 +141,8 @@ public enum AirshipAI {
     /// Thin, backend-agnostic wrapper over a model.
     ///
     /// Takes instructions + a prompt + a schema and returns the model's structured
-    /// response as a JSON string. No FoundationModels types appear here — only
-    /// `SystemAIModel` (in the `AirshipAI` module) touches FoundationModels.
+    /// response as parsed JSON. No FoundationModels types appear here — only
+    /// `SystemAIModel` (in the `AirshipAIModels` module) touches FoundationModels.
     public protocol Model: Sendable {
 
         var availability: Availability { get }
@@ -148,15 +151,20 @@ public enum AirshipAI {
             instructions: String,
             prompt: String,
             schema: Schema
-        ) async throws -> String
+        ) async throws -> AirshipJSON
     }
 
     // MARK: - ContextProvider protocol
 
     /// Implemented by the host app to supply on-device context for AI evaluations.
-    public protocol ContextProvider: AnyObject, Sendable {
+    ///
+    /// `Subject` is the type of the feature-specific data the provider receives
+    /// (e.g. the message being filtered). The `Usage<Subject>` phantom type ensures
+    /// the correct provider is registered at the correct call site.
+    public protocol ContextProvider<Subject>: AnyObject, Sendable {
+        associatedtype Subject: Sendable
         @MainActor
-        func context(for usage: Usage) async -> Context
+        func context(for subject: Subject) async -> Context
     }
 
     // MARK: - Manager protocol
@@ -167,12 +175,26 @@ public enum AirshipAI {
     /// swap the backing model here.
     public protocol Manager: Sendable {
 
-        /// Registers a context provider for a usage, or clears it when `provider` is nil.
+        /// Registers a typed context provider for a usage, or clears it when `provider` is nil.
+        ///
+        /// The `Subject` phantom type on `Usage` ensures the provider's `Subject` matches
+        /// the usage — a mismatched provider is a compile error.
         @MainActor
-        func setProvider(
-            _ provider: (any ContextProvider)?,
-            for usage: Usage
+        func setProvider<S: Sendable>(
+            _ provider: (any ContextProvider<S>)?,
+            for usage: Usage<S>
         )
+
+        /// Registers a default context provider invoked for every evaluation.
+        ///
+        /// The default provider receives no feature-specific subject (`Subject == Void`) — use
+        /// it to supply general user context such as preferences or profile data.
+        ///
+        /// When a typed provider is also registered for a usage, both are called and their
+        /// contexts are merged: the typed provider's values take precedence over the default.
+        /// Pass `nil` to remove a previously registered default provider.
+        @MainActor
+        func setDefaultProvider(_ provider: (any ContextProvider<Void>)?)
 
         /// Overrides the model used for all evaluations. Use `.defaultModel` to restore
         /// the SDK default.
@@ -189,12 +211,18 @@ public enum AirshipAI {
     /// A typed request submitted to the on-device model.
     ///
     /// Feature modules define concrete evaluations; `Output` is decoded from the
-    /// model's JSON response. No FoundationModels types appear here.
+    /// model's JSON response. `Subject` is the feature-specific context type whose
+    /// instance is passed to the registered `ContextProvider` at evaluation time.
     @_spi(AirshipInternal)
     public protocol Evaluation<Output>: Sendable {
         associatedtype Output: Decodable & Sendable
+        associatedtype Subject: Sendable
 
-        var usage: Usage { get }
+        var usage: Usage<Subject> { get }
+
+        /// The context subject for this evaluation — passed to the registered
+        /// `ContextProvider<Subject>` to produce the `Context` for the prompt.
+        var subject: Subject { get }
 
         func instructions() -> String
         func prompt(context: Context) -> String
@@ -215,11 +243,11 @@ public enum AirshipAI {
         /// Registers the schema for a usage. Feature modules call this at startup
         /// so the schema is available during evaluation.
         @MainActor
-        func setSchema(_ schema: Schema, for usage: Usage)
+        func setSchema<S: Sendable>(_ schema: Schema, for usage: Usage<S>)
 
         /// Returns the schema registered for a usage.
         @MainActor
-        func schema(for usage: Usage) -> Schema?
+        func schema<S: Sendable>(for usage: Usage<S>) -> Schema?
 
         /// Called by `AirshipAIModelsSDKModule` to wire in `SystemAIModel` as the
         /// default. Replaces the current model immediately.
@@ -227,6 +255,28 @@ public enum AirshipAI {
         func registerModelFactory(
             _ factory: @MainActor @Sendable @escaping () -> any Model
         )
+
+        /// Raw keys of all usages that have a registered schema.
+        @MainActor
+        var registeredUsageKeys: [String] { get }
+
+        /// Fetches the merged context that would be passed to the model for the given usage and subject.
+        /// Returns `.empty` if no provider is registered.
+        func fetchContext<S: Sendable>(for usage: Usage<S>, subject: S) async -> Context
+    }
+}
+
+// MARK: - Usage Codable
+
+extension AirshipAI.Usage: Codable {
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        rawValue = try container.decode(String.self)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
     }
 }
 
@@ -243,7 +293,8 @@ extension AirshipAI.Schema {
             return "  \"\(field.name)\": \(field.type.rawValue) (\(requirement))\(description)"
         }
         return """
-        Respond with ONLY a single JSON object (no markdown, no prose) with these fields:
+        *Return the data in JSON format. Do not use markdown backticks or fences.*
+        The response must start with { and end with }. Fields:
         {
         \(lines.joined(separator: ",\n"))
         }

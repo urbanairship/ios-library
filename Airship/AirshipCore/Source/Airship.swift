@@ -158,6 +158,11 @@ public final class Airship: Sendable {
         return shared.airshipInstance.ai
     }
 
+    @_spi(AirshipInternal)
+    public static var _aiManager: any AirshipAI.InternalManager {
+        return shared.airshipInstance.ai
+    }
+
     @MainActor
     private static var onReadyCallbacks: [@MainActor @Sendable () -> Void] = []
 

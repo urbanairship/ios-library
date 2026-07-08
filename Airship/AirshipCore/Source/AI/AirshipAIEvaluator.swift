@@ -9,25 +9,27 @@ extension AirshipAI {
         func evaluate<E: Evaluation>(
             _ evaluation: E,
             model: any Model,
-            provider: (any ContextProvider)?,
+            context: Context,
             schema: Schema
         ) async -> Result<E.Output> {
             guard case .available = model.availability else {
                 return .skipped(reason: "On-device model unavailable")
             }
 
-            let context = await provider?.context(for: evaluation.usage) ?? .empty
-
             do {
+                let instructions = evaluation.instructions()
+                let prompt = evaluation.prompt(context: context)
+                AirshipLogger.debug("AI evaluate [\(evaluation.usage.rawValue)] instructions:\n\(instructions)\n\nschema:\n\(schema.instruction)\n\nprompt:\n\(prompt)")
                 let json = try await model.respond(
-                    instructions: evaluation.instructions(),
-                    prompt: evaluation.prompt(context: context),
+                    instructions: instructions,
+                    prompt: prompt,
                     schema: schema
                 )
-                let output = try JSONDecoder().decode(E.Output.self, from: Data(json.utf8))
+                AirshipLogger.debug("AI evaluate [\(evaluation.usage.rawValue)] response:\n\(json)")
+                let output: E.Output = try json.decode()
                 return .completed(output)
             } catch {
-                AirshipLogger.warn("AI evaluation failed for \(evaluation.usage): \(error)")
+                AirshipLogger.warn("AI evaluation failed for \(evaluation.usage.rawValue): \(error)")
                 return .failed(error)
             }
         }

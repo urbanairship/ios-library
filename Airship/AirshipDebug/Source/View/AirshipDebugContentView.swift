@@ -78,6 +78,11 @@ public struct AirshipDebugContentView: View {
             icon: "iphone.homebutton",
             title: "App Info",
             route: .appInfo
+        ),
+        DebugSection(
+            icon: "cpu.fill",
+            title: "On-Device AI",
+            route: .ai
         )
     ]
 

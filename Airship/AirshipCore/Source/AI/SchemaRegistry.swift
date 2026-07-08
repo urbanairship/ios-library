@@ -6,18 +6,23 @@ extension AirshipAI {
     final class SchemaRegistry: Sendable {
 
         @MainActor
-        private var schemas: [Usage: Schema] = [:]
+        private var schemas: [String: Schema] = [:]
 
         init() {}
 
         @MainActor
-        func setSchema(_ schema: Schema, for usage: Usage) {
-            schemas[usage] = schema
+        func setSchema<S: Sendable>(_ schema: Schema, for usage: Usage<S>) {
+            schemas[usage.rawValue] = schema
         }
 
         @MainActor
-        func schema(for usage: Usage) -> Schema? {
-            schemas[usage]
+        func schema(for rawValue: String) -> Schema? {
+            schemas[rawValue]
+        }
+
+        @MainActor
+        var registeredUsageKeys: [String] {
+            Array(schemas.keys)
         }
     }
 }

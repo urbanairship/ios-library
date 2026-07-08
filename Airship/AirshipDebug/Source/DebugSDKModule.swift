@@ -3,6 +3,8 @@
 public import Foundation
 @_spi(AirshipInternal) public import AirshipCore
 
+nonisolated(unsafe) var debugModuleAIManager: (any AirshipAI.InternalManager)?
+
 /// - Note: For internal use only. :nodoc:
 @objc(UADebugSDKModule)
 @_spi(AirshipInternal)
@@ -13,6 +15,7 @@ public class DebugSDKModule: NSObject, AirshipSDKModule {
     public let components: [any AirshipComponent]
 
     public static func load(_ args: AirshipModuleLoaderArgs) -> (any AirshipSDKModule)? {
+        debugModuleAIManager = args.aiManager
         let debugManager = DefaultAirshipDebugManager(
             config: args.config,
             analytics: args.analytics,

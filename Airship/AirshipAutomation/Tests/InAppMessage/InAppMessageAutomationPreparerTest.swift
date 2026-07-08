@@ -15,6 +15,7 @@ struct InAppMessageAutomationPreparerTest {
     private let analyticsFactory: TestAnalyticsFactory = TestAnalyticsFactory()
     private let analytics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
     private let actionRunnerFactory: TestInAppActionRunnerFactory = TestInAppActionRunnerFactory()
+    private let aiManager: TestAIManager = TestAIManager()
 
     private let preparer: InAppMessageAutomationPreparer
     private let message: InAppMessage = InAppMessage(
@@ -40,7 +41,8 @@ struct InAppMessageAutomationPreparerTest {
             displayCoordinatorManager: displayCoordinatorManager,
             displayAdapterFactory: displayAdapterFactory,
             analyticsFactory: analyticsFactory,
-            actionRunnerFactory: actionRunnerFactory
+            actionRunnerFactory: actionRunnerFactory,
+            aiManager: aiManager
         )
 
         actionRunnerFactory.onMake = { _, _ in return TestInAppActionRunner() }
@@ -263,6 +265,118 @@ struct InAppMessageAutomationPreparerTest {
             Issue.record("Expected .prepared")
             return
         }
+    }
+
+    // MARK: - AI filter
+
+    /// A message carrying the `ua_ai_filter` extras key, which is what gates the AI filter.
+    private func filterMessage() -> InAppMessage {
+        InAppMessage(
+            name: "promo",
+            displayContent: .banner(.init(media: .init(url: "some-url", type: .image))),
+            extras: .object(["ua_ai_filter": .string("only show to hikers")])
+        )
+    }
+
+    private func setupDisplayStubs() async {
+        await self.assetManager.setOnCache { _, _ in TestCachedAssets() }
+        self.displayCoordinatorManager.onCoordinator = { _ in TestDisplayCoordinator() }
+        self.displayAdapterFactory.onMake = { _ in TestDisplayAdapter() }
+    }
+
+    @Test
+    func testAIFilterSuppressesWhenNotAllowed() async throws {
+        // onCache intentionally not set — the message must be skipped before assets are prepared.
+        aiManager.onEvaluate = { _ in
+            AirshipAI.Result<InAppMessageFilterEvaluation.Output>.completed(
+                .init(allow: false, reason: "not relevant")
+            )
+        }
+
+        let result = try await self.preparer.prepare(data: filterMessage(), preparedScheduleInfo: preparedScheduleInfo)
+        guard case .skip = result else {
+            Issue.record("Expected .skip, got \(result)")
+            return
+        }
+    }
+
+    @Test
+    func testAIFilterAllowsWhenAllowed() async throws {
+        await setupDisplayStubs()
+        aiManager.onEvaluate = { _ in
+            AirshipAI.Result<InAppMessageFilterEvaluation.Output>.completed(
+                .init(allow: true, reason: "relevant")
+            )
+        }
+
+        guard case .prepared = try await self.preparer.prepare(data: filterMessage(), preparedScheduleInfo: preparedScheduleInfo) else {
+            Issue.record("Expected .prepared")
+            return
+        }
+    }
+
+    @Test
+    func testAIFilterFailsOpenWhenSkipped() async throws {
+        await setupDisplayStubs()
+        aiManager.onEvaluate = { _ in
+            AirshipAI.Result<InAppMessageFilterEvaluation.Output>.skipped(reason: "model unavailable")
+        }
+
+        guard case .prepared = try await self.preparer.prepare(data: filterMessage(), preparedScheduleInfo: preparedScheduleInfo) else {
+            Issue.record("Expected .prepared on skipped evaluation (fail open)")
+            return
+        }
+    }
+
+    @Test
+    func testAIFilterFailsOpenWhenFailed() async throws {
+        await setupDisplayStubs()
+        aiManager.onEvaluate = { _ in
+            AirshipAI.Result<InAppMessageFilterEvaluation.Output>.failed(AirshipErrors.error("boom"))
+        }
+
+        guard case .prepared = try await self.preparer.prepare(data: filterMessage(), preparedScheduleInfo: preparedScheduleInfo) else {
+            Issue.record("Expected .prepared on failed evaluation (fail open)")
+            return
+        }
+    }
+
+    @Test
+    func testAIFilterNotRunWithoutExtrasKey() async throws {
+        await setupDisplayStubs()
+
+        let evaluated = AirshipAtomicValue<Bool>(false)
+        aiManager.onEvaluate = { _ in
+            evaluated.value = true
+            return AirshipAI.Result<InAppMessageFilterEvaluation.Output>.completed(.init(allow: false, reason: ""))
+        }
+
+        // Default message has no extras — the filter must not run, and the message prepares.
+        guard case .prepared = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo) else {
+            Issue.record("Expected .prepared")
+            return
+        }
+        #expect(evaluated.value == false)
+    }
+
+    @Test
+    func testAIFilterPassesNameExtrasAndCampaigns() async throws {
+        await setupDisplayStubs()
+
+        let received = AirshipAtomicValue<InAppMessageFilterEvaluation?>(nil)
+        aiManager.onEvaluate = { evaluation in
+            received.value = evaluation as? InAppMessageFilterEvaluation
+            return AirshipAI.Result<InAppMessageFilterEvaluation.Output>.completed(.init(allow: true, reason: ""))
+        }
+
+        _ = try await self.preparer.prepare(data: filterMessage(), preparedScheduleInfo: preparedScheduleInfo)
+
+        let evaluation = try #require(received.value)
+        #expect(evaluation.subject.name == "promo")
+        #expect(evaluation.subject.extras?.object?["ua_ai_filter"]?.string == "only show to hikers")
+        #expect(evaluation.subject.campaigns == preparedScheduleInfo.campaigns)
+        // The extracted filter prompt is private, so assert it propagated via the rendered prompt.
+        #expect(evaluation.prompt(context: .empty).contains("Filter instruction: only show to hikers"))
     }
 
 }

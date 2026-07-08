@@ -6,6 +6,12 @@ import Foundation
 
 private enum SampleError: Error { case boom }
 
+// MARK: - Test usage
+
+private extension AirshipAI.Usage where Subject == Void {
+    static let testUsage = AirshipAI.Usage<Void>(rawValue: "test_usage")
+}
+
 // MARK: - Value types
 
 struct AirshipAIValueTests {
@@ -26,9 +32,11 @@ struct AirshipAIValueTests {
 
     @Test
     func usageCodesAsBareString() throws {
-        let data = try JSONEncoder().encode(AirshipAI.Usage.inAppMessageFilter)
+        let usage = AirshipAI.Usage<Void>(rawValue: "in_app_message_filter")
+        let data = try JSONEncoder().encode(usage)
         #expect(String(data: data, encoding: .utf8) == "\"in_app_message_filter\"")
-        #expect(try JSONDecoder().decode(AirshipAI.Usage.self, from: data) == .inAppMessageFilter)
+        let decoded = try JSONDecoder().decode(AirshipAI.Usage<Void>.self, from: data)
+        #expect(decoded == usage)
     }
 
     @Test
@@ -49,17 +57,18 @@ struct AirshipAIValueTests {
 struct AirshipAIContextProviderTests {
 
     final class StubProvider: AirshipAI.ContextProvider, @unchecked Sendable {
-        func context(for usage: AirshipAI.Usage) async -> AirshipAI.Context { .empty }
+        typealias Subject = Void
+        func context(for subject: Void) async -> AirshipAI.Context { .empty }
     }
 
     @Test
     func setProviderRegistersResolvesAndClears() throws {
         let manager = AirshipAI.DefaultManager()
-        defer { manager.setProvider(nil, for: .inAppMessageFilter) }
+        defer { manager.setProvider(nil, for: .testUsage) }
 
         let provider = StubProvider()
-        manager.setProvider(provider, for: .inAppMessageFilter)
-        manager.setProvider(nil, for: .inAppMessageFilter)
+        manager.setProvider(provider, for: .testUsage)
+        manager.setProvider(nil, for: .testUsage)
     }
 }
 
@@ -68,7 +77,7 @@ struct AirshipAIContextProviderTests {
 /// Reusable stub model. Records what it was asked and returns a canned JSON string.
 final class MockAIModel: AirshipAI.Model, @unchecked Sendable {
     var availabilityValue: AirshipAI.Availability
-    var response: Swift.Result<String, any Error>
+    var response: Swift.Result<AirshipJSON, any Error>
 
     private(set) var respondCallCount = 0
     private(set) var lastInstructions: String?
@@ -77,7 +86,7 @@ final class MockAIModel: AirshipAI.Model, @unchecked Sendable {
 
     init(
         availability: AirshipAI.Availability = .available,
-        response: Swift.Result<String, any Error> = .success(#"{"allow":true,"reason":"ok"}"#)
+        response: Swift.Result<AirshipJSON, any Error> = .success(["allow": true, "reason": "ok"])
     ) {
         self.availabilityValue = availability
         self.response = response
@@ -89,25 +98,12 @@ final class MockAIModel: AirshipAI.Model, @unchecked Sendable {
         instructions: String,
         prompt: String,
         schema: AirshipAI.Schema
-    ) async throws -> String {
+    ) async throws -> AirshipJSON {
         respondCallCount += 1
         lastInstructions = instructions
         lastPrompt = prompt
         lastSchema = schema
         return try response.get()
-    }
-}
-
-final class MockContextProvider: AirshipAI.ContextProvider, @unchecked Sendable {
-    let stubContext: AirshipAI.Context
-    private(set) var requestedUsages: [AirshipAI.Usage] = []
-
-    init(_ context: AirshipAI.Context) { self.stubContext = context }
-
-    @MainActor
-    func context(for usage: AirshipAI.Usage) async -> AirshipAI.Context {
-        requestedUsages.append(usage)
-        return stubContext
     }
 }
 
@@ -122,7 +118,10 @@ struct TestEvaluation: AirshipAI.Evaluation {
         let reason: String
     }
 
-    let usage: AirshipAI.Usage = .inAppMessageFilter
+    typealias Subject = Void
+
+    let subject: Void = ()
+    let usage: AirshipAI.Usage<Void> = .testUsage
     func instructions() -> String { "rules" }
     func prompt(context: AirshipAI.Context) -> String {
         "subject|\(context.summary ?? "no-context")"
@@ -134,27 +133,27 @@ struct AirshipAIEvaluatorTests {
 
     private func eval(
         model: any AirshipAI.Model,
-        provider: (any AirshipAI.ContextProvider)? = nil
+        context: AirshipAI.Context = .empty
     ) async -> AirshipAI.Result<TestEvaluation.Output> {
         await AirshipAI.Evaluator().evaluate(
             TestEvaluation(),
             model: model,
-            provider: provider,
+            context: context,
             schema: testSchema
         )
     }
 
     @Test
     func completedWhenModelSucceeds() async throws {
-        let model = MockAIModel(response: .success(#"{"allow":false,"reason":"not relevant"}"#))
-        let provider = MockContextProvider(AirshipAI.Context(summary: "likes hiking"))
+        let model = MockAIModel(response: .success(["allow": false, "reason": "not relevant"]))
 
-        let result = await eval(model: model, provider: provider)
+        let result = await eval(
+            model: model,
+            context: AirshipAI.Context(summary: "likes hiking")
+        )
 
         let decision = try #require(result.output)
         #expect(decision == TestEvaluation.Output(allow: false, reason: "not relevant"))
-
-        #expect(provider.requestedUsages == [.inAppMessageFilter])
         #expect(model.lastInstructions == "rules")
         #expect(model.lastPrompt == "subject|likes hiking")
         #expect(model.lastSchema?.fields.count == 2)
@@ -163,24 +162,19 @@ struct AirshipAIEvaluatorTests {
     @Test
     func skippedWhenModelUnavailable() async {
         let model = MockAIModel(availability: .unavailable(reason: .deviceNotEligible))
-        let provider = MockContextProvider(.empty)
 
-        let result = await eval(model: model, provider: provider)
+        let result = await eval(model: model)
 
         guard case .skipped = result else {
             Issue.record("Expected .skipped, got \(result)")
             return
         }
         #expect(model.respondCallCount == 0)
-        #expect(provider.requestedUsages.isEmpty)
     }
 
     @Test
     func failedWhenModelThrows() async {
-        let result = await eval(
-            model: MockAIModel(response: .failure(SampleError.boom)),
-            provider: MockContextProvider(.empty)
-        )
+        let result = await eval(model: MockAIModel(response: .failure(SampleError.boom)))
         guard case .failed = result else {
             Issue.record("Expected .failed, got \(result)")
             return
@@ -188,10 +182,10 @@ struct AirshipAIEvaluatorTests {
     }
 
     @Test
-    func failedWhenResponseIsNotValidJSON() async {
-        let result = await eval(model: MockAIModel(response: .success("not json")))
+    func failedWhenResponseDoesNotMatchSchema() async {
+        let result = await eval(model: MockAIModel(response: .success(["unexpected_key": "value"])))
         guard case .failed = result else {
-            Issue.record("Expected .failed on bad JSON, got \(result)")
+            Issue.record("Expected .failed on schema mismatch, got \(result)")
             return
         }
     }
@@ -206,10 +200,10 @@ struct AirshipAIEvaluatorTests {
     @Test
     @MainActor
     func managerUsesConfiguredModel() async throws {
-        let model = MockAIModel(response: .success(#"{"allow":false,"reason":"override"}"#))
+        let model = MockAIModel(response: .success(["allow": false, "reason": "override"]))
         let manager = AirshipAI.DefaultManager()
         manager.setModel(.custom(model))
-        manager.setSchema(testSchema, for: .inAppMessageFilter)
+        manager.setSchema(testSchema, for: .testUsage)
 
         let result = await manager.evaluate(TestEvaluation())
 

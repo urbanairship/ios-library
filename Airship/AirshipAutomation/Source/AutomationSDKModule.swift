@@ -50,7 +50,8 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let messagePreparer = InAppMessageAutomationPreparer(
             assetManager: assetManager,
             displayCoordinatorManager: displayCoordinatorManager,
-            analyticsFactory: analyticsFactory
+            analyticsFactory: analyticsFactory,
+            aiManager: args.aiManager
         )
         let automationPreparer = AutomationPreparer(
             actionPreparer: actionPreparer,

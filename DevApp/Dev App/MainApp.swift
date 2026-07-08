@@ -46,7 +46,9 @@ struct MainApp: App {
                         }
                     }
                 }
+#if DEBUG && canImport(AirshipDebug)
                 .airshipDebug(triggers: [.shake, .cmdShiftD])
+#endif
         }
     }
 }

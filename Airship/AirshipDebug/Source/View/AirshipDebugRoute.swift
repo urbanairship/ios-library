@@ -1,7 +1,7 @@
 /* Copyright Airship and Contributors */
 
 public import SwiftUI
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 import AirshipPreferenceCenter
 
 
@@ -79,6 +79,17 @@ public enum AirshipDebugRoute: Sendable, Equatable, Hashable {
     
     /// Navigate to the app information section.
     case appInfo
+
+    /// Navigate to the on-device AI debug section.
+    case ai
+
+    /// Navigate to a specific AI debug sub-section.
+    case aiSub(AIRoute)
+
+    /// Sub-routes for the AI debug section.
+    public enum AIRoute: Sendable, Equatable, Hashable {
+        case usage(key: String)
+    }
 
     /// Sub-routes for the channel management section.
     public enum ChannelRoute: Sendable, Equatable, Hashable {
@@ -238,6 +249,11 @@ public extension AirshipDebugRoute {
             }
 
         case .appInfo: AirshipDebugAppInfoView()
+        case .ai: AirshipDebugAIView(manager: Airship._aiManager)
+        case .aiSub(let subRoute):
+            switch subRoute {
+            case .usage(let key): AirshipDebugAIUsageView(usageKey: key, manager: Airship._aiManager)
+            }
         }
     }
 }
