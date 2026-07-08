@@ -39,13 +39,19 @@ public struct AirshipNotificationCenter: Sendable {
     
     public func postOnMain(name: NSNotification.Name, object: (any Sendable)? = nil, userInfo: [AnyHashable: Any]? = nil){
         let wrapped = try? AirshipJSON.wrap(userInfo)
-        
-        DefaultDispatcher.main.dispatchAsyncIfNecessary {
+
+        let postBlock: @Sendable () -> Void = {
             self.post(
                 name: name,
                 object: object,
                 userInfo: wrapped?.unWrap() as? [AnyHashable: Any]
             )
+        }
+
+        if Thread.isMainThread {
+            postBlock()
+        } else {
+            DispatchQueue.main.async(execute: postBlock)
         }
     }
     

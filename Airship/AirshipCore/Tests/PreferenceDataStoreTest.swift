@@ -17,10 +17,10 @@ import Foundation
     func testPrefix() throws {
         let dataStore = PreferenceDataStore(
             appKey: self.appKey,
-            dispatcher: TestDispatcher(),
             deviceID: testDeviceID
         )
         dataStore.setObject("neat", forKey: "some-key")
+        dataStore.waitForWrites()
         #expect(
             "neat" ==
             airshipDefaults.string(forKey: "\(self.appKey)some-key")
@@ -189,7 +189,6 @@ import Foundation
     func testAppNotRestoredNoData() async throws {
         let dataStore = PreferenceDataStore(
             appKey: self.appKey,
-            dispatcher: TestDispatcher(),
             deviceID: testDeviceID
         )
 
@@ -201,7 +200,6 @@ import Foundation
     func testAppRestoredDeviceIDChange() async throws {
         let dataStore = PreferenceDataStore(
             appKey: self.appKey,
-            dispatcher: TestDispatcher(),
             deviceID: testDeviceID
         )
         var value = await dataStore.isAppRestore
@@ -217,7 +215,6 @@ import Foundation
     func testKeyIsStoredAndRetrieved() {
         let dataStore = PreferenceDataStore(
             appKey: self.appKey,
-            dispatcher: TestDispatcher(),
             deviceID: testDeviceID
         )
 
@@ -230,7 +227,6 @@ import Foundation
     func testKeyIsRemoved() {
         let dataStore = PreferenceDataStore(
             appKey: self.appKey,
-            dispatcher: TestDispatcher(),
             deviceID: testDeviceID
         )
 
@@ -248,7 +244,6 @@ import Foundation
 
         let dataStore = PreferenceDataStore(
             appKey: prefix,
-            dispatcher: TestDispatcher(),
             deviceID: testDeviceID
         )
 

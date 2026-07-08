@@ -13,7 +13,7 @@ public final class PreferenceDataStore: @unchecked Sendable {
     private var pending: [String: [Any?]] = [:]
     private var cache: [String: Cached] = [:]
     private let lock: AirshipLock = AirshipLock()
-    private let dispatcher: any UADispatcher
+    private let queue: DispatchQueue
     private var deviceID: any AirshipDeviceIDProtocol
 
     var isAppRestore: Bool {
@@ -39,15 +39,16 @@ public final class PreferenceDataStore: @unchecked Sendable {
     public convenience init(appKey: String) {
         self.init(
             appKey: appKey,
-            dispatcher: DefaultDispatcher.serial(),
             deviceID: AirshipDeviceID(appKey: appKey)
         )
     }
 
-    init(appKey: String, dispatcher: any UADispatcher, deviceID: any AirshipDeviceIDProtocol) {
+    init(appKey: String, deviceID: any AirshipDeviceIDProtocol) {
         self.defaults = PreferenceDataStore.createDefaults(appKey: appKey)
         self.appKey = appKey
-        self.dispatcher = dispatcher
+        self.queue = DispatchQueue(
+            label: "com.urbanairship.preferencedatastore.serial_queue"
+        )
         self.deviceID = deviceID
         mergeKeys()
     }
@@ -283,7 +284,7 @@ public final class PreferenceDataStore: @unchecked Sendable {
             self.cache[key] = Cached(value: value)
         }
 
-        self.dispatcher.dispatchAsync {
+        self.queue.async {
             self.lock.sync {
                 if let value = self.cache[key]?.value {
                     self.defaults.set(value, forKey: key)
@@ -292,6 +293,12 @@ public final class PreferenceDataStore: @unchecked Sendable {
                 }
             }
         }
+    }
+
+    /// Waits for any pending writes to be flushed to the underlying defaults.
+    /// - Note: For internal/testing use only. :nodoc:
+    func waitForWrites() {
+        self.queue.sync {}
     }
 
     private func prefixKey(_ key: String) -> String {
