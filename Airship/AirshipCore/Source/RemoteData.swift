@@ -589,3 +589,10 @@ extension Sequence where Iterator.Element == RemoteDataPayload {
 fileprivate struct SendablePromise<O, E>: @unchecked Sendable where E : Error {
     let promise: Future<O,E>.Promise
 }
+
+fileprivate extension Subject {
+    @MainActor
+    func sendMainActor(_ value: Self.Output) {
+        self.send(value)
+    }
+}
