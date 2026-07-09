@@ -11,9 +11,20 @@ struct InAppMessageFilterEvaluationTest {
     // MARK: - instructions()
 
     @Test
-    func instructionsContainBaseDirective() {
+    func instructionsUseFilterPromptAsCondition() {
+        let eval = InAppMessageFilterEvaluation(
+            filterPrompt: "Only show to frequent flyers",
+            subject: .init(name: "Test")
+        )
+        let instructions = eval.instructions()
+        #expect(instructions.contains("Only show to frequent flyers"))
+        #expect(instructions.contains("Show the message only when"))
+    }
+
+    @Test
+    func instructionsFallBackWhenPromptEmpty() {
         let eval = InAppMessageFilterEvaluation(filterPrompt: "", subject: .init(name: "Test"))
-        #expect(eval.instructions().contains("relevant to the current user"))
+        #expect(eval.instructions().contains("When in doubt, show it"))
     }
 
     // MARK: - prompt(context:)
@@ -25,18 +36,15 @@ struct InAppMessageFilterEvaluationTest {
     }
 
     @Test
-    func promptIncludesFilterInstruction() {
+    func filterConditionLivesInInstructionsNotPrompt() {
         let eval = InAppMessageFilterEvaluation(
             filterPrompt: "Only show to frequent flyers",
             subject: .init(name: "Test")
         )
-        #expect(eval.prompt(context: .empty).contains("Filter instruction: Only show to frequent flyers"))
-    }
-
-    @Test
-    func promptOmitsFilterInstructionWhenEmpty() {
-        let eval = InAppMessageFilterEvaluation(filterPrompt: "", subject: .init(name: "Test"))
-        #expect(!eval.prompt(context: .empty).contains("Filter instruction:"))
+        #expect(eval.instructions().contains("Only show to frequent flyers"))
+        let prompt = eval.prompt(context: .empty)
+        #expect(!prompt.contains("Only show to frequent flyers"))
+        #expect(!prompt.contains("Filter instruction:"))
     }
 
     @Test

@@ -31,21 +31,31 @@ public struct InAppMessageFilterEvaluation: AirshipAI.Evaluation {
     }
 
     public func instructions() -> String {
-        """
-        You decide whether an in-app message is relevant to the current user based on \
-        their context. Return allow=true if the message is worth showing, allow=false if \
-        it is clearly irrelevant or redundant given what you know about the user. When in \
-        doubt, allow the message — it is better to show a marginally relevant message than \
-        to suppress one the user would have wanted.
+        guard !filterPrompt.isEmpty else {
+            return """
+            You decide whether to show an in-app message to the current user based on their \
+            context. When in doubt, show it.
+            """
+        }
+        return """
+        You are a gate that decides whether to show a single in-app message to the current \
+        user. Show the message only when this condition holds for the user; otherwise do not \
+        show it:
+
+        \(filterPrompt)
+
+        Evaluate the condition against the user context and attributes given in the prompt, \
+        reasoning about what those signals imply rather than matching them literally. Only \
+        this condition governs the decision — do not treat unrelated context as a reason to \
+        show or hide the message. If the context is genuinely insufficient to judge the \
+        condition, show the message.
         """
     }
 
     public func prompt(context: AirshipAI.Context) -> String {
+        // The filter condition is the governing rule and lives in instructions() — it is
+        // deliberately not repeated here as context.
         var parts: [String] = ["Message name: \(subject.name)"]
-
-        if !filterPrompt.isEmpty {
-            parts.append("Filter instruction: \(filterPrompt)")
-        }
 
         if let extras = subject.extras, extras != .null,
            let formatted = extras.promptString, formatted != "{}" {

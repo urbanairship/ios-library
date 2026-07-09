@@ -274,7 +274,10 @@ struct InAppMessageAutomationPreparerTest {
         InAppMessage(
             name: "promo",
             displayContent: .banner(.init(media: .init(url: "some-url", type: .image))),
-            extras: .object(["ua_ai_filter": .string("only show to hikers")])
+            extras: .object([
+                "ua_ai_filter": .string("only show to hikers"),
+                "promo_type": .string("flash_sale")
+            ])
         )
     }
 
@@ -373,10 +376,13 @@ struct InAppMessageAutomationPreparerTest {
 
         let evaluation = try #require(received.value)
         #expect(evaluation.subject.name == "promo")
-        #expect(evaluation.subject.extras?.object?["ua_ai_filter"]?.string == "only show to hikers")
+        // The filter key is stripped from the context extras; other extras are retained.
+        #expect(evaluation.subject.extras?.object?["ua_ai_filter"] == nil)
+        #expect(evaluation.subject.extras?.object?["promo_type"]?.string == "flash_sale")
         #expect(evaluation.subject.campaigns == preparedScheduleInfo.campaigns)
-        // The extracted filter prompt is private, so assert it propagated via the rendered prompt.
-        #expect(evaluation.prompt(context: .empty).contains("Filter instruction: only show to hikers"))
+        // The filter prompt governs via instructions() — not repeated as context in the prompt.
+        #expect(evaluation.instructions().contains("only show to hikers"))
+        #expect(!evaluation.prompt(context: .empty).contains("only show to hikers"))
     }
 
 }

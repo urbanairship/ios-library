@@ -91,6 +91,7 @@ struct AirshipDebugAIUsageView: View {
 
 struct AirshipDebugIAAFilterView: View {
     @StateObject private var viewModel: IAAFilterViewModel
+    @FocusState private var keyboardActive: Bool
 
     init(manager: any AirshipAI.InternalManager) {
         _viewModel = StateObject(wrappedValue: IAAFilterViewModel(manager: manager))
@@ -98,11 +99,82 @@ struct AirshipDebugIAAFilterView: View {
 
     var body: some View {
         List {
+            Section {
+                TextEditor(text: $viewModel.filterPrompt)
+                    .focused($keyboardActive)
+                    .frame(minHeight: 72)
+                    .overlay(alignment: .topLeading) {
+                        if viewModel.filterPrompt.isEmpty {
+                            Text("e.g. Only show this if the user travels frequently for work")
+                                .foregroundStyle(.tertiary)
+                                .padding(.top, 8)
+                                .padding(.leading, 4)
+                                .allowsHitTesting(false)
+                        }
+                    }
+            } header: {
+                Text("AI Filter Prompt")
+            }
+
+            Section {
+                Button {
+                    keyboardActive = false
+                    Task { await viewModel.runFilter() }
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("Evaluate")
+                            .bold()
+                        Spacer()
+                    }
+                }
+                .disabled(viewModel.isRunning || viewModel.messageName.isEmpty)
+            }
+
+            Section("Result") {
+                if viewModel.isRunning {
+                    HStack(spacing: 12) {
+                        ProgressView()
+                        Text("Evaluating…")
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 4)
+                } else if let result = viewModel.result {
+                    switch result {
+                    case .filter(let allow, let reason):
+                        HStack(spacing: 12) {
+                            Image(systemName: allow ? "checkmark.circle.fill" : "xmark.circle.fill")
+                                .font(.title2)
+                                .foregroundStyle(allow ? .green : .red)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(allow ? "Allowed" : "Blocked")
+                                    .font(.headline)
+                                Text(reason)
+                                    .font(.callout)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    case .skipped(let reason):
+                        Label("Skipped: \(reason)", systemImage: "exclamationmark.circle.fill")
+                            .foregroundStyle(.orange)
+                    case .failed(let message):
+                        Label(message, systemImage: "xmark.circle.fill")
+                            .foregroundStyle(.red)
+                    }
+                } else {
+                    Text("Not evaluated yet")
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             Section("Test Message Details") {
                 TextField("Message name", text: $viewModel.messageName)
                     .autocorrectionDisabled()
+                    .focused($keyboardActive)
 
                 TextEditor(text: $viewModel.extrasJSON)
+                    .focused($keyboardActive)
                     .frame(minHeight: 60)
                     .font(.system(.footnote, design: .monospaced))
                     .autocorrectionDisabled()
@@ -118,6 +190,7 @@ struct AirshipDebugIAAFilterView: View {
                     }
 
                 TextEditor(text: $viewModel.campaignsJSON)
+                    .focused($keyboardActive)
                     .frame(minHeight: 60)
                     .font(.system(.footnote, design: .monospaced))
                     .autocorrectionDisabled()
@@ -131,22 +204,6 @@ struct AirshipDebugIAAFilterView: View {
                                 .allowsHitTesting(false)
                         }
                     }
-            }
-
-            Section {
-                TextEditor(text: $viewModel.filterPrompt)
-                    .frame(minHeight: 72)
-                    .overlay(alignment: .topLeading) {
-                        if viewModel.filterPrompt.isEmpty {
-                            Text("e.g. Only show this if the user travels frequently for work")
-                                .foregroundStyle(.tertiary)
-                                .padding(.top, 8)
-                                .padding(.leading, 4)
-                                .allowsHitTesting(false)
-                        }
-                    }
-            } header: {
-                Text("AI Filter Prompt")
             }
 
             Section("User Context") {
@@ -172,53 +229,14 @@ struct AirshipDebugIAAFilterView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-
-            Section {
-                Button {
-                    Task { await viewModel.runFilter() }
-                } label: {
-                    HStack {
-                        Spacer()
-                        if viewModel.isRunning {
-                            ProgressView()
-                        } else {
-                            Text("Evaluate")
-                                .bold()
-                        }
-                        Spacer()
-                    }
-                }
-                .disabled(viewModel.isRunning || viewModel.messageName.isEmpty)
-            }
-
-            if let result = viewModel.result {
-                Section("Result") {
-                    switch result {
-                    case .filter(let allow, let reason):
-                        HStack(spacing: 12) {
-                            Image(systemName: allow ? "checkmark.circle.fill" : "xmark.circle.fill")
-                                .font(.title2)
-                                .foregroundStyle(allow ? .green : .red)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(allow ? "Allowed" : "Blocked")
-                                    .font(.headline)
-                                Text(reason)
-                                    .font(.callout)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        .padding(.vertical, 4)
-                    case .skipped(let reason):
-                        Label("Skipped: \(reason)", systemImage: "exclamationmark.circle.fill")
-                            .foregroundStyle(.orange)
-                    case .failed(let message):
-                        Label(message, systemImage: "xmark.circle.fill")
-                            .foregroundStyle(.red)
-                    }
-                }
-            }
         }
         .scrollDismissesKeyboard(.interactively)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { keyboardActive = false }
+            }
+        }
         .navigationTitle("IAX Display Filter")
         .onAppear {
             viewModel.setup()

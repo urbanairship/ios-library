@@ -110,13 +110,22 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
             }
         }
 
-        if let filterPrompt = message.extras?.object?[iaaFilterPromptExtrasKey]?.string {
+        if let filterPrompt = message.extras?.object?[iaaFilterPromptExtrasKey]?.string,
+           !filterPrompt.isEmpty {
+            // Strip the filter key from the extras we pass as context — the prompt is the
+            // governing rule (in instructions), not a piece of user context.
+            let contextExtras: AirshipJSON? = {
+                guard case .object(var dict) = message.extras else { return message.extras }
+                dict[iaaFilterPromptExtrasKey] = nil
+                return dict.isEmpty ? nil : .object(dict)
+            }()
+
             let result = await aiManager.evaluate(
                 InAppMessageFilterEvaluation(
                     filterPrompt: filterPrompt,
                     subject: .init(
                         name: message.name,
-                        extras: message.extras,
+                        extras: contextExtras,
                         campaigns: preparedScheduleInfo.campaigns
                     )
                 )
@@ -125,7 +134,6 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
                 AirshipLogger.debug("AI filter suppressed message \(message.name): \(result.output?.reason ?? "")")
                 return .skip
             }
-
         }
 
         let assets = try await self.prepareAssets(

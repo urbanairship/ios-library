@@ -51,6 +51,123 @@ struct AirshipAIValueTests {
     }
 }
 
+// MARK: - Schema (nested types + validation)
+
+struct AirshipAISchemaTests {
+
+    /// A schema exercising every field type, including a nested object and an array.
+    private let schema = AirshipAI.Schema(fields: [
+        .init(name: "allow", type: .boolean),
+        .init(name: "reason", type: .string, isRequired: false),
+        .init(name: "user", type: .object(fields: [
+            .init(name: "age", type: .integer),
+            .init(name: "tags", type: .array(element: .string), isRequired: false)
+        ]), isRequired: false)
+    ])
+
+    // MARK: instruction
+
+    @Test
+    func instructionRendersNestedObjectAndArray() {
+        let instruction = schema.instruction
+        #expect(instruction.contains("\"user\": {"))
+        #expect(instruction.contains("\"age\": integer (required)"))
+        #expect(instruction.contains("array of string"))
+    }
+
+    // MARK: validate — happy paths
+
+    @Test
+    func validatePassesForConformingObject() throws {
+        try schema.validate(.object([
+            "allow": .bool(true),
+            "reason": .string("relevant"),
+            "user": .object([
+                "age": .number(30),
+                "tags": .array([.string("a"), .string("b")])
+            ])
+        ]))
+    }
+
+    @Test
+    func validateAllowsAbsentOptionalFields() throws {
+        // Only the required "allow" is present.
+        try schema.validate(.object(["allow": .bool(false)]))
+    }
+
+    @Test
+    func validateIgnoresExtraKeys() throws {
+        try schema.validate(.object([
+            "allow": .bool(true),
+            "unexpected": .string("ignored")
+        ]))
+    }
+
+    @Test
+    func validateAcceptsWholeNumberForInteger() throws {
+        try schema.validate(.object([
+            "allow": .bool(true),
+            "user": .object(["age": .number(42)])
+        ]))
+    }
+
+    // MARK: validate — failures
+
+    @Test
+    func validateThrowsForMissingRequiredField() {
+        #expect(throws: (any Error).self) {
+            try schema.validate(.object(["reason": .string("no allow key")]))
+        }
+    }
+
+    @Test
+    func validateThrowsForWrongScalarType() {
+        #expect(throws: (any Error).self) {
+            try schema.validate(.object(["allow": .string("not a bool")]))
+        }
+    }
+
+    @Test
+    func validateThrowsForNonObjectRoot() {
+        #expect(throws: (any Error).self) {
+            try schema.validate(.string("not an object"))
+        }
+    }
+
+    @Test
+    func validateThrowsForBadNestedObjectField() {
+        #expect(throws: (any Error).self) {
+            try schema.validate(.object([
+                "allow": .bool(true),
+                "user": .object(["age": .string("thirty")])
+            ]))
+        }
+    }
+
+    @Test
+    func validateThrowsForBadArrayElement() {
+        #expect(throws: (any Error).self) {
+            try schema.validate(.object([
+                "allow": .bool(true),
+                "user": .object([
+                    "age": .number(30),
+                    "tags": .array([.string("ok"), .number(5)])
+                ])
+            ]))
+        }
+    }
+
+    @Test
+    func validateThrowsForFractionalInteger() {
+        #expect(throws: (any Error).self) {
+            try schema.validate(.object([
+                "allow": .bool(true),
+                "user": .object(["age": .number(3.5)])
+            ]))
+        }
+    }
+}
+
 // MARK: - Context provider registration
 
 @MainActor

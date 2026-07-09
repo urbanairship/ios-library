@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// Namespace for Airship's on-device AI features.
 public enum AirshipAI {
@@ -96,11 +97,15 @@ public enum AirshipAI {
     /// Backend-agnostic — exposes no Apple FoundationModels types.
     public struct Schema: Sendable, Equatable {
 
-        public enum FieldType: String, Sendable, Equatable {
+        public indirect enum FieldType: Sendable, Equatable {
             case string
             case boolean
             case integer
             case number
+            /// A nested object with its own fields.
+            case object(fields: [Field])
+            /// An array whose elements all conform to `element`.
+            case array(element: FieldType)
         }
 
         public struct Field: Sendable, Equatable {
@@ -287,11 +292,7 @@ extension AirshipAI.Schema {
     /// to model instructions. Model implementors can include this in the system
     /// prompt to constrain output without guided generation.
     public var instruction: String {
-        let lines = fields.map { field -> String in
-            let requirement = field.isRequired ? "required" : "optional"
-            let description = field.description.map { " — \($0)" } ?? ""
-            return "  \"\(field.name)\": \(field.type.rawValue) (\(requirement))\(description)"
-        }
+        let lines = fields.map { "  \(Self.describe(field: $0))" }
         return """
         *Return the data in JSON format. Do not use markdown backticks or fences.*
         The response must start with { and end with }. Fields:
@@ -299,5 +300,83 @@ extension AirshipAI.Schema {
         \(lines.joined(separator: ",\n"))
         }
         """
+    }
+
+    /// Renders a single field as `"name": <type> (required|optional) — description`.
+    private static func describe(field: Field) -> String {
+        let requirement = field.isRequired ? "required" : "optional"
+        let description = field.description.map { " — \($0)" } ?? ""
+        return "\"\(field.name)\": \(describe(type: field.type)) (\(requirement))\(description)"
+    }
+
+    /// Renders a field type, recursing into nested objects and arrays.
+    private static func describe(type: FieldType) -> String {
+        switch type {
+        case .string: return "string"
+        case .boolean: return "boolean"
+        case .integer: return "integer"
+        case .number: return "number"
+        case .object(let fields):
+            let inner = fields.map { describe(field: $0) }.joined(separator: ", ")
+            return "{ \(inner) }"
+        case .array(let element):
+            return "array of \(describe(type: element))"
+        }
+    }
+}
+
+// MARK: - Schema validation
+
+extension AirshipAI.Schema {
+    /// Validates that `json` conforms to this schema.
+    ///
+    /// Extra keys not described by the schema are ignored. Optional fields may be
+    /// absent or null.
+    ///
+    /// - Throws: an error describing the first violation; returns normally if valid.
+    public func validate(_ json: AirshipJSON) throws {
+        try Self.validate(json, against: .object(fields: fields), path: "$")
+    }
+
+    private static func validate(
+        _ value: AirshipJSON,
+        against type: FieldType,
+        path: String
+    ) throws {
+        switch type {
+        case .string:
+            guard value.isString else { throw typeError(path, "string", value) }
+        case .boolean:
+            guard value.isBool else { throw typeError(path, "boolean", value) }
+        case .integer:
+            guard let number = value.number, number.rounded() == number else {
+                throw typeError(path, "integer", value)
+            }
+        case .number:
+            guard value.isNumber else { throw typeError(path, "number", value) }
+        case .object(let fields):
+            guard let object = value.object else { throw typeError(path, "object", value) }
+            for field in fields {
+                let child = object[field.name]
+                if child == nil || child == AirshipJSON.null {
+                    if field.isRequired {
+                        throw AirshipErrors.error(
+                            "Schema validation: missing required field '\(path).\(field.name)'"
+                        )
+                    }
+                    continue
+                }
+                try validate(child!, against: field.type, path: "\(path).\(field.name)")
+            }
+        case .array(let element):
+            guard let array = value.array else { throw typeError(path, "array", value) }
+            for (index, item) in array.enumerated() {
+                try validate(item, against: element, path: "\(path)[\(index)]")
+            }
+        }
+    }
+
+    private static func typeError(_ path: String, _ expected: String, _ value: AirshipJSON) -> any Error {
+        AirshipErrors.error("Schema validation: expected \(expected) at '\(path)'")
     }
 }
