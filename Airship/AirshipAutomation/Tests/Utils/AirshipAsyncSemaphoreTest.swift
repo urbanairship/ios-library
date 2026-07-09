@@ -20,75 +20,37 @@ struct AirshipAsyncSemaphoreTest {
 
     @Test
     func testMutualExclusionWithOnePermit() async throws {
-        let semaphore = AirshipAsyncSemaphore(value: 1)
-        let concurrent: AirshipActorValue<Int> = AirshipActorValue(0)
-        let maxConcurrent: AirshipActorValue<Int> = AirshipActorValue(0)
-        let completedCount: AirshipActorValue<Int> = AirshipActorValue(0)
-
-        async let first: () = semaphore.withPermit {
-            let current = await concurrent.getAndUpdate { $0 += 1 }
-            await maxConcurrent.update { $0 = max($0, current) }
-            try await Task.sleep(nanoseconds: 50_000_000)
-            await concurrent.update { $0 -= 1 }
-            await completedCount.update { $0 += 1 }
-        }
-
-        async let second: () = semaphore.withPermit {
-            let current = await concurrent.getAndUpdate { $0 += 1 }
-            await maxConcurrent.update { $0 = max($0, current) }
-            try await Task.sleep(nanoseconds: 50_000_000)
-            await concurrent.update { $0 -= 1 }
-            await completedCount.update { $0 += 1 }
-        }
-
-        async let third: () = semaphore.withPermit {
-            let current = await concurrent.getAndUpdate { $0 += 1 }
-            await maxConcurrent.update { $0 = max($0, current) }
-            try await Task.sleep(nanoseconds: 50_000_000)
-            await concurrent.update { $0 -= 1 }
-            await completedCount.update { $0 += 1 }
-        }
-
-        _ = try await (first, second, third)
-
-        await #expect(maxConcurrent.value <= 1)
-        await #expect(completedCount.value == 3)
+        try await verifyConcurrencyLimit(permits: 1, taskCount: 3)
     }
 
     @Test
     func testConcurrencyLimitWithTwoPermits() async throws {
-        let semaphore = AirshipAsyncSemaphore(value: 2)
-        let concurrent: AirshipActorValue<Int> = AirshipActorValue(0)
-        let maxConcurrent: AirshipActorValue<Int> = AirshipActorValue(0)
-        let completedCount: AirshipActorValue<Int> = AirshipActorValue(0)
+        try await verifyConcurrencyLimit(permits: 2, taskCount: 3)
+    }
 
-        async let first: () = semaphore.withPermit {
-            let current = await concurrent.getAndUpdate { $0 += 1 }
-            await maxConcurrent.update { $0 = max($0, current) }
-            try await Task.sleep(nanoseconds: 50_000_000)
-            await concurrent.update { $0 -= 1 }
-            await completedCount.update { $0 += 1 }
+    /// Verifies exactly `permits` tasks run concurrently, no more.
+    private func verifyConcurrencyLimit(permits: Int, taskCount: Int) async throws {
+        let semaphore = AirshipAsyncSemaphore(value: permits)
+        let gate = TestGate()
+
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for _ in 0..<taskCount {
+                group.addTask {
+                    try await semaphore.withPermit {
+                        await gate.arrive()
+                    }
+                }
+            }
+
+            // All permits should be taken now; the rest are blocked.
+            await gate.waitForArrivals(permits)
+            #expect(await gate.inside == permits)
+            #expect(await gate.arrivedCount == permits)
+
+            await gate.open()
+            try await group.waitForAll()
         }
 
-        async let second: () = semaphore.withPermit {
-            let current = await concurrent.getAndUpdate { $0 += 1 }
-            await maxConcurrent.update { $0 = max($0, current) }
-            try await Task.sleep(nanoseconds: 50_000_000)
-            await concurrent.update { $0 -= 1 }
-            await completedCount.update { $0 += 1 }
-        }
-
-        async let third: () = semaphore.withPermit {
-            let current = await concurrent.getAndUpdate { $0 += 1 }
-            await maxConcurrent.update { $0 = max($0, current) }
-            try await Task.sleep(nanoseconds: 50_000_000)
-            await concurrent.update { $0 -= 1 }
-            await completedCount.update { $0 += 1 }
-        }
-
-        _ = try await (first, second, third)
-
-        await #expect(maxConcurrent.value <= 2)
-        await #expect(completedCount.value == 3)
+        #expect(await gate.arrivedCount == taskCount)
     }
 }

@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+import Combine
 import Foundation
 import SwiftUI
 import Testing
@@ -73,7 +74,7 @@ private final class StubThomasImageLoader: ThomasImageLoader {
 
 // MARK: - Tests
 
-@Suite("ThomasAsyncViewState", .serialized)
+@Suite("ThomasAsyncViewState", .serialized, .timeLimit(.minutes(1)))
 @MainActor
 struct ThomasAsyncViewStateTest {
 
@@ -147,6 +148,16 @@ struct ThomasAsyncViewStateTest {
         let resolver = TestAsyncViewResolver()
         resolver.script = script
         return resolver
+    }
+
+    /// Awaits `status` until `predicate` matches, instead of polling with sleeps.
+    private func awaitStatus(
+        _ state: ThomasAsyncViewState,
+        until predicate: (ThomasAsyncViewState.Status) -> Bool
+    ) async {
+        for await status in state.$status.values {
+            if predicate(status) { return }
+        }
     }
 
     @Test
@@ -365,10 +376,7 @@ struct ThomasAsyncViewStateTest {
         #expect(state.resolvedLayoutAwaitingPrefetch != nil)
 
         state.retry()
-        for _ in 0..<400 {
-            if case .loaded = state.status { break }
-            try await Task.sleep(nanoseconds: 5_000_000)
-        }
+        await awaitStatus(state) { if case .loaded = $0 { return true } else { return false } }
         #expect(state.response != nil)
         #expect(state.status == .loaded)
         #expect(state.resolvedLayoutAwaitingPrefetch == nil)
@@ -457,10 +465,7 @@ struct ThomasAsyncViewStateTest {
         )
 
         state.retry()
-        for _ in 0..<400 {
-            if case .error = state.status { break }
-            try await Task.sleep(nanoseconds: 5_000_000)
-        }
+        await awaitStatus(state) { if case .error = $0 { return true } else { return false } }
         #expect(state.status == .error(.imagePrefetchFailed))
         #expect(state.response == nil)
         #expect(state.resolvedLayoutAwaitingPrefetch != nil)
@@ -475,10 +480,7 @@ struct ThomasAsyncViewStateTest {
             taskSleeper: RecordingTaskSleeper()
         )
         state.retry()
-        for _ in 0..<400 {
-            if case .loaded = state.status { break }
-            try await Task.sleep(nanoseconds: 5_000_000)
-        }
+        await awaitStatus(state) { if case .loaded = $0 { return true } else { return false } }
         #expect(state.response != nil)
         #expect(state.status == .loaded)
         #expect(testResolver.callCount == 1)
@@ -494,8 +496,8 @@ struct ThomasAsyncViewStateTest {
         )
         try await state.resolve()
         #expect(testResolver.callCount == 1)
+        // retry() is a no-op once a response exists.
         state.retry()
-        try await Task.sleep(nanoseconds: 20_000_000)
         #expect(testResolver.callCount == 1)
         #expect(state.response != nil)
     }
@@ -514,10 +516,7 @@ struct ThomasAsyncViewStateTest {
             taskSleeper: RecordingTaskSleeper()
         )
         state.retry()
-        for _ in 0..<400 {
-            if case .error = state.status { break }
-            try await Task.sleep(nanoseconds: 5_000_000)
-        }
+        await awaitStatus(state) { if case .error = $0 { return true } else { return false } }
         #expect(state.status == .error(.server(statusCode: 404)))
     }
 }

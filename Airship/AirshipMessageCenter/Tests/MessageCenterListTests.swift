@@ -541,6 +541,11 @@ struct MessageCenterListTest {
     @Test
     func testRefreshOnMessageExpiresOnAfterUpdate() async throws {
         var sleeps = await self.sleeper.sleepUpdates.makeStream().makeAsyncIterator()
+
+        // Pause the sleeper so the expiry-triggered second refresh can't run until we let it,
+        // otherwise it can race ahead and overwrite the store before we check `fetched` below.
+        await self.sleeper.pause()
+
         self.channel.identifier = UUID().uuidString
 
         let mcUser = MessageCenterUser(
@@ -585,7 +590,6 @@ struct MessageCenterListTest {
             }
         }.makeAsyncIterator()
 
-
         #expect(self.workManager.workRequests.isEmpty)
 
         self.inbox.enabled = true
@@ -598,6 +602,8 @@ struct MessageCenterListTest {
 
         let sleep = await sleeps.next()
         #expect(1 == sleep)
+
+        await self.sleeper.resume()
         _ = await refreshes.next()
 
         fetched = await self.inbox.message(forID: message.id)
@@ -623,6 +629,19 @@ struct MessageCenterListTest {
                 expiry: self.date.now.advanced(by: 3)
             )
         ]
+
+        // Signals the current work request count each time one is dispatched, so we can wait
+        // for the third (expiry-triggered) one instead of guessing with a fixed sleep.
+        let workRequestCounts = AirshipAsyncChannel<Int>()
+        let workManager = self.workManager
+        self.workManager.onNewWorkRequestAdded = { _ in
+            Task { await workRequestCounts.send(workManager.workRequests.count) }
+        }
+        var workRequestCountUpdates = await workRequestCounts.makeStream().makeAsyncIterator()
+
+        // Pause the sleeper so the expiry-triggered second refresh can't run until we let it,
+        // otherwise it can race ahead and overwrite the store before we check `saved` below.
+        await self.sleeper.pause()
 
         self.client.onCreateUser = { _ in
             return AirshipHTTPResponse(
@@ -654,7 +673,8 @@ struct MessageCenterListTest {
         let saved = await self.inbox.message(forID: messages.first!.id)
         #expect(saved != nil)
 
-        try await Task.sleep(nanoseconds: 1 * NSEC_PER_SEC)
+        await self.sleeper.resume()
+        while await workRequestCountUpdates.next() != 3 {}
 
         #expect(3 == self.workManager.workRequests.count)
     }
@@ -745,10 +765,27 @@ fileprivate final class TestMessageCenterAPIClient : MessageCenterAPIClientProto
 actor TestTaskSleeper : AirshipTaskSleeper {
     var sleepUpdates: AirshipAsyncChannel<TimeInterval> = AirshipAsyncChannel()
     var sleeps : [TimeInterval] = []
+    private var isPaused = false
+    private var continuations: [CheckedContinuation<Void, Never>] = []
+
+    /// Once paused, subsequent sleep() calls park until resume() is called.
+    func pause() {
+        isPaused = true
+    }
+
+    func resume() {
+        isPaused = false
+        continuations.forEach { $0.resume() }
+        continuations.removeAll()
+    }
 
     func sleep(timeInterval: TimeInterval) async throws {
         sleeps.append(timeInterval)
         await sleepUpdates.send(timeInterval)
         await Task.yield()
+
+        if isPaused {
+            await withCheckedContinuation { continuations.append($0) }
+        }
     }
 }

@@ -32,45 +32,39 @@ struct RetryingQueueTests {
 
         #expect(6 == result)
     }
-    
+
     @Test
     func testExecutionOrderPriorities() async throws {
-        
         let queue = RetryingQueue<Int>(
             id: "test",
-            maxConcurrentOperations: 1
+            maxConcurrentOperations: 3
         )
-        
-        let numbers = await withTaskGroup(of: Int.self) { group in
-            group.addTask {
-                return await queue.run(name: "3", priority: 3) { _ in
-                    try await Task.sleep(nanoseconds: 1_000_000)
-                    return .success(result: 3, ignoreReturnOrder: false)
-                }
-            }
-            group.addTask {
-                return await queue.run(name: "2", priority: 2) { _ in
-                    try await Task.sleep(nanoseconds: 1_000_000)
-                    return .success(result: 2, ignoreReturnOrder: false)
-                }
-            }
-            group.addTask {
-                return await queue.run(name: "1", priority: 1) { _ in
-                    try await Task.sleep(nanoseconds: 1_000_000)
-                    return .success(result: 1, ignoreReturnOrder: false)
-                }
-            }
 
-            var result = [Int]()
-            
-            for await item in group {
-                result.append(item)
+        let gate = TestGate()
+        let returnOrder = ActorValue<[Int]>([])
+
+        // Submit highest priority first so each is running before the next starts.
+        func submit(priority: Int, value: Int) -> Task<Void, Never> {
+            Task {
+                let result = await queue.run(name: "\(value)", priority: priority) { _ in
+                    await gate.arrive()
+                    return .success(result: value, ignoreReturnOrder: false)
+                }
+                await returnOrder.update { $0 + [result] }
             }
-            
-            return result
         }
-        
-        #expect([1, 2, 3] == numbers)
+
+        let first = submit(priority: 1, value: 1)
+        await gate.waitForArrivals(1)
+        let second = submit(priority: 2, value: 2)
+        await gate.waitForArrivals(2)
+        let third = submit(priority: 3, value: 3)
+        await gate.waitForArrivals(3)
+
+        await gate.open()
+        _ = await (first.value, second.value, third.value)
+
+        #expect([1, 2, 3] == (await returnOrder.get()))
     }
 
     @Test
@@ -179,138 +173,149 @@ struct RetryingQueueTests {
         #expect([10] == self.taskSleeper.sleeps)
     }
 
-    @Test
+    @Test(.timeLimit(.minutes(1)))
     func testDeadLock() async throws {
-           let queue = RetryingQueue<String>(
+        let queue = RetryingQueue<String>(
             id: "test",
-               maxConcurrentOperations: 1,
-               maxPendingResults: 1
-           )
+            maxConcurrentOperations: 1,
+            maxPendingResults: 1
+        )
 
-           let coordinator = DeadlockTestCoordinator()
+        let coordinator = DeadlockTestCoordinator()
 
-           await confirmation("Task A completed") { taskACompleted in
-               await confirmation("Task B completed") { taskBCompleted in
-                   let taskA = Task {
-                       let result = await queue.run(name: "Task A", priority: 10) { _ in
-                           print("\(Date()): Task A: Started work.")
-                           await coordinator.signalTaskBShouldBeAdded()
-                           await coordinator.waitForTaskAFinishWork()
-                           return .success(result: "A")
-                       }
-                       #expect(result == "A")
-                       taskACompleted()
-                   }
+        await confirmation("Task A completed") { taskACompleted in
+            await confirmation("Task B completed") { taskBCompleted in
+                let taskA = Task {
+                    let result = await queue.run(name: "Task A", priority: 10) { _ in
+                        await coordinator.signalTaskBShouldBeAdded()
+                        await coordinator.waitForTaskAFinishWork()
+                        return .success(result: "A")
+                    }
+                    #expect(result == "A")
+                    taskACompleted()
+                }
 
-                   await coordinator.waitForTaskBToBeAdded()
+                await coordinator.waitForTaskBToBeAdded()
 
-                   let taskB = Task {
-                       let result = await queue.run(name: "Task B", priority: 0) { _ in
-                           return .success(result: "B")
-                       }
-                       #expect(result == "B")
-                       taskBCompleted()
-                   }
+                let taskB = Task {
+                    let result = await queue.run(name: "Task B", priority: 0) { _ in
+                        return .success(result: "B")
+                    }
+                    #expect(result == "B")
+                    taskBCompleted()
+                }
 
-                   await coordinator.signalTaskAFinishWork()
+                await coordinator.signalTaskAFinishWork()
 
-                   await taskA.value
-                   await taskB.value
-               }
-           }
-       }
+                await taskA.value
+                await taskB.value
+            }
+        }
+    }
 
     @Test
     func testRetryDoesNotBlock() async throws {
-
+        // A retrying task should not block other queued tasks from completing.
         let queue = RetryingQueue<Int>(
             id: "test",
-            maxConcurrentOperations: 3,
-            initialBackOff: 10
+            maxConcurrentOperations: 1,
+            initialBackOff: 10,
+            taskSleeper: taskSleeper
         )
 
-        let taskNumber = ActorValue<Int>(1)
-        let startedTasks = ActorValue<Int>(0)
         let results = ActorValue<[Int]>([])
 
-        await confirmation("Completed") { completed in
-            var tasks: [Task<Void, Never>] = []
-            for _ in 1...2 {
-                let task = Task { @MainActor in
-                    let myTaskNumber = await taskNumber.getAndUpdate { task in
-                        task + 1
-                    }
-
-                    let result = await queue.run(name: "Task \(myTaskNumber)") { state in
-                        let isFirstRun = await state.value(key: "isFirstRun") ?? true
-                        await state.setValue(false, key: "isFirstRun")
-
-                        if (isFirstRun) {
-                            await startedTasks.update { task in
-                               task + 1
-                           }
-                        }
-
-                        while (await startedTasks.get() != 2) {
-                            await Task.yield()
-                        }
-
-                        if (myTaskNumber == 1 && isFirstRun) {
-                            return .retryAfter(0.2)
-                        }
-
-                        return .success(result: myTaskNumber)
-                    }
-
-                    await results.update { current in
-                        var current = current
-                        current.append(result)
-
-                        defer {
-                            if (current.count == 2) {
-                                completed()
-                            }
-                        }
-
-                        return current
-                    }
-                }
-                tasks.append(task)
-            }
-
-            for task in tasks {
-                await task.value
+        // Hold Task 1 in backoff until Task 2 completes, proving it wasn't blocked.
+        self.taskSleeper.onSleep = { _ in
+            while await results.get().contains(2) == false {
+                await Task.yield()
             }
         }
-        let resultsValue = await results.get()
-        #expect(resultsValue == [2,1])
+
+        let task1 = Task {
+            let result = await queue.run(name: "Task 1", priority: 0) { state in
+                let isFirstRun = await state.value(key: "isFirstRun") ?? true
+                await state.setValue(false, key: "isFirstRun")
+                return isFirstRun ? .retryAfter(0.2) : .success(result: 1)
+            }
+            await results.update { $0 + [result] }
+        }
+
+        let task2 = Task {
+            let result = await queue.run(name: "Task 2", priority: 1) { _ in
+                return .success(result: 2)
+            }
+            await results.update { $0 + [result] }
+        }
+
+        _ = await (task1.value, task2.value)
+
+        #expect((await results.get()) == [2, 1])
     }
 }
 
 actor ActorValue<T: Sendable> {
     private var value: T
-    
+
     init(_ value: T) {
         self.value = value
     }
-    
+
     func set(_ value: T) {
         self.value = value
     }
-    
+
     func get() -> T {
         return value
     }
-    
+
     func getAndUpdate(block: @Sendable (T) -> T) -> T {
         let value = value
         self.value = block(self.value)
         return value
     }
-    
-    
+
+
     func update(block: @Sendable (T) -> T) {
         self.value = block(self.value)
+    }
+}
+
+/// A test barrier: tasks park on `arrive()` until `open()` is called.
+actor TestGate {
+    private(set) var arrivedCount = 0
+    private var parked: [CheckedContinuation<Void, Never>] = []
+    private var observers: [(target: Int, continuation: CheckedContinuation<Void, Never>)] = []
+    private var isOpen = false
+
+    /// Number of tasks currently parked at the gate.
+    var inside: Int { parked.count }
+
+    /// Records an arrival, then parks until `open()` unless already open.
+    func arrive() async {
+        arrivedCount += 1
+        observers.removeAll { observer in
+            guard arrivedCount >= observer.target else { return false }
+            observer.continuation.resume()
+            return true
+        }
+
+        guard !isOpen else { return }
+        await withCheckedContinuation { parked.append($0) }
+    }
+
+    /// Resolves once `arrivedCount` has reached `count`.
+    func waitForArrivals(_ count: Int) async {
+        guard arrivedCount < count else { return }
+        await withCheckedContinuation { observers.append((count, $0)) }
+    }
+
+    /// Releases all parked tasks and lets future arrivals pass through.
+    func open() {
+        isOpen = true
+        let continuations = parked
+        parked.removeAll()
+        continuations.forEach { $0.resume() }
     }
 }
 

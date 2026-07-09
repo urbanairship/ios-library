@@ -12,8 +12,11 @@ struct AssetCacheManagerTest {
         var downloadResult: Result<URL, Error>?
         var downloadDelaySeconds: TimeInterval = 0
         var customDownloadHandler: ((URL) async throws -> URL)?
+        var onDownloadStarted: (() -> Void)?
 
         func downloadAsset(remoteURL: URL) async throws -> URL {
+            onDownloadStarted?()
+
             // Simulate a network delay
             if downloadDelaySeconds > 0 {
                 let delayNanoseconds = UInt64(downloadDelaySeconds * 1_000_000_000)  // Convert seconds to nanoseconds
@@ -187,13 +190,17 @@ struct AssetCacheManagerTest {
         let manager = AssetCacheManager(assetDownloader: downloader, assetFileManager: fileManager)
         let identifier = "testIdentifier"
 
+        // The download only starts once the task is registered in the manager's task map,
+        // so waiting for it tells us clearCache will find (and cancel) the task.
+        let downloadStarted = AirshipTestExpectation(description: "download started")
+        downloader.onDownloadStarted = { downloadStarted.fulfill() }
+
         // Start caching assets in a separate task to allow it to run in parallel
         let cacheTask = Task {
             try await manager.cacheAssets(identifier: identifier, assets: ["http://airship.com/asset"])
         }
 
-        // Give the cacheTask a moment to start be assigned to the task map
-        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        await fulfillment(of: [downloadStarted], timeout: 5)
 
         // Clear the cache while the caching task is still in progress
         await manager.clearCache(identifier: identifier)

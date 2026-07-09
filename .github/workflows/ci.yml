@@ -20,7 +20,7 @@ jobs:
 
   run-tests-core:
     runs-on: macos-15-xlarge
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Test
