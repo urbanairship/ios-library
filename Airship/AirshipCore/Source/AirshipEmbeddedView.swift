@@ -8,6 +8,27 @@ import Combine
 /// Return `.orderedAscending` to display `lhs` before `rhs`. When set, this replaces the default priority ordering.
 public typealias AirshipEmbeddedComparator = @Sendable (_ lhs: AirshipEmbeddedInfo, _ rhs: AirshipEmbeddedInfo) -> ComparisonResult
 
+/// Describes how an ``AirshipEmbeddedView`` chooses which pending embedded content
+/// to display when more than one instance is available for an embedded ID.
+public enum AirshipEmbeddedSelection: Sendable {
+
+    /// Display by priority ordering, preferring the last displayed instance.
+    ///
+    /// This is the default behavior.
+    case priority
+
+    /// Sort the available contents with a comparator and display the first.
+    ///
+    /// Return `.orderedAscending` from the comparator to display `lhs` before `rhs`.
+    case comparator(AirshipEmbeddedComparator)
+
+    /// Display a specific pending instance by its ``AirshipEmbeddedInfo/instanceID``,
+    /// bypassing ordering.
+    ///
+    /// The placeholder is shown until that instance is pending.
+    case instance(String)
+}
+
 /// Airship embedded view - a scene that can be embedded in an app and managed remotely
 public struct AirshipEmbeddedView<PlaceHolder: View>: View {
 
@@ -20,28 +41,24 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     private let placeholder: () -> PlaceHolder
     private let embeddedID: String
     private let embeddedSize: AirshipEmbeddedSize?
-    private let instanceID: String?
-    private let comparator: AirshipEmbeddedComparator?
+    private let selection: AirshipEmbeddedSelection
 
     /// Creates a new AirshipEmbeddedView.
     ///
     /// - Parameters:
     ///   - embeddedID: The embedded ID.
     ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
-    ///   - instanceID: Optional instance ID (`AirshipEmbeddedInfo.instanceID`) of a specific pending content to display. When set, only that instance is displayed, bypassing the comparator and priority ordering; the placeholder is shown until that instance is available.
-    ///   - comparator: Optional comparator used to sort the available embedded contents. Defaults to priority ordering. Ignored when `instanceID` is set.
+    ///   - selection: How to select which pending content to display when more than one is available. Defaults to `.priority`.
     ///   - placeholder: The place holder block.
     public init(
         embeddedID: String,
         embeddedSize: AirshipEmbeddedSize? = nil,
-        instanceID: String? = nil,
-        comparator: AirshipEmbeddedComparator? = nil,
+        selection: AirshipEmbeddedSelection = .priority,
         @ViewBuilder placeholder: @escaping () -> PlaceHolder
     ) {
         self.embeddedID = embeddedID
         self.embeddedSize = embeddedSize
-        self.instanceID = instanceID
-        self.comparator = comparator
+        self.selection = selection
         self.placeholder = placeholder
         self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(embeddedID: embeddedID))
     }
@@ -51,20 +68,58 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     /// - Parameters:
     ///   - embeddedID: The embedded ID.
     ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
-    ///   - instanceID: Optional instance ID (`AirshipEmbeddedInfo.instanceID`) of a specific pending content to display. When set, only that instance is displayed, bypassing the comparator and priority ordering; nothing is shown until that instance is available.
-    ///   - comparator: Optional comparator used to sort the available embedded contents. Defaults to priority ordering. Ignored when `instanceID` is set.
+    ///   - selection: How to select which pending content to display when more than one is available. Defaults to `.priority`.
     public init(
         embeddedID: String,
         embeddedSize: AirshipEmbeddedSize? = nil,
-        instanceID: String? = nil,
-        comparator: AirshipEmbeddedComparator? = nil
+        selection: AirshipEmbeddedSelection = .priority
     ) where PlaceHolder == EmptyView {
         self.embeddedID = embeddedID
         self.embeddedSize = embeddedSize
-        self.instanceID = instanceID
-        self.comparator = comparator
+        self.selection = selection
         self.placeholder = { EmptyView() }
         self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(embeddedID: embeddedID))
+    }
+
+    /// Creates a new AirshipEmbeddedView.
+    ///
+    /// - Parameters:
+    ///   - embeddedID: The embedded ID.
+    ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
+    ///   - comparator: Optional comparator used to sort the available embedded contents. Defaults to priority ordering.
+    ///   - placeholder: The place holder block.
+    @available(*, deprecated, message: "Use init(embeddedID:embeddedSize:selection:placeholder:) with .comparator(...)")
+    public init(
+        embeddedID: String,
+        embeddedSize: AirshipEmbeddedSize? = nil,
+        comparator: AirshipEmbeddedComparator?,
+        @ViewBuilder placeholder: @escaping () -> PlaceHolder
+    ) {
+        self.init(
+            embeddedID: embeddedID,
+            embeddedSize: embeddedSize,
+            selection: comparator.map { .comparator($0) } ?? .priority,
+            placeholder: placeholder
+        )
+    }
+
+    /// Creates a new AirshipEmbeddedView.
+    ///
+    /// - Parameters:
+    ///   - embeddedID: The embedded ID.
+    ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
+    ///   - comparator: Optional comparator used to sort the available embedded contents. Defaults to priority ordering.
+    @available(*, deprecated, message: "Use init(embeddedID:embeddedSize:selection:) with .comparator(...)")
+    public init(
+        embeddedID: String,
+        embeddedSize: AirshipEmbeddedSize? = nil,
+        comparator: AirshipEmbeddedComparator?
+    ) where PlaceHolder == EmptyView {
+        self.init(
+            embeddedID: embeddedID,
+            embeddedSize: embeddedSize,
+            selection: comparator.map { .comparator($0) } ?? .priority
+        )
     }
 
     public var body: some View {
@@ -90,8 +145,7 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
                 )
             },
             placeHolder: AnyView(self.placeholder()),
-            instanceID: instanceID,
-            comparator: comparator
+            selection: selection
         )
 
         return self.style.makeBody(configuration: configuration)
@@ -169,11 +223,17 @@ public struct AirshipEmbeddedViewStyleConfiguration {
     public let pending: [Pending]
     public let placeHolder: AnyView
 
-    /// Optional instance ID of a specific pending content to display. When set, only that instance is displayed, bypassing the comparator and priority ordering.
-    public let instanceID: String?
+    /// How to select which pending content to display when more than one is available.
+    public let selection: AirshipEmbeddedSelection
 
-    /// Optional comparator used to sort the available embedded contents. Ignored when `instanceID` is set.
-    public let comparator: AirshipEmbeddedComparator?
+    /// Optional comparator used to sort the available embedded contents.
+    @available(*, deprecated, message: "Use `selection`.")
+    public var comparator: AirshipEmbeddedComparator? {
+        if case .comparator(let comparator) = selection {
+            return comparator
+        }
+        return nil
+    }
 
     /// Deprecated: Use `pending` instead.
     @available(*, deprecated, message: "Use `pending` which includes dismissal logic per-view.")
@@ -185,14 +245,12 @@ public struct AirshipEmbeddedViewStyleConfiguration {
         embeddedID: String,
         pending: [Pending],
         placeHolder: AnyView,
-        instanceID: String? = nil,
-        comparator: AirshipEmbeddedComparator? = nil
+        selection: AirshipEmbeddedSelection = .priority
     ) {
         self.embeddedID = embeddedID
         self.pending = pending
         self.placeHolder = placeHolder
-        self.instanceID = instanceID
-        self.comparator = comparator
+        self.selection = selection
     }
 }
 
@@ -219,8 +277,7 @@ public struct DefaultAirshipEmbeddedViewStyle: AirshipEmbeddedViewStyle {
         return EmbeddedViewSelector.shared.selectView(
             embeddedID: configuration.embeddedID,
             views: configuration.pending.map { $0.content },
-            instanceID: configuration.instanceID,
-            comparator: configuration.comparator
+            selection: configuration.selection
        )
     }
 
