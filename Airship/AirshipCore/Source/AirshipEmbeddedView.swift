@@ -20,23 +20,27 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     private let placeholder: () -> PlaceHolder
     private let embeddedID: String
     private let embeddedSize: AirshipEmbeddedSize?
+    private let instanceID: String?
     private let comparator: AirshipEmbeddedComparator?
 
     /// Creates a new AirshipEmbeddedView.
     ///
     /// - Parameters:
     ///   - embeddedID: The embedded ID.
-    ///   - size: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
-    ///   - comparator: Optional comparator used to sort the available embedded contents. Defaults to priority ordering.
+    ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
+    ///   - instanceID: Optional instance ID (`AirshipEmbeddedInfo.instanceID`) of a specific pending content to display. When set, only that instance is displayed, bypassing the comparator and priority ordering; the placeholder is shown until that instance is available.
+    ///   - comparator: Optional comparator used to sort the available embedded contents. Defaults to priority ordering. Ignored when `instanceID` is set.
     ///   - placeholder: The place holder block.
     public init(
         embeddedID: String,
         embeddedSize: AirshipEmbeddedSize? = nil,
+        instanceID: String? = nil,
         comparator: AirshipEmbeddedComparator? = nil,
         @ViewBuilder placeholder: @escaping () -> PlaceHolder
     ) {
         self.embeddedID = embeddedID
         self.embeddedSize = embeddedSize
+        self.instanceID = instanceID
         self.comparator = comparator
         self.placeholder = placeholder
         self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(embeddedID: embeddedID))
@@ -46,15 +50,18 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     ///
     /// - Parameters:
     ///   - embeddedID: The embedded ID.
-    ///   - size: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
-    ///   - comparator: Optional comparator used to sort the available embedded contents. Defaults to priority ordering.
+    ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
+    ///   - instanceID: Optional instance ID (`AirshipEmbeddedInfo.instanceID`) of a specific pending content to display. When set, only that instance is displayed, bypassing the comparator and priority ordering; nothing is shown until that instance is available.
+    ///   - comparator: Optional comparator used to sort the available embedded contents. Defaults to priority ordering. Ignored when `instanceID` is set.
     public init(
         embeddedID: String,
         embeddedSize: AirshipEmbeddedSize? = nil,
+        instanceID: String? = nil,
         comparator: AirshipEmbeddedComparator? = nil
     ) where PlaceHolder == EmptyView {
         self.embeddedID = embeddedID
         self.embeddedSize = embeddedSize
+        self.instanceID = instanceID
         self.comparator = comparator
         self.placeholder = { EmptyView() }
         self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(embeddedID: embeddedID))
@@ -83,6 +90,7 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
                 )
             },
             placeHolder: AnyView(self.placeholder()),
+            instanceID: instanceID,
             comparator: comparator
         )
 
@@ -161,7 +169,10 @@ public struct AirshipEmbeddedViewStyleConfiguration {
     public let pending: [Pending]
     public let placeHolder: AnyView
 
-    /// Optional comparator used to sort the available embedded contents.
+    /// Optional instance ID of a specific pending content to display. When set, only that instance is displayed, bypassing the comparator and priority ordering.
+    public let instanceID: String?
+
+    /// Optional comparator used to sort the available embedded contents. Ignored when `instanceID` is set.
     public let comparator: AirshipEmbeddedComparator?
 
     /// Deprecated: Use `pending` instead.
@@ -174,11 +185,13 @@ public struct AirshipEmbeddedViewStyleConfiguration {
         embeddedID: String,
         pending: [Pending],
         placeHolder: AnyView,
+        instanceID: String? = nil,
         comparator: AirshipEmbeddedComparator? = nil
     ) {
         self.embeddedID = embeddedID
         self.pending = pending
         self.placeHolder = placeHolder
+        self.instanceID = instanceID
         self.comparator = comparator
     }
 }
@@ -206,6 +219,7 @@ public struct DefaultAirshipEmbeddedViewStyle: AirshipEmbeddedViewStyle {
         return EmbeddedViewSelector.shared.selectView(
             embeddedID: configuration.embeddedID,
             views: configuration.pending.map { $0.content },
+            instanceID: configuration.instanceID,
             comparator: configuration.comparator
        )
     }

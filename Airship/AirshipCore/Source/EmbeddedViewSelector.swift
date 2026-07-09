@@ -14,7 +14,21 @@ final class EmbeddedViewSelector {
         lastDisplayed[info.embeddedID] = info.instanceID
     }
 
-    func selectView(embeddedID: String, views: [AirshipEmbeddedContentView], comparator: AirshipEmbeddedComparator? = nil) -> AirshipEmbeddedContentView? {
+    func selectView(embeddedID: String, views: [AirshipEmbeddedContentView], instanceID: String? = nil, comparator: AirshipEmbeddedComparator? = nil) -> AirshipEmbeddedContentView? {
+        if let instanceID {
+            let view = views.first(where: { view in
+                view.embeddedInfo.instanceID == instanceID
+            })
+
+            if view != nil {
+                AirshipLogger.trace("Selecting targeted instance view for \(embeddedID): \(instanceID)")
+            } else {
+                AirshipLogger.trace("No pending view matches targeted instance \(instanceID) for \(embeddedID)")
+            }
+
+            return view
+        }
+
         if let comparator {
             let view = views.sorted(by: { f, s in
                 comparator(f.embeddedInfo, s.embeddedInfo) == .orderedAscending
