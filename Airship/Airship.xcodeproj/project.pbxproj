@@ -49,6 +49,7 @@
 		2726505B2E81B80E000B6FA3 /* PagerControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2726505A2E81B80E000B6FA3 /* PagerControllerTest.swift */; };
 		2738997F2F7EA83900741963 /* NativeLayoutControlOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2738997E2F7EA83900741963 /* NativeLayoutControlOptions.swift */; };
 		273899812F7EA8EA00741963 /* MessageCenterMessageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273899802F7EA8EA00741963 /* MessageCenterMessageError.swift */; };
+		27C0DE012F7EA8EA00741963 /* MessageCenterMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C0DE002F7EA8EA00741963 /* MessageCenterMessageContentView.swift */; };
 		273DC3AD2F60836F0025637D /* MessageCenterStoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273DC3AC2F60836F0025637D /* MessageCenterStoriesViewModel.swift */; };
 		273DC3AF2F60898C0025637D /* MessageCenterStoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273DC3AE2F60898C0025637D /* MessageCenterStoriesView.swift */; };
 		2753F6422F6C5BB50073882C /* (null) in Sources */ = {isa = PBXBuildFile; };
@@ -1423,6 +1424,7 @@
 		2726505A2E81B80E000B6FA3 /* PagerControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerControllerTest.swift; sourceTree = "<group>"; };
 		2738997E2F7EA83900741963 /* NativeLayoutControlOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLayoutControlOptions.swift; sourceTree = "<group>"; };
 		273899802F7EA8EA00741963 /* MessageCenterMessageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterMessageError.swift; sourceTree = "<group>"; };
+		27C0DE002F7EA8EA00741963 /* MessageCenterMessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterMessageContentView.swift; sourceTree = "<group>"; };
 		273DC3AC2F60836F0025637D /* MessageCenterStoriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterStoriesViewModel.swift; sourceTree = "<group>"; };
 		273DC3AE2F60898C0025637D /* MessageCenterStoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterStoriesView.swift; sourceTree = "<group>"; };
 		275D32AA2EF955AD00B75760 /* AirshipSimpleLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSimpleLayoutView.swift; sourceTree = "<group>"; };
@@ -3953,6 +3955,7 @@
 			isa = PBXGroup;
 			children = (
 				273899802F7EA8EA00741963 /* MessageCenterMessageError.swift */,
+				27C0DE002F7EA8EA00741963 /* MessageCenterMessageContentView.swift */,
 				6E4D225C2E70ADDB00A8D641 /* MessageCenterMessageViewModel.swift */,
 				32B5BE2928F8A7D600F2254B /* MessageCenterMessageView.swift */,
 				6E4D22492E6F813700A8D641 /* MessageCenterMessageViewWithNavigation.swift */,
@@ -5907,6 +5910,7 @@
 				32B5BE3E28F8A8C000F2254B /* MessageCenterListItemView.swift in Sources */,
 				32B513562B9F53A500BBE780 /* MessageCenterPredicate.swift in Sources */,
 				273899812F7EA8EA00741963 /* MessageCenterMessageError.swift in Sources */,
+				27C0DE012F7EA8EA00741963 /* MessageCenterMessageContentView.swift in Sources */,
 				32B5BE3B28F8A7EB00F2254B /* MessageCenterController.swift in Sources */,
 				32F68CF328F07C2C00F7F52A /* MessageCenter.swift in Sources */,
 				99FD20A52DEFC35900242551 /* MessageCenterUIKitAppearance.swift in Sources */,

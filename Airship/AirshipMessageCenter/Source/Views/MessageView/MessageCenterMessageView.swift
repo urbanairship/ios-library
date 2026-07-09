@@ -1,6 +1,5 @@
 /* Copyright Airship and Contributors */
 
-import Combine
 import Foundation
 public import SwiftUI
 
@@ -60,12 +59,19 @@ public struct MessageCenterMessageView: View {
 
         style.makeBody(configuration: configuration)
     }
-    
-    enum DisplayPhase {
-        case loading
-        case error(any Error)
-        case loaded
-    }
+}
+
+/// The loading phase of a Message Center message's content.
+///
+/// Reported by ``MessageCenterMessageContentView`` through its `phase` binding
+/// so a host can present its own loading and error UI.
+public enum MessageCenterMessageContentPhase: Sendable, Equatable {
+    /// The message content is loading.
+    case loading
+    /// The message content failed to load.
+    case error(MessageCenterMessageError)
+    /// The message content finished loading.
+    case loaded
 }
 
 extension View {
@@ -116,7 +122,7 @@ public struct DefaultMessageViewStyle: MessageViewStyle {
     ///   - configuration: The configuration for the message view.
     /// - Returns: The view body.
     public func makeBody(configuration: Configuration) -> some View {
-        MessageCenterMessageContentView(
+        DefaultMessageCenterMessageContentView(
             viewModel: configuration.viewModel,
             dismissAction: configuration.dismissAction
         )
@@ -150,7 +156,13 @@ extension EnvironmentValues {
     }
 }
 
-private struct MessageCenterMessageContentView: View {
+/// The default content view for a Message Center message.
+///
+/// Wraps ``MessageCenterMessageContentView`` with the SDK's built-in loading
+/// indicator, error/retry UI, and fade-in behavior. Hosts that want to provide
+/// their own loading and error presentation should use
+/// ``MessageCenterMessageContentView`` directly.
+private struct DefaultMessageCenterMessageContentView: View {
     @Environment(\.colorScheme)
     private var colorScheme
 
@@ -158,13 +170,10 @@ private struct MessageCenterMessageContentView: View {
     private var theme
 
     @State
-    private var messageLoadingPhase: MessageCenterMessageView.DisplayPhase = .loading
-    
+    private var messageLoadingPhase: MessageCenterMessageContentPhase = .loading
+
     @State
     private var opacity = 0.0
-    
-    @State
-    private var contentType: MessageCenterMessage.ContentType = .unknown(nil)
 
     @ObservedObject
     var viewModel: MessageCenterMessageViewModel
@@ -176,45 +185,7 @@ private struct MessageCenterMessageContentView: View {
     ) {
         self.viewModel = viewModel
         self.dismissAction = dismissAction
-        self.contentType = viewModel.message?.contentType ?? .unknown(nil)
     }
-
-    @MainActor
-    private static func makeRequest(
-        viewModel: MessageCenterMessageViewModel
-    ) async throws -> URLRequest {
-        guard let message = await viewModel.fetchMessage(),
-              let user = await Airship.messageCenter.inbox.user
-        else {
-            throw AirshipErrors.error("")
-        }
-
-        var request = URLRequest(url: message.bodyURL)
-        request.setValue(
-            user.basicAuthString,
-            forHTTPHeaderField: "Authorization"
-        )
-        request.timeoutInterval = 120
-        return request
-    }
-
-#if canImport(WebKit)
-    @MainActor
-    private func makeExtensionDelegate(
-        messageID: String
-    ) async throws -> MessageCenterNativeBridgeExtension {
-        guard let message = await viewModel.fetchMessage(),
-              let user = await Airship.messageCenter.inbox.user
-        else {
-            throw AirshipErrors.error("")
-        }
-
-        return MessageCenterNativeBridgeExtension(
-            message: message,
-            user: user
-        )
-    }
-#endif
 
     var body: some View {
         let backgroundColor = self.colorScheme.airshipResolveColor(
@@ -226,34 +197,28 @@ private struct MessageCenterMessageContentView: View {
             if let backgroundColor {
                 backgroundColor.ignoresSafeArea()
             }
-            
-            messageContent()
-                .opacity(self.opacity)
-                .onReceive(Just(messageLoadingPhase)) { _ in
-                    if case .loaded = self.messageLoadingPhase {
-                        self.opacity = 1.0
-                        if Airship.isFlying {
-                            Task {
-                                await viewModel.markRead()
-                            }
-                        }
+
+            MessageCenterMessageContentView(
+                viewModel: viewModel,
+                phase: self.$messageLoadingPhase,
+                dismissAction: dismissAction
+            )
+            .opacity(self.opacity)
+            .airshipOnChangeOf(self.messageLoadingPhase.isLoaded) { isLoaded in
+                guard isLoaded else { return }
+                self.opacity = 1.0
+                if Airship.isFlying {
+                    Task {
+                        await viewModel.markRead()
                     }
                 }
-                .animation(.easeInOut(duration: 0.5), value: self.opacity)
-            
+            }
+            .animation(.easeInOut(duration: 0.5), value: self.opacity)
+
             if case .loading = self.messageLoadingPhase {
-                ProgressView().task {
-                    do {
-                        let message = try await viewModel.fetchMessageThrowing()
-                        self.contentType = message.contentType
-                    } catch {
-                        self.messageLoadingPhase = .error(error)
-                    }
-                }
+                ProgressView()
             } else if case .error(let error) = self.messageLoadingPhase {
-                if let error = error as? MessageCenterMessageError,
-                   error == .messageGone
-                {
+                if error == .messageGone {
                     VStack {
                         Text(
                             "ua_mc_no_longer_available".messageCenterLocalizedString
@@ -276,59 +241,6 @@ private struct MessageCenterMessageContentView: View {
                 }
             }
         }
-    }
-    
-    @ViewBuilder
-    private func messageContent() -> some View {
-        switch self.contentType {
-        case .html, .plain, .unknown:
-            webBasedMessageView()
-        case .native:
-            thomasMessageView()
-        }
-    }
-    
-    @ViewBuilder
-    private func webBasedMessageView() -> some View {
-#if canImport(WebKit)
-        MessageCenterWebView(
-            phase: self.$messageLoadingPhase,
-            nativeBridgeExtension: {
-                try await makeExtensionDelegate(messageID: viewModel.messageID)
-            },
-            request: {
-                try await Self.makeRequest(viewModel: self.viewModel)
-            },
-            dismiss: {
-                await MainActor.run {
-                    dismiss()
-                }
-            }
-        )
-#else
-        Text("ua_mc_failed_to_load".messageCenterLocalizedString)
-            .font(.headline)
-            .foregroundColor(.primary)
-#endif
-    }
-    
-    @ViewBuilder
-    private func thomasMessageView() -> some View {
-        if let displayListener = viewModel.makeAnalytics(onDismiss: { [action = dismissAction] in action?() } ) {
-            MessageCenterThomasView(
-                phase: self.$messageLoadingPhase,
-                layoutRequest: { try await Self.makeRequest(viewModel: viewModel) },
-                displayListener: displayListener,
-                dismissHandle: self.viewModel.thomasDismissHandle,
-                stateStorage: { viewModel.getOrCreateNativeStateStorage() }
-            )
-        } else {
-            EmptyView()
-        }
-    }
-
-    private func dismiss() {
-        self.dismissAction?()
     }
 }
 

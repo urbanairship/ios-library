@@ -35,7 +35,7 @@ struct MessageCenterWebView: AirshipNativeViewRepresentable {
 #endif
 
     @Binding
-    var phase: MessageCenterMessageView.DisplayPhase
+    var phase: MessageCenterMessageContentPhase
     let nativeBridgeExtension:
     (() async throws -> MessageCenterNativeBridgeExtension)?
 
@@ -107,7 +107,7 @@ struct MessageCenterWebView: AirshipNativeViewRepresentable {
             _ = webView.load(request)
             self.isWebViewLoading = true
         } catch {
-            self.phase = .error(error)
+            self.phase = .error(.from(error))
         }
     }
 
@@ -116,7 +116,7 @@ struct MessageCenterWebView: AirshipNativeViewRepresentable {
         self.isWebViewLoading = false
 
         if let error = error {
-            self.phase = .error(error)
+            self.phase = .error(.from(error))
         } else {
             self.phase = .loaded
         }
