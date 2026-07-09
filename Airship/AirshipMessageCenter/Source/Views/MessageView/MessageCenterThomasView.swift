@@ -10,13 +10,13 @@ import Combine
 struct MessageCenterThomasView: View {
 
     @Binding
-    var phase: MessageCenterMessageView.DisplayPhase
+    var phase: MessageCenterMessageContentPhase
 
     @StateObject
     private var viewModel: ViewModel
 
     init(
-        phase: Binding<MessageCenterMessageView.DisplayPhase>,
+        phase: Binding<MessageCenterMessageContentPhase>,
         layoutRequest: @escaping () async throws -> URLRequest,
         displayListener: ThomasDisplayListener,
         dismissHandle: ThomasDismissHandle,
@@ -58,7 +58,7 @@ private final class ViewModel: ObservableObject {
     let displayListener: any ThomasDelegate
     let dismissHandle: ThomasDismissHandle
 
-    private var loadTask: Task<MessageCenterMessageView.DisplayPhase, Never>?
+    private var loadTask: Task<MessageCenterMessageContentPhase, Never>?
 
     init(
         request: @escaping () async throws -> URLRequest,
@@ -72,7 +72,7 @@ private final class ViewModel: ObservableObject {
         self.stateStorageBuilder = stateStorage
     }
 
-    func loadLayout() async -> MessageCenterMessageView.DisplayPhase {
+    func loadLayout() async -> MessageCenterMessageContentPhase {
         guard self.layout == nil else {
             return .loaded
         }
@@ -88,7 +88,7 @@ private final class ViewModel: ObservableObject {
         return result
     }
 
-    private func performLoadLayout() async -> MessageCenterMessageView.DisplayPhase {
+    private func performLoadLayout() async -> MessageCenterMessageContentPhase {
         guard self.layout == nil else {
             return .loaded
         }
@@ -100,7 +100,7 @@ private final class ViewModel: ObservableObject {
             let storage = await preloadData(for: downloaded)
             self.layout = (downloaded, makeSimpleLayoutViewModel(with: storage))
         } catch {
-            return .error(error)
+            return .error(.from(error))
         }
 
         return .loaded

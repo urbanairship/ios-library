@@ -45,6 +45,43 @@ jobs:
         with:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
+      - name: Check Certificate Expiry Window
+        env:
+          CERT_BASE64: ${{ secrets.CERTIFICATEXC }}
+          CERT_PASS: ${{ secrets.CERTIFICATEXC_PASS }}
+        run: |
+          # Fails if the cert expires within 30 days, before we sign a release with it.
+          # Use Apple's system openssl (LibreSSL-based): Homebrew's OpenSSL 3.x build lacks
+          # the legacy provider needed for RC2-40-CBC, which is what Keychain Access exports use.
+          echo "$CERT_BASE64" | base64 --decode > cert.p12
+          /usr/bin/openssl pkcs12 -in cert.p12 -passin pass:"$CERT_PASS" -nokeys -clcerts | /usr/bin/openssl x509 -checkend 2592000
+          rm cert.p12
+      - name: Verify Certificate Is Not Revoked
+        run: |
+          # codesign --verify catches basic signature/integrity problems, but its OCSP-based
+          # revocation checking has been observed to pass on a certificate Apple's own OCSP
+          # responder reports as revoked (locally cached trust decisions, most likely). Query
+          # the OCSP responder directly as the authoritative check.
+          echo 'int main(){return 0;}' > test.c
+          clang -o testbin test.c
+          codesign --timestamp -v --sign "Apple Distribution: Urban Airship Inc. (PGJV57GD94)" testbin
+          codesign --verify --strict -vvv testbin
+
+          codesign -d --extract-certificates testbin
+          /usr/bin/openssl x509 -inform DER -in codesign0 -outform PEM -out leaf.pem
+          /usr/bin/openssl x509 -inform DER -in codesign1 -outform PEM -out issuer.pem
+          /usr/bin/openssl x509 -inform DER -in codesign2 -outform PEM -out root.pem
+          OCSP_URL=$(/usr/bin/openssl x509 -in leaf.pem -noout -ocsp_uri)
+          OCSP_STATUS=$(/usr/bin/openssl ocsp -issuer issuer.pem -cert leaf.pem -url "$OCSP_URL" -no_nonce -text -verify_other issuer.pem -CAfile root.pem 2>&1)
+          echo "$OCSP_STATUS"
+          # Fail closed: require an explicit "good" response rather than just checking for
+          # "revoked". A network blip or malformed query produces neither string, and treating
+          # that as "not revoked" would silently skip the check entirely - the same failure
+          # shape as the original incident.
+          if ! echo "$OCSP_STATUS" | grep -q "Cert Status: good"; then
+            echo "::error::Could not confirm certificate is not revoked via Apple OCSP responder"
+            exit 1
+          fi
       - name: Build SDK
         run: make build-package
       - name: Upload zip distribution
