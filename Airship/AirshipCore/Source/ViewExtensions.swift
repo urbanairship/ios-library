@@ -42,8 +42,10 @@ extension View {
         fixedSize: Bool = false
     ) -> some View {
         self.frame(
+            minWidth: constraints.isHorizontalAbsoluteSize ? constraints.width : nil,
             idealWidth: constraints.width,
             maxWidth: constraints.width,
+            minHeight: constraints.isVerticalAbsoluteSize ? constraints.height : nil,
             idealHeight: constraints.height,
             maxHeight: constraints.height,
             alignment: alignment ?? .center

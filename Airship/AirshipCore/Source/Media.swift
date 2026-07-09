@@ -61,10 +61,6 @@ struct Media: View {
                 AirshipProgressView()
             }
             .constraints(constraints)
-            .fixedSize(
-                horizontal: constraints.isHorizontalAbsoluteSize && constraints.width != nil,
-                vertical: constraints.isVerticalAbsoluteSize && constraints.height != nil
-            )
             .thomasCommon(self.info)
             .accessible(
                 self.info.accessible,

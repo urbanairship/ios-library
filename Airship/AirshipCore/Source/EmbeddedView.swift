@@ -45,7 +45,9 @@ struct AdoptLayout: SwiftUI.Layout {
 
         let viewConstraints = ViewConstraints(
             width: constraintWidth,
-            height: constraintHeight
+            height: constraintHeight,
+            isHorizontalAbsoluteSize: placement.size.width.isPoints,
+            isVerticalAbsoluteSize: placement.size.height.isPoints
         )
 
         DispatchQueue.main.async {

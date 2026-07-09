@@ -124,6 +124,8 @@ struct Pager: View {
             height: nil,
             isHorizontalFixedSize: self.constraints.isHorizontalFixedSize,
             isVerticalFixedSize: self.constraints.isVerticalFixedSize,
+            isHorizontalAbsoluteSize: self.constraints.isHorizontalAbsoluteSize,
+            isVerticalAbsoluteSize: false,
             safeAreaInsets: self.constraints.safeAreaInsets
         )
 
@@ -157,6 +159,8 @@ struct Pager: View {
                 height: height,
                 isHorizontalFixedSize: self.constraints.isHorizontalFixedSize,
                 isVerticalFixedSize: self.constraints.isVerticalFixedSize,
+                isHorizontalAbsoluteSize: self.constraints.isHorizontalAbsoluteSize,
+                isVerticalAbsoluteSize: self.constraints.isVerticalAbsoluteSize,
                 safeAreaInsets: self.constraints.safeAreaInsets
             )
 
