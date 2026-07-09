@@ -4,6 +4,14 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.10.0 - July 9, 2026
+Minor release that refines display-order control for embedded content, exposes a new Message Center content view, and improves rendering of fixed-size views in Scenes.
+
+### Changes
+- Added `AirshipEmbeddedSelection` to `AirshipEmbeddedView`, allowing hosts to control which pending embedded instance is displayed by priority, a custom comparator, or a specific instance ID. The `comparator` initializers added in 20.9.0 are now deprecated in favor of the selection API.
+- Added a public `MessageCenterMessageContentView` that renders a Message Center message's content and reports load state through a `MessageCenterMessageContentPhase` binding, letting hosts provide their own loading and error UI.
+- Improved rendering of fixed-size views in Scenes so explicitly-sized content is no longer compressed below its specified dimensions.
+
 ## Version 20.9.0 - July 2, 2026
 Minor release that adds display-order control for embedded content, improves feature flag resolution performance, and signs the XCFrameworks with a new Apple Distribution certificate.
 
