@@ -2,9 +2,9 @@
 
 import Foundation
 
-#if canImport(AirshipCore)
+@_spi(AirshipInternal) import AirshipBasement
 import AirshipCore
-#endif
+
 
 /// Actor that memoizes a single value with in-flight dedup so a burst of concurrent
 /// lookups shares one load (request coalescing). Freshness is validated by the

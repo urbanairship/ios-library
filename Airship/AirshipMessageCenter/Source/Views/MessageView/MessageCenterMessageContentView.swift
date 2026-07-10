@@ -7,9 +7,7 @@ public import SwiftUI
 import WebKit
 #endif
 
-#if canImport(AirshipCore)
-import AirshipCore
-#endif
+@_spi(AirshipInternal) import AirshipCore
 
 /// A view that loads and displays the content of a Message Center message.
 ///
