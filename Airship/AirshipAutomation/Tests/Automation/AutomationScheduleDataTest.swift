@@ -279,6 +279,26 @@ final class AutomationScheduleDataTest: XCTestCase {
         XCTAssertEqual(self.data.scheduleStateChangeDate, self.date + 100)
     }
 
+    func testExecutionCancelledTriggered() {
+        self.data.scheduleState = .triggered
+        self.data.triggerInfo = self.triggerInfo
+
+        self.data.executionCancelled(date: self.date + 100)
+        XCTAssertEqual(self.data.scheduleState, .idle)
+        XCTAssertEqual(self.data.executionCount, 0)
+        XCTAssertNil(self.data.triggerInfo)
+        XCTAssertEqual(self.data.scheduleStateChangeDate, self.date + 100)
+    }
+
+    func testExecutionCancelledIgnoresOtherStates() {
+        for state in [AutomationScheduleState.idle, .executing, .paused, .finished] {
+            self.data.scheduleState = state
+
+            self.data.executionCancelled(date: self.date + 100)
+            XCTAssertEqual(self.data.scheduleState, state)
+        }
+    }
+
     func testExecutionCancelledOverLimit() {
         self.data.schedule.limit = 1
         self.data.executionCount = 1
