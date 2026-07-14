@@ -6,7 +6,7 @@ import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 @_spi(AirshipInternal) @testable import AirshipCore
-@testable import AirshipMessageCenter
+@_spi(AirshipInternal) @testable import AirshipMessageCenter
 
 @MainActor
 struct MessageCenterListTest {

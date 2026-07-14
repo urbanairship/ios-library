@@ -3,6 +3,8 @@
 import AirshipCore
 
 /// Model object for holding user data.
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public struct MessageCenterUser: Codable, Sendable, Equatable {
 
     /// The username.
@@ -22,6 +24,7 @@ public struct MessageCenterUser: Codable, Sendable, Equatable {
     }
 }
 
+@_spi(AirshipInternal)
 extension MessageCenterUser {
     public var basicAuthString: String {
         return AirshipUtils.authHeader(

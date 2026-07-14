@@ -16,15 +16,6 @@ public final class UAMessageCenterInbox: NSObject, Sendable {
         return messages.map { UAMessageCenterMessage(message: $0) }
     }
 
-    /// The user associated to the Message Center
-    @objc
-    public func getUser() async -> UAMessageCenterUser? {
-        guard let user = await Airship.messageCenter.inbox.user else {
-            return nil
-        }
-        return UAMessageCenterUser(user: user)
-    }
-
     /// The number of messages that are currently unread.
     @objc
     public func getUnreadCount() async -> Int {

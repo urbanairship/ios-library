@@ -15,6 +15,8 @@ private let messageSentDateFormatter: DateFormatter = {
 }()
 
 /// Airship native bridge extension for the Message Center.
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
 public final class MessageCenterNativeBridgeExtension: NSObject, NativeBridgeExtensionDelegate, Sendable {
 
     let message: MessageCenterMessage

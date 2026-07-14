@@ -4,7 +4,7 @@ import Testing
 import Foundation
 
 @testable import AirshipCore
-@testable import AirshipMessageCenter
+@_spi(AirshipInternal) @testable import AirshipMessageCenter
 
 struct MessageCenterAPIClientTest {
 

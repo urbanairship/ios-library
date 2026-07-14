@@ -208,6 +208,33 @@ replacement — implement the equivalent in your own code if you depended on one
 Apple deprecated in iOS 13. Remove the corresponding call from your app delegate;
 use background push or a `BGAppRefreshTask` (BackgroundTasks framework) instead.
 
+### Message Center user credentials and native bridge
+
+The Message Center user credentials and the message native bridge are no longer
+exposed: `MessageCenterUser`, the `user` property on `MessageCenterInbox`, and
+`MessageCenterNativeBridgeExtension` have been removed from the public API, along
+with the Objective-C equivalents (`UAMessageCenterUser`,
+`UAMessageCenterInbox.getUser()`, and `UAMessageCenterNativeBridge`).
+
+These existed to load a message's `bodyURL` directly in your own web view,
+authenticating the request with the user's basic auth string. That flow is no
+longer supported. Message Center messages are no longer limited to web content —
+a message can also be delivered as a native (Scenes) layout. The `bodyURL` is an
+internal detail: for native messages it does not point to renderable web content,
+so loading it in a web view silently breaks for those messages. Future inbox
+changes will also use a different authentication scheme for messages.
+
+Display messages through the Airship-provided views instead, which resolve the
+content type and handle authentication for both web and native messages:
+
+- `MessageCenterMessageView(messageID:dismissAction:)` — the full message view,
+  including loading indicator, error/retry UI, and mark-as-read behavior. Styleable
+  via `messageViewStyle(_:)`.
+- `MessageCenterMessageContentView(viewModel:phase:dismissAction:)` — renders only
+  the message content, reporting its loading state through the `phase` binding so
+  you can build fully custom chrome (your own loading, error, and retry UI) around
+  it.
+
 ### Preference Center view components
 
 The `ChannelTextField` and `ErrorLabel` SwiftUI views and the `AddChannelState`

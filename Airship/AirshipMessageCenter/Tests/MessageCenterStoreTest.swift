@@ -4,7 +4,7 @@ import Testing
 import Foundation
 
 @_spi(AirshipInternal) @testable import AirshipCore
-@testable import AirshipMessageCenter
+@_spi(AirshipInternal) @testable import AirshipMessageCenter
 
 struct MessageCenterStoreTest {
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)

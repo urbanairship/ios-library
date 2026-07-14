@@ -68,7 +68,7 @@ public struct MessageCenterMessageContentView: View {
         viewModel: MessageCenterMessageViewModel
     ) async throws -> URLRequest {
         guard let message = await viewModel.fetchMessage(),
-              let user = await Airship.messageCenter.inbox.user
+              let user = await Airship.internalMessageCenter.internalInbox.user
         else {
             throw AirshipErrors.error("")
         }
@@ -88,7 +88,7 @@ public struct MessageCenterMessageContentView: View {
         messageID: String
     ) async throws -> MessageCenterNativeBridgeExtension {
         guard let message = await viewModel.fetchMessage(),
-              let user = await Airship.messageCenter.inbox.user
+              let user = await Airship.internalMessageCenter.internalInbox.user
         else {
             throw AirshipErrors.error("")
         }

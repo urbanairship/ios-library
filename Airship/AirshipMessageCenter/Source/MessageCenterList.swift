@@ -82,9 +82,6 @@ public protocol MessageCenterInbox: AnyObject, Sendable {
     /// The list of messages in the inbox.
     var messages: [MessageCenterMessage] { get async }
 
-    /// The user associated to the Message Center
-    var user: MessageCenterUser? { get async }
-
     /// The number of messages that are currently unread.
     var unreadCount: Int { get async }
 
@@ -95,6 +92,9 @@ public protocol MessageCenterInbox: AnyObject, Sendable {
 }
 
 protocol InternalMessageCenterInbox: MessageCenterInbox {
+    /// The user associated to the Message Center
+    var user: MessageCenterUser? { get async }
+
     func saveDisplayHistory(for messageID: String, history: MessageDisplayHistory) async
     func saveLayoutState(for messageID: String, state: MessageCenterMessage.AssociatedData.ViewState?) async
     func associatedData(forID messageID: String) async -> MessageCenterMessage.AssociatedData
