@@ -171,27 +171,21 @@ AirshipCustomViewManager.shared.register(name: "weather") { args in
 
 ## Hidden APIs
 
-As part of the module split, a number of symbols that were technically `public`
-but were always documented as internal-only (`/// - Note: For internal use only.
-:nodoc:`) have been correctly marked `internal` or `@_spi(AirshipInternal)`. These
-were never intended to be part of the public API, and the vast majority are
-scene-rendering implementation details (the layout DSL, the rendering
-delegates, reporting events, etc.) that could not be meaningfully used from app
-code.
+SDK 21.0 formalizes the boundary between the supported public API and SDK
+internals. Symbols that were technically `public` but were always documented as
+internal-only (`/// - Note: For internal use only. :nodoc:`) have been moved
+behind `@_spi(AirshipInternal)` or marked `internal`. This cleanup spans all
+modules. These symbols were never part of the supported API, and no remaining
+public APIs were renamed or had signature changes as part of this cleanup. Most
+apps will not be affected.
 
-Most apps will not be affected. The exceptions — helpers that were genuinely
-plain-`public` and that an app could conceivably have called — are the internal
-SwiftUI convenience helpers:
-
-- The `View` convenience extensions, e.g. `airshipApplyIf(_:transform:)` and
-  `airshipGeometryGroupCompat()`.
-- The `Color` convenience extension (hex initializer and related helpers).
-
-These were intended for Airship's own UI code and are now `@_spi(AirshipInternal)`.
-If your app happened to call one of these, copy the small helper into your own
-codebase rather than relying on it from the SDK. Alternatively,
-[open an issue](https://github.com/urbanairship/ios-library/issues) describing your
-use case — if it's something other apps need, we may expose it as a supported API.
+If your app happened to use one of these internal symbols (for example the
+SwiftUI convenience helpers like `airshipApplyIf(_:transform:)` or the `Color`
+hex initializer, or one of the internal utility classes), copy the small helper
+into your own codebase rather than relying on it from the SDK. Alternatively,
+[open an issue](https://github.com/urbanairship/ios-library/issues) describing
+your use case — if it's something other apps need, we may expose it as a
+supported API.
 
 ## Removed APIs
 
@@ -214,6 +208,13 @@ replacement — implement the equivalent in your own code if you depended on one
 Apple deprecated in iOS 13. Remove the corresponding call from your app delegate;
 use background push or a `BGAppRefreshTask` (BackgroundTasks framework) instead.
 
+### Preference Center view components
+
+The `ChannelTextField` and `ErrorLabel` SwiftUI views and the `AddChannelState`
+enum are now internal. These were building blocks of the Preference Center's
+add-channel (SMS/email opt-in) prompt and were unintentionally public. If you
+embedded them in your own UI, replace them with your own implementations.
+
 ## Troubleshooting
 
 **"Cannot find 'AirshipEmbeddedView' / 'AirshipCustomViewManager' in scope"**
@@ -229,9 +230,10 @@ use background push or a `BGAppRefreshTask` (BackgroundTasks framework) instead.
 - CocoaPods is no longer supported. Migrate to Swift Package Manager or manual
   XCFramework integration.
 
-**"airshipApplyIf / hex Color initializer is unavailable"**
-- These internal helpers are now `@_spi(AirshipInternal)`. Reimplement the small
-  helper in your own code.
+**"Cannot find type … in scope" for a type that was public in 20.x**
+- Internal-only (`:nodoc:`) types are now `@_spi(AirshipInternal)` or `internal`.
+  See [Hidden APIs](#hidden-apis) — reimplement the helper in your own code, or
+  open an issue if you have a use case for a supported API.
 
 ### Getting Help
 
