@@ -9,11 +9,14 @@ import AirshipCore
 final class ImmediateDisplayCoordinatorTest: XCTestCase {
 
     private let stateTracker: TestAppStateTracker = TestAppStateTracker()
+    private var activityTracker: DisplayActivityTracker!
     private var displayCoordinator: ImmediateDisplayCoordinator!
 
     @MainActor
     override func setUp() async throws {
+        activityTracker = DisplayActivityTracker()
         displayCoordinator = ImmediateDisplayCoordinator(
+            activityTracker: self.activityTracker,
             appStateTracker: self.stateTracker
         )
     }
@@ -62,5 +65,25 @@ final class ImmediateDisplayCoordinatorTest: XCTestCase {
 
         self.displayCoordinator.messageFinishedDisplaying(bar)
         XCTAssertTrue(self.displayCoordinator.isReady)
+    }
+
+    @MainActor
+    func testDisplaysAreTracked() throws {
+        self.stateTracker.currentState = .active
+
+        let foo = InAppMessage(name: "foo", displayContent: .custom(.string("foo")))
+        let bar = InAppMessage(name: "bar", displayContent: .custom(.string("bar")))
+
+        XCTAssertFalse(self.activityTracker.isDisplaying)
+
+        self.displayCoordinator.messageWillDisplay(foo)
+        XCTAssertTrue(self.activityTracker.isDisplaying)
+
+        self.displayCoordinator.messageWillDisplay(bar)
+        self.displayCoordinator.messageFinishedDisplaying(foo)
+        XCTAssertTrue(self.activityTracker.isDisplaying)
+
+        self.displayCoordinator.messageFinishedDisplaying(bar)
+        XCTAssertFalse(self.activityTracker.isDisplaying)
     }
 }

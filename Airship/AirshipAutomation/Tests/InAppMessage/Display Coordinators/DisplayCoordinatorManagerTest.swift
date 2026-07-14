@@ -48,7 +48,7 @@ final class DisplayCoordinatorManagerTest: XCTestCase {
             )
         )
         let adapter = manager.displayCoordinator(message: message)
-        XCTAssertNotNil(adapter as? ImmediateDisplayCoordinator)
+        XCTAssertNotNil(adapter as? EmbeddedDisplayCoordinator)
     }
 
     func testStandardBehavior() throws {
@@ -71,6 +71,72 @@ final class DisplayCoordinatorManagerTest: XCTestCase {
 
         let adapter = manager.displayCoordinator(message: message)
         XCTAssertNotNil(adapter as? ImmediateDisplayCoordinator)
+    }
+
+    @MainActor
+    func testImmediateDisplayBlocksDefault() throws {
+        let stateTracker = TestAppStateTracker()
+        stateTracker.currentState = .active
+
+        let activityTracker = DisplayActivityTracker()
+        let immediate = ImmediateDisplayCoordinator(
+            activityTracker: activityTracker,
+            appStateTracker: stateTracker
+        )
+        let standard = DefaultDisplayCoordinator(
+            displayInterval: 0.0,
+            activityTracker: activityTracker,
+            appStateTracker: stateTracker
+        )
+
+        manager = DisplayCoordinatorManager(
+            dataStore: dataStore,
+            immediateCoordinator: immediate,
+            defaultCoordinator: standard
+        )
+
+        let message = InAppMessage(
+            name: "",
+            displayContent: .custom(.string("")),
+            displayBehavior: .immediate
+        )
+
+        XCTAssertTrue(standard.isReady)
+
+        immediate.messageWillDisplay(message)
+        XCTAssertTrue(immediate.isReady)
+        XCTAssertFalse(standard.isReady)
+
+        immediate.messageFinishedDisplaying(message)
+        XCTAssertTrue(standard.isReady)
+    }
+
+    @MainActor
+    func testEmbeddedDisplayDoesNotBlockDefault() throws {
+        let stateTracker = TestAppStateTracker()
+        stateTracker.currentState = .active
+
+        let activityTracker = DisplayActivityTracker()
+        let embedded = EmbeddedDisplayCoordinator(appStateTracker: stateTracker)
+        let standard = DefaultDisplayCoordinator(
+            displayInterval: 0.0,
+            activityTracker: activityTracker,
+            appStateTracker: stateTracker
+        )
+
+        manager = DisplayCoordinatorManager(
+            dataStore: dataStore,
+            defaultCoordinator: standard,
+            embeddedCoordinator: embedded
+        )
+
+        let message = InAppMessage(
+            name: "",
+            displayContent: .custom(.string(""))
+        )
+
+        embedded.messageWillDisplay(message)
+        XCTAssertTrue(standard.isReady)
     }
 
 }

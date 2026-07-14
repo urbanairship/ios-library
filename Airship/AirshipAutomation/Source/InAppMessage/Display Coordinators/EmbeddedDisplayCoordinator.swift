@@ -6,20 +6,16 @@ import Foundation
 import AirshipCore
 #endif
 
-
-/// A display coordinator that only requires the app to be active. Displays are
-/// tracked in the activity tracker so other coordinators can react to them.
+/// A display coordinator for embedded messages that only requires the app to be active.
+/// Embedded displays do not count as a displaying message for other coordinators.
 @MainActor
-final class ImmediateDisplayCoordinator: DisplayCoordinator {
+final class EmbeddedDisplayCoordinator: DisplayCoordinator {
 
     private let appStateTracker: any AppStateTrackerProtocol
-    private let activityTracker: DisplayActivityTracker
 
     init(
-        activityTracker: DisplayActivityTracker = DisplayActivityTracker(),
         appStateTracker: (any AppStateTrackerProtocol)? = nil
     ) {
-        self.activityTracker = activityTracker
         self.appStateTracker = appStateTracker ?? AppStateTracker.shared
     }
 
@@ -28,11 +24,11 @@ final class ImmediateDisplayCoordinator: DisplayCoordinator {
     }
 
     func messageWillDisplay(_ message: InAppMessage) {
-        activityTracker.messageWillDisplay()
+
     }
 
     func messageFinishedDisplaying(_ message: InAppMessage) {
-        activityTracker.messageFinishedDisplaying()
+
     }
 
     func waitForReady() async {

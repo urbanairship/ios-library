@@ -10,14 +10,17 @@ final class DefaultDisplayCoordinatorTest: XCTestCase {
 
     private let stateTracker: TestAppStateTracker = TestAppStateTracker()
     private var displayCoordinator: DefaultDisplayCoordinator!
+    private var activityTracker: DisplayActivityTracker!
     private let taskSleeper: TestTaskSleeper = TestTaskSleeper()
 
     let fooSchedule = InAppMessage(name: "foo", displayContent: .custom(.string("foo")))
 
     @MainActor
     override func setUp() async throws {
+        activityTracker = DisplayActivityTracker()
         displayCoordinator = DefaultDisplayCoordinator(
             displayInterval: 10.0,
+            activityTracker: self.activityTracker,
             appStateTracker: self.stateTracker,
             taskSleeper: self.taskSleeper
         )
@@ -60,5 +63,36 @@ final class DefaultDisplayCoordinatorTest: XCTestCase {
 
         self.stateTracker.currentState = .active
         await ready.value
+    }
+
+    @MainActor
+    func testIsReadyOtherDisplayActive() throws {
+        self.stateTracker.currentState = .active
+        XCTAssertTrue(self.displayCoordinator.isReady)
+
+        self.activityTracker.messageWillDisplay()
+        XCTAssertFalse(self.displayCoordinator.isReady)
+
+        self.activityTracker.messageWillDisplay()
+        self.activityTracker.messageFinishedDisplaying()
+        XCTAssertFalse(self.displayCoordinator.isReady)
+
+        self.activityTracker.messageFinishedDisplaying()
+        XCTAssertTrue(self.displayCoordinator.isReady)
+    }
+
+    @MainActor
+    func testWaitForReadyOtherDisplayActive() async throws {
+        self.stateTracker.currentState = .active
+        self.activityTracker.messageWillDisplay()
+        XCTAssertFalse(self.displayCoordinator.isReady)
+
+        let ready = Task { [displayCoordinator] in
+            await displayCoordinator!.waitForReady()
+        }
+
+        self.activityTracker.messageFinishedDisplaying()
+        await ready.value
+        XCTAssertTrue(self.displayCoordinator.isReady)
     }
 }

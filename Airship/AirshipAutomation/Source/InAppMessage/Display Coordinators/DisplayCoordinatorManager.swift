@@ -15,6 +15,7 @@ protocol DisplayCoordinatorManagerProtocol: Sendable, AnyObject {
 final class DisplayCoordinatorManager: DisplayCoordinatorManagerProtocol {
     private let immediateCoordinator: ImmediateDisplayCoordinator
     private let defaultCoordinator: DefaultDisplayCoordinator
+    private let embeddedCoordinator: EmbeddedDisplayCoordinator
     private let dataStore: PreferenceDataStore
 
     private static let displayIntervalKey: String = "UAInAppMessageManagerDisplayInterval"
@@ -34,18 +35,24 @@ final class DisplayCoordinatorManager: DisplayCoordinatorManagerProtocol {
     init(
         dataStore: PreferenceDataStore,
         immediateCoordinator: ImmediateDisplayCoordinator? = nil,
-        defaultCoordinator: DefaultDisplayCoordinator? = nil
+        defaultCoordinator: DefaultDisplayCoordinator? = nil,
+        embeddedCoordinator: EmbeddedDisplayCoordinator? = nil
     ) {
+        let activityTracker = DisplayActivityTracker()
         self.dataStore = dataStore
-        self.immediateCoordinator = immediateCoordinator ?? ImmediateDisplayCoordinator()
-        self.defaultCoordinator = defaultCoordinator ?? DefaultDisplayCoordinator(
-            displayInterval: dataStore.double(forKey: Self.displayIntervalKey, defaultValue: 0.0)
+        self.immediateCoordinator = immediateCoordinator ?? ImmediateDisplayCoordinator(
+            activityTracker: activityTracker
         )
+        self.defaultCoordinator = defaultCoordinator ?? DefaultDisplayCoordinator(
+            displayInterval: dataStore.double(forKey: Self.displayIntervalKey, defaultValue: 0.0),
+            activityTracker: activityTracker
+        )
+        self.embeddedCoordinator = embeddedCoordinator ?? EmbeddedDisplayCoordinator()
     }
 
     func displayCoordinator(message: InAppMessage) -> any DisplayCoordinator {
         guard !message.isEmbedded else {
-            return immediateCoordinator
+            return embeddedCoordinator
         }
         switch message.displayBehavior {
         case .immediate: return immediateCoordinator
