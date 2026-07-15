@@ -74,7 +74,7 @@ final class MeteredUsageAPIClient : MeteredUsageAPIClientProtocol {
     }
 
 
-    fileprivate struct RequestBody: Encodable {
+    private struct RequestBody: Encodable {
         let usage: [AirshipMeteredUsageEvent]
     }
 }

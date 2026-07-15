@@ -75,7 +75,7 @@ final class SMSValidatorAPIClient: SMSValidatorAPIClientProtocol {
         )
     }
 
-    fileprivate func performSMSValidation<T: Encodable>(
+    private func performSMSValidation<T: Encodable>(
         requestBody: T
     ) async throws -> AirshipHTTPResponse<SMSValidatorAPIClientResult> {
         let request = AirshipRequest(
@@ -118,7 +118,7 @@ final class SMSValidatorAPIClient: SMSValidatorAPIClientProtocol {
         return url
     }
 
-    fileprivate struct RequestBody: Encodable {
+    private struct RequestBody: Encodable {
         let msisdn: String
         let sender: String?
         let prefix: String?

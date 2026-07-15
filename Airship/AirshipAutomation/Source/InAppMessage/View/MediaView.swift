@@ -59,7 +59,7 @@ struct MediaView: View {
 }
 
 #if canImport(WebKit)
-struct InAppMessageMediaWebView: AirshipNativeViewRepresentable {
+fileprivate struct InAppMessageMediaWebView: AirshipNativeViewRepresentable {
 #if os(macOS)
     typealias NSViewType = WKWebView
     func makeNSView(context: Context) -> WKWebView {
@@ -159,12 +159,12 @@ struct InAppMessageMediaWebView: AirshipNativeViewRepresentable {
 }
 #endif
 
-struct MediaInfo {
+fileprivate struct MediaInfo {
     let url: String
     let type: InAppMediaType
 }
 
-enum InAppMediaType {
+fileprivate enum InAppMediaType {
     case video, youtube, image, vimeo
 }
 

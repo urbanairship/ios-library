@@ -96,7 +96,7 @@ public final class AirshipImageData: Sendable {
 fileprivate actor AirshipImageDataFrameActor {
     private let source: CGImageSource
 
-    let framesCount: Int
+    private let framesCount: Int
 
     init(source: CGImageSource) {
         self.source = source
@@ -145,7 +145,7 @@ fileprivate actor AirshipImageDataFrameActor {
         return max(gifDelayTime ?? delayTime ?? 0.0, AirshipImageData.minFrameDuration)
     }
 
-    fileprivate static func imageProperties(
+    private static func imageProperties(
         index: Int,
         source: CGImageSource
     ) -> [AnyHashable: Any]? {

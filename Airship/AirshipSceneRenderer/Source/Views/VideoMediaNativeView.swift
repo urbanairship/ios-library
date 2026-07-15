@@ -95,7 +95,7 @@ struct VideoMediaNativeView: View {
     }
 }
 
-internal struct VideoControls: ViewModifier {
+fileprivate struct VideoControls: ViewModifier {
     let hasError: Bool
     let showControls: Bool
     let shouldLoop: Bool

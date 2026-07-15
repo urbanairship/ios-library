@@ -38,7 +38,7 @@ protocol WindowSceneHolder: Sendable {
 }
 
 @MainActor
-struct DefaultWindowSceneHolder: WindowSceneHolder {
+fileprivate struct DefaultWindowSceneHolder: WindowSceneHolder {
     var scene: UIWindowScene
 }
 

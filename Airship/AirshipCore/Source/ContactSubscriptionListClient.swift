@@ -69,7 +69,7 @@ final class ContactSubscriptionListAPIClient: ContactSubscriptionListAPIClientPr
     }
 }
 
-struct SubscriptionResponseBody: Decodable {
+fileprivate struct SubscriptionResponseBody: Decodable {
     let subscriptionLists: [Entry]
 
     enum CodingKeys: String, CodingKey {

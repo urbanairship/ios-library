@@ -53,7 +53,7 @@ final class SceneAction: AirshipAction {
         }
     }
 
-    fileprivate struct ActionArgs: Decodable, Sendable {
+    private struct ActionArgs: Decodable, Sendable {
         var dsl: String
     }
 

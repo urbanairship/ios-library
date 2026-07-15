@@ -243,7 +243,7 @@ struct TextInput: View {
     }
 
     @MainActor
-    fileprivate final class ViewModel: ObservableObject {
+    private final class ViewModel: ObservableObject {
         private let inputProperties: ThomasViewInfo.TextInput.Properties
         private let isRequired: Bool
 
@@ -474,7 +474,7 @@ struct TextInput: View {
     }
 }
 
-struct AirshipTextField: View {
+fileprivate struct AirshipTextField: View {
     @Environment(\.sizeCategory) private var sizeCategory
 
     private let info: ThomasViewInfo.TextInput

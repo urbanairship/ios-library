@@ -5,7 +5,7 @@ import Foundation
 
 @_spi(AirshipInternal) import AirshipCore
 
-protocol AutomationPreparerProtocol: Sendable {
+fileprivate protocol AutomationPreparerProtocol: Sendable {
     func prepare(
         schedule: AutomationSchedule,
         triggerContext: AirshipTriggerContext?,

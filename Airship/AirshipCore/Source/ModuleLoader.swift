@@ -26,7 +26,7 @@ public struct AirshipModuleLoaderArgs {
 
 }
 
-enum SDKModuleNames: String, CaseIterable {
+fileprivate enum SDKModuleNames: String, CaseIterable {
     case messageCenter = "UAMessageCenterSDKModule"
     case preferenceCenter = "UAPreferenceCenterSDKModule"
     case debug = "UADebugSDKModule"

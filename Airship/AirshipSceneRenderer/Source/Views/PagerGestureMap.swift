@@ -131,7 +131,7 @@ struct PagerGestureMapExplorer {
     }
 }
 
-struct PagerGestureMap: View {
+fileprivate struct PagerGestureMap: View {
     var body: some View {
         Rectangle()
             .overlayView {
@@ -151,7 +151,7 @@ struct PagerGestureMap: View {
     }
 }
 
-struct PagerGestureMap_Previews: PreviewProvider {
+fileprivate struct PagerGestureMap_Previews: PreviewProvider {
     static var previews: some View {
         PagerGestureMap()
     }

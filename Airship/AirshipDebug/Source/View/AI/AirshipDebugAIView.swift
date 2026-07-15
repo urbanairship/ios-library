@@ -93,7 +93,7 @@ struct AirshipDebugAIUsageView: View {
 
 // MARK: - IAA filter sandbox
 
-struct AirshipDebugIAAFilterView: View {
+fileprivate struct AirshipDebugIAAFilterView: View {
     @StateObject private var viewModel: IAAFilterViewModel
     @FocusState private var keyboardActive: Bool
 

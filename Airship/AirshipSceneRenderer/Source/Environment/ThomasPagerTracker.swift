@@ -54,7 +54,7 @@ final class ThomasPagerTracker {
     }
 
     @MainActor
-    fileprivate final class Tracker {
+    private final class Tracker {
         private var currentPage: Page?
         var viewed: [ThomasViewedPageInfo] = []
         private var startTime: TimeInterval?
@@ -82,7 +82,7 @@ final class ThomasPagerTracker {
         }
     }
 
-    fileprivate struct Page: Equatable {
+    private struct Page: Equatable {
         let identifier: String
         let index: Int
     }

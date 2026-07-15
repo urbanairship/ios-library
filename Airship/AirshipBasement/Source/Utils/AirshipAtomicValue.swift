@@ -6,8 +6,8 @@ import Foundation
 @_spi(AirshipInternal)
 public final class AirshipAtomicValue<T: Sendable>: @unchecked Sendable {
 
-    fileprivate let lock: AirshipLock = AirshipLock()
-    fileprivate var _value: T
+    private let lock: AirshipLock = AirshipLock()
+    private var _value: T
 
     public init(_ value: T) {
         self._value = value

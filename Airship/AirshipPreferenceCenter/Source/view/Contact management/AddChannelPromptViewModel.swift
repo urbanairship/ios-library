@@ -136,14 +136,14 @@ internal class AddChannelPromptViewModel: ObservableObject {
     }
 
     @MainActor
-    internal func onStartLoading() {
+    fileprivate func onStartLoading() {
         withAnimation {
             self.state = .loading
         }
     }
 
     @MainActor
-    internal func onValidationSucceeded() {
+    fileprivate func onValidationSucceeded() {
         withAnimation {
             self.state = .succeeded
         }
@@ -165,7 +165,7 @@ internal class AddChannelPromptViewModel: ObservableObject {
 
     /// Validates input format for UI feedback (enabling/disabling submit button)
     @MainActor
-    internal func validateInputFormat() {
+    fileprivate func validateInputFormat() {
         if let platform = self.platform {
             // Basic validation to enable/disable submit button
             // Full validation happens in attemptSubmission

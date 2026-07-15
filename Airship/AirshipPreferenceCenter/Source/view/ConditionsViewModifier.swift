@@ -3,7 +3,7 @@
 import Foundation
 import SwiftUI
 
-struct ConditionsViewModifier: ViewModifier {
+fileprivate struct ConditionsViewModifier: ViewModifier {
     @StateObject
     var conditionsMonitor: ConditionsMonitor
 

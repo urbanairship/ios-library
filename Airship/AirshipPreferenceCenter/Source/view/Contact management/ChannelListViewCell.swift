@@ -12,10 +12,10 @@ class ChannelListCellViewModel: ObservableObject {
     let pendingLabelModel: PreferenceCenterConfig.ContactManagementItem.PendingLabel?
 
     @Published
-    internal var isPendingLabelShowing: Bool = false
+    fileprivate var isPendingLabelShowing: Bool = false
 
     @Published
-    internal var isResendShowing: Bool = false
+    fileprivate var isResendShowing: Bool = false
 
     let onResend: () -> Void
     let onRemove: () -> Void

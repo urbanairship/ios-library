@@ -235,7 +235,7 @@ protocol PreferenceSubscriber {
     )
 }
 
-class PreviewPreferenceSubscriber: PreferenceSubscriber {
+fileprivate class PreviewPreferenceSubscriber: PreferenceSubscriber {
 
     private let channelEditsSubject = PassthroughSubject<
         SubscriptionListEdit, Never
@@ -278,7 +278,7 @@ class PreviewPreferenceSubscriber: PreferenceSubscriber {
     }
 }
 
-class AirshipPreferenceSubscriber: PreferenceSubscriber {
+fileprivate class AirshipPreferenceSubscriber: PreferenceSubscriber {
     var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
     {
         return Airship.channel.subscriptionListEdits

@@ -24,7 +24,7 @@ extension View {
     }
 }
 
-struct MessageCenterPredicateKey: EnvironmentKey {
+fileprivate struct MessageCenterPredicateKey: EnvironmentKey {
     static let defaultValue: (any MessageCenterPredicate)? = nil
 }
 

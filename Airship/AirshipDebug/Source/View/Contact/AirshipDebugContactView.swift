@@ -62,7 +62,7 @@ struct AirshipDebugContactsView: View {
 
 
     @MainActor
-    fileprivate final class ViewModel: ObservableObject {
+    private final class ViewModel: ObservableObject {
         @Published
         var namedUserID: String?
 

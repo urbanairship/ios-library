@@ -14,7 +14,7 @@ protocol TriggerStoreProtocol: Sendable {
     func deleteTriggers(scheduleID: String, triggerIDs: Set<String>) async throws
 }
 
-protocol ScheduleStoreProtocol: Sendable {
+fileprivate protocol ScheduleStoreProtocol: Sendable {
     func getSchedules() async throws -> [AutomationScheduleData]
 
     @discardableResult

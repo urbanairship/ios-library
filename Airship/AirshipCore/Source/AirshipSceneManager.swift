@@ -106,7 +106,7 @@ public final class AirshipSceneManager: AirshipSceneManagerProtocol, Sendable {
     }
 
     @MainActor
-    fileprivate class func findWindowScene() throws -> UIWindowScene {
+    private class func findWindowScene() throws -> UIWindowScene {
         guard
             let scene = UIApplication.shared.connectedScenes.first(where: {
                 $0.isKind(of: UIWindowScene.self)

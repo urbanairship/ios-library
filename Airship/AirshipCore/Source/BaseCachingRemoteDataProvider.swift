@@ -110,7 +110,7 @@ final actor BaseCachingRemoteDataProvider<Output: CachingRemoteDataProviderResul
     }
     
     /// Manages the contact update API calls including backoff and override application
-    fileprivate actor Resolver {
+    private actor Resolver {
         private let identifier: String
         private let overridesProvider: @Sendable (String) async -> AsyncStream<Overrides>
         private let remoteFetcher: @Sendable (String) async throws -> AirshipHTTPResponse<Output>

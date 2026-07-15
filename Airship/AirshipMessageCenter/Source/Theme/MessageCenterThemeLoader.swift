@@ -174,7 +174,7 @@ extension MessageCenterThemeLoader.FontConfig {
 }
 
 extension MessageCenterThemeLoader.Config {
-    internal func toMessageCenterTheme(bundle: Bundle = Bundle.main) throws -> MessageCenterTheme {
+    fileprivate func toMessageCenterTheme(bundle: Bundle = Bundle.main) throws -> MessageCenterTheme {
         var theme = MessageCenterTheme()
         theme.refreshTintColor = self.refreshTintColor?.airshipToColor(bundle)
         theme.refreshTintColorDark = self.refreshTintColorDark?.airshipToColor(bundle)

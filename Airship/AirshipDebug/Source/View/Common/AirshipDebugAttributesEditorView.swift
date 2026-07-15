@@ -289,7 +289,7 @@ struct AirshipDebugAttributesEditorView: View {
 
 /// For tvOS
 #if os(tvOS)
-struct MultilineTextView: UIViewRepresentable {
+fileprivate struct MultilineTextView: UIViewRepresentable {
     @Binding var text: String
 
     class Coordinator: NSObject, UITextViewDelegate {

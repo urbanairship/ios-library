@@ -165,7 +165,7 @@ public final class UAirship: NSObject, Sendable {
     }
 
     @MainActor
-    fileprivate final class Storage  {
+    private final class Storage  {
         var deepLinkDelegate: (any DeepLinkDelegate)?
     }
 

@@ -104,7 +104,7 @@ struct AirshipDebugAddEmailChannelView: View {
     }
 
     @MainActor
-    fileprivate class ViewModel: ObservableObject {
+    private class ViewModel: ObservableObject {
         @Published var emailAddress: String = ""
         @Published var commercial: Bool = false
         @Published var registrationType: RegistrationType = .transactional

@@ -175,7 +175,7 @@ internal struct MessageCenterAppearanceDetector: UIViewRepresentable {
 
 // MARK: - View Modifier for Applying Detected Appearance
 
-internal struct MessageCenterApplyDetectedAppearance: ViewModifier {
+fileprivate struct MessageCenterApplyDetectedAppearance: ViewModifier {
     @Environment(\.messageCenterDetectedAppearance) var detectedAppearance
 
     func body(content: Content) -> some View {

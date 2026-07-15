@@ -58,7 +58,7 @@ struct AirshipDebugInAppExperiencesView: View {
     }
 
     @MainActor
-    fileprivate final class ViewModel: ObservableObject {
+    private final class ViewModel: ObservableObject {
         @Published
         var displayInterval: TimeInterval = 0.0 {
             didSet {

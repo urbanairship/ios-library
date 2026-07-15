@@ -83,7 +83,7 @@ struct AirshipDebugPushView: View {
     }
 
     @MainActor
-    fileprivate final class ViewModel: ObservableObject {
+    private final class ViewModel: ObservableObject {
         @Published
         private(set) var deviceToken: String? = nil
 

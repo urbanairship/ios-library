@@ -323,7 +323,7 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
         return contactID
     }
 
-    fileprivate struct UpdateRecord {
+    private struct UpdateRecord {
         enum RecordType {
             case channel(String)
             case contact(String)
@@ -337,7 +337,7 @@ actor DefaultAudienceOverridesProvider: AudienceOverridesProvider {
         let channels: [ContactChannelUpdate]?
     }
 
-    fileprivate struct ContactRecord: Sendable {
+    private struct ContactRecord: Sendable {
         let contactID: String
         let tags: [TagGroupUpdate]
         let attributes: [AttributeUpdate]

@@ -72,7 +72,7 @@ extension View {
     }
 }
 
-struct CenteredGeometryReader<Content: View>: View {
+fileprivate struct CenteredGeometryReader<Content: View>: View {
     var content: (CGSize) -> Content
 
     init(@ViewBuilder content: @escaping (CGSize) -> Content) {
@@ -91,7 +91,7 @@ struct CenteredGeometryReader<Content: View>: View {
 }
 
 /// Attempt to resize to specified size and clamp any size axis that exceeds parent size axis to said axis.
-struct AspectResize: ViewModifier {
+fileprivate struct AspectResize: ViewModifier {
     var width: Double?
     var height: Double?
 
@@ -110,7 +110,7 @@ struct AspectResize: ViewModifier {
 }
 
 /// Attempt to resize to specified size and clamp any size axis that exceeds parent size axis to said axis.
-struct ParentClampingResize: ViewModifier {
+fileprivate struct ParentClampingResize: ViewModifier {
     var maxWidth: CGFloat
     var maxHeight: CGFloat
 

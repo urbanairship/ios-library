@@ -315,7 +315,7 @@ public final class UAPush: NSObject, Sendable {
         }
     }
 
-    fileprivate final class Storage: Sendable  {
+    private final class Storage: Sendable  {
         @MainActor
         var registrationDelegate: (any RegistrationDelegate)?
 

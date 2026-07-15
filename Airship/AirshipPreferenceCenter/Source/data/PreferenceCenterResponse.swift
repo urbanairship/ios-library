@@ -4,7 +4,7 @@ import Foundation
 
 import AirshipCore
 
-struct PrefrenceCenterResponse: Decodable {
+fileprivate struct PrefrenceCenterResponse: Decodable {
     let config: PreferenceCenterConfig
 
     enum CodingKeys: String, CodingKey {

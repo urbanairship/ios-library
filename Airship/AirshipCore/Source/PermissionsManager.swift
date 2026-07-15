@@ -383,7 +383,7 @@ protocol SystemSettingsNavigatorProtocol: Sendable {
     func open(for: AirshipPermission) async -> Bool
 }
 
-struct SystemSettingsNavigator: SystemSettingsNavigatorProtocol {
+fileprivate struct SystemSettingsNavigator: SystemSettingsNavigatorProtocol {
     @MainActor
     func open(for permission: AirshipPermission) async -> Bool {
 #if os(watchOS)

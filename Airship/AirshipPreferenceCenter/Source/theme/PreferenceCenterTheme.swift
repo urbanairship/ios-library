@@ -452,7 +452,7 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
     }
 }
 
-struct PreferenceCenterThemeKey: EnvironmentKey {
+fileprivate struct PreferenceCenterThemeKey: EnvironmentKey {
     static let defaultValue = PreferenceCenterTheme()
 }
 

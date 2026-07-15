@@ -36,7 +36,7 @@ extension View {
     }
 }
 
-struct TextStyleViewModifier: ViewModifier {
+fileprivate struct TextStyleViewModifier: ViewModifier {
     @Environment(\.sizeCategory) var sizeCategory
     let textInfo: InAppMessageTextInfo
 

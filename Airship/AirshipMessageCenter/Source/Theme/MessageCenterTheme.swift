@@ -245,7 +245,7 @@ extension View {
     }
 }
 
-struct MessageCenterThemeKey: EnvironmentKey {
+fileprivate struct MessageCenterThemeKey: EnvironmentKey {
     static let defaultValue = MessageCenterTheme()
 }
 

@@ -12,7 +12,7 @@ import UserNotifications
 @_spi(AirshipInternal) import AirshipBasement
 
 final class RemoteData: AirshipComponent, RemoteDataProtocol {
-    fileprivate enum RefreshStatus: Sendable {
+    private enum RefreshStatus: Sendable {
         case none
         case success
         case failed

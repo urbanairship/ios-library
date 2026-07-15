@@ -116,7 +116,7 @@ public final class LandingPageAction: AirshipAction {
         return nil
     }
 
-    fileprivate struct LandingPageArgs: Decodable, Sendable {
+    private struct LandingPageArgs: Decodable, Sendable {
         var url: URL
         var height: Double?
         var width: Double?

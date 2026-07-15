@@ -5,7 +5,7 @@ import Foundation
 @_spi(AirshipInternal) import AirshipCore
 
 /// Resources for AirshipPreferenceCenter.
-final class AirshipPreferenceCenterResources {
+fileprivate final class AirshipPreferenceCenterResources {
 
     static func localizedString(key: String) -> String? {
         return AirshipLocalizationUtils.localizedString(

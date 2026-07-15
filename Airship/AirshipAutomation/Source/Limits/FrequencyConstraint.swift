@@ -12,14 +12,14 @@ struct FrequencyConstraint: Equatable, Hashable, Sendable, Decodable {
     var count: UInt
     
 
-    fileprivate enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case identifier = "id"
         case range = "range"
         case boundary = "boundary"
         case period = "period"
     }
 
-    fileprivate enum Period: String, Decodable {
+    private enum Period: String, Decodable {
         case seconds
         case minutes
         case hours

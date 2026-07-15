@@ -10,11 +10,11 @@ public final class AirshipLogger: Sendable {
     // Configuration for the logger
     private static let configuration: Configuration = Configuration()
 
-    static var logLevel: AirshipLogLevel {
+    private static var logLevel: AirshipLogLevel {
         return configuration.storage.logLevel
     }
 
-    static var logHandler: any AirshipLogHandler {
+    private static var logHandler: any AirshipLogHandler {
         return configuration.storage.handler
     }
 
@@ -33,7 +33,7 @@ public final class AirshipLogger: Sendable {
         configuration.configure(logLevel: logLevel, handler: handler)
     }
 
-    fileprivate final class Configuration: @unchecked Sendable {
+    private final class Configuration: @unchecked Sendable {
         struct Storage: Sendable {
             var logLevel: AirshipLogLevel
             var handler: any AirshipLogHandler
@@ -165,7 +165,7 @@ public final class AirshipLogger: Sendable {
         )
     }
 
-    static func log(
+    private static func log(
         logLevel: AirshipLogLevel,
         message: @autoclosure () -> String,
         fileID: String,

@@ -5,7 +5,7 @@ import Foundation
 
 import AirshipCore
 
-protocol AutomationExecutorProtocol: Sendable {
+fileprivate protocol AutomationExecutorProtocol: Sendable {
     @MainActor
     func isValid(
         schedule: AutomationSchedule

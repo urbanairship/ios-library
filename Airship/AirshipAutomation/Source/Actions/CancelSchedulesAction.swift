@@ -69,7 +69,7 @@ public final class CancelSchedulesAction: AirshipAction {
         return nil
     }
     
-    fileprivate struct Arguments: Decodable, Sendable {
+    private struct Arguments: Decodable, Sendable {
         static let all = "all"
         
         let cancellAll: Bool

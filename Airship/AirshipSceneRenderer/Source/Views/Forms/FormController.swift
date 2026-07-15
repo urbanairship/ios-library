@@ -138,7 +138,7 @@ struct FormController: View {
     }
 }
 
-struct FormControllerDebug: View {
+fileprivate struct FormControllerDebug: View {
     @EnvironmentObject var state: ThomasFormState
 
     var body: some View {

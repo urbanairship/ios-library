@@ -87,7 +87,7 @@ final class AdditionalAudienceCheckerAPIClient: AdditionalAudienceCheckerAPIClie
         }
     }
     
-    fileprivate struct RequestBody: Encodable {
+    private struct RequestBody: Encodable {
         let channelID: String
         let contactID: String
         let namedUserID: String?

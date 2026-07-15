@@ -187,7 +187,7 @@ private final class Delegates {
 extension DefaultPreferenceCenter {
 
     @MainActor
-    fileprivate func displayPreferenceCenter(
+    private func displayPreferenceCenter(
         _ preferenceCenterID: String,
         theme: PreferenceCenterTheme?
     ) throws -> any AirshipMainActorCancellable {

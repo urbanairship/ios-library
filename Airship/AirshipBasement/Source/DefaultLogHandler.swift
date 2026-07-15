@@ -51,7 +51,7 @@ extension AirshipLogLevel {
         }
     }
     
-    var icon: String {
+    fileprivate var icon: String {
         switch(self) {
         case .error: return "❌"
         case .warn: return "⚠️"

@@ -246,7 +246,7 @@ actor Worker {
         try await Task.sleep(nanoseconds: sleep)
     }
 
-    fileprivate struct PendingRequest: Equatable, Sendable, Hashable {
+    private struct PendingRequest: Equatable, Sendable, Hashable {
         let id: Int
         let request: AirshipWorkRequest
         let date: Date = Date()

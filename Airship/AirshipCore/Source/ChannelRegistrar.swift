@@ -23,7 +23,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
     static let workID: String = "UAChannelRegistrar.registration"
     private static let payloadCadence: TimeInterval = 24 * 60 * 60
 
-    fileprivate static let forcefullyKey: String = "forcefully"
+    private static let forcefullyKey: String = "forcefully"
     private static let channelIDKey: String = "UAChannelID"
     private static let lastRegistrationInfo: String = "ChannelRegistrar.lastRegistrationInfo"
 
@@ -398,7 +398,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
         return payload.minimizePayload(previous: lastRegistrationInfo.payload)
     }
 
-    fileprivate struct LastRegistrationInfo: Codable {
+    private struct LastRegistrationInfo: Codable {
         let date: Date
         let lastFullPayloadSent: Date?
         let payload: ChannelRegistrationPayload

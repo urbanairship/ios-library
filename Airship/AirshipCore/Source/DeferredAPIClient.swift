@@ -83,7 +83,7 @@ final class DeferredAPIClient: DeferredAPIClientProtocol {
         )
     }
 
-    fileprivate struct RequestBody: Encodable {
+    private struct RequestBody: Encodable {
         let platform: String = "ios"
         let channelID: String
         let contactID: String?

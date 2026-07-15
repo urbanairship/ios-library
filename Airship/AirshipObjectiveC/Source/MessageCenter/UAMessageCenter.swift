@@ -122,7 +122,7 @@ public final class UAMessageCenter: NSObject, Sendable {
     }
 
 
-    fileprivate final class Storage: Sendable  {
+    private final class Storage: Sendable  {
         @MainActor
         var displayDelegate: (any MessageCenterDisplayDelegate)?
 

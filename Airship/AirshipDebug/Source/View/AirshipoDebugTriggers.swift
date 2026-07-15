@@ -61,7 +61,7 @@ public extension View {
     }
 }
 
-struct AirshipDebugModifier: ViewModifier {
+fileprivate struct AirshipDebugModifier: ViewModifier {
     let triggers: AirshipDebugTrigger
 
     func body(content: Content) -> some View {

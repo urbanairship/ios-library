@@ -60,7 +60,7 @@ struct AnonContactData: Codable, Sendable {
     }
 
     // Migration purposes
-    fileprivate struct JsonValue : Decodable {
+    private struct JsonValue : Decodable {
         let jsonEncodedValue: String?
     }
 }

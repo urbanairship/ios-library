@@ -139,7 +139,7 @@ public extension View {
     }
 }
 
-struct PreferenceCenterView_Previews: PreviewProvider {
+fileprivate struct PreferenceCenterView_Previews: PreviewProvider {
     static var previews: some View {
         let config = PreferenceCenterConfig(
             identifier: "PREVIEW",

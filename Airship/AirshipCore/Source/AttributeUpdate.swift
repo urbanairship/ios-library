@@ -76,7 +76,7 @@ struct AttributeUpdate: Codable, Sendable, Equatable {
     }
 
     // Migration purposes
-    fileprivate struct JsonValue : Decodable {
+    private struct JsonValue : Decodable {
         let jsonEncodedValue: String?
     }
 }

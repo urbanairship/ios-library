@@ -39,7 +39,7 @@ struct LegacyInAppAnalytics : LegacyInAppAnalyticsProtocol {
     }
 }
 
-struct LegacyResolutionEvent : ThomasLayoutEvent {
+fileprivate struct LegacyResolutionEvent : ThomasLayoutEvent {
     let name = AirshipEventType.inAppResolution
 
     let data: (any Encodable & Sendable)?
@@ -60,12 +60,12 @@ struct LegacyResolutionEvent : ThomasLayoutEvent {
         )
     }
 
-    fileprivate enum LegacyResolutionType: String, Encodable {
+    private enum LegacyResolutionType: String, Encodable {
         case replaced
         case directOpen = "direct_open"
     }
 
-    fileprivate struct LegacyResolutionBody: Encodable {
+    private struct LegacyResolutionBody: Encodable {
         var type: LegacyResolutionType
         var replacementID: String?
 

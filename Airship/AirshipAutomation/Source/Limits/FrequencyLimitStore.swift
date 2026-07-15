@@ -6,7 +6,7 @@ import Foundation
 
 @_spi(AirshipInternal) import AirshipCore
 
-enum FrequencyLimitStoreError: Error, Sendable {
+fileprivate enum FrequencyLimitStoreError: Error, Sendable {
     case coreDataUnavailable
     case coreDataError
 }
@@ -156,7 +156,7 @@ actor FrequencyLimitStore {
     // MARK: -
     // MARK: Helpers
 
-    fileprivate nonisolated func fetchConstraintsData(
+    private nonisolated func fetchConstraintsData(
         forIDs constraintIDs: [String]? = nil,
         context: NSManagedObjectContext
     ) throws -> [FrequencyConstraintData] {
@@ -171,7 +171,7 @@ actor FrequencyLimitStore {
         return try context.fetch(request)
     }
 
-    fileprivate nonisolated func makeConstraintData(
+    private nonisolated func makeConstraintData(
         context: NSManagedObjectContext
     ) throws -> FrequencyConstraintData {
         guard let data = NSEntityDescription.insertNewObject(
@@ -184,7 +184,7 @@ actor FrequencyLimitStore {
         return data
     }
 
-    fileprivate nonisolated func makeOccurrenceData(
+    private nonisolated func makeOccurrenceData(
         context:NSManagedObjectContext
     ) throws -> OccurrenceData {
 
@@ -200,7 +200,7 @@ actor FrequencyLimitStore {
         return data
     }
 
-    fileprivate nonisolated func makeInfo(data: FrequencyConstraintData) -> ConstraintInfo {
+    private nonisolated func makeInfo(data: FrequencyConstraintData) -> ConstraintInfo {
         return ConstraintInfo(
             constraint: FrequencyConstraint(
                 identifier: data.identifier,

@@ -96,7 +96,7 @@ public final class UAPreferenceCenter: NSObject, Sendable {
         return try await Airship.preferenceCenter.jsonConfig(preferenceCenterID: preferenceCenterID)
     }
 
-    fileprivate final class Storage: Sendable {
+    private final class Storage: Sendable {
         @MainActor
         var openDelegate: (any PreferenceCenterOpenDelegate)?
 

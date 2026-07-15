@@ -45,7 +45,7 @@ struct InAppMessageWebView: View {
     }
 }
 
-struct WKWebViewRepresentable: AirshipNativeViewRepresentable {
+fileprivate struct WKWebViewRepresentable: AirshipNativeViewRepresentable {
 #if os(macOS)
     typealias NSViewType = WKWebView
     func makeNSView(context: Context) -> WKWebView {

@@ -467,7 +467,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         enum AccessibilityRole: Codable, Equatable, Sendable {
             case heading(level: Int)
 
-            fileprivate enum AccessibilityRoleType: String, Codable {
+            private enum AccessibilityRoleType: String, Codable {
                 case heading
             }
 
@@ -665,7 +665,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             }
         }
 
-        fileprivate enum AccessibilityRoleType: String, Codable {
+        private enum AccessibilityRoleType: String, Codable {
             case button
             case container
         }

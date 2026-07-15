@@ -97,7 +97,7 @@ struct AirshipDebugAppInfoView: View {
     }
     
     @MainActor
-    fileprivate final class ViewModel: ObservableObject {
+    private final class ViewModel: ObservableObject {
         @Published
         var appInfo: AppInfo
 

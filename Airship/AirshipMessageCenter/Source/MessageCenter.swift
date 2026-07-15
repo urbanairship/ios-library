@@ -381,7 +381,7 @@ extension DefaultMessageCenter {
     }
 
     @MainActor
-    fileprivate func showDefaultMessageCenter() {
+    private func showDefaultMessageCenter() {
         guard self.mutable.currentDisplay == nil else {
             return
         }
@@ -410,7 +410,7 @@ extension DefaultMessageCenter {
     }
 
     @MainActor
-    fileprivate func dismissDefaultMessageCenter() {
+    private func dismissDefaultMessageCenter() {
         self.mutable.currentDisplay?.cancel()
         self.mutable.currentDisplay = nil
     }
