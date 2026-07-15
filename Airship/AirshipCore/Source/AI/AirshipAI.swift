@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+public import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 /// Namespace for Airship's on-device AI features.
@@ -21,26 +21,73 @@ public enum AirshipAI {
 
     /// App-supplied context for an on-device model evaluation.
     ///
+    /// Context is an ordered list of prioritized items. The model appends the items to
+    /// the evaluation prompt and may drop lower-priority items to fit its input budget.
     /// Everything here stays on device — it is fed to the on-device model and never
     /// leaves the SDK.
     public struct Context: Sendable, Equatable {
 
-        /// Free-form natural language the model reads directly.
-        public var summary: String?
+        /// Relative importance of a context item. Models drop lower-priority items
+        /// first when trimming context to fit their input budget.
+        public enum Priority: Int, Sendable, Equatable, Comparable, CaseIterable {
+            case low = 0
+            case medium = 1
+            case high = 2
 
-        /// Structured key/value hints (e.g. `["favorite_category": .string("hiking")]`).
-        public var attributes: [String: AirshipJSON]
+            public static func < (lhs: Priority, rhs: Priority) -> Bool {
+                lhs.rawValue < rhs.rawValue
+            }
+        }
 
-        public init(
-            summary: String? = nil,
-            attributes: [String: AirshipJSON] = [:]
-        ) {
-            self.summary = summary
-            self.attributes = attributes
+        /// A single piece of context. `content` should be self-describing text
+        /// (e.g. `"Favorite category: hiking"`) — it is inserted into the prompt as-is.
+        public struct Item: Sendable, Equatable {
+            public var content: String
+            public var priority: Priority
+
+            public init(content: String, priority: Priority = .medium) {
+                self.content = content
+                self.priority = priority
+            }
+        }
+
+        /// Context pieces in presentation order.
+        public var items: [Item]
+
+        public init(items: [Item] = []) {
+            self.items = items
         }
 
         /// An empty context, used when the host supplies nothing.
         public static let empty = Context()
+
+        /// Renders the items into prompt text, one per line, preserving order.
+        ///
+        /// - Returns: the rendered context, or nil when there is nothing to render.
+        public func render() -> String? {
+            let kept = items.filter { !$0.content.isEmpty }
+            guard !kept.isEmpty else { return nil }
+            return kept.map(\.content).joined(separator: "\n")
+        }
+
+        /// A copy of this context with the lowest-priority item removed — earliest
+        /// first within a priority, so later (more specific) providers win ties.
+        ///
+        /// Models call this to shrink the context when the full prompt exceeds their
+        /// input window, repeating until the prompt fits.
+        ///
+        /// - Returns: the reduced context, or nil when there is nothing left to drop.
+        public func droppingLowestPriorityItem() -> Context? {
+            guard
+                let lowest = items.map(\.priority).min(),
+                let index = items.firstIndex(where: { $0.priority == lowest })
+            else {
+                return nil
+            }
+            var reduced = items
+            reduced.remove(at: index)
+            return Context(items: reduced)
+        }
     }
 
     // MARK: - Availability
@@ -90,50 +137,6 @@ public enum AirshipAI {
         }
     }
 
-    // MARK: - Schema
-
-    /// Describes the structured JSON output an evaluation expects from the model.
-    ///
-    /// Backend-agnostic — exposes no Apple FoundationModels types.
-    public struct Schema: Sendable, Equatable {
-
-        public indirect enum FieldType: Sendable, Equatable {
-            case string
-            case boolean
-            case integer
-            case number
-            /// A nested object with its own fields.
-            case object(fields: [Field])
-            /// An array whose elements all conform to `element`.
-            case array(element: FieldType)
-        }
-
-        public struct Field: Sendable, Equatable {
-            public let name: String
-            public let type: FieldType
-            public let description: String?
-            public let isRequired: Bool
-
-            public init(
-                name: String,
-                type: FieldType,
-                description: String? = nil,
-                isRequired: Bool = true
-            ) {
-                self.name = name
-                self.type = type
-                self.description = description
-                self.isRequired = isRequired
-            }
-        }
-
-        public let fields: [Field]
-
-        public init(fields: [Field]) {
-            self.fields = fields
-        }
-    }
-
     // MARK: - ModelSelector
 
     public enum ModelSelector: Sendable {
@@ -145,17 +148,32 @@ public enum AirshipAI {
 
     /// Thin, backend-agnostic wrapper over a model.
     ///
-    /// Takes instructions + a prompt + a schema and returns the model's structured
-    /// response as parsed JSON. No FoundationModels types appear here — only
-    /// `SystemAIModel` (in the `AirshipAIModels` module) touches FoundationModels.
+    /// Takes instructions + a prompt + prioritized context + a schema and returns the
+    /// model's structured response as parsed JSON. Retry, timeout, and output
+    /// validation live in the framework — a model answers a single request and
+    /// declares its retry/timeout policy through `maxAttempts`/`responseTimeout`.
+    /// No FoundationModels types appear here — only `SystemAIModel` (in the
+    /// `AirshipAIModels` module) touches FoundationModels.
     public protocol Model: Sendable {
 
         var availability: Availability { get }
 
+        /// How many attempts (including the first) the framework should make before
+        /// failing the evaluation. Airship's on-device model uses 3.
+        var maxAttempts: Int { get }
+
+        /// Total wall-clock budget across all attempts. The framework fails the
+        /// evaluation when it expires. Airship's on-device model uses 30 seconds.
+        var responseTimeout: TimeInterval { get }
+
+        /// Answers a single request. The model appends `context` to the prompt; when
+        /// the prompt exceeds its input window it should shrink the context via
+        /// `Context.droppingLowestPriorityItem()` and try again.
         func respond(
             instructions: String,
             prompt: String,
-            schema: Schema
+            context: Context,
+            schema: AirshipJSONSchema
         ) async throws -> AirshipJSON
     }
 
@@ -229,8 +247,15 @@ public enum AirshipAI {
         /// `ContextProvider<Subject>` to produce the `Context` for the prompt.
         var subject: Subject { get }
 
+        /// The structured output contract for this evaluation. Static features declare
+        /// it in code; payload-driven features (e.g. scenes) decode it from the payload.
+        var schema: AirshipJSONSchema { get }
+
         func instructions() -> String
-        func prompt(context: Context) -> String
+
+        /// The subject portion of the prompt. Provider context is fetched by the
+        /// framework and appended by the model, which may trim low-priority items.
+        func prompt() -> String
     }
 
     // MARK: - InternalManager protocol (SPI)
@@ -245,25 +270,12 @@ public enum AirshipAI {
         /// fails open — returns `.skipped` when the model is unavailable.
         func evaluate<E: Evaluation>(_ evaluation: E) async -> Result<E.Output>
 
-        /// Registers the schema for a usage. Feature modules call this at startup
-        /// so the schema is available during evaluation.
-        @MainActor
-        func setSchema<S: Sendable>(_ schema: Schema, for usage: Usage<S>)
-
-        /// Returns the schema registered for a usage.
-        @MainActor
-        func schema<S: Sendable>(for usage: Usage<S>) -> Schema?
-
         /// Called by `AirshipAIModelsSDKModule` to wire in `SystemAIModel` as the
         /// default. Replaces the current model immediately.
         @MainActor
         func registerModelFactory(
             _ factory: @MainActor @Sendable @escaping () -> any Model
         )
-
-        /// Raw keys of all usages that have a registered schema.
-        @MainActor
-        var registeredUsageKeys: [String] { get }
 
         /// Fetches the merged context that would be passed to the model for the given usage and subject.
         /// Returns `.empty` if no provider is registered.
@@ -282,101 +294,5 @@ extension AirshipAI.Usage: Codable {
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(rawValue)
-    }
-}
-
-// MARK: - Schema instruction helper
-
-extension AirshipAI.Schema {
-    /// A natural-language description of the expected JSON shape, ready to append
-    /// to model instructions. Model implementors can include this in the system
-    /// prompt to constrain output without guided generation.
-    public var instruction: String {
-        let lines = fields.map { "  \(Self.describe(field: $0))" }
-        return """
-        *Return the data in JSON format. Do not use markdown backticks or fences.*
-        The response must start with { and end with }. Fields:
-        {
-        \(lines.joined(separator: ",\n"))
-        }
-        """
-    }
-
-    /// Renders a single field as `"name": <type> (required|optional) — description`.
-    private static func describe(field: Field) -> String {
-        let requirement = field.isRequired ? "required" : "optional"
-        let description = field.description.map { " — \($0)" } ?? ""
-        return "\"\(field.name)\": \(describe(type: field.type)) (\(requirement))\(description)"
-    }
-
-    /// Renders a field type, recursing into nested objects and arrays.
-    private static func describe(type: FieldType) -> String {
-        switch type {
-        case .string: return "string"
-        case .boolean: return "boolean"
-        case .integer: return "integer"
-        case .number: return "number"
-        case .object(let fields):
-            let inner = fields.map { describe(field: $0) }.joined(separator: ", ")
-            return "{ \(inner) }"
-        case .array(let element):
-            return "array of \(describe(type: element))"
-        }
-    }
-}
-
-// MARK: - Schema validation
-
-extension AirshipAI.Schema {
-    /// Validates that `json` conforms to this schema.
-    ///
-    /// Extra keys not described by the schema are ignored. Optional fields may be
-    /// absent or null.
-    ///
-    /// - Throws: an error describing the first violation; returns normally if valid.
-    public func validate(_ json: AirshipJSON) throws {
-        try Self.validate(json, against: .object(fields: fields), path: "$")
-    }
-
-    private static func validate(
-        _ value: AirshipJSON,
-        against type: FieldType,
-        path: String
-    ) throws {
-        switch type {
-        case .string:
-            guard value.isString else { throw typeError(path, "string", value) }
-        case .boolean:
-            guard value.isBool else { throw typeError(path, "boolean", value) }
-        case .integer:
-            guard let number = value.number, number.rounded() == number else {
-                throw typeError(path, "integer", value)
-            }
-        case .number:
-            guard value.isNumber else { throw typeError(path, "number", value) }
-        case .object(let fields):
-            guard let object = value.object else { throw typeError(path, "object", value) }
-            for field in fields {
-                let child = object[field.name]
-                if child == nil || child == AirshipJSON.null {
-                    if field.isRequired {
-                        throw AirshipErrors.error(
-                            "Schema validation: missing required field '\(path).\(field.name)'"
-                        )
-                    }
-                    continue
-                }
-                try validate(child!, against: field.type, path: "\(path).\(field.name)")
-            }
-        case .array(let element):
-            guard let array = value.array else { throw typeError(path, "array", value) }
-            for (index, item) in array.enumerated() {
-                try validate(item, against: element, path: "\(path)[\(index)]")
-            }
-        }
-    }
-
-    private static func typeError(_ path: String, _ expected: String, _ value: AirshipJSON) -> any Error {
-        AirshipErrors.error("Schema validation: expected \(expected) at '\(path)'")
     }
 }

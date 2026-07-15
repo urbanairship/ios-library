@@ -27,12 +27,12 @@ struct InAppMessageFilterEvaluationTest {
         #expect(eval.instructions().contains("When in doubt, show it"))
     }
 
-    // MARK: - prompt(context:)
+    // MARK: - prompt()
 
     @Test
     func promptIncludesMessageName() {
         let eval = InAppMessageFilterEvaluation(filterPrompt: "", subject: .init(name: "Summer Promo"))
-        #expect(eval.prompt(context: .empty).contains("Message name: Summer Promo"))
+        #expect(eval.prompt().contains("Message name: Summer Promo"))
     }
 
     @Test
@@ -42,7 +42,7 @@ struct InAppMessageFilterEvaluationTest {
             subject: .init(name: "Test")
         )
         #expect(eval.instructions().contains("Only show to frequent flyers"))
-        let prompt = eval.prompt(context: .empty)
+        let prompt = eval.prompt()
         #expect(!prompt.contains("Only show to frequent flyers"))
         #expect(!prompt.contains("Filter instruction:"))
     }
@@ -53,7 +53,7 @@ struct InAppMessageFilterEvaluationTest {
             filterPrompt: "",
             subject: .init(name: "Test", extras: ["promo_type": "flash_sale"])
         )
-        let prompt = eval.prompt(context: .empty)
+        let prompt = eval.prompt()
         #expect(prompt.contains("Message Extras:"))
         #expect(prompt.contains("promo_type"))
         #expect(prompt.contains("flash_sale"))
@@ -62,7 +62,7 @@ struct InAppMessageFilterEvaluationTest {
     @Test
     func promptOmitsExtrasWhenNil() {
         let eval = InAppMessageFilterEvaluation(filterPrompt: "", subject: .init(name: "Test"))
-        #expect(!eval.prompt(context: .empty).contains("Message Extras:"))
+        #expect(!eval.prompt().contains("Message Extras:"))
     }
 
     @Test
@@ -71,7 +71,7 @@ struct InAppMessageFilterEvaluationTest {
             filterPrompt: "",
             subject: .init(name: "Test", campaigns: ["campaign_name": "summer_promo"])
         )
-        let prompt = eval.prompt(context: .empty)
+        let prompt = eval.prompt()
         #expect(prompt.contains("Campaigns:"))
         #expect(prompt.contains("campaign_name"))
         #expect(prompt.contains("summer_promo"))
@@ -80,29 +80,13 @@ struct InAppMessageFilterEvaluationTest {
     @Test
     func promptOmitsCampaignsSectionWhenNil() {
         let eval = InAppMessageFilterEvaluation(filterPrompt: "", subject: .init(name: "Test"))
-        #expect(!eval.prompt(context: .empty).contains("Campaigns:"))
+        #expect(!eval.prompt().contains("Campaigns:"))
     }
 
     @Test
-    func promptIncludesContextSummary() {
+    func promptContainsOnlySubjectContent() {
+        // Provider context is appended by the model, never by the evaluation.
         let eval = InAppMessageFilterEvaluation(filterPrompt: "", subject: .init(name: "Test"))
-        let context = AirshipAI.Context(summary: "power user, travels often")
-        #expect(eval.prompt(context: context).contains("User context: power user, travels often"))
-    }
-
-    @Test
-    func promptIncludesContextAttributes() {
-        let eval = InAppMessageFilterEvaluation(filterPrompt: "", subject: .init(name: "Test"))
-        let context = AirshipAI.Context(attributes: ["named_user": .string("ryan")])
-        let prompt = eval.prompt(context: context)
-        #expect(prompt.contains("User attributes:"))
-        #expect(prompt.contains("named_user"))
-        #expect(prompt.contains("ryan"))
-    }
-
-    @Test
-    func promptOmitsAttributesSectionWhenEmpty() {
-        let eval = InAppMessageFilterEvaluation(filterPrompt: "", subject: .init(name: "Test"))
-        #expect(!eval.prompt(context: .empty).contains("User attributes:"))
+        #expect(eval.prompt() == "Message name: Test")
     }
 }

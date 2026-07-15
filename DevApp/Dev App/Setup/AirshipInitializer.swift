@@ -42,31 +42,32 @@ private final class DevIAAFilterContextProvider: AirshipAI.ContextProvider {
     typealias Subject = InAppMessageFilterContext
 
     func context(for subject: InAppMessageFilterContext) async -> AirshipAI.Context {
-        var attributes: [String: AirshipJSON] = [:]
+        var items: [AirshipAI.Context.Item] = []
 
         if let namedUser = await Airship.contact.namedUserID {
-            attributes["named_user"] = .string(namedUser)
+            items.append(.init(content: "Named user: \(namedUser)", priority: .high))
         }
 
         let tags = Airship.channel.tags
         if !tags.isEmpty {
-            attributes["channel_tags"] = .array(tags.sorted().map { .string($0) })
-        }
-
-        if let channelID = Airship.channel.identifier {
-            attributes["channel_id"] = .string(channelID)
+            items.append(.init(content: "Channel tags: \(tags.sorted().joined(separator: ", "))", priority: .medium))
         }
 
         let notifStatus = await Airship.push.notificationStatus
-        attributes["notifications_opted_in"] = .bool(notifStatus.isUserOptedIn)
+        items.append(.init(content: "Notifications opted in: \(notifStatus.isUserOptedIn)", priority: .medium))
 
-        if let subscriptions = try? await Airship.contact.fetchSubscriptionLists(), !subscriptions.isEmpty {
-            let encoded = subscriptions.sorted { $0.key < $1.key }.reduce(into: [String: AirshipJSON]()) { result, entry in
-                result[entry.key] = .array(entry.value.map { .string($0.rawValue) })
-            }
-            attributes["contact_subscriptions"] = .object(encoded)
+        if let channelID = Airship.channel.identifier {
+            items.append(.init(content: "Channel ID: \(channelID)", priority: .low))
         }
 
-        return AirshipAI.Context(attributes: attributes)
+        if let subscriptions = try? await Airship.contact.fetchSubscriptionLists(), !subscriptions.isEmpty {
+            let rendered = subscriptions
+                .sorted { $0.key < $1.key }
+                .map { "\($0.key): \($0.value.map(\.rawValue).joined(separator: ", "))" }
+                .joined(separator: "; ")
+            items.append(.init(content: "Contact subscriptions: \(rendered)", priority: .low))
+        }
+
+        return AirshipAI.Context(items: items)
     }
 }

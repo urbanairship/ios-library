@@ -14,9 +14,6 @@ extension AirshipAI {
         @MainActor
         private let providerRegistry = ProviderRegistry()
 
-        @MainActor
-        private let schemaRegistry = SchemaRegistry()
-
         private let evaluator = AirshipAI.Evaluator()
 
         @_spi(AirshipInternal)
@@ -56,20 +53,6 @@ extension AirshipAI {
         }
 
         @MainActor
-        public func schema<S: Sendable>(for usage: Usage<S>) -> Schema? {
-            schemaRegistry.schema(for: usage.rawValue)
-        }
-
-        @MainActor
-        public func setSchema<S: Sendable>(_ schema: Schema, for usage: Usage<S>) {
-            schemaRegistry.setSchema(schema, for: usage)
-        }
-
-        public var registeredUsageKeys: [String] {
-            schemaRegistry.registeredUsageKeys
-        }
-
-        @MainActor
         public func registerModelFactory(
             _ factory: @MainActor @Sendable @escaping () -> any AirshipAI.Model
         ) {
@@ -89,19 +72,15 @@ extension AirshipAI {
         public func evaluate<E: AirshipAI.Evaluation>(
             _ evaluation: E
         ) async -> AirshipAI.Result<E.Output> {
-            let (model, contextFetcher, schema) = await MainActor.run {
+            let (model, contextFetcher) = await MainActor.run {
                 (resolvedModel,
-                 providerRegistry.contextFetcher(for: evaluation.usage.rawValue),
-                 schemaRegistry.schema(for: evaluation.usage.rawValue))
+                 providerRegistry.contextFetcher(for: evaluation.usage.rawValue))
             }
             guard let model else {
                 return .skipped(reason: "No model configured")
             }
-            guard let schema else {
-                return .skipped(reason: "No schema registered for \(evaluation.usage.rawValue)")
-            }
             let context = await contextFetcher?(evaluation.subject) ?? .empty
-            return await evaluator.evaluate(evaluation, model: model, context: context, schema: schema)
+            return await evaluator.evaluate(evaluation, model: model, context: context)
         }
     }
 }

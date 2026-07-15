@@ -47,7 +47,12 @@ struct AirshipDebugAIView: View {
 extension AirshipDebugAIView {
     @MainActor final class ViewModel: ObservableObject {
         @Published var availability: AirshipAI.Availability = .unavailable(reason: .osVersion)
-        @Published var usageKeys: [String] = []
+
+        // Schemas live on evaluations now, so there is no runtime registry to
+        // enumerate — this is the list of usages the debug UI knows how to drive.
+        let usageKeys: [String] = [
+            InAppMessageFilterContext.filterUsage.rawValue
+        ]
 
         let manager: any AirshipAI.InternalManager
 
@@ -65,7 +70,6 @@ extension AirshipDebugAIView {
 
         func setup() {
             availability = manager.availability
-            usageKeys = manager.registeredUsageKeys.sorted()
         }
     }
 }
@@ -213,13 +217,13 @@ struct AirshipDebugIAAFilterView: View {
                         Text("Fetching context…")
                             .foregroundStyle(.secondary)
                     }
-                } else if let attrs = viewModel.context?.attributes, !attrs.isEmpty {
-                    ForEach(attrs.keys.sorted(), id: \.self) { key in
+                } else if let items = viewModel.context?.items, !items.isEmpty {
+                    ForEach(Array(items.enumerated()), id: \.offset) { _, item in
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(key)
+                            Text(priorityLabel(item.priority))
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
-                            Text(attrs[key]?.prettyString ?? "null")
+                            Text(item.content)
                                 .font(.system(.footnote, design: .monospaced))
                         }
                         .padding(.vertical, 2)
@@ -239,8 +243,16 @@ struct AirshipDebugIAAFilterView: View {
         }
         .navigationTitle("IAX Display Filter")
         .onAppear {
-            viewModel.setup()
             Task { await viewModel.fetchContext() }
+        }
+    }
+
+    private func priorityLabel(_ priority: AirshipAI.Context.Priority) -> String {
+        switch priority {
+        case .low: return "low priority"
+        case .medium: return "medium priority"
+        case .high: return "high priority"
+        @unknown default: return "priority \(priority.rawValue)"
         }
     }
 }
@@ -268,12 +280,6 @@ private final class IAAFilterViewModel: ObservableObject {
 
     init(manager: any AirshipAI.InternalManager) {
         self.manager = manager
-    }
-
-    func setup() {
-        if manager.schema(for: InAppMessageFilterContext.filterUsage) == nil {
-            manager.setSchema(InAppMessageFilterEvaluation.schema, for: InAppMessageFilterContext.filterUsage)
-        }
     }
 
     func fetchContext() async {
@@ -351,9 +357,6 @@ private final class PreviewAIManager: AirshipAI.InternalManager, @unchecked Send
     func setDefaultProvider(_ provider: (any AirshipAI.ContextProvider<Void>)?) {}
     func setModel(_ selector: AirshipAI.ModelSelector) {}
     func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E) async -> AirshipAI.Result<E.Output> { .skipped(reason: "preview") }
-    func setSchema<S: Sendable>(_ schema: AirshipAI.Schema, for usage: AirshipAI.Usage<S>) {}
-    func schema<S: Sendable>(for usage: AirshipAI.Usage<S>) -> AirshipAI.Schema? { nil }
     func registerModelFactory(_ factory: @MainActor @Sendable @escaping () -> any AirshipAI.Model) {}
-    var registeredUsageKeys: [String] { ["in_app_message_filter"] }
     func fetchContext<S: Sendable>(for usage: AirshipAI.Usage<S>, subject: S) async -> AirshipAI.Context { .empty }
 }

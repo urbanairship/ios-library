@@ -382,7 +382,7 @@ struct InAppMessageAutomationPreparerTest {
         #expect(evaluation.subject.campaigns == preparedScheduleInfo.campaigns)
         // The filter prompt governs via instructions() — not repeated as context in the prompt.
         #expect(evaluation.instructions().contains("only show to hikers"))
-        #expect(!evaluation.prompt(context: .empty).contains("only show to hikers"))
+        #expect(!evaluation.prompt().contains("only show to hikers"))
     }
 
 }

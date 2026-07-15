@@ -60,7 +60,6 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
         self.analyticsFactory = analyticsFactory
         self.actionRunnerFactory = actionRunnerFactory
         self.aiManager = aiManager
-        aiManager.setSchema(InAppMessageFilterEvaluation.schema, for: InAppMessageFilterContext.filterUsage)
     }
 
     func prepare(

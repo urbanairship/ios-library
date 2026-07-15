@@ -20,9 +20,6 @@ final class TestAIManager: AirshipAI.InternalManager, @unchecked Sendable {
         }
         return result
     }
-    func setSchema<S: Sendable>(_ schema: AirshipAI.Schema, for usage: AirshipAI.Usage<S>) {}
-    func schema<S: Sendable>(for usage: AirshipAI.Usage<S>) -> AirshipAI.Schema? { nil }
     func registerModelFactory(_ factory: @MainActor @Sendable @escaping () -> any AirshipAI.Model) {}
-    var registeredUsageKeys: [String] { [] }
     func fetchContext<S: Sendable>(for usage: AirshipAI.Usage<S>, subject: S) async -> AirshipAI.Context { .empty }
 }

@@ -11,10 +11,13 @@ public struct InAppMessageFilterEvaluation: AirshipAI.Evaluation {
         public let reason: String
     }
 
-    public static let schema = AirshipAI.Schema(fields: [
-        .init(name: "allow", type: .boolean, description: "Whether to show the in-app message to this user"),
-        .init(name: "reason", type: .string, description: "Brief reason for the decision"),
-    ])
+    public let schema = AirshipJSONSchema.object(
+        properties: [
+            "allow": .boolean(description: "Whether to show the in-app message to this user"),
+            "reason": .string(description: "Brief reason for the decision"),
+        ],
+        required: ["allow", "reason"]
+    )
 
     public typealias Subject = InAppMessageFilterContext
 
@@ -52,9 +55,9 @@ public struct InAppMessageFilterEvaluation: AirshipAI.Evaluation {
         """
     }
 
-    public func prompt(context: AirshipAI.Context) -> String {
+    public func prompt() -> String {
         // The filter condition is the governing rule and lives in instructions() — it is
-        // deliberately not repeated here as context.
+        // deliberately not repeated here. Provider context is appended by the model.
         var parts: [String] = ["Message name: \(subject.name)"]
 
         if let extras = subject.extras, extras != .null,
@@ -65,15 +68,6 @@ public struct InAppMessageFilterEvaluation: AirshipAI.Evaluation {
         if let campaigns = subject.campaigns, campaigns != .null,
            let formatted = campaigns.promptString, formatted != "{}" {
             parts.append("Campaigns: \(formatted)")
-        }
-
-        if let summary = context.summary {
-            parts.append("User context: \(summary)")
-        }
-
-        if !context.attributes.isEmpty,
-           let formatted = AirshipJSON.object(context.attributes).promptString, formatted != "{}" {
-            parts.append("User attributes: \(formatted)")
         }
 
         return parts.joined(separator: "\n")

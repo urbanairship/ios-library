@@ -9,13 +9,15 @@ import FoundationModels
 
 /// Production `AirshipAI.Model` backed by Apple's on-device `SystemLanguageModel`.
 ///
+/// Answers a single request per `respond` call — retry, timeout, and output
+/// validation live in the framework's evaluator.
+///
 /// This is the only file in the SDK that imports FoundationModels.
 @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
 final class SystemAIModel: AirshipAI.Model {
 
-    /// Total wall-clock budget for a response across all retry attempts. A backstop
-    /// against a pathological hang, not a latency target — on timeout we fail open.
-    private static let responseTimeout: TimeInterval = 30
+    let maxAttempts: Int = 3
+    let responseTimeout: TimeInterval = 30
 
     var availability: AirshipAI.Availability {
         switch SystemLanguageModel.default.availability {
@@ -35,88 +37,145 @@ final class SystemAIModel: AirshipAI.Model {
         }
     }
 
+    /// Output tokens share the context window with the input — reserve room for the
+    /// schema-constrained response when measuring whether the prompt fits.
+    private static let responseTokenReserve = 512
+
     func respond(
         instructions: String,
         prompt: String,
-        schema: AirshipAI.Schema
+        context: AirshipAI.Context,
+        schema: AirshipJSONSchema
     ) async throws -> AirshipJSON {
         // Guided generation constrains the model to the schema, so the response is
         // structurally guaranteed to conform — no code-fence stripping or JSON repair.
         let generationSchema = try schema.generationSchema()
 
-        return try await withThrowingTaskGroup(of: AirshipJSON.self) { group in
-            group.addTask { [self] in
-                try await withRetry {
-                    // A fresh session per attempt so a retry is an independent judgment
-                    // rather than a continuation of the previous (failed) turn's transcript.
-                    let session = LanguageModelSession(instructions: instructions)
-                    let response = try await session.respond(to: prompt, schema: generationSchema)
-                    return response.content.airshipJSON
-                }
-            }
-            group.addTask {
-                try await Task.sleep(for: .seconds(Self.responseTimeout))
-                throw AirshipErrors.error("SystemAIModel timed out after \(Self.responseTimeout)s")
-            }
-            defer { group.cancelAll() }
-            return try await group.next()!
+        // Trim the context up front with tokenizer measurements when the OS can
+        // measure — much cheaper than paying a full generation per dropped item.
+        var context = context
+        if #available(iOS 26.4, macOS 26.4, visionOS 26.4, *) {
+            context = await Self.measuredTrim(
+                context: context,
+                instructions: instructions,
+                prompt: prompt,
+                schema: generationSchema
+            )
         }
-    }
 
-    private func withRetry<T: Sendable>(
-        maxAttempts: Int = 3,
-        operation: @Sendable () async throws -> T
-    ) async throws -> T {
-        var lastError: (any Error)?
-        for attempt in 1...maxAttempts {
+        // Backstop: the model rejects prompts that still exceed the window
+        // (pre-26.4 runtimes, or measurement drift). Shrink the context one
+        // lowest-priority item at a time until it fits.
+        while true {
             try Task.checkCancellation()
+
             do {
-                return try await operation()
-            } catch {
-                lastError = error
-                AirshipLogger.warn("SystemAIModel attempt \(attempt)/\(maxAttempts) failed: \(error)")
+                // A fresh session per call so an evaluator retry is an independent
+                // judgment rather than a continuation of a failed turn's transcript.
+                let session = LanguageModelSession(instructions: instructions)
+                let response = try await session.respond(
+                    to: Self.fullPrompt(prompt: prompt, context: context),
+                    schema: generationSchema
+                )
+                return response.content.airshipJSON
+            } catch LanguageModelSession.GenerationError.exceededContextWindowSize {
+                guard let reduced = context.droppingLowestPriorityItem() else {
+                    throw AirshipErrors.error(
+                        "SystemAIModel: prompt exceeds the context window with no context left to drop"
+                    )
+                }
+                AirshipLogger.debug("SystemAIModel: prompt exceeded context window, dropping a low-priority context item")
+                context = reduced
             }
         }
-        throw lastError!
+    }
+
+    private static func fullPrompt(prompt: String, context: AirshipAI.Context) -> String {
+        guard let rendered = context.render() else { return prompt }
+        return "\(prompt)\n\(rendered)"
+    }
+
+    /// Drops the lowest-priority context items until the measured token count of
+    /// instructions + schema + prompt + context (plus a response reserve) fits the
+    /// model's context window. Measurement failures fall back to the generation-time
+    /// backstop in `respond`.
+    @available(iOS 26.4, macOS 26.4, visionOS 26.4, *)
+    private static func measuredTrim(
+        context: AirshipAI.Context,
+        instructions: String,
+        prompt: String,
+        schema: GenerationSchema
+    ) async -> AirshipAI.Context {
+        let model = SystemLanguageModel.default
+        do {
+            let instructionTokens = try await model.tokenCount(for: Instructions(instructions))
+            let schemaTokens = try await model.tokenCount(for: schema)
+            let fixedTokens = instructionTokens + schemaTokens + Self.responseTokenReserve
+
+            var context = context
+            while true {
+                let promptTokens = try await model.tokenCount(
+                    for: fullPrompt(prompt: prompt, context: context)
+                )
+                let total = fixedTokens + promptTokens
+                guard total > model.contextSize else {
+                    return context
+                }
+                guard let reduced = context.droppingLowestPriorityItem() else {
+                    return context
+                }
+                AirshipLogger.debug("SystemAIModel: prompt measures \(total)/\(model.contextSize) tokens, dropping a low-priority context item")
+                context = reduced
+            }
+        } catch {
+            AirshipLogger.debug("SystemAIModel: token measurement failed (\(error)) — relying on generation-time trimming")
+            return context
+        }
     }
 }
 
-// MARK: - AirshipAI.Schema -> GenerationSchema
+// MARK: - AirshipJSONSchema -> GenerationSchema
 
 @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
-fileprivate extension AirshipAI.Schema {
+fileprivate extension AirshipJSONSchema {
     func generationSchema() throws -> GenerationSchema {
-        let root = FieldType.object(fields: fields).dynamicSchema(name: "Result")
-        return try GenerationSchema(root: root, dependencies: [])
+        return try GenerationSchema(
+            root: dynamicSchema(name: "Result"),
+            dependencies: []
+        )
     }
-}
 
-@available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
-fileprivate extension AirshipAI.Schema.FieldType {
-    /// Builds the FoundationModels schema for this field type, recursing into nested
+    /// Builds the FoundationModels schema for this node, recursing into nested
     /// objects and arrays. `name` disambiguates nested object schemas.
     func dynamicSchema(name: String) -> DynamicGenerationSchema {
-        switch self {
-        case .string: return DynamicGenerationSchema(type: String.self)
+        switch type {
+        case .string(let info):
+            guard let choices = info.choices else {
+                return DynamicGenerationSchema(type: String.self)
+            }
+            // Guided generation constrains output to the choices — the model cannot
+            // produce an out-of-vocabulary value.
+            return DynamicGenerationSchema(name: name, anyOf: choices)
         case .boolean: return DynamicGenerationSchema(type: Bool.self)
         case .integer: return DynamicGenerationSchema(type: Int.self)
         case .number: return DynamicGenerationSchema(type: Double.self)
-        case .object(let fields):
-            let properties = fields.map { field in
-                DynamicGenerationSchema.Property(
-                    name: field.name,
-                    description: field.description,
-                    schema: field.type.dynamicSchema(name: "\(name)_\(field.name)"),
-                    isOptional: !field.isRequired
-                )
-            }
-            return DynamicGenerationSchema(name: name, properties: properties)
-        case .array(let element):
-            return DynamicGenerationSchema(arrayOf: element.dynamicSchema(name: "\(name)_element"))
+        case .object(let info):
+            let schemaProperties = info.properties
+                .map { (propertyName, property) in
+                    DynamicGenerationSchema.Property(
+                        name: propertyName,
+                        description: property.description,
+                        schema: property.dynamicSchema(name: "\(name)_\(propertyName)"),
+                        isOptional: !info.required.contains(propertyName)
+                    )
+                }
+            return DynamicGenerationSchema(name: name, properties: schemaProperties)
+        case .array(let info):
+            return DynamicGenerationSchema(arrayOf: info.items.dynamicSchema(name: "\(name)_element"))
         @unknown default:
-            // A field type added in a newer Core than this model — should not happen in
+            // A value type added in a newer Core than this model — should not happen in
             // practice; degrade to string.
-            AirshipLogger.warn("SystemAIModel: unknown AirshipAI.Schema.FieldType, degrading to a string schema")
+            AirshipLogger.warn("SystemAIModel: unknown AirshipJSONSchema.ValueType, degrading to a string schema")
             return DynamicGenerationSchema(type: String.self)
         }
     }

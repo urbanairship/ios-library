@@ -42,7 +42,7 @@ extension AirshipAI {
 
         /// Returns a type-erased context fetcher for the given usage raw value, or nil if
         /// no provider is registered. The returned closure merges default and typed contexts;
-        /// the typed provider's values take precedence.
+        /// typed provider items come after the default provider's.
         @MainActor
         func contextFetcher(
             for rawValue: String
@@ -73,11 +73,8 @@ extension AirshipAI {
 
 private extension AirshipAI.Context {
     func merged(overriddenBy other: AirshipAI.Context) -> AirshipAI.Context {
-        var result = self
-        if let otherSummary = other.summary {
-            result.summary = otherSummary
-        }
-        result.attributes.merge(other.attributes) { _, new in new }
-        return result
+        // Typed provider items come after default items — when priorities tie,
+        // models drop the earlier (default) items first when trimming.
+        AirshipAI.Context(items: items + other.items)
     }
 }
