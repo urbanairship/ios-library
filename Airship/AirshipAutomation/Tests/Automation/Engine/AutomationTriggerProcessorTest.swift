@@ -7,6 +7,9 @@ import Foundation
 import AirshipAutomation
 @_spi(AirshipInternal) import AirshipCore
 
+// Serialized: takeNext() relies on a real-time timeout to drain the trigger-results
+// stream, which starves under swift-testing's default parallel execution.
+@Suite(.serialized)
 struct AutomationTriggerProcessorTest: @unchecked Sendable {
     private let date: UATestDate = UATestDate(offset: 0, dateOverride: Date())
     private let store: TestTriggerStore = TestTriggerStore()

@@ -8,6 +8,9 @@ import AirshipAutomation
 @_spi(AirshipInternal) @testable import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
+// Serialized: the event-feed assertions rely on real-time draining that starves
+// under swift-testing's default parallel execution.
+@Suite(.serialized)
 struct AutomationEventFeedTest: @unchecked Sendable {
     private let date = UATestDate(offset: 0, dateOverride: Date())
     private let datastore = PreferenceDataStore(appKey: UUID().uuidString)
