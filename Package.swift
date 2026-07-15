@@ -4,6 +4,13 @@
 
 import PackageDescription
 
+// Matches the Xcode project, which enables InternalImportsByDefault project-wide.
+// This makes imports internal unless explicitly marked `public import`, so that
+// modules are only re-exposed when actually used in public API.
+let airshipSwiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("InternalImportsByDefault")
+]
+
 let package = Package(
     name: "Airship",
     defaultLocalization: "en",
@@ -61,7 +68,8 @@ let package = Package(
             exclude: [
                 "Info.plist",
             ],
-            sources: ["Source"]
+            sources: ["Source"],
+            swiftSettings: airshipSwiftSettings
         ),
         .target(
             name: "AirshipCore",
@@ -74,7 +82,8 @@ let package = Package(
             sources: ["Source"],
             resources: [
                 .process("Resources")
-            ]
+            ],
+            swiftSettings: airshipSwiftSettings
         ),
         .target(
             name: "AirshipAutomation",
@@ -90,7 +99,8 @@ let package = Package(
             sources: ["Source"],
             resources: [
                 .process("Resources")
-            ]
+            ],
+            swiftSettings: airshipSwiftSettings
         ),
         .target(
             name: "AirshipMessageCenter",
@@ -106,7 +116,8 @@ let package = Package(
             sources: ["Source"],
             resources: [
                 .process("Resources")
-            ]
+            ],
+            swiftSettings: airshipSwiftSettings
         ),
         .target(
             name: "AirshipNotificationServiceExtension",
@@ -115,7 +126,8 @@ let package = Package(
                 "Info.plist",
                 "Tests"
             ],
-            sources: ["Source"]
+            sources: ["Source"],
+            swiftSettings: airshipSwiftSettings
         ),
         .target(
             name: "AirshipPreferenceCenter",
@@ -125,7 +137,8 @@ let package = Package(
                 "Info.plist",
                 "Tests",
             ],
-            sources: ["Source"]
+            sources: ["Source"],
+            swiftSettings: airshipSwiftSettings
         ),
         .target(
             name: "AirshipFeatureFlags",
@@ -135,7 +148,8 @@ let package = Package(
                 "Info.plist",
                 "Tests",
             ],
-            sources: ["Source"]
+            sources: ["Source"],
+            swiftSettings: airshipSwiftSettings
         ),
         .target(
             name: "AirshipObjectiveC",
@@ -148,7 +162,8 @@ let package = Package(
                 .target(name: "AirshipFeatureFlags")
             ],
             path: "Airship/AirshipObjectiveC",
-            sources: ["Source"]
+            sources: ["Source"],
+            swiftSettings: airshipSwiftSettings
         ),
         .target(
             name: "AirshipDebug",
@@ -166,7 +181,8 @@ let package = Package(
             sources: ["Source"],
             resources: [
                 .process("Resources")
-            ]
+            ],
+            swiftSettings: airshipSwiftSettings
         ),
         .target(
             name: "AirshipSceneRenderer",
@@ -176,7 +192,8 @@ let package = Package(
                 "Info.plist",
                 "Tests",
             ],
-            sources: ["Source"]
+            sources: ["Source"],
+            swiftSettings: airshipSwiftSettings
         ),
         .target(
             name: "AirshipScenes",
@@ -189,7 +206,8 @@ let package = Package(
                 "Info.plist",
                 "Tests",
             ],
-            sources: ["Source"]
+            sources: ["Source"],
+            swiftSettings: airshipSwiftSettings
         ),
         .target(
             name: "AirshipAIModels",
@@ -199,7 +217,8 @@ let package = Package(
                 "Info.plist",
                 "Tests",
             ],
-            sources: ["Source"]
+            sources: ["Source"],
+            swiftSettings: airshipSwiftSettings
         ),
     ]
 )
