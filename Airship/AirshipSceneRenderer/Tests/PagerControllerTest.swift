@@ -55,10 +55,8 @@ struct PagerControllerTest {
 
     @MainActor
     @Test
-    func disableTouchDuringNavigation() async throws {
+    func navigationLockHoldsUntilEndNavigationTailCooldown() async throws {
         let sleeper = TestTaskSleeper()
-        let sleepUpdates = await sleeper.sleepUpdates
-        var iterator = sleepUpdates.makeAsyncIterator()
 
         let pagerState = PagerState(
             identifier: "test",
@@ -68,12 +66,35 @@ struct PagerControllerTest {
 
         #expect(pagerState.isNavigationInProgress == false)
 
-        pagerState.disableTouchDuringNavigation()
+        pagerState.beginNavigation()
         #expect(pagerState.isNavigationInProgress == true)
 
-        let sleeps = await iterator.next()
-        #expect(sleeps?.count == 1)
+        // Ending navigation keeps the lock through the tail cooldown.
+        pagerState.endNavigation()
+        #expect(pagerState.isNavigationInProgress == true)
+
+        await sleeper.waitForSleep(0.3)
         // yield to let the PagerState task resume and set isNavigationInProgress = false
+        await Task.yield()
+        #expect(pagerState.isNavigationInProgress == false)
+    }
+
+    @MainActor
+    @Test
+    func navigationLockFailsafeReleasesWithoutEndNavigation() async throws {
+        let sleeper = TestTaskSleeper()
+
+        let pagerState = PagerState(
+            identifier: "test",
+            branching: nil,
+            taskSleeper: sleeper
+        )
+
+        pagerState.beginNavigation()
+        #expect(pagerState.isNavigationInProgress == true)
+
+        await sleeper.waitForSleep(2.0)
+        // yield to let the failsafe task resume and release the lock
         await Task.yield()
         #expect(pagerState.isNavigationInProgress == false)
     }

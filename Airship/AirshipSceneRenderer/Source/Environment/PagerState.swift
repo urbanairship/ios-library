@@ -74,7 +74,7 @@ class PagerState: ObservableObject {
                 let page = currentPageId,
                 page != oldValue
             else {
-                return
+                return 
             }
 
             self.pageViewCounts[page] = (self.pageViewCounts[page] ?? 0) + 1
@@ -125,6 +125,12 @@ class PagerState: ObservableObject {
         get { branchControl == nil ? pageItems.count : -1 }
     }
 
+    /// Whether the resolved page list is driven by branching, in which case it can
+    /// grow or shrink as layout state changes.
+    var isBranching: Bool {
+        branchControl != nil
+    }
+
     init(
         identifier: String,
         branching: ThomasPagerControllerBranching?,
@@ -140,15 +146,19 @@ class PagerState: ObservableObject {
         }
         
         if let branchControl {
+            // Branch re-evaluation runs on every state change and usually resolves the
+            // same path — dedupe so identical results don't re-publish (and re-layout
+            // the pager) mid scroll animation.
             branchControl.$pages
+                .removeDuplicates()
                 .map { pages in
                     pages.map { $0.toPageState() }
                 }
                 .assign(to: &$pageStates)
 
-            branchControl.$pages.assign(to: &$pageItems)
+            branchControl.$pages.removeDuplicates().assign(to: &$pageItems)
 
-            branchControl.$isComplete.assign(to: &$completed)
+            branchControl.$isComplete.removeDuplicates().assign(to: &$completed)
         }
     }
     
@@ -185,7 +195,10 @@ class PagerState: ObservableObject {
             self.progress = restored.progress
 
             self.restoredState = nil
-        } else if self.currentPageId == nil || pagesChanged {
+        } else if self.currentPageId == nil || (branchControl == nil && pagesChanged) {
+            // `pagesChanged` compares the authored list against the resolved one, which
+            // never match while branching — resetting on it would snap a re-attached
+            // branching pager (e.g. after rotation) back to the first page.
             self.currentPageId = pageItems.first?.identifier
         }
     }
@@ -326,13 +339,14 @@ class PagerState: ObservableObject {
         selectors: [ThomasViewInfo.Pager.DisableSwipeSelector]
     ) {
         let selector = selectors.first(where: { $0.predicate?.evaluate(json: state) ?? true })
-        
-        switch(selector?.direction) {
-        case .horizontal:
-            isScrollingDisabled = true
-        case .none:
-            isScrollingDisabled = false
-        }         
+
+        let disabled = switch(selector?.direction) {
+        case .horizontal: true
+        case .none: false
+        }
+        if isScrollingDisabled != disabled {
+            isScrollingDisabled = disabled
+        }
     }
     
     private func resetExecutedActions(for pageId: String?) {
@@ -346,9 +360,31 @@ class PagerState: ObservableObject {
         pageStates[index].resetExecutedActions()
     }
     
-    func disableTouchDuringNavigation() {
-        // WORKAROUND: SwiftUI's scrollPosition(id:) has a race condition where rapid touch
-        // during scroll animation causes scrollPosition state to desync from actual position.
+    /// Starts a programmatic navigation: locks out scrollPosition writebacks and
+    /// touch (`isNavigationInProgress`) until `endNavigation()` is called when the
+    /// scroll animation completes. A stale writeback mid-animation would otherwise
+    /// read as a user swipe back to the outgoing page. The failsafe here releases
+    /// the lock if the caller's animation completion never fires.
+    ///
+    /// WORKAROUND: SwiftUI's scrollPosition(id:) has a race condition where rapid
+    /// touch during a scroll animation desyncs scrollPosition from the actual
+    /// position — this lock also gates hit testing while navigating.
+    func beginNavigation() {
+        self.isNavigationInProgress = true
+        self.navigationCooldownTask?.cancel()
+        self.navigationCooldownTask = Task { @MainActor [weak self] in
+            guard let self = self else { return }
+            try? await taskSleeper.sleep(timeInterval: 2.0)
+            guard !Task.isCancelled else { return }
+            self.navigationCooldownTask = nil
+            self.isNavigationInProgress = false
+        }
+    }
+
+    /// Ends a navigation started with `beginNavigation()`: keeps the lock through a
+    /// short tail cooldown — the scroll view can emit trailing writebacks just after
+    /// the animation logically completes — then releases it.
+    func endNavigation() {
         self.isNavigationInProgress = true
         self.navigationCooldownTask?.cancel()
         self.navigationCooldownTask = Task { @MainActor [weak self] in
@@ -500,8 +536,11 @@ private class BranchControl: Sendable {
         guard let current = historyCopy.popLast() else {
             return
         }
-        
-        pages = historyCopy + buildPathFrom(page: current, payload: payload)
+
+        let resolved = historyCopy + buildPathFrom(page: current, payload: payload)
+        if resolved != pages {
+            pages = resolved
+        }
     }
     
     private func buildPathFrom(
@@ -546,11 +585,10 @@ private class BranchControl: Sendable {
             $0.predicate?.evaluate(json: payload) != false
         }
 
-        if result, result != isComplete {
-            performCompletionOutcomes()
-        }
+        guard result else { return }
 
-        self.isComplete = result
+        performCompletionOutcomes()
+        self.isComplete = true
     }
 
     private func performCompletionOutcomes() {

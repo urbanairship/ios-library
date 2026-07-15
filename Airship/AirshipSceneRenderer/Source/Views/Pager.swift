@@ -108,7 +108,11 @@ struct Pager: View {
 
     @ViewBuilder
     func makePager() -> some View {
-        if (pagerState.pageItems.count == 1) {
+        // The single-page fast path must not apply to branching pagers: their resolved
+        // page count changes as state changes, and switching between this structure and
+        // the multi-page one resets the SwiftUI identity (and any @StateObject) of every
+        // view on the page.
+        if (pagerState.pageItems.count == 1 && !pagerState.isBranching) {
             self.makeSinglePagePager()
         } else if constraints.height == nil {
             self.makeAutoHeightPager()
@@ -256,13 +260,32 @@ struct Pager: View {
             .scrollIndicators(.never)
             .accessibilityElement(children: .contain)
             .airshipOnChangeOf(scrollPosition, initial: false) { value in
-                guard let value, value != self.pagerState.currentPageId else {
-                    return
-                }
+                // onChange fires inside the view update transaction — publishing
+                // state from here is undefined behavior. Hop off the transaction
+                // before reacting.
+                Task { @MainActor in
+                    guard let value, value != self.pagerState.currentPageId else {
+                        return
+                    }
 
-                let result = self.pagerState.navigateToPage(id: value)
-                if let result {
-                    handleEvents(.defaultSwipe(result))
+                    // While a programmatic navigation is settling the scroll view can
+                    // re-report the outgoing page (branching re-layout while the lazily
+                    // inserted destination loads). Ignoring it is not enough — the
+                    // writeback re-anchors this binding to the wrong page, and the next
+                    // re-layout visually snaps back to it. Re-assert the destination.
+                    guard !self.pagerState.isNavigationInProgress else {
+                        if let current = self.pagerState.currentPageId, value != current {
+                            withAnimation {
+                                self.scrollPosition = current
+                            }
+                        }
+                        return
+                    }
+
+                    let result = self.pagerState.navigateToPage(id: value)
+                    if let result {
+                        handleEvents(.defaultSwipe(result))
+                    }
                 }
             }
             .frame(
@@ -348,34 +371,31 @@ struct Pager: View {
             .onAppear(perform: attachToPagerState)
             .airshipOnChangeOf(pagerState.completed) { completed in
                 guard completed else { return }
-                reportCompleted()
+                Task { @MainActor in
+                    reportCompleted()
+                }
             }
             .airshipOnChangeOf(pagerState.currentPageId, initial: true) { pageID in
                 guard let pageID else { return }
 
-                reportPage(pageID: pageID)
-
-                guard pageID != scrollPosition else { return }
-
-                if scrollPosition != nil {
-                    pagerState.disableTouchDuringNavigation()
-                    withAnimation {
-                        scrollPosition = pageID
-                    }
-                } else {
-                    // Nil means the scroll view was just created or recreated (e.g. after
-                    // rotation rebuilds via .id(verticalSizeClass)). Set directly without
-                    // animation — animating from offset 0 sweeps intermediate pages and
-                    // fires spurious navigateToPage calls via onChange(scrollPosition).
-                    scrollPosition = pageID
+                // onChange fires inside the view update transaction. reportPage
+                // publishes (state actions, analytics, progress) and the scroll
+                // below mutates state — doing either mid-transaction is what floods
+                // "Publishing changes from within view updates" and leaves the
+                // scroll view in an undefined state. Hop off the transaction first.
+                Task { @MainActor in
+                    handlePageChange(pageID)
                 }
             }
             .airshipOnChangeOf(isVisible) { visible in
-                if visible, let pageID = pagerState.currentPageId {
-                    reportPage(pageID: pageID)
-                }
-                if visible, pagerState.completed {
-                    reportCompleted()
+                guard visible else { return }
+                Task { @MainActor in
+                    if let pageID = pagerState.currentPageId {
+                        reportPage(pageID: pageID)
+                    }
+                    if pagerState.completed {
+                        reportCompleted()
+                    }
                 }
             }
             .onReceive(self.timer) { _ in
@@ -490,6 +510,72 @@ struct Pager: View {
 #endif
 
     // MARK: Utils methods
+
+    /// Reacts to a currentPageId change: reports the page view and scrolls the
+    /// pager to it. Must run OUTSIDE the view update transaction (see the
+    /// onChange(currentPageId) handler) — it publishes state and mutates
+    /// scrollPosition.
+    private func handlePageChange(_ pageID: String) {
+        reportPage(pageID: pageID)
+
+        guard pageID != scrollPosition else { return }
+
+#if canImport(UIKit) && !os(watchOS)
+        // End editing before the scroll starts. A focused text input on the
+        // outgoing page stays first responder, and UIKit's keyboard avoidance
+        // scrolls the pager back to reveal it — undoing the navigation. The
+        // SwiftUI-side focus reset in AirshipTextField lands too late to stop
+        // it, so resign through the responder chain here. Only when one of this
+        // layout's inputs holds focus — the first responder is then ours, so an
+        // embedded pager never drops the host app's keyboard.
+        if thomasEnvironment.focusedID != nil {
+            UIApplication.shared.sendAction(
+                #selector(UIResponder.resignFirstResponder),
+                to: nil,
+                from: nil,
+                for: nil
+            )
+        }
+#endif
+
+        if scrollPosition != nil {
+            if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
+                // Hold the navigation lock for the whole scroll animation —
+                // the fixed cooldown expires mid-flight, and a stale
+                // scrollPosition writeback after that (branching re-layout
+                // while the lazily inserted destination settles) reads as a
+                // user swipe back to the outgoing page.
+                pagerState.beginNavigation()
+                withAnimation {
+                    scrollPosition = pageID
+                } completion: {
+                    // A spurious writeback during the animation can leave the
+                    // binding anchored to the outgoing page — repair it before
+                    // releasing the navigation lock.
+                    if let current = pagerState.currentPageId, scrollPosition != current {
+                        withAnimation {
+                            scrollPosition = current
+                        }
+                    }
+                    pagerState.endNavigation()
+                }
+            } else {
+                // No animation completion pre-iOS 17 — begin/end immediately so the
+                // tail cooldown provides the (previous, fixed-length) lock window.
+                pagerState.beginNavigation()
+                withAnimation {
+                    scrollPosition = pageID
+                }
+                pagerState.endNavigation()
+            }
+        } else {
+            // Nil means the scroll view was just created or recreated (e.g. after
+            // rotation rebuilds via .id(verticalSizeClass)). Set directly without
+            // animation — animating from offset 0 sweeps intermediate pages and
+            // fires spurious navigateToPage calls via onChange(scrollPosition).
+            scrollPosition = pageID
+        }
+    }
 
     private func attachToPagerState() {
         pagerState.setPagesAndListenForUpdates(

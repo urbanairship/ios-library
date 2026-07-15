@@ -485,6 +485,7 @@ fileprivate struct AirshipTextField: View {
     @Binding private var isEditing: Bool
 
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.isVisible) private var isVisible
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject private var viewState: ThomasState
 
@@ -532,6 +533,18 @@ fileprivate struct AirshipTextField: View {
                 }
 
                 isEditing = newValue
+            }
+            .airshipOnChangeOf(isVisible) { visible in
+                // Resign focus when this input's page scrolls away. A focused field
+                // stays first responder even off screen, and UIKit's keyboard
+                // avoidance will animate the enclosing pager back to it — undoing
+                // pager navigation with no scrollPosition writeback. FocusState
+                // writes made during a view update can be dropped — defer it.
+                if !visible, focused {
+                    Task { @MainActor in
+                        self.focused = false
+                    }
+                }
             }
             .airshipApplyIf(isMultiline) { view in
                 view.airshipOnChangeOf(binding) { [binding] newValue in
