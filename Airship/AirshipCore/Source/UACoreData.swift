@@ -276,12 +276,10 @@ public actor UACoreData {
                         description: error.localizedDescription,
                         isMigrationError: Self.isMigrationError(error as NSError)
                     )
-                    failures.update { $0 + [failure] }
+                    failures.update { $0.append(failure) }
                 }
 
-                remaining.update { current in
-                    current - 1
-                }
+                remaining.update { $0 -= 1 }
 
                 if (remaining.value <= 0) {
                     continuation.resume(returning: failures.value)

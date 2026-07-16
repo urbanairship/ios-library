@@ -55,7 +55,7 @@ import Testing
 
     @Test
     func testOpenAppStoreFallbackItunesID() async throws {
-        configItunesID.value = "config iTunes ID"
+        configItunesID.set("config iTunes ID")
         let args: [String: Any] = [:]
 
         let result = try await action.perform(arguments:
@@ -71,7 +71,7 @@ import Testing
 
     @Test
     func testNilConfig() async throws {
-        configItunesID.value = "config iTunes ID"
+        configItunesID.set("config iTunes ID")
 
         let result = try await action.perform(arguments:
             ActionArguments(
@@ -86,7 +86,7 @@ import Testing
 
     @Test
     func testNoItunesID() async throws {
-        configItunesID.value = nil
+        configItunesID.set(nil)
 
         do {
             _ = try await action.perform(arguments:
@@ -104,7 +104,7 @@ import Testing
 
     @Test
     func testInvalidArgs() async throws {
-        configItunesID.value = "config id"
+        configItunesID.set("config id")
         do {
             _ = try await action.perform(arguments:
                 ActionArguments(

@@ -11,7 +11,7 @@ final class RemoteConfigCache: Sendable {
             return _remoteConfig.value
         }
         set {
-            _remoteConfig.value = newValue
+            _remoteConfig.set(newValue)
             do {
                 try self.dataStore.setCodable(
                     newValue,

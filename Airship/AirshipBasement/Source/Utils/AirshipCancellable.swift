@@ -21,12 +21,12 @@ public final class AirshipMainActorCancellableBlock: AirshipMainActorCancellable
     private let block: AirshipAtomicValue<(@Sendable @MainActor () -> Void)?> = AirshipAtomicValue<(@Sendable @MainActor () -> Void)?>(nil)
 
     public init(block: @escaping @MainActor @Sendable () -> Void) {
-        self.block.value = block
+        self.block.set(block)
     }
 
     @MainActor
     public func cancel() {
         self.block.value?()
-        self.block.value = nil
+        self.block.set(nil)
     }
 }

@@ -170,13 +170,13 @@ final class DefaultAppIntegrationDelegate: AppIntegrationDelegate, Sendable {
             }
 
             for await result in taskGroup {
-                finalResult.update { $0.merge(result) }
+                finalResult.update { $0 = $0.merge(result) }
             }
         }
 
         // Get and merge the platform-specific fetch result
         let fetchResult = await getFetchResult(userInfo, isForeground: isForeground)
-        finalResult.update { $0.merge(fetchResult) }
+        finalResult.update { $0 = $0.merge(fetchResult) }
 
         if let pushJSON = self.safeWrap(userInfo: userInfo) {
             let situation: ActionSituation = isForeground ? .foregroundPush : .backgroundPush

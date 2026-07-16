@@ -362,10 +362,10 @@ final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
         
         let delay = refresh.timeIntervalSince(self.date.now)
         
-        self.refreshOnExpireTask.value = Task { [weak self] in
+        self.refreshOnExpireTask.set(Task { [weak self] in
             try await self?.taskSleeper.sleep(timeInterval: delay)
             self?.dispatchUpdateWorkRequest()
-        }
+        })
     }
 
     private let updateChannel: AirshipAsyncChannel<UpdateType> = AirshipAsyncChannel()

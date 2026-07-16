@@ -62,7 +62,7 @@ final class TestPrivacyManager: InternalAirshipPrivacyManager, @unchecked Sendab
         set {
             lock.sync {
                 self.localEnabledFeatures = newValue
-                notifyUpdate()
+                notifyUpdateLocked()
             }
         }
     }
@@ -92,12 +92,17 @@ final class TestPrivacyManager: InternalAirshipPrivacyManager, @unchecked Sendab
 
     private func notifyUpdate() {
         lock.sync {
-            let enabledFeatures = self.enabledFeatures
-            guard enabledFeatures != lastUpdated else { return }
-            self.lastUpdated = enabledFeatures
-            self.notificationCenter.postOnMain(
-                name: AirshipNotifications.PrivacyManagerUpdated.name
-            )
+            notifyUpdateLocked()
         }
+    }
+
+    /// Caller must hold `lock`.
+    private func notifyUpdateLocked() {
+        let enabledFeatures = self.enabledFeatures
+        guard enabledFeatures != lastUpdated else { return }
+        self.lastUpdated = enabledFeatures
+        self.notificationCenter.postOnMain(
+            name: AirshipNotifications.PrivacyManagerUpdated.name
+        )
     }
 }

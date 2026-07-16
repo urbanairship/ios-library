@@ -84,11 +84,7 @@ public final class AirshipSceneManager: AirshipSceneManagerProtocol, Sendable {
             AirshipLogger.debug("Unable to cast UIWindowScene from notification UIScene.willConnectNotification")
             return
         }
-        scenes.update { current in
-            var mutableScenes = current
-            mutableScenes.append(scene)
-            return mutableScenes
-        }
+        scenes.update { $0.append(scene) }
     }
 
     @objc
@@ -98,11 +94,7 @@ public final class AirshipSceneManager: AirshipSceneManagerProtocol, Sendable {
             AirshipLogger.debug("Unable to cast UIWindowScene from notification UIScene.didDisconnectNotification")
             return
         }
-        scenes.update { current in
-            var mutableScenes = current
-            mutableScenes.removeAll { $0 == scene }
-            return mutableScenes
-        }
+        scenes.update { current in current.removeAll { $0 == scene } }
     }
 
     @MainActor

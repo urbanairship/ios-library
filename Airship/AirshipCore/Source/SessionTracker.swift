@@ -73,10 +73,8 @@ final class SessionTracker: SessionTrackerProtocol {
         AirshipLogger.debug("Launched from push")
 
         self._sessionState.update { state in
-            var state = state
             state.conversionMetadata = metadata
             state.conversionSendID = sendID
-            return state
         }
         self.ensureInit(isForeground: true) {
             AirshipLogger.debug("App init - launched from push")
@@ -132,11 +130,11 @@ final class SessionTracker: SessionTrackerProtocol {
         // Background -> foreground
         if isForeground.value == false {
             isForeground.set(true)
-            self._sessionState.update { [sessionStateFactory] old in
+            self._sessionState.update { [sessionStateFactory] state in
                 var session = sessionStateFactory()
-                session.conversionMetadata = old.conversionMetadata
-                session.conversionSendID = old.conversionSendID
-                return session
+                session.conversionMetadata = state.conversionMetadata
+                session.conversionSendID = state.conversionSendID
+                state = session
             }
             addEvent(.foreground)
         }
@@ -157,7 +155,7 @@ final class SessionTracker: SessionTrackerProtocol {
             isForeground.set(false)
             addEvent(.background)
 
-            self._sessionState.value = self.sessionStateFactory()
+            self._sessionState.set(self.sessionStateFactory())
         }
     }
 }

@@ -47,7 +47,7 @@ public final class CancellableValueHolder<T: Sendable>: AirshipCancellable, @unc
         lock.sync {
             guard isCancelled == false else { return }
             isCancelled = true
-            if let value = value {
+            if let value = _value {
                 onCancel(value)
                 _value = nil
             }

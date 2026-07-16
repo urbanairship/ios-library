@@ -22,10 +22,10 @@ public final class PreferenceDataStore: @unchecked Sendable {
 
             var restored: Bool = false
             lock.sync {
-                let previousDeviceID = self.string(forKey: PreferenceDataStore.deviceIDKey)
+                let previousDeviceID: String? = self.readLocked(PreferenceDataStore.deviceIDKey)
                 if (deviceIDValue != previousDeviceID) {
                     restored = previousDeviceID != nil
-                    self.setObject(deviceIDValue, forKey: PreferenceDataStore.deviceIDKey)
+                    self.writeLocked(PreferenceDataStore.deviceIDKey, value: deviceIDValue)
                 }
             }
 
@@ -257,16 +257,19 @@ public final class PreferenceDataStore: @unchecked Sendable {
     }
 
     private func read<T>(_ key: String) -> T? {
-        let key = prefixKey(key)
-        let defaults = self.defaults
-        var result: Any?
+        return lock.sync {
+            self.readLocked(key)
+        }
+    }
 
-        lock.sync {
-            if let cached = self.cache[key] {
-                result = cached.value
-            } else {
-                result = defaults.object(forKey: key)
-            }
+    /// Caller must hold `lock`.
+    private func readLocked<T>(_ key: String) -> T? {
+        let key = prefixKey(key)
+        let result: Any?
+        if let cached = self.cache[key] {
+            result = cached.value
+        } else {
+            result = self.defaults.object(forKey: key)
         }
 
         guard let result = result else {
@@ -277,12 +280,16 @@ public final class PreferenceDataStore: @unchecked Sendable {
     }
 
     func write(_ key: String, value: Any?) {
-        let key = prefixKey(key)
-        let value = value
-
         lock.sync {
-            self.cache[key] = Cached(value: value)
+            self.writeLocked(key, value: value)
         }
+    }
+
+    /// Caller must hold `lock`.
+    private func writeLocked(_ key: String, value: Any?) {
+        let key = prefixKey(key)
+
+        self.cache[key] = Cached(value: value)
 
         self.queue.async {
             self.lock.sync {

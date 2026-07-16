@@ -62,7 +62,7 @@ public final class Airship: Sendable {
             return shared.airshipInstance.javaScriptCommandDelegate
         }
         set {
-            shared._airshipInstanceHolder.value.javaScriptCommandDelegate = newValue
+            shared._airshipInstanceHolder.update { $0.javaScriptCommandDelegate = newValue }
         }
     }
 
@@ -79,7 +79,7 @@ public final class Airship: Sendable {
             return shared.airshipInstance.deepLinkDelegate
         }
         set {
-            shared._airshipInstanceHolder.value.deepLinkDelegate = newValue
+            shared._airshipInstanceHolder.update { $0.deepLinkDelegate = newValue }
         }
     }
 
@@ -91,7 +91,7 @@ public final class Airship: Sendable {
             return shared.airshipInstance.onDeepLink
         }
         set {
-            shared._airshipInstanceHolder.value.onDeepLink = newValue
+            shared._airshipInstanceHolder.update { $0.onDeepLink = newValue }
         }
     }
 
@@ -123,7 +123,7 @@ public final class Airship: Sendable {
     static let _sharedHolder: AirshipAtomicValue<Airship?> = AirshipAtomicValue<Airship?>(nil)
     static var _shared: Airship? {
         get { _sharedHolder.value }
-        set { _sharedHolder.value = newValue }
+        set { _sharedHolder.set(newValue) }
     }
 
     static var shared: Airship {

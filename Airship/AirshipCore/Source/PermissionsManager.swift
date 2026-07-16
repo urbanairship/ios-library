@@ -179,11 +179,7 @@ final class DefaultAirshipPermissionsManager: AirshipPermissionsManager {
         _ delegate: (any AirshipPermissionDelegate)?,
         permission: AirshipPermission
     ) {
-        delegateMap.update { input in
-            var mutable = input
-            mutable[permission] = delegate
-            return mutable
-        }
+        delegateMap.update { $0[permission] = delegate }
     }
     
     @MainActor
@@ -274,13 +270,7 @@ final class DefaultAirshipPermissionsManager: AirshipPermissionsManager {
         extender: @escaping @Sendable (AirshipPermissionStatus) async -> Void
     ) {
         extenders.update { current in
-            var mutable = current
-            if mutable[permission] == nil {
-                mutable[permission] = [extender]
-            } else {
-                mutable[permission]?.append(extender)
-            }
-            return mutable
+            current[permission, default: []].append(extender)
         }
     }
     
@@ -289,13 +279,7 @@ final class DefaultAirshipPermissionsManager: AirshipPermissionsManager {
         onEnable: @escaping @Sendable () async -> Void
     ) {
         airshipEnablers.update { current in
-            var mutable = current
-            if mutable[permission] == nil {
-                mutable[permission] = [onEnable]
-            } else {
-                mutable[permission]?.append(onEnable)
-            }
-            return mutable
+            current[permission, default: []].append(onEnable)
         }
     }
     

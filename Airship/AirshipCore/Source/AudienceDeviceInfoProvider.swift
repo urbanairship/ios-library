@@ -227,13 +227,11 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
 
 fileprivate final class OneTimeValue<T: Equatable & Sendable>: @unchecked Sendable {
     private let lock: AirshipLock = AirshipLock()
-    private var atomicValue: AirshipAtomicValue<T?> = AirshipAtomicValue(nil)
+    private var cached: T?
     private let provider: () -> T
 
     var cachedValue: T? {
-        get {
-            return atomicValue.value
-        }
+        lock.sync { cached }
     }
 
     init(provider: @escaping () -> T) {
@@ -241,16 +239,14 @@ fileprivate final class OneTimeValue<T: Equatable & Sendable>: @unchecked Sendab
     }
 
     var value: T {
-        get {
-            lock.sync {
-                if let cachedValue = atomicValue.value {
-                    return cachedValue
-                }
-                
-                let value = provider()
-                atomicValue.value = value
-                return value
+        lock.sync {
+            if let cached {
+                return cached
             }
+
+            let value = provider()
+            cached = value
+            return value
         }
     }
 }

@@ -521,7 +521,7 @@ struct RemoteDataTest {
         // Capture the change token
         let testLocaleManager = self.testLocaleManager
         await self.contactProvider.setRefreshCallback { @Sendable change, locale, _ in
-            changeToken.value = change
+            changeToken.set(change)
             #expect(testLocaleManager.currentLocale == locale)
             return .failed
         }
@@ -557,7 +557,7 @@ struct RemoteDataTest {
         // Capture the change token
         let testLocaleManager = self.testLocaleManager
         await self.contactProvider.setRefreshCallback { @Sendable change, locale, _ in
-            changeToken.value = change
+            changeToken.set(change)
             #expect(testLocaleManager.currentLocale == locale)
             return .failed
         }

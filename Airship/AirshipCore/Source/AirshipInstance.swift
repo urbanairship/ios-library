@@ -47,7 +47,7 @@ final class DefaultAirshipInstance: AirshipInstance {
     private let _jsDelegateHolder: AirshipAtomicValue<(any JavaScriptCommandDelegate)?> = AirshipAtomicValue<(any JavaScriptCommandDelegate)?>(nil)
     public var javaScriptCommandDelegate: (any JavaScriptCommandDelegate)? {
         get { return _jsDelegateHolder.value }
-        set { _jsDelegateHolder.value = newValue }
+        set { _jsDelegateHolder.set(newValue) }
     }
     public let channelCapture: any AirshipChannelCapture
 #endif
@@ -56,7 +56,7 @@ final class DefaultAirshipInstance: AirshipInstance {
     private let _deeplinkDelegateHolder: AirshipAtomicValue<(any DeepLinkDelegate)?> = AirshipAtomicValue<(any DeepLinkDelegate)?>(nil)
     public var deepLinkDelegate: (any DeepLinkDelegate)? {
         get { _deeplinkDelegateHolder.value }
-        set { _deeplinkDelegateHolder.value = newValue }
+        set { _deeplinkDelegateHolder.set(newValue) }
     }
 
     @MainActor
@@ -68,8 +68,7 @@ final class DefaultAirshipInstance: AirshipInstance {
     public let components: [any AirshipComponent]
     private let remoteConfigManager: RemoteConfigManager
     private let experimentManager: any ExperimentDataProvider
-    private let componentMap: AirshipAtomicValue<[String: any AirshipComponent]> = AirshipAtomicValue([String: any AirshipComponent]()) //it's accessed with the lock below
-    private let lock: AirshipLock = AirshipLock()
+    private let componentMap: AirshipAtomicValue<[String: any AirshipComponent]> = AirshipAtomicValue([String: any AirshipComponent]())
     public let urlOpener: any URLOpenerProtocol = DefaultURLOpener()
     
     @MainActor
@@ -234,19 +233,10 @@ final class DefaultAirshipInstance: AirshipInstance {
     
     public func component<E>(ofType componentType: E.Type) -> E? {
         var component: E?
-        lock.sync {
+        componentMap.update { map in
             let key = "Type:\(componentType)"
-            var stored = componentMap.value[key]
-            
-            if stored == nil {
-                componentMap.update { current in
-                    var mutable = current
-                    stored = self.components.first { ($0 as? E) != nil }
-                    mutable[key] = stored
-                    return mutable
-                }
-            }
-            
+            let stored = map[key] ?? self.components.first { ($0 as? E) != nil }
+            map[key] = stored
             component = stored as? E
         }
         return component

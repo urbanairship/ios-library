@@ -23,7 +23,7 @@ final class EventManager: EventManagerProtocol {
             _uploadsEnabled.value
         }
         set {
-            _uploadsEnabled.value = newValue
+            _uploadsEnabled.set(newValue)
         }
     }
 

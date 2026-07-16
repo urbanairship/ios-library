@@ -193,7 +193,7 @@ fileprivate extension AirshipSwizzler {
                 group.enter()
                 let fn = unsafeBitCast(original, to: (@convention(c) (NSObject, Selector, UNUserNotificationCenter, UNNotification, @escaping (UNNotificationPresentationOptions) -> Void) -> Void).self)
                 let safeCompletion = strongSelf.ensureOnce(selector: willPresentSelector) { options in
-                    result.update { $0.union(options) }
+                    result.update { $0.formUnion(options) }
                     group.leave()
                 }
                 fn(receiver, willPresentSelector, center, notification, safeCompletion)
@@ -201,7 +201,7 @@ fileprivate extension AirshipSwizzler {
 
             group.enter()
             integrationDelegate.presentationOptions(for: notification) { options in
-                result.update { $0.union(options) }
+                result.update { $0.formUnion(options) }
                 group.leave()
             }
 
@@ -291,7 +291,7 @@ extension AirshipSwizzler {
             let updateResult: @Sendable (WKBackgroundFetchResult) -> Void = { next in
                 resultValue.update { current in
                     // Logic: .newData wins, otherwise .failed wins over .noData
-                    return (current == .newData || next == .newData) ? .newData : (next == .failed ? .failed : current)
+                    current = (current == .newData || next == .newData) ? .newData : (next == .failed ? .failed : current)
                 }
             }
 
@@ -459,7 +459,7 @@ fileprivate extension AirshipSwizzler {
 
             let updateResult: @Sendable (UIBackgroundFetchResult) -> Void = { next in
                 resultValue.update { current in
-                    return (current == .newData || next == .newData) ? .newData : (next == .failed ? .failed : current)
+                    current = (current == .newData || next == .newData) ? .newData : (next == .failed ? .failed : current)
                 }
             }
 

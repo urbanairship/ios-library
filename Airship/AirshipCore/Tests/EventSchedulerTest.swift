@@ -158,7 +158,7 @@ struct EventSchedulerTest {
     func testWorkBlockFailed() async throws {
         let called = AirshipAtomicValue<Bool>(false)
         await self.eventScheduler.setWorkBlock {
-            called.value = true
+            called.set(true)
             return .failure
         }
 
@@ -172,7 +172,7 @@ struct EventSchedulerTest {
     func testWorkBlockSuccess() async throws {
         let called = AirshipAtomicValue<Bool>(false)
         await self.eventScheduler.setWorkBlock {
-            called.value = true
+            called.set(true)
             return .success
         }
 

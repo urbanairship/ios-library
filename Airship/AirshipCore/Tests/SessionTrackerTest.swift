@@ -26,7 +26,7 @@ struct SessionTrackerTest {
             appStateTracker: appStateTracker,
             sessionStateFactory: { [sessionCount] in
                 let state = SessionState(sessionID: "\(sessionCount.value)")
-                sessionCount.value = sessionCount.value + 1
+                sessionCount.update { $0 += 1 }
                 return state
             }
         )

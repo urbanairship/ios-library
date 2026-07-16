@@ -575,11 +575,9 @@ struct MessageCenterListTest {
 
                 let response = responses.value.first
                 responses.update { responses in
-                    var updated = responses
-                    if !updated.isEmpty {
-                        updated.removeFirst()
+                    if !responses.isEmpty {
+                        responses.removeFirst()
                     }
-                    return updated
                 }
 
                 return AirshipHTTPResponse(

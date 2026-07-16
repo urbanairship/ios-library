@@ -72,6 +72,16 @@ final class DefaultAirshipChannel: AirshipChannel, Sendable {
         }
     }
 
+    /// Caller must hold `tagsLock`.
+    private var storedTags: [String] {
+        get {
+            (self.dataStore.array(forKey: DefaultAirshipChannel.tagsDataStoreKey) as? [String]) ?? []
+        }
+        set {
+            self.dataStore.setObject(newValue, forKey: DefaultAirshipChannel.tagsDataStoreKey)
+        }
+    }
+
     /// The channel tags.
     public var tags: [String] {
         get {
@@ -79,13 +89,7 @@ final class DefaultAirshipChannel: AirshipChannel, Sendable {
                 return []
             }
 
-            var result: [String]?
-            tagsLock.sync {
-                result =
-                    self.dataStore.array(forKey: DefaultAirshipChannel.tagsDataStoreKey)
-                    as? [String]
-            }
-            return result ?? []
+            return tagsLock.sync { self.storedTags }
         }
 
         set {
@@ -97,11 +101,7 @@ final class DefaultAirshipChannel: AirshipChannel, Sendable {
             }
 
             tagsLock.sync {
-                let normalized = AudienceUtils.normalizeTags(newValue)
-                self.dataStore.setObject(
-                    normalized,
-                    forKey: DefaultAirshipChannel.tagsDataStoreKey
-                )
+                self.storedTags = AudienceUtils.normalizeTags(newValue)
             }
 
             self.updateRegistration()
@@ -111,7 +111,7 @@ final class DefaultAirshipChannel: AirshipChannel, Sendable {
     private let isChannelTagRegistrationEnabledContainer: AirshipAtomicValue<Bool> = AirshipAtomicValue(true)
     public var isChannelTagRegistrationEnabled: Bool {
         get { return isChannelTagRegistrationEnabledContainer.value }
-        set { isChannelTagRegistrationEnabledContainer.value = newValue }
+        set { isChannelTagRegistrationEnabledContainer.set(newValue) }
     }
 
     @MainActor
@@ -319,9 +319,20 @@ final class DefaultAirshipChannel: AirshipChannel, Sendable {
 
     public func editTags() -> TagEditor {
         return TagEditor { tagApplicator in
-            self.tagsLock.sync {
-                self.tags = tagApplicator(self.tags)
+            guard self.privacyManager.isEnabled(.tagsAndAttributes) else {
+                AirshipLogger.warn(
+                    "Unable to modify channel tags when data collection is disabled."
+                )
+                return
             }
+
+            self.tagsLock.sync {
+                self.storedTags = AudienceUtils.normalizeTags(
+                    tagApplicator(self.storedTags)
+                )
+            }
+
+            self.updateRegistration()
         }
     }
 
@@ -377,7 +388,7 @@ final class DefaultAirshipChannel: AirshipChannel, Sendable {
 
     public func enableChannelCreation() {
         if !self.isChannelCreationEnabled.value {
-            self.isChannelCreationEnabled.value = true
+            self.isChannelCreationEnabled.set(true)
             self.updateRegistration()
         }
     }

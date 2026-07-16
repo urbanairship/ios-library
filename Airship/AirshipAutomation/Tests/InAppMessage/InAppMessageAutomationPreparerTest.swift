@@ -241,8 +241,8 @@ struct InAppMessageAutomationPreparerTest {
         let receivedScheduleID = AirshipAtomicValue<String?>(nil)
 
         self.preparer.onCheckLocalAudience = { message, scheduleID in
-            receivedMessage.value = message
-            receivedScheduleID.value = scheduleID
+            receivedMessage.set(message)
+            receivedScheduleID.set(scheduleID)
             return .match
         }
 
@@ -350,7 +350,7 @@ struct InAppMessageAutomationPreparerTest {
 
         let evaluated = AirshipAtomicValue<Bool>(false)
         aiManager.onEvaluate = { _ in
-            evaluated.value = true
+            evaluated.set(true)
             return AirshipAI.Result<InAppMessageFilterEvaluation.Output>.completed(.init(allow: false, reason: ""))
         }
 
@@ -368,7 +368,7 @@ struct InAppMessageAutomationPreparerTest {
 
         let received = AirshipAtomicValue<InAppMessageFilterEvaluation?>(nil)
         aiManager.onEvaluate = { evaluation in
-            received.value = evaluation as? InAppMessageFilterEvaluation
+            received.set(evaluation as? InAppMessageFilterEvaluation)
             return AirshipAI.Result<InAppMessageFilterEvaluation.Output>.completed(.init(allow: true, reason: ""))
         }
 

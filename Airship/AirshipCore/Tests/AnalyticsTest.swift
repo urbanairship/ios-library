@@ -666,10 +666,8 @@ final class TestSessionTracker: SessionTrackerProtocol {
     
     func launchedFromPush(sendID: String?, metadata: String?) {
         self._sessionState.update { state in
-            var state = state
             state.conversionMetadata = metadata
             state.conversionSendID = sendID
-            return state
         }
     }
 }

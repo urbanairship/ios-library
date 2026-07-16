@@ -131,11 +131,7 @@ public final class JavaScriptEnvironment: JavaScriptEnvironmentProtocol, Sendabl
     }
 
     private func addExtension(_ ext: String) {
-        self.extensions.update { current in
-            var mutable = current
-            mutable.append(ext)
-            return mutable
-        }
+        self.extensions.update { $0.append(ext) }
     }
 
     private func makeGetter(

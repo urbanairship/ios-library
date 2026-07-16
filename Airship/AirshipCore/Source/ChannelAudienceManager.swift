@@ -346,29 +346,25 @@ final class ChannelAudienceManager: ChannelAudienceManagerProtocol {
         self.enqueueTask()
     }
 
+    /// Caller must hold `updateLock`.
     private func getUpdates() -> [AudienceUpdate] {
-        var result: [AudienceUpdate]?
-        updateLock.sync {
-            if let data = self.dataStore.data(
+        guard
+            let data = self.dataStore.data(
                 forKey: ChannelAudienceManager.updatesKey
-            ) {
-                result = try? JSONDecoder().decode(
-                    [AudienceUpdate].self,
-                    from: data
-                )
-            }
+            )
+        else {
+            return []
         }
-        return result ?? []
+        return (try? JSONDecoder().decode([AudienceUpdate].self, from: data)) ?? []
     }
 
+    /// Caller must hold `updateLock`.
     private func storeUpdates(_ operations: [AudienceUpdate]) {
-        updateLock.sync {
-            if let data = try? JSONEncoder().encode(operations) {
-                self.dataStore.setObject(
-                    data,
-                    forKey: ChannelAudienceManager.updatesKey
-                )
-            }
+        if let data = try? JSONEncoder().encode(operations) {
+            self.dataStore.setObject(
+                data,
+                forKey: ChannelAudienceManager.updatesKey
+            )
         }
     }
 

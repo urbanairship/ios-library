@@ -192,8 +192,8 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
                                 viewDimensions in
                                 
                                 if index == 0 {
-                                    dx.value = 0
-                                    dy.value = 0
+                                    dx.set(0)
+                                    dy.set(0)
                                 }
 
                                 var offSet = dx.value
@@ -201,11 +201,11 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
                                     > size.width
                                 {
                                     offSet = 0
-                                    dx.value = 0
-                                    dy.value -= viewDimensions.height + chipSpacing
+                                    dx.set(0)
+                                    dy.update { $0 -= viewDimensions.height + chipSpacing }
                                 }
 
-                                dx.value -= (viewDimensions.width + chipSpacing)
+                                dx.update { $0 -= (viewDimensions.width + chipSpacing) }
                                 return offSet
                             }
                             .alignmentGuide(VerticalAlignment.top) {

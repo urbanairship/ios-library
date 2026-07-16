@@ -34,11 +34,7 @@ struct ExecutionWindowProcessorTest {
             date: date,
             notificationCenter: notificationCenter,
             onEvaluate: { window, date in
-                evaluatedWindows.update { t in
-                    var mutated = t
-                    mutated.append(Evaluated(window: window, date: date))
-                    return mutated
-                }
+                evaluatedWindows.update { $0.append(Evaluated(window: window, date: date)) }
                 return try onResult.value!()
             }
         )
@@ -46,13 +42,13 @@ struct ExecutionWindowProcessorTest {
 
     @Test
     func testIsAvailable() throws {
-        onResult.value = { throw AirshipErrors.error("Error!") }
+        onResult.set({ throw AirshipErrors.error("Error!") })
         #expect(!(processor.isActive(window: window)))
 
-        onResult.value = { return .retry(100) }
+        onResult.set({ return .retry(100) })
         #expect(!(processor.isActive(window: window)))
 
-        onResult.value = { return .now }
+        onResult.set({ return .now })
         #expect(processor.isActive(window: window))
 
         let evaluated = Evaluated(window: window, date: date.now)
@@ -69,9 +65,9 @@ struct ExecutionWindowProcessorTest {
             task.cancel()
         }
 
-        onResult.value = {
+        onResult.set({
             throw AirshipErrors.error("Error!")
-        }
+        })
 
         await task.value
 
@@ -90,9 +86,9 @@ struct ExecutionWindowProcessorTest {
             task.cancel()
         }
 
-        onResult.value = {
+        onResult.set({
             .retry(100.0)
-        }
+        })
 
         await task.value
 
@@ -116,9 +112,9 @@ struct ExecutionWindowProcessorTest {
             }
         }
 
-        onResult.value = {
+        onResult.set({
             .retry(1000.0)
-        }
+        })
 
         notificationCenter.post(name: .NSSystemTimeZoneDidChange, object: nil)
 

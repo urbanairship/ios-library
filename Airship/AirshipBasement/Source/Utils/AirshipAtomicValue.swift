@@ -14,24 +14,22 @@ public final class AirshipAtomicValue<T: Sendable>: @unchecked Sendable {
     }
 
     public var value: T {
-        get {
-            var result: T!
-            lock.sync {
-                result = self._value
-            }
-            return result
-        }
-
-        set {
-            lock.sync {
-                self._value = newValue
-            }
-        }
+        lock.sync { self._value }
     }
 
-    public func update(onModify: (T) -> T) {
+    public func set(_ value: T) {
+        lock.sync { self._value = value }
+    }
+
+    public func update(_ block: (inout T) -> Void) {
+        lock.sync { block(&self._value) }
+    }
+
+    @discardableResult
+    public func getAndUpdate(_ block: (inout T) -> Void) -> T {
         lock.sync {
-            self._value = onModify(self._value)
+            block(&self._value)
+            return self._value
         }
     }
 }
@@ -40,7 +38,7 @@ public final class AirshipAtomicValue<T: Sendable>: @unchecked Sendable {
 public extension AirshipAtomicValue where T: Equatable {
 
     @discardableResult
-    func setValue(_ value: T, onChange:(() -> Void)? = nil) -> Bool {
+    func setValue(_ value: T, onChange: (() -> Void)? = nil) -> Bool {
         return lock.sync {
             guard self._value != value else { return false }
             self._value = value
@@ -59,7 +57,3 @@ public extension AirshipAtomicValue where T: Equatable {
         }
     }
 }
-
-
-
-

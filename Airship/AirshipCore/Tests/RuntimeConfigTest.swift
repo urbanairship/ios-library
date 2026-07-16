@@ -62,7 +62,7 @@ import Foundation
             object: nil,
             queue: nil
         ) { _ in
-            updatedCount.value += 1
+            updatedCount.update { $0 += 1 }
         }
 
         let config = RuntimeConfig.testConfig(notifiaconCenter: notificationCenter)

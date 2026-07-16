@@ -536,7 +536,7 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
         version: String
     ) {
         let sanitizedVersion = version.replacingOccurrences(of: ",", with: "")
-        self.sdkExtensions.value.append("\(ext.name):\(sanitizedVersion)")
+        self.sdkExtensions.update { $0.append("\(ext.name):\(sanitizedVersion)") }
     }
 
     @objc

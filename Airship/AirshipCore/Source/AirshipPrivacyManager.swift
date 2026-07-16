@@ -67,7 +67,7 @@ final class DefaultAirshipPrivacyManager: InternalAirshipPrivacyManager {
 
     private let lock: AirshipLock = AirshipLock()
 
-    private let lastUpdated: AirshipAtomicValue<AirshipFeature> = AirshipAtomicValue<AirshipFeature>([])
+    private let lastUpdated: AirshipAtomicValue<AirshipFeature> = AirshipAtomicValue([])
 
     private var localEnabledFeatures: AirshipFeature {
         get {
@@ -94,7 +94,7 @@ final class DefaultAirshipPrivacyManager: InternalAirshipPrivacyManager {
         set {
             lock.sync {
                 self.localEnabledFeatures = newValue
-                notifyUpdate()
+                notifyUpdateLocked()
             }
         }
     }
@@ -116,7 +116,7 @@ final class DefaultAirshipPrivacyManager: InternalAirshipPrivacyManager {
             self.dataStore.removeObject(forKey:  DefaultAirshipPrivacyManager.enabledFeaturesKey)
         } 
 
-        self.lastUpdated.value = self.enabledFeatures
+        self.lastUpdated.set(self.enabledFeatures)
 
         self.migrateData()
 
@@ -196,13 +196,18 @@ final class DefaultAirshipPrivacyManager: InternalAirshipPrivacyManager {
 
     private func notifyUpdate() {
         lock.sync {
-            let enabledFeatures = self.enabledFeatures
-            guard enabledFeatures != lastUpdated.value else { return }
-            self.lastUpdated.value = enabledFeatures
-            self.notificationCenter.postOnMain(
-                name: AirshipNotifications.PrivacyManagerUpdated.name
-            )
+            notifyUpdateLocked()
         }
+    }
+
+    /// Caller must hold `lock`.
+    private func notifyUpdateLocked() {
+        let enabledFeatures = self.enabledFeatures
+        guard enabledFeatures != lastUpdated.value else { return }
+        self.lastUpdated.set(enabledFeatures)
+        self.notificationCenter.postOnMain(
+            name: AirshipNotifications.PrivacyManagerUpdated.name
+        )
     }
 }
 

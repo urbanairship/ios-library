@@ -141,7 +141,7 @@ struct DefaultAirshipPrivacyManagerTest {
     func testNotifiedOnChange() {
         let counter = AirshipAtomicValue(0)
         let observer = notificationCenter.addObserver(forName: AirshipNotifications.PrivacyManagerUpdated.name, object: nil, queue: nil) { @Sendable _ in
-            counter.value += 1
+            counter.update { $0 += 1 }
         }
 
         self.privacyManager.enabledFeatures = .all

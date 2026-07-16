@@ -386,7 +386,7 @@ struct RemoteDataProviderTest {
 
         let requestCount = AirshipAtomicValue<Int>(0)
         self.delegate.fetchRemoteDataCallback = { _, _, _ in
-            requestCount.value += 1
+            requestCount.update { $0 += 1 }
             let refreshResult = RemoteDataResult(
                 payloads: [
                     RemoteDataTestUtils.generatePayload(

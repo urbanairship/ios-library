@@ -225,7 +225,7 @@ final class RemoteData: AirshipComponent, RemoteDataProtocol {
             return
         }
         
-        self.currentSourceStatus.update(onModify: { _ in updates })
+        self.currentSourceStatus.set(updates)
         await statusUpdates.send(updates)
     }
 

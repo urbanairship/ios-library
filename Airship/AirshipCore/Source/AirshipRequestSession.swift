@@ -382,11 +382,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, Sendable {
 
         let task = Task { @MainActor in
             defer {
-                self.authTasks.update { current in
-                    var mutable = current
-                    mutable[requestAuth] = nil
-                    return mutable
-                }
+                self.authTasks.update { $0[requestAuth] = nil }
             }
 
             let token = try await provider.resolveAuth(
@@ -404,11 +400,7 @@ final class DefaultAirshipRequestSession: AirshipRequestSession, Sendable {
             }
         }
 
-        self.authTasks.update { current in
-            var mutable = current
-            mutable[requestAuth] = task
-            return mutable
-        }
+        self.authTasks.update { $0[requestAuth] = task }
         
         return try await task.value
     }
