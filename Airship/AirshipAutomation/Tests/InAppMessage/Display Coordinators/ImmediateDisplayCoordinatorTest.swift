@@ -12,10 +12,13 @@ import AirshipCore
 struct ImmediateDisplayCoordinatorTest {
 
     private let stateTracker: TestAppStateTracker = TestAppStateTracker()
+    private let activityTracker: DisplayActivityTracker
     private let displayCoordinator: ImmediateDisplayCoordinator
 
     init() {
+        self.activityTracker = DisplayActivityTracker()
         displayCoordinator = ImmediateDisplayCoordinator(
+            activityTracker: self.activityTracker,
             appStateTracker: self.stateTracker
         )
     }
@@ -64,5 +67,25 @@ struct ImmediateDisplayCoordinatorTest {
 
         self.displayCoordinator.messageFinishedDisplaying(bar)
         #expect(self.displayCoordinator.isReady)
+    }
+
+    @Test
+    func testDisplaysAreTracked() throws {
+        self.stateTracker.currentState = .active
+
+        let foo = InAppMessage(name: "foo", displayContent: .custom(.string("foo")))
+        let bar = InAppMessage(name: "bar", displayContent: .custom(.string("bar")))
+
+        #expect(!self.activityTracker.isDisplaying)
+
+        self.displayCoordinator.messageWillDisplay(foo)
+        #expect(self.activityTracker.isDisplaying)
+
+        self.displayCoordinator.messageWillDisplay(bar)
+        self.displayCoordinator.messageFinishedDisplaying(foo)
+        #expect(self.activityTracker.isDisplaying)
+
+        self.displayCoordinator.messageFinishedDisplaying(bar)
+        #expect(!self.activityTracker.isDisplaying)
     }
 }

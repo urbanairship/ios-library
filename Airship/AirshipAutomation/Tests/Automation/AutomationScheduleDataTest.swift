@@ -303,6 +303,28 @@ struct AutomationScheduleDataTest {
     }
 
     @Test
+    mutating func testExecutionCancelledTriggered() {
+        self.data.scheduleState = .triggered
+        self.data.triggerInfo = self.triggerInfo
+
+        self.data.executionCancelled(date: self.date + 100)
+        #expect(self.data.scheduleState == .idle)
+        #expect(self.data.executionCount == 0)
+        #expect(self.data.triggerInfo == nil)
+        #expect(self.data.scheduleStateChangeDate == self.date + 100)
+    }
+
+    @Test
+    mutating func testExecutionCancelledIgnoresOtherStates() {
+        for state in [AutomationScheduleState.idle, .executing, .paused, .finished] {
+            self.data.scheduleState = state
+
+            self.data.executionCancelled(date: self.date + 100)
+            #expect(self.data.scheduleState == state)
+        }
+    }
+
+    @Test
     mutating func testExecutionCancelledOverLimit() {
         self.data.schedule.limit = 1
         self.data.executionCount = 1

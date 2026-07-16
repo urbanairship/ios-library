@@ -18,6 +18,7 @@ final class DefaultDisplayCoordinator: DisplayCoordinator {
 
     private var lockState: AirshipMainActorValue<LockState> = AirshipMainActorValue(.unlocked)
     private let appStateTracker: any AppStateTrackerProtocol
+    private let activityTracker: DisplayActivityTracker
     private let taskSleeper: any AirshipTaskSleeper
     private var unlockTask: Task<Void, Never>?
 
@@ -32,16 +33,20 @@ final class DefaultDisplayCoordinator: DisplayCoordinator {
 
     init(
         displayInterval: TimeInterval,
+        activityTracker: DisplayActivityTracker = DisplayActivityTracker(),
         appStateTracker: (any AppStateTrackerProtocol)? = nil,
         taskSleeper: any AirshipTaskSleeper = .shared
     ) {
         self.displayInterval = displayInterval
+        self.activityTracker = activityTracker
         self.appStateTracker = appStateTracker ?? AppStateTracker.shared
         self.taskSleeper = taskSleeper
     }
 
     var isReady: Bool {
-        return lockState.value == .unlocked && self.appStateTracker.state == .active
+        return lockState.value == .unlocked &&
+            !self.activityTracker.isDisplaying &&
+            self.appStateTracker.state == .active
     }
 
     @MainActor
@@ -80,6 +85,12 @@ final class DefaultDisplayCoordinator: DisplayCoordinator {
 
             for await state in self.lockState.updates {
                 if (state == .unlocked) {
+                    break
+                }
+            }
+
+            for await count in self.activityTracker.activeCountUpdates {
+                if (count == 0) {
                     break
                 }
             }

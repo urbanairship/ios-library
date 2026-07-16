@@ -590,8 +590,14 @@ fileprivate extension AutomationEngine {
                 data.prepared(info: preparedSchedule.info, date: date.now)
             }
 
-            // Make sure its updated
-            guard let updated else {
+            // Make sure the transition actually applied. The schedule might have left
+            // the `triggered` state while prepare was in flight (e.g., a delay
+            // cancellation trigger fired), making `prepared` a no-op.
+            guard
+                let updated,
+                updated.scheduleState == .prepared,
+                updated.preparedScheduleInfo == preparedSchedule.info
+            else {
                 await preparer.cancelled(schedule: data.schedule)
                 return nil
             }

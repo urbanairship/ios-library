@@ -122,7 +122,9 @@ extension AutomationScheduleData {
     }
 
     mutating func executionCancelled(date: Date) {
-        guard self.isInState([.prepared]) else {
+        // Delay cancellation triggers are active for both `triggered` and `prepared`,
+        // so a cancellation must unwind either state, including an in-flight prepare.
+        guard self.isInState([.triggered, .prepared]) else {
             return
         }
 
