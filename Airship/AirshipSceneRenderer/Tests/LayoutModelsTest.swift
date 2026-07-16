@@ -143,6 +143,84 @@ struct LayoutModelsTest {
         _ = try decode(json.data(using: .utf8)!)
     }
 
+    @Test
+    func stackImageView() throws {
+        let json = """
+            {
+                "presentation": {
+                    "type": "banner",
+                    "default_placement": {
+                        "size": {
+                            "width": "100%",
+                            "height": "auto"
+                        },
+                        "position": {
+                            "horizontal": "center",
+                            "vertical": "bottom"
+                        }
+                    }
+                },
+                "version": 1,
+                "view": {
+                  "type": "container",
+                  "items": [
+                    {
+                      "position": {
+                        "horizontal": "center",
+                        "vertical": "top"
+                      },
+                      "size": {
+                        "height": 4,
+                        "width": 36
+                      },
+                      "view": {
+                        "type": "stack_image_view",
+                        "identifier": "nub",
+                        "content_description": "Nub",
+                        "items": [
+                          {
+                            "type": "shape",
+                            "shape": {
+                              "type": "rectangle",
+                              "color": { "default": { "hex": "#000000", "alpha": 0.42 } },
+                              "border": { "radius": 2 }
+                            }
+                          },
+                          {
+                            "type": "image_url",
+                            "url": "https://example.com/nub.png",
+                            "media_fit": "center_inside"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+            }
+            """
+
+        let layout = try decode(json.data(using: .utf8)!)
+        guard
+            case .container(let container) = layout.view,
+            case .stackImageView(let stackImageView) = container.properties.items.first?.view
+        else {
+            Issue.record("Expected container with a stack_image_view item")
+            return
+        }
+
+        #expect(stackImageView.properties.identifier == "nub")
+        #expect(stackImageView.properties.items.count == 2)
+        #expect(stackImageView.accessible.contentDescription == "Nub")
+
+        // image_url items should be prefetched
+        #expect(layout.urlInfos == [.image(url: "https://example.com/nub.png")])
+
+        // Round trip
+        let encoded = try JSONEncoder().encode(layout)
+        let restored = try JSONDecoder().decode(AirshipLayout.self, from: encoded)
+        #expect(restored == layout)
+    }
+
     private func decode(_ data: Data) throws -> AirshipLayout {
         try JSONDecoder().decode(AirshipLayout.self, from: data)
     }

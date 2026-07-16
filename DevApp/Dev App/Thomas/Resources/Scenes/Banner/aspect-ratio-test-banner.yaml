@@ -15,7 +15,7 @@ presentation:
         alpha: 1
     border:
       radius: 0
-  duration: 10
+  duration_seconds: 10
 view:
   type: linear_layout
   direction: vertical

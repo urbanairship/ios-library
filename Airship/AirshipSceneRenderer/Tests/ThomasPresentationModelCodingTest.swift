@@ -72,6 +72,148 @@ struct ThomasPresentationModelCodingTest {
     }
 
     @Test
+    func bannerPresentationFullSpecCodable() throws {
+        let json = """
+        {
+          "type": "banner",
+          "duration_seconds": 8.5,
+          "ios": {
+            "keyboard_avoidance": "over_the_top"
+          },
+          "default_placement": {
+            "size": {
+              "width": "100%",
+              "height": "auto",
+              "aspect_ratio": 2.5
+            },
+            "position": {
+              "horizontal": "end",
+              "vertical": "top"
+            },
+            "animation": {
+              "type": "slide",
+              "animate_in_seconds": 0.3,
+              "animate_out_seconds": 0.3
+            },
+            "swipe_to_dismiss": false,
+            "shadow": {
+              "selectors": [
+                {
+                  "platform": "ios",
+                  "shadow": {
+                    "box_shadow": {
+                      "color": {
+                        "default": {
+                          "type": "hex",
+                          "hex": "#000000",
+                          "alpha": 0.4
+                        }
+                      },
+                      "radius": 4,
+                      "blur_radius": 8,
+                      "offset_y": 2
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+        """
+        try decodeEncodeCompare(source: json, type: ThomasPresentationInfo.self)
+
+        let decoded = try JSONDecoder().decode(ThomasPresentationInfo.self, from: json.data(using: .utf8)!)
+        guard case .banner(let banner) = decoded else {
+            Issue.record("Expected banner presentation")
+            return
+        }
+
+        #expect(banner.durationSeconds == 8.5)
+        #expect(banner.ios?.keyboardAvoidance == .overTheTop)
+
+        let placement = banner.defaultPlacement
+        #expect(placement.position.horizontal == .end)
+        #expect(placement.position.vertical == .top)
+        #expect(placement.swipeToDismiss == false)
+        #expect(placement.size.aspectRatio == 2.5)
+        #expect(placement.shadow?.selectors?.first?.shadow.boxShadow?.blurRadius == 8)
+    }
+
+    @Test
+    func bannerVerticallyCenteredEdgePositionCodable() throws {
+        let json = """
+        {
+          "type": "banner",
+          "default_placement": {
+            "size": {
+              "width": 100,
+              "height": 200
+            },
+            "position": {
+              "horizontal": "start",
+              "vertical": "center"
+            }
+          }
+        }
+        """
+        try decodeEncodeCompare(source: json, type: ThomasPresentationInfo.self)
+    }
+
+    @Test
+    func bannerObjectPositionRejectsCenterCenter() throws {
+        // A banner must be anchored to at least one non-center edge
+        #expect(throws: DecodingError.self) {
+            try JSONDecoder().decode(
+                ThomasPresentationInfo.self,
+                from: bannerJson(position: """
+                {
+                  "horizontal": "center",
+                  "vertical": "center"
+                }
+                """).data(using: .utf8)!
+            )
+        }
+    }
+
+    @Test
+    func bannerNoDurationDecodesNilDuration() throws {
+        // No duration means the banner never auto-dismisses
+        let decoded = try JSONDecoder().decode(
+            ThomasPresentationInfo.self,
+            from: bannerJson(position: """
+            {
+              "horizontal": "center",
+              "vertical": "bottom"
+            }
+            """).data(using: .utf8)!
+        )
+        guard case .banner(let banner) = decoded else {
+            Issue.record("Expected banner presentation")
+            return
+        }
+        #expect(banner.durationSeconds == nil)
+
+        // Absent swipe_to_dismiss decodes as nil, which the view treats as enabled
+        #expect(banner.defaultPlacement.swipeToDismiss == nil)
+        #expect(banner.defaultPlacement.isSwipeToDismissEnabled)
+    }
+
+    private func bannerJson(position: String) -> String {
+        """
+        {
+          "type": "banner",
+          "default_placement": {
+            "size": {
+              "width": "100%",
+              "height": "auto"
+            },
+            "position": \(position)
+          }
+        }
+        """
+    }
+
+    @Test
     func modalPresentationModelCodable() throws {
         let json = """
         {

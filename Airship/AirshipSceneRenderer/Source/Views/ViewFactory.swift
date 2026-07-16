@@ -61,6 +61,8 @@ struct ViewFactory: Sendable {
             ImageButton(info: info, constraints: constraints)
         case .stackImageButton(let info):
             StackImageButton(info: info, constraints: constraints)
+        case .stackImageView(let info):
+            StackImageView(info: info, constraints: constraints)
         case .checkbox(let info):
             Checkbox(info: info, constraints: constraints)
         case .checkboxController(let info):

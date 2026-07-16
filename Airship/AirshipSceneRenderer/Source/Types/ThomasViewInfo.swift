@@ -17,6 +17,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
     case labelButton(LabelButton)
     case imageButton(ImageButton)
     case stackImageButton(StackImageButton)
+    case stackImageView(StackImageView)
     case emptyView(EmptyView)
     case pager(Pager)
     case pagerIndicator(PagerIndicator)
@@ -53,6 +54,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         case labelButton = "label_button"
         case imageButton = "image_button"
         case stackImageButton = "stack_image_button"
+        case stackImageView = "stack_image_view"
         case buttonLayout = "button_layout"
         case emptyView = "empty_view"
         case pager
@@ -115,6 +117,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         case .labelButton: .labelButton(try LabelButton(from: decoder))
         case .imageButton: .imageButton(try ImageButton(from: decoder))
         case .stackImageButton: .stackImageButton(try StackImageButton(from: decoder))
+        case .stackImageView: .stackImageView(try StackImageView(from: decoder))
         case .emptyView: .emptyView(try EmptyView(from: decoder))
         case .pager: .pager(try Pager(from: decoder))
         case .pagerIndicator: .pagerIndicator(try PagerIndicator(from: decoder))
@@ -163,6 +166,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         case .labelButton(let info): try info.encode(to: encoder)
         case .imageButton(let info): try info.encode(to: encoder)
         case .stackImageButton(let info): try info.encode(to: encoder)
+        case .stackImageView(let info): try info.encode(to: encoder)
         case .emptyView(let info): try info.encode(to: encoder)
         case .pager(let info): try info.encode(to: encoder)
         case .pagerIndicator(let info): try info.encode(to: encoder)
@@ -722,7 +726,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         }
 
         struct Properties: ThomasSerializable {
-            let type: ViewType = .imageButton
+            let type: ViewType = .stackImageButton
             var identifier: String
             var clickBehaviors: [ThomasButtonClickBehavior]?
             var actions: ThomasActionsPayload?
@@ -828,6 +832,43 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         }
     }
 
+    /// Non-interactive counterpart to `StackImageButton`. Used for decorative
+    /// elements, such as a banner nub.
+    struct StackImageView: BaseInfo {
+        var commonProperties: CommonViewProperties
+        var commonOverrides: CommonViewOverrides?
+        var properties: Properties
+        var accessible: ThomasAccessibleInfo
+
+        func encode(to encoder: any Encoder) throws {
+            try encoder.encode(
+                properties: commonProperties, properties, accessible,
+                overrides: commonOverrides
+            )
+        }
+
+        init(from decoder: any Decoder) throws {
+            self.commonProperties = try decoder.decodeProperties()
+            self.properties = try decoder.decodeProperties()
+            self.accessible = try decoder.decodeProperties()
+            self.commonOverrides = try decoder.decodeOverrides()
+        }
+
+        struct Properties: ThomasSerializable {
+            let type: ViewType = .stackImageView
+            var identifier: String
+            var items: [StackImageButton.Item]
+            var accessibilityActions: [ThomasAccessibilityAction]?
+
+            private enum CodingKeys: String, CodingKey {
+                case identifier
+                case type
+                case items
+                case accessibilityActions = "accessibility_actions"
+            }
+        }
+    }
+
     struct ImageButton: BaseInfo {
         var commonProperties: CommonViewProperties
         var commonOverrides: CommonViewOverrides?
@@ -926,26 +967,6 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                     case mediaFit = "media_fit"
                 }
             }
-        }
-    }
-
-    struct NubInfo: ThomasSerializable {
-        var size: ThomasSize
-        var margin: ThomasMargin?
-        var color: ThomasColor
-    }
-
-    struct CornerRadiusInfo: ThomasSerializable {
-        var topLeft: Double?
-        var topRight: Double?
-        var bottomLeft: Double?
-        var bottomRight: Double?
-
-        private enum CodingKeys: String, CodingKey {
-            case topLeft = "top_left"
-            case topRight = "top_right"
-            case bottomLeft = "bottom_left"
-            case bottomRight = "bottom_right"
         }
     }
 

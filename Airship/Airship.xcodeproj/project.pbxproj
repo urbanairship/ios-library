@@ -395,6 +395,7 @@
 		6E21C39E2FEC3C1E00EA3E56 /* WrappingLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3672FEC3C1E00EA3E56 /* WrappingLayout.swift */; };
 		6E21C39F2FEC3C1E00EA3E56 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3852FEC3C1E00EA3E56 /* RootView.swift */; };
 		6E21C3A02FEC3C1E00EA3E56 /* StackImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3652FEC3C1E00EA3E56 /* StackImageButton.swift */; };
+		7A5723022FEC3C1E00EA3E56 /* StackImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5723012FEC3C1E00EA3E56 /* StackImageView.swift */; };
 		6E21C3A12FEC3C1E00EA3E56 /* StateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3702FEC3C1E00EA3E56 /* StateController.swift */; };
 		6E21C3A22FEC3C1E00EA3E56 /* Pager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3872FEC3C1E00EA3E56 /* Pager.swift */; };
 		6E21C3A32FEC3C1E00EA3E56 /* IconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3662FEC3C1E00EA3E56 /* IconView.swift */; };
@@ -468,6 +469,7 @@
 		6E21C4712FEC586A00EA3E56 /* ThomasViewModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C46A2FEC586A00EA3E56 /* ThomasViewModelTest.swift */; };
 		6E21C4722FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C46E2FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift */; };
 		6E21C4732FEC586A00EA3E56 /* PagerStateLastPageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4702FEC586A00EA3E56 /* PagerStateLastPageTest.swift */; };
+		6E21CB022FEC59AA00EA3E56 /* BannerSwipeDismissLogicTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21CB012FEC59AA00EA3E56 /* BannerSwipeDismissLogicTest.swift */; };
 		6E21C4742FEC586A00EA3E56 /* ThomasAssociatedLabelResolverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C46D2FEC586A00EA3E56 /* ThomasAssociatedLabelResolverTest.swift */; };
 		6E21C4752FEC586A00EA3E56 /* LayoutModelsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4672FEC586A00EA3E56 /* LayoutModelsTest.swift */; };
 		6E21C4762FEC586A00EA3E56 /* ThomasAsyncViewStateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C46B2FEC586A00EA3E56 /* ThomasAsyncViewStateTest.swift */; };
@@ -1957,6 +1959,7 @@
 		6E21C3602FEC3C0100EA3E56 /* AirshipSceneController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSceneController.swift; sourceTree = "<group>"; };
 		6E21C3642FEC3C1E00EA3E56 /* AsyncViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncViewController.swift; sourceTree = "<group>"; };
 		6E21C3652FEC3C1E00EA3E56 /* StackImageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackImageButton.swift; sourceTree = "<group>"; };
+		7A5723012FEC3C1E00EA3E56 /* StackImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackImageView.swift; sourceTree = "<group>"; };
 		6E21C3662FEC3C1E00EA3E56 /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
 		6E21C3672FEC3C1E00EA3E56 /* WrappingLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappingLayout.swift; sourceTree = "<group>"; };
 		6E21C3682FEC3C1E00EA3E56 /* PagerSwipeDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerSwipeDirection.swift; sourceTree = "<group>"; };
@@ -2056,6 +2059,7 @@
 		6E21C46E2FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasPresentationModelCodingTest.swift; sourceTree = "<group>"; };
 		6E21C46F2FEC586A00EA3E56 /* PagerControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerControllerTest.swift; sourceTree = "<group>"; };
 		6E21C4702FEC586A00EA3E56 /* PagerStateLastPageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerStateLastPageTest.swift; sourceTree = "<group>"; };
+		6E21CB012FEC59AA00EA3E56 /* BannerSwipeDismissLogicTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerSwipeDismissLogicTest.swift; sourceTree = "<group>"; };
 		6E21C47C2FEC587900EA3E56 /* ThomasEmailRegistrationOptionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasEmailRegistrationOptionsTest.swift; sourceTree = "<group>"; };
 		6E21C47D2FEC587900EA3E56 /* PagerDisableSwipeSelectorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerDisableSwipeSelectorTest.swift; sourceTree = "<group>"; };
 		6E21C47E2FEC587900EA3E56 /* ThomasButtonClickBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasButtonClickBehavior.swift; sourceTree = "<group>"; };
@@ -3655,6 +3659,7 @@
 			children = (
 				6E21C3642FEC3C1E00EA3E56 /* AsyncViewController.swift */,
 				6E21C3652FEC3C1E00EA3E56 /* StackImageButton.swift */,
+				7A5723012FEC3C1E00EA3E56 /* StackImageView.swift */,
 				6E21C3662FEC3C1E00EA3E56 /* IconView.swift */,
 				6E21C3672FEC3C1E00EA3E56 /* WrappingLayout.swift */,
 				6E21C3682FEC3C1E00EA3E56 /* PagerSwipeDirection.swift */,
@@ -4908,6 +4913,7 @@
 				6E21C46E2FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift */,
 				6E21C46F2FEC586A00EA3E56 /* PagerControllerTest.swift */,
 				6E21C4702FEC586A00EA3E56 /* PagerStateLastPageTest.swift */,
+				6E21CB012FEC59AA00EA3E56 /* BannerSwipeDismissLogicTest.swift */,
 				6E21C4652FEC585F00EA3E56 /* VideoMediaWebViewTests.swift */,
 				6E21C44E2FEC583B00EA3E56 /* Outcomes */,
 			);
@@ -7354,6 +7360,7 @@
 				6E21C39E2FEC3C1E00EA3E56 /* WrappingLayout.swift in Sources */,
 				6E21C39F2FEC3C1E00EA3E56 /* RootView.swift in Sources */,
 				6E21C3A02FEC3C1E00EA3E56 /* StackImageButton.swift in Sources */,
+				7A5723022FEC3C1E00EA3E56 /* StackImageView.swift in Sources */,
 				6E21C3A12FEC3C1E00EA3E56 /* StateController.swift in Sources */,
 				6E21C3A22FEC3C1E00EA3E56 /* Pager.swift in Sources */,
 				6E21C3A32FEC3C1E00EA3E56 /* IconView.swift in Sources */,
@@ -7461,6 +7468,7 @@
 				6E21C4712FEC586A00EA3E56 /* ThomasViewModelTest.swift in Sources */,
 				6E21C4722FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift in Sources */,
 				6E21C4732FEC586A00EA3E56 /* PagerStateLastPageTest.swift in Sources */,
+				6E21CB022FEC59AA00EA3E56 /* BannerSwipeDismissLogicTest.swift in Sources */,
 				6E21C4B22FEC58A500EA3E56 /* ThomasFormPayloadGeneratorTest.swift in Sources */,
 				6E21C4B42FEC58A500EA3E56 /* ThomasFormDataCollectorTest.swift in Sources */,
 				6E21C4B52FEC58A500EA3E56 /* ThomasFormFieldTest.swift in Sources */,

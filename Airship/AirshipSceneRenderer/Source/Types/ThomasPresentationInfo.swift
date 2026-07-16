@@ -64,16 +64,38 @@ public enum ThomasPresentationInfo: ThomasSerializable {
 
     public struct Banner: ThomasSerializable {
         let type: PresentationType = .banner
-        var duration: Int?
+        var durationSeconds: TimeInterval?
         var placementSelectors: [PlacementSelector<Placement>]?
         var defaultPlacement: Placement
         var ios: iOS?
 
         private enum CodingKeys: String, CodingKey {
-            case duration = "duration_milliseconds"
+            case durationSeconds = "duration_seconds"
             case placementSelectors = "placement_selectors"
             case defaultPlacement = "default_placement"
             case type
+            case ios
+        }
+
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+
+            self.durationSeconds = try container.decodeIfPresent(TimeInterval.self, forKey: .durationSeconds)
+            self.placementSelectors = try container.decodeIfPresent(
+                [PlacementSelector<Placement>].self,
+                forKey: .placementSelectors
+            )
+            self.defaultPlacement = try container.decode(Placement.self, forKey: .defaultPlacement)
+            self.ios = try container.decodeIfPresent(iOS.self, forKey: .ios)
+        }
+
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(type, forKey: .type)
+            try container.encodeIfPresent(durationSeconds, forKey: .durationSeconds)
+            try container.encodeIfPresent(placementSelectors, forKey: .placementSelectors)
+            try container.encode(defaultPlacement, forKey: .defaultPlacement)
+            try container.encodeIfPresent(ios, forKey: .ios)
         }
 
         struct Placement: ThomasSerializable {
@@ -83,9 +105,14 @@ public enum ThomasPresentationInfo: ThomasSerializable {
             var ignoreSafeArea: Bool?
             var border: ThomasBorder?
             var backgroundColor: ThomasColor?
-            var nubInfo: ThomasViewInfo.NubInfo?
-            var cornerRadius: ThomasViewInfo.CornerRadiusInfo?
+            // Optional for legacy payloads; nil renders as slide
             var animation: Animation?
+            var swipeToDismiss: Bool?
+            var shadow: ThomasShadow?
+
+            /// Swipe-to-dismiss defaults to enabled when unset to preserve
+            /// legacy banner behavior.
+            var isSwipeToDismissEnabled: Bool { swipeToDismiss ?? true }
 
             private enum CodingKeys: String, CodingKey {
                 case margin
@@ -93,10 +120,10 @@ public enum ThomasPresentationInfo: ThomasSerializable {
                 case position
                 case ignoreSafeArea = "ignore_safe_area"
                 case border
-                case backgroundColor = "background_color"  
-                case nubInfo = "nub"
-                case cornerRadius = "corner_radius"
+                case backgroundColor = "background_color"
                 case animation
+                case swipeToDismiss = "swipe_to_dismiss"
+                case shadow
             }
         }
         

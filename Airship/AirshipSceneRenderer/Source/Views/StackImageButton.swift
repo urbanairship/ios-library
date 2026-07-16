@@ -86,7 +86,7 @@ struct StackImageButton : View {
             eventHandlers: self.info.commonProperties.eventHandlers,
             tapEffect: self.info.properties.tapEffect
         ) {
-            StackImageButtonContent(items: resolveItems, constraints: constraints)
+            StackImageItemsView(items: resolveItems, constraints: constraints)
                 .constraints(constraints, fixedSize: true)
                 .thomasCommon(self.info, scope: [.background])
                 .accessible(
@@ -120,7 +120,8 @@ struct StackImageButton : View {
     }
 }
 
-/// The button's inner content, extracted into its own concrete `View` type.
+/// The stacked item content shared by `StackImageButton` and `StackImageView`,
+/// extracted into its own concrete `View` type.
 ///
 /// Inlining this `ZStack`/`ForEach`/`switch` directly in `StackImageButton.body`
 /// (on top of the `constraints`/`thomasCommon`/`accessible` modifier chain) builds
@@ -129,7 +130,7 @@ struct StackImageButton : View {
 /// in SILGen). Referencing a named struct keeps `body`'s type tree small while
 /// preserving full static typing (and thus view identity / animations), unlike
 /// erasing to `AnyView`.
-private struct StackImageButtonContent: View {
+struct StackImageItemsView: View {
 
     let items: [ThomasViewInfo.StackImageButton.Item]
     let constraints: ViewConstraints

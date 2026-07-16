@@ -201,6 +201,46 @@ struct AirshipLayoutTest {
         try decodeEncodeCompare(source: json, type: AirshipLayout.self)
     }
 
+    @Test
+    func stackImageButtonRoundTripMatchesOriginalJSON() throws {
+        // Pins the stack_image_button `type` field surviving re-encoding
+        let json = """
+        {
+          "version": 1,
+          "presentation": {
+            "type": "banner",
+            "default_placement": {
+              "size": { "width": "100%", "height": "auto" },
+              "position": { "horizontal": "center", "vertical": "top" }
+            }
+          },
+          "view": {
+            "type": "stack_image_button",
+            "identifier": "dismiss_button",
+            "items": [
+              {
+                "type": "icon",
+                "icon": {
+                  "type": "icon",
+                  "icon": "close",
+                  "scale": 0.4,
+                  "color": {
+                    "default": { "type": "hex", "hex": "#000000", "alpha": 1 }
+                  }
+                }
+              },
+              {
+                "type": "image_url",
+                "url": "https://example.com/button.png",
+                "media_fit": "center_inside"
+              }
+            ]
+          }
+        }
+        """
+        try decodeEncodeCompare(source: json, type: AirshipLayout.self)
+    }
+
     private func decode(_ json: String) throws -> AirshipLayout {
         guard let data = json.data(using: .utf8) else {
             struct Encoding: Error {}

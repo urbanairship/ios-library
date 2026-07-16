@@ -17,16 +17,6 @@ presentation:
       bottom: 0
       start: 16
       end: 16
-    nub:
-      size:
-        width: 36
-        height: 4
-      margin:
-        top: 8
-      color:
-        default:
-          hex: "#000000"
-          alpha: 0.42
     border:
       radius: 12
       stroke_width: 1
@@ -38,7 +28,7 @@ presentation:
       default:
         hex: "#FFFFFF"
         alpha: 1
-  duration: 8
+  duration_seconds: 8
 view:
   type: container
   items:
@@ -120,3 +110,25 @@ view:
                             alpha: 1
                     button_click:
                       - dismiss
+    # Nub authored via stack_image_view (#318)
+    - position:
+        horizontal: center
+        vertical: top
+      margin:
+        top: 6
+      size:
+        width: 36
+        height: 4
+      view:
+        type: stack_image_view
+        identifier: banner_nub
+        items:
+          - type: shape
+            shape:
+              type: rectangle
+              color:
+                default:
+                  hex: "#000000"
+                  alpha: 0.42
+              border:
+                radius: 2

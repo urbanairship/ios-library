@@ -11,9 +11,22 @@ struct BannerView: View {
     @Environment(\.layoutState) private var layoutState
     @Environment(\.windowSize) private var windowSize
     @Environment(\.orientation) private var orientation
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.layoutDirection) private var layoutDirection
 
-    static let animationInOutDuration = 0.2
+    static let animationInOutDuration = 0.3
+
+    /// A drag released without a fling toward the dismiss edge dismisses when it
+    /// covers at least this fraction of the banner's extent along the swipe axis.
+    private static let idleDismissDragFraction: CGFloat = 0.4
+
+    /// A drag released with a fling toward the dismiss edge dismisses when it
+    /// covers more than this fraction of the banner's extent along the swipe axis.
+    private static let flingDismissDragFraction: CGFloat = 0.1
+
+    /// Absolute drag distance along the swipe axis that dismisses when the
+    /// banner's extent is unknown (e.g. right after rotation clears the cached
+    /// content size).
+    private static let fallbackDismissDistance: CGFloat = 100
     
     private let viewControllerOptions: ThomasViewControllerOptions
     private let presentation: ThomasPresentationInfo.Banner
@@ -49,11 +62,9 @@ struct BannerView: View {
         self.layout = layout
         self.thomasEnvironment = thomasEnvironment
         self.bannerConstraints = bannerConstraints
-        let durationMs = presentation.duration ?? Int(INT_MAX)
+        // A nil duration never starts a timer, so the banner never auto-dismisses
         self._timer = StateObject(
-            wrappedValue: AirshipObservableTimer(
-                duration: TimeInterval(durationMs) / 1000.0
-            )
+            wrappedValue: AirshipObservableTimer(duration: presentation.durationSeconds)
         )
         self.onDismiss = onDismiss
     }
@@ -82,7 +93,7 @@ struct BannerView: View {
                         }
                     }
                     .airshipApplyBannerTransition(
-                        isTopPlacement: placement.position.vertical == .top,
+                        position: placement.position,
                         animation: placement.animation
                     )
                     .airshipOnChangeOf(thomasEnvironment.isDismissed) { _ in
@@ -128,31 +139,11 @@ struct BannerView: View {
         presentation.ios?.keyboardAvoidance == .overTheTop
     }
 
-    @ViewBuilder
-    private func nub(placement: ThomasPresentationInfo.Banner.Placement) -> some View {
-        if let nubInfo = placement.nubInfo {
-            Capsule()
-                .frame(
-                    width: nubInfo.size.width.calculateSize(nil) ?? 36,
-                    height: nubInfo.size.height.calculateSize(nil) ?? 4
-                )
-                .foregroundColor(nubInfo.color.toColor(colorScheme))
-                .margin(nubInfo.margin)
-        } else {
-            Capsule()
-                .frame(width: 36, height: 4)
-                .foregroundColor(Color.red.opacity(0.42))
-        }
-    }
-
     private func createBanner(
         placement: ThomasPresentationInfo.Banner.Placement,
         metrics: GeometryProxy
     ) -> some View {
-        let alignment = Alignment(
-            horizontal: .center,
-            vertical: placement.position.vertical == .top ? .top : .bottom
-        )
+        let alignment = placement.position.asPosition.alignment
 
         let constraints = ViewConstraints(
             size: self.bannerConstraints.windowSize,
@@ -176,18 +167,19 @@ struct BannerView: View {
                 layout.view,
                 constraints: contentConstraints
             )
-            .airshipAddNub(
-                isTopPlacement: placement.position.vertical == .top,
-                nub: AnyView(nub(placement: placement)),
-                itemSpacing: 16
-            )
             .thomasBackground(
                 color: placement.backgroundColor,
-                border: placement.border
+                border: placement.border,
+                shadow: placement.shadow
             )
-            .offset(x: 0, y: swipeOffset)
+            .offset(
+                x: placement.position.vertical == .center ? swipeOffset : 0,
+                y: placement.position.vertical == .center ? 0 : swipeOffset
+            )
 #if !os(tvOS)
-            .simultaneousGesture(swipeGesture(placement: placement))
+            .airshipApplyIf(placement.isSwipeToDismissEnabled) { view in
+                view.simultaneousGesture(swipeGesture(placement: placement))
+            }
 #endif
             .background(
                 GeometryReader(content: { contentMetrics -> Color in
@@ -269,33 +261,35 @@ struct BannerView: View {
 
 #if !os(tvOS)
     private func swipeGesture(placement: ThomasPresentationInfo.Banner.Placement) -> some Gesture {
-        let minSwipeDistance: CGFloat = if let height = self.contentSize?.height, height > 0 {
-            min(100.0, height * 0.5)
-        } else {
-            100.0
-        }
+        let position = placement.position
+        let isVerticalSwipe = position.vertical != .center
 
         return DragGesture(minimumDistance: 10)
             .onChanged { gesture in
                 withAnimation(.interpolatingSpring(stiffness: 300, damping: 20)) {
-                    let offset = gesture.translation.height
-                    let upwardSwipeTopPlacement = (placement.position.vertical == .top && offset < 0)
-                    let downwardSwipeBottomPlacement = (placement.position.vertical == .bottom && offset > 0)
-
-                    if upwardSwipeTopPlacement || downwardSwipeBottomPlacement {
+                    let offset = isVerticalSwipe ? gesture.translation.height : gesture.translation.width
+                    if Self.isTowardDismissEdge(offset, position: position, layoutDirection: layoutDirection) {
                         self.swipeOffset = offset
                     }
                 }
             }
             .onEnded { gesture in
                 withAnimation(.interpolatingSpring(stiffness: 300, damping: 20)) {
-                    let offset = gesture.translation.height
+                    let offset = isVerticalSwipe ? gesture.translation.height : gesture.translation.width
+                    let predictedOffset = isVerticalSwipe
+                        ? gesture.predictedEndTranslation.height
+                        : gesture.predictedEndTranslation.width
                     swipeOffset = offset
 
-                    let upwardSwipeTopPlacement = (placement.position.vertical == .top && offset < -minSwipeDistance)
-                    let downwardSwipeBottomPlacement = (placement.position.vertical == .bottom && offset > minSwipeDistance)
+                    let shouldDismiss = Self.shouldDismissOnSwipe(
+                        offset: offset,
+                        predictedEndOffset: predictedOffset,
+                        extent: isVerticalSwipe ? self.contentSize?.height : self.contentSize?.width,
+                        position: position,
+                        layoutDirection: layoutDirection
+                    )
 
-                    if upwardSwipeTopPlacement || downwardSwipeBottomPlacement {
+                    if shouldDismiss {
                         thomasEnvironment.dismiss()
                     } else {
                         // Return to origin
@@ -304,52 +298,101 @@ struct BannerView: View {
                 }
             }
     }
+
+    /// Whether releasing a drag along the swipe axis should dismiss the banner.
+    /// `extent` is the banner's size along the swipe axis, or nil when unknown.
+    static func shouldDismissOnSwipe(
+        offset: CGFloat,
+        predictedEndOffset: CGFloat,
+        extent: CGFloat?,
+        position: ThomasEdgePosition,
+        layoutDirection: LayoutDirection
+    ) -> Bool {
+        guard isTowardDismissEdge(offset, position: position, layoutDirection: layoutDirection) else {
+            return false
+        }
+
+        // Fling: the predicted end position continues past the release
+        // point toward the dismiss edge. Flings back toward the resting
+        // position never dismiss.
+        let isFlingTowardDismissEdge = isTowardDismissEdge(
+            predictedEndOffset - offset,
+            position: position,
+            layoutDirection: layoutDirection
+        )
+
+        guard let extent, extent > 0 else {
+            // Extent unknown (e.g. right after rotation clears the cached
+            // content size): fall back to an absolute drag distance or a
+            // fling toward the dismiss edge.
+            return abs(offset) > Self.fallbackDismissDistance || isFlingTowardDismissEdge
+        }
+
+        let dragFraction = abs(offset) / extent
+        return dragFraction >= Self.idleDismissDragFraction ||
+            (isFlingTowardDismissEdge && dragFraction > Self.flingDismissDragFraction)
+    }
+
+    /// Whether a drag offset along the swipe axis moves the banner toward its dismiss edge.
+    /// Banners anchored to a vertical edge dismiss toward that edge; vertically-centered
+    /// banners dismiss toward their horizontal edge.
+    static func isTowardDismissEdge(
+        _ offset: CGFloat,
+        position: ThomasEdgePosition,
+        layoutDirection: LayoutDirection
+    ) -> Bool {
+        guard offset != 0 else { return false }
+        switch position.vertical {
+        case .top:
+            return offset < 0
+        case .bottom:
+            return offset > 0
+        case .center:
+            let towardLeading = layoutDirection == .rightToLeft ? offset > 0 : offset < 0
+            return position.horizontal == .start ? towardLeading : !towardLeading
+        }
+    }
 #endif
+}
+
+extension ThomasEdgePosition {
+    /// The edge a banner slides in from and out to. The vertical edge wins for corners;
+    /// vertically-centered banners slide from their horizontal edge.
+    var bannerSlideEdge: Edge {
+        switch vertical {
+        case .top: return .top
+        case .bottom: return .bottom
+        case .center:
+            switch horizontal {
+            case .start: return .leading
+            case .end: return .trailing
+            case .center:
+                // Unreachable: ThomasEdgePosition requires at least one non-center axis
+                assertionFailure("ThomasEdgePosition invariant violated: both axes are center")
+                return .top
+            }
+        }
+    }
 }
 
 private extension View {
     @ViewBuilder
     func airshipApplyBannerTransition(
-        isTopPlacement: Bool,
+        position: ThomasEdgePosition,
         animation: ThomasPresentationInfo.Banner.Animation?
     ) -> some View {
         switch animation {
-        case .slide:
-            if isTopPlacement {
-                self.transition(
-                    .asymmetric(
-                        insertion: .move(edge: .top),
-                        removal: .move(edge: .top).combined(with: .opacity)
-                    )
+        // A missing animation defaults to slide-from-placement-edge to match Android
+        case .slide, nil:
+            let edge = position.bannerSlideEdge
+            self.transition(
+                .asymmetric(
+                    insertion: .move(edge: edge),
+                    removal: .move(edge: edge).combined(with: .opacity)
                 )
-            } else {
-                self.transition(
-                    .asymmetric(
-                        insertion: .move(edge: .bottom),
-                        removal: .move(edge: .bottom).combined(with: .opacity)
-                    )
-                )
-            }
-        case .fade, _:
+            )
+        case .fade:
             self.transition(.opacity)
         }
     }
-
-    @ViewBuilder
-    func airshipAddNub(
-        isTopPlacement: Bool,
-        nub: AnyView,
-        itemSpacing: CGFloat
-    ) -> some View {
-        VStack(spacing: 0) {
-            if isTopPlacement {
-                self
-                nub.padding(.vertical, itemSpacing / 2)
-            } else {
-                nub.padding(.vertical, itemSpacing / 2)
-                self
-            }
-        }
-    }
-
 }

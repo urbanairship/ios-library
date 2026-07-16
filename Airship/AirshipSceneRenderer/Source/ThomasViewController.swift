@@ -82,6 +82,9 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
 
 class ThomasBannerViewController: ThomasViewController<BannerView> {
     private var centerXConstraint: NSLayoutConstraint?
+    private var leadingConstraint: NSLayoutConstraint?
+    private var trailingConstraint: NSLayoutConstraint?
+    private var centerYConstraint: NSLayoutConstraint?
     private var topConstraint: NSLayoutConstraint?
     private var bottomConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
@@ -89,18 +92,14 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
 
     private let thomasBannerConstraints: ThomasBannerConstraints
 
-    private let position: ThomasEdgePosition?
-
     private var subscription: AnyCancellable?
 
     init(
         rootView: BannerView,
-        position: ThomasEdgePosition,
         options: ThomasViewControllerOptions,
         constraints: ThomasBannerConstraints
     ) {
         self.thomasBannerConstraints = constraints
-        self.position = position
         super.init(rootView: rootView, options: options)
     }
 
@@ -140,10 +139,9 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     func createBannerConstraints() {
         self.view.translatesAutoresizingMaskIntoConstraints = false
 
-        if let window = self.view.window {
-            centerXConstraint = self.view.centerXAnchor.constraint(equalTo: window.centerXAnchor)
-            topConstraint = self.view.topAnchor.constraint(equalTo: window.topAnchor)
-            bottomConstraint = self.view.bottomAnchor.constraint(equalTo: window.bottomAnchor)
+        if self.view.window != nil {
+            // Positioning constraints are created per placement in
+            // handleBannerConstraints once the content placement is known.
             heightConstraint = self.view.heightAnchor.constraint(
                 equalToConstant: thomasBannerConstraints.windowSize.height
             )
@@ -165,56 +163,77 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
 
         // Deactivate old constraints before creating new ones
         self.centerXConstraint?.isActive = false
+        self.leadingConstraint?.isActive = false
+        self.trailingConstraint?.isActive = false
+        self.centerYConstraint?.isActive = false
         self.topConstraint?.isActive = false
         self.bottomConstraint?.isActive = false
 
         let edgeInsets = contentPlacement.additionalEdgeInsets
 
-        // Shift horizontal constraint by start/end margins
-        // Positive leading margin shifts right, positive trailing margin shifts left
-        let horizontalOffset = edgeInsets.leading - edgeInsets.trailing
-        self.centerXConstraint = self.view.centerXAnchor.constraint(
-            equalTo: window.centerXAnchor,
-            constant: horizontalOffset
-        )
-        self.centerXConstraint?.isActive = true
+        // Edge-anchored axes attach to window edges when ignoring safe area,
+        // otherwise to the safe area layout guide. Centered axes always anchor
+        // to the window center regardless of ignore_safe_area. Margins shift
+        // the anchor in all cases.
+        let ignoreSafeArea = contentPlacement.ignoreSafeArea
 
-        if contentPlacement.ignoreSafeArea {
-            // Anchor to window edges when ignoring safe area, shifted by margins
-            if contentPlacement.isTop {
-                self.topConstraint = self.view.topAnchor.constraint(
-                    equalTo: window.topAnchor,
-                    constant: edgeInsets.top
-                )
-            } else {
-                self.bottomConstraint = self.view.bottomAnchor.constraint(
-                    equalTo: window.bottomAnchor,
-                    constant: -edgeInsets.bottom
-                )
-            }
-        } else {
-            // Anchor to safe area layout guide when respecting safe area, shifted by margins
-            if contentPlacement.isTop {
-                self.topConstraint = self.view.topAnchor.constraint(
-                    equalTo: window.safeAreaLayoutGuide.topAnchor,
-                    constant: edgeInsets.top
-                )
-            } else {
-                self.bottomConstraint = self.view.bottomAnchor.constraint(
-                    equalTo: window.safeAreaLayoutGuide.bottomAnchor,
-                    constant: -edgeInsets.bottom
-                )
-            }
+        switch contentPlacement.position.horizontal {
+        case .start:
+            self.leadingConstraint = self.view.leadingAnchor.constraint(
+                equalTo: ignoreSafeArea
+                    ? window.leadingAnchor
+                    : window.safeAreaLayoutGuide.leadingAnchor,
+                constant: edgeInsets.leading
+            )
+            self.leadingConstraint?.isActive = true
+
+        case .end:
+            self.trailingConstraint = self.view.trailingAnchor.constraint(
+                equalTo: ignoreSafeArea
+                    ? window.trailingAnchor
+                    : window.safeAreaLayoutGuide.trailingAnchor,
+                constant: -edgeInsets.trailing
+            )
+            self.trailingConstraint?.isActive = true
+
+        case .center:
+            // Shift horizontal constraint by start/end margins
+            // Positive leading margin shifts right, positive trailing margin shifts left
+            let horizontalOffset = edgeInsets.leading - edgeInsets.trailing
+            self.centerXConstraint = self.view.centerXAnchor.constraint(
+                equalTo: window.centerXAnchor,
+                constant: horizontalOffset
+            )
+            self.centerXConstraint?.isActive = true
         }
 
-        switch self.position?.vertical {
+        switch contentPlacement.position.vertical {
         case .top:
+            self.topConstraint = self.view.topAnchor.constraint(
+                equalTo: ignoreSafeArea
+                    ? window.topAnchor
+                    : window.safeAreaLayoutGuide.topAnchor,
+                constant: edgeInsets.top
+            )
             self.topConstraint?.isActive = true
-            self.bottomConstraint?.isActive = false
 
-        default:
-            self.topConstraint?.isActive = false
+        case .bottom:
+            self.bottomConstraint = self.view.bottomAnchor.constraint(
+                equalTo: ignoreSafeArea
+                    ? window.bottomAnchor
+                    : window.safeAreaLayoutGuide.bottomAnchor,
+                constant: -edgeInsets.bottom
+            )
             self.bottomConstraint?.isActive = true
+
+        case .center:
+            // Shift vertical constraint by top/bottom margins
+            let verticalOffset = edgeInsets.top - edgeInsets.bottom
+            self.centerYConstraint = self.view.centerYAnchor.constraint(
+                equalTo: window.centerYAnchor,
+                constant: verticalOffset
+            )
+            self.centerYConstraint?.isActive = true
         }
 
         self.view.layoutIfNeeded()
@@ -264,6 +283,9 @@ class ThomasViewController<Content> : NSHostingController<Content> where Content
 
 class ThomasBannerViewController: ThomasViewController<BannerView> {
     private var centerXConstraint: NSLayoutConstraint?
+    private var leadingConstraint: NSLayoutConstraint?
+    private var trailingConstraint: NSLayoutConstraint?
+    private var centerYConstraint: NSLayoutConstraint?
     private var topConstraint: NSLayoutConstraint?
     private var bottomConstraint: NSLayoutConstraint?
     private var heightConstraint: NSLayoutConstraint?
@@ -317,6 +339,9 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
         self.view.translatesAutoresizingMaskIntoConstraints = false
         if let contentView = self.view.window?.contentView {
             centerXConstraint = self.view.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
+            leadingConstraint = self.view.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
+            trailingConstraint = self.view.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+            centerYConstraint = self.view.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
             topConstraint = self.view.topAnchor.constraint(equalTo: contentView.topAnchor)
             bottomConstraint = self.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
 
@@ -329,20 +354,44 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
         // Ensure view is still in window hierarchy before updating constraints
         guard self.view.window != nil else { return }
 
-        self.centerXConstraint?.isActive = true
         self.heightConstraint?.isActive = true
         self.widthConstraint?.isActive = true
         self.widthConstraint?.constant = size.width
+
+        switch self.position?.horizontal {
+        case .start:
+            self.leadingConstraint?.isActive = true
+            self.trailingConstraint?.isActive = false
+            self.centerXConstraint?.isActive = false
+
+        case .end:
+            self.leadingConstraint?.isActive = false
+            self.trailingConstraint?.isActive = true
+            self.centerXConstraint?.isActive = false
+
+        default:
+            self.leadingConstraint?.isActive = false
+            self.trailingConstraint?.isActive = false
+            self.centerXConstraint?.isActive = true
+        }
 
         switch self.position?.vertical {
         case .top:
             self.topConstraint?.isActive = true
             self.bottomConstraint?.isActive = false
+            self.centerYConstraint?.isActive = false
             self.heightConstraint?.constant = size.height + self.view.safeAreaInsets.top
+
+        case .center:
+            self.topConstraint?.isActive = false
+            self.bottomConstraint?.isActive = false
+            self.centerYConstraint?.isActive = true
+            self.heightConstraint?.constant = size.height
 
         default:
             self.topConstraint?.isActive = false
             self.bottomConstraint?.isActive = true
+            self.centerYConstraint?.isActive = false
             self.heightConstraint?.constant = size.height + self.view.safeAreaInsets.bottom
         }
 
@@ -405,7 +454,7 @@ class ThomasBannerConstraints: ObservableObject {
         )
 
         let contentPlacement = ContentPlacement(
-            isTop: placement.position.vertical == .top,
+            position: placement.position,
             additionalEdgeInsets: additionalEdgeInsets,
             width: width,
             height: height,
@@ -425,7 +474,7 @@ class ThomasBannerConstraints: ObservableObject {
 }
 
 fileprivate struct ContentPlacement: Sendable, Equatable {
-    let isTop: Bool
+    let position: ThomasEdgePosition
     let additionalEdgeInsets: EdgeInsets
     let width: Double
     let height: Double

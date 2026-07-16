@@ -54,33 +54,20 @@ extension ThomasViewInfo {
                 }
                 return images.isEmpty ? nil : images
             case .stackImageButton(let info):
-                var images: [URLInfo] = []
-                for item in info.properties.items {
-                    switch item {
-                    case .imageURL(let info):
-                        images.append(.image(url: info.url))
-                        images.append(contentsOf: info.urlSelectors.imageURLInfos)
-                    case .icon, .shape:
-                        break
-                    }
-                }
+                var images: [URLInfo] = info.properties.items.imageURLInfos
 
                 if let overrides = info.overrides?.items {
                     for override in overrides {
                         guard let item = override.value else { continue }
-                        for value in item {
-                            switch value {
-                            case .imageURL(let info):
-                                images.append(.image(url: info.url))
-                                images.append(contentsOf: info.urlSelectors.imageURLInfos)
-                            case .icon, .shape:
-                                break
-                            }
-                        }
+                        images.append(contentsOf: item.imageURLInfos)
                     }
                 }
 
-                return images
+                return images.isEmpty ? nil : images
+
+            case .stackImageView(let info):
+                let images = info.properties.items.imageURLInfos
+                return images.isEmpty ? nil : images
 
             default: return nil
             }
@@ -89,6 +76,23 @@ extension ThomasViewInfo {
         return urls.compactMap { $0 }.reduce(into: []) { result, urlArray in
             result.append(contentsOf: urlArray)
         }
+    }
+}
+
+private extension Sequence where Element == ThomasViewInfo.StackImageButton.Item {
+    /// `.image` URLInfos for all image items in a stack image button/view.
+    var imageURLInfos: [URLInfo] {
+        var images: [URLInfo] = []
+        for item in self {
+            switch item {
+            case .imageURL(let info):
+                images.append(.image(url: info.url))
+                images.append(contentsOf: info.urlSelectors.imageURLInfos)
+            case .icon, .shape:
+                break
+            }
+        }
+        return images
     }
 }
 

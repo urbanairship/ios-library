@@ -42,12 +42,21 @@ public struct ThomasViewControllerFactory {
             onDismiss()
         }
 
+#if os(macOS)
+        // The macOS variant positions the banner itself and still needs the position
         let viewController = ThomasBannerViewController(
             rootView: rootView,
             position: presentation.defaultPlacement.position,
             options: options,
             constraints: bannerConstraints
         )
+#else
+        let viewController = ThomasBannerViewController(
+            rootView: rootView,
+            options: options,
+            constraints: bannerConstraints
+        )
+#endif
 
         return (viewController, { [weak environment] in environment?.dismiss() })
     }

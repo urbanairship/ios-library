@@ -60,6 +60,7 @@ extension ThomasViewInfo {
         case .media: nil
         case .imageButton: nil
         case .stackImageButton: nil
+        case .stackImageView: nil
         #if !os(tvOS) && !os(watchOS)
         case .webView: nil
         #endif
