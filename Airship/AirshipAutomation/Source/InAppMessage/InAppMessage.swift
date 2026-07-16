@@ -261,30 +261,3 @@ extension InAppMessage {
 struct AirshipLayoutWrapper: Codable {
     var layout: AirshipLayout
 }
-
-/// These are just for view testing purposes
-/// - Note: For internal use only. :nodoc:
-@_spi(AirshipInternal)
-public extension InAppMessage {
-    /// We return a window since we are implementing display
-    @MainActor
-    func _display() async throws {
-        let adapter = try AirshipLayoutDisplayAdapter(
-            message: self,
-            priority: 0,
-            assets: EmptyAirshipCachedAssets()
-        )
-#if os(macOS)
-        let displayTarget = AirshipDisplayTarget()
-#else
-        let displayTarget = AirshipDisplayTarget {
-            try AirshipSceneManager.shared.lastActiveScene
-        }
-#endif
-
-        _ = try await adapter.display(
-            displayTarget: displayTarget,
-            analytics: LoggingInAppMessageAnalytics()
-        )
-    }
-}

@@ -1,0 +1,424 @@
+# AI Inference: feedback classification + pager branching (iOS-only test scene)
+#
+# Exercises the new `ai_inference` config on a text_multiline input:
+#   - As the user types (2s settle delay), the on-device model classifies the
+#     feedback. The output rides on the form field result, projected into state at
+#       $forms.current.data.children.feedback_text.status:
+#         { type: pending }                                  while inference runs
+#         { type: valid, ai: { status: complete, result, reason }, ... }  on success
+#         { type: valid, ai: { status: failed }, ... }       on failure / no model
+#   - Pager branching routes Next per category via ...status.ai.result, with a
+#     fallback page when ...status.ai.status == failed.
+#
+# Structure notes:
+#   - form_controller ancestor is required for the text_input to bind form state.
+#   - Next uses button_click: [form_validate, pager_next] with
+#     enabled: [form_validation] — tappable anytime; tapping validates the form
+#     (awaiting the pending AI inference, spinner + "Classifying…" via label
+#     view_overrides on $forms.current.status.type == validating) and then
+#     navigates per the branch selectors.
+---
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  ios:
+    keyboard_avoidance: over_the_top
+  default_placement:
+    size:
+      width: 90%
+      height: auto
+      max_width: 480
+    position: { horizontal: center, vertical: center }
+    shade_color: { default: { hex: "#000000", alpha: 0.5 } }
+    border: { radius: 16 }
+    background_color: { default: { hex: "#FFFFFF", alpha: 1 } }
+view:
+  type: state_controller
+  view:
+    type: form_controller
+    identifier: feedback_form
+    response_type: feedback
+    validation_mode:
+        type: on_demand
+    view:
+      type: pager_controller
+      identifier: feedback-pager
+      branching:
+        pager_completions:
+          - when_state_matches:
+              scope: [flow_complete]
+              value: { equals: true }
+      view:
+        type: linear_layout
+        direction: vertical
+        items:
+          - size: { width: 100%, height: 420 }
+            view:
+              type: pager
+              disable_swipe: true
+              items:
+
+                # ---------------- Page 1: feedback input ----------------
+                - identifier: page-feedback
+                  branching:
+                    next_page:
+                      selectors:
+                        # Fallback first: model unavailable or inference failed
+                        - when_state_matches:
+                            scope: [$forms, current, data, children, feedback_text, status, ai, status]
+                            value: { equals: failed }
+                          page_id: page-fallback
+                        # One route per classification result
+                        - when_state_matches:
+                            scope: [$forms, current, data, children, feedback_text, status, ai, result]
+                            value: { equals: shipping }
+                          page_id: page-shipping
+                        - when_state_matches:
+                            scope: [$forms, current, data, children, feedback_text, status, ai, result]
+                            value: { equals: quality }
+                          page_id: page-quality
+                        - when_state_matches:
+                            scope: [$forms, current, data, children, feedback_text, status, ai, result]
+                            value: { equals: praise }
+                          page_id: page-praise
+                        - when_state_matches:
+                            scope: [$forms, current, data, children, feedback_text, status, ai, result]
+                            value: { equals: other }
+                          page_id: page-other
+                        # Safety net: complete but unrecognized result value
+                        - when_state_matches:
+                            scope: [$forms, current, data, children, feedback_text, status, ai, status]
+                            value: { equals: complete }
+                          page_id: page-other
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 24, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "How was your experience?"
+                          text_appearance:
+                            font_size: 20
+                            styles: [bold]
+                            alignment: start
+                            color: { default: { hex: "#111111", alpha: 1 } }
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 4, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Tell us anything — we'll route you to the right place."
+                          text_appearance:
+                            font_size: 14
+                            alignment: start
+                            color: { default: { hex: "#666666", alpha: 1 } }
+                      - size: { width: 100%, height: 140 }
+                        margin: { top: 16, start: 20, end: 20 }
+                        view:
+                          type: text_input
+                          identifier: feedback_text
+                          input_type: text_multiline
+                          required: true
+                          place_holder: "Type your feedback…"
+                          border:
+                            radius: 8
+                            stroke_width: 1
+                            stroke_color: { default: { hex: "#CCCCCC", alpha: 1 } }
+                          text_appearance:
+                            font_size: 15
+                            alignment: start
+                            color: { default: { hex: "#111111", alpha: 1 } }
+                          ai_inference:
+                            prompt: >-
+                              Classify the customer feedback into the category
+                              that best matches its main complaint or theme.
+                            output_schema:
+                              type: object
+                              properties:
+                                result:
+                                  type: string
+                                  enum: [shipping, quality, praise, other]
+                                  description: The feedback category
+                                reason:
+                                  type: string
+                                  description: Short reason for the classification
+                              required: [result, reason]
+                      # Failure notice (model unavailable / inference error)
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 12, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Couldn't classify (model unavailable) — Next will use the fallback path."
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              scope: [$forms, current, data, children, feedback_text, status, ai, status]
+                              value: { equals: failed }
+                          text_appearance:
+                            font_size: 13
+                            alignment: start
+                            color: { default: { hex: "#B3261E", alpha: 1 } }
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 16, start: 20, end: 20, bottom: 24 }
+                        view:
+                          type: label_button
+                          identifier: next_button
+                          # Validate on tap: waits for the pending AI inference to
+                          # resolve, then navigates per the branch selectors.
+                          button_click: [form_validate, pager_next]
+                          enabled: [form_validation]
+                          background_color: { default: { hex: "#004BFF", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            type: label
+                            text: "Next"
+                            view_overrides:
+                              icon_start:
+                                - value:
+                                    type: floating
+                                    space: 8
+                                    icon:
+                                      type: icon
+                                      icon: progress_spinner
+                                      color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                                      scale: 1
+                                  when_state_matches:
+                                    scope: [$forms, current, status, type]
+                                    value: { equals: validating }
+                              text:
+                                - value: "Classifying…"
+                                  when_state_matches:
+                                    scope: [$forms, current, status, type]
+                                    value: { equals: validating }
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              alignment: center
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }
+
+                # ---------------- Result: shipping ----------------
+                - identifier: page-shipping
+                  state_actions:
+                    - { type: set, key: flow_complete, value: true }
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    background_color: { default: { hex: "#E8F0FE", alpha: 1 } }
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 48, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Shipping issue"
+                          text_appearance:
+                            font_size: 20
+                            styles: [bold]
+                            alignment: center
+                            color: { default: { hex: "#0B3D91", alpha: 1 } }
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Routed here because feedback_ai.result == shipping. Sorry about the delivery — our team is on it."
+                          text_appearance:
+                            font_size: 14
+                            alignment: center
+                            color: { default: { hex: "#333333", alpha: 1 } }
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 24, start: 20, end: 20 }
+                        view:
+                          type: label_button
+                          identifier: shipping_done
+                          button_click: [dismiss]
+                          background_color: { default: { hex: "#0B3D91", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            type: label
+                            text: "Done"
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              alignment: center
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }
+
+                # ---------------- Result: quality ----------------
+                - identifier: page-quality
+                  state_actions:
+                    - { type: set, key: flow_complete, value: true }
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    background_color: { default: { hex: "#FDEDE8", alpha: 1 } }
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 48, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Product quality"
+                          text_appearance:
+                            font_size: 20
+                            styles: [bold]
+                            alignment: center
+                            color: { default: { hex: "#8C2D04", alpha: 1 } }
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Routed here because feedback_ai.result == quality. We'd like to make this right."
+                          text_appearance:
+                            font_size: 14
+                            alignment: center
+                            color: { default: { hex: "#333333", alpha: 1 } }
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 24, start: 20, end: 20 }
+                        view:
+                          type: label_button
+                          identifier: quality_done
+                          button_click: [dismiss]
+                          background_color: { default: { hex: "#8C2D04", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            type: label
+                            text: "Done"
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              alignment: center
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }
+
+                # ---------------- Result: praise ----------------
+                - identifier: page-praise
+                  state_actions:
+                    - { type: set, key: flow_complete, value: true }
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    background_color: { default: { hex: "#E9F7EC", alpha: 1 } }
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 48, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Thanks for the kind words!"
+                          text_appearance:
+                            font_size: 20
+                            styles: [bold]
+                            alignment: center
+                            color: { default: { hex: "#1B7A2F", alpha: 1 } }
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Routed here because feedback_ai.result == praise. We'll share this with the team."
+                          text_appearance:
+                            font_size: 14
+                            alignment: center
+                            color: { default: { hex: "#333333", alpha: 1 } }
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 24, start: 20, end: 20 }
+                        view:
+                          type: label_button
+                          identifier: praise_done
+                          button_click: [dismiss]
+                          background_color: { default: { hex: "#1B7A2F", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            type: label
+                            text: "Done"
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              alignment: center
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }
+
+                # ---------------- Result: other ----------------
+                - identifier: page-other
+                  state_actions:
+                    - { type: set, key: flow_complete, value: true }
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    background_color: { default: { hex: "#F3F0FA", alpha: 1 } }
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 48, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Thanks for the feedback"
+                          text_appearance:
+                            font_size: 20
+                            styles: [bold]
+                            alignment: center
+                            color: { default: { hex: "#4A3B8C", alpha: 1 } }
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Routed here because feedback_ai.result == other (or an unrecognized result). We'll take a look."
+                          text_appearance:
+                            font_size: 14
+                            alignment: center
+                            color: { default: { hex: "#333333", alpha: 1 } }
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 24, start: 20, end: 20 }
+                        view:
+                          type: label_button
+                          identifier: other_done
+                          button_click: [dismiss]
+                          background_color: { default: { hex: "#4A3B8C", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            type: label
+                            text: "Done"
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              alignment: center
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }
+
+                # ---------------- Fallback: inference failed ----------------
+                - identifier: page-fallback
+                  state_actions:
+                    - { type: set, key: flow_complete, value: true }
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    background_color: { default: { hex: "#F5F5F5", alpha: 1 } }
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 48, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Feedback received"
+                          text_appearance:
+                            font_size: 20
+                            styles: [bold]
+                            alignment: center
+                            color: { default: { hex: "#111111", alpha: 1 } }
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Routed here because feedback_ai.status == failed (on-device model unavailable or inference error). Non-AI fallback path."
+                          text_appearance:
+                            font_size: 14
+                            alignment: center
+                            color: { default: { hex: "#333333", alpha: 1 } }
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 24, start: 20, end: 20 }
+                        view:
+                          type: label_button
+                          identifier: fallback_done
+                          button_click: [dismiss]
+                          background_color: { default: { hex: "#111111", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            type: label
+                            text: "Done"
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              alignment: center
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }

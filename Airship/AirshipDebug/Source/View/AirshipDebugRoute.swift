@@ -249,10 +249,18 @@ public extension AirshipDebugRoute {
             }
 
         case .appInfo: AirshipDebugAppInfoView()
-        case .ai: AirshipDebugAIView(manager: Airship._aiManager)
+        case .ai:
+            // Uses the AI manager injected into the debug module at load
+            // (`AirshipModuleLoaderArgs.aiManager`), never the shared `Airship` instance.
+            if let manager = debugModuleAIManager {
+                AirshipDebugAIView(manager: manager)
+            }
         case .aiSub(let subRoute):
             switch subRoute {
-            case .usage(let key): AirshipDebugAIUsageView(usageKey: key, manager: Airship._aiManager)
+            case .usage(let key):
+                if let manager = debugModuleAIManager {
+                    AirshipDebugAIUsageView(usageKey: key, manager: manager)
+                }
             }
         }
     }

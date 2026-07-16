@@ -17,6 +17,7 @@ public struct DefaultThomasExtensions: ThomasExtensions {
     public let audienceEditor: (any ThomasAudienceEditor) = DefaultThomasAudienceEditor()
     public let imageLoader: any ThomasImageLoader
     public let actionRunner: any ThomasActionRunner
+    public let aiInferenceExecutor: (any ThomasAIInferenceExecutor)?
     public var inputValidator: (any AirshipInputValidation.Validator)? {
         Airship.isFlying ? Airship.inputValidator : nil
     }
@@ -29,7 +30,8 @@ public struct DefaultThomasExtensions: ThomasExtensions {
         imageProvider: (any AirshipImageProvider)? = nil,
         assetCacheManager: (any AssetCacheManagerProtocol)? = nil,
         actionRunner: (any ThomasActionRunner)? = nil,
-        nativeBridgeExtension: (any NativeBridgeExtensionDelegate)? = nil
+        nativeBridgeExtension: (any NativeBridgeExtensionDelegate)? = nil,
+        aiManager: (any AirshipAI.InternalManager)? = nil
     ) {
         let actionRunner = actionRunner ?? DefaultThomasActionRunner()
         self.imageLoader = DefaultThomasImageLoader(
@@ -41,19 +43,26 @@ public struct DefaultThomasExtensions: ThomasExtensions {
             actionRunner: actionRunner,
             nativeBridgeExtension: nativeBridgeExtension
         )
+        self.aiInferenceExecutor = aiManager.map {
+            DefaultThomasAIInferenceExecutor(aiManager: $0)
+        }
     }
 #else
     @_spi(AirshipInternal)
     public init(
         imageProvider: (any AirshipImageProvider)? = nil,
         assetCacheManager: (any AssetCacheManagerProtocol)? = nil,
-        actionRunner: (any ThomasActionRunner)? = nil
+        actionRunner: (any ThomasActionRunner)? = nil,
+        aiManager: (any AirshipAI.InternalManager)? = nil
     ) {
         self.imageLoader = DefaultThomasImageLoader(
             imageProvider: imageProvider,
             assetCacheManager: assetCacheManager
         )
         self.actionRunner = actionRunner ?? DefaultThomasActionRunner()
+        self.aiInferenceExecutor = aiManager.map {
+            DefaultThomasAIInferenceExecutor(aiManager: $0)
+        }
     }
 #endif
 }

@@ -12,6 +12,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     private let priority: Int
     private let assets: any AirshipCachedAssetsProtocol
     private let actionRunner: (any InternalInAppActionRunner)?
+    private let aiManager: (any AirshipAI.InternalManager)?
     private let networkChecker: any AirshipNetworkCheckerProtocol
     private let provider: @Sendable (URL) -> AirshipImageData?
 
@@ -25,12 +26,14 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         priority: Int,
         assets: any AirshipCachedAssetsProtocol,
         actionRunner: (any InternalInAppActionRunner)? = nil,
+        aiManager: (any AirshipAI.InternalManager)? = nil,
         networkChecker: any AirshipNetworkCheckerProtocol = AirshipNetworkChecker.shared
     ) throws {
         self.message = message
         self.priority = priority
         self.assets = assets
         self.actionRunner = actionRunner
+        self.aiManager = aiManager
         self.networkChecker = networkChecker
 
         if case .custom(_) = message.displayContent {
@@ -348,12 +351,14 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             let extensions = DefaultThomasExtensions(
                 imageProvider: imageProvider,
                 actionRunner: actionRunner,
-                nativeBridgeExtension: InAppMessageNativeBridgeExtension(message: message)
+                nativeBridgeExtension: InAppMessageNativeBridgeExtension(message: message),
+                aiManager: aiManager
             )
 #else
             let extensions = DefaultThomasExtensions(
                 imageProvider: imageProvider,
-                actionRunner: actionRunner
+                actionRunner: actionRunner,
+                aiManager: aiManager
             )
 #endif
             let listener = ThomasDisplayListener(

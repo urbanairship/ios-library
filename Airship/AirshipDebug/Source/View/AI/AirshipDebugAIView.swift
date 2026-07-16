@@ -4,6 +4,7 @@ import Combine
 import SwiftUI
 @_spi(AirshipInternal) import AirshipCore
 @_spi(AirshipInternal) import AirshipAutomation
+import AirshipScenes
 import AirshipBasement
 
 // MARK: - Root list
@@ -51,7 +52,8 @@ extension AirshipDebugAIView {
         // Schemas live on evaluations now, so there is no runtime registry to
         // enumerate — this is the list of usages the debug UI knows how to drive.
         let usageKeys: [String] = [
-            InAppMessageFilterContext.filterUsage.rawValue
+            InAppMessageFilterContext.filterUsage.rawValue,
+            ThomasTextInputInferenceSubject.inferenceUsage.rawValue,
         ]
 
         let manager: any AirshipAI.InternalManager
@@ -83,6 +85,8 @@ struct AirshipDebugAIUsageView: View {
     var body: some View {
         if usageKey == InAppMessageFilterContext.filterUsage.rawValue {
             AirshipDebugIAAFilterView(manager: manager)
+        } else if usageKey == ThomasTextInputInferenceSubject.inferenceUsage.rawValue {
+            AirshipDebugSceneTextInputView(manager: manager)
         } else {
             Text("No debug UI for usage \"\(usageKey)\"")
                 .foregroundStyle(.secondary)
@@ -118,6 +122,26 @@ fileprivate struct AirshipDebugIAAFilterView: View {
                     }
             } header: {
                 Text("AI Filter Prompt")
+            }
+
+            Section("Test Message Details") {
+                TextField("Message name", text: $viewModel.messageName)
+                    .autocorrectionDisabled()
+                    .focused($keyboardActive)
+
+                AirshipDebugJSONEditor(
+                    title: "Extras",
+                    placeholder: "{\"key\": \"value\"}",
+                    text: $viewModel.extrasJSON,
+                    focus: $keyboardActive
+                )
+
+                AirshipDebugJSONEditor(
+                    title: "Campaigns",
+                    placeholder: "{\"campaign_name\": \"summer_promo\"}",
+                    text: $viewModel.campaignsJSON,
+                    focus: $keyboardActive
+                )
             }
 
             Section {
@@ -170,44 +194,6 @@ fileprivate struct AirshipDebugIAAFilterView: View {
                     Text("Not evaluated yet")
                         .foregroundStyle(.secondary)
                 }
-            }
-
-            Section("Test Message Details") {
-                TextField("Message name", text: $viewModel.messageName)
-                    .autocorrectionDisabled()
-                    .focused($keyboardActive)
-
-                TextEditor(text: $viewModel.extrasJSON)
-                    .focused($keyboardActive)
-                    .frame(minHeight: 60)
-                    .font(.system(.footnote, design: .monospaced))
-                    .autocorrectionDisabled()
-                    .overlay(alignment: .topLeading) {
-                        if viewModel.extrasJSON.isEmpty {
-                            Text("Extras: {\"key\": \"value\"}")
-                                .font(.system(.footnote, design: .monospaced))
-                                .foregroundStyle(.tertiary)
-                                .padding(.top, 8)
-                                .padding(.leading, 4)
-                                .allowsHitTesting(false)
-                        }
-                    }
-
-                TextEditor(text: $viewModel.campaignsJSON)
-                    .focused($keyboardActive)
-                    .frame(minHeight: 60)
-                    .font(.system(.footnote, design: .monospaced))
-                    .autocorrectionDisabled()
-                    .overlay(alignment: .topLeading) {
-                        if viewModel.campaignsJSON.isEmpty {
-                            Text("Campaigns: {\"campaign_name\": \"summer_promo\"}")
-                                .font(.system(.footnote, design: .monospaced))
-                                .foregroundStyle(.tertiary)
-                                .padding(.top, 8)
-                                .padding(.leading, 4)
-                                .allowsHitTesting(false)
-                        }
-                    }
             }
 
             Section("User Context") {

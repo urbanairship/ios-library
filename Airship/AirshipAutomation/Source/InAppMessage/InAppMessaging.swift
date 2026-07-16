@@ -2,6 +2,7 @@
 
 public import Foundation
 
+@_spi(AirshipInternal) import AirshipBasement
 import AirshipCore
 
 /// In-app messaging

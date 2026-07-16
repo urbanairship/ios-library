@@ -76,7 +76,8 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
         let messageExecutor = InAppMessageAutomationExecutor(
             assetManager: assetManager,
             analyticsFactory: analyticsFactory,
-            scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier
+            scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier,
+            aiManager: args.aiManager
         )
 #else
         let messageSceneManager = InAppMessageSceneManager(sceneManger: AirshipSceneManager.shared)
@@ -84,7 +85,8 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             sceneManager: messageSceneManager,
             assetManager: assetManager,
             analyticsFactory: analyticsFactory,
-            scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier
+            scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier,
+            aiManager: args.aiManager
         )
 #endif
         
@@ -142,7 +144,8 @@ public class AutomationSDKModule: NSObject, AirshipSDKModule {
             remoteDataSubscriber: remoteDataSubscriber,
             dataStore: args.dataStore,
             privacyManager: args.privacyManager,
-            config: args.config
+            config: args.config,
+            viewTester: InAppMessageViewTester(executor: messageExecutor)
         )
         
         return AutomationSDKModule(

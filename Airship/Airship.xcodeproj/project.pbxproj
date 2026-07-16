@@ -50,6 +50,7 @@
 
 /* Begin PBXBuildFile section */
 		1A9DBFB4891B4752A115259D /* AirshipAIModelsSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B81AD3732B84B9CA6E58DA1 /* AirshipAIModelsSDKModule.swift */; };
+		1C3CB5F0AA3805397BC51E57 /* AirshipDebugJSONEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9F4A0E1F3961F3E4B53D /* AirshipDebugJSONEditor.swift */; };
 		27051CD72EE75E3300C770D5 /* AutomationEventsHistoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27051CD62EE75E3300C770D5 /* AutomationEventsHistoryTest.swift */; };
 		27077E4C2EE7531C0027A282 /* AutomationEventsHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27077E4B2EE7531C0027A282 /* AutomationEventsHistory.swift */; };
 		271B38652DB2866200495D9F /* TagActionMutation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271B38642DB2866200495D9F /* TagActionMutation.swift */; };
@@ -66,6 +67,7 @@
 		27CCF77F2F16DA500018058F /* MessageViewAnalyticsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CCF77E2F16DA500018058F /* MessageViewAnalyticsTest.swift */; };
 		27E4194A2EF59F9800D5C1A6 /* MessageCenterThomasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E419492EF59F9800D5C1A6 /* MessageCenterThomasView.swift */; };
 		27F1E19D2F0E836000E317DB /* InAppMessageAnalyticsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6AAE52B58A9D3002FEA75 /* InAppMessageAnalyticsTest.swift */; };
+		2C8EF1E6E4E1523BB533C1DB /* AirshipDebugSceneTextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949779F961CDB0D1DB694666 /* AirshipDebugSceneTextInputView.swift */; };
 		322AAB1E2B5AB65700652DAC /* AddChannelPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DDC0562AF1055300D23EBE /* AddChannelPromptView.swift */; };
 		322AAB212B5ACB2800652DAC /* ChannelListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322AAB202B5ACB2800652DAC /* ChannelListView.swift */; };
 		322AAB222B5FCB6B00652DAC /* ContactManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322AAB1C2B5A869000652DAC /* ContactManagementView.swift */; };
@@ -135,6 +137,7 @@
 		3CC95B1F268E785900FE2ACD /* NotificationCategories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B1E268E785900FE2ACD /* NotificationCategories.swift */; };
 		3CC95B2B2696549B00FE2ACD /* AirshipPushableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CC95B2A2696549B00FE2ACD /* AirshipPushableComponent.swift */; };
 		45A8ADF023134B38004AD8CA /* testMCColorsCatalog.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 45A8ADD123133E51004AD8CA /* testMCColorsCatalog.xcassets */; };
+		4C3A98AFF491F8226970810E /* AirshipSceneRenderer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB7231A2FEB3FF5001FBB9F /* AirshipSceneRenderer.framework */; };
 		6014AD672C1B5F540072DCF0 /* ChallengeResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6014AD662C1B5F540072DCF0 /* ChallengeResolver.swift */; };
 		6014AD6C2C2032730072DCF0 /* ChallengeResolverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6014AD6A2C2032360072DCF0 /* ChallengeResolverTest.swift */; };
 		6014AD752C20410B0072DCF0 /* airship.der in Resources */ = {isa = PBXBuildFile; fileRef = 6014AD742C20410A0072DCF0 /* airship.der */; };
@@ -1110,6 +1113,8 @@
 		847B000B267CD85E007CD249 /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		847B0013267CE558007CD249 /* PreferenceCenterSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847B0012267CE558007CD249 /* PreferenceCenterSDKModule.swift */; };
 		847BFFFD267CD73A007CD249 /* AirshipPreferenceCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 847BFFF4267CD739007CD249 /* AirshipPreferenceCenter.framework */; };
+		8608B0DB0796604EF109D5DC /* DefaultThomasAIInferenceExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E8A8115FCD9AF8F6D97F45 /* DefaultThomasAIInferenceExecutor.swift */; };
+		92F0F772B79AD50E8911D7FF /* ThomasAIInferenceExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BA040E2618447908CAB2308 /* ThomasAIInferenceExecutor.swift */; };
 		990A09592B5C677C00244D90 /* InAppMessageWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990A09582B5C677C00244D90 /* InAppMessageWebView.swift */; };
 		990A09942B5CA5B700244D90 /* InAppMessageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990A09932B5CA5B700244D90 /* InAppMessageExtensions.swift */; };
 		990A09AF2B5DBD0400244D90 /* InAppMessageViewUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990A09AE2B5DBD0400244D90 /* InAppMessageViewUtils.swift */; };
@@ -1201,10 +1206,27 @@
 		E99605A727A075C600365AE4 /* OpenRegistrationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99605A627A075C600365AE4 /* OpenRegistrationOptions.swift */; };
 		EAB57CAC0000000000000002 /* AirshipCoalescingCacheTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAB57CAC0000000000000001 /* AirshipCoalescingCacheTest.swift */; };
 		EAB57CAC0000000000000004 /* AirshipCoalescingCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAB57CAC0000000000000003 /* AirshipCoalescingCache.swift */; };
+		EE295608520F2D2BD620F749 /* AirshipDebugSchemaBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4069204909960C806AB521D /* AirshipDebugSchemaBuilder.swift */; };
+		F653DE79C6B4C8A537B3BDF0 /* AirshipScenes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB723342FEB3FF7001FBB9F /* AirshipScenes.framework */; };
+		F797D433210B6125C32E3F9D /* ThomasAIInferenceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5185C83FBF3B88E6C218B38 /* ThomasAIInferenceInfo.swift */; };
 		FEFE000000000000000000B1 /* AirshipTestExpectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEFE000000000000000000A1 /* AirshipTestExpectation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		074F8F8D343ACE1134ED1288 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6EB723022FEB3FF5001FBB9F;
+			remoteInfo = AirshipSceneRenderer;
+		};
+		16434CF88BFB5D2BF01C5E37 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6EB7231C2FEB3FF7001FBB9F;
+			remoteInfo = AirshipScenes;
+		};
 		3C39D3072384C8B6003C50D4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 494DD94E1B0EB677009C134E /* Project object */;
@@ -2675,6 +2697,8 @@
 		847BFFF4267CD739007CD249 /* AirshipPreferenceCenter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipPreferenceCenter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		847BFFF7267CD73A007CD249 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		847BFFFC267CD73A007CD249 /* AirshipPreferenceCenterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipPreferenceCenterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		92E8A8115FCD9AF8F6D97F45 /* DefaultThomasAIInferenceExecutor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DefaultThomasAIInferenceExecutor.swift; sourceTree = "<group>"; };
+		949779F961CDB0D1DB694666 /* AirshipDebugSceneTextInputView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AirshipDebugSceneTextInputView.swift; sourceTree = "<group>"; };
 		990A09582B5C677C00244D90 /* InAppMessageWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageWebView.swift; sourceTree = "<group>"; };
 		990A09932B5CA5B700244D90 /* InAppMessageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageExtensions.swift; sourceTree = "<group>"; };
 		990A09AE2B5DBD0400244D90 /* InAppMessageViewUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageViewUtils.swift; sourceTree = "<group>"; };
@@ -2726,6 +2750,7 @@
 		99F662B12B60425E00696098 /* InAppMessageModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageModalView.swift; sourceTree = "<group>"; };
 		99F662D12B63047300696098 /* InAppMessageBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppMessageBannerView.swift; sourceTree = "<group>"; };
 		99FD20A42DEFC35900242551 /* MessageCenterUIKitAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterUIKitAppearance.swift; sourceTree = "<group>"; };
+		9BA040E2618447908CAB2308 /* ThomasAIInferenceExecutor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ThomasAIInferenceExecutor.swift; sourceTree = "<group>"; };
 		A61517B126A9C4C3008A41C4 /* SubscriptionListEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SubscriptionListEditor.swift; path = AirshipCore/Source/SubscriptionListEditor.swift; sourceTree = SOURCE_ROOT; };
 		A61517B426AEEAAB008A41C4 /* SubscriptionListUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SubscriptionListUpdate.swift; path = AirshipCore/Source/SubscriptionListUpdate.swift; sourceTree = SOURCE_ROOT; };
 		A61517C026B009D6008A41C4 /* SubscriptionListAPIClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionListAPIClient.swift; sourceTree = "<group>"; };
@@ -2756,6 +2781,7 @@
 		A6E9AD972D4D12C60091BBAF /* FeatureFlagUpdateStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlagUpdateStatus.swift; sourceTree = "<group>"; };
 		A6E9ADEC2D4D20300091BBAF /* InAppAutomationUpdateStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppAutomationUpdateStatus.swift; sourceTree = "<group>"; };
 		A6F0B18F2B837E36002D10A4 /* AutomationEngineTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationEngineTest.swift; sourceTree = "<group>"; };
+		B4069204909960C806AB521D /* AirshipDebugSchemaBuilder.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AirshipDebugSchemaBuilder.swift; sourceTree = "<group>"; };
 		C00ED4CE26C729390040C5D0 /* URLAllowList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLAllowList.swift; sourceTree = "<group>"; };
 		C02D0B6526C1A3E200F673E6 /* ChannelCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCapture.swift; sourceTree = "<group>"; };
 		C088383526E0244C00D40838 /* TestURLAllowList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestURLAllowList.swift; sourceTree = "<group>"; };
@@ -2769,6 +2795,8 @@
 		CC64F1491D8B7954009CEF27 /* development-embedded.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = "development-embedded.mobileprovision"; sourceTree = "<group>"; };
 		CC64F14A1D8B7954009CEF27 /* production-embedded.mobileprovision */ = {isa = PBXFileReference; lastKnownFileType = file; path = "production-embedded.mobileprovision"; sourceTree = "<group>"; };
 		DFD2464D2473404C000FD565 /* DebugSDKModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugSDKModule.swift; sourceTree = "<group>"; };
+		E42A9F4A0E1F3961F3E4B53D /* AirshipDebugJSONEditor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AirshipDebugJSONEditor.swift; sourceTree = "<group>"; };
+		E5185C83FBF3B88E6C218B38 /* ThomasAIInferenceInfo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ThomasAIInferenceInfo.swift; sourceTree = "<group>"; };
 		E976486E27A46CC50024518D /* ChannelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelType.swift; sourceTree = "<group>"; };
 		E99605A027A071EA00365AE4 /* EmailRegistrationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailRegistrationOptions.swift; sourceTree = "<group>"; };
 		E99605A327A075B800365AE4 /* SMSRegistrationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SMSRegistrationOptions.swift; sourceTree = "<group>"; };
@@ -2802,6 +2830,8 @@
 				3CA0E2A0237CCE2600EE76CF /* AirshipCore.framework in Frameworks */,
 				3C39D3092384C8BE003C50D4 /* AirshipMessageCenter.framework in Frameworks */,
 				6E2F5A932A67316C00CABD3D /* AirshipFeatureFlags.framework in Frameworks */,
+				4C3A98AFF491F8226970810E /* AirshipSceneRenderer.framework in Frameworks */,
+				F653DE79C6B4C8A537B3BDF0 /* AirshipScenes.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3615,6 +3645,7 @@
 				6E21C2F72FEC3B9900EA3E56 /* ThomasPagerControllerBranching.swift */,
 				6E21C2F82FEC3B9900EA3E56 /* ThomasSmsLocale.swift */,
 				6E21C2F92FEC3B9900EA3E56 /* NativeLayoutControlOptions.swift */,
+				E5185C83FBF3B88E6C218B38 /* ThomasAIInferenceInfo.swift */,
 			);
 			path = Types;
 			sourceTree = "<group>";
@@ -4564,6 +4595,7 @@
 				6EAFC25C2FF2DEE3005FA58D /* AirshipWebViewChallengeResolver.swift */,
 				6EAFC25A2FF2DEC5005FA58D /* AsyncViewResolver.swift */,
 				6EAFC2552FF2DE15005FA58D /* ThomasLocalizer.swift */,
+				9BA040E2618447908CAB2308 /* ThomasAIInferenceExecutor.swift */,
 			);
 			path = "Thomas Extensions";
 			sourceTree = "<group>";
@@ -4579,6 +4611,7 @@
 				6EAFC2692FF2E026005FA58D /* DefaultWebViewChallengeResolver.swift */,
 				6EAFC2672FF2DFF5005FA58D /* DefaultThomasLocalizer.swift */,
 				6EAFC2652FF2DFDD005FA58D /* DefaultAsyncViewResolver.swift */,
+				92E8A8115FCD9AF8F6D97F45 /* DefaultThomasAIInferenceExecutor.swift */,
 			);
 			path = "Thomas Extensions";
 			sourceTree = "<group>";
@@ -4768,6 +4801,9 @@
 			isa = PBXGroup;
 			children = (
 				6EB21B012E81BB6E001A5660 /* AirshipDebugAIView.swift */,
+				E42A9F4A0E1F3961F3E4B53D /* AirshipDebugJSONEditor.swift */,
+				B4069204909960C806AB521D /* AirshipDebugSchemaBuilder.swift */,
+				949779F961CDB0D1DB694666 /* AirshipDebugSceneTextInputView.swift */,
 			);
 			path = AI;
 			sourceTree = "<group>";
@@ -5808,6 +5844,8 @@
 				3CA0E2DA237CD59100EE76CF /* PBXTargetDependency */,
 				3C39D3082384C8B6003C50D4 /* PBXTargetDependency */,
 				6E2F5A962A67316C00CABD3D /* PBXTargetDependency */,
+				237A2CE8DABDAD18B3F0E5FE /* PBXTargetDependency */,
+				37E31382686859C2786BF673 /* PBXTargetDependency */,
 			);
 			name = AirshipDebug;
 			productName = AirshipDebug;
@@ -6571,6 +6609,9 @@
 				6EB21B5F2E82FE9F001A5660 /* AirshipDebugAudienceSubject.swift in Sources */,
 				6EB21A8F2E81BB6E001A5660 /* AirshipDebugAddOpenChannelView.swift in Sources */,
 				6E6CC38623A3F9B4003D583C /* PushDataManager.swift in Sources */,
+				1C3CB5F0AA3805397BC51E57 /* AirshipDebugJSONEditor.swift in Sources */,
+				EE295608520F2D2BD620F749 /* AirshipDebugSchemaBuilder.swift in Sources */,
+				2C8EF1E6E4E1523BB533C1DB /* AirshipDebugSceneTextInputView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7367,6 +7408,8 @@
 				6E21C3252FEC3B9900EA3E56 /* ThomasButtonClickBehavior.swift in Sources */,
 				6E21C3262FEC3B9900EA3E56 /* ThomasWindowSize.swift in Sources */,
 				6E21C3272FEC3B9900EA3E56 /* ThomasBorder.swift in Sources */,
+				92F0F772B79AD50E8911D7FF /* ThomasAIInferenceExecutor.swift in Sources */,
+				F797D433210B6125C32E3F9D /* ThomasAIInferenceInfo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7405,6 +7448,7 @@
 				6EB966492FEEE44A00459ED3 /* ThomasLayoutEvent.swift in Sources */,
 				6EB9664A2FEEE44A00459ED3 /* ThomasLayoutPageActionEvent.swift in Sources */,
 				6EB9664B2FEEE44A00459ED3 /* ThomasLayoutGestureEvent.swift in Sources */,
+				8608B0DB0796604EF109D5DC /* DefaultThomasAIInferenceExecutor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7748,6 +7792,18 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		237A2CE8DABDAD18B3F0E5FE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipSceneRenderer;
+			target = 6EB723022FEB3FF5001FBB9F /* AirshipSceneRenderer */;
+			targetProxy = 074F8F8D343ACE1134ED1288 /* PBXContainerItemProxy */;
+		};
+		37E31382686859C2786BF673 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AirshipScenes;
+			target = 6EB7231C2FEB3FF7001FBB9F /* AirshipScenes */;
+			targetProxy = 16434CF88BFB5D2BF01C5E37 /* PBXContainerItemProxy */;
+		};
 		3C39D3082384C8B6003C50D4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3CA0E346237E4A7B00EE76CF /* AirshipMessageCenter */;

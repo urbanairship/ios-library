@@ -31,6 +31,11 @@ final class ThomasFormField: Sendable {
         var value: Value
         var channels: [Channel]? = nil
         var attributes: [Attribute]? = nil
+
+        /// On-device AI inference output derived from the input (`ai_inference` config).
+        /// Projected into the form state payload for predicates/branching; not part of
+        /// the submitted form value.
+        var aiInference: AirshipJSON? = nil
     }
     
     enum Status: Equatable, Sendable {

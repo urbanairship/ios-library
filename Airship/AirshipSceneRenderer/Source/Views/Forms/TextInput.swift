@@ -41,7 +41,8 @@ struct TextInput: View {
     init(
         info: ThomasViewInfo.TextInput,
         constraints: ViewConstraints,
-        inputValidator: (any AirshipInputValidation.Validator)?
+        inputValidator: (any AirshipInputValidation.Validator)?,
+        aiInferenceExecutor: (any ThomasAIInferenceExecutor)?
     ) {
         self.info = info
         self.constraints = constraints
@@ -50,7 +51,8 @@ struct TextInput: View {
             wrappedValue: ViewModel(
                 inputProperties: info.properties,
                 isRequired: info.validation.isRequired ?? false,
-                inputValidator: inputValidator
+                inputValidator: inputValidator,
+                aiInferenceExecutor: aiInferenceExecutor
             )
         )
     }
@@ -244,15 +246,25 @@ struct TextInput: View {
 
     @MainActor
     private final class ViewModel: ObservableObject {
+        /// How long the input must be idle before it's sent to the on-device model.
+        /// Longer than validation's delay — evaluations are expensive.
+        private static let aiInferenceProcessDelay: TimeInterval = 2.0
+
         private let inputProperties: ThomasViewInfo.TextInput.Properties
         private let isRequired: Bool
 
         private let inputValidator: (any AirshipInputValidation.Validator)?
+        private let aiInferenceExecutor: (any ThomasAIInferenceExecutor)?
+
+        /// The last completed inference, so unchanged text (e.g. the restore path
+        /// re-making the field, or trailing-whitespace edits) reuses the result
+        /// instead of re-running the model.
+        private var lastInference: (text: String, output: AirshipJSON)?
 
         @Published
         var formField: ThomasFormField?
         private var lastInput: String?
-        
+
         @Published
         var selectedSMSLocale: ThomasSMSLocale?
         let availableLocales: [ThomasSMSLocale]?
@@ -273,11 +285,13 @@ struct TextInput: View {
         init(
             inputProperties: ThomasViewInfo.TextInput.Properties,
             isRequired: Bool,
-            inputValidator: (any AirshipInputValidation.Validator)?
+            inputValidator: (any AirshipInputValidation.Validator)?,
+            aiInferenceExecutor: (any ThomasAIInferenceExecutor)?
         ) {
             self.inputProperties = inputProperties
             self.isRequired = isRequired
             self.inputValidator = inputValidator
+            self.aiInferenceExecutor = aiInferenceExecutor
             self.availableLocales = inputProperties.smsLocales
             self.selectedSMSLocale = inputProperties.smsLocales?.first
         }
@@ -454,20 +468,103 @@ struct TextInput: View {
                     }
                 }
             case .number, .text, .textMultiline:
-                return if trimmed.isEmpty, isRequired {
-                    ThomasFormField.invalidField(
-                        identifier: inputProperties.identifier,
-                        input: .text(input)
-                    )
-                } else {
-                    ThomasFormField.validField(
+                guard !trimmed.isEmpty else {
+                    return if isRequired {
+                        ThomasFormField.invalidField(
+                            identifier: inputProperties.identifier,
+                            input: .text(input)
+                        )
+                    } else {
+                        ThomasFormField.validField(
+                            identifier: inputProperties.identifier,
+                            input: .text(input),
+                            result: .init(
+                                value: .text(trimmed),
+                                attributes: self.makeAttributes(value: trimmed)
+                            )
+                        )
+                    }
+                }
+
+                var result = ThomasFormField.Result(
+                    value: .text(trimmed),
+                    attributes: self.makeAttributes(value: trimmed)
+                )
+
+                // Unchanged text — reuse the completed inference instead of
+                // re-running the model.
+                if let lastInference, lastInference.text == trimmed {
+                    result.aiInference = lastInference.output
+                    return ThomasFormField.validField(
                         identifier: inputProperties.identifier,
                         input: .text(input),
-                        result: .init(
-                            value: .text(trimmed),
-                            attributes: self.makeAttributes(value: trimmed)
-                        )
+                        result: result
                     )
+                }
+
+                guard
+                    let aiInference = inputProperties.aiInference,
+                    let executor = aiInferenceExecutor,
+                    executor.isAvailable
+                else {
+                    // No model right now — fail open without the async settle delay
+                    // so the form never waits on inference that can't happen. Mark
+                    // the result failed so layouts can branch to a non-AI path.
+                    if inputProperties.aiInference != nil {
+                        result.aiInference = .object(["status": "failed"])
+                    }
+                    return ThomasFormField.validField(
+                        identifier: inputProperties.identifier,
+                        input: .text(input),
+                        result: result
+                    )
+                }
+
+                // Post-process the text through the on-device model like email/SMS
+                // post-process through validation — the async field machinery provides
+                // the settle delay, cancellation on newer input, and pending status
+                // (the field resolves once inference lands, so its `ai` payload shows
+                // up in the form state projection for predicates/branching).
+                let request = ThomasAIInferenceRequest(
+                    prompt: aiInference.prompt,
+                    text: trimmed,
+                    outputSchema: aiInference.outputSchema
+                )
+
+                let identifier = inputProperties.identifier
+
+                return ThomasFormField.asyncField(
+                    identifier: inputProperties.identifier,
+                    input: .text(input),
+                    processDelay: Self.aiInferenceProcessDelay
+                ) { [weak self, executor] in
+                    let output = await executor.run(request: request)
+
+                    // A superseded field is cancelled by the form state — bail before
+                    // resolving a stale result.
+                    try Task.checkCancellation()
+
+                    // Object outputs are flattened next to `status` so predicates can
+                    // match fields directly (e.g. `...status.ai.result`); scalar and
+                    // array outputs land under `result` (`...status.ai.result`).
+                    var ai: [String: AirshipJSON]
+                    switch output {
+                    case .some(let output):
+                        ai = output.object ?? ["result": output]
+                        ai["status"] = "complete"
+                    case .none:
+                        // The executor logs why (unavailable/failed); this logs which
+                        // input, the context the executor doesn't have.
+                        AirshipLogger.debug("Scene AI inference produced no output for input \(identifier)")
+                        ai = ["status": "failed"]
+                    }
+
+                    var result = result
+                    result.aiInference = .object(ai)
+                    self?.lastInference = (trimmed, .object(ai))
+
+                    // Fail open: inference never invalidates the field itself.
+                    return .valid(result)
                 }
             }
         }
@@ -533,6 +630,17 @@ fileprivate struct AirshipTextField: View {
                 }
 
                 isEditing = newValue
+            }
+            .airshipOnChangeOf(thomasEnvironment.keyboardDismissRequest) { _ in
+                // A button (or navigation) asked us to give up focus. Clear the SwiftUI
+                // FocusState — not just the UIKit responder — so the two stay in sync and
+                // nothing re-focuses this field on a later re-layout. Deferred: FocusState
+                // writes made during a view update can be dropped.
+                if focused {
+                    Task { @MainActor in
+                        self.focused = false
+                    }
+                }
             }
             .airshipOnChangeOf(isVisible) { visible in
                 // Resign focus when this input's page scrolls away. A focused field

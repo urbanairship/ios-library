@@ -3,7 +3,7 @@
 import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
-public import AirshipCore
+@_spi(AirshipInternal) public import AirshipCore
 
 /// Arguments passed to display adapters when creating or displaying an in-app message.
 public struct DisplayAdapterArgs: Sendable {
@@ -20,8 +20,11 @@ public struct DisplayAdapterArgs: Sendable {
     public var actionRunner: any InAppActionRunner {
         return _actionRunner
     }
-    
+
     var _actionRunner: any InternalInAppActionRunner
+
+    /// AI manager handed to layout adapters for scene text-input inference.
+    var _aiManager: (any AirshipAI.InternalManager)? = nil
 }
 
 protocol DisplayAdapterFactoryProtocol: Sendable {
@@ -86,7 +89,8 @@ final class DisplayAdapterFactory: DisplayAdapterFactoryProtocol, Sendable {
             message: args.message,
             priority: args.priority,
             assets: args.assets,
-            actionRunner: args._actionRunner
+            actionRunner: args._actionRunner,
+            aiManager: args._aiManager
         )
     }
 }

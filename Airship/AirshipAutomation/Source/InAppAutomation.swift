@@ -60,6 +60,42 @@ public protocol InAppAutomation: AnyObject, Sendable {
     ///  - Parameters
     ///     - maxTime: Timeout in seconds.
     func waitRefresh(maxTime: TimeInterval?) async
+
+    /// View-testing surface for displaying messages directly, bypassing the automation
+    /// pipeline. Lives here rather than on `InAppMessaging` so it stays out of that
+    /// app-facing (and test-mocked) protocol.
+    /// - Note: For internal use only. :nodoc:
+    @_spi(AirshipInternal)
+    var viewTester: InAppMessageViewTester { get }
+}
+
+@_spi(AirshipInternal)
+public extension InAppAutomation {
+    /// Unavailable unless the concrete automation supplies a real tester (the default
+    /// exists only to satisfy the `@_spi` requirement).
+    var viewTester: InAppMessageViewTester { InAppMessageViewTester(executor: nil) }
+}
+
+/// Displays in-app messages directly for view-testing, bypassing the automation pipeline.
+/// Reached via `Airship.inAppAutomation.viewTester`; wired with the message executor so it
+/// reuses the real scene/display plumbing and the AI manager injected at module load.
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
+public struct InAppMessageViewTester: Sendable {
+    private let executor: InAppMessageAutomationExecutor?
+
+    init(executor: InAppMessageAutomationExecutor?) {
+        self.executor = executor
+    }
+
+    /// Displays the message directly, bypassing the automation pipeline.
+    @MainActor
+    public func display(message: InAppMessage) async throws {
+        guard let executor else {
+            throw AirshipErrors.error("In-app message view testing is unavailable")
+        }
+        try await executor.displayTest(message: message)
+    }
 }
 
 internal protocol InternalInAppAutomation: InAppAutomation {
@@ -80,6 +116,9 @@ final class DefaultInAppAutomation: InternalInAppAutomation, Sendable {
     /// In-App Messaging
     let inAppMessaging: any InAppMessaging
 
+    /// View-testing display surface, injected at module load.
+    let viewTester: InAppMessageViewTester
+
     /// Legacy In-App Messaging
     var legacyInAppMessaging: any LegacyInAppMessaging {
         return _legacyInAppMessaging
@@ -95,6 +134,7 @@ final class DefaultInAppAutomation: InternalInAppAutomation, Sendable {
         dataStore: PreferenceDataStore,
         privacyManager: any AirshipPrivacyManager,
         config: RuntimeConfig,
+        viewTester: InAppMessageViewTester = InAppMessageViewTester(executor: nil),
         notificationCenter: AirshipNotificationCenter = .shared
     ) {
         self.engine = engine
@@ -105,6 +145,7 @@ final class DefaultInAppAutomation: InternalInAppAutomation, Sendable {
         self.privacyManager = privacyManager
         self.notificationCenter = notificationCenter
         self.remoteData = remoteData
+        self.viewTester = viewTester
 
         if (config.airshipConfig.autoPauseInAppAutomationOnLaunch) {
             self.isPaused = true

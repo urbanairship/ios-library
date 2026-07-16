@@ -202,7 +202,7 @@ extension LayoutFile {
         let message = InAppMessage(name: "thomas", displayContent: .airshipLayout(layout))
 
         Task { @MainActor in
-            try await message._display()
+            try await Airship.inAppAutomation.viewTester.display(message: message)
         }
     }
 
@@ -223,7 +223,7 @@ extension LayoutFile {
         }
 
         Task { @MainActor in
-            try await message._display()
+            try await Airship.inAppAutomation.viewTester.display(message: message)
         }
     }
 }

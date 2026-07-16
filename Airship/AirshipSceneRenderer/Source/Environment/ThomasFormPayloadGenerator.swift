@@ -13,6 +13,7 @@ struct ThomasFormPayloadGenerator {
     private static let statusKey = "status"
     private static let resultKey = "result"
     private static let dataKey = "data"
+    private static let aiKey = "ai"
 
     /**
      * This is using an opaque AirshipJSON instead of structured types so we could expose the value to
@@ -178,6 +179,7 @@ struct ThomasFormPayloadGenerator {
             case .valid(let result):
                 builder.set(string: "valid", key: Self.typeKey)
                 builder.set(json: makeValuePayload(result.value), key: Self.resultKey)
+                builder.set(json: result.aiInference, key: Self.aiKey)
             case .invalid:
                 builder.set(string: "invalid", key: Self.typeKey)
             case .pending:

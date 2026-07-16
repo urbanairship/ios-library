@@ -14,15 +14,22 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     private let analyticsFactory: any InAppMessageAnalyticsFactoryProtocol
     private let scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier
 
+    /// Injected at module load so the view-testing `displayTest` path can build a layout
+    /// adapter without resolving the AI manager from the shared `Airship` instance.
+    /// `nil` when no on-device model is available.
+    private let aiManager: (any AirshipAI.InternalManager)?
+
 #if os(macOS)
     init(
         assetManager: any AssetCacheManagerProtocol,
         analyticsFactory: any InAppMessageAnalyticsFactoryProtocol,
-        scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier
+        scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier,
+        aiManager: (any AirshipAI.InternalManager)? = nil
     ) {
         self.assetManager = assetManager
         self.analyticsFactory = analyticsFactory
         self.scheduleConditionsChangedNotifier = scheduleConditionsChangedNotifier
+        self.aiManager = aiManager
     }
 #else
     private let sceneManager: any InAppMessageSceneManagerProtocol
@@ -42,12 +49,14 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         sceneManager: any InAppMessageSceneManagerProtocol,
         assetManager: any AssetCacheManagerProtocol,
         analyticsFactory: any InAppMessageAnalyticsFactoryProtocol,
-        scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier
+        scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier,
+        aiManager: (any AirshipAI.InternalManager)? = nil
     ) {
         self.sceneManager = sceneManager
         self.assetManager = assetManager
         self.analyticsFactory = analyticsFactory
         self.scheduleConditionsChangedNotifier = scheduleConditionsChangedNotifier
+        self.aiManager = aiManager
     }
 #endif
 
@@ -116,6 +125,32 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         }
 
         return .ready
+    }
+
+    /// Displays a message directly for view-testing, bypassing the automation pipeline.
+    /// Reuses the same scene plumbing as the normal execute path and the AI manager
+    /// injected at module load, so nothing is resolved from the shared `Airship` instance.
+    @MainActor
+    func displayTest(message: InAppMessage) async throws {
+        let adapter = try AirshipLayoutDisplayAdapter(
+            message: message,
+            priority: 0,
+            assets: EmptyAirshipCachedAssets(),
+            aiManager: self.aiManager
+        )
+
+#if os(macOS)
+        let displayTarget = AirshipDisplayTarget()
+#else
+        let displayTarget = AirshipDisplayTarget {
+            try self.sceneManager.scene(forMessage: message).scene
+        }
+#endif
+
+        _ = try await adapter.display(
+            displayTarget: displayTarget,
+            analytics: LoggingInAppMessageAnalytics()
+        )
     }
 
     @MainActor

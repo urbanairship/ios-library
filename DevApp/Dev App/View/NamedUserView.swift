@@ -48,8 +48,8 @@ struct NamedUserView: View {
         public var namedUserID: String = ""
 
         init() {
-            Airship.onReady {
-                Task { @MainActor [weak self] in
+            Airship.onReady { [weak self] in
+                Task { @MainActor in
                     self?.namedUserID = await Airship.contact.namedUserID ?? ""
                 }
             }

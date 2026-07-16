@@ -518,25 +518,16 @@ struct Pager: View {
     private func handlePageChange(_ pageID: String) {
         reportPage(pageID: pageID)
 
-        guard pageID != scrollPosition else { return }
+        // Dismiss the keyboard on any page change — button, programmatic, or swipe. This
+        // runs before the scroll-sync guard below so it fires even for a swipe (which has
+        // already moved scrollPosition to the new page). A focused text input on the
+        // outgoing page otherwise stays first responder and UIKit keyboard-avoidance
+        // scrolls the pager back to reveal it — undoing the navigation. The signal only
+        // resigns this layout's focused input (in sync with SwiftUI, so nothing
+        // re-focuses); it never touches the host app's keyboard, so it's always safe to ask.
+        thomasEnvironment.requestKeyboardDismiss()
 
-#if canImport(UIKit) && !os(watchOS)
-        // End editing before the scroll starts. A focused text input on the
-        // outgoing page stays first responder, and UIKit's keyboard avoidance
-        // scrolls the pager back to reveal it — undoing the navigation. The
-        // SwiftUI-side focus reset in AirshipTextField lands too late to stop
-        // it, so resign through the responder chain here. Only when one of this
-        // layout's inputs holds focus — the first responder is then ours, so an
-        // embedded pager never drops the host app's keyboard.
-        if thomasEnvironment.focusedID != nil {
-            UIApplication.shared.sendAction(
-                #selector(UIResponder.resignFirstResponder),
-                to: nil,
-                from: nil,
-                for: nil
-            )
-        }
-#endif
+        guard pageID != scrollPosition else { return }
 
         if scrollPosition != nil {
             if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {

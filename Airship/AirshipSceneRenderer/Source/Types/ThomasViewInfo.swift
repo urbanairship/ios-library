@@ -1752,6 +1752,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var iconEnd: IconEndInfo?
             var emailRegistration: ThomasEmailRegistrationOption?
             var smsLocales: [ThomasSMSLocale]?
+            var aiInference: ThomasAIInferenceInfo?
 
             enum CodingKeys: String, CodingKey {
                 case attributeName = "attribute_name"
@@ -1763,6 +1764,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case iconEnd = "icon_end"
                 case emailRegistration = "email_registration"
                 case smsLocales = "locales"
+                case aiInference = "ai_inference"
             }
         }
 

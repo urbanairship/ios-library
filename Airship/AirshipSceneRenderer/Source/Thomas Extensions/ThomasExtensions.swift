@@ -22,6 +22,10 @@ public protocol ThomasExtensions: Sendable {
     /// isn't flying), in which case those fields resolve as invalid.
     var inputValidator: (any AirshipInputValidation.Validator)? { get }
 
+    /// Runs on-device AI inference for text inputs. `nil` when no AI manager is available,
+    /// in which case `ai_inference` configs are ignored.
+    var aiInferenceExecutor: (any ThomasAIInferenceExecutor)? { get }
+
     /// Resolves localized strings (e.g. accessibility labels) from the host's resource bundle.
     var localizer: any ThomasLocalizer { get }
 

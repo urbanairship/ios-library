@@ -155,7 +155,8 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
                 message: message,
                 assets: assets,
                 priority: preparedScheduleInfo.priority,
-                _actionRunner: actionRunner
+                _actionRunner: actionRunner,
+                _aiManager: aiManager
             )
         )
 

@@ -39,7 +39,12 @@ struct ViewFactory: Sendable {
         case .npsController(let info):
             FormController(info: .nps(info), constraints: constraints)
         case .textInput(let info):
-            TextInput(info: info, constraints: constraints, inputValidator: extensions.inputValidator)
+            TextInput(
+                info: info,
+                constraints: constraints,
+                inputValidator: extensions.inputValidator,
+                aiInferenceExecutor: extensions.aiInferenceExecutor
+            )
         case .pagerController(let info):
             PagerController(info: info, constraints: constraints)
         case .pagerIndicator(let info):
