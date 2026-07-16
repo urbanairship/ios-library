@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import AirshipCore
+import Foundation
 
 /// Model object for holding user data.
 /// - Note: For internal use only. :nodoc:
@@ -27,9 +27,9 @@ public struct MessageCenterUser: Codable, Sendable, Equatable {
 @_spi(AirshipInternal)
 extension MessageCenterUser {
     public var basicAuthString: String {
-        return AirshipUtils.authHeader(
-            username: self.username,
-            password: self.password
-        ) ?? ""
+        guard let data = "\(self.username):\(self.password)".data(using: .utf8) else {
+            return ""
+        }
+        return "Basic \(data.base64EncodedString())"
     }
 }

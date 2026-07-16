@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+import CommonCrypto
 import Foundation
 
 public import AirshipCore
@@ -262,10 +263,33 @@ public struct EventAutomationTrigger: Sendable, Codable, Equatable {
             components.append(json)
         }
 
-        self.id = AirshipUtils.sha256Hash(
+        self.id = AutomationTriggerHash.sha256Hash(
             input: components.joined(separator: ":")
         )
         self.allowBackfillID = false
+    }
+}
+
+/// Stable SHA256 hashing used to backfill automation trigger identifiers.
+private enum AutomationTriggerHash {
+    static func sha256Hash(input: String) -> String {
+        let digestLength = Int(CC_SHA256_DIGEST_LENGTH)
+        let digest = sha256Digest(input: input)
+        var buffer = [UInt8](repeating: 0, count: digestLength)
+        digest.getBytes(&buffer, length: digestLength)
+
+        return buffer.map { String(format: "%02x", $0) }.joined(separator: "")
+    }
+
+    private static func sha256Digest(input: String) -> NSData {
+        guard let dataIn = input.data(using: .utf8) as NSData? else {
+            return NSData()
+        }
+        let digestLength = Int(CC_SHA256_DIGEST_LENGTH)
+        var digest = [UInt8](repeating: 0, count: digestLength)
+        CC_SHA256(dataIn.bytes, CC_LONG(dataIn.count), &digest)
+
+        return NSData(bytes: digest, length: digestLength)
     }
 }
 

@@ -2,20 +2,15 @@
 
 import CommonCrypto
 import Foundation
-public import SwiftUI
 @_spi(AirshipInternal) import AirshipBasement
 
-#if !os(watchOS)
-import SystemConfiguration
-#endif
-
-#if os(iOS) && !targetEnvironment(macCatalyst)
-import CoreTelephony
+#if !os(watchOS) && !os(macOS)
+import UIKit
 #endif
 
 
 /// The `Utils` object provides an interface for utility methods.
-public final class AirshipUtils {
+final class AirshipUtils {
 
     // MARK: Device Utilities
 
@@ -23,7 +18,7 @@ public final class AirshipUtils {
     /// Gets the short bundle version string.
     ///
     /// - Returns: A short bundle version string value.
-    public class func bundleShortVersionString() -> String? {
+    class func bundleShortVersionString() -> String? {
         return Bundle.main.infoDictionary?["CFBundleShortVersionString"]
             as? String
     }
@@ -38,7 +33,7 @@ public final class AirshipUtils {
     ///
     /// - Returns: The main window, or `nil` if the window cannot be found.
     @MainActor
-    public class func mainWindow() throws -> UIWindow? {
+    class func mainWindow() throws -> UIWindow? {
         let scene = try AirshipSceneManager.shared.lastActiveScene
 
         let sharedApp: UIApplication = UIApplication.shared
@@ -59,7 +54,7 @@ public final class AirshipUtils {
     ///
     /// - Returns: The main window, or `nil` if the window cannot be found.
     @MainActor
-    public class func mainWindow(scene: UIWindowScene) -> UIWindow? {
+    class func mainWindow(scene: UIWindowScene) -> UIWindow? {
         for w in scene.windows {
             if !w.isHidden {
                 return w
@@ -79,7 +74,7 @@ public final class AirshipUtils {
     /// - Parameter notification The notification payload.
     ///
     /// - Returns: `true` the notification is a silent push, `false` otherwise.
-    public class func isSilentPush(_ notification: [AnyHashable: Any]) -> Bool {
+    class func isSilentPush(_ notification: [AnyHashable: Any]) -> Bool {
         guard let apsDict = notification["aps"] as? [AnyHashable: Any] else {
             return true
         }
@@ -106,7 +101,7 @@ public final class AirshipUtils {
     /// - Parameter notification The notification payload.
     ///
     /// - Returns: `true` the notification is an alerting  push, `false` otherwise.
-    public class func isAlertingPush(_ notification: [AnyHashable: Any]) -> Bool
+    class func isAlertingPush(_ notification: [AnyHashable: Any]) -> Bool
     {
         guard let apsDict = notification["aps"] as? [AnyHashable: Any] else {
             return false
@@ -135,7 +130,7 @@ public final class AirshipUtils {
     /// - Parameter token: An APNS-provided device token.
     ///
     /// - Returns: The decoded Airship device token.
-    public class func deviceTokenStringFromDeviceToken(_ token: Data) -> String
+    class func deviceTokenStringFromDeviceToken(_ token: Data) -> String
     {
         var tokenString = ""
 
@@ -153,7 +148,7 @@ public final class AirshipUtils {
     ///
     /// - Parameter input: `String` for which to calculate SHA.
     /// - Returns: The `SHA256` digest as `NSData`.
-    public class func sha256Digest(input: String) -> NSData {
+    class func sha256Digest(input: String) -> NSData {
         guard let dataIn = input.data(using: .utf8) as NSData? else {
             return NSData()
         }
@@ -169,7 +164,7 @@ public final class AirshipUtils {
     /// - Parameter input: Input string for which to calculate SHA.
     ///
     /// - Returns: SHA256 digest as a hex string
-    public class func sha256Hash(input: String) -> String {
+    class func sha256Hash(input: String) -> String {
         let digestLength = Int(CC_SHA256_DIGEST_LENGTH)
         let digest = sha256Digest(input: input)
         var buffer = [UInt8](repeating: 0, count: digestLength)
@@ -178,32 +173,6 @@ public final class AirshipUtils {
         return buffer.map { String(format: "%02x", $0) }.joined(separator: "")
     }
 
-    // MARK: UAHTTP Authenticated Request Helpers
-
-    /// Returns a basic auth header string.
-    ///
-    /// - Parameters:
-    ///   - username: The username.
-    ///   - password: The password.
-    /// - Returns: An HTTP Basic Auth header string value for the provided credentials in the form of: `Basic [Base64 Encoded "username:password"]`
-    public class func authHeader(username: String, password: String) -> String?
-    {
-        guard let data = "\(username):\(password)".data(using: .utf8) else {
-            return nil
-        }
-        guard let encodedData = AirshipBase64.string(from: data) else {
-            return nil
-        }
-        let authString =
-            encodedData
-            //strip carriage return and linefeed characters
-            .replacingOccurrences(of: "\n", with: "")
-            .replacingOccurrences(of: "\r", with: "")
-
-        return "Basic \(authString)"
-    }
-
-   
     // MARK: URL
 
     /// Parse url for the input string.
@@ -211,7 +180,7 @@ public final class AirshipUtils {
     /// - Parameter value: Input string for which to create the URL.
     ///
     /// - Returns: returns the created URL otherwise return nil.
-    public class func parseURL(_ value: String) -> URL? {
+    class func parseURL(_ value: String) -> URL? {
         if let url = URL(string: value) {
             return url
         }

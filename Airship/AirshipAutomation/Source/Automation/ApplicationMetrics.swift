@@ -50,7 +50,7 @@ final class ApplicationMetrics: ApplicationMetricsProtocol {
         dataStore: PreferenceDataStore,
         privacyManager: any AirshipPrivacyManager,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
-        appVersion: String? = AirshipUtils.bundleShortVersionString()
+        appVersion: String? = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
     ) {
         self.dataStore = dataStore
         self.privacyManager = privacyManager

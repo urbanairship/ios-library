@@ -33,7 +33,7 @@ public struct DeferredRequest: Sendable, Equatable {
         triggerContext: AirshipTriggerContext? = nil,
         locale: Locale,
         notificationOptIn: Bool,
-        appVersion: String = AirshipUtils.bundleShortVersionString() ?? "",
+        appVersion: String = (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "",
         sdkVersion: String = AirshipVersion.version
     ) {
         self.url = url
