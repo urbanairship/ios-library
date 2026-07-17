@@ -33,3 +33,4 @@ DerivedData
 **/.claude/settings.local.json
 .build/
 .dependencies/
+.bundle/
