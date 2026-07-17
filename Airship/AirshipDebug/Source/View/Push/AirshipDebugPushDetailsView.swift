@@ -23,7 +23,7 @@ struct AirshipDebugPushDetailsView: View {
 
 
     @MainActor
-    class ViewModel: ObservableObject {
+    final class ViewModel: ObservableObject {
         @Published private(set) var pushNotification: PushNotification?
 
         init(identifier: String) {

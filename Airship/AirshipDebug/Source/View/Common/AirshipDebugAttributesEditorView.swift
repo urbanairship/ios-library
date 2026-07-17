@@ -292,7 +292,7 @@ struct AirshipDebugAttributesEditorView: View {
 fileprivate struct MultilineTextView: UIViewRepresentable {
     @Binding var text: String
 
-    class Coordinator: NSObject, UITextViewDelegate {
+    final class Coordinator: NSObject, UITextViewDelegate {
         var parent: MultilineTextView
         init(_ parent: MultilineTextView) { self.parent = parent }
         func textViewDidChange(_ textView: UITextView) { parent.text = textView.text }

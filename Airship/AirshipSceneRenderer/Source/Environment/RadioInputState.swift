@@ -6,7 +6,7 @@ import Combine
 import AirshipBasement
 
 @MainActor
-class RadioInputState: ObservableObject {
+final class RadioInputState: ObservableObject {
 
     @Published
     private(set) var selected: Selected?

@@ -4,7 +4,7 @@ import Foundation
 import Combine
 
 @MainActor
-class VideoGroupState: ObservableObject {
+final class VideoGroupState: ObservableObject {
     @Published var isMuted: Bool = false
     @Published var isPlaying: Bool = false
 
@@ -25,7 +25,7 @@ class VideoGroupState: ObservableObject {
 }
 
 @MainActor
-class VideoGroups {
+final class VideoGroups {
     private var muteGroups: [String: VideoGroupState]
     private var playGroups: [String: VideoGroupState]
 

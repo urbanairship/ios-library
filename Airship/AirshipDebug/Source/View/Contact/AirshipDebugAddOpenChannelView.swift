@@ -91,7 +91,7 @@ struct AirshipDebugAddOpenChannelView: View {
     }
 
     @MainActor
-    class ViewModel: ObservableObject {
+    final class ViewModel: ObservableObject {
         @Published var identifiers: [String: String] = [:]
         @Published var address: String = ""
         @Published var platformName: String = ""

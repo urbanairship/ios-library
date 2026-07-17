@@ -4,7 +4,7 @@ import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 /// Scoped subscription list editor.
-public class ScopedSubscriptionListEditor {
+public final class ScopedSubscriptionListEditor {
 
     private var subscriptionListUpdates: [ScopedSubscriptionListUpdate] = []
     private let date: any AirshipDateProtocol

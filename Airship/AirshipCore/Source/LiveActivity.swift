@@ -173,7 +173,7 @@ extension Data {
 
 @MainActor
 @available(iOS 16.1, *)
-fileprivate class AirshipBackgroundTask {
+fileprivate final class AirshipBackgroundTask {
 
     private var taskID: UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
 

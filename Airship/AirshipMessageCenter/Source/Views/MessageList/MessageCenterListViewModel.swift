@@ -7,7 +7,7 @@ import AirshipCore
 
 /// A view model for the message center list.
 @MainActor
-public class MessageCenterMessageListViewModel: ObservableObject {
+public final class MessageCenterMessageListViewModel: ObservableObject {
 
     /// The list of messages.
     @Published

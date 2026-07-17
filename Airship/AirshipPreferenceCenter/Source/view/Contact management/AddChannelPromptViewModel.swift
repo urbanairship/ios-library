@@ -9,7 +9,7 @@ import Combine
 import AirshipCore
 
 @MainActor
-internal class AddChannelPromptViewModel: ObservableObject {
+internal final class AddChannelPromptViewModel: ObservableObject {
     let inputValidator: (any AirshipInputValidation.Validator)?
 
     @Published var state: AddChannelState = .ready

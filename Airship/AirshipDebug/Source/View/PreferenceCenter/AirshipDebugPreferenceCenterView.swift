@@ -23,7 +23,7 @@ struct AirshipDebugPreferenceCentersView: View {
     }
 
     @MainActor
-    class ViewModel: ObservableObject {
+    final class ViewModel: ObservableObject {
         @Published private(set) var identifiers: [String] = []
         private var cancellable: AnyCancellable? = nil
 

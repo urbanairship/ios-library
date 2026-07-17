@@ -25,7 +25,7 @@ struct AirshipDebugFeatureFlagView: View {
     }
 
     @MainActor
-    class ViewModel: ObservableObject {
+    final class ViewModel: ObservableObject {
         @Published private(set) var entries: [String] = []
         private var cancellable: AnyCancellable? = nil
 

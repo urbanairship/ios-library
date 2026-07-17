@@ -154,7 +154,7 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
 
 
 @MainActor
-private class EmbeddedViewModel: ObservableObject {
+private final class EmbeddedViewModel: ObservableObject {
 
     @Published
     var pending: [PendingEmbedded] = []

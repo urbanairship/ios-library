@@ -2,7 +2,7 @@
 @_spi(AirshipInternal) import AirshipBasement
 
 /// A  circular region defines a radius, and latitude and longitude from its center.
-public class CircularRegion {
+public final class CircularRegion {
 
     let radius: Double
     let latitude: Double

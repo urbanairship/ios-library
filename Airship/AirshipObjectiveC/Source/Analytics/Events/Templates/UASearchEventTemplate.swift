@@ -6,7 +6,7 @@ import AirshipCore
 
 /// Search template
 @objc
-public class UACustomEventSearchTemplate: NSObject {
+public final class UACustomEventSearchTemplate: NSObject {
 
     fileprivate var template: CustomEvent.SearchTemplate
 
@@ -21,7 +21,7 @@ public class UACustomEventSearchTemplate: NSObject {
 }
 
 @objc
-public class UACustomEventSearchProperties: NSObject {
+public final class UACustomEventSearchProperties: NSObject {
 
     /// The event's ID.
     @objc

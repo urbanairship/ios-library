@@ -6,7 +6,7 @@ import Combine
 import AirshipBasement
 
 @MainActor
-class CheckboxState: ObservableObject {
+final class CheckboxState: ObservableObject {
 
     let minSelection: Int
     let maxSelection: Int

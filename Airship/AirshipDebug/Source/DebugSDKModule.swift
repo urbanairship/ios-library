@@ -8,7 +8,7 @@ nonisolated(unsafe) var debugModuleAIManager: (any AirshipAI.InternalManager)?
 /// - Note: For internal use only. :nodoc:
 @objc(UADebugSDKModule)
 @_spi(AirshipInternal)
-public class DebugSDKModule: NSObject, AirshipSDKModule {
+public final class DebugSDKModule: NSObject, AirshipSDKModule {
 
     public var actionsManifest: (any ActionsManifest)? = nil
 

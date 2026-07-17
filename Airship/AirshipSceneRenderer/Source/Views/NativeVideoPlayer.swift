@@ -125,7 +125,7 @@ struct NativeVideoPlayer: UIViewRepresentable {
     // MARK: - Coordinator
 
     @MainActor
-    class Coordinator: NSObject {
+    final class Coordinator: NSObject {
         private var isLoaded: Binding<Bool>
         private var hasError: Binding<Bool>
         private var videoState: VideoState
@@ -396,7 +396,7 @@ struct NativeVideoPlayer: UIViewRepresentable {
 
     // MARK: - VideoPlayerContainer
 
-    class VideoPlayerContainer: UIView {
+    final class VideoPlayerContainer: UIView {
         var player: AVPlayer?
         var videoURL: URL?
         var shouldLoop: Bool = false

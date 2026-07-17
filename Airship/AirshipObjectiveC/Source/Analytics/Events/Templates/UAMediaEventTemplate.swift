@@ -36,7 +36,7 @@ public final class UACustomEventMediaTemplate: NSObject {
 }
 
 @objc
-public class UACustomEventMediaProperties: NSObject {
+public final class UACustomEventMediaProperties: NSObject {
 
     /// The event's ID.
     @objc

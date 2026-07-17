@@ -10,7 +10,7 @@ struct Score: View {
     private let constraints: ViewConstraints
 
     @MainActor
-    private class ViewModel: ObservableObject {
+    private final class ViewModel: ObservableObject {
 
         let style: ThomasViewInfo.Score.ScoreStyle
 

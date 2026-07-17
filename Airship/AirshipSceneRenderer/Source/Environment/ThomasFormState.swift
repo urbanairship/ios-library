@@ -5,7 +5,7 @@ import Combine
 @_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
-class ThomasFormState: ObservableObject {
+final class ThomasFormState: ObservableObject {
 
     /// Represents the possible statuses of a form during its lifecycle.
     enum Status: String, ThomasSerializable, Hashable {

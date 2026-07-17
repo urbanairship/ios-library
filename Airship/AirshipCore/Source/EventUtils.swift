@@ -4,7 +4,7 @@ import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 import UserNotifications
 
-class EventUtils {
+final class EventUtils {
 
     class func isValid(latitude: Double) -> Bool {
         guard latitude >= -90 && latitude <= 90 else {

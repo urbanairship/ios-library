@@ -51,7 +51,7 @@ struct AirshipDebugAnalyticIdentifierEditorView: View {
     }
 
     @MainActor
-    class ViewModel: ObservableObject {
+    final class ViewModel: ObservableObject {
         @Published var identifiers: [String: String] {
             didSet {
                 save()

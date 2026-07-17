@@ -6,7 +6,7 @@ import Combine
 
 /// State class managing video playback state within a VideoController scope.
 @MainActor
-class VideoState: ObservableObject {
+final class VideoState: ObservableObject {
     /// The unique identifier for this video controller
     let identifier: String
 

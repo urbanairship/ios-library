@@ -6,7 +6,7 @@ import AirshipCore
 
 /// Scoped subscription list editor.
 @objc
-public class UAScopedSubscriptionListEditor: NSObject {
+public final class UAScopedSubscriptionListEditor: NSObject {
     
     var editor: ScopedSubscriptionListEditor?
     

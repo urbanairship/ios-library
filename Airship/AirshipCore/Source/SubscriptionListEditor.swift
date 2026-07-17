@@ -3,7 +3,7 @@
 import Foundation
 
 /// Subscription list editor.
-public class SubscriptionListEditor {
+public final class SubscriptionListEditor {
 
     private var subscriptionListUpdates: [SubscriptionListUpdate] = []
     private let completionHandler: ([SubscriptionListUpdate]) -> Void

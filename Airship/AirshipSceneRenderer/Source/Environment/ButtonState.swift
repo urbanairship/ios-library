@@ -4,7 +4,7 @@ import Foundation
 import Combine
 
 @MainActor
-class ButtonState: ObservableObject {
+final class ButtonState: ObservableObject {
     let identifier: String
     init(identifier: String) {
         self.identifier = identifier

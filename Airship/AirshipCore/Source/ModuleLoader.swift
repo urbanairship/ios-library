@@ -35,7 +35,7 @@ fileprivate enum SDKModuleNames: String, CaseIterable {
     case aiModels = "UAAIModelsSDKModule"
 }
 
-class ModuleLoader {
+final class ModuleLoader {
 
     public let components: [any AirshipComponent]
 

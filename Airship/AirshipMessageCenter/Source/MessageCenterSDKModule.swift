@@ -8,7 +8,7 @@ public import Foundation
 /// - Note: For internal use only. :nodoc:
 @objc(UAMessageCenterSDKModule)
 @_spi(AirshipInternal)
-public class MessageCenterSDKModule: NSObject, AirshipSDKModule {
+public final class MessageCenterSDKModule: NSObject, AirshipSDKModule {
 
     public let actionsManifest: (any ActionsManifest)? = MessageCenterActionsManifest()
     public let components: [any AirshipComponent]

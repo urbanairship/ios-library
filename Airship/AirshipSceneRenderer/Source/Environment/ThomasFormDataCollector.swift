@@ -4,7 +4,7 @@ import Foundation
 import Combine
 
 @MainActor
-class ThomasFormDataCollector: ObservableObject {
+final class ThomasFormDataCollector: ObservableObject {
     private let formState: ThomasFormState?
     private let pagerState: PagerState?
 

@@ -6,7 +6,7 @@ import AirshipCore
 
 /// Subscription list editor.
 @objc
-public class UASubscriptionListEditor: NSObject {
+public final class UASubscriptionListEditor: NSObject {
     
     var editor: SubscriptionListEditor?
     

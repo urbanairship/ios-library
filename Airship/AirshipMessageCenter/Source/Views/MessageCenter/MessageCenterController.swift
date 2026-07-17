@@ -15,7 +15,7 @@ public enum MessageCenterState: Equatable, Sendable {
 
 /// Controller for the Message Center.
 @MainActor
-public class MessageCenterController: ObservableObject {
+public final class MessageCenterController: ObservableObject {
 
     /// The routes available in the message center.
     public enum Route: Sendable, Hashable {

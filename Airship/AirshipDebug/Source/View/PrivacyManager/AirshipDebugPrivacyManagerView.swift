@@ -50,7 +50,7 @@ struct AirshipDebugPrivacyManagerView: View {
     }
 
     @MainActor
-    class ViewModel: ObservableObject {
+    final class ViewModel: ObservableObject {
 
         @Published
         public var iaaEnabled: Bool {

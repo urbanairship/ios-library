@@ -6,7 +6,7 @@ import Foundation
 
 // Legacy attribute mutation. Used for migration to AttributeUpdates.
 @objc(UAAttributePendingMutations)
-class AttributePendingMutations: NSObject, NSSecureCoding {
+final class AttributePendingMutations: NSObject, NSSecureCoding {
     static let codableKey: String = "com.urbanairship.attributes"
 
     public static let supportsSecureCoding: Bool = true

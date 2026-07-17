@@ -57,7 +57,7 @@ struct ThomasPageInfo: Sendable {
 
 
 @MainActor
-class PagerState: ObservableObject {
+final class PagerState: ObservableObject {
 
     struct NavigationResult: Sendable {
         var fromPage: ThomasPageInfo?
@@ -448,7 +448,7 @@ class PagerState: ObservableObject {
 }
 
 @MainActor
-private class BranchControl: Sendable {
+private final class BranchControl: Sendable {
     let completionChecker: ThomasPagerControllerBranching
     
     private var allPages: [ThomasViewInfo.Pager.Item] = []

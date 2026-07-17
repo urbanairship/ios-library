@@ -22,7 +22,7 @@ public import UserNotifications
 /// (enabled by default), Airship will automatically integrate these calls into
 /// the application by swizzling methods. If `automaticSetupEnabled` is disabled,
 /// the application must call through to every method provided by this class.
-public class AppIntegration {
+public final class AppIntegration {
 
     /// - Note: For internal use only. :nodoc:
     @MainActor

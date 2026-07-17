@@ -18,7 +18,7 @@ public enum AirshipBoundaryEvent: Int, Sendable {
 }
 
 /// A region event captures information regarding a region event for analytics.
-public class RegionEvent {
+public final class RegionEvent {
 
     public static let eventType: String = "region_event"
 

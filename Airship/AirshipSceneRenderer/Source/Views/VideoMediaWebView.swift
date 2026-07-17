@@ -8,7 +8,7 @@ import WebKit
 @_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
-private class WeakScriptMessageHandler: NSObject, WKScriptMessageHandler {
+private final class WeakScriptMessageHandler: NSObject, WKScriptMessageHandler {
     weak var delegate: (any WKScriptMessageHandler)?
 
     init(_ delegate: any WKScriptMessageHandler) {
@@ -342,7 +342,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
 
     // MARK: - Coordinator
 
-    class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
+    final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         private var isLoaded: Binding<Bool>
         private var videoIdentifier: String?
         private var videoState: VideoState

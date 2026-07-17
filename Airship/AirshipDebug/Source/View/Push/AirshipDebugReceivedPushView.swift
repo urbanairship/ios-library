@@ -23,7 +23,7 @@ struct AirshipDebugReceivedPushView: View {
     }
 
     @MainActor
-    class ViewModel: ObservableObject {
+    final class ViewModel: ObservableObject {
         @Published private(set) var pushNotifications: [PushNotification] = []
         private var cancellable: AnyCancellable? = nil
 

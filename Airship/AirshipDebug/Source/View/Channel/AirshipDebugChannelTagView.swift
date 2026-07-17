@@ -50,7 +50,7 @@ struct AirshipDebugChannelTagView: View {
     }
 
     @MainActor
-    class ViewModel: ObservableObject {
+    final class ViewModel: ObservableObject {
 
         @Published
         private(set) var tags: [String]

@@ -14,7 +14,7 @@ public import AppKit
 #endif
 
 /// View controller for Message Center view
-public class MessageCenterViewControllerFactory: NSObject {
+public final class MessageCenterViewControllerFactory: NSObject {
 
     /// Makes a message view controller with the given theme.
     /// - Parameters:
@@ -102,7 +102,7 @@ public class MessageCenterViewControllerFactory: NSObject {
     }
 }
 
-private class MessageCenterViewController<Content>: AirshipNativeHostingController<Content> where Content: View {
+private final class MessageCenterViewController<Content>: AirshipNativeHostingController<Content> where Content: View {
 
     override init(rootView: Content) {
         super.init(rootView: rootView)

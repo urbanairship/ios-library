@@ -171,7 +171,7 @@ struct LinearLayout: View {
     }
 }
 
-fileprivate class RepeatableNumberGenerator: RandomNumberGenerator {
+fileprivate final class RepeatableNumberGenerator: RandomNumberGenerator {
     private var numbers: [UInt64] = []
     private var index: Int = 0
     private var numberGenerator: SystemRandomNumberGenerator = SystemRandomNumberGenerator()

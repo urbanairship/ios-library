@@ -145,7 +145,7 @@ internal struct MessageCenterAppearanceDetector: UIViewRepresentable {
         }
     }
 
-    class IntrospectionView: UIView {
+    final class IntrospectionView: UIView {
         var onAppearanceDetected: ((MessageCenterUIKitAppearance.DetectedAppearance) -> Void)?
         var hostingControllerRef: MessageCenterUIKitAppearance.WeakReference<UIViewController>?
 

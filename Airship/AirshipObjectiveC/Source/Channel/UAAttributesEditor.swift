@@ -5,7 +5,7 @@ import AirshipCore
 
 /// Attributes editor.
 @objc
-public class UAAttributesEditor: NSObject {
+public final class UAAttributesEditor: NSObject {
     
     var editor: AttributesEditor?
     

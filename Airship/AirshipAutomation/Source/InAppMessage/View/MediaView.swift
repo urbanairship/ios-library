@@ -145,7 +145,7 @@ fileprivate struct InAppMessageMediaWebView: AirshipNativeViewRepresentable {
         return Coordinator()
     }
 
-    class Coordinator: NSObject, WKNavigationDelegate {
+    final class Coordinator: NSObject, WKNavigationDelegate {
         let challengeResolver: ChallengeResolver
 
         init(resolver: ChallengeResolver = .shared) {

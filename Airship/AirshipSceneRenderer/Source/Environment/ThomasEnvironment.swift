@@ -10,7 +10,7 @@ import UIKit
 #endif
 
 @MainActor
-class ThomasEnvironment: ObservableObject {
+final class ThomasEnvironment: ObservableObject {
     private let delegate: any ThomasDelegate
     private let pagerTracker: ThomasPagerTracker
     private let timer: any AirshipTimerProtocol

@@ -154,7 +154,7 @@ public final class AirshipDisplayTarget {
 
 #if os(macOS)
 @MainActor
-fileprivate class ModalDisplayable: AirshipDisplayTarget.Displayable {
+fileprivate final class ModalDisplayable: AirshipDisplayTarget.Displayable {
     private var window: NSWindow?
     private var parentWindow: NSWindow?
     private var frameObserver: (any NSObjectProtocol)?
@@ -259,7 +259,7 @@ fileprivate class ModalDisplayable: AirshipDisplayTarget.Displayable {
 }
 
 @MainActor
-fileprivate class BannerDisplayable: AirshipDisplayTarget.Displayable {
+fileprivate final class BannerDisplayable: AirshipDisplayTarget.Displayable {
 
     private let holder: AirshipStrongValueHolder<NSViewController> = AirshipStrongValueHolder()
 
@@ -360,7 +360,7 @@ fileprivate class BannerDisplayable: AirshipDisplayTarget.Displayable {
     }
 }
 
-fileprivate class FillWindowViewController: NSViewController {
+fileprivate final class FillWindowViewController: NSViewController {
     private let contentViewController: NSViewController
     
     init(content: NSViewController) {
@@ -432,7 +432,7 @@ extension NSWindow {
 
 #else
 @MainActor
-fileprivate class ModalDisplayable: AirshipDisplayTarget.Displayable {
+fileprivate final class ModalDisplayable: AirshipDisplayTarget.Displayable {
 
     private let sceneProvider: @MainActor () throws -> UIWindowScene
     private let windowAnimated: Bool
@@ -474,7 +474,7 @@ fileprivate class ModalDisplayable: AirshipDisplayTarget.Displayable {
 }
 
 @MainActor
-fileprivate class BannerDisplayable: AirshipDisplayTarget.Displayable {
+fileprivate final class BannerDisplayable: AirshipDisplayTarget.Displayable {
     private let sceneProvider: @MainActor () throws -> UIWindowScene
     private let holder: AirshipStrongValueHolder<UIViewController> = AirshipStrongValueHolder()
 

@@ -11,7 +11,7 @@ fileprivate struct SwizzlerEntry {
 }
 
 @MainActor
-internal class AirshipSwizzler {
+internal final class AirshipSwizzler {
     @objc fileprivate protocol ForwardingCheck {
         @objc func forwardingTarget(for aSelector: Selector!) -> Any?
     }

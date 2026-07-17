@@ -114,7 +114,7 @@ struct AirshipDebugFeatureFlagDetailsView: View {
     }
 
     @MainActor
-    class ViewModel: ObservableObject {
+    final class ViewModel: ObservableObject {
 
         @Published private(set) var result: FeatureFlag?
         @Published private(set) var error: String?

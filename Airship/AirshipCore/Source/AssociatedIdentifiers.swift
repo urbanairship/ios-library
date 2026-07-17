@@ -2,7 +2,7 @@
 
 /// Defines analytics identifiers to be associated with
 /// the device.
-public class AssociatedIdentifiers {
+public final class AssociatedIdentifiers {
 
     /**
      * Maximum number of associated IDs that can be set.

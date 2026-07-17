@@ -35,7 +35,7 @@ public protocol AirshipActionRegistry: Sendable {
 
 
 @MainActor
-public class DefaultAirshipActionRegistry: AirshipActionRegistry {
+final class DefaultAirshipActionRegistry: AirshipActionRegistry {
     private var entries: [String: EntryHolder] = [:]
 
 
@@ -135,7 +135,7 @@ public struct ActionEntry: Sendable {
 }
 
 
-fileprivate class EntryHolder {
+fileprivate final class EntryHolder {
     private var _entry: ActionEntry?
     var entry: ActionEntry {
         get {

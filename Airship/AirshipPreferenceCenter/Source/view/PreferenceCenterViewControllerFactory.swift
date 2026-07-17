@@ -17,7 +17,7 @@ public import AppKit
 ///
 /// This factory provides a unified way to create native view controllers (`UIViewController` on iOS/tvOS
 /// or `NSViewController` on macOS) that host a Preference Center SwiftUI view.
-public class PreferenceCenterViewControllerFactory: NSObject {
+public final class PreferenceCenterViewControllerFactory: NSObject {
 
     /// Makes a view controller for the given Preference Center ID.
     /// - Parameters:
@@ -105,7 +105,7 @@ public class PreferenceCenterViewControllerFactory: NSObject {
 }
 
 /// A platform-specific hosting controller that manages the lifecycle and styling of the Preference Center view.
-private class PreferenceCenterViewController<Content>: AirshipNativeHostingController<Content> where Content: View {
+private final class PreferenceCenterViewController<Content>: AirshipNativeHostingController<Content> where Content: View {
     
     /// Initializes the controller.
     /// - Parameters:

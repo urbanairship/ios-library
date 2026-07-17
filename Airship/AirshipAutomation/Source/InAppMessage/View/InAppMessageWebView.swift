@@ -117,7 +117,7 @@ fileprivate struct WKWebViewRepresentable: AirshipNativeViewRepresentable {
         }
     }
 
-    class Coordinator: NSObject, AirshipWKNavigationDelegate,
+    final class Coordinator: NSObject, AirshipWKNavigationDelegate,
                        JavaScriptCommandDelegate, NativeBridgeDelegate
     {
 

@@ -6,7 +6,7 @@ import AirshipCore
 
 /// Tag editor.
 @objc
-public class UATagEditor: NSObject {
+public final class UATagEditor: NSObject {
     
     var editor: TagEditor?
     

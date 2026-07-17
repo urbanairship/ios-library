@@ -9,7 +9,7 @@ public import Combine
 /// such as moving forward and backward, and locking the navigation. It is designed
 /// to be used with SwiftUI and must be accessed on the main actor.
 @MainActor
-public class AirshipSceneController: ObservableObject {
+public final class AirshipSceneController: ObservableObject {
 
     /// Dismisses the current scene.
     ///
@@ -42,7 +42,7 @@ public class AirshipSceneController: ObservableObject {
     }
     
     @MainActor
-    public class PagerController: ObservableObject {
+    public final class PagerController: ObservableObject {
         private let pagerState: PagerState?
         
         init(pagerState: PagerState?) {

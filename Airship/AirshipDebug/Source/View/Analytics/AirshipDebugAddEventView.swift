@@ -116,7 +116,7 @@ struct AirshipDebugAddEventView: View {
     }
 
     @MainActor
-    private class ViewModel: ObservableObject {
+    private final class ViewModel: ObservableObject {
         @Published var eventName: String = ""
         @Published var eventValue: Double = 1.0
         @Published var interactionID: String = ""

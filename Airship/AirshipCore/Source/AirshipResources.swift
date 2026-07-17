@@ -3,7 +3,7 @@
 import Foundation
 
 @_spi(AirshipInternal)
-public class AirshipResources {
+public final class AirshipResources {
     static let bundle: Bundle? = findBundle()
 
     /// Assumes AirshipResources class and UrbanAirship.string resource always exist in the same bundle

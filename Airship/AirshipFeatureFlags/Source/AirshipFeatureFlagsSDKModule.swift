@@ -8,7 +8,7 @@ public import Foundation
 /// - Note: For internal use only. :nodoc:
 @objc(UAFeatureFlagsSDKModule)
 @_spi(AirshipInternal)
-public class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
+public final class AirshipFeatureFlagsSDKModule: NSObject, AirshipSDKModule {
     public let actionsManifest: (any ActionsManifest)? = nil
 
     public let components: [any AirshipComponent]

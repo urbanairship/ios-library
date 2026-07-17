@@ -7,7 +7,7 @@ import SwiftUI
 @_spi(AirshipInternal) import AirshipCore
 
 @MainActor
-class InAppMessageEnvironment: ObservableObject {
+final class InAppMessageEnvironment: ObservableObject {
     private let delegate: any InAppMessageViewDelegate
 
     let imageLoader: AirshipImageLoader

@@ -80,7 +80,7 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
 }
 
 
-class ThomasBannerViewController: ThomasViewController<BannerView> {
+final class ThomasBannerViewController: ThomasViewController<BannerView> {
     private var centerXConstraint: NSLayoutConstraint?
     private var leadingConstraint: NSLayoutConstraint?
     private var trailingConstraint: NSLayoutConstraint?
@@ -240,7 +240,7 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     }
 }
 
-class ThomasModalViewController : ThomasViewController<ModalView> {
+final class ThomasModalViewController : ThomasViewController<ModalView> {
 
     override init(rootView: ModalView, options: ThomasViewControllerOptions) {
         super.init(rootView: rootView, options: options)
@@ -281,7 +281,7 @@ class ThomasViewController<Content> : NSHostingController<Content> where Content
 }
 
 
-class ThomasBannerViewController: ThomasViewController<BannerView> {
+final class ThomasBannerViewController: ThomasViewController<BannerView> {
     private var centerXConstraint: NSLayoutConstraint?
     private var leadingConstraint: NSLayoutConstraint?
     private var trailingConstraint: NSLayoutConstraint?
@@ -399,7 +399,7 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     }
 }
 
-class ThomasModalViewController : ThomasViewController<ModalView> {
+final class ThomasModalViewController : ThomasViewController<ModalView> {
 
     override init(rootView: ModalView, options: ThomasViewControllerOptions) {
         super.init(rootView: rootView, options: options)
@@ -413,13 +413,13 @@ class ThomasModalViewController : ThomasViewController<ModalView> {
 
 #endif
 
-class ThomasViewControllerOptions {
+final class ThomasViewControllerOptions {
     var orientation: ThomasOrientation?
     var bannerPlacement: ThomasPresentationInfo.Banner.Placement?
 }
 
 @MainActor
-class ThomasBannerConstraints: ObservableObject {
+final class ThomasBannerConstraints: ObservableObject {
     @Published
     fileprivate var contentPlacement: ContentPlacement?
 

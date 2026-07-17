@@ -45,7 +45,7 @@ struct AirshipDebugNamedUserView: View {
 
 
     @MainActor
-    private class ViewModel: ObservableObject {
+    private final class ViewModel: ObservableObject {
         @Published
         public var namedUserID: String = ""
 

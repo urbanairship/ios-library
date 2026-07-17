@@ -120,7 +120,7 @@ struct MessageCenterWebView: AirshipNativeViewRepresentable {
         }
     }
 
-    class Coordinator: NSObject, AirshipWKNavigationDelegate,
+    final class Coordinator: NSObject, AirshipWKNavigationDelegate,
                        JavaScriptCommandDelegate,
                        NativeBridgeDelegate
     {

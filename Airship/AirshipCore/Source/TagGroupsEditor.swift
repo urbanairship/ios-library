@@ -4,7 +4,7 @@ import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 /// Tag groups editor.
-public class TagGroupsEditor {
+public final class TagGroupsEditor {
 
     private var tagUpdates: [TagGroupUpdate] = []
     private var allowDeviceTagGroup: Bool = false

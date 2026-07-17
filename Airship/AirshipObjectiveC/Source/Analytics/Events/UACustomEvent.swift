@@ -7,7 +7,7 @@ import AirshipCore
 /// CustomEvent captures information regarding a custom event for
 /// Analytics.
 @objc
-public class UACustomEvent: NSObject {
+public final class UACustomEvent: NSObject {
     
     var customEvent: CustomEvent
 

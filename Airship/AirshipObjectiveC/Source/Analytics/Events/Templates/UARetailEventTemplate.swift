@@ -46,7 +46,7 @@ public final class UACustomEventRetailTemplate: NSObject {
 }
 
 @objc
-public class UACustomEventRetailProperties: NSObject {
+public final class UACustomEventRetailProperties: NSObject {
 
     /// The event's ID.
     @objc

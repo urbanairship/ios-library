@@ -3,7 +3,7 @@
 import Foundation
 
 /// Tag editor.
-public class TagEditor {
+public final class TagEditor {
 
     typealias TagApplicator = ([String]) -> [String]
 

@@ -128,7 +128,7 @@ final class AutoIntegration {
 
 // MARK: - Default delegate
 
-fileprivate class UAAutoIntegrationDummyDelegate: NSObject, UNUserNotificationCenterDelegate {
+fileprivate final class UAAutoIntegrationDummyDelegate: NSObject, UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([])
     }

@@ -9,7 +9,7 @@ public import AirshipCore
 
 /// Preference Center State
 @MainActor
-public class PreferenceCenterState: ObservableObject {
+public final class PreferenceCenterState: ObservableObject {
 
     /// The config
     public let config: PreferenceCenterConfig
@@ -235,7 +235,7 @@ protocol PreferenceSubscriber {
     )
 }
 
-fileprivate class PreviewPreferenceSubscriber: PreferenceSubscriber {
+fileprivate final class PreviewPreferenceSubscriber: PreferenceSubscriber {
 
     private let channelEditsSubject = PassthroughSubject<
         SubscriptionListEdit, Never
@@ -278,7 +278,7 @@ fileprivate class PreviewPreferenceSubscriber: PreferenceSubscriber {
     }
 }
 
-fileprivate class AirshipPreferenceSubscriber: PreferenceSubscriber {
+fileprivate final class AirshipPreferenceSubscriber: PreferenceSubscriber {
     var channelSubscriptionListEdits: AnyPublisher<SubscriptionListEdit, Never>
     {
         return Airship.channel.subscriptionListEdits

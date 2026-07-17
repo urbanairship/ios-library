@@ -10,7 +10,7 @@ import Combine
 
 
 @MainActor
-private class VideoControlsObserver: ObservableObject {
+private final class VideoControlsObserver: ObservableObject {
     var timeObserver: Any?
     var endTimeObserver: (any NSObjectProtocol)?
     var statusObserver: NSKeyValueObservation?

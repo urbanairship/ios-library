@@ -69,7 +69,7 @@ class InAppMessageHostingController<Content> : AirshipNativeHostingController<Co
 
 import Combine
 
-class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessageBannerView> {
+final class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessageBannerView> {
 
     private var centerXConstraint: NSLayoutConstraint?
     private var topConstraint: NSLayoutConstraint?
@@ -189,7 +189,7 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
 }
 
 @MainActor
-class InAppMessageBannerConstraints: ObservableObject {
+final class InAppMessageBannerConstraints: ObservableObject {
     @Published
     var size: CGSize
 

@@ -6,7 +6,7 @@ import Foundation
 
 import AirshipCore
 
-class PreferenceCenterDecoder {
+final class PreferenceCenterDecoder {
     class func decodeConfig(data: Data) throws -> PreferenceCenterConfig {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .airshipISO8601

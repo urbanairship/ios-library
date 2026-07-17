@@ -38,7 +38,7 @@ struct AirshipDebugAutomationsView: View {
     }
 
     @MainActor
-    class ViewModel: ObservableObject {
+    final class ViewModel: ObservableObject {
         @Published private(set) var messagePayloads: [[String: AnyHashable]] = []
         private var cancellable: AnyCancellable? = nil
 

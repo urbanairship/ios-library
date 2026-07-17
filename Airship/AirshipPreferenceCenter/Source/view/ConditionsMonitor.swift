@@ -6,7 +6,7 @@ import Foundation
 import AirshipCore
 
 @MainActor
-class ConditionsMonitor: ObservableObject {
+final class ConditionsMonitor: ObservableObject {
     @Published
     public private(set) var isMet: Bool = true
 

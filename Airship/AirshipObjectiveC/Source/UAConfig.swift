@@ -8,7 +8,7 @@ import AirshipCore
 /// The simplest way to use this class is to add an AirshipConfig.plist file in your app's bundle and set
 /// the desired options.
 @objc
-public class UAConfig: NSObject {
+public final class UAConfig: NSObject {
 
     var config: AirshipConfig
     
@@ -488,7 +488,7 @@ public enum UACloudSite: Int, Sendable {
     case eu = 1
 }
 
-class UAHelpers: NSObject {
+final class UAHelpers: NSObject {
     
     public static func toLogLevel(level: AirshipLogLevel) -> UAAirshipLogLevel {
         switch(level){

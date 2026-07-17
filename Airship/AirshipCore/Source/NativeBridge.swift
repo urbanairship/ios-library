@@ -524,7 +524,7 @@ extension URL {
 
 
 @MainActor
-fileprivate class JSBridgeLoadRequest: Sendable {
+fileprivate final class JSBridgeLoadRequest: Sendable {
     private(set) weak var webView: WKWebView?
     private let jsFactoryBlock: () async throws -> String?
     private var task: Task<Void, Never>?

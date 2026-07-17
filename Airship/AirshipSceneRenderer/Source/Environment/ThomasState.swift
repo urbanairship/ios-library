@@ -5,7 +5,7 @@ import Combine
 @_spi(AirshipInternal) import AirshipBasement
 
 @MainActor
-class ThomasState: ObservableObject {
+final class ThomasState: ObservableObject {
     @Published private(set) var state: AirshipJSON = [:]
 
     private var subscriptions: Set<AnyCancellable> = []
@@ -220,7 +220,7 @@ class ThomasState: ObservableObject {
     }
 
     @MainActor
-    class MutableState: ObservableObject {
+    final class MutableState: ObservableObject {
         @Published private(set) var state: AirshipJSON
         private var appliedState: [String: AirshipJSON] = [:]
         private var tempMutations: [String: TempMutation] = [:]

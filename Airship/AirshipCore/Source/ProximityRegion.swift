@@ -2,7 +2,7 @@
 @_spi(AirshipInternal) import AirshipBasement
 
 /// A proximity region defines an identifier, major and minor.
-public class ProximityRegion {
+public final class ProximityRegion {
 
     let latitude: Double?
     let longitude: Double?

@@ -4,7 +4,7 @@ import Foundation
 
 /// - Note: For internal use only. :nodoc:
 @_spi(AirshipInternal)
-public class AirshipWeakValueHolder<T: AnyObject> {
+public final class AirshipWeakValueHolder<T: AnyObject> {
     public weak var value: T?
 
     public init(value: T? = nil) {
@@ -12,7 +12,9 @@ public class AirshipWeakValueHolder<T: AnyObject> {
     }
 }
 
-public class AirshipStrongValueHolder<T: AnyObject> {
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
+public final class AirshipStrongValueHolder<T: AnyObject> {
     public var value: T?
 
     public init(value: T? = nil) {

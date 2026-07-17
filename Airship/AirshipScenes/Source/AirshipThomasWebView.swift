@@ -106,7 +106,7 @@ private struct WebViewRepresentable: AirshipNativeViewRepresentable {
         }
     }
 
-    class Coordinator: NSObject, AirshipWKNavigationDelegate,
+    final class Coordinator: NSObject, AirshipWKNavigationDelegate,
                        JavaScriptCommandDelegate, NativeBridgeDelegate
     {
         private let parent: WebViewRepresentable
