@@ -10,6 +10,15 @@ required to migrate an app from SDK 20.x to SDK 21.0.
 > This guide is a work in progress and will be updated as SDK 21.0 development
 > continues.
 
+> **Migrate with AI**
+> Airship provides AI developer tools — an MCP server and a set of Agent Skills —
+> that plug into AI coding assistants like Claude Code, Cursor, and Windsurf. These
+> tools include SDK migration guidance and can help automate much of the work in
+> this guide (updating imports, finding deprecated API usage, and applying
+> replacements) directly in your project. See
+> [Airship AI Tools](https://www.airship.com/docs/developer/ai-tools/about/) to get
+> started, and review the generated edits before committing them.
+
 **Required Migration Tasks:**
 - Update to Xcode 27 (required for the final 21.0 release).
 - Migrate off CocoaPods to Swift Package Manager (or manual XCFramework/Carthage integration).
@@ -30,6 +39,8 @@ required to migrate an app from SDK 20.x to SDK 21.0.
   - [Custom Views](#custom-views)
 - [Hidden APIs](#hidden-apis)
 - [Removed APIs](#removed-apis)
+- [Changed APIs](#changed-apis)
+  - [Feature Flag Status Updates](#feature-flag-status-updates)
 - [Troubleshooting](#troubleshooting)
 
 ## Requirements
@@ -193,12 +204,14 @@ A handful of utility and app-integration methods that were unintentionally publi
 — or that wrapped Apple APIs deprecated years ago — have been removed. None had a
 supported public use; replacements are noted below where relevant.
 
-### AirshipUtils helpers
+### AirshipUtils
 
-The following `AirshipUtils` methods have been removed: `compareVersion(_:toVersion:maxVersionParts:)`,
-`hasNetworkConnection()`, `deviceModelName()`, and `mergeFetchResults(_:)`. These
-were internal utilities that were unintentionally exposed and have no public
-replacement — implement the equivalent in your own code if you depended on one.
+`AirshipUtils` has been marked `internal` and is no longer part of the public API.
+It was a grab-bag of general-purpose helpers that were unintentionally exposed and
+have no supported public replacement. If you depended on any of them, copy the
+implementation into your own codebase. Alternatively, if you have a real use case,
+[open an issue](https://github.com/urbanairship/ios-library/issues) describing it —
+we can look at exposing the functionality in a supported way.
 
 ### Background-fetch app integration
 
@@ -241,6 +254,44 @@ The `ChannelTextField` and `ErrorLabel` SwiftUI views and the `AddChannelState`
 enum are now internal. These were building blocks of the Preference Center's
 add-channel (SMS/email opt-in) prompt and were unintentionally public. If you
 embedded them in your own UI, replace them with your own implementations.
+
+## Changed APIs
+
+A small number of public APIs kept the same name but changed signature. These
+produce a compile error rather than a silent behavior change.
+
+### Feature Flag Status Updates
+
+`FeatureFlagManager.featureFlagStatusUpdates` now emits the concrete
+`FeatureFlagUpdateStatus` type instead of `any Sendable`:
+
+```swift
+// 20.x
+var featureFlagStatusUpdates: AsyncStream<any Sendable> { get async }
+
+// 21.0
+var featureFlagStatusUpdates: AsyncStream<FeatureFlagUpdateStatus> { get async }
+```
+
+The stream always emitted `FeatureFlagUpdateStatus` values in practice, so this
+change makes the element type match what was already delivered (and matches the
+sibling `featureFlagStatus` property). If you were casting the elements to
+`FeatureFlagUpdateStatus`, remove the cast:
+
+**Before:**
+```swift
+for await status in await Airship.featureFlagManager.featureFlagStatusUpdates {
+    guard let status = status as? FeatureFlagUpdateStatus else { continue }
+    handle(status)
+}
+```
+
+**After:**
+```swift
+for await status in await Airship.featureFlagManager.featureFlagStatusUpdates {
+    handle(status)   // already a FeatureFlagUpdateStatus
+}
+```
 
 ## Troubleshooting
 
