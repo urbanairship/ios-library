@@ -23,7 +23,7 @@ final class DefaultFeatureFlagManager: FeatureFlagManager {
 
     let resultCache: any FeatureFlagResultCache
 
-    var featureFlagStatusUpdates: AsyncStream<any Sendable> {
+    var featureFlagStatusUpdates: AsyncStream<FeatureFlagUpdateStatus> {
         get async {
             return await self.remoteData.statusUpdates(sources: [RemoteDataSource.app]) { statuses in
                 return self.toFeatureFlagUpdateStatus(status: statuses.values.first ?? .upToDate)

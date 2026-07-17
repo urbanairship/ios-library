@@ -20,7 +20,7 @@ public protocol FeatureFlagManager: AnyObject, Sendable {
     var resultCache: any FeatureFlagResultCache { get }
 
     /// Feature flag status updates. Possible values are upToDate, stale and outOfDate.
-    var featureFlagStatusUpdates: AsyncStream<any Sendable> { get async }
+    var featureFlagStatusUpdates: AsyncStream<FeatureFlagUpdateStatus> { get async }
 
     /// Current feature flag status. Possible values are upToDate, stale and outOfDate.
     var featureFlagStatus: FeatureFlagUpdateStatus { get async }
