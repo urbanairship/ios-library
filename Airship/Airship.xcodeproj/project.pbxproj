@@ -86,7 +86,6 @@
 		325D53F729648150003421B4 /* TestDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6ED1422683B8FA00A2CBD0 /* TestDate.swift */; };
 		325D53FA29648818003421B4 /* TestAirshipRequestSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4A467F28EF4FAF00A25617 /* TestAirshipRequestSession.swift */; };
 		325D53FB2964885B003421B4 /* AirshipBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */; };
-		3261A7F6243CD7F900ADBF6B /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
 		3299EF172948CBC100251E70 /* RemoteDataAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */; };
 		3299EF222949EC3E00251E70 /* AirshipBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */; };
 		3299EF26294B222F00251E70 /* RemoteDataStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF25294B222F00251E70 /* RemoteDataStoreTest.swift */; };
@@ -539,7 +538,6 @@
 		6E411C782538C60900FEE4E8 /* UrbanAirship.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6E411C742538C60900FEE4E8 /* UrbanAirship.strings */; };
 		6E411CAB2538C6A600FEE4E8 /* UARemoteData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E411CA42538C6A500FEE4E8 /* UARemoteData.xcdatamodeld */; };
 		6E411CAF2538C6A600FEE4E8 /* UAEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E411CA72538C6A500FEE4E8 /* UAEvents.xcdatamodeld */; };
-		6E43202226EA814F009228AB /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */; platformFilter = maccatalyst; };
 		6E43219226EA89B6009228AB /* NativeBridgeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E43218F26EA89B6009228AB /* NativeBridgeDelegate.swift */; };
 		6E4325C32B7A9D9A00A9B000 /* AirshipPrivacyManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4325C22B7A9D9A00A9B000 /* AirshipPrivacyManagerTest.swift */; };
 		6E4325C52B7AC3F700A9B000 /* TestPush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4325C42B7AC3F700A9B000 /* TestPush.swift */; };
@@ -1683,7 +1681,6 @@
 		325108C72B7A596F0028F508 /* UAInbox 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 3.xcdatamodel"; sourceTree = "<group>"; };
 		325108C82B7A5A220028F508 /* UARemoteData 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UARemoteData 4.xcdatamodel"; sourceTree = "<group>"; };
 		325D53D9295C7979003421B4 /* ActionRegistryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRegistryTest.swift; sourceTree = "<group>"; };
-		3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreTelephony.framework; sourceTree = DEVELOPER_DIR; };
 		3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataAPIClientTest.swift; sourceTree = "<group>"; };
 		3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipBaseTest.swift; sourceTree = "<group>"; };
 		3299EF25294B222F00251E70 /* RemoteDataStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataStoreTest.swift; sourceTree = "<group>"; };
@@ -2867,7 +2864,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EB723802FEB43AD001FBB9F /* AirshipBasement.framework in Frameworks */,
-				3261A7F6243CD7F900ADBF6B /* CoreTelephony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2900,7 +2896,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E43202226EA814F009228AB /* CoreTelephony.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5761,7 +5756,6 @@
 				A67229B928199D430033F54D /* libz.tbd */,
 				6EB4E4A32549F95200E3FFD0 /* Network.framework */,
 				6EB4E4BE2549F9B900E3FFD0 /* Network.framework */,
-				3261A7F4243CD73100ADBF6B /* CoreTelephony.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
