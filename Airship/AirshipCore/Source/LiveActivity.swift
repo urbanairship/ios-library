@@ -216,30 +216,52 @@ fileprivate class AirshipBackgroundTask {
 @available(iOS 16.1, *)
 extension Activity where Attributes : ActivityAttributes {
 
-    fileprivate class func _airshipCheckActivities(activityBlock: @escaping @Sendable (Activity<Attributes>) -> Void) {
+    fileprivate class func _airshipActiveActivities() -> [Activity<Attributes>] {
         self.activities.filter { activity in
             if #available(iOS 16.2, *) {
                 return activity.activityState == .active || activity.activityState == .stale
             } else {
                 return activity.activityState == .active
             }
-        }.forEach { activity in
-            activityBlock(activity)
         }
     }
 
-    /// Calls `checkActivity` on every active activity on the first call and on each `pushToStartTokenUpdates` update.
+    /// Calls `activityBlock` on every active activity on the first call and on each `pushToStartTokenUpdates` update.
     /// - Parameters:
+    ///     - unique: When `true`, `activityBlock` is called at most once per Live Activity, identified by
+    ///     its `id`. When `false` (the default), it is called on every check for every active activity.
     ///     - activityBlock: Block that is called with the activity
-    public class func airshipWatchActivities(activityBlock: @escaping @Sendable (Activity<Attributes>) -> Void) {
+    public class func airshipWatchActivities(
+        unique: Bool = false,
+        activityBlock: @escaping @Sendable (Activity<Attributes>) -> Void
+    ) {
         Task {
             // This nested function is a workaround for a Swift compiler Sendable warning.
             // It avoids the Task's @Sendable closure from directly capturing the generic type.
             func run() async {
-                _airshipCheckActivities(activityBlock: activityBlock)
+                // Only allocated when `unique` is set. Tracks the ids already handed to
+                // `activityBlock` so each Live Activity only triggers the block once.
+                let handledIDs = unique ? AirshipAtomicValue<Set<String>>([]) : nil
+
+                func check() {
+                    for activity in _airshipActiveActivities() {
+                        if let handledIDs {
+                            var isNew = false
+                            handledIDs.update { ids in
+                                var ids = ids
+                                isNew = ids.insert(activity.id).inserted
+                                return ids
+                            }
+                            guard isNew else { continue }
+                        }
+                        activityBlock(activity)
+                    }
+                }
+
+                check()
                 if #available(iOS 17.2, *) {
                     for await _ in Activity<Attributes>.pushToStartTokenUpdates {
-                        _airshipCheckActivities(activityBlock: activityBlock)
+                        check()
                     }
                 }
             }
