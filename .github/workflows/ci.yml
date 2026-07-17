@@ -20,7 +20,7 @@ jobs:
 
   run-tests-core:
     runs-on: macos-26-xlarge
-    timeout-minutes: 15
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - name: Test
@@ -84,7 +84,7 @@ jobs:
 
   build-airship-objectiveC:
     runs-on: macos-26-xlarge
-    timeout-minutes: 15
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - name: Build AirshipObjectiveC target
@@ -92,12 +92,36 @@ jobs:
         
   build-samples:
     runs-on: macos-26-xlarge
-    timeout-minutes: 15
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - name: Build samples
         run: make build-samples
-      
+
+  build-sdk-tvos:
+    runs-on: macos-26-xlarge
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build SDK for tvOS
+        run: make build-sdk-tvos
+
+  build-sdk-visionos:
+    runs-on: macos-26-xlarge
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build SDK for visionOS
+        run: make build-sdk-visionos
+
+  build-sdk-maccatalyst:
+    runs-on: macos-26-xlarge
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build SDK for Mac Catalyst
+        run: make build-sdk-maccatalyst
+
 
   # run-tests-watchos:
   #   runs-on: macos-26-xlarge

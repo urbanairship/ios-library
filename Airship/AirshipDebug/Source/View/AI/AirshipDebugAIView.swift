@@ -108,6 +108,10 @@ fileprivate struct AirshipDebugIAAFilterView: View {
     var body: some View {
         List {
             Section {
+#if os(tvOS)
+                TextField("e.g. Only show this if the user travels frequently for work", text: $viewModel.filterPrompt)
+                    .focused($keyboardActive)
+#else
                 TextEditor(text: $viewModel.filterPrompt)
                     .focused($keyboardActive)
                     .frame(minHeight: 72)
@@ -120,6 +124,7 @@ fileprivate struct AirshipDebugIAAFilterView: View {
                                 .allowsHitTesting(false)
                         }
                     }
+#endif
             } header: {
                 Text("AI Filter Prompt")
             }
@@ -220,6 +225,9 @@ fileprivate struct AirshipDebugIAAFilterView: View {
                 }
             }
         }
+#if os(iOS)
+        // Keyboard-dismiss gesture and the `.keyboard` toolbar placement exist
+        // only on iOS / Mac Catalyst (not macOS, tvOS, or visionOS).
         .scrollDismissesKeyboard(.interactively)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
@@ -227,6 +235,7 @@ fileprivate struct AirshipDebugIAAFilterView: View {
                 Button("Done") { keyboardActive = false }
             }
         }
+#endif
         .navigationTitle("IAX Display Filter")
         .onAppear {
             Task { await viewModel.fetchContext() }

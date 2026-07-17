@@ -23,6 +23,10 @@ struct AirshipDebugSceneTextInputView: View {
     var body: some View {
         List {
             Section {
+#if os(tvOS)
+                TextField("e.g. Classify the feedback as one of: shipping, quality, praise, other", text: $viewModel.prompt)
+                    .focused($keyboardActive)
+#else
                 TextEditor(text: $viewModel.prompt)
                     .focused($keyboardActive)
                     .frame(minHeight: 72)
@@ -35,11 +39,16 @@ struct AirshipDebugSceneTextInputView: View {
                                 .allowsHitTesting(false)
                         }
                     }
+#endif
             } header: {
                 Text("Instruction Prompt")
             }
 
             Section("Input") {
+#if os(tvOS)
+                TextField("User text to run inference over…", text: $viewModel.userText)
+                    .focused($keyboardActive)
+#else
                 TextEditor(text: $viewModel.userText)
                     .focused($keyboardActive)
                     .frame(minHeight: 72)
@@ -52,6 +61,7 @@ struct AirshipDebugSceneTextInputView: View {
                                 .allowsHitTesting(false)
                         }
                     }
+#endif
             }
 
             schemaSection
@@ -73,6 +83,9 @@ struct AirshipDebugSceneTextInputView: View {
             resultSection
             contextSection
         }
+#if os(iOS)
+        // Keyboard-dismiss gesture and the `.keyboard` toolbar placement exist
+        // only on iOS / Mac Catalyst (not macOS, tvOS, or visionOS).
         .scrollDismissesKeyboard(.interactively)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
@@ -80,6 +93,7 @@ struct AirshipDebugSceneTextInputView: View {
                 Button("Done") { keyboardActive = false }
             }
         }
+#endif
         .navigationTitle("Scene Text Input")
         .onAppear { Task { await viewModel.fetchContext() } }
     }
@@ -206,7 +220,9 @@ struct AirshipDebugSceneTextInputView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(8)
                 .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
+#if !os(tvOS)
                 .textSelection(.enabled)
+#endif
         }
     }
 }

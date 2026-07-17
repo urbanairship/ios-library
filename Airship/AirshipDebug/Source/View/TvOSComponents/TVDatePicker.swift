@@ -5,7 +5,7 @@ import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
 /// Represents the available components of the tv date picker view.
-fileprivate struct TvDatePickerComponents: OptionSet {
+struct TvDatePickerComponents: OptionSet {
     /// Displays day, month, and year based on the locale
     static var date: TvDatePickerComponents { TvDatePickerComponents(rawValue: 1 << 3) }
     /// Displays hour and minute components based on the locale

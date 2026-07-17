@@ -16,7 +16,7 @@ public final class AirshipAIModelsSDKModule: NSObject, AirshipSDKModule {
     @MainActor
     public static func load(_ args: AirshipModuleLoaderArgs) -> (any AirshipSDKModule)? {
 #if canImport(FoundationModels)
-        if #available(iOS 26.0, *) {
+        if #available(iOS 26.0, visionOS 26.0, *) {
             args.aiManager.registerModelFactory {
                 return SystemAIModel()
             }

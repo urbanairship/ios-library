@@ -84,6 +84,20 @@ build-sample-watchos: setup
 build-airship-objectiveC: setup
 	bash ./scripts/run_xcodebuild.sh "AirshipObjectiveC" "${derived_data_path}" build
 
+# Fast per-platform SDK compile (no archive/package/sign) to catch tvOS/visionOS
+# compile breaks without running the full release build.
+.PHONY: build-sdk-tvos
+build-sdk-tvos: setup
+	bash ./scripts/build_sdk.sh "AirshipRelease tvOS" "generic/platform=tvOS" "${derived_data_path}"
+
+.PHONY: build-sdk-visionos
+build-sdk-visionos: setup
+	bash ./scripts/build_sdk.sh "AirshipRelease" "generic/platform=visionOS" "${derived_data_path}"
+
+.PHONY: build-sdk-maccatalyst
+build-sdk-maccatalyst: setup
+	bash ./scripts/build_sdk.sh "AirshipRelease" "generic/platform=macOS,variant=Mac Catalyst" "${derived_data_path}"
+
 .PHONY: test
 test: setup test-basement test-core test-preference-center test-message-center test-scene-renderer test-scenes test-automation test-feature-flags test-service-extension
 

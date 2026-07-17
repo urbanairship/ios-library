@@ -65,11 +65,20 @@ struct AirshipDebugJSONEditor: View {
 
     @ViewBuilder
     private var editor: some View {
+#if os(tvOS)
+        // tvOS has no TextEditor; fall back to a single-line field.
+        if let focus {
+            TextField("", text: $text).focused(focus)
+        } else {
+            TextField("", text: $text)
+        }
+#else
         if let focus {
             TextEditor(text: $text).focused(focus)
         } else {
             TextEditor(text: $text)
         }
+#endif
     }
 
     @ViewBuilder
