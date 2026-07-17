@@ -229,7 +229,7 @@ extension AirshipDebugSceneTextInputView {
         @Published var isFetchingContext = false
         @Published var isRunning = false
         @Published var result: RunResult?
-        @Published var availability: AirshipAI.Availability = .unavailable(reason: .osVersion)
+        @Published var availability: AirshipAI.Availability = .unavailable(reason: .missingModel)
         @Published var isGeneratingSchema = false
         @Published var schemaGenError: String?
 

@@ -28,11 +28,11 @@ final class SystemAIModel: AirshipAI.Model {
             case .deviceNotEligible:
                 return .unavailable(reason: .deviceNotEligible)
             case .appleIntelligenceNotEnabled:
-                return .unavailable(reason: .appleIntelligenceNotEnabled)
+                return .unavailable(reason: .notEnabled)
             case .modelNotReady:
-                return .unavailable(reason: .modelNotReady)
+                return .unavailable(reason: .missingModel)
             @unknown default:
-                return .unavailable(reason: .unknown)
+                return .unavailable(reason: .other(String(describing: reason)))
             }
         }
     }
@@ -122,6 +122,10 @@ final class SystemAIModel: AirshipAI.Model {
                     return context
                 }
                 guard let reduced = context.droppingLowestPriorityItem() else {
+                    // Nothing left to drop yet the prompt still overflows — the fixed
+                    // portion (instructions + schema + reserve) alone exceeds the window.
+                    // Trimming can't help; let generation surface the authoritative error.
+                    AirshipLogger.warn("SystemAIModel: prompt measures \(total)/\(model.contextSize) tokens with no context left to drop — the instructions/schema alone exceed the context window")
                     return context
                 }
                 AirshipLogger.debug("SystemAIModel: prompt measures \(total)/\(model.contextSize) tokens, dropping a low-priority context item")
@@ -166,7 +170,7 @@ fileprivate extension AirshipJSONSchema {
                         name: propertyName,
                         description: property.description,
                         schema: property.dynamicSchema(name: "\(name)_\(propertyName)"),
-                        isOptional: !info.required.contains(propertyName)
+                        isOptional: !(info.required?.contains(propertyName) ?? false)
                     )
                 }
             return DynamicGenerationSchema(name: name, properties: schemaProperties)

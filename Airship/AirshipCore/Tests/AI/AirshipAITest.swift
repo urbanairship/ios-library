@@ -62,28 +62,6 @@ struct AirshipAIValueTests {
         #expect(AirshipAI.Context.empty.droppingLowestPriorityItem() == nil)
     }
 
-    @Test
-    func usageCodesAsBareString() throws {
-        let usage = AirshipAI.Usage<Void>(rawValue: "in_app_message_filter")
-        let data = try JSONEncoder().encode(usage)
-        #expect(String(data: data, encoding: .utf8) == "\"in_app_message_filter\"")
-        let decoded = try JSONDecoder().decode(AirshipAI.Usage<Void>.self, from: data)
-        #expect(decoded == usage)
-    }
-
-    @Test
-    func schemaInstructionListsFields() {
-        let schema = AirshipJSONSchema.object(
-            properties: [
-                "allow": .boolean(description: "whether to show"),
-                "reason": .string()
-            ],
-            required: ["allow"]
-        )
-        let instruction = schema.instruction
-        #expect(instruction.contains("\"allow\": boolean (required) — whether to show"))
-        #expect(instruction.contains("\"reason\": string (optional)"))
-    }
 }
 
 // MARK: - Schema (nested types + validation)
@@ -105,16 +83,6 @@ struct AirshipAISchemaTests {
         ],
         required: ["allow"]
     )
-
-    // MARK: instruction
-
-    @Test
-    func instructionRendersNestedObjectAndArray() {
-        let instruction = schema.instruction
-        #expect(instruction.contains("\"user\": {"))
-        #expect(instruction.contains("\"age\": integer (required)"))
-        #expect(instruction.contains("array of string"))
-    }
 
     // MARK: validate — happy paths
 
@@ -159,6 +127,23 @@ struct AirshipAISchemaTests {
         #expect(throws: (any Error).self) {
             try schema.validate(.object(["reason": .string("no allow key")]))
         }
+    }
+
+    @Test
+    func validateThrowsForMissingRequiredKeyNotInProperties() throws {
+        // `required` may name a key that has no entry in `properties` — its
+        // presence must still be enforced.
+        let schema = AirshipJSONSchema.object(
+            properties: ["known": .string()],
+            required: ["mustExist"]
+        )
+        #expect(throws: (any Error).self) {
+            try schema.validate(.object(["known": .string("here")]))
+        }
+        try schema.validate(.object([
+            "known": .string("here"),
+            "mustExist": .string("present")
+        ]))
     }
 
     @Test
@@ -216,13 +201,6 @@ struct AirshipAISchemaTests {
         ],
         required: ["result"]
     )
-
-    @Test
-    func instructionRendersEnumChoices() {
-        #expect(enumSchema.instruction.contains(
-            "\"result\": string, exactly one of: \"shipping\", \"quality\", \"praise\" (required)"
-        ))
-    }
 
     @Test
     func validateAcceptsEnumMember() throws {
@@ -315,16 +293,13 @@ struct AirshipAISchemaTests {
     }
 
     @Test
-    func scalarRootValidatesAndRendersInstruction() throws {
+    func scalarRootValidates() throws {
         let schema = AirshipJSONSchema.string(choices: ["a", "b"])
 
         try schema.validate(.string("a"))
         #expect(throws: (any Error).self) {
             try schema.validate(.string("c"))
         }
-
-        #expect(schema.instruction.contains("single JSON value"))
-        #expect(schema.instruction.contains("exactly one of: \"a\", \"b\""))
     }
 }
 

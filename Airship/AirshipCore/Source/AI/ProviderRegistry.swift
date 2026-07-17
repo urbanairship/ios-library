@@ -41,40 +41,15 @@ extension AirshipAI {
         }
 
         /// Returns a type-erased context fetcher for the given usage raw value, or nil if
-        /// no provider is registered. The returned closure merges default and typed contexts;
-        /// typed provider items come after the default provider's.
+        /// no provider is registered.
+        ///
+        /// A usage-specific provider wins outright; the default provider is only a
+        /// fallback for usages that have none. The two are never combined.
         @MainActor
         func contextFetcher(
             for rawValue: String
         ) -> (@Sendable @MainActor (any Sendable) async -> AirshipAI.Context)? {
-            let typed = providers[rawValue]
-            let def = defaultProvider
-
-            guard typed != nil || def != nil else { return nil }
-
-            return { subject in
-                let defCtx: AirshipAI.Context
-                if let def {
-                    defCtx = await def.fetch(subject)
-                } else {
-                    defCtx = .empty
-                }
-                let typedCtx: AirshipAI.Context
-                if let typed {
-                    typedCtx = await typed.fetch(subject)
-                } else {
-                    typedCtx = .empty
-                }
-                return defCtx.merged(overriddenBy: typedCtx)
-            }
+            (providers[rawValue] ?? defaultProvider)?.fetch
         }
-    }
-}
-
-private extension AirshipAI.Context {
-    func merged(overriddenBy other: AirshipAI.Context) -> AirshipAI.Context {
-        // Typed provider items come after default items — when priorities tie,
-        // models drop the earlier (default) items first when trimming.
-        AirshipAI.Context(items: items + other.items)
     }
 }

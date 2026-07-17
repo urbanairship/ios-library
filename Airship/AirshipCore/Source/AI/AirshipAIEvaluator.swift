@@ -20,7 +20,7 @@ extension AirshipAI {
             let prompt = evaluation.prompt()
             let usage = evaluation.usage.rawValue
 
-            AirshipLogger.debug("AI evaluate [\(usage)] instructions:\n\(instructions)\n\nschema:\n\(schema.instruction)\n\nprompt:\n\(prompt)\n\ncontext:\n\(context.render() ?? "none")")
+            AirshipLogger.trace("AI evaluate [\(usage)] instructions:\n\(instructions)\n\nschema:\n\(schema)\n\nprompt:\n\(prompt)\n\ncontext:\n\(context.render() ?? "none")")
 
             do {
                 let json = try await Self.withTimeout(model.responseTimeout) {
@@ -37,7 +37,7 @@ extension AirshipAI {
                         return json
                     }
                 }
-                AirshipLogger.debug("AI evaluate [\(usage)] response:\n\(json)")
+                AirshipLogger.trace("AI evaluate [\(usage)] response:\n\(json)")
                 let output: E.Output = try json.decode()
                 return .completed(output)
             } catch {
@@ -77,6 +77,10 @@ extension AirshipAI {
                 try Task.checkCancellation()
                 do {
                     return try await operation()
+                } catch is CancellationError {
+                    // Cancellation (e.g. the timeout firing) is terminal — propagate it
+                    // rather than burning a retry on it.
+                    throw CancellationError()
                 } catch {
                     lastError = error
                     AirshipLogger.warn("AI evaluation attempt \(attempt)/\(attempts) failed for \(usage): \(error)")

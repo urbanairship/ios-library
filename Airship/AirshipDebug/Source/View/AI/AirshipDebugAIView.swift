@@ -47,7 +47,7 @@ struct AirshipDebugAIView: View {
 
 extension AirshipDebugAIView {
     @MainActor final class ViewModel: ObservableObject {
-        @Published var availability: AirshipAI.Availability = .unavailable(reason: .osVersion)
+        @Published var availability: AirshipAI.Availability = .unavailable(reason: .missingModel)
 
         // Schemas live on evaluations now, so there is no runtime registry to
         // enumerate — this is the list of usages the debug UI knows how to drive.
@@ -319,11 +319,10 @@ private final class IAAFilterViewModel: ObservableObject {
 private extension AirshipAI.Availability.Reason {
     var debugLabel: String {
         switch self {
-        case .osVersion: return "OS version too low (requires iOS 26)"
-        case .deviceNotEligible: return "Device not eligible for Apple Intelligence"
-        case .appleIntelligenceNotEnabled: return "Apple Intelligence disabled in settings"
-        case .modelNotReady: return "Model downloading or warming up"
-        case .unknown: return "Unknown"
+        case .deviceNotEligible: return "Device or OS can't run the model"
+        case .missingModel: return "No model available (not downloaded or still preparing)"
+        case .notEnabled: return "AI features are turned off"
+        case .other(let message): return message
         @unknown default: return "Unknown"
         }
     }
@@ -338,7 +337,7 @@ private extension AirshipAI.Availability.Reason {
 }
 
 private final class PreviewAIManager: AirshipAI.InternalManager, @unchecked Sendable {
-    var availability: AirshipAI.Availability { .unavailable(reason: .osVersion) }
+    var availability: AirshipAI.Availability { .unavailable(reason: .missingModel) }
     func setProvider<S: Sendable>(_ provider: (any AirshipAI.ContextProvider<S>)?, for usage: AirshipAI.Usage<S>) {}
     func setDefaultProvider(_ provider: (any AirshipAI.ContextProvider<Void>)?) {}
     func setModel(_ selector: AirshipAI.ModelSelector) {}

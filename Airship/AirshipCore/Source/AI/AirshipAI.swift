@@ -94,22 +94,28 @@ public enum AirshipAI {
 
     /// Whether the on-device model can be used right now.
     ///
-    /// Ungated so the host app can query it without an `#available` check. Below
-    /// iOS 26 the default model is always `.unavailable(reason: .osVersion)`.
+    /// Ungated so the host app can query it without an `#available` check. When no
+    /// model is resolved (e.g. below the OS minimum, or none registered) the default
+    /// is `.unavailable(reason: .missingModel)`.
     public enum Availability: Sendable, Equatable {
         case available
         case unavailable(reason: Reason)
 
+        /// Why a model can't be used right now.
+        ///
+        /// Kept model-agnostic: these describe outcomes a host app can act on, not
+        /// the internals of any particular (on-device or otherwise) backend.
         public enum Reason: Sendable, Equatable {
-            /// OS is below the minimum required for on-device models (iOS 26).
-            case osVersion
-            /// Hardware is not eligible for Apple Intelligence.
+            /// The device or OS can't run the model (ineligible hardware or an
+            /// unsupported OS version).
             case deviceNotEligible
-            /// Apple Intelligence is not enabled by the user.
-            case appleIntelligenceNotEnabled
-            /// The model is still downloading / warming up.
-            case modelNotReady
-            case unknown
+            /// No usable model is available — not downloaded, still preparing, or
+            /// simply not registered.
+            case missingModel
+            /// AI features are turned off, by the user or by configuration.
+            case notEnabled
+            /// Any other reason, carrying a human-readable description.
+            case other(String)
         }
     }
 
@@ -156,6 +162,11 @@ public enum AirshipAI {
     /// `AirshipAIModels` module) touches FoundationModels.
     public protocol Model: Sendable {
 
+        /// Whether the model can be used right now, and if not, why.
+        ///
+        /// Queried before each evaluation — the framework skips the run when this is
+        /// `.unavailable`. May change over the model's lifetime (e.g. as a model
+        /// finishes downloading), so it's read fresh rather than cached.
         var availability: Availability { get }
 
         /// How many attempts (including the first) the framework should make before
@@ -186,6 +197,13 @@ public enum AirshipAI {
     /// the correct provider is registered at the correct call site.
     public protocol ContextProvider<Subject>: AnyObject, Sendable {
         associatedtype Subject: Sendable
+
+        /// Supplies the on-device context for an evaluation of `subject`.
+        ///
+        /// Called on the main actor immediately before each evaluation. Return
+        /// `.empty` when there's nothing relevant to contribute — the evaluation
+        /// still runs. Keep the work light; it's on the path to displaying the
+        /// feature.
         @MainActor
         func context(for subject: Subject) async -> Context
     }
@@ -208,14 +226,15 @@ public enum AirshipAI {
             for usage: Usage<S>
         )
 
-        /// Registers a default context provider invoked for every evaluation.
+        /// Registers a fallback context provider for usages that have no provider of
+        /// their own.
         ///
-        /// The default provider receives no feature-specific subject (`Subject == Void`) — use
-        /// it to supply general user context such as preferences or profile data.
+        /// Receives no feature-specific subject (`Subject == Void`) — use it to supply
+        /// general user context such as preferences or profile data.
         ///
-        /// When a typed provider is also registered for a usage, both are called and their
-        /// contexts are merged: the typed provider's values take precedence over the default.
-        /// Pass `nil` to remove a previously registered default provider.
+        /// It is only invoked when the evaluation's usage has no typed provider set (via
+        /// `setProvider(_:for:)`). A usage-specific provider wins outright — the two are
+        /// never combined. Pass `nil` to remove a previously registered default provider.
         @MainActor
         func setDefaultProvider(_ provider: (any ContextProvider<Void>)?)
 
@@ -280,19 +299,5 @@ public enum AirshipAI {
         /// Fetches the merged context that would be passed to the model for the given usage and subject.
         /// Returns `.empty` if no provider is registered.
         func fetchContext<S: Sendable>(for usage: Usage<S>, subject: S) async -> Context
-    }
-}
-
-// MARK: - Usage Codable
-
-extension AirshipAI.Usage: Codable {
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        rawValue = try container.decode(String.self)
-    }
-
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(rawValue)
     }
 }

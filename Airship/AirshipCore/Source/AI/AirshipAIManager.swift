@@ -49,7 +49,7 @@ extension AirshipAI {
 
         @MainActor
         public var availability: Availability {
-            resolvedModel?.availability ?? .unavailable(reason: .osVersion)
+            resolvedModel?.availability ?? .unavailable(reason: .missingModel)
         }
 
         @MainActor

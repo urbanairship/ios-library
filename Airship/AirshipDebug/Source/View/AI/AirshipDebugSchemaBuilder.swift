@@ -104,14 +104,14 @@ final class SchemaNodeModel: ObservableObject, Identifiable {
             return .number(description: desc)
         case .object:
             var props: [String: AirshipJSONSchema] = [:]
-            var required: Set<String> = []
+            var required: [String] = []
             for property in properties {
                 let name = property.name.trimmingCharacters(in: .whitespaces)
                 guard !name.isEmpty else { continue }
                 props[name] = property.node.build()
-                if property.required { required.insert(name) }
+                if property.required { required.append(name) }
             }
-            return .object(properties: props, required: required, description: desc)
+            return .object(properties: props, required: required.isEmpty ? nil : required, description: desc)
         case .array:
             return .array(items: (items ?? SchemaNodeModel()).build(), description: desc)
         }

@@ -59,13 +59,13 @@ public struct AirshipJSONSchema: Sendable, Equatable {
     public struct ObjectInfo: Sendable, Equatable {
         /// Named properties.
         public var properties: [String: AirshipJSONSchema]
-        /// Property names that must be present. Per JSON Schema, anything not listed
-        /// is optional.
-        public var required: Set<String>
+        /// Property names that must be present, in declaration order, or `nil` when the
+        /// schema specifies none. An array (not a set) so the order round-trips.
+        public var required: [String]?
 
         public init(
             properties: [String: AirshipJSONSchema],
-            required: Set<String> = []
+            required: [String]? = nil
         ) {
             self.properties = properties
             self.required = required
@@ -119,7 +119,7 @@ extension AirshipJSONSchema {
 
     public static func object(
         properties: [String: AirshipJSONSchema],
-        required: Set<String> = [],
+        required: [String]? = nil,
         description: String? = nil
     ) -> AirshipJSONSchema {
         .init(
@@ -177,7 +177,7 @@ extension AirshipJSONSchema: Codable {
             self.type = .object(
                 .init(
                     properties: try container.decode([String: AirshipJSONSchema].self, forKey: .properties),
-                    required: Set(try container.decodeIfPresent([String].self, forKey: .required) ?? [])
+                    required: try container.decodeIfPresent([String].self, forKey: .required)
                 )
             )
         case .array:
@@ -204,66 +204,10 @@ extension AirshipJSONSchema: Codable {
         case .object(let info):
             try container.encode(RawType.object, forKey: .type)
             try container.encode(info.properties, forKey: .properties)
-            if !info.required.isEmpty {
-                try container.encode(info.required, forKey: .required)
-            }
+            try container.encodeIfPresent(info.required, forKey: .required)
         case .array(let info):
             try container.encode(RawType.array, forKey: .type)
             try container.encode(info.items, forKey: .items)
-        }
-    }
-}
-
-// MARK: - Schema instruction helper
-
-extension AirshipJSONSchema {
-    /// A natural-language description of the expected JSON shape, ready to append
-    /// to model instructions. Model implementors can include this in the system
-    /// prompt to constrain output without guided generation.
-    public var instruction: String {
-        switch type {
-        case .object(let info):
-            let lines = info.properties
-                .map { "  \(Self.describe(name: $0.key, schema: $0.value, isRequired: info.required.contains($0.key)))" }
-            return """
-            *Return the data in JSON format. Do not use markdown backticks or fences.*
-            The response must start with { and end with }. Fields:
-            {
-            \(lines.joined(separator: ",\n"))
-            }
-            """
-        default:
-            return """
-            *Return the data in JSON format. Do not use markdown backticks or fences.*
-            The response must be a single JSON value: \(Self.describe(schema: self)).
-            """
-        }
-    }
-
-    /// Renders a property as `"name": <type> (required|optional) — description`.
-    private static func describe(name: String, schema: AirshipJSONSchema, isRequired: Bool) -> String {
-        let requirement = isRequired ? "required" : "optional"
-        let description = schema.description.map { " — \($0)" } ?? ""
-        return "\"\(name)\": \(describe(schema: schema)) (\(requirement))\(description)"
-    }
-
-    /// Renders a schema node, recursing into nested objects and arrays.
-    private static func describe(schema: AirshipJSONSchema) -> String {
-        switch schema.type {
-        case .string(let info):
-            guard let choices = info.choices else { return "string" }
-            let rendered = choices.map { "\"\($0)\"" }.joined(separator: ", ")
-            return "string, exactly one of: \(rendered)"
-        case .boolean: return "boolean"
-        case .integer: return "integer"
-        case .number: return "number"
-        case .object(let info):
-            let inner = info.properties
-                .map { describe(name: $0.key, schema: $0.value, isRequired: info.required.contains($0.key)) }
-                .joined(separator: ", ")
-            return "{ \(inner) }"
-        case .array(let info):
-            return "array of \(describe(schema: info.items))"
         }
     }
 }
@@ -304,17 +248,24 @@ extension AirshipJSONSchema {
             guard value.isNumber else { throw typeError(path, "number", value) }
         case .object(let info):
             guard let object = value.object else { throw typeError(path, "object", value) }
-            for (name, property) in info.properties {
-                let child = object[name]
-                if child == nil || child == AirshipJSON.null {
-                    if info.required.contains(name) {
+
+            // 1. Verify all required properties are present.
+            if let requiredKeys = info.required {
+                for name in requiredKeys {
+                    let child = object[name]
+                    if child == nil || child == AirshipJSON.null {
                         throw AirshipErrors.error(
                             "Schema validation: missing required property '\(path).\(name)'"
                         )
                     }
-                    continue
                 }
-                try validate(child!, against: property, path: "\(path).\(name)")
+            }
+
+            // 2. Validate types for properties that are present.
+            for (name, property) in info.properties {
+                if let child = object[name], child != AirshipJSON.null {
+                    try validate(child, against: property, path: "\(path).\(name)")
+                }
             }
         case .array(let info):
             guard let array = value.array else { throw typeError(path, "array", value) }

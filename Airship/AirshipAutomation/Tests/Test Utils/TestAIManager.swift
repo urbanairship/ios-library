@@ -4,7 +4,7 @@ import Foundation
 @_spi(AirshipInternal) import AirshipCore
 
 final class TestAIManager: AirshipAI.InternalManager, @unchecked Sendable {
-    var availability: AirshipAI.Availability = .unavailable(reason: .osVersion)
+    var availability: AirshipAI.Availability = .unavailable(reason: .missingModel)
 
     func setProvider<S: Sendable>(_ provider: (any AirshipAI.ContextProvider<S>)?, for usage: AirshipAI.Usage<S>) {}
     func setDefaultProvider(_ provider: (any AirshipAI.ContextProvider<Void>)?) {}
