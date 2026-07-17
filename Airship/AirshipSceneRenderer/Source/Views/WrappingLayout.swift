@@ -9,22 +9,22 @@ import SwiftUI
 /// item padding is specified.
 internal struct WrappingLayout: Layout {
     /// View constraints to apply
-    var viewConstraints: ViewConstraints
+    private var viewConstraints: ViewConstraints
 
     /// Minimum number of lines to display
-    var minLines: Int
+    private var minLines: Int
     private static let defaultMinLines: Int = 1
 
     /// Spacing applied around each item
-    var itemSpacing: CGFloat
+    private var itemSpacing: CGFloat
     private static let defaultItemSpacing: CGFloat = 0
 
     /// Spacing applied for each wrapped line
-    var lineSpacing: CGFloat
+    private var lineSpacing: CGFloat
     private static let defaultLineSpacing: CGFloat = 0
 
     /// Maximum number of items to display per line
-    var maxItemsPerLine: Int
+    private var maxItemsPerLine: Int
     private static let defaultMaxItemsPerLine: Int = 11
 
     init(

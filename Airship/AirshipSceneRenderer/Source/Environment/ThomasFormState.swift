@@ -36,7 +36,7 @@ final class ThomasFormState: ObservableObject {
     @MainActor
     private struct Child {
         var field: ThomasFormField
-        var watchTask: Task<Void, Never>
+        fileprivate var watchTask: Task<Void, Never>
         var predicate: (@MainActor @Sendable () -> Bool)?
     }
 

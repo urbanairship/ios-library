@@ -11,11 +11,11 @@ import Combine
 
 @MainActor
 private final class VideoControlsObserver: ObservableObject {
-    var timeObserver: Any?
-    var endTimeObserver: (any NSObjectProtocol)?
-    var statusObserver: NSKeyValueObservation?
-    weak var player: AVPlayer?
-    var isCancelled: Bool = false
+    fileprivate var timeObserver: Any?
+    fileprivate var endTimeObserver: (any NSObjectProtocol)?
+    fileprivate var statusObserver: NSKeyValueObservation?
+    fileprivate weak var player: AVPlayer?
+    fileprivate var isCancelled: Bool = false
 
     /// Called by wrapper
     internal func cleanup() {
@@ -51,8 +51,8 @@ struct VideoMediaNativeView: View {
     @State private var isControlsVisible: Bool = true
     @State private var controlsTimer: Timer?
 
-    @EnvironmentObject var videoState: VideoState
-    @Environment(\.isVisible) var isVisible
+    @EnvironmentObject private var videoState: VideoState
+    @Environment(\.isVisible) private var isVisible
 
     private var showControls: Bool {
         info.properties.video?.showControls ?? true
@@ -96,23 +96,23 @@ struct VideoMediaNativeView: View {
 }
 
 fileprivate struct VideoControls: ViewModifier {
-    let hasError: Bool
-    let showControls: Bool
-    let shouldLoop: Bool
-    let player: AVPlayer?
+    fileprivate let hasError: Bool
+    fileprivate let showControls: Bool
+    fileprivate let shouldLoop: Bool
+    fileprivate let player: AVPlayer?
     @Binding
-    var isPlaying: Bool
+    fileprivate var isPlaying: Bool
     @Binding
-    var currentTime: Double
+    fileprivate var currentTime: Double
     @Binding
-    var duration: Double
+    fileprivate var duration: Double
     @Binding
-    var isControlsVisible: Bool
+    fileprivate var isControlsVisible: Bool
     @Binding
-    var controlsTimer: Timer?
+    fileprivate var controlsTimer: Timer?
 
     @StateObject
-    private var observer = VideoControlsObserver()
+    private var observer: VideoControlsObserver = VideoControlsObserver()
     @State
     private var isDraggingSlider: Bool = false
 
@@ -294,17 +294,17 @@ private struct VideoErrorView: View {
 }
 
 private struct VideoControlsView: View {
-    let player: AVPlayer?
+    fileprivate let player: AVPlayer?
     @Binding
-    var isPlaying: Bool
+    fileprivate var isPlaying: Bool
     @Binding
-    var currentTime: Double
+    fileprivate var currentTime: Double
     @Binding
-    var duration: Double
+    fileprivate var duration: Double
     @Binding
-    var isDraggingSlider: Bool
-    let size: CGSize
-    let onInteraction: () -> Void
+    fileprivate var isDraggingSlider: Bool
+    fileprivate let size: CGSize
+    fileprivate let onInteraction: () -> Void
 
     @State
     private var isMuted: Bool = false

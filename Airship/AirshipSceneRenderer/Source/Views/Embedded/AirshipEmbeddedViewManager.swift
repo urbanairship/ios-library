@@ -24,11 +24,11 @@ public protocol AirshipEmbeddedViewManagerProtocol: Sendable {
 @_spi(AirshipInternal)
 public final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
 
-    public static let shared = AirshipEmbeddedViewManager()
+    public static let shared: AirshipEmbeddedViewManager = AirshipEmbeddedViewManager()
 
     @MainActor
     private var pending: [PendingEmbedded] = []
-    private let viewSubject = CurrentValueSubject<[PendingEmbedded], Never>([])
+    private let viewSubject: CurrentValueSubject<[PendingEmbedded], Never> = CurrentValueSubject<[PendingEmbedded], Never>([])
 
     public var publisher: AnyPublisher<[PendingEmbedded], Never> {
         viewSubject.eraseToAnyPublisher()

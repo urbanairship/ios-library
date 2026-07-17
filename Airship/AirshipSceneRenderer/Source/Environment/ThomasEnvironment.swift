@@ -58,7 +58,7 @@ final class ThomasEnvironment: ObservableObject {
     }
 
     @Published
-    var isDismissed = false
+    var isDismissed: Bool = false
 
     @Published
     var focusedID: String? = nil

@@ -56,7 +56,7 @@ final class ThomasPagerTracker {
     @MainActor
     private final class Tracker {
         private var currentPage: Page?
-        var viewed: [ThomasViewedPageInfo] = []
+        fileprivate var viewed: [ThomasViewedPageInfo] = []
         private var startTime: TimeInterval?
 
         func start(page: Page, currentDisplayTime: TimeInterval) {

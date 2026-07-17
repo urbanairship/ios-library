@@ -5,8 +5,8 @@ import SwiftUI
 
 
 struct BackgroundViewModifier: ViewModifier {
-    @Environment(\.colorScheme) var colorScheme
-    @EnvironmentObject var state: ThomasState
+    @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject private var state: ThomasState
 
     var backgroundColor: ThomasColor?
     var backgroundColorOverrides: [ThomasPropertyOverride<ThomasColor>]?
@@ -204,10 +204,10 @@ extension View {
 }
 
 struct CustomCornerRadii: Equatable, Animatable {
-    var topLeading: CGFloat
-    var topTrailing: CGFloat
-    var bottomLeading: CGFloat
-    var bottomTrailing: CGFloat
+    fileprivate var topLeading: CGFloat
+    fileprivate var topTrailing: CGFloat
+    fileprivate var bottomLeading: CGFloat
+    fileprivate var bottomTrailing: CGFloat
 
     /// Initializes CustomCornerRadii representing the INNER radii
     /// calculated from a ThomasBorder, subtracting the stroke width.

@@ -12,17 +12,17 @@ struct Score: View {
     @MainActor
     private final class ViewModel: ObservableObject {
 
-        let style: ThomasViewInfo.Score.ScoreStyle
+        private let style: ThomasViewInfo.Score.ScoreStyle
 
         init(style: ThomasViewInfo.Score.ScoreStyle) {
             self.style = style
         }
 
         @Published
-        var score: AirshipJSON?
+        fileprivate var score: AirshipJSON?
 
         @Published
-        var index: Int?
+        fileprivate var index: Int?
 
         func accessibilityValue(format: String) -> String? {
             guard let index else { return nil }
@@ -307,11 +307,11 @@ struct Score: View {
 }
 
 private struct AirshipNumberRangeToggleStyle: ToggleStyle {
-    let style: ThomasViewInfo.Score.ScoreStyle.NumberRange
-    let viewConstraints: ViewConstraints
-    let value: Int
-    let colorScheme: ColorScheme
-    let disabled: Bool
+    fileprivate let style: ThomasViewInfo.Score.ScoreStyle.NumberRange
+    fileprivate let viewConstraints: ViewConstraints
+    fileprivate let value: Int
+    fileprivate let colorScheme: ColorScheme
+    fileprivate let disabled: Bool
 
     func makeBody(configuration: Self.Configuration) -> some View {
         let isOn = configuration.isOn

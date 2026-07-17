@@ -7,7 +7,7 @@ import AirshipBasement
 /// View factory. Inflates views based on type. Carried by `ThomasEnvironment` so it reaches every
 /// view (`thomasEnvironment.viewFactory`) with the host-provided `ThomasExtensions`.
 struct ViewFactory: Sendable {
-    let extensions: any ThomasExtensions
+    private let extensions: any ThomasExtensions
 
     init(extensions: any ThomasExtensions) {
         self.extensions = extensions

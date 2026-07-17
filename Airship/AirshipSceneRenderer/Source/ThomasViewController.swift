@@ -474,10 +474,10 @@ final class ThomasBannerConstraints: ObservableObject {
 }
 
 fileprivate struct ContentPlacement: Sendable, Equatable {
-    let position: ThomasEdgePosition
-    let additionalEdgeInsets: EdgeInsets
-    let width: Double
-    let height: Double
-    let ignoreSafeArea: Bool
+    fileprivate let position: ThomasEdgePosition
+    fileprivate let additionalEdgeInsets: EdgeInsets
+    fileprivate let width: Double
+    fileprivate let height: Double
+    fileprivate let ignoreSafeArea: Bool
 }
 

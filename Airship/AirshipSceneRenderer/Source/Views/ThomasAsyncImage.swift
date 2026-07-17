@@ -7,10 +7,10 @@ public import SwiftUI
 @_spi(AirshipInternal)
 public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
 
-    let url: String
-    let loadImage: @MainActor (String) async throws -> AirshipImageData
-    let image: (Image, CGSize) -> ImageView
-    let placeholder: () -> Placeholder
+    private let url: String
+    private let loadImage: @MainActor (String) async throws -> AirshipImageData
+    private let image: (Image, CGSize) -> ImageView
+    private let placeholder: () -> Placeholder
 
     @_spi(AirshipInternal)
     public init(
@@ -32,7 +32,7 @@ public struct ThomasAsyncImage<Placeholder: View, ImageView: View>: View {
     @State private var imageTask: Task<Void, Never>?
     @State private var loopsCompleted: Int = 0
 
-    @Environment(\.isVisible) var isVisible: Bool   // we use this value not for updating view tree, but for starting stopping animation,
+    @Environment(\.isVisible) private var isVisible: Bool   // we use this value not for updating view tree, but for starting stopping animation,
                                                     // that's why we need to store the actual value in a separate @State variable
     @State private var isImageVisible: Bool = false
 

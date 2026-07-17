@@ -46,7 +46,7 @@ extension ThomasViewInfo {
         return result
     }
 
-    var immediateChildren: [ThomasViewInfo]? {
+    private var immediateChildren: [ThomasViewInfo]? {
         return switch self {
         case .container(let info): info.properties.items.map { $0.view }
         case .linearLayout(let info): info.properties.items.map { $0.view }
@@ -90,8 +90,8 @@ extension ThomasViewInfo {
 }
 
 extension AirshipLayout {
-    static let minLayoutVersion = 1
-    static let maxLayoutVersion = 2
+    static let minLayoutVersion: Int = 1
+    static let maxLayoutVersion: Int = 2
 
     public static func isValidVersion(_ version: Int) -> Bool {
         return version >= minLayoutVersion && version <= maxLayoutVersion

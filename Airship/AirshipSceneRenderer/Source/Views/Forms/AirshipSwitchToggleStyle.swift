@@ -15,29 +15,29 @@ struct AirshipSwitchToggleStyle: ToggleStyle {
     }
     
     struct AirshipSwitchButtonStyle: ButtonStyle {
-        let info: ThomasToggleStyleInfo.Switch
-        var isOn: Binding<Bool>
+        fileprivate let info: ThomasToggleStyleInfo.Switch
+        fileprivate var isOn: Binding<Bool>
         
         func makeBody(configuration: Self.Configuration) -> some View {
             ButtonView(configuration: configuration, info: info, isOn: isOn)
         }
         
         struct ButtonView: View {
-            let configuration: ButtonStyle.Configuration
-            let info: ThomasToggleStyleInfo.Switch
-            var isOn: Binding<Bool>
-            
-            @Environment(\.isFocused) var isFocused
-            @Environment(\.isEnabled) var isEnabled
-            @Environment(\.colorScheme) var colorScheme
+            fileprivate let configuration: ButtonStyle.Configuration
+            fileprivate let info: ThomasToggleStyleInfo.Switch
+            fileprivate var isOn: Binding<Bool>
 
-            static let trackWidth = 50.0
-            static let thumbDiameter = 30.0
-            static let thumbPadding = 1.5
-            static let pressedThumbStretch = 4.0
-            
-            static let offSet = (trackWidth - thumbDiameter) / 2
-            static let pressedOffset = offSet - (pressedThumbStretch / 2)
+            @Environment(\.isFocused) private var isFocused
+            @Environment(\.isEnabled) private var isEnabled
+            @Environment(\.colorScheme) private var colorScheme
+
+            private static let trackWidth: Double = 50.0
+            private static let thumbDiameter: Double = 30.0
+            private static let thumbPadding: Double = 1.5
+            private static let pressedThumbStretch: Double = 4.0
+
+            private static let offSet: Double = (trackWidth - thumbDiameter) / 2
+            private static let pressedOffset: Double = offSet - (pressedThumbStretch / 2)
             
             @ViewBuilder
             func createOverlay(isPressed: Bool) -> some View {

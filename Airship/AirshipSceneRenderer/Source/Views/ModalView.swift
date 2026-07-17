@@ -21,8 +21,8 @@ struct ModalView: View {
     @State private var isShowing: Bool = false
     @State private var isDismissing: Bool = false
     
-    static let animateInDuration = 0.2
-    static let animateOutDuration = 0.3
+    private static let animateInDuration: Double = 0.2
+    private static let animateOutDuration: Double = 0.3
     
     var body: some View {
         GeometryReader { metrics in

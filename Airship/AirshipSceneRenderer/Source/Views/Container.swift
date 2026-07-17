@@ -84,7 +84,7 @@ fileprivate struct NewContainer: View {
 
 fileprivate struct ContainerLayout: Layout {
     struct ContainerItemPositionKey: LayoutValueKey {
-        static let defaultValue = ThomasPosition(horizontal: .center, vertical: .center)
+        static let defaultValue: ThomasPosition = ThomasPosition(horizontal: .center, vertical: .center)
     }
     
     let constraints: ViewConstraints

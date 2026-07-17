@@ -67,7 +67,7 @@ extension ThomasButtonClickBehavior {
 }
 
 extension Array where Element == ThomasButtonClickBehavior {
-    var sortedBehaviors: [Element] {
+    private var sortedBehaviors: [Element] {
         return self.sorted { $0.sortOrder < $1.sortOrder }
     }
 }

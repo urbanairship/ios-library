@@ -6,22 +6,22 @@ import SwiftUI
 
 struct StoryIndicator: View {
 
-    private static let defaultSpacing = 10.0
-    private static let defaultHeight = 6.0
-    private static let defaultInactiveSegmentScaler = 0.5
+    private static let defaultSpacing: Double = 10.0
+    private static let defaultHeight: Double = 6.0
+    private static let defaultInactiveSegmentScaler: Double = 0.5
     
     let info: ThomasViewInfo.StoryIndicator
     let constraints: ViewConstraints
 
-    @EnvironmentObject var pagerState: PagerState
-    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject private var pagerState: PagerState
+    @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
+    @Environment(\.colorScheme) private var colorScheme
     
     func announcePage(info: ThomasViewInfo.StoryIndicator) -> Bool {
         return info.properties.automatedAccessibilityActions?.contains{ $0.type == .announce} ?? false
     }
 
-    var style: ThomasViewInfo.StoryIndicator.Style.LinearProgress {
+    private var style: ThomasViewInfo.StoryIndicator.Style.LinearProgress {
         switch (self.info.properties.style) {
         case .linearProgress(let style): return style
         }

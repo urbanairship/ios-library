@@ -17,10 +17,10 @@ final class ValidatableHelper : ObservableObject {
     private var subscriptionState: [String: State] = [:]
 
     private final class State {
-        var lastValue: (any Equatable)?
-        var isInitialValue: Bool
-        var subscription: AnyCancellable?
-        var lastAction: ValidationAction?
+        fileprivate var lastValue: (any Equatable)?
+        fileprivate var isInitialValue: Bool
+        fileprivate var subscription: AnyCancellable?
+        fileprivate var lastAction: ValidationAction?
 
         init(isInitialValue: Bool, lastValue: (any Equatable)? = nil, subscription: AnyCancellable? = nil) {
             self.isInitialValue = isInitialValue

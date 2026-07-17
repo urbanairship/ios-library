@@ -89,8 +89,8 @@ final class PagerState: ObservableObject {
     @Published private(set) var pageItems: [ThomasViewInfo.Pager.Item] = []
     @Published var progress: Double = 0.0
     @Published private(set) var completed: Bool = false
-    @Published private(set) var isScrollingDisabled = false
-    @Published private(set) var isNavigationInProgress = false
+    @Published private(set) var isScrollingDisabled: Bool = false
+    @Published private(set) var isNavigationInProgress: Bool = false
 
     /// Used to pause/resume a story
     @Published var inProgress: Bool = true
@@ -100,7 +100,7 @@ final class PagerState: ObservableObject {
     private var pageViewCounts: [String: Int] = [:]
 
     @Published
-    var isVoiceOverRunning = false
+    var isVoiceOverRunning: Bool = false
 
     private var mediaReadyState: [MediaKey: Bool] = [:]
 
@@ -449,7 +449,7 @@ final class PagerState: ObservableObject {
 
 @MainActor
 private final class BranchControl: Sendable {
-    let completionChecker: ThomasPagerControllerBranching
+    private let completionChecker: ThomasPagerControllerBranching
     
     private var allPages: [ThomasViewInfo.Pager.Item] = []
     
@@ -464,7 +464,7 @@ private final class BranchControl: Sendable {
         self.completionChecker = completionChecker
     }
 
-    var payload: AirshipJSON {
+    private var payload: AirshipJSON {
         return self.thomasState?.state ?? .null
     }
 

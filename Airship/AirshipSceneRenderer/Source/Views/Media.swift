@@ -41,7 +41,7 @@ struct Media: View {
         self.constraints = constraints
     }
 
-    var videoAspectRatio: CGFloat {
+    private var videoAspectRatio: CGFloat {
         CGFloat(self.info.properties.video?.aspectRatio ?? defaultAspectRatio)
     }
 

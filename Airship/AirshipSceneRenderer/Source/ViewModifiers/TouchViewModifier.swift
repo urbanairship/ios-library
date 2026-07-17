@@ -6,8 +6,8 @@ import SwiftUI
 
 #if !os(tvOS)
 fileprivate struct TouchViewModifier: ViewModifier {
-    @GestureState var isPressed: Bool = false
-    let onChange: (Bool) -> Void
+    @GestureState private var isPressed: Bool = false
+    fileprivate let onChange: (Bool) -> Void
 
     func body(content: Content) -> some View {
         content

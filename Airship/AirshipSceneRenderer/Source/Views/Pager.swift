@@ -862,7 +862,7 @@ extension ThomasViewInfo.Pager.Item {
 extension Pager {
     // Use .viewAligned instead of .paging — .paging has a SwiftUI bug where full-screen
     // pagers with clipped images misalign pages at exactly 100% of the window width.
-    static var scrollTargetBehavior: ViewAlignedScrollTargetBehavior {
+    private static var scrollTargetBehavior: ViewAlignedScrollTargetBehavior {
         if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *) {
             return .viewAligned(limitBehavior: .alwaysByOne)
         } else {

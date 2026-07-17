@@ -4,7 +4,7 @@ import Foundation
 
 @MainActor
 struct ThomasAssociatedLabelResolver: Sendable {
-    var labelMap: [String: (ThomasState) -> String?] = [:]
+    private var labelMap: [String: (ThomasState) -> String?] = [:]
 
     init(layout: AirshipLayout, localizer: any ThomasLocalizer) {
         var labelMap: [String: (ThomasState) -> String?] = [:]

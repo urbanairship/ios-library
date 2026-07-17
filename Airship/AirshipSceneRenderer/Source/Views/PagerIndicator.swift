@@ -68,8 +68,8 @@ struct PagerIndicator: View {
 /// static typing (and thus view identity / animations), unlike erasing to `AnyView`.
 private struct PagerIndicatorChild: View {
 
-    let binding: ThomasViewInfo.PagerIndicator.Properties.Binding
-    let constraints: ViewConstraints
+    fileprivate let binding: ThomasViewInfo.PagerIndicator.Properties.Binding
+    fileprivate let constraints: ViewConstraints
 
     @Environment(\.colorScheme) private var colorScheme
 

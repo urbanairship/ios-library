@@ -8,7 +8,7 @@ enum ThomasFormFieldPendingResult: Equatable, Sendable {
     case invalid
     case error
 
-    var isError: Bool {
+    fileprivate var isError: Bool {
         if case .error = self {
             return true
         }

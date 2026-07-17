@@ -5,7 +5,7 @@ import SwiftUI
 
 struct ThomasMediaUrlSelector: ThomasSerializable {
     var platform: ThomasPlatform?
-    var darkMode: Bool?
+    fileprivate var darkMode: Bool?
     var url: String
 
     private enum CodingKeys: String, CodingKey {

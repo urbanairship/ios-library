@@ -3,7 +3,7 @@
 import Foundation
 
 struct LayoutState: Sendable {
-    static let empty = LayoutState(
+    static let empty: LayoutState = LayoutState(
         pagerState: nil,
         formState: nil,
         buttonState: nil

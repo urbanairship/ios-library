@@ -23,8 +23,8 @@ struct NativeVideoPlayer: UIViewRepresentable {
     @Environment(\.isVisible) private var isVisible
     @Environment(\.layoutDirection) private var layoutDirection
     @State private var isLoaded: Bool = false
-    @EnvironmentObject var pagerState: PagerState
-    @EnvironmentObject var videoState: VideoState
+    @EnvironmentObject private var pagerState: PagerState
+    @EnvironmentObject private var videoState: VideoState
 
     private var video: ThomasViewInfo.Media.Video? {
         self.info.properties.video
@@ -102,11 +102,11 @@ struct NativeVideoPlayer: UIViewRepresentable {
     // MARK: - PlayerObservers
 
     private final class PlayerObservers: @unchecked Sendable {
-        var endTimeObserver: (any NSObjectProtocol)?
-        var statusObserver: NSKeyValueObservation?
-        var rateObserver: NSKeyValueObservation?
-        var muteObserver: NSKeyValueObservation?
-        weak var player: AVPlayer?
+        fileprivate var endTimeObserver: (any NSObjectProtocol)?
+        fileprivate var statusObserver: NSKeyValueObservation?
+        fileprivate var rateObserver: NSKeyValueObservation?
+        fileprivate var muteObserver: NSKeyValueObservation?
+        fileprivate weak var player: AVPlayer?
 
         func cleanup() {
             if let observer = endTimeObserver {
@@ -136,7 +136,7 @@ struct NativeVideoPlayer: UIViewRepresentable {
 
         private weak var playerContainer: VideoPlayerContainer?
         private var onMediaReady: (@MainActor () -> Void)?
-        private let observers = PlayerObservers()
+        private let observers: PlayerObservers = PlayerObservers()
 
         private var lastIsVisible: Bool = false
         private var lastIsLoaded: Bool = false
@@ -397,12 +397,12 @@ struct NativeVideoPlayer: UIViewRepresentable {
     // MARK: - VideoPlayerContainer
 
     final class VideoPlayerContainer: UIView {
-        var player: AVPlayer?
-        var videoURL: URL?
-        var shouldLoop: Bool = false
-        var isMuted: Bool = false
-        var info: ThomasViewInfo.Media?
-        var isRTL: Bool = false
+        fileprivate var player: AVPlayer?
+        fileprivate var videoURL: URL?
+        fileprivate var shouldLoop: Bool = false
+        fileprivate var isMuted: Bool = false
+        fileprivate var info: ThomasViewInfo.Media?
+        fileprivate var isRTL: Bool = false
 
         override init(frame: CGRect) {
             super.init(frame: frame)

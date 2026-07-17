@@ -16,7 +16,7 @@ struct ViewConstraints: Equatable {
         case consumeMargin
     }
 
-    static let emptyEdgeSet = EdgeInsets(
+    static let emptyEdgeSet: EdgeInsets = EdgeInsets(
         top: 0,
         leading: 0,
         bottom: 0,
@@ -318,7 +318,7 @@ extension ThomasSizeConstraint {
         }
     }
 
-    var isPercent: Bool {
+    fileprivate var isPercent: Bool {
         switch self {
         case .points(_):
             return false

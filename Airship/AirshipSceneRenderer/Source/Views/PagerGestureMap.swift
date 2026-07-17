@@ -80,11 +80,11 @@ fileprivate struct CenterRectangle: Shape {
 
 struct PagerGestureMapExplorer {
     
-    let topTrapezoidPath: Path
-    let bottomTrapezoidPath: Path
-    let leftTrapezoidPath: Path
-    let rightTrapezoidPath: Path
-    let centerSquarePath: Path
+    private let topTrapezoidPath: Path
+    private let bottomTrapezoidPath: Path
+    private let leftTrapezoidPath: Path
+    private let rightTrapezoidPath: Path
+    private let centerSquarePath: Path
 
 
     init(_ rect: CGRect) {

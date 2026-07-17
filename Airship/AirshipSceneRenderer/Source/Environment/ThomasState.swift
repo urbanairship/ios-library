@@ -23,14 +23,14 @@ final class ThomasState: ObservableObject {
     // Internal state snapshot that tracks current values
     @MainActor
     private struct StateSnapshot {
-        var formStatus: ThomasFormState.Status?
-        var formActiveFields: [String: ThomasFormField] = [:]
-        var formType: ThomasFormState.FormType?
-        var pagerInProgress: Bool?
-        var videoPlaying: Bool?
-        var videoMuted: Bool?
-        var mutableStateValue: AirshipJSON?
-        var asyncViewStatus: ThomasAsyncViewState.Status?
+        fileprivate var formStatus: ThomasFormState.Status?
+        fileprivate var formActiveFields: [String: ThomasFormField] = [:]
+        fileprivate var formType: ThomasFormState.FormType?
+        fileprivate var pagerInProgress: Bool?
+        fileprivate var videoPlaying: Bool?
+        fileprivate var videoMuted: Bool?
+        fileprivate var mutableStateValue: AirshipJSON?
+        fileprivate var asyncViewStatus: ThomasAsyncViewState.Status?
 
         /// Generates the final AirshipJSON based strictly on this snapshot data
         func toAirshipJSON() -> AirshipJSON {
@@ -328,7 +328,7 @@ fileprivate extension AirshipJSON {
 final class ScopedStateCache: ObservableObject {
     private var cachedState: ThomasState?
     
-    private let updateSubject = PassthroughSubject<any Codable, Never>()
+    private let updateSubject: PassthroughSubject<any Codable, Never> = PassthroughSubject<any Codable, Never>()
     private var subscription: AnyCancellable?
     private var pendingUpdate: SnapshotType? = nil
 
@@ -393,9 +393,9 @@ extension ThomasState: ThomasStateProvider {
     typealias SnapshotType = PersistentState
     
     struct PersistentState: Codable {
-        let formState: ThomasFormState.SnapshotType?
-        let pagerState: PagerState.SnapshotType?
-        let mutableState: MutableState.SnapshotType?
+        fileprivate let formState: ThomasFormState.SnapshotType?
+        fileprivate let pagerState: PagerState.SnapshotType?
+        fileprivate let mutableState: MutableState.SnapshotType?
     }
     
     var updates: AnyPublisher<any Codable, Never> {

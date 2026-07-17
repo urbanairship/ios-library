@@ -113,11 +113,11 @@ extension View {
 private struct AccessibleModifier<Content: View>: View {
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
 
-    let content: Content
-    let accessible: ThomasAccessibleInfo?
-    let associatedLabel: String?
-    let fallbackContentDescription: String?
-    let hideIfDescriptionIsMissing: Bool
+    fileprivate let content: Content
+    fileprivate let accessible: ThomasAccessibleInfo?
+    fileprivate let associatedLabel: String?
+    fileprivate let fallbackContentDescription: String?
+    fileprivate let hideIfDescriptionIsMissing: Bool
 
     @ViewBuilder
     var body: some View {
@@ -145,11 +145,11 @@ private struct AccessibleModifier<Content: View>: View {
 internal struct ThomasCommonScope: OptionSet {
     let rawValue: UInt
 
-    public static let background = ThomasCommonScope(rawValue: 1 << 0)
-    public static let stateTriggers = ThomasCommonScope(rawValue: 1 << 1)
-    public static let eventHandlers = ThomasCommonScope(rawValue: 1 << 2)
-    public static let enableBehaviors = ThomasCommonScope(rawValue: 1 << 3)
-    public static let visibility = ThomasCommonScope(rawValue: 1 << 4)
+    public static let background: ThomasCommonScope = ThomasCommonScope(rawValue: 1 << 0)
+    public static let stateTriggers: ThomasCommonScope = ThomasCommonScope(rawValue: 1 << 1)
+    public static let eventHandlers: ThomasCommonScope = ThomasCommonScope(rawValue: 1 << 2)
+    public static let enableBehaviors: ThomasCommonScope = ThomasCommonScope(rawValue: 1 << 3)
+    public static let visibility: ThomasCommonScope = ThomasCommonScope(rawValue: 1 << 4)
 
     static let all: ThomasCommonScope = [.background, .stateTriggers, .eventHandlers, .enableBehaviors, .visibility]
 }
@@ -371,7 +371,7 @@ struct AirshipViewModifierBuilder {
     }
 
     private struct Optional<Modifier: ViewModifier>: ViewModifier {
-        let viewModifier: Modifier?
+        fileprivate let viewModifier: Modifier?
 
         func body(content: Content) -> some View {
             if let viewModifier = viewModifier {

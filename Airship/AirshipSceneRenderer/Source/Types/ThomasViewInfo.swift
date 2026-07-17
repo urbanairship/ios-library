@@ -1490,7 +1490,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
     }
 
     struct StateController: BaseInfo {
-        static let defaultIdentifier: String = "default"
+        private static let defaultIdentifier: String = "default"
         
         var commonProperties: CommonViewProperties
         var commonOverrides: CommonViewOverrides?
@@ -2198,13 +2198,13 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             }
 
             private enum Defaults {
-                static let maxRetries = 3
+                static let maxRetries: Int = 3
                 static let initialBackoffSeconds: TimeInterval = 1.0
                 static let maxBackoffSeconds: TimeInterval = 10.0
             }
 
             /// Defaults when the `retry` object or individual fields are omitted from JSON.
-            static let defaultRetryConfiguration = RetryingConfig(
+            static let defaultRetryConfiguration: RetryingConfig = RetryingConfig(
                 maxRetries: Defaults.maxRetries,
                 initialBackoff: Defaults.initialBackoffSeconds,
                 maxBackoff: Defaults.maxBackoffSeconds
@@ -2432,7 +2432,7 @@ fileprivate struct ViewOverridesEncodable: Encodable {
     }
 
     struct Wrapper: Encodable {
-        var overrides: [any Encodable]
+        fileprivate var overrides: [any Encodable]
         func encode(to encoder: any Encoder) throws {
             try overrides.forEach {
                 try $0.encode(to: encoder)
@@ -2442,7 +2442,7 @@ fileprivate struct ViewOverridesEncodable: Encodable {
 }
 
 fileprivate struct ViewOverridesDecodable<T: Decodable>: Decodable {
-    var overrides: T?
+    fileprivate var overrides: T?
     enum CodingKeys: String, CodingKey {
         case overrides = "view_overrides"
     }

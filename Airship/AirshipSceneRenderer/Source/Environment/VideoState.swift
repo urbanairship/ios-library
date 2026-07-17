@@ -35,10 +35,10 @@ final class VideoState: ObservableObject {
     private var subscriptions: Set<AnyCancellable> = Set()
 
     struct VideoRegistration {
-        let play: @MainActor () -> Void
-        let pause: @MainActor () -> Void
-        let mute: @MainActor () -> Void
-        let unmute: @MainActor () -> Void
+        fileprivate let play: @MainActor () -> Void
+        fileprivate let pause: @MainActor () -> Void
+        fileprivate let mute: @MainActor () -> Void
+        fileprivate let unmute: @MainActor () -> Void
     }
 
     init(

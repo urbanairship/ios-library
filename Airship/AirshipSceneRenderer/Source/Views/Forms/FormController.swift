@@ -139,7 +139,7 @@ struct FormController: View {
 }
 
 fileprivate struct FormControllerDebug: View {
-    @EnvironmentObject var state: ThomasFormState
+    @EnvironmentObject private var state: ThomasFormState
 
     var body: some View {
         Text(String(describing: state))

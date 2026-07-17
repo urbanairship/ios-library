@@ -8,13 +8,13 @@ struct CustomView: View {
     let constraints: ViewConstraints
 
     @EnvironmentObject
-    var thomasEnvironment: ThomasEnvironment
+    private var thomasEnvironment: ThomasEnvironment
 
     @EnvironmentObject
-    var pagerState: PagerState
+    private var pagerState: PagerState
 
     @Environment(\.layoutState)
-    var layoutState
+    private var layoutState
 
     var body: some View {
         let args = AirshipCustomViewArguments(

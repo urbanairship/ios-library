@@ -9,7 +9,7 @@ import WebKit
 
 @MainActor
 private final class WeakScriptMessageHandler: NSObject, WKScriptMessageHandler {
-    weak var delegate: (any WKScriptMessageHandler)?
+    private weak var delegate: (any WKScriptMessageHandler)?
 
     init(_ delegate: any WKScriptMessageHandler) {
         self.delegate = delegate
@@ -57,12 +57,12 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
     let info: ThomasViewInfo.Media
     let videoIdentifier: String?
     let onMediaReady: @MainActor () -> Void
-    @Environment(\.isVisible) var isVisible
+    @Environment(\.isVisible) private var isVisible
     @State private var isLoaded: Bool = false
-    @EnvironmentObject var pagerState: PagerState
-    @EnvironmentObject var videoState: VideoState
-    @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @Environment(\.layoutDirection) var layoutDirection
+    @EnvironmentObject private var pagerState: PagerState
+    @EnvironmentObject private var videoState: VideoState
+    @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
+    @Environment(\.layoutDirection) private var layoutDirection
 
     private var url: String {
         self.info.properties.url

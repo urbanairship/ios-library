@@ -158,9 +158,9 @@ struct Icons {
 /// erasing to `AnyView`.
 @MainActor
 private struct IconsContent: View {
-    let info: ThomasIconInfo
-    let colorScheme: ColorScheme
-    let resizable: Bool
+    fileprivate let info: ThomasIconInfo
+    fileprivate let colorScheme: ColorScheme
+    fileprivate let resizable: Bool
 
     var body: some View {
         Icons.makeView(
@@ -177,8 +177,8 @@ private struct IconsContent: View {
 
 @MainActor
 private struct ProgressSpinnerIconView: View {
-    let resizable: Bool
-    let color: Color
+    fileprivate let resizable: Bool
+    fileprivate let color: Color
     // Only used for < 18
     @State private var isSpinning: Bool = false
     

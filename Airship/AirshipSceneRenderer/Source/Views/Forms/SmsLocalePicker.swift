@@ -51,7 +51,7 @@ struct SmsLocalePicker: View {
 }
 
 private extension String {
-    private static let base = UnicodeScalar("🇦").value - UnicodeScalar("A").value
+    private static let base: UInt32 = UnicodeScalar("🇦").value - UnicodeScalar("A").value
     
     func toFlagEmoji() -> String {
         guard self.count == 2 else { return self }

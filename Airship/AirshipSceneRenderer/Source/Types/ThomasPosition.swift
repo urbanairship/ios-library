@@ -24,7 +24,7 @@ enum ThomasHorizontalEdge: String, ThomasSerializable {
     case start
     case end
     
-    var baseType: ThomasPosition.Horizontal {
+    fileprivate var baseType: ThomasPosition.Horizontal {
         switch self {
         case .start: return .start
         case .end: return .end
@@ -36,7 +36,7 @@ enum ThomasVerticalEdge: String, ThomasSerializable {
     case top
     case bottom
     
-    var baseType: ThomasPosition.Vertical {
+    fileprivate var baseType: ThomasPosition.Vertical {
         switch self {
         case .top: return .top
         case .bottom: return .bottom

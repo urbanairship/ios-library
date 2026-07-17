@@ -6,10 +6,10 @@ import AirshipBasement
 
 struct TextAppearanceViewModifier: ViewModifier
 {
-    let textAppearance: ThomasTextAppearance
+    fileprivate let textAppearance: ThomasTextAppearance
 
     // Needed for dynamic font size
-    @Environment(\.sizeCategory) var sizeCategory
+    @Environment(\.sizeCategory) fileprivate var sizeCategory
     
     @ViewBuilder
     func body(content: Content) -> some View {

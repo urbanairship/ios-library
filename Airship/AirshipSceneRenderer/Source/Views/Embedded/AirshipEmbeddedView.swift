@@ -157,7 +157,7 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
 private final class EmbeddedViewModel: ObservableObject {
 
     @Published
-    var pending: [PendingEmbedded] = []
+    fileprivate var pending: [PendingEmbedded] = []
 
     private var cancellable: AnyCancellable?
     private var timer: AnyCancellable?
@@ -309,11 +309,11 @@ struct AnyAirshipEmbeddedViewStyle: AirshipEmbeddedViewStyle {
 }
 
 struct AirshipEmbeddedViewStyleKey: EnvironmentKey {
-    static let defaultValue = AnyAirshipEmbeddedViewStyle(style: .defaultStyle)
+    static let defaultValue: AnyAirshipEmbeddedViewStyle = AnyAirshipEmbeddedViewStyle(style: .defaultStyle)
 }
 
 extension EnvironmentValues {
-    var airshipEmbeddedViewStyle: AnyAirshipEmbeddedViewStyle {
+    fileprivate var airshipEmbeddedViewStyle: AnyAirshipEmbeddedViewStyle {
         get { self[AirshipEmbeddedViewStyleKey.self] }
         set { self[AirshipEmbeddedViewStyleKey.self] = newValue }
     }

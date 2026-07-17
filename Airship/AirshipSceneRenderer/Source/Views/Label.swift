@@ -25,7 +25,7 @@ struct Label: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.sizeCategory) private var sizeCategory
 
-    static let defaultHighlightColor: Color = Color(
+    private static let defaultHighlightColor: Color = Color(
         red: 1.0,
         green: 0.84,
         blue: 0.04,
@@ -238,17 +238,17 @@ extension Label {
     private static let subscriptBaselineScale: Double = 0.2
 
     private struct Segment {
-        let range: Range<AttributedString.Index>
-        let isHighlight: Bool
-        let isSuperscript: Bool
-        let isSubscript: Bool
+        fileprivate let range: Range<AttributedString.Index>
+        fileprivate let isHighlight: Bool
+        fileprivate let isSuperscript: Bool
+        fileprivate let isSubscript: Bool
     }
 
     private struct DelimitedRange {
         /// Full range including the delimiter characters themselves.
-        let outer: Range<AttributedString.Index>
+        fileprivate let outer: Range<AttributedString.Index>
         /// Inner content range, excluding the delimiter characters.
-        let inner: Range<AttributedString.Index>
+        fileprivate let inner: Range<AttributedString.Index>
     }
 
     private func findDelimitedRanges(
@@ -422,15 +422,15 @@ extension Label {
 
 @available(iOS 18.0, *)
 struct HighlightAttribute: TextAttribute {
-    let color: Color
-    let cornerRadius: CGFloat
+    fileprivate let color: Color
+    fileprivate let cornerRadius: CGFloat
 }
 
 @available(iOS 18.0, *)
 struct HighlightRenderer: TextRenderer {
     struct Cluster {
-        var rect: CGRect
-        var attr: HighlightAttribute
+        fileprivate var rect: CGRect
+        fileprivate var attr: HighlightAttribute
     }
 
     func draw(layout: Text.Layout, in context: inout GraphicsContext) {

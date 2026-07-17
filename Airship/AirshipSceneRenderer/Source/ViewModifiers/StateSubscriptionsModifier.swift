@@ -33,7 +33,7 @@ internal enum StateTriggerEvaluation {
 
 internal struct StateTriggerModifier: ViewModifier {
     let triggers: [ThomasStateTriggers]
-    @EnvironmentObject var thomasState: ThomasState
+    @EnvironmentObject private var thomasState: ThomasState
 
     @State private var triggered: Set<String> = Set()
 

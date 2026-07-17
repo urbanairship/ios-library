@@ -10,7 +10,7 @@ final class ScoreState: ObservableObject {
     @Published
     private(set) var selected: Selected?
 
-    let entries: [ThomasViewInfo.ScoreToggleLayout]
+    private let entries: [ThomasViewInfo.ScoreToggleLayout]
 
     init(info: ThomasViewInfo.ScoreController) {
         self.entries = info.properties.view.extractDescendants { info in

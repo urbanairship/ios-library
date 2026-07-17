@@ -13,7 +13,7 @@ struct BannerView: View {
     @Environment(\.orientation) private var orientation
     @Environment(\.layoutDirection) private var layoutDirection
 
-    static let animationInOutDuration = 0.3
+    static let animationInOutDuration: Double = 0.3
 
     /// A drag released without a fling toward the dismiss edge dismisses when it
     /// covers at least this fraction of the banner's extent along the swipe axis.

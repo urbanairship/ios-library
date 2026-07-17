@@ -20,7 +20,7 @@ struct RootView<Content: View>: View {
     @ObservedObject var thomasEnvironment: ThomasEnvironment
     @StateObject var thomasState: ThomasState
     @StateObject var validatableHelper: ValidatableHelper = ValidatableHelper()
-    @StateObject var formInputCollector: ThomasFormDataCollector = ThomasFormDataCollector()
+    @StateObject private var formInputCollector: ThomasFormDataCollector = ThomasFormDataCollector()
 
     // Default form state so @EnvironmentObject does not crash
     @StateObject

@@ -5,15 +5,15 @@ import Foundation
 
 @MainActor
 struct ThomasFormPayloadGenerator {
-    private static let typeKey = "type"
-    private static let valueKey = "value"
-    private static let childrenKey = "children"
-    private static let scoreIDKey = "score_id"
-    private static let responseTypeKey = "response_type"
-    private static let statusKey = "status"
-    private static let resultKey = "result"
-    private static let dataKey = "data"
-    private static let aiKey = "ai"
+    private static let typeKey: String = "type"
+    private static let valueKey: String = "value"
+    private static let childrenKey: String = "children"
+    private static let scoreIDKey: String = "score_id"
+    private static let responseTypeKey: String = "response_type"
+    private static let statusKey: String = "status"
+    private static let resultKey: String = "result"
+    private static let dataKey: String = "data"
+    private static let aiKey: String = "ai"
 
     /**
      * This is using an opaque AirshipJSON instead of structured types so we could expose the value to

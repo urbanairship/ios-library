@@ -173,10 +173,10 @@ struct TVButtonStyle: ButtonStyle {
     }
 
     struct ButtonView: View {
-        @Environment(\.isFocused) var isFocused
-        @Environment(\.isEnabled) var isEnabled
+        @Environment(\.isFocused) private var isFocused
+        @Environment(\.isEnabled) private var isEnabled
 
-        let configuration: ButtonStyle.Configuration
+        fileprivate let configuration: ButtonStyle.Configuration
 
         var body: some View {
             configuration.label

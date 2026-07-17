@@ -6,7 +6,7 @@ import SwiftUI
 /// Progress view
 struct AirshipProgressView: View {
 
-    @State var isVisible = false
+    @State private var isVisible: Bool = false
 
     var body: some View {
         ProgressView()

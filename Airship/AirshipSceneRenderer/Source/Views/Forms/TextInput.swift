@@ -85,7 +85,7 @@ struct TextInput: View {
         )
     }
 
-    var showSMSPicker: Bool {
+    private var showSMSPicker: Bool {
         guard
             self.info.properties.inputType == .sms,
             self.viewModel.availableLocales != nil
@@ -108,14 +108,14 @@ struct TextInput: View {
 #endif
     }
 
-    var textFieldAlignment: Alignment {
+    private var textFieldAlignment: Alignment {
         return switch(self.info.properties.inputType) {
         case .email, .text, .number, .sms: .center
         case .textMultiline: .top
         }
     }
 
-    var placeHolderAlignment: Alignment {
+    private var placeHolderAlignment: Alignment {
         let textAlignment = self.info.properties.textAppearance.alignment ?? .start
 
         let horizontalAlignment: HorizontalAlignment = switch(textAlignment) {
@@ -262,15 +262,15 @@ struct TextInput: View {
         private var lastInference: (text: String, output: AirshipJSON)?
 
         @Published
-        var formField: ThomasFormField?
+        fileprivate var formField: ThomasFormField?
         private var lastInput: String?
 
         @Published
-        var selectedSMSLocale: ThomasSMSLocale?
-        let availableLocales: [ThomasSMSLocale]?
+        fileprivate var selectedSMSLocale: ThomasSMSLocale?
+        fileprivate let availableLocales: [ThomasSMSLocale]?
 
         @Published
-        var input: String = "" {
+        fileprivate var input: String = "" {
             didSet {
                 if !self.input.isEmpty, !didEdit {
                     didEdit = true
@@ -280,7 +280,7 @@ struct TextInput: View {
         }
 
         @Published
-        var didEdit: Bool = false
+        private var didEdit: Bool = false
 
         init(
             inputProperties: ThomasViewInfo.TextInput.Properties,

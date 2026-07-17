@@ -6,12 +6,12 @@ import SwiftUI
 /// Controller view for managing video playback state.
 @MainActor
 struct VideoController: View {
-    let info: ThomasViewInfo.VideoController
-    let constraints: ViewConstraints
+    private let info: ThomasViewInfo.VideoController
+    private let constraints: ViewConstraints
 
-    @EnvironmentObject var environment: ThomasEnvironment
-    @EnvironmentObject var state: ThomasState
-    @EnvironmentObject var parentVideoState: VideoState
+    @EnvironmentObject private var environment: ThomasEnvironment
+    @EnvironmentObject private var state: ThomasState
+    @EnvironmentObject private var parentVideoState: VideoState
 
     init(
         info: ThomasViewInfo.VideoController,
@@ -34,13 +34,13 @@ struct VideoController: View {
     @MainActor
     struct Content: View {
         @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
-        let info: ThomasViewInfo.VideoController
-        let constraints: ViewConstraints
+        private let info: ThomasViewInfo.VideoController
+        private let constraints: ViewConstraints
 
-        @Environment(\.layoutState) var layoutState
+        @Environment(\.layoutState) private var layoutState
 
-        @StateObject var videoState: VideoState
-        @StateObject var state: ThomasState
+        @StateObject private var videoState: VideoState
+        @StateObject private var state: ThomasState
 
         init(
             info: ThomasViewInfo.VideoController,

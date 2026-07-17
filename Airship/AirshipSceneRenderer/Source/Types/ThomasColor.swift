@@ -5,7 +5,7 @@ import SwiftUI
 @_spi(AirshipInternal) import AirshipBasement
 
 struct ThomasColor: ThomasSerializable {
-    let defaultColor: HexColor
+    private let defaultColor: HexColor
     let selectors: [Selector]?
 
     enum CodingKeys: String, CodingKey {

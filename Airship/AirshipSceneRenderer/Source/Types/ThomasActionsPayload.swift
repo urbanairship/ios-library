@@ -4,7 +4,7 @@ import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 struct ThomasActionsPayload: ThomasSerializable, Hashable {
-    static let keyActionOverride = "platform_action_overrides"
+    private static let keyActionOverride: String = "platform_action_overrides"
 
     private let original: AirshipJSON
     private let merged: AirshipJSON

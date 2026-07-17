@@ -33,7 +33,7 @@ public struct AirshipCustomViewArguments: Sendable {
 @MainActor
 public final class AirshipCustomViewManager: Sendable {
     /// Shared instance
-    public static let shared = AirshipCustomViewManager()
+    public static let shared: AirshipCustomViewManager = AirshipCustomViewManager()
     
     private var builders: [String: AirshipCustomViewBuilder] = [:]
 

@@ -4,7 +4,7 @@ import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 struct ThomasPropertyOverride<T: Codable&Sendable&Equatable>: ThomasSerializable {
-    let whenStateMatches: JSONPredicate?
+    private let whenStateMatches: JSONPredicate?
     let value: T?
 
     enum CodingKeys: String, CodingKey {
