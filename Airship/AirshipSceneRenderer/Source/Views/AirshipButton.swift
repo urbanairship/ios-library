@@ -60,6 +60,9 @@ struct AirshipButton<Label> : View  where Label : View {
         )
         .optionalAccessibilityLabel(self.description)
         .buttonTapEffect(tapEffect ?? .default)
+        // Inside .disabled so the reporter sees isEnabled == false while processing and
+        // stops reporting, matching the disabled-elements-don't-report rule.
+        .reportPagerGestureExclusion()
         .disabled(isProcessing)
     }
 
