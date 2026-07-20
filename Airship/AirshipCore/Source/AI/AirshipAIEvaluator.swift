@@ -72,7 +72,6 @@ extension AirshipAI {
             operation: @Sendable () async throws -> T
         ) async throws -> T {
             let attempts = max(1, maxAttempts)
-            var lastError: (any Error)?
             for attempt in 1...attempts {
                 try Task.checkCancellation()
                 do {
@@ -82,11 +81,11 @@ extension AirshipAI {
                     // rather than burning a retry on it.
                     throw CancellationError()
                 } catch {
-                    lastError = error
                     AirshipLogger.warn("AI evaluation attempt \(attempt)/\(attempts) failed for \(usage): \(error)")
+                    if attempt == attempts { throw error }
                 }
             }
-            throw lastError!
+            preconditionFailure("withRetry exhausted — unreachable")
         }
     }
 }

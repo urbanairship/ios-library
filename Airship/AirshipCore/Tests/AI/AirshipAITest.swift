@@ -495,16 +495,49 @@ struct AirshipAIEvaluatorTests {
     }
 
     @Test
-    func failsWhenResponseTimeoutExpires() async {
-        let model = MockAIModel(responseTimeout: 0.05)
-        model.respondDelay = 5
+    func cancellationErrorIsNotRetried() async {
+        let model = MockAIModel(response: .failure(CancellationError()), maxAttempts: 5)
 
         let result = await eval(model: model)
+
+        guard case .failed = result else {
+            Issue.record("Expected .failed on CancellationError, got \(result)")
+            return
+        }
+        // CancellationError must propagate immediately — not count as a retryable failure.
+        // Without the catch-is-CancellationError branch, all 5 attempts would run.
+        #expect(model.respondCallCount == 1)
+    }
+
+    @Test
+    func retriesUpToMaxAttemptsOnOrdinaryFailure() async {
+        let model = MockAIModel(response: .failure(SampleError.boom), maxAttempts: 3)
+
+        let result = await eval(model: model)
+
+        guard case .failed = result else {
+            Issue.record("Expected .failed after exhausting attempts, got \(result)")
+            return
+        }
+        #expect(model.respondCallCount == 3)
+    }
+
+    @Test
+    func timeoutTerminatesSlowModel() async {
+        let model = MockAIModel(responseTimeout: 0.1)
+        model.respondDelay = 60  // model would hang for 60s without the timeout
+
+        let start = ContinuousClock.now
+        let result = await eval(model: model)
+        let elapsed = ContinuousClock.now - start
 
         guard case .failed = result else {
             Issue.record("Expected .failed on timeout, got \(result)")
             return
         }
+        // If cancellation leaked and the operation task wasn't cut off, this
+        // would take the full 60s. Allow 5s of headroom for slow CI runners.
+        #expect(elapsed < .seconds(5))
     }
 
     @Test
