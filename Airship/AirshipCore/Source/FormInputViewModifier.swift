@@ -40,9 +40,14 @@ extension View {
     @ViewBuilder
     @MainActor
     func formElement() -> some View {
-        self.viewModifiers {
-            FormVisibilityViewModifier()
-            FormInputEnabledViewModifier()
-        }
+        // Report the input's frame (innermost, so it is a descendant of the disabled
+        // modifier below and skips reporting when the input is disabled) so an enclosing
+        // pager can suppress region tap gestures that land on it. Covers toggle, checkbox,
+        // radio, score, and text input.
+        self.reportPagerGestureExclusion()
+            .viewModifiers {
+                FormVisibilityViewModifier()
+                FormInputEnabledViewModifier()
+            }
     }
 }

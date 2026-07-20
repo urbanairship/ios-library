@@ -62,6 +62,9 @@ internal struct EventHandlerViewModifier: ViewModifier {
             view.addTapGesture {
                 handleEvent(type: .tap)
             }
+            // A view that handles taps itself should not also fire an enclosing pager's
+            // region tap gesture. Report its frame so the pager can skip taps on it.
+            .reportPagerGestureExclusion()
         }
         .airshipApplyIf(types.contains(.formInput)) { view in
             if let formInputID {

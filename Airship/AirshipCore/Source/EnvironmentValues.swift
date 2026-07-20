@@ -35,6 +35,10 @@ private struct LayoutStateEnvironmentKey: EnvironmentKey {
     static let defaultValue: LayoutState = LayoutState.empty
 }
 
+private struct PagerTapExclusionSpaceKey: EnvironmentKey {
+    static let defaultValue: String? = nil
+}
+
 extension EnvironmentValues {
     var orientation: ThomasOrientation? {
         get { self[OrientationKey.self] }
@@ -76,6 +80,16 @@ extension EnvironmentValues {
         get { self[LayoutStateEnvironmentKey.self] }
         set { self[LayoutStateEnvironmentKey.self] = newValue }
     }
+
+    /// Name of the coordinate space that interactive elements (e.g. buttons) should report
+    /// their frames into so an enclosing pager can suppress region tap gestures that land on
+    /// them. Set only by a pager that has tap gestures; `nil` means no reporting is needed.
+    var pagerTapExclusionSpace: String? {
+        get { self[PagerTapExclusionSpaceKey.self] }
+        set { self[PagerTapExclusionSpaceKey.self] = newValue }
+    }
+
+
 }
 
 extension View {

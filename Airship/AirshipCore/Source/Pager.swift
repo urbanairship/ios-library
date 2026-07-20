@@ -52,7 +52,15 @@ struct Pager: View {
     @State private var size: CGSize?
     @State private var scrollPosition: String?
     @State private var pageHeights: [String: CGFloat] = [:]
+    @State private var gestureExclusionFrames: [CGRect] = []
     private let timer: Publishers.Autoconnect<Timer.TimerPublisher>
+
+    /// Per-pager coordinate space that interactive children report their frames into so region
+    /// tap gestures can skip taps that land on them. Keyed by the resolved pager ID to avoid
+    /// collisions between nested pagers.
+    private var gestureExclusionSpaceName: String {
+        "airship.pager.gestureExclusion.\(resolvedPagerID)"
+    }
 
     private var resolvedPagerID: String {
         let pagerID = self.info.properties.identifier ?? pagerState.identifier
@@ -344,6 +352,23 @@ struct Pager: View {
     @ViewBuilder
     var body: some View {
         makePager()
+            .coordinateSpace(name: gestureExclusionSpaceName)
+            .transformEnvironment(\.pagerTapExclusionSpace) { space in
+                // Only override when this pager has tap gestures; otherwise leave any
+                // enclosing pager's space in place so its exclusions keep working
+                // through this pager's subtree.
+                if self.info.containsGestures([.tap]) {
+                    space = gestureExclusionSpaceName
+                }
+            }
+            .onPreferenceChange(PagerGestureExclusionFramesKey.self) { [spaceName = gestureExclusionSpaceName] frames in
+                // Preferences bubble past this pager to enclosing pagers; keep only the
+                // frames measured in this pager's coordinate space.
+                let resolved = frames.filter { $0.space == spaceName }.map(\.frame)
+                Task { @MainActor in
+                    self.gestureExclusionFrames = resolved
+                }
+            }
             .onAppear(perform: attachToPagerState)
             .airshipOnChangeOf(pagerState.completed) { completed in
                 guard completed else { return }
@@ -453,6 +478,16 @@ struct Pager: View {
 
     private func handleTap(tapLocation: CGPoint)  {
         guard let size = size else {
+            return
+        }
+
+        // A tap that lands on an interactive child (e.g. a button) is consumed by that child
+        // and should not also fire a region gesture. Buttons report their frames via
+        // reportPagerGestureExclusion(); skip the region gesture when the tap is inside one.
+        if let excluded = gestureExclusionFrames.first(where: { $0.contains(tapLocation) }) {
+            AirshipLogger.trace(
+                "Pager region tap at \(tapLocation) excluded: landed on interactive element frame \(excluded)"
+            )
             return
         }
 
