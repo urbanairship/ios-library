@@ -249,9 +249,7 @@ extension Activity where Attributes : ActivityAttributes {
                         if let handledIDs {
                             var isNew = false
                             handledIDs.update { ids in
-                                var ids = ids
                                 isNew = ids.insert(activity.id).inserted
-                                return ids
                             }
                             guard isNew else { continue }
                         }
