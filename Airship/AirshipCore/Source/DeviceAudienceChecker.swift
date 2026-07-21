@@ -257,12 +257,10 @@ extension DeviceAudienceSelector {
             return false
         }
 
-        let versionObject: AirshipJSON = [
-            "ios": [
-                "version": .string(appVersion)
-            ]
-        ]
-        
+        let versionObject = AirshipUtils.createVersionObject(
+            versionName: appVersion,
+            buildVersion: deviceInfoProvider.appBuildVersion
+        )
         return versionPredicate.evaluate(json: versionObject)
     }
 

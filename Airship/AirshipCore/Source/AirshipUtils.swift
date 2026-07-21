@@ -4,6 +4,10 @@ import CommonCrypto
 import Foundation
 public import SwiftUI
 
+#if canImport(AirshipBasement)
+@_spi(AirshipInternal) import AirshipBasement
+#endif
+
 #if !os(watchOS)
 import SystemConfiguration
 #endif
@@ -33,7 +37,6 @@ public final class AirshipUtils {
         return Bundle.main.infoDictionary?["CFBundleShortVersionString"]
             as? String
     }
-
 
     #if !os(watchOS)
     /// Checks if the device has network connection.
@@ -112,6 +115,40 @@ public final class AirshipUtils {
         return .orderedSame
     }
 
+    /// Gets the bundle version string (build number / CFBundleVersion).
+    ///
+    /// - Returns: A bundle version string value.
+    class func bundleBuildVersion() -> String? {
+        return Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+    }
+
+    /// Builds the iOS platform version object used for predicate matching in version triggers and audience checks.
+    /// - Parameters:
+    ///   - versionName: The marketing version (CFBundleShortVersionString).
+    ///   - buildVersion: The build version (CFBundleVersion), if available.
+    ///   - fromBuildVersion: The previous build version, if available.
+    ///   - fromVersionName: The previous marketing version, if available.
+    /// - Returns: An `AirshipJSON` value of the form `{ "ios": { ... } }`.
+    @_spi(AirshipInternal)
+    public class func createVersionObject(
+        versionName: String,
+        buildVersion: String? = nil,
+        fromBuildVersion: String? = nil,
+        fromVersionName: String? = nil
+    ) -> AirshipJSON {
+        var platformFields: [String: AirshipJSON] = [
+            "version": .string(versionName),
+            "version_name": .string(versionName)
+        ]
+        if let buildVersion { platformFields["build_version"] = .string(buildVersion) }
+        if fromBuildVersion != nil || fromVersionName != nil {
+            var fromFields: [String: AirshipJSON] = [:]
+            if let fv = fromBuildVersion { fromFields["build_version"] = .string(fv) }
+            if let fn = fromVersionName { fromFields["version_name"] = .string(fn) }
+            platformFields["from"] = .object(fromFields)
+        }
+        return ["ios": .object(platformFields)]
+    }
 
     // MARK: UI Utilities
 

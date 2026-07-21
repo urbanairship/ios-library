@@ -3,7 +3,7 @@
 import Foundation
 
 #if canImport(AirshipCore)
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 #endif
 
 // This is only called from an actor `AutomationTriggerProcessor`
@@ -179,13 +179,18 @@ extension EventAutomationTrigger {
         case .version:
             guard
                 let versionUpdated = state.versionUpdated,
-                versionUpdated != data.lastTriggerableState?.versionUpdated,
-                isPredicateMatching(
-                    value: [
-                        "ios": ["version": .string(versionUpdated)]
-                    ]
-                )
+                versionUpdated != data.lastTriggerableState?.versionUpdated
             else {
+                return nil
+            }
+
+            let versionObject = AirshipUtils.createVersionObject(
+                versionName: versionUpdated,
+                buildVersion: state.buildVersion,
+                fromBuildVersion: state.fromBuildVersion,
+                fromVersionName: state.fromVersionName
+            )
+            guard isPredicateMatching(value: versionObject) else {
                 return nil
             }
 

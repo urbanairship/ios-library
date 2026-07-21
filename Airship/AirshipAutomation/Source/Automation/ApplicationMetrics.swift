@@ -9,13 +9,16 @@ import AirshipCore
 protocol ApplicationMetricsProtocol: Sendable {
     var isAppVersionUpdated: Bool { get }
     var currentAppVersion: String? { get }
-
+    var currentBuildVersion: String? { get }
+    var lastAppVersion: String? { get }
+    var lastBuildVersion: String? { get }
 }
 
 /// The ApplicationMetrics class keeps track of application-related metrics.
 final class ApplicationMetrics: ApplicationMetricsProtocol {
     private static let lastOpenDataKey = "UAApplicationMetricLastOpenDate"
     private static let lastAppVersionKey = "UAApplicationMetricsLastAppVersion"
+    private static let lastBuildVersionKey = "UAApplicationMetricsLastBuildVersion"
 
     private let dataStore: PreferenceDataStore
     private let privacyManager: any AirshipPrivacyManager
@@ -25,46 +28,47 @@ final class ApplicationMetrics: ApplicationMetricsProtocol {
      * Only tracked if Feature.inAppAutomation or Feature.analytics are enabled in the privacy manager.
      */
     public var isAppVersionUpdated: Bool {
-        guard
-            self.privacyManager.isApplicationMetricsEnabled,
-            let currentVersion = self.currentAppVersion,
-            let lastVersion = self.lastAppVersion,
-            AirshipUtils.compareVersion(lastVersion, toVersion: currentVersion) == .orderedAscending
-        else {
-            return false
-        }
+        guard self.privacyManager.isApplicationMetricsEnabled else { return false }
 
-        return true
+        // Both nil means fresh install — no prior record at all.
+        guard self.lastAppVersion != nil || self.lastBuildVersion != nil else { return false }
+
+        // Use build version (CFBundleVersion) as the sole indicator — it's required to increment.
+        guard let current = self.currentBuildVersion, let last = self.lastBuildVersion else { return false }
+        return last != current
     }
 
-    /**
-     * The application's current short version string also known as the marketing version.
-     */
+    /// The application's current short version string (marketing version / CFBundleShortVersionString).
     public let currentAppVersion: String?
 
-    /**
-     * The application's last short version string also known as the marketing version.
-     */
+    /// The application's current build version (CFBundleVersion).
+    public let currentBuildVersion: String?
+
+    /// The application's previous short version string from the last launch.
     public let lastAppVersion: String?
+
+    /// The application's previous build version from the last launch.
+    public let lastBuildVersion: String?
 
     public init(
         dataStore: PreferenceDataStore,
         privacyManager: any AirshipPrivacyManager,
         notificationCenter: AirshipNotificationCenter = AirshipNotificationCenter.shared,
-        appVersion: String? = AirshipUtils.bundleShortVersionString()
+        appVersion: String? = AirshipUtils.bundleShortVersionString(),
+        buildVersion: String? = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
     ) {
         self.dataStore = dataStore
         self.privacyManager = privacyManager
         self.currentAppVersion = appVersion
+        self.currentBuildVersion = buildVersion
 
-
-        self.lastAppVersion = if privacyManager.isApplicationMetricsEnabled {
-            self.dataStore.string(
-                forKey: ApplicationMetrics.lastAppVersionKey
-            )
-        } else {
-            nil
-        }
+        let metricsEnabled = privacyManager.isApplicationMetricsEnabled
+        self.lastAppVersion = metricsEnabled
+            ? self.dataStore.string(forKey: ApplicationMetrics.lastAppVersionKey)
+            : nil
+        self.lastBuildVersion = metricsEnabled
+            ? self.dataStore.string(forKey: ApplicationMetrics.lastBuildVersionKey)
+            : nil
 
         // Delete old
         self.dataStore.removeObject(
@@ -84,18 +88,15 @@ final class ApplicationMetrics: ApplicationMetricsProtocol {
     @objc
     func updateData() {
         if self.privacyManager.isApplicationMetricsEnabled {
-            guard let currentVersion = self.currentAppVersion else {
-                return
+            if let currentVersion = self.currentAppVersion {
+                self.dataStore.setObject(currentVersion, forKey: ApplicationMetrics.lastAppVersionKey)
             }
-
-            self.dataStore.setObject(
-                currentVersion,
-                forKey: ApplicationMetrics.lastAppVersionKey
-            )
+            if let currentBuild = self.currentBuildVersion {
+                self.dataStore.setObject(currentBuild, forKey: ApplicationMetrics.lastBuildVersionKey)
+            }
         } else {
-            self.dataStore.removeObject(
-                forKey: ApplicationMetrics.lastAppVersionKey
-            )
+            self.dataStore.removeObject(forKey: ApplicationMetrics.lastAppVersionKey)
+            self.dataStore.removeObject(forKey: ApplicationMetrics.lastBuildVersionKey)
         }
     }
 }

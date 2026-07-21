@@ -9,6 +9,7 @@ public protocol AudienceDeviceInfoProvider: AnyObject, Sendable {
     var channelID: String { get async throws }
     var locale:  Locale { get }
     var appVersion: String? { get }
+    var appBuildVersion: String? { get }
     var sdkVersion: String { get }
     var permissions: [AirshipPermission: AirshipPermissionStatus] { get async }
     var isUserOptedInPushNotifications: Bool { get async }
@@ -89,6 +90,10 @@ public final class CachingAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
         return deviceInfoProvider.appVersion
     }
 
+    public var appBuildVersion: String? {
+        return deviceInfoProvider.appBuildVersion
+    }
+
     public var isAirshipReady: Bool {
         return deviceInfoProvider.isAirshipReady
     }
@@ -167,6 +172,10 @@ public final class DefaultAudienceDeviceInfoProvider: AudienceDeviceInfoProvider
 
     public var appVersion: String? {
         return AirshipUtils.bundleShortVersionString()
+    }
+
+    public var appBuildVersion: String? {
+        return AirshipUtils.bundleBuildVersion()
     }
 
     public var isAirshipReady: Bool {

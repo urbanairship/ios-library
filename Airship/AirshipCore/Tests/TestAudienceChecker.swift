@@ -40,6 +40,7 @@ final class TestAudienceDeviceInfoProvider: AudienceDeviceInfoProvider, @uncheck
     var locale: Locale = Locale.current
 
     var appVersion: String? = nil
+    var appBuildVersion: String? = nil
 
     var permissions: [AirshipPermission : AirshipPermissionStatus] = [:]
 

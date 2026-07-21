@@ -1296,6 +1296,7 @@ final class TestDeviceInfoProvider: AudienceDeviceInfoProvider, @unchecked Senda
     var locale: Locale = Locale.current
 
     var appVersion: String?
+    var appBuildVersion: String?
 
     var permissions: [AirshipCore.AirshipPermission : AirshipCore.AirshipPermissionStatus] = [:]
 
