@@ -35,8 +35,14 @@ struct AutomationEventFeedTest: @unchecked Sendable {
 
         let events = await takeNext(count: 2)
         
-        let state = TriggerableState(versionUpdated: "test")
-        
+        let state = TriggerableState(
+            versionUpdated: "1.2.3",
+            buildVersion: "100",
+            versionName: "1.2.3",
+            fromBuildVersion: "99",
+            fromVersionName: "1.1.0"
+        )
+
         #expect([AutomationEvent.event(type: .appInit), AutomationEvent.stateChanged(state: state)] == events)
     }
     
@@ -64,12 +70,12 @@ struct AutomationEventFeedTest: @unchecked Sendable {
         stateTracker.currentState = .active
         var events = await takeNext(count: 2)
         #expect(AutomationEvent.event(type: .foreground) == events.first)
-        verifyStateChange(event: events.last!, foreground: true, versionUpdated: "test")
+        verifyStateChange(event: events.last!, foreground: true, versionUpdated: "1.2.3")
 
         stateTracker.currentState = .background
         events = await takeNext(count: 2)
         #expect(AutomationEvent.event(type: .background) == events.first)
-        verifyStateChange(event: events.last!, foreground: false, versionUpdated: "test")
+        verifyStateChange(event: events.last!, foreground: false, versionUpdated: "1.2.3")
 
         let trackScreenName = "test-screen"
         await analyticsFeed.notifyEvent(.screen(screen: trackScreenName))
@@ -224,10 +230,10 @@ struct AutomationEventFeedTest: @unchecked Sendable {
 
 
 class TestApplicationMetrics: ApplicationMetricsProtocol, @unchecked Sendable {
-    var currentAppVersion: String? = "test"
-
-
+    var currentAppVersion: String? = "1.2.3"
+    var currentBuildVersion: String? = "100"
+    var lastAppVersion: String? = "1.1.0"
+    var lastBuildVersion: String? = "99"
     var versionUpdated = false
-
     var isAppVersionUpdated: Bool { return versionUpdated }
 }

@@ -13,7 +13,6 @@ struct ApplicationMetricsTest {
     )
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let privacyManager: TestPrivacyManager
-    private let metrics: ApplicationMetrics
 
     init() {
         self.privacyManager = TestPrivacyManager(
@@ -22,51 +21,116 @@ struct ApplicationMetricsTest {
             defaultEnabledFeatures: .all,
             notificationCenter: self.notificationCenter
         )
-
-        self.metrics = ApplicationMetrics(
-            dataStore: self.dataStore,
-            privacyManager: self.privacyManager,
-            notificationCenter: self.notificationCenter,
-            appVersion: "1.0.0"
-        )
     }
-
 
     @Test
     func testAppVersionUpdated() throws {
-        var metrics = self.metrics
-        // Fresh install
-        #expect(!(metrics.isAppVersionUpdated))
+        let initial = ApplicationMetrics(
+            dataStore: self.dataStore,
+            privacyManager: self.privacyManager,
+            notificationCenter: self.notificationCenter,
+            appVersion: "1.0.0",
+            buildVersion: "1"
+        )
+        // Fresh install — no previous build version stored
+        #expect(!initial.isAppVersionUpdated)
 
         // No change
-        metrics = ApplicationMetrics(
+        let noChange = ApplicationMetrics(
             dataStore: self.dataStore,
             privacyManager: self.privacyManager,
             notificationCenter: self.notificationCenter,
-            appVersion: "1.0.0"
+            appVersion: "1.0.0",
+            buildVersion: "1"
         )
-        #expect(!(metrics.isAppVersionUpdated))
+        #expect(!noChange.isAppVersionUpdated)
 
-        // Update
-        metrics = ApplicationMetrics(
+        // Build version bumped (same marketing version)
+        let buildBump = ApplicationMetrics(
             dataStore: self.dataStore,
             privacyManager: self.privacyManager,
             notificationCenter: self.notificationCenter,
-            appVersion: "2.0.0"
+            appVersion: "1.0.0",
+            buildVersion: "2"
         )
+        #expect(buildBump.isAppVersionUpdated)
 
-
-        #expect(metrics.isAppVersionUpdated)
+        // Both bumped
+        let bothBump = ApplicationMetrics(
+            dataStore: self.dataStore,
+            privacyManager: self.privacyManager,
+            notificationCenter: self.notificationCenter,
+            appVersion: "2.0.0",
+            buildVersion: "3"
+        )
+        #expect(bothBump.isAppVersionUpdated)
     }
 
     @Test
-    func testOptedOut() {
-        // Update
+    func testPreviousVersionsExposedOnUpgrade() throws {
+        // First launch — stores version
+        _ = ApplicationMetrics(
+            dataStore: self.dataStore,
+            privacyManager: self.privacyManager,
+            notificationCenter: self.notificationCenter,
+            appVersion: "1.0.0",
+            buildVersion: "1"
+        )
+
+        // Upgrade
         let metrics = ApplicationMetrics(
             dataStore: self.dataStore,
             privacyManager: self.privacyManager,
             notificationCenter: self.notificationCenter,
-            appVersion: "2.0.0"
+            appVersion: "2.0.0",
+            buildVersion: "2"
+        )
+
+        #expect(metrics.isAppVersionUpdated)
+        #expect(metrics.lastAppVersion == "1.0.0")
+        #expect(metrics.lastBuildVersion == "1")
+    }
+
+    @Test
+    func testExistingInstallWithoutBuildVersionDoesNotFire() throws {
+        // Old install — only marketing version was stored, no build version
+        _ = ApplicationMetrics(
+            dataStore: self.dataStore,
+            privacyManager: self.privacyManager,
+            notificationCenter: self.notificationCenter,
+            appVersion: "1.0.0",
+            buildVersion: nil
+        )
+
+        // Still no build version available — can't compare, does not fire.
+        let metrics = ApplicationMetrics(
+            dataStore: self.dataStore,
+            privacyManager: self.privacyManager,
+            notificationCenter: self.notificationCenter,
+            appVersion: "2.0.0",
+            buildVersion: nil
+        )
+        #expect(!metrics.isAppVersionUpdated)
+    }
+
+    @Test
+    func testOptedOut() {
+        // First store a version so we're not on a fresh install
+        _ = ApplicationMetrics(
+            dataStore: self.dataStore,
+            privacyManager: self.privacyManager,
+            notificationCenter: self.notificationCenter,
+            appVersion: "1.0.0",
+            buildVersion: "1"
+        )
+
+        // Upgrade
+        let metrics = ApplicationMetrics(
+            dataStore: self.dataStore,
+            privacyManager: self.privacyManager,
+            notificationCenter: self.notificationCenter,
+            appVersion: "2.0.0",
+            buildVersion: "2"
         )
 
         #expect(metrics.isAppVersionUpdated)
@@ -78,6 +142,6 @@ struct ApplicationMetricsTest {
         #expect(metrics.isAppVersionUpdated)
 
         self.privacyManager.enabledFeatures = .push
-        #expect(!(metrics.isAppVersionUpdated))
+        #expect(!metrics.isAppVersionUpdated)
     }
 }

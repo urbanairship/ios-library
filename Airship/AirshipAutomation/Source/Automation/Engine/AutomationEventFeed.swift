@@ -10,8 +10,12 @@ protocol AutomationEventFeedProtocol: Sendable {
 }
 
 struct TriggerableState: Equatable, Codable {
-    var appSessionID: String? // set on foreground event, resets on background
-    var versionUpdated: String? // versionUpdate event
+    var appSessionID: String?
+    var versionUpdated: String?
+    var buildVersion: String?
+    var versionName: String?
+    var fromBuildVersion: String?
+    var fromVersionName: String?
 }
 
 enum AutomationEvent: Sendable, Equatable {
@@ -65,11 +69,14 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
 
             self.continuation.yield(.event(type: .appInit))
 
-            if
-                applicationMetrics.isAppVersionUpdated,
-                let version = applicationMetrics.currentAppVersion
+            if applicationMetrics.isAppVersionUpdated,
+               let version = applicationMetrics.currentAppVersion
             {
                 self.appSessionState.versionUpdated = version
+                self.appSessionState.buildVersion = applicationMetrics.currentBuildVersion
+                self.appSessionState.versionName = version
+                self.appSessionState.fromBuildVersion = applicationMetrics.lastBuildVersion
+                self.appSessionState.fromVersionName = applicationMetrics.lastAppVersion
                 self.continuation.yield(.stateChanged(state: self.appSessionState))
             }
         }
