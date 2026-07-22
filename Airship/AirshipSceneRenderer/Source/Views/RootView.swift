@@ -17,6 +17,12 @@ struct RootView<Content: View>: View {
     @State private var isVisible: Bool = false
     @State private var isVoiceOverRunning: Bool = RootViewResolver.resolveIsVoiceOverRunning()
 
+    /// The single focus authority for this layout's text inputs. Hoisting it here (rather
+    /// than a per-input `@FocusState`) means a text input that gets recreated — e.g. when
+    /// a branching pager re-evaluates its page list as form state changes — cannot bring
+    /// its own focus back, and navigation can resign focus in one place by setting nil.
+    @FocusState private var focusedInputID: String?
+
     @ObservedObject var thomasEnvironment: ThomasEnvironment
     @StateObject var thomasState: ThomasState
     @StateObject var validatableHelper: ValidatableHelper = ValidatableHelper()
@@ -92,6 +98,22 @@ struct RootView<Content: View>: View {
             .environment(\.isVisible, isVisible)
             .environment(\.isVoiceOverRunning, isVoiceOverRunning)
             .environment(\.thomasAssociatedLabelResolver, associatedLabelResolver)
+            .environment(\.thomasFocusedInput, $focusedInputID)
+            // Bridge the SwiftUI focus state (the owner of the keyboard) to the
+            // environment object's `focusedID` (what callers read/write), both ways.
+            // User-driven focus flows FocusState -> focusedID; programmatic focus and
+            // dismissal (button tap / page change set focusedID = nil) flow focusedID ->
+            // FocusState. The equality guards stop the mirror from looping.
+            .airshipOnChangeOf(focusedInputID) { newValue in
+                if thomasEnvironment.focusedID != newValue {
+                    thomasEnvironment.focusedID = newValue
+                }
+            }
+            .airshipOnChangeOf(thomasEnvironment.focusedID) { newValue in
+                if focusedInputID != newValue {
+                    focusedInputID = newValue
+                }
+            }
             .onReceive(NotificationCenter.default.publisher(for: AppStateTracker.didTransitionToForeground)) { (_) in
                 self.isForeground = true
                 self.thomasEnvironment.onVisibilityChanged(isVisible: self.isVisible, isForegrounded: self.isForeground)

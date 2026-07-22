@@ -558,9 +558,9 @@ struct Pager: View {
         // already moved scrollPosition to the new page). A focused text input on the
         // outgoing page otherwise stays first responder and UIKit keyboard-avoidance
         // scrolls the pager back to reveal it — undoing the navigation. The signal only
-        // resigns this layout's focused input (in sync with SwiftUI, so nothing
-        // re-focuses); it never touches the host app's keyboard, so it's always safe to ask.
-        thomasEnvironment.requestKeyboardDismiss()
+        // resigns this layout's focused input (RootView bridges focusedID to the SwiftUI
+        // focus state); it never touches the host app's keyboard, so it's always safe.
+        thomasEnvironment.focusedID = nil
 
         guard pageID != scrollPosition else { return }
 

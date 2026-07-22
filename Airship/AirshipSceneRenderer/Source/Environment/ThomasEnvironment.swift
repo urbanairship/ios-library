@@ -60,21 +60,13 @@ final class ThomasEnvironment: ObservableObject {
     @Published
     var isDismissed: Bool = false
 
+    /// The layout's text-input focus authority: the id of the focused input, or `nil` for
+    /// none. `RootView` bridges this to the single `@FocusState` that actually drives the
+    /// keyboard, so setting it here focuses/resigns directly. SwiftUI does not resign first
+    /// responder on a `Button` tap, so buttons (and page changes) set this to `nil` to
+    /// dismiss. Scoped to this layout, so an embedded pager never drops the host keyboard.
     @Published
     var focusedID: String? = nil
-
-    /// Bumped to ask any focused layout text input to resign. SwiftUI does not resign
-    /// first responder when a `Button` is tapped, so buttons bump this on tap — clearing
-    /// focus at the SwiftUI `@FocusState` level (not just UIKit) keeps the two in sync so
-    /// a later re-layout can't re-assert focus and trigger keyboard-avoidance snap-back.
-    /// Scoped to this layout's inputs, so an embedded pager never drops the host keyboard.
-    @Published
-    var keyboardDismissRequest: Int = 0
-
-    @MainActor
-    func requestKeyboardDismiss() {
-        keyboardDismissRequest &+= 1
-    }
 
     private var onDismiss: (() -> Void)?
     private var dismissHandle: ThomasDismissHandle?

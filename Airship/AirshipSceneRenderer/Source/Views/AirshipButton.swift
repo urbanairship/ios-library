@@ -70,10 +70,10 @@ struct AirshipButton<Label> : View  where Label : View {
     private func doButtonActions() async {
         // Tapping a Button does not resign the keyboard in SwiftUI, so a focused text
         // input stays first responder — and once we navigate, UIKit keyboard-avoidance
-        // scrolls the pager back to reveal it (the snap-back). Ask focused inputs to
-        // resign now, before form validation may await async work and before navigation.
-        // Local to this layout, so always safe to request.
-        thomasEnvironment.requestKeyboardDismiss()
+        // scrolls the pager back to reveal it (the snap-back). Clear the layout's focus
+        // now, before form validation may await async work and before navigation. Local
+        // to this layout, so always safe.
+        thomasEnvironment.focusedID = nil
 
         if outcomes.hasFormOutcome {
             guard await formState.validate() else { return }

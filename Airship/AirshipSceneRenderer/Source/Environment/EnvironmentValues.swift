@@ -39,6 +39,12 @@ private struct PagerTapExclusionSpaceKey: EnvironmentKey {
     static let defaultValue: String? = nil
 }
 
+private struct ThomasFocusedInputKey: EnvironmentKey {
+    // Constant nil — the non-Sendable FocusState.Binding is only ever the real value
+    // injected by RootView on the main actor; the default carries no shared state.
+    nonisolated(unsafe) static let defaultValue: FocusState<String?>.Binding? = nil
+}
+
 extension EnvironmentValues {
     var orientation: ThomasOrientation? {
         get { self[OrientationKey.self] }
@@ -87,6 +93,16 @@ extension EnvironmentValues {
     var pagerTapExclusionSpace: String? {
         get { self[PagerTapExclusionSpaceKey.self] }
         set { self[PagerTapExclusionSpaceKey.self] = newValue }
+    }
+
+    /// Layout-wide text-input focus authority: a binding to a single `@FocusState`
+    /// hoisted to the layout root, keyed by input identifier. Text inputs bind to it
+    /// with `.focused(binding, equals: id)` so focus has one source of truth that
+    /// survives view recreation (a rebuilt input can't resurrect focus) and navigation
+    /// can resign in one place by setting it to `nil`. `nil` outside a layout root.
+    var thomasFocusedInput: FocusState<String?>.Binding? {
+        get { self[ThomasFocusedInputKey.self] }
+        set { self[ThomasFocusedInputKey.self] = newValue }
     }
 
 }

@@ -593,7 +593,12 @@ fileprivate struct AirshipTextField: View {
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject private var viewState: ThomasState
 
-    @FocusState private var focused: Bool
+    /// The layout-wide focus authority, owned by RootView. A single source of truth keyed
+    /// by input id means this field being recreated (branch re-layout) can't resurrect its
+    /// own focus, and navigation resigns focus in one place.
+    @Environment(\.thomasFocusedInput) private var focusedInput
+    /// Fallback owner used only when there's no layout root (e.g. SwiftUI previews).
+    @FocusState private var fallbackFocus: String?
 
     @State private var icon: ThomasViewInfo.TextInput.IconEndInfo?
 
@@ -614,51 +619,52 @@ fileprivate struct AirshipTextField: View {
     var body: some View {
         let isMultiline = self.info.properties.inputType == .textMultiline
         let axis: Axis = isMultiline ? .vertical : .horizontal
+        let identifier = self.info.properties.identifier
+        // One source of truth for focus: the layout root's, or a local fallback outside one.
+        let focusBinding = focusedInput ?? $fallbackFocus
 
         return TextField("", text: $binding, axis: axis)
             .padding(5)
             .constraints(constraints, alignment: alignment)
-            .focused($focused)
+            .focused(focusBinding, equals: identifier)
             .foregroundColor(self.info.properties.textAppearance.color.toColor(colorScheme))
             .contentShape(Rectangle())
+            // Remove the field from the focus system entirely while its page is
+            // off-screen. Resigning focus after the fact loses the race — UIKit
+            // re-asserts first responder on the offscreen field and keyboard
+            // avoidance scrolls the pager back. Not-focusable can't be re-asserted.
+            .airshipFocusableCompat(isVisible)
             .textFieldStyle(.plain)
             .onTapGesture {
-                self.focused = true
+                focusBinding.wrappedValue = identifier
             }
             .applyViewAppearance(self.info.properties.textAppearance, colorScheme: colorScheme)
             .airshipApplyIf(isUnderlined, transform: { content in
                 content.underline()
             })
-            .airshipOnChangeOf(focused) { newValue in
-                if (newValue) {
-                    self.thomasEnvironment.focusedID = self.info.properties.identifier
-                } else if (self.thomasEnvironment.focusedID == self.info.properties.identifier) {
-                    self.thomasEnvironment.focusedID = nil
+            .airshipOnChangeOf(focusBinding.wrappedValue) { newValue in
+                // Focus is owned by the root, which mirrors it onto
+                // thomasEnvironment.focusedID; here we only track editing state.
+                // UIKit can re-assert first responder after a programmatic resign
+                // (keyboard bring-up racing the resign, or focus restoration when the
+                // lazy page view is recreated). The isVisible guard below can't catch
+                // that — it only fires on visibility *transitions*, and these
+                // re-asserts land while the page is already offscreen. Left alone, the
+                // stale focus makes keyboard avoidance scroll the pager back to this
+                // field, undoing navigation.
+                if newValue == identifier, !isVisible {
+                    focusBinding.wrappedValue = nil
+                    return
                 }
-
-                isEditing = newValue
-            }
-            .airshipOnChangeOf(thomasEnvironment.keyboardDismissRequest) { _ in
-                // A button (or navigation) asked us to give up focus. Clear the SwiftUI
-                // FocusState — not just the UIKit responder — so the two stay in sync and
-                // nothing re-focuses this field on a later re-layout. Deferred: FocusState
-                // writes made during a view update can be dropped.
-                if focused {
-                    Task { @MainActor in
-                        self.focused = false
-                    }
-                }
+                isEditing = (newValue == identifier)
             }
             .airshipOnChangeOf(isVisible) { visible in
                 // Resign focus when this input's page scrolls away. A focused field
                 // stays first responder even off screen, and UIKit's keyboard
                 // avoidance will animate the enclosing pager back to it — undoing
-                // pager navigation with no scrollPosition writeback. FocusState
-                // writes made during a view update can be dropped — defer it.
-                if !visible, focused {
-                    Task { @MainActor in
-                        self.focused = false
-                    }
+                // pager navigation. Clearing the shared authority resigns reliably.
+                if !visible, focusBinding.wrappedValue == identifier {
+                    focusBinding.wrappedValue = nil
                 }
             }
             .airshipApplyIf(isMultiline) { view in
@@ -671,7 +677,7 @@ fileprivate struct AirshipTextField: View {
                         if newValue != binding {
                             self.binding = binding
                         }
-                        self.focused = false
+                        focusBinding.wrappedValue = nil
                     }
                 }
             }
