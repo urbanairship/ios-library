@@ -34,15 +34,21 @@ struct AirshipInitializer {
 
         try Airship.takeOff(config)
 
-        Airship.ai.setProvider(DevIAAFilterContextProvider(), for: InAppMessageFilterContext.filterUsage)
+        Airship.ai.setProvider(DevIAASuppressionContextProvider(), for: InAppMessageAISuppression.usage)
     }
 }
 
-private final class DevIAAFilterContextProvider: AirshipAI.ContextProvider {
-    typealias Subject = InAppMessageFilterContext
+private final class DevIAASuppressionContextProvider: AirshipAI.ContextProvider {
+    typealias Subject = InAppMessageAISuppression
 
-    func context(for subject: InAppMessageFilterContext) async -> AirshipAI.Context {
+    func context(for subject: InAppMessageAISuppression) async -> AirshipAI.Context {
         var items: [AirshipAI.Context.Item] = []
+
+        // Layout-authored subject_hints are handed to the provider (never the prompt) so
+        // the app can tailor context to them.
+        for (key, value) in subject.hints.sorted(by: { $0.key < $1.key }) {
+            items.append(.init(content: "\(key): \(value)"))
+        }
 
         if let namedUser = await Airship.contact.namedUserID {
             items.append(.init(content: "Named user: \(namedUser)"))

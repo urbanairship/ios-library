@@ -26,7 +26,6 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
     private let actionRunnerFactory: any InAppActionRunnerFactoryProtocol
     private let aiManager: any AirshipAI.InternalManager
     private let hooks = Hooks()
-    private let iaaFilterPromptExtrasKey = "ua_ai_filter"
 
 
     @MainActor
@@ -109,29 +108,26 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
             }
         }
 
-        if let filterPrompt = message.extras?.object?[iaaFilterPromptExtrasKey]?.string,
-           !filterPrompt.isEmpty {
-            // Strip the filter key from the extras we pass as context — the prompt is the
-            // governing rule (in instructions), not a piece of user context.
-            let contextExtras: AirshipJSON? = {
-                guard case .object(var dict) = message.extras else { return message.extras }
-                dict[iaaFilterPromptExtrasKey] = nil
-                return dict.isEmpty ? nil : .object(dict)
-            }()
-
+        if let suppression = preparedScheduleInfo.aiSuppression, !suppression.condition.isEmpty {
             let result = await aiManager.evaluate(
-                InAppMessageFilterEvaluation(
-                    filterPrompt: filterPrompt,
+                InAppMessageAISuppressionEvaluation(
+                    condition: suppression.condition,
                     subject: .init(
                         name: message.name,
-                        extras: contextExtras,
-                        campaigns: preparedScheduleInfo.campaigns
+                        extras: message.extras,
+                        priority: preparedScheduleInfo.priority,
+                        hints: suppression.subjectHints ?? [:]
                     )
                 )
             )
             if result.output?.allow == false {
-                AirshipLogger.debug("AI filter suppressed message \(message.name): \(result.output?.reason ?? "")")
-                return .skip
+                AirshipLogger.debug("AI suppressed message \(message.name): \(result.output?.reason ?? "")")
+                // Default matches the payload contract: skip (eligible again next trigger).
+                return switch suppression.missBehavior ?? .skip {
+                case .cancel: .cancel
+                case .skip: .skip
+                case .penalize: .penalize
+                }
             }
         }
 

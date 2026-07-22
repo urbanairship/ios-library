@@ -188,7 +188,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                         triggerSessionID: triggerSessionID,
                         additionalAudienceCheckResult: result,
                         priority: schedule.priority ?? 0,
-                        sendMetadata: schedule.sendMetadata
+                        sendMetadata: schedule.sendMetadata,
+                        aiSuppression: schedule.aiSuppression
                     )
                 },
                 prepareSchedule: { [frequencyChecker] scheduleInfo, data in

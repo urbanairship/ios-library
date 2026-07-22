@@ -74,6 +74,39 @@ struct AutomationScheduleTests {
     }
 
     @Test
+    func testParseAISuppression() throws {
+        let jsonString = """
+           {
+               "id": "test_schedule",
+               "triggers": [
+                   { "type": "custom_event_count", "goal": 1, "id": "json-id" }
+               ],
+               "type": "actions",
+               "actions": { "foo": "bar" },
+               "ai_suppression": {
+                   "condition": "user has not purchased in the last 30 days",
+                   "subject_hints": { "tier": "gold" },
+                   "miss_behavior": "penalize"
+               }
+           }
+           """
+
+        let expectedSchedule = AutomationSchedule(
+            identifier: "test_schedule",
+            data: .actions(try AirshipJSON.wrap(["foo": "bar"])),
+            triggers: [.event(EventAutomationTrigger(id: "json-id", type: .customEventCount, goal: 1.0))],
+            created: nil,
+            aiSuppression: AutomationAISuppression(
+                condition: "user has not purchased in the last 30 days",
+                subjectHints: ["tier": "gold"],
+                missBehavior: .penalize
+            )
+        )
+
+        try verify(json: jsonString, expected: expectedSchedule)
+    }
+
+    @Test
     func testParseDeferred() throws {
         let jsonString = """
            {

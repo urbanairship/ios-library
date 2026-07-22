@@ -24,6 +24,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
     var additionalAudienceCheckResult: Bool
     var priority: Int
     var sendMetadata: String?
+    var aiSuppression: AutomationAISuppression?
 
     init(
         scheduleID: String,
@@ -35,7 +36,8 @@ struct PreparedScheduleInfo: Codable, Equatable {
         triggerSessionID: String,
         additionalAudienceCheckResult: Bool = true,
         priority: Int,
-        sendMetadata: String? = nil
+        sendMetadata: String? = nil,
+        aiSuppression: AutomationAISuppression? = nil
     ) {
         self.scheduleID = scheduleID
         self.productID = productID
@@ -47,6 +49,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.additionalAudienceCheckResult = additionalAudienceCheckResult
         self.priority = priority
         self.sendMetadata = sendMetadata
+        self.aiSuppression = aiSuppression
     }
 
     init(from decoder: any Decoder) throws {
@@ -61,6 +64,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.additionalAudienceCheckResult = try container.decodeIfPresent(Bool.self, forKey: .additionalAudienceCheckResult) ?? true
         self.priority = try container.decodeIfPresent(Int.self, forKey: .priority) ?? 0
         self.sendMetadata = try container.decodeIfPresent(String.self, forKey: .sendMetadata)
+        self.aiSuppression = try container.decodeIfPresent(AutomationAISuppression.self, forKey: .aiSuppression)
     }
 }
 

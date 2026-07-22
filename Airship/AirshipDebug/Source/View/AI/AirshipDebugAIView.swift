@@ -52,7 +52,7 @@ extension AirshipDebugAIView {
         // Schemas live on evaluations now, so there is no runtime registry to
         // enumerate — this is the list of usages the debug UI knows how to drive.
         let usageKeys: [String] = [
-            InAppMessageFilterContext.filterUsage.rawValue,
+            InAppMessageAISuppression.usage.rawValue,
             SceneTextInputInferenceSubject.inferenceUsage.rawValue,
         ]
 
@@ -83,8 +83,8 @@ struct AirshipDebugAIUsageView: View {
     let manager: any AirshipAI.InternalManager
 
     var body: some View {
-        if usageKey == InAppMessageFilterContext.filterUsage.rawValue {
-            AirshipDebugIAAFilterView(manager: manager)
+        if usageKey == InAppMessageAISuppression.usage.rawValue {
+            AirshipDebugIAASuppressionView(manager: manager)
         } else if usageKey == SceneTextInputInferenceSubject.inferenceUsage.rawValue {
             AirshipDebugSceneTextInputView(manager: manager)
         } else {
@@ -95,28 +95,28 @@ struct AirshipDebugAIUsageView: View {
     }
 }
 
-// MARK: - IAA filter sandbox
+// MARK: - IAA suppression sandbox
 
-fileprivate struct AirshipDebugIAAFilterView: View {
-    @StateObject private var viewModel: IAAFilterViewModel
+fileprivate struct AirshipDebugIAASuppressionView: View {
+    @StateObject private var viewModel: IAASuppressionViewModel
     @FocusState private var keyboardActive: Bool
 
     init(manager: any AirshipAI.InternalManager) {
-        _viewModel = StateObject(wrappedValue: IAAFilterViewModel(manager: manager))
+        _viewModel = StateObject(wrappedValue: IAASuppressionViewModel(manager: manager))
     }
 
     var body: some View {
         List {
             Section {
 #if os(tvOS)
-                TextField("e.g. Only show this if the user travels frequently for work", text: $viewModel.filterPrompt)
+                TextField("e.g. Only show this if the user travels frequently for work", text: $viewModel.condition)
                     .focused($keyboardActive)
 #else
-                TextEditor(text: $viewModel.filterPrompt)
+                TextEditor(text: $viewModel.condition)
                     .focused($keyboardActive)
                     .frame(minHeight: 72)
                     .overlay(alignment: .topLeading) {
-                        if viewModel.filterPrompt.isEmpty {
+                        if viewModel.condition.isEmpty {
                             Text("e.g. Only show this if the user travels frequently for work")
                                 .foregroundStyle(.tertiary)
                                 .padding(.top, 8)
@@ -126,7 +126,18 @@ fileprivate struct AirshipDebugIAAFilterView: View {
                     }
 #endif
             } header: {
-                Text("AI Filter Prompt")
+                Text("Condition")
+            } footer: {
+                Text("Injected into the SDK's fixed instruction template.")
+            }
+
+            Section("Generated Instructions") {
+                Text(viewModel.generatedInstructions)
+                    .font(.system(.footnote, design: .monospaced))
+                    .foregroundStyle(.secondary)
+#if !os(tvOS)
+                    .textSelection(.enabled)
+#endif
             }
 
             Section("Test Message Details") {
@@ -142,9 +153,9 @@ fileprivate struct AirshipDebugIAAFilterView: View {
                 )
 
                 AirshipDebugJSONEditor(
-                    title: "Campaigns",
-                    placeholder: "{\"campaign_name\": \"summer_promo\"}",
-                    text: $viewModel.campaignsJSON,
+                    title: "Subject Hints",
+                    placeholder: "{\"hint_key\": \"hint_value\"}",
+                    text: $viewModel.hintsJSON,
                     focus: $keyboardActive
                 )
             }
@@ -152,7 +163,7 @@ fileprivate struct AirshipDebugIAAFilterView: View {
             Section {
                 Button {
                     keyboardActive = false
-                    Task { await viewModel.runFilter() }
+                    Task { await viewModel.runEvaluation() }
                 } label: {
                     HStack {
                         Spacer()
@@ -174,7 +185,7 @@ fileprivate struct AirshipDebugIAAFilterView: View {
                     .padding(.vertical, 4)
                 } else if let result = viewModel.result {
                     switch result {
-                    case .filter(let allow, let reason):
+                    case .completed(let allow, let reason):
                         HStack(spacing: 12) {
                             Image(systemName: allow ? "checkmark.circle.fill" : "xmark.circle.fill")
                                 .font(.title2)
@@ -236,7 +247,7 @@ fileprivate struct AirshipDebugIAAFilterView: View {
             }
         }
 #endif
-        .navigationTitle("IAX Display Filter")
+        .navigationTitle("IAX AI Suppression")
         .onAppear {
             Task { await viewModel.fetchContext() }
         }
@@ -247,24 +258,24 @@ fileprivate struct AirshipDebugIAAFilterView: View {
     }
 }
 
-// MARK: - IAA Filter ViewModel
+// MARK: - IAA Suppression ViewModel
 
-private enum FilterResult {
-    case filter(allow: Bool, reason: String)
+private enum SuppressionResult {
+    case completed(allow: Bool, reason: String)
     case skipped(String)
     case failed(String)
 }
 
 @MainActor
-private final class IAAFilterViewModel: ObservableObject {
+private final class IAASuppressionViewModel: ObservableObject {
     @Published var messageName: String = "Test Message"
-    @Published var filterPrompt: String = ""
+    @Published var condition: String = ""
     @Published var extrasJSON: String = ""
-    @Published var campaignsJSON: String = ""
+    @Published var hintsJSON: String = ""
     @Published var context: AirshipAI.Context? = nil
     @Published var isFetchingContext = false
     @Published var isRunning = false
-    @Published var result: FilterResult?
+    @Published var result: SuppressionResult?
 
     private let manager: any AirshipAI.InternalManager
 
@@ -277,10 +288,10 @@ private final class IAAFilterViewModel: ObservableObject {
         defer { isFetchingContext = false }
 
         let subject = makeSubject()
-        context = await manager.fetchContext(for: InAppMessageFilterContext.filterUsage, subject: subject)
+        context = await manager.fetchContext(for: InAppMessageAISuppression.usage, subject: subject)
     }
 
-    func runFilter() async {
+    func runEvaluation() async {
         isRunning = true
         result = nil
         defer { isRunning = false }
@@ -288,13 +299,13 @@ private final class IAAFilterViewModel: ObservableObject {
         await fetchContext()
 
         let subject = makeSubject()
-        let evaluation = InAppMessageFilterEvaluation(
-            filterPrompt: filterPrompt,
+        let evaluation = InAppMessageAISuppressionEvaluation(
+            condition: condition,
             subject: subject
         )
         switch await manager.evaluate(evaluation) {
         case .completed(let output):
-            result = .filter(allow: output.allow, reason: output.reason)
+            result = .completed(allow: output.allow, reason: output.reason)
         case .skipped(let reason):
             result = .skipped(reason)
         case .failed(let error):
@@ -304,11 +315,22 @@ private final class IAAFilterViewModel: ObservableObject {
         }
     }
 
-    private func makeSubject() -> InAppMessageFilterContext {
-        return InAppMessageFilterContext(
+    /// The full instruction text the SDK will send — the fixed template with the current
+    /// condition injected. Shown in the debug UI so the combined prompt is visible.
+    var generatedInstructions: String {
+        InAppMessageAISuppressionEvaluation(
+            condition: condition,
+            subject: makeSubject()
+        ).instructions()
+    }
+
+    private func makeSubject() -> InAppMessageAISuppression {
+        let hints = (try? JSONDecoder().decode([String: String].self, from: Data(hintsJSON.utf8))) ?? [:]
+        return InAppMessageAISuppression(
             name: messageName,
             extras: parseStringDict(extrasJSON),
-            campaigns: parseStringDict(campaignsJSON)
+            priority: 0,
+            hints: hints
         )
     }
 

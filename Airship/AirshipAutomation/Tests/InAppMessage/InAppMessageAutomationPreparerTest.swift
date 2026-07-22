@@ -267,18 +267,32 @@ struct InAppMessageAutomationPreparerTest {
         }
     }
 
-    // MARK: - AI filter
+    // MARK: - AI suppression
 
-    /// A message carrying the `ua_ai_filter` extras key, which is what gates the AI filter.
-    private func filterMessage() -> InAppMessage {
+    /// A message with extras (context), no longer carrying the condition — that now comes
+    /// from the schedule's `ai_suppression`.
+    private func suppressionMessage() -> InAppMessage {
         InAppMessage(
             name: "promo",
             displayContent: .banner(.init(media: .init(url: "some-url", type: .image))),
-            extras: .object([
-                "ua_ai_filter": .string("only show to hikers"),
-                "promo_type": .string("flash_sale")
-            ])
+            extras: .object(["promo_type": .string("flash_sale")])
         )
+    }
+
+    /// `preparedScheduleInfo` carrying an `ai_suppression` config.
+    private func suppressionInfo(
+        condition: String = "only show to hikers",
+        missBehavior: AutomationAudience.MissBehavior? = nil,
+        subjectHints: [String: String]? = nil
+    ) -> PreparedScheduleInfo {
+        var info = preparedScheduleInfo
+        info.priority = 7
+        info.aiSuppression = AutomationAISuppression(
+            condition: condition,
+            subjectHints: subjectHints,
+            missBehavior: missBehavior
+        )
+        return info
     }
 
     private func setupDisplayStubs() async {
@@ -288,73 +302,93 @@ struct InAppMessageAutomationPreparerTest {
     }
 
     @Test
-    func testAIFilterSuppressesWhenNotAllowed() async throws {
+    func testAISuppressionSkipsByDefaultWhenNotAllowed() async throws {
         // onCache intentionally not set — the message must be skipped before assets are prepared.
         aiManager.onEvaluate = { _ in
-            AirshipAI.Result<InAppMessageFilterEvaluation.Output>.completed(
+            AirshipAI.Result<InAppMessageAISuppressionEvaluation.Output>.completed(
                 .init(allow: false, reason: "not relevant")
             )
         }
 
-        let result = try await self.preparer.prepare(data: filterMessage(), preparedScheduleInfo: preparedScheduleInfo)
+        let result = try await self.preparer.prepare(data: suppressionMessage(), preparedScheduleInfo: suppressionInfo())
         guard case .skip = result else {
             Issue.record("Expected .skip, got \(result)")
             return
         }
     }
 
+    @Test(arguments: [
+        (AutomationAudience.MissBehavior.cancel, "cancel"),
+        (AutomationAudience.MissBehavior.skip, "skip"),
+        (AutomationAudience.MissBehavior.penalize, "penalize"),
+    ])
+    func testAISuppressionAppliesMissBehavior(missBehavior: AutomationAudience.MissBehavior, label: String) async throws {
+        aiManager.onEvaluate = { _ in
+            AirshipAI.Result<InAppMessageAISuppressionEvaluation.Output>.completed(.init(allow: false, reason: ""))
+        }
+
+        let result = try await self.preparer.prepare(
+            data: suppressionMessage(),
+            preparedScheduleInfo: suppressionInfo(missBehavior: missBehavior)
+        )
+        switch (missBehavior, result) {
+        case (.cancel, .cancel), (.skip, .skip), (.penalize, .penalize): break
+        default: Issue.record("Expected .\(label), got \(result)")
+        }
+    }
+
     @Test
-    func testAIFilterAllowsWhenAllowed() async throws {
+    func testAISuppressionAllowsWhenAllowed() async throws {
         await setupDisplayStubs()
         aiManager.onEvaluate = { _ in
-            AirshipAI.Result<InAppMessageFilterEvaluation.Output>.completed(
+            AirshipAI.Result<InAppMessageAISuppressionEvaluation.Output>.completed(
                 .init(allow: true, reason: "relevant")
             )
         }
 
-        guard case .prepared = try await self.preparer.prepare(data: filterMessage(), preparedScheduleInfo: preparedScheduleInfo) else {
+        guard case .prepared = try await self.preparer.prepare(data: suppressionMessage(), preparedScheduleInfo: suppressionInfo()) else {
             Issue.record("Expected .prepared")
             return
         }
     }
 
     @Test
-    func testAIFilterFailsOpenWhenSkipped() async throws {
+    func testAISuppressionFailsOpenWhenSkipped() async throws {
         await setupDisplayStubs()
         aiManager.onEvaluate = { _ in
-            AirshipAI.Result<InAppMessageFilterEvaluation.Output>.skipped(reason: "model unavailable")
+            AirshipAI.Result<InAppMessageAISuppressionEvaluation.Output>.skipped(reason: "model unavailable")
         }
 
-        guard case .prepared = try await self.preparer.prepare(data: filterMessage(), preparedScheduleInfo: preparedScheduleInfo) else {
+        guard case .prepared = try await self.preparer.prepare(data: suppressionMessage(), preparedScheduleInfo: suppressionInfo()) else {
             Issue.record("Expected .prepared on skipped evaluation (fail open)")
             return
         }
     }
 
     @Test
-    func testAIFilterFailsOpenWhenFailed() async throws {
+    func testAISuppressionFailsOpenWhenFailed() async throws {
         await setupDisplayStubs()
         aiManager.onEvaluate = { _ in
-            AirshipAI.Result<InAppMessageFilterEvaluation.Output>.failed(AirshipErrors.error("boom"))
+            AirshipAI.Result<InAppMessageAISuppressionEvaluation.Output>.failed(AirshipErrors.error("boom"))
         }
 
-        guard case .prepared = try await self.preparer.prepare(data: filterMessage(), preparedScheduleInfo: preparedScheduleInfo) else {
+        guard case .prepared = try await self.preparer.prepare(data: suppressionMessage(), preparedScheduleInfo: suppressionInfo()) else {
             Issue.record("Expected .prepared on failed evaluation (fail open)")
             return
         }
     }
 
     @Test
-    func testAIFilterNotRunWithoutExtrasKey() async throws {
+    func testAISuppressionNotRunWithoutConfig() async throws {
         await setupDisplayStubs()
 
         let evaluated = AirshipAtomicValue<Bool>(false)
         aiManager.onEvaluate = { _ in
             evaluated.set(true)
-            return AirshipAI.Result<InAppMessageFilterEvaluation.Output>.completed(.init(allow: false, reason: ""))
+            return AirshipAI.Result<InAppMessageAISuppressionEvaluation.Output>.completed(.init(allow: false, reason: ""))
         }
 
-        // Default message has no extras — the filter must not run, and the message prepares.
+        // No aiSuppression on the prepared info — suppression must not run, and the message prepares.
         guard case .prepared = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo) else {
             Issue.record("Expected .prepared")
             return
@@ -363,24 +397,26 @@ struct InAppMessageAutomationPreparerTest {
     }
 
     @Test
-    func testAIFilterPassesNameExtrasAndCampaigns() async throws {
+    func testAISuppressionPassesSubjectDetails() async throws {
         await setupDisplayStubs()
 
-        let received = AirshipAtomicValue<InAppMessageFilterEvaluation?>(nil)
+        let received = AirshipAtomicValue<InAppMessageAISuppressionEvaluation?>(nil)
         aiManager.onEvaluate = { evaluation in
-            received.set(evaluation as? InAppMessageFilterEvaluation)
-            return AirshipAI.Result<InAppMessageFilterEvaluation.Output>.completed(.init(allow: true, reason: ""))
+            received.set(evaluation as? InAppMessageAISuppressionEvaluation)
+            return AirshipAI.Result<InAppMessageAISuppressionEvaluation.Output>.completed(.init(allow: true, reason: ""))
         }
 
-        _ = try await self.preparer.prepare(data: filterMessage(), preparedScheduleInfo: preparedScheduleInfo)
+        _ = try await self.preparer.prepare(
+            data: suppressionMessage(),
+            preparedScheduleInfo: suppressionInfo(subjectHints: ["tier": "gold"])
+        )
 
         let evaluation = try #require(received.value)
         #expect(evaluation.subject.name == "promo")
-        // The filter key is stripped from the context extras; other extras are retained.
-        #expect(evaluation.subject.extras?.object?["ua_ai_filter"] == nil)
         #expect(evaluation.subject.extras?.object?["promo_type"]?.string == "flash_sale")
-        #expect(evaluation.subject.campaigns == preparedScheduleInfo.campaigns)
-        // The filter prompt governs via instructions() — not repeated as context in the prompt.
+        #expect(evaluation.subject.priority == 7)
+        #expect(evaluation.subject.hints == ["tier": "gold"])
+        // The condition governs via instructions() — not repeated as context in the prompt.
         #expect(evaluation.instructions().contains("only show to hikers"))
         #expect(!evaluation.prompt().contains("only show to hikers"))
     }
