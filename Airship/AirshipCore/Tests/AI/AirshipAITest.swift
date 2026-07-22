@@ -299,6 +299,72 @@ struct AirshipAISchemaTests {
         #expect(decoded == original)
     }
 
+    // MARK: vendor extensions (x-*)
+
+    @Test
+    func decodesVendorExtensionKeysAtEveryLevel() throws {
+        let json = """
+        {
+          "type": "object",
+          "x-ua-report": true,
+          "properties": {
+            "result": {"type": "string", "x-ua-report-property": true},
+            "reason": {"type": "string"}
+          }
+        }
+        """
+        let schema = try JSONDecoder().decode(AirshipJSONSchema.self, from: Data(json.utf8))
+        #expect(schema.extensions["x-ua-report"] == .bool(true))
+
+        guard case .object(let info) = schema.type else {
+            Issue.record("Expected object type")
+            return
+        }
+        #expect(info.properties?["result"]?.extensions["x-ua-report-property"] == .bool(true))
+        #expect(info.properties?["reason"]?.extensions.isEmpty == true)
+    }
+
+    @Test
+    func decodeCapturesOnlyVendorPrefixedUnknownKeys() throws {
+        // `x-*` is captured; other unknown keys are still ignored (dropped).
+        let json = """
+        {"type": "string", "x-keep": 1, "randomUnknown": "dropped"}
+        """
+        let schema = try JSONDecoder().decode(AirshipJSONSchema.self, from: Data(json.utf8))
+        #expect(schema.extensions == ["x-keep": .number(1)])
+    }
+
+    @Test
+    func extensionsRoundTripThroughCodable() throws {
+        let json = """
+        {
+          "type": "object",
+          "x-ua-report": true,
+          "properties": {
+            "result": {"type": "string", "x-ua-report-property": true}
+          }
+        }
+        """
+        let decoded = try JSONDecoder().decode(AirshipJSONSchema.self, from: Data(json.utf8))
+        let reDecoded = try JSONDecoder().decode(
+            AirshipJSONSchema.self,
+            from: JSONEncoder().encode(decoded)
+        )
+        // Equatable now compares extensions, so this also proves encode wrote them back
+        // without clobbering a real keyword.
+        #expect(reDecoded == decoded)
+        #expect(reDecoded.extensions["x-ua-report"] == .bool(true))
+    }
+
+    @Test
+    func initKeepsOnlyVendorExtensionKeys() {
+        let schema = AirshipJSONSchema(
+            type: .string(.init()),
+            extensions: ["x-ok": .bool(true), "nope": .string("dropped")]
+        )
+        #expect(schema.extensions == ["x-ok": .bool(true)])
+    }
+
     // MARK: Non-object roots
 
     @Test

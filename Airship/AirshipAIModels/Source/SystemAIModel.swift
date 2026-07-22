@@ -209,7 +209,7 @@ fileprivate extension AirshipJSONSchema {
             }
             // Guided generation constrains output to the choices — the model cannot
             // produce an out-of-vocabulary value.
-            return DynamicGenerationSchema(name: name, anyOf: choices)
+            return DynamicGenerationSchema(name: name, description: self.description, anyOf: choices)
         case .boolean: return DynamicGenerationSchema(type: Bool.self)
         case .integer: return DynamicGenerationSchema(type: Int.self)
         case .number: return DynamicGenerationSchema(type: Double.self)
@@ -223,7 +223,7 @@ fileprivate extension AirshipJSONSchema {
                         isOptional: !(info.required?.contains(propertyName) ?? false)
                     )
                 }
-            return DynamicGenerationSchema(name: name, properties: schemaProperties)
+            return DynamicGenerationSchema(name: name, description: self.description, properties: schemaProperties)
         case .array(let info):
             return DynamicGenerationSchema(arrayOf: info.items.dynamicSchema(name: "\(name)_element"))
         @unknown default:

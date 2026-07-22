@@ -90,10 +90,27 @@ public struct AirshipJSONSchema: Sendable, Equatable {
     /// Optional natural-language description, surfaced to the model.
     public let description: String?
 
-    public init(type: ValueType, description: String? = nil) {
+    /// JSON Schema extension keywords (`x-*`, the spec's vendor-extension convention)
+    /// carried verbatim from the payload. Kept as opaque JSON so new extensions round-trip
+    /// without decoder changes; consumers interpret whichever keys they care about.
+    /// `validate` and guided-generation ignore these — they're metadata for other consumers.
+    public let extensions: [String: AirshipJSON]
+
+    public init(
+        type: ValueType,
+        description: String? = nil,
+        extensions: [String: AirshipJSON] = [:]
+    ) {
         self.type = type
         self.description = description
+        // Same invariant the decoder enforces: only `x-*` keys live here. Keeps encode from
+        // ever writing a key that collides with a real schema keyword (`type`, `enum`, ...).
+        self.extensions = extensions.filter { $0.key.hasPrefix(Self.extensionKeyPrefix) }
     }
+
+    /// Prefix marking JSON Schema vendor-extension keywords. Every payload key with this
+    /// prefix is captured into ``extensions`` verbatim.
+    public static let extensionKeyPrefix: String = "x-"
 }
 
 // MARK: - Convenience constructors
@@ -160,6 +177,16 @@ extension AirshipJSONSchema: Codable {
         case array
     }
 
+    /// Accepts any string key, so the decoder can enumerate the raw payload keys and pick
+    /// out the `x-*` extensions the typed `CodingKeys` don't model.
+    private struct AnyCodingKey: CodingKey {
+        let stringValue: String
+        var intValue: Int? { nil }
+        init(_ stringValue: String) { self.stringValue = stringValue }
+        init?(stringValue: String) { self.stringValue = stringValue }
+        init?(intValue: Int) { nil }
+    }
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.description = try container.decodeIfPresent(String.self, forKey: .description)
@@ -187,6 +214,14 @@ extension AirshipJSONSchema: Codable {
                 .init(items: try container.decode(AirshipJSONSchema.self, forKey: .items))
             )
         }
+
+        // Capture vendor-extension keywords (`x-*`) verbatim; other unknown keys are ignored.
+        let raw = try decoder.container(keyedBy: AnyCodingKey.self)
+        var extensions: [String: AirshipJSON] = [:]
+        for key in raw.allKeys where key.stringValue.hasPrefix(Self.extensionKeyPrefix) {
+            extensions[key.stringValue] = try raw.decode(AirshipJSON.self, forKey: key)
+        }
+        self.extensions = extensions
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -210,6 +245,13 @@ extension AirshipJSONSchema: Codable {
         case .array(let info):
             try container.encode(RawType.array, forKey: .type)
             try container.encode(info.items, forKey: .items)
+        }
+
+        if !extensions.isEmpty {
+            var raw = encoder.container(keyedBy: AnyCodingKey.self)
+            for (key, value) in extensions {
+                try raw.encode(value, forKey: AnyCodingKey(key))
+            }
         }
     }
 }
@@ -251,7 +293,7 @@ extension AirshipJSONSchema {
         case .object(let info):
             guard let object = value.object else { throw typeError(path, "object", value) }
 
-            // 1. Verify all required properties are present.
+            // Verify all required properties are present.
             if let requiredKeys = info.required {
                 for name in requiredKeys {
                     let child = object[name]
@@ -263,7 +305,7 @@ extension AirshipJSONSchema {
                 }
             }
 
-            // 2. Validate types for declared properties that are present. No declared
+            // Validate types for declared properties that are present. No declared
             // properties means the object is unconstrained.
             for (name, property) in info.properties ?? [:] {
                 if let child = object[name], child != AirshipJSON.null {
