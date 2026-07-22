@@ -86,10 +86,13 @@ final class ThomasState: ObservableObject {
 
             // Add $ai — on-device model availability, so predicates and pager branching
             // can gate on whether AI can run. Present only when an executor is wired.
+            // Wrapped under `current` to match $forms/$pagers/$video (and web-thomas #348).
             if let aiAvailable {
-                result["$ai"] = [
-                    "available": .bool(aiAvailable)
-                ]
+                result["$ai"] = .object([
+                    "current": .object([
+                        "available": .bool(aiAvailable)
+                    ])
+                ])
             }
 
             return .object(result)
@@ -153,7 +156,7 @@ final class ThomasState: ObservableObject {
     }
 
     /// Bridges the executor's `availabilityUpdates` async stream onto `aiAvailabilitySubject`
-    /// so `$ai.available` tracks the on-device model over the scene's lifetime (e.g. the
+    /// so `$ai.current.available` tracks the on-device model over the scene's lifetime (e.g. the
     /// model finishing a download). No executor → no stream → `$ai` never appears.
     private func startAIAvailabilityBridge() {
         guard let executor = aiInferenceExecutor else { return }
@@ -327,7 +330,7 @@ fileprivate extension ThomasFormField.Value {
         case .radio(let value): return value
         case .sms(let value, _),
             .email(let value),
-            .text(let value):
+            .text(let value, _):
             guard let value else { return nil }
             return .string(value)
         case .score(let value): return value

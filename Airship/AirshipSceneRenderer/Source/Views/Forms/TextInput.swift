@@ -223,9 +223,9 @@ struct TextInput: View {
         let identifier = self.info.properties.identifier
         switch(self.info.properties.inputType, formState.fieldValue(identifier: identifier)) {
         case(.email, .email(let value)),
-            (.number, .text(let value)),
-            (.text, .text(let value)),
-            (.textMultiline, .text(let value)):
+            (.number, .text(let value, _)),
+            (.text, .text(let value, _)),
+            (.textMultiline, .text(let value, _)):
             return (value, nil)
         case (.sms, .sms(let value, let locale)):
             return (value, locale)
@@ -258,8 +258,9 @@ struct TextInput: View {
 
         /// The last completed inference, so unchanged text (e.g. the restore path
         /// re-making the field, or trailing-whitespace edits) reuses the result
-        /// instead of re-running the model.
-        private var lastInference: (text: String, output: AirshipJSON)?
+        /// instead of re-running the model. Carries both the state projection payload
+        /// and the reportable `ai_inference` payload.
+        private var lastInference: (text: String, output: AirshipJSON, report: ThomasAIInferenceReport)?
 
         @Published
         fileprivate var formField: ThomasFormField?
@@ -472,14 +473,14 @@ struct TextInput: View {
                     return if isRequired {
                         ThomasFormField.invalidField(
                             identifier: inputProperties.identifier,
-                            input: .text(input)
+                            input: .text(input, aiInference: nil)
                         )
                     } else {
                         ThomasFormField.validField(
                             identifier: inputProperties.identifier,
-                            input: .text(input),
+                            input: .text(input, aiInference: nil),
                             result: .init(
-                                value: .text(trimmed),
+                                value: .text(trimmed, aiInference: nil),
                                 attributes: self.makeAttributes(value: trimmed)
                             )
                         )
@@ -487,7 +488,7 @@ struct TextInput: View {
                 }
 
                 var result = ThomasFormField.Result(
-                    value: .text(trimmed),
+                    value: .text(trimmed, aiInference: nil),
                     attributes: self.makeAttributes(value: trimmed)
                 )
 
@@ -495,9 +496,10 @@ struct TextInput: View {
                 // re-running the model.
                 if let lastInference, lastInference.text == trimmed {
                     result.aiInference = lastInference.output
+                    result.value = .text(trimmed, aiInference: lastInference.report)
                     return ThomasFormField.validField(
                         identifier: inputProperties.identifier,
-                        input: .text(input),
+                        input: .text(input, aiInference: nil),
                         result: result
                     )
                 }
@@ -512,10 +514,11 @@ struct TextInput: View {
                     // the result failed so layouts can branch to a non-AI path.
                     if inputProperties.aiInference != nil {
                         result.aiInference = .object(["status": "failed"])
+                        result.value = .text(trimmed, aiInference: ThomasAIInferenceReport.failed)
                     }
                     return ThomasFormField.validField(
                         identifier: inputProperties.identifier,
-                        input: .text(input),
+                        input: .text(input, aiInference: nil),
                         result: result
                     )
                 }
@@ -542,7 +545,7 @@ struct TextInput: View {
 
                 return ThomasFormField.asyncField(
                     identifier: inputProperties.identifier,
-                    input: .text(input),
+                    input: .text(input, aiInference: nil),
                     processDelay: Self.aiInferenceProcessDelay
                 ) { [weak self, executor] in
                     let output = await executor.run(request: request)
@@ -555,20 +558,29 @@ struct TextInput: View {
                     // match fields directly (e.g. `...status.ai.result`); scalar and
                     // array outputs land under `result` (`...status.ai.result`).
                     var ai: [String: AirshipJSON]
+                    let report: ThomasAIInferenceReport
                     switch output {
                     case .some(let output):
                         ai = output.object ?? ["result": output]
                         ai["status"] = "complete"
+                        // Reported output is filtered to properties opted in via
+                        // x-ua-report-property — distinct from the full `ai` projection.
+                        report = ThomasAIInferenceReport(
+                            output: output,
+                            schema: request.outputSchema
+                        )
                     case .none:
                         // The executor logs why (unavailable/failed); this logs which
                         // input, the context the executor doesn't have.
                         AirshipLogger.debug("Scene AI inference produced no output for input \(identifier)")
                         ai = ["status": "failed"]
+                        report = ThomasAIInferenceReport.failed
                     }
 
                     var result = result
                     result.aiInference = .object(ai)
-                    self?.lastInference = (trimmed, .object(ai))
+                    result.value = .text(trimmed, aiInference: report)
+                    self?.lastInference = (trimmed, .object(ai), report)
 
                     // Fail open: inference never invalidates the field itself.
                     return .valid(result)

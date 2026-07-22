@@ -14,6 +14,7 @@ struct ThomasFormPayloadGenerator {
     private static let resultKey: String = "result"
     private static let dataKey: String = "data"
     private static let aiKey: String = "ai"
+    private static let aiInferenceKey: String = "ai_inference"
 
     /**
      * This is using an opaque AirshipJSON instead of structured types so we could expose the value to
@@ -68,12 +69,16 @@ struct ThomasFormPayloadGenerator {
             throw AirshipErrors.error("Form value should be form or npsForm")
         }
 
-        return .object([identifier: makeValuePayload(formValue) ?? .object([:])])
+        // The event payload is the one place AI inference results are reported.
+        return .object([identifier: makeValuePayload(formValue, includeAIInference: true) ?? .object([:])])
     }
 
+    /// - Parameter includeAIInference: emit the `ai_inference` payload carried on a text
+    ///   value. Only the form event payload sets this — the state projection omits it.
     private static func makeValuePayload(
         _ value: ThomasFormField.Value,
-        status: ThomasFormField.Status? = nil
+        status: ThomasFormField.Status? = nil,
+        includeAIInference: Bool = false
     ) -> AirshipJSON? {
         switch value {
         case .toggle(let value):
@@ -100,12 +105,15 @@ struct ThomasFormPayloadGenerator {
                     builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)
                 }
             }
-        case .text(let value):
+        case .text(let value, let aiInference):
             return AirshipJSON.makeObject { builder in
                 builder.set(string: "text_input", key: Self.typeKey)
                 builder.set(string: value, key: Self.valueKey)
                 if let status {
                     builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)
+                }
+                if includeAIInference, let aiInference {
+                    builder.set(json: try? AirshipJSON.wrap(aiInference), key: Self.aiInferenceKey)
                 }
             }
         case .email(let value):
@@ -145,7 +153,10 @@ struct ThomasFormPayloadGenerator {
 
                 let children = AirshipJSON.makeObject { builder in
                     children.forEach {
-                        builder.set(json: Self.makeValuePayload($0.value), key: $0.key)
+                        builder.set(
+                            json: Self.makeValuePayload($0.value, includeAIInference: includeAIInference),
+                            key: $0.key
+                        )
                     }
                 }
 
@@ -164,7 +175,10 @@ struct ThomasFormPayloadGenerator {
                 
                 let children = AirshipJSON.makeObject { builder in
                     children.forEach {
-                        builder.set(json: Self.makeValuePayload($0.value), key: $0.key)
+                        builder.set(
+                            json: Self.makeValuePayload($0.value, includeAIInference: includeAIInference),
+                            key: $0.key
+                        )
                     }
                 }
 
