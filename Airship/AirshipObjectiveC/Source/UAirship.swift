@@ -13,7 +13,7 @@ import AirshipCore
 @objc
 public final class UAirship: NSObject, Sendable {
 
-    private static let storage = Storage()
+    private static let storage: Storage = Storage()
     private static let _push: UAPush = UAPush()
     private static let _channel: UAChannel = UAChannel()
     private static let _contact: UAContact = UAContact()

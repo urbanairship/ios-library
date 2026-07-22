@@ -306,7 +306,7 @@ extension AirshipJSON {
 }
 
 public struct AirshipJSONObjectBuilder {
-    var data: [String: AirshipJSON] = [:]
+    fileprivate var data: [String: AirshipJSON] = [:]
 
     public mutating func set(string: String?, key: String) {
         guard let string = string else {
@@ -356,7 +356,7 @@ public struct AirshipJSONObjectBuilder {
         data[key] = .bool(bool)
     }
 
-    func build() -> AirshipJSON {
+    fileprivate func build() -> AirshipJSON {
         return .object(data)
     }
 }

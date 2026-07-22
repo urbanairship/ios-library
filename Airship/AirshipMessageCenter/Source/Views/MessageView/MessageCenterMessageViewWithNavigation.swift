@@ -27,7 +27,7 @@ public struct MessageCenterMessageViewWithNavigation: View {
 #endif
 
     @State
-    private var opacity = 0.0
+    private var opacity: Double = 0.0
 
     @StateObject
     private var messageViewModel: MessageCenterMessageViewModel
@@ -37,7 +37,7 @@ public struct MessageCenterMessageViewWithNavigation: View {
     private let dismissAction: (@MainActor () -> Void)?
 
     @State
-    private var isDismissed = false // Add this state
+    private var isDismissed: Bool = false // Add this state
 
     /// Initializer.
     /// - Parameters:

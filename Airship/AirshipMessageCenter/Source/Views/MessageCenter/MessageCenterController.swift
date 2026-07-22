@@ -24,10 +24,10 @@ public final class MessageCenterController: ObservableObject {
     }
 
     @Published
-    var visibleMessageID: String? = nil
+    private var visibleMessageID: String? = nil
 
     @Published
-    var isMessageCenterVisible: Bool = false
+    private var isMessageCenterVisible: Bool = false
 
     /// The navigation path.
     @Published

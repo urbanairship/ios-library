@@ -172,7 +172,7 @@ private struct DefaultMessageCenterMessageContentView: View {
     private var messageLoadingPhase: MessageCenterMessageContentPhase = .loading
 
     @State
-    private var opacity = 0.0
+    private var opacity: Double = 0.0
 
     @ObservedObject
     var viewModel: MessageCenterMessageViewModel

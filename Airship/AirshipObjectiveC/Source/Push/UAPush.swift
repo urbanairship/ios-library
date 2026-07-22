@@ -10,7 +10,7 @@ import AirshipCore
 @objc
 public final class UAPush: NSObject, Sendable {
 
-    private let storage = Storage()
+    private let storage: Storage = Storage()
 
     override init() {
         super.init()

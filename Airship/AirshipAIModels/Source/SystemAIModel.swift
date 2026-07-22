@@ -89,7 +89,7 @@ final class SystemAIModel: AirshipAI.Model {
 
     /// Output tokens share the context window with the input — reserve room for the
     /// schema-constrained response when measuring whether the prompt fits.
-    private static let responseTokenReserve = 512
+    private static let responseTokenReserve: Int = 512
 
     func respond(
         instructions: String,

@@ -14,16 +14,16 @@ final class FeatureFlagAnalytics: FeatureFlagAnalyticsProtocol {
     private let airshipAnalytics: any InternalAirshipAnalytics
 
     private enum FlagKeys {
-        static let name = "flag_name"
-        static let metadata = "reporting_metadata"
-        static let supersededMetadata = "superseded_reporting_metadata"
-        static let eligible = "eligible"
-        static let device = "device"
+        static let name: String = "flag_name"
+        static let metadata: String = "reporting_metadata"
+        static let supersededMetadata: String = "superseded_reporting_metadata"
+        static let eligible: String = "eligible"
+        static let device: String = "device"
     }
 
     private enum DeviceKeys {
-        static let channelID = "channel_id"
-        static let contactID = "contact_id"
+        static let channelID: String = "channel_id"
+        static let contactID: String = "contact_id"
     }
 
     init(

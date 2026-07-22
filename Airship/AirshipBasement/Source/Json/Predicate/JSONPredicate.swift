@@ -166,7 +166,7 @@ public struct JSONPredicate: Sendable, Codable, Equatable, Hashable {
     /// - Parameter json: The JSON payload.
     /// - Returns: A predicate or `nil` if the JSON is invalid.
     /// - Throws: An error if the JSON cannot be parsed.
-    static func fromJson(json: Any?) throws -> JSONPredicate {
+    private static func fromJson(json: Any?) throws -> JSONPredicate {
         return try JSONPredicate(json: json)
     }
 }

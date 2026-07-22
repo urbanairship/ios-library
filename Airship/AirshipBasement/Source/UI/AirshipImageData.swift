@@ -172,7 +172,7 @@ fileprivate actor AirshipImageDataFrameActor {
 }
 
 extension CGImageSource {
-    func gifLoopCount() -> Int? {
+    fileprivate func gifLoopCount() -> Int? {
         guard let properties = CGImageSourceCopyProperties(self, nil) as NSDictionary?,
               let gifDictionary = properties[kCGImagePropertyGIFDictionary] as? NSDictionary else {
             return nil

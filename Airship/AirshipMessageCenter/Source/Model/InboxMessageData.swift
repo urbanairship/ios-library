@@ -8,7 +8,7 @@ import Foundation
 @objc(UAInboxMessageData)
 class InboxMessageData: NSManagedObject {
 
-    static let messageDataEntity = "UAInboxMessage"
+    static let messageDataEntity: String = "UAInboxMessage"
 
     @nonobjc class func fetchRequest<T>() -> NSFetchRequest<T> {
         return NSFetchRequest<T>(entityName: InboxMessageData.messageDataEntity)

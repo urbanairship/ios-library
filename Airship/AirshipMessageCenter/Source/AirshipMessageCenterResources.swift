@@ -10,7 +10,7 @@ import Foundation
 final class AirshipMessageCenterResources {
     
     /// Module bundle
-    static let bundle = resolveBundle()
+    static let bundle: Bundle = resolveBundle()
 
     private static func resolveBundle() -> Bundle {
 #if SWIFT_PACKAGE

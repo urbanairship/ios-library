@@ -9,8 +9,8 @@ import AirshipCore
 struct MessageCenterThemeLoader {
 
 
-    static let messageCenterFileName = "MessageCenterTheme"
-    static let cellSeparatorStyleNoneKey = "none"
+    static let messageCenterFileName: String = "MessageCenterTheme"
+    static let cellSeparatorStyleNoneKey: String = "none"
 
     static func defaultPlist() -> MessageCenterTheme? {
         if let _ = try? plistPath(

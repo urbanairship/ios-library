@@ -23,13 +23,13 @@ public struct MessageCenterListView: View {
     private var theme
 
     @StateObject
-    private var viewModel = MessageCenterMessageListViewModel()
+    private var viewModel: MessageCenterMessageListViewModel = MessageCenterMessageListViewModel()
 
     @State
-    private var listOpacity = 0.0
+    private var listOpacity: Double = 0.0
 
     @State
-    private var isRefreshing = false
+    private var isRefreshing: Bool = false
 
     /// Initializer.
     /// - Parameters:

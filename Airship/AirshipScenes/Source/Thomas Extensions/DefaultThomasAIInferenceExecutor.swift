@@ -89,7 +89,7 @@ struct ThomasAIInferenceEvaluation: AirshipAI.Evaluation {
     typealias Subject = SceneTextInputInferenceSubject
 
     /// The contract used when the layout doesn't define an `output_schema`.
-    static let defaultSchema = AirshipJSONSchema.object(
+    private static let defaultSchema: AirshipJSONSchema = AirshipJSONSchema.object(
         properties: [
             "result": .string(description: "The value the instruction asks for"),
             "reason": .string(description: "Brief reason for the result"),
@@ -97,6 +97,8 @@ struct ThomasAIInferenceEvaluation: AirshipAI.Evaluation {
         required: ["result", "reason"]
     )
 
+    // Kept `internal` (not `fileprivate`): the evaluation is constructed in the module's
+    // tests via @testable, which reaches internal but not fileprivate.
     let request: ThomasAIInferenceRequest
 
     /// A per-evaluation random marker used to fence the untrusted user text in the prompt.

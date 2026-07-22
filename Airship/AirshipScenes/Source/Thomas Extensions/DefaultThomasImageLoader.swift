@@ -9,7 +9,7 @@ import Foundation
 /// `releaseAll()` (the environment calls this on dismiss).
 @MainActor
 final class DefaultThomasImageLoader: ThomasImageLoader {
-    private static let assetCacheRootComponent = "com.airship.layout.assets"
+    private static let assetCacheRootComponent: String = "com.airship.layout.assets"
 
     private let imageProvider: (any AirshipImageProvider)?
     private let imageLoader: AirshipImageLoader
