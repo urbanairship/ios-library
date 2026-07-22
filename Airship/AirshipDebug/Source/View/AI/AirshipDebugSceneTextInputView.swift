@@ -194,7 +194,7 @@ struct AirshipDebugSceneTextInputView: View {
             } else if let items = viewModel.context?.items, !items.isEmpty {
                 ForEach(Array(items.enumerated()), id: \.offset) { _, item in
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("priority \(item.priority.rawValue)")
+                        Text(verbatim: "priority \(item.priority)")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                         Text(item.content)
@@ -276,8 +276,8 @@ extension AirshipDebugSceneTextInputView {
             isFetchingContext = true
             defer { isFetchingContext = false }
             context = await manager.fetchContext(
-                for: ThomasTextInputInferenceSubject.inferenceUsage,
-                subject: ThomasTextInputInferenceSubject()
+                for: SceneTextInputInferenceSubject.inferenceUsage,
+                subject: SceneTextInputInferenceSubject()
             )
         }
 

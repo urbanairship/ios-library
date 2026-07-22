@@ -16,6 +16,20 @@ extension AirshipAI {
 
         private let evaluator = AirshipAI.Evaluator()
 
+        /// Live subscribers to `availabilityUpdates`, keyed so each can remove itself on
+        /// termination.
+        @MainActor
+        private var availabilityContinuations: [UUID: AsyncStream<Availability>.Continuation] = [:]
+
+        /// Forwards the currently resolved model's own availability changes into the
+        /// broadcast. Cancelled and restarted whenever the resolved model changes.
+        @MainActor
+        private var modelObservationTask: Task<Void, Never>?
+
+        /// Last value broadcast, so repeated equal values are collapsed.
+        @MainActor
+        private var lastBroadcastAvailability: Availability?
+
         @_spi(AirshipInternal)
         public init() {}
 
@@ -45,6 +59,7 @@ extension AirshipAI {
         @MainActor
         public func setModel(_ selector: ModelSelector) {
             currentSelector = selector
+            restartModelObservation()
         }
 
         @MainActor
@@ -57,6 +72,50 @@ extension AirshipAI {
             _ factory: @MainActor @Sendable @escaping () -> any AirshipAI.Model
         ) {
             defaultModelFactory = factory
+            restartModelObservation()
+        }
+
+        @MainActor
+        public var availabilityUpdates: AsyncStream<Availability> {
+            AsyncStream { continuation in
+                let id = UUID()
+                continuation.yield(self.availability)
+                self.availabilityContinuations[id] = continuation
+                continuation.onTermination = { @Sendable _ in
+                    Task { @MainActor in self.availabilityContinuations[id] = nil }
+                }
+            }
+        }
+
+        /// Recomputes availability and pushes it to all subscribers, collapsing repeats.
+        @MainActor
+        private func broadcastAvailability() {
+            let current = self.availability
+            guard current != lastBroadcastAvailability else { return }
+            lastBroadcastAvailability = current
+            for continuation in availabilityContinuations.values {
+                continuation.yield(current)
+            }
+        }
+
+        /// Re-subscribes to the resolved model's availability stream (and broadcasts the
+        /// new current value). Called whenever the resolved model may have changed.
+        @MainActor
+        private func restartModelObservation() {
+            modelObservationTask?.cancel()
+
+            guard let model = resolvedModel else {
+                broadcastAvailability()
+                modelObservationTask = nil
+                return
+            }
+
+            modelObservationTask = Task { @MainActor [weak self] in
+                for await _ in model.availabilityUpdates {
+                    if Task.isCancelled { return }
+                    self?.broadcastAvailability()
+                }
+            }
         }
 
         public func fetchContext<S: Sendable>(
@@ -79,7 +138,10 @@ extension AirshipAI {
             guard let model else {
                 return .skipped(reason: "No model configured")
             }
-            let context = await contextFetcher?(evaluation.subject) ?? .empty
+            // Provider context first, then the evaluation's own context appended after
+            // (later items win priority ties when the model trims to fit its window).
+            let providerContext = await contextFetcher?(evaluation.subject) ?? .empty
+            let context = providerContext.appending(evaluation.additionalContext)
             return await evaluator.evaluate(evaluation, model: model, context: context)
         }
     }

@@ -45,19 +45,19 @@ private final class DevIAAFilterContextProvider: AirshipAI.ContextProvider {
         var items: [AirshipAI.Context.Item] = []
 
         if let namedUser = await Airship.contact.namedUserID {
-            items.append(.init(content: "Named user: \(namedUser)", priority: .high))
+            items.append(.init(content: "Named user: \(namedUser)"))
         }
 
         let tags = Airship.channel.tags
         if !tags.isEmpty {
-            items.append(.init(content: "Channel tags: \(tags.sorted().joined(separator: ", "))", priority: .medium))
+            items.append(.init(content: "Channel tags: \(tags.sorted().joined(separator: ", "))"))
         }
 
         let notifStatus = await Airship.push.notificationStatus
-        items.append(.init(content: "Notifications opted in: \(notifStatus.isUserOptedIn)", priority: .medium))
+        items.append(.init(content: "Notifications opted in: \(notifStatus.isUserOptedIn)"))
 
         if let channelID = Airship.channel.identifier {
-            items.append(.init(content: "Channel ID: \(channelID)", priority: .low))
+            items.append(.init(content: "Channel ID: \(channelID)"))
         }
 
         if let subscriptions = try? await Airship.contact.fetchSubscriptionLists(), !subscriptions.isEmpty {
@@ -65,7 +65,7 @@ private final class DevIAAFilterContextProvider: AirshipAI.ContextProvider {
                 .sorted { $0.key < $1.key }
                 .map { "\($0.key): \($0.value.map(\.rawValue).joined(separator: ", "))" }
                 .joined(separator: "; ")
-            items.append(.init(content: "Contact subscriptions: \(rendered)", priority: .low))
+            items.append(.init(content: "Contact subscriptions: \(rendered)"))
         }
 
         return AirshipAI.Context(items: items)

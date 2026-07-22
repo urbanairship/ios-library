@@ -9,6 +9,10 @@
 #         { type: valid, ai: { status: failed }, ... }       on failure / no model
 #   - Pager branching routes Next per category via ...status.ai.result, with a
 #     fallback page when ...status.ai.status == failed.
+#   - ai_inference also carries `additional_context` (layout-authored context
+#     appended after the app's context provider) and `subject_hints` (passed to
+#     the app's context provider alongside the subject, not into the prompt).
+#   - `$ai.available` gates an up-front notice when the on-device model can't run.
 #
 # Structure notes:
 #   - form_controller ancestor is required for the text_input to bind form state.
@@ -114,6 +118,22 @@ view:
                             font_size: 14
                             alignment: start
                             color: { default: { hex: "#666666", alpha: 1 } }
+                      # Up-front gate on on-device AI availability via $ai.available.
+                      # Shown before the user types when the model can't run at all.
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "On-device AI is unavailable on this device — feedback still works, we just won't auto-route it."
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              scope: [$ai, available]
+                              value: { equals: false }
+                          text_appearance:
+                            font_size: 13
+                            alignment: start
+                            color: { default: { hex: "#8A6D00", alpha: 1 } }
                       - size: { width: 100%, height: 140 }
                         margin: { top: 16, start: 20, end: 20 }
                         view:
@@ -145,6 +165,20 @@ view:
                                   type: string
                                   description: Short reason for the classification
                               required: [result, reason]
+                            # Layout-authored context, appended AFTER the app's
+                            # context-provider items. Priority is an int where LOWER is
+                            # more important; the highest-valued items are dropped first
+                            # when the model's context window is tight (0 = default).
+                            additional_context:
+                              - content: "This feedback is about a physical goods order."
+                                priority: 0
+                              - content: "Prefer 'shipping' when delivery timing is mentioned."
+                                priority: 5
+                            # Handed to the app's context provider alongside the subject;
+                            # NOT added to the prompt by the renderer.
+                            subject_hints:
+                              surface: feedback_modal
+                              locale: en-US
                       # Failure notice (model unavailable / inference error)
                       - size: { width: 100%, height: auto }
                         margin: { top: 12, start: 20, end: 20 }

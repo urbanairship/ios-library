@@ -27,25 +27,18 @@ public enum AirshipAI {
     /// leaves the SDK.
     public struct Context: Sendable, Equatable {
 
-        /// Relative importance of a context item. Models drop lower-priority items
-        /// first when trimming context to fit their input budget.
-        public enum Priority: Int, Sendable, Equatable, Comparable, CaseIterable {
-            case low = 0
-            case medium = 1
-            case high = 2
-
-            public static func < (lhs: Priority, rhs: Priority) -> Bool {
-                lhs.rawValue < rhs.rawValue
-            }
-        }
-
         /// A single piece of context. `content` should be self-describing text
         /// (e.g. `"Favorite category: hiking"`) — it is inserted into the prompt as-is.
         public struct Item: Sendable, Equatable {
             public var content: String
-            public var priority: Priority
 
-            public init(content: String, priority: Priority = .medium) {
+            /// Relative importance, where **lower is more important**. When the prompt
+            /// exceeds the model's input window, items with the highest priority value
+            /// are dropped first. Any value is valid — negatives rank above the `0`
+            /// default. Providers and layout-authored context share this one numeric scale.
+            public var priority: Double
+
+            public init(content: String, priority: Double = 0.0) {
                 self.content = content
                 self.priority = priority
             }
@@ -70,8 +63,18 @@ public enum AirshipAI {
             return kept.map(\.content).joined(separator: "\n")
         }
 
-        /// A copy of this context with the lowest-priority item removed — earliest
-        /// first within a priority, so later (more specific) providers win ties.
+        /// A copy of this context with `other`'s items appended after this context's.
+        ///
+        /// Order is meaningful: appended items are "later" and so win priority ties when
+        /// trimming (see `droppingLowestPriorityItem()`). Used to merge an evaluation's
+        /// own context after the provider's.
+        public func appending(_ other: Context) -> Context {
+            Context(items: items + other.items)
+        }
+
+        /// A copy of this context with the least-important item removed — since lower
+        /// priority values are more important, this drops the item with the highest
+        /// value, earliest first within a value so later (more specific) items win ties.
         ///
         /// Models call this to shrink the context when the full prompt exceeds their
         /// input window, repeating until the prompt fits.
@@ -79,8 +82,8 @@ public enum AirshipAI {
         /// - Returns: the reduced context, or nil when there is nothing left to drop.
         public func droppingLowestPriorityItem() -> Context? {
             guard
-                let lowest = items.map(\.priority).min(),
-                let index = items.firstIndex(where: { $0.priority == lowest })
+                let leastImportant = items.map(\.priority).max(),
+                let index = items.firstIndex(where: { $0.priority == leastImportant })
             else {
                 return nil
             }
@@ -169,6 +172,15 @@ public enum AirshipAI {
         /// finishes downloading), so it's read fresh rather than cached.
         var availability: Availability { get }
 
+        /// A stream of availability changes over the model's lifetime, e.g. as an
+        /// on-device model finishes downloading or the OS toggles AI features. The
+        /// framework observes this to drive `Manager.availabilityUpdates`.
+        ///
+        /// The default emits the current value once — enough for models whose
+        /// availability never changes. Models with dynamic availability (e.g. the
+        /// on-device system model) override it to emit on every change.
+        var availabilityUpdates: AsyncStream<Availability> { get }
+
         /// How many attempts (including the first) the framework should make before
         /// failing the evaluation. Airship's on-device model uses 3.
         var maxAttempts: Int { get }
@@ -246,6 +258,13 @@ public enum AirshipAI {
         /// Whether the active model can be used right now.
         @MainActor
         var availability: Availability { get }
+
+        /// A stream of availability changes, starting with the current value and emitting
+        /// whenever it changes — the active model finishing a download, the OS toggling AI
+        /// features, or a `setModel`/model-factory swap. Consumers can gate UI on live
+        /// availability instead of a stale render-time snapshot.
+        @MainActor
+        var availabilityUpdates: AsyncStream<Availability> { get }
     }
 
     // MARK: - Evaluation protocol (SPI)
@@ -269,6 +288,11 @@ public enum AirshipAI {
         /// The structured output contract for this evaluation. Static features declare
         /// it in code; payload-driven features (e.g. scenes) decode it from the payload.
         var schema: AirshipJSONSchema { get }
+
+        /// Context the evaluation contributes itself, appended after the provider's
+        /// context (so it wins priority ties when trimming). Payload-driven features
+        /// carry authored context here; most evaluations leave it `.empty` (the default).
+        var additionalContext: Context { get }
 
         func instructions() -> String
 
@@ -300,4 +324,24 @@ public enum AirshipAI {
         /// Returns `.empty` if no provider is registered.
         func fetchContext<S: Sendable>(for usage: Usage<S>, subject: S) async -> Context
     }
+}
+
+// MARK: - Default implementations
+
+extension AirshipAI.Model {
+    /// Emits the current availability once and finishes — correct for models whose
+    /// availability never changes. Dynamic models override this.
+    public var availabilityUpdates: AsyncStream<AirshipAI.Availability> {
+        let availability = self.availability
+        return AsyncStream { continuation in
+            continuation.yield(availability)
+            continuation.finish()
+        }
+    }
+}
+
+@_spi(AirshipInternal)
+extension AirshipAI.Evaluation {
+    /// Most evaluations contribute no context of their own.
+    public var additionalContext: AirshipAI.Context { .empty }
 }

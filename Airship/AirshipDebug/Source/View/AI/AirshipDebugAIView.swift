@@ -53,7 +53,7 @@ extension AirshipDebugAIView {
         // enumerate — this is the list of usages the debug UI knows how to drive.
         let usageKeys: [String] = [
             InAppMessageFilterContext.filterUsage.rawValue,
-            ThomasTextInputInferenceSubject.inferenceUsage.rawValue,
+            SceneTextInputInferenceSubject.inferenceUsage.rawValue,
         ]
 
         let manager: any AirshipAI.InternalManager
@@ -85,7 +85,7 @@ struct AirshipDebugAIUsageView: View {
     var body: some View {
         if usageKey == InAppMessageFilterContext.filterUsage.rawValue {
             AirshipDebugIAAFilterView(manager: manager)
-        } else if usageKey == ThomasTextInputInferenceSubject.inferenceUsage.rawValue {
+        } else if usageKey == SceneTextInputInferenceSubject.inferenceUsage.rawValue {
             AirshipDebugSceneTextInputView(manager: manager)
         } else {
             Text("No debug UI for usage \"\(usageKey)\"")
@@ -242,13 +242,8 @@ fileprivate struct AirshipDebugIAAFilterView: View {
         }
     }
 
-    private func priorityLabel(_ priority: AirshipAI.Context.Priority) -> String {
-        switch priority {
-        case .low: return "low priority"
-        case .medium: return "medium priority"
-        case .high: return "high priority"
-        @unknown default: return "priority \(priority.rawValue)"
-        }
+    private func priorityLabel(_ priority: Double) -> String {
+        "priority \(priority)"
     }
 }
 
@@ -347,6 +342,10 @@ private extension AirshipAI.Availability.Reason {
 
 private final class PreviewAIManager: AirshipAI.InternalManager, @unchecked Sendable {
     var availability: AirshipAI.Availability { .unavailable(reason: .missingModel) }
+    @MainActor
+    var availabilityUpdates: AsyncStream<AirshipAI.Availability> {
+        AsyncStream { $0.yield(.unavailable(reason: .missingModel)); $0.finish() }
+    }
     func setProvider<S: Sendable>(_ provider: (any AirshipAI.ContextProvider<S>)?, for usage: AirshipAI.Usage<S>) {}
     func setDefaultProvider(_ provider: (any AirshipAI.ContextProvider<Void>)?) {}
     func setModel(_ selector: AirshipAI.ModelSelector) {}

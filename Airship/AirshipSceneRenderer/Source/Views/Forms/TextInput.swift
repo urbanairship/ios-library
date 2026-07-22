@@ -528,7 +528,14 @@ struct TextInput: View {
                 let request = ThomasAIInferenceRequest(
                     prompt: aiInference.prompt,
                     text: trimmed,
-                    outputSchema: aiInference.outputSchema
+                    outputSchema: aiInference.outputSchema,
+                    additionalContext: (aiInference.additionalContext ?? []).map { item in
+                        ThomasAIContextItem(
+                            content: item.content,
+                            priority: item.priority ?? 0.0
+                        )
+                    },
+                    subjectHints: aiInference.subjectHints ?? [:]
                 )
 
                 let identifier = inputProperties.identifier

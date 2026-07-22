@@ -6,19 +6,29 @@
 
 /// The context subject for scene text-input AI inference.
 ///
-/// Carries no fields: the user's text rides the evaluation `prompt()` and user context
-/// comes from the app's provider, so there is nothing input-specific to hand the provider.
-/// It exists only to give the `scene_text_input` usage a distinct typed provider slot.
-public struct ThomasTextInputInferenceSubject: Sendable {
+/// Handed to the app's registered context provider so it can build relevant `Context` for
+/// the evaluation. Carries the user's current `text` and the layout's `hints`
+/// (`subject_hints`). The renderer adds the text to the prompt itself; neither field is a
+/// substitute for the context the provider returns.
+public struct SceneTextInputInferenceSubject: Sendable {
     /// The AI usage key for scene text-input inference.
     ///
     /// Pass this to `Airship.ai.setProvider(_:for:)` when registering a context provider
     /// for scene text-input inference.
-    public static let inferenceUsage = AirshipAI.Usage<ThomasTextInputInferenceSubject>(
+    public static let inferenceUsage = AirshipAI.Usage<SceneTextInputInferenceSubject>(
         rawValue: "scene_text_input"
     )
 
-    public init() {}
+    /// The user's current text for the field being evaluated. Empty when unavailable.
+    public let text: String
+
+    /// Layout-authored `subject_hints`. Empty when the layout provides none.
+    public let hints: [String: String]
+
+    public init(text: String = "", hints: [String: String] = [:]) {
+        self.text = text
+        self.hints = hints
+    }
 }
 
 /// Runs scene text-input inference through the injected AI manager. Wired into the
@@ -35,6 +45,20 @@ public struct DefaultThomasAIInferenceExecutor: ThomasAIInferenceExecutor {
 
     public var isAvailable: Bool {
         aiManager.availability == .available
+    }
+
+    @MainActor
+    public var availabilityUpdates: AsyncStream<Bool> {
+        let stream = aiManager.availabilityUpdates
+        return AsyncStream { continuation in
+            let task = Task { @MainActor in
+                for await availability in stream {
+                    continuation.yield(availability == .available)
+                }
+                continuation.finish()
+            }
+            continuation.onTermination = { _ in task.cancel() }
+        }
     }
 
     public func run(request: ThomasAIInferenceRequest) async -> AirshipJSON? {
@@ -61,7 +85,7 @@ struct ThomasAIInferenceEvaluation: AirshipAI.Evaluation {
     // The output shape is layout-defined, so the raw JSON is the output — the scene
     // writes it into layout state as-is rather than decoding a fixed type.
     typealias Output = AirshipJSON
-    typealias Subject = ThomasTextInputInferenceSubject
+    typealias Subject = SceneTextInputInferenceSubject
 
     /// The contract used when the layout doesn't define an `output_schema`.
     static let defaultSchema = AirshipJSONSchema.object(
@@ -74,12 +98,23 @@ struct ThomasAIInferenceEvaluation: AirshipAI.Evaluation {
 
     let request: ThomasAIInferenceRequest
 
-    let usage: AirshipAI.Usage<ThomasTextInputInferenceSubject> = ThomasTextInputInferenceSubject.inferenceUsage
+    let usage: AirshipAI.Usage<SceneTextInputInferenceSubject> = SceneTextInputInferenceSubject.inferenceUsage
 
-    let subject = ThomasTextInputInferenceSubject()
+    var subject: SceneTextInputInferenceSubject {
+        SceneTextInputInferenceSubject(text: request.text, hints: request.subjectHints)
+    }
 
     var schema: AirshipJSONSchema {
         request.outputSchema ?? Self.defaultSchema
+    }
+
+    /// Layout-authored context, appended after the provider's context by the framework.
+    var additionalContext: AirshipAI.Context {
+        AirshipAI.Context(
+            items: request.additionalContext.map { item in
+                AirshipAI.Context.Item(content: item.content, priority: item.priority)
+            }
+        )
     }
 
     func instructions() -> String {

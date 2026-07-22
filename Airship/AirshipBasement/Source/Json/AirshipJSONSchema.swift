@@ -57,14 +57,15 @@ public struct AirshipJSONSchema: Sendable, Equatable {
 
     /// Object shape.
     public struct ObjectInfo: Sendable, Equatable {
-        /// Named properties.
-        public var properties: [String: AirshipJSONSchema]
+        /// Named properties, or `nil` when the schema specifies none (an object with no
+        /// declared property constraints — per JSON Schema, any properties are allowed).
+        public var properties: [String: AirshipJSONSchema]?
         /// Property names that must be present, in declaration order, or `nil` when the
         /// schema specifies none. An array (not a set) so the order round-trips.
         public var required: [String]?
 
         public init(
-            properties: [String: AirshipJSONSchema],
+            properties: [String: AirshipJSONSchema]? = nil,
             required: [String]? = nil
         ) {
             self.properties = properties
@@ -74,7 +75,8 @@ public struct AirshipJSONSchema: Sendable, Equatable {
 
     /// Array shape.
     public struct ArrayInfo: Sendable, Equatable {
-        /// Every element conforms to this schema.
+        /// Every element conforms to this schema. Tuple (positional) `items` is not
+        /// supported — the on-device model can't guarantee positional output.
         public var items: AirshipJSONSchema
 
         public init(items: AirshipJSONSchema) {
@@ -176,7 +178,7 @@ extension AirshipJSONSchema: Codable {
         case .object:
             self.type = .object(
                 .init(
-                    properties: try container.decode([String: AirshipJSONSchema].self, forKey: .properties),
+                    properties: try container.decodeIfPresent([String: AirshipJSONSchema].self, forKey: .properties),
                     required: try container.decodeIfPresent([String].self, forKey: .required)
                 )
             )
@@ -203,7 +205,7 @@ extension AirshipJSONSchema: Codable {
             try container.encode(RawType.number, forKey: .type)
         case .object(let info):
             try container.encode(RawType.object, forKey: .type)
-            try container.encode(info.properties, forKey: .properties)
+            try container.encodeIfPresent(info.properties, forKey: .properties)
             try container.encodeIfPresent(info.required, forKey: .required)
         case .array(let info):
             try container.encode(RawType.array, forKey: .type)
@@ -261,8 +263,9 @@ extension AirshipJSONSchema {
                 }
             }
 
-            // 2. Validate types for properties that are present.
-            for (name, property) in info.properties {
+            // 2. Validate types for declared properties that are present. No declared
+            // properties means the object is unconstrained.
+            for (name, property) in info.properties ?? [:] {
                 if let child = object[name], child != AirshipJSON.null {
                     try validate(child, against: property, path: "\(path).\(name)")
                 }

@@ -6,6 +6,15 @@ import Foundation
 final class TestAIManager: AirshipAI.InternalManager, @unchecked Sendable {
     var availability: AirshipAI.Availability = .unavailable(reason: .missingModel)
 
+    @MainActor
+    var availabilityUpdates: AsyncStream<AirshipAI.Availability> {
+        let availability = self.availability
+        return AsyncStream { continuation in
+            continuation.yield(availability)
+            continuation.finish()
+        }
+    }
+
     func setProvider<S: Sendable>(_ provider: (any AirshipAI.ContextProvider<S>)?, for usage: AirshipAI.Usage<S>) {}
     func setDefaultProvider(_ provider: (any AirshipAI.ContextProvider<Void>)?) {}
     func setModel(_ selector: AirshipAI.ModelSelector) {}

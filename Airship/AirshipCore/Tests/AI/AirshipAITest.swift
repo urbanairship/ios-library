@@ -33,33 +33,46 @@ struct AirshipAIValueTests {
     @Test
     func contextRenderJoinsItemsInOrderWithoutPriorities() {
         let context = AirshipAI.Context(items: [
-            .init(content: "b", priority: .low),
-            .init(content: "a", priority: .high),
-            .init(content: "", priority: .high)
+            .init(content: "b", priority: 2),
+            .init(content: "a", priority: 0),
+            .init(content: "", priority: 0)
         ])
         // Order preserved, empty content skipped, priority never rendered.
         #expect(context.render() == "b\na")
     }
 
     @Test
-    func droppingLowestPriorityItemDropsEarliestLowest() {
+    func droppingLowestPriorityItemDropsEarliestLeastImportant() {
+        // Lower value is more important, so the highest value is dropped first.
         let context = AirshipAI.Context(items: [
-            .init(content: "keep-high", priority: .high),
-            .init(content: "drop-first", priority: .low),
-            .init(content: "drop-second", priority: .low),
-            .init(content: "keep-medium", priority: .medium)
+            .init(content: "keep-important", priority: 0),
+            .init(content: "drop-first", priority: 2),
+            .init(content: "drop-second", priority: 2),
+            .init(content: "keep-mid", priority: 1)
         ])
 
         let once = context.droppingLowestPriorityItem()
-        #expect(once?.items.map(\.content) == ["keep-high", "drop-second", "keep-medium"])
+        #expect(once?.items.map(\.content) == ["keep-important", "drop-second", "keep-mid"])
 
         let twice = once?.droppingLowestPriorityItem()
-        #expect(twice?.items.map(\.content) == ["keep-high", "keep-medium"])
+        #expect(twice?.items.map(\.content) == ["keep-important", "keep-mid"])
 
         let thrice = twice?.droppingLowestPriorityItem()
-        #expect(thrice?.items.map(\.content) == ["keep-high"])
+        #expect(thrice?.items.map(\.content) == ["keep-important"])
 
         #expect(AirshipAI.Context.empty.droppingLowestPriorityItem() == nil)
+    }
+
+    @Test
+    func appendingKeepsOrderWithOtherItemsLast() {
+        // Same value → the appended (later) item is dropped last, so it wins the tie.
+        let base = AirshipAI.Context(items: [.init(content: "provider", priority: 1)])
+        let merged = base.appending(
+            AirshipAI.Context(items: [.init(content: "authored", priority: 1)])
+        )
+        #expect(merged.items.map(\.content) == ["provider", "authored"])
+        #expect(merged.droppingLowestPriorityItem()?.items.map(\.content) == ["authored"])
+        #expect(base.appending(.empty) == base)
     }
 
 }
@@ -240,11 +253,31 @@ struct AirshipAISchemaTests {
             Issue.record("Expected object type")
             return
         }
-        #expect(info.properties["result"]?.type == .string(.init(choices: ["a", "b"])))
-        #expect(info.properties["reason"]?.type == .string(.init()))
-        #expect(info.properties["reason"]?.description == "why")
+        #expect(info.properties?["result"]?.type == .string(.init(choices: ["a", "b"])))
+        #expect(info.properties?["reason"]?.type == .string(.init()))
+        #expect(info.properties?["reason"]?.description == "why")
         #expect(info.required == ["result"])
     }
+
+    @Test
+    func decodesObjectWithoutProperties() throws {
+        // `properties` is optional per JSON Schema — an object node may omit it.
+        let json = """
+        {"type": "object", "required": ["anything"]}
+        """
+        let schema = try JSONDecoder().decode(AirshipJSONSchema.self, from: Data(json.utf8))
+        guard case .object(let info) = schema.type else {
+            Issue.record("Expected object type")
+            return
+        }
+        #expect(info.properties == nil)
+        // No declared properties → any object is accepted, but `required` still applies.
+        try schema.validate(.object(["anything": .string("present"), "extra": .bool(true)]))
+        #expect(throws: (any Error).self) {
+            try schema.validate(.object(["missing": .string("required key")]))
+        }
+    }
+
 
     @Test
     func schemaRoundTripsThroughCodable() throws {
@@ -397,6 +430,27 @@ struct TestEvaluation: AirshipAI.Evaluation {
     func prompt() -> String { "subject" }
 }
 
+/// A `TestEvaluation` that also contributes its own context.
+struct TestEvaluationWithContext: AirshipAI.Evaluation {
+    typealias Output = TestEvaluation.Output
+    typealias Subject = Void
+
+    let subject: Void = ()
+    let usage: AirshipAI.Usage<Void> = .testUsage
+    let schema = testSchema
+    let additionalContext: AirshipAI.Context
+    func instructions() -> String { "rules" }
+    func prompt() -> String { "subject" }
+}
+
+/// Context provider returning a fixed set of items.
+final class ItemsProvider: AirshipAI.ContextProvider, @unchecked Sendable {
+    typealias Subject = Void
+    let items: [AirshipAI.Context.Item]
+    init(_ items: [AirshipAI.Context.Item]) { self.items = items }
+    func context(for subject: Void) async -> AirshipAI.Context { .init(items: items) }
+}
+
 @MainActor
 struct AirshipAIEvaluatorTests {
 
@@ -414,7 +468,7 @@ struct AirshipAIEvaluatorTests {
     @Test
     func completedWhenModelSucceeds() async throws {
         let model = MockAIModel(response: .success(["allow": false, "reason": "not relevant"]))
-        let context = AirshipAI.Context(items: [.init(content: "likes hiking", priority: .high)])
+        let context = AirshipAI.Context(items: [.init(content: "likes hiking", priority: 0)])
 
         let result = await eval(model: model, context: context)
 
@@ -551,5 +605,53 @@ struct AirshipAIEvaluatorTests {
 
         #expect(result.output?.allow == false)
         #expect(model.respondCallCount == 1)
+    }
+
+    @Test
+    @MainActor
+    func managerAppendsAdditionalContextAfterProviderContext() async {
+        let model = MockAIModel()
+        let manager = AirshipAI.DefaultManager()
+        manager.setModel(.custom(model))
+        manager.setProvider(
+            ItemsProvider([.init(content: "provider", priority: 0)]),
+            for: .testUsage
+        )
+        defer { manager.setProvider(nil, for: .testUsage) }
+
+        _ = await manager.evaluate(
+            TestEvaluationWithContext(
+                additionalContext: .init(items: [.init(content: "authored", priority: 5)])
+            )
+        )
+
+        #expect(model.lastContext?.items.map(\.content) == ["provider", "authored"])
+    }
+}
+
+// MARK: - Manager availability stream
+
+@MainActor
+struct AirshipAIManagerAvailabilityTests {
+
+    @Test
+    func availabilityUpdatesEmitsCurrentValueFirst() async {
+        let manager = AirshipAI.DefaultManager()
+        manager.setModel(.custom(MockAIModel(availability: .available)))
+
+        var iterator = manager.availabilityUpdates.makeAsyncIterator()
+        #expect(await iterator.next() == .available)
+    }
+
+    @Test
+    func availabilityUpdatesEmitsOnModelChange() async {
+        // No model resolved yet -> unavailable.
+        let manager = AirshipAI.DefaultManager()
+        var iterator = manager.availabilityUpdates.makeAsyncIterator()
+        #expect(await iterator.next() == .unavailable(reason: .missingModel))
+
+        // Swapping in an available model pushes the change to live subscribers.
+        manager.setModel(.custom(MockAIModel(availability: .available)))
+        #expect(await iterator.next() == .available)
     }
 }

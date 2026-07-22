@@ -64,7 +64,9 @@ struct RootView<Content: View>: View {
         self._isForeground = State(initialValue: AppStateTracker.shared.isForegrounded)
         self._currentOrientation = State(initialValue: thomasEnvironment.windowScene.orientation)
         self._thomasState = StateObject(
-            wrappedValue: ThomasState() { [weak thomasEnvironment] state in
+            wrappedValue: ThomasState(
+                aiInferenceExecutor: thomasEnvironment.extensions.aiInferenceExecutor
+            ) { [weak thomasEnvironment] state in
                 thomasEnvironment?.onStateChange(state)
             }
         )

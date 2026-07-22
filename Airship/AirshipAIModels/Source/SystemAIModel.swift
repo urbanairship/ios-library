@@ -7,6 +7,13 @@ import Foundation
 #if canImport(FoundationModels)
 import FoundationModels
 
+/// Lifetime flag for an availability observation chain, flipped when the stream is torn
+/// down so the self-re-arming `withObservationTracking` loop stops.
+@MainActor
+private final class ObservationToken {
+    var isCancelled = false
+}
+
 /// Production `AirshipAI.Model` backed by Apple's on-device `SystemLanguageModel`.
 ///
 /// Answers a single request per `respond` call — retry, timeout, and output
@@ -20,7 +27,50 @@ final class SystemAIModel: AirshipAI.Model {
     let responseTimeout: TimeInterval = 30
 
     var availability: AirshipAI.Availability {
-        switch SystemLanguageModel.default.availability {
+        Self.map(SystemLanguageModel.default.availability)
+    }
+
+    /// Streams availability as the on-device model changes state (e.g. finishes
+    /// downloading, or Apple Intelligence is toggled in Settings). `SystemLanguageModel`
+    /// is `@Observable`, so we track `availability` and re-emit on each change; the chain
+    /// re-registers itself after every change and stops once the stream is torn down.
+    var availabilityUpdates: AsyncStream<AirshipAI.Availability> {
+        AsyncStream { continuation in
+            let token = ObservationToken()
+            Task { @MainActor in
+                Self.observeAvailability(token: token, continuation: continuation)
+            }
+            continuation.onTermination = { _ in
+                Task { @MainActor in token.isCancelled = true }
+            }
+        }
+    }
+
+    /// Reads the current availability under observation tracking and yields it, then
+    /// re-arms itself when the tracked value changes. A no-op once `token` is cancelled.
+    @MainActor
+    private static func observeAvailability(
+        token: ObservationToken,
+        continuation: AsyncStream<AirshipAI.Availability>.Continuation
+    ) {
+        guard !token.isCancelled else { return }
+
+        let current = withObservationTracking {
+            Self.map(SystemLanguageModel.default.availability)
+        } onChange: {
+            // Fires just before the value changes; re-read on the next hop so we
+            // observe the new value and re-establish tracking.
+            Task { @MainActor in
+                Self.observeAvailability(token: token, continuation: continuation)
+            }
+        }
+        continuation.yield(current)
+    }
+
+    private static func map(
+        _ availability: SystemLanguageModel.Availability
+    ) -> AirshipAI.Availability {
+        switch availability {
         case .available:
             return .available
         case .unavailable(let reason):
@@ -164,7 +214,7 @@ fileprivate extension AirshipJSONSchema {
         case .integer: return DynamicGenerationSchema(type: Int.self)
         case .number: return DynamicGenerationSchema(type: Double.self)
         case .object(let info):
-            let schemaProperties = info.properties
+            let schemaProperties = (info.properties ?? [:])
                 .map { (propertyName, property) in
                     DynamicGenerationSchema.Property(
                         name: propertyName,
