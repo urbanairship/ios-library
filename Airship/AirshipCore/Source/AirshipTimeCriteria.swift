@@ -37,3 +37,17 @@ public extension AirshipTimeCriteria {
         return true
     }
 }
+
+extension AirshipTimeCriteria {
+    /// Start of the window, if set.
+    var startDate: Date? {
+        guard let start = self.start else { return nil }
+        return Date(timeIntervalSince1970: TimeInterval(start) / 1000.0)
+    }
+
+    /// End of the window, if set.
+    var endDate: Date? {
+        guard let end = self.end else { return nil }
+        return Date(timeIntervalSince1970: TimeInterval(end) / 1000.0)
+    }
+}
