@@ -162,13 +162,13 @@ struct AnyChannelSubscriptionViewStyle: ChannelSubscriptionViewStyle {
 }
 
 struct ChannelSubscriptionViewStyleKey: EnvironmentKey {
-    static let defaultValue = AnyChannelSubscriptionViewStyle(
+    static let defaultValue: AnyChannelSubscriptionViewStyle = AnyChannelSubscriptionViewStyle(
         style: .defaultStyle
     )
 }
 
 extension EnvironmentValues {
-    var airshipChannelSubscriptionViewStyle: AnyChannelSubscriptionViewStyle {
+    fileprivate var airshipChannelSubscriptionViewStyle: AnyChannelSubscriptionViewStyle {
         get { self[ChannelSubscriptionViewStyleKey.self] }
         set { self[ChannelSubscriptionViewStyleKey.self] = newValue }
     }

@@ -17,9 +17,9 @@ enum AddChannelState {
 struct AddChannelPromptView: View, Sendable {
     // MARK: - Constants
     private enum Layout {
-        static let standardSpacing: CGFloat = 20
-        static let buttonTopPadding: CGFloat = 10
-        static let maxWidth: CGFloat = 500  // Consistent max width for sheets
+        fileprivate static let standardSpacing: CGFloat = 20
+        fileprivate static let buttonTopPadding: CGFloat = 10
+        fileprivate static let maxWidth: CGFloat = 500  // Consistent max width for sheets
     }
 
     // MARK: - Environment
@@ -28,7 +28,7 @@ struct AddChannelPromptView: View, Sendable {
 
     // MARK: - State
     @StateObject private var viewModel: AddChannelPromptViewModel
-    @State private var showSuccessAlert = false
+    @State private var showSuccessAlert: Bool = false
 
     // MARK: - Initialization
     init(viewModel: AddChannelPromptViewModel) {

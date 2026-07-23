@@ -23,7 +23,7 @@ final class AutomationRemoteDataAccess: AutomationRemoteDataAccessProtocol {
     private let remoteData: any RemoteDataProtocol
     private let network: any AirshipNetworkCheckerProtocol
 
-    private static let remoteDataTypes = ["in_app_messages"]
+    private static let remoteDataTypes: [String] = ["in_app_messages"]
 
     init(
         remoteData: any RemoteDataProtocol,
@@ -307,9 +307,9 @@ struct InAppRemoteData: Sendable {
 
 /// A struct to extract just the ID, created date, and min SDK version from a schedule when full parsing fails
 fileprivate struct PartialSchedule: Decodable {
-    let identifier: String
-    let created: Date?
-    let minSDKVersion: String?
+    fileprivate let identifier: String
+    fileprivate let created: Date?
+    fileprivate let minSDKVersion: String?
     
     enum CodingKeys: String, CodingKey {
         case identifier = "id"

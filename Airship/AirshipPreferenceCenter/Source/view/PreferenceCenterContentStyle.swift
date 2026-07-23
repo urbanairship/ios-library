@@ -197,7 +197,7 @@ struct AnyPreferenceCenterViewStyle: PreferenceCenterContentStyle {
 }
 
 struct PreferenceCenterViewStyleKey: EnvironmentKey {
-    static let defaultValue = AnyPreferenceCenterViewStyle(style: .defaultStyle)
+    static let defaultValue: AnyPreferenceCenterViewStyle = AnyPreferenceCenterViewStyle(style: .defaultStyle)
 }
 
 extension EnvironmentValues {

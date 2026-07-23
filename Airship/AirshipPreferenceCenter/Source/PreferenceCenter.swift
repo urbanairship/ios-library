@@ -57,8 +57,8 @@ final class DefaultPreferenceCenter: PreferenceCenter {
 
     let inputValidator: any AirshipInputValidation.Validator
 
-    private static let payloadType = "preference_forms"
-    private static let preferenceFormsKey = "preference_forms"
+    private static let payloadType: String = "preference_forms"
+    private static let preferenceFormsKey: String = "preference_forms"
 
     private let delegates: Delegates = Delegates()
 
@@ -181,7 +181,7 @@ final class DefaultPreferenceCenter: PreferenceCenter {
 /// Delegates holder so I can keep the executor sendable
 @MainActor
 private final class Delegates {
-    var openDelegate: (any PreferenceCenterOpenDelegate)?
+    fileprivate var openDelegate: (any PreferenceCenterOpenDelegate)?
 }
 
 extension DefaultPreferenceCenter {

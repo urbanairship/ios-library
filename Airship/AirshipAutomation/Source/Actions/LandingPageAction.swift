@@ -117,10 +117,10 @@ public final class LandingPageAction: AirshipAction {
     }
 
     private struct LandingPageArgs: Decodable, Sendable {
-        var url: URL
-        var height: Double?
-        var width: Double?
-        var aspectLock: Bool?
+        fileprivate var url: URL
+        fileprivate var height: Double?
+        fileprivate var width: Double?
+        fileprivate var aspectLock: Bool?
 
         enum CodingKeys: String, CodingKey {
             case url

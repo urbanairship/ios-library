@@ -166,13 +166,13 @@ struct AnyContactSubscriptionViewStyle: ContactSubscriptionViewStyle {
 }
 
 struct ContactSubscriptionViewStyleKey: EnvironmentKey {
-    static let defaultValue = AnyContactSubscriptionViewStyle(
+    static let defaultValue: AnyContactSubscriptionViewStyle = AnyContactSubscriptionViewStyle(
         style: .defaultStyle
     )
 }
 
 extension EnvironmentValues {
-    var airshipContactSubscriptionViewStyle: AnyContactSubscriptionViewStyle {
+    fileprivate var airshipContactSubscriptionViewStyle: AnyContactSubscriptionViewStyle {
         get { self[ContactSubscriptionViewStyleKey.self] }
         set { self[ContactSubscriptionViewStyleKey.self] = newValue }
     }

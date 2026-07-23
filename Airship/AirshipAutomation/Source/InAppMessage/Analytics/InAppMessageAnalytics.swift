@@ -168,7 +168,7 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
     }
 
     @MainActor
-    var shouldRecordImpression: Bool {
+    private var shouldRecordImpression: Bool {
         guard
             let lastImpression = displayHistory.value.lastImpression,
             lastImpression.triggerSessionID == self.preparedScheduleInfo.triggerSessionID

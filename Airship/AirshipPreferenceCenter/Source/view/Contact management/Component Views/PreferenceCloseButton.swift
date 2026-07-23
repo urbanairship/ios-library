@@ -12,10 +12,10 @@ fileprivate struct PreferenceCloseButton: View {
         self.onTap = onTap
     }
 
-    let dismissIconColor: Color
-    let dismissIconResource: String
+    private let dismissIconColor: Color
+    private let dismissIconResource: String
 
-    let onTap: () -> Void
+    private let onTap: () -> Void
 
     private let opacity: CGFloat = 0.64
 

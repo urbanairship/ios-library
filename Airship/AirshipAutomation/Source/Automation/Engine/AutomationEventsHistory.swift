@@ -23,8 +23,8 @@ final actor DefaultAutomationEventsHistory: AutomationEventsHistory {
     }
     
     private struct Entry {
-        let event: AutomationEvent
-        let timestamp: Date
+        fileprivate let event: AutomationEvent
+        fileprivate let timestamp: Date
     }
     
     var events: [AutomationEvent] {

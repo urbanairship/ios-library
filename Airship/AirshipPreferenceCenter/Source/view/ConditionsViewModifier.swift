@@ -5,10 +5,10 @@ import SwiftUI
 
 fileprivate struct ConditionsViewModifier: ViewModifier {
     @StateObject
-    var conditionsMonitor: ConditionsMonitor
+    fileprivate var conditionsMonitor: ConditionsMonitor
 
     @Binding
-    var binding: Bool
+    fileprivate var binding: Bool
 
     @ViewBuilder
     func body(content: Content) -> some View {

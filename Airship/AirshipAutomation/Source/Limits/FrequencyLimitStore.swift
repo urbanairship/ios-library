@@ -228,7 +228,7 @@ struct ConstraintInfo: Hashable, Equatable, Sendable {
 @objc(UAFrequencyConstraintData)
 fileprivate class FrequencyConstraintData: NSManagedObject {
 
-    static let frequencyConstraintDataEntity = "UAFrequencyConstraintData"
+    static let frequencyConstraintDataEntity: String = "UAFrequencyConstraintData"
 
     @nonobjc class func fetchRequest<T>() -> NSFetchRequest<T> {
         return NSFetchRequest<T>(entityName: FrequencyConstraintData.frequencyConstraintDataEntity)
@@ -250,7 +250,7 @@ fileprivate class FrequencyConstraintData: NSManagedObject {
 @objc(UAOccurrenceData)
 fileprivate class OccurrenceData: NSManagedObject {
 
-    static let occurrenceDataEntity = "UAOccurrenceData"
+    static let occurrenceDataEntity: String = "UAOccurrenceData"
 
     @nonobjc class func fetchRequest<T>() -> NSFetchRequest<T> {
         return NSFetchRequest<T>(entityName: OccurrenceData.occurrenceDataEntity)

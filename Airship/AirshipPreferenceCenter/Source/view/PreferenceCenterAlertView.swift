@@ -200,11 +200,11 @@ struct AnyPreferenceCenterAlertStyle: PreferenceCenterAlertStyle {
 }
 
 struct PreferenceCenterAlertStyleKey: EnvironmentKey {
-    static let defaultValue = AnyPreferenceCenterAlertStyle(style: .defaultStyle)
+    static let defaultValue: AnyPreferenceCenterAlertStyle = AnyPreferenceCenterAlertStyle(style: .defaultStyle)
 }
 
 extension EnvironmentValues {
-    var airshipPreferenceCenterAlertStyle: AnyPreferenceCenterAlertStyle {
+    fileprivate var airshipPreferenceCenterAlertStyle: AnyPreferenceCenterAlertStyle {
         get { self[PreferenceCenterAlertStyleKey.self] }
         set { self[PreferenceCenterAlertStyleKey.self] = newValue }
     }

@@ -87,7 +87,7 @@ public struct PreferenceCenterConfig: Decodable, Sendable, Equatable {
             case optedOut = "opt_out"
         }
 
-        public let type = PreferenceCenterConfigConditionType.notificationOptIn
+        public let type: PreferenceCenterConfigConditionType = PreferenceCenterConfigConditionType.notificationOptIn
 
         public var optInStatus: OptInStatus
 
@@ -130,7 +130,7 @@ public struct PreferenceCenterConfig: Decodable, Sendable, Equatable {
     public struct CommonSection: Decodable, PreferenceCenterConfigSection {
 
         /// The section's type.
-        public let type = PreferenceCenterConfigSectionType.common
+        public let type: PreferenceCenterConfigSectionType = PreferenceCenterConfigSectionType.common
 
         /// The section's identifier.
         public var id: String
@@ -169,7 +169,7 @@ public struct PreferenceCenterConfig: Decodable, Sendable, Equatable {
 
 
         /// The section's type.
-        public let type = PreferenceCenterConfigSectionType.labeledSectionBreak
+        public let type: PreferenceCenterConfigSectionType = PreferenceCenterConfigSectionType.labeledSectionBreak
 
         /// The section's identifier.
         public var id: String
@@ -201,7 +201,7 @@ public struct PreferenceCenterConfig: Decodable, Sendable, Equatable {
     /// Contact Management section.
     public struct ContactManagementSection: Decodable, PreferenceCenterConfigSection {
         /// The section's type.
-        public let type = PreferenceCenterConfigSectionType.common
+        public let type: PreferenceCenterConfigSectionType = PreferenceCenterConfigSectionType.common
 
         /// The section's identifier.
         public var id: String
@@ -270,7 +270,7 @@ public struct PreferenceCenterConfig: Decodable, Sendable, Equatable {
     public struct ChannelSubscription: Decodable, Equatable, PreferenceCenterConfigItem {
 
         /// The item's type.
-        public let type = PreferenceCenterConfigItemType.channelSubscription
+        public let type: PreferenceCenterConfigItemType = PreferenceCenterConfigItemType.channelSubscription
 
         /// The item's identifier.
         public var id: String
@@ -310,7 +310,7 @@ public struct PreferenceCenterConfig: Decodable, Sendable, Equatable {
     public struct ContactSubscriptionGroup: Decodable, Equatable, PreferenceCenterConfigItem {
 
         /// The item's type.
-        public let type = PreferenceCenterConfigItemType
+        public let type: PreferenceCenterConfigItemType = PreferenceCenterConfigItemType
             .contactSubscriptionGroup
 
         /// The item's identifier.
@@ -379,7 +379,7 @@ public struct PreferenceCenterConfig: Decodable, Sendable, Equatable {
     public struct ContactSubscription: Decodable, PreferenceCenterConfigItem, Equatable {
 
         /// The item's type.
-        public let type = PreferenceCenterConfigItemType.contactSubscription
+        public let type: PreferenceCenterConfigItemType = PreferenceCenterConfigItemType.contactSubscription
 
         /// The item's identifier.
         public var id: String
@@ -424,7 +424,7 @@ public struct PreferenceCenterConfig: Decodable, Sendable, Equatable {
     /// Alert item info.
     public struct Alert: Decodable, PreferenceCenterConfigItem, Equatable {
 
-        public let type = PreferenceCenterConfigItemType.alert
+        public let type: PreferenceCenterConfigItemType = PreferenceCenterConfigItemType.alert
 
         /// The item's identifier.
         public let id: String
@@ -629,7 +629,7 @@ public protocol PreferenceCenterConfigSection: Sendable, Equatable, Identifiable
 }
 
 extension PreferenceCenterConfig.Item {
-    var info: any PreferenceCenterConfigItem {
+    fileprivate var info: any PreferenceCenterConfigItem {
         switch self {
         case .channelSubscription(let info): return info
         case .contactSubscription(let info): return info
@@ -641,7 +641,7 @@ extension PreferenceCenterConfig.Item {
 }
 
 extension PreferenceCenterConfig.Section {
-    var info: any PreferenceCenterConfigSection {
+    private var info: any PreferenceCenterConfigSection {
         switch self {
         case .common(let info): return info
         case .labeledSectionBreak(let info): return info
@@ -650,7 +650,7 @@ extension PreferenceCenterConfig.Section {
 }
 
 extension PreferenceCenterConfig.Condition {
-    var info: any PreferenceConfigCondition {
+    private var info: any PreferenceConfigCondition {
         switch self {
         case .notificationOptIn(let info): return info
         }

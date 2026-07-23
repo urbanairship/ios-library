@@ -390,7 +390,7 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
 @objc(UAScheduleEntity)
 fileprivate class ScheduleEntity: NSManagedObject {
 
-    static let entityName = "UAScheduleEntity"
+    static let entityName: String = "UAScheduleEntity"
 
     @nonobjc class func fetchRequest<T>() -> NSFetchRequest<T> {
         return NSFetchRequest<T>(entityName: ScheduleEntity.entityName)
@@ -487,7 +487,7 @@ fileprivate class ScheduleEntity: NSManagedObject {
 
 @objc(UATriggerEntity)
 fileprivate class TriggerEntity: NSManagedObject {
-    static let entityName = "UATriggerEntity"
+    static let entityName: String = "UATriggerEntity"
 
     @nonobjc class func fetchRequest() -> NSFetchRequest<TriggerEntity> {
         return NSFetchRequest<TriggerEntity>(entityName: Self.entityName)

@@ -11,20 +11,20 @@ struct ChannelTextField: View {
     // MARK: - Constants
     private enum Layout {
 #if os(tvOS)
-        static let fieldHeight: CGFloat = 66  // tvOS needs taller fields for focus
-        static let fieldPadding: CGFloat = 12
+        fileprivate static let fieldHeight: CGFloat = 66  // tvOS needs taller fields for focus
+        fileprivate static let fieldPadding: CGFloat = 12
 #else
-        static let fieldHeight: CGFloat = 52
-        static let fieldPadding: CGFloat = 10
+        fileprivate static let fieldHeight: CGFloat = 52
+        fileprivate static let fieldPadding: CGFloat = 10
 #endif
-        static let fieldCornerRadius: CGFloat = 4
-        static let stackSpacing: CGFloat = 2
-        static let standardSpacing: CGFloat = 12
-        static let placeHolderPadding = EdgeInsets(top: 4, leading: 15, bottom: 4, trailing: 4)
+        fileprivate static let fieldCornerRadius: CGFloat = 4
+        fileprivate static let stackSpacing: CGFloat = 2
+        fileprivate static let standardSpacing: CGFloat = 12
+        fileprivate static let placeHolderPadding: EdgeInsets = EdgeInsets(top: 4, leading: 15, bottom: 4, trailing: 4)
     }
 
     // MARK: - Environment
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.colorScheme) private var colorScheme
 
     // MARK: - Properties
     private var senders: [PreferenceCenterConfig.ContactManagementItem.SMSSenderInfo]?
@@ -33,13 +33,13 @@ struct ChannelTextField: View {
     private var emailOptions: PreferenceCenterConfig.ContactManagementItem.Email?
 
     // MARK: - State
-    @Binding var selectedSender: PreferenceCenterConfig.ContactManagementItem.SMSSenderInfo
-    @State var selectedSenderID: String = ""
-    @Binding var inputText: String
+    @Binding private var selectedSender: PreferenceCenterConfig.ContactManagementItem.SMSSenderInfo
+    @State private var selectedSenderID: String = ""
+    @Binding private var inputText: String
     @State private var placeholder: String = ""
 
     /// The preference center theme
-    var theme: PreferenceCenterTheme.ContactManagement?
+    private var theme: PreferenceCenterTheme.ContactManagement?
 
     init(
         platform: PreferenceCenterConfig.ContactManagementItem.Platform?,

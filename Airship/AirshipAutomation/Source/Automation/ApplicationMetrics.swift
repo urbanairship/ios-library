@@ -16,9 +16,9 @@ protocol ApplicationMetricsProtocol: Sendable {
 
 /// The ApplicationMetrics class keeps track of application-related metrics.
 final class ApplicationMetrics: ApplicationMetricsProtocol {
-    private static let lastOpenDataKey = "UAApplicationMetricLastOpenDate"
-    private static let lastAppVersionKey = "UAApplicationMetricsLastAppVersion"
-    private static let lastBuildVersionKey = "UAApplicationMetricsLastBuildVersion"
+    private static let lastOpenDataKey: String = "UAApplicationMetricLastOpenDate"
+    private static let lastAppVersionKey: String = "UAApplicationMetricsLastAppVersion"
+    private static let lastBuildVersionKey: String = "UAApplicationMetricsLastBuildVersion"
 
     private let dataStore: PreferenceDataStore
     private let privacyManager: any AirshipPrivacyManager

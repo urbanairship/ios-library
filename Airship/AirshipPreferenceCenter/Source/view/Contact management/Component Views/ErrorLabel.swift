@@ -7,8 +7,8 @@ struct ErrorLabel: View {
     @Environment(\.colorScheme)
     private var colorScheme
 
-    var message: String?
-    var theme: PreferenceCenterTheme.ContactManagement?
+    private var message: String?
+    private var theme: PreferenceCenterTheme.ContactManagement?
 
     init(
         message: String?,

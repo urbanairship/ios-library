@@ -54,7 +54,7 @@ final class SceneAction: AirshipAction {
     }
 
     private struct ActionArgs: Decodable, Sendable {
-        var dsl: String
+        fileprivate var dsl: String
     }
 
     @MainActor

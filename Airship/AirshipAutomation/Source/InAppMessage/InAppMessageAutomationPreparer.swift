@@ -25,7 +25,7 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
     private let analyticsFactory: any InAppMessageAnalyticsFactoryProtocol
     private let actionRunnerFactory: any InAppActionRunnerFactoryProtocol
     private let aiManager: any AirshipAI.InternalManager
-    private let hooks = Hooks()
+    private let hooks: Hooks = Hooks()
 
 
     @MainActor
@@ -207,6 +207,6 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
 
     private final class Hooks: Sendable {
         @MainActor
-        var onCheckLocalAudience: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> LocalAudienceCheckResult)?
+        fileprivate var onCheckLocalAudience: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> LocalAudienceCheckResult)?
     }
 }

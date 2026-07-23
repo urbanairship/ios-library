@@ -10,12 +10,12 @@ import AirshipCore
 
 @MainActor
 internal final class AddChannelPromptViewModel: ObservableObject {
-    let inputValidator: (any AirshipInputValidation.Validator)?
+    private let inputValidator: (any AirshipInputValidation.Validator)?
 
     @Published var state: AddChannelState = .ready
     @Published var selectedSender: PreferenceCenterConfig.ContactManagementItem.SMSSenderInfo
-    @Published var inputText = ""
-    @Published var isInputFormatValid = false
+    @Published var inputText: String = ""
+    @Published private var isInputFormatValid: Bool = false
 
     var theme: PreferenceCenterTheme.ContactManagement?
 

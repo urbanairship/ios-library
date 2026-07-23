@@ -28,7 +28,7 @@ public final class ScheduleAction: AirshipAction {
         self.overrideAutomation = overrideAutomation
     }
     
-    var automation: any InAppAutomation {
+    private var automation: any InAppAutomation {
         return overrideAutomation ?? Airship.inAppAutomation
     }
     

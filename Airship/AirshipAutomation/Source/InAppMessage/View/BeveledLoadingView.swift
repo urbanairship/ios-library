@@ -3,7 +3,7 @@
 import SwiftUI
 
 struct BeveledLoadingView: View {
-    let opacity = 0.7
+    let opacity: Double = 0.7
 
     var body: some View {
         ZStack {

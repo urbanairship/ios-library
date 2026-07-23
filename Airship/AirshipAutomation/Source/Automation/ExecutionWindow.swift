@@ -8,8 +8,8 @@ import AirshipCore
 /// Defines when an automation is allowed to run (e.g. daily, weekly, or monthly time windows).
 public struct ExecutionWindow: Sendable, Equatable, Codable {
 
-    let include: [Rule]?
-    let exclude: [Rule]?
+    private let include: [Rule]?
+    private let exclude: [Rule]?
 
 
     init(include: [Rule]? = nil, exclude: [Rule]? = nil) throws {
@@ -182,10 +182,10 @@ public struct ExecutionWindow: Sendable, Equatable, Codable {
     }
 
     struct TimeRange: Hashable, Equatable, Sendable, Codable {
-        var startHour: Int
-        var startMinute: Int
-        var endHour: Int
-        var endMinute: Int
+        fileprivate var startHour: Int
+        fileprivate var startMinute: Int
+        fileprivate var endHour: Int
+        fileprivate var endMinute: Int
 
         enum CodingKeys: String, CodingKey {
             case startHour = "start_hour"

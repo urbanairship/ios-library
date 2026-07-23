@@ -138,11 +138,11 @@ struct AnyContactManagementSectionStyle: ContactManagementSectionStyle {
 }
 
 struct ContactManagementSectionStyleKey: EnvironmentKey {
-    static let defaultValue = AnyContactManagementSectionStyle(style: .defaultStyle)
+    static let defaultValue: AnyContactManagementSectionStyle = AnyContactManagementSectionStyle(style: .defaultStyle)
 }
 
 extension EnvironmentValues {
-    var airshipContactManagementSectionStyle: AnyContactManagementSectionStyle {
+    fileprivate var airshipContactManagementSectionStyle: AnyContactManagementSectionStyle {
         get { self[ContactManagementSectionStyleKey.self] }
         set { self[ContactManagementSectionStyleKey.self] = newValue }
     }

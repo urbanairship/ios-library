@@ -210,13 +210,13 @@ struct AnyCommonSectionViewStyle: CommonSectionViewStyle {
 }
 
 struct CommonSectionViewStyleKey: EnvironmentKey {
-    static let defaultValue = AnyCommonSectionViewStyle(
+    static let defaultValue: AnyCommonSectionViewStyle = AnyCommonSectionViewStyle(
         style: DefaultCommonSectionViewStyle()
     )
 }
 
 extension EnvironmentValues {
-    var airshipCommonSectionViewStyle: AnyCommonSectionViewStyle {
+    fileprivate var airshipCommonSectionViewStyle: AnyCommonSectionViewStyle {
         get { self[CommonSectionViewStyleKey.self] }
         set { self[CommonSectionViewStyleKey.self] = newValue }
     }

@@ -44,7 +44,7 @@ protocol DisplayAdapterFactoryProtocol: Sendable {
 final class DisplayAdapterFactory: DisplayAdapterFactoryProtocol, Sendable {
 
     @MainActor
-    var customAdapters: [CustomDisplayAdapterType: @Sendable (DisplayAdapterArgs) -> (any CustomDisplayAdapter)?] = [:]
+    private var customAdapters: [CustomDisplayAdapterType: @Sendable (DisplayAdapterArgs) -> (any CustomDisplayAdapter)?] = [:]
 
     @MainActor
     func setAdapterFactoryBlock(

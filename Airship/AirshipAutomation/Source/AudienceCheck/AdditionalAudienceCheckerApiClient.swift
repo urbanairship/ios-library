@@ -88,10 +88,10 @@ final class AdditionalAudienceCheckerAPIClient: AdditionalAudienceCheckerAPIClie
     }
     
     private struct RequestBody: Encodable {
-        let channelID: String
-        let contactID: String
-        let namedUserID: String?
-        let context: AirshipJSON?
+        fileprivate let channelID: String
+        fileprivate let contactID: String
+        fileprivate let namedUserID: String?
+        fileprivate let context: AirshipJSON?
 
         enum CodingKeys: String, CodingKey {
             case channelID = "channel_id"

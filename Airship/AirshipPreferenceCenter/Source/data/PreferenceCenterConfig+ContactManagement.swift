@@ -9,7 +9,7 @@ public extension PreferenceCenterConfig {
     /// Contact management item - base container object for contact management in the preference center
     struct ContactManagementItem: Decodable, Equatable, PreferenceCenterConfigItem, Sendable {
         /// The contact management item's type.
-        public let type = PreferenceCenterConfigItemType.contactManagement
+        public let type: PreferenceCenterConfigItemType = PreferenceCenterConfigItemType.contactManagement
 
         /// The contact management item's identifier.
         public var id: String
@@ -540,7 +540,7 @@ public extension PreferenceCenterConfig {
                 self.displayName = displayName
             }
 
-            static let none = SMSSenderInfo(
+            static let none: SMSSenderInfo = SMSSenderInfo(
                 senderId: "none",
                 placeholderText: "none",
                 countryCode: "none",

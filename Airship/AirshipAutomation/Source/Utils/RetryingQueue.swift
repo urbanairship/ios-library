@@ -75,11 +75,11 @@ actor RetryingQueue<T: Sendable> {
     /// Internal state for tracking each operation.
     private struct OperationState {
         /// The priority of the operation. Lower numbers are higher priority.
-        let priority: Int
+        fileprivate let priority: Int
         /// A unique ID for the operation.
-        var id: UInt
+        fileprivate var id: UInt
         /// The current status of the operation.
-        var status: Status = .pendingRun
+        fileprivate var status: Status = .pendingRun
         /// A continuation used to suspend and resume the operation's task.
         private var continuation: CheckedContinuation<Void, Never>? = nil
 

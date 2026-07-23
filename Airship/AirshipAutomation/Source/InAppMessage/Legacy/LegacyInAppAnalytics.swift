@@ -40,7 +40,7 @@ struct LegacyInAppAnalytics : LegacyInAppAnalyticsProtocol {
 }
 
 fileprivate struct LegacyResolutionEvent : ThomasLayoutEvent {
-    let name = AirshipEventType.inAppResolution
+    let name: AirshipEventType = AirshipEventType.inAppResolution
 
     let data: (any Encodable & Sendable)?
 
@@ -66,8 +66,8 @@ fileprivate struct LegacyResolutionEvent : ThomasLayoutEvent {
     }
 
     private struct LegacyResolutionBody: Encodable {
-        var type: LegacyResolutionType
-        var replacementID: String?
+        fileprivate var type: LegacyResolutionType
+        fileprivate var replacementID: String?
 
         enum CodingKeys: String, CodingKey {
             case type

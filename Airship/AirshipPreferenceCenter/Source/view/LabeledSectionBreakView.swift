@@ -145,11 +145,11 @@ struct AnyLabeledSectionBreakStyle: LabeledSectionBreakStyle {
 }
 
 struct LabeledSectionBreakStyleKey: EnvironmentKey {
-    static let defaultValue = AnyLabeledSectionBreakStyle(style: .defaultStyle)
+    static let defaultValue: AnyLabeledSectionBreakStyle = AnyLabeledSectionBreakStyle(style: .defaultStyle)
 }
 
 extension EnvironmentValues {
-    var airshipLabeledSectionBreakStyle: AnyLabeledSectionBreakStyle {
+    fileprivate var airshipLabeledSectionBreakStyle: AnyLabeledSectionBreakStyle {
         get { self[LabeledSectionBreakStyleKey.self] }
         set { self[LabeledSectionBreakStyleKey.self] = newValue }
     }

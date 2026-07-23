@@ -785,14 +785,14 @@ fileprivate extension AutomationSchedule {
 }
 
 fileprivate struct PreparedData: Sendable {
-    let scheduleData: AutomationScheduleData
-    let preparedSchedule: PreparedSchedule
+    fileprivate let scheduleData: AutomationScheduleData
+    fileprivate let preparedSchedule: PreparedSchedule
 
-    var scheduleID: String {
+    fileprivate var scheduleID: String {
         return scheduleData.schedule.identifier
     }
 
-    var priority: Int {
+    fileprivate var priority: Int {
         return scheduleData.schedule.priority ?? 0
     }
 }

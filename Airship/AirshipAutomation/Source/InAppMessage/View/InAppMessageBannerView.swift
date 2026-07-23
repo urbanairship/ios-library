@@ -29,7 +29,7 @@ struct InAppMessageBannerView: View {
     private static let mediaMaxWidth: CGFloat = 120
     private static let mediaMinHeight: CGFloat = 88
     private static let mediaMaxHeight: CGFloat = 480
-    static let animationInOutDuration = 0.2
+    static let animationInOutDuration: Double = 0.2
 
     @ViewBuilder
     private var dissmisActionButton: some View {
@@ -349,7 +349,7 @@ struct InAppMessageBannerView: View {
 }
 
 fileprivate struct InAppMessageCustomOpacityButtonStyle: ButtonStyle {
-    let pressedOpacity: Double
+    fileprivate let pressedOpacity: Double
     func makeBody(configuration: Configuration) -> some View {
         configuration.label.opacity(configuration.isPressed ? pressedOpacity : 1.0)
     }

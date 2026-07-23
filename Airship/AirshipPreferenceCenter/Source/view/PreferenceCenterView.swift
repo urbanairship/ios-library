@@ -123,7 +123,7 @@ private struct PreferenceCenterDismissActionKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-    var preferenceCenterDismissAction: (@MainActor @Sendable () -> Void)? {
+    fileprivate var preferenceCenterDismissAction: (@MainActor @Sendable () -> Void)? {
         get { self[PreferenceCenterDismissActionKey.self] }
         set { self[PreferenceCenterDismissActionKey.self] = newValue }
     }

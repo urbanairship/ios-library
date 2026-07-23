@@ -17,7 +17,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     private let provider: @Sendable (URL) -> AirshipImageData?
 
     @MainActor
-    var themeManager: InAppAutomationThemeManager {
+    private var themeManager: InAppAutomationThemeManager {
         return Airship.inAppAutomation.inAppMessaging.themeManager
     }
 
@@ -384,7 +384,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
 }
 
 extension ThomasDisplayListener.DisplayResult {
-    var automationDisplayResult: DisplayResult {
+    fileprivate var automationDisplayResult: DisplayResult {
         return switch self {
             case .finished: .finished
             case .cancel: .cancel

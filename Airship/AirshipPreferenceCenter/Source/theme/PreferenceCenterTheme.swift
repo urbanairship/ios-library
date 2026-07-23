@@ -453,7 +453,7 @@ public struct PreferenceCenterTheme: Equatable, Sendable {
 }
 
 fileprivate struct PreferenceCenterThemeKey: EnvironmentKey {
-    static let defaultValue = PreferenceCenterTheme()
+    static let defaultValue: PreferenceCenterTheme = PreferenceCenterTheme()
 }
 
 extension EnvironmentValues {
@@ -563,8 +563,8 @@ struct PreferenceCenterDefaults {
 
 
     static let labeledSectionBreakTitleBackgroundColor: Color = .gray
-    static let buttonDestructiveBackgroundColor = Color.red
-    static let buttonBackgroundColor = AirshipSystemColors.label
+    static let buttonDestructiveBackgroundColor: Color = Color.red
+    static let buttonBackgroundColor: Color = AirshipSystemColors.label
 
     static let promptBackgroundColor: Color = {
 #if os(macOS)
@@ -582,66 +582,66 @@ struct PreferenceCenterDefaults {
 #endif
     }()
 
-    static let labeledSectionBreakTitleAppearance = PreferenceCenterTheme.TextAppearance(
+    static let labeledSectionBreakTitleAppearance: PreferenceCenterTheme.TextAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline,
         color: Color.black,
         colorDark: Color.white
     )
 
-    static let sectionTitleAppearance = PreferenceCenterTheme.TextAppearance(
+    static let sectionTitleAppearance: PreferenceCenterTheme.TextAppearance = PreferenceCenterTheme.TextAppearance(
         font: .title2,
         color: AirshipSystemColors.label
     )
 
-    static let sectionSubtitleAppearance = PreferenceCenterTheme.TextAppearance(
+    static let sectionSubtitleAppearance: PreferenceCenterTheme.TextAppearance = PreferenceCenterTheme.TextAppearance(
         font: .subheadline,
         color: AirshipSystemColors.label
     )
 
-    static let titleAppearance = PreferenceCenterTheme.TextAppearance(
+    static let titleAppearance: PreferenceCenterTheme.TextAppearance = PreferenceCenterTheme.TextAppearance(
         font: .title3,
         color: AirshipSystemColors.label
     )
 
-    static let subtitleAppearance = PreferenceCenterTheme.TextAppearance(
+    static let subtitleAppearance: PreferenceCenterTheme.TextAppearance = PreferenceCenterTheme.TextAppearance(
         font: .subheadline,
         color: AirshipSystemColors.label
     )
 
-    static let channelListItemTitleAppearance = PreferenceCenterTheme.TextAppearance(
+    static let channelListItemTitleAppearance: PreferenceCenterTheme.TextAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline,
         color: AirshipSystemColors.label
     )
 
-    static let channelListItemSubtitleAppearance = PreferenceCenterTheme.TextAppearance(
+    static let channelListItemSubtitleAppearance: PreferenceCenterTheme.TextAppearance = PreferenceCenterTheme.TextAppearance(
         font: .subheadline,
         color: AirshipSystemColors.secondaryLabel
     )
 
-    static let emptyTextAppearance = PreferenceCenterTheme.TextAppearance(
+    static let emptyTextAppearance: PreferenceCenterTheme.TextAppearance = PreferenceCenterTheme.TextAppearance(
         font: .body,
         color: AirshipSystemColors.label
     )
 
-    static let errorAppearance = PreferenceCenterTheme.TextAppearance(
+    static let errorAppearance: PreferenceCenterTheme.TextAppearance = PreferenceCenterTheme.TextAppearance(
         font: .footnote.weight(.medium),
         color: .red
     )
 
-    static let textFieldTextAppearance = PreferenceCenterTheme.TextAppearance(
+    static let textFieldTextAppearance: PreferenceCenterTheme.TextAppearance = PreferenceCenterTheme.TextAppearance(
         font: .body,
     )
 
-    static let textFieldPlaceholderAppearance = PreferenceCenterTheme.TextAppearance(
+    static let textFieldPlaceholderAppearance: PreferenceCenterTheme.TextAppearance = PreferenceCenterTheme.TextAppearance(
         font: .body,
         color: AirshipSystemColors.placeholder
     )
 
-    static let chipLabelAppearance = PreferenceCenterTheme.TextAppearance(
+    static let chipLabelAppearance: PreferenceCenterTheme.TextAppearance = PreferenceCenterTheme.TextAppearance(
         font: .headline.weight(.bold),
     )
 
-    static let resendButtonTitleAppearance = PreferenceCenterTheme.TextAppearance(
+    static let resendButtonTitleAppearance: PreferenceCenterTheme.TextAppearance = PreferenceCenterTheme.TextAppearance(
         font: .caption.weight(.bold),
         color: AirshipSystemColors.link
     )
@@ -656,14 +656,14 @@ internal struct AirshipSystemColors {
 #if os(macOS)
     static let placeholder: Color = Color(.placeholderTextColor)
     static let tertiaryLabel: Color = Color(.tertiaryLabelColor)
-    static let link = Color(.linkColor)
-    static let background = Color(.windowBackgroundColor)
-    static let secondaryBackground = Color(.controlBackgroundColor)
-    static let tertiaryBackground = Color(.underPageBackgroundColor)
+    static let link: Color = Color(.linkColor)
+    static let background: Color = Color(.windowBackgroundColor)
+    static let secondaryBackground: Color = Color(.controlBackgroundColor)
+    static let tertiaryBackground: Color = Color(.underPageBackgroundColor)
 #elseif os(tvOS)
     static let placeholder: Color = Color(.placeholderText)
     static let tertiaryLabel: Color = Color(.tertiaryLabel)
-    static let link = Color(.link)
+    static let link: Color = Color(.link)
     static let background: Color = AirshipColor.systemBackground
     static let secondaryBackground: Color = AirshipColor.systemBackground
     static let tertiaryBackground: Color = AirshipColor.systemBackground

@@ -68,167 +68,167 @@ struct PreferenceCenterThemeLoader {
 
     fileprivate struct LegacyConfig: Decodable {
         // Existing properties remain unchanged
-        let title: String?
-        let titleFont: FontConfig?
-        let titleColor: String?
-        let navigationBarColor: String?
-        let backgroundColor: String?
-        let tintColor: String?
-        let subtitleFont: FontConfig?
-        let subtitleColor: String?
-        let sectionTextColor: String?
-        let sectionTextFont: FontConfig?
-        let sectionTitleTextColor: String?
-        let sectionTitleTextFont: FontConfig?
-        let sectionSubtitleTextColor: String?
-        let sectionSubtitleTextFont: FontConfig?
-        let sectionBreakTextColor: String?
-        let sectionBreakTextFont: FontConfig?
-        let sectionBreakBackgroundColor: String?
-        let preferenceTextColor: String?
-        let preferenceTextFont: FontConfig?
-        let preferenceTitleTextColor: String?
-        let preferenceTitleTextFont: FontConfig?
-        let preferenceSubtitleTextColor: String?
-        let preferenceSubtitleTextFont: FontConfig?
+        private let title: String?
+        private let titleFont: FontConfig?
+        private let titleColor: String?
+        private let navigationBarColor: String?
+        private let backgroundColor: String?
+        private let tintColor: String?
+        private let subtitleFont: FontConfig?
+        private let subtitleColor: String?
+        private let sectionTextColor: String?
+        private let sectionTextFont: FontConfig?
+        private let sectionTitleTextColor: String?
+        private let sectionTitleTextFont: FontConfig?
+        private let sectionSubtitleTextColor: String?
+        private let sectionSubtitleTextFont: FontConfig?
+        private let sectionBreakTextColor: String?
+        private let sectionBreakTextFont: FontConfig?
+        private let sectionBreakBackgroundColor: String?
+        private let preferenceTextColor: String?
+        private let preferenceTextFont: FontConfig?
+        private let preferenceTitleTextColor: String?
+        private let preferenceTitleTextFont: FontConfig?
+        private let preferenceSubtitleTextColor: String?
+        private let preferenceSubtitleTextFont: FontConfig?
 
-        let switchTintColor: String?
+        private let switchTintColor: String?
 
-        let preferenceChipTextColor: String?
-        let preferenceChipTextFont: FontConfig?
-        let preferenceChipCheckmarkCheckedBackgroundColor: String?
-        let preferenceChipBorderColor: String?
+        private let preferenceChipTextColor: String?
+        private let preferenceChipTextFont: FontConfig?
+        private let preferenceChipCheckmarkCheckedBackgroundColor: String?
+        private let preferenceChipBorderColor: String?
 
-        let alertTitleColor: String?
-        let alertTitleFont: FontConfig?
-        let alertSubtitleColor: String?
-        let alertSubtitleFont: FontConfig?
-        let alertButtonBackgroundColor: String?
-        let alertButtonLabelColor: String?
-        let alertButtonLabelFont: FontConfig?
+        private let alertTitleColor: String?
+        private let alertTitleFont: FontConfig?
+        private let alertSubtitleColor: String?
+        private let alertSubtitleFont: FontConfig?
+        private let alertButtonBackgroundColor: String?
+        private let alertButtonLabelColor: String?
+        private let alertButtonLabelFont: FontConfig?
 
         // New properties for dark mode
-        let titleColorDark: String?
-        let navigationBarColorDark: String?
-        let backgroundColorDark: String?
-        let tintColorDark: String?
-        let subtitleColorDark: String?
-        let sectionTextColorDark: String?
-        let sectionTitleTextColorDark: String?
-        let sectionSubtitleTextColorDark: String?
-        let sectionBreakTextColorDark: String?
-        let sectionBreakBackgroundColorDark: String?
-        let preferenceTextColorDark: String?
-        let preferenceTitleTextColorDark: String?
-        let preferenceSubtitleTextColorDark: String?
-        let switchTintColorDark: String?
-        let preferenceChipTextColorDark: String?
-        let preferenceChipCheckmarkCheckedBackgroundColorDark: String?
-        let preferenceChipBorderColorDark: String?
-        let alertTitleColorDark: String?
-        let alertSubtitleColorDark: String?
-        let alertButtonBackgroundColorDark: String?
-        let alertButtonLabelColorDark: String?
+        private let titleColorDark: String?
+        private let navigationBarColorDark: String?
+        private let backgroundColorDark: String?
+        private let tintColorDark: String?
+        private let subtitleColorDark: String?
+        private let sectionTextColorDark: String?
+        private let sectionTitleTextColorDark: String?
+        private let sectionSubtitleTextColorDark: String?
+        private let sectionBreakTextColorDark: String?
+        private let sectionBreakBackgroundColorDark: String?
+        private let preferenceTextColorDark: String?
+        private let preferenceTitleTextColorDark: String?
+        private let preferenceSubtitleTextColorDark: String?
+        private let switchTintColorDark: String?
+        private let preferenceChipTextColorDark: String?
+        private let preferenceChipCheckmarkCheckedBackgroundColorDark: String?
+        private let preferenceChipBorderColorDark: String?
+        private let alertTitleColorDark: String?
+        private let alertSubtitleColorDark: String?
+        private let alertButtonBackgroundColorDark: String?
+        private let alertButtonLabelColorDark: String?
     }
 
     fileprivate struct Config: Decodable {
-        let viewController: ViewController?
-        let preferenceCenter: PreferenceCenter?
-        let commonSection: CommonSection?
-        let labeledSectionBreak: LabeledSectionBreak?
-        let alert: Alert?
-        let channelSubscription: ChannelSubscription?
-        let contactSubscription: ContactSubscription?
-        let contactSubscriptionGroup: ContactSubscriptionGroup?
+        private let viewController: ViewController?
+        private let preferenceCenter: PreferenceCenter?
+        private let commonSection: CommonSection?
+        private let labeledSectionBreak: LabeledSectionBreak?
+        private let alert: Alert?
+        private let channelSubscription: ChannelSubscription?
+        private let contactSubscription: ContactSubscription?
+        private let contactSubscriptionGroup: ContactSubscriptionGroup?
 
         struct NavigationBar: Decodable {
-            let title: String?
-            let titleFont: FontConfig?
-            let titleColor: String?
-            let titleColorDark: String?
-            let tintColor: String?
-            let tintColorDark: String?
-            let backgroundColor: String?
-            let backgroundColorDark: String?
-            let backButtonColor: String?
-            let backButtonColorDark: String?
+            private let title: String?
+            private let titleFont: FontConfig?
+            private let titleColor: String?
+            private let titleColorDark: String?
+            private let tintColor: String?
+            private let tintColorDark: String?
+            private let backgroundColor: String?
+            private let backgroundColorDark: String?
+            private let backButtonColor: String?
+            private let backButtonColorDark: String?
         }
 
         struct ViewController: Decodable {
-            let navigationBar: NavigationBar?
-            let backgroundColor: String?
-            let backgroundColorDark: String?
+            private let navigationBar: NavigationBar?
+            private let backgroundColor: String?
+            private let backgroundColorDark: String?
         }
 
         struct PreferenceCenter: Decodable {
-            let subtitleAppearance: TextAppearance?
-            let retryButtonBackgroundColor: String?
-            let retryButtonBackgroundColorDark: String?
-            let retryButtonLabelAppearance: TextAppearance?
-            let retryButtonLabel: String?
-            let retryMessage: String?
-            let retryMessageAppearance: TextAppearance?
+            private let subtitleAppearance: TextAppearance?
+            private let retryButtonBackgroundColor: String?
+            private let retryButtonBackgroundColorDark: String?
+            private let retryButtonLabelAppearance: TextAppearance?
+            private let retryButtonLabel: String?
+            private let retryMessage: String?
+            private let retryMessageAppearance: TextAppearance?
         }
 
         struct TextAppearance: Decodable {
-            let font: FontConfig?
-            let color: String?
-            let colorDark: String?
+            private let font: FontConfig?
+            private let color: String?
+            private let colorDark: String?
         }
 
         struct Chip: Decodable {
-            let checkColor: String?
-            let checkColorDark: String?
-            let borderColor: String?
-            let borderColorDark: String?
-            let labelAppearance: TextAppearance?
+            private let checkColor: String?
+            private let checkColorDark: String?
+            private let borderColor: String?
+            private let borderColorDark: String?
+            private let labelAppearance: TextAppearance?
         }
 
         struct CommonSection: Decodable {
-            let titleAppearance: TextAppearance?
-            let subtitleAppearance: TextAppearance?
+            private let titleAppearance: TextAppearance?
+            private let subtitleAppearance: TextAppearance?
         }
 
         struct LabeledSectionBreak: Decodable {
-            let titleAppearance: TextAppearance?
-            let backgroundColor: String?
-            let backgroundColorDark: String?
+            private let titleAppearance: TextAppearance?
+            private let backgroundColor: String?
+            private let backgroundColorDark: String?
         }
 
         struct Alert: Decodable {
-            let titleAppearance: TextAppearance?
-            let subtitleAppearance: TextAppearance?
-            let buttonLabelAppearance: TextAppearance?
-            let buttonBackgroundColor: String?
-            let buttonBackgroundColorDark: String?
+            private let titleAppearance: TextAppearance?
+            private let subtitleAppearance: TextAppearance?
+            private let buttonLabelAppearance: TextAppearance?
+            private let buttonBackgroundColor: String?
+            private let buttonBackgroundColorDark: String?
         }
 
         struct ChannelSubscription: Decodable {
-            let titleAppearance: TextAppearance?
-            let subtitleAppearance: TextAppearance?
-            let toggleTintColor: String?
-            let toggleTintColorDark: String?
-            let buttonBackgroundColor: String?
-            let buttonBackgroundColorDark: String?
+            private let titleAppearance: TextAppearance?
+            private let subtitleAppearance: TextAppearance?
+            private let toggleTintColor: String?
+            private let toggleTintColorDark: String?
+            private let buttonBackgroundColor: String?
+            private let buttonBackgroundColorDark: String?
         }
 
         struct ContactSubscription: Decodable {
-            let titleAppearance: TextAppearance?
-            let subtitleAppearance: TextAppearance?
-            let toggleTintColor: String?
-            let toggleTintColorDark: String?
+            private let titleAppearance: TextAppearance?
+            private let subtitleAppearance: TextAppearance?
+            private let toggleTintColor: String?
+            private let toggleTintColorDark: String?
         }
 
         struct ContactSubscriptionGroup: Decodable {
-            let titleAppearance: TextAppearance?
-            let subtitleAppearance: TextAppearance?
-            let chip: Chip?
+            private let titleAppearance: TextAppearance?
+            private let subtitleAppearance: TextAppearance?
+            private let chip: Chip?
         }
     }
 
     fileprivate struct FontConfig: Decodable {
-        let fontName: String
-        let fontSize: String
+        private let fontName: String
+        private let fontSize: String
     }
 }
 

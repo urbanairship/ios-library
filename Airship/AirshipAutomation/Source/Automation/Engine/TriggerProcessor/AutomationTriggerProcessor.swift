@@ -36,13 +36,13 @@ protocol AutomationTriggerProcessorProtocol: Sendable {
 }
 
 final actor AutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
-    let store: any TriggerStoreProtocol
+    private let store: any TriggerStoreProtocol
     private let date: any AirshipDateProtocol
     private let eventsHistory: any AutomationEventsHistory
     private let stream: AsyncStream<TriggerResult>
     private let continuation: AsyncStream<TriggerResult>.Continuation
     
-    @MainActor private var isPaused = false
+    @MainActor private var isPaused: Bool = false
     
     // scheduleID to [PreparedTriggers]
     private var preparedTriggers: [String: [PreparedTrigger]] = [:]

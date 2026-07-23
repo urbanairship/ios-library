@@ -81,7 +81,7 @@ fileprivate struct InAppMessageMediaWebView: AirshipNativeViewRepresentable {
     }
 #endif
 
-    let mediaInfo: InAppMessageMediaInfo
+    fileprivate let mediaInfo: InAppMessageMediaInfo
 
     private var baseURL: URL? {
         let bundleIdentifier = Bundle.main.bundleIdentifier ?? "com.airship.sdk"
@@ -146,7 +146,7 @@ fileprivate struct InAppMessageMediaWebView: AirshipNativeViewRepresentable {
     }
 
     final class Coordinator: NSObject, WKNavigationDelegate {
-        let challengeResolver: ChallengeResolver
+        private let challengeResolver: ChallengeResolver
 
         init(resolver: ChallengeResolver = .shared) {
             self.challengeResolver = resolver

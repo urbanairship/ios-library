@@ -6,7 +6,7 @@ import Foundation
 
 /// Stores information about a remote-data source used for scheduling
 final class AutomationSourceInfoStore: Sendable {
-    let dataStore: PreferenceDataStore
+    private let dataStore: PreferenceDataStore
 
     init(dataStore: PreferenceDataStore) {
         self.dataStore = dataStore
@@ -113,16 +113,16 @@ struct AutomationSourceInfo: Sendable, Codable, Equatable {
 }
 
 fileprivate struct LegacyAppKeys {
-    static let lastPayloadTimestamp = "UAInAppRemoteDataClient.LastPayloadTimeStamp"
-    static let lastSDKVersion = "UAInAppRemoteDataClient.LastSDKVersion"
-    static let lastRemoteDataInfo = "UAInAppRemoteDataClient.LastRemoteDataInfo"
-    static let lastMetadata = "UAInAppRemoteDataClient.LastPayloadMetadata"
+    static let lastPayloadTimestamp: String = "UAInAppRemoteDataClient.LastPayloadTimeStamp"
+    static let lastSDKVersion: String = "UAInAppRemoteDataClient.LastSDKVersion"
+    static let lastRemoteDataInfo: String = "UAInAppRemoteDataClient.LastRemoteDataInfo"
+    static let lastMetadata: String = "UAInAppRemoteDataClient.LastPayloadMetadata"
 }
 
 fileprivate struct LegacyContactKeys {
-    private static let lastPayloadTimestampPrefix = "UAInAppRemoteDataClient.LastPayloadTimeStamp.Contact"
-    private static let lastSDKVersionPrefix = "UAInAppRemoteDataClient.LastSDKVersion.Contact"
-    private static let lastRemoteDataInfoPrefix = "UAInAppRemoteDataClient.LastRemoteDataInfo.Contact"
+    private static let lastPayloadTimestampPrefix: String = "UAInAppRemoteDataClient.LastPayloadTimeStamp.Contact"
+    private static let lastSDKVersionPrefix: String = "UAInAppRemoteDataClient.LastSDKVersion.Contact"
+    private static let lastRemoteDataInfoPrefix: String = "UAInAppRemoteDataClient.LastRemoteDataInfo.Contact"
 
     static func lastPayloadTimestamp(_ contactID: String?) -> String {
         return "\(lastPayloadTimestampPrefix)\(contactID ?? "")"

@@ -261,10 +261,10 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     /// Delegates holder so I can keep the executor sendable
     private final class Delegates: Sendable {
         @MainActor
-        weak var displayDelegate: (any InAppMessageDisplayDelegate)?
+        fileprivate weak var displayDelegate: (any InAppMessageDisplayDelegate)?
         
         @MainActor
-        var onIsReadyToDisplay: (@MainActor @Sendable (InAppMessage, String) -> Bool)?
+        fileprivate var onIsReadyToDisplay: (@MainActor @Sendable (InAppMessage, String) -> Bool)?
     }
 }
 

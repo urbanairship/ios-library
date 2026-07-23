@@ -30,7 +30,7 @@ public final class CancelSchedulesAction: AirshipAction {
         self.overrideAutomation = overrideAutomation
     }
     
-    var automation: any InternalInAppAutomation {
+    private var automation: any InternalInAppAutomation {
         return overrideAutomation ?? Airship.requireComponent(ofType: InAppAutomationComponent.self).inAppAutomation
     }
     
@@ -70,11 +70,11 @@ public final class CancelSchedulesAction: AirshipAction {
     }
     
     private struct Arguments: Decodable, Sendable {
-        static let all = "all"
+        private static let all: String = "all"
         
-        let cancellAll: Bool
-        let scheduleIDs: [String]?
-        let groups: [String]?
+        fileprivate let cancellAll: Bool
+        fileprivate let scheduleIDs: [String]?
+        fileprivate let groups: [String]?
         
         enum CodingKeys: String, CodingKey {
             case ids = "ids"

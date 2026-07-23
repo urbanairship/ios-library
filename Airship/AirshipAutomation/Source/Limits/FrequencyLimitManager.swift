@@ -25,7 +25,7 @@ final class FrequencyLimitManager: FrequencyLimitManagerProtocol, Sendable {
     private let date: any AirshipDateProtocol
     private let storeQueue: AirshipSerialQueue
 
-    private let emptyChecker = FrequencyChecker(
+    private let emptyChecker: FrequencyChecker = FrequencyChecker(
         isOverLimitBlock: { false },
         checkAndIncrementBlock: { true }
     )

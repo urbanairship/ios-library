@@ -388,8 +388,8 @@ extension AutomationTrigger {
 }
 
 fileprivate struct MatchResult {
-   var triggerID: String
-   var isTriggered: Bool
+   fileprivate var triggerID: String
+   fileprivate var isTriggered: Bool
 }
 
 fileprivate extension AutomationEvent {

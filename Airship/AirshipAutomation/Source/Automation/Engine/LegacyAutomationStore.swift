@@ -243,11 +243,11 @@ fileprivate extension UAScheduleTriggerData {
 fileprivate extension UAScheduleData {
 
     struct LegacyKeys {
-        static let displayType = "display_type"
-        static let display = "display"
-        static let audience = "audience"
-        static let source = "source"
-        static let duration = "duration"
+        static let displayType: String = "display_type"
+        static let display: String = "display"
+        static let audience: String = "audience"
+        static let source: String = "source"
+        static let duration: String = "duration"
     }
 
     func convert() throws -> LegacyScheduleData {

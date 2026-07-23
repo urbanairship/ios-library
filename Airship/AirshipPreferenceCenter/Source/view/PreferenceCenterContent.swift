@@ -25,7 +25,7 @@ public struct PreferenceCenterContent: View {
     private var loader: PreferenceCenterContentLoader = PreferenceCenterContentLoader()
 
     @State
-    private var initialLoadCalled = false
+    private var initialLoadCalled: Bool = false
 
     @State
     private var namedUser: String?

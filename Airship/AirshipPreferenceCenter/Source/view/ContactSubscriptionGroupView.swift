@@ -167,8 +167,8 @@ public struct DefaultContactSubscriptionGroupStyle: ContactSubscriptionGroupStyl
         @Environment(\.colorScheme)
         private var colorScheme
 
-        let componentStates: [Configuration.ComponentState]
-        let chipTheme: PreferenceCenterTheme.Chip?
+        fileprivate let componentStates: [Configuration.ComponentState]
+        fileprivate let chipTheme: PreferenceCenterTheme.Chip?
 
         @State
         private var componentHeight: CGFloat?
@@ -271,13 +271,13 @@ struct AnyContactSubscriptionGroupStyle: ContactSubscriptionGroupStyle {
 }
 
 struct ContactSubscriptionGroupStyleKey: EnvironmentKey {
-    static let defaultValue = AnyContactSubscriptionGroupStyle(
+    static let defaultValue: AnyContactSubscriptionGroupStyle = AnyContactSubscriptionGroupStyle(
         style: .defaultStyle
     )
 }
 
 extension EnvironmentValues {
-    var airshipContactSubscriptionGroupStyle: AnyContactSubscriptionGroupStyle {
+    fileprivate var airshipContactSubscriptionGroupStyle: AnyContactSubscriptionGroupStyle {
         get { self[ContactSubscriptionGroupStyleKey.self] }
         set { self[ContactSubscriptionGroupStyleKey.self] = newValue }
     }
@@ -285,9 +285,9 @@ extension EnvironmentValues {
 
 struct ChipToggleStyle: ToggleStyle {
     // Custom colors can be passed in during initialization.
-    var onColor: Color
-    var offColor: Color
-    var borderColor: Color
+    fileprivate var onColor: Color
+    fileprivate var offColor: Color
+    fileprivate var borderColor: Color
 
     func makeBody(configuration: Configuration) -> some View {
 #if os(tvOS)

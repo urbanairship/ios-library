@@ -292,10 +292,10 @@ extension DefaultLegacyInAppMessaging: InternalLegacyInAppMessaging {
     }
 
     private enum Defaults {
-        static let primaryColor = "#FFFFFF"
-        static let secondaryColor = "#1C1C1C"
-        static let borderRadius = 2.0
-        static let notificationButtonsCount = 2
+        static let primaryColor: String = "#FFFFFF"
+        static let secondaryColor: String = "#1C1C1C"
+        static let borderRadius: Double = 2.0
+        static let notificationButtonsCount: Int = 2
     }
 }
 

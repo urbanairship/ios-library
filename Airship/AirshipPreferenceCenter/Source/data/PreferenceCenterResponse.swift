@@ -5,7 +5,7 @@ import Foundation
 import AirshipCore
 
 fileprivate struct PrefrenceCenterResponse: Decodable {
-    let config: PreferenceCenterConfig
+    private let config: PreferenceCenterConfig
 
     enum CodingKeys: String, CodingKey {
         case config = "form"

@@ -9,7 +9,7 @@ import AirshipCore
 struct ChannelListView: View {
     // MARK: - Constants
     private enum Layout {
-        static let presentationDetentHeight: CGFloat = 0.5 // medium detent as fraction
+        private static let presentationDetentHeight: CGFloat = 0.5 // medium detent as fraction
     }
 
     // MARK: - Environment
@@ -22,9 +22,9 @@ struct ChannelListView: View {
 
     // MARK: - State
     @State private var selectedChannel: ContactChannel?
-    @State private var showAddChannelSheet = false
-    @State private var showRemoveChannelAlert = false
-    @State private var showResendSuccessAlert = false
+    @State private var showAddChannelSheet: Bool = false
+    @State private var showRemoveChannelAlert: Bool = false
+    @State private var showResendSuccessAlert: Bool = false
 
     // MARK: - Computed Properties
     private var channels: [ContactChannel] {

@@ -351,8 +351,8 @@ fileprivate extension AutomationSchedule {
 }
 
 fileprivate actor Queues {
-    var queues: [String: RetryingQueue<SchedulePrepareResult>] = [:]
-    lazy var defaultQueue: RetryingQueue<SchedulePrepareResult>  = {
+    private var queues: [String: RetryingQueue<SchedulePrepareResult>] = [:]
+    private lazy var defaultQueue: RetryingQueue<SchedulePrepareResult>  = {
         return RetryingQueue(
             id: "default",
             config: config.remoteConfig.iaaConfig?.retryingQueue

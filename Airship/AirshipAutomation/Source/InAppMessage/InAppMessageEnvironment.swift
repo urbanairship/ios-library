@@ -17,7 +17,7 @@ final class InAppMessageEnvironment: ObservableObject {
     let actionRunner: (any InAppActionRunner)?
 
 
-    @Published var isDismissed = false
+    @Published var isDismissed: Bool = false
 
     @MainActor
     init(

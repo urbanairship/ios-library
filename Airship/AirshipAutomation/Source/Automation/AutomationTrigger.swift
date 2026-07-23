@@ -173,7 +173,7 @@ public struct EventAutomationTrigger: Sendable, Codable, Equatable {
     /// Tracks if we should allow backfilling the ID. Will be true if the id was generated,, otherwise false.
     /// This field is only relevant when parsing JSON without an ID. Once it encodes/decodes
     /// an ID will be set and this will always be false.
-    var allowBackfillID: Bool
+    fileprivate var allowBackfillID: Bool
 
 
     /// Event automation trigger initializer

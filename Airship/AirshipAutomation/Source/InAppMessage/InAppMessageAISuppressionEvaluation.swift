@@ -11,7 +11,7 @@ public struct InAppMessageAISuppressionEvaluation: AirshipAI.Evaluation {
         public let reason: String
     }
 
-    public let schema = AirshipJSONSchema.object(
+    public let schema: AirshipJSONSchema = AirshipJSONSchema.object(
         properties: [
             "allow": .boolean(description: "Whether to show the in-app message to this user"),
             "reason": .string(description: "Brief reason for the decision"),

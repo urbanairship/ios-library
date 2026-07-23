@@ -36,14 +36,14 @@ final class AutomationEventFeed: AutomationEventFeedProtocol {
     
     private let continuation: Stream.Continuation
     private var observers: [AnyObject] = []
-    private var isFirstAttach = false
+    private var isFirstAttach: Bool = false
     private var listenerTask: Task<Void, Never>?
 
     private let applicationMetrics: any ApplicationMetricsProtocol
     private let applicationStateTracker: any AppStateTrackerProtocol
     private let analyticsFeed: AirshipAnalyticsFeed
 
-    private var appSessionState = TriggerableState()
+    private var appSessionState: TriggerableState = TriggerableState()
     private var regions: Set<String> = Set()
 
     nonisolated let feed: Stream

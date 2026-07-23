@@ -8,8 +8,8 @@ import Combine
 
 @MainActor
 final class ChannelListCellViewModel: ObservableObject {
-    let channel: ContactChannel
-    let pendingLabelModel: PreferenceCenterConfig.ContactManagementItem.PendingLabel?
+    fileprivate let channel: ContactChannel
+    fileprivate let pendingLabelModel: PreferenceCenterConfig.ContactManagementItem.PendingLabel?
 
     @Published
     fileprivate var isPendingLabelShowing: Bool = false
@@ -17,8 +17,8 @@ final class ChannelListCellViewModel: ObservableObject {
     @Published
     fileprivate var isResendShowing: Bool = false
 
-    let onResend: () -> Void
-    let onRemove: () -> Void
+    fileprivate let onResend: () -> Void
+    fileprivate let onRemove: () -> Void
 
     private var resendLabelHideDelaySeconds: Double { Double(pendingLabelModel?.intervalInSeconds ?? 15) }
 
@@ -199,7 +199,7 @@ struct ChannelListViewCell: View {
 
 
 extension ContactChannel {
-    var isOptedIn: Bool {
+    fileprivate var isOptedIn: Bool {
         switch (self) {
         case .email(let email):
             switch(email) {
