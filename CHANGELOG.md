@@ -4,6 +4,14 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.11.0 - July 22, 2026
+Minor release that adds build version support to version triggers and audience checks, a dedup option for Live Activity watching, and a fix for story pager gestures.
+
+### Changes
+- Added build version and version name to the `VERSION` trigger predicate and device audience version check, alongside the existing marketing version comparison.
+- Added a `unique` option to `Activity.airshipWatchActivities` so the handler is invoked at most once per Live Activity across the initial check and push-to-start updates.
+- Fixed story pager region gestures firing on interactive elements like buttons and form inputs.
+
 ## Version 20.10.0 - July 9, 2026
 Minor release that refines display-order control for embedded content, exposes a new Message Center content view, and improves rendering of fixed-size views in Scenes.
 
