@@ -554,15 +554,11 @@ struct TextInput: View {
                     // resolving a stale result.
                     try Task.checkCancellation()
 
-                    // Object outputs are flattened next to `status` so predicates can
-                    // match fields directly (e.g. `...status.ai.result`); scalar and
-                    // array outputs land under `result` (`...status.ai.result`).
                     var ai: [String: AirshipJSON]
                     let report: ThomasAIInferenceReport
                     switch output {
                     case .some(let output):
-                        ai = output.object ?? ["result": output]
-                        ai["status"] = "complete"
+                        ai = ["result": output, "status": "complete"]
                         // Reported output is filtered to properties opted in via
                         // x-ua-report-property — distinct from the full `ai` projection.
                         report = ThomasAIInferenceReport(

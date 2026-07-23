@@ -10,14 +10,17 @@ final class ThomasLayoutViewModel: ObservableObject {
     private let layoutLoader: LayoutLoader = .init()
 
     @Published
+    public var openError: (any Error)?
+
+    @Published
     public private(set) var recentLayouts: [LayoutFile] = []
 
     init() {
         self.recentLayouts = ThomasUserDefaults.shared.recentLayouts
     }
 
-    func openLayout(_ layout: LayoutFile, addToRecents: Bool = true) throws {
-        try layout.open()
+    func openLayout(_ layout: LayoutFile, addToRecents: Bool = true) async throws {
+        try await layout.open()
         if addToRecents {
             Self.saveToRecent(layout)
             self.recentLayouts = ThomasUserDefaults.shared.recentLayouts

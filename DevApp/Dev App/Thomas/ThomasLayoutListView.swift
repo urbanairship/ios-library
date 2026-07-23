@@ -22,15 +22,13 @@ struct ThomasLayoutListView: View {
         case html
     }
 
-    @State var errorMessage: String?
-    @State var showError: Bool = false
-
     func open(_ layout: LayoutFile, addToRecents: Bool = true) {
-        do {
-            try viewModel.openLayout(layout, addToRecents: addToRecents)
-        } catch {
-            self.showError = true
-            self.errorMessage = "Failed to open layout \(error)"
+        Task { @MainActor in
+            do {
+                try await viewModel.openLayout(layout)
+            } catch {
+                viewModel.openError = error
+            }
         }
     }
 
@@ -80,10 +78,10 @@ struct ThomasLayoutListView: View {
             }
         }
         .navigationTitle("Layout Viewer")
-        .sheet(isPresented: $showError) {
+        .sheet(isPresented: Binding(get: { viewModel.openError != nil }, set: { if !$0 { viewModel.openError = nil } })) {
             NavigationStack {
                 ScrollView {
-                    Text(self.errorMessage ?? "error")
+                    Text("Loading error: \(viewModel.openError?.localizedDescription ?? "")")
                         .font(.system(.footnote, design: .monospaced))
 #if !os(tvOS)
                         .textSelection(.enabled)
@@ -101,15 +99,14 @@ struct ThomasLayoutListView: View {
 #if os(macOS)
                             let pasteboard = NSPasteboard.general
                             pasteboard.declareTypes([.string], owner: nil)
-                            pasteboard.setString(self.errorMessage ?? "", forType: .string)
+                            pasteboard.setString(viewModel.openError?.localizedDescription ?? "", forType: .string)
 #elseif !os(tvOS)
-                            UIPasteboard.general.string = self.errorMessage
+                            UIPasteboard.general.string = viewModel.openError?.localizedDescription
 #endif
                         }
-                        .disabled(self.errorMessage == nil)
                     }
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") { self.showError = false }
+                        Button("Done") { viewModel.openError = nil }
                     }
                 }
             }

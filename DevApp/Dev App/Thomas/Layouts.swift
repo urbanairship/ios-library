@@ -70,15 +70,15 @@ enum LayoutType: Equatable, Hashable, Codable {
 
 extension LayoutFile {
     @MainActor
-    func open() throws {
+    func open() async throws {
         let filePath = Bundle.main.resourcePath! + directory + "/" + fileName
         let data = try loadData(filePath: filePath)
 
         switch self.type {
         case .sceneModal, .sceneBanner, .sceneEmbedded:
-            try displayScene(data)
+            try await displayScene(data)
         case .messageModal, .messageBanner, .messageFullscreen, .messageHTML:
-            try displayMessage(data)
+            try await displayMessage(data)
         }
     }
 
@@ -194,20 +194,17 @@ extension LayoutFile {
 
 
     @MainActor
-    private func displayScene(_ data: Data) throws {
+    private func displayScene(_ data: Data) async throws {
         // Extract layout from potentially wrapped payload (in_app_message.message.display.layout)
         let layoutData = try extractLayoutFromPayload(data)
         let layout = try JSONDecoder().decode(AirshipLayout.self, from: layoutData)
 
         let message = InAppMessage(name: "thomas", displayContent: .airshipLayout(layout))
-
-        Task { @MainActor in
-            try await Airship.inAppAutomation.viewTester.display(message: message)
-        }
+        try await Airship.inAppAutomation.viewTester.display(message: message)
     }
 
     @MainActor
-    private func displayMessage(_ data: Data) throws {
+    private func displayMessage(_ data: Data) async throws {
         let message: InAppMessage
 
         // Try to unwrap server-formatted JSON with in_app_message wrapper
@@ -221,9 +218,6 @@ extension LayoutFile {
             // Fall back to direct InAppMessage decoding (for legacy format)
             message = try JSONDecoder().decode(InAppMessage.self, from: data)
         }
-
-        Task { @MainActor in
-            try await Airship.inAppAutomation.viewTester.display(message: message)
-        }
+        try await Airship.inAppAutomation.viewTester.display(message: message)
     }
 }

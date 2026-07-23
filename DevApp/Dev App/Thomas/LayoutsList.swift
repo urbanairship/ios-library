@@ -7,9 +7,6 @@ struct LayoutsList: View {
 
     @ObservedObject
     private var viewModel: ViewModel
-    
-    @State var errorMessage: String?
-    @State var showError: Bool = false
 
     init(
         layoutType: LayoutType,
@@ -26,10 +23,10 @@ struct LayoutsList: View {
                 }
             }
         }
-        .sheet(isPresented: $showError) {
+        .sheet(isPresented: Binding(get: { viewModel.openError != nil }, set: { if !$0 { viewModel.openError = nil } })) {
             NavigationStack {
                 ScrollView {
-                    Text(self.errorMessage ?? "error")
+                    Text(viewModel.openError?.localizedDescription ?? "")
                         .font(.system(.footnote, design: .monospaced))
 #if !os(tvOS)
                         .textSelection(.enabled)
@@ -47,27 +44,27 @@ struct LayoutsList: View {
 #if os(macOS)
                             let pasteboard = NSPasteboard.general
                             pasteboard.declareTypes([.string], owner: nil)
-                            pasteboard.setString(self.errorMessage ?? "", forType: .string)
+                            pasteboard.setString(viewModel.openError?.localizedDescription ?? "", forType: .string)
 #elseif !os(tvOS)
-                            UIPasteboard.general.string = self.errorMessage
+                            UIPasteboard.general.string = viewModel.openError?.localizedDescription
 #endif
                         }
-                        .disabled(self.errorMessage == nil)
                     }
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") { self.showError = false }
+                        Button("Done") { viewModel.openError = nil }
                     }
                 }
             }
         }
     }
-    
+
     func open(_ layout: LayoutFile, addToRecents: Bool = true) {
-        do {
-            try viewModel.openLayout(layout)
-        } catch {
-            self.showError = true
-            self.errorMessage = "Failed to open layout \(error)"
+        Task { @MainActor in
+            do {
+                try await viewModel.openLayout(layout)
+            } catch {
+                viewModel.openError = error
+            }
         }
     }
 }
@@ -77,14 +74,17 @@ private class ViewModel: ObservableObject {
     let layoutLoader = LayoutLoader()
     let layouts: [LayoutFile]
     let onOpen: @MainActor (LayoutFile) -> Void
-    
+
+    @Published
+    var openError: (any Error)?
+
     init(layoutType: LayoutType, onOpen: @escaping @MainActor (LayoutFile) -> Void) {
         layouts = layoutLoader.load(type: layoutType)
         self.onOpen = onOpen
     }
-    
-    func openLayout(_ layout: LayoutFile) throws {
-        try layout.open()
+
+    func openLayout(_ layout: LayoutFile) async throws {
+        try await layout.open()
         onOpen(layout)
     }
 }

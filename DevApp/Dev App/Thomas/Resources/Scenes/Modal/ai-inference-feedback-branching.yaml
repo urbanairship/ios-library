@@ -5,10 +5,10 @@
 #     feedback. The output rides on the form field result, projected into state at
 #       $forms.current.data.children.feedback_text.status:
 #         { type: pending }                                  while inference runs
-#         { type: valid, ai: { status: complete, result, reason }, ... }  on success
+#         { type: valid, ai: { status: complete, result: <string> }, ... }  on success
 #         { type: valid, ai: { status: failed }, ... }       on failure / no model
-#   - Pager branching routes Next per category via ...status.ai.result, with a
-#     fallback page when ...status.ai.status == failed.
+#   - Pager branching routes Next per category via ...status.ai.result (string),
+#     with a fallback page when ...status.ai.status == failed.
 #   - ai_inference also carries `additional_context` (layout-authored context
 #     appended after the app's context provider) and `subject_hints` (passed to
 #     the app's context provider alongside the subject, not into the prompt).
@@ -152,19 +152,22 @@ view:
                             color: { default: { hex: "#111111", alpha: 1 } }
                           ai_inference:
                             prompt: >-
-                              Classify the customer feedback into the category
-                              that best matches its main complaint or theme.
+                              Classify the customer feedback. If the overall tone
+                              is positive or satisfied — even if it mentions
+                              shipping or product — use praise. Only use shipping
+                              or quality for negative or problem-focused feedback.
                             output_schema:
-                              type: object
-                              properties:
-                                result:
-                                  type: string
-                                  enum: [shipping, quality, praise, other]
-                                  description: The feedback category
-                                reason:
-                                  type: string
-                                  description: Short reason for the classification
-                              required: [result, reason]
+                              type: string
+                              description: >
+                                praise — positive, happy, or satisfied feedback
+                                about anything (fast shipping, great product, etc.).
+                                shipping — complaints or problems with delivery
+                                timing, tracking, lost or damaged packages.
+                                quality — complaints about product defects, wrong
+                                items, poor materials, or durability.
+                                other — neutral or negative feedback that doesn't
+                                fit shipping or quality.
+                              enum: [praise, shipping, quality, other]
                             # Layout-authored context, appended AFTER the app's
                             # context-provider items. Priority is an int where LOWER is
                             # more important; the highest-valued items are dropped first

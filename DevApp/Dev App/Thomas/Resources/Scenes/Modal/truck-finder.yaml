@@ -1,0 +1,1260 @@
+# U-Haul demo: AI move classifier
+#
+# Step 1 — free text: AI classifies the move description directly into a
+#   truck size: cargo_van | 10ft | 15ft | 20ft | 26ft (runs once)
+#
+# Step 2 — choice list: radio_input_controller lets the user confirm or
+#   override the AI recommendation. A "Recommended" badge appears on the
+#   AI-picked option when ai.status == complete.
+#
+# Result pages: one per truck size + a fallback.
+# state_actions sets flow_complete on entry; pager_completions submits the form.
+#
+# $ai.current.text_input_inference gates a soft notice on step 1.
+---
+version: 1
+presentation:
+  type: modal
+  dismiss_on_touch_outside: true
+  ios:
+    keyboard_avoidance: over_the_top
+  default_placement:
+    size:
+      width: 92%
+      height: auto
+      max_width: 480
+    position: { horizontal: center, vertical: center }
+    shade_color: { default: { hex: "#000000", alpha: 0.5 } }
+    border: { radius: 16 }
+    background_color: { default: { hex: "#FFFFFF", alpha: 1 } }
+view:
+  type: state_controller
+  view:
+    type: form_controller
+    identifier: move_form
+    response_type: user_feedback
+    validation_mode:
+      type: on_demand
+    view:
+      type: pager_controller
+      identifier: move-pager
+      branching:
+        pager_completions:
+          - when_state_matches:
+              scope: [flow_complete]
+              value: { equals: true }
+      view:
+        type: linear_layout
+        direction: vertical
+        items:
+          - size: { width: 100%, height: 540 }
+            view:
+              type: pager
+              disable_swipe: false
+              items:
+
+                # ── Page 1: describe your move ───────────────────────────
+                - identifier: page-input
+                  branching:
+                    next_page:
+                      selectors:
+                        - page_id: page-selection
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 24, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Find your truck"
+                          text_appearance:
+                            font_size: 22
+                            styles: [bold]
+                            color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                            alignment: start
+
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Describe what you're moving and we'll recommend the right size."
+                          text_appearance:
+                            font_size: 15
+                            color: { default: { hex: "#666666", alpha: 1 } }
+                            alignment: start
+
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "AI recommendations unavailable — you can still pick a size on the next screen."
+                          text_appearance:
+                            font_size: 13
+                            color: { default: { hex: "#999999", alpha: 1 } }
+                            alignment: start
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              scope: [$ai, current, text_input_inference]
+                              value: { equals: false }
+
+                      - size: { width: 100%, height: 120 }
+                        margin: { top: 16, start: 20, end: 20 }
+                        view:
+                          type: text_input
+                          identifier: move_description
+                          required: true
+                          place_holder: "e.g. 2-bedroom apartment, mostly furniture and boxes"
+                          text_appearance:
+                            font_size: 15
+                            alignment: start
+                            color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                          border:
+                            stroke_width: 1
+                            stroke_color: { default: { hex: "#CCCCCC", alpha: 1 } }
+                            radius: 8
+                          background_color: { default: { hex: "#F9F9F9", alpha: 1 } }
+                          input_type: text_multiline
+                          count:
+                            min: 5
+                          ai_inference:
+                            prompt: >
+                              Based on the move description, recommend the most appropriate
+                              U-Haul vehicle. pickup_truck: outdoor, garden, or landscape
+                              materials — gravel, mulch, lumber, soil, patio furniture, ATVs,
+                              or anything best hauled open-bed. cargo_van: small indoor loads,
+                              single furniture pieces, or studio apartments. 10ft: studio or
+                              1-bedroom apartment. 15ft: 1-2 bedrooms. 20ft: 2-3 bedrooms.
+                              26ft: 4+ bedrooms or a large house. Return only the identifier.
+                            output_schema:
+                              type: string
+                              description: >
+                                pickup_truck — open-bed hauling: gravel, mulch, lumber, soil,
+                                landscaping, ATVs, outdoor/garden materials.
+                                cargo_van — small enclosed loads under ~200 cu ft, single items,
+                                studio apartments.
+                                10ft — studio or 1-bedroom apartment.
+                                15ft — 1 to 2 bedrooms.
+                                20ft — 2 to 3 bedrooms.
+                                26ft — 4 or more bedrooms or a large home.
+                              enum: [pickup_truck, cargo_van, 10ft, 15ft, 20ft, 26ft]
+                            subject_hints:
+                              surface: uhaul_move_classifier
+
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 20, start: 20, end: 20 }
+                        view:
+                          type: label_button
+                          identifier: input_next
+                          button_click: [form_validate, pager_next]
+                          enabled: [form_validation]
+                          background_color: { default: { hex: "#F26722", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            text: "See Recommendations"
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                              alignment: center
+                            view_overrides:
+                              icon_start:
+                                - value:
+                                    type: floating
+                                    space: 8
+                                    icon:
+                                      type: icon
+                                      icon: progress_spinner
+                                      color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                                      scale: 1
+                                  when_state_matches:
+                                    scope: [$forms, current, status, type]
+                                    value: { equals: validating }
+                              text:
+                                - value: "Classifying..."
+                                  when_state_matches:
+                                    scope: [$forms, current, status, type]
+                                    value: { equals: validating }
+
+                # ── Page 2: confirm truck size ────────────────────────────
+                - identifier: page-selection
+                  branching:
+                    next_page:
+                      selectors:
+                        - page_id: page-pickup-truck
+                          when_state_matches:
+                            scope: [$forms, current, data, children, truck_size]
+                            key: value
+                            value: { equals: pickup_truck }
+                        - page_id: page-cargo-van
+                          when_state_matches:
+                            scope: [$forms, current, data, children, truck_size]
+                            key: value
+                            value: { equals: cargo_van }
+                        - page_id: page-10ft
+                          when_state_matches:
+                            scope: [$forms, current, data, children, truck_size]
+                            key: value
+                            value: { equals: 10ft }
+                        - page_id: page-15ft
+                          when_state_matches:
+                            scope: [$forms, current, data, children, truck_size]
+                            key: value
+                            value: { equals: 15ft }
+                        - page_id: page-20ft
+                          when_state_matches:
+                            scope: [$forms, current, data, children, truck_size]
+                            key: value
+                            value: { equals: 20ft }
+                        - page_id: page-26ft
+                          when_state_matches:
+                            scope: [$forms, current, data, children, truck_size]
+                            key: value
+                            value: { equals: 26ft }
+                        - page_id: page-fallback
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 20, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Choose your truck"
+                          text_appearance:
+                            font_size: 20
+                            styles: [bold]
+                            color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                            alignment: start
+
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 4, start: 20, end: 20, bottom: 12 }
+                        view:
+                          type: label
+                          text: "We've highlighted our recommendation based on your description."
+                          text_appearance:
+                            font_size: 14
+                            color: { default: { hex: "#666666", alpha: 1 } }
+                            alignment: start
+                          visibility:
+                            default: false
+                            invert_when_state_matches:
+                              scope: [$forms, current, data, children, move_description, status, ai, status]
+                              value: { equals: complete }
+
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 4, start: 20, end: 20, bottom: 12 }
+                        view:
+                          type: label
+                          text: "Select the size that fits your needs."
+                          text_appearance:
+                            font_size: 14
+                            color: { default: { hex: "#666666", alpha: 1 } }
+                            alignment: start
+                          visibility:
+                            default: true
+                            invert_when_state_matches:
+                              scope: [$forms, current, data, children, move_description, status, ai, status]
+                              value: { equals: complete }
+
+                      - size: { width: 100%, height: auto }
+                        margin: { start: 20, end: 20 }
+                        view:
+                          type: radio_input_controller
+                          identifier: truck_size
+                          required: true
+                          view:
+                            type: linear_layout
+                            direction: vertical
+                            items:
+                              - size: { width: 100%, height: auto }
+                                margin: { bottom: 6 }
+                                view: &truck_row_toggle
+                                  type: radio_input_toggle_layout
+                                  identifier: radio_toggle_pickup
+                                  reporting_value: pickup_truck
+                                  on_toggle_on:
+                                    state_actions:
+                                      - { type: set, key: selected_truck, value: pickup_truck }
+                                  on_toggle_off:
+                                    state_actions: []
+                                  view:
+                                    type: linear_layout
+                                    direction: horizontal
+                                    border:
+                                      stroke_width: 1
+                                      stroke_color: { default: { hex: "#DDDDDD", alpha: 1 } }
+                                      radius: 10
+                                    view_overrides:
+                                      background_color:
+                                        - when_state_matches:
+                                            key: selected_truck
+                                            value: { equals: pickup_truck }
+                                          value: { default: { hex: "#FFF3EC", alpha: 1 } }
+                                    items:
+                                      - size: { width: 100%, height: auto }
+                                        margin: { top: 12, bottom: 12, start: 16, end: 12 }
+                                        view:
+                                          type: linear_layout
+                                          direction: horizontal
+                                          items:
+                                            - size: { width: 20, height: 20 }
+                                              margin: { end: 12 }
+                                              view:
+                                                type: container
+                                                items:
+                                                  - size: { width: 20, height: 20 }
+                                                    position: { horizontal: center, vertical: center }
+                                                    view:
+                                                      type: stack_image_view
+                                                      identifier: ring_pickup
+                                                      items:
+                                                        - type: shape
+                                                          shape:
+                                                            type: ellipse
+                                                            aspect_ratio: 1
+                                                            color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                                                            border:
+                                                              stroke_width: 2
+                                                              stroke_color: { default: { hex: "#CCCCCC", alpha: 1 } }
+                                                            scale: 1
+                                                  - size: { width: 10, height: 10 }
+                                                    position: { horizontal: center, vertical: center }
+                                                    view:
+                                                      type: stack_image_view
+                                                      identifier: dot_pickup
+                                                      visibility:
+                                                        default: false
+                                                        invert_when_state_matches:
+                                                          key: selected_truck
+                                                          value: { equals: pickup_truck }
+                                                      items:
+                                                        - type: shape
+                                                          shape:
+                                                            type: ellipse
+                                                            aspect_ratio: 1
+                                                            color: { default: { hex: "#F26722", alpha: 1 } }
+                                                            scale: 1
+                                            - size: { width: 100%, height: auto }
+                                              view:
+                                                type: label
+                                                text: "Pickup Truck"
+                                                text_appearance:
+                                                  font_size: 14
+                                                  styles: [bold]
+                                                  color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                                                  alignment: start
+                                            - size: { width: auto, height: auto }
+                                              margin: { start: 6 }
+                                              view:
+                                                type: label
+                                                text: " Recommended "
+                                                text_appearance:
+                                                  font_size: 11
+                                                  styles: [bold]
+                                                  color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                                                  alignment: center
+                                                background_color: { default: { hex: "#F26722", alpha: 1 } }
+                                                border: { radius: 4 }
+                                                visibility:
+                                                  default: false
+                                                  invert_when_state_matches:
+                                                    and:
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, status]
+                                                        value: { equals: complete }
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, result]
+                                                        value: { equals: pickup_truck }
+
+                              - size: { width: 100%, height: auto }
+                                margin: { bottom: 6 }
+                                view:
+                                  type: radio_input_toggle_layout
+                                  identifier: radio_toggle_cargo_van
+                                  reporting_value: cargo_van
+                                  on_toggle_on:
+                                    state_actions:
+                                      - { type: set, key: selected_truck, value: cargo_van }
+                                  on_toggle_off:
+                                    state_actions: []
+                                  view:
+                                    type: linear_layout
+                                    direction: horizontal
+                                    border:
+                                      stroke_width: 1
+                                      stroke_color: { default: { hex: "#DDDDDD", alpha: 1 } }
+                                      radius: 10
+                                    view_overrides:
+                                      background_color:
+                                        - when_state_matches:
+                                            key: selected_truck
+                                            value: { equals: cargo_van }
+                                          value: { default: { hex: "#FFF3EC", alpha: 1 } }
+                                    items:
+                                      - size: { width: 100%, height: auto }
+                                        margin: { top: 12, bottom: 12, start: 16, end: 12 }
+                                        view:
+                                          type: linear_layout
+                                          direction: horizontal
+                                          items:
+                                            - size: { width: 20, height: 20 }
+                                              margin: { end: 12 }
+                                              view:
+                                                type: container
+                                                items:
+                                                  - size: { width: 20, height: 20 }
+                                                    position: { horizontal: center, vertical: center }
+                                                    view:
+                                                      type: stack_image_view
+                                                      identifier: ring_cargo_van
+                                                      items:
+                                                        - type: shape
+                                                          shape:
+                                                            type: ellipse
+                                                            aspect_ratio: 1
+                                                            color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                                                            border:
+                                                              stroke_width: 2
+                                                              stroke_color: { default: { hex: "#CCCCCC", alpha: 1 } }
+                                                            scale: 1
+                                                  - size: { width: 10, height: 10 }
+                                                    position: { horizontal: center, vertical: center }
+                                                    view:
+                                                      type: stack_image_view
+                                                      identifier: dot_cargo_van
+                                                      visibility:
+                                                        default: false
+                                                        invert_when_state_matches:
+                                                          key: selected_truck
+                                                          value: { equals: cargo_van }
+                                                      items:
+                                                        - type: shape
+                                                          shape:
+                                                            type: ellipse
+                                                            aspect_ratio: 1
+                                                            color: { default: { hex: "#F26722", alpha: 1 } }
+                                                            scale: 1
+                                            - size: { width: 100%, height: auto }
+                                              view:
+                                                type: label
+                                                text: "Cargo Van"
+                                                text_appearance:
+                                                  font_size: 14
+                                                  styles: [bold]
+                                                  color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                                                  alignment: start
+                                            - size: { width: auto, height: auto }
+                                              margin: { start: 6 }
+                                              view:
+                                                type: label
+                                                text: " Recommended "
+                                                text_appearance:
+                                                  font_size: 11
+                                                  styles: [bold]
+                                                  color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                                                  alignment: center
+                                                background_color: { default: { hex: "#F26722", alpha: 1 } }
+                                                border: { radius: 4 }
+                                                visibility:
+                                                  default: false
+                                                  invert_when_state_matches:
+                                                    and:
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, status]
+                                                        value: { equals: complete }
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, result]
+                                                        value: { equals: cargo_van }
+
+                              - size: { width: 100%, height: auto }
+                                margin: { bottom: 6 }
+                                view:
+                                  type: radio_input_toggle_layout
+                                  identifier: radio_toggle_10ft
+                                  reporting_value: 10ft
+                                  on_toggle_on:
+                                    state_actions:
+                                      - { type: set, key: selected_truck, value: 10ft }
+                                  on_toggle_off:
+                                    state_actions: []
+                                  view:
+                                    type: linear_layout
+                                    direction: horizontal
+                                    border:
+                                      stroke_width: 1
+                                      stroke_color: { default: { hex: "#DDDDDD", alpha: 1 } }
+                                      radius: 10
+                                    view_overrides:
+                                      background_color:
+                                        - when_state_matches:
+                                            key: selected_truck
+                                            value: { equals: 10ft }
+                                          value: { default: { hex: "#FFF3EC", alpha: 1 } }
+                                    items:
+                                      - size: { width: 100%, height: auto }
+                                        margin: { top: 12, bottom: 12, start: 16, end: 12 }
+                                        view:
+                                          type: linear_layout
+                                          direction: horizontal
+                                          items:
+                                            - size: { width: 20, height: 20 }
+                                              margin: { end: 12 }
+                                              view:
+                                                type: container
+                                                items:
+                                                  - size: { width: 20, height: 20 }
+                                                    position: { horizontal: center, vertical: center }
+                                                    view:
+                                                      type: stack_image_view
+                                                      identifier: ring_10ft
+                                                      items:
+                                                        - type: shape
+                                                          shape:
+                                                            type: ellipse
+                                                            aspect_ratio: 1
+                                                            color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                                                            border:
+                                                              stroke_width: 2
+                                                              stroke_color: { default: { hex: "#CCCCCC", alpha: 1 } }
+                                                            scale: 1
+                                                  - size: { width: 10, height: 10 }
+                                                    position: { horizontal: center, vertical: center }
+                                                    view:
+                                                      type: stack_image_view
+                                                      identifier: dot_10ft
+                                                      visibility:
+                                                        default: false
+                                                        invert_when_state_matches:
+                                                          key: selected_truck
+                                                          value: { equals: 10ft }
+                                                      items:
+                                                        - type: shape
+                                                          shape:
+                                                            type: ellipse
+                                                            aspect_ratio: 1
+                                                            color: { default: { hex: "#F26722", alpha: 1 } }
+                                                            scale: 1
+                                            - size: { width: 100%, height: auto }
+                                              view:
+                                                type: label
+                                                text: "10 ft Truck"
+                                                text_appearance:
+                                                  font_size: 14
+                                                  styles: [bold]
+                                                  color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                                                  alignment: start
+                                            - size: { width: auto, height: auto }
+                                              margin: { start: 6 }
+                                              view:
+                                                type: label
+                                                text: " Recommended "
+                                                text_appearance:
+                                                  font_size: 11
+                                                  styles: [bold]
+                                                  color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                                                  alignment: center
+                                                background_color: { default: { hex: "#F26722", alpha: 1 } }
+                                                border: { radius: 4 }
+                                                visibility:
+                                                  default: false
+                                                  invert_when_state_matches:
+                                                    and:
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, status]
+                                                        value: { equals: complete }
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, result]
+                                                        value: { equals: 10ft }
+
+                              - size: { width: 100%, height: auto }
+                                margin: { bottom: 6 }
+                                view:
+                                  type: radio_input_toggle_layout
+                                  identifier: radio_toggle_15ft
+                                  reporting_value: 15ft
+                                  on_toggle_on:
+                                    state_actions:
+                                      - { type: set, key: selected_truck, value: 15ft }
+                                  on_toggle_off:
+                                    state_actions: []
+                                  view:
+                                    type: linear_layout
+                                    direction: horizontal
+                                    border:
+                                      stroke_width: 1
+                                      stroke_color: { default: { hex: "#DDDDDD", alpha: 1 } }
+                                      radius: 10
+                                    view_overrides:
+                                      background_color:
+                                        - when_state_matches:
+                                            key: selected_truck
+                                            value: { equals: 15ft }
+                                          value: { default: { hex: "#FFF3EC", alpha: 1 } }
+                                    items:
+                                      - size: { width: 100%, height: auto }
+                                        margin: { top: 12, bottom: 12, start: 16, end: 12 }
+                                        view:
+                                          type: linear_layout
+                                          direction: horizontal
+                                          items:
+                                            - size: { width: 20, height: 20 }
+                                              margin: { end: 12 }
+                                              view:
+                                                type: container
+                                                items:
+                                                  - size: { width: 20, height: 20 }
+                                                    position: { horizontal: center, vertical: center }
+                                                    view:
+                                                      type: stack_image_view
+                                                      identifier: ring_15ft
+                                                      items:
+                                                        - type: shape
+                                                          shape:
+                                                            type: ellipse
+                                                            aspect_ratio: 1
+                                                            color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                                                            border:
+                                                              stroke_width: 2
+                                                              stroke_color: { default: { hex: "#CCCCCC", alpha: 1 } }
+                                                            scale: 1
+                                                  - size: { width: 10, height: 10 }
+                                                    position: { horizontal: center, vertical: center }
+                                                    view:
+                                                      type: stack_image_view
+                                                      identifier: dot_15ft
+                                                      visibility:
+                                                        default: false
+                                                        invert_when_state_matches:
+                                                          key: selected_truck
+                                                          value: { equals: 15ft }
+                                                      items:
+                                                        - type: shape
+                                                          shape:
+                                                            type: ellipse
+                                                            aspect_ratio: 1
+                                                            color: { default: { hex: "#F26722", alpha: 1 } }
+                                                            scale: 1
+                                            - size: { width: 100%, height: auto }
+                                              view:
+                                                type: label
+                                                text: "15 ft Truck"
+                                                text_appearance:
+                                                  font_size: 14
+                                                  styles: [bold]
+                                                  color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                                                  alignment: start
+                                            - size: { width: auto, height: auto }
+                                              margin: { start: 6 }
+                                              view:
+                                                type: label
+                                                text: " Recommended "
+                                                text_appearance:
+                                                  font_size: 11
+                                                  styles: [bold]
+                                                  color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                                                  alignment: center
+                                                background_color: { default: { hex: "#F26722", alpha: 1 } }
+                                                border: { radius: 4 }
+                                                visibility:
+                                                  default: false
+                                                  invert_when_state_matches:
+                                                    and:
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, status]
+                                                        value: { equals: complete }
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, result]
+                                                        value: { equals: 15ft }
+
+                              - size: { width: 100%, height: auto }
+                                margin: { bottom: 6 }
+                                view:
+                                  type: radio_input_toggle_layout
+                                  identifier: radio_toggle_20ft
+                                  reporting_value: 20ft
+                                  on_toggle_on:
+                                    state_actions:
+                                      - { type: set, key: selected_truck, value: 20ft }
+                                  on_toggle_off:
+                                    state_actions: []
+                                  view:
+                                    type: linear_layout
+                                    direction: horizontal
+                                    border:
+                                      stroke_width: 1
+                                      stroke_color: { default: { hex: "#DDDDDD", alpha: 1 } }
+                                      radius: 10
+                                    view_overrides:
+                                      background_color:
+                                        - when_state_matches:
+                                            key: selected_truck
+                                            value: { equals: 20ft }
+                                          value: { default: { hex: "#FFF3EC", alpha: 1 } }
+                                    items:
+                                      - size: { width: 100%, height: auto }
+                                        margin: { top: 12, bottom: 12, start: 16, end: 12 }
+                                        view:
+                                          type: linear_layout
+                                          direction: horizontal
+                                          items:
+                                            - size: { width: 20, height: 20 }
+                                              margin: { end: 12 }
+                                              view:
+                                                type: container
+                                                items:
+                                                  - size: { width: 20, height: 20 }
+                                                    position: { horizontal: center, vertical: center }
+                                                    view:
+                                                      type: stack_image_view
+                                                      identifier: ring_20ft
+                                                      items:
+                                                        - type: shape
+                                                          shape:
+                                                            type: ellipse
+                                                            aspect_ratio: 1
+                                                            color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                                                            border:
+                                                              stroke_width: 2
+                                                              stroke_color: { default: { hex: "#CCCCCC", alpha: 1 } }
+                                                            scale: 1
+                                                  - size: { width: 10, height: 10 }
+                                                    position: { horizontal: center, vertical: center }
+                                                    view:
+                                                      type: stack_image_view
+                                                      identifier: dot_20ft
+                                                      visibility:
+                                                        default: false
+                                                        invert_when_state_matches:
+                                                          key: selected_truck
+                                                          value: { equals: 20ft }
+                                                      items:
+                                                        - type: shape
+                                                          shape:
+                                                            type: ellipse
+                                                            aspect_ratio: 1
+                                                            color: { default: { hex: "#F26722", alpha: 1 } }
+                                                            scale: 1
+                                            - size: { width: 100%, height: auto }
+                                              view:
+                                                type: label
+                                                text: "20 ft Truck"
+                                                text_appearance:
+                                                  font_size: 14
+                                                  styles: [bold]
+                                                  color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                                                  alignment: start
+                                            - size: { width: auto, height: auto }
+                                              margin: { start: 6 }
+                                              view:
+                                                type: label
+                                                text: " Recommended "
+                                                text_appearance:
+                                                  font_size: 11
+                                                  styles: [bold]
+                                                  color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                                                  alignment: center
+                                                background_color: { default: { hex: "#F26722", alpha: 1 } }
+                                                border: { radius: 4 }
+                                                visibility:
+                                                  default: false
+                                                  invert_when_state_matches:
+                                                    and:
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, status]
+                                                        value: { equals: complete }
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, result]
+                                                        value: { equals: 20ft }
+
+                              - size: { width: 100%, height: auto }
+                                view:
+                                  type: radio_input_toggle_layout
+                                  identifier: radio_toggle_26ft
+                                  reporting_value: 26ft
+                                  on_toggle_on:
+                                    state_actions:
+                                      - { type: set, key: selected_truck, value: 26ft }
+                                  on_toggle_off:
+                                    state_actions: []
+                                  view:
+                                    type: linear_layout
+                                    direction: horizontal
+                                    border:
+                                      stroke_width: 1
+                                      stroke_color: { default: { hex: "#DDDDDD", alpha: 1 } }
+                                      radius: 10
+                                    view_overrides:
+                                      background_color:
+                                        - when_state_matches:
+                                            key: selected_truck
+                                            value: { equals: 26ft }
+                                          value: { default: { hex: "#FFF3EC", alpha: 1 } }
+                                    items:
+                                      - size: { width: 100%, height: auto }
+                                        margin: { top: 12, bottom: 12, start: 16, end: 12 }
+                                        view:
+                                          type: linear_layout
+                                          direction: horizontal
+                                          items:
+                                            - size: { width: 20, height: 20 }
+                                              margin: { end: 12 }
+                                              view:
+                                                type: container
+                                                items:
+                                                  - size: { width: 20, height: 20 }
+                                                    position: { horizontal: center, vertical: center }
+                                                    view:
+                                                      type: stack_image_view
+                                                      identifier: ring_26ft
+                                                      items:
+                                                        - type: shape
+                                                          shape:
+                                                            type: ellipse
+                                                            aspect_ratio: 1
+                                                            color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                                                            border:
+                                                              stroke_width: 2
+                                                              stroke_color: { default: { hex: "#CCCCCC", alpha: 1 } }
+                                                            scale: 1
+                                                  - size: { width: 10, height: 10 }
+                                                    position: { horizontal: center, vertical: center }
+                                                    view:
+                                                      type: stack_image_view
+                                                      identifier: dot_26ft
+                                                      visibility:
+                                                        default: false
+                                                        invert_when_state_matches:
+                                                          key: selected_truck
+                                                          value: { equals: 26ft }
+                                                      items:
+                                                        - type: shape
+                                                          shape:
+                                                            type: ellipse
+                                                            aspect_ratio: 1
+                                                            color: { default: { hex: "#F26722", alpha: 1 } }
+                                                            scale: 1
+                                            - size: { width: 100%, height: auto }
+                                              view:
+                                                type: label
+                                                text: "26 ft Truck"
+                                                text_appearance:
+                                                  font_size: 14
+                                                  styles: [bold]
+                                                  color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                                                  alignment: start
+                                            - size: { width: auto, height: auto }
+                                              margin: { start: 6 }
+                                              view:
+                                                type: label
+                                                text: " Recommended "
+                                                text_appearance:
+                                                  font_size: 11
+                                                  styles: [bold]
+                                                  color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                                                  alignment: center
+                                                background_color: { default: { hex: "#F26722", alpha: 1 } }
+                                                border: { radius: 4 }
+                                                visibility:
+                                                  default: false
+                                                  invert_when_state_matches:
+                                                    and:
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, status]
+                                                        value: { equals: complete }
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, result]
+                                                        value: { equals: 26ft }
+
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 12, start: 20, end: 20 }
+                        view:
+                          type: label_button
+                          identifier: selection_next
+                          button_click: [form_validate, pager_next]
+                          enabled: [form_validation]
+                          background_color: { default: { hex: "#F26722", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            text: "Find My Truck"
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                              alignment: center
+
+                # ── Result pages ──────────────────────────────────────────
+                - identifier: page-pickup-truck
+                  state_actions:
+                    - { type: set, key: flow_complete, value: true }
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 48, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Pickup Truck"
+                          text_appearance:
+                            font_size: 22
+                            styles: [bold]
+                            color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                            alignment: center
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Perfect for gravel, mulch, lumber, landscaping materials, and anything else that hauls better open-bed."
+                          text_appearance:
+                            font_size: 15
+                            color: { default: { hex: "#555555", alpha: 1 } }
+                            alignment: center
+                      - size: { width: 100%, height: 80 }
+                        margin: { top: 20, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "[ Placeholder: custom inventory selector ]"
+                          text_appearance:
+                            font_size: 13
+                            color: { default: { hex: "#AAAAAA", alpha: 1 } }
+                            alignment: center
+                          border:
+                            stroke_width: 1
+                            stroke_color: { default: { hex: "#DDDDDD", alpha: 1 } }
+                            radius: 8
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 12, start: 20, end: 20 }
+                        view:
+                          type: label_button
+                          identifier: reserve_pickup_truck
+                          button_click: [dismiss]
+                          background_color: { default: { hex: "#F26722", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            text: "Reserve Now"
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                              alignment: center
+
+                - identifier: page-cargo-van
+                  state_actions:
+                    - { type: set, key: flow_complete, value: true }
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 48, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Cargo Van"
+                          text_appearance:
+                            font_size: 22
+                            styles: [bold]
+                            color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                            alignment: center
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "The right pick for small loads, single items, or a quick trip across town."
+                          text_appearance:
+                            font_size: 15
+                            color: { default: { hex: "#555555", alpha: 1 } }
+                            alignment: center
+                      - size: { width: 100%, height: 80 }
+                        margin: { top: 20, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "[ Placeholder: custom inventory selector ]"
+                          text_appearance:
+                            font_size: 13
+                            color: { default: { hex: "#AAAAAA", alpha: 1 } }
+                            alignment: center
+                          border:
+                            stroke_width: 1
+                            stroke_color: { default: { hex: "#DDDDDD", alpha: 1 } }
+                            radius: 8
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 12, start: 20, end: 20 }
+                        view:
+                          type: label_button
+                          identifier: reserve_cargo_van
+                          button_click: [dismiss]
+                          background_color: { default: { hex: "#F26722", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            text: "Reserve Now"
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                              alignment: center
+
+                - identifier: page-10ft
+                  state_actions:
+                    - { type: set, key: flow_complete, value: true }
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 48, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "10 ft Truck"
+                          text_appearance:
+                            font_size: 22
+                            styles: [bold]
+                            color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                            alignment: center
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "A studio or 1-bedroom apartment fits comfortably. Easiest to drive of the box trucks."
+                          text_appearance:
+                            font_size: 15
+                            color: { default: { hex: "#555555", alpha: 1 } }
+                            alignment: center
+                      - size: { width: 100%, height: 80 }
+                        margin: { top: 20, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "[ Placeholder: custom inventory selector ]"
+                          text_appearance:
+                            font_size: 13
+                            color: { default: { hex: "#AAAAAA", alpha: 1 } }
+                            alignment: center
+                          border:
+                            stroke_width: 1
+                            stroke_color: { default: { hex: "#DDDDDD", alpha: 1 } }
+                            radius: 8
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 12, start: 20, end: 20 }
+                        view:
+                          type: label_button
+                          identifier: reserve_10ft
+                          button_click: [dismiss]
+                          background_color: { default: { hex: "#F26722", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            text: "Reserve Now"
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                              alignment: center
+
+                - identifier: page-15ft
+                  state_actions:
+                    - { type: set, key: flow_complete, value: true }
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 48, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "15 ft Truck"
+                          text_appearance:
+                            font_size: 22
+                            styles: [bold]
+                            color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                            alignment: center
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Handles a full 1-bedroom or a tight 2-bedroom. Our most popular size."
+                          text_appearance:
+                            font_size: 15
+                            color: { default: { hex: "#555555", alpha: 1 } }
+                            alignment: center
+                      - size: { width: 100%, height: 80 }
+                        margin: { top: 20, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "[ Placeholder: custom inventory selector ]"
+                          text_appearance:
+                            font_size: 13
+                            color: { default: { hex: "#AAAAAA", alpha: 1 } }
+                            alignment: center
+                          border:
+                            stroke_width: 1
+                            stroke_color: { default: { hex: "#DDDDDD", alpha: 1 } }
+                            radius: 8
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 12, start: 20, end: 20 }
+                        view:
+                          type: label_button
+                          identifier: reserve_15ft
+                          button_click: [dismiss]
+                          background_color: { default: { hex: "#F26722", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            text: "Reserve Now"
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                              alignment: center
+
+                - identifier: page-20ft
+                  state_actions:
+                    - { type: set, key: flow_complete, value: true }
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 48, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "20 ft Truck"
+                          text_appearance:
+                            font_size: 22
+                            styles: [bold]
+                            color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                            alignment: center
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Fits a 2-3 bedroom home in a single trip. Includes a loading ramp."
+                          text_appearance:
+                            font_size: 15
+                            color: { default: { hex: "#555555", alpha: 1 } }
+                            alignment: center
+                      - size: { width: 100%, height: 80 }
+                        margin: { top: 20, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "[ Placeholder: custom inventory selector ]"
+                          text_appearance:
+                            font_size: 13
+                            color: { default: { hex: "#AAAAAA", alpha: 1 } }
+                            alignment: center
+                          border:
+                            stroke_width: 1
+                            stroke_color: { default: { hex: "#DDDDDD", alpha: 1 } }
+                            radius: 8
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 12, start: 20, end: 20 }
+                        view:
+                          type: label_button
+                          identifier: reserve_20ft
+                          button_click: [dismiss]
+                          background_color: { default: { hex: "#F26722", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            text: "Reserve Now"
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                              alignment: center
+
+                - identifier: page-26ft
+                  state_actions:
+                    - { type: set, key: flow_complete, value: true }
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 48, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "26 ft Truck"
+                          text_appearance:
+                            font_size: 22
+                            styles: [bold]
+                            color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                            alignment: center
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Our largest truck. Moves a 4+ bedroom home or full office in one go."
+                          text_appearance:
+                            font_size: 15
+                            color: { default: { hex: "#555555", alpha: 1 } }
+                            alignment: center
+                      - size: { width: 100%, height: 80 }
+                        margin: { top: 20, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "[ Placeholder: custom inventory selector ]"
+                          text_appearance:
+                            font_size: 13
+                            color: { default: { hex: "#AAAAAA", alpha: 1 } }
+                            alignment: center
+                          border:
+                            stroke_width: 1
+                            stroke_color: { default: { hex: "#DDDDDD", alpha: 1 } }
+                            radius: 8
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 12, start: 20, end: 20 }
+                        view:
+                          type: label_button
+                          identifier: reserve_26ft
+                          button_click: [dismiss]
+                          background_color: { default: { hex: "#F26722", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            text: "Reserve Now"
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                              alignment: center
+
+                - identifier: page-fallback
+                  state_actions:
+                    - { type: set, key: flow_complete, value: true }
+                  view:
+                    type: linear_layout
+                    direction: vertical
+                    items:
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 48, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "We'll find the right fit"
+                          text_appearance:
+                            font_size: 22
+                            styles: [bold]
+                            color: { default: { hex: "#1A1A1A", alpha: 1 } }
+                            alignment: center
+                      - size: { width: 100%, height: auto }
+                        margin: { top: 8, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "Our team can help you choose the right truck. Stop by any location or call us."
+                          text_appearance:
+                            font_size: 15
+                            color: { default: { hex: "#555555", alpha: 1 } }
+                            alignment: center
+                      - size: { width: 100%, height: 80 }
+                        margin: { top: 20, start: 20, end: 20 }
+                        view:
+                          type: label
+                          text: "[ Placeholder: custom inventory selector ]"
+                          text_appearance:
+                            font_size: 13
+                            color: { default: { hex: "#AAAAAA", alpha: 1 } }
+                            alignment: center
+                          border:
+                            stroke_width: 1
+                            stroke_color: { default: { hex: "#DDDDDD", alpha: 1 } }
+                            radius: 8
+
+                      - size: { width: 100%, height: 48 }
+                        margin: { top: 16, start: 20, end: 20 }
+                        view:
+                          type: label_button
+                          identifier: fallback_dismiss
+                          button_click: [dismiss]
+                          background_color: { default: { hex: "#F26722", alpha: 1 } }
+                          border: { radius: 8 }
+                          label:
+                            text: "Got It"
+                            text_appearance:
+                              font_size: 16
+                              styles: [bold]
+                              color: { default: { hex: "#FFFFFF", alpha: 1 } }
+                              alignment: center
