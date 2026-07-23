@@ -413,13 +413,13 @@ struct AirshipAIContextProviderTests {
     }
 
     @Test
-    func setProviderRegistersResolvesAndClears() throws {
+    func setContextProviderRegistersResolvesAndClears() throws {
         let manager = AirshipAI.DefaultManager()
-        defer { manager.setProvider(nil, for: .testUsage) }
+        defer { manager.setContextProvider(nil, for: .testUsage) }
 
         let provider = StubProvider()
-        manager.setProvider(provider, for: .testUsage)
-        manager.setProvider(nil, for: .testUsage)
+        manager.setContextProvider(provider, for: .testUsage)
+        manager.setContextProvider(nil, for: .testUsage)
     }
 }
 
@@ -665,7 +665,7 @@ struct AirshipAIEvaluatorTests {
     func managerUsesConfiguredModel() async throws {
         let model = MockAIModel(response: .success(["allow": false, "reason": "override"]))
         let manager = AirshipAI.DefaultManager()
-        manager.setModel(.custom(model))
+        manager.setModelResolver { _ in .custom(model) }
 
         let result = await manager.evaluate(TestEvaluation())
 
@@ -678,12 +678,12 @@ struct AirshipAIEvaluatorTests {
     func managerAppendsAdditionalContextAfterProviderContext() async {
         let model = MockAIModel()
         let manager = AirshipAI.DefaultManager()
-        manager.setModel(.custom(model))
-        manager.setProvider(
+        manager.setModelResolver { _ in .custom(model) }
+        manager.setContextProvider(
             ItemsProvider([.init(content: "provider", priority: 0)]),
             for: .testUsage
         )
-        defer { manager.setProvider(nil, for: .testUsage) }
+        defer { manager.setContextProvider(nil, for: .testUsage) }
 
         _ = await manager.evaluate(
             TestEvaluationWithContext(
@@ -695,29 +695,50 @@ struct AirshipAIEvaluatorTests {
     }
 }
 
-// MARK: - Manager availability stream
+// MARK: - Manager per-usage model resolution
 
 @MainActor
-struct AirshipAIManagerAvailabilityTests {
+struct AirshipAIManagerModelTests {
 
     @Test
-    func availabilityUpdatesEmitsCurrentValueFirst() async {
+    func modelReturnsNilWhenNoneConfigured() {
         let manager = AirshipAI.DefaultManager()
-        manager.setModel(.custom(MockAIModel(availability: .available)))
-
-        var iterator = manager.availabilityUpdates.makeAsyncIterator()
-        #expect(await iterator.next() == .available)
+        #expect(manager.model(for: AirshipAI.Usage<Void>(rawValue: "test")) == nil)
     }
 
     @Test
-    func availabilityUpdatesEmitsOnModelChange() async {
-        // No model resolved yet -> unavailable.
+    func modelReturnsDefaultFactoryModelWhenNoOverride() {
+        let model = MockAIModel(availability: .available)
         let manager = AirshipAI.DefaultManager()
-        var iterator = manager.availabilityUpdates.makeAsyncIterator()
-        #expect(await iterator.next() == .unavailable(reason: .missingModel))
+        manager.registerModelFactory { model }
 
-        // Swapping in an available model pushes the change to live subscribers.
-        manager.setModel(.custom(MockAIModel(availability: .available)))
-        #expect(await iterator.next() == .available)
+        let resolved = manager.model(for: AirshipAI.Usage<Void>(rawValue: "any_usage"))
+        #expect(resolved?.availability == .available)
+    }
+
+    @Test
+    func overrideResolverWinsOverDefaultFactory() {
+        let defaultModel = MockAIModel(availability: .available)
+        let usageModel = MockAIModel(availability: .unavailable(reason: .notEnabled))
+        let manager = AirshipAI.DefaultManager()
+        manager.registerModelFactory { defaultModel }
+        manager.setModelResolver { usage in
+            usage == AirshipAI.Usage<Void>.testUsage ? .custom(usageModel) : .defaultModel
+        }
+
+        #expect(manager.model(for: .testUsage)?.availability == .unavailable(reason: .notEnabled))
+        #expect(manager.model(for: AirshipAI.Usage<Void>(rawValue: "other"))?.availability == .available)
+    }
+
+    @Test
+    func clearingOverrideResolverFallsBackToDefaultFactory() {
+        let defaultModel = MockAIModel(availability: .available)
+        let usageModel = MockAIModel(availability: .unavailable(reason: .notEnabled))
+        let manager = AirshipAI.DefaultManager()
+        manager.registerModelFactory { defaultModel }
+        manager.setModelResolver { _ in .custom(usageModel) }
+        manager.setModelResolver(nil)
+
+        #expect(manager.model(for: .testUsage)?.availability == .available)
     }
 }

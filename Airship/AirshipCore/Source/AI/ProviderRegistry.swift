@@ -18,7 +18,7 @@ extension AirshipAI {
         init() {}
 
         @MainActor
-        func setProvider<S: Sendable>(_ provider: (any ContextProvider<S>)?, for usage: Usage<S>) {
+        func setContextProvider<S: Sendable>(_ provider: (any ContextProvider<S>)?, for usage: Usage<S>) {
             if let provider {
                 providers[usage.rawValue] = AnyProvider { subject in
                     guard let typed = subject as? S else { return .empty }
@@ -30,7 +30,7 @@ extension AirshipAI {
         }
 
         @MainActor
-        func setDefaultProvider(_ provider: (any ContextProvider<Void>)?) {
+        func setDefaultContextProvider(_ provider: (any ContextProvider<Void>)?) {
             if let provider {
                 defaultProvider = AnyProvider { _ in
                     await provider.context(for: ())

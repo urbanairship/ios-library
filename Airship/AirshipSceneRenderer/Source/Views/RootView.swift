@@ -71,7 +71,7 @@ struct RootView<Content: View>: View {
         self._currentOrientation = State(initialValue: thomasEnvironment.windowScene.orientation)
         self._thomasState = StateObject(
             wrappedValue: ThomasState(
-                aiInferenceExecutor: thomasEnvironment.extensions.aiInferenceExecutor
+                sceneAIExecutor: thomasEnvironment.extensions.aiInferenceExecutor
             ) { [weak thomasEnvironment] state in
                 thomasEnvironment?.onStateChange(state)
             }

@@ -24,7 +24,7 @@ public protocol ThomasExtensions: Sendable {
 
     /// Runs on-device AI inference for text inputs. `nil` when no AI manager is available,
     /// in which case `ai_inference` configs are ignored.
-    var aiInferenceExecutor: (any ThomasAIInferenceExecutor)? { get }
+    var aiInferenceExecutor: (any SceneAIExecutor)? { get }
 
     /// Resolves localized strings (e.g. accessibility labels) from the host's resource bundle.
     var localizer: any ThomasLocalizer { get }

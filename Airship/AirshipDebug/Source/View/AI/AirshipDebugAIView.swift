@@ -19,23 +19,21 @@ struct AirshipDebugAIView: View {
 
     var body: some View {
         List {
-            Section("Model") {
-                CommonItems.infoRow(title: "Status", value: viewModel.availabilityLabel)
-                if case .unavailable(let reason) = viewModel.availability {
-                    CommonItems.infoRow(title: "Reason", value: reason.debugLabel)
-                }
-            }
-
-            Section("Registered Usages") {
+            Section("Usages") {
                 if viewModel.usageKeys.isEmpty {
                     Text("None registered")
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(viewModel.usageKeys, id: \.self) { key in
-                        CommonItems.navigationLink(
-                            title: key,
-                            route: .aiSub(.usage(key: key))
-                        )
+                        VStack(alignment: .leading, spacing: 2) {
+                            CommonItems.navigationLink(
+                                title: key,
+                                route: .aiSub(.usage(key: key))
+                            )
+                            Text(viewModel.availabilityLabel(for: key))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 }
             }
@@ -47,7 +45,7 @@ struct AirshipDebugAIView: View {
 
 extension AirshipDebugAIView {
     @MainActor final class ViewModel: ObservableObject {
-        @Published var availability: AirshipAI.Availability = .unavailable(reason: .missingModel)
+        @Published var availabilityByUsage: [String: AirshipAI.Availability] = [:]
 
         // Schemas live on evaluations now, so there is no runtime registry to
         // enumerate — this is the list of usages the debug UI knows how to drive.
@@ -57,21 +55,36 @@ extension AirshipDebugAIView {
         ]
 
         let manager: any AirshipAI.InternalManager
+        private var observationTasks: [String: Task<Void, Never>] = [:]
 
         init(manager: any AirshipAI.InternalManager) {
             self.manager = manager
         }
 
-        var availabilityLabel: String {
-            switch availability {
+        func availabilityLabel(for usageKey: String) -> String {
+            switch availabilityByUsage[usageKey] {
             case .available: return "Available"
-            case .unavailable: return "Unavailable"
+            case .unavailable(let reason): return "Unavailable — \(reason.debugLabel)"
+            case nil: return "No model"
             @unknown default: return "Unknown"
             }
         }
 
         func setup() {
-            availability = manager.availability
+            observe(usage: InAppMessageAISuppression.usage)
+            observe(usage: SceneTextInputInferenceSubject.inferenceUsage)
+        }
+
+        private func observe<S: Sendable>(usage: AirshipAI.Usage<S>) {
+            let key = usage.rawValue
+            observationTasks[key]?.cancel()
+            guard let stream = manager.model(for: usage)?.availabilityUpdates else { return }
+            observationTasks[key] = Task { [weak self] in
+                for await availability in stream {
+                    if Task.isCancelled { break }
+                    self?.availabilityByUsage[key] = availability
+                }
+            }
         }
     }
 }
@@ -363,14 +376,11 @@ private extension AirshipAI.Availability.Reason {
 }
 
 private final class PreviewAIManager: AirshipAI.InternalManager, @unchecked Sendable {
-    var availability: AirshipAI.Availability { .unavailable(reason: .missingModel) }
-    @MainActor
-    var availabilityUpdates: AsyncStream<AirshipAI.Availability> {
-        AsyncStream { $0.yield(.unavailable(reason: .missingModel)); $0.finish() }
-    }
-    func setProvider<S: Sendable>(_ provider: (any AirshipAI.ContextProvider<S>)?, for usage: AirshipAI.Usage<S>) {}
-    func setDefaultProvider(_ provider: (any AirshipAI.ContextProvider<Void>)?) {}
-    func setModel(_ selector: AirshipAI.ModelSelector) {}
+    var defaultModel: (any AirshipAI.Model)? { nil }
+    func model<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.Model)? { nil }
+    func setContextProvider<S: Sendable>(_ provider: (any AirshipAI.ContextProvider<S>)?, for usage: AirshipAI.Usage<S>) {}
+    func setDefaultContextProvider(_ provider: (any AirshipAI.ContextProvider<Void>)?) {}
+    func setModelResolver(_ resolver: (@MainActor @Sendable (AirshipAI.AnyUsage) -> AirshipAI.ModelSelector)?) {}
     func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E) async -> AirshipAI.Result<E.Output> { .skipped(reason: "preview") }
     func registerModelFactory(_ factory: @MainActor @Sendable @escaping () -> any AirshipAI.Model) {}
     func fetchContext<S: Sendable>(for usage: AirshipAI.Usage<S>, subject: S) async -> AirshipAI.Context { .empty }

@@ -17,7 +17,7 @@ public struct DefaultThomasExtensions: ThomasExtensions {
     public let audienceEditor: (any ThomasAudienceEditor) = DefaultThomasAudienceEditor()
     public let imageLoader: any ThomasImageLoader
     public let actionRunner: any ThomasActionRunner
-    public let aiInferenceExecutor: (any ThomasAIInferenceExecutor)?
+    public let aiInferenceExecutor: (any SceneAIExecutor)?
     public var inputValidator: (any AirshipInputValidation.Validator)? {
         Airship.isFlying ? Airship.inputValidator : nil
     }
@@ -44,7 +44,7 @@ public struct DefaultThomasExtensions: ThomasExtensions {
             nativeBridgeExtension: nativeBridgeExtension
         )
         self.aiInferenceExecutor = aiManager.map {
-            DefaultThomasAIInferenceExecutor(aiManager: $0)
+            DefaultSceneAIExecutor(aiManager: $0)
         }
     }
 #else
@@ -61,7 +61,7 @@ public struct DefaultThomasExtensions: ThomasExtensions {
         )
         self.actionRunner = actionRunner ?? DefaultThomasActionRunner()
         self.aiInferenceExecutor = aiManager.map {
-            DefaultThomasAIInferenceExecutor(aiManager: $0)
+            DefaultSceneAIExecutor(aiManager: $0)
         }
     }
 #endif

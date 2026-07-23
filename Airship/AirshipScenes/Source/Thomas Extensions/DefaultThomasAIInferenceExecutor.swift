@@ -14,7 +14,7 @@ import Foundation
 public struct SceneTextInputInferenceSubject: Sendable {
     /// The AI usage key for scene text-input inference.
     ///
-    /// Pass this to `Airship.ai.setProvider(_:for:)` when registering a context provider
+    /// Pass this to `Airship.ai.setContextProvider(_:for:)` when registering a context provider
     /// for scene text-input inference.
     public static let inferenceUsage = AirshipAI.Usage<SceneTextInputInferenceSubject>(
         rawValue: "scene_text_input"
@@ -36,25 +36,31 @@ public struct SceneTextInputInferenceSubject: Sendable {
 /// renderer via `DefaultThomasExtensions` when the host has an AI manager to give it.
 /// - Note: For internal use only. :nodoc:
 @_spi(AirshipInternal)
-public struct DefaultThomasAIInferenceExecutor: ThomasAIInferenceExecutor {
+public struct DefaultSceneAIExecutor: SceneAIExecutor {
 
     private let aiManager: any AirshipAI.InternalManager
+    private let usage: AirshipAI.Usage<SceneTextInputInferenceSubject>
+    private let resolvedModel: (any AirshipAI.Model)?
 
+    @MainActor
     public init(aiManager: any AirshipAI.InternalManager) {
         self.aiManager = aiManager
+        self.usage = SceneTextInputInferenceSubject.inferenceUsage
+        self.resolvedModel = aiManager.model(for: SceneTextInputInferenceSubject.inferenceUsage)
     }
 
     public var isAvailable: Bool {
-        aiManager.availability == .available
+        resolvedModel?.availability == .available
     }
 
     @MainActor
-    public var availabilityUpdates: AsyncStream<Bool> {
-        let stream = aiManager.availabilityUpdates
+    public var statusUpdates: AsyncStream<SceneAIStatus> {
+        let stream = resolvedModel?.availabilityUpdates
+            ?? AsyncStream { $0.yield(.unavailable(reason: .missingModel)); $0.finish() }
         return AsyncStream { continuation in
             let task = Task { @MainActor in
                 for await availability in stream {
-                    continuation.yield(availability == .available)
+                    continuation.yield(SceneAIStatus(textInputInference: availability == .available))
                 }
                 continuation.finish()
             }

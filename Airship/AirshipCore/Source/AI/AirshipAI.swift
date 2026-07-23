@@ -11,8 +11,24 @@ public enum AirshipAI {
     /// Identifies what an on-device model evaluation is for.
     ///
     /// `Subject` is a phantom type that ties a usage to its typed context provider,
-    /// giving compile-time guarantees at `setProvider` call sites.
+    /// giving compile-time guarantees at `setContextProvider` call sites.
     public struct Usage<Subject: Sendable>: RawRepresentable, Hashable, Sendable {
+        public let rawValue: String
+        public init(rawValue: String) { self.rawValue = rawValue }
+    }
+
+    // MARK: - AnyUsage
+
+    /// A type-erased usage key, used in the `setModelResolver` resolver so a single
+    /// closure can route any usage to a model without being generic over `Subject`.
+    ///
+    /// Compare directly against a typed `Usage<Subject>` with `==`:
+    ///
+    ///     Airship.ai.setModelResolver { usage in
+    ///         if usage == InAppMessageAISuppression.usage { return .custom(myModel) }
+    ///         return .defaultModel
+    ///     }
+    public struct AnyUsage: RawRepresentable, Hashable, Sendable {
         public let rawValue: String
         public init(rawValue: String) { self.rawValue = rawValue }
     }
@@ -148,8 +164,15 @@ public enum AirshipAI {
 
     // MARK: - ModelSelector
 
+    /// Selects which model backs an evaluation.
+    ///
+    /// Returned from the `setModelResolver` closure to route a usage to the appropriate backend.
     public enum ModelSelector: Sendable {
+        /// Use the SDK's built-in model — the on-device system model when `AirshipAIModels` is
+        /// linked and the device is eligible, otherwise no model.
         case defaultModel
+        /// Use a custom model. Implement `AirshipAI.Model` to wrap any backend: a private-compute
+        /// endpoint, a third-party inference API, or another on-device runtime.
         case custom(any Model)
     }
 
@@ -225,7 +248,7 @@ public enum AirshipAI {
     /// Public entry point for Airship's on-device AI features.
     ///
     /// Accessed via `Airship.ai`. Host apps register context providers and can
-    /// swap the backing model here.
+    /// configure the backing model globally or per-usage.
     public protocol Manager: Sendable {
 
         /// Registers a typed context provider for a usage, or clears it when `provider` is nil.
@@ -233,7 +256,7 @@ public enum AirshipAI {
         /// The `Subject` phantom type on `Usage` ensures the provider's `Subject` matches
         /// the usage — a mismatched provider is a compile error.
         @MainActor
-        func setProvider<S: Sendable>(
+        func setContextProvider<S: Sendable>(
             _ provider: (any ContextProvider<S>)?,
             for usage: Usage<S>
         )
@@ -245,26 +268,55 @@ public enum AirshipAI {
         /// general user context such as preferences or profile data.
         ///
         /// It is only invoked when the evaluation's usage has no typed provider set (via
-        /// `setProvider(_:for:)`). A usage-specific provider wins outright — the two are
+        /// `setContextProvider(_:for:)`). A usage-specific provider wins outright — the two are
         /// never combined. Pass `nil` to remove a previously registered default provider.
         @MainActor
-        func setDefaultProvider(_ provider: (any ContextProvider<Void>)?)
+        func setDefaultContextProvider(_ provider: (any ContextProvider<Void>)?)
 
-        /// Overrides the model used for all evaluations. Use `.defaultModel` to restore
-        /// the SDK default.
+        /// Registers a per-usage model resolver that routes each usage to a model backend.
+        ///
+        /// The closure receives a type-erased `AnyUsage` and returns the selector to apply.
+        /// Return `.defaultModel` for any usage that should use the SDK's built-in model.
+        /// Pass `nil` to clear a previously registered resolver (reverts all usages to the
+        /// SDK default).
+        ///
+        ///     Airship.ai.setModelResolver { usage in
+        ///         if usage == InAppMessageAISuppression.usage {
+        ///             return .custom(myPrivateComputeModel)
+        ///         }
+        ///         return .defaultModel
+        ///     }
         @MainActor
-        func setModel(_ selector: ModelSelector)
+        func setModelResolver(_ resolver: (@MainActor @Sendable (_ usage: AnyUsage) -> ModelSelector)?)
 
-        /// Whether the active model can be used right now.
+        /// The SDK's built-in default model, or nil when none is registered
+        /// (e.g. `AirshipAIModels` is not linked or the device is ineligible).
+        ///
+        /// Use this inside a `setModelResolver` closure to make a conditional override — for
+        /// example, falling back to a private-compute model only when the on-device model is
+        /// unavailable:
+        ///
+        ///     Airship.ai.setModelResolver { usage in
+        ///         if Airship.ai.defaultModel?.availability == .available {
+        ///             return .defaultModel
+        ///         }
+        ///         return .custom(myFallbackModel)
+        ///     }
         @MainActor
-        var availability: Availability { get }
+        var defaultModel: (any Model)? { get }
 
-        /// A stream of availability changes, starting with the current value and emitting
-        /// whenever it changes — the active model finishing a download, the OS toggling AI
-        /// features, or a `setModel`/model-factory swap. Consumers can gate UI on live
-        /// availability instead of a stale render-time snapshot.
+        /// Returns the model currently resolved for `usage`, or nil when no model is
+        /// configured or available (none registered, below OS minimum, etc.).
+        ///
+        /// The model's `availability` and `availabilityUpdates` reflect whether it can run
+        /// right now:
+        ///
+        ///     Airship.ai.model(for: InAppMessageAISuppression.usage)?.availability
+        ///     Airship.ai.model(for: InAppMessageAISuppression.usage)?.availabilityUpdates
+        ///
+        /// The per-usage resolver (set via `setModelResolver`) wins over the SDK default.
         @MainActor
-        var availabilityUpdates: AsyncStream<Availability> { get }
+        func model<S: Sendable>(for usage: Usage<S>) -> (any Model)?
     }
 
     // MARK: - Evaluation protocol (SPI)
@@ -344,4 +396,15 @@ extension AirshipAI.Model {
 extension AirshipAI.Evaluation {
     /// Most evaluations contribute no context of their own.
     public var additionalContext: AirshipAI.Context { .empty }
+}
+
+// MARK: - AnyUsage cross-type equality
+
+extension AirshipAI.AnyUsage {
+    public static func == <S: Sendable>(lhs: Self, rhs: AirshipAI.Usage<S>) -> Bool {
+        lhs.rawValue == rhs.rawValue
+    }
+    public static func == <S: Sendable>(lhs: AirshipAI.Usage<S>, rhs: Self) -> Bool {
+        lhs.rawValue == rhs.rawValue
+    }
 }

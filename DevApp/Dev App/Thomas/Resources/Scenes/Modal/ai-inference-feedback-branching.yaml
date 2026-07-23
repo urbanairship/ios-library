@@ -12,7 +12,7 @@
 #   - ai_inference also carries `additional_context` (layout-authored context
 #     appended after the app's context provider) and `subject_hints` (passed to
 #     the app's context provider alongside the subject, not into the prompt).
-#   - `$ai.current.available` gates an up-front notice when the on-device model can't run.
+#   - `$ai.current.text_input_inference` gates an up-front notice when the on-device model can't run.
 #
 # Structure notes:
 #   - form_controller ancestor is required for the text_input to bind form state.
@@ -118,7 +118,7 @@ view:
                             font_size: 14
                             alignment: start
                             color: { default: { hex: "#666666", alpha: 1 } }
-                      # Up-front gate on on-device AI availability via $ai.current.available.
+                      # Up-front gate on on-device AI availability via $ai.current.text_input_inference.
                       # Shown before the user types when the model can't run at all.
                       - size: { width: 100%, height: auto }
                         margin: { top: 8, start: 20, end: 20 }
@@ -128,7 +128,7 @@ view:
                           visibility:
                             default: false
                             invert_when_state_matches:
-                              scope: [$ai, current, available]
+                              scope: [$ai, current, text_input_inference]
                               value: { equals: false }
                           text_appearance:
                             font_size: 13

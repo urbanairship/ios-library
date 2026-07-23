@@ -9,7 +9,7 @@ import SwiftUI
 
 /// Debug sandbox for the scene text-input AI usage (`scene_text_input`).
 ///
-/// Drives the real ``DefaultThomasAIInferenceExecutor`` — the same path a scene text
+/// Drives the real ``DefaultSceneAIExecutor`` — the same path a scene text
 /// input uses — so you can author a prompt + output schema, type sample text, and see the
 /// structured output and the form-state `ai` payload predicates/branching would read.
 struct AirshipDebugSceneTextInputView: View {
@@ -95,7 +95,10 @@ struct AirshipDebugSceneTextInputView: View {
         }
 #endif
         .navigationTitle("Scene Text Input")
-        .onAppear { Task { await viewModel.fetchContext() } }
+        .onAppear {
+            viewModel.observeAvailability()
+            Task { await viewModel.fetchContext() }
+        }
     }
 
     @ViewBuilder
@@ -252,11 +255,23 @@ extension AirshipDebugSceneTextInputView {
         let schemaRoot = SchemaNodeModel.defaultContract()
 
         private let manager: any AirshipAI.InternalManager
-        private let executor: DefaultThomasAIInferenceExecutor
+        private let executor: DefaultSceneAIExecutor
+        private var availabilityTask: Task<Void, Never>?
 
         init(manager: any AirshipAI.InternalManager) {
             self.manager = manager
-            self.executor = DefaultThomasAIInferenceExecutor(aiManager: manager)
+            self.executor = DefaultSceneAIExecutor(aiManager: manager)
+        }
+
+        func observeAvailability() {
+            availabilityTask?.cancel()
+            guard let stream = manager.model(for: SceneTextInputInferenceSubject.inferenceUsage)?.availabilityUpdates else { return }
+            availabilityTask = Task { [weak self] in
+                for await value in stream {
+                    if Task.isCancelled { break }
+                    self?.availability = value
+                }
+            }
         }
 
         var availabilityLabel: String {
@@ -272,7 +287,6 @@ extension AirshipDebugSceneTextInputView {
         }
 
         func fetchContext() async {
-            availability = manager.availability
             isFetchingContext = true
             defer { isFetchingContext = false }
             context = await manager.fetchContext(
@@ -291,8 +305,6 @@ extension AirshipDebugSceneTextInputView {
             isGeneratingSchema = true
             schemaGenError = nil
             defer { isGeneratingSchema = false }
-
-            availability = manager.availability
 
             switch await manager.evaluate(SchemaSuggestionEvaluation(instruction: instruction)) {
             case .completed(let output):
@@ -343,7 +355,6 @@ extension AirshipDebugSceneTextInputView {
             result = nil
             defer { isRunning = false }
 
-            availability = manager.availability
             await fetchContext()
 
             let request = ThomasAIInferenceRequest(

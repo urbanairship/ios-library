@@ -35,7 +35,7 @@ public struct InAppMessageAISuppression: Sendable {
 
     /// The AI usage key for in-app message suppression.
     ///
-    /// Pass this to `Airship.ai.setProvider(_:for:)` when registering a context provider for
+    /// Pass this to `Airship.ai.setContextProvider(_:for:)` when registering a context provider for
     /// in-app message suppression.
     public static let usage = AirshipAI.Usage<InAppMessageAISuppression>(
         rawValue: "in_app_message_suppression"

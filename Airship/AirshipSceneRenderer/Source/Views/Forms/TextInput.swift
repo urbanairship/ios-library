@@ -42,7 +42,7 @@ struct TextInput: View {
         info: ThomasViewInfo.TextInput,
         constraints: ViewConstraints,
         inputValidator: (any AirshipInputValidation.Validator)?,
-        aiInferenceExecutor: (any ThomasAIInferenceExecutor)?
+        aiInferenceExecutor: (any SceneAIExecutor)?
     ) {
         self.info = info
         self.constraints = constraints
@@ -254,7 +254,7 @@ struct TextInput: View {
         private let isRequired: Bool
 
         private let inputValidator: (any AirshipInputValidation.Validator)?
-        private let aiInferenceExecutor: (any ThomasAIInferenceExecutor)?
+        private let aiInferenceExecutor: (any SceneAIExecutor)?
 
         /// The last completed inference, so unchanged text (e.g. the restore path
         /// re-making the field, or trailing-whitespace edits) reuses the result
@@ -287,7 +287,7 @@ struct TextInput: View {
             inputProperties: ThomasViewInfo.TextInput.Properties,
             isRequired: Bool,
             inputValidator: (any AirshipInputValidation.Validator)?,
-            aiInferenceExecutor: (any ThomasAIInferenceExecutor)?
+            aiInferenceExecutor: (any SceneAIExecutor)?
         ) {
             self.inputProperties = inputProperties
             self.isRequired = isRequired

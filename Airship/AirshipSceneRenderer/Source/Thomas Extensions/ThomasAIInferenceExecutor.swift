@@ -57,23 +57,41 @@ public struct ThomasAIInferenceRequest: Sendable {
     }
 }
 
+/// Per-usage availability snapshot streamed from a `SceneAIExecutor`. Thomas bridges
+/// this struct into layout state so predicates and pager branching can gate on specific
+/// usages (e.g. `$ai.current.available`).
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
+public struct SceneAIStatus: Sendable, Encodable {
+    /// Whether the text-input inference model can run right now.
+    public var textInputInference: Bool
+
+    public init(textInputInference: Bool = false) {
+        self.textInputInference = textInputInference
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case textInputInference = "text_input_inference"
+    }
+}
+
 /// Runs on-device AI inference for layout text inputs. The renderer is Core-free, so the
 /// host supplies an implementation through `ThomasExtensions` (AirshipScenes wires one
 /// backed by the SDK's AI manager).
 /// - Note: For internal use only. :nodoc:
 @_spi(AirshipInternal)
-public protocol ThomasAIInferenceExecutor: Sendable {
+public protocol SceneAIExecutor: Sendable {
 
     /// Whether the on-device model can run right now. Callers check this before
     /// scheduling work so an absent model never delays the form — fail open, non-blocking.
     @MainActor
     var isAvailable: Bool { get }
 
-    /// A stream of availability changes, starting with the current value and emitting
-    /// whenever it changes. Thomas bridges this to a Combine publisher to project
-    /// `$ai.current.available` into layout state for predicates and pager branching.
+    /// A stream of per-usage availability changes, starting with the current values and
+    /// emitting on any change. Thomas bridges this struct into layout state so predicates
+    /// and pager branching can gate on specific usages.
     @MainActor
-    var availabilityUpdates: AsyncStream<Bool> { get }
+    var statusUpdates: AsyncStream<SceneAIStatus> { get }
 
     /// Runs inference over the user's text. Returns the model's structured output, or
     /// nil when the model is unavailable or the evaluation failed — callers fail open.

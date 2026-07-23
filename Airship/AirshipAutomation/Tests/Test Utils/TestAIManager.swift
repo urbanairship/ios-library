@@ -4,20 +4,13 @@ import Foundation
 @_spi(AirshipInternal) import AirshipCore
 
 final class TestAIManager: AirshipAI.InternalManager, @unchecked Sendable {
-    var availability: AirshipAI.Availability = .unavailable(reason: .missingModel)
+    var stubModel: (any AirshipAI.Model)?
 
-    @MainActor
-    var availabilityUpdates: AsyncStream<AirshipAI.Availability> {
-        let availability = self.availability
-        return AsyncStream { continuation in
-            continuation.yield(availability)
-            continuation.finish()
-        }
-    }
-
-    func setProvider<S: Sendable>(_ provider: (any AirshipAI.ContextProvider<S>)?, for usage: AirshipAI.Usage<S>) {}
-    func setDefaultProvider(_ provider: (any AirshipAI.ContextProvider<Void>)?) {}
-    func setModel(_ selector: AirshipAI.ModelSelector) {}
+    var defaultModel: (any AirshipAI.Model)? { nil }
+    func model<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.Model)? { stubModel }
+    func setContextProvider<S: Sendable>(_ provider: (any AirshipAI.ContextProvider<S>)?, for usage: AirshipAI.Usage<S>) {}
+    func setDefaultContextProvider(_ provider: (any AirshipAI.ContextProvider<Void>)?) {}
+    func setModelResolver(_ resolver: (@MainActor @Sendable (AirshipAI.AnyUsage) -> AirshipAI.ModelSelector)?) {}
     /// Test hook. Receives the (type-erased) evaluation and returns a type-erased
     /// `AirshipAI.Result<E.Output>`. Defaults to `.skipped` when unset.
     var onEvaluate: (@Sendable (any Sendable) async -> Any)?

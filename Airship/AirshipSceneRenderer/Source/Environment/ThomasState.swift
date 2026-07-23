@@ -17,10 +17,10 @@ final class ThomasState: ObservableObject {
     private let mutableState: MutableState?
     private let asyncViewState: ThomasAsyncViewState?
 
-    // On-device AI availability source. Not a state object — its value is streamed from
-    // the inference executor and bridged onto a publisher below.
-    private let aiInferenceExecutor: (any ThomasAIInferenceExecutor)?
-    private let aiAvailabilitySubject = PassthroughSubject<Bool, Never>()
+    // On-device AI status source. Not a state object — its value is streamed from
+    // the executor and bridged onto a publisher below.
+    private let sceneAIExecutor: (any SceneAIExecutor)?
+    private let aiStatusSubject = PassthroughSubject<SceneAIStatus, Never>()
     private var aiAvailabilityTask: Task<Void, Never>?
 
     private let onStateChange: @Sendable @MainActor (AirshipJSON) -> Void
@@ -37,7 +37,7 @@ final class ThomasState: ObservableObject {
         fileprivate var videoMuted: Bool?
         fileprivate var mutableStateValue: AirshipJSON?
         fileprivate var asyncViewStatus: ThomasAsyncViewState.Status?
-        fileprivate var aiAvailable: Bool?
+        fileprivate var aiStatus: SceneAIStatus?
 
         /// Generates the final AirshipJSON based strictly on this snapshot data
         func toAirshipJSON() -> AirshipJSON {
@@ -87,12 +87,8 @@ final class ThomasState: ObservableObject {
             // Add $ai — on-device model availability, so predicates and pager branching
             // can gate on whether AI can run. Present only when an executor is wired.
             // Wrapped under `current` to match $forms/$pagers/$video (and web-thomas #348).
-            if let aiAvailable {
-                result["$ai"] = .object([
-                    "current": .object([
-                        "available": .bool(aiAvailable)
-                    ])
-                ])
+            if let aiStatus, let encoded = try? AirshipJSON.wrap(aiStatus) {
+                result["$ai"] = .object(["current": encoded])
             }
 
             return .object(result)
@@ -108,7 +104,7 @@ final class ThomasState: ObservableObject {
         videoState: VideoState? = nil,
         mutableState: MutableState? = nil,
         asyncViewState: ThomasAsyncViewState? = nil,
-        aiInferenceExecutor: (any ThomasAIInferenceExecutor)? = nil,
+        sceneAIExecutor: (any SceneAIExecutor)? = nil,
         onStateChange: @escaping @Sendable @MainActor (AirshipJSON) -> Void
     ) {
         self.formState = formState
@@ -116,7 +112,7 @@ final class ThomasState: ObservableObject {
         self.videoState = videoState
         self.mutableState = mutableState
         self.asyncViewState = asyncViewState
-        self.aiInferenceExecutor = aiInferenceExecutor
+        self.sceneAIExecutor = sceneAIExecutor
         self.onStateChange = onStateChange
         
         self.outcomesProcessor = DefaultThomasOutcomeProcessor(
@@ -152,18 +148,18 @@ final class ThomasState: ObservableObject {
         videoState?.isMutedPublisher.sink { [weak self] in self?.updateSnapshot(videoMuted: $0) }.store(in: &subscriptions)
         mutableState?.$state.sink { [weak self] in self?.updateSnapshot(mutableStateValue: $0) }.store(in: &subscriptions)
         asyncViewState?.$status.sink { [weak self] in self?.updateSnapshot(asyncViewStatus: $0) }.store(in: &subscriptions)
-        aiAvailabilitySubject.sink { [weak self] in self?.updateSnapshot(aiAvailable: $0) }.store(in: &subscriptions)
+        aiStatusSubject.sink { [weak self] in self?.updateSnapshot(aiStatus: $0) }.store(in: &subscriptions)
     }
 
-    /// Bridges the executor's `availabilityUpdates` async stream onto `aiAvailabilitySubject`
+    /// Bridges the executor's `statusUpdates` async stream onto `aiStatusSubject`
     /// so `$ai.current.available` tracks the on-device model over the scene's lifetime (e.g. the
     /// model finishing a download). No executor → no stream → `$ai` never appears.
     private func startAIAvailabilityBridge() {
-        guard let executor = aiInferenceExecutor else { return }
-        let stream = executor.availabilityUpdates
+        guard let executor = sceneAIExecutor else { return }
+        let stream = executor.statusUpdates
         aiAvailabilityTask = Task { @MainActor [weak self] in
-            for await available in stream {
-                self?.aiAvailabilitySubject.send(available)
+            for await status in stream {
+                self?.aiStatusSubject.send(status)
             }
         }
     }
@@ -177,7 +173,7 @@ final class ThomasState: ObservableObject {
         videoMuted: Bool? = nil,
         mutableStateValue: AirshipJSON? = nil,
         asyncViewStatus: ThomasAsyncViewState.Status? = nil,
-        aiAvailable: Bool? = nil
+        aiStatus: SceneAIStatus? = nil
     ) {
         // Update the snapshot with provided values
         if let val = formStatus { stateSnapshot.formStatus = val }
@@ -188,7 +184,7 @@ final class ThomasState: ObservableObject {
         if let val = videoMuted { stateSnapshot.videoMuted = val }
         if let val = mutableStateValue { stateSnapshot.mutableStateValue = val }
         if let val = asyncViewStatus { stateSnapshot.asyncViewStatus = val }
-        if let val = aiAvailable { stateSnapshot.aiAvailable = val }
+        if let val = aiStatus { stateSnapshot.aiStatus = val }
 
         // Compute new output directly from the snapshot
         let newOutput = stateSnapshot.toAirshipJSON()
@@ -234,7 +230,7 @@ final class ThomasState: ObservableObject {
             videoState: newVideoState,
             mutableState: newMutableState,
             asyncViewState: newAsyncViewState,
-            aiInferenceExecutor: self.aiInferenceExecutor,
+            sceneAIExecutor: self.sceneAIExecutor,
             onStateChange: self.onStateChange
         )
     }

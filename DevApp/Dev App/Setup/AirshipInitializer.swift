@@ -33,8 +33,7 @@ struct AirshipInitializer {
         #endif
 
         try Airship.takeOff(config)
-
-        Airship.ai.setProvider(DevIAASuppressionContextProvider(), for: InAppMessageAISuppression.usage)
+        Airship.ai.setContextProvider(DevIAASuppressionContextProvider(), for: InAppMessageAISuppression.usage)
     }
 }
 

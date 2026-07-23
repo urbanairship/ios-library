@@ -1035,7 +1035,7 @@ struct TestThomasExtensions: ThomasExtensions {
     var asyncViewResolver: any AsyncViewResolver = StubAsyncViewResolver()
     var webViewChallengeResolver: any AirshipWebViewChallengeResolver = StubWebViewChallengeResolver()
     var inputValidator: (any AirshipInputValidation.Validator)? = nil
-    var aiInferenceExecutor: (any ThomasAIInferenceExecutor)? = nil
+    var aiInferenceExecutor: (any SceneAIExecutor)? = nil
     var localizer: any ThomasLocalizer = TestThomasLocalizer()
     var imageLoader: any ThomasImageLoader = EmptyThomasImageLoader()
     var actionRunner: any ThomasActionRunner = StubThomasActionRunner()
