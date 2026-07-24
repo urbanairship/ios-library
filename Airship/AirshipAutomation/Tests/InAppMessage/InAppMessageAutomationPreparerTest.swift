@@ -418,7 +418,7 @@ struct InAppMessageAutomationPreparerTest {
         #expect(evaluation.subject.hints == ["tier": "gold"])
         // The condition governs via instructions() — not repeated as context in the prompt.
         #expect(evaluation.instructions().contains("only show to hikers"))
-        #expect(!evaluation.prompt().contains("only show to hikers"))
+        #expect(!evaluation.prompt(context: .empty).contains("only show to hikers"))
     }
 
 }

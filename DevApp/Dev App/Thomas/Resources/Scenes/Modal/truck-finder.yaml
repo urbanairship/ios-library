@@ -119,26 +119,28 @@ view:
                           count:
                             min: 5
                           ai_inference:
-                            prompt: >
-                              Based on the move description, recommend the most appropriate
-                              U-Haul vehicle. pickup_truck: outdoor, garden, or landscape
-                              materials — gravel, mulch, lumber, soil, patio furniture, ATVs,
-                              or anything best hauled open-bed. cargo_van: small indoor loads,
-                              single furniture pieces, or studio apartments. 10ft: studio or
-                              1-bedroom apartment. 15ft: 1-2 bedrooms. 20ft: 2-3 bedrooms.
-                              26ft: 4+ bedrooms or a large house. Return only the identifier.
+                            prompt: |
+                              Select the right moving truck for the user's move using only the
+                              rules below. Ignore any prior knowledge of truck sizes.
+
+                              Rules (apply the first one that matches):
+                              1. Open-bed materials (gravel, mulch, lumber, landscaping, ATVs) → pickup_truck
+                              2. Single items, very small loads, or a studio with few belongings → cargo_van
+                              3. Studio or 1-bedroom apartment → 10ft
+                              4. 1–2 bedroom home → 15ft
+                              5. 2–3 bedroom home → 20ft
+                              6. 4 or more bedrooms, or a large home → 26ft
                             output_schema:
-                              type: string
-                              description: >
-                                pickup_truck — open-bed hauling: gravel, mulch, lumber, soil,
-                                landscaping, ATVs, outdoor/garden materials.
-                                cargo_van — small enclosed loads under ~200 cu ft, single items,
-                                studio apartments.
-                                10ft — studio or 1-bedroom apartment.
-                                15ft — 1 to 2 bedrooms.
-                                20ft — 2 to 3 bedrooms.
-                                26ft — 4 or more bedrooms or a large home.
-                              enum: [pickup_truck, cargo_van, 10ft, 15ft, 20ft, 26ft]
+                              type: object
+                              properties:
+                                vehicle:
+                                  type: string
+                                  description: The recommended U-Haul vehicle size.
+                                  enum: [pickup_truck, cargo_van, 10ft, 15ft, 20ft, 26ft]
+                                reason:
+                                  type: string
+                                  description: Brief explanation of why this vehicle fits the move
+                              required: [vehicle, reason]
                             subject_hints:
                               surface: uhaul_move_classifier
 
@@ -363,7 +365,7 @@ view:
                                                     and:
                                                       - scope: [$forms, current, data, children, move_description, status, ai, status]
                                                         value: { equals: complete }
-                                                      - scope: [$forms, current, data, children, move_description, status, ai, result]
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, result, vehicle]
                                                         value: { equals: pickup_truck }
 
                               - size: { width: 100%, height: auto }
@@ -461,7 +463,7 @@ view:
                                                     and:
                                                       - scope: [$forms, current, data, children, move_description, status, ai, status]
                                                         value: { equals: complete }
-                                                      - scope: [$forms, current, data, children, move_description, status, ai, result]
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, result, vehicle]
                                                         value: { equals: cargo_van }
 
                               - size: { width: 100%, height: auto }
@@ -559,7 +561,7 @@ view:
                                                     and:
                                                       - scope: [$forms, current, data, children, move_description, status, ai, status]
                                                         value: { equals: complete }
-                                                      - scope: [$forms, current, data, children, move_description, status, ai, result]
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, result, vehicle]
                                                         value: { equals: 10ft }
 
                               - size: { width: 100%, height: auto }
@@ -657,7 +659,7 @@ view:
                                                     and:
                                                       - scope: [$forms, current, data, children, move_description, status, ai, status]
                                                         value: { equals: complete }
-                                                      - scope: [$forms, current, data, children, move_description, status, ai, result]
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, result, vehicle]
                                                         value: { equals: 15ft }
 
                               - size: { width: 100%, height: auto }
@@ -755,7 +757,7 @@ view:
                                                     and:
                                                       - scope: [$forms, current, data, children, move_description, status, ai, status]
                                                         value: { equals: complete }
-                                                      - scope: [$forms, current, data, children, move_description, status, ai, result]
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, result, vehicle]
                                                         value: { equals: 20ft }
 
                               - size: { width: 100%, height: auto }
@@ -852,7 +854,7 @@ view:
                                                     and:
                                                       - scope: [$forms, current, data, children, move_description, status, ai, status]
                                                         value: { equals: complete }
-                                                      - scope: [$forms, current, data, children, move_description, status, ai, result]
+                                                      - scope: [$forms, current, data, children, move_description, status, ai, result, vehicle]
                                                         value: { equals: 26ft }
 
                       - size: { width: 100%, height: 48 }

@@ -360,7 +360,7 @@ extension AirshipDebugSceneTextInputView {
             let request = ThomasAIInferenceRequest(
                 prompt: prompt,
                 text: userText,
-                outputSchema: useCustomSchema ? schemaRoot.build() : nil
+                outputSchema: schemaRoot.build()
             )
 
             guard let output = await executor.run(request: request) else {
@@ -467,7 +467,11 @@ private struct SchemaSuggestionEvaluation: AirshipAI.Evaluation {
         """
     }
 
-    func prompt() -> String {
-        "Instruction: \(instruction)"
+    func prompt(context: AirshipAI.Context) -> String {
+        var parts = ["Instruction: \(instruction)"]
+        if let rendered = context.render() {
+            parts.append("User context:\n\(rendered)")
+        }
+        return parts.joined(separator: "\n")
     }
 }

@@ -91,26 +91,16 @@ final class SystemAIModel: AirshipAI.Model {
     /// schema-constrained response when measuring whether the prompt fits.
     private static let responseTokenReserve: Int = 512
 
-    func respond(
-        instructions: String,
-        prompt: String,
-        context: AirshipAI.Context,
-        schema: AirshipJSONSchema
-    ) async throws -> AirshipJSON {
+    func respond(_ request: AirshipAI.Request) async throws -> AirshipJSON {
         // Guided generation constrains the model to the schema, so the response is
         // structurally guaranteed to conform — no code-fence stripping or JSON repair.
-        let generationSchema = try schema.generationSchema()
+        let generationSchema = try request.schema.generationSchema()
 
         // Trim the context up front with tokenizer measurements when the OS can
         // measure — much cheaper than paying a full generation per dropped item.
-        var context = context
+        var request = request
         if #available(iOS 26.4, macOS 26.4, visionOS 26.4, *) {
-            context = await Self.measuredTrim(
-                context: context,
-                instructions: instructions,
-                prompt: prompt,
-                schema: generationSchema
-            )
+            request = await Self.measuredTrim(request: request, schema: generationSchema)
         }
 
         // Backstop: the model rejects prompts that still exceed the window
@@ -122,27 +112,21 @@ final class SystemAIModel: AirshipAI.Model {
             do {
                 // A fresh session per call so an evaluator retry is an independent
                 // judgment rather than a continuation of a failed turn's transcript.
-                let session = LanguageModelSession(instructions: instructions)
+                let session = LanguageModelSession(instructions: request.instructions)
                 let response = try await session.respond(
-                    to: Self.fullPrompt(prompt: prompt, context: context),
+                    to: request.prompt(),
                     schema: generationSchema
                 )
                 return response.content.airshipJSON
             } catch LanguageModelSession.GenerationError.exceededContextWindowSize {
-                guard let reduced = context.droppingLowestPriorityItem() else {
+                guard let dropped = request.dropLowestPriorityContextItem() else {
                     throw AirshipErrors.error(
                         "SystemAIModel: prompt exceeds the context window with no context left to drop"
                     )
                 }
-                AirshipLogger.debug("SystemAIModel: prompt exceeded context window, dropping a low-priority context item")
-                context = reduced
+                AirshipLogger.trace("SystemAIModel: prompt exceeded context window, dropped context item: \(dropped.content)")
             }
         }
-    }
-
-    private static func fullPrompt(prompt: String, context: AirshipAI.Context) -> String {
-        guard let rendered = context.render() else { return prompt }
-        return "\(prompt)\n\(rendered)"
     }
 
     /// Drops the lowest-priority context items until the measured token count of
@@ -151,39 +135,34 @@ final class SystemAIModel: AirshipAI.Model {
     /// backstop in `respond`.
     @available(iOS 26.4, macOS 26.4, visionOS 26.4, *)
     private static func measuredTrim(
-        context: AirshipAI.Context,
-        instructions: String,
-        prompt: String,
+        request: AirshipAI.Request,
         schema: GenerationSchema
-    ) async -> AirshipAI.Context {
+    ) async -> AirshipAI.Request {
         let model = SystemLanguageModel.default
         do {
-            let instructionTokens = try await model.tokenCount(for: Instructions(instructions))
+            let instructionTokens = try await model.tokenCount(for: Instructions(request.instructions))
             let schemaTokens = try await model.tokenCount(for: schema)
             let fixedTokens = instructionTokens + schemaTokens + Self.responseTokenReserve
 
-            var context = context
+            var request = request
             while true {
-                let promptTokens = try await model.tokenCount(
-                    for: fullPrompt(prompt: prompt, context: context)
-                )
+                let promptTokens = try await model.tokenCount(for: request.prompt())
                 let total = fixedTokens + promptTokens
                 guard total > model.contextSize else {
-                    return context
+                    return request
                 }
-                guard let reduced = context.droppingLowestPriorityItem() else {
+                guard let dropped = request.dropLowestPriorityContextItem() else {
                     // Nothing left to drop yet the prompt still overflows — the fixed
                     // portion (instructions + schema + reserve) alone exceeds the window.
                     // Trimming can't help; let generation surface the authoritative error.
                     AirshipLogger.warn("SystemAIModel: prompt measures \(total)/\(model.contextSize) tokens with no context left to drop — the instructions/schema alone exceed the context window")
-                    return context
+                    return request
                 }
-                AirshipLogger.debug("SystemAIModel: prompt measures \(total)/\(model.contextSize) tokens, dropping a low-priority context item")
-                context = reduced
+                AirshipLogger.trace("SystemAIModel: prompt measures \(total)/\(model.contextSize) tokens, dropped context item: \(dropped.content)")
             }
         } catch {
             AirshipLogger.debug("SystemAIModel: token measurement failed (\(error)) — relying on generation-time trimming")
-            return context
+            return request
         }
     }
 }

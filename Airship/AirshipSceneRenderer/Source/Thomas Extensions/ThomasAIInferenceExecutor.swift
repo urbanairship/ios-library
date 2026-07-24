@@ -32,8 +32,8 @@ public struct ThomasAIInferenceRequest: Sendable {
     /// The user's current text.
     public let text: String
 
-    /// Expected output shape; nil falls back to the executor's default contract.
-    public let outputSchema: AirshipJSONSchema?
+    /// Expected output shape.
+    public let outputSchema: AirshipJSONSchema
 
     /// Layout-authored context appended after the app's provider context.
     public let additionalContext: [ThomasAIContextItem]
@@ -45,7 +45,7 @@ public struct ThomasAIInferenceRequest: Sendable {
     public init(
         prompt: String,
         text: String,
-        outputSchema: AirshipJSONSchema? = nil,
+        outputSchema: AirshipJSONSchema,
         additionalContext: [ThomasAIContextItem] = [],
         subjectHints: [String: String] = [:]
     ) {

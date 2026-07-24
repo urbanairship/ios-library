@@ -67,27 +67,47 @@ extension AirshipAI {
             for usage: AirshipAI.Usage<S>,
             subject: S
         ) async -> AirshipAI.Context {
-            let contextFetcher = await MainActor.run {
-                providerRegistry.contextFetcher(for: usage.rawValue)
-            }
-            return await contextFetcher?(subject) ?? .empty
+            await providerContext(forUsage: usage.rawValue, subject: subject)
         }
 
         public func evaluate<E: AirshipAI.Evaluation>(
-            _ evaluation: E
+            _ evaluation: E,
+            context: AirshipAI.Context
         ) async -> AirshipAI.Result<E.Output> {
-            let (model, contextFetcher) = await MainActor.run {
-                (self.model(for: evaluation.usage),
-                 providerRegistry.contextFetcher(for: evaluation.usage.rawValue))
-            }
-            guard let model else {
+            guard let resolved = await resolve(evaluation) else {
                 return .skipped(reason: "No model configured")
             }
-            // Provider context first, then the evaluation's own context appended after
+            // Provider context first, then the caller's additional context appended after
             // (later items win priority ties when the model trims to fit its window).
-            let providerContext = await contextFetcher?(evaluation.subject) ?? .empty
-            let context = providerContext.appending(evaluation.additionalContext)
-            return await evaluator.evaluate(evaluation, model: model, context: context)
+            let merged = resolved.context.appending(context)
+            return await evaluator.evaluate(evaluation, model: resolved.model, context: merged)
+        }
+
+        /// Resolves the model and fetches the provider's context in a single main-actor hop.
+        /// The provider fetcher is main-actor-isolated, so staying on the actor across its
+        /// async work avoids a second cross-actor round trip. Returns nil (skipping the
+        /// context fetch) when no model is configured.
+        @MainActor
+        private func resolve<E: AirshipAI.Evaluation>(
+            _ evaluation: E
+        ) async -> (model: any AirshipAI.Model, context: AirshipAI.Context)? {
+            guard let model = self.model(for: evaluation.usage) else { return nil }
+            let context = await providerContext(
+                forUsage: evaluation.usage.rawValue,
+                subject: evaluation.subject
+            )
+            return (model, context)
+        }
+
+        /// Fetches the registered provider's context for a usage, or `.empty` when none is
+        /// registered. Runs entirely on the main actor — the fetcher and its async work stay
+        /// there, so callers pay a single hop.
+        @MainActor
+        private func providerContext(
+            forUsage rawValue: String,
+            subject: any Sendable
+        ) async -> AirshipAI.Context {
+            await providerRegistry.contextFetcher(for: rawValue)?(subject) ?? .empty
         }
     }
 }

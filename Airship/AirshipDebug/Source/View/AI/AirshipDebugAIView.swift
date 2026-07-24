@@ -381,7 +381,7 @@ private final class PreviewAIManager: AirshipAI.InternalManager, @unchecked Send
     func setContextProvider<S: Sendable>(_ provider: (any AirshipAI.ContextProvider<S>)?, for usage: AirshipAI.Usage<S>) {}
     func setDefaultContextProvider(_ provider: (any AirshipAI.ContextProvider<Void>)?) {}
     func setModelResolver(_ resolver: (@MainActor @Sendable (AirshipAI.AnyUsage) -> AirshipAI.ModelSelector)?) {}
-    func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E) async -> AirshipAI.Result<E.Output> { .skipped(reason: "preview") }
+    func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E, context: AirshipAI.Context) async -> AirshipAI.Result<E.Output> { .skipped(reason: "preview") }
     func registerModelFactory(_ factory: @MainActor @Sendable @escaping () -> any AirshipAI.Model) {}
     func fetchContext<S: Sendable>(for usage: AirshipAI.Usage<S>, subject: S) async -> AirshipAI.Context { .empty }
 }

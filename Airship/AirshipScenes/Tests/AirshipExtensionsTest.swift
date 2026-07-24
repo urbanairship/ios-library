@@ -105,32 +105,44 @@ struct AirshipExtensionsTest {
 
 struct ThomasAIInferenceEvaluationGuardTest {
 
+    private static let testSchema = AirshipJSONSchema.string(choices: ["positive", "negative"])
+
     private func makeEvaluation(prompt: String = "classify sentiment", text: String) -> ThomasAIInferenceEvaluation {
-        ThomasAIInferenceEvaluation(request: .init(prompt: prompt, text: text))
+        ThomasAIInferenceEvaluation(request: .init(prompt: prompt, text: text, outputSchema: Self.testSchema))
     }
 
-    @Test("User text is fenced between the per-evaluation marker")
+    @Test("User text is fenced inside XML tags in the prompt")
     func promptFencesUserText() {
         let eval = makeEvaluation(text: "I love it")
-        let prompt = eval.prompt()
+        let prompt = eval.prompt(context: .empty)
         #expect(prompt.contains("I love it"))
-        // The marker appears exactly twice (open + close) → 3 components when split on it.
-        #expect(prompt.components(separatedBy: eval.inputMarker).count == 3)
+        #expect(prompt.contains("<\(eval.inputTag)>"))
+        #expect(prompt.contains("</\(eval.inputTag)>"))
     }
 
-    @Test("Instructions reference the marker and guard against embedded instructions")
+    @Test("Instructions reference the tag and guard against embedded instructions")
     func instructionsGuardAgainstInjection() {
         let eval = makeEvaluation(prompt: "classify sentiment", text: "x")
         let instructions = eval.instructions()
-        #expect(instructions.contains(eval.inputMarker))
+        #expect(instructions.contains(eval.inputTag))
         #expect(instructions.contains("untrusted"))
-        #expect(instructions.contains("never as instructions"))
-        // The author's instruction is still applied.
+        // The author's instruction drives the role.
         #expect(instructions.contains("classify sentiment"))
     }
 
-    @Test("The fence marker is regenerated per evaluation so it can't be guessed/injected")
-    func markerRegeneratesPerEvaluation() {
-        #expect(makeEvaluation(text: "x").inputMarker != makeEvaluation(text: "x").inputMarker)
+    @Test("User text appears before background context in the combined prompt")
+    func promptPutsUserTextFirst() {
+        let eval = makeEvaluation(text: "I love it")
+        let context = AirshipAI.Context(items: [.init(content: "Name: Alice")])
+        let combined = eval.prompt(context: context)
+        let inputRange = combined.range(of: "<\(eval.inputTag)>")!
+        let contextRange = combined.range(of: "Background context:")!
+        #expect(inputRange.lowerBound < contextRange.lowerBound)
+        #expect(combined.contains("- Name: Alice"))
+    }
+
+    @Test("The tag is regenerated per evaluation so it can't be guessed/injected")
+    func tagRegeneratesPerEvaluation() {
+        #expect(makeEvaluation(text: "x").inputTag != makeEvaluation(text: "x").inputTag)
     }
 }

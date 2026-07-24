@@ -3,6 +3,7 @@
 import AirshipAutomation
 import AirshipBasement
 import AirshipCore
+import AirshipScenes
 import Foundation
 
 /// Example Airship SDK initialization handler.
@@ -34,6 +35,20 @@ struct AirshipInitializer {
 
         try Airship.takeOff(config)
         Airship.ai.setContextProvider(DevIAASuppressionContextProvider(), for: InAppMessageAISuppression.usage)
+        Airship.ai.setContextProvider(DevSceneTextInputContextProvider(), for: SceneTextInputInferenceSubject.inferenceUsage)
+    }
+}
+
+private final class DevSceneTextInputContextProvider: AirshipAI.ContextProvider {
+    typealias Subject = SceneTextInputInferenceSubject
+
+    func context(for subject: SceneTextInputInferenceSubject) async -> AirshipAI.Context {
+        // Demo context: profile data relevant to truck size selection.
+        // A real app would pull these from its customer profile API.
+        return AirshipAI.Context(items: [
+            .init(content: "Customer since: 2019"),
+            .init(content: "Rental history: 15ft (2022), 20ft (2024)"),
+        ])
     }
 }
 

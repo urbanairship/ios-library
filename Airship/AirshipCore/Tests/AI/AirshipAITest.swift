@@ -51,16 +51,18 @@ struct AirshipAIValueTests {
             .init(content: "keep-mid", priority: 1)
         ])
 
-        let once = context.droppingLowestPriorityItem()
-        #expect(once?.items.map(\.content) == ["keep-important", "drop-second", "keep-mid"])
+        var trimmed = context
+        #expect(trimmed.dropLowestPriorityItem()?.content == "drop-first")
+        #expect(trimmed.items.map(\.content) == ["keep-important", "drop-second", "keep-mid"])
 
-        let twice = once?.droppingLowestPriorityItem()
-        #expect(twice?.items.map(\.content) == ["keep-important", "keep-mid"])
+        #expect(trimmed.dropLowestPriorityItem()?.content == "drop-second")
+        #expect(trimmed.items.map(\.content) == ["keep-important", "keep-mid"])
 
-        let thrice = twice?.droppingLowestPriorityItem()
-        #expect(thrice?.items.map(\.content) == ["keep-important"])
+        #expect(trimmed.dropLowestPriorityItem()?.content == "keep-mid")
+        #expect(trimmed.items.map(\.content) == ["keep-important"])
 
-        #expect(AirshipAI.Context.empty.droppingLowestPriorityItem() == nil)
+        var empty = AirshipAI.Context.empty
+        #expect(empty.dropLowestPriorityItem() == nil)
     }
 
     @Test
@@ -71,7 +73,9 @@ struct AirshipAIValueTests {
             AirshipAI.Context(items: [.init(content: "authored", priority: 1)])
         )
         #expect(merged.items.map(\.content) == ["provider", "authored"])
-        #expect(merged.droppingLowestPriorityItem()?.items.map(\.content) == ["authored"])
+        var trimmed = merged
+        #expect(trimmed.dropLowestPriorityItem()?.content == "provider")
+        #expect(trimmed.items.map(\.content) == ["authored"])
         #expect(base.appending(.empty) == base)
     }
 
@@ -435,10 +439,7 @@ final class MockAIModel: AirshipAI.Model, @unchecked Sendable {
     var respondDelay: TimeInterval = 0
 
     private(set) var respondCallCount = 0
-    private(set) var lastInstructions: String?
-    private(set) var lastPrompt: String?
-    private(set) var lastContext: AirshipAI.Context?
-    private(set) var lastSchema: AirshipJSONSchema?
+    private(set) var lastRequest: AirshipAI.Request?
 
     init(
         availability: AirshipAI.Availability = .available,
@@ -454,17 +455,9 @@ final class MockAIModel: AirshipAI.Model, @unchecked Sendable {
 
     var availability: AirshipAI.Availability { availabilityValue }
 
-    func respond(
-        instructions: String,
-        prompt: String,
-        context: AirshipAI.Context,
-        schema: AirshipJSONSchema
-    ) async throws -> AirshipJSON {
+    func respond(_ request: AirshipAI.Request) async throws -> AirshipJSON {
         respondCallCount += 1
-        lastInstructions = instructions
-        lastPrompt = prompt
-        lastContext = context
-        lastSchema = schema
+        lastRequest = request
         if respondDelay > 0 {
             try await Task.sleep(nanoseconds: UInt64(respondDelay * 1_000_000_000))
         }
@@ -493,21 +486,9 @@ struct TestEvaluation: AirshipAI.Evaluation {
     let usage: AirshipAI.Usage<Void> = .testUsage
     let schema = testSchema
     func instructions() -> String { "rules" }
-    func prompt() -> String { "subject" }
+    func prompt(context: AirshipAI.Context) -> String { "subject" }
 }
 
-/// A `TestEvaluation` that also contributes its own context.
-struct TestEvaluationWithContext: AirshipAI.Evaluation {
-    typealias Output = TestEvaluation.Output
-    typealias Subject = Void
-
-    let subject: Void = ()
-    let usage: AirshipAI.Usage<Void> = .testUsage
-    let schema = testSchema
-    let additionalContext: AirshipAI.Context
-    func instructions() -> String { "rules" }
-    func prompt() -> String { "subject" }
-}
 
 /// Context provider returning a fixed set of items.
 final class ItemsProvider: AirshipAI.ContextProvider, @unchecked Sendable {
@@ -540,10 +521,10 @@ struct AirshipAIEvaluatorTests {
 
         let decision = try #require(result.output)
         #expect(decision == TestEvaluation.Output(allow: false, reason: "not relevant"))
-        #expect(model.lastInstructions == "rules")
-        #expect(model.lastPrompt == "subject")
-        #expect(model.lastContext == context)
-        #expect(model.lastSchema == testSchema)
+        #expect(model.lastRequest?.instructions == "rules")
+        #expect(model.lastRequest?.prompt() == "subject")
+        #expect(model.lastRequest?.context == context)
+        #expect(model.lastRequest?.schema == testSchema)
     }
 
     @Test
@@ -582,7 +563,7 @@ struct AirshipAIEvaluatorTests {
     func usesEmptyContextWhenNoProvider() async throws {
         let model = MockAIModel()
         _ = await eval(model: model)
-        #expect(model.lastContext == .empty)
+        #expect(model.lastRequest?.context == .empty)
     }
 
     // MARK: retry / timeout
@@ -686,12 +667,11 @@ struct AirshipAIEvaluatorTests {
         defer { manager.setContextProvider(nil, for: .testUsage) }
 
         _ = await manager.evaluate(
-            TestEvaluationWithContext(
-                additionalContext: .init(items: [.init(content: "authored", priority: 5)])
-            )
+            TestEvaluation(),
+            context: .init(items: [.init(content: "authored", priority: 5)])
         )
 
-        #expect(model.lastContext?.items.map(\.content) == ["provider", "authored"])
+        #expect(model.lastRequest?.context.items.map(\.content) == ["provider", "authored"])
     }
 }
 

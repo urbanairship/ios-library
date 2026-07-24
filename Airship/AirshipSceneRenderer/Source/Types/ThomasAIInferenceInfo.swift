@@ -14,9 +14,8 @@ struct ThomasAIInferenceInfo: ThomasSerializable {
     /// (e.g. "Classify the feedback as one of: shipping, quality, praise, other").
     var prompt: String
 
-    /// Expected output shape. When nil, the executor's default contract
-    /// (`result` + `reason` strings) is used.
-    var outputSchema: AirshipJSONSchema?
+    /// Expected output shape for the inference.
+    var outputSchema: AirshipJSONSchema
 
     /// Layout-authored context items appended to the prompt after any context the app's
     /// context provider returns. Lower-priority items are dropped first when the model's

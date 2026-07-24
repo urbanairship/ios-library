@@ -55,10 +55,9 @@ public struct InAppMessageAISuppressionEvaluation: AirshipAI.Evaluation {
         """
     }
 
-    public func prompt() -> String {
+    public func prompt(context: AirshipAI.Context) -> String {
         // The condition is the governing rule and lives in instructions() — deliberately not
-        // repeated here. `hints` are provider-only and never rendered. Provider context is
-        // appended by the model.
+        // repeated here. `hints` are provider-only and never rendered.
         var parts: [String] = ["Message name: \(subject.name)"]
 
         if let extras = subject.extras, extras != .null,
@@ -67,6 +66,10 @@ public struct InAppMessageAISuppressionEvaluation: AirshipAI.Evaluation {
         }
 
         parts.append("Message priority: \(subject.priority)")
+
+        if let rendered = context.render() {
+            parts.append("User context:\n\(rendered)")
+        }
 
         return parts.joined(separator: "\n")
     }

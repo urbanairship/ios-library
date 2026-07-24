@@ -32,7 +32,7 @@ struct InAppMessageAISuppressionEvaluationTest {
     @Test
     func promptIncludesMessageName() {
         let eval = InAppMessageAISuppressionEvaluation(condition: "", subject: .init(name: "Summer Promo"))
-        #expect(eval.prompt().contains("Message name: Summer Promo"))
+        #expect(eval.prompt(context: .empty).contains("Message name: Summer Promo"))
     }
 
     @Test
@@ -42,7 +42,7 @@ struct InAppMessageAISuppressionEvaluationTest {
             subject: .init(name: "Test")
         )
         #expect(eval.instructions().contains("Only show to frequent flyers"))
-        #expect(!eval.prompt().contains("Only show to frequent flyers"))
+        #expect(!eval.prompt(context: .empty).contains("Only show to frequent flyers"))
     }
 
     @Test
@@ -51,7 +51,7 @@ struct InAppMessageAISuppressionEvaluationTest {
             condition: "",
             subject: .init(name: "Test", extras: ["promo_type": "flash_sale"])
         )
-        let prompt = eval.prompt()
+        let prompt = eval.prompt(context: .empty)
         #expect(prompt.contains("Message Extras:"))
         #expect(prompt.contains("promo_type"))
         #expect(prompt.contains("flash_sale"))
@@ -60,7 +60,7 @@ struct InAppMessageAISuppressionEvaluationTest {
     @Test
     func promptOmitsExtrasWhenNil() {
         let eval = InAppMessageAISuppressionEvaluation(condition: "", subject: .init(name: "Test"))
-        #expect(!eval.prompt().contains("Message Extras:"))
+        #expect(!eval.prompt(context: .empty).contains("Message Extras:"))
     }
 
     @Test
@@ -69,7 +69,7 @@ struct InAppMessageAISuppressionEvaluationTest {
             condition: "",
             subject: .init(name: "Test", priority: 3)
         )
-        #expect(eval.prompt().contains("Message priority: 3"))
+        #expect(eval.prompt(context: .empty).contains("Message priority: 3"))
     }
 
     @Test
@@ -78,14 +78,14 @@ struct InAppMessageAISuppressionEvaluationTest {
             condition: "",
             subject: .init(name: "Test", hints: ["secret": "value"])
         )
-        #expect(!eval.prompt().contains("secret"))
-        #expect(!eval.prompt().contains("value"))
+        #expect(!eval.prompt(context: .empty).contains("secret"))
+        #expect(!eval.prompt(context: .empty).contains("value"))
     }
 
     @Test
     func promptContainsOnlySubjectContent() {
         // Provider context is appended by the model, never by the evaluation.
         let eval = InAppMessageAISuppressionEvaluation(condition: "", subject: .init(name: "Test", priority: 0))
-        #expect(eval.prompt() == "Message name: Test\nMessage priority: 0")
+        #expect(eval.prompt(context: .empty) == "Message name: Test\nMessage priority: 0")
     }
 }

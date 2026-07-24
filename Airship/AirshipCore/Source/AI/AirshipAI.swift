@@ -82,30 +82,27 @@ public enum AirshipAI {
         /// A copy of this context with `other`'s items appended after this context's.
         ///
         /// Order is meaningful: appended items are "later" and so win priority ties when
-        /// trimming (see `droppingLowestPriorityItem()`). Used to merge an evaluation's
+        /// trimming (see `dropLowestPriorityItem()`). Used to merge an evaluation's
         /// own context after the provider's.
         public func appending(_ other: Context) -> Context {
             Context(items: items + other.items)
         }
 
-        /// A copy of this context with the least-important item removed — since lower
-        /// priority values are more important, this drops the item with the highest
-        /// value, earliest first within a value so later (more specific) items win ties.
+        /// Removes and returns the least-important item — since lower priority values are
+        /// more important, this drops the item with the highest value, earliest first within
+        /// a value so later (more specific) items win ties. Returns `nil` when the context is
+        /// already empty.
         ///
-        /// Models call this to shrink the context when the full prompt exceeds their
-        /// input window, repeating until the prompt fits.
-        ///
-        /// - Returns: the reduced context, or nil when there is nothing left to drop.
-        public func droppingLowestPriorityItem() -> Context? {
+        /// The SDK calls this (through `Request`) to shrink the context when the full prompt
+        /// exceeds the model's input window, repeating until the prompt fits.
+        mutating func dropLowestPriorityItem() -> Item? {
             guard
                 let leastImportant = items.map(\.priority).max(),
                 let index = items.firstIndex(where: { $0.priority == leastImportant })
             else {
                 return nil
             }
-            var reduced = items
-            reduced.remove(at: index)
-            return Context(items: reduced)
+            return items.remove(at: index)
         }
     }
 
@@ -176,14 +173,68 @@ public enum AirshipAI {
         case custom(any Model)
     }
 
+    // MARK: - Request
+
+    /// A single request handed to a `Model`.
+    ///
+    /// Bundles the instructions, output schema, and prioritized context, and knows how to
+    /// render itself into prompt text (`prompt()`). Context labeling and layout are owned by
+    /// the originating evaluation — a model never formats context itself; it only renders and,
+    /// if its input window is tight, trims.
+    ///
+    /// A model doesn't construct these — the framework builds one per evaluation and hands it
+    /// to `Model.respond(_:)`.
+    public struct Request: Sendable {
+
+        /// The system instructions (the model's role and rules).
+        public let instructions: String
+
+        /// The structured output contract the response must conform to.
+        public let schema: AirshipJSONSchema
+
+        /// The prioritized context for this attempt. Shrink it with
+        /// `dropLowestPriorityContextItem()`; the setter is private so that's the only path.
+        public private(set) var context: Context
+
+        /// Renders `context` into the full prompt. Owned by the evaluation, so the labeling
+        /// and ordering match what that feature intends. Kept internal — models call
+        /// `prompt()`, they don't invoke this directly.
+        let render: @Sendable (Context) -> String
+
+        init(
+            instructions: String,
+            schema: AirshipJSONSchema,
+            context: Context,
+            render: @escaping @Sendable (Context) -> String
+        ) {
+            self.instructions = instructions
+            self.schema = schema
+            self.context = context
+            self.render = render
+        }
+
+        /// The full prompt text for the current context.
+        public func prompt() -> String {
+            render(context)
+        }
+
+        /// Drops the least-important context item and returns it, or `nil` when the context
+        /// is already empty (nothing to drop). Models call this to shrink a request that
+        /// exceeds their input window, re-reading `prompt()` after each drop until it fits;
+        /// the returned item is handy for trace logging what was dropped.
+        @discardableResult
+        public mutating func dropLowestPriorityContextItem() -> Context.Item? {
+            context.dropLowestPriorityItem()
+        }
+    }
+
     // MARK: - Model protocol
 
     /// Thin, backend-agnostic wrapper over a model.
     ///
-    /// Takes instructions + a prompt + prioritized context + a schema and returns the
-    /// model's structured response as parsed JSON. Retry, timeout, and output
-    /// validation live in the framework — a model answers a single request and
-    /// declares its retry/timeout policy through `maxAttempts`/`responseTimeout`.
+    /// Takes a `Request` and returns the model's structured response as parsed JSON. Retry,
+    /// timeout, and output validation live in the framework — a model answers a single
+    /// request and declares its retry/timeout policy through `maxAttempts`/`responseTimeout`.
     /// No FoundationModels types appear here — only `SystemAIModel` (in the
     /// `AirshipAIModels` module) touches FoundationModels.
     public protocol Model: Sendable {
@@ -212,15 +263,13 @@ public enum AirshipAI {
         /// evaluation when it expires. Airship's on-device model uses 30 seconds.
         var responseTimeout: TimeInterval { get }
 
-        /// Answers a single request. The model appends `context` to the prompt; when
-        /// the prompt exceeds its input window it should shrink the context via
-        /// `Context.droppingLowestPriorityItem()` and try again.
-        func respond(
-            instructions: String,
-            prompt: String,
-            context: Context,
-            schema: AirshipJSONSchema
-        ) async throws -> AirshipJSON
+        /// Answers a single request, returning the model's structured response as JSON.
+        ///
+        /// At minimum, send `request.prompt()`. If your backend has an input limit and the
+        /// prompt exceeds it, shrink the request with `request.droppingLowestPriorityContextItem()`
+        /// and take `prompt()` from the result, repeating until it fits; a backend with a large
+        /// enough window can ignore trimming entirely and just send `request.prompt()` once.
+        func respond(_ request: Request) async throws -> AirshipJSON
     }
 
     // MARK: - ContextProvider protocol
@@ -341,16 +390,18 @@ public enum AirshipAI {
         /// it in code; payload-driven features (e.g. scenes) decode it from the payload.
         var schema: AirshipJSONSchema { get }
 
-        /// Context the evaluation contributes itself, appended after the provider's
-        /// context (so it wins priority ties when trimming). Payload-driven features
-        /// carry authored context here; most evaluations leave it `.empty` (the default).
-        var additionalContext: Context { get }
-
         func instructions() -> String
 
-        /// The subject portion of the prompt. Provider context is fetched by the
-        /// framework and appended by the model, which may trim low-priority items.
-        func prompt() -> String
+        /// Builds the prompt sent to the model. `context` is the already-trimmed
+        /// context for this attempt — the model drops low-priority items and calls
+        /// this again on each retry until the prompt fits the context window.
+        ///
+        /// Implementations are expected to render `context` into the prompt. Nothing
+        /// enforces it — an implementation that ignores the parameter still runs, but the
+        /// context is fetched and trimmed for a prompt it never reaches, so that work is
+        /// wasted. If an evaluation genuinely wants no context, don't register a provider
+        /// (and pass none to `evaluate`) rather than dropping it here.
+        func prompt(context: Context) -> String
     }
 
     // MARK: - InternalManager protocol (SPI)
@@ -363,7 +414,11 @@ public enum AirshipAI {
 
         /// Runs an evaluation through the active model. Feature modules call this;
         /// fails open — returns `.skipped` when the model is unavailable.
-        func evaluate<E: Evaluation>(_ evaluation: E) async -> Result<E.Output>
+        ///
+        /// `context` is layout- or feature-authored context appended after the
+        /// provider's context (so it wins priority ties when the model trims to fit its window).
+        /// Use `evaluate(_:)` (no additional context) for the common case.
+        func evaluate<E: Evaluation>(_ evaluation: E, context: Context) async -> Result<E.Output>
 
         /// Called by `AirshipAIModelsSDKModule` to wire in `SystemAIModel` as the
         /// default. Replaces the current model immediately.
@@ -393,9 +448,10 @@ extension AirshipAI.Model {
 }
 
 @_spi(AirshipInternal)
-extension AirshipAI.Evaluation {
-    /// Most evaluations contribute no context of their own.
-    public var additionalContext: AirshipAI.Context { .empty }
+extension AirshipAI.InternalManager {
+    public func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E) async -> AirshipAI.Result<E.Output> {
+        await evaluate(evaluation, context: .empty)
+    }
 }
 
 // MARK: - AnyUsage cross-type equality

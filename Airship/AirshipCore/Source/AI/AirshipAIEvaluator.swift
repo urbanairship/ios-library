@@ -17,20 +17,21 @@ extension AirshipAI {
 
             let schema = evaluation.schema
             let instructions = evaluation.instructions()
-            let prompt = evaluation.prompt()
             let usage = evaluation.usage.rawValue
 
-            AirshipLogger.trace("AI evaluate [\(usage)] instructions:\n\(instructions)\n\nschema:\n\(schema)\n\nprompt:\n\(prompt)\n\ncontext:\n\(context.render() ?? "none")")
+            let request = AirshipAI.Request(
+                instructions: instructions,
+                schema: schema,
+                context: context,
+                render: evaluation.prompt(context:)
+            )
+
+            AirshipLogger.trace("AI evaluate [\(usage)] instructions:\n\(instructions)\n\nschema:\n\(schema)\n\nprompt:\n\(request.prompt())\n\ncontext:\n\(context.render() ?? "none")")
 
             do {
                 let json = try await Self.withTimeout(model.responseTimeout) {
                     try await Self.withRetry(maxAttempts: model.maxAttempts, usage: usage) {
-                        let json = try await model.respond(
-                            instructions: instructions,
-                            prompt: prompt,
-                            context: context,
-                            schema: schema
-                        )
+                        let json = try await model.respond(request)
                         // Reject non-conforming output inside the retry loop so
                         // another attempt can correct it.
                         try schema.validate(json)
