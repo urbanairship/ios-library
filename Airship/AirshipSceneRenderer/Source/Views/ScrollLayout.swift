@@ -80,16 +80,41 @@ struct ScrollLayout: View {
                     }
                 }
         }
-        .airshipApplyIf(self.shouldApplyFrameSize) {
-            switch (info.properties.direction) {
-            case .vertical:
-                $0.frame(maxHeight: self.contentSize?.height ?? 0)
-            case .horizontal:
-                $0.frame(maxWidth: self.contentSize?.width ?? 0)
+        .airshipApplyIf(self.shouldApplyFrameSize) { view in
+            if let limit = self.measuredContentDimension {
+                // Content has been measured: pin the scroll to it so it hugs its content, while
+                // remaining squeezable/scrollable if an ancestor offers less than this.
+                switch (info.properties.direction) {
+                case .vertical:
+                    view.frame(maxHeight: limit)
+                case .horizontal:
+                    view.frame(maxWidth: limit)
+                }
+            } else {
+                // Not yet measured: hug the content's natural size on this first pass. Previously the
+                // scroll collapsed to 0 here (`?? 0`), which made an auto-height parent (e.g. a modal
+                // with min_height) measure a near-zero content height and latch to its min_height,
+                // forcing the content to scroll even though it fit. Hugging via fixedSize lets the
+                // parent measure the true content height, so it can size correctly before the scroll
+                // becomes squeezable on the next pass.
+                view.fixedSize(
+                    horizontal: info.properties.direction == .horizontal,
+                    vertical: info.properties.direction == .vertical
+                )
             }
         }
     }
-    
+
+    /// The already-measured content size along the scroll axis, or `nil` before the first measurement.
+    private var measuredContentDimension: CGFloat? {
+        switch (info.properties.direction) {
+        case .vertical:
+            return self.contentSize?.height
+        case .horizontal:
+            return self.contentSize?.width
+        }
+    }
+
     private var shouldApplyFrameSize: Bool {
         switch (info.properties.direction) {
         case .vertical:
