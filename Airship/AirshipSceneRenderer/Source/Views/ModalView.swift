@@ -124,18 +124,44 @@ struct ModalView: View {
             safeAreaInsets: safeAreaInsets
         )
 
-        let contentConstraints = windowConstraints.contentConstraints(
+        var contentConstraints = windowConstraints.contentConstraints(
             placement.size,
             contentSize: self.contentSize,
             margin: placement.margin
         )
+
+        // Min_height / min_width floor, in points.
+        let parentWidth = windowConstraints.width?.subtract(
+            placement.margin?.horizontalMargins ?? 0
+        )
+        let parentHeight = windowConstraints.height?.subtract(
+            placement.margin?.verticalMargins ?? 0
+        )
+        let minWidthFloor = placement.size.minWidth?.calculateSize(parentWidth)
+        let minHeightFloor = placement.size.minHeight?.calculateSize(parentHeight)
+
+        // For an auto axis shorter than its min, let the content hug its natural size (so it's
+        // measured stably) and enforce the min as an outer frame floor below. Baking the min
+        // into the child height instead makes it flicker between hugging and the min.
+        if placement.size.height.isAuto, let floor = minHeightFloor,
+            let measured = self.contentSize, measured.height <= floor
+        {
+            contentConstraints.height = nil
+            contentConstraints.maxHeight = parentHeight
+        }
+        if placement.size.width.isAuto, let floor = minWidthFloor,
+            let measured = self.contentSize, measured.width <= floor
+        {
+            contentConstraints.width = nil
+            contentConstraints.maxWidth = parentWidth
+        }
 
         let safeAreasToIgnore: SafeAreaRegions = if ignoreSafeArea {
             [.container, .keyboard]
         } else {
             []
         }
-        
+
         return VStack {
             thomasEnvironment.viewFactory.createView(
                 self.layout.view,
@@ -149,6 +175,13 @@ struct ModalView: View {
                     return Color.clear
                 }
             )
+            .airshipApplyIf(minWidthFloor != nil || minHeightFloor != nil) { view in
+                view.frame(
+                    minWidth: minWidthFloor,
+                    minHeight: minHeightFloor,
+                    alignment: .center
+                )
+            }
             .thomasBackground(
                 color: placement.backgroundColor,
                 border: placement.border,
