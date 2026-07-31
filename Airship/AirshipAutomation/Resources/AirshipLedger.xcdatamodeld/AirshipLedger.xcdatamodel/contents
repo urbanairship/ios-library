@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24C101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="UALedgerEventData" representedClassName="UALedgerEventData" syncable="YES">
+        <attribute name="body" attributeType="Binary"/>
+        <attribute name="scheduleID" attributeType="String"/>
+        <attribute name="sharedID" optional="YES" attributeType="String"/>
+        <fetchIndex name="byScheduleID">
+            <fetchIndexElement property="scheduleID" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="bySharedID">
+            <fetchIndexElement property="sharedID" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+</model>
