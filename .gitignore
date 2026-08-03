@@ -34,3 +34,12 @@ DerivedData
 .build/
 .dependencies/
 .bundle/
+
+# Thomas Scene fixtures fetched from urbanairship/thomas-layouts
+# (see scripts/fetch-layouts.sh / `make fetch-layouts`).
+# Scenes/ is an Xcode folder reference, so the directory must stay present (via
+# .gitkeep) even though its fetched contents are ignored -- otherwise the DevApp
+# fails to build without the repo. Messages/ fixtures are tracked in this repo.
+DevApp/Dev App/Thomas/Resources/Scenes/*
+!DevApp/Dev App/Thomas/Resources/Scenes/.gitkeep
+DevApp/Dev App/Thomas/Resources/.layouts.version

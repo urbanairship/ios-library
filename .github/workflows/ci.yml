@@ -95,7 +95,24 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+      - name: Cache Thomas layouts
+        uses: actions/cache@v4
+        with:
+          path: |
+            DevApp/Dev App/Thomas/Resources/Scenes
+            DevApp/Dev App/Thomas/Resources/.layouts.version
+          key: thomas-layouts-${{ hashFiles('layouts.version') }}
+      - name: Mint layouts read token
+        id: layouts_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.ACTIONS_REPO_READER_APP_ID }}
+          private-key: ${{ secrets.ACTIONS_REPO_READER_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: thomas-layouts
       - name: Build samples
+        env:
+          LAYOUTS_REPO_TOKEN: ${{ steps.layouts_token.outputs.token }}
         run: make build-samples
 
   build-sdk-tvos:

@@ -37,6 +37,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Cache Thomas layouts
+        uses: actions/cache@v4
+        with:
+          path: |
+            DevApp/Dev App/Thomas/Resources/Scenes
+            DevApp/Dev App/Thomas/Resources/.layouts.version
+          key: thomas-layouts-${{ hashFiles('layouts.version') }}
+
+      - name: Mint layouts read token
+        id: layouts_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.ACTIONS_REPO_READER_APP_ID }}
+          private-key: ${{ secrets.ACTIONS_REPO_READER_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: thomas-layouts
+
       - name: Install Apple Certificate
         uses: apple-actions/import-codesign-certs@v3
         with:
@@ -48,4 +65,5 @@ jobs:
           ASC_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           ASC_API_KEY_P8_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8_BASE64 }}
+          LAYOUTS_REPO_TOKEN: ${{ steps.layouts_token.outputs.token }}
         run: make archive-devapp-store

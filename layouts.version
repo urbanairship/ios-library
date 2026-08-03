@@ -1,0 +1,7 @@
+# Pinned version of urbanairship/thomas-layouts fetched into the DevApp Thomas
+# Scene resources by scripts/fetch-layouts.sh.
+#
+# thomas-layouts publishes no tags, so this is a full commit SHA. Bump this
+# value to pull updated scenes; that bump is the explicit, reviewable
+# "update the layouts" change.
+f38a705722d48ef6deba7edcd99ba1f7f1dc6748

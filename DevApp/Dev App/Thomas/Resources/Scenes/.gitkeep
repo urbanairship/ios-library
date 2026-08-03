@@ -1,0 +1,2 @@
+# Keeps the Scenes/ directory present so the DevApp Xcode folder reference
+# resolves even before `make fetch-layouts` populates it. Do not remove.

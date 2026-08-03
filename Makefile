@@ -63,17 +63,23 @@ build-xcframeworks-no-sign: setup clean-xcframeworks
 .PHONY: build-samples
 build-samples: build-sample-ios build-sample-macos
 
+# Fetches the pinned Thomas Scene fixtures from urbanairship/thomas-layouts
+# into the DevApp resources. Best-effort locally, strict in CI (see the script).
+.PHONY: fetch-layouts
+fetch-layouts:
+	bash ./scripts/fetch-layouts.sh
+
 .PHONY: build-sample-ios
-build-sample-ios: setup
+build-sample-ios: setup fetch-layouts
 	bash ./scripts/build_sample.sh "DevApp" "${derived_data_path}"
 
 # Release archive + App Store IPA export + altool validation (requires ASC API key + distribution cert in CI).
 .PHONY: archive-devapp-store
-archive-devapp-store: setup
+archive-devapp-store: setup fetch-layouts
 	bash ./scripts/archive_devapp_store.sh "${derived_data_devapp_store}" "${devapp_store_out}"
 	
 .PHONY: build-sample-macos
-build-sample-macos: setup
+build-sample-macos: setup fetch-layouts
 	bash ./scripts/build_sample.sh "DevApp" "${derived_data_path}" "macOS"
 	
 .PHONY: build-sample-watchos

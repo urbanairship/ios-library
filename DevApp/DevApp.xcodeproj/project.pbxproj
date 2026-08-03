@@ -780,6 +780,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6EAAE98328C7E18C003CAE53 /* Build configuration list for PBXNativeTarget "DevApp" */;
 			buildPhases = (
+				6EAAFE7C0000000000000CA1 /* Check Thomas layouts */,
 				6EAAE97428C7E18B003CAE53 /* Sources */,
 				6EAAE97528C7E18B003CAE53 /* Frameworks */,
 				6EAAE97628C7E18B003CAE53 /* Resources */,
@@ -1137,6 +1138,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6EAAFE7C0000000000000CA1 /* Check Thomas layouts */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Check Thomas layouts";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "bash \"$SRCROOT/../scripts/check_layouts.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6EAAE97428C7E18B003CAE53 /* Sources */ = {

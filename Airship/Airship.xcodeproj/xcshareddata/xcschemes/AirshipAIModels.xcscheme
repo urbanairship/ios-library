@@ -16,6 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6EAFC3AC2FF329F3005FA58D"
                BuildableName = "AirshipAIModels.framework"
+               BlueprintName = "AirshipAIModels"
                ReferencedContainer = "container:Airship.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -62,6 +63,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6EAFC3AC2FF329F3005FA58D"
             BuildableName = "AirshipAIModels.framework"
+            BlueprintName = "AirshipAIModels"
             ReferencedContainer = "container:Airship.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
