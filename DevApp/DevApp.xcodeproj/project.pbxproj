@@ -85,6 +85,10 @@
 		6EB21AA12E82008A001A5660 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21A962E820088001A5660 /* AppRouter.swift */; };
 		6EB21AA32E820C5A001A5660 /* AirshipInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21AA22E820C55001A5660 /* AirshipInitializer.swift */; };
 		6EB21AA42E820C5A001A5660 /* AirshipInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21AA22E820C55001A5660 /* AirshipInitializer.swift */; };
+		66E95686C07EE271B565025B /* ClaudeAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AEE82CB0EA053D93EC55B9 /* ClaudeAIModel.swift */; };
+		0672945E4FD9B38050935474 /* ClaudeAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AEE82CB0EA053D93EC55B9 /* ClaudeAIModel.swift */; };
+		6DE647A17590C250D4EB83DE /* OpenAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1172461942BA6D5637D488 /* OpenAIModel.swift */; };
+		4F06F25B3167DC030BB3C974 /* OpenAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1172461942BA6D5637D488 /* OpenAIModel.swift */; };
 		6EB21AFE2E821E01001A5660 /* LiveActivityHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21AFD2E821DFD001A5660 /* LiveActivityHandler.swift */; };
 		6EB21AFF2E821E01001A5660 /* LiveActivityHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21AFD2E821DFD001A5660 /* LiveActivityHandler.swift */; };
 		6EB21B022E821E34001A5660 /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21B012E821E30001A5660 /* DeepLinkHandler.swift */; };
@@ -495,6 +499,8 @@
 		6EAAE9F328C7E417003CAE53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EB21A962E820088001A5660 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
 		6EB21AA22E820C55001A5660 /* AirshipInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipInitializer.swift; sourceTree = "<group>"; };
+		B6AEE82CB0EA053D93EC55B9 /* ClaudeAIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAIModel.swift; sourceTree = "<group>"; };
+		9B1172461942BA6D5637D488 /* OpenAIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIModel.swift; sourceTree = "<group>"; };
 		6EB21AFD2E821DFD001A5660 /* LiveActivityHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityHandler.swift; sourceTree = "<group>"; };
 		6EB21B012E821E30001A5660 /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
 		6EB21B042E821E4C001A5660 /* PushNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationHandler.swift; sourceTree = "<group>"; };
@@ -707,6 +713,8 @@
 			isa = PBXGroup;
 			children = (
 				6EB21AA22E820C55001A5660 /* AirshipInitializer.swift */,
+				B6AEE82CB0EA053D93EC55B9 /* ClaudeAIModel.swift */,
+				9B1172461942BA6D5637D488 /* OpenAIModel.swift */,
 				6EB21B042E821E4C001A5660 /* PushNotificationHandler.swift */,
 				6EB21B012E821E30001A5660 /* DeepLinkHandler.swift */,
 				6EB21AFD2E821DFD001A5660 /* LiveActivityHandler.swift */,
@@ -1137,6 +1145,8 @@
 			files = (
 				6EDB2B1128D4E25100A01377 /* LiveActivity.intentdefinition in Sources */,
 				6EB21AA32E820C5A001A5660 /* AirshipInitializer.swift in Sources */,
+				66E95686C07EE271B565025B /* ClaudeAIModel.swift in Sources */,
+				6DE647A17590C250D4EB83DE /* OpenAIModel.swift in Sources */,
 				279DCEE12E85A558008B5542 /* ThomasLayoutViewModel.swift in Sources */,
 				32B5BE4B28F8BFBA00F2254B /* Toast.swift in Sources */,
 				6EAAE98C28C7E1A1003CAE53 /* AppView.swift in Sources */,
@@ -1199,6 +1209,8 @@
 				279DCEE22E85A558008B5542 /* ThomasLayoutViewModel.swift in Sources */,
 				6EAAE9B228C7E31E003CAE53 /* NamedUserView.swift in Sources */,
 				6EB21AA42E820C5A001A5660 /* AirshipInitializer.swift in Sources */,
+				0672945E4FD9B38050935474 /* ClaudeAIModel.swift in Sources */,
+				4F06F25B3167DC030BB3C974 /* OpenAIModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

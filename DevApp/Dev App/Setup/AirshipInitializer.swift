@@ -36,6 +36,18 @@ struct AirshipInitializer {
         try Airship.takeOff(config)
         Airship.ai.setContextProvider(DevIAASuppressionContextProvider(), for: InAppMessageAISuppression.usage)
         Airship.ai.setContextProvider(DevSceneTextInputContextProvider(), for: SceneTextInputInferenceSubject.inferenceUsage)
+
+        // Bring-your-own-model testing: set ANTHROPIC_API_KEY or OPENAI_API_KEY in the
+        // scheme's environment variables (Product > Scheme > Edit Scheme > Run > Arguments)
+        // to route every usage to that provider instead of the on-device default.
+        let environment = ProcessInfo.processInfo.environment
+        if let apiKey = environment["ANTHROPIC_API_KEY"], !apiKey.isEmpty {
+            let model = ClaudeAIModel(apiKey: apiKey)
+            Airship.ai.setModelResolver { _ in .custom(model) }
+        } else if let apiKey = environment["OPENAI_API_KEY"], !apiKey.isEmpty {
+            let model = OpenAIModel(apiKey: apiKey)
+            Airship.ai.setModelResolver { _ in .custom(model) }
+        }
     }
 }
 
