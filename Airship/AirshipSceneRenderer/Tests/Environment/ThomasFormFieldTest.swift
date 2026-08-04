@@ -13,7 +13,7 @@ struct ThomasFormFieldTest {
     func testInvalidField() async throws {
         let field = ThomasFormField.invalidField(
             identifier: "some-ID",
-            input: .text("some-text", aiInference: nil)
+            input: .text("some-text", aiInference: nil, isRedacted: nil)
         )
 
         #expect(field.status == .invalid)
@@ -32,20 +32,20 @@ struct ThomasFormFieldTest {
     func testValidFieldStatus() async throws {
         let field = ThomasFormField.validField(
             identifier: "some-ID",
-            input: .text("some-text", aiInference: nil),
-            result: .init(value: .text("some-other-text", aiInference: nil))
+            input: .text("some-text", aiInference: nil, isRedacted: nil),
+            result: .init(value: .text("some-other-text", aiInference: nil, isRedacted: nil))
         )
 
-        #expect(field.status == .valid(.init(value: .text("some-other-text", aiInference: nil))))
+        #expect(field.status == .valid(.init(value: .text("some-other-text", aiInference: nil, isRedacted: nil))))
 
         // Process does nothing
         await field.process(retryErrors: true)
         await field.process(retryErrors: false)
 
-        #expect(field.status == .valid(.init(value: .text("some-other-text", aiInference: nil))))
+        #expect(field.status == .valid(.init(value: .text("some-other-text", aiInference: nil, isRedacted: nil))))
 
         var statusUpdates = field.statusUpdates.makeAsyncIterator()
-        #expect(await statusUpdates.next() == .valid(.init(value: .text("some-other-text", aiInference: nil))))
+        #expect(await statusUpdates.next() == .valid(.init(value: .text("some-other-text", aiInference: nil, isRedacted: nil))))
     }
 
     @Test("Test async field.")
@@ -60,11 +60,11 @@ struct ThomasFormFieldTest {
 
         let field = ThomasFormField.asyncField(
             identifier: "some-ID",
-            input: .text("some-text", aiInference: nil),
+            input: .text("some-text", aiInference: nil, isRedacted: nil),
             processDelay: 3.0,
             processor: processor
         ) {
-            .valid(.init(value: .text("some valid text", aiInference: nil)))
+            .valid(.init(value: .text("some valid text", aiInference: nil, isRedacted: nil)))
         }
 
         #expect(field.status == .pending)
@@ -85,7 +85,7 @@ struct ThomasFormFieldTest {
 
         // Update the result
         pendingRequest.result = try await pendingRequest.resultBlock?()
-        #expect(await statusUpdates.next() == .valid(.init(value: .text("some valid text", aiInference: nil))))
+        #expect(await statusUpdates.next() == .valid(.init(value: .text("some valid text", aiInference: nil, isRedacted: nil))))
 
         // Update the result to the error
         pendingRequest.result = .error
@@ -164,6 +164,6 @@ struct ThomasFormFieldValueCompatTest {
         // Pre-change synthesized format for `.text(String?)`.
         let oldJSON = #"{"text":{"_0":"hello"}}"#
         let decoded = try JSONDecoder().decode(ThomasFormField.Value.self, from: Data(oldJSON.utf8))
-        #expect(decoded == .text("hello", aiInference: nil))
+        #expect(decoded == .text("hello", aiInference: nil, isRedacted: nil))
     }
 }

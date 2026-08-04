@@ -66,7 +66,7 @@ struct ThomasOutcomeProcessorTest {
 
     @Test
     func processSyncAppliesStateActionWithFormFieldValue() {
-        let fieldValue = ThomasFormField.Value.text("hello", aiInference: nil)
+        let fieldValue = ThomasFormField.Value.text("hello", aiInference: nil, isRedacted: nil)
         var recorded: [(ThomasStateAction, ThomasFormField.Value?)] = []
         let processor = processor(onStateAction: { action, value in
             recorded.append((action, value))

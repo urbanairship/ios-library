@@ -34,13 +34,7 @@ public struct InAppMessageAISuppressionEvaluation: AirshipAI.Evaluation {
     }
 
     public func instructions() -> String {
-        guard !condition.isEmpty else {
-            return """
-            You are a gate that decides whether to show a single in-app message to the \
-            current user. When in doubt, show it.
-            """
-        }
-        return """
+        """
         You are a gate that decides whether to show a single in-app message to the current \
         user. Show the message only when this condition holds for the user; otherwise do not \
         show it:

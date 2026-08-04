@@ -223,9 +223,9 @@ struct TextInput: View {
         let identifier = self.info.properties.identifier
         switch(self.info.properties.inputType, formState.fieldValue(identifier: identifier)) {
         case(.email, .email(let value)),
-            (.number, .text(let value, _)),
-            (.text, .text(let value, _)),
-            (.textMultiline, .text(let value, _)):
+            (.number, .text(let value, _, _)),
+            (.text, .text(let value, _, _)),
+            (.textMultiline, .text(let value, _, _)):
             return (value, nil)
         case (.sms, .sms(let value, let locale)):
             return (value, locale)
@@ -473,14 +473,14 @@ struct TextInput: View {
                     return if isRequired {
                         ThomasFormField.invalidField(
                             identifier: inputProperties.identifier,
-                            input: .text(input, aiInference: nil)
+                            input: .text(input, aiInference: nil, isRedacted: nil)
                         )
                     } else {
                         ThomasFormField.validField(
                             identifier: inputProperties.identifier,
-                            input: .text(input, aiInference: nil),
+                            input: .text(input, aiInference: nil, isRedacted: nil),
                             result: .init(
-                                value: .text(trimmed, aiInference: nil),
+                                value: .text(trimmed, aiInference: nil, isRedacted: inputProperties.redactInput),
                                 attributes: self.makeAttributes(value: trimmed)
                             )
                         )
@@ -488,7 +488,7 @@ struct TextInput: View {
                 }
 
                 var result = ThomasFormField.Result(
-                    value: .text(trimmed, aiInference: nil),
+                    value: .text(trimmed, aiInference: nil, isRedacted: inputProperties.redactInput),
                     attributes: self.makeAttributes(value: trimmed)
                 )
 
@@ -496,10 +496,10 @@ struct TextInput: View {
                 // re-running the model.
                 if let lastInference, lastInference.text == trimmed {
                     result.aiInference = lastInference.output
-                    result.value = .text(trimmed, aiInference: lastInference.report)
+                    result.value = .text(trimmed, aiInference: lastInference.report, isRedacted: inputProperties.redactInput)
                     return ThomasFormField.validField(
                         identifier: inputProperties.identifier,
-                        input: .text(input, aiInference: nil),
+                        input: .text(input, aiInference: nil, isRedacted: nil),
                         result: result
                     )
                 }
@@ -514,11 +514,11 @@ struct TextInput: View {
                     // the result failed so layouts can branch to a non-AI path.
                     if inputProperties.aiInference != nil {
                         result.aiInference = .object(["status": "failed"])
-                        result.value = .text(trimmed, aiInference: ThomasAIInferenceReport.failed)
+                        result.value = .text(trimmed, aiInference: ThomasAIInferenceReport.failed, isRedacted: inputProperties.redactInput)
                     }
                     return ThomasFormField.validField(
                         identifier: inputProperties.identifier,
-                        input: .text(input, aiInference: nil),
+                        input: .text(input, aiInference: nil, isRedacted: nil),
                         result: result
                     )
                 }
@@ -543,9 +543,10 @@ struct TextInput: View {
 
                 let identifier = inputProperties.identifier
 
+                let redactInput = inputProperties.redactInput
                 return ThomasFormField.asyncField(
                     identifier: inputProperties.identifier,
-                    input: .text(input, aiInference: nil),
+                    input: .text(input, aiInference: nil, isRedacted: nil),
                     processDelay: Self.aiInferenceProcessDelay
                 ) { [weak self, executor] in
                     let output = await executor.run(request: request)
@@ -575,7 +576,7 @@ struct TextInput: View {
 
                     var result = result
                     result.aiInference = .object(ai)
-                    result.value = .text(trimmed, aiInference: report)
+                    result.value = .text(trimmed, aiInference: report, isRedacted: redactInput)
                     self?.lastInference = (trimmed, .object(ai), report)
 
                     // Fail open: inference never invalidates the field itself.

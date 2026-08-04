@@ -105,10 +105,15 @@ struct ThomasFormPayloadGenerator {
                     builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)
                 }
             }
-        case .text(let value, let aiInference):
+        case .text(let value, let aiInference, let isRedacted):
             return AirshipJSON.makeObject { builder in
                 builder.set(string: "text_input", key: Self.typeKey)
-                builder.set(string: value, key: Self.valueKey)
+                if isRedacted == true {
+                    builder.set(string: "REDACTED", key: Self.valueKey)
+                    builder.set(bool: true, key: "is_redacted")
+                } else {
+                    builder.set(string: value, key: Self.valueKey)
+                }
                 if let status {
                     builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)
                 }
@@ -172,7 +177,7 @@ struct ThomasFormPayloadGenerator {
                 if let status {
                     builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)
                 }
-                
+
                 let children = AirshipJSON.makeObject { builder in
                     children.forEach {
                         builder.set(

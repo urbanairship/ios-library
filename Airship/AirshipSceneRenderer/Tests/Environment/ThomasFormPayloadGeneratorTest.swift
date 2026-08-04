@@ -17,14 +17,14 @@ struct ThomasFormPayloadGeneratorTest {
                     "some-radio-input": .radio(AirshipJSON.string("some-radio-input-value")),
                     "some-toggle-input": .toggle(true),
                     "some-score-input": .score(7.0),
-                    "some-text-input": .text("neat text", aiInference: nil),
+                    "some-text-input": .text("neat text", aiInference: nil, isRedacted: nil),
                     "some-email-input": .email("email@email.email"),
                     "some-sms-input": .sms("123", nil),
                     "some-child-score": .score(8.0),
                     "some-child-form": .form(
                         responseType: "some-child-form-response",
                         children: [
-                            "some-other-text-input": .text("other neat text", aiInference: nil)
+                            "some-other-text-input": .text("other neat text", aiInference: nil, isRedacted: nil)
                         ]
                     ),
                     "some-child-nps-form": .npsForm(
@@ -34,7 +34,7 @@ struct ThomasFormPayloadGeneratorTest {
                             "some-other-child-score": .score(9.0)
                         ]
                     ),
-                    "text-nil": .text(nil, aiInference: nil),
+                    "text-nil": .text(nil, aiInference: nil, isRedacted: nil),
                     "email-nil": .email(nil),
                     "sms-nil": .sms(nil, .init(countryCode: "US", prefix: "+1")),
                     "score-nil": .score(nil),
@@ -131,7 +131,7 @@ struct ThomasFormPayloadGeneratorTest {
                 responseType: "user_feedback",
                 scoreID: "some-child-score",
                 children: [
-                    "some-text-input": .text("neat text", aiInference: nil),
+                    "some-text-input": .text("neat text", aiInference: nil, isRedacted: nil),
                     "some-email-input": .email("email@email.email"),
                     "some-child-score": .score(8.0),
                 ]
@@ -174,7 +174,7 @@ struct ThomasFormPayloadGeneratorTest {
         #expect(throws: NSError.self) {
             try ThomasFormPayloadGenerator.makeFormEventPayload(
                 identifier: "some-form-id",
-                formValue: .text("some-text", aiInference: nil)
+                formValue: .text("some-text", aiInference: nil, isRedacted: nil)
             )
         }
     }
@@ -187,7 +187,7 @@ struct ThomasFormPayloadGeneratorTest {
         let form: ThomasFormField.Value = .form(
             responseType: "user_feedback",
             children: [
-                "question-id-1": .text("I hate goats", aiInference: report),
+                "question-id-1": .text("I hate goats", aiInference: report, isRedacted: nil),
                 "question-id-2": .score(7.0)
             ]
         )
@@ -220,6 +220,44 @@ struct ThomasFormPayloadGeneratorTest {
         #expect(actual == expected)
     }
 
+    @Test("redact_input omits text value from event payload but preserves type")
+    func testRedactInput() throws {
+        let form: ThomasFormField.Value = .form(
+            responseType: "user_feedback",
+            children: [
+                "open-question": .text("sensitive text", aiInference: nil, isRedacted: true),
+                "score-field": .score(8.0)
+            ]
+        )
+
+        let expectedJSON = """
+        {
+          "some-form-id": {
+            "type": "form",
+            "response_type": "user_feedback",
+            "children": {
+              "open-question": {
+                "type": "text_input",
+                "value": "REDACTED",
+                "is_redacted": true
+              },
+              "score-field": {
+                "type": "score",
+                "value": 8.0
+              }
+            }
+          }
+        }
+        """
+
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try ThomasFormPayloadGenerator.makeFormEventPayload(
+            identifier: "some-form-id",
+            formValue: form
+        )
+        #expect(actual == expected)
+    }
+
     @Test("ai_inference on a text value is omitted from the state projection")
     func testStateProjectionOmitsAIInference() throws {
         let report = ThomasAIInferenceReport.success(
@@ -227,8 +265,8 @@ struct ThomasFormPayloadGeneratorTest {
         )
         let field = ThomasFormField.validField(
             identifier: "question-id-1",
-            input: .text("I hate goats", aiInference: nil),
-            result: .init(value: .text("I hate goats", aiInference: report))
+            input: .text("I hate goats", aiInference: nil, isRedacted: nil),
+            result: .init(value: .text("I hate goats", aiInference: report, isRedacted: nil))
         )
 
         let payload = ThomasFormPayloadGenerator.makeFormStatePayload(

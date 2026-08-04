@@ -72,7 +72,7 @@ final class ThomasFormField: Sendable {
         /// A text input's value plus its optional `ai_inference` report, which rides the value
         /// so it survives form folding/nesting and reaches the event payload. nil when the
         /// field has no `ai_inference` config or on the raw input value.
-        case text(String?, aiInference: ThomasAIInferenceReport?)
+        case text(String?, aiInference: ThomasAIInferenceReport?, isRedacted: Bool?)
         case email(String?)
         case sms(String?, ThomasSMSLocale?)
         case score(AirshipJSON?)

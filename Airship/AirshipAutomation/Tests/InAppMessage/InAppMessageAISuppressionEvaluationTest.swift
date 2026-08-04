@@ -21,12 +21,6 @@ struct InAppMessageAISuppressionEvaluationTest {
         #expect(instructions.contains("Show the message only when"))
     }
 
-    @Test
-    func instructionsFallBackWhenConditionEmpty() {
-        let eval = InAppMessageAISuppressionEvaluation(condition: "", subject: .init(name: "Test"))
-        #expect(eval.instructions().contains("When in doubt, show it"))
-    }
-
     // MARK: - prompt()
 
     @Test

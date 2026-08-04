@@ -326,7 +326,7 @@ fileprivate extension ThomasFormField.Value {
         case .radio(let value): return value
         case .sms(let value, _),
             .email(let value),
-            .text(let value, _):
+            .text(let value, _, _):
             guard let value else { return nil }
             return .string(value)
         case .score(let value): return value
