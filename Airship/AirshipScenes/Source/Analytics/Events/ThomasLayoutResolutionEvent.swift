@@ -92,6 +92,24 @@ public struct ThomasLayoutResolutionEvent: ThomasLayoutEvent {
         )
     }
 
+    public static func appSuppressed() -> ThomasLayoutResolutionEvent {
+        return ThomasLayoutResolutionEvent(
+            data: ResolutionData(
+                resolutionType: .appSuppressed,
+                displayTime: 0.0
+            )
+        )
+    }
+
+    public static func aiSuppressed() -> ThomasLayoutResolutionEvent {
+        return ThomasLayoutResolutionEvent(
+            data: ResolutionData(
+                resolutionType: .aiSuppressed,
+                displayTime: 0.0
+            )
+        )
+    }
+
     private struct DeviceInfo: Encodable, Sendable {
         var channel: String?
         var contact: String?
@@ -112,6 +130,8 @@ public struct ThomasLayoutResolutionEvent: ThomasLayoutEvent {
             case interrupted
             case control
             case audienceCheckExcluded
+            case appSuppressed
+            case aiSuppressed
         }
 
         let resolutionType: ResolutionType
@@ -159,6 +179,10 @@ public struct ThomasLayoutResolutionEvent: ThomasLayoutEvent {
                 try resolution.encode("control", forKey: .resolutionType)
             case .audienceCheckExcluded:
                 try resolution.encode("audience_check_excluded", forKey: .resolutionType)
+            case .appSuppressed:
+                try resolution.encode("app_suppressed", forKey: .resolutionType)
+            case .aiSuppressed:
+                try resolution.encode("ai_suppressed", forKey: .resolutionType)
             }
         }
     }

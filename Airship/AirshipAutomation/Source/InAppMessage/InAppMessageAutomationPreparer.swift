@@ -29,9 +29,9 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
 
 
     @MainActor
-    var onCheckLocalAudience: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> LocalAudienceCheckResult)? {
-        get { hooks.onCheckLocalAudience }
-        set { hooks.onCheckLocalAudience = newValue }
+    var onCheckSuppression: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> SuppressionResult)? {
+        get { hooks.onCheckSuppression }
+        set { hooks.onCheckSuppression = newValue }
     }
 
     @MainActor
@@ -96,15 +96,9 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
             message = data
         }
 
-        if let check = await hooks.onCheckLocalAudience {
-            switch try await check(message, preparedScheduleInfo.scheduleID) {
-            case .match: break
-            case .miss(let behavior):
-                return switch behavior {
-                case .cancel: .cancel
-                case .skip: .skip
-                case .penalize: .penalize
-                }
+        if let check = await hooks.onCheckSuppression {
+            if case .suppress(let behavior) = try await check(message, preparedScheduleInfo.scheduleID) {
+                return await suppressed(behavior, event: .appSuppressed(), preparedScheduleInfo: preparedScheduleInfo, message: message)
             }
         }
 
@@ -122,12 +116,7 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
             )
             if result.output?.allow == false {
                 AirshipLogger.debug("AI suppressed message \(message.name): \(result.output?.reason ?? "")")
-                // Default matches the payload contract: skip (eligible again next trigger).
-                return switch suppression.missBehavior ?? .skip {
-                case .cancel: .cancel
-                case .skip: .skip
-                case .penalize: .penalize
-                }
+                return await suppressed(suppression.missBehavior ?? .skip, event: .aiSuppressed(), preparedScheduleInfo: preparedScheduleInfo, message: message)
             }
         }
 
@@ -163,6 +152,21 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
             analytics: analytics,
             actionRunner: actionRunner
         ))
+    }
+
+    private func suppressed(
+        _ behavior: AutomationAudience.MissBehavior,
+        event: ThomasLayoutResolutionEvent,
+        preparedScheduleInfo: PreparedScheduleInfo,
+        message: InAppMessage
+    ) async -> DelegatePreparerResult<PreparedInAppMessageData> {
+        let analytics = await analyticsFactory.makeAnalytics(preparedScheduleInfo: preparedScheduleInfo, message: message)
+        await MainActor.run { analytics.recordEvent(event, layoutContext: nil) }
+        return switch behavior {
+        case .cancel: .cancel
+        case .skip: .skip
+        case .penalize: .penalize
+        }
     }
 
     func cancelled(scheduleID: String) async {
@@ -207,6 +211,6 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
 
     private final class Hooks: Sendable {
         @MainActor
-        fileprivate var onCheckLocalAudience: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> LocalAudienceCheckResult)?
+        fileprivate var onCheckSuppression: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> SuppressionResult)?
     }
 }

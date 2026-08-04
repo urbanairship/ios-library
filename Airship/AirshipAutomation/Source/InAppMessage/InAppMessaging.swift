@@ -48,18 +48,16 @@ public protocol InAppMessaging: AnyObject, Sendable {
     @MainActor
     func notifyDisplayConditionsChanged()
 
-    /// Called during schedule preparation, after deferred resolution, to allow app-side logic to
-    /// approve or suppress the message before assets are fetched. Throwing causes the prepare
-    /// operation to retry with backoff — catch internally to fail open instead.
-    @_spi(AirshipInternal)
+    /// Called during schedule preparation to allow app-side logic to suppress the message before
+    /// assets are fetched. Throwing causes the prepare operation to retry with backoff — catch
+    /// internally to fail open instead.
     @MainActor
-    var onCheckLocalAudience: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> LocalAudienceCheckResult)? { get set }
+    var onCheckSuppression: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> SuppressionResult)? { get set }
 }
 
-@_spi(AirshipInternal)
 public extension InAppMessaging {
     @MainActor
-    var onCheckLocalAudience: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> LocalAudienceCheckResult)? {
+    var onCheckSuppression: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> SuppressionResult)? {
         get { nil }
         set { }
     }
@@ -149,8 +147,8 @@ final class DefaultInAppMessaging: InAppMessaging {
     }
 
     @MainActor
-    var onCheckLocalAudience: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> LocalAudienceCheckResult)? {
-        get { preparer.onCheckLocalAudience }
-        set { preparer.onCheckLocalAudience = newValue }
+    var onCheckSuppression: (@Sendable (_ message: InAppMessage, _ scheduleID: String) async throws -> SuppressionResult)? {
+        get { preparer.onCheckSuppression }
+        set { preparer.onCheckSuppression = newValue }
     }
 }

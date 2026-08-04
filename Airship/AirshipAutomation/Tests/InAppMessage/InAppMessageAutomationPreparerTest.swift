@@ -170,14 +170,14 @@ struct InAppMessageAutomationPreparerTest {
     }
 
     @Test
-    func testLocalAudienceCheckMatch() async throws {
+    func testAppSuppressionMatch() async throws {
         let coordinator = TestDisplayCoordinator()
         let adapter = TestDisplayAdapter()
         await self.assetManager.setOnCache { _, _ in TestCachedAssets() }
         self.displayCoordinatorManager.onCoordinator = { _ in coordinator }
         self.displayAdapterFactory.onMake = { _ in adapter }
 
-        preparer.onCheckLocalAudience = { _, _ in .match }
+        preparer.onCheckSuppression = { _, _ in .show }
 
         guard case .prepared = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo) else {
             Issue.record("Expected .prepared")
@@ -186,9 +186,9 @@ struct InAppMessageAutomationPreparerTest {
     }
 
     @Test
-    func testLocalAudienceCheckMissSkip() async throws {
+    func testAppSuppressionMissSkip() async throws {
         // onCache intentionally not set — if assets are prepared the force-unwrap crashes
-        preparer.onCheckLocalAudience = { _, _ in .miss(.skip) }
+        preparer.onCheckSuppression = { _, _ in .suppress(.skip) }
 
         let result = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
         guard case .skip = result else {
@@ -198,8 +198,8 @@ struct InAppMessageAutomationPreparerTest {
     }
 
     @Test
-    func testLocalAudienceCheckMissCancel() async throws {
-        preparer.onCheckLocalAudience = { _, _ in .miss(.cancel) }
+    func testAppSuppressionMissCancel() async throws {
+        preparer.onCheckSuppression = { _, _ in .suppress(.cancel) }
 
         let result = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
         guard case .cancel = result else {
@@ -209,8 +209,8 @@ struct InAppMessageAutomationPreparerTest {
     }
 
     @Test
-    func testLocalAudienceCheckMissPenalize() async throws {
-        preparer.onCheckLocalAudience = { _, _ in .miss(.penalize) }
+    func testAppSuppressionMissPenalize() async throws {
+        preparer.onCheckSuppression = { _, _ in .suppress(.penalize) }
 
         let result = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
         guard case .penalize = result else {
@@ -220,8 +220,8 @@ struct InAppMessageAutomationPreparerTest {
     }
 
     @Test
-    func testLocalAudienceCheckThrows() async throws {
-        preparer.onCheckLocalAudience = { _, _ in throw AirshipErrors.error("LLM unavailable") }
+    func testAppSuppressionThrows() async throws {
+        preparer.onCheckSuppression = { _, _ in throw AirshipErrors.error("LLM unavailable") }
 
         do {
             _ = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
@@ -230,7 +230,7 @@ struct InAppMessageAutomationPreparerTest {
     }
 
     @Test
-    func testLocalAudienceCheckReceivesMessageAndScheduleID() async throws {
+    func testAppSuppressionReceivesMessageAndScheduleID() async throws {
         let coordinator = TestDisplayCoordinator()
         let adapter = TestDisplayAdapter()
         await self.assetManager.setOnCache { _, _ in TestCachedAssets() }
@@ -240,10 +240,10 @@ struct InAppMessageAutomationPreparerTest {
         let receivedMessage = AirshipAtomicValue<InAppMessage?>(nil)
         let receivedScheduleID = AirshipAtomicValue<String?>(nil)
 
-        self.preparer.onCheckLocalAudience = { message, scheduleID in
+        self.preparer.onCheckSuppression = { message, scheduleID in
             receivedMessage.set(message)
             receivedScheduleID.set(scheduleID)
-            return .match
+            return .show
         }
 
         _ = try await self.preparer.prepare(data: message, preparedScheduleInfo: preparedScheduleInfo)
@@ -253,7 +253,7 @@ struct InAppMessageAutomationPreparerTest {
     }
 
     @Test
-    func testLocalAudienceCheckNilSkipsHook() async throws {
+    func testAppSuppressionNilSkipsHook() async throws {
         let coordinator = TestDisplayCoordinator()
         let adapter = TestDisplayAdapter()
         await self.assetManager.setOnCache { _, _ in TestCachedAssets() }
