@@ -19,12 +19,22 @@ public protocol AirshipEmbeddedViewManagerProtocol: Sendable {
 
     var publisher: AnyPublisher<[PendingEmbedded], Never> { get }
     func publisher(embeddedViewID: String) -> AnyPublisher<[PendingEmbedded], Never>
+
+    @MainActor
+    var embeddedAISelector: (any EmbeddedAISelector)? { get }
 }
 
 @_spi(AirshipInternal)
 public final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtocol {
 
     public static let shared: AirshipEmbeddedViewManager = AirshipEmbeddedViewManager()
+
+    /// AI selector for `.ai` embedded selection. Injected once at SDK setup (by the module that
+    /// owns the AI manager); nil when AI isn't available, in which case `.ai` selection falls
+    /// back. Lives here — external to per-layout `ThomasExtensions` — because choosing which
+    /// pending embedded to show is an embedded-view concern, not a layout-render one.
+    @MainActor
+    public var embeddedAISelector: (any EmbeddedAISelector)? = nil
 
     @MainActor
     private var pending: [PendingEmbedded] = []

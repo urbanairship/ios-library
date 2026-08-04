@@ -82,8 +82,9 @@ public struct SceneAIStatus: Sendable, Encodable {
 @_spi(AirshipInternal)
 public protocol SceneAIExecutor: Sendable {
 
-    /// Whether the on-device model can run right now. Callers check this before
-    /// scheduling work so an absent model never delays the form — fail open, non-blocking.
+    /// Whether the on-device model for text-input inference can run right now. Callers check
+    /// this before scheduling work so an absent model never delays the form — fail open,
+    /// non-blocking.
     @MainActor
     var isAvailable: Bool { get }
 

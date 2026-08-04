@@ -146,3 +146,73 @@ struct ThomasAIInferenceEvaluationGuardTest {
         #expect(makeEvaluation(text: "x").inputTag != makeEvaluation(text: "x").inputTag)
     }
 }
+
+struct EmbeddedSelectionEvaluationTest {
+
+    private func candidate(_ id: String, extras: AirshipJSON? = nil, priority: Int = 0) -> AirshipEmbeddedInfo {
+        AirshipEmbeddedInfo(instanceID: id, embeddedID: "slot", extras: extras, priority: priority)
+    }
+
+    private func makeEvaluation(
+        prompt: String = "pick the best offer",
+        strategy: AirshipEmbeddedSelection.AIConfig.Strategy = .scoreThenPriority,
+        minScoreThreshold: Int? = nil,
+        candidates: [AirshipEmbeddedInfo]
+    ) -> EmbeddedSelectionEvaluation {
+        EmbeddedSelectionEvaluation(
+            request: .init(
+                embeddedID: "slot",
+                prompt: prompt,
+                strategy: strategy,
+                minScoreThreshold: minScoreThreshold,
+                candidates: candidates
+            )
+        )
+    }
+
+    @Test("Schema constrains scores to candidate ids")
+    func schemaConstrainsScoresToCandidateIDs() throws {
+        let eval = makeEvaluation(candidates: [
+            candidate("a"),
+            candidate("b"),
+        ])
+
+        guard case .object(let info) = eval.schema.type,
+              case .array(let arrayInfo)? = info.properties?["scores"]?.type,
+              case .object(let itemInfo) = arrayInfo.items.type,
+              case .string(let stringInfo)? = itemInfo.properties?["id"]?.type else {
+            Issue.record("Expected scores array of objects with id and score")
+            return
+        }
+        #expect(stringInfo.choices == ["a", "b"])
+    }
+
+    @Test("Prompt lists each candidate as a JSON object with id and extras")
+    func promptListsCandidatesAsJSON() throws {
+        let eval = makeEvaluation(candidates: [
+            candidate("a", extras: try AirshipJSON.wrap(["tier": "gold"])),
+            candidate("b"),
+        ])
+        let prompt = eval.prompt(context: .empty)
+        #expect(prompt.contains("\"id\" : \"a\""))
+        #expect(prompt.contains("\"tier\" : \"gold\""))
+        #expect(prompt.contains("\"id\" : \"b\""))
+    }
+
+    @Test("Background context items are appended to the prompt")
+    func promptIncludesContext() {
+        let eval = makeEvaluation(candidates: [candidate("a")])
+        let context = AirshipAI.Context(items: [.init(content: "User is a dog owner")])
+        let prompt = eval.prompt(context: context)
+        #expect(prompt.contains("User is a dog owner"))
+    }
+
+    @Test("Author prompt appears in instructions")
+    func instructionsUseAuthorPrompt() {
+        let eval = makeEvaluation(
+            prompt: "surface the most relevant promo",
+            candidates: [candidate("a")]
+        )
+        #expect(eval.instructions().contains("surface the most relevant promo"))
+    }
+}

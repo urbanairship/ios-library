@@ -148,6 +148,10 @@ public final class AutomationSDKModule: NSObject, AirshipSDKModule {
             viewTester: InAppMessageViewTester(executor: messageExecutor)
         )
         
+        AirshipEmbeddedViewManager.shared.embeddedAISelector = DefaultEmbeddedAISelector(
+            aiManager: args.aiManager
+        )
+
         return AutomationSDKModule(
             components: [
                 InAppAutomationComponent(inAppAutomation: inAppAutomation)

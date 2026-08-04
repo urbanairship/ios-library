@@ -4,7 +4,8 @@ import Combine
 import SwiftUI
 @_spi(AirshipInternal) import AirshipCore
 @_spi(AirshipInternal) import AirshipAutomation
-import AirshipScenes
+@_spi(AirshipInternal) import AirshipScenes
+@_spi(AirshipInternal) import AirshipSceneRenderer
 import AirshipBasement
 
 // MARK: - Root list
@@ -52,6 +53,7 @@ extension AirshipDebugAIView {
         let usageKeys: [String] = [
             InAppMessageAISuppression.usage.rawValue,
             SceneTextInputInferenceSubject.inferenceUsage.rawValue,
+            EmbeddedSelectionSubject.usage.rawValue,
         ]
 
         let manager: any AirshipAI.InternalManager
@@ -73,6 +75,7 @@ extension AirshipDebugAIView {
         func setup() {
             observe(usage: InAppMessageAISuppression.usage)
             observe(usage: SceneTextInputInferenceSubject.inferenceUsage)
+            observe(usage: EmbeddedSelectionSubject.usage)
         }
 
         private func observe<S: Sendable>(usage: AirshipAI.Usage<S>) {
@@ -100,6 +103,8 @@ struct AirshipDebugAIUsageView: View {
             AirshipDebugIAASuppressionView(manager: manager)
         } else if usageKey == SceneTextInputInferenceSubject.inferenceUsage.rawValue {
             AirshipDebugSceneTextInputView(manager: manager)
+        } else if usageKey == EmbeddedSelectionSubject.usage.rawValue {
+            AirshipDebugEmbeddedSelectionView(manager: manager)
         } else {
             Text("No debug UI for usage \"\(usageKey)\"")
                 .foregroundStyle(.secondary)
@@ -363,6 +368,297 @@ private extension AirshipAI.Availability.Reason {
         case .notEnabled: return "AI features are turned off"
         case .other(let message): return message
         @unknown default: return "Unknown"
+        }
+    }
+}
+
+// MARK: - Embedded selection sandbox
+
+struct AirshipDebugEmbeddedSelectionView: View {
+    @StateObject private var viewModel: EmbeddedSelectionViewModel
+    @FocusState private var keyboardActive: Bool
+
+    init(manager: any AirshipAI.InternalManager) {
+        _viewModel = StateObject(wrappedValue: EmbeddedSelectionViewModel(manager: manager))
+    }
+
+    var body: some View {
+        List {
+            Section {
+#if os(tvOS)
+                TextField("e.g. Show content that matches the user's interests.", text: $viewModel.prompt)
+                    .focused($keyboardActive)
+#else
+                TextEditor(text: $viewModel.prompt)
+                    .focused($keyboardActive)
+                    .frame(minHeight: 72)
+                    .overlay(alignment: .topLeading) {
+                        if viewModel.prompt.isEmpty {
+                            Text("e.g. Show content that matches the user's interests.")
+                                .foregroundStyle(.tertiary)
+                                .padding(.top, 8)
+                                .padding(.leading, 4)
+                                .allowsHitTesting(false)
+                        }
+                    }
+#endif
+            } header: {
+                Text("Prompt")
+            } footer: {
+                Text("Passed verbatim as the author instruction to the model.")
+            }
+
+            Section {
+                ForEach($viewModel.candidates) { $candidate in
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            TextField("Instance ID", text: $candidate.instanceID)
+                                .autocorrectionDisabled()
+                                .focused($keyboardActive)
+                            Spacer()
+#if !os(tvOS)
+                            Stepper("Priority \(candidate.priority)", value: $candidate.priority)
+                                .labelsHidden()
+#endif
+                            Text("P\(candidate.priority)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .frame(width: 24)
+                        }
+                        AirshipDebugJSONEditor(
+                            title: "Extras",
+                            placeholder: "{\"description\": \"...\"}",
+                            text: $candidate.extrasJSON,
+                            focus: $keyboardActive
+                        )
+                    }
+                    .padding(.vertical, 4)
+                }
+                .onDelete { viewModel.candidates.remove(atOffsets: $0) }
+
+                Button {
+                    viewModel.addCandidate()
+                } label: {
+                    Label("Add candidate", systemImage: "plus.circle")
+                }
+            } header: {
+                HStack {
+                    Text("Candidates")
+                    Spacer()
+#if !os(tvOS) && !os(macOS)
+                    EditButton()
+                        .font(.footnote)
+#endif
+                }
+            }
+
+            Section {
+                Button {
+                    keyboardActive = false
+                    Task { await viewModel.rank() }
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("Rank").bold()
+                        Spacer()
+                    }
+                }
+                .disabled(viewModel.isRunning || viewModel.candidates.count < 2 || viewModel.prompt.isEmpty)
+            }
+
+            Section("Result") {
+                if viewModel.isRunning {
+                    HStack(spacing: 12) {
+                        ProgressView()
+                        Text("Ranking…").foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 4)
+                } else if let result = viewModel.result {
+                    switch result {
+                    case .ranked(let scores, let reason):
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(Array(scores.enumerated()), id: \.offset) { index, entry in
+                                HStack(spacing: 8) {
+                                    Text("\(index + 1)")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(.secondary)
+                                        .frame(width: 20)
+                                    Text(entry.id)
+                                        .font(.system(.footnote, design: .monospaced))
+                                    Spacer()
+                                    Text("score: \(entry.score)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            Text(reason)
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding(.top, 4)
+                        }
+                        .padding(.vertical, 4)
+                    case .skipped(let reason):
+                        Label("Skipped: \(reason)", systemImage: "exclamationmark.circle.fill")
+                            .foregroundStyle(.orange)
+                    case .failed(let message):
+                        Label(message, systemImage: "xmark.circle.fill")
+                            .foregroundStyle(.red)
+                    }
+                } else {
+                    Text("Not ranked yet").foregroundStyle(.secondary)
+                }
+            }
+
+            Section("Model Status & Context") {
+                CommonItems.infoRow(title: "Availability", value: viewModel.availabilityLabel)
+                if viewModel.isFetchingContext {
+                    HStack(spacing: 8) {
+                        ProgressView()
+                        Text("Fetching context…").foregroundStyle(.secondary)
+                    }
+                } else if let items = viewModel.context?.items, !items.isEmpty {
+                    ForEach(Array(items.enumerated()), id: \.offset) { _, item in
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(verbatim: "priority \(item.priority)")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                            Text(item.content)
+                                .font(.system(.footnote, design: .monospaced))
+                        }
+                        .padding(.vertical, 2)
+                    }
+                } else {
+                    Text("No context provided").foregroundStyle(.secondary)
+                }
+            }
+        }
+#if os(iOS)
+        .scrollDismissesKeyboard(.interactively)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { keyboardActive = false }
+            }
+        }
+#endif
+        .navigationTitle("Embedded Selection")
+        .onAppear {
+            viewModel.observeAvailability()
+            Task { await viewModel.fetchContext() }
+        }
+    }
+}
+
+private enum EmbeddedSelectionResult {
+    case ranked([(id: String, score: Int)], reason: String)
+    case skipped(String)
+    case failed(String)
+}
+
+private struct EmbeddedCandidate: Identifiable {
+    let id: UUID = UUID()
+    var instanceID: String
+    var extrasJSON: String
+    var priority: Int
+}
+
+@MainActor
+private final class EmbeddedSelectionViewModel: ObservableObject {
+    @Published var prompt: String = "Show content that matches the user's interests."
+    @Published var candidates: [EmbeddedCandidate] = [
+        EmbeddedCandidate(instanceID: UUID().uuidString, extrasJSON: "{\"description\": \"Adopt a rescue cat today — find your perfect feline companion.\"}", priority: 0),
+        EmbeddedCandidate(instanceID: UUID().uuidString, extrasJSON: "{\"description\": \"Top-rated dog food for active breeds — fuel your pup's adventures.\"}", priority: 1),
+        EmbeddedCandidate(instanceID: UUID().uuidString, extrasJSON: "{\"description\": \"Spring sale on cat trees, toys, and grooming supplies.\"}", priority: 2),
+    ]
+    @Published var result: EmbeddedSelectionResult?
+    @Published var isRunning = false
+    @Published var isFetchingContext = false
+    @Published var context: AirshipAI.Context?
+    @Published var availability: AirshipAI.Availability = .unavailable(reason: .missingModel)
+
+    private let manager: any AirshipAI.InternalManager
+    private var availabilityTask: Task<Void, Never>?
+
+    init(manager: any AirshipAI.InternalManager) {
+        self.manager = manager
+    }
+
+    func addCandidate() {
+        candidates.append(EmbeddedCandidate(instanceID: "id-\(candidates.count + 1)", extrasJSON: "", priority: 0))
+    }
+
+    func observeAvailability() {
+        availabilityTask?.cancel()
+        guard let stream = manager.model(for: EmbeddedSelectionSubject.usage)?.availabilityUpdates else { return }
+        availabilityTask = Task { [weak self] in
+            for await value in stream {
+                if Task.isCancelled { break }
+                self?.availability = value
+            }
+        }
+    }
+
+    var availabilityLabel: String {
+        switch availability {
+        case .available: return "Available"
+        case .unavailable(let reason): return "Unavailable (\(reason))"
+        @unknown default: return "Unknown"
+        }
+    }
+
+    func fetchContext() async {
+        isFetchingContext = true
+        defer { isFetchingContext = false }
+        let subject = EmbeddedSelectionSubject(
+            embeddedID: "debug",
+            pending: makeCandidateInfos(),
+            hints: [:]
+        )
+        context = await manager.fetchContext(for: EmbeddedSelectionSubject.usage, subject: subject)
+    }
+
+    func rank() async {
+        isRunning = true
+        result = nil
+        defer { isRunning = false }
+
+        await fetchContext()
+
+        let request = EmbeddedAISelectionRequest(
+            embeddedID: "debug",
+            prompt: prompt,
+            candidates: makeCandidateInfos()
+        )
+        let evaluation = EmbeddedSelectionEvaluation(request: request)
+
+        switch await manager.evaluate(evaluation) {
+        case .completed(let output):
+            let priorityByID = Dictionary(uniqueKeysWithValues: makeCandidateInfos().map { ($0.instanceID, $0.priority) })
+            let scored = output.scores
+                .sorted { lhs, rhs in
+                    if lhs.score != rhs.score { return lhs.score > rhs.score }
+                    return (priorityByID[lhs.id] ?? .max) < (priorityByID[rhs.id] ?? .max)
+                }
+                .map { (id: $0.id, score: $0.score) }
+            result = .ranked(scored, reason: output.reason)
+        case .skipped(let reason):
+            result = .skipped(reason)
+        case .failed(let error):
+            result = .failed(error.localizedDescription)
+        @unknown default:
+            result = .skipped("Unexpected result")
+        }
+    }
+
+    private func makeCandidateInfos() -> [AirshipEmbeddedInfo] {
+        candidates.map { candidate in
+            AirshipEmbeddedInfo(
+                instanceID: candidate.instanceID,
+                embeddedID: "debug",
+                extras: try? AirshipJSON.from(json: candidate.extrasJSON),
+                priority: candidate.priority
+            )
         }
     }
 }

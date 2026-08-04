@@ -19,7 +19,8 @@ public struct AirshipEmbeddedInfo: Equatable, Hashable, Sendable {
     /// View priority. Lower is higher priority.
     public let priority: Int
 
-    init(instanceID: String, embeddedID: String, extras: AirshipJSON?, priority: Int) {
+    @_spi(AirshipInternal)
+    public init(instanceID: String, embeddedID: String, extras: AirshipJSON?, priority: Int) {
         self.instanceID = instanceID
         self.embeddedID = embeddedID
         self.extras = extras

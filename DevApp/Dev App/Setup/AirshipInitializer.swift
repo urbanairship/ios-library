@@ -34,8 +34,7 @@ struct AirshipInitializer {
         #endif
 
         try Airship.takeOff(config)
-        Airship.ai.setContextProvider(DevIAASuppressionContextProvider(), for: InAppMessageAISuppression.usage)
-        Airship.ai.setContextProvider(DevSceneTextInputContextProvider(), for: SceneTextInputInferenceSubject.inferenceUsage)
+        Airship.ai.setDefaultContextProvider(DevDefaultContextProvider())
 
         // Bring-your-own-model testing: set ANTHROPIC_API_KEY or OPENAI_API_KEY in the
         // scheme's environment variables (Product > Scheme > Edit Scheme > Run > Arguments)
@@ -51,30 +50,15 @@ struct AirshipInitializer {
     }
 }
 
-private final class DevSceneTextInputContextProvider: AirshipAI.ContextProvider {
-    typealias Subject = SceneTextInputInferenceSubject
+private final class DevDefaultContextProvider: AirshipAI.ContextProvider {
+    typealias Subject = Void
 
-    func context(for subject: SceneTextInputInferenceSubject) async -> AirshipAI.Context {
-        // Demo context: profile data relevant to truck size selection.
-        // A real app would pull these from its customer profile API.
-        return AirshipAI.Context(items: [
+    func context(for subject: Void) async -> AirshipAI.Context {
+        var items: [AirshipAI.Context.Item] = [
+            .init(content: "User interests: cats"),
             .init(content: "Customer since: 2019"),
             .init(content: "Rental history: 15ft (2022), 20ft (2024)"),
-        ])
-    }
-}
-
-private final class DevIAASuppressionContextProvider: AirshipAI.ContextProvider {
-    typealias Subject = InAppMessageAISuppression
-
-    func context(for subject: InAppMessageAISuppression) async -> AirshipAI.Context {
-        var items: [AirshipAI.Context.Item] = []
-
-        // Layout-authored subject_hints are handed to the provider (never the prompt) so
-        // the app can tailor context to them.
-        for (key, value) in subject.hints.sorted(by: { $0.key < $1.key }) {
-            items.append(.init(content: "\(key): \(value)"))
-        }
+        ]
 
         if let namedUser = await Airship.contact.namedUserID {
             items.append(.init(content: "Named user: \(namedUser)"))
