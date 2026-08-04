@@ -51,9 +51,9 @@ extension AirshipDebugAIView {
         // Schemas live on evaluations now, so there is no runtime registry to
         // enumerate — this is the list of usages the debug UI knows how to drive.
         let usageKeys: [String] = [
-            InAppMessageAISuppression.usage.rawValue,
-            SceneTextInputInferenceSubject.inferenceUsage.rawValue,
-            EmbeddedSelectionSubject.usage.rawValue,
+            AirshipAI.InAppMessageSuppression.usage.rawValue,
+            AirshipAI.TextInputInference.usage.rawValue,
+            AirshipAI.EmbeddedSelection.usage.rawValue,
         ]
 
         let manager: any AirshipAI.InternalManager
@@ -73,9 +73,9 @@ extension AirshipDebugAIView {
         }
 
         func setup() {
-            observe(usage: InAppMessageAISuppression.usage)
-            observe(usage: SceneTextInputInferenceSubject.inferenceUsage)
-            observe(usage: EmbeddedSelectionSubject.usage)
+            observe(usage: AirshipAI.InAppMessageSuppression.usage)
+            observe(usage: AirshipAI.TextInputInference.usage)
+            observe(usage: AirshipAI.EmbeddedSelection.usage)
         }
 
         private func observe<S: Sendable>(usage: AirshipAI.Usage<S>) {
@@ -99,11 +99,11 @@ struct AirshipDebugAIUsageView: View {
     let manager: any AirshipAI.InternalManager
 
     var body: some View {
-        if usageKey == InAppMessageAISuppression.usage.rawValue {
+        if usageKey == AirshipAI.InAppMessageSuppression.usage.rawValue {
             AirshipDebugIAASuppressionView(manager: manager)
-        } else if usageKey == SceneTextInputInferenceSubject.inferenceUsage.rawValue {
+        } else if usageKey == AirshipAI.TextInputInference.usage.rawValue {
             AirshipDebugSceneTextInputView(manager: manager)
-        } else if usageKey == EmbeddedSelectionSubject.usage.rawValue {
+        } else if usageKey == AirshipAI.EmbeddedSelection.usage.rawValue {
             AirshipDebugEmbeddedSelectionView(manager: manager)
         } else {
             Text("No debug UI for usage \"\(usageKey)\"")
@@ -306,7 +306,7 @@ private final class IAASuppressionViewModel: ObservableObject {
         defer { isFetchingContext = false }
 
         let subject = makeSubject()
-        context = await manager.fetchContext(for: InAppMessageAISuppression.usage, subject: subject)
+        context = await manager.fetchContext(for: AirshipAI.InAppMessageSuppression.usage, subject: subject)
     }
 
     func runEvaluation() async {
@@ -342,9 +342,9 @@ private final class IAASuppressionViewModel: ObservableObject {
         ).instructions()
     }
 
-    private func makeSubject() -> InAppMessageAISuppression {
+    private func makeSubject() -> AirshipAI.InAppMessageSuppression.Subject {
         let hints = (try? JSONDecoder().decode([String: String].self, from: Data(hintsJSON.utf8))) ?? [:]
-        return InAppMessageAISuppression(
+        return AirshipAI.InAppMessageSuppression.Subject(
             name: messageName,
             extras: parseStringDict(extrasJSON),
             priority: 0,
@@ -590,7 +590,7 @@ private final class EmbeddedSelectionViewModel: ObservableObject {
 
     func observeAvailability() {
         availabilityTask?.cancel()
-        guard let stream = manager.model(for: EmbeddedSelectionSubject.usage)?.availabilityUpdates else { return }
+        guard let stream = manager.model(for: AirshipAI.EmbeddedSelection.usage)?.availabilityUpdates else { return }
         availabilityTask = Task { [weak self] in
             for await value in stream {
                 if Task.isCancelled { break }
@@ -610,12 +610,12 @@ private final class EmbeddedSelectionViewModel: ObservableObject {
     func fetchContext() async {
         isFetchingContext = true
         defer { isFetchingContext = false }
-        let subject = EmbeddedSelectionSubject(
+        let subject = AirshipAI.EmbeddedSelection.Subject(
             embeddedID: "debug",
             pending: makeCandidateInfos(),
             hints: [:]
         )
-        context = await manager.fetchContext(for: EmbeddedSelectionSubject.usage, subject: subject)
+        context = await manager.fetchContext(for: AirshipAI.EmbeddedSelection.usage, subject: subject)
     }
 
     func rank() async {
@@ -677,7 +677,7 @@ private final class PreviewAIManager: AirshipAI.InternalManager, @unchecked Send
     func setContextProvider<S: Sendable>(_ provider: (any AirshipAI.ContextProvider<S>)?, for usage: AirshipAI.Usage<S>) {}
     func setDefaultContextProvider(_ provider: (any AirshipAI.ContextProvider<Void>)?) {}
     func setModelResolver(_ resolver: (@MainActor @Sendable (AirshipAI.AnyUsage) -> AirshipAI.ModelSelector)?) {}
-    func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E, context: AirshipAI.Context) async -> AirshipAI.Result<E.Output> { .skipped(reason: "preview") }
+    func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E, additionalContext: AirshipAI.Context) async -> AirshipAI.Result<E.Output> { .skipped(reason: "preview") }
     func registerModelFactory(_ factory: @MainActor @Sendable @escaping () -> any AirshipAI.Model) {}
     func fetchContext<S: Sendable>(for usage: AirshipAI.Usage<S>, subject: S) async -> AirshipAI.Context { .empty }
 }

@@ -136,7 +136,7 @@ struct ThomasAIInferenceEvaluationGuardTest {
         let context = AirshipAI.Context(items: [.init(content: "Name: Alice")])
         let combined = eval.prompt(context: context)
         let inputRange = combined.range(of: "<\(eval.inputTag)>")!
-        let contextRange = combined.range(of: "Background context:")!
+        let contextRange = combined.range(of: "User context:")!
         #expect(inputRange.lowerBound < contextRange.lowerBound)
         #expect(combined.contains("- Name: Alice"))
     }
@@ -199,7 +199,7 @@ struct EmbeddedSelectionEvaluationTest {
         #expect(prompt.contains("\"id\" : \"b\""))
     }
 
-    @Test("Background context items are appended to the prompt")
+    @Test("User context items are appended to the prompt")
     func promptIncludesContext() {
         let eval = makeEvaluation(candidates: [candidate("a")])
         let context = AirshipAI.Context(items: [.init(content: "User is a dog owner")])

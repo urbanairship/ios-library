@@ -72,14 +72,14 @@ extension AirshipAI {
 
         public func evaluate<E: AirshipAI.Evaluation>(
             _ evaluation: E,
-            context: AirshipAI.Context
+            additionalContext: AirshipAI.Context
         ) async -> AirshipAI.Result<E.Output> {
             guard let resolved = await resolve(evaluation) else {
                 return .skipped(reason: "No model configured")
             }
             // Provider context first, then the caller's additional context appended after
             // (later items win priority ties when the model trims to fit its window).
-            let merged = resolved.context.appending(context)
+            let merged = resolved.context.appending(additionalContext)
             return await evaluator.evaluate(evaluation, model: resolved.model, context: merged)
         }
 

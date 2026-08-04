@@ -265,7 +265,7 @@ extension AirshipDebugSceneTextInputView {
 
         func observeAvailability() {
             availabilityTask?.cancel()
-            guard let stream = manager.model(for: SceneTextInputInferenceSubject.inferenceUsage)?.availabilityUpdates else { return }
+            guard let stream = manager.model(for: AirshipAI.TextInputInference.usage)?.availabilityUpdates else { return }
             availabilityTask = Task { [weak self] in
                 for await value in stream {
                     if Task.isCancelled { break }
@@ -290,8 +290,8 @@ extension AirshipDebugSceneTextInputView {
             isFetchingContext = true
             defer { isFetchingContext = false }
             context = await manager.fetchContext(
-                for: SceneTextInputInferenceSubject.inferenceUsage,
-                subject: SceneTextInputInferenceSubject()
+                for: AirshipAI.TextInputInference.usage,
+                subject: AirshipAI.TextInputInference.Subject()
             )
         }
 
@@ -398,8 +398,13 @@ extension AirshipDebugSceneTextInputView {
 
 // MARK: - Schema suggestion evaluation
 
-/// No context needed for schema design.
-private struct SchemaSuggestionSubject: Sendable {}
+private extension AirshipAI {
+    enum DebugSchemaSuggestion {
+        static let usage = AirshipAI.Usage<Subject>(rawValue: "debug_schema_suggestion")
+        /// No context needed for schema design.
+        struct Subject: Sendable {}
+    }
+}
 
 /// Runs on the same on-device Airship AI stack as text-input inference, but asks the model
 /// to design the *output shape* for an instruction rather than to classify text. Kept flat
@@ -426,8 +431,8 @@ private struct SchemaSuggestionEvaluation: AirshipAI.Evaluation {
 
     let instruction: String
 
-    let usage = AirshipAI.Usage<SchemaSuggestionSubject>(rawValue: "debug_schema_suggestion")
-    let subject = SchemaSuggestionSubject()
+    let usage = AirshipAI.DebugSchemaSuggestion.usage
+    let subject = AirshipAI.DebugSchemaSuggestion.Subject()
 
     let schema = AirshipJSONSchema.object(
         properties: [
@@ -469,9 +474,9 @@ private struct SchemaSuggestionEvaluation: AirshipAI.Evaluation {
 
     func prompt(context: AirshipAI.Context) -> String {
         var parts = ["Instruction: \(instruction)"]
-        if let rendered = context.render() {
-            parts.append("User context:\n\(rendered)")
+        if let bullets = context.renderBullets() {
+            parts.append("User context:\n\(bullets)")
         }
-        return parts.joined(separator: "\n")
+        return parts.joined(separator: "\n\n")
     }
 }

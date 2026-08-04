@@ -15,7 +15,7 @@ final class TestAIManager: AirshipAI.InternalManager, @unchecked Sendable {
     /// `AirshipAI.Result<E.Output>`. Defaults to `.skipped` when unset.
     var onEvaluate: (@Sendable (any Sendable) async -> Any)?
 
-    func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E, context: AirshipAI.Context) async -> AirshipAI.Result<E.Output> {
+    func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E, additionalContext: AirshipAI.Context) async -> AirshipAI.Result<E.Output> {
         guard let onEvaluate else { return .skipped(reason: "test") }
         guard let result = await onEvaluate(evaluation) as? AirshipAI.Result<E.Output> else {
             return .skipped(reason: "test: unexpected result type")

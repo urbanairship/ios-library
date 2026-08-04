@@ -19,15 +19,15 @@ public struct InAppMessageAISuppressionEvaluation: AirshipAI.Evaluation {
         required: ["allow", "reason"]
     )
 
-    public typealias Subject = InAppMessageAISuppression
+    public typealias Subject = AirshipAI.InAppMessageSuppression.Subject
 
     private let condition: String
-    public let subject: InAppMessageAISuppression
-    public let usage: AirshipAI.Usage<InAppMessageAISuppression> = InAppMessageAISuppression.usage
+    public let subject: AirshipAI.InAppMessageSuppression.Subject
+    public let usage: AirshipAI.Usage<AirshipAI.InAppMessageSuppression.Subject> = AirshipAI.InAppMessageSuppression.usage
 
     public init(
         condition: String,
-        subject: InAppMessageAISuppression
+        subject: AirshipAI.InAppMessageSuppression.Subject
     ) {
         self.condition = condition
         self.subject = subject
@@ -36,8 +36,8 @@ public struct InAppMessageAISuppressionEvaluation: AirshipAI.Evaluation {
     public func instructions() -> String {
         guard !condition.isEmpty else {
             return """
-            You decide whether to show an in-app message to the current user based on their \
-            context. When in doubt, show it.
+            You are a gate that decides whether to show a single in-app message to the \
+            current user. When in doubt, show it.
             """
         }
         return """
@@ -45,7 +45,7 @@ public struct InAppMessageAISuppressionEvaluation: AirshipAI.Evaluation {
         user. Show the message only when this condition holds for the user; otherwise do not \
         show it:
 
-        \(condition)
+        <condition>\(condition)</condition>
 
         Evaluate the condition against the user context and attributes given in the prompt, \
         reasoning about what those signals imply rather than matching them literally. Only \
@@ -67,11 +67,11 @@ public struct InAppMessageAISuppressionEvaluation: AirshipAI.Evaluation {
 
         parts.append("Message priority: \(subject.priority)")
 
-        if let rendered = context.render() {
-            parts.append("User context:\n\(rendered)")
+        if let bullets = context.renderBullets() {
+            parts.append("User context:\n\(bullets)")
         }
 
-        return parts.joined(separator: "\n")
+        return parts.joined(separator: "\n\n")
     }
 }
 

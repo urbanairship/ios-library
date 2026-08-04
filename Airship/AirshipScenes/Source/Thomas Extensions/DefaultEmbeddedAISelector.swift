@@ -5,32 +5,34 @@ import Foundation
 @_spi(AirshipInternal) public import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
-/// The context subject for embedded-view AI selection.
-///
-/// Handed to the app's registered context provider so it can build relevant `Context` for the
-/// selection (e.g. user preferences). Carries the layout's `hints` (`subject_hints`).
-public struct EmbeddedSelectionSubject: Sendable {
-    /// The AI usage key for embedded-view selection.
-    ///
-    /// Pass this to `Airship.ai.setContextProvider(_:for:)` to register a context provider.
-    public static let usage = AirshipAI.Usage<EmbeddedSelectionSubject>(
-        rawValue: "embedded_selection"
-    )
+extension AirshipAI {
+    /// Namespace for the embedded-view AI selection usage.
+    public enum EmbeddedSelection {
+        /// The AI usage key for embedded-view selection.
+        ///
+        /// Pass this to `Airship.ai.setContextProvider(_:for:)` to register a context provider.
+        public static let usage = AirshipAI.Usage<Subject>(rawValue: "embedded_selection")
 
-    /// The embedded ID being selected for.
-    public let embeddedID: String
+        /// The context subject handed to the app's registered context provider so it can build
+        /// relevant `Context` for the selection (e.g. user preferences). Carries the layout's
+        /// `hints` (`subject_hints`).
+        public struct Subject: Sendable {
+            /// The embedded ID being selected for.
+            public let embeddedID: String
 
-    /// The pending embedded instances being ranked — the set the model is choosing between.
-    /// A context provider can inspect these to build relevant context.
-    public let pending: [AirshipEmbeddedInfo]
+            /// The pending embedded instances being ranked — the set the model is choosing between.
+            /// A context provider can inspect these to build relevant context.
+            public let pending: [AirshipEmbeddedInfo]
 
-    /// Layout-authored `subject_hints`. Empty when the layout provides none.
-    public let hints: [String: String]
+            /// Layout-authored `subject_hints`. Empty when the layout provides none.
+            public let hints: [String: String]
 
-    public init(embeddedID: String = "", pending: [AirshipEmbeddedInfo] = [], hints: [String: String] = [:]) {
-        self.embeddedID = embeddedID
-        self.pending = pending
-        self.hints = hints
+            public init(embeddedID: String = "", pending: [AirshipEmbeddedInfo] = [], hints: [String: String] = [:]) {
+                self.embeddedID = embeddedID
+                self.pending = pending
+                self.hints = hints
+            }
+        }
     }
 }
 
@@ -49,7 +51,7 @@ public struct DefaultEmbeddedAISelector: EmbeddedAISelector {
 
     @MainActor
     public var isAvailable: Bool {
-        aiManager.model(for: EmbeddedSelectionSubject.usage)?.availability == .available
+        aiManager.model(for: AirshipAI.EmbeddedSelection.usage)?.availability == .available
     }
 
     public func rank(_ request: EmbeddedAISelectionRequest) async -> [String]? {
@@ -123,7 +125,7 @@ public struct EmbeddedSelectionEvaluation: AirshipAI.Evaluation {
         public let reason: String
     }
 
-    public typealias Subject = EmbeddedSelectionSubject
+    public typealias Subject = AirshipAI.EmbeddedSelection.Subject
 
     public let request: EmbeddedAISelectionRequest
 
@@ -131,10 +133,10 @@ public struct EmbeddedSelectionEvaluation: AirshipAI.Evaluation {
         self.request = request
     }
 
-    public let usage: AirshipAI.Usage<EmbeddedSelectionSubject> = EmbeddedSelectionSubject.usage
+    public let usage: AirshipAI.Usage<AirshipAI.EmbeddedSelection.Subject> = AirshipAI.EmbeddedSelection.usage
 
-    public var subject: EmbeddedSelectionSubject {
-        EmbeddedSelectionSubject(embeddedID: request.embeddedID, pending: request.candidates, hints: request.subjectHints)
+    public var subject: AirshipAI.EmbeddedSelection.Subject {
+        AirshipAI.EmbeddedSelection.Subject(embeddedID: request.embeddedID, pending: request.candidates, hints: request.subjectHints)
     }
 
     public var schema: AirshipJSONSchema {
@@ -160,13 +162,13 @@ public struct EmbeddedSelectionEvaluation: AirshipAI.Evaluation {
         """
         You are scoring content candidates for a user based on a prompt and context.
 
-        Scoring prompt:
+        Instruction:
         <prompt>\(request.prompt)</prompt>
 
-        Instructions:
-        1. Check background context for facts needed by the scoring prompt (e.g., user interests or history).
+        Steps:
+        1. Check background context for facts needed by the instruction (e.g., user interests or history).
         2. Carefully read each candidate's description text.
-        3. Assign a score from 1 to 10 based on how well the candidate matches the prompt and context.
+        3. Assign a score from 1 to 10 based on how well the candidate matches the instruction and context.
 
         Scoring Rules:
         - 9–10: Direct match (e.g., cat items for a cat interest).
@@ -192,12 +194,8 @@ public struct EmbeddedSelectionEvaluation: AirshipAI.Evaluation {
         let candidateBlock = (try? AirshipJSON.array(candidateObjects).toString(encoder: encoder)) ?? "[]"
         parts.append("Score each of the following candidates according to the system instructions.\n\nCandidates:\n\(candidateBlock)")
 
-        let bullets = context.items
-            .filter { !$0.content.isEmpty }
-            .map { "- \($0.content)" }
-            .joined(separator: "\n")
-        if !bullets.isEmpty {
-            parts.append("Background context:\n\(bullets)")
+        if let bullets = context.renderBullets() {
+            parts.append("User context:\n\(bullets)")
         }
 
         return parts.joined(separator: "\n\n")

@@ -86,6 +86,6 @@ struct InAppMessageAISuppressionEvaluationTest {
     func promptContainsOnlySubjectContent() {
         // Provider context is appended by the model, never by the evaluation.
         let eval = InAppMessageAISuppressionEvaluation(condition: "", subject: .init(name: "Test", priority: 0))
-        #expect(eval.prompt(context: .empty) == "Message name: Test\nMessage priority: 0")
+        #expect(eval.prompt(context: .empty) == "Message name: Test\n\nMessage priority: 0")
     }
 }

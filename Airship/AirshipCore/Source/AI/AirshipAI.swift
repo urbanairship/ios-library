@@ -25,7 +25,7 @@ public enum AirshipAI {
     /// Compare directly against a typed `Usage<Subject>` with `==`:
     ///
     ///     Airship.ai.setModelResolver { usage in
-    ///         if usage == InAppMessageAISuppression.usage { return .custom(myModel) }
+    ///         if usage == AirshipAI.InAppMessageSuppression.usage { return .custom(myModel) }
     ///         return .defaultModel
     ///     }
     public struct AnyUsage: RawRepresentable, Hashable, Sendable {
@@ -70,13 +70,13 @@ public enum AirshipAI {
         /// An empty context, used when the host supplies nothing.
         public static let empty = Context()
 
-        /// Renders the items into prompt text, one per line, preserving order.
+        /// Renders the items as a bullet list (`- item`), one per item, preserving order.
         ///
-        /// - Returns: the rendered context, or nil when there is nothing to render.
-        public func render() -> String? {
+        /// - Returns: the bullet list, or nil when there is nothing to render.
+        public func renderBullets() -> String? {
             let kept = items.filter { !$0.content.isEmpty }
             guard !kept.isEmpty else { return nil }
-            return kept.map(\.content).joined(separator: "\n")
+            return kept.map { "- \($0.content)" }.joined(separator: "\n")
         }
 
         /// A copy of this context with `other`'s items appended after this context's.
@@ -330,7 +330,7 @@ public enum AirshipAI {
         /// SDK default).
         ///
         ///     Airship.ai.setModelResolver { usage in
-        ///         if usage == InAppMessageAISuppression.usage {
+        ///         if usage == AirshipAI.InAppMessageSuppression.usage {
         ///             return .custom(myPrivateComputeModel)
         ///         }
         ///         return .defaultModel
@@ -360,8 +360,8 @@ public enum AirshipAI {
         /// The model's `availability` and `availabilityUpdates` reflect whether it can run
         /// right now:
         ///
-        ///     Airship.ai.model(for: InAppMessageAISuppression.usage)?.availability
-        ///     Airship.ai.model(for: InAppMessageAISuppression.usage)?.availabilityUpdates
+        ///     Airship.ai.model(for: AirshipAI.InAppMessageSuppression.usage)?.availability
+        ///     Airship.ai.model(for: AirshipAI.InAppMessageSuppression.usage)?.availabilityUpdates
         ///
         /// The per-usage resolver (set via `setModelResolver`) wins over the SDK default.
         @MainActor
@@ -377,9 +377,14 @@ public enum AirshipAI {
     /// instance is passed to the registered `ContextProvider` at evaluation time.
     @_spi(AirshipInternal)
     public protocol Evaluation<Output>: Sendable {
+        /// The decoded type the model returns for this evaluation.
         associatedtype Output: Decodable & Sendable
+
+        /// The feature-specific subject type passed to the registered `ContextProvider`.
         associatedtype Subject: Sendable
 
+        /// Identifies which AI usage this evaluation belongs to and constrains the
+        /// `ContextProvider` type that can be registered for it.
         var usage: Usage<Subject> { get }
 
         /// The context subject for this evaluation — passed to the registered
@@ -390,6 +395,9 @@ public enum AirshipAI {
         /// it in code; payload-driven features (e.g. scenes) decode it from the payload.
         var schema: AirshipJSONSchema { get }
 
+        /// Returns the system instructions sent to the model — the stable, evaluation-wide
+        /// directives that define the model's role, rules, and output expectations.
+        /// Injected as the system prompt; the model sees this before any user turn.
         func instructions() -> String
 
         /// Builds the prompt sent to the model. `context` is the already-trimmed
@@ -415,10 +423,10 @@ public enum AirshipAI {
         /// Runs an evaluation through the active model. Feature modules call this;
         /// fails open — returns `.skipped` when the model is unavailable.
         ///
-        /// `context` is layout- or feature-authored context appended after the
+        /// `additionalContext` is layout- or feature-authored context appended after the
         /// provider's context (so it wins priority ties when the model trims to fit its window).
         /// Use `evaluate(_:)` (no additional context) for the common case.
-        func evaluate<E: Evaluation>(_ evaluation: E, context: Context) async -> Result<E.Output>
+        func evaluate<E: Evaluation>(_ evaluation: E, additionalContext: Context) async -> Result<E.Output>
 
         /// Called by `AirshipAIModelsSDKModule` to wire in `SystemAIModel` as the
         /// default. Replaces the current model immediately.
@@ -450,7 +458,7 @@ extension AirshipAI.Model {
 @_spi(AirshipInternal)
 extension AirshipAI.InternalManager {
     public func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E) async -> AirshipAI.Result<E.Output> {
-        await evaluate(evaluation, context: .empty)
+        await evaluate(evaluation, additionalContext: .empty)
     }
 }
 

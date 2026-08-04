@@ -113,30 +113,62 @@ public struct AirshipJSONSchema: Sendable, Equatable {
     public static let extensionKeyPrefix: String = "x-"
 }
 
+// MARK: - Literal conformances
+
+extension AirshipJSONSchema: ExpressibleByDictionaryLiteral {
+    /// Creates an object schema from a key-schema dictionary literal.
+    /// Use `.object(properties:required:)` when you need to declare required properties.
+    ///
+    ///     .array(items: ["id": .string(), "score": .integer()])
+    ///     // equivalent to:
+    ///     .array(items: .object(properties: ["id": .string(), "score": .integer()]))
+    public init(dictionaryLiteral elements: (String, AirshipJSONSchema)...) {
+        self.init(type: .object(.init(properties: Dictionary(uniqueKeysWithValues: elements))))
+    }
+}
+
 // MARK: - Convenience constructors
 
-extension AirshipJSONSchema {
+public extension AirshipJSONSchema {
 
-    public static func string(
+    /// A string value, optionally constrained to a fixed set of `choices`.
+    ///
+    ///     .string()                                    // any string
+    ///     .string(choices: ["a", "b", "c"])            // enum
+    ///     .string(description: "The user's name")
+    static func string(
         choices: [String]? = nil,
         description: String? = nil
     ) -> AirshipJSONSchema {
         .init(type: .string(.init(choices: choices)), description: description)
     }
 
-    public static func boolean(description: String? = nil) -> AirshipJSONSchema {
+    /// A boolean value (`true` or `false`).
+    static func boolean(description: String? = nil) -> AirshipJSONSchema {
         .init(type: .boolean, description: description)
     }
 
-    public static func integer(description: String? = nil) -> AirshipJSONSchema {
+    /// A whole-number value (JSON number with no fractional part).
+    static func integer(description: String? = nil) -> AirshipJSONSchema {
         .init(type: .integer(.init()), description: description)
     }
 
-    public static func number(description: String? = nil) -> AirshipJSONSchema {
+    /// A floating-point value.
+    static func number(description: String? = nil) -> AirshipJSONSchema {
         .init(type: .number(.init()), description: description)
     }
 
-    public static func object(
+    /// A JSON object with declared `properties`.
+    ///
+    /// `required` lists the property names the model must always emit. Per JSON Schema,
+    /// any property not in `required` is optional. Pass `nil` to leave the object
+    /// unconstrained (any properties allowed).
+    ///
+    ///     .object(
+    ///         properties: ["id": .string(), "score": .integer()],
+    ///         required: ["id", "score"]
+    ///     )
+    static func object(
         properties: [String: AirshipJSONSchema],
         required: [String]? = nil,
         description: String? = nil
@@ -147,7 +179,11 @@ extension AirshipJSONSchema {
         )
     }
 
-    public static func array(
+    /// A homogeneous array where every element matches `items`.
+    ///
+    ///     .array(items: .string())
+    ///     .array(items: .object(properties: ["id": .string()], required: ["id"]))
+    static func array(
         items: AirshipJSONSchema,
         description: String? = nil
     ) -> AirshipJSONSchema {

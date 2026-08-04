@@ -26,7 +26,7 @@ extension AirshipAI {
                 render: evaluation.prompt(context:)
             )
 
-            AirshipLogger.trace("AI evaluate [\(usage)] instructions:\n\(instructions)\n\nschema:\n\(schema)\n\nprompt:\n\(request.prompt())\n\ncontext:\n\(context.render() ?? "none")")
+            AirshipLogger.trace("AI evaluate [\(usage)] instructions:\n\(instructions)\n\nschema:\n\(schema)\n\nprompt:\n\(request.prompt())\n\ncontext:\n\(context)")
 
             do {
                 let json = try await Self.withTimeout(model.responseTimeout) {

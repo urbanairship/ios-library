@@ -27,18 +27,18 @@ struct AirshipAIValueTests {
     func emptyContextIsEmpty() {
         let empty = AirshipAI.Context.empty
         #expect(empty.items.isEmpty)
-        #expect(empty.render() == nil)
+        #expect(empty.renderBullets() == nil)
     }
 
     @Test
-    func contextRenderJoinsItemsInOrderWithoutPriorities() {
+    func contextRenderBulletsJoinsItemsInOrderWithoutPriorities() {
         let context = AirshipAI.Context(items: [
             .init(content: "b", priority: 2),
             .init(content: "a", priority: 0),
             .init(content: "", priority: 0)
         ])
         // Order preserved, empty content skipped, priority never rendered.
-        #expect(context.render() == "b\na")
+        #expect(context.renderBullets() == "- b\n- a")
     }
 
     @Test
@@ -668,7 +668,7 @@ struct AirshipAIEvaluatorTests {
 
         _ = await manager.evaluate(
             TestEvaluation(),
-            context: .init(items: [.init(content: "authored", priority: 5)])
+            additionalContext: .init(items: [.init(content: "authored", priority: 5)])
         )
 
         #expect(model.lastRequest?.context.items.map(\.content) == ["provider", "authored"])
