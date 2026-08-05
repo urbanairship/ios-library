@@ -27,7 +27,8 @@ public final class AutomationSDKModule: NSObject, AirshipSDKModule {
         let eventRecorder = ThomasLayoutEventRecorder(airshipAnalytics: args.analytics, meteredUsage: args.meteredUsage)
         let metrics = ApplicationMetrics(dataStore: args.dataStore, privacyManager: args.privacyManager)
         
-        let automationStore = AutomationStore(config: args.config)
+        let ledgerStore = LedgerStore(config: args.config)
+        let automationStore = AutomationStore(config: args.config, ledgerStore: ledgerStore)
         let history = DefaultAutomationEventsHistory()
         let ledger = AutomationLedger(store: LedgerStore(config: args.config))
         

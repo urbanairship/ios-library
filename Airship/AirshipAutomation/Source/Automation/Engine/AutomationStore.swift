@@ -48,9 +48,14 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
     private let coreData: UACoreData?
     private let inMemory: Bool
     private let legacyStore: LegacyAutomationStore
+    private let ledgerStore: any LedgerStoreProtocol
     private var migrationTask: Task<Void, any Error>?
 
-    init(appKey: String, inMemory: Bool = false) {
+    init(
+        appKey: String,
+        inMemory: Bool = false,
+        ledgerStore: any LedgerStoreProtocol
+    ) {
         let modelURL = AirshipAutomationResources.bundle.url(
             forResource: "AirshipAutomation",
             withExtension:"momd"
@@ -69,10 +74,11 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
 
         self.inMemory = inMemory
         self.legacyStore = LegacyAutomationStore(appKey: appKey, inMemory: inMemory)
+        self.ledgerStore = ledgerStore
     }
 
-    init(config: RuntimeConfig) {
-        self.init(appKey: config.appCredentials.appKey)
+    init(config: RuntimeConfig, ledgerStore: any LedgerStoreProtocol) {
+        self.init(appKey: config.appCredentials.appKey, ledgerStore: ledgerStore)
     }
 
     func getSchedules() async throws -> [AutomationScheduleData] {
@@ -340,14 +346,14 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
 
             let identifiers = legacyData.map { $0.scheduleData.schedule.identifier }
 
-            try await coredata.perform { context in
+            let didMigrate = try await coredata.performWithResult { context -> Bool in
                 let request: NSFetchRequest<ScheduleEntity> = ScheduleEntity.fetchRequest()
                 request.includesPropertyValues = true
                 request.predicate = NSPredicate(format: "identifier in %@", identifiers)
 
                 guard try context.fetch(request).isEmpty else {
                     // Migration already happened, probably failed to delete before
-                    return
+                    return false
                 }
 
                 do {
@@ -364,6 +370,15 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
                     context.rollback()
                     throw error
                 }
+
+                return true
+            }
+
+            // Only backfill on the launch that actually moved the schedules.
+            // The "already migrated" path above bails before this, so re-runs
+            // (e.g. a previously failed legacy delete) never duplicate events.
+            if didMigrate {
+                await self.backfillLedger(legacyData: legacyData)
             }
 
             do {
@@ -374,6 +389,51 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         }
 
         try await self.migrationTask?.value
+    }
+
+    private func backfillLedger(legacyData: [LegacyScheduleData]) async {
+        let events = Self.backfillLedgerEvents(
+            from: legacyData,
+            timestamp: AirshipDate().now
+        )
+
+        guard !events.isEmpty else { return }
+
+        do {
+            try await self.ledgerStore.recordEvents(events)
+        } catch {
+            AirshipLogger.error("Failed to backfill ledger execution counts: \(error)")
+        }
+    }
+
+    /// Builds the backfill ledger events for a set of migrating legacy schedules.
+    ///
+    /// Each legacy schedule with a non-zero execution count contributes a single
+    /// `execution` event with `result: backfill` and `count` equal to that legacy
+    /// count. Backfill events carry no `trigger_id` and are never recorded under a
+    /// `shared_id`, so pre-ledger history stays scoped to the schedule and never
+    /// pollutes a pooled group tally. The timestamp is the migration time — an
+    /// upper bound on when those executions actually happened.
+    static func backfillLedgerEvents(
+        from legacyData: [LegacyScheduleData],
+        timestamp: Date
+    ) -> [LedgerEvent] {
+        return legacyData.compactMap { legacy in
+            let count = legacy.scheduleData.executionCount
+            guard count > 0 else { return nil }
+
+            return .execution(
+                LedgerEvent.Execution(
+                    scheduleID: legacy.scheduleData.schedule.identifier,
+                    sharedID: nil,
+                    triggerID: nil,
+                    timestamp: timestamp,
+                    count: count,
+                    result: .backfill,
+                    cancel: nil
+                )
+            )
+        }
     }
 
     func prepareCoreData() async throws -> UACoreData {

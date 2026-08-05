@@ -59,7 +59,12 @@ final class AutomationEngineTest {
             notificationCenter: self.notificationCenter
         )
 
-        self.automationStore = AutomationStore(appKey: UUID().uuidString, inMemory: true)
+        let automationStoreAppKey = UUID().uuidString
+        self.automationStore = AutomationStore(
+            appKey: automationStoreAppKey,
+            inMemory: true,
+            ledgerStore: LedgerStore(appKey: automationStoreAppKey, inMemory: true)
+        )
         self.preparer = AutomationPreparer(
             actionPreparer: actionPreparer,
             messagePreparer: messagePreparer,

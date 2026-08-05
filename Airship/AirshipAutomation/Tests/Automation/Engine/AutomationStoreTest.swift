@@ -2,6 +2,7 @@
 
 import Testing
 import Foundation
+import CoreData
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
@@ -9,10 +10,14 @@ import AirshipAutomation
 
 struct AutomationStoreTest {
 
-    private let store: AutomationStore = AutomationStore(
-        appKey: UUID().uuidString,
-        inMemory: true
-    )
+    private let store: AutomationStore = {
+        let appKey = UUID().uuidString
+        return AutomationStore(
+            appKey: appKey,
+            inMemory: true,
+            ledgerStore: LedgerStore(appKey: appKey, inMemory: true)
+        )
+    }()
 
     @Test
     func testUpsertNewSchedules() async throws {
@@ -296,6 +301,246 @@ struct AutomationStoreTest {
         #expect(!(isCurrent))
     }
 
+    @Test
+    func testBackfillLedgerEvents() {
+        let timestamp = Date(timeIntervalSince1970: 1000)
+        let legacyData = [
+            makeLegacy(identifier: "a", executionCount: 3),
+            makeLegacy(identifier: "b", executionCount: 0),
+            makeLegacy(identifier: "c", executionCount: 1)
+        ]
+
+        let events = AutomationStore.backfillLedgerEvents(
+            from: legacyData,
+            timestamp: timestamp
+        )
+
+        // Only schedules with a non-zero legacy count are backfilled, each as a
+        // single execution/backfill event with no trigger or shared scope.
+        let expected: [LedgerEvent] = [
+            .execution(
+                .init(
+                    scheduleID: "a",
+                    sharedID: nil,
+                    triggerID: nil,
+                    timestamp: timestamp,
+                    count: 3,
+                    result: .backfill,
+                    cancel: nil
+                )
+            ),
+            .execution(
+                .init(
+                    scheduleID: "c",
+                    sharedID: nil,
+                    triggerID: nil,
+                    timestamp: timestamp,
+                    count: 1,
+                    result: .backfill,
+                    cancel: nil
+                )
+            )
+        ]
+
+        #expect(events == expected)
+    }
+
+    @Test
+    func testBackfillLedgerEventsSkipsZeroCounts() {
+        let events = AutomationStore.backfillLedgerEvents(
+            from: [makeLegacy(identifier: "a", executionCount: 0)],
+            timestamp: Date()
+        )
+        #expect(events.isEmpty)
+    }
+
+    @Test
+    func testBackfillLedgerEventsEmptyInput() {
+        let events = AutomationStore.backfillLedgerEvents(from: [], timestamp: Date())
+        #expect(events.isEmpty)
+    }
+
+    // MARK: - Migration backfill (end-to-end)
+
+    @Test
+    func testMigrationBackfillsLegacyExecutionCounts() async throws {
+        let appKey = UUID().uuidString
+        defer { Self.cleanupStores(appKey: appKey) }
+
+        try Self.seedLegacySchedule(appKey: appKey, identifier: "legacy-1", triggeredCount: 5)
+
+        let ledger = TestLedgerStore()
+        let store = AutomationStore(appKey: appKey, inMemory: false, ledgerStore: ledger)
+
+        // Any store access drives the lazy legacy migration.
+        let schedules = try await store.getSchedules()
+
+        #expect(schedules.count == 1)
+        #expect(schedules.first?.schedule.identifier == "legacy-1")
+        #expect(schedules.first?.executionCount == 5)
+
+        let recorded = await ledger.recorded
+        #expect(recorded.count == 1)
+
+        guard case .execution(let execution) = recorded.first else {
+            Issue.record("Expected a single execution backfill event, got \(recorded)")
+            return
+        }
+
+        #expect(execution.scheduleID == "legacy-1")
+        #expect(execution.count == 5)
+        #expect(execution.result == .backfill)
+        #expect(execution.sharedID == nil)
+        #expect(execution.triggerID == nil)
+    }
+
+    @Test
+    func testMigrationDoesNotBackfillZeroCounts() async throws {
+        let appKey = UUID().uuidString
+        defer { Self.cleanupStores(appKey: appKey) }
+
+        try Self.seedLegacySchedule(appKey: appKey, identifier: "legacy-1", triggeredCount: 0)
+
+        let ledger = TestLedgerStore()
+        let store = AutomationStore(appKey: appKey, inMemory: false, ledgerStore: ledger)
+
+        let schedules = try await store.getSchedules()
+
+        // The schedule still migrates, but a zero count produces no backfill.
+        #expect(schedules.count == 1)
+        #expect(await ledger.recorded.isEmpty)
+    }
+
+    @Test
+    func testMigrationBackfillIsNotDuplicatedOnRerun() async throws {
+        let appKey = UUID().uuidString
+        defer { Self.cleanupStores(appKey: appKey) }
+
+        try Self.seedLegacySchedule(appKey: appKey, identifier: "legacy-1", triggeredCount: 5)
+
+        let firstLedger = TestLedgerStore()
+        let firstStore = AutomationStore(appKey: appKey, inMemory: false, ledgerStore: firstLedger)
+        _ = try await firstStore.getSchedules()
+        #expect(await firstLedger.recorded.count == 1)
+
+        // Simulate a relaunch where the post-migration legacy delete had failed:
+        // the legacy store is present again, but the new store already holds the
+        // migrated schedule. Migration must bail without re-recording backfill.
+        try Self.seedLegacySchedule(appKey: appKey, identifier: "legacy-1", triggeredCount: 5)
+
+        let secondLedger = TestLedgerStore()
+        let secondStore = AutomationStore(appKey: appKey, inMemory: false, ledgerStore: secondLedger)
+        let schedules = try await secondStore.getSchedules()
+
+        #expect(schedules.count == 1)
+        #expect(await secondLedger.recorded.isEmpty)
+    }
+
+    // MARK: - Migration helpers
+
+    /// Writes a single legacy `UAScheduleData` row into the pre-ledger
+    /// `Automation-<appKey>.sqlite` store using the current legacy model, so the
+    /// real `LegacyAutomationStore` inside `AutomationStore` will migrate it.
+    private static func seedLegacySchedule(
+        appKey: String,
+        identifier: String,
+        triggeredCount: Int
+    ) throws {
+        let modelURL = try #require(
+            AirshipAutomationResources.bundle.url(
+                forResource: "UAAutomation",
+                withExtension: "momd"
+            )
+        )
+        let model = try #require(NSManagedObjectModel(contentsOf: modelURL))
+        let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+
+        let storeURL = try storeDirectory()
+            .appendingPathComponent("Automation-\(appKey).sqlite")
+
+        try coordinator.addPersistentStore(
+            ofType: NSSQLiteStoreType,
+            configurationName: nil,
+            at: storeURL,
+            options: nil
+        )
+
+        let context = NSManagedObjectContext(
+            concurrencyType: .privateQueueConcurrencyType
+        )
+        context.persistentStoreCoordinator = coordinator
+
+        try context.performAndWait {
+            let entity = NSEntityDescription.insertNewObject(
+                forEntityName: "UAScheduleData",
+                into: context
+            )
+            entity.setValue(identifier, forKey: "identifier")
+            entity.setValue(NSNumber(value: 1), forKey: "type") // actions
+            entity.setValue("{}", forKey: "data")
+            entity.setValue(NSNumber(value: 3), forKey: "dataVersion") // skip data migration
+            entity.setValue(NSNumber(value: triggeredCount), forKey: "triggeredCount")
+            try context.save()
+        }
+
+        if let store = coordinator.persistentStores.first {
+            try coordinator.remove(store)
+        }
+    }
+
+    private static func storeDirectory() throws -> URL {
+        #if os(tvOS)
+        let searchPath: FileManager.SearchPathDirectory = .cachesDirectory
+        #else
+        let searchPath: FileManager.SearchPathDirectory = .libraryDirectory
+        #endif
+
+        let base = try #require(
+            FileManager.default.urls(for: searchPath, in: .userDomainMask).last
+        )
+        let directory = base.appendingPathComponent("com.urbanairship.no-backup")
+        try FileManager.default.createDirectory(
+            at: directory,
+            withIntermediateDirectories: true
+        )
+        return directory
+    }
+
+    private static func cleanupStores(appKey: String) {
+        guard let directory = try? storeDirectory() else { return }
+        let names = [
+            "Automation-\(appKey).sqlite",
+            "In-app-automation-\(appKey).sqlite",
+            "AirshipAutomation-\(appKey).sqlite"
+        ]
+        for name in names {
+            for suffix in ["", "-wal", "-shm"] {
+                let path = directory.appendingPathComponent(name + suffix).path
+                if FileManager.default.fileExists(atPath: path) {
+                    try? FileManager.default.removeItem(atPath: path)
+                }
+            }
+        }
+    }
+
+    private func makeLegacy(identifier: String, executionCount: Int) -> LegacyScheduleData {
+        return LegacyScheduleData(
+            scheduleData: AutomationScheduleData(
+                schedule: AutomationSchedule(
+                    identifier: identifier,
+                    data: .actions(.string("actions")),
+                    triggers: []
+                ),
+                scheduleState: .idle,
+                lastScheduleModifiedDate: .distantPast,
+                scheduleStateChangeDate: .distantPast,
+                executionCount: executionCount,
+                triggerSessionID: UUID().uuidString
+            ),
+            triggerDatas: []
+        )
+    }
+
     private func makeSchedule(identifer: String, group: String? = nil) -> AutomationScheduleData {
         let schedule = AutomationSchedule(
             identifier: identifer,
@@ -339,4 +584,19 @@ extension AutomationScheduleData {
         associatedData == other.associatedData &&
         triggerSessionID == other.triggerSessionID
     }
+}
+
+/// Records everything written to it so migration backfill can be asserted.
+private actor TestLedgerStore: LedgerStoreProtocol {
+    private(set) var recorded: [LedgerEvent] = []
+
+    func recordEvents(_ events: [LedgerEvent]) async throws {
+        recorded.append(contentsOf: events)
+    }
+
+    func events(scheduleID: String, sharedID: String?) async throws -> [LedgerEvent] {
+        return []
+    }
+
+    func deleteEvents(scopes: [LedgerScope]) async throws {}
 }
