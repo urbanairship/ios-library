@@ -74,6 +74,39 @@ struct AutomationScheduleTests {
     }
 
     @Test
+    func testParseLedgerConfig() throws {
+        let jsonString = """
+           {
+               "id": "test_schedule",
+               "triggers": [
+                   { "type": "custom_event_count", "goal": 1, "id": "json-id" }
+               ],
+               "type": "actions",
+               "actions": { "foo": "bar" },
+               "ledger_config": {
+                   "shared_id": "group-1"
+               }
+           }
+           """
+
+        let expectedSchedule = AutomationSchedule(
+            identifier: "test_schedule",
+            data: .actions(try AirshipJSON.wrap(["foo": "bar"])),
+            triggers: [.event(EventAutomationTrigger(id: "json-id", type: .customEventCount, goal: 1.0))],
+            created: nil,
+            ledgerConfig: AutomationSchedule.LedgerConfig(sharedID: "group-1")
+        )
+
+        try verify(json: jsonString, expected: expectedSchedule)
+
+        let decoded = try JSONDecoder().decode(
+            AutomationSchedule.self,
+            from: jsonString.data(using: .utf8)!
+        )
+        #expect(decoded.ledgerSharedID == "group-1")
+    }
+
+    @Test
     func testParseAISuppression() throws {
         let jsonString = """
            {

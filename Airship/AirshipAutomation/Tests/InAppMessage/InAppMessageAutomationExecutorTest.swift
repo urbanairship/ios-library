@@ -17,6 +17,7 @@ struct InAppMessageAutomationExecutorTest {
     private let conditionsChangedNotifier: ScheduleConditionsChangedNotifier
     private let analytics: TestInAppMessageAnalytics = TestInAppMessageAnalytics()
     private let actionRunner: TestInAppActionRunner = TestInAppActionRunner()
+    private let ledger: TestAutomationLedger = TestAutomationLedger()
     private let displayAdapter: TestDisplayAdapter
 
 
@@ -54,7 +55,8 @@ struct InAppMessageAutomationExecutorTest {
             sceneManager: sceneManager,
             assetManager: assetManager,
             analyticsFactory: analyticsFactory,
-            scheduleConditionsChangedNotifier: conditionsChangedNotifier
+            scheduleConditionsChangedNotifier: conditionsChangedNotifier,
+            ledger: ledger
         )
 
         let analytics = self.analytics
@@ -142,6 +144,16 @@ struct InAppMessageAutomationExecutorTest {
         let result =  try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
         #expect(self.displayAdapter.displayed)
         #expect(result == .finished)
+
+        #expect(await self.ledger.recorded == [
+            .execution(
+                scheduleID: preparedInfo.scheduleID,
+                sharedID: nil,
+                triggerID: nil,
+                result: .succeeded,
+                cancel: false
+            )
+        ])
     }
 
     @Test
@@ -167,6 +179,16 @@ struct InAppMessageAutomationExecutorTest {
         #expect(!(self.displayAdapter.displayed))
         #expect(result == .finished)
         #expect(self.actionRunner.actionPayloads.isEmpty)
+
+        #expect(await self.ledger.recorded == [
+            .execution(
+                scheduleID: preparedInfo.scheduleID,
+                sharedID: nil,
+                triggerID: nil,
+                result: .holdout,
+                cancel: false
+            )
+        ])
     }
 
     @Test
@@ -226,6 +248,7 @@ struct InAppMessageAutomationExecutorTest {
         #expect(self.displayAdapter.displayed)
         #expect(result == .cancel)
         #expect(self.actionRunner.actionPayloads.isEmpty)
+        #expect(await self.ledger.recorded.isEmpty)
     }
 
     @Test
@@ -245,6 +268,7 @@ struct InAppMessageAutomationExecutorTest {
         #expect(!(self.displayAdapter.displayed))
         #expect(result == .finished)
         #expect(self.actionRunner.actionPayloads.isEmpty)
+        #expect(await self.ledger.recorded.isEmpty)
     }
 
     @Test

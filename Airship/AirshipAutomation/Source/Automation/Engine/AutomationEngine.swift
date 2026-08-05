@@ -23,6 +23,7 @@ actor AutomationEngine : AutomationEngineProtocol {
     private let date: any AirshipDateProtocol
     private let taskSleeper: any AirshipTaskSleeper
     private let eventsHistory: any AutomationEventsHistory
+    private let ledger: any AutomationLedgerProtocol
 
     private var processPendingExecutionTask: Task<Void, Never>?
     private var pendingExecution: [String: PreparedData] = [:]
@@ -38,6 +39,7 @@ actor AutomationEngine : AutomationEngineProtocol {
         triggersProcessor: any AutomationTriggerProcessorProtocol,
         delayProcessor: any AutomationDelayProcessorProtocol,
         eventsHistory: any AutomationEventsHistory,
+        ledger: any AutomationLedgerProtocol,
         date: any AirshipDateProtocol = AirshipDate.shared,
         taskSleeper: any AirshipTaskSleeper = .shared
     ) {
@@ -51,6 +53,7 @@ actor AutomationEngine : AutomationEngineProtocol {
         self.date = date
         self.taskSleeper = taskSleeper
         self.eventsHistory = eventsHistory
+        self.ledger = ledger
     }
 
     @MainActor
@@ -330,8 +333,23 @@ fileprivate extension AutomationEngine {
                     break
 
                 case .execution:
-                    try await self.updateState(identifier: result.scheduleID) { data in
+                    let updated = try await self.updateState(identifier: result.scheduleID) { data in
                         data.triggered(triggerInfo: result.triggerInfo, date: now)
+                    }
+
+                    // Record only when this call actually moved the schedule into
+                    // `triggered` for this result. `triggered(...)` is a no-op
+                    // unless the schedule was idle, and it stamps this result's
+                    // `triggerInfo`, so matching both confirms the transition and
+                    // avoids double-counting a redundant trigger result.
+                    if let updated,
+                       updated.scheduleState == .triggered,
+                       updated.triggerInfo == result.triggerInfo {
+                        await self.ledger.recordTriggered(
+                            scheduleID: updated.schedule.identifier,
+                            sharedID: updated.schedule.ledgerSharedID,
+                            triggerID: result.triggerInfo.triggerID
+                        )
                     }
 
                     await self.startTaskToProcessTriggeredSchedule(
@@ -579,7 +597,8 @@ fileprivate extension AutomationEngine {
         let prepareResult = await self.preparer.prepare(
             schedule: data.schedule,
             triggerContext: data.triggerInfo?.context,
-            triggerSessionID: data.triggerSessionID
+            triggerSessionID: data.triggerSessionID,
+            triggerID: data.triggerInfo?.triggerID
         )
 
         AirshipLogger.trace("Finished preparing schedule \(data.schedule.identifier) result: \(prepareResult)")

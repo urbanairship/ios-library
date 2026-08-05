@@ -9,7 +9,8 @@ fileprivate protocol AutomationPreparerProtocol: Sendable {
     func prepare(
         schedule: AutomationSchedule,
         triggerContext: AirshipTriggerContext?,
-        triggerSessionID: String
+        triggerSessionID: String,
+        triggerID: String?
     ) async -> SchedulePrepareResult
 
     func cancelled(schedule: AutomationSchedule) async
@@ -46,6 +47,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
     private let queues: Queues
     private let config: RuntimeConfig
     private let additionalAudienceResolver: any AdditionalAudienceCheckerResolverProtocol
+    private let ledger: any AutomationLedgerProtocol
 
     private static let deferredResultKey: String = "AirshipAutomation#deferredResult"
     private static let defaultMessageType: String = "transactional"
@@ -64,7 +66,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         deviceInfoProviderFactory: @escaping @Sendable (String?) -> any AudienceDeviceInfoProvider = { contactID in
             CachingAudienceDeviceInfoProvider(contactID: contactID)
         },
-        additionalAudienceResolver: any AdditionalAudienceCheckerResolverProtocol
+        additionalAudienceResolver: any AdditionalAudienceCheckerResolverProtocol,
+        ledger: any AutomationLedgerProtocol
     ) {
         self.actionPreparer = actionPreparer
         self.messagePreparer = messagePreparer
@@ -77,6 +80,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         self.config = config
         self.queues = Queues(config: config)
         self.additionalAudienceResolver = additionalAudienceResolver
+        self.ledger = ledger
     }
 
     func cancelled(schedule: AutomationSchedule) async {
@@ -90,7 +94,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
     func prepare(
         schedule: AutomationSchedule,
         triggerContext: AirshipTriggerContext?,
-        triggerSessionID: String
+        triggerSessionID: String,
+        triggerID: String? = nil
     ) async -> SchedulePrepareResult {
         AirshipLogger.trace("Preparing \(schedule.identifier)")
 
@@ -136,6 +141,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
 
                 if (!match.isMatch) {
                     AirshipLogger.trace("Local audience miss \(schedule.identifier)")
+                    await self.recordAudienceMiss(schedule: schedule, triggerID: triggerID)
                     return .success(
                         result: schedule.audienceMissBehaviorResult,
                         ignoreReturnOrder: true
@@ -161,6 +167,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
             return try await self.prepareData(
                 data: schedule.data,
                 schedule: schedule,
+                triggerID: triggerID,
                 retryState: retryState,
                 deferredRequest: { url in
                     DeferredRequest(
@@ -189,7 +196,9 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                         additionalAudienceCheckResult: result,
                         priority: schedule.priority ?? 0,
                         sendMetadata: schedule.sendMetadata,
-                        aiSuppression: schedule.aiSuppression
+                        aiSuppression: schedule.aiSuppression,
+                        ledgerSharedID: schedule.ledgerSharedID,
+                        triggerID: triggerID
                     )
                 },
                 prepareSchedule: { [frequencyChecker] scheduleInfo, data in
@@ -206,6 +215,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
     private func prepareData(
         data: AutomationSchedule.ScheduleData,
         schedule: AutomationSchedule,
+        triggerID: String?,
         retryState: RetryingQueue<SchedulePrepareResult>.State,
         deferredRequest:  @escaping @Sendable (URL) async throws -> DeferredRequest,
         prepareScheduleInfo:  @escaping @Sendable () async throws -> PreparedScheduleInfo,
@@ -247,12 +257,14 @@ struct AutomationPreparer: AutomationPreparerProtocol {
             return try await self.prepareDeferred(
                 deferred: deferred,
                 schedule: schedule,
+                triggerID: triggerID,
                 retryState: retryState,
                 deferredRequest: deferredRequest
             ) { data in
                 try await self.prepareData(
                     data: data,
                     schedule: schedule,
+                    triggerID: triggerID,
                     retryState: retryState,
                     deferredRequest: deferredRequest,
                     prepareScheduleInfo: prepareScheduleInfo,
@@ -266,6 +278,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
     private func prepareDeferred(
         deferred: DeferredAutomationData,
         schedule: AutomationSchedule,
+        triggerID: String?,
         retryState: RetryingQueue<SchedulePrepareResult>.State,
         deferredRequest:  @escaping @Sendable (URL) async throws -> DeferredRequest,
         onResult: @escaping @Sendable (AutomationSchedule.ScheduleData) async throws -> RetryingQueue<SchedulePrepareResult>.Result
@@ -305,6 +318,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                     return try await onResult(.inAppMessage(message))
                 }
             } else {
+                await self.recordAudienceMiss(schedule: schedule, triggerID: triggerID)
                 return .success(
                     result: schedule.audienceMissBehaviorResult,
                     ignoreReturnOrder: true
@@ -334,15 +348,45 @@ struct AutomationPreparer: AutomationPreparerProtocol {
     }
 }
 
+extension AutomationPreparer {
+    /// Records the audience-miss outcome when the schedule's miss behavior
+    /// consumes budget. `penalize` records `audience_miss`; `cancel` records
+    /// `audience_miss` with `cancel: true`; `skip` records nothing.
+    fileprivate func recordAudienceMiss(
+        schedule: AutomationSchedule,
+        triggerID: String?
+    ) async {
+        switch schedule.effectiveAudienceMissBehavior {
+        case .skip:
+            return
+        case .penalize, .cancel:
+            await self.ledger.recordExecution(
+                scheduleID: schedule.identifier,
+                sharedID: schedule.ledgerSharedID,
+                triggerID: triggerID,
+                result: .audienceMiss,
+                cancel: schedule.effectiveAudienceMissBehavior == .cancel
+            )
+        }
+    }
+}
+
 fileprivate extension AutomationSchedule {
-    var audienceMissBehaviorResult: SchedulePrepareResult {
+    /// The effective miss behavior after combining compound and device
+    /// audiences. Mirrors `audienceMissBehaviorResult`, defaulting to
+    /// `penalize` when no behavior is configured.
+    var effectiveAudienceMissBehavior: AutomationAudience.MissBehavior {
         if let compoundAudience {
-            return compoundAudience.missBehavior.schedulePrepareResult
+            return compoundAudience.missBehavior
         } else if let audienceMiss = audience?.missBehavior {
-            return audienceMiss.schedulePrepareResult
+            return audienceMiss
         } else {
             return .penalize
         }
+    }
+
+    var audienceMissBehaviorResult: SchedulePrepareResult {
+        return effectiveAudienceMissBehavior.schedulePrepareResult
     }
 
     var evaluateExperiments: Bool {

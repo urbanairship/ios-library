@@ -13,6 +13,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     private let assetManager: any AssetCacheManagerProtocol
     private let analyticsFactory: any InAppMessageAnalyticsFactoryProtocol
     private let scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier
+    private let ledger: any AutomationLedgerProtocol
 
     /// Injected at module load so the view-testing `displayTest` path can build a layout
     /// adapter without resolving the AI manager from the shared `Airship` instance.
@@ -24,12 +25,14 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         assetManager: any AssetCacheManagerProtocol,
         analyticsFactory: any InAppMessageAnalyticsFactoryProtocol,
         scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier,
-        aiManager: (any AirshipAI.InternalManager)? = nil
+        aiManager: (any AirshipAI.InternalManager)? = nil,
+        ledger: any AutomationLedgerProtocol
     ) {
         self.assetManager = assetManager
         self.analyticsFactory = analyticsFactory
         self.scheduleConditionsChangedNotifier = scheduleConditionsChangedNotifier
         self.aiManager = aiManager
+        self.ledger = ledger
     }
 #else
     private let sceneManager: any InAppMessageSceneManagerProtocol
@@ -50,13 +53,15 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         assetManager: any AssetCacheManagerProtocol,
         analyticsFactory: any InAppMessageAnalyticsFactoryProtocol,
         scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier,
-        aiManager: (any AirshipAI.InternalManager)? = nil
+        aiManager: (any AirshipAI.InternalManager)? = nil,
+        ledger: any AutomationLedgerProtocol
     ) {
         self.sceneManager = sceneManager
         self.assetManager = assetManager
         self.analyticsFactory = analyticsFactory
         self.scheduleConditionsChangedNotifier = scheduleConditionsChangedNotifier
         self.aiManager = aiManager
+        self.ledger = ledger
     }
 #endif
 
@@ -192,6 +197,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
                 ThomasLayoutResolutionEvent.control(experimentResult: experimentResult),
                 layoutContext: nil
             )
+            await self.recordLedgerExecution(preparedScheduleInfo, result: .holdout)
         } else {
             do {
                 AirshipLogger.info("Displaying message \(preparedScheduleInfo.scheduleID)")
@@ -203,6 +209,8 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
                 case .finished:
                     result = .finished
                 }
+
+                await self.recordLedgerExecution(preparedScheduleInfo, result: .succeeded)
 
                 if let actions = data.message.actions  {
                     data.actionRunner.runAsync(actions: actions)
@@ -251,6 +259,19 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
 
         await self.assetManager.clearCache(identifier: preparedScheduleInfo.scheduleID)
         return .finish
+    }
+
+    private func recordLedgerExecution(
+        _ info: PreparedScheduleInfo,
+        result: LedgerExecutionResult
+    ) async {
+        await self.ledger.recordExecution(
+            scheduleID: info.scheduleID,
+            sharedID: info.ledgerSharedID,
+            triggerID: info.triggerID,
+            result: result,
+            cancel: false
+        )
     }
 
     @MainActor

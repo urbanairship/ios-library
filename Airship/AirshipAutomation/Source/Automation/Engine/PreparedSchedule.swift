@@ -26,6 +26,15 @@ struct PreparedScheduleInfo: Codable, Equatable {
     var sendMetadata: String?
     var aiSuppression: AutomationAISuppression?
 
+    /// Shared ledger group ID the schedule had when prepared. Stamped here so
+    /// execution-outcome ledger events record under it without re-reading the
+    /// (possibly changed) schedule config.
+    var ledgerSharedID: String?
+
+    /// ID of the execution-causing trigger, carried through for ledger event
+    /// attribution.
+    var triggerID: String?
+
     init(
         scheduleID: String,
         productID: String? = nil,
@@ -37,7 +46,9 @@ struct PreparedScheduleInfo: Codable, Equatable {
         additionalAudienceCheckResult: Bool = true,
         priority: Int,
         sendMetadata: String? = nil,
-        aiSuppression: AutomationAISuppression? = nil
+        aiSuppression: AutomationAISuppression? = nil,
+        ledgerSharedID: String? = nil,
+        triggerID: String? = nil
     ) {
         self.scheduleID = scheduleID
         self.productID = productID
@@ -50,6 +61,8 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.priority = priority
         self.sendMetadata = sendMetadata
         self.aiSuppression = aiSuppression
+        self.ledgerSharedID = ledgerSharedID
+        self.triggerID = triggerID
     }
 
     init(from decoder: any Decoder) throws {
@@ -65,6 +78,8 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.priority = try container.decodeIfPresent(Int.self, forKey: .priority) ?? 0
         self.sendMetadata = try container.decodeIfPresent(String.self, forKey: .sendMetadata)
         self.aiSuppression = try container.decodeIfPresent(AutomationAISuppression.self, forKey: .aiSuppression)
+        self.ledgerSharedID = try container.decodeIfPresent(String.self, forKey: .ledgerSharedID)
+        self.triggerID = try container.decodeIfPresent(String.self, forKey: .triggerID)
     }
 }
 

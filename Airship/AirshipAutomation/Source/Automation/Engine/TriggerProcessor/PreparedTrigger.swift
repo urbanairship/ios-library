@@ -128,7 +128,8 @@ final class PreparedTrigger {
                     type: trigger.type,
                     goal: trigger.goal,
                     event: eventData),
-                date: self.date.now
+                date: self.date.now,
+                triggerID: self.trigger.id
             )
         )
     }

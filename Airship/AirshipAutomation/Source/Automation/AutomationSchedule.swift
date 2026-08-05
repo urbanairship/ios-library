@@ -63,6 +63,11 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     /// If the schedule should bypass holdout groups or not
     public var bypassHoldoutGroups: Bool?
 
+    /// Ledger configuration for shared display limiting. When present with a
+    /// `shared_id`, ledger events this schedule records are pooled across every
+    /// schedule sharing that ID (e.g. A/B variants).
+    public var ledgerConfig: LedgerConfig?
+
 
     /// After the schedule ends or is finished, how long to hold on to the schedule before
     /// deleting it. This is used to keep schedule state around for a period of time
@@ -103,6 +108,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         case reportingContext = "reporting_context"
         case productID = "product_id"
         case bypassHoldoutGroups = "bypass_holdout_groups"
+        case ledgerConfig = "ledger_config"
         case editGracePeriodDays = "edit_grace_period"
         case frequencyConstraintIDs = "frequency_constraint_ids"
         case messageType = "message_type"
@@ -120,6 +126,24 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         case actions
         case inAppMessage = "in_app_message"
         case deferred
+    }
+
+    /// Ledger configuration for a schedule. An expandable object so future
+    /// ledger-level knobs (e.g. compaction behavior) can be added without a new
+    /// top-level field.
+    public struct LedgerConfig: Sendable, Codable, Equatable {
+
+        /// Shared group ID that pools ledger history across schedules. When set,
+        /// events are recorded under this ID in addition to the schedule ID.
+        public var sharedID: String?
+
+        enum CodingKeys: String, CodingKey {
+            case sharedID = "shared_id"
+        }
+
+        public init(sharedID: String? = nil) {
+            self.sharedID = sharedID
+        }
     }
 
 
@@ -169,6 +193,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.interval = interval
         self.data = data
         self.bypassHoldoutGroups = bypassHoldoutGroups
+        self.ledgerConfig = nil
         self.editGracePeriodDays = editGracePeriodDays
 
         self.metadata = nil
@@ -199,6 +224,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         delay: AutomationDelay? = nil,
         interval: TimeInterval? = nil,
         bypassHoldoutGroups: Bool? = nil,
+        ledgerConfig: LedgerConfig? = nil,
         editGracePeriodDays: UInt? = nil,
         metadata: AirshipJSON? = nil,
         sendMetadata: String? = nil,
@@ -225,6 +251,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.interval = interval
         self.data = data
         self.bypassHoldoutGroups = bypassHoldoutGroups
+        self.ledgerConfig = ledgerConfig
         self.editGracePeriodDays = editGracePeriodDays
         self.metadata = metadata
         self.sendMetadata = sendMetadata
@@ -260,6 +287,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.reportingContext = try container.decodeIfPresent(AirshipJSON.self, forKey: .reportingContext)
         self.productID = try container.decodeIfPresent(String.self, forKey: .productID)
         self.bypassHoldoutGroups = try container.decodeIfPresent(Bool.self, forKey: .bypassHoldoutGroups)
+        self.ledgerConfig = try container.decodeIfPresent(LedgerConfig.self, forKey: .ledgerConfig)
         self.editGracePeriodDays = try container.decodeIfPresent(UInt.self, forKey: .editGracePeriodDays)
         self.frequencyConstraintIDs = try container.decodeIfPresent([String].self, forKey: .frequencyConstraintIDs)
         self.messageType = try container.decodeIfPresent(String.self, forKey: .messageType)
@@ -318,6 +346,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         try container.encodeIfPresent(self.reportingContext, forKey: .reportingContext)
         try container.encodeIfPresent(self.productID, forKey: .productID)
         try container.encodeIfPresent(self.bypassHoldoutGroups, forKey: .bypassHoldoutGroups)
+        try container.encodeIfPresent(self.ledgerConfig, forKey: .ledgerConfig)
         try container.encodeIfPresent(self.editGracePeriodDays, forKey: .editGracePeriodDays)
         try container.encodeIfPresent(self.frequencyConstraintIDs, forKey: .frequencyConstraintIDs)
         try container.encodeIfPresent(self.messageType, forKey: .messageType)
@@ -353,6 +382,12 @@ fileprivate extension Date {
 }
 
 extension AutomationSchedule {
+    /// The shared ledger group ID this schedule records under, if any. Stamped
+    /// onto every ledger event at record time.
+    var ledgerSharedID: String? {
+        return self.ledgerConfig?.sharedID
+    }
+
     var isInAppMessageType: Bool {
         switch (data) {
         case .actions(_): return false

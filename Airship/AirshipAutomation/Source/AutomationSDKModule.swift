@@ -29,6 +29,7 @@ public final class AutomationSDKModule: NSObject, AirshipSDKModule {
         
         let automationStore = AutomationStore(config: args.config)
         let history = DefaultAutomationEventsHistory()
+        let ledger = AutomationLedger(store: LedgerStore(config: args.config))
         
         let analyticsFactory = InAppMessageAnalyticsFactory(
             eventRecorder: eventRecorder,
@@ -65,19 +66,21 @@ public final class AutomationSDKModule: NSObject, AirshipSDKModule {
             additionalAudienceResolver: AdditionalAudienceCheckerResolver(
                 config: args.config,
                 cache: args.cache
-            )
+            ),
+            ledger: ledger
         )
         
         
         // Execution
-        let actionExecutor = ActionAutomationExecutor()
+        let actionExecutor = ActionAutomationExecutor(ledger: ledger)
         
 #if os(macOS)
         let messageExecutor = InAppMessageAutomationExecutor(
             assetManager: assetManager,
             analyticsFactory: analyticsFactory,
             scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier,
-            aiManager: args.aiManager
+            aiManager: args.aiManager,
+            ledger: ledger
         )
 #else
         let messageSceneManager = InAppMessageSceneManager(sceneManger: AirshipSceneManager.shared)
@@ -86,7 +89,8 @@ public final class AutomationSDKModule: NSObject, AirshipSDKModule {
             assetManager: assetManager,
             analyticsFactory: analyticsFactory,
             scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier,
-            aiManager: args.aiManager
+            aiManager: args.aiManager,
+            ledger: ledger
         )
 #endif
         
@@ -116,6 +120,7 @@ public final class AutomationSDKModule: NSObject, AirshipSDKModule {
             ),
             delayProcessor: AutomationDelayProcessor(analytics: args.analytics),
             eventsHistory: history,
+            ledger: ledger
         )
         
         let remoteDataSubscriber = AutomationRemoteDataSubscriber(

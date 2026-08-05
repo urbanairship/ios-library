@@ -49,7 +49,8 @@ struct AutomationTriggerProcessorTest: @unchecked Sendable {
                 type: "active_session",
                 goal: 1.0,
                 event: .null),
-            date: self.date.now) == result?.triggerInfo)
+            date: self.date.now,
+            triggerID: "trigger-id") == result?.triggerInfo)
     }
     
     @Test
@@ -73,7 +74,8 @@ struct AutomationTriggerProcessorTest: @unchecked Sendable {
                 type: "active_session",
                 goal: 1.0,
                 event: .null),
-            date: self.date.now) == result?.triggerInfo)
+            date: self.date.now,
+            triggerID: "trigger-id") == result?.triggerInfo)
     }
     
     @Test

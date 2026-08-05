@@ -39,6 +39,8 @@ final class AutomationEngineTest {
     private let experiments: TestExperimentDataProvider = TestExperimentDataProvider()
     private let frequencyLimits: TestFrequencyLimitManager = TestFrequencyLimitManager()
     private let audienceChecker: TestAudienceChecker = TestAudienceChecker()
+    private let ledger: TestAutomationLedger = TestAutomationLedger()
+    private let triggersProcessor: TestAutomationTriggerProcessor = TestAutomationTriggerProcessor()
     private var preparer: AutomationPreparer!
     private var eventFeed: AutomationEventFeed!
     private var executor: AutomationExecutor!
@@ -67,13 +69,19 @@ final class AutomationEngineTest {
             experiments: experiments,
             remoteDataAccess: remoteDataAccess,
             config: self.runtimeConfig,
-            additionalAudienceResolver: TestAdditionalAudienceResolver()
+            additionalAudienceResolver: TestAdditionalAudienceResolver(),
+            ledger: NoOpAutomationLedger()
         )
-        
-        let actionExecutor = ActionAutomationExecutor()
+
+        // The trigger-driven ledger tests below let the engine reach the
+        // preparer's `cancelled` path; give it an inert block so it doesn't
+        // force-unwrap a nil handler.
+        self.actionPreparer.cancelledBlock = { _ in }
+        self.messagePreparer.cancelledBlock = { _ in }
+
+        let actionExecutor = ActionAutomationExecutor(ledger: NoOpAutomationLedger())
         let messageExecutor = TestInAppMessageAutomationExecutor()
         let executor = AutomationExecutor(actionExecutor: actionExecutor, messageExecutor: messageExecutor, remoteDataAccess: remoteDataAccess)
-        let triggersProcessor = AutomationTriggerProcessor(store: automationStore, history: history)
         
         self.metrics = ApplicationMetrics(
             dataStore: dataStore,
@@ -94,9 +102,10 @@ final class AutomationEngineTest {
             preparer: self.preparer,
             scheduleConditionsChangedNotifier: scheduleConditionsChangedNotifier,
             eventFeed: eventFeed,
-            triggersProcessor: triggersProcessor,
+            triggersProcessor: self.triggersProcessor,
             delayProcessor: delayProcessor,
-            eventsHistory: history
+            eventsHistory: history,
+            ledger: self.ledger
         )
     }
     
@@ -196,6 +205,134 @@ final class AutomationEngineTest {
         let schedule = try await self.engine.getSchedule(identifier: "test")
         #expect(schedule == nil)
     }
+
+    /// An execution-type trigger result that moves an idle schedule into
+    /// `triggered` must record a `triggered` ledger event, stamped with the
+    /// schedule's shared ID and the causing trigger's ID.
+    @Test
+    func testExecutionTriggerRecordsTriggered() async throws {
+        try await self.engine.upsertSchedules([
+            makeSchedule(id: "record-schedule", sharedID: "group-1")
+        ])
+
+        // Pause so the schedule records `triggered` but halts before the
+        // preparer/executor pipeline, keeping the test focused on recording.
+        self.engine.setEnginePaused(true)
+        self.engine.setExecutionPaused(true)
+        await self.engine.start()
+
+        await self.triggersProcessor.emit(
+            TriggerResult(
+                scheduleID: "record-schedule",
+                triggerExecutionType: .execution,
+                triggerInfo: TriggeringInfo(date: Date(), triggerID: "trigger-1")
+            )
+        )
+
+        try await waitForTriggeredRecord(scheduleID: "record-schedule")
+
+        let recorded = await self.ledger.recorded
+        #expect(recorded == [
+            .triggered(scheduleID: "record-schedule", sharedID: "group-1", triggerID: "trigger-1")
+        ])
+    }
+
+    /// A delay-cancellation trigger result must not record a `triggered`
+    /// event. A second execution result gives a deterministic barrier: because
+    /// results are processed serially, once the barrier's record appears the
+    /// cancellation has already been processed, so its absence is conclusive.
+    @Test
+    func testDelayCancellationDoesNotRecordTriggered() async throws {
+        try await self.engine.upsertSchedules([
+            makeSchedule(id: "cancel-schedule"),
+            makeSchedule(id: "barrier-schedule", sharedID: "barrier-group")
+        ])
+
+        self.engine.setEnginePaused(true)
+        self.engine.setExecutionPaused(true)
+        await self.engine.start()
+
+        await self.triggersProcessor.emit(
+            TriggerResult(
+                scheduleID: "cancel-schedule",
+                triggerExecutionType: .delayCancellation,
+                triggerInfo: TriggeringInfo(date: Date(), triggerID: "trigger-cancel")
+            )
+        )
+
+        await self.triggersProcessor.emit(
+            TriggerResult(
+                scheduleID: "barrier-schedule",
+                triggerExecutionType: .execution,
+                triggerInfo: TriggeringInfo(date: Date(), triggerID: "trigger-barrier")
+            )
+        )
+
+        try await waitForTriggeredRecord(scheduleID: "barrier-schedule")
+
+        let recorded = await self.ledger.recorded
+        #expect(recorded == [
+            .triggered(scheduleID: "barrier-schedule", sharedID: "barrier-group", triggerID: "trigger-barrier")
+        ])
+    }
+
+    private func makeSchedule(id: String, sharedID: String? = nil) -> AutomationSchedule {
+        AutomationSchedule(
+            identifier: id,
+            data: .inAppMessage(
+                InAppMessage(name: "test", displayContent: .custom(.string("test")))
+            ),
+            triggers: [],
+            ledgerConfig: sharedID.map { .init(sharedID: $0) }
+        )
+    }
+
+    private func waitForTriggeredRecord(
+        scheduleID: String,
+        timeout: TimeInterval = 5
+    ) async throws {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            let recorded = await self.ledger.recorded
+            let found = recorded.contains {
+                if case .triggered(let sid, _, _) = $0 { return sid == scheduleID }
+                return false
+            }
+            if found { return }
+            try await Task.sleep(nanoseconds: 20_000_000)
+        }
+        Issue.record("Timed out waiting for triggered record for \(scheduleID)")
+    }
+}
+
+/// Trigger processor double that lets a test push `TriggerResult`s straight
+/// into the engine's results stream, so trigger-driven engine behavior can be
+/// exercised deterministically without real event ingestion timing.
+final actor TestAutomationTriggerProcessor: AutomationTriggerProcessorProtocol {
+    private let stream: AsyncStream<TriggerResult>
+    private let continuation: AsyncStream<TriggerResult>.Continuation
+
+    init() {
+        (self.stream, self.continuation) = AsyncStream<TriggerResult>.airshipMakeStreamWithContinuation()
+    }
+
+    func emit(_ result: TriggerResult) {
+        self.continuation.yield(result)
+    }
+
+    @MainActor
+    func setPaused(_ paused: Bool) {}
+
+    var triggerResults: AsyncStream<TriggerResult> {
+        return self.stream
+    }
+
+    func processEvent(_ event: AutomationEvent) async {}
+    func restoreSchedules(_ datas: [AutomationScheduleData]) async throws {}
+    func updateSchedules(_ datas: [AutomationScheduleData]) async {}
+    func updateScheduleState(scheduleID: String, state: AutomationScheduleState) async throws {}
+    func cancel(scheduleIDs: [String]) async {}
+    func cancel(group: String) async {}
 }
 
 actor TestAdditionalAudienceResolver: AdditionalAudienceCheckerResolverProtocol {

@@ -18,6 +18,7 @@ struct AutomationPreparerTest {
     private let experiments: TestExperimentDataProvider = TestExperimentDataProvider()
     private let frequencyLimits: TestFrequencyLimitManager = TestFrequencyLimitManager()
     private let audienceChecker: TestAudienceChecker = TestAudienceChecker()
+    private let ledger: TestAutomationLedger = TestAutomationLedger()
     private let preparer: AutomationPreparer!
     private let deviceInfoProvider = TestDeviceInfoProvider()
     private let audienceAdditionalResolver = TestAdditionalAudienceResolver()
@@ -51,7 +52,8 @@ struct AutomationPreparerTest {
                 provider.stableContactInfo = StableContactInfo(contactID: contactID ?? UUID().uuidString)
                 return provider
             },
-            additionalAudienceResolver: audienceAdditionalResolver
+            additionalAudienceResolver: audienceAdditionalResolver,
+            ledger: ledger
         )
     
     }
@@ -197,12 +199,52 @@ struct AutomationPreparerTest {
         let prepareResult = await self.preparer.prepare(
             schedule: automationSchedule,
             triggerContext: triggerContext,
-            triggerSessionID: UUID().uuidString
+            triggerSessionID: UUID().uuidString,
+            triggerID: "trigger-1"
         )
 
         #expect(prepareResult.isPenalize)
+
+        #expect(await self.ledger.recorded == [
+            .execution(
+                scheduleID: automationSchedule.identifier,
+                sharedID: nil,
+                triggerID: "trigger-1",
+                result: .audienceMiss,
+                cancel: false
+            )
+        ])
     }
-    
+
+    @Test
+    func testAudienceMissSkipRecordsNothing() async throws {
+        let automationSchedule = AutomationSchedule(
+            identifier: UUID().uuidString,
+            triggers: [],
+            data: .inAppMessage(
+                InAppMessage(name: "name", displayContent: .custom(.null))
+            ),
+            audience: AutomationAudience(
+                audienceSelector: DeviceAudienceSelector(),
+                missBehavior: .skip
+            )
+        )
+
+        self.remoteDataAccess.contactIDBlock = { _ in return nil }
+        self.remoteDataAccess.requiresUpdateBlock = { _ in return false }
+        self.remoteDataAccess.bestEffortRefreshBlock = { _ in return true }
+        self.audienceChecker.onEvaluate = { _, _, _ in return .miss }
+
+        let prepareResult = await self.preparer.prepare(
+            schedule: automationSchedule,
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
+        )
+
+        #expect(prepareResult.isSkipped)
+        #expect(await self.ledger.recorded.isEmpty)
+    }
+
     @Test
     func testAudienceCheckFirst() async throws {
         let automationSchedule = AutomationSchedule(
@@ -333,6 +375,16 @@ struct AutomationPreparerTest {
         )
 
         #expect(prepareResult.isCancelled)
+
+        #expect(await self.ledger.recorded == [
+            .execution(
+                scheduleID: automationSchedule.identifier,
+                sharedID: nil,
+                triggerID: nil,
+                result: .audienceMiss,
+                cancel: true
+            )
+        ])
     }
 
     @Test
