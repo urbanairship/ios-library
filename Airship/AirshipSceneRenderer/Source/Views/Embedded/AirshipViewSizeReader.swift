@@ -26,13 +26,18 @@ public struct AirshipViewSizeReader<Content> : View where Content : View {
 public extension View {
 
     /// Adds a geometry reader to the background to fetch the size without causing the view to grow.
+    /// The binding is written only when the size changes.
     /// -  Parameter binding: The  binding to store the size.
     @ViewBuilder
     func airshipMeasureView(_ binding: Binding<CGSize?>) -> some View  {
         self.background(
             GeometryReader { geo -> Color in
+                let size = geo.size
                 DispatchQueue.main.async {
-                    binding.wrappedValue = geo.size
+                    // Only write on an actual change — an unconditional write invalidates
+                    // layout, which schedules another pass, which writes again.
+                    guard binding.wrappedValue != size else { return }
+                    binding.wrappedValue = size
                 }
                 return Color.clear
             }
@@ -40,7 +45,11 @@ public extension View {
     }
 
     /// Adds a geometry reader to the background to fetch the size without causing the view to grow.
-    /// Use when you want to react to size changes without storing them in @State.
+    /// Use when you want the size without storing it in `@State`.
+    ///
+    /// Despite the parameter name this does not dedupe: the closure fires on every layout
+    /// pass, whether or not the size changed. Compare against your own stored value if that
+    /// matters — the `Binding` overload dedupes for you.
     /// -  Parameter onChange: Closure called with the latest size on every layout pass.
     @ViewBuilder
     func airshipMeasureView(onChange: @escaping (CGSize) -> Void) -> some View  {

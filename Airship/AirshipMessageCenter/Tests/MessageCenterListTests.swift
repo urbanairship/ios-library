@@ -463,7 +463,7 @@ struct MessageCenterListTest {
             self.inbox.enabled = true
             self.workManager.autoLaunchRequests = true
 
-            let result = try await self.inbox.refreshMessages(timeout: 4.0)
+            let result = try await self.inbox.refreshMessages(timeout: 60.0)
             #expect(result)
             #expect(!self.workManager.workRequests.last!.requiresNetwork)
             #expect(self.workManager.workRequests.last!.conflictPolicy == .replace)

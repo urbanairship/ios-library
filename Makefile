@@ -1,5 +1,5 @@
 
-XCODE ?= 26.6
+XCODE ?= 27.0
 
 export XCBEAUTIFY_RENDERER ?= github-actions
 export TEST_DESTINATION ?= platform=iOS Simulator,OS=latest,name=iPhone 17 Pro Max

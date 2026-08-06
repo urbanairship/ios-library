@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   build-sdk:
-    runs-on: macos-15-xlarge
+    runs-on: xcode-27-xlarge
     steps:
       - name: Install Apple Certificate
         uses: apple-actions/import-codesign-certs@v3

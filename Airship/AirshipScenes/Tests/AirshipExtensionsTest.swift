@@ -199,6 +199,18 @@ struct EmbeddedSelectionEvaluationTest {
         #expect(prompt.contains("\"id\" : \"b\""))
     }
 
+    @Test("Extras cannot clobber the candidate's id")
+    func promptKeepsInstanceIDWhenExtrasCarryAnID() throws {
+        let eval = makeEvaluation(candidates: [
+            candidate("a", extras: try AirshipJSON.wrap(["id": "author-supplied"])),
+        ])
+        let prompt = eval.prompt(context: .empty)
+        // The instance ID is what scores are matched back by, so it has to survive.
+        #expect(prompt.contains("\"id\" : \"a\""))
+        // The author's value is still shown to the model, just not as the candidate id.
+        #expect(prompt.contains("\"id\" : \"author-supplied\""))
+    }
+
     @Test("User context items are appended to the prompt")
     func promptIncludesContext() {
         let eval = makeEvaluation(candidates: [candidate("a")])

@@ -15,10 +15,12 @@ public final class AirshipAIModelsSDKModule: NSObject, AirshipSDKModule {
 
     @MainActor
     public static func load(_ args: AirshipModuleLoaderArgs) -> (any AirshipSDKModule)? {
-#if canImport(FoundationModels)
-        if #available(iOS 26.0, visionOS 26.0, *) {
+// FoundationModels ships a tvOS stub where every symbol is unavailable, so `canImport`
+// alone isn't enough to gate this file.
+#if canImport(FoundationModels) && !os(tvOS)
+        if #available(iOS 26.0, macOS 26.0, visionOS 26.0, *) {
             args.aiManager.registerModelFactory {
-                return SystemAIModel()
+                return DefaultOnDeviceModel()
             }
         }
 #endif

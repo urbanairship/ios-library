@@ -674,8 +674,8 @@ private final class EmbeddedSelectionViewModel: ObservableObject {
 private final class PreviewAIManager: AirshipAI.InternalManager, @unchecked Sendable {
     var defaultModel: (any AirshipAI.Model)? { nil }
     func model<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.Model)? { nil }
-    func setContextProvider<S: Sendable>(_ provider: (any AirshipAI.ContextProvider<S>)?, for usage: AirshipAI.Usage<S>) {}
-    func setDefaultContextProvider(_ provider: (any AirshipAI.ContextProvider<Void>)?) {}
+    func setContextProvider<S: Sendable>(for usage: AirshipAI.Usage<S>, _ provider: AirshipAI.ContextProvider<S>?) {}
+    func setDefaultContextProvider(_ provider: (@Sendable () async -> AirshipAI.Context)?) {}
     func setModelResolver(_ resolver: (@MainActor @Sendable (AirshipAI.AnyUsage) -> AirshipAI.ModelSelector)?) {}
     func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E, additionalContext: AirshipAI.Context) async -> AirshipAI.Result<E.Output> { .skipped(reason: "preview") }
     func registerModelFactory(_ factory: @MainActor @Sendable @escaping () -> any AirshipAI.Model) {}

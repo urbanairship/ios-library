@@ -10,8 +10,6 @@ public final class AirshipEmbeddedObserver : ObservableObject {
     @Published
     public var embeddedInfos: [AirshipEmbeddedInfo] = []
 
-    private var subscription: AnyCancellable?
-
     /// Creates a new view model for the given embedded ID .
     ///
     /// - Parameters:
@@ -44,13 +42,17 @@ public final class AirshipEmbeddedObserver : ObservableObject {
     /// - Parameters:
     ///   - predicate: A predicate to filter out AirshipEmbeddedInfo.
     public init(predicate: @escaping @MainActor (AirshipEmbeddedInfo) -> Bool) {
-        subscription = AirshipEmbeddedViewManager.shared.publisher
+        // `assign(to:on:)` would capture `self` strongly in a subscription stored on
+        // `self`; the upstream is a singleton that never completes, so the observer
+        // could never deinit. The `&$` overload ties the subscription's lifetime to the
+        // published property instead.
+        AirshipEmbeddedViewManager.shared.publisher
             .map { array in
                 array.filter { predicate($0.embeddedInfo) }
                     .map { $0.embeddedInfo }
             }
             .removeDuplicates()
-            .assign(to: \.embeddedInfos, on: self)
+            .assign(to: &$embeddedInfos)
     }
 
 

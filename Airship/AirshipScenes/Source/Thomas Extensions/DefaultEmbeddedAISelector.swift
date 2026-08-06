@@ -183,9 +183,12 @@ public struct EmbeddedSelectionEvaluation: AirshipAI.Evaluation {
         var parts: [String] = []
 
         let candidateObjects = request.candidates.map { candidate -> AirshipJSON in
+            // Extras are nested rather than flattened: they're author-supplied, so a key
+            // like `id` would otherwise collide with the instance ID that scores are
+            // matched back by, silently dropping the candidate from the ranking.
             var dict: [String: AirshipJSON] = ["id": .string(candidate.instanceID)]
-            if let extras = candidate.extras, case .object(let extrasDict) = extras {
-                dict.merge(extrasDict) { _, new in new }
+            if let extras = candidate.extras {
+                dict["extras"] = extras
             }
             return .object(dict)
         }

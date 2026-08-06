@@ -8,8 +8,8 @@ final class TestAIManager: AirshipAI.InternalManager, @unchecked Sendable {
 
     var defaultModel: (any AirshipAI.Model)? { nil }
     func model<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.Model)? { stubModel }
-    func setContextProvider<S: Sendable>(_ provider: (any AirshipAI.ContextProvider<S>)?, for usage: AirshipAI.Usage<S>) {}
-    func setDefaultContextProvider(_ provider: (any AirshipAI.ContextProvider<Void>)?) {}
+    func setContextProvider<S: Sendable>(for usage: AirshipAI.Usage<S>, _ provider: AirshipAI.ContextProvider<S>?) {}
+    func setDefaultContextProvider(_ provider: (@Sendable () async -> AirshipAI.Context)?) {}
     func setModelResolver(_ resolver: (@MainActor @Sendable (AirshipAI.AnyUsage) -> AirshipAI.ModelSelector)?) {}
     /// Test hook. Receives the (type-erased) evaluation and returns a type-erased
     /// `AirshipAI.Result<E.Output>`. Defaults to `.skipped` when unset.

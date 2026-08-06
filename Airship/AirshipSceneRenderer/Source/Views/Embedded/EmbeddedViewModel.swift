@@ -54,7 +54,7 @@ final class EmbeddedViewModel: ObservableObject {
     private func onNewViewReceived(_ pending: [PendingEmbedded]) {
         let incomingIDs = Set(pending.map(\.embeddedInfo.instanceID))
         let hasNewID = !incomingIDs.isSubset(of: knownIDs)
-        let displayedDismissed = displayedInstanceID.map { !incomingIDs.contains($0) } ?? false
+        let idsChanged = incomingIDs != knownIDs
         self.pending = pending
         self.knownIDs = incomingIDs
 
@@ -76,7 +76,10 @@ final class EmbeddedViewModel: ObservableObject {
         if hasNewID {
             askAI(incomingIDs: incomingIDs, config: config, fallback: fallback)
             recomputeAISelection(config: config, fallback: fallback)
-        } else if displayedDismissed {
+        } else if idsChanged {
+            // Something was removed with nothing new arriving — no reason to re-score,
+            // but displayPending and the selection still need to drop the departed
+            // candidate. Subsumes the displayed instance itself being dismissed.
             recomputeAISelection(config: config, fallback: fallback)
         }
     }

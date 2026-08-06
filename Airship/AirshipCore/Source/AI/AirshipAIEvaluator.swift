@@ -12,7 +12,7 @@ extension AirshipAI {
             context: Context
         ) async -> Result<E.Output> {
             guard case .available = model.availability else {
-                return .skipped(reason: "On-device model unavailable")
+                return .skipped(reason: "Model unavailable")
             }
 
             let schema = evaluation.schema

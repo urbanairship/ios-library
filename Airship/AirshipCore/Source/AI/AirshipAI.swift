@@ -8,10 +8,14 @@ public enum AirshipAI {
 
     // MARK: - Usage
 
-    /// Identifies what an on-device model evaluation is for.
+    /// Identifies an AI use case — one key per feature that can be evaluated, such as
+    /// in-app message suppression, scene text input, or embedded selection.
     ///
-    /// `Subject` is a phantom type that ties a usage to its typed context provider,
-    /// giving compile-time guarantees at `setContextProvider` call sites.
+    /// A usage is what both registration APIs key off: the host supplies context for it
+    /// with `setContextProvider(for:_:)`, and `setModelResolver(_:)` routes it to a model.
+    ///
+    /// `Subject` is a phantom type naming the feature-specific data the provider receives,
+    /// so registering a provider for the wrong usage is a compile error.
     public struct Usage<Subject: Sendable>: RawRepresentable, Hashable, Sendable {
         public let rawValue: String
         public init(rawValue: String) { self.rawValue = rawValue }
@@ -35,12 +39,15 @@ public enum AirshipAI {
 
     // MARK: - Context
 
-    /// App-supplied context for an on-device model evaluation.
+    /// App-supplied context for a model evaluation.
     ///
     /// Context is an ordered list of prioritized items. The model appends the items to
     /// the evaluation prompt and may drop lower-priority items to fit its input budget.
-    /// Everything here stays on device — it is fed to the on-device model and never
-    /// leaves the SDK.
+    ///
+    /// Context goes to the model that runs the evaluation and nowhere else — Airship does
+    /// not receive, store, or report it. Where the model runs is your choice: the built-in
+    /// model keeps it on the device, while a model you configure (Apple's Private Cloud
+    /// Compute, or your own backend) sends it wherever that model runs.
     public struct Context: Sendable, Equatable {
 
         /// A single piece of context. `content` should be self-describing text
@@ -108,7 +115,7 @@ public enum AirshipAI {
 
     // MARK: - Availability
 
-    /// Whether the on-device model can be used right now.
+    /// Whether the resolved model can be used right now.
     ///
     /// Ungated so the host app can query it without an `#available` check. When no
     /// model is resolved (e.g. below the OS minimum, or none registered) the default
@@ -137,7 +144,7 @@ public enum AirshipAI {
 
     // MARK: - Result
 
-    /// The outcome of an on-device model evaluation.
+    /// The outcome of a model evaluation.
     ///
     /// Treat anything that isn't `.completed` as "no opinion" and proceed with
     /// default behavior.
@@ -168,8 +175,10 @@ public enum AirshipAI {
         /// Use the SDK's built-in model — the on-device system model when `AirshipAIModels` is
         /// linked and the device is eligible, otherwise no model.
         case defaultModel
-        /// Use a custom model. Implement `AirshipAI.Model` to wrap any backend: a private-compute
-        /// endpoint, a third-party inference API, or another on-device runtime.
+        /// Use a custom model. `AirshipAIModels` ships `AirshipFoundationModel` for anything
+        /// conforming to Foundation Models' `LanguageModel`, including Apple's Private Cloud
+        /// Compute; implement `AirshipAI.Model` directly to wrap anything else — your own
+        /// backend, a third-party inference API, or another on-device runtime.
         case custom(any Model)
     }
 
@@ -230,13 +239,15 @@ public enum AirshipAI {
 
     // MARK: - Model protocol
 
-    /// Thin, backend-agnostic wrapper over a model.
+    /// The framework's interface to a model backend.
     ///
     /// Takes a `Request` and returns the model's structured response as parsed JSON. Retry,
-    /// timeout, and output validation live in the framework — a model answers a single
-    /// request and declares its retry/timeout policy through `maxAttempts`/`responseTimeout`.
-    /// No FoundationModels types appear here — only `SystemAIModel` (in the
-    /// `AirshipAIModels` module) touches FoundationModels.
+    /// timeout, and output validation live in the framework — a model answers one request
+    /// and tunes the retry/timeout budget through `maxAttempts`/`responseTimeout`, both of
+    /// which have defaults.
+    ///
+    /// No FoundationModels types appear here — that framework is confined to the
+    /// `AirshipAIModels` module.
     public protocol Model: Sendable {
 
         /// Whether the model can be used right now, and if not, why.
@@ -247,50 +258,56 @@ public enum AirshipAI {
         var availability: Availability { get }
 
         /// A stream of availability changes over the model's lifetime, e.g. as an
-        /// on-device model finishes downloading or the OS toggles AI features. The
-        /// framework observes this to drive `Manager.availabilityUpdates`.
+        /// on-device model finishes downloading or the OS toggles AI features. Host apps
+        /// reach it through `Airship.ai.model(for:)?.availabilityUpdates`.
         ///
-        /// The default emits the current value once — enough for models whose
-        /// availability never changes. Models with dynamic availability (e.g. the
-        /// on-device system model) override it to emit on every change.
+        /// The default emits the current value once and finishes — enough for models whose
+        /// availability never changes. Models with dynamic availability (e.g. the on-device
+        /// system model) override it to emit on every change. Treat it as change
+        /// notifications and read `availability` when you need the value right now.
         var availabilityUpdates: AsyncStream<Availability> { get }
 
         /// How many attempts (including the first) the framework should make before
-        /// failing the evaluation. Airship's on-device model uses 3.
+        /// failing the evaluation. Defaults to 3.
         var maxAttempts: Int { get }
 
-        /// Total wall-clock budget across all attempts. The framework fails the
-        /// evaluation when it expires. Airship's on-device model uses 30 seconds.
+        /// Total wall-clock budget across *all* attempts, not per attempt. The framework
+        /// fails the evaluation when it expires. Defaults to 30 seconds.
+        ///
+        /// A model that answers over the network should raise the budget, lower the
+        /// attempt count, or both — three attempts sharing 30 seconds leaves little room
+        /// per round trip.
         var responseTimeout: TimeInterval { get }
 
         /// Answers a single request, returning the model's structured response as JSON.
         ///
-        /// At minimum, send `request.prompt()`. If your backend has an input limit and the
-        /// prompt exceeds it, shrink the request with `request.droppingLowestPriorityContextItem()`
-        /// and take `prompt()` from the result, repeating until it fits; a backend with a large
-        /// enough window can ignore trimming entirely and just send `request.prompt()` once.
+        /// At minimum, send `request.prompt()`. A backend with a large enough input window
+        /// can stop there.
+        ///
+        /// If your backend has an input limit and the prompt exceeds it, take a mutable
+        /// copy and shrink it one item at a time, re-reading `prompt()` after each drop until
+        /// it fits. `dropLowestPriorityContextItem()` returns the item it removed, or `nil`
+        /// when the context is already empty:
+        ///
+        ///     var request = request
+        ///     while tooLong(request.prompt()) {
+        ///         guard request.dropLowestPriorityContextItem() != nil else { break }
+        ///     }
         func respond(_ request: Request) async throws -> AirshipJSON
     }
 
-    // MARK: - ContextProvider protocol
+    // MARK: - ContextProvider
 
-    /// Implemented by the host app to supply on-device context for AI evaluations.
+    /// Supplies the context for an evaluation, given the feature-specific `Subject`
+    /// (e.g. the message being filtered).
     ///
-    /// `Subject` is the type of the feature-specific data the provider receives
-    /// (e.g. the message being filtered). The `Usage<Subject>` phantom type ensures
-    /// the correct provider is registered at the correct call site.
-    public protocol ContextProvider<Subject>: AnyObject, Sendable {
-        associatedtype Subject: Sendable
-
-        /// Supplies the on-device context for an evaluation of `subject`.
-        ///
-        /// Called on the main actor immediately before each evaluation. Return
-        /// `.empty` when there's nothing relevant to contribute — the evaluation
-        /// still runs. Keep the work light; it's on the path to displaying the
-        /// feature.
-        @MainActor
-        func context(for subject: Subject) async -> Context
-    }
+    /// Called immediately before each evaluation. Return `.empty` when there's nothing
+    /// relevant to contribute — the evaluation still runs. Keep the work light; it's on
+    /// the path to displaying the feature.
+    ///
+    /// The SDK holds the provider until it's replaced or cleared, so capture `self`
+    /// weakly if the closure reaches back into an object that owns the registration.
+    public typealias ContextProvider<Subject: Sendable> = @Sendable (Subject) async -> Context
 
     // MARK: - Manager protocol
 
@@ -300,27 +317,31 @@ public enum AirshipAI {
     /// configure the backing model globally or per-usage.
     public protocol Manager: Sendable {
 
-        /// Registers a typed context provider for a usage, or clears it when `provider` is nil.
+        /// Registers a context provider for a usage, or clears it when `provider` is nil.
         ///
-        /// The `Subject` phantom type on `Usage` ensures the provider's `Subject` matches
-        /// the usage — a mismatched provider is a compile error.
+        /// The `Subject` phantom type on `Usage` binds the closure's parameter type — a
+        /// mismatched provider is a compile error.
+        ///
+        ///     Airship.ai.setContextProvider(for: AirshipAI.InAppMessageSuppression.usage) { message in
+        ///         AirshipAI.Context(items: [.init(content: "Last booked: \(store.lastBooking)")])
+        ///     }
         @MainActor
         func setContextProvider<S: Sendable>(
-            _ provider: (any ContextProvider<S>)?,
-            for usage: Usage<S>
+            for usage: Usage<S>,
+            _ provider: ContextProvider<S>?
         )
 
         /// Registers a fallback context provider for usages that have no provider of
         /// their own.
         ///
-        /// Receives no feature-specific subject (`Subject == Void`) — use it to supply
-        /// general user context such as preferences or profile data.
+        /// Receives no feature-specific subject — use it to supply general user context
+        /// such as preferences or profile data.
         ///
-        /// It is only invoked when the evaluation's usage has no typed provider set (via
-        /// `setContextProvider(_:for:)`). A usage-specific provider wins outright — the two are
-        /// never combined. Pass `nil` to remove a previously registered default provider.
+        /// It is only invoked when the evaluation's usage has no provider set (via
+        /// `setContextProvider(for:_:)`). A usage-specific provider wins outright — the two
+        /// are never combined. Pass `nil` to remove a previously registered default provider.
         @MainActor
-        func setDefaultContextProvider(_ provider: (any ContextProvider<Void>)?)
+        func setDefaultContextProvider(_ provider: (@Sendable () async -> Context)?)
 
         /// Registers a per-usage model resolver that routes each usage to a model backend.
         ///
@@ -370,7 +391,7 @@ public enum AirshipAI {
 
     // MARK: - Evaluation protocol (SPI)
 
-    /// A typed request submitted to the on-device model.
+    /// A typed request submitted to the resolved model.
     ///
     /// Feature modules define concrete evaluations; `Output` is decoded from the
     /// model's JSON response. `Subject` is the feature-specific context type whose
@@ -383,8 +404,8 @@ public enum AirshipAI {
         /// The feature-specific subject type passed to the registered `ContextProvider`.
         associatedtype Subject: Sendable
 
-        /// Identifies which AI usage this evaluation belongs to and constrains the
-        /// `ContextProvider` type that can be registered for it.
+        /// Identifies which AI usage this evaluation belongs to, and binds the subject
+        /// type the registered provider receives.
         var usage: Usage<Subject> { get }
 
         /// The context subject for this evaluation — passed to the registered
@@ -400,9 +421,9 @@ public enum AirshipAI {
         /// Injected as the system prompt; the model sees this before any user turn.
         func instructions() -> String
 
-        /// Builds the prompt sent to the model. `context` is the already-trimmed
-        /// context for this attempt — the model drops low-priority items and calls
-        /// this again on each retry until the prompt fits the context window.
+        /// Builds the prompt sent to the model. `context` is the context as trimmed so
+        /// far — a model whose input window is tight drops low-priority items and calls
+        /// this again after each drop until the prompt fits.
         ///
         /// Implementations are expected to render `context` into the prompt. Nothing
         /// enforces it — an implementation that ignores the parameter still runs, but the
@@ -428,15 +449,17 @@ public enum AirshipAI {
         /// Use `evaluate(_:)` (no additional context) for the common case.
         func evaluate<E: Evaluation>(_ evaluation: E, additionalContext: Context) async -> Result<E.Output>
 
-        /// Called by `AirshipAIModelsSDKModule` to wire in `SystemAIModel` as the
+        /// Called by `AirshipAIModelsSDKModule` to wire in the on-device model as the
         /// default. Replaces the current model immediately.
         @MainActor
         func registerModelFactory(
             _ factory: @MainActor @Sendable @escaping () -> any Model
         )
 
-        /// Fetches the merged context that would be passed to the model for the given usage and subject.
-        /// Returns `.empty` if no provider is registered.
+        /// Fetches the registered provider's context for the given usage and subject —
+        /// the usage-specific provider if there is one, otherwise the default provider.
+        /// Returns `.empty` when neither is registered. Does not include the
+        /// `additionalContext` an evaluation may append.
         func fetchContext<S: Sendable>(for usage: Usage<S>, subject: S) async -> Context
     }
 }
@@ -453,6 +476,12 @@ extension AirshipAI.Model {
             continuation.finish()
         }
     }
+
+    /// A reasonable default. Override for a backend where a retry is expensive.
+    public var maxAttempts: Int { 3 }
+
+    /// A reasonable default. Override for a backend that answers over the network.
+    public var responseTimeout: TimeInterval { 30 }
 }
 
 @_spi(AirshipInternal)

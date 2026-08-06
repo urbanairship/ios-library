@@ -11,7 +11,7 @@ permissions:
 jobs:
   check-version:
     if: github.repository == 'urbanairship/ios-library'
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     steps:
       - uses: actions/checkout@v4
       - name: Get the version
@@ -35,7 +35,7 @@ jobs:
 
   build-package:
     needs: check-version
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     steps:
       - uses: actions/checkout@v4
       - name: Install Coreutils
@@ -105,7 +105,7 @@ jobs:
 
   build-samples:
     needs: check-version
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     steps:
       - uses: actions/checkout@v4
       - name: Build samples
@@ -114,7 +114,7 @@ jobs:
   # Test jobs, all depend on check-version
   run-tests-basement:
     needs: check-version
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -125,7 +125,7 @@ jobs:
 
   run-tests-core:
     needs: check-version
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -136,7 +136,7 @@ jobs:
         
   run-tests-preference-center:
     needs: check-version
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -147,7 +147,7 @@ jobs:
         
   run-tests-message-center:
     needs: check-version
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -158,7 +158,7 @@ jobs:
 
   run-tests-scene-renderer:
     needs: check-version
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -169,7 +169,7 @@ jobs:
 
   run-tests-scenes:
     needs: check-version
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -180,7 +180,7 @@ jobs:
 
   run-tests-automation:
     needs: check-version
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -191,7 +191,7 @@ jobs:
 
   run-tests-feature-flags:
     needs: check-version
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -202,7 +202,7 @@ jobs:
 
   run-tests-service-extension:
     needs: check-version
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -214,7 +214,7 @@ jobs:
   deploy-github:
     permissions:
       contents: write
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     needs:
       - run-tests-basement
       - run-tests-core

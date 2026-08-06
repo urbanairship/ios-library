@@ -40,14 +40,14 @@ extension AirshipAI {
 
         @MainActor
         public func setContextProvider<S: Sendable>(
-            _ provider: (any ContextProvider<S>)?,
-            for usage: Usage<S>
+            for usage: Usage<S>,
+            _ provider: ContextProvider<S>?
         ) {
-            providerRegistry.setContextProvider(provider, for: usage)
+            providerRegistry.setContextProvider(for: usage, provider)
         }
 
         @MainActor
-        public func setDefaultContextProvider(_ provider: (any ContextProvider<Void>)?) {
+        public func setDefaultContextProvider(_ provider: (@Sendable () async -> Context)?) {
             providerRegistry.setDefaultContextProvider(provider)
         }
 
@@ -83,9 +83,9 @@ extension AirshipAI {
             return await evaluator.evaluate(evaluation, model: resolved.model, context: merged)
         }
 
-        /// Resolves the model and fetches the provider's context in a single main-actor hop.
-        /// The provider fetcher is main-actor-isolated, so staying on the actor across its
-        /// async work avoids a second cross-actor round trip. Returns nil (skipping the
+        /// Resolves the model and fetches the provider's context. Model resolution and the
+        /// provider lookup both read main-actor state, so they share one hop; the provider's
+        /// own work runs with whatever isolation it declares. Returns nil (skipping the
         /// context fetch) when no model is configured.
         @MainActor
         private func resolve<E: AirshipAI.Evaluation>(
@@ -100,8 +100,7 @@ extension AirshipAI {
         }
 
         /// Fetches the registered provider's context for a usage, or `.empty` when none is
-        /// registered. Runs entirely on the main actor — the fetcher and its async work stay
-        /// there, so callers pay a single hop.
+        /// registered. The lookup runs on the main actor; awaiting the fetcher leaves it.
         @MainActor
         private func providerContext(
             forUsage rawValue: String,

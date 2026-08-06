@@ -34,7 +34,7 @@ struct AirshipInitializer {
         #endif
 
         try Airship.takeOff(config)
-        Airship.ai.setDefaultContextProvider(DevDefaultContextProvider())
+        Airship.ai.setDefaultContextProvider { await devDefaultContext() }
 
         // Bring-your-own-model testing: set ANTHROPIC_API_KEY or OPENAI_API_KEY in the
         // scheme's environment variables (Product > Scheme > Edit Scheme > Run > Arguments)
@@ -50,40 +50,37 @@ struct AirshipInitializer {
     }
 }
 
-private final class DevDefaultContextProvider: AirshipAI.ContextProvider {
-    typealias Subject = Void
+/// Fallback context for any usage without a provider of its own.
+private func devDefaultContext() async -> AirshipAI.Context {
+    var items: [AirshipAI.Context.Item] = [
+        .init(content: "User interests: cats"),
+        .init(content: "Customer since: 2019"),
+        .init(content: "Rental history: 15ft (2022), 20ft (2024)"),
+    ]
 
-    func context(for subject: Void) async -> AirshipAI.Context {
-        var items: [AirshipAI.Context.Item] = [
-            .init(content: "User interests: cats"),
-            .init(content: "Customer since: 2019"),
-            .init(content: "Rental history: 15ft (2022), 20ft (2024)"),
-        ]
-
-        if let namedUser = await Airship.contact.namedUserID {
-            items.append(.init(content: "Named user: \(namedUser)"))
-        }
-
-        let tags = Airship.channel.tags
-        if !tags.isEmpty {
-            items.append(.init(content: "Channel tags: \(tags.sorted().joined(separator: ", "))"))
-        }
-
-        let notifStatus = await Airship.push.notificationStatus
-        items.append(.init(content: "Notifications opted in: \(notifStatus.isUserOptedIn)"))
-
-        if let channelID = Airship.channel.identifier {
-            items.append(.init(content: "Channel ID: \(channelID)"))
-        }
-
-        if let subscriptions = try? await Airship.contact.fetchSubscriptionLists(), !subscriptions.isEmpty {
-            let rendered = subscriptions
-                .sorted { $0.key < $1.key }
-                .map { "\($0.key): \($0.value.map(\.rawValue).joined(separator: ", "))" }
-                .joined(separator: "; ")
-            items.append(.init(content: "Contact subscriptions: \(rendered)"))
-        }
-
-        return AirshipAI.Context(items: items)
+    if let namedUser = await Airship.contact.namedUserID {
+        items.append(.init(content: "Named user: \(namedUser)"))
     }
+
+    let tags = Airship.channel.tags
+    if !tags.isEmpty {
+        items.append(.init(content: "Channel tags: \(tags.sorted().joined(separator: ", "))"))
+    }
+
+    let notifStatus = await Airship.push.notificationStatus
+    items.append(.init(content: "Notifications opted in: \(notifStatus.isUserOptedIn)"))
+
+    if let channelID = Airship.channel.identifier {
+        items.append(.init(content: "Channel ID: \(channelID)"))
+    }
+
+    if let subscriptions = try? await Airship.contact.fetchSubscriptionLists(), !subscriptions.isEmpty {
+        let rendered = subscriptions
+            .sorted { $0.key < $1.key }
+            .map { "\($0.key): \($0.value.map(\.rawValue).joined(separator: ", "))" }
+            .joined(separator: "; ")
+        items.append(.init(content: "Contact subscriptions: \(rendered)"))
+    }
+
+    return AirshipAI.Context(items: items)
 }

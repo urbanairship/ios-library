@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   run-tests-basement:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -19,7 +19,7 @@ jobs:
         run: make test-basement
 
   run-tests-core:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
         run: make test-core
 
   run-tests-message-center:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
         run: make test-message-center
 
   run-tests-preference-center:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +43,7 @@ jobs:
         run: make test-preference-center
 
   run-tests-feature-flags:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -51,7 +51,7 @@ jobs:
         run: make test-feature-flags
 
   run-tests-scene-renderer:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -59,7 +59,7 @@ jobs:
         run: make test-scene-renderer
 
   run-tests-scenes:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -67,7 +67,7 @@ jobs:
         run: make test-scenes
 
   run-tests-automation:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -75,7 +75,7 @@ jobs:
         run: make test-automation
 
   run-tests-extensions:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -83,7 +83,7 @@ jobs:
         run: make test-service-extension
 
   build-airship-objectiveC:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -91,7 +91,7 @@ jobs:
         run: make build-airship-objectiveC
         
   build-samples:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -116,7 +116,7 @@ jobs:
         run: make build-samples
 
   build-sdk-tvos:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -124,7 +124,7 @@ jobs:
         run: make build-sdk-tvos
 
   build-sdk-visionos:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -132,7 +132,7 @@ jobs:
         run: make build-sdk-visionos
 
   build-sdk-maccatalyst:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
@@ -141,7 +141,7 @@ jobs:
 
 
   # run-tests-watchos:
-  #   runs-on: macos-26-xlarge
+  #   runs-on: xcode-27-xlarge
   #   steps:
   #     - uses: actions/checkout@v4
   #     - uses: ruby/setup-ruby@v1

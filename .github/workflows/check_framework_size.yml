@@ -9,7 +9,7 @@ env:
 jobs:
  
   framework-size:
-    runs-on: macos-15-xlarge
+    runs-on: xcode-27-xlarge
     steps:
       - uses: actions/checkout@v4
       - name: Restore Size

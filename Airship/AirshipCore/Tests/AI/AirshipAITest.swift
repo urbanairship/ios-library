@@ -411,19 +411,13 @@ struct AirshipAISchemaTests {
 @MainActor
 struct AirshipAIContextProviderTests {
 
-    final class StubProvider: AirshipAI.ContextProvider, @unchecked Sendable {
-        typealias Subject = Void
-        func context(for subject: Void) async -> AirshipAI.Context { .empty }
-    }
-
     @Test
     func setContextProviderRegistersResolvesAndClears() throws {
         let manager = AirshipAI.DefaultManager()
-        defer { manager.setContextProvider(nil, for: .testUsage) }
+        defer { manager.setContextProvider(for: .testUsage, nil) }
 
-        let provider = StubProvider()
-        manager.setContextProvider(provider, for: .testUsage)
-        manager.setContextProvider(nil, for: .testUsage)
+        manager.setContextProvider(for: .testUsage) { .empty }
+        manager.setContextProvider(for: .testUsage, nil)
     }
 }
 
@@ -491,11 +485,8 @@ struct TestEvaluation: AirshipAI.Evaluation {
 
 
 /// Context provider returning a fixed set of items.
-final class ItemsProvider: AirshipAI.ContextProvider, @unchecked Sendable {
-    typealias Subject = Void
-    let items: [AirshipAI.Context.Item]
-    init(_ items: [AirshipAI.Context.Item]) { self.items = items }
-    func context(for subject: Void) async -> AirshipAI.Context { .init(items: items) }
+func itemsProvider(_ items: [AirshipAI.Context.Item]) -> AirshipAI.ContextProvider<Void> {
+    { _ in .init(items: items) }
 }
 
 @MainActor
@@ -661,10 +652,10 @@ struct AirshipAIEvaluatorTests {
         let manager = AirshipAI.DefaultManager()
         manager.setModelResolver { _ in .custom(model) }
         manager.setContextProvider(
-            ItemsProvider([.init(content: "provider", priority: 0)]),
-            for: .testUsage
+            for: .testUsage,
+            itemsProvider([.init(content: "provider", priority: 0)])
         )
-        defer { manager.setContextProvider(nil, for: .testUsage) }
+        defer { manager.setContextProvider(for: .testUsage, nil) }
 
         _ = await manager.evaluate(
             TestEvaluation(),
