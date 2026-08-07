@@ -12,16 +12,9 @@ import Foundation
 struct ClaudeAIModel: AirshipAI.Model {
     let apiKey: String
 
-    let maxAttempts: Int = 3
-    let responseTimeout: TimeInterval = 30
-
-    var availability: AirshipAI.Availability { .available }
-    var availabilityUpdates: AsyncStream<AirshipAI.Availability> {
-        AsyncStream { continuation in
-            continuation.yield(.available)
-            continuation.finish()
-        }
-    }
+    // availability, availabilityUpdates, maxAttempts and responseTimeout all have
+    // protocol defaults that suit a network-backed model, so respond(_:) is the
+    // only requirement.
 
     func respond(_ request: AirshipAI.Request) async throws -> AirshipJSON {
         let body: [String: Any] = [

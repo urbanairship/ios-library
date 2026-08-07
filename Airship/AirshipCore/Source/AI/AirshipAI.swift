@@ -255,6 +255,9 @@ public enum AirshipAI {
         /// Queried before each evaluation — the framework skips the run when this is
         /// `.unavailable`. May change over the model's lifetime (e.g. as a model
         /// finishes downloading), so it's read fresh rather than cached.
+        ///
+        /// Defaults to `.available`. Override it only for a backend that can genuinely
+        /// be unusable; otherwise let a failure surface from `respond(_:)`.
         var availability: Availability { get }
 
         /// A stream of availability changes over the model's lifetime, e.g. as an
@@ -467,6 +470,11 @@ public enum AirshipAI {
 // MARK: - Default implementations
 
 extension AirshipAI.Model {
+    /// Assumes the model can be used. Correct for a backend that has no readiness
+    /// state of its own — a failure surfaces from `respond(_:)` instead. Models
+    /// that can genuinely be unusable override this.
+    public var availability: AirshipAI.Availability { .available }
+
     /// Emits the current availability once and finishes — correct for models whose
     /// availability never changes. Dynamic models override this.
     public var availabilityUpdates: AsyncStream<AirshipAI.Availability> {
