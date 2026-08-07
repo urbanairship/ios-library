@@ -545,6 +545,6 @@ Airship.inAppMessaging.onIsReadyToDisplay = { message, scheduleID in
 ### Getting Help
 
 If you encounter issues not covered in this guide:
-- Check the [Airship Documentation](https://docs.airship.com/)
-- Review the [SDK API Reference](https://docs.airship.com/reference/libraries/ios/)
+- Check the [Airship Documentation](https://www.airship.com/docs/)
+- Review the [SDK API Reference](https://urbanairship.github.io/ios-library/)
 - Contact [Airship Support](https://support.airship.com/)

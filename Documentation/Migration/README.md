@@ -5,7 +5,7 @@ Comprehensive migration guides with code examples, troubleshooting, and clear mi
 
 ## Migration Guides
 
-- **[SDK 20.x → 21.0](migration-guide-20-21.md)** - Module split (scene rendering out of Core), CocoaPods removal, and import changes
+- **[SDK 20.x → 21.0](migration-guide-20-21.md)** - Xcode 27 requirement, module split (scene rendering out of Core), CocoaPods removal, and import changes
 - **[SDK 19.x → 20.0](migration-guide-19-20.md)** - Major architectural changes, block-based callbacks, and UI refactors
 - **[SDK 18.x → 19.x](migration-guide-18-19.md)** - SwiftUI improvements and modern APIs
 - **[SDK 17.x → 18.x](migration-guide-17-18.md)** - Enhanced messaging and automation features
@@ -17,5 +17,5 @@ Migration guides for SDK versions 9-15 are available in the [16.0.0 release](htt
 
 ## Support
 
-- [Full Documentation](https://docs.airship.com/)
+- [Full Documentation](https://www.airship.com/docs/)
 - [Report Issues](https://github.com/urbanairship/ios-library/issues)

@@ -20,7 +20,7 @@ required to migrate an app from SDK 20.x to SDK 21.0.
 > started, and review the generated edits before committing them.
 
 **Required Migration Tasks:**
-- Update to Xcode 27 (required for the final 21.0 release).
+- Update to Xcode 27.
 - Migrate off CocoaPods to Swift Package Manager (or manual XCFramework/Carthage integration).
 - Update `import` statements for embedded views and custom views.
 
@@ -45,10 +45,9 @@ required to migrate an app from SDK 20.x to SDK 21.0.
 
 ## Requirements
 
-The final SDK 21.0 release will require **Xcode 27**. Xcode 26 may still build
-against current pre-release versions, but this is not guaranteed going forward —
-plan to update your build environment (including CI) to Xcode 27 before the final
-21.0 release.
+SDK 21.0 requires **Xcode 27**, as of 21.0.0-beta.2. Earlier betas built with
+Xcode 26; that is no longer the case, and Xcode 26 will fail to compile the SDK.
+Update your build environment, including CI, before taking the update.
 
 ## Dependency Manager Changes
 
@@ -229,24 +228,16 @@ exposed: `MessageCenterUser`, the `user` property on `MessageCenterInbox`, and
 with the Objective-C equivalents (`UAMessageCenterUser`,
 `UAMessageCenterInbox.getUser()`, and `UAMessageCenterNativeBridge`).
 
-These existed to load a message's `bodyURL` directly in your own web view,
-authenticating the request with the user's basic auth string. That flow is no
-longer supported. Message Center messages are no longer limited to web content —
-a message can also be delivered as a native (Scenes) layout. The `bodyURL` is an
-internal detail: for native messages it does not point to renderable web content,
-so loading it in a web view silently breaks for those messages. Future inbox
-changes will also use a different authentication scheme for messages.
+These existed to load a message's `bodyURL` in your own web view, authenticating
+with the user's basic auth string. That flow is no longer supported: a message can
+now be delivered as a native (Scenes) layout, whose `bodyURL` does not point to
+renderable web content, so loading it in a web view silently breaks.
 
-Display messages through the Airship-provided views instead, which resolve the
-content type and handle authentication for both web and native messages:
-
-- `MessageCenterMessageView(messageID:dismissAction:)` — the full message view,
-  including loading indicator, error/retry UI, and mark-as-read behavior. Styleable
-  via `messageViewStyle(_:)`.
-- `MessageCenterMessageContentView(viewModel:phase:dismissAction:)` — renders only
-  the message content, reporting its loading state through the `phase` binding so
-  you can build fully custom chrome (your own loading, error, and retry UI) around
-  it.
+Replace your web view with `MessageCenterMessageView`, or
+`MessageCenterMessageContentView` if you need to supply your own surrounding UI.
+Both resolve web vs. native content and handle authentication. See the
+[Message Center documentation](https://www.airship.com/docs/developer/sdk-integration/apple/message-center/)
+for usage.
 
 ### Preference Center view components
 
@@ -316,6 +307,6 @@ for await status in await Airship.featureFlagManager.featureFlagStatusUpdates {
 ### Getting Help
 
 If you encounter issues not covered in this guide:
-- Check the [Airship Documentation](https://docs.airship.com/)
-- Review the [SDK API Reference](https://docs.airship.com/reference/libraries/ios/)
+- Check the [Airship Documentation](https://www.airship.com/docs/)
+- Review the [SDK API Reference](https://urbanairship.github.io/ios-library/)
 - Contact [Airship Support](https://support.airship.com/)

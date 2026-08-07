@@ -1,7 +1,6 @@
 # Airship SDK for Apple
 
 [![Swift Package Manager](https://img.shields.io/badge/SPM-supported-DE5C43.svg)](https://swift.org/package-manager/)
-[![CocoaPods](https://img.shields.io/cocoapods/v/Airship.svg)](https://cocoapods.org/pods/Airship)
 [![Carthage](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg)](https://github.com/Carthage/Carthage)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
@@ -14,6 +13,7 @@ The Airship SDK for Apple provides a comprehensive way to integrate Airship's cu
 - **Message Center** - Inbox for push notifications and messages
 - **Preference Center** - User preference management
 - **Feature Flags** - Dynamic feature toggles and experimentation
+- **On-Device AI** - Personalize experiences with an on-device model, or route to your own
 - **Analytics** - Comprehensive user behavior tracking
 - **Contacts** - User identification and contact management
 - **Tags, Attributes & Subscription Lists** - User segmentation, personalization, and subscription management
@@ -31,6 +31,7 @@ The Airship SDK for Apple provides a comprehensive way to integrate Airship's cu
 | Message Center                         | ✅  | ✅<sup>2</sup> | ✅       |
 | Preference Center                      | ✅  | ✅             | ✅       |
 | Feature Flags                          | ✅  | ✅             | ✅       |
+| On-Device AI                           | ✅  | ✅<sup>3</sup> | ✅       |
 | Analytics                              | ✅  | ✅             | ✅       |
 | Contacts                               | ✅  | ✅             | ✅       |
 | Tags, Attributes & Subscription Lists  | ✅  | ✅             | ✅       |
@@ -39,6 +40,7 @@ The Airship SDK for Apple provides a comprehensive way to integrate Airship's cu
 
 <sup>1</sup> tvOS In-App Experiences: Scenes, Banners, and non-HTML In-App Automations are supported. However, scheduled In-App Experiences will no longer display if the app’s cache is wiped due to tvOS storage limitations.
 <sup>2</sup> tvOS Message Center: Supports Native Message Center.
+<sup>3</sup> tvOS On-Device AI: requires a custom model. The AI framework lives in `AirshipCore` and works on every platform and deployment target, but the built-in model ships in the optional `AirshipAIModels` module on top of Apple's Foundation Models, which is unavailable on tvOS. The same applies on iOS and visionOS below 26 — supply your own model to serve devices the built-in one can't.
 
 ## Installation
 
@@ -56,11 +58,14 @@ In Xcode, add the following products to your target dependencies:
 - `AirshipPreferenceCenter` (for Preference Center)
 - `AirshipAutomation` (for In-App Experiences, including Scenes, In-App Automation, and Landing Pages)
 - `AirshipFeatureFlags` (for Feature Flags)
+- `AirshipAIModels` (optional, for the built-in on-device AI model)
 - `AirshipNotificationServiceExtension` (for rich push notifications)
 - `AirshipObjectiveC` (for Objective-C compatibility)
 - `AirshipDebug` (for debugging tools)
 
-For other installation methods (CocoaPods, Carthage, xcframeworks), please see the [getting started guide](https://www.airship.com/docs/developer/sdk-integration/apple/installation/getting-started/).
+For other installation methods (Carthage, xcframeworks), please see the [getting started guide](https://www.airship.com/docs/developer/sdk-integration/apple/installation/getting-started/).
+
+> **Note**: CocoaPods is no longer supported as of SDK 21.0. See the [migration guide](Documentation/Migration/migration-guide-20-21.md) if you are upgrading from 20.x.
 
 ## Quick Start
 
@@ -109,18 +114,18 @@ await Airship.push.enableUserPushNotifications()
 - iOS 16.0+
 - tvOS 18.0+
 - visionOS 1.0+
-- Xcode 26.0+
+- Xcode 27.0+
 
 ## Documentation
 
-- **[Getting Started](https://docs.airship.com/platform/mobile/setup/sdk/ios/)** - Complete setup guide
+- **[Getting Started](https://www.airship.com/docs/developer/sdk-integration/apple/installation/getting-started/)** - Complete setup guide
 - **[API Reference](https://urbanairship.github.io/ios-library/)** - Full API documentation
 - **[Migration Guides](Documentation/Migration/README.md)** - Comprehensive migration documentation
 - **[Sample Apps](https://github.com/urbanairship/apple-sample-apps)** - Example implementations
 
 ## Support
 
-- 📚 [Documentation](https://docs.airship.com/)
+- 📚 [Documentation](https://www.airship.com/docs/)
 - 🐛 [Report Issues](https://github.com/urbanairship/ios-library/issues)
 
 ## License
