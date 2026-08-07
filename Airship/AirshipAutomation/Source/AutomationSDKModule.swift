@@ -28,9 +28,10 @@ public final class AutomationSDKModule: NSObject, AirshipSDKModule {
         let metrics = ApplicationMetrics(dataStore: args.dataStore, privacyManager: args.privacyManager)
         
         let ledgerStore = LedgerStore(config: args.config)
-        let automationStore = AutomationStore(config: args.config, ledgerStore: ledgerStore)
+        let automationStore = AutomationStore(config: args.config, ledgerStore: ledgerStore, dataStore: args.dataStore)
         let history = DefaultAutomationEventsHistory()
-        let ledger = AutomationLedger(store: LedgerStore(config: args.config))
+        let ledger = AutomationLedger(store: ledgerStore)
+        let limitEvaluator = LedgerLimitEvaluator(store: ledgerStore)
         
         let analyticsFactory = InAppMessageAnalyticsFactory(
             eventRecorder: eventRecorder,
@@ -121,7 +122,8 @@ public final class AutomationSDKModule: NSObject, AirshipSDKModule {
             ),
             delayProcessor: AutomationDelayProcessor(analytics: args.analytics),
             eventsHistory: history,
-            ledger: ledger
+            ledger: ledger,
+            limitEvaluator: limitEvaluator
         )
         
         let remoteDataSubscriber = AutomationRemoteDataSubscriber(

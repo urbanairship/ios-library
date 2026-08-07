@@ -418,8 +418,12 @@ struct AutomationStoreTest {
 
         try Self.seedLegacySchedule(appKey: appKey, identifier: "legacy-1", triggeredCount: 5)
 
+        // Shared across relaunches so the one-time backfill flag persists, exactly
+        // as the app's data store would across process restarts.
+        let dataStore = PreferenceDataStore(appKey: appKey)
+
         let firstLedger = TestLedgerStore()
-        let firstStore = AutomationStore(appKey: appKey, inMemory: false, ledgerStore: firstLedger)
+        let firstStore = AutomationStore(appKey: appKey, inMemory: false, ledgerStore: firstLedger, dataStore: dataStore)
         _ = try await firstStore.getSchedules()
         #expect(await firstLedger.recorded.count == 1)
 
@@ -429,10 +433,86 @@ struct AutomationStoreTest {
         try Self.seedLegacySchedule(appKey: appKey, identifier: "legacy-1", triggeredCount: 5)
 
         let secondLedger = TestLedgerStore()
-        let secondStore = AutomationStore(appKey: appKey, inMemory: false, ledgerStore: secondLedger)
+        let secondStore = AutomationStore(appKey: appKey, inMemory: false, ledgerStore: secondLedger, dataStore: dataStore)
         let schedules = try await secondStore.getSchedules()
 
         #expect(schedules.count == 1)
+        #expect(await secondLedger.recorded.isEmpty)
+    }
+
+    // MARK: - Current-store migration backfill (post-18, end-to-end)
+
+    @Test
+    func testMigrationBackfillsCurrentStoreExecutionCounts() async throws {
+        let appKey = UUID().uuidString
+        defer { Self.cleanupStores(appKey: appKey) }
+
+        // A schedule already living in the current (Swift) store, as it would after
+        // an upgrade from SDK 18.0-20.x, with no Objective-C store involved.
+        try Self.seedCurrentSchedule(appKey: appKey, identifier: "current-1", executionCount: 4)
+
+        let ledger = TestLedgerStore()
+        let store = AutomationStore(appKey: appKey, inMemory: false, ledgerStore: ledger)
+
+        let schedules = try await store.getSchedules()
+
+        #expect(schedules.count == 1)
+        #expect(schedules.first?.schedule.identifier == "current-1")
+        #expect(schedules.first?.executionCount == 4)
+
+        let recorded = await ledger.recorded
+        #expect(recorded.count == 1)
+
+        guard case .execution(let execution) = recorded.first else {
+            Issue.record("Expected a single execution backfill event, got \(recorded)")
+            return
+        }
+
+        #expect(execution.scheduleID == "current-1")
+        #expect(execution.count == 4)
+        #expect(execution.result == .backfill)
+        #expect(execution.sharedID == nil)
+        #expect(execution.triggerID == nil)
+    }
+
+    @Test
+    func testCurrentStoreBackfillSkipsZeroCounts() async throws {
+        let appKey = UUID().uuidString
+        defer { Self.cleanupStores(appKey: appKey) }
+
+        try Self.seedCurrentSchedule(appKey: appKey, identifier: "current-1", executionCount: 0)
+
+        let ledger = TestLedgerStore()
+        let store = AutomationStore(appKey: appKey, inMemory: false, ledgerStore: ledger)
+
+        let schedules = try await store.getSchedules()
+
+        #expect(schedules.count == 1)
+        #expect(await ledger.recorded.isEmpty)
+    }
+
+    @Test
+    func testCurrentStoreBackfillIsNotDuplicatedOnRerun() async throws {
+        let appKey = UUID().uuidString
+        defer { Self.cleanupStores(appKey: appKey) }
+
+        try Self.seedCurrentSchedule(appKey: appKey, identifier: "current-1", executionCount: 4)
+
+        // Shared across relaunches so the one-time backfill flag persists.
+        let dataStore = PreferenceDataStore(appKey: appKey)
+
+        let firstLedger = TestLedgerStore()
+        let firstStore = AutomationStore(appKey: appKey, inMemory: false, ledgerStore: firstLedger, dataStore: dataStore)
+        _ = try await firstStore.getSchedules()
+        #expect(await firstLedger.recorded.count == 1)
+
+        // Relaunch: the current store still holds the schedule and, under the ledger,
+        // its executionCount would also cover ledger-recorded executions. The backfill
+        // must run only once, so no counts are re-recorded on the second launch.
+        let secondLedger = TestLedgerStore()
+        let secondStore = AutomationStore(appKey: appKey, inMemory: false, ledgerStore: secondLedger, dataStore: dataStore)
+        _ = try await secondStore.getSchedules()
+
         #expect(await secondLedger.recorded.isEmpty)
     }
 
@@ -480,6 +560,63 @@ struct AutomationStoreTest {
             entity.setValue("{}", forKey: "data")
             entity.setValue(NSNumber(value: 3), forKey: "dataVersion") // skip data migration
             entity.setValue(NSNumber(value: triggeredCount), forKey: "triggeredCount")
+            try context.save()
+        }
+
+        if let store = coordinator.persistentStores.first {
+            try coordinator.remove(store)
+        }
+    }
+
+    /// Writes a single `UAScheduleEntity` row into the current (Swift)
+    /// `AirshipAutomation-<appKey>.sqlite` store using the current model, so it is
+    /// present before `AutomationStore` runs its one-time current-store backfill.
+    private static func seedCurrentSchedule(
+        appKey: String,
+        identifier: String,
+        executionCount: Int
+    ) throws {
+        let modelURL = try #require(
+            AirshipAutomationResources.bundle.url(
+                forResource: "AirshipAutomation",
+                withExtension: "momd"
+            )
+        )
+        let model = try #require(NSManagedObjectModel(contentsOf: modelURL))
+        let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+
+        let storeURL = try storeDirectory()
+            .appendingPathComponent("AirshipAutomation-\(appKey).sqlite")
+
+        try coordinator.addPersistentStore(
+            ofType: NSSQLiteStoreType,
+            configurationName: nil,
+            at: storeURL,
+            options: nil
+        )
+
+        let context = NSManagedObjectContext(
+            concurrencyType: .privateQueueConcurrencyType
+        )
+        context.persistentStoreCoordinator = coordinator
+
+        let schedule = AutomationSchedule(
+            identifier: identifier,
+            data: .actions(.string("actions")),
+            triggers: []
+        )
+        let scheduleData = try JSONEncoder().encode(schedule)
+
+        try context.performAndWait {
+            let entity = NSEntityDescription.insertNewObject(
+                forEntityName: "UAScheduleEntity",
+                into: context
+            )
+            entity.setValue(identifier, forKey: "identifier")
+            entity.setValue(scheduleData, forKey: "schedule")
+            entity.setValue(AutomationScheduleState.idle.rawValue, forKey: "scheduleState")
+            entity.setValue(Date.distantPast, forKey: "scheduleStateChangeDate")
+            entity.setValue(executionCount, forKey: "executionCount")
             try context.save()
         }
 

@@ -45,16 +45,25 @@ fileprivate protocol ScheduleStoreProtocol: Sendable {
 }
 
 actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
+    /// One-time flag recording that pre-ledger execution counts already held in
+    /// the current (Swift) automation store have been backfilled into the ledger.
+    /// Persisted per app key by `PreferenceDataStore`.
+    private static let ledgerBackfillCompletedKey = "AirshipAutomation.ledger.backfillCompleted"
+
     private let coreData: UACoreData?
     private let inMemory: Bool
     private let legacyStore: LegacyAutomationStore
     private let ledgerStore: any LedgerStoreProtocol
+    private let date: any AirshipDateProtocol
+    private let dataStore: PreferenceDataStore
     private var migrationTask: Task<Void, any Error>?
 
     init(
         appKey: String,
         inMemory: Bool = false,
-        ledgerStore: any LedgerStoreProtocol
+        ledgerStore: any LedgerStoreProtocol,
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        dataStore: PreferenceDataStore? = nil
     ) {
         let modelURL = AirshipAutomationResources.bundle.url(
             forResource: "AirshipAutomation",
@@ -75,10 +84,22 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         self.inMemory = inMemory
         self.legacyStore = LegacyAutomationStore(appKey: appKey, inMemory: inMemory)
         self.ledgerStore = ledgerStore
+        self.date = date
+        self.dataStore = dataStore ?? PreferenceDataStore(appKey: appKey)
     }
 
-    init(config: RuntimeConfig, ledgerStore: any LedgerStoreProtocol) {
-        self.init(appKey: config.appCredentials.appKey, ledgerStore: ledgerStore)
+    init(
+        config: RuntimeConfig,
+        ledgerStore: any LedgerStoreProtocol,
+        dataStore: PreferenceDataStore,
+        date: any AirshipDateProtocol = AirshipDate.shared
+    ) {
+        self.init(
+            appKey: config.appCredentials.appKey,
+            ledgerStore: ledgerStore,
+            date: date,
+            dataStore: dataStore
+        )
     }
 
     func getSchedules() async throws -> [AutomationScheduleData] {
@@ -342,50 +363,61 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
 
         self.migrationTask = Task {
             let legacyData = try await self.legacyStore.legacyScheduleData
-            guard !legacyData.isEmpty else { return }
 
-            let identifiers = legacyData.map { $0.scheduleData.schedule.identifier }
+            // Pre-18 (Objective-C) store migration: move any legacy schedules into
+            // the current store and backfill their execution counts into the ledger.
+            if !legacyData.isEmpty {
+                let identifiers = legacyData.map { $0.scheduleData.schedule.identifier }
 
-            let didMigrate = try await coredata.performWithResult { context -> Bool in
-                let request: NSFetchRequest<ScheduleEntity> = ScheduleEntity.fetchRequest()
-                request.includesPropertyValues = true
-                request.predicate = NSPredicate(format: "identifier in %@", identifiers)
+                let didMigrate = try await coredata.performWithResult { context -> Bool in
+                    let request: NSFetchRequest<ScheduleEntity> = ScheduleEntity.fetchRequest()
+                    request.includesPropertyValues = true
+                    request.predicate = NSPredicate(format: "identifier in %@", identifiers)
 
-                guard try context.fetch(request).isEmpty else {
-                    // Migration already happened, probably failed to delete before
-                    return false
+                    guard try context.fetch(request).isEmpty else {
+                        // Migration already happened, probably failed to delete before
+                        return false
+                    }
+
+                    do {
+                        for legacy in legacyData {
+                            let scheduleEntity = try ScheduleEntity.make(context: context)
+                            try scheduleEntity.update(data: legacy.scheduleData)
+
+                            for triggerData in legacy.triggerDatas {
+                                let triggerEntity = try TriggerEntity.make(context: context)
+                                try triggerEntity.update(data: triggerData)
+                            }
+                        }
+                    } catch {
+                        context.rollback()
+                        throw error
+                    }
+
+                    return true
+                }
+
+                // Only backfill on the launch that actually moved the schedules.
+                // The "already migrated" path above bails before this, so re-runs
+                // (e.g. a previously failed legacy delete) never duplicate events.
+                // Marking the backfill complete here also prevents the current-store
+                // pass below from re-recording the counts we just migrated.
+                if didMigrate {
+                    await self.backfillLedger(legacyData: legacyData)
+                    self.markLedgerBackfillCompleted()
                 }
 
                 do {
-                    for legacy in legacyData {
-                        let scheduleEntity = try ScheduleEntity.make(context: context)
-                        try scheduleEntity.update(data: legacy.scheduleData)
-
-                        for triggerData in legacy.triggerDatas {
-                            let triggerEntity = try TriggerEntity.make(context: context)
-                            try triggerEntity.update(data: triggerData)
-                        }
-                    }
+                    try await self.legacyStore.deleteAll()
                 } catch {
-                    context.rollback()
-                    throw error
+                    AirshipLogger.error("Failed to delete legacy store \(error)")
                 }
-
-                return true
             }
 
-            // Only backfill on the launch that actually moved the schedules.
-            // The "already migrated" path above bails before this, so re-runs
-            // (e.g. a previously failed legacy delete) never duplicate events.
-            if didMigrate {
-                await self.backfillLedger(legacyData: legacyData)
-            }
-
-            do {
-                try await self.legacyStore.deleteAll()
-            } catch {
-                AirshipLogger.error("Failed to delete legacy store \(error)")
-            }
+            // Post-18 (Swift) store migration: on the first launch under the ledger,
+            // backfill execution counts already held in the current store so limits
+            // upgraded from 18.0-20.x are not reset. Runs at most once per app.
+            await self.backfillCurrentStoreIfNeeded(coreData: coredata)
         }
 
         try await self.migrationTask?.value
@@ -394,7 +426,7 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
     private func backfillLedger(legacyData: [LegacyScheduleData]) async {
         let events = Self.backfillLedgerEvents(
             from: legacyData,
-            timestamp: AirshipDate().now
+            timestamp: self.date.now
         )
 
         guard !events.isEmpty else { return }
@@ -404,6 +436,50 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         } catch {
             AirshipLogger.error("Failed to backfill ledger execution counts: \(error)")
         }
+    }
+
+    /// Backfills execution counts from schedules already stored in the current
+    /// (Swift) store into the ledger. This covers upgrades from SDK 18.0-20.x,
+    /// where schedules live in the current store and never pass through the
+    /// Objective-C migration above.
+    ///
+    /// This runs at most once per app: the completion flag is persisted in the
+    /// data store, so subsequent launches (where the current store's execution
+    /// counts also include ledger-recorded executions) never double-count. It is
+    /// invoked during `migrateData`, before the engine executes any schedule, so
+    /// on the first ledger launch the counts captured here are purely pre-ledger.
+    private func backfillCurrentStoreIfNeeded(coreData: UACoreData) async {
+        guard !self.dataStore.bool(forKey: Self.ledgerBackfillCompletedKey) else {
+            return
+        }
+
+        do {
+            let schedules = try await coreData.performWithResult { context in
+                try self.fetchSchedules(context: context)
+            }
+
+            let events = Self.backfillLedgerEvents(
+                scheduleCounts: schedules.map {
+                    ($0.schedule.identifier, $0.executionCount)
+                },
+                timestamp: self.date.now
+            )
+
+            if !events.isEmpty {
+                try await self.ledgerStore.recordEvents(events)
+            }
+
+            self.markLedgerBackfillCompleted()
+        } catch {
+            // Leave the flag unset so the backfill is retried on the next launch.
+            AirshipLogger.error(
+                "Failed to backfill current store execution counts into ledger: \(error)"
+            )
+        }
+    }
+
+    private func markLedgerBackfillCompleted() {
+        self.dataStore.setBool(true, forKey: Self.ledgerBackfillCompletedKey)
     }
 
     /// Builds the backfill ledger events for a set of migrating legacy schedules.
@@ -418,17 +494,33 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         from legacyData: [LegacyScheduleData],
         timestamp: Date
     ) -> [LedgerEvent] {
-        return legacyData.compactMap { legacy in
-            let count = legacy.scheduleData.executionCount
-            guard count > 0 else { return nil }
+        return backfillLedgerEvents(
+            scheduleCounts: legacyData.map {
+                ($0.scheduleData.schedule.identifier, $0.scheduleData.executionCount)
+            },
+            timestamp: timestamp
+        )
+    }
+
+    /// Builds backfill ledger events from `(scheduleID, executionCount)` pairs.
+    ///
+    /// Shared by the Objective-C and current-store migration paths: each schedule
+    /// with a non-zero count contributes a single scheduleID-scoped
+    /// `execution`/`backfill` event, carrying no `trigger_id` or `shared_id`.
+    static func backfillLedgerEvents(
+        scheduleCounts: [(id: String, count: Int)],
+        timestamp: Date
+    ) -> [LedgerEvent] {
+        return scheduleCounts.compactMap { entry in
+            guard entry.count > 0 else { return nil }
 
             return .execution(
                 LedgerEvent.Execution(
-                    scheduleID: legacy.scheduleData.schedule.identifier,
+                    scheduleID: entry.id,
                     sharedID: nil,
                     triggerID: nil,
                     timestamp: timestamp,
-                    count: count,
+                    count: entry.count,
                     result: .backfill,
                     cancel: nil
                 )

@@ -60,11 +60,13 @@ final class AutomationEngineTest {
         )
 
         let automationStoreAppKey = UUID().uuidString
+        let ledgerStore = LedgerStore(appKey: automationStoreAppKey, inMemory: true)
         self.automationStore = AutomationStore(
             appKey: automationStoreAppKey,
             inMemory: true,
-            ledgerStore: LedgerStore(appKey: automationStoreAppKey, inMemory: true)
+            ledgerStore: ledgerStore
         )
+        let limitEvaluator = LedgerLimitEvaluator(store: ledgerStore)
         self.preparer = AutomationPreparer(
             actionPreparer: actionPreparer,
             messagePreparer: messagePreparer,
@@ -110,7 +112,8 @@ final class AutomationEngineTest {
             triggersProcessor: self.triggersProcessor,
             delayProcessor: delayProcessor,
             eventsHistory: history,
-            ledger: self.ledger
+            ledger: self.ledger,
+            limitEvaluator: limitEvaluator
         )
     }
     

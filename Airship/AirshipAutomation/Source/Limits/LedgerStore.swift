@@ -20,6 +20,12 @@ protocol LedgerStoreProtocol: Sendable {
     /// Fetches the events eligible for a schedule's limit evaluation: every
     /// event recorded under the schedule's own ID, plus every event recorded
     /// under the schedule's current shared group ID (if any).
+    ///
+    /// The two IDs are matched with a logical **OR**, not an AND: an event
+    /// qualifies if its `schedule_id` matches `scheduleID` OR its `shared_id`
+    /// matches `sharedID`. Despite the AND-like parameter list, an event does
+    /// not need to match both — passing a `sharedID` widens the result set, it
+    /// does not narrow it.
     /// - Parameters:
     ///   - scheduleID: The evaluating schedule's ID.
     ///   - sharedID: The schedule's current shared group ID, if any.
@@ -40,8 +46,6 @@ actor LedgerStore: LedgerStoreProtocol {
 
     private let coreData: UACoreData?
     private let inMemory: Bool
-    private let encoder: JSONEncoder = JSONEncoder()
-    private let decoder: JSONDecoder = JSONDecoder()
 
     init(appKey: String, inMemory: Bool) {
         let bundle = AirshipAutomationResources.bundle
@@ -72,11 +76,15 @@ actor LedgerStore: LedgerStoreProtocol {
         AirshipLogger.trace("Recording ledger events: \(events)")
 
         try await coreData.perform { context in
+            // `JSONEncoder` isn't thread-safe and this actor's `perform` closure
+            // can suspend, so use a closure-local encoder rather than a shared
+            // one to avoid overlapping use from a re-entrant call.
+            let encoder = JSONEncoder()
             try events.forEach { event in
                 let entity = try self.makeEventData(context: context)
                 entity.scheduleID = event.scheduleID
                 entity.sharedID = event.sharedID
-                entity.body = try self.encoder.encode(event)
+                entity.body = try encoder.encode(event)
             }
         }
     }
@@ -91,14 +99,21 @@ actor LedgerStore: LedgerStoreProtocol {
         )
 
         return try await coreData.performWithResult { context in
+            // Logical OR, not AND: an event qualifies if it was recorded under
+            // this schedule's ID OR under its current shared group ID. Both are
+            // not required despite the AND-like parameter list.
             let predicate: NSPredicate = if let sharedID {
                 NSPredicate(format: "scheduleID == %@ OR sharedID == %@", scheduleID, sharedID)
             } else {
                 NSPredicate(format: "scheduleID == %@", scheduleID)
             }
 
+            // `JSONDecoder` isn't thread-safe and this actor's `performWithResult`
+            // closure can suspend, so use a closure-local decoder rather than a
+            // shared one to avoid overlapping use from a re-entrant call.
+            let decoder = JSONDecoder()
             return try self.fetchEvents(predicate: predicate, context: context)
-                .map { try self.makeEvent(data: $0) }
+                .map { try decoder.decode(LedgerEvent.self, from: $0.body) }
         }
     }
 
@@ -165,10 +180,6 @@ actor LedgerStore: LedgerStoreProtocol {
             throw LedgerStoreError.coreDataError
         }
         return data
-    }
-
-    private nonisolated func makeEvent(data: LedgerEventData) throws -> LedgerEvent {
-        return try self.decoder.decode(LedgerEvent.self, from: data.body)
     }
 }
 

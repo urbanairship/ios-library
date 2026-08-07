@@ -39,12 +39,6 @@ extension AutomationScheduleData {
         return end <= date
     }
 
-    var isOverLimit: Bool {
-        // 0 means no limit
-        guard self.schedule.limit != 0 else { return false }
-        return (self.schedule.limit ?? 1) <= self.executionCount
-    }
-
     private mutating func setState(_ state: AutomationScheduleState, date: Date) {
         guard scheduleState != state else { return }
         self.scheduleState = state
@@ -69,7 +63,7 @@ extension AutomationScheduleData {
         self.triggerInfo = nil
     }
 
-    mutating func updateState(date: Date) {
+    mutating func updateState(date: Date, isOverLimit: Bool) {
         if isOverLimit || isExpired(date: date) {
             finished(date: date)
         } else if isInState([.finished]) {
@@ -77,7 +71,7 @@ extension AutomationScheduleData {
         }
     }
 
-    mutating func prepareCancelled(date: Date, penalize: Bool) {
+    mutating func prepareCancelled(date: Date, penalize: Bool, isOverLimit: Bool) {
         guard self.isInState([.triggered]) else {
             return
         }
@@ -94,7 +88,7 @@ extension AutomationScheduleData {
         idle(date: date)
     }
 
-    mutating func prepareInterrupted(date: Date) {
+    mutating func prepareInterrupted(date: Date, isOverLimit: Bool) {
         guard self.isInState([.prepared, .triggered]) else {
             return
         }
@@ -107,7 +101,7 @@ extension AutomationScheduleData {
         setState(.triggered, date: date)
     }
 
-    mutating func prepared(info: PreparedScheduleInfo, date: Date) {
+    mutating func prepared(info: PreparedScheduleInfo, date: Date, isOverLimit: Bool) {
         guard self.isInState([.triggered]) else {
             return
         }
@@ -121,7 +115,7 @@ extension AutomationScheduleData {
         self.setState(.prepared, date: date)
     }
 
-    mutating func executionCancelled(date: Date) {
+    mutating func executionCancelled(date: Date, isOverLimit: Bool) {
         // Delay cancellation triggers are active for both `triggered` and `prepared`,
         // so a cancellation must unwind either state, including an in-flight prepare.
         guard self.isInState([.triggered, .prepared]) else {
@@ -136,7 +130,7 @@ extension AutomationScheduleData {
         idle(date: date)
     }
 
-    mutating func executionSkipped(date: Date) {
+    mutating func executionSkipped(date: Date, isOverLimit: Bool) {
         guard self.isInState([.prepared]) else {
             return
         }
@@ -153,7 +147,7 @@ extension AutomationScheduleData {
         }
     }
 
-    mutating func executionInvalidated(date: Date) {
+    mutating func executionInvalidated(date: Date, isOverLimit: Bool) {
         guard self.isInState([.prepared]) else {
             return
         }
@@ -176,7 +170,7 @@ extension AutomationScheduleData {
         self.scheduleStateChangeDate = date
     }
 
-    mutating func executionInterrupted(date: Date, retry: Bool) {
+    mutating func executionInterrupted(date: Date, retry: Bool, isOverLimit: Bool) {
         guard self.isInState([.executing]) else {
             return
         }
@@ -190,11 +184,11 @@ extension AutomationScheduleData {
             self.preparedScheduleInfo = nil
             self.setState(.triggered, date: date)
         } else {
-            finishedExecuting(date: date)
+            finishedExecuting(date: date, isOverLimit: isOverLimit)
         }
     }
 
-    mutating func finishedExecuting(date: Date) {
+    mutating func finishedExecuting(date: Date, isOverLimit: Bool) {
         guard self.isInState([.executing]) else {
             return
         }
@@ -225,7 +219,8 @@ extension AutomationScheduleData {
 
     mutating func triggered(
         triggerInfo: TriggeringInfo,
-        date: Date
+        date: Date,
+        isOverLimit: Bool
     ) {
         guard self.scheduleState == .idle else {
             return

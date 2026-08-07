@@ -89,48 +89,6 @@ struct AutomationScheduleDataTest {
     }
 
     @Test
-    mutating func testOverLimitNotSetDefaultsTo1() throws {
-        self.data.schedule.limit = nil
-
-        self.data.executionCount = 0
-        #expect(!(data.isOverLimit))
-
-        self.data.executionCount = 1
-        #expect(data.isOverLimit)
-    }
-
-    @Test
-    mutating func testOverLimitUnlimited() throws {
-        self.data.schedule.limit = 0
-
-        self.data.executionCount = 0
-        #expect(!(data.isOverLimit))
-
-        self.data.executionCount = 1
-        #expect(!(data.isOverLimit))
-
-        self.data.executionCount = 100
-        #expect(!(data.isOverLimit))
-    }
-
-    @Test
-    mutating func testOverLimit() throws {
-        self.data.schedule.limit = 10
-
-        self.data.executionCount = 0
-        #expect(!(data.isOverLimit))
-
-        self.data.executionCount = 9
-        #expect(!(data.isOverLimit))
-
-        self.data.executionCount = 10
-        #expect(data.isOverLimit)
-
-        self.data.executionCount = 11
-        #expect(data.isOverLimit)
-    }
-
-    @Test
     mutating func testFinished() {
         self.data.triggerInfo = self.triggerInfo
         self.data.preparedScheduleInfo = self.preparedScheduleInfo
@@ -173,7 +131,7 @@ struct AutomationScheduleDataTest {
         self.data.executionCount = 1
         self.data.schedule.limit = 1
 
-        self.data.updateState(date: self.date + 100)
+        self.data.updateState(date: self.date + 100, isOverLimit: true)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
     }
@@ -183,7 +141,7 @@ struct AutomationScheduleDataTest {
         self.data.scheduleState = .idle
         self.data.schedule.end = self.date
 
-        self.data.updateState(date: self.date + 100)
+        self.data.updateState(date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
     }
@@ -192,7 +150,7 @@ struct AutomationScheduleDataTest {
     mutating func testUpdateFinishedToIdle() {
         self.data.scheduleState = .finished
 
-        self.data.updateState(date: self.date + 100)
+        self.data.updateState(date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .idle)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
     }
@@ -201,7 +159,7 @@ struct AutomationScheduleDataTest {
     mutating func testUpdateStateFinished() {
         self.data.scheduleState = .idle
 
-        self.data.updateState(date: self.date + 100)
+        self.data.updateState(date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .idle)
         #expect(self.data.scheduleStateChangeDate == self.date)
     }
@@ -211,7 +169,7 @@ struct AutomationScheduleDataTest {
         self.data.schedule.limit = 2
         self.data.scheduleState = .triggered
 
-        self.data.prepareCancelled(date: self.date + 100, penalize: true)
+        self.data.prepareCancelled(date: self.date + 100, penalize: true, isOverLimit: false)
         #expect(self.data.scheduleState == .idle)
         #expect(self.data.executionCount == 1)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
@@ -222,7 +180,7 @@ struct AutomationScheduleDataTest {
     mutating func testPrepareCancelled() {
         self.data.scheduleState = .triggered
 
-        self.data.prepareCancelled(date: self.date + 100, penalize: false)
+        self.data.prepareCancelled(date: self.date + 100, penalize: false, isOverLimit: false)
         #expect(self.data.scheduleState == .idle)
         #expect(self.data.executionCount == 0)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
@@ -232,7 +190,7 @@ struct AutomationScheduleDataTest {
     mutating func testPrepareCancelledOverLimit() {
         self.data.scheduleState = .triggered
 
-        self.data.prepareCancelled(date: self.date + 100, penalize: true)
+        self.data.prepareCancelled(date: self.date + 100, penalize: true, isOverLimit: true)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.executionCount == 1)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
@@ -244,7 +202,7 @@ struct AutomationScheduleDataTest {
         self.data.scheduleState = .triggered
         self.data.schedule.end = self.date
 
-        self.data.prepareCancelled(date: self.date + 100, penalize: true)
+        self.data.prepareCancelled(date: self.date + 100, penalize: true, isOverLimit: false)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.executionCount == 1)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
@@ -254,7 +212,7 @@ struct AutomationScheduleDataTest {
     mutating func testPrepareInterrupted() {
         self.data.scheduleState = .prepared
 
-        self.data.prepareInterrupted(date: self.date + 100)
+        self.data.prepareInterrupted(date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .triggered)
         #expect(self.data.executionCount == 0)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
@@ -264,7 +222,7 @@ struct AutomationScheduleDataTest {
     mutating func testTriggeredScheduleInterrupted() {
         self.data.scheduleState = .triggered
 
-        self.data.prepareInterrupted(date: self.date + 100)
+        self.data.prepareInterrupted(date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .triggered)
         #expect(self.data.executionCount == 0)
         #expect(self.data.scheduleStateChangeDate == self.date)
@@ -276,7 +234,7 @@ struct AutomationScheduleDataTest {
         self.data.executionCount = 1
         self.data.scheduleState = .triggered
 
-        self.data.prepareInterrupted(date: self.date + 100)
+        self.data.prepareInterrupted(date: self.date + 100, isOverLimit: true)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
     }
@@ -286,7 +244,7 @@ struct AutomationScheduleDataTest {
         self.data.scheduleState = .triggered
         self.data.schedule.end = self.date
 
-        self.data.prepareInterrupted(date: self.date + 100)
+        self.data.prepareInterrupted(date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.executionCount == 0)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
@@ -296,7 +254,7 @@ struct AutomationScheduleDataTest {
     mutating func testExecutionCancelled() {
         self.data.scheduleState = .prepared
 
-        self.data.executionCancelled(date: self.date + 100)
+        self.data.executionCancelled(date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .idle)
         #expect(self.data.executionCount == 0)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
@@ -307,7 +265,7 @@ struct AutomationScheduleDataTest {
         self.data.scheduleState = .triggered
         self.data.triggerInfo = self.triggerInfo
 
-        self.data.executionCancelled(date: self.date + 100)
+        self.data.executionCancelled(date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .idle)
         #expect(self.data.executionCount == 0)
         #expect(self.data.triggerInfo == nil)
@@ -319,7 +277,7 @@ struct AutomationScheduleDataTest {
         for state in [AutomationScheduleState.idle, .executing, .paused, .finished] {
             self.data.scheduleState = state
 
-            self.data.executionCancelled(date: self.date + 100)
+            self.data.executionCancelled(date: self.date + 100, isOverLimit: false)
             #expect(self.data.scheduleState == state)
         }
     }
@@ -330,7 +288,7 @@ struct AutomationScheduleDataTest {
         self.data.executionCount = 1
         self.data.scheduleState = .prepared
 
-        self.data.executionCancelled(date: self.date + 100)
+        self.data.executionCancelled(date: self.date + 100, isOverLimit: true)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
     }
@@ -340,7 +298,7 @@ struct AutomationScheduleDataTest {
         self.data.scheduleState = .prepared
         self.data.schedule.end = self.date
 
-        self.data.executionCancelled(date: self.date + 100)
+        self.data.executionCancelled(date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
     }
@@ -349,7 +307,7 @@ struct AutomationScheduleDataTest {
     mutating func testPrepared() {
         self.data.scheduleState = .triggered
 
-        self.data.prepared(info: self.preparedScheduleInfo, date: self.date + 100)
+        self.data.prepared(info: self.preparedScheduleInfo, date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .prepared)
         #expect(self.data.preparedScheduleInfo == self.preparedScheduleInfo)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
@@ -361,7 +319,7 @@ struct AutomationScheduleDataTest {
         self.data.executionCount = 1
         self.data.scheduleState = .triggered
 
-        self.data.prepared(info: self.preparedScheduleInfo, date: self.date + 100)
+        self.data.prepared(info: self.preparedScheduleInfo, date: self.date + 100, isOverLimit: true)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.preparedScheduleInfo == nil)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
@@ -372,7 +330,7 @@ struct AutomationScheduleDataTest {
         self.data.schedule.end = self.date
         self.data.scheduleState = .triggered
 
-        self.data.prepared(info: self.preparedScheduleInfo, date: self.date + 100)
+        self.data.prepared(info: self.preparedScheduleInfo, date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.preparedScheduleInfo == nil)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
@@ -384,7 +342,7 @@ struct AutomationScheduleDataTest {
         self.data.executionCount = 1
         self.data.scheduleState = .prepared
 
-        self.data.executionSkipped(date: self.date + 100)
+        self.data.executionSkipped(date: self.date + 100, isOverLimit: false)
         #expect(self.data.executionCount == 1)
         #expect(self.data.scheduleState == .idle)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
@@ -396,7 +354,7 @@ struct AutomationScheduleDataTest {
         self.data.executionCount = 1
         self.data.scheduleState = .prepared
 
-        self.data.executionSkipped(date: self.date + 100)
+        self.data.executionSkipped(date: self.date + 100, isOverLimit: true)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
     }
@@ -408,7 +366,7 @@ struct AutomationScheduleDataTest {
         self.data.schedule.end = self.date
         self.data.scheduleState = .prepared
 
-        self.data.executionSkipped(date: self.date + 100)
+        self.data.executionSkipped(date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
     }
@@ -419,7 +377,7 @@ struct AutomationScheduleDataTest {
         self.data.executionCount = 1
         self.data.scheduleState = .prepared
 
-        self.data.executionInvalidated(date: self.date + 100)
+        self.data.executionInvalidated(date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .triggered)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
     }
@@ -430,7 +388,7 @@ struct AutomationScheduleDataTest {
         self.data.executionCount = 1
         self.data.scheduleState = .prepared
 
-        self.data.executionInvalidated(date: self.date + 100)
+        self.data.executionInvalidated(date: self.date + 100, isOverLimit: true)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
     }
@@ -442,7 +400,7 @@ struct AutomationScheduleDataTest {
         self.data.schedule.end = self.date
         self.data.scheduleState = .prepared
 
-        self.data.executionInvalidated(date: self.date + 100)
+        self.data.executionInvalidated(date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
     }
@@ -463,7 +421,7 @@ struct AutomationScheduleDataTest {
         self.data.executionCount = 1
         self.data.scheduleState = .executing
 
-        self.data.executionInterrupted(date: self.date + 100, retry: false)
+        self.data.executionInterrupted(date: self.date + 100, retry: false, isOverLimit: false)
         #expect(self.data.scheduleState == .idle)
         #expect(self.data.executionCount == 2)
         #expect(self.data.scheduleStateChangeDate == self.date + 100)
@@ -478,7 +436,7 @@ struct AutomationScheduleDataTest {
         self.data.preparedScheduleInfo = self.preparedScheduleInfo
         self.data.schedule.end = self.date
 
-        self.data.executionInterrupted(date: self.date + 100, retry: true)
+        self.data.executionInterrupted(date: self.date + 100, retry: true, isOverLimit: false)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.executionCount == 1)
         #expect(self.data.preparedScheduleInfo == nil)
@@ -493,7 +451,7 @@ struct AutomationScheduleDataTest {
         self.data.scheduleState = .executing
         self.data.preparedScheduleInfo = self.preparedScheduleInfo
 
-        self.data.executionInterrupted(date: self.date + 100, retry: false)
+        self.data.executionInterrupted(date: self.date + 100, retry: false, isOverLimit: true)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.executionCount == 2)
         #expect(self.data.preparedScheduleInfo == nil)
@@ -509,7 +467,7 @@ struct AutomationScheduleDataTest {
         self.data.preparedScheduleInfo = self.preparedScheduleInfo
         self.data.schedule.end = self.date
 
-        self.data.executionInterrupted(date: self.date + 100, retry: true)
+        self.data.executionInterrupted(date: self.date + 100, retry: true, isOverLimit: false)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.executionCount == 1)
         #expect(self.data.preparedScheduleInfo == nil)
@@ -524,7 +482,7 @@ struct AutomationScheduleDataTest {
         self.data.schedule.interval = 10.0
         self.data.preparedScheduleInfo = self.preparedScheduleInfo
 
-        self.data.executionInterrupted(date: self.date + 100, retry: false)
+        self.data.executionInterrupted(date: self.date + 100, retry: false, isOverLimit: false)
         #expect(self.data.scheduleState == .paused)
         #expect(self.data.executionCount == 2)
         #expect(self.data.preparedScheduleInfo == nil)
@@ -539,7 +497,7 @@ struct AutomationScheduleDataTest {
         self.data.scheduleState = .executing
         self.data.preparedScheduleInfo = self.preparedScheduleInfo
 
-        self.data.finishedExecuting(date: self.date + 100)
+        self.data.finishedExecuting(date: self.date + 100, isOverLimit: false)
         #expect(self.data.preparedScheduleInfo == nil)
         #expect(self.data.scheduleState == .idle)
         #expect(self.data.executionCount == 2)
@@ -554,7 +512,7 @@ struct AutomationScheduleDataTest {
         self.data.scheduleState = .executing
         self.data.preparedScheduleInfo = self.preparedScheduleInfo
 
-        self.data.finishedExecuting(date: self.date + 100)
+        self.data.finishedExecuting(date: self.date + 100, isOverLimit: true)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.executionCount == 2)
         #expect(self.data.preparedScheduleInfo == nil)
@@ -570,7 +528,7 @@ struct AutomationScheduleDataTest {
         self.data.preparedScheduleInfo = self.preparedScheduleInfo
         self.data.schedule.end = self.date
 
-        self.data.finishedExecuting(date: self.date + 100)
+        self.data.finishedExecuting(date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .finished)
         #expect(self.data.executionCount == 2)
         #expect(self.data.preparedScheduleInfo == nil)
@@ -585,7 +543,7 @@ struct AutomationScheduleDataTest {
         self.data.schedule.interval = 10.0
         self.data.preparedScheduleInfo = self.preparedScheduleInfo
 
-        self.data.finishedExecuting(date: self.date + 100)
+        self.data.finishedExecuting(date: self.date + 100, isOverLimit: false)
         #expect(self.data.scheduleState == .paused)
         #expect(self.data.executionCount == 2)
         #expect(self.data.preparedScheduleInfo == nil)
@@ -612,7 +570,7 @@ struct AutomationScheduleDataTest {
 
         let context = AirshipTriggerContext(type: "some-type", goal: 10.0, event: "event")
         
-        self.data.triggered(triggerInfo: TriggeringInfo(context: context, date: self.date), date: self.date + 100)
+        self.data.triggered(triggerInfo: TriggeringInfo(context: context, date: self.date), date: self.date + 100, isOverLimit: false)
         #expect(self.data.triggerInfo?.context == context)
         #expect(self.data.triggerInfo?.date == self.date)
         #expect(self.data.scheduleState == .triggered)
@@ -626,7 +584,7 @@ struct AutomationScheduleDataTest {
         self.data.executionCount = 1
 
         let context = AirshipTriggerContext(type: "some-type", goal: 10.0, event: "event")
-        self.data.triggered(triggerInfo: TriggeringInfo(context: context, date: self.date), date: self.date + 100)
+        self.data.triggered(triggerInfo: TriggeringInfo(context: context, date: self.date), date: self.date + 100, isOverLimit: true)
 
         #expect(self.data.triggerInfo == nil)
         #expect(self.data.scheduleState == .finished)
@@ -640,7 +598,7 @@ struct AutomationScheduleDataTest {
         self.data.schedule.end = self.date
 
         let context = AirshipTriggerContext(type: "some-type", goal: 10.0, event: "event")
-        self.data.triggered(triggerInfo: TriggeringInfo(context: context, date: self.date), date: self.date + 100)
+        self.data.triggered(triggerInfo: TriggeringInfo(context: context, date: self.date), date: self.date + 100, isOverLimit: false)
 
         #expect(self.data.triggerInfo == nil)
         #expect(self.data.scheduleState == .finished)

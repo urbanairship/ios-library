@@ -24,6 +24,7 @@ actor AutomationEngine : AutomationEngineProtocol {
     private let taskSleeper: any AirshipTaskSleeper
     private let eventsHistory: any AutomationEventsHistory
     private let ledger: any AutomationLedgerProtocol
+    private let limitEvaluator: any LedgerLimitEvaluatorProtocol
 
     private var processPendingExecutionTask: Task<Void, Never>?
     private var pendingExecution: [String: PreparedData] = [:]
@@ -40,6 +41,7 @@ actor AutomationEngine : AutomationEngineProtocol {
         delayProcessor: any AutomationDelayProcessorProtocol,
         eventsHistory: any AutomationEventsHistory,
         ledger: any AutomationLedgerProtocol,
+        limitEvaluator: any LedgerLimitEvaluatorProtocol,
         date: any AirshipDateProtocol = AirshipDate.shared,
         taskSleeper: any AirshipTaskSleeper = .shared
     ) {
@@ -54,6 +56,7 @@ actor AutomationEngine : AutomationEngineProtocol {
         self.taskSleeper = taskSleeper
         self.eventsHistory = eventsHistory
         self.ledger = ledger
+        self.limitEvaluator = limitEvaluator
     }
 
     @MainActor
@@ -157,13 +160,21 @@ actor AutomationEngine : AutomationEngineProtocol {
         
         AirshipLogger.debug("Upserting schedules \(map.keys)")
 
+        // The ledger read is async and can't run inside the Core Data block, so
+        // resolve each schedule's over-limit state up front and feed it in.
+        var resolvedOverLimit: [String: Bool] = [:]
+        for (identifier, schedule) in map {
+            resolvedOverLimit[identifier] = await self.isOverLimit(schedule: schedule)
+        }
+        let overLimitByID = resolvedOverLimit
+
         let updated = try await store.upsertSchedules(scheduleIDs: Array(map.keys)) { [date] identifier, data in
             guard let schedule = map[identifier] else {
                 throw AirshipErrors.error("Failed to upsert")
             }
 
             var updated = try schedule.updateOrCreate(data: data, date: self.date.now)
-            updated.updateState(date: date.now)
+            updated.updateState(date: date.now, isOverLimit: overLimitByID[identifier] ?? false)
             updated.lastScheduleModifiedDate = date.now
             return updated
         }
@@ -261,19 +272,20 @@ actor AutomationEngine : AutomationEngineProtocol {
 
         for data in interrupted {
             var updated: AutomationScheduleData?
+            let isOverLimit = await self.isOverLimit(schedule: data.schedule)
 
             if data.scheduleState == .executing, let preparedInfo = data.preparedScheduleInfo {
                 let behavior = await self.executor.interrupted(schedule: data.schedule, preparedScheduleInfo: preparedInfo)
 
                 updated = try await self.updateState(data: data) {  data in
-                    data.executionInterrupted(date: now, retry: behavior == .retry)
+                    data.executionInterrupted(date: now, retry: behavior == .retry, isOverLimit: isOverLimit)
                 }
                 if (updated?.scheduleState == .paused) {
                     handleInterval(updated?.schedule.interval ?? 0.0, scheduleID: data.schedule.identifier)
                 }
             } else {
                 updated = try await self.updateState(data: data) {  data in
-                    data.prepareInterrupted(date: now)
+                    data.prepareInterrupted(date: now, isOverLimit: isOverLimit)
                 }
             }
 
@@ -323,8 +335,9 @@ fileprivate extension AutomationEngine {
             do {
                 switch (result.triggerExecutionType) {
                 case .delayCancellation:
+                    let isOverLimit = await self.isOverLimit(scheduleID: result.scheduleID)
                     let updated = try await self.updateState(identifier: result.scheduleID) { data in
-                        data.executionCancelled(date: now)
+                        data.executionCancelled(date: now, isOverLimit: isOverLimit)
                     }
 
                     if let updated = updated {
@@ -333,8 +346,9 @@ fileprivate extension AutomationEngine {
                     break
 
                 case .execution:
+                    let isOverLimit = await self.isOverLimit(scheduleID: result.scheduleID)
                     let updated = try await self.updateState(identifier: result.scheduleID) { data in
-                        data.triggered(triggerInfo: result.triggerInfo, date: now)
+                        data.triggered(triggerInfo: result.triggerInfo, date: now, isOverLimit: isOverLimit)
                     }
 
                     // Record only when this call actually moved the schedule into
@@ -467,8 +481,9 @@ fileprivate extension AutomationEngine {
         await waitForConditions(preparedData: preparedData)
 
         guard await checkStillValid(prepared: preparedData) else {
+            let isOverLimit = await self.isOverLimit(schedule: preparedData.scheduleData.schedule)
             let updated = try await self.updateState(data: preparedData.scheduleData) { [date] data in
-                data.executionInvalidated(date: date.now)
+                data.executionInvalidated(date: date.now, isOverLimit: isOverLimit)
             }
 
             if updated?.scheduleState == .triggered {
@@ -605,8 +620,9 @@ fileprivate extension AutomationEngine {
 
         switch prepareResult {
         case .prepared(let preparedSchedule):
+            let isOverLimit = await self.isOverLimit(schedule: data.schedule)
             let updated = try await self.updateState(data: data) { [date] data in
-                data.prepared(info: preparedSchedule.info, date: date.now)
+                data.prepared(info: preparedSchedule.info, date: date.now, isOverLimit: isOverLimit)
             }
 
             // Make sure the transition actually applied. The schedule might have left
@@ -634,13 +650,17 @@ fileprivate extension AutomationEngine {
             try await self.store.deleteSchedules(scheduleIDs: [data.schedule.identifier])
             return nil
         case .skip:
+            let isOverLimit = await self.isOverLimit(schedule: data.schedule)
             _ = try await self.updateState(data: data) { [date] data in
-                data.prepareCancelled(date: date.now, penalize: false)
+                data.prepareCancelled(date: date.now, penalize: false, isOverLimit: isOverLimit)
             }
             return nil
         case .penalize:
+            // The audience-miss ledger event was recorded during prepare, so the
+            // ledger read here reflects it when deciding whether to finish.
+            let isOverLimit = await self.isOverLimit(schedule: data.schedule)
             _ = try await self.updateState(data: data) { [date] data in
-                data.prepareCancelled(date: date.now, penalize: true)
+                data.prepareCancelled(date: date.now, penalize: true, isOverLimit: isOverLimit)
             }
             return nil
         }
@@ -657,8 +677,9 @@ fileprivate extension AutomationEngine {
             break
 
         case .invalidate:
+            let isOverLimit = await self.isOverLimit(schedule: data.schedule)
             let updated = try await self.updateState(data: data) { [date] data in
-                data.executionInvalidated(date: date.now)
+                data.executionInvalidated(date: date.now, isOverLimit: isOverLimit)
             }
 
             if updated?.scheduleState == .triggered {
@@ -674,8 +695,9 @@ fileprivate extension AutomationEngine {
             return false
 
         case .skip:
+            let isOverLimit = await self.isOverLimit(schedule: data.schedule)
             try await self.updateState(data: data) { [date] data in
-                data.executionSkipped(date: date.now)
+                data.executionSkipped(date: date.now, isOverLimit: isOverLimit)
             }
             await self.preparer.cancelled(schedule: data.schedule)
             return true
@@ -692,8 +714,11 @@ fileprivate extension AutomationEngine {
             return true
 
         case .finished:
+            // The execution ledger event was recorded during `execute`, so the
+            // ledger read here counts it when deciding whether the limit is hit.
+            let isOverLimit = await self.isOverLimit(schedule: data.schedule)
             let updated = try await self.updateState(identifier: scheduleID) {  [date] data in
-                data.finishedExecuting(date: date.now)
+                data.finishedExecuting(date: date.now, isOverLimit: isOverLimit)
             }
 
             if let updated = updated, updated.scheduleState == .paused {
@@ -782,6 +807,22 @@ fileprivate extension AutomationEngine {
             )
         }
         return updated
+    }
+
+    /// Whether the schedule has reached its limit according to the ledger.
+    /// Used to feed the authoritative over-limit value into state transitions.
+    func isOverLimit(schedule: AutomationSchedule) async -> Bool {
+        return await self.limitEvaluator.isOverLimit(schedule: schedule)
+    }
+
+    /// Convenience that looks up the schedule by ID before evaluating its
+    /// ledger limit. Returns `false` when the schedule can't be loaded, erring
+    /// toward continuing rather than silently finishing.
+    func isOverLimit(scheduleID: String) async -> Bool {
+        guard let data = try? await self.store.getSchedule(scheduleID: scheduleID) else {
+            return false
+        }
+        return await self.isOverLimit(schedule: data.schedule)
     }
 }
 

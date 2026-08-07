@@ -68,6 +68,12 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     /// schedule sharing that ID (e.g. A/B variants).
     public var ledgerConfig: LedgerConfig?
 
+    /// Ledger-based limit configuration. When present, its `exclude` rules
+    /// subtract recorded events from this schedule's limit tally. The limit is
+    /// always evaluated against the ledger regardless of this field; it only
+    /// changes what counts against the cap, never the cap itself.
+    var limitConfig: LimitConfig?
+
 
     /// After the schedule ends or is finished, how long to hold on to the schedule before
     /// deleting it. This is used to keep schedule state around for a period of time
@@ -109,6 +115,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         case productID = "product_id"
         case bypassHoldoutGroups = "bypass_holdout_groups"
         case ledgerConfig = "ledger_config"
+        case limitConfig = "limit_config"
         case editGracePeriodDays = "edit_grace_period"
         case frequencyConstraintIDs = "frequency_constraint_ids"
         case messageType = "message_type"
@@ -194,6 +201,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.data = data
         self.bypassHoldoutGroups = bypassHoldoutGroups
         self.ledgerConfig = nil
+        self.limitConfig = nil
         self.editGracePeriodDays = editGracePeriodDays
 
         self.metadata = nil
@@ -225,6 +233,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         interval: TimeInterval? = nil,
         bypassHoldoutGroups: Bool? = nil,
         ledgerConfig: LedgerConfig? = nil,
+        limitConfig: LimitConfig? = nil,
         editGracePeriodDays: UInt? = nil,
         metadata: AirshipJSON? = nil,
         sendMetadata: String? = nil,
@@ -252,6 +261,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.data = data
         self.bypassHoldoutGroups = bypassHoldoutGroups
         self.ledgerConfig = ledgerConfig
+        self.limitConfig = limitConfig
         self.editGracePeriodDays = editGracePeriodDays
         self.metadata = metadata
         self.sendMetadata = sendMetadata
@@ -288,6 +298,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.productID = try container.decodeIfPresent(String.self, forKey: .productID)
         self.bypassHoldoutGroups = try container.decodeIfPresent(Bool.self, forKey: .bypassHoldoutGroups)
         self.ledgerConfig = try container.decodeIfPresent(LedgerConfig.self, forKey: .ledgerConfig)
+        self.limitConfig = try container.decodeIfPresent(LimitConfig.self, forKey: .limitConfig)
         self.editGracePeriodDays = try container.decodeIfPresent(UInt.self, forKey: .editGracePeriodDays)
         self.frequencyConstraintIDs = try container.decodeIfPresent([String].self, forKey: .frequencyConstraintIDs)
         self.messageType = try container.decodeIfPresent(String.self, forKey: .messageType)
@@ -347,6 +358,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         try container.encodeIfPresent(self.productID, forKey: .productID)
         try container.encodeIfPresent(self.bypassHoldoutGroups, forKey: .bypassHoldoutGroups)
         try container.encodeIfPresent(self.ledgerConfig, forKey: .ledgerConfig)
+        try container.encodeIfPresent(self.limitConfig, forKey: .limitConfig)
         try container.encodeIfPresent(self.editGracePeriodDays, forKey: .editGracePeriodDays)
         try container.encodeIfPresent(self.frequencyConstraintIDs, forKey: .frequencyConstraintIDs)
         try container.encodeIfPresent(self.messageType, forKey: .messageType)
