@@ -80,6 +80,14 @@ extension AirshipAI {
             // Provider context first, then the caller's additional context appended after
             // (later items win priority ties when the model trims to fit its window).
             let merged = resolved.context.appending(additionalContext)
+
+            // Some evaluations are only meaningful with context (e.g. embedded selection):
+            // with none, the model would guess from the prompt alone, so skip and let the
+            // caller fall back. Most evaluations opt out and run regardless (fail open).
+            if evaluation.requiresContext, merged.items.isEmpty {
+                return .skipped(reason: "No context to personalize on")
+            }
+
             return await evaluator.evaluate(evaluation, model: resolved.model, context: merged)
         }
 

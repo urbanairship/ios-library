@@ -41,11 +41,18 @@ public struct InAppMessageAISuppressionEvaluation: AirshipAI.Evaluation {
 
         <condition>\(condition)</condition>
 
-        Evaluate the condition against the user context and attributes given in the prompt, \
-        reasoning about what those signals imply rather than matching them literally. Only \
-        this condition governs the decision — do not treat unrelated context as a reason to \
-        show or hide the message. If the context is genuinely insufficient to judge the \
-        condition, show the message.
+        Decide using only the user context and attributes given in the prompt, reasoning \
+        about what those signals imply rather than matching them literally. Set allow=true \
+        to show the message and allow=false to hide it.
+
+        - Set allow=false only when the context contains a signal that clearly contradicts \
+        the condition (for example, the user's stated interests or behavior are directly at \
+        odds with it).
+        - In every other case — including when the context is missing, silent, or only \
+        weakly related to the condition — set allow=true. Do not invent facts, and do not \
+        treat the mere absence of a signal as proof the condition is unmet.
+
+        Consider only this condition; ignore unrelated context.
         """
     }
 

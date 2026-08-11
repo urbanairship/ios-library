@@ -483,6 +483,20 @@ struct TestEvaluation: AirshipAI.Evaluation {
     func prompt(context: AirshipAI.Context) -> String { "subject" }
 }
 
+/// Like `TestEvaluation` but opts into `requiresContext`, so the manager skips it when the
+/// resolved context is empty.
+struct ContextRequiredEvaluation: AirshipAI.Evaluation {
+    typealias Output = TestEvaluation.Output
+    typealias Subject = Void
+
+    let subject: Void = ()
+    let usage: AirshipAI.Usage<Void> = .testUsage
+    let schema = testSchema
+    func instructions() -> String { "rules" }
+    func prompt(context: AirshipAI.Context) -> String { "subject" }
+    var requiresContext: Bool { true }
+}
+
 
 /// Context provider returning a fixed set of items.
 func itemsProvider(_ items: [AirshipAI.Context.Item]) -> AirshipAI.ContextProvider<Void> {
@@ -663,6 +677,56 @@ struct AirshipAIEvaluatorTests {
         )
 
         #expect(model.lastRequest?.context.items.map(\.content) == ["provider", "authored"])
+    }
+
+    // MARK: requiresContext
+
+    @Test
+    func skipsContextRequiringEvaluationWhenContextEmpty() async {
+        let model = MockAIModel()
+        let manager = AirshipAI.DefaultManager()
+        manager.setModelResolver { _ in .custom(model) }
+        // No provider registered, so the resolved context is empty.
+
+        let result = await manager.evaluate(ContextRequiredEvaluation())
+
+        guard case .skipped = result else {
+            Issue.record("Expected .skipped when a context-requiring evaluation has no context, got \(result)")
+            return
+        }
+        // The model must not be consulted at all.
+        #expect(model.respondCallCount == 0)
+    }
+
+    @Test
+    func runsContextRequiringEvaluationWhenProviderSuppliesContext() async {
+        let model = MockAIModel(response: .success(["allow": true, "reason": "ok"]))
+        let manager = AirshipAI.DefaultManager()
+        manager.setModelResolver { _ in .custom(model) }
+        manager.setContextProvider(for: .testUsage, itemsProvider([.init(content: "likes hiking")]))
+        defer { manager.setContextProvider(for: .testUsage, nil) }
+
+        let result = await manager.evaluate(ContextRequiredEvaluation())
+
+        #expect(result.output != nil)
+        #expect(model.respondCallCount == 1)
+    }
+
+    @Test
+    func runsContextRequiringEvaluationWhenOnlyAdditionalContextProvided() async {
+        // The gate is on the merged context, so caller-supplied context satisfies it even
+        // with no provider registered.
+        let model = MockAIModel(response: .success(["allow": true, "reason": "ok"]))
+        let manager = AirshipAI.DefaultManager()
+        manager.setModelResolver { _ in .custom(model) }
+
+        let result = await manager.evaluate(
+            ContextRequiredEvaluation(),
+            additionalContext: .init(items: [.init(content: "authored")])
+        )
+
+        #expect(result.output != nil)
+        #expect(model.respondCallCount == 1)
     }
 }
 

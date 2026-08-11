@@ -228,3 +228,62 @@ struct EmbeddedSelectionEvaluationTest {
         #expect(eval.instructions().contains("surface the most relevant promo"))
     }
 }
+
+/// Backs the ranking path. The "skip when no context" decision now lives in the manager
+/// (via `Evaluation.requiresContext`), so it's covered in AirshipAITest against the real
+/// manager; here the mock just returns a canned evaluation result to exercise `rank`.
+private final class MockEmbeddedAIManager: AirshipAI.InternalManager, @unchecked Sendable {
+    var evaluateResult: AirshipAI.Result<EmbeddedSelectionEvaluation.Output> = .skipped(reason: "test")
+    private(set) var evaluateCallCount = 0
+
+    var defaultModel: (any AirshipAI.Model)? { nil }
+    func model<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.Model)? { nil }
+    func setContextProvider<S: Sendable>(for usage: AirshipAI.Usage<S>, _ provider: AirshipAI.ContextProvider<S>?) {}
+    func setDefaultContextProvider(_ provider: (@Sendable () async -> AirshipAI.Context)?) {}
+    func setModelResolver(_ resolver: (@MainActor @Sendable (AirshipAI.AnyUsage) -> AirshipAI.ModelSelector)?) {}
+    func registerModelFactory(_ factory: @MainActor @Sendable @escaping () -> any AirshipAI.Model) {}
+    func fetchContext<S: Sendable>(for usage: AirshipAI.Usage<S>, subject: S) async -> AirshipAI.Context { .empty }
+    func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E, additionalContext: AirshipAI.Context) async -> AirshipAI.Result<E.Output> {
+        evaluateCallCount += 1
+        return (evaluateResult as? AirshipAI.Result<E.Output>) ?? .skipped(reason: "test: unexpected type")
+    }
+}
+
+struct DefaultEmbeddedAISelectorTest {
+
+    private func candidate(_ id: String, priority: Int = 0) -> AirshipEmbeddedInfo {
+        AirshipEmbeddedInfo(instanceID: id, embeddedID: "slot", extras: nil, priority: priority)
+    }
+
+    private func request(_ ids: [String]) -> EmbeddedAISelectionRequest {
+        .init(embeddedID: "slot", prompt: "pick", candidates: ids.map { candidate($0) })
+    }
+
+    @Test("A skipped evaluation falls back to the caller's ordering")
+    func skippedResultFallsBack() async {
+        let manager = MockEmbeddedAIManager()
+        manager.evaluateResult = .skipped(reason: "no context")
+        let selector = DefaultEmbeddedAISelector(aiManager: manager)
+
+        let result = await selector.rank(request(["a", "b"]))
+
+        #expect(result == nil)
+    }
+
+    @Test("A completed evaluation is ranked by score")
+    func completedResultRanksByScore() async {
+        let manager = MockEmbeddedAIManager()
+        manager.evaluateResult = .completed(
+            EmbeddedSelectionEvaluation.Output(
+                scores: [.init(id: "a", score: 3), .init(id: "b", score: 9)],
+                reason: "b matches"
+            )
+        )
+        let selector = DefaultEmbeddedAISelector(aiManager: manager)
+
+        let result = await selector.rank(request(["a", "b"]))
+
+        #expect(manager.evaluateCallCount == 1)
+        #expect(result == ["b", "a"])
+    }
+}

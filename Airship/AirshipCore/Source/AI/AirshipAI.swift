@@ -434,6 +434,12 @@ public enum AirshipAI {
         /// wasted. If an evaluation genuinely wants no context, don't register a provider
         /// (and pass none to `evaluate`) rather than dropping it here.
         func prompt(context: Context) -> String
+
+        /// When true, the evaluation is skipped (`.skipped`) if the resolved context is
+        /// empty — there is nothing to personalize on, so the model would only guess from
+        /// the prompt. Defaults to false: most evaluations run regardless (e.g. suppression
+        /// fails open). Opt in only when an empty context makes the model's answer arbitrary.
+        var requiresContext: Bool { get }
     }
 
     // MARK: - InternalManager protocol (SPI)
@@ -468,6 +474,12 @@ public enum AirshipAI {
 }
 
 // MARK: - Default implementations
+
+@_spi(AirshipInternal)
+extension AirshipAI.Evaluation {
+    /// Most evaluations run regardless of context; opt in by overriding.
+    public var requiresContext: Bool { false }
+}
 
 extension AirshipAI.Model {
     /// Assumes the model can be used. Correct for a backend that has no readiness
