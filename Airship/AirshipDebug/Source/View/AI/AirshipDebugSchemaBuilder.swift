@@ -4,6 +4,23 @@ import SwiftUI
 import Combine
 @_spi(AirshipInternal) import AirshipBasement
 
+/// A `Codable` value snapshot of a ``SchemaNodeModel`` subtree, so a built schema can be
+/// saved/restored with the rest of a sandbox's state. `items` holds zero or one element (an
+/// array node's element schema) to stay trivially `Codable`.
+struct SchemaNodeSnapshot: Codable, Equatable {
+    var kind: String
+    var descriptionText: String
+    var choicesText: String
+    var properties: [PropertySnapshot]
+    var items: [SchemaNodeSnapshot]
+
+    struct PropertySnapshot: Codable, Equatable {
+        var name: String
+        var required: Bool
+        var node: SchemaNodeSnapshot
+    }
+}
+
 /// Editable, recursive model of an ``AirshipJSONSchema`` node backing the visual builder.
 ///
 /// A tree of reference types so the drill-down SwiftUI editor can observe each node
@@ -128,6 +145,45 @@ final class SchemaNodeModel: ObservableObject, Identifiable {
         self.properties = properties
     }
 
+    // MARK: - Codable snapshot
+
+    /// Captures this subtree as a value type so a schema can be persisted with the rest of a
+    /// sandbox's state (see ``SchemaNodeSnapshot``).
+    func snapshot() -> SchemaNodeSnapshot {
+        SchemaNodeSnapshot(
+            kind: kind.rawValue,
+            descriptionText: descriptionText,
+            choicesText: choicesText,
+            properties: properties.map {
+                SchemaNodeSnapshot.PropertySnapshot(
+                    name: $0.name,
+                    required: $0.required,
+                    node: $0.node.snapshot()
+                )
+            },
+            items: items.map { [$0.snapshot()] } ?? []
+        )
+    }
+
+    /// Replaces this node in place from a snapshot, so an observing editor updates without the
+    /// root object being swapped out.
+    func apply(_ snapshot: SchemaNodeSnapshot) {
+        kind = Kind(rawValue: snapshot.kind) ?? .string
+        descriptionText = snapshot.descriptionText
+        choicesText = snapshot.choicesText
+        properties = snapshot.properties.map {
+            Property(name: $0.name, required: $0.required, node: SchemaNodeModel.from($0.node))
+        }
+        items = snapshot.items.first.map { SchemaNodeModel.from($0) }
+    }
+
+    /// Builds a fresh node tree from a snapshot.
+    static func from(_ snapshot: SchemaNodeSnapshot) -> SchemaNodeModel {
+        let node = SchemaNodeModel()
+        node.apply(snapshot)
+        return node
+    }
+
     /// Seeds the builder with the executor's default `{ result, reason }` contract.
     static func defaultContract() -> SchemaNodeModel {
         SchemaNodeModel(
@@ -179,7 +235,7 @@ struct SchemaNodeEditorView: View {
                         Text(kind.rawValue).tag(kind)
                     }
                 }
-                .onChange(of: node.kind) { _ in node.ensureChildrenForKind() }
+                .airshipOnChangeOf(node.kind) { _ in node.ensureChildrenForKind() }
 
                 TextField("Description (optional)", text: $node.descriptionText, axis: .vertical)
 

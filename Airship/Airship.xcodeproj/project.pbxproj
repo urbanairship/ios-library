@@ -892,6 +892,9 @@
 		6EB21A932E81C7AB001A5660 /* AirshipDebugAddStringPropertyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21A922E81C7A2001A5660 /* AirshipDebugAddStringPropertyView.swift */; };
 		6EB21AFC2E8216A4001A5660 /* AirshipoDebugTriggers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21AFB2E82169F001A5660 /* AirshipoDebugTriggers.swift */; };
 		6EB21B022E81BB6E001A5660 /* AirshipDebugAIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21B012E81BB6E001A5660 /* AirshipDebugAIView.swift */; };
+		6EA1D0B00000000000000001 /* AirshipDebugAIStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA1D0A00000000000000001 /* AirshipDebugAIStore.swift */; };
+		6EA1D0B00000000000000002 /* AirshipDebugAITestDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA1D0A00000000000000002 /* AirshipDebugAITestDataSection.swift */; };
+		6EA1D0B00000000000000003 /* AirshipDebugAIContextSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA1D0A00000000000000003 /* AirshipDebugAIContextSection.swift */; };
 		6EB21B5F2E82FE9F001A5660 /* AirshipDebugAudienceSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21B5E2E82FE98001A5660 /* AirshipDebugAudienceSubject.swift */; };
 		6EB3FCEF2ABCFA680018594E /* RemoteDataProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */; };
 		6EB5156E28A42B5800870C5A /* AirshipPreferenceCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5156D28A42B5800870C5A /* AirshipPreferenceCenterResources.swift */; };
@@ -2520,6 +2523,9 @@
 		6EB21A922E81C7A2001A5660 /* AirshipDebugAddStringPropertyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAddStringPropertyView.swift; sourceTree = "<group>"; };
 		6EB21AFB2E82169F001A5660 /* AirshipoDebugTriggers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipoDebugTriggers.swift; sourceTree = "<group>"; };
 		6EB21B012E81BB6E001A5660 /* AirshipDebugAIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAIView.swift; sourceTree = "<group>"; };
+		6EA1D0A00000000000000001 /* AirshipDebugAIStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAIStore.swift; sourceTree = "<group>"; };
+		6EA1D0A00000000000000002 /* AirshipDebugAITestDataSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAITestDataSection.swift; sourceTree = "<group>"; };
+		6EA1D0A00000000000000003 /* AirshipDebugAIContextSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAIContextSection.swift; sourceTree = "<group>"; };
 		6EB21B5E2E82FE98001A5660 /* AirshipDebugAudienceSubject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAudienceSubject.swift; sourceTree = "<group>"; };
 		6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDataProtocol.swift; sourceTree = "<group>"; };
 		6EB4E4A32549F95200E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
@@ -4869,6 +4875,9 @@
 			isa = PBXGroup;
 			children = (
 				6EB21B012E81BB6E001A5660 /* AirshipDebugAIView.swift */,
+				6EA1D0A00000000000000001 /* AirshipDebugAIStore.swift */,
+				6EA1D0A00000000000000002 /* AirshipDebugAITestDataSection.swift */,
+				6EA1D0A00000000000000003 /* AirshipDebugAIContextSection.swift */,
 				E42A9F4A0E1F3961F3E4B53D /* AirshipDebugJSONEditor.swift */,
 				B4069204909960C806AB521D /* AirshipDebugSchemaBuilder.swift */,
 				949779F961CDB0D1DB694666 /* AirshipDebugSceneTextInputView.swift */,
@@ -6643,6 +6652,9 @@
 				6EB21A6F2E81BB6E001A5660 /* AirshipDebugPushDetailsView.swift in Sources */,
 				6EB21A702E81BB6E001A5660 /* AirshipDebugView.swift in Sources */,
 				6EB21B022E81BB6E001A5660 /* AirshipDebugAIView.swift in Sources */,
+				6EA1D0B00000000000000001 /* AirshipDebugAIStore.swift in Sources */,
+				6EA1D0B00000000000000002 /* AirshipDebugAITestDataSection.swift in Sources */,
+				6EA1D0B00000000000000003 /* AirshipDebugAIContextSection.swift in Sources */,
 				6EB21A712E81BB6E001A5660 /* AirshipDebugAddSMSChannelView.swift in Sources */,
 				6EB21A722E81BB6E001A5660 /* AirshipJSONDetailsView.swift in Sources */,
 				6EB21A732E81BB6E001A5660 /* AirshipDebugAnalyticIdentifierEditorView.swift in Sources */,

@@ -125,6 +125,12 @@ fileprivate struct AirshipDebugIAASuppressionView: View {
 
     var body: some View {
         List {
+            AirshipDebugAITestDataSection(
+                store: viewModel.store,
+                currentState: { viewModel.state },
+                onLoad: { viewModel.apply($0) }
+            )
+
             Section {
 #if os(tvOS)
                 TextField("e.g. Only show this if the user travels frequently for work", text: $viewModel.condition)
@@ -149,15 +155,6 @@ fileprivate struct AirshipDebugIAASuppressionView: View {
                 Text("Injected into the SDK's fixed instruction template.")
             }
 
-            Section("Generated Instructions") {
-                Text(viewModel.generatedInstructions)
-                    .font(.system(.footnote, design: .monospaced))
-                    .foregroundStyle(.secondary)
-#if !os(tvOS)
-                    .textSelection(.enabled)
-#endif
-            }
-
             Section("Test Message Details") {
                 TextField("Message name", text: $viewModel.messageName)
                     .autocorrectionDisabled()
@@ -175,6 +172,21 @@ fileprivate struct AirshipDebugIAASuppressionView: View {
                     placeholder: "{\"hint_key\": \"hint_value\"}",
                     text: $viewModel.hintsJSON,
                     focus: $keyboardActive
+                )
+            }
+
+            AirshipDebugAIContextSection(
+                mode: $viewModel.contextMode,
+                items: $viewModel.contextItems,
+                resolvedItems: viewModel.context?.items,
+                isFetching: viewModel.isFetchingContext,
+                focus: $keyboardActive
+            )
+
+            Section("Assembled Prompt") {
+                AirshipDebugAIPromptPreview(
+                    instructions: viewModel.assembledInstructions,
+                    prompt: viewModel.assembledPrompt
                 )
             }
 
@@ -230,29 +242,10 @@ fileprivate struct AirshipDebugIAASuppressionView: View {
                 }
             }
 
-            Section("User Context") {
-                if viewModel.isFetchingContext {
-                    HStack(spacing: 8) {
-                        ProgressView()
-                        Text("Fetching context…")
-                            .foregroundStyle(.secondary)
-                    }
-                } else if let items = viewModel.context?.items, !items.isEmpty {
-                    ForEach(Array(items.enumerated()), id: \.offset) { _, item in
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(priorityLabel(item.priority))
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                            Text(item.content)
-                                .font(.system(.footnote, design: .monospaced))
-                        }
-                        .padding(.vertical, 2)
-                    }
-                } else {
-                    Text("No context provided")
-                        .foregroundStyle(.secondary)
-                }
-            }
+            AirshipDebugAIHistorySection(
+                store: viewModel.store,
+                onRestore: { viewModel.apply($0) }
+            )
         }
 #if os(iOS)
         // Keyboard-dismiss gesture and the `.keyboard` toolbar placement exist
@@ -267,12 +260,11 @@ fileprivate struct AirshipDebugIAASuppressionView: View {
 #endif
         .navigationTitle("IAX AI Suppression")
         .onAppear {
-            Task { await viewModel.fetchContext() }
+            Task { await viewModel.onAppear() }
         }
-    }
-
-    private func priorityLabel(_ priority: Double) -> String {
-        "priority \(priority)"
+        .onDisappear {
+            viewModel.onDisappear()
+        }
     }
 }
 
@@ -282,6 +274,24 @@ private enum SuppressionResult {
     case completed(allow: Bool, reason: String)
     case skipped(String)
     case failed(String)
+
+    var summary: String {
+        switch self {
+        case .completed(let allow, let reason): return "\(allow ? "Allowed" : "Blocked"): \(reason)"
+        case .skipped(let reason): return "Skipped: \(reason)"
+        case .failed(let message): return "Failed: \(message)"
+        }
+    }
+}
+
+/// Persisted inputs for the IAA suppression sandbox.
+private struct IAASuppressionState: Codable, Equatable {
+    var condition: String = ""
+    var messageName: String = "Test Message"
+    var extrasJSON: String = ""
+    var hintsJSON: String = ""
+    var contextMode: AirshipDebugContextMode = .providerOnly
+    var contextItems: [AirshipDebugContextItem] = []
 }
 
 @MainActor
@@ -290,23 +300,77 @@ private final class IAASuppressionViewModel: ObservableObject {
     @Published var condition: String = ""
     @Published var extrasJSON: String = ""
     @Published var hintsJSON: String = ""
+    @Published var contextMode: AirshipDebugContextMode = .providerOnly
+    @Published var contextItems: [AirshipDebugContextItem] = []
     @Published var context: AirshipAI.Context? = nil
     @Published var isFetchingContext = false
     @Published var isRunning = false
     @Published var result: SuppressionResult?
 
+    let store: AirshipDebugAIStore<IAASuppressionState>
+
     private let manager: any AirshipAI.InternalManager
+    private let usage = AirshipAI.InAppMessageSuppression.usage
+    private var cancellables = Set<AnyCancellable>()
 
     init(manager: any AirshipAI.InternalManager) {
         self.manager = manager
+        self.store = Self.makeStore()
+
+        objectWillChange
+            .debounce(for: .milliseconds(400), scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in
+                Task { @MainActor in
+                    guard let self else { return }
+                    self.store.saveLastSession(self.state)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    var state: IAASuppressionState {
+        IAASuppressionState(
+            condition: condition,
+            messageName: messageName,
+            extrasJSON: extrasJSON,
+            hintsJSON: hintsJSON,
+            contextMode: contextMode,
+            contextItems: contextItems
+        )
+    }
+
+    func apply(_ state: IAASuppressionState) {
+        condition = state.condition
+        messageName = state.messageName
+        extrasJSON = state.extrasJSON
+        hintsJSON = state.hintsJSON
+        contextMode = state.contextMode
+        contextItems = state.contextItems
+    }
+
+    func onAppear() async {
+        if let saved = store.loadLastSession() {
+            apply(saved)
+        }
+        await fetchContext()
+    }
+
+    func onDisappear() {
+        // Restore production behavior: drop any override provider we installed.
+        manager.setContextProvider(for: usage, nil)
     }
 
     func fetchContext() async {
         isFetchingContext = true
         defer { isFetchingContext = false }
 
-        let subject = makeSubject()
-        context = await manager.fetchContext(for: AirshipAI.InAppMessageSuppression.usage, subject: subject)
+        syncContextProvider()
+        let provider = await manager.fetchContext(for: usage, subject: makeSubject())
+        switch contextMode {
+        case .providerOnly: context = provider
+        case .append: context = provider.appending(contextItems.airshipContext)
+        case .override: context = contextItems.airshipContext
+        }
     }
 
     func runEvaluation() async {
@@ -316,30 +380,51 @@ private final class IAASuppressionViewModel: ObservableObject {
 
         await fetchContext()
 
-        let subject = makeSubject()
         let evaluation = InAppMessageAISuppressionEvaluation(
             condition: condition,
-            subject: subject
+            subject: makeSubject()
         )
-        switch await manager.evaluate(evaluation) {
+        let additional: AirshipAI.Context = (contextMode == .append) ? contextItems.airshipContext : .empty
+
+        let outcome: SuppressionResult
+        switch await manager.evaluate(evaluation, additionalContext: additional) {
         case .completed(let output):
-            result = .completed(allow: output.allow, reason: output.reason)
+            outcome = .completed(allow: output.allow, reason: output.reason)
         case .skipped(let reason):
-            result = .skipped(reason)
+            outcome = .skipped(reason)
         case .failed(let error):
-            result = .failed(error.localizedDescription)
+            outcome = .failed(error.localizedDescription)
         @unknown default:
-            result = .skipped("Unexpected result")
+            outcome = .skipped("Unexpected result")
         }
+        result = outcome
+        store.recordRun(
+            summary: messageName.isEmpty ? condition : messageName,
+            output: outcome.summary,
+            state: state
+        )
     }
 
     /// The full instruction text the SDK will send — the fixed template with the current
-    /// condition injected. Shown in the debug UI so the combined prompt is visible.
-    var generatedInstructions: String {
-        InAppMessageAISuppressionEvaluation(
-            condition: condition,
-            subject: makeSubject()
-        ).instructions()
+    /// condition injected.
+    var assembledInstructions: String {
+        InAppMessageAISuppressionEvaluation(condition: condition, subject: makeSubject()).instructions()
+    }
+
+    /// The rendered user prompt for the currently resolved context.
+    var assembledPrompt: String {
+        InAppMessageAISuppressionEvaluation(condition: condition, subject: makeSubject())
+            .prompt(context: context ?? .empty)
+    }
+
+    private func syncContextProvider() {
+        switch contextMode {
+        case .override:
+            let ctx = contextItems.airshipContext
+            manager.setContextProvider(for: usage) { _ in ctx }
+        case .providerOnly, .append:
+            manager.setContextProvider(for: usage, nil)
+        }
     }
 
     private func makeSubject() -> AirshipAI.InAppMessageSuppression.Subject {
@@ -355,6 +440,42 @@ private final class IAASuppressionViewModel: ObservableObject {
     private func parseStringDict(_ json: String) -> AirshipJSON? {
         let trimmed = json.trimmingCharacters(in: .whitespacesAndNewlines)
         return try? AirshipJSON.from(json: trimmed)
+    }
+
+    private static func makeStore() -> AirshipDebugAIStore<IAASuppressionState> {
+        AirshipDebugAIStore(
+            usageKey: AirshipAI.InAppMessageSuppression.usage.rawValue,
+            bundledFixtures: [
+                .init(
+                    name: "Frequent traveler",
+                    state: IAASuppressionState(
+                        condition: "Only show if the user travels frequently for work",
+                        messageName: "Trip Upgrade Offer"
+                    )
+                ),
+                .init(
+                    name: "Cat owner (custom context)",
+                    state: IAASuppressionState(
+                        condition: "Only show if the user is likely to own a cat",
+                        messageName: "Cat Toy Promo",
+                        contextMode: .override,
+                        contextItems: [
+                            .init(content: "User interests: cats"),
+                            .init(content: "Recent purchase: cat litter"),
+                        ]
+                    )
+                ),
+                .init(
+                    name: "Insufficient context (fails open)",
+                    state: IAASuppressionState(
+                        condition: "Only show to users who prefer email over SMS",
+                        messageName: "Channel Preference",
+                        contextMode: .override,
+                        contextItems: [.init(content: "Signup date: 2024-01-01")]
+                    )
+                ),
+            ]
+        )
     }
 }
 
@@ -384,6 +505,12 @@ struct AirshipDebugEmbeddedSelectionView: View {
 
     var body: some View {
         List {
+            AirshipDebugAITestDataSection(
+                store: viewModel.store,
+                currentState: { viewModel.state },
+                onLoad: { viewModel.apply($0) }
+            )
+
             Section {
 #if os(tvOS)
                 TextField("e.g. Show content that matches the user's interests.", text: $viewModel.prompt)
@@ -452,6 +579,25 @@ struct AirshipDebugEmbeddedSelectionView: View {
                 }
             }
 
+            AirshipDebugAIContextSection(
+                mode: $viewModel.contextMode,
+                items: $viewModel.contextItems,
+                resolvedItems: viewModel.context?.items,
+                isFetching: viewModel.isFetchingContext,
+                focus: $keyboardActive
+            )
+
+            Section("Assembled Prompt") {
+                AirshipDebugAIPromptPreview(
+                    instructions: viewModel.assembledInstructions,
+                    prompt: viewModel.assembledPrompt
+                )
+            }
+
+            Section("Model Status") {
+                CommonItems.infoRow(title: "Availability", value: viewModel.availabilityLabel)
+            }
+
             Section {
                 Button {
                     keyboardActive = false
@@ -510,28 +656,10 @@ struct AirshipDebugEmbeddedSelectionView: View {
                 }
             }
 
-            Section("Model Status & Context") {
-                CommonItems.infoRow(title: "Availability", value: viewModel.availabilityLabel)
-                if viewModel.isFetchingContext {
-                    HStack(spacing: 8) {
-                        ProgressView()
-                        Text("Fetching context…").foregroundStyle(.secondary)
-                    }
-                } else if let items = viewModel.context?.items, !items.isEmpty {
-                    ForEach(Array(items.enumerated()), id: \.offset) { _, item in
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(verbatim: "priority \(item.priority)")
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                            Text(item.content)
-                                .font(.system(.footnote, design: .monospaced))
-                        }
-                        .padding(.vertical, 2)
-                    }
-                } else {
-                    Text("No context provided").foregroundStyle(.secondary)
-                }
-            }
+            AirshipDebugAIHistorySection(
+                store: viewModel.store,
+                onRestore: { viewModel.apply($0) }
+            )
         }
 #if os(iOS)
         .scrollDismissesKeyboard(.interactively)
@@ -545,7 +673,10 @@ struct AirshipDebugEmbeddedSelectionView: View {
         .navigationTitle("Embedded Selection")
         .onAppear {
             viewModel.observeAvailability()
-            Task { await viewModel.fetchContext() }
+            Task { await viewModel.onAppear() }
+        }
+        .onDisappear {
+            viewModel.onDisappear()
         }
     }
 }
@@ -554,34 +685,92 @@ private enum EmbeddedSelectionResult {
     case ranked([(id: String, score: Int)], reason: String)
     case skipped(String)
     case failed(String)
+
+    var summary: String {
+        switch self {
+        case .ranked(let scores, _):
+            let order = scores.map { "\($0.id)=\($0.score)" }.joined(separator: ", ")
+            return order.isEmpty ? "(no scores)" : order
+        case .skipped(let reason): return "Skipped: \(reason)"
+        case .failed(let message): return "Failed: \(message)"
+        }
+    }
 }
 
-private struct EmbeddedCandidate: Identifiable {
-    let id: UUID = UUID()
+private struct EmbeddedCandidate: Identifiable, Codable, Equatable {
+    var id: UUID = UUID()
     var instanceID: String
     var extrasJSON: String
     var priority: Int
 }
 
+/// Persisted inputs for the embedded selection sandbox.
+private struct EmbeddedSelectionState: Codable, Equatable {
+    var prompt: String = "Show content that matches the user's interests."
+    var candidates: [EmbeddedCandidate] = []
+    var contextMode: AirshipDebugContextMode = .providerOnly
+    var contextItems: [AirshipDebugContextItem] = []
+}
+
 @MainActor
 private final class EmbeddedSelectionViewModel: ObservableObject {
     @Published var prompt: String = "Show content that matches the user's interests."
-    @Published var candidates: [EmbeddedCandidate] = [
-        EmbeddedCandidate(instanceID: UUID().uuidString, extrasJSON: "{\"description\": \"Adopt a rescue cat today — find your perfect feline companion.\"}", priority: 0),
-        EmbeddedCandidate(instanceID: UUID().uuidString, extrasJSON: "{\"description\": \"Top-rated dog food for active breeds — fuel your pup's adventures.\"}", priority: 1),
-        EmbeddedCandidate(instanceID: UUID().uuidString, extrasJSON: "{\"description\": \"Spring sale on cat trees, toys, and grooming supplies.\"}", priority: 2),
-    ]
+    @Published var candidates: [EmbeddedCandidate] = EmbeddedSelectionViewModel.defaultCandidates()
+    @Published var contextMode: AirshipDebugContextMode = .providerOnly
+    @Published var contextItems: [AirshipDebugContextItem] = []
     @Published var result: EmbeddedSelectionResult?
     @Published var isRunning = false
     @Published var isFetchingContext = false
     @Published var context: AirshipAI.Context?
     @Published var availability: AirshipAI.Availability = .unavailable(reason: .missingModel)
 
+    let store: AirshipDebugAIStore<EmbeddedSelectionState>
+
     private let manager: any AirshipAI.InternalManager
+    private let usage = AirshipAI.EmbeddedSelection.usage
     private var availabilityTask: Task<Void, Never>?
+    private var cancellables = Set<AnyCancellable>()
 
     init(manager: any AirshipAI.InternalManager) {
         self.manager = manager
+        self.store = Self.makeStore()
+
+        objectWillChange
+            .debounce(for: .milliseconds(400), scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in
+                Task { @MainActor in
+                    guard let self else { return }
+                    self.store.saveLastSession(self.state)
+                }
+            }
+            .store(in: &cancellables)
+    }
+
+    var state: EmbeddedSelectionState {
+        EmbeddedSelectionState(
+            prompt: prompt,
+            candidates: candidates,
+            contextMode: contextMode,
+            contextItems: contextItems
+        )
+    }
+
+    func apply(_ state: EmbeddedSelectionState) {
+        prompt = state.prompt
+        candidates = state.candidates
+        contextMode = state.contextMode
+        contextItems = state.contextItems
+    }
+
+    func onAppear() async {
+        if let saved = store.loadLastSession() {
+            apply(saved)
+        }
+        await fetchContext()
+    }
+
+    func onDisappear() {
+        manager.setContextProvider(for: usage, nil)
     }
 
     func addCandidate() {
@@ -590,7 +779,7 @@ private final class EmbeddedSelectionViewModel: ObservableObject {
 
     func observeAvailability() {
         availabilityTask?.cancel()
-        guard let stream = manager.model(for: AirshipAI.EmbeddedSelection.usage)?.availabilityUpdates else { return }
+        guard let stream = manager.model(for: usage)?.availabilityUpdates else { return }
         availabilityTask = Task { [weak self] in
             for await value in stream {
                 if Task.isCancelled { break }
@@ -610,12 +799,18 @@ private final class EmbeddedSelectionViewModel: ObservableObject {
     func fetchContext() async {
         isFetchingContext = true
         defer { isFetchingContext = false }
+        syncContextProvider()
         let subject = AirshipAI.EmbeddedSelection.Subject(
             embeddedID: "debug",
             pending: makeCandidateInfos(),
             hints: [:]
         )
-        context = await manager.fetchContext(for: AirshipAI.EmbeddedSelection.usage, subject: subject)
+        let provider = await manager.fetchContext(for: usage, subject: subject)
+        switch contextMode {
+        case .providerOnly: context = provider
+        case .append: context = provider.appending(contextItems.airshipContext)
+        case .override: context = contextItems.airshipContext
+        }
     }
 
     func rank() async {
@@ -625,14 +820,11 @@ private final class EmbeddedSelectionViewModel: ObservableObject {
 
         await fetchContext()
 
-        let request = EmbeddedAISelectionRequest(
-            embeddedID: "debug",
-            prompt: prompt,
-            candidates: makeCandidateInfos()
-        )
-        let evaluation = EmbeddedSelectionEvaluation(request: request)
+        let evaluation = EmbeddedSelectionEvaluation(request: makeRequest())
+        let additional: AirshipAI.Context = (contextMode == .append) ? contextItems.airshipContext : .empty
 
-        switch await manager.evaluate(evaluation) {
+        let outcome: EmbeddedSelectionResult
+        switch await manager.evaluate(evaluation, additionalContext: additional) {
         case .completed(let output):
             let priorityByID = Dictionary(uniqueKeysWithValues: makeCandidateInfos().map { ($0.instanceID, $0.priority) })
             let scored = output.scores
@@ -641,13 +833,41 @@ private final class EmbeddedSelectionViewModel: ObservableObject {
                     return (priorityByID[lhs.id] ?? .max) < (priorityByID[rhs.id] ?? .max)
                 }
                 .map { (id: $0.id, score: $0.score) }
-            result = .ranked(scored, reason: output.reason)
+            outcome = .ranked(scored, reason: output.reason)
         case .skipped(let reason):
-            result = .skipped(reason)
+            outcome = .skipped(reason)
         case .failed(let error):
-            result = .failed(error.localizedDescription)
+            outcome = .failed(error.localizedDescription)
         @unknown default:
-            result = .skipped("Unexpected result")
+            outcome = .skipped("Unexpected result")
+        }
+        result = outcome
+        store.recordRun(summary: prompt, output: outcome.summary, state: state)
+    }
+
+    var assembledInstructions: String {
+        EmbeddedSelectionEvaluation(request: makeRequest()).instructions()
+    }
+
+    var assembledPrompt: String {
+        EmbeddedSelectionEvaluation(request: makeRequest()).prompt(context: context ?? .empty)
+    }
+
+    private func makeRequest() -> EmbeddedAISelectionRequest {
+        EmbeddedAISelectionRequest(
+            embeddedID: "debug",
+            prompt: prompt,
+            candidates: makeCandidateInfos()
+        )
+    }
+
+    private func syncContextProvider() {
+        switch contextMode {
+        case .override:
+            let ctx = contextItems.airshipContext
+            manager.setContextProvider(for: usage) { _ in ctx }
+        case .providerOnly, .append:
+            manager.setContextProvider(for: usage, nil)
         }
     }
 
@@ -660,6 +880,40 @@ private final class EmbeddedSelectionViewModel: ObservableObject {
                 priority: candidate.priority
             )
         }
+    }
+
+    private static func defaultCandidates() -> [EmbeddedCandidate] {
+        [
+            EmbeddedCandidate(instanceID: UUID().uuidString, extrasJSON: "{\"description\": \"Adopt a rescue cat today — find your perfect feline companion.\"}", priority: 0),
+            EmbeddedCandidate(instanceID: UUID().uuidString, extrasJSON: "{\"description\": \"Top-rated dog food for active breeds — fuel your pup's adventures.\"}", priority: 1),
+            EmbeddedCandidate(instanceID: UUID().uuidString, extrasJSON: "{\"description\": \"Spring sale on cat trees, toys, and grooming supplies.\"}", priority: 2),
+        ]
+    }
+
+    private static func makeStore() -> AirshipDebugAIStore<EmbeddedSelectionState> {
+        AirshipDebugAIStore(
+            usageKey: AirshipAI.EmbeddedSelection.usage.rawValue,
+            bundledFixtures: [
+                .init(
+                    name: "Cats vs dogs (cat context)",
+                    state: EmbeddedSelectionState(
+                        prompt: "Show content that matches the user's interests.",
+                        candidates: defaultCandidates(),
+                        contextMode: .override,
+                        contextItems: [.init(content: "User interests: cats")]
+                    )
+                ),
+                .init(
+                    name: "No relevant context (fallback band)",
+                    state: EmbeddedSelectionState(
+                        prompt: "Rank by relevance to the user.",
+                        candidates: defaultCandidates(),
+                        contextMode: .override,
+                        contextItems: []
+                    )
+                ),
+            ]
+        )
     }
 }
 

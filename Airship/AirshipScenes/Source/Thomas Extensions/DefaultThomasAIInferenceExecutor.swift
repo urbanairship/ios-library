@@ -69,6 +69,18 @@ public struct DefaultSceneAIExecutor: SceneAIExecutor {
         }
     }
 
+    /// Debug-only: the exact system instructions and rendered prompt this request would send
+    /// for an already-fetched context. The untrusted-input fence tag is regenerated per call,
+    /// so it won't match a subsequent real run's tag — this is illustrative, for surfacing the
+    /// assembled prompt in the debug UI.
+    public func promptPreview(
+        request: ThomasAIInferenceRequest,
+        context: AirshipAI.Context
+    ) -> (instructions: String, prompt: String) {
+        let evaluation = ThomasAIInferenceEvaluation(request: request)
+        return (evaluation.instructions(), evaluation.prompt(context: context))
+    }
+
     public func run(request: ThomasAIInferenceRequest) async -> AirshipJSON? {
         let context = AirshipAI.Context(
             items: request.additionalContext.map { .init(content: $0.content, priority: $0.priority) }
