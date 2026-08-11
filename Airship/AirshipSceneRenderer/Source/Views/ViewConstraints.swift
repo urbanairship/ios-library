@@ -27,6 +27,13 @@ struct ViewConstraints: Equatable {
     var maxHeight: CGFloat?
     var width: CGFloat?
     var height: CGFloat?
+    /// Axes this view may measure past its length on.
+    ///
+    /// `View.constraints(_:)` uses `width`/`height` as the frame's maximum as well as its length,
+    /// which is right for nearly everything but leaves a scroll layout unable to say "take your
+    /// percentages of the viewport, but measure as far as you need". Naming the axis lifts the
+    /// maximum without disturbing the length, so percentages still resolve against the viewport.
+    var uncappedAxes: Axis.Set = []
     var safeAreaInsets: EdgeInsets
     var isHorizontalFixedSize: Bool
     var isVerticalFixedSize: Bool
@@ -39,6 +46,7 @@ struct ViewConstraints: Equatable {
         height: CGFloat? = nil,
         maxWidth: CGFloat? = nil,
         maxHeight: CGFloat? = nil,
+        uncappedAxes: Axis.Set = [],
         isHorizontalFixedSize: Bool = false,
         isVerticalFixedSize: Bool = false,
         isHorizontalAbsoluteSize: Bool = false,
@@ -51,6 +59,7 @@ struct ViewConstraints: Equatable {
         self.height = height
         self.maxWidth = maxWidth
         self.maxHeight = maxHeight
+        self.uncappedAxes = uncappedAxes
         self.safeAreaInsets = safeAreaInsets
         self.isHorizontalFixedSize = isHorizontalFixedSize
         self.isVerticalFixedSize = isVerticalFixedSize
@@ -58,6 +67,12 @@ struct ViewConstraints: Equatable {
         self.isVerticalAbsoluteSize = isVerticalAbsoluteSize
         self.aspectRatio = aspectRatio
     }
+
+    /// The length the frame should take on each axis: the view's size, unless the axis is
+    /// uncapped, where the frame takes nothing and the length serves only as the reference percent
+    /// children resolve against.
+    var frameWidth: CGFloat? { uncappedAxes.contains(.horizontal) ? nil : width }
+    var frameHeight: CGFloat? { uncappedAxes.contains(.vertical) ? nil : height }
 
     init(size: CGSize, safeAreaInsets: EdgeInsets) {
         self.init(
@@ -71,6 +86,21 @@ struct ViewConstraints: Equatable {
         )
     }
 
+    /// Resolves a declared size against its parent.
+    ///
+    /// A percentage covers the space the item occupies, margins included, so they come out of its
+    /// share rather than being charged on top: two 50% items with margins fill their parent exactly
+    /// instead of overflowing it by their margins. Points and auto are unaffected.
+    private static func resolve(
+        _ constraint: ThomasSizeConstraint?,
+        parent: CGFloat?,
+        margins: CGFloat
+    ) -> CGFloat? {
+        guard let constraint, let value = constraint.calculateSize(parent) else { return nil }
+        guard constraint.isPercent, let parent else { return value }
+        return max(0, min(value, parent) - margins)
+    }
+
     func contentConstraints(
         _ constrainedSize: ThomasConstrainedSize,
         contentSize: CGSize?,
@@ -80,36 +110,21 @@ struct ViewConstraints: Equatable {
         let verticalMargins: CGFloat = margin?.verticalMargins ?? 0.0
         let horizontalMargins: CGFloat = margin?.horizontalMargins ?? 0.0
 
-        let parentWidth: CGFloat? = self.width?.subtract(horizontalMargins)
-        let parentHeight: CGFloat? = self.height?.subtract(verticalMargins)
+        let parentWidth: CGFloat? = self.width
+        let parentHeight: CGFloat? = self.height
 
-        let childMinWidth: CGFloat? = constrainedSize.minWidth?.calculateSize(
-            parentWidth
-        )
-
-        let childMaxWidth: CGFloat? = constrainedSize.maxWidth?.calculateSize(
-            parentWidth
-        )
-
-        var childWidth: CGFloat? = constrainedSize.width.calculateSize(
-            parentWidth
-        )
+        let childMinWidth = Self.resolve(constrainedSize.minWidth, parent: parentWidth, margins: horizontalMargins)
+        let childMaxWidth = Self.resolve(constrainedSize.maxWidth, parent: parentWidth, margins: horizontalMargins)
+        var childWidth = Self.resolve(constrainedSize.width, parent: parentWidth, margins: horizontalMargins)
 
         childWidth = childWidth?.bound(
             minValue: childMinWidth,
             maxValue: childMaxWidth
         )
 
-        let childMinHeight: CGFloat? = constrainedSize.minHeight?.calculateSize(
-            parentHeight
-        )
-        let childMaxHeight: CGFloat? = constrainedSize.maxHeight?.calculateSize(
-            parentHeight
-        )
-
-        var childHeight: CGFloat? = constrainedSize.height.calculateSize(
-            parentHeight
-        )
+        let childMinHeight = Self.resolve(constrainedSize.minHeight, parent: parentHeight, margins: verticalMargins)
+        let childMaxHeight = Self.resolve(constrainedSize.maxHeight, parent: parentHeight, margins: verticalMargins)
+        var childHeight = Self.resolve(constrainedSize.height, parent: parentHeight, margins: verticalMargins)
 
         childHeight = childHeight?.bound(
             minValue: childMinHeight,
@@ -205,16 +220,8 @@ struct ViewConstraints: Equatable {
             safeAreaInsets = ViewConstraints.emptyEdgeSet
         }
 
-        var childWidth: CGFloat? = size.width.calculateSize(parentWidth)
-        var childHeight: CGFloat? = size.height.calculateSize(parentHeight)
-
-        if size.width.isPercent, let width = childWidth, let parentWidth = parentWidth {
-            childWidth = max(0, min(width, parentWidth.subtract(horizontalMargins)))
-        }
-
-        if size.height.isPercent, let height = childHeight, let parentHeight = parentHeight {
-            childHeight = max(0, min(height, parentHeight.subtract(verticalMargins)))
-        }
+        var childWidth = Self.resolve(size.width, parent: parentWidth, margins: horizontalMargins)
+        var childHeight = Self.resolve(size.height, parent: parentHeight, margins: verticalMargins)
 
         // Pre-compute derived dimension so children receive concrete parent bounds.
         // Also carry the ratio through to ViewConstraints so the .constraints()
@@ -271,6 +278,9 @@ struct ViewConstraints: Equatable {
             height: childHeight,
             maxWidth: childWidth ?? maxWidth,
             maxHeight: childHeight ?? maxHeight,
+            // Not inherited: a child gets its own length from us, so it is capped by that.
+            // Only the view a scroll layout hands its constraints to may exceed its length.
+            uncappedAxes: [],
             isHorizontalFixedSize: isHorizontalFixedSize,
             isVerticalFixedSize: isVerticalFixedSize,
             isHorizontalAbsoluteSize: isHorizontalAbsoluteSize,
@@ -278,6 +288,19 @@ struct ViewConstraints: Equatable {
             aspectRatio: aspectRatio,
             safeAreaInsets: safeAreaInsets
         )
+    }
+}
+
+extension ViewConstraints {
+    /// Returns a copy of these constraints with nil (auto) dimensions replaced by the
+    /// measured values.  Concrete dimensions are left unchanged, and isFixedSize flags
+    /// are not touched — the fill is a hint for percent-child calculations only, not a
+    /// hard layout constraint on the parent.
+    func fillingMeasured(width: CGFloat?, height: CGFloat?) -> ViewConstraints {
+        var copy = self
+        if copy.width == nil { copy.width = width }
+        if copy.height == nil { copy.height = height }
+        return copy
     }
 }
 
@@ -318,7 +341,7 @@ extension ThomasSizeConstraint {
         }
     }
 
-    fileprivate var isPercent: Bool {
+    var isPercent: Bool {
         switch self {
         case .points(_):
             return false

@@ -15,6 +15,7 @@ struct ScrollLayout: View {
     private let constraints: ViewConstraints
     
     @State private var contentSize: CGSize? = nil
+    @State private var measuredFrameSize: CGSize? = nil
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @State private var scrollTask: (String, Task<Void, Never>)?
     
@@ -144,6 +145,7 @@ struct ScrollLayout: View {
     var body: some View {
         makeScrollView()
             .constraints(self.constraints)
+            .airshipMeasureView($measuredFrameSize)
             .thomasCommon(self.info)
 #if os(tvOS)
             .focusSection()
@@ -151,17 +153,26 @@ struct ScrollLayout: View {
     }
     
     private func childConstraints() -> ViewConstraints {
-        var childConstraints = constraints
-        if self.info.properties.direction == .vertical {
-            childConstraints.height = nil
+        let isVertical = info.properties.direction == .vertical
+
+        // The viewport is what percentages resolve against, on both axes, so fill it in as the
+        // length. Naming the scroll axis as uncapped is what lets the content measure past it —
+        // otherwise the length doubles as the frame's maximum and `100% + 50% + 25%` compresses
+        // into a single screen instead of scrolling a screen and three quarters.
+        var childConstraints = constraints.fillingMeasured(
+            width: measuredFrameSize?.width,
+            height: measuredFrameSize?.height
+        )
+        childConstraints.uncappedAxes = isVertical ? .vertical : .horizontal
+
+        if isVertical {
             childConstraints.maxHeight = nil
             childConstraints.isVerticalFixedSize = false
         } else {
-            childConstraints.width = nil
             childConstraints.maxWidth = nil
             childConstraints.isHorizontalFixedSize = false
         }
-        
+
         return childConstraints
     }
     

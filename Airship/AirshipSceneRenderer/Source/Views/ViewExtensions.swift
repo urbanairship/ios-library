@@ -37,18 +37,30 @@ extension View {
     }
 
     @ViewBuilder
+    /// A length is also the ideal and the maximum here, which is what nearly every view wants. On
+    /// an axis named in `uncappedAxes` the length doesn't reach the frame at all and serves only as
+    /// the reference percent children resolve against — a scroll layout's content takes its
+    /// percentages of the viewport but sizes to its content.
+    ///
+    /// The ideal has to go as well as the maximum: a scroll applies `fixedSize` on its axis, which
+    /// makes SwiftUI take the ideal, so leaving it set pins the content to the viewport however
+    /// open the maximum is.
+    ///
+    /// `constraints.maxWidth`/`maxHeight` are deliberately not used: they carry the space
+    /// available to a view, which is what its children are measured against, not a ceiling on the
+    /// view itself.
     func constraints(
         _ constraints: ViewConstraints,
         alignment: Alignment? = nil,
         fixedSize: Bool = false
     ) -> some View {
         self.frame(
-            minWidth: constraints.isHorizontalAbsoluteSize ? constraints.width : nil,
-            idealWidth: constraints.width,
-            maxWidth: constraints.width,
-            minHeight: constraints.isVerticalAbsoluteSize ? constraints.height : nil,
-            idealHeight: constraints.height,
-            maxHeight: constraints.height,
+            minWidth: constraints.isHorizontalAbsoluteSize ? constraints.frameWidth : nil,
+            idealWidth: constraints.frameWidth,
+            maxWidth: constraints.frameWidth,
+            minHeight: constraints.isVerticalAbsoluteSize ? constraints.frameHeight : nil,
+            idealHeight: constraints.frameHeight,
+            maxHeight: constraints.frameHeight,
             alignment: alignment ?? .center
         )
         .airshipApplyIf(fixedSize) { view in

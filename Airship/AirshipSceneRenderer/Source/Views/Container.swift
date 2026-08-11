@@ -33,6 +33,8 @@ fileprivate struct NewContainer: View {
     /// View constraints.
     private let constraints: ViewConstraints
 
+    @State private var measuredSize: CGSize? = nil
+
     init(info: ThomasViewInfo.Container, constraints: ViewConstraints) {
         self.info = info
         self.constraints = constraints
@@ -50,6 +52,7 @@ fileprivate struct NewContainer: View {
         .accessibilityElement(children: .contain)
         .airshipGeometryGroupCompat()
         .constraints(constraints)
+        .airshipMeasureView($measuredSize)
         .clipped()
         .thomasCommon(self.info)
     }
@@ -60,12 +63,14 @@ fileprivate struct NewContainer: View {
         let consumeSafeAreaInsets = item.ignoreSafeArea != true
 
         let borderPadding = self.info.commonProperties.border?.strokeWidth ?? 0
-        let childConstraints = self.constraints.childConstraints(
-            item.size,
-            margin: item.margin,
-            padding: borderPadding,
-            safeAreaInsetsMode: consumeSafeAreaInsets ? .consumeMargin : .ignore
-        )
+        let childConstraints = self.constraints
+            .fillingMeasured(width: measuredSize?.width, height: measuredSize?.height)
+            .childConstraints(
+                item.size,
+                margin: item.margin,
+                padding: borderPadding,
+                safeAreaInsetsMode: consumeSafeAreaInsets ? .consumeMargin : .ignore
+            )
 
         thomasEnvironment.viewFactory.createView(
             item.view,
