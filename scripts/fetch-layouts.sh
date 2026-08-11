@@ -59,9 +59,14 @@ if [ -z "$REF" ]; then
 fi
 
 # --- skip if already at the pinned ref (local cache) -----------------------
+# Only trust the marker if scene files are actually present; otherwise a stale
+# marker with a wiped Scenes/ directory would make the fetch a permanent no-op.
 if [ -f "$MARKER" ] && [ "$(cat "$MARKER" 2>/dev/null)" = "$REF" ]; then
-  echo "fetch-layouts: already at ${REF}, skipping."
-  exit 0
+  EXISTING="$(find "${DEST}/Scenes" -type f ! -name '.gitkeep' 2>/dev/null | wc -l | tr -d '[:space:]')"
+  if [ "${EXISTING:-0}" -gt 0 ]; then
+    echo "fetch-layouts: already at ${REF}, skipping."
+    exit 0
+  fi
 fi
 
 # --- build the (optionally authenticated) clone URL ------------------------
@@ -79,7 +84,8 @@ trap 'rm -rf "$TMP_DIR"' EXIT
 redact() {
   local text="$1"
   if [ -n "${LAYOUTS_REPO_TOKEN:-}" ]; then
-    text="${text//${LAYOUTS_REPO_TOKEN}/***}"
+    # Quote the pattern so glob characters in the token still match literally.
+    text="${text//"${LAYOUTS_REPO_TOKEN}"/***}"
   fi
   printf '%s' "$text"
 }
@@ -101,6 +107,15 @@ if ! GIT_ERR="$(git clone --quiet --depth 1 --branch "$REF" "$CLONE_URL" "$TMP_D
   fi
 fi
 
+# --- validate the fetched tree before touching the destination -------------
+# All source directories must exist before we clear anything, so a bad ref or
+# a repo-layout change can never leave a half-replaced, mixed-version Scenes/.
+for src in "${SRC_DIRS[@]}"; do
+  if [ ! -d "${TMP_DIR}/${src}" ]; then
+    fail_or_warn "fetched layouts are missing '${src}/' (wrong ref or repo layout changed)"
+  fi
+done
+
 # --- copy each source subtree into its Scenes/ destination -----------------
 # Scenes/ subdirectories are part of an Xcode folder reference in the DevApp
 # Copy Bundle Resources phase, so each directory must always exist (a missing
@@ -110,9 +125,6 @@ mkdir -p "$DEST"
 for i in "${!SRC_DIRS[@]}"; do
   src="${SRC_DIRS[$i]}"
   dst="${DEST_DIRS[$i]}"
-  if [ ! -d "${TMP_DIR}/${src}" ]; then
-    fail_or_warn "fetched layouts are missing '${src}/' (wrong ref or repo layout changed)"
-  fi
   mkdir -p "${DEST}/${dst}"
   find "${DEST}/${dst}" -mindepth 1 ! -name '.gitkeep' -delete 2>/dev/null || true
   cp -R "${TMP_DIR}/${src}/." "${DEST}/${dst}/"
