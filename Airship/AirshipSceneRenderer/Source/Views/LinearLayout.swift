@@ -222,7 +222,16 @@ struct LinearLayout: View {
         // and fair-shares the rest — 200 plus two 100% items in 480pt renders 200/140/140,
         // matching Android's slot distribution.
         guard percentTotal < 1 else {
-            return isVertical ? self.constraints.maxHeight : self.constraints.maxWidth
+            // Use the constraint bound so the layout settles rather than feeding the
+            // measurement back, which is the divergence described above. An absent bound —
+            // a scroll layout clears its content's maximum — has to stay absent: handing
+            // back the measurement there is that same feedback loop, and it's the one case
+            // with nothing above us to stop it. Nil leaves the percent items on auto, which
+            // is stable. A non-finite bound is worth replacing, but only with a finite
+            // measurement, so ∞ never reaches a child frame either way.
+            let bound = isVertical ? self.constraints.maxHeight : self.constraints.maxWidth
+            guard let bound else { return nil }
+            return bound.safeValue ?? measured.safeValue
         }
 
         // SwiftUI may evaluate `body` more than once for the same layout. Each evaluation has to
@@ -235,8 +244,15 @@ struct LinearLayout: View {
         let base: CGFloat
         if let previous = tracker.base {
             let fixedExtent = measured - resolvedPercentExtent(base: previous)
-            // Rounded so the loop settles on a whole point instead of chasing the last 1e-14.
-            base = max(0, (fixedExtent / (1 - percentTotal)).rounded())
+            if fixedExtent >= 0 {
+                // Rounded so the loop settles on a whole point instead of chasing the last 1e-14.
+                base = (fixedExtent / (1 - percentTotal)).rounded()
+            } else {
+                // fixedExtent < 0 means the previous base was built for larger constraints
+                // (e.g. after a rotation where the stack axis shrank). Re-seed from the
+                // current measurement rather than clamping to 0 and collapsing the layout.
+                base = measured
+            }
         } else {
             // First measurement: this tree was built before we had any base, so the percent items
             // fell back to auto and their contribution is their own content — not something we can
@@ -257,7 +273,7 @@ struct LinearLayout: View {
     }
 
     /// The space the percent items occupy on the stack axis, given [base] — their resolved size
-    /// plus their margins, since that is what they contribute to the measurement being unpicked.
+    /// on the stack axis (margins cancel: `.margin()` re-adds what `childConstraints` removed).
     private func resolvedPercentExtent(base: CGFloat) -> CGFloat {
         let padding = (self.info.commonProperties.border?.strokeWidth ?? 0) * 2
         let inner = base - padding
