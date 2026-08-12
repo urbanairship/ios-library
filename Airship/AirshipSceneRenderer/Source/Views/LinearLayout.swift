@@ -215,23 +215,22 @@ struct LinearLayout: View {
         //
         // Hand back the bound we were given rather than our own measurement. Feeding the
         // measurement back makes each pass `percentTotal` times the last, and at 1 or more that
-        // expands instead of converging — with no finite cap above us (a scroll layout clears its
-        // content's maximum) it runs away until SwiftUI is handed an infinite height and traps.
-        // The bound is a constant, so the layout settles: percent items are `maxHeight` with no
-        // `minHeight` while point-sized items are rigid, so the stack pays the fixed items first
-        // and fair-shares the rest — 200 plus two 100% items in 480pt renders 200/140/140,
-        // matching Android's slot distribution.
+        // expands instead of converging. A real bound is a constant, so the layout settles: percent
+        // items are `maxHeight` with no `minHeight` while point-sized items are rigid, so the stack
+        // pays the fixed items first and fair-shares the rest — 200 plus two 100% items in 480pt
+        // renders 200/140/140, matching Android's slot distribution.
+        //
+        // Only if it is a real bound, though. An auto ancestor fills its measurement in as a length,
+        // and the maximum we inherit from it is then this stack's own height by another route.
+        // Handing that back is the divergence above with no cap to stop it: three 100% rows measure
+        // ~3x taller, which raises the bound, which grows the rows, until SwiftUI is handed an
+        // infinite height and traps. Nothing is the honest answer there — percent children of a nil
+        // length resolve to auto, so the rows size to their content and there is nowhere to grow.
         guard percentTotal < 1 else {
-            // Use the constraint bound so the layout settles rather than feeding the
-            // measurement back, which is the divergence described above. An absent bound —
-            // a scroll layout clears its content's maximum — has to stay absent: handing
-            // back the measurement there is that same feedback loop, and it's the one case
-            // with nothing above us to stop it. Nil leaves the percent items on auto, which
-            // is stable. A non-finite bound is worth replacing, but only with a finite
-            // measurement, so ∞ never reaches a child frame either way.
+            let stackAxis: Axis.Set = isVertical ? .vertical : .horizontal
+            guard !self.constraints.measuredAxes.contains(stackAxis) else { return nil }
             let bound = isVertical ? self.constraints.maxHeight : self.constraints.maxWidth
-            guard let bound else { return nil }
-            return bound.safeValue ?? measured.safeValue
+            return bound?.safeValue
         }
 
         // SwiftUI may evaluate `body` more than once for the same layout. Each evaluation has to

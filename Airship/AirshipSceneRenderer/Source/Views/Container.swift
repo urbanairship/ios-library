@@ -100,8 +100,12 @@ fileprivate struct ContainerLayout: Layout {
         subviews: Subviews,
         cache: inout ()
     ) -> CGSize {
-        var maxWidth: CGFloat = (constraints.width == nil) ? 0 : proposal.width ?? 0
-        var maxHeight: CGFloat = (constraints.height == nil) ? 0 : proposal.height ?? 0
+        // The proposal is a ceiling to grow from, not a size to adopt, and it arrives infinite
+        // often enough to matter — a scroll proposes ∞ on its axis, and `maxHeight: .infinity`
+        // above us propagates one down. Taking it raw returns an infinite size, which the
+        // measuring GeometryReader in the background then has to place content inside of.
+        var maxWidth: CGFloat = (constraints.width == nil) ? 0 : (proposal.width?.safeValue ?? 0)
+        var maxHeight: CGFloat = (constraints.height == nil) ? 0 : (proposal.height?.safeValue ?? 0)
 
         for subview in subviews {
             let size = subview.dimensions(in: proposal)

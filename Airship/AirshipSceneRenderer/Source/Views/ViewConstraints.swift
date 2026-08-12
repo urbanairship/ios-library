@@ -34,6 +34,15 @@ struct ViewConstraints: Equatable {
     /// percentages of the viewport, but measure as far as you need". Naming the axis lifts the
     /// maximum without disturbing the length, so percentages still resolve against the viewport.
     var uncappedAxes: Axis.Set = []
+    /// Axes whose length came from measuring a view rather than from a constraint.
+    ///
+    /// A length usually states what a view was given. `fillingMeasured` writes one that says what
+    /// a view turned out to be, and anything derived from it — a child's percentage, the `maxHeight`
+    /// a child inherits — carries that measurement inside it. Most of the layout can't tell the
+    /// difference and doesn't need to, but a stack solving for its own length must: a bound that
+    /// already contains the stack is circular, and feeding it back diverges. Inherited by children,
+    /// since a length derived from a measured one is measured too.
+    var measuredAxes: Axis.Set = []
     var safeAreaInsets: EdgeInsets
     var isHorizontalFixedSize: Bool
     var isVerticalFixedSize: Bool
@@ -47,6 +56,7 @@ struct ViewConstraints: Equatable {
         maxWidth: CGFloat? = nil,
         maxHeight: CGFloat? = nil,
         uncappedAxes: Axis.Set = [],
+        measuredAxes: Axis.Set = [],
         isHorizontalFixedSize: Bool = false,
         isVerticalFixedSize: Bool = false,
         isHorizontalAbsoluteSize: Bool = false,
@@ -60,6 +70,7 @@ struct ViewConstraints: Equatable {
         self.maxWidth = maxWidth
         self.maxHeight = maxHeight
         self.uncappedAxes = uncappedAxes
+        self.measuredAxes = measuredAxes
         self.safeAreaInsets = safeAreaInsets
         self.isHorizontalFixedSize = isHorizontalFixedSize
         self.isVerticalFixedSize = isVerticalFixedSize
@@ -71,8 +82,10 @@ struct ViewConstraints: Equatable {
     /// The length the frame should take on each axis: the view's size, unless the axis is
     /// uncapped, where the frame takes nothing and the length serves only as the reference percent
     /// children resolve against.
-    var frameWidth: CGFloat? { uncappedAxes.contains(.horizontal) ? nil : width }
-    var frameHeight: CGFloat? { uncappedAxes.contains(.vertical) ? nil : height }
+    /// `safeValue` because these reach `.frame(idealWidth:maxWidth:…)` directly: a non-finite
+    /// length there is an invalid frame dimension, and an unset one is merely auto.
+    var frameWidth: CGFloat? { uncappedAxes.contains(.horizontal) ? nil : width?.safeValue }
+    var frameHeight: CGFloat? { uncappedAxes.contains(.vertical) ? nil : height?.safeValue }
 
     init(size: CGSize, safeAreaInsets: EdgeInsets) {
         self.init(
@@ -281,6 +294,9 @@ struct ViewConstraints: Equatable {
             // Not inherited: a child gets its own length from us, so it is capped by that.
             // Only the view a scroll layout hands its constraints to may exceed its length.
             uncappedAxes: [],
+            // Inherited: everything a child gets on this axis is derived from our length, so if
+            // ours was measured then so are the child's percentage and the maximum it falls back to.
+            measuredAxes: measuredAxes,
             isHorizontalFixedSize: isHorizontalFixedSize,
             isVerticalFixedSize: isVerticalFixedSize,
             isHorizontalAbsoluteSize: isHorizontalAbsoluteSize,
@@ -298,8 +314,14 @@ extension ViewConstraints {
     /// hard layout constraint on the parent.
     func fillingMeasured(width: CGFloat?, height: CGFloat?) -> ViewConstraints {
         var copy = self
-        if copy.width == nil { copy.width = width }
-        if copy.height == nil { copy.height = height }
+        if copy.width == nil, let width = width?.safeValue {
+            copy.width = width
+            copy.measuredAxes.insert(.horizontal)
+        }
+        if copy.height == nil, let height = height?.safeValue {
+            copy.height = height
+            copy.measuredAxes.insert(.vertical)
+        }
         return copy
     }
 }
