@@ -4,11 +4,15 @@
         <attribute name="body" attributeType="Binary"/>
         <attribute name="scheduleID" attributeType="String"/>
         <attribute name="sharedID" optional="YES" attributeType="String"/>
+        <attribute name="timestamp" attributeType="Date" usesScalarValueType="NO"/>
         <fetchIndex name="byScheduleID">
             <fetchIndexElement property="scheduleID" type="Binary" order="ascending"/>
         </fetchIndex>
         <fetchIndex name="bySharedID">
             <fetchIndexElement property="sharedID" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byTimestamp">
+            <fetchIndexElement property="timestamp" type="Binary" order="ascending"/>
         </fetchIndex>
     </entity>
 </model>

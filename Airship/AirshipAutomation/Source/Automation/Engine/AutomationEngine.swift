@@ -198,6 +198,11 @@ actor AutomationEngine : AutomationEngineProtocol {
         try await store.deleteSchedules(group: group)
         await self.triggersProcessor.cancel(group: group)
     }
+
+    func reconcileLedger() async throws {
+        await self.startTask?.value
+        try await self.store.reconcileLedger(now: self.date.now)
+    }
     
     func cancelSchedulesWith(type: AutomationSchedule.ScheduleType) async throws {
         AirshipLogger.debug("Cancelling schedules with type \(type)")
@@ -872,6 +877,9 @@ protocol AutomationEngineProtocol: Actor, Sendable {
     func cancelSchedules(identifiers: [String]) async throws
     func cancelSchedules(group: String) async throws
     func cancelSchedulesWith(type: AutomationSchedule.ScheduleType) async throws
+
+    /// Reconciles the ledger against current schedules: retention + compaction.
+    func reconcileLedger() async throws
 
     var schedules: [AutomationSchedule] { get async throws }
     func getSchedule(identifier: String) async throws -> AutomationSchedule?

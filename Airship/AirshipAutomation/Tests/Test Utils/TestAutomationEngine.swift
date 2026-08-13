@@ -18,8 +18,10 @@ actor TestAutomationEngine: AutomationEngineProtocol {
     private var onUpsert: (@Sendable ([AutomationSchedule]) async throws -> Void)?
     private var onStop: (@Sendable ([AutomationSchedule]) async throws -> Void)?
     private var onCancel: (@Sendable ([AutomationSchedule]) async throws -> Void)?
-    
+    private var onReconcileLedger: (@Sendable () async throws -> Void)?
+
     private(set) var cancelledSchedules: [String] = []
+    private(set) var reconcileLedgerCallCount: Int = 0
 
     @MainActor
     func setEnginePaused(_ paused: Bool) {
@@ -82,6 +84,15 @@ actor TestAutomationEngine: AutomationEngineProtocol {
             default: return false
             }
         }
+    }
+
+    func setOnReconcileLedger(_ onReconcileLedger: @escaping @Sendable () async throws -> Void) {
+        self.onReconcileLedger = onReconcileLedger
+    }
+
+    func reconcileLedger() async throws {
+        self.reconcileLedgerCallCount += 1
+        try await self.onReconcileLedger?()
     }
 
 

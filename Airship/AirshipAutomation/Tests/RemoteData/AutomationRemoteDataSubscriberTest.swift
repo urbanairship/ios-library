@@ -778,6 +778,93 @@ struct AutomationRemoteDataSubscriberTest {
         }
     }
 
+    // MARK: - Ledger reconciliation
+
+    @Test
+    func testReconcileLedgerRunsAfterUpdate() async throws {
+        let data = InAppRemoteData(
+            payloads: [
+                .app: .init(
+                    data: .init(
+                        schedules: makeSchedules(source: .app),
+                        constraints: []
+                    ),
+                    timestamp: Date()
+                )
+            ]
+        )
+
+        await self.subscriber.subscribe()
+
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnReconcileLedger {
+                confirm()
+                await latch.signal()
+            }
+
+            self.remoteDataAccess.updatesSubject.send(data)
+            await latch.wait()
+        }
+
+        #expect(await self.engine.reconcileLedgerCallCount == 1)
+    }
+
+    @Test
+    func testReconcileLedgerErrorIsSwallowed() async throws {
+        let firstUpdate = InAppRemoteData(
+            payloads: [
+                .app: .init(
+                    data: .init(schedules: makeSchedules(source: .app), constraints: []),
+                    timestamp: Date()
+                )
+            ]
+        )
+        let secondUpdate = InAppRemoteData(
+            payloads: [
+                .app: .init(
+                    data: .init(schedules: makeSchedules(source: .app), constraints: []),
+                    timestamp: Date()
+                )
+            ]
+        )
+
+        await self.subscriber.subscribe()
+
+        // The second update drops the first update's schedules from the listing,
+        // which stops them; give the engine double a no-op stop handler.
+        await self.engine.setOnStop { _ in }
+
+        // First update: reconciliation throws.
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnReconcileLedger {
+                confirm()
+                await latch.signal()
+                throw AirshipErrors.error("ledger reconcile failed")
+            }
+
+            self.remoteDataAccess.updatesSubject.send(firstUpdate)
+            await latch.wait()
+        }
+
+        // Second update, sent only after the first fully processed: the thrown
+        // error was swallowed rather than tearing down the subscription, so the
+        // next update still reconciles.
+        await confirmation { confirm in
+            let latch = Latch(1)
+            await self.engine.setOnReconcileLedger {
+                confirm()
+                await latch.signal()
+            }
+
+            self.remoteDataAccess.updatesSubject.send(secondUpdate)
+            await latch.wait()
+        }
+
+        #expect(await self.engine.reconcileLedgerCallCount == 2)
+    }
+
     // MARK: - Helpers
 
     private func makeSchedules(

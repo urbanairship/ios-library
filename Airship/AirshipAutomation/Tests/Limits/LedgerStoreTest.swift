@@ -192,4 +192,240 @@ struct LedgerStoreTest {
             #expect(decoded == event)
         }
     }
+
+    // MARK: - Retention
+
+    @Test
+    func testRetainKeepsLiveScheduleAndDropsOrphans() async throws {
+        let liveOwn = execution(scheduleID: "live")
+        let liveViaGroup = execution(scheduleID: "dead-1", sharedID: "live-group")
+        let orphanWithGroup = execution(scheduleID: "dead-2", sharedID: "dead-group")
+        let orphanNoGroup = execution(scheduleID: "dead-3")
+
+        try await store.recordEvents([liveOwn, liveViaGroup, orphanWithGroup, orphanNoGroup])
+
+        try await store.retainEvents(
+            liveScheduleIDs: ["live"],
+            liveSharedIDs: ["live-group"]
+        )
+
+        // Kept: own event of a live schedule, and an event pooled under a live group.
+        #expect(try await store.events(scheduleID: "live", sharedID: nil) == [liveOwn])
+        #expect(
+            try await store.events(scheduleID: "dead-1", sharedID: "live-group") == [liveViaGroup]
+        )
+        // Dropped: fully orphaned events, including one with no shared group.
+        #expect(try await store.events(scheduleID: "dead-2", sharedID: "dead-group").isEmpty)
+        #expect(try await store.events(scheduleID: "dead-3", sharedID: nil).isEmpty)
+    }
+
+    @Test
+    func testRetainWithNoLiveIDsDropsEverything() async throws {
+        try await store.recordEvents([
+            execution(scheduleID: "a"),
+            execution(scheduleID: "b", sharedID: "g")
+        ])
+
+        try await store.retainEvents(liveScheduleIDs: [], liveSharedIDs: [])
+
+        #expect(try await store.events(scheduleID: "a", sharedID: "g").isEmpty)
+        #expect(try await store.events(scheduleID: "b", sharedID: "g").isEmpty)
+    }
+
+    // MARK: - Compaction (store)
+
+    @Test
+    func testCompactMergesMergeableRows() async throws {
+        let now = Self.date(2020, 1, 1)
+        try await store.recordEvents([
+            execution(scheduleID: "s", timestamp: Self.date(2017, 3, 5)),
+            execution(scheduleID: "s", timestamp: Self.date(2017, 9, 20))
+        ])
+
+        try await store.compact(now: now)
+
+        let result = try await store.events(scheduleID: "s", sharedID: nil)
+        #expect(result.count == 1)
+        #expect(result.first?.count == 2)
+        #expect(result.first?.timestamp == Self.date(2017, 9, 20))
+    }
+
+    // When the ledger is under the cap and every event is younger than a year,
+    // the cheap pre-check skips the decode entirely. Two recent events sharing an
+    // exact timestamp would merge in the raw tier if compaction ran, so their
+    // survival proves the guard short-circuited before decoding.
+    @Test
+    func testCompactSkipsWhenAllRecentAndUnderCap() async throws {
+        let now = Self.date(2020, 1, 1)
+        let recent = Self.date(2019, 12, 25)
+        try await store.recordEvents([
+            execution(scheduleID: "s", timestamp: recent),
+            execution(scheduleID: "s", timestamp: recent)
+        ])
+
+        try await store.compact(now: now)
+
+        let result = try await store.events(scheduleID: "s", sharedID: nil)
+        #expect(result.count == 2)
+    }
+
+    // Over the cap, the pre-check must not short-circuit even when every event is
+    // recent: the backstop still has to run. Two recent same-timestamp events
+    // merge in the raw tier once the decode proceeds.
+    @Test
+    func testCompactOverCapCompactsEvenWhenRecent() async throws {
+        let now = Self.date(2020, 1, 1)
+        let recent = Self.date(2019, 12, 25)
+        try await store.recordEvents([
+            execution(scheduleID: "s", timestamp: recent),
+            execution(scheduleID: "s", timestamp: recent)
+        ])
+
+        try await store.compact(now: now, maxEvents: 1)
+
+        let result = try await store.events(scheduleID: "s", sharedID: nil)
+        #expect(result.count == 1)
+        #expect(result.first?.count == 2)
+    }
+
+    // When any event is old enough to age-bucket, the pre-check lets the decode
+    // proceed, so a full compaction runs over the whole table — which also merges
+    // recent same-timestamp dupes that a skipped run would have left alone.
+    @Test
+    func testCompactProceedsWhenAnyEventIsOld() async throws {
+        let now = Self.date(2020, 1, 1)
+        let recent = Self.date(2019, 12, 25)
+        try await store.recordEvents([
+            execution(scheduleID: "s", timestamp: recent),
+            execution(scheduleID: "s", timestamp: recent),
+            execution(scheduleID: "old", timestamp: Self.date(2017, 3, 5))
+        ])
+
+        try await store.compact(now: now)
+
+        let recentResult = try await store.events(scheduleID: "s", sharedID: nil)
+        #expect(recentResult.count == 1)
+        #expect(recentResult.first?.count == 2)
+    }
+
+    // MARK: - Compaction (pure)
+
+    @Test
+    func testCompactRawTierKeepsRecentDistinctTimestamps() {
+        let now = Self.date(2020, 1, 1)
+        let events = [
+            execution(scheduleID: "s", timestamp: Self.date(2019, 12, 20)),
+            execution(scheduleID: "s", timestamp: Self.date(2019, 12, 25))
+        ]
+
+        // Both younger than a year: raw, so distinct timestamps never merge.
+        #expect(LedgerCompactor.compact(events, now: now).count == 2)
+    }
+
+    @Test
+    func testCompactMonthlyTierMergesWithinSameMonth() {
+        let now = Self.date(2020, 1, 1)
+        let events = [
+            execution(scheduleID: "s", timestamp: Self.date(2018, 6, 10), count: 2),
+            execution(scheduleID: "s", timestamp: Self.date(2018, 6, 20), count: 3)
+        ]
+
+        let result = LedgerCompactor.compact(events, now: now)
+        #expect(result.count == 1)
+        #expect(result.first?.count == 5)
+        #expect(result.first?.timestamp == Self.date(2018, 6, 20))
+    }
+
+    @Test
+    func testCompactMonthlyTierKeepsDifferentMonths() {
+        let now = Self.date(2020, 1, 1)
+        let events = [
+            execution(scheduleID: "s", timestamp: Self.date(2018, 6, 10)),
+            execution(scheduleID: "s", timestamp: Self.date(2018, 7, 10))
+        ]
+
+        #expect(LedgerCompactor.compact(events, now: now).count == 2)
+    }
+
+    @Test
+    func testCompactYearlyTierMergesWithinSameYear() {
+        let now = Self.date(2020, 1, 1)
+        let events = [
+            execution(scheduleID: "s", timestamp: Self.date(2017, 3, 5)),
+            execution(scheduleID: "s", timestamp: Self.date(2017, 9, 20))
+        ]
+
+        let result = LedgerCompactor.compact(events, now: now)
+        #expect(result.count == 1)
+        #expect(result.first?.count == 2)
+        #expect(result.first?.timestamp == Self.date(2017, 9, 20))
+    }
+
+    @Test
+    func testCompactNeverMergesAcrossDistinguishingFields() {
+        let now = Self.date(2020, 1, 1)
+        let old = Self.date(2017, 3, 5)
+        let older = Self.date(2017, 9, 20)
+
+        // Same yearly bucket + scope, but each pair differs on one field the
+        // limit evaluator can key on, so none may merge.
+        let differByResult = [
+            execution(scheduleID: "s", timestamp: old, result: .succeeded),
+            execution(scheduleID: "s", timestamp: older, result: .audienceMiss)
+        ]
+        let differByCancel = [
+            execution(scheduleID: "s", timestamp: old, cancel: true),
+            execution(scheduleID: "s", timestamp: older, cancel: false)
+        ]
+        let differByTrigger = [
+            execution(scheduleID: "s", triggerID: "t1", timestamp: old),
+            execution(scheduleID: "s", triggerID: "t2", timestamp: older)
+        ]
+        let differByScope = [
+            execution(scheduleID: "s1", timestamp: old),
+            execution(scheduleID: "s2", timestamp: older)
+        ]
+        let differByType = [
+            triggered(scheduleID: "s", timestamp: old),
+            execution(scheduleID: "s", timestamp: older)
+        ]
+
+        for events in [differByResult, differByCancel, differByTrigger, differByScope, differByType] {
+            #expect(LedgerCompactor.compact(events, now: now).count == 2)
+        }
+    }
+
+    @Test
+    func testCompactBackstopCollapsesOldestGroupFirst() {
+        let now = Self.date(2020, 1, 1)
+        // Two raw (recent) groups of 3 distinct-timestamp events each = 6 rows.
+        // Group "a" is older than group "b".
+        let events = [
+            execution(scheduleID: "a", timestamp: Self.date(2019, 7, 1)),
+            execution(scheduleID: "a", timestamp: Self.date(2019, 7, 2)),
+            execution(scheduleID: "a", timestamp: Self.date(2019, 7, 3)),
+            execution(scheduleID: "b", timestamp: Self.date(2019, 11, 1)),
+            execution(scheduleID: "b", timestamp: Self.date(2019, 11, 2)),
+            execution(scheduleID: "b", timestamp: Self.date(2019, 11, 3))
+        ]
+
+        let result = LedgerCompactor.compact(events, now: now, maxEvents: 4)
+
+        #expect(result.count == 4)
+
+        // Oldest group fully collapsed to one summed event...
+        let groupA = result.filter { $0.scheduleID == "a" }
+        #expect(groupA.count == 1)
+        #expect(groupA.first?.count == 3)
+        // ...while the newer group is left untouched.
+        #expect(result.filter { $0.scheduleID == "b" }.count == 3)
+    }
+
+    private static func date(_ year: Int, _ month: Int, _ day: Int) -> Date {
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+        components.day = day
+        return LedgerCompactor.utcCalendar.date(from: components)!
+    }
 }

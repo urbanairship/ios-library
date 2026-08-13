@@ -516,6 +516,48 @@ struct AutomationStoreTest {
         #expect(await secondLedger.recorded.isEmpty)
     }
 
+    // MARK: - Ledger reconciliation
+
+    @Test
+    func testReconcileLedgerDerivesLiveIDsAndRetainsBeforeCompacting() async throws {
+        let appKey = UUID().uuidString
+        let ledger = TestLedgerStore()
+        let store = AutomationStore(appKey: appKey, inMemory: true, ledgerStore: ledger)
+
+        // Two schedules carry a shared group, one has none — the derived shared-ID
+        // set must include only the non-nil values.
+        let data = [
+            "a": makeSchedule(identifer: "a", sharedID: "shared-1"),
+            "b": makeSchedule(identifer: "b"),
+            "c": makeSchedule(identifer: "c", sharedID: "shared-2")
+        ]
+        _ = try await store.upsertSchedules(scheduleIDs: ["a", "b", "c"]) { identifier, _ in
+            data[identifier]!
+        }
+
+        try await store.reconcileLedger(now: Date())
+
+        #expect(await ledger.retainedLiveScheduleIDs == ["a", "b", "c"])
+        #expect(await ledger.retainedLiveSharedIDs == ["shared-1", "shared-2"])
+        #expect(await ledger.compactCount == 1)
+        // Retention must run before compaction so orphaned events are dropped
+        // before the survivors are merged.
+        #expect(await ledger.reconcileCalls == ["retain", "compact"])
+    }
+
+    @Test
+    func testReconcileLedgerWithNoSchedulesPassesEmptyLiveSets() async throws {
+        let appKey = UUID().uuidString
+        let ledger = TestLedgerStore()
+        let store = AutomationStore(appKey: appKey, inMemory: true, ledgerStore: ledger)
+
+        try await store.reconcileLedger(now: Date())
+
+        #expect(await ledger.retainedLiveScheduleIDs == [])
+        #expect(await ledger.retainedLiveSharedIDs == [])
+        #expect(await ledger.compactCount == 1)
+    }
+
     // MARK: - Migration helpers
 
     /// Writes a single legacy `UAScheduleData` row into the pre-ledger
@@ -678,7 +720,11 @@ struct AutomationStoreTest {
         )
     }
 
-    private func makeSchedule(identifer: String, group: String? = nil) -> AutomationScheduleData {
+    private func makeSchedule(
+        identifer: String,
+        group: String? = nil,
+        sharedID: String? = nil
+    ) -> AutomationScheduleData {
         let schedule = AutomationSchedule(
             identifier: identifer,
             data: .inAppMessage(
@@ -689,7 +735,8 @@ struct AutomationStoreTest {
             ),
             triggers: [],
             created: Date.distantPast,
-            group: group
+            group: group,
+            ledgerConfig: sharedID.map { AutomationSchedule.LedgerConfig(sharedID: $0) }
         )
 
         return AutomationScheduleData(
@@ -726,6 +773,13 @@ extension AutomationScheduleData {
 /// Records everything written to it so migration backfill can be asserted.
 private actor TestLedgerStore: LedgerStoreProtocol {
     private(set) var recorded: [LedgerEvent] = []
+    private(set) var retainedLiveScheduleIDs: Set<String>?
+    private(set) var retainedLiveSharedIDs: Set<String>?
+    private(set) var compactCount: Int = 0
+
+    /// Ordered log of reconciliation calls, so tests can assert retention runs
+    /// before compaction.
+    private(set) var reconcileCalls: [String] = []
 
     func recordEvents(_ events: [LedgerEvent]) async throws {
         recorded.append(contentsOf: events)
@@ -736,4 +790,15 @@ private actor TestLedgerStore: LedgerStoreProtocol {
     }
 
     func deleteEvents(scopes: [LedgerScope]) async throws {}
+
+    func retainEvents(liveScheduleIDs: Set<String>, liveSharedIDs: Set<String>) async throws {
+        self.retainedLiveScheduleIDs = liveScheduleIDs
+        self.retainedLiveSharedIDs = liveSharedIDs
+        self.reconcileCalls.append("retain")
+    }
+
+    func compact(now: Date) async throws {
+        self.compactCount += 1
+        self.reconcileCalls.append("compact")
+    }
 }

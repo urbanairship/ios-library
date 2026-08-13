@@ -528,6 +528,27 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         }
     }
 
+    /// Reconciles the ledger against the currently persisted schedules: drops
+    /// events orphaned by schedules that are gone, then compacts what remains.
+    ///
+    /// Run off the same post-fetch reconciliation that removes schedules missing
+    /// from the remote listing. Schedules linger in the store through their edit
+    /// grace period before being deleted, so their ledger IDs stay "live" here
+    /// until then — giving pooled history a tail rather than dropping it the
+    /// moment a schedule disappears from a listing.
+    /// - Parameter now: Reference time used to bucket events by age.
+    func reconcileLedger(now: Date) async throws {
+        let schedules = try await self.getSchedules()
+        let liveScheduleIDs = Set(schedules.map { $0.schedule.identifier })
+        let liveSharedIDs = Set(schedules.compactMap { $0.schedule.ledgerConfig?.sharedID })
+
+        try await self.ledgerStore.retainEvents(
+            liveScheduleIDs: liveScheduleIDs,
+            liveSharedIDs: liveSharedIDs
+        )
+        try await self.ledgerStore.compact(now: now)
+    }
+
     func prepareCoreData() async throws -> UACoreData {
         guard let coreData = coreData else {
             throw AirshipErrors.error("Failed to create core data.")

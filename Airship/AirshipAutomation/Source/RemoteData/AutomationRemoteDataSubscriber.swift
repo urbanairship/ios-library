@@ -111,6 +111,15 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
                 AirshipLogger.error("Failed to process \(source) automations \(error)")
             }
         }
+
+        // Now that schedules missing from the listing have been stopped, clean up
+        // the ledger against what remains. Cleanup must never break syncing, so
+        // failures are logged and swallowed.
+        do {
+            try await engine.reconcileLedger()
+        } catch {
+            AirshipLogger.error("Failed to reconcile ledger \(error)")
+        }
     }
 
     private func syncAutomations(
