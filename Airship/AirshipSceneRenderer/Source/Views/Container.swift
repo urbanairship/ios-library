@@ -35,9 +35,29 @@ fileprivate struct NewContainer: View {
 
     @State private var measuredSize: CGSize? = nil
 
+    /// Whether this container has no length of its own on an axis and no item that could give it one.
+    ///
+    /// Per axis, unlike a stack: a container overlays its items rather than summing them, so width and
+    /// height are settled independently and one can collapse while the other doesn't. Settled in `init`
+    /// because both are read once per child and answering them walks the whole subtree, while neither
+    /// input changes for the life of the view.
+    private let collapsesVertically: Bool
+    private let collapsesHorizontally: Bool
+
     init(info: ThomasViewInfo.Container, constraints: ViewConstraints) {
         self.info = info
         self.constraints = constraints
+        self.collapsesVertically = constraints.height == nil
+            && Self.collapses(info: info, on: .vertical)
+        self.collapsesHorizontally = constraints.width == nil
+            && Self.collapses(info: info, on: .horizontal)
+    }
+
+    private static func collapses(info: ThomasViewInfo.Container, on axis: Axis) -> Bool {
+        let items = info.properties.items
+        return !items.isEmpty && items.allSatisfy {
+            !$0.size.constraint(on: axis).establishesLength(view: $0.view, on: axis)
+        }
     }
 
     var body: some View {
@@ -57,6 +77,7 @@ fileprivate struct NewContainer: View {
         .thomasCommon(self.info)
     }
 
+
     @ViewBuilder
     @MainActor
     private func childItem(_ index: Int, item: ThomasViewInfo.Container.Item) -> some View {
@@ -64,7 +85,13 @@ fileprivate struct NewContainer: View {
 
         let borderPadding = self.info.commonProperties.border?.strokeWidth ?? 0
         let childConstraints = self.constraints
-            .fillingMeasured(width: measuredSize?.width, height: measuredSize?.height)
+            // Zero rather than the measurement on a collapsed axis. Feeding the measurement back would
+            // let the items settle on their own content, which is the length they were supposed to be
+            // taking a share of.
+            .fillingMeasured(
+                width: collapsesHorizontally ? 0 : measuredSize?.width,
+                height: collapsesVertically ? 0 : measuredSize?.height
+            )
             .childConstraints(
                 item.size,
                 margin: item.margin,
@@ -76,7 +103,8 @@ fileprivate struct NewContainer: View {
             item.view,
             constraints: childConstraints
         )
-        .margin(item.margin)
+        // Margins are inside a percentage's share, so a share of nothing carries none of them.
+        .airshipApplyIf(!(collapsesHorizontally || collapsesVertically)) { $0.margin(item.margin) }
         .airshipApplyIf(consumeSafeAreaInsets) {
             $0.padding(self.constraints.safeAreaInsets)
         }

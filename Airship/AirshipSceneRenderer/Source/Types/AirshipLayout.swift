@@ -46,7 +46,8 @@ extension ThomasViewInfo {
         return result
     }
 
-    private var immediateChildren: [ThomasViewInfo]? {
+    /// Nil for a view that draws its own content rather than hosting other views.
+    var immediateChildren: [ThomasViewInfo]? {
         return switch self {
         case .container(let info): info.properties.items.map { $0.view }
         case .linearLayout(let info): info.properties.items.map { $0.view }

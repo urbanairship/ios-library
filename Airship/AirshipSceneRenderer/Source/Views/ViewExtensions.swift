@@ -7,9 +7,9 @@ import SwiftUI
 extension View {
 
     @ViewBuilder
-    func foreground(_ color: ThomasColor?, colorScheme: ColorScheme) -> some View {
-        if let color = color {
-            self.foregroundColor(color.toColor(colorScheme))
+    func foreground(_ color: ThomasColor?, colorScheme: ColorScheme, fallbackColor: Color? = nil) -> some View {
+        if let color = color?.toColor(colorScheme) ?? fallbackColor {
+            self.foregroundColor(color)
         } else {
             self
         }

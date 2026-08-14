@@ -206,7 +206,7 @@ struct ModalView: View {
                 }
 
                 Rectangle()
-                    .foreground(placement.shade, colorScheme: colorScheme)
+                    .foreground(placement.shade, colorScheme: colorScheme, fallbackColor: .airshipTappableClear)
                     .ignoresSafeArea(.all)
                     .airshipApplyIf(self.presentation.dismissOnTouchOutside == true) {
                         view in

@@ -26,9 +26,33 @@ struct LinearLayout: View {
     @State
     private var tracker: StackAxisTracker = StackAxisTracker()
 
+    /// Whether this stack has no length of its own and no item that could give it one.
+    ///
+    /// Settled in `init` because it is read once per child and again while resolving the base, and
+    /// answering it walks the whole subtree. Neither input changes for the life of the view.
+    private let collapsesStackAxis: Bool
+
     init(info: ThomasViewInfo.LinearLayout, constraints: ViewConstraints) {
         self.info = info
         self.constraints = constraints
+        self.collapsesStackAxis = Self.collapsesStackAxis(info: info, constraints: constraints)
+    }
+
+    /// Only the stack axis: items can't grow the cross axis, so a percentage there resolves against a
+    /// measurement that doesn't depend on it.
+    private static func collapsesStackAxis(
+        info: ThomasViewInfo.LinearLayout,
+        constraints: ViewConstraints
+    ) -> Bool {
+        let isVertical = info.properties.direction == .vertical
+        let isAuto = isVertical ? constraints.height == nil : constraints.width == nil
+        guard isAuto else { return false }
+
+        let axis: Axis = isVertical ? .vertical : .horizontal
+        let items = info.properties.items
+        return !items.isEmpty && items.allSatisfy {
+            !$0.size.constraint(on: axis).establishesLength(view: $0.view, on: axis)
+        }
     }
 
     @ViewBuilder
@@ -152,11 +176,16 @@ struct LinearLayout: View {
         )
 
         thomasEnvironment.viewFactory.createView(item.view, constraints: constraints)
-            .margin(item.margin)
+            // A percentage is a footprint — `childConstraints` takes the margins out of the share and
+            // `.margin()` puts them back, so the two make up the item's whole extent. A collapsed
+            // stack gives out shares of nothing, and the margins are inside those shares, so applying
+            // them would leave a stack of gaps where the collapse said there is nothing at all.
+            .airshipApplyIf(!collapsesStackAxis) { $0.margin(item.margin) }
 #if os(tvOS)
             .focusSection()
 #endif
     }
+
 
     private func parentConstraints() -> ViewConstraints {
         let isVertical = self.info.properties.direction == .vertical
@@ -201,6 +230,11 @@ struct LinearLayout: View {
         guard isAuto else { return measured }
 
         let isVertical = self.info.properties.direction == .vertical
+
+        // Every item is a share of a length none of them supplies. Answer zero without measuring:
+        // it is what the solve arrives at anyway, and reaching it by measurement means feeding the
+        // items' own extent back to them, which diverges rather than settles once the shares reach 1.
+        guard !collapsesStackAxis else { return 0 }
 
         guard let measured else { return nil }
 

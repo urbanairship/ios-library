@@ -136,23 +136,8 @@ extension Image {
     }
 
     private func shouldCenterInside(constraints: ViewConstraints, imageSize: CGSize) -> Bool {
-        guard constraints.height == nil || constraints.width == nil else {
-            return false
-        }
-
         let aspectRatio = imageSize.height > 0 ? imageSize.width/imageSize.height : 1.0
-
-        if let height = constraints.height, let maxWidth = constraints.maxWidth {
-            let fitWidth = height * aspectRatio
-            return fitWidth <= maxWidth
-        }
-
-        if let width = constraints.width, let maxHeight = constraints.maxHeight {
-            let fitHeight = width / aspectRatio
-            return fitHeight <= maxHeight
-        }
-
-        return false
+        return shouldShowMediaWhole(constraints: constraints, aspectRatio: aspectRatio)
     }
 
     @ViewBuilder
@@ -203,21 +188,7 @@ extension View {
     }
 
     private func shouldCenterInsideVideo(constraints: ViewConstraints, videoAspectRatio: CGFloat) -> Bool {
-        guard constraints.height == nil || constraints.width == nil else {
-            return false
-        }
-
-        if let height = constraints.height, let maxWidth = constraints.maxWidth {
-            let fitWidth = height * videoAspectRatio
-            return fitWidth <= maxWidth
-        }
-
-        if let width = constraints.width, let maxHeight = constraints.maxHeight {
-            let fitHeight = width / videoAspectRatio
-            return fitHeight <= maxHeight
-        }
-
-        return false
+        shouldShowMediaWhole(constraints: constraints, aspectRatio: videoAspectRatio)
     }
 
     @ViewBuilder
@@ -237,5 +208,45 @@ extension View {
     private func centerInsideVideo(constraints: ViewConstraints, videoAspectRatio: CGFloat ) -> some View {
         self.aspectRatio(videoAspectRatio, contentMode: .fit)
             .constraints(constraints)
+    }
+}
+
+/// Whether media of [aspectRatio] can be shown whole at the length it was given.
+///
+/// Cropping is what you do to fit media into a box. An auto axis isn't a box — it takes whatever the
+/// media turns out to be — so the only question is whether scaling to the axis that *was* given pushes
+/// the other one past its maximum. If it doesn't, the media fits, and cropping would throw away pixels
+/// for nothing.
+///
+/// A maximum that isn't there imposes no limit, so nothing can exceed it. Reading an absent one as a
+/// reason to crop is what left an auto-height image scaled to fill and clipped to whatever height its
+/// siblings happened to settle on, rather than to its own proportions.
+private func shouldShowMediaWhole(constraints: ViewConstraints, aspectRatio: CGFloat) -> Bool {
+    switch (constraints.width, constraints.height) {
+    case (nil, let height?):
+        guard let maxWidth = constraints.limit(on: .horizontal) else { return true }
+        return height * aspectRatio <= maxWidth
+    case (let width?, nil):
+        guard let maxHeight = constraints.limit(on: .vertical) else { return true }
+        return width / aspectRatio <= maxHeight
+    // Both given is a box, and the media is cropped into it. Neither leaves nothing to scale from,
+    // so whatever the crop path is proposed is as good an answer as any.
+    case (_?, _?), (nil, nil):
+        return false
+    }
+}
+
+private extension ViewConstraints {
+    /// The maximum on [axis], where there is one that actually limits anything.
+    ///
+    /// A maximum that isn't there imposes no limit, so nothing can exceed it. Neither does one an
+    /// auto-sized ancestor arrived at by measuring: that is its own children's extent handed back as
+    /// a ceiling, and the view now being measured against it is one of the children it was taken
+    /// from. Media sized from such a maximum is capped by whatever its siblings happened to settle
+    /// on — and it settles there, since the measurement that produced the cap then reproduces it.
+    func limit(on axis: Axis) -> CGFloat? {
+        let measured: Axis.Set = axis == .vertical ? .vertical : .horizontal
+        guard !self.measuredAxes.contains(measured) else { return nil }
+        return axis == .vertical ? self.maxHeight : self.maxWidth
     }
 }
