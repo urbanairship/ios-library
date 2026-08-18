@@ -204,7 +204,7 @@ private struct DefaultMessageCenterMessageContentView: View {
                 dismissAction: dismissAction
             )
             .opacity(self.opacity)
-            .airshipOnChangeOf(self.messageLoadingPhase.isLoaded) { isLoaded in
+            .airshipOnChangeOf(self.messageLoadingPhase.isLoaded, initial: true) { isLoaded in
                 guard isLoaded else { return }
                 self.opacity = 1.0
                 if Airship.isFlying {

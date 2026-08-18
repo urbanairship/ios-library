@@ -8,12 +8,10 @@ import Combine
 
 class ThomasViewController<Content> : UIHostingController<Content> where Content : View {
 
-    var options: ThomasViewControllerOptions
     var onDismiss: (() -> Void)?
     private var scrollViewsUpdated: Bool = false
 
-    init(rootView: Content, options: ThomasViewControllerOptions = ThomasViewControllerOptions()) {
-        self.options = options
+    override init(rootView: Content) {
         super.init(rootView: rootView)
         self.view.backgroundColor = .clear
     }
@@ -29,24 +27,16 @@ class ThomasViewController<Content> : UIHostingController<Content> where Content
     }
 
 #if !os(tvOS)
+    /// Just to be explicit about what we expect from these view controllers. Layouts never lock
+    /// orientation, so they rotate and resize with whatever the scene does.
+    ///
+    /// `lock_orientation` used to be honored here, but this mask reorients the whole *scene*, which
+    /// the Airship window shares with the host app, and the host's content does not necessarily
+    /// follow it -- leaving the app underneath visibly broken rather than merely rotated. iOS 27
+    /// reduces the mask to a preference it ignores in resizable environments anyway, leaving no
+    /// version of it worth keeping.
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        // iPad ignores supportedInterfaceOrientations unless UIRequiresFullScreen is set,
-        // so attempting to lock orientation there produces broken layouts. Allow free rotation.
-        guard let orientation = options.orientation,
-              UIDevice.current.userInterfaceIdiom != .pad else {
-            return .all
-        }
-
-        switch orientation {
-        case .portrait:
-            return .portrait
-        case .landscape:
-            return .landscape
-        }
-    }
-
-    override var shouldAutorotate: Bool {
-        return self.options.orientation == nil || UIDevice.current.userInterfaceIdiom == .pad
+        return .all
     }
 #endif
 
@@ -96,12 +86,11 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
     init(
         rootView: BannerView,
         position: ThomasEdgePosition,
-        options: ThomasViewControllerOptions,
         constraints: ThomasBannerConstraints
     ) {
         self.thomasBannerConstraints = constraints
         self.position = position
-        super.init(rootView: rootView, options: options)
+        super.init(rootView: rootView)
     }
 
     @objc required dynamic init?(coder aDecoder: NSCoder) {
@@ -223,8 +212,8 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
 
 class ThomasModalViewController : ThomasViewController<ModalView> {
 
-    override init(rootView: ModalView, options: ThomasViewControllerOptions) {
-        super.init(rootView: rootView, options: options)
+    override init(rootView: ModalView) {
+        super.init(rootView: rootView)
         self.modalPresentationStyle = .currentContext
     }
 
@@ -238,12 +227,10 @@ class ThomasModalViewController : ThomasViewController<ModalView> {
 @available(iOS 13.0.0, tvOS 13.0, *)
 class ThomasViewController<Content> : NSHostingController<Content> where Content : View {
 
-    var options: ThomasViewControllerOptions
     var onDismiss: (() -> Void)?
     private var scrollViewsUpdated: Bool = false
 
-    init(rootView: Content, options: ThomasViewControllerOptions = ThomasViewControllerOptions()) {
-        self.options = options
+    override init(rootView: Content) {
         super.init(rootView: rootView)
         self.view.layer?.backgroundColor = NSColor.clear.cgColor
     }
@@ -277,13 +264,12 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
 
     init(rootView: BannerView,
         position: ThomasEdgePosition,
-        options: ThomasViewControllerOptions,
         constraints: ThomasBannerConstraints
     ) {
         self.thomasBannerConstraints = constraints
 
         self.position = position
-        super.init(rootView: rootView, options: options)
+        super.init(rootView: rootView)
     }
 
     @objc required dynamic init?(coder aDecoder: NSCoder) {
@@ -352,8 +338,8 @@ class ThomasBannerViewController: ThomasViewController<BannerView> {
 
 class ThomasModalViewController : ThomasViewController<ModalView> {
 
-    override init(rootView: ModalView, options: ThomasViewControllerOptions) {
-        super.init(rootView: rootView, options: options)
+    override init(rootView: ModalView) {
+        super.init(rootView: rootView)
     }
 
     @objc required dynamic init?(coder aDecoder: NSCoder) {
@@ -364,10 +350,6 @@ class ThomasModalViewController : ThomasViewController<ModalView> {
 
 #endif
 
-class ThomasViewControllerOptions {
-    var orientation: ThomasOrientation?
-    var bannerPlacement: ThomasPresentationInfo.Banner.Placement?
-}
 
 @MainActor
 class ThomasBannerConstraints: ObservableObject {

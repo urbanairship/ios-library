@@ -31,12 +31,14 @@ struct LayoutsList: View {
                 ScrollView {
                     Text(self.errorMessage ?? "error")
                         .font(.system(.footnote, design: .monospaced))
+#if !os(tvOS)
                         .textSelection(.enabled)
+#endif
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding()
                 }
                 .navigationTitle("Error")
-#if !os(macOS)
+#if !(os(macOS) || os(tvOS))
                 .navigationBarTitleDisplayMode(.inline)
 #endif
                 .toolbar {
@@ -46,7 +48,7 @@ struct LayoutsList: View {
                             let pasteboard = NSPasteboard.general
                             pasteboard.declareTypes([.string], owner: nil)
                             pasteboard.setString(self.errorMessage ?? "", forType: .string)
-#else
+#elseif !os(tvOS)
                             UIPasteboard.general.string = self.errorMessage
 #endif
                         }

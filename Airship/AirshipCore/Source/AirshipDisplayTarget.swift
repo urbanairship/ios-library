@@ -46,10 +46,11 @@ public final class AirshipDisplayTarget {
 
     /// Information about the window where content will be displayed.
     ///
-    /// This struct provides metadata about the target window, such as its size,
-    /// which can be used to configure the view controller appropriately.
+    /// A snapshot taken at display time, used to configure the view controller before it has been
+    /// laid out. It is not kept up to date -- a window can be resized at any point after this, so
+    /// anything that has to stay correct must observe the window itself.
     public struct WindowInfo: Sendable {
-        /// The size of the window in points.
+        /// Size of the window in points, at the moment the content was displayed.
         public var size: CGSize
     }
 
@@ -513,9 +514,9 @@ class BannerDisplayable: AirshipDisplayTarget.Displayable {
 extension UIWindow {
     /// Returns window information suitable for use with `AirshipDisplayTarget`.
     ///
-    /// This property provides a `WindowInfo` struct containing metadata about
-    /// the window, such as its size. The size is calculated based on the platform:
-    /// - iOS/tvOS: Uses the screen bounds
+    /// This property provides a `WindowInfo` snapshot of the window, taken now and not tracked
+    /// thereafter. The size is calculated based on the platform:
+    /// - iOS/tvOS: Uses the space available to the window's scene
     /// - visionOS: Uses a standard window size (1280x720) per Apple's guidelines
     /// - watchOS: Uses the device's screen bounds
     var airshipInfo: AirshipDisplayTarget.WindowInfo {
@@ -532,7 +533,13 @@ extension UIWindow {
     @MainActor
     private class func windowSize(_ window: UIWindow) -> CGSize {
         #if os(iOS) || os(tvOS)
-        return window.screen.bounds.size
+        // The scene may only own part of the screen, and from iOS 27 on the user can reshape it
+        // at will, so screen bounds would overstate how much room we have to lay out in.
+        if !window.bounds.isEmpty {
+            return window.bounds.size
+        }
+
+        return window.windowScene?.airshipAvailableSpace ?? window.screen.bounds.size
         #elseif os(visionOS)
         // https://developer.apple.com/design/human-interface-guidelines/windows#visionOS
         return CGSize(

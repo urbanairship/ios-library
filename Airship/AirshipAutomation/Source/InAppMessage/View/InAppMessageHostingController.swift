@@ -56,13 +56,10 @@ class InAppMessageHostingController<Content> : AirshipNativeHostingController<Co
 
 
 #if !os(tvOS) && !os(macOS)
-    /// Just to be explicit about what we expect from these hosting controllers
+    /// Just to be explicit about what we expect from these hosting controllers. In-app messages
+    /// never lock orientation, so they rotate and resize with whatever the scene does.
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .all
-    }
-
-    override var shouldAutorotate: Bool {
-        return true
     }
 #endif
 }
@@ -154,6 +151,11 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
         super.viewWillDisappear(animated)
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        self.bannerConstraints.updateWindowSize(self.view.window?.bounds.size)
+    }
+
     func createBannerConstraints() {
         self.view.translatesAutoresizingMaskIntoConstraints = false
         if let window = self.view.window {
@@ -195,7 +197,20 @@ class InAppMessageBannerConstraints: ObservableObject {
     @Published
     var size: CGSize
 
+    /// Space available to the banner's window. The banner cannot measure this itself -- its
+    /// own width is what drives the hosting controller's width constraint -- so it has to be
+    /// supplied from outside and refreshed when the window is resized.
+    @Published
+    private(set) var windowSize: CGSize
+
     init(size: CGSize) {
         self.size = size
+        self.windowSize = size
+    }
+
+    func updateWindowSize(_ size: CGSize?) {
+        if let size, self.windowSize != size {
+            self.windowSize = size
+        }
     }
 }

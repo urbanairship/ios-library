@@ -57,7 +57,6 @@ public final class Thomas {
     ) throws -> any AirshipMainActorCancellable {
         let displayable = displayTarget.prepareDisplay(for: .banner)
 
-        let options = ThomasViewControllerOptions()
         let environment = ThomasEnvironment(
             delegate: delegate,
             extensions: extensions
@@ -69,11 +68,10 @@ public final class Thomas {
             )
 
             let rootView = BannerView(
-                viewControllerOptions: options,
                 presentation: presentation,
                 layout: layout,
                 thomasEnvironment: environment,
-                bannerConstraints: bannerConstraints,
+                bannerConstraints: bannerConstraints
             ) {
                 displayable.dismiss()
             }
@@ -81,7 +79,6 @@ public final class Thomas {
             return ThomasBannerViewController(
                 rootView: rootView,
                 position: presentation.defaultPlacement.position,
-                options: options,
                 constraints: bannerConstraints
             )
         }
@@ -101,28 +98,22 @@ public final class Thomas {
     ) throws -> any AirshipMainActorCancellable {
         let displayable = displayTarget.prepareDisplay(for: .modal, windowAnimated: false)
 
-        let options = ThomasViewControllerOptions()
-        options.orientation = presentation.defaultPlacement.device?.orientationLock
-
         let environment = ThomasEnvironment(
             delegate: delegate,
             extensions: extensions
         )
 
-        let rootView = ModalView(
-            presentation: presentation,
-            layout: layout,
-            thomasEnvironment: environment,
-            viewControllerOptions: options
-        ) {
-            displayable.dismiss()
-        }
+        try displayable.display { windowInfo in
+            let rootView = ModalView(
+                presentation: presentation,
+                layout: layout,
+                thomasEnvironment: environment,
+                initialWindowSize: windowInfo.size
+            ) {
+                displayable.dismiss()
+            }
 
-        try displayable.display { window in
-            return ThomasModalViewController(
-                rootView: rootView,
-                options: options
-            )
+            return ThomasModalViewController(rootView: rootView)
         }
 
         return AirshipMainActorCancellableBlock { [weak environment] in

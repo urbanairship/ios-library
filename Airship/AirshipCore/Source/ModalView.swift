@@ -11,9 +11,9 @@ struct ModalView: View {
     let layout: AirshipLayout
     @ObservedObject
     var thomasEnvironment: ThomasEnvironment
-    #if !os(watchOS)
-    let viewControllerOptions: ThomasViewControllerOptions
-    #endif
+
+    /// Window size at display time, so the first frame resolves against the real window.
+    let initialWindowSize: CGSize
 
     let onDismiss: () -> Void
 
@@ -28,7 +28,8 @@ struct ModalView: View {
         GeometryReader { metrics in
             RootView(
                 thomasEnvironment: thomasEnvironment,
-                layout: layout
+                layout: layout,
+                initialWindowSize: initialWindowSize
             ) { orientation, windowSize in
                 let placement = resolvePlacement(
                     orientation: orientation,
@@ -198,12 +199,10 @@ struct ModalView: View {
     ) -> ThomasPresentationInfo.Modal.Placement {
         var placement = self.presentation.defaultPlacement
 
-        #if !os(watchOS)
-        let resolvedOrientation =
-            viewControllerOptions.orientation ?? orientation
-        #else
+        // Resolve against the orientation we are actually in. `lock_orientation` used to override
+        // this, which only held together while it also rotated the scene to match -- without that
+        // it dresses a landscape window in a layout designed for portrait.
         let resolvedOrientation = orientation
-        #endif
 
         for placementSelector in self.presentation.placementSelectors ?? [] {
             if placementSelector.windowSize != nil
@@ -223,10 +222,6 @@ struct ModalView: View {
             break
         }
 
-        #if !os(watchOS)
-        self.viewControllerOptions.orientation =
-            placement.device?.orientationLock
-        #endif
         return placement
     }
 

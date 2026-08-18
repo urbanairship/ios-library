@@ -3,10 +3,6 @@
 import Foundation
 import SwiftUI
 
-private struct OrientationKey: EnvironmentKey {
-    static let defaultValue: ThomasOrientation? = nil
-}
-
 private struct WindowSizeKey: EnvironmentKey {
     static let defaultValue: ThomasWindowSize? = nil
 }
@@ -40,11 +36,6 @@ private struct PagerTapExclusionSpaceKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-    var orientation: ThomasOrientation? {
-        get { self[OrientationKey.self] }
-        set { self[OrientationKey.self] = newValue }
-    }
-
     var windowSize: ThomasWindowSize? {
         get { self[WindowSizeKey.self] }
         set { self[WindowSizeKey.self] = newValue }
