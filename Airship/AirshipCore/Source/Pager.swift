@@ -53,6 +53,11 @@ struct Pager: View {
     @State private var scrollPosition: String?
     @State private var pageHeights: [String: CGFloat] = [:]
     @State private var gestureExclusionFrames: [CGRect] = []
+    @State private var widthResyncTask: Task<Void, Never>?
+    @State private var lastWidthResyncDate: Date?
+    @State private var isInitialWidthSync: Bool = true
+    private static let widthResyncInterval: TimeInterval = 0.15
+    private static let initialWidthResyncDelay: TimeInterval = 0.03
     private let timer: Publishers.Autoconnect<Timer.TimerPublisher>
 
     /// Per-pager coordinate space that interactive children report their frames into so region
@@ -282,6 +287,70 @@ struct Pager: View {
             .task(id: resolvedPagerID) {
                 proxy.scrollTo(scrollPosition)
             }
+            .airshipOnChangeOf(width, initial: true) { _ in
+                // The scroll view's content offset is stored in absolute points and doesn't
+                // re-derive itself from the new page width as the container resizes (e.g. a
+                // live macOS window drag), so the offset drifts between pages. `initial: true`
+                // also runs this on first appearance: on macOS the ScrollView's lazy content can
+                // still be settling its real page frames when the one-shot `.task` above fires
+                // its first `scrollTo`, and nothing else re-corrects that afterward.
+                let isInitial = isInitialWidthSync
+                isInitialWidthSync = false
+                scheduleResync(isInitial: isInitial, proxy: proxy)
+            }
+            .airshipOnChangeOf(isVisible) { visible in
+                guard visible else { return }
+                // Re-appearing (e.g. a Message Center split/stack swap) can find the lazy
+                // ScrollView's content still settling, same as a true first appearance, so take
+                // the fast settle-correction path again. Handled here rather than by touching
+                // isInitialWidthSync: that flag is only consulted the next time width actually
+                // changes, which reappearance alone doesn't trigger, so setting it wouldn't
+                // schedule anything -- this calls the correction directly instead.
+                scheduleResync(isInitial: true, proxy: proxy)
+            }
+        }
+    }
+
+    /// Corrects the scroll offset, either right away, after a short settle delay, or both.
+    ///
+    /// Correcting on every single tick isn't safe -- scrollTo's underlying offset change is
+    /// itself asynchronous, so a fast burst can race the previous correction. Throttle instead:
+    /// fire right away if it's been a while since the last correction (bounds how far a long
+    /// resize can drift), and always schedule a trailing correction too, so the last tick in a
+    /// burst still gets one final correction once things settle.
+    ///
+    /// `isInitial` skips that throttle for a settle-correction that isn't part of a resize burst
+    /// (first appearance, or reappearance finding lazy content still settling) -- it doesn't need
+    /// to wait out the full resize-throttle window, just long enough for the layout pass to land,
+    /// which is much sooner.
+    @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+    private func scheduleResync(isInitial: Bool, proxy: ScrollViewProxy) {
+        let delay = isInitial ? Self.initialWidthResyncDelay : Self.widthResyncInterval
+
+        widthResyncTask?.cancel()
+
+        let now = Date()
+        if isInitial || (lastWidthResyncDate.map({ now.timeIntervalSince($0) >= Self.widthResyncInterval }) ?? true) {
+            resyncScrollPosition(proxy)
+        }
+
+        widthResyncTask = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(delay))
+            guard !Task.isCancelled else { return }
+            resyncScrollPosition(proxy)
+        }
+    }
+
+    @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+    private func resyncScrollPosition(_ proxy: ScrollViewProxy) {
+        lastWidthResyncDate = Date()
+
+        // No animation -- animating here would sweep through intermediate pages and fire
+        // spurious navigateToPage calls, same as the nil-scrollPosition case in `body`.
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            proxy.scrollTo(scrollPosition)
         }
     }
 
@@ -370,6 +439,9 @@ struct Pager: View {
                 }
             }
             .onAppear(perform: attachToPagerState)
+            .onDisappear {
+                widthResyncTask?.cancel()
+            }
             .airshipOnChangeOf(pagerState.completed) { completed in
                 guard completed else { return }
                 reportCompleted()
