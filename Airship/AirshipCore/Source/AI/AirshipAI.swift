@@ -172,19 +172,19 @@ public enum AirshipAI {
     ///
     /// Returned from the `setModelResolver` closure to route a usage to the appropriate backend.
     public enum ModelSelector: Sendable {
-        /// Use the SDK's built-in model — the on-device system model when `AirshipAIModels` is
+        /// Use the SDK's built-in model — the on-device system model when `AirshipFoundationModels` is
         /// linked and the device is eligible, otherwise no model.
         case defaultModel
-        /// Use a custom model. `AirshipAIModels` ships `AirshipFoundationModel` for anything
+        /// Use a custom model. `AirshipFoundationModels` ships `AirshipFoundationModel` for anything
         /// conforming to Foundation Models' `LanguageModel`, including Apple's Private Cloud
-        /// Compute; implement `AirshipAI.Model` directly to wrap anything else — your own
+        /// Compute; implement `AirshipAI.ModelProtocol` directly to wrap anything else — your own
         /// backend, a third-party inference API, or another on-device runtime.
-        case custom(any Model)
+        case custom(any ModelProtocol)
     }
 
     // MARK: - Request
 
-    /// A single request handed to a `Model`.
+    /// A single request handed to a `ModelProtocol`.
     ///
     /// Bundles the instructions, output schema, and prioritized context, and knows how to
     /// render itself into prompt text (`prompt()`). Context labeling and layout are owned by
@@ -192,7 +192,7 @@ public enum AirshipAI {
     /// if its input window is tight, trims.
     ///
     /// A model doesn't construct these — the framework builds one per evaluation and hands it
-    /// to `Model.respond(_:)`.
+    /// to `ModelProtocol.respond(_:)`.
     public struct Request: Sendable {
 
         /// The system instructions (the model's role and rules).
@@ -247,8 +247,8 @@ public enum AirshipAI {
     /// which have defaults.
     ///
     /// No FoundationModels types appear here — that framework is confined to the
-    /// `AirshipAIModels` module.
-    public protocol Model: Sendable {
+    /// `AirshipFoundationModels` module.
+    public protocol ModelProtocol: Sendable {
 
         /// Whether the model can be used right now, and if not, why.
         ///
@@ -363,7 +363,7 @@ public enum AirshipAI {
         func setModelResolver(_ resolver: (@MainActor @Sendable (_ usage: AnyUsage) -> ModelSelector)?)
 
         /// The SDK's built-in default model, or nil when none is registered
-        /// (e.g. `AirshipAIModels` is not linked or the device is ineligible).
+        /// (e.g. `AirshipFoundationModels` is not linked or the device is ineligible).
         ///
         /// Use this inside a `setModelResolver` closure to make a conditional override — for
         /// example, falling back to a private-compute model only when the on-device model is
@@ -376,7 +376,7 @@ public enum AirshipAI {
         ///         return .custom(myFallbackModel)
         ///     }
         @MainActor
-        var defaultModel: (any Model)? { get }
+        var defaultModel: (any ModelProtocol)? { get }
 
         /// Returns the model currently resolved for `usage`, or nil when no model is
         /// configured or available (none registered, below OS minimum, etc.).
@@ -389,7 +389,7 @@ public enum AirshipAI {
         ///
         /// The per-usage resolver (set via `setModelResolver`) wins over the SDK default.
         @MainActor
-        func model<S: Sendable>(for usage: Usage<S>) -> (any Model)?
+        func model<S: Sendable>(for usage: Usage<S>) -> (any ModelProtocol)?
     }
 
     // MARK: - Evaluation protocol (SPI)
@@ -458,11 +458,11 @@ public enum AirshipAI {
         /// Use `evaluate(_:)` (no additional context) for the common case.
         func evaluate<E: Evaluation>(_ evaluation: E, additionalContext: Context) async -> Result<E.Output>
 
-        /// Called by `AirshipAIModelsSDKModule` to wire in the on-device model as the
+        /// Called by `AirshipFoundationModelsSDKModule` to wire in the on-device model as the
         /// default. Replaces the current model immediately.
         @MainActor
         func registerModelFactory(
-            _ factory: @MainActor @Sendable @escaping () -> any Model
+            _ factory: @MainActor @Sendable @escaping () -> any ModelProtocol
         )
 
         /// Fetches the registered provider's context for the given usage and subject —
@@ -470,6 +470,15 @@ public enum AirshipAI {
         /// Returns `.empty` when neither is registered. Does not include the
         /// `additionalContext` an evaluation may append.
         func fetchContext<S: Sendable>(for usage: Usage<S>, subject: S) async -> Context
+
+        /// Same resolution as `model(for:)`, but wraps the result so its `availability`/
+        /// `availabilityUpdates` also reflect `AirshipFeature.onDeviceAI` — for a caller that
+        /// resolves once and holds onto the result for a long lifetime (e.g. a scene's AI
+        /// executor) and needs it to stay in sync with privacy manager changes, rather than
+        /// re-resolving on every check. `model(for:)` itself is untouched, so callers that need
+        /// the exact registered instance (identity/type checks) keep getting it.
+        @MainActor
+        func gatedModel<S: Sendable>(for usage: Usage<S>) -> (any ModelProtocol)?
     }
 }
 
@@ -481,7 +490,7 @@ extension AirshipAI.Evaluation {
     public var requiresContext: Bool { false }
 }
 
-extension AirshipAI.Model {
+extension AirshipAI.ModelProtocol {
     /// Assumes the model can be used. Correct for a backend that has no readiness
     /// state of its own — a failure surfaces from `respond(_:)` instead. Models
     /// that can genuinely be unusable override this.

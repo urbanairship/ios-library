@@ -45,6 +45,11 @@ struct AirshipDebugPrivacyManagerView: View {
                 "Feature Flags",
                 self.$viewModel.featureFlagEnabled
             )
+
+            makeFeatureToggle(
+                "On-device AI",
+                self.$viewModel.onDeviceAIEnabled
+            )
         }
         .navigationTitle("Privacy Manager".localized())
     }
@@ -70,6 +75,13 @@ struct AirshipDebugPrivacyManagerView: View {
         public var featureFlagEnabled: Bool {
             didSet {
                 update(.featureFlags, enable: self.featureFlagEnabled)
+            }
+        }
+
+        @Published
+        public var onDeviceAIEnabled: Bool {
+            didSet {
+                update(.onDeviceAI, enable: self.onDeviceAIEnabled)
             }
         }
 
@@ -117,6 +129,7 @@ struct AirshipDebugPrivacyManagerView: View {
                 self.tagsAndAttributesEnabled = privacyManager.isEnabled(
                     .tagsAndAttributes)
                 self.featureFlagEnabled = privacyManager.isEnabled(.featureFlags)
+                self.onDeviceAIEnabled = privacyManager.isEnabled(.onDeviceAI)
             } else {
                 self.iaaEnabled = false
                 self.messageCenterEnabled = false
@@ -125,6 +138,7 @@ struct AirshipDebugPrivacyManagerView: View {
                 self.contactsEnabled = false
                 self.tagsAndAttributesEnabled = false
                 self.featureFlagEnabled = false
+                self.onDeviceAIEnabled = false
             }
         }
 

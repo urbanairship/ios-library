@@ -8,7 +8,7 @@ import Observation
 ///
 /// FoundationModels' model types are `@Observable`, so this is how availability changes
 /// (a model finishing its download, Apple Intelligence being toggled in Settings, Private
-/// Cloud Compute becoming reachable) reach `AirshipAI.Model.availabilityUpdates`.
+/// Cloud Compute becoming reachable) reach `AirshipAI.ModelProtocol.availabilityUpdates`.
 @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, visionOS 1.0, *)
 enum AvailabilityObservation {
 

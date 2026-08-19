@@ -40,7 +40,7 @@ The Airship SDK for Apple provides a comprehensive way to integrate Airship's cu
 
 <sup>1</sup> tvOS In-App Experiences: Scenes, Banners, and non-HTML In-App Automations are supported. However, scheduled In-App Experiences will no longer display if the app’s cache is wiped due to tvOS storage limitations.
 <sup>2</sup> tvOS Message Center: Supports Native Message Center.
-<sup>3</sup> tvOS On-Device AI: requires a custom model. The AI framework lives in `AirshipCore` and works on every platform and deployment target, but the built-in model ships in the optional `AirshipAIModels` module on top of Apple's Foundation Models, which is unavailable on tvOS. The same applies on iOS and visionOS below 26 — supply your own model to serve devices the built-in one can't.
+<sup>3</sup> tvOS On-Device AI: requires a custom model. The AI framework lives in `AirshipCore` and works on every platform and deployment target, but the built-in model ships in the optional `AirshipFoundationModels` module on top of Apple's Foundation Models, which is unavailable on tvOS. The same applies on iOS and visionOS below 26 — supply your own model to serve devices the built-in one can't.
 
 ## Installation
 
@@ -58,7 +58,7 @@ In Xcode, add the following products to your target dependencies:
 - `AirshipPreferenceCenter` (for Preference Center)
 - `AirshipAutomation` (for In-App Experiences, including Scenes, In-App Automation, and Landing Pages)
 - `AirshipFeatureFlags` (for Feature Flags)
-- `AirshipAIModels` (optional, for the built-in on-device AI model)
+- `AirshipFoundationModels` (optional, for the built-in on-device AI model)
 - `AirshipNotificationServiceExtension` (for rich push notifications)
 - `AirshipObjectiveC` (for Objective-C compatibility)
 - `AirshipDebug` (for debugging tools)

@@ -20,6 +20,10 @@ public protocol AirshipPrivacyManager: AnyObject, Sendable {
     /// The current set of enabled features.
     var enabledFeatures: AirshipFeature { get set }
 
+    /// A stream of `enabledFeatures` changes — starts with the current value and emits on
+    /// every subsequent change, including ones driven by remote config.
+    var updates: AsyncStream<AirshipFeature> { get }
+
     /// Enables features.
     /// This will append any features to the `enabledFeatures` property.
     /// - Parameter features: The features to enable.
@@ -68,6 +72,7 @@ final class DefaultAirshipPrivacyManager: InternalAirshipPrivacyManager {
     private let lock: AirshipLock = AirshipLock()
 
     private let lastUpdated: AirshipAtomicValue<AirshipFeature> = AirshipAtomicValue([])
+    private let updateContinuations: AirshipAtomicValue<[UUID: AsyncStream<AirshipFeature>.Continuation]> = AirshipAtomicValue([:])
 
     private var localEnabledFeatures: AirshipFeature {
         get {
@@ -95,6 +100,17 @@ final class DefaultAirshipPrivacyManager: InternalAirshipPrivacyManager {
             lock.sync {
                 self.localEnabledFeatures = newValue
                 notifyUpdateLocked()
+            }
+        }
+    }
+
+    public var updates: AsyncStream<AirshipFeature> {
+        let id = UUID()
+        return AsyncStream { continuation in
+            updateContinuations.update { $0[id] = continuation }
+            continuation.yield(self.enabledFeatures)
+            continuation.onTermination = { [updateContinuations] _ in
+                updateContinuations.update { $0.removeValue(forKey: id) }
             }
         }
     }
@@ -208,6 +224,9 @@ final class DefaultAirshipPrivacyManager: InternalAirshipPrivacyManager {
         self.notificationCenter.postOnMain(
             name: AirshipNotifications.PrivacyManagerUpdated.name
         )
+        for continuation in updateContinuations.value.values {
+            continuation.yield(enabledFeatures)
+        }
     }
 }
 
@@ -239,6 +258,9 @@ public struct AirshipFeature: OptionSet, Sendable, CustomStringConvertible {
     /// Feature flags
     public static let featureFlags: AirshipFeature = AirshipFeature(rawValue: 1 << 8)
 
+    /// On-device AI (`Airship.ai`)
+    public static let onDeviceAI: AirshipFeature = AirshipFeature(rawValue: 1 << 9)
+
     /// All features
     public static let all: AirshipFeature = [
         inAppAutomation,
@@ -247,7 +269,8 @@ public struct AirshipFeature: OptionSet, Sendable, CustomStringConvertible {
         analytics,
         tagsAndAttributes,
         contacts,
-        featureFlags
+        featureFlags,
+        onDeviceAI
     ]
 
     public init(rawValue: UInt) {
@@ -277,6 +300,9 @@ public struct AirshipFeature: OptionSet, Sendable, CustomStringConvertible {
         if self.contains(.featureFlags) {
             descriptions.append("Feature flags")
         }
+        if self.contains(.onDeviceAI) {
+            descriptions.append("On-device AI")
+        }
 
         // add prefix indicating that these are enabled features
         return "Enabled features: " + descriptions.joined(separator: ", ")
@@ -292,6 +318,7 @@ extension AirshipFeature: Codable {
         "tags_and_attributes": .tagsAndAttributes,
         "in_app_automation": .inAppAutomation,
         "feature_flags": .featureFlags,
+        "on_device_ai": .onDeviceAI,
         "all": .all,
         "none": []
     ]

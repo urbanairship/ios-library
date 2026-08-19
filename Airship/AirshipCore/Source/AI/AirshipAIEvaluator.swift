@@ -8,7 +8,7 @@ extension AirshipAI {
 
         func evaluate<E: Evaluation>(
             _ evaluation: E,
-            model: any Model,
+            model: any ModelProtocol,
             context: Context
         ) async -> Result<E.Output> {
             guard case .available = model.availability else {

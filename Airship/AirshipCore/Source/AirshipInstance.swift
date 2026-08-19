@@ -78,9 +78,6 @@ final class DefaultAirshipInstance: AirshipInstance {
             appSecret: appCredentials.appSecret
         )
 
-        let internalAIManager = AirshipAI.DefaultManager()
-        self.ai = internalAIManager
-        
         let dataStore = PreferenceDataStore(appKey: appCredentials.appKey)
         self.preferenceDataStore = dataStore
         self.permissionsManager = DefaultAirshipPermissionsManager()
@@ -100,7 +97,10 @@ final class DefaultAirshipInstance: AirshipInstance {
             config: self.config,
             defaultEnabledFeatures: airshipConfig.enabledFeatures
         )
-        
+
+        let internalAIManager = AirshipAI.DefaultManager(privacyManager: self.privacyManager)
+        self.ai = internalAIManager
+
         self.actionRegistry = DefaultAirshipActionRegistry()
         self.urlAllowList = DefaultAirshipURLAllowList(airshipConfig: airshipConfig)
         self.localeManager = DefaultAirshipLocaleManager(

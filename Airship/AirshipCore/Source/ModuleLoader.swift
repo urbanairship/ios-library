@@ -32,7 +32,7 @@ fileprivate enum SDKModuleNames: String, CaseIterable {
     case debug = "UADebugSDKModule"
     case featureFlags = "UAFeatureFlagsSDKModule"
     case automation = "UAAutomationSDKModule"
-    case aiModels = "UAAIModelsSDKModule"
+    case foundationModels = "UAFoundationModelsSDKModule"
 }
 
 final class ModuleLoader {

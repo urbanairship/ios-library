@@ -50,7 +50,7 @@ extension AirshipJSONSchema {
         @unknown default:
             // A value type added in a newer Core than this module — should not happen in
             // practice; degrade to string.
-            AirshipLogger.warn("AirshipAIModels: unknown AirshipJSONSchema.ValueType, degrading to a string schema")
+            AirshipLogger.warn("AirshipFoundationModels: unknown AirshipJSONSchema.ValueType, degrading to a string schema")
             return DynamicGenerationSchema(type: String.self)
         }
     }

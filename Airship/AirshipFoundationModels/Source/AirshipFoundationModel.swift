@@ -9,7 +9,7 @@ public import Foundation
 #if canImport(FoundationModels) && !os(tvOS)
 public import FoundationModels
 
-/// An `AirshipAI.Model` backed by a Foundation Models `LanguageModel`.
+/// An `AirshipAI.ModelProtocol` backed by a Foundation Models `LanguageModel`.
 ///
 /// Build one with ``backed(by:reasoningLevel:maxAttempts:responseTimeout:availability:)`` to
 /// wrap any `LanguageModel` — Apple's on-device `SystemLanguageModel` or your own conformance
@@ -30,7 +30,7 @@ public import FoundationModels
 @available(iOS 27.0, macOS 27.0, visionOS 27.0, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
-public struct AirshipFoundationModel<Backing: LanguageModel>: AirshipAI.Model {
+public struct AirshipFoundationModel<Backing: LanguageModel>: AirshipAI.ModelProtocol {
 
     /// The Foundation Models model that answers requests.
     public let model: Backing
@@ -116,7 +116,7 @@ public struct AirshipFoundationModel<Backing: LanguageModel>: AirshipAI.Model {
                 responseTimeout: responseTimeout,
                 availabilityProvider: { .available },
                 // Nothing to observe, so emit once and finish — the same contract as
-                // `AirshipAI.Model`'s default implementation.
+                // `AirshipAI.ModelProtocol`'s default implementation.
                 availabilityStreamProvider: {
                     AsyncStream { continuation in
                         continuation.yield(.available)
@@ -196,7 +196,7 @@ public struct AirshipFoundationModel<Backing: LanguageModel>: AirshipAI.Model {
 @available(watchOS, unavailable)
 extension AirshipFoundationModel where Backing == PrivateCloudComputeLanguageModel {
 
-    /// An `AirshipAI.Model` backed by Apple's Private Cloud Compute model.
+    /// An `AirshipAI.ModelProtocol` backed by Apple's Private Cloud Compute model.
     ///
     /// A larger model than the on-device one, so it handles harder judgments, at the cost of
     /// a network round trip and a per-app quota. Prompts and context leave the device — they

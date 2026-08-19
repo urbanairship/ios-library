@@ -3,13 +3,13 @@
 import AirshipCore
 import Foundation
 
-/// Example `AirshipAI.Model` that routes on-device AI evaluations to Anthropic's Claude API.
+/// Example `AirshipAI.ModelProtocol` that routes on-device AI evaluations to Anthropic's Claude API.
 ///
 /// - Note: This is an example - do not ship an API key embedded in a real app. Proxy the
 ///   request through your own backend instead. Reads its key from the `ANTHROPIC_API_KEY`
 ///   environment variable (Scheme > Run > Arguments > Environment Variables) so it never
 ///   gets committed.
-struct ClaudeAIModel: AirshipAI.Model {
+struct ClaudeAIModel: AirshipAI.ModelProtocol {
     let apiKey: String
 
     // availability, availabilityUpdates, maxAttempts and responseTimeout all have

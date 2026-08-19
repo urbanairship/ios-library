@@ -8,12 +8,12 @@ import Foundation
 
 import FoundationModels
 
-/// Production `AirshipAI.Model` backed by Apple's on-device `SystemLanguageModel`.
+/// Production `AirshipAI.ModelProtocol` backed by Apple's on-device `SystemLanguageModel`.
 ///
 /// Answers a single request per `respond` call — retry, timeout, and output
 /// validation live in the framework's evaluator.
 @available(iOS 26.0, macOS 26.0, visionOS 26.0, *)
-final class DefaultOnDeviceModel: AirshipAI.Model {
+final class DefaultOnDeviceModel: AirshipAI.ModelProtocol {
 
     var availability: AirshipAI.Availability {
         Self.map(SystemLanguageModel.default.availability)

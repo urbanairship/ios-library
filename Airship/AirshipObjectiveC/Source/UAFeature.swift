@@ -53,6 +53,12 @@ public final class UAFeature: NSObject, OptionSet, Sendable {
         return UAFeature(rawValue: AirshipFeature.featureFlags.rawValue)
     }
 
+    /// Bindings for `AirshipFeature.onDeviceAI`
+    @objc
+    public static func onDeviceAI() -> UAFeature {
+        return UAFeature(rawValue: AirshipFeature.onDeviceAI.rawValue)
+    }
+
     /// All features
     @objc
     public static func all() -> UAFeature {

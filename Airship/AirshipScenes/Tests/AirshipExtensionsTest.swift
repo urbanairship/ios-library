@@ -236,13 +236,14 @@ private final class MockEmbeddedAIManager: AirshipAI.InternalManager, @unchecked
     var evaluateResult: AirshipAI.Result<EmbeddedSelectionEvaluation.Output> = .skipped(reason: "test")
     private(set) var evaluateCallCount = 0
 
-    var defaultModel: (any AirshipAI.Model)? { nil }
-    func model<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.Model)? { nil }
+    var defaultModel: (any AirshipAI.ModelProtocol)? { nil }
+    func model<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.ModelProtocol)? { nil }
     func setContextProvider<S: Sendable>(for usage: AirshipAI.Usage<S>, _ provider: AirshipAI.ContextProvider<S>?) {}
     func setDefaultContextProvider(_ provider: (@Sendable () async -> AirshipAI.Context)?) {}
     func setModelResolver(_ resolver: (@MainActor @Sendable (AirshipAI.AnyUsage) -> AirshipAI.ModelSelector)?) {}
-    func registerModelFactory(_ factory: @MainActor @Sendable @escaping () -> any AirshipAI.Model) {}
+    func registerModelFactory(_ factory: @MainActor @Sendable @escaping () -> any AirshipAI.ModelProtocol) {}
     func fetchContext<S: Sendable>(for usage: AirshipAI.Usage<S>, subject: S) async -> AirshipAI.Context { .empty }
+    func gatedModel<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.ModelProtocol)? { nil }
     func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E, additionalContext: AirshipAI.Context) async -> AirshipAI.Result<E.Output> {
         evaluateCallCount += 1
         return (evaluateResult as? AirshipAI.Result<E.Output>) ?? .skipped(reason: "test: unexpected type")

@@ -19,6 +19,7 @@ final class TestPrivacyManager: InternalAirshipPrivacyManager, @unchecked Sendab
 
     private let lock: AirshipLock = AirshipLock()
     private var lastUpdated: AirshipFeature = []
+    private var updateContinuations: [UUID: AsyncStream<AirshipFeature>.Continuation] = [:]
 
     private var _enabledFeatures: AirshipFeature = []
 
@@ -67,6 +68,17 @@ final class TestPrivacyManager: InternalAirshipPrivacyManager, @unchecked Sendab
         }
     }
 
+    public var updates: AsyncStream<AirshipFeature> {
+        let id = UUID()
+        return AsyncStream { continuation in
+            lock.sync { updateContinuations[id] = continuation }
+            continuation.yield(self.enabledFeatures)
+            continuation.onTermination = { [weak self] _ in
+                self?.lock.sync { self?.updateContinuations.removeValue(forKey: id) }
+            }
+        }
+    }
+
     func enableFeatures(_ features: AirshipFeature) {
         self.enabledFeatures.insert(features)
     }
@@ -104,5 +116,8 @@ final class TestPrivacyManager: InternalAirshipPrivacyManager, @unchecked Sendab
         self.notificationCenter.postOnMain(
             name: AirshipNotifications.PrivacyManagerUpdated.name
         )
+        for continuation in updateContinuations.values {
+            continuation.yield(enabledFeatures)
+        }
     }
 }

@@ -41,13 +41,13 @@ public struct DefaultSceneAIExecutor: SceneAIExecutor {
 
     private let aiManager: any AirshipAI.InternalManager
     private let usage: AirshipAI.Usage<AirshipAI.TextInputInference.Subject>
-    private let resolvedModel: (any AirshipAI.Model)?
+    private let resolvedModel: (any AirshipAI.ModelProtocol)?
 
     @MainActor
     public init(aiManager: any AirshipAI.InternalManager) {
         self.aiManager = aiManager
         self.usage = AirshipAI.TextInputInference.usage
-        self.resolvedModel = aiManager.model(for: AirshipAI.TextInputInference.usage)
+        self.resolvedModel = aiManager.gatedModel(for: AirshipAI.TextInputInference.usage)
     }
 
     public var isAvailable: Bool {

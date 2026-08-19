@@ -3,12 +3,12 @@
 public import Foundation
 @_spi(AirshipInternal) public import AirshipCore
 
-/// AirshipAIModels module loader. Registers the default on-device model with
+/// AirshipFoundationModels module loader. Registers the default on-device model with
 /// the Core AI manager when the module is linked.
 /// - Note: For internal use only. :nodoc:
-@objc(UAAIModelsSDKModule)
+@objc(UAFoundationModelsSDKModule)
 @_spi(AirshipInternal)
-public final class AirshipAIModelsSDKModule: NSObject, AirshipSDKModule {
+public final class AirshipFoundationModelsSDKModule: NSObject, AirshipSDKModule {
 
     public let actionsManifest: (any ActionsManifest)? = nil
     public let components: [any AirshipComponent] = []
@@ -24,6 +24,6 @@ public final class AirshipAIModelsSDKModule: NSObject, AirshipSDKModule {
             }
         }
 #endif
-        return AirshipAIModelsSDKModule()
+        return AirshipFoundationModelsSDKModule()
     }
 }

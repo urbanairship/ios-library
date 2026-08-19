@@ -12,6 +12,18 @@ private extension AirshipAI.Usage where Subject == Void {
     static let testUsage = AirshipAI.Usage<Void>(rawValue: "test_usage")
 }
 
+/// A `DefaultManager` with AI enabled by default — the gate itself is covered separately
+/// in `AirshipAIPrivacyManagerTests`.
+private func makeManager(enabledFeatures: AirshipFeature = .all) -> AirshipAI.DefaultManager {
+    AirshipAI.DefaultManager(
+        privacyManager: TestPrivacyManager(
+            dataStore: PreferenceDataStore(appKey: UUID().uuidString),
+            config: RuntimeConfig.testConfig(),
+            defaultEnabledFeatures: enabledFeatures
+        )
+    )
+}
+
 // MARK: - Value types
 
 struct AirshipAIValueTests {
@@ -413,7 +425,7 @@ struct AirshipAIContextProviderTests {
 
     @Test
     func setContextProviderRegistersResolvesAndClears() throws {
-        let manager = AirshipAI.DefaultManager()
+        let manager = makeManager()
         defer { manager.setContextProvider(for: .testUsage, nil) }
 
         manager.setContextProvider(for: .testUsage) { .empty }
@@ -425,7 +437,7 @@ struct AirshipAIContextProviderTests {
 
 /// Reusable stub model. Records what it was asked and returns canned responses —
 /// one per attempt when `responses` holds several, repeating the last.
-final class MockAIModel: AirshipAI.Model, @unchecked Sendable {
+final class MockAIModel: AirshipAI.ModelProtocol, @unchecked Sendable {
     var availabilityValue: AirshipAI.Availability
     var responses: [Swift.Result<AirshipJSON, any Error>]
     var maxAttempts: Int
@@ -507,7 +519,7 @@ func itemsProvider(_ items: [AirshipAI.Context.Item]) -> AirshipAI.ContextProvid
 struct AirshipAIEvaluatorTests {
 
     private func eval(
-        model: any AirshipAI.Model,
+        model: any AirshipAI.ModelProtocol,
         context: AirshipAI.Context = .empty
     ) async -> AirshipAI.Result<TestEvaluation.Output> {
         await AirshipAI.Evaluator().evaluate(
@@ -650,7 +662,7 @@ struct AirshipAIEvaluatorTests {
     @MainActor
     func managerUsesConfiguredModel() async throws {
         let model = MockAIModel(response: .success(["allow": false, "reason": "override"]))
-        let manager = AirshipAI.DefaultManager()
+        let manager = makeManager()
         manager.setModelResolver { _ in .custom(model) }
 
         let result = await manager.evaluate(TestEvaluation())
@@ -663,7 +675,7 @@ struct AirshipAIEvaluatorTests {
     @MainActor
     func managerAppendsAdditionalContextAfterProviderContext() async {
         let model = MockAIModel()
-        let manager = AirshipAI.DefaultManager()
+        let manager = makeManager()
         manager.setModelResolver { _ in .custom(model) }
         manager.setContextProvider(
             for: .testUsage,
@@ -684,7 +696,7 @@ struct AirshipAIEvaluatorTests {
     @Test
     func skipsContextRequiringEvaluationWhenContextEmpty() async {
         let model = MockAIModel()
-        let manager = AirshipAI.DefaultManager()
+        let manager = makeManager()
         manager.setModelResolver { _ in .custom(model) }
         // No provider registered, so the resolved context is empty.
 
@@ -701,7 +713,7 @@ struct AirshipAIEvaluatorTests {
     @Test
     func runsContextRequiringEvaluationWhenProviderSuppliesContext() async {
         let model = MockAIModel(response: .success(["allow": true, "reason": "ok"]))
-        let manager = AirshipAI.DefaultManager()
+        let manager = makeManager()
         manager.setModelResolver { _ in .custom(model) }
         manager.setContextProvider(for: .testUsage, itemsProvider([.init(content: "likes hiking")]))
         defer { manager.setContextProvider(for: .testUsage, nil) }
@@ -717,7 +729,7 @@ struct AirshipAIEvaluatorTests {
         // The gate is on the merged context, so caller-supplied context satisfies it even
         // with no provider registered.
         let model = MockAIModel(response: .success(["allow": true, "reason": "ok"]))
-        let manager = AirshipAI.DefaultManager()
+        let manager = makeManager()
         manager.setModelResolver { _ in .custom(model) }
 
         let result = await manager.evaluate(
@@ -737,14 +749,14 @@ struct AirshipAIManagerModelTests {
 
     @Test
     func modelReturnsNilWhenNoneConfigured() {
-        let manager = AirshipAI.DefaultManager()
+        let manager = makeManager()
         #expect(manager.model(for: AirshipAI.Usage<Void>(rawValue: "test")) == nil)
     }
 
     @Test
     func modelReturnsDefaultFactoryModelWhenNoOverride() {
         let model = MockAIModel(availability: .available)
-        let manager = AirshipAI.DefaultManager()
+        let manager = makeManager()
         manager.registerModelFactory { model }
 
         let resolved = manager.model(for: AirshipAI.Usage<Void>(rawValue: "any_usage"))
@@ -755,7 +767,7 @@ struct AirshipAIManagerModelTests {
     func overrideResolverWinsOverDefaultFactory() {
         let defaultModel = MockAIModel(availability: .available)
         let usageModel = MockAIModel(availability: .unavailable(reason: .notEnabled))
-        let manager = AirshipAI.DefaultManager()
+        let manager = makeManager()
         manager.registerModelFactory { defaultModel }
         manager.setModelResolver { usage in
             usage == AirshipAI.Usage<Void>.testUsage ? .custom(usageModel) : .defaultModel
@@ -769,11 +781,125 @@ struct AirshipAIManagerModelTests {
     func clearingOverrideResolverFallsBackToDefaultFactory() {
         let defaultModel = MockAIModel(availability: .available)
         let usageModel = MockAIModel(availability: .unavailable(reason: .notEnabled))
-        let manager = AirshipAI.DefaultManager()
+        let manager = makeManager()
         manager.registerModelFactory { defaultModel }
         manager.setModelResolver { _ in .custom(usageModel) }
         manager.setModelResolver(nil)
 
         #expect(manager.model(for: .testUsage)?.availability == .available)
+    }
+}
+
+// MARK: - Privacy manager gating
+
+@MainActor
+struct AirshipAIPrivacyManagerTests {
+
+    @Test
+    func modelIsNilWhenAIDisabled() {
+        let manager = makeManager(enabledFeatures: [])
+        manager.registerModelFactory { MockAIModel(availability: .available) }
+
+        #expect(manager.model(for: .testUsage) == nil)
+        #expect(manager.defaultModel == nil)
+    }
+
+    @Test
+    func modelIsResolvedWhenAIEnabled() {
+        let manager = makeManager(enabledFeatures: .onDeviceAI)
+        manager.registerModelFactory { MockAIModel(availability: .available) }
+
+        #expect(manager.model(for: .testUsage)?.availability == .available)
+        #expect(manager.defaultModel?.availability == .available)
+    }
+
+    @Test
+    func gatedModelReportsNotEnabledWhenAIDisabled() {
+        let manager = makeManager(enabledFeatures: [])
+        manager.registerModelFactory { MockAIModel(availability: .available) }
+
+        // Unlike `model(for:)`, `gatedModel(for:)` still returns an instance — just one
+        // reporting `.notEnabled` — so a caller holding onto it sees the gate reflected in
+        // `.availability` rather than losing the reference outright.
+        #expect(manager.gatedModel(for: .testUsage)?.availability == .unavailable(reason: .notEnabled))
+    }
+
+    @Test
+    func gatedModelReportsUnderlyingAvailabilityWhenAIEnabled() {
+        let manager = makeManager(enabledFeatures: .onDeviceAI)
+        manager.registerModelFactory { MockAIModel(availability: .available) }
+
+        #expect(manager.gatedModel(for: .testUsage)?.availability == .available)
+    }
+
+    @Test
+    @MainActor
+    func gatedModelAvailabilityStaysInSyncAsPrivacyManagerToggles() {
+        let privacyManager = TestPrivacyManager(
+            dataStore: PreferenceDataStore(appKey: UUID().uuidString),
+            config: RuntimeConfig.testConfig(),
+            defaultEnabledFeatures: .all
+        )
+        let manager = AirshipAI.DefaultManager(privacyManager: privacyManager)
+        manager.registerModelFactory { MockAIModel(availability: .available) }
+
+        // A single resolved reference, held across the toggle — mirrors a caller
+        // (e.g. a scene's AI executor) that resolves once and caches the result.
+        let resolved = manager.gatedModel(for: .testUsage)
+        #expect(resolved?.availability == .available)
+
+        privacyManager.disableFeatures(.onDeviceAI)
+        #expect(resolved?.availability == .unavailable(reason: .notEnabled))
+
+        privacyManager.enableFeatures(.onDeviceAI)
+        #expect(resolved?.availability == .available)
+    }
+
+    @Test
+    @MainActor
+    func gatedModelAvailabilityUpdatesEmitsOnPrivacyManagerChange() async {
+        let privacyManager = TestPrivacyManager(
+            dataStore: PreferenceDataStore(appKey: UUID().uuidString),
+            config: RuntimeConfig.testConfig(),
+            defaultEnabledFeatures: .all
+        )
+        let manager = AirshipAI.DefaultManager(privacyManager: privacyManager)
+        manager.registerModelFactory { MockAIModel(availability: .available) }
+
+        let resolved = manager.gatedModel(for: .testUsage)!
+
+        var iterator = resolved.availabilityUpdates.makeAsyncIterator()
+        let first = await iterator.next()
+        #expect(first == .available)
+
+        privacyManager.disableFeatures(.onDeviceAI)
+        let second = await iterator.next()
+        #expect(second == .unavailable(reason: .notEnabled))
+    }
+
+    @Test
+    func evaluateSkipsWhenAIDisabled() async {
+        let model = MockAIModel(response: .success(["allow": true, "reason": "ok"]))
+        let manager = makeManager(enabledFeatures: [])
+        manager.setModelResolver { _ in .custom(model) }
+
+        let result = await manager.evaluate(TestEvaluation())
+
+        guard case .skipped = result else {
+            Issue.record("Expected .skipped when AI is disabled, got \(result)")
+            return
+        }
+        #expect(model.respondCallCount == 0)
+    }
+
+    @Test
+    func fetchContextReturnsEmptyWhenAIDisabled() async {
+        let manager = makeManager(enabledFeatures: [])
+        manager.setContextProvider(for: .testUsage, itemsProvider([.init(content: "likes hiking")]))
+        defer { manager.setContextProvider(for: .testUsage, nil) }
+
+        let context = await manager.fetchContext(for: AirshipAI.Usage<Void>.testUsage, subject: ())
+
+        #expect(context == .empty)
     }
 }

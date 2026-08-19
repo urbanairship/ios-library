@@ -58,7 +58,7 @@ struct DefaultAirshipPrivacyManagerTest {
         #expect(self.privacyManager.enabledFeatures != .all)
 
         self.privacyManager.disableFeatures([.analytics, .messageCenter, .tagsAndAttributes])
-        #expect(self.privacyManager.enabledFeatures == [.inAppAutomation, .contacts, .featureFlags])
+        #expect(self.privacyManager.enabledFeatures == [.inAppAutomation, .contacts, .featureFlags, .onDeviceAI])
     }
 
     @Test

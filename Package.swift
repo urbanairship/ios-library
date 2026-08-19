@@ -57,8 +57,8 @@ let package = Package(
             targets: ["AirshipScenes"]
         ),
         .library(
-            name: "AirshipAIModels",
-            targets: ["AirshipAIModels"]
+            name: "AirshipFoundationModels",
+            targets: ["AirshipFoundationModels"]
         ),
     ],
     targets: [
@@ -212,9 +212,9 @@ let package = Package(
             swiftSettings: airshipSwiftSettings
         ),
         .target(
-            name: "AirshipAIModels",
+            name: "AirshipFoundationModels",
             dependencies: [.target(name: "AirshipCore")],
-            path: "Airship/AirshipAIModels",
+            path: "Airship/AirshipFoundationModels",
             exclude: [
                 "Info.plist",
                 "Tests",

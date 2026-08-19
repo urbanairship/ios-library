@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6EAFC3AC2FF329F3005FA58D"
-               BuildableName = "AirshipAIModels.framework"
-               BlueprintName = "AirshipAIModels"
+               BuildableName = "AirshipFoundationModels.framework"
+               BlueprintName = "AirshipFoundationModels"
                ReferencedContainer = "container:Airship.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -33,8 +33,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6EAFC45B2FF32A08005FA58D"
-               BuildableName = "AirshipAIModelsTests.xctest"
-               BlueprintName = "AirshipAIModelsTests"
+               BuildableName = "AirshipFoundationModelsTests.xctest"
+               BlueprintName = "AirshipFoundationModelsTests"
                ReferencedContainer = "container:Airship.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6EAFC3AC2FF329F3005FA58D"
-            BuildableName = "AirshipAIModels.framework"
-            BlueprintName = "AirshipAIModels"
+            BuildableName = "AirshipFoundationModels.framework"
+            BlueprintName = "AirshipFoundationModels"
             ReferencedContainer = "container:Airship.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
