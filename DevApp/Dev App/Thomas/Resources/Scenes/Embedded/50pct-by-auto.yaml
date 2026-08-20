@@ -1,0 +1,42 @@
+---
+version: 1
+presentation:
+  type: embedded
+  embedded_id: "50pct x auto"
+  default_placement:
+    size:
+      width: 50%
+      height: auto
+view:
+  type: container
+  border:
+    stroke_color:
+      default:
+        hex: "#FF0D49"
+        alpha: 1
+    stroke_width: 2
+  background_color:
+    default:
+      hex: "#6D597A"
+      alpha: 1
+  items:
+  - position:
+      horizontal: center
+      vertical: center
+    margin:
+      top: 16
+      bottom: 16
+      start: 16
+      end: 16
+    size:
+      width: 100%
+      height: auto
+    view:
+      type: label
+      text: "50% wide, auto height. Should be half the parent width, never a skinny strand."
+      text_appearance:
+        font_size: 14
+        color:
+          default:
+            hex: "#FFFFFF"
+            alpha: 1

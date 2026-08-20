@@ -15,6 +15,7 @@ class EmbeddedPlaygroundMenuViewModel: ObservableObject {
     @Published var selectedFileID: String = "" {
         didSet {
             selectedEmbeddedID = extractEmbeddedId(selectedFileID: selectedFileID) ?? ""
+            displaySelectedScene()
         }
     }
 
@@ -23,6 +24,31 @@ class EmbeddedPlaygroundMenuViewModel: ObservableObject {
     @Published var selectedEmbeddedID: String = ""
 
     private let viewsPath = "/Scenes/Embedded"
+
+    /// Nothing else displays embedded scenes into the embedded view manager, so the
+    /// playground has to display the selected scene itself or the playground views only
+    /// ever show the placeholder. Displayed once per file to avoid stacking pending
+    /// instances for the same embedded ID.
+    private var displayedFileIDs: Set<String> = []
+
+    private func displaySelectedScene() {
+        guard !selectedFileID.isEmpty, !displayedFileIDs.contains(selectedFileID) else {
+            return
+        }
+
+        let layout = LayoutFile(
+            directory: viewsPath,
+            fileName: "\(selectedFileID).yaml",
+            type: .sceneEmbedded
+        )
+
+        do {
+            try layout.open()
+            displayedFileIDs.insert(selectedFileID)
+        } catch {
+            print("Failed to display embedded scene \(selectedFileID): \(error)")
+        }
+    }
 
     func extractEmbeddedId(selectedFileID: String) -> String? {
         guard let resourcePath = Bundle.main.resourcePath else {

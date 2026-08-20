@@ -125,7 +125,14 @@ struct RootView<Content: View>: View {
 #if !os(watchOS)
             .background(
                 ThomasSceneSizeReader { size in
-                    orientationTracker.update(size)
+                    // `report()` calls this synchronously from the representable's own
+                    // layout()/layoutSubviews(), which SwiftUI drives as part of resolving
+                    // this very view's layout -- mutating `@Published` state inline here is
+                    // "publishing changes from within view updates." Deferring to the next
+                    // run loop turn moves the mutation outside that update.
+                    Task { @MainActor in
+                        orientationTracker.update(size)
+                    }
                 }
             )
 #endif
@@ -242,6 +249,12 @@ struct ThomasSceneSizeReader: AirshipNativeViewRepresentable {
     private final class ProbeView: NSView {
         private let onChange: @MainActor (CGSize?) -> Void
 
+        /// `deinit` runs nonisolated even for a MainActor class -- deallocation can happen from
+        /// any thread -- so this can't be a normal (implicitly MainActor-isolated) stored
+        /// property if `deinit` is going to read it. Only ever written on the main actor
+        /// (`syncWindowObserver()`); `removeObserver` itself is documented safe from any thread.
+        nonisolated(unsafe) private var resizeObserver: AnyObject?
+
         init(onChange: @escaping @MainActor (CGSize?) -> Void) {
             self.onChange = onChange
             super.init(frame: .zero)
@@ -252,14 +265,51 @@ struct ThomasSceneSizeReader: AirshipNativeViewRepresentable {
             fatalError("init(coder:) has not been implemented")
         }
 
+        deinit {
+            if let resizeObserver {
+                NotificationCenter.default.removeObserver(resizeObserver)
+            }
+        }
+
         override func viewDidMoveToWindow() {
             super.viewDidMoveToWindow()
+            self.syncWindowObserver()
             self.report()
         }
 
         override func layout() {
             super.layout()
             self.report()
+        }
+
+        /// Our own layout() only fires when the layout above us changes, and for an embedded
+        /// placement nested several layers inside the host app's UI, AppKit may not re-layout
+        /// this deeply-nested probe on every increment of a window resize -- only once it's
+        /// large enough to actually propagate down. `NSWindow.didResizeNotification` fires on
+        /// every increment of a live resize regardless of the view hierarchy's own layout
+        /// timing, so listening for it directly -- rather than routing through a view pinned
+        /// into that hierarchy -- keeps reporting independent of it without touching the
+        /// hierarchy at all.
+        private func syncWindowObserver() {
+            if let resizeObserver {
+                NotificationCenter.default.removeObserver(resizeObserver)
+                self.resizeObserver = nil
+            }
+
+            guard let window = self.window else { return }
+
+            self.resizeObserver = NotificationCenter.default.addObserver(
+                forName: NSWindow.didResizeNotification,
+                object: window,
+                queue: .main
+            ) { [weak self] _ in
+                // `queue: .main` only guarantees this *runs* on the main thread -- the closure
+                // type itself isn't proven MainActor-isolated at compile time, so `report()`
+                // (MainActor-isolated, like the rest of this NSView) needs an explicit assertion.
+                MainActor.assumeIsolated {
+                    self?.report()
+                }
+            }
         }
 
         /// The window's own content area, not the screen's -- a Mac window is rarely the size of the

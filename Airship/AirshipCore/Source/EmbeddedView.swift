@@ -25,6 +25,7 @@ struct AdoptLayout<Content: View>: View {
     let content: (ViewConstraints, ThomasPresentationInfo.Embedded.Placement) -> Content
 
     @State private var viewConstraints: ViewConstraints?
+    @State private var constraintsPublisher = AdoptLayoutConstraintsPublisher()
 
     /// A presentation resolved per orientation/window size, e.g. `EmbeddedView`'s.
     init(
@@ -84,7 +85,7 @@ struct AdoptLayout<Content: View>: View {
 
     var body: some View {
         if usesAutoMeasurement {
-            AdoptLayoutEngine(placement: placement, embeddedSize: embeddedSize, viewConstraints: $viewConstraints) {
+            AdoptLayoutEngine(placement: placement, embeddedSize: embeddedSize, viewConstraints: $viewConstraints, constraintsPublisher: constraintsPublisher) {
                 if let viewConstraints {
                     content(viewConstraints, placement)
                 } else {
@@ -109,6 +110,46 @@ struct AdoptLayout<Content: View>: View {
     }
 }
 
+/// Coalesces constraint publishes so at most one `@State` write lands per main-queue drain,
+/// carrying the constraints from the drain's largest-width layout pass.
+///
+/// A single drain can run `placeSubviews` many times: besides the committed placement, hosts
+/// that adopt content size run a width search (propose several smaller candidate widths to
+/// find one whose height fits their cap). Applying constraints from a search pass makes the
+/// content rigid at that width, which corrupts every subsequent measurement, re-triggers
+/// layout, and can latch the content in a collapsed one-character column (observed on macOS
+/// when a live window resize settles). Search passes can't be told apart from commits by
+/// shape, and a drain doesn't reliably end on the commit -- but this layout is greedy (percent
+/// axes adopt the full proposal), so within a drain the committed pass is always the widest.
+/// Keeping the widest publish per drain therefore tracks the committed geometry both while
+/// growing and while shrinking, and makes the collapsed fixed point unreachable.
+@available(iOS 16, tvOS 16, watchOS 9.0, *)
+@MainActor
+final class AdoptLayoutConstraintsPublisher {
+    private var pending: ViewConstraints?
+    private var isScheduled = false
+
+    func publish(_ constraints: ViewConstraints, to binding: Binding<ViewConstraints?>) {
+        if let current = pending, isScheduled {
+            let currentSize = (current.width ?? 0) + (current.height ?? 0)
+            let newSize = (constraints.width ?? 0) + (constraints.height ?? 0)
+            if newSize > currentSize {
+                pending = constraints
+            }
+        } else {
+            pending = constraints
+        }
+        guard !isScheduled else { return }
+        isScheduled = true
+        DispatchQueue.main.async { [self] in
+            isScheduled = false
+            if binding.wrappedValue != pending {
+                binding.wrappedValue = pending
+            }
+        }
+    }
+}
+
 /// The actual `SwiftUI.Layout` conformance that resolves `placement` against the real, proposed
 /// geometry. Implementation detail of `AdoptLayout` -- callers should use that instead.
 @available(iOS 16, tvOS 16, watchOS 9.0, *)
@@ -117,8 +158,55 @@ private struct AdoptLayoutEngine: SwiftUI.Layout {
     let placement: ThomasPresentationInfo.Embedded.Placement
     let embeddedSize: AirshipEmbeddedSize?
     var viewConstraints: Binding<ViewConstraints?>? = nil
+    var constraintsPublisher: AdoptLayoutConstraintsPublisher? = nil
 
-    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    /// The last real proposal seen, per axis. SwiftUI also queries this layout with unspecified
+    /// (nil) proposals -- notably the ideal-size pass AppKit runs when a live macOS window
+    /// resize settles. A percent placement has no intrinsic ideal size, and answering the
+    /// hardcoded 10pt fallback lets a size-adopting host commit that answer as real geometry,
+    /// collapsing the content (and the constraints published from it) to a sliver that only
+    /// recovers on the next real proposal. Remembering the last real proposal lets the
+    /// ideal-size answer be "the size I already occupy".
+    ///
+    /// A raw proposal isn't trustworthy on its own, though -- a width search can hand this the
+    /// same in-between candidate widths `constraintsPublisher` already knows to discard, and if
+    /// the ideal-size query lands right after one of those (e.g. resize ends there), answering
+    /// from it re-commits the discarded value. `viewConstraints` only ever holds what
+    /// `constraintsPublisher` already filtered down to the widest real pass per drain, so it's
+    /// preferred whenever something has actually been published; the raw last proposal is only
+    /// a fallback for before that first publish exists.
+    struct Cache {
+        var lastRealProposalWidth: CGFloat?
+        var lastRealProposalHeight: CGFloat?
+    }
+
+    func makeCache(subviews: Subviews) -> Cache {
+        Cache()
+    }
+
+    private func remembered(
+        _ value: CGFloat?,
+        trusted: CGFloat?,
+        last: inout CGFloat?
+    ) -> CGFloat? {
+        guard let value else { return trusted ?? last }
+        if value > 0, value.isFinite {
+            last = value
+        }
+        return value
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> CGSize {
+        let proposalWidth = remembered(
+            proposal.width,
+            trusted: viewConstraints?.wrappedValue?.width,
+            last: &cache.lastRealProposalWidth
+        )
+        let proposalHeight = remembered(
+            proposal.height,
+            trusted: viewConstraints?.wrappedValue?.height,
+            last: &cache.lastRealProposalHeight
+        )
         let viewSize = subviews.first?.sizeThatFits(proposal)
 
         let height = size(
@@ -126,7 +214,7 @@ private struct AdoptLayoutEngine: SwiftUI.Layout {
             minConstraint: placement.size.minHeight,
             maxConstraint: placement.size.maxHeight,
             parent: self.embeddedSize?.parentHeight,
-            proposal: proposal.height,
+            proposal: proposalHeight,
             sizeThataFits: viewSize?.height
         )
 
@@ -135,7 +223,7 @@ private struct AdoptLayoutEngine: SwiftUI.Layout {
             minConstraint: placement.size.minWidth,
             maxConstraint: placement.size.maxWidth,
             parent: self.embeddedSize?.parentWidth,
-            proposal: proposal.width,
+            proposal: proposalWidth,
             sizeThataFits: viewSize?.width
         )
 
@@ -196,7 +284,7 @@ private struct AdoptLayoutEngine: SwiftUI.Layout {
         }
     }
 
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) {
         let width = size(
             constraint: placement.size.width,
             minConstraint: placement.size.minWidth,
@@ -222,14 +310,25 @@ private struct AdoptLayoutEngine: SwiftUI.Layout {
             )
 
             // `placeSubviews` isn't called only once with the geometry SwiftUI committed to --
-            // it's also invoked with a synthetic `.zero` proposal (same as `sizeThatFits`) to
-            // probe how small this layout can go. That probe isn't a real commit; publishing it
-            // would flip the constraints to 0x0, which changes the body and triggers another
-            // layout pass -- which gets probed at `.zero` again, forever. Skip that degenerate case.
-            if proposal.width != 0 || proposal.height != 0 {
-                DispatchQueue.main.async {
-                    if viewConstraints.wrappedValue != newConstraints {
-                        viewConstraints.wrappedValue = newConstraints
+            // it's also invoked with synthetic zero proposals (same as `sizeThatFits`) to probe
+            // how small this layout can go. Those probes aren't real commits; publishing from one
+            // computes constraints against probe-pass bounds (e.g. 50% of a zero-width rect),
+            // which changes the body and triggers another layout pass -- which gets probed again,
+            // forever, or latches the content at a collapsed size a real pass never chose. A zero
+            // on either axis marks a probe (a nil axis does not -- parents may legitimately place
+            // with an unspecified axis), and degenerate bounds mark a pass not worth publishing;
+            // constraints keep their last real value until the next committed pass.
+            let isProbe = proposal.width == 0 || proposal.height == 0
+            if !isProbe && bounds.width > 0 && bounds.height > 0 {
+                if let constraintsPublisher {
+                    MainActor.assumeIsolated {
+                        constraintsPublisher.publish(newConstraints, to: viewConstraints)
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        if viewConstraints.wrappedValue != newConstraints {
+                            viewConstraints.wrappedValue = newConstraints
+                        }
                     }
                 }
             }
