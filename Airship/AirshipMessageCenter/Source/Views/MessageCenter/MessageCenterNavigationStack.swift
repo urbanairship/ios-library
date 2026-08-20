@@ -18,18 +18,35 @@ struct MessageCenterNavigationStack: View {
     @ObservedObject
     private var controller: MessageCenterController
     
-    @StateObject
+    /// Owned by ``MessageCenterAdaptiveNavigationView`` so it survives this container being swapped
+    /// for the split one when the available width changes.
+    @ObservedObject
     private var listViewModel: MessageCenterMessageListViewModel
-    
+
 #if !os(macOS)
-    @State
-    private var editMode: EditMode = .inactive
+    @Binding
+    private var editMode: EditMode
 #endif
-    
-    init(controller: MessageCenterController, predicate: (any MessageCenterPredicate)?) {
+
+#if !os(macOS)
+    init(
+        controller: MessageCenterController,
+        listViewModel: MessageCenterMessageListViewModel,
+        editMode: Binding<EditMode>
+    ) {
         self.controller = controller
-        _listViewModel = .init(wrappedValue: .init(predicate: predicate))
+        self.listViewModel = listViewModel
+        self._editMode = editMode
     }
+#else
+    init(
+        controller: MessageCenterController,
+        listViewModel: MessageCenterMessageListViewModel
+    ) {
+        self.controller = controller
+        self.listViewModel = listViewModel
+    }
+#endif
     
     var body: some View {
         NavigationStack(path: $controller.path) {

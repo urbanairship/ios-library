@@ -28,7 +28,6 @@ struct BannerView: View {
     /// content size).
     private static let fallbackDismissDistance: CGFloat = 100
     
-    private let viewControllerOptions: ThomasViewControllerOptions
     private let presentation: ThomasPresentationInfo.Banner
     private let layout: AirshipLayout
 
@@ -50,14 +49,12 @@ struct BannerView: View {
     @State private var contentSize: CGSize? = nil
 
     init(
-        viewControllerOptions: ThomasViewControllerOptions,
         presentation: ThomasPresentationInfo.Banner,
         layout: AirshipLayout,
         thomasEnvironment: ThomasEnvironment,
         bannerConstraints: ThomasBannerConstraints,
         onDismiss: @escaping () -> Void
     ) {
-        self.viewControllerOptions = viewControllerOptions
         self.presentation = presentation
         self.layout = layout
         self.thomasEnvironment = thomasEnvironment
@@ -74,7 +71,8 @@ struct BannerView: View {
             GeometryReader { metrics in
                 RootView(
                     thomasEnvironment: thomasEnvironment,
-                    layout: layout
+                    layout: layout,
+                    initialWindowSize: bannerConstraints.windowSize
                 ) { orientation, windowSize in
                     let placement = resolvePlacement(
                         orientation: orientation,
@@ -125,12 +123,7 @@ struct BannerView: View {
                         self.thomasEnvironment.dismiss()
                     }
                 }
-                // Invalidate cached content size on orientation change
-                .airshipOnChangeOf(orientation) { _ in
-                    self.contentSize = nil
-                }
             }
-            .id(orientation)
             .ignoresSafeArea(ignoreKeyboardSafeArea ? [.keyboard] : [])
         }
     }
@@ -229,7 +222,6 @@ struct BannerView: View {
             placement = placementSelector.placement
         }
 
-        viewControllerOptions.bannerPlacement = placement
         return placement
     }
 

@@ -1,0 +1,764 @@
+---
+version: 1
+presentation:
+  type: embedded
+  placement_selectors: []
+  default_placement:
+    size:
+      width: 100%
+      height: 100%
+    border:
+      radius: 0
+      stroke_width: 0
+  embedded_id: see-a-movie-above-posters
+view:
+  type: state_controller
+  view:
+    type: pager_controller
+    identifier: 44d44471-b14e-4c80-b8bc-e75439bf8339
+    view:
+      type: linear_layout
+      direction: vertical
+      items:
+      - size:
+          width: 100%
+          height: 100%
+        view:
+          type: container
+          items:
+          - identifier: 69394c06-6a7f-4ef4-8696-1bb89a1d8f3c_pager_container_item
+            position:
+              horizontal: center
+              vertical: center
+            size:
+              width: 100%
+              height: 100%
+            view:
+              type: pager
+              disable_swipe: true
+              gestures:
+              - identifier: 44d44471-b14e-4c80-b8bc-e75439bf8339_tap_start
+                type: tap
+                location: start
+                behavior:
+                  behaviors:
+                  - pager_previous
+              - identifier: 44d44471-b14e-4c80-b8bc-e75439bf8339_tap_end
+                type: tap
+                location: end
+                behavior:
+                  behaviors:
+                  - pager_next_or_first
+              - identifier: 44d44471-b14e-4c80-b8bc-e75439bf8339_swipe_up
+                type: swipe
+                direction: up
+                behavior:
+                  behaviors:
+                  - dismiss
+              - identifier: 44d44471-b14e-4c80-b8bc-e75439bf8339_swipe_down
+                type: swipe
+                direction: down
+                behavior:
+                  behaviors:
+                  - dismiss
+              - identifier: 44d44471-b14e-4c80-b8bc-e75439bf8339_hold
+                type: hold
+                press_behavior:
+                  behaviors:
+                  - pager_pause
+                release_behavior:
+                  behaviors:
+                  - pager_resume
+              items:
+              - identifier: 84f5f716-519e-4414-bb2e-931e08a50e0c
+                type: pager_item
+                view:
+                  type: container
+                  items:
+                  - identifier: 769610a5-eebb-49e7-855e-84c35732cffa_main_view_container_item
+                    size:
+                      width: 100%
+                      height: 100%
+                    position:
+                      horizontal: center
+                      vertical: center
+                    ignore_safe_area: true
+                    view:
+                      type: container
+                      items:
+                      - identifier: 1bebc05c-4a2c-407c-872d-7e5f2398f7a6_container_item
+                        margin:
+                          bottom: 0
+                          top: 0
+                          end: 0
+                          start: 0
+                        position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        view:
+                          type: linear_layout
+                          direction: vertical
+                          items:
+                          - identifier: layout_container
+                            size:
+                              width: 100%
+                              height: 100%
+                            view:
+                              type: linear_layout
+                              direction: vertical
+                              items:
+                              - identifier: c9c6e7ac-9b77-43d4-b629-53be22922e85
+                                size:
+                                  width: 100%
+                                  height: auto
+                                view:
+                                  type: container
+                                  items:
+                                  - identifier: c9c6e7ac-9b77-43d4-b629-53be22922e85_linear_container
+                                    margin:
+                                      top: 0
+                                      bottom: 0
+                                      start: 0
+                                      end: 0
+                                    position:
+                                      horizontal: start
+                                      vertical: center
+                                    size:
+                                      width: 100%
+                                      height: auto
+                                    view:
+                                      type: linear_layout
+                                      direction: horizontal
+                                      items:
+                                      - identifier: 206f49c0-5564-49f8-8ff0-53344a4ffd08
+                                        size:
+                                          width: 30%
+                                          height: auto
+                                        view:
+                                          type: media
+                                          media_fit: center_inside
+                                          url: https://c00098-dl.urbanairship.com/binary/public/mXEn7hhmQeGXMK0v00orUQ/aa87b0d2-c25e-475f-8000-da43b032c77f
+                                          media_type: image
+                                        margin:
+                                          top: 0
+                                          bottom: 0
+                                          start: 0
+                                          end: 0
+                                      - identifier: ba02bbfe-8979-4635-9b33-0ce7c0256349
+                                        size:
+                                          width: 100%
+                                          height: auto
+                                        view:
+                                          type: container
+                                          items:
+                                          - identifier: ba02bbfe-8979-4635-9b33-0ce7c0256349_linear_container
+                                            margin:
+                                              top: 0
+                                              bottom: 0
+                                              start: 0
+                                              end: 0
+                                            position:
+                                              horizontal: end
+                                              vertical: center
+                                            size:
+                                              width: 100%
+                                              height: 100
+                                            view:
+                                              type: linear_layout
+                                              direction: vertical
+                                              items:
+                                              - identifier: 4c5f40ac-ee9f-4a28-b6ea-697990870685
+                                                size:
+                                                  width: 100%
+                                                  height: auto
+                                                margin:
+                                                  top: 5
+                                                  bottom: 5
+                                                  start: 16
+                                                  end: 16
+                                                view:
+                                                  type: label
+                                                  text: Enjoy a Month of Movies for 99
+                                                  content_description: Enjoy a Month of Movies for 99
+                                                  text_appearance:
+                                                    font_size: 14
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#ffffff'
+                                                        alpha: 1
+                                                    alignment: start
+                                                    styles:
+                                                    - bold
+                                                    font_families:
+                                                    - GorditaBlack
+                                                    - GorditaRegular
+                                                    - GorditaMedium
+                                                    - GorditaBold
+                                                    - GorditaLight
+                                                    - GorditaRegular-Italic
+                                                    - GoditaBold-Italic
+                                                  accessibility_hidden: false
+                                              - identifier: c27eda1b-95f5-432a-bad5-29acfa297212
+                                                size:
+                                                  width: 100%
+                                                  height: auto
+                                                margin:
+                                                  top: 0
+                                                  bottom: 5
+                                                  start: 16
+                                                  end: 16
+                                                view:
+                                                  type: label
+                                                  text: Become and A-Lister now and save up to $27 on your first month.
+                                                  content_description: Become and A-Lister now and save up to $27 on your first month.
+                                                  text_appearance:
+                                                    font_size: 12
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#ffffff'
+                                                        alpha: 1
+                                                    alignment: start
+                                                    styles: []
+                                                    font_families:
+                                                    - GorditaBlack
+                                                    - GorditaRegular
+                                                    - GorditaMedium
+                                                    - GorditaBold
+                                                    - GorditaLight
+                                                    - GorditaRegular-Italic
+                                                    - GoditaBold-Italic
+                                                  accessibility_hidden: false
+                                              - view:
+                                                  type: container
+                                                  items:
+                                                  - identifier: e840d6df-01c6-486c-8cf8-3906d457f668_container
+                                                    size:
+                                                      width: 50%
+                                                      height: auto
+                                                    view:
+                                                      type: linear_layout
+                                                      direction: horizontal
+                                                      items:
+                                                      - margin:
+                                                          top: 4
+                                                          bottom: 16
+                                                          start: 0
+                                                          end: 0
+                                                        size:
+                                                          width: 100%
+                                                          height: auto
+                                                        view:
+                                                          type: label_button
+                                                          identifier: url--Join A-List
+                                                          reporting_metadata:
+                                                            trigger_link_id: 00d9fce2-2a98-4b0b-bbe7-73416577e07e
+                                                            button_id: 00d9fce2-2a98-4b0b-bbe7-73416577e07e
+                                                            button_action: url
+                                                          label:
+                                                            type: label
+                                                            text: Join A-List
+                                                            content_description: Join A-List
+                                                            text_appearance:
+                                                              font_size: 12
+                                                              color:
+                                                                default:
+                                                                  type: hex
+                                                                  hex: '#ffffff'
+                                                                  alpha: 1
+                                                              alignment: center
+                                                              styles:
+                                                              - bold
+                                                              font_families:
+                                                              - Gordita
+                                                          actions:
+                                                            open_external_url_action: https://www.amctheatres.com/
+                                                          enabled: []
+                                                          button_click: []
+                                                          background_color:
+                                                            default:
+                                                              type: hex
+                                                              hex: '#e51937'
+                                                              alpha: 1
+                                                          border:
+                                                            radius: 100
+                                                            stroke_width: 1
+                                                            stroke_color:
+                                                              default:
+                                                                type: hex
+                                                                hex: '#e51937'
+                                                                alpha: 1
+                                                          content_description: Join A-List
+                                                      background_color:
+                                                        default:
+                                                          type: hex
+                                                          hex: '#000000'
+                                                          alpha: 0
+                                                    position:
+                                                      horizontal: start
+                                                      vertical: center
+                                                identifier: e840d6df-01c6-486c-8cf8-3906d457f668_wrapper
+                                                size:
+                                                  width: 100%
+                                                  height: auto
+                                                margin:
+                                                  top: 0
+                                                  bottom: 0
+                                                  start: 16
+                                                  end: 16
+                                              background_color:
+                                                default:
+                                                  type: hex
+                                                  hex: '#000000'
+                                                  alpha: 0
+                                              border:
+                                                radius: 0
+                                        margin:
+                                          top: 0
+                                          bottom: 0
+                                          start: 0
+                                          end: 0
+                                      background_color:
+                                        default:
+                                          type: hex
+                                          hex: '#000000'
+                                          alpha: 0
+                                      border:
+                                        radius: 0
+                                margin:
+                                  top: 0
+                                  bottom: 0
+                                  start: 0
+                                  end: 0
+                  background_color:
+                    default:
+                      type: hex
+                      hex: '#000000'
+                      alpha: 1
+                automated_actions:
+                - identifier: '[pager_next]_84f5f716-519e-4414-bb2e-931e08a50e0c'
+                  delay: 7
+                  behaviors:
+                  - pager_next
+                state_actions:
+                - type: set
+                  key: 84f5f716-519e-4414-bb2e-931e08a50e0c_next
+              - identifier: 003f2742-19f7-416a-a658-ece31261d298
+                type: pager_item
+                view:
+                  type: container
+                  items:
+                  - identifier: beb6dc2c-19c3-494c-929b-5c1ac3e412b4_main_view_container_item
+                    size:
+                      width: 100%
+                      height: 100%
+                    position:
+                      horizontal: center
+                      vertical: center
+                    ignore_safe_area: true
+                    view:
+                      type: container
+                      items:
+                      - identifier: fbecc74d-d50a-4858-87ca-e83e072ab6d5_container_item
+                        margin:
+                          bottom: 0
+                          top: 0
+                          end: 0
+                          start: 0
+                        position:
+                          horizontal: center
+                          vertical: center
+                        size:
+                          width: 100%
+                          height: 100%
+                        view:
+                          type: linear_layout
+                          direction: vertical
+                          items:
+                          - identifier: layout_container
+                            size:
+                              width: 100%
+                              height: 100%
+                            view:
+                              type: linear_layout
+                              direction: vertical
+                              items:
+                              - identifier: f12d1c05-2bf3-478b-897a-d7e0bf90c9e0
+                                size:
+                                  width: 100%
+                                  height: auto
+                                view:
+                                  type: container
+                                  items:
+                                  - identifier: f12d1c05-2bf3-478b-897a-d7e0bf90c9e0_linear_container
+                                    margin:
+                                      top: 0
+                                      bottom: 0
+                                      start: 0
+                                      end: 0
+                                    position:
+                                      horizontal: start
+                                      vertical: center
+                                    size:
+                                      width: 100%
+                                      height: auto
+                                    view:
+                                      type: linear_layout
+                                      direction: horizontal
+                                      items:
+                                      - identifier: 31e9141a-0cf4-48f7-9b27-f42be6786eb0
+                                        size:
+                                          width: 30%
+                                          height: auto
+                                        view:
+                                          type: media
+                                          media_fit: center_inside
+                                          url: https://c00098-dl.urbanairship.com/binary/public/mXEn7hhmQeGXMK0v00orUQ/aa87b0d2-c25e-475f-8000-da43b032c77f
+                                          media_type: image
+                                        margin:
+                                          top: 0
+                                          bottom: 0
+                                          start: 0
+                                          end: 0
+                                      - identifier: 120843ee-c5cf-43d0-8f00-bc0f370a67f9
+                                        size:
+                                          width: 100%
+                                          height: auto
+                                        view:
+                                          type: container
+                                          items:
+                                          - identifier: 120843ee-c5cf-43d0-8f00-bc0f370a67f9_linear_container
+                                            margin:
+                                              top: 0
+                                              bottom: 0
+                                              start: 0
+                                              end: 0
+                                            position:
+                                              horizontal: end
+                                              vertical: center
+                                            size:
+                                              width: 100%
+                                              height: 100
+                                            view:
+                                              type: linear_layout
+                                              direction: vertical
+                                              items:
+                                              - identifier: 492504d9-4aaa-4a03-95d3-2eafba59bbe6
+                                                size:
+                                                  width: 100%
+                                                  height: auto
+                                                margin:
+                                                  top: 5
+                                                  bottom: 5
+                                                  start: 16
+                                                  end: 16
+                                                view:
+                                                  type: label
+                                                  text: Enjoy a Month of Movies for 99
+                                                  content_description: Enjoy a Month of Movies for 99
+                                                  text_appearance:
+                                                    font_size: 14
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#ffffff'
+                                                        alpha: 1
+                                                    alignment: start
+                                                    styles:
+                                                    - bold
+                                                    font_families:
+                                                    - GorditaBlack
+                                                    - GorditaRegular
+                                                    - GorditaMedium
+                                                    - GorditaBold
+                                                    - GorditaLight
+                                                    - GorditaRegular-Italic
+                                                    - GoditaBold-Italic
+                                                  accessibility_hidden: false
+                                              - identifier: 1562d164-7ee6-417e-b7ac-f6306775e5d5
+                                                size:
+                                                  width: 100%
+                                                  height: auto
+                                                margin:
+                                                  top: 0
+                                                  bottom: 5
+                                                  start: 16
+                                                  end: 16
+                                                view:
+                                                  type: label
+                                                  text: Become and A-Lister now and save up to $27 on your first month.
+                                                  content_description: Become and A-Lister now and save up to $27 on your first month.
+                                                  text_appearance:
+                                                    font_size: 12
+                                                    color:
+                                                      default:
+                                                        type: hex
+                                                        hex: '#ffffff'
+                                                        alpha: 1
+                                                    alignment: start
+                                                    styles: []
+                                                    font_families:
+                                                    - GorditaBlack
+                                                    - GorditaRegular
+                                                    - GorditaMedium
+                                                    - GorditaBold
+                                                    - GorditaLight
+                                                    - GorditaRegular-Italic
+                                                    - GoditaBold-Italic
+                                                  accessibility_hidden: false
+                                              - identifier: 5fb00ce2-57b8-41c3-99c3-21728a4fb3b1
+                                                size:
+                                                  width: 100%
+                                                  height: auto
+                                                view:
+                                                  type: container
+                                                  items:
+                                                  - identifier: 5fb00ce2-57b8-41c3-99c3-21728a4fb3b1_linear_container
+                                                    margin:
+                                                      top: 0
+                                                      bottom: 0
+                                                      start: 0
+                                                      end: 0
+                                                    position:
+                                                      horizontal: center
+                                                      vertical: center
+                                                    size:
+                                                      width: 100%
+                                                      height: auto
+                                                    view:
+                                                      type: linear_layout
+                                                      direction: horizontal
+                                                      items:
+                                                      - identifier: f402d75b-8915-43e3-b744-09e4e6b6da7e
+                                                        margin:
+                                                          top: 0
+                                                          bottom: 0
+                                                          start: 16
+                                                          end: 16
+                                                        size:
+                                                          width: 100%
+                                                          height: auto
+                                                        view:
+                                                          type: linear_layout
+                                                          direction: horizontal
+                                                          items:
+                                                          - margin:
+                                                              top: 4
+                                                              bottom: 16
+                                                              start: 0
+                                                              end: 8
+                                                            size:
+                                                              width: 100%
+                                                              height: auto
+                                                            view:
+                                                              type: label_button
+                                                              identifier: url--Join A-List
+                                                              reporting_metadata:
+                                                                trigger_link_id: 8b3365cc-ed9a-4c78-ad7c-88861fc18c87
+                                                                button_id: 8b3365cc-ed9a-4c78-ad7c-88861fc18c87
+                                                                button_action: url
+                                                              label:
+                                                                type: label
+                                                                text: Join A-List
+                                                                content_description: Join A-List
+                                                                text_appearance:
+                                                                  font_size: 12
+                                                                  color:
+                                                                    default:
+                                                                      type: hex
+                                                                      hex: '#ffffff'
+                                                                      alpha: 1
+                                                                  alignment: center
+                                                                  styles:
+                                                                  - bold
+                                                                  font_families:
+                                                                  - Gordita
+                                                              actions:
+                                                                open_external_url_action: https://www.amctheatres.com/
+                                                              enabled: []
+                                                              button_click: []
+                                                              background_color:
+                                                                default:
+                                                                  type: hex
+                                                                  hex: '#e51937'
+                                                                  alpha: 1
+                                                              border:
+                                                                radius: 100
+                                                                stroke_width: 1
+                                                                stroke_color:
+                                                                  default:
+                                                                    type: hex
+                                                                    hex: '#e51937'
+                                                                    alpha: 1
+                                                              content_description: Join A-List
+                                                          - margin:
+                                                              top: 4
+                                                              bottom: 16
+                                                              start: 8
+                                                              end: 0
+                                                            size:
+                                                              width: 100%
+                                                              height: auto
+                                                            view:
+                                                              type: label_button
+                                                              identifier: url--Next Time
+                                                              reporting_metadata:
+                                                                trigger_link_id: 17c581a6-796e-4318-a812-9215f1d61453
+                                                                button_id: 17c581a6-796e-4318-a812-9215f1d61453
+                                                                button_action: url
+                                                              label:
+                                                                type: label
+                                                                text: Next Time
+                                                                content_description: Next Time
+                                                                text_appearance:
+                                                                  font_size: 12
+                                                                  color:
+                                                                    default:
+                                                                      type: hex
+                                                                      hex: '#ffffff'
+                                                                      alpha: 1
+                                                                  alignment: center
+                                                                  styles:
+                                                                  - bold
+                                                                  font_families:
+                                                                  - Gordita
+                                                              actions:
+                                                                open_external_url_action: https://www.amctheatres.com/
+                                                              enabled: []
+                                                              button_click: []
+                                                              background_color:
+                                                                default:
+                                                                  type: hex
+                                                                  hex: '#e51937'
+                                                                  alpha: 1
+                                                              border:
+                                                                radius: 100
+                                                                stroke_width: 1
+                                                                stroke_color:
+                                                                  default:
+                                                                    type: hex
+                                                                    hex: '#e51937'
+                                                                    alpha: 1
+                                                              content_description: Next Time
+                                                          background_color:
+                                                            default:
+                                                              type: hex
+                                                              hex: '#000000'
+                                                              alpha: 0
+                                                      background_color:
+                                                        default:
+                                                          type: hex
+                                                          hex: '#000000'
+                                                          alpha: 0
+                                                      border:
+                                                        radius: 0
+                                                margin:
+                                                  top: 0
+                                                  bottom: 0
+                                                  start: 0
+                                                  end: 0
+                                              background_color:
+                                                default:
+                                                  type: hex
+                                                  hex: '#000000'
+                                                  alpha: 0
+                                              border:
+                                                radius: 0
+                                        margin:
+                                          top: 0
+                                          bottom: 0
+                                          start: 0
+                                          end: 0
+                                      background_color:
+                                        default:
+                                          type: hex
+                                          hex: '#000000'
+                                          alpha: 0
+                                      border:
+                                        radius: 0
+                                margin:
+                                  top: 0
+                                  bottom: 0
+                                  start: 0
+                                  end: 0
+                  background_color:
+                    default:
+                      type: hex
+                      hex: '#000000'
+                      alpha: 1
+                automated_actions:
+                - identifier: pager_next_or_first_003f2742-19f7-416a-a658-ece31261d298
+                  delay: 7
+                  behaviors:
+                  - pager_next_or_first
+                state_actions:
+                - type: set
+                  key: 003f2742-19f7-416a-a658-ece31261d298_next
+            ignore_safe_area: true
+          - position:
+              horizontal: end
+              vertical: top
+            margin:
+              top: 8
+            size:
+              width: 48
+              height: 48
+            view:
+              type: image_button
+              image:
+                scale: 0.4
+                type: icon
+                icon: close
+                color:
+                  default:
+                    type: hex
+                    hex: '#ffffff'
+                    alpha: 1
+              identifier: dismiss_button
+              button_click:
+              - dismiss
+              localized_content_description:
+                ref: ua_dismiss
+                refs:
+                - ua_close
+                - ua_dismiss
+                fallback: Close
+              reporting_metadata:
+                button_id: dismiss_button
+                button_action: dismiss
+          - margin:
+              top: 8
+              bottom: 0
+              end: 16
+              start: 16
+            position:
+              horizontal: center
+              vertical: top
+            size:
+              height: 4
+              width: 100%
+            view:
+              type: story_indicator
+              source:
+                type: pager
+              style:
+                type: linear_progress
+                direction: horizontal
+                sizing: equal
+                spacing: 4
+                progress_color:
+                  default:
+                    type: hex
+                    hex: '#AAAAAA'
+                    alpha: 1
+                track_color:
+                  default:
+                    type: hex
+                    hex: '#CCCCCC'
+                    alpha: 1
+              automated_accessibility_actions:
+              - type: announce

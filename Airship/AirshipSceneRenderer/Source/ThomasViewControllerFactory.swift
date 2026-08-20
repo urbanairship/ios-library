@@ -28,12 +28,10 @@ public struct ThomasViewControllerFactory {
         windowSize: CGSize,
         onDismiss: @escaping @MainActor () -> Void
     ) -> (viewController: AirshipNativeViewController, dismiss: @MainActor @Sendable () -> Void) {
-        let options = ThomasViewControllerOptions()
         let environment = ThomasEnvironment(delegate: delegate, windowScene: windowScene, extensions: extensions)
         let bannerConstraints = ThomasBannerConstraints(windowSize: windowSize)
 
         let rootView = BannerView(
-            viewControllerOptions: options,
             presentation: presentation,
             layout: layout,
             thomasEnvironment: environment,
@@ -47,13 +45,11 @@ public struct ThomasViewControllerFactory {
         let viewController = ThomasBannerViewController(
             rootView: rootView,
             position: presentation.defaultPlacement.position,
-            options: options,
             constraints: bannerConstraints
         )
 #else
         let viewController = ThomasBannerViewController(
             rootView: rootView,
-            options: options,
             constraints: bannerConstraints
         )
 #endif
@@ -69,24 +65,22 @@ public struct ThomasViewControllerFactory {
         delegate: any ThomasDelegate,
         windowScene: ThomasWindowScene = ThomasWindowScene(),
         extensions: any ThomasExtensions,
+        windowSize: CGSize,
         onDismiss: @escaping @MainActor () -> Void
     ) -> (viewController: AirshipNativeViewController, dismiss: @MainActor @Sendable () -> Void) {
-        let options = ThomasViewControllerOptions()
-        options.orientation = presentation.defaultPlacement.device?.orientationLock
         let environment = ThomasEnvironment(delegate: delegate, windowScene: windowScene, extensions: extensions)
 
         let rootView = ModalView(
             presentation: presentation,
             layout: layout,
             thomasEnvironment: environment,
-            viewControllerOptions: options
+            initialWindowSize: windowSize
         ) {
             onDismiss()
         }
 
         let viewController = ThomasModalViewController(
-            rootView: rootView,
-            options: options
+            rootView: rootView
         )
 
         return (viewController, { [weak environment] in environment?.dismiss() })

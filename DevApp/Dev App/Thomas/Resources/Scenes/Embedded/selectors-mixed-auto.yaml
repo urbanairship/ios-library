@@ -1,0 +1,48 @@
+---
+version: 1
+presentation:
+  type: embedded
+  embedded_id: "selectors mixed auto"
+  default_placement:
+    size:
+      width: 100%
+      height: 150
+  placement_selectors:
+  - orientation: landscape
+    placement:
+      size:
+        width: 50%
+        height: auto
+view:
+  type: container
+  border:
+    stroke_color:
+      default:
+        hex: "#FF0D49"
+        alpha: 1
+    stroke_width: 2
+  background_color:
+    default:
+      hex: "#457B9D"
+      alpha: 1
+  items:
+  - position:
+      horizontal: center
+      vertical: center
+    margin:
+      top: 16
+      bottom: 16
+      start: 16
+      end: 16
+    size:
+      width: 100%
+      height: auto
+    view:
+      type: label
+      text: "Portrait/tall: 100% x 150pt. Landscape/wide: 50% x auto. Should never blank or collapse."
+      text_appearance:
+        font_size: 14
+        color:
+          default:
+            hex: "#FFFFFF"
+            alpha: 1

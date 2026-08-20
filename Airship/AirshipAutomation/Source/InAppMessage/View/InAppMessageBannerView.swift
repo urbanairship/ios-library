@@ -295,7 +295,9 @@ struct InAppMessageBannerView: View {
         let screenWidth = NSScreen.main?.frame.width ?? 1024
         return min(screenWidth, theme.maxWidth)
 #else
-        min(UIScreen.main.bounds.size.width, theme.maxWidth)
+        // Track the window rather than the screen: a resizable window can be much narrower
+        // than the display, and a screen-wide banner would overflow it on both sides.
+        min(bannerConstraints.windowSize.width, theme.maxWidth)
 #endif
     }
 
