@@ -28,19 +28,19 @@ struct LinearLayout: View {
 
     /// Whether this stack has no length of its own and no item that could give it one.
     ///
-    /// Settled in `init` because it is read once per child and again while resolving the base, and
-    /// answering it walks the whole subtree. Neither input changes for the life of the view.
-    private let collapsesStackAxis: Bool
+    /// Settled in `init` because answering it walks the whole subtree, while neither input changes
+    /// for the life of the view: `body` runs as often as SwiftUI likes, the walk happens once.
+    private let stackAxisLacksBasis: Bool
 
     init(info: ThomasViewInfo.LinearLayout, constraints: ViewConstraints) {
         self.info = info
         self.constraints = constraints
-        self.collapsesStackAxis = Self.collapsesStackAxis(info: info, constraints: constraints)
+        self.stackAxisLacksBasis = Self.stackAxisLacksBasis(info: info, constraints: constraints)
     }
 
     /// Only the stack axis: items can't grow the cross axis, so a percentage there resolves against a
     /// measurement that doesn't depend on it.
-    private static func collapsesStackAxis(
+    private static func stackAxisLacksBasis(
         info: ThomasViewInfo.LinearLayout,
         constraints: ViewConstraints
     ) -> Bool {
@@ -177,10 +177,10 @@ struct LinearLayout: View {
 
         thomasEnvironment.viewFactory.createView(item.view, constraints: constraints)
             // A percentage is a footprint — `childConstraints` takes the margins out of the share and
-            // `.margin()` puts them back, so the two make up the item's whole extent. A collapsed
-            // stack gives out shares of nothing, and the margins are inside those shares, so applying
-            // them would leave a stack of gaps where the collapse said there is nothing at all.
-            .airshipApplyIf(!collapsesStackAxis) { $0.margin(item.margin) }
+            // `.margin()` puts them back, so the two make up the item's whole extent. When there is no
+            // basis the share is never taken out in the first place: the item falls back to its own
+            // content, and its margins belong around that content like any other item's.
+            .margin(item.margin)
 #if os(tvOS)
             .focusSection()
 #endif
@@ -231,10 +231,13 @@ struct LinearLayout: View {
 
         let isVertical = self.info.properties.direction == .vertical
 
-        // Every item is a share of a length none of them supplies. Answer zero without measuring:
-        // it is what the solve arrives at anyway, and reaching it by measurement means feeding the
-        // items' own extent back to them, which diverges rather than settles once the shares reach 1.
-        guard !collapsesStackAxis else { return 0 }
+        // Every item is a share of a length none of them supplies, so there is no base here to take a
+        // share of. Answer nothing rather than measuring: percent children of a nil length resolve to
+        // auto, so they size to their own content and nothing is fed back for the next pass to
+        // re-resolve. Zero is the other reading — `H(1 - P) = S` with `S = 0` forces `H` to zero — but
+        // it renders the items away, and an author who wrote `100%` on a label wants to see the label,
+        // not an empty stack. Both answers settle; only this one is visible enough to debug.
+        guard !stackAxisLacksBasis else { return nil }
 
         guard let measured else { return nil }
 

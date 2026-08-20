@@ -38,22 +38,22 @@ fileprivate struct NewContainer: View {
     /// Whether this container has no length of its own on an axis and no item that could give it one.
     ///
     /// Per axis, unlike a stack: a container overlays its items rather than summing them, so width and
-    /// height are settled independently and one can collapse while the other doesn't. Settled in `init`
-    /// because both are read once per child and answering them walks the whole subtree, while neither
-    /// input changes for the life of the view.
-    private let collapsesVertically: Bool
-    private let collapsesHorizontally: Bool
+    /// height are settled independently and one can lack a basis while the other doesn't. Settled in
+    /// `init` because both are read once per child and answering them walks the whole subtree, while
+    /// neither input changes for the life of the view.
+    private let verticalLacksBasis: Bool
+    private let horizontalLacksBasis: Bool
 
     init(info: ThomasViewInfo.Container, constraints: ViewConstraints) {
         self.info = info
         self.constraints = constraints
-        self.collapsesVertically = constraints.height == nil
-            && Self.collapses(info: info, on: .vertical)
-        self.collapsesHorizontally = constraints.width == nil
-            && Self.collapses(info: info, on: .horizontal)
+        self.verticalLacksBasis = constraints.height == nil
+            && Self.lacksBasis(info: info, on: .vertical)
+        self.horizontalLacksBasis = constraints.width == nil
+            && Self.lacksBasis(info: info, on: .horizontal)
     }
 
-    private static func collapses(info: ThomasViewInfo.Container, on axis: Axis) -> Bool {
+    private static func lacksBasis(info: ThomasViewInfo.Container, on axis: Axis) -> Bool {
         let items = info.properties.items
         return !items.isEmpty && items.allSatisfy {
             !$0.size.constraint(on: axis).establishesLength(view: $0.view, on: axis)
@@ -85,12 +85,14 @@ fileprivate struct NewContainer: View {
 
         let borderPadding = self.info.commonProperties.border?.strokeWidth ?? 0
         let childConstraints = self.constraints
-            // Zero rather than the measurement on a collapsed axis. Feeding the measurement back would
-            // let the items settle on their own content, which is the length they were supposed to be
-            // taking a share of.
+            // Nothing rather than the measurement on an axis with no basis. Feeding the measurement
+            // back would let the items settle on their own content while still calling it a share of
+            // the container, which is circular. Leaving the length nil says the same thing honestly:
+            // percent resolves to auto, the items size to their content, and there is nothing to
+            // re-resolve on the next pass.
             .fillingMeasured(
-                width: collapsesHorizontally ? 0 : measuredSize?.width,
-                height: collapsesVertically ? 0 : measuredSize?.height
+                width: horizontalLacksBasis ? nil : measuredSize?.width,
+                height: verticalLacksBasis ? nil : measuredSize?.height
             )
             .childConstraints(
                 item.size,
@@ -103,8 +105,9 @@ fileprivate struct NewContainer: View {
             item.view,
             constraints: childConstraints
         )
-        // Margins are inside a percentage's share, so a share of nothing carries none of them.
-        .airshipApplyIf(!(collapsesHorizontally || collapsesVertically)) { $0.margin(item.margin) }
+        // Margins are inside a percentage's share. With no basis the share is never taken, so the item
+        // falls back to its content and its margins belong around that content as usual.
+        .margin(item.margin)
         .airshipApplyIf(consumeSafeAreaInsets) {
             $0.padding(self.constraints.safeAreaInsets)
         }
