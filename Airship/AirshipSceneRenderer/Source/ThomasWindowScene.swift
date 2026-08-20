@@ -33,7 +33,7 @@ public struct ThomasWindowScene {
     public init() {}
 }
 
-#if !os(tvOS) && !os(watchOS) && !os(macOS)
+#if !os(watchOS) && !os(macOS)
 extension UIWindowScene {
     /// The space actually available to this scene's windows.
     ///
