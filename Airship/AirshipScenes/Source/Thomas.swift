@@ -96,7 +96,7 @@ public final class Thomas {
         let displayable = displayTarget.prepareDisplay(for: .modal, windowAnimated: false)
 
         var dismiss: (@MainActor @Sendable () -> Void)?
-        try displayable.display { _ in
+        try displayable.display { windowInfo in
 #if !os(tvOS) && !os(watchOS) && !os(macOS)
             let windowScene = ThomasWindowScene(try? displayTarget.sceneProvider())
 #else
@@ -108,6 +108,7 @@ public final class Thomas {
                 delegate: delegate,
                 windowScene: windowScene,
                 extensions: extensions,
+                windowSize: windowInfo.size,
                 onDismiss: { displayable.dismiss() }
             )
             dismiss = made.dismiss

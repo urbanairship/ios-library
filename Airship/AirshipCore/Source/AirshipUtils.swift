@@ -441,3 +441,34 @@ internal extension Collection {
     }
 }
 
+#if !os(watchOS) && !os(macOS)
+internal extension UIWindowScene {
+    /// The space actually available to this scene's windows.
+    ///
+    /// A scene does not necessarily fill its screen. On iPad, in iPhone Mirroring, and from
+    /// iOS 27 on for any resizable app, it occupies an arbitrary slice of the display that the
+    /// user can change at any time, so screen bounds do not describe what we are able to draw
+    /// into. Prefer the scene's own resolved geometry, then its main window, and only fall back
+    /// to the screen when neither has been laid out yet.
+    @MainActor
+    var airshipAvailableSpace: CGSize {
+        if #available(iOS 26.0, tvOS 26.0, visionOS 26.0, *) {
+            let bounds = self.effectiveGeometry.coordinateSpace.bounds
+            if !bounds.isEmpty {
+                return bounds.size
+            }
+        }
+
+        if let window = AirshipUtils.mainWindow(scene: self), !window.bounds.isEmpty {
+            return window.bounds.size
+        }
+
+#if os(visionOS)
+        // https://developer.apple.com/design/human-interface-guidelines/windows#visionOS
+        return CGSize(width: 1280, height: 720)
+#else
+        return self.screen.bounds.size
+#endif
+    }
+}
+#endif

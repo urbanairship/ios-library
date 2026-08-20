@@ -31,21 +31,36 @@ public struct ThomasWindowScene {
 #endif
 
     public init() {}
+}
 
-    /// Interface orientation to render at. Derived from the captured scene where one exists,
-    /// and a fixed value on platforms without interface orientation.
+#if !os(tvOS) && !os(watchOS) && !os(macOS)
+extension UIWindowScene {
+    /// The space actually available to this scene's windows.
+    ///
+    /// A scene does not necessarily fill its screen. On iPad, in iPhone Mirroring, and from
+    /// iOS 27 on for any resizable app, it occupies an arbitrary slice of the display that the
+    /// user can change at any time, so screen bounds do not describe what we are able to draw
+    /// into. Prefer the scene's own resolved geometry, then its first visible window, and only
+    /// fall back to the screen when neither has been laid out yet.
     @MainActor
-    var orientation: ThomasOrientation {
-#if os(tvOS) || os(watchOS) || os(macOS)
-        return .landscape
-#else
-        guard let scene else { return .portrait }
-        if scene.interfaceOrientation.isLandscape {
-            return .landscape
-        } else if scene.interfaceOrientation.isPortrait {
-            return .portrait
+    var airshipAvailableSpace: CGSize {
+        if #available(iOS 26.0, tvOS 26.0, visionOS 26.0, *) {
+            let bounds = self.effectiveGeometry.coordinateSpace.bounds
+            if !bounds.isEmpty {
+                return bounds.size
+            }
         }
-        return .portrait
+
+        if let window = self.windows.first(where: { !$0.isHidden }), !window.bounds.isEmpty {
+            return window.bounds.size
+        }
+
+#if os(visionOS)
+        // https://developer.apple.com/design/human-interface-guidelines/windows#visionOS
+        return CGSize(width: 1280, height: 720)
+#else
+        return self.screen.bounds.size
 #endif
     }
 }
+#endif
