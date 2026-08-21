@@ -126,8 +126,15 @@ struct ViewConstraints: Equatable {
         let parentWidth: CGFloat? = self.width
         let parentHeight: CGFloat? = self.height
 
-        let childMinWidth = Self.resolve(constrainedSize.minWidth, parent: parentWidth, margins: horizontalMargins)
-        let childMaxWidth = Self.resolve(constrainedSize.maxWidth, parent: parentWidth, margins: horizontalMargins)
+        // Rounded where they are resolved, because a bound is compared against a measurement and
+        // then handed back as a length — and the length that leaves here is rounded. A percentage
+        // that lands on a fraction made those two different numbers: content measured at the
+        // rounded 455 was tested against 455.4, failed, and the clamp let go; the content grew back
+        // to its natural height, exceeded the bound, and clamped again, every pass, forever. Which
+        // way the fraction has to fall differs by direction — under .5 for a maximum, over it for a
+        // minimum — so both are rounded rather than the comparison being patched.
+        let childMinWidth = Self.resolve(constrainedSize.minWidth, parent: parentWidth, margins: horizontalMargins)?.rounded()
+        let childMaxWidth = Self.resolve(constrainedSize.maxWidth, parent: parentWidth, margins: horizontalMargins)?.rounded()
         var childWidth = Self.resolve(constrainedSize.width, parent: parentWidth, margins: horizontalMargins)
 
         childWidth = childWidth?.bound(
@@ -135,8 +142,8 @@ struct ViewConstraints: Equatable {
             maxValue: childMaxWidth
         )
 
-        let childMinHeight = Self.resolve(constrainedSize.minHeight, parent: parentHeight, margins: verticalMargins)
-        let childMaxHeight = Self.resolve(constrainedSize.maxHeight, parent: parentHeight, margins: verticalMargins)
+        let childMinHeight = Self.resolve(constrainedSize.minHeight, parent: parentHeight, margins: verticalMargins)?.rounded()
+        let childMaxHeight = Self.resolve(constrainedSize.maxHeight, parent: parentHeight, margins: verticalMargins)?.rounded()
         var childHeight = Self.resolve(constrainedSize.height, parent: parentHeight, margins: verticalMargins)
 
         childHeight = childHeight?.bound(
@@ -204,15 +211,40 @@ struct ViewConstraints: Equatable {
         )
     }
 
+    /// [borderStrokeWidth] is the child's own stroke, not ours.
+    ///
+    /// A declared length is the whole footprint the author asked for, and the border is drawn inside
+    /// it — so the frame the child sizes to is that length less the stroke on both edges, and the
+    /// padding the border modifier adds around it brings the footprint back to what was declared.
+    /// Left out, the padding landed outside a frame already set to the full length and the view came
+    /// out `2 x stroke` bigger than it said it was.
+    ///
+    /// This is also why nothing subtracts the stroke a second time when that child goes on to size
+    /// children of its own: its length is already the content box by then.
+    /// A copy with [view]'s own stroke taken out of whatever lengths are set.
+    ///
+    /// `childConstraints` does this for anything a container or a stack sizes, which is nearly
+    /// everything. A placement root has no such parent — its length comes from the placement — so it
+    /// asks for the same treatment here, and a bordered root card stays the size it was placed at.
+    func deductingBorder(of view: ThomasViewInfo) -> ViewConstraints {
+        let stroke = CGFloat(view.borderStrokeWidth * 2)
+        guard stroke > 0 else { return self }
+
+        var copy = self
+        copy.width = copy.width.map { max(0, $0 - stroke) }
+        copy.height = copy.height.map { max(0, $0 - stroke) }
+        return copy
+    }
+
     func childConstraints(
         _ size: ThomasSize,
         margin: ThomasMargin?,
-        padding: Double = 0,
+        borderStrokeWidth: Double = 0,
         safeAreaInsetsMode: SafeAreaInsetsMode = .ignore
     ) -> ViewConstraints {
 
-        let parentWidth: CGFloat? = self.width?.subtract(padding * 2)
-        let parentHeight: CGFloat? = self.height?.subtract(padding * 2)
+        let parentWidth: CGFloat? = self.width
+        let parentHeight: CGFloat? = self.height
 
         var horizontalMargins: CGFloat = margin?.horizontalMargins ?? 0.0
         var verticalMargins: CGFloat = margin?.verticalMargins ?? 0.0
@@ -267,8 +299,8 @@ struct ViewConstraints: Equatable {
         let isHorizontalAbsoluteSize: Bool = size.width.isPoints
         let isVerticalAbsoluteSize: Bool = size.height.isPoints
 
-        var maxWidth = (parentWidth ?? self.maxWidth?.subtract(padding * 2))?.subtract(horizontalMargins)
-        var maxHeight = (parentHeight ?? self.maxHeight?.subtract(padding * 2))?.subtract(verticalMargins)
+        var maxWidth = (parentWidth ?? self.maxWidth)?.subtract(horizontalMargins)
+        var maxHeight = (parentHeight ?? self.maxHeight)?.subtract(verticalMargins)
 
         // For both-auto + aspect_ratio, tighten max bounds by the ratio so children
         // receive accurate parent bounds (e.g. maxHeight 600 with 16:9 ratio → 225, not 600).
@@ -286,6 +318,37 @@ struct ViewConstraints: Equatable {
             }
         }
 
+        // The child's own stroke, taken out of a length it was given and only out of a length: an
+        // auto axis has no footprint to fit a border inside, so there the border grows the view and
+        // that is the right answer. Clamped, since a stroke wider than the length it sits in would
+        // otherwise give a negative frame.
+        //
+        // After the ratio, not before. The ratio describes the box the author sees, which is the
+        // whole footprint including the border — deriving from an already-reduced length made the
+        // visible box off-ratio by the stroke.
+        let stroke = CGFloat(borderStrokeWidth * 2)
+        if stroke > 0 {
+            childWidth = childWidth.map { max(0, $0 - stroke) }
+            childHeight = childHeight.map { max(0, $0 - stroke) }
+        }
+
+        // Inherited: everything a child gets on this axis is derived from our length, so if ours was
+        // measured then so are the child's percentage and the maximum it falls back to.
+        //
+        // Except where the child declared points. It didn't derive that from us — it is a number
+        // the author wrote, and the maximum everything inside it falls back to is that number, a
+        // real ceiling. Carrying the mark past it told a stack further down that its ceiling was a
+        // measurement, and a stack whose percentages reach 1 gives up its fair share of one of
+        // those rather than diverge: `60 + 100% + 100%` in a 200pt box drew 60 and two text-height
+        // rows, leaving the rest of the box empty.
+        var childMeasuredAxes = measuredAxes
+        if isHorizontalAbsoluteSize {
+            childMeasuredAxes.remove(.horizontal)
+        }
+        if isVerticalAbsoluteSize {
+            childMeasuredAxes.remove(.vertical)
+        }
+
         return ViewConstraints(
             width: childWidth,
             height: childHeight,
@@ -294,9 +357,7 @@ struct ViewConstraints: Equatable {
             // Not inherited: a child gets its own length from us, so it is capped by that.
             // Only the view a scroll layout hands its constraints to may exceed its length.
             uncappedAxes: [],
-            // Inherited: everything a child gets on this axis is derived from our length, so if
-            // ours was measured then so are the child's percentage and the maximum it falls back to.
-            measuredAxes: measuredAxes,
+            measuredAxes: childMeasuredAxes,
             isHorizontalFixedSize: isHorizontalFixedSize,
             isVerticalFixedSize: isVerticalFixedSize,
             isHorizontalAbsoluteSize: isHorizontalAbsoluteSize,

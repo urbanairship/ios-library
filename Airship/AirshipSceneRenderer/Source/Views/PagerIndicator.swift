@@ -18,11 +18,10 @@ struct PagerIndicator: View {
     }
 
     var body: some View {
-        let size: Double = if let height = constraints.height {
-            height - (self.info.commonProperties.border?.strokeWidth ?? 0)
-        } else {
-            32.0
-        }
+        // The stroke is already out of `constraints.height` — our parent took it off before handing
+        // us a length, the same way it does for anything with a border. Taking it off again here
+        // charged it twice and left the dots short.
+        let size: Double = constraints.height ?? 32.0
         
         let childConstraints = ViewConstraints(
             width: size,

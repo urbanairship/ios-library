@@ -47,9 +47,12 @@ fileprivate struct NewContainer: View {
     init(info: ThomasViewInfo.Container, constraints: ViewConstraints) {
         self.info = info
         self.constraints = constraints
-        self.verticalLacksBasis = constraints.height == nil
+        // A ratio derives one axis from the other, so a box with one has a length whatever its
+        // items declare, and the items are a share of something real.
+        let hasRatio = constraints.aspectRatio != nil
+        self.verticalLacksBasis = constraints.height == nil && !hasRatio
             && Self.lacksBasis(info: info, on: .vertical)
-        self.horizontalLacksBasis = constraints.width == nil
+        self.horizontalLacksBasis = constraints.width == nil && !hasRatio
             && Self.lacksBasis(info: info, on: .horizontal)
     }
 
@@ -83,7 +86,6 @@ fileprivate struct NewContainer: View {
     private func childItem(_ index: Int, item: ThomasViewInfo.Container.Item) -> some View {
         let consumeSafeAreaInsets = item.ignoreSafeArea != true
 
-        let borderPadding = self.info.commonProperties.border?.strokeWidth ?? 0
         let childConstraints = self.constraints
             // Nothing rather than the measurement on an axis with no basis. Feeding the measurement
             // back would let the items settle on their own content while still calling it a share of
@@ -94,10 +96,12 @@ fileprivate struct NewContainer: View {
                 width: horizontalLacksBasis ? nil : measuredSize?.width,
                 height: verticalLacksBasis ? nil : measuredSize?.height
             )
+            // Our stroke was taken out of our own length before we got it, so this is the content
+            // box already; the child's stroke comes out of the child's length the same way.
             .childConstraints(
                 item.size,
                 margin: item.margin,
-                padding: borderPadding,
+                borderStrokeWidth: item.view.borderStrokeWidth,
                 safeAreaInsetsMode: consumeSafeAreaInsets ? .consumeMargin : .ignore
             )
 

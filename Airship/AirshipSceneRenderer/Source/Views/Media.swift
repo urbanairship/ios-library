@@ -150,7 +150,14 @@ extension Image {
             self.resizable()
                 .scaledToFill()
                 .constraints(constraints, alignment: alignment)
-                .frame(maxWidth: constraints.maxWidth, maxHeight: constraints.maxHeight)
+                // Bounds the fill on an axis with no length of its own, so `limit(on:)` rather
+                // than the raw maximum — the same reading the crop decision above uses. A measured
+                // maximum is the siblings' extent handed back, and clamping to it is what the
+                // decision declined to crop for.
+                .frame(
+                    maxWidth: constraints.limit(on: .horizontal),
+                    maxHeight: constraints.limit(on: .vertical)
+                )
                 .clipped()
         }
     }
@@ -199,7 +206,11 @@ extension View {
         } else {
             self.aspectRatio(videoAspectRatio, contentMode: .fill)
                 .constraints(constraints, alignment: alignment)
-                .frame(maxWidth: constraints.maxWidth, maxHeight: constraints.maxHeight)
+                // As above: a measured maximum is not a ceiling this view has to fit inside.
+                .frame(
+                    maxWidth: constraints.limit(on: .horizontal),
+                    maxHeight: constraints.limit(on: .vertical)
+                )
                 .clipped()
         }
     }
@@ -229,10 +240,17 @@ private func shouldShowMediaWhole(constraints: ViewConstraints, aspectRatio: CGF
     case (let width?, nil):
         guard let maxHeight = constraints.limit(on: .vertical) else { return true }
         return width / aspectRatio <= maxHeight
-    // Both given is a box, and the media is cropped into it. Neither leaves nothing to scale from,
-    // so whatever the crop path is proposed is as good an answer as any.
-    case (_?, _?), (nil, nil):
+    // Both given is a box, and the media is cropped into it.
+    case (_?, _?):
         return false
+    // Neither declared, so the only box on offer is a maximum — and only a real one counts. Against
+    // a ceiling the author can point at, `fit_crop` still means fill it and crop the overflow.
+    // Against a measured one there is nothing to crop into: that number is the siblings' extent, and
+    // obeying it rendered a `fit_crop` image beside a two-character label as a strip of itself the
+    // label's width.
+    case (nil, nil):
+        return constraints.limit(on: .horizontal) == nil
+            && constraints.limit(on: .vertical) == nil
     }
 }
 
