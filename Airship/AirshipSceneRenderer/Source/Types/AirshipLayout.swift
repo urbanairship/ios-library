@@ -46,6 +46,65 @@ extension ThomasViewInfo {
         return result
     }
 
+    /// The stroke this view draws around itself, which sits inside a length it was given.
+    ///
+    /// A parent needs it while it is still deciding the child's frame: the length in the payload is
+    /// the whole footprint, and the border is part of what fits inside it.
+    ///
+    /// The widest stroke the view could draw, not the one it draws right now. A border can be
+    /// overridden per state, and the frame is settled here — before any state exists — while the
+    /// padding is applied later by a modifier that resolves the override. Reserving the widest keeps
+    /// the view inside its declared footprint whichever state it lands in; a narrower one leaves it
+    /// slightly under, which is the harmless direction.
+    var borderStrokeWidth: Double {
+        let strokes = [borderProperties.0?.strokeWidth]
+            + (borderProperties.1?.map { $0.value?.strokeWidth } ?? [])
+        return strokes.compactMap { $0 }.max() ?? 0
+    }
+
+    private var borderProperties: (ThomasBorder?, [ThomasPropertyOverride<ThomasBorder>]?) {
+        let properties: (CommonViewProperties, CommonViewOverrides?) = switch self {
+        case .container(let info): (info.commonProperties, info.commonOverrides)
+        case .linearLayout(let info): (info.commonProperties, info.commonOverrides)
+        #if !os(tvOS) && !os(watchOS)
+        case .webView(let info): (info.commonProperties, info.commonOverrides)
+        #endif
+        case .customView(let info): (info.commonProperties, info.commonOverrides)
+        case .scrollLayout(let info): (info.commonProperties, info.commonOverrides)
+        case .media(let info): (info.commonProperties, info.commonOverrides)
+        case .label(let info): (info.commonProperties, info.commonOverrides)
+        case .labelButton(let info): (info.commonProperties, info.commonOverrides)
+        case .imageButton(let info): (info.commonProperties, info.commonOverrides)
+        case .stackImageButton(let info): (info.commonProperties, info.commonOverrides)
+        case .stackImageView(let info): (info.commonProperties, info.commonOverrides)
+        case .emptyView(let info): (info.commonProperties, info.commonOverrides)
+        case .pager(let info): (info.commonProperties, info.commonOverrides)
+        case .pagerIndicator(let info): (info.commonProperties, info.commonOverrides)
+        case .storyIndicator(let info): (info.commonProperties, info.commonOverrides)
+        case .pagerController(let info): (info.commonProperties, info.commonOverrides)
+        case .formController(let info): (info.commonProperties, info.commonOverrides)
+        case .checkbox(let info): (info.commonProperties, info.commonOverrides)
+        case .checkboxController(let info): (info.commonProperties, info.commonOverrides)
+        case .radioInput(let info): (info.commonProperties, info.commonOverrides)
+        case .radioInputController(let info): (info.commonProperties, info.commonOverrides)
+        case .textInput(let info): (info.commonProperties, info.commonOverrides)
+        case .score(let info): (info.commonProperties, info.commonOverrides)
+        case .npsController(let info): (info.commonProperties, info.commonOverrides)
+        case .toggle(let info): (info.commonProperties, info.commonOverrides)
+        case .stateController(let info): (info.commonProperties, info.commonOverrides)
+        case .buttonLayout(let info): (info.commonProperties, info.commonOverrides)
+        case .basicToggleLayout(let info): (info.commonProperties, info.commonOverrides)
+        case .checkboxToggleLayout(let info): (info.commonProperties, info.commonOverrides)
+        case .radioInputToggleLayout(let info): (info.commonProperties, info.commonOverrides)
+        case .iconView(let info): (info.commonProperties, info.commonOverrides)
+        case .scoreController(let info): (info.commonProperties, info.commonOverrides)
+        case .scoreToggleLayout(let info): (info.commonProperties, info.commonOverrides)
+        case .asyncViewController(let info): (info.commonProperties, info.commonOverrides)
+        case .videoController(let info): (info.commonProperties, info.commonOverrides)
+        }
+        return (properties.0.border, properties.1?.border)
+    }
+
     /// Nil for a view that draws its own content rather than hosting other views.
     var immediateChildren: [ThomasViewInfo]? {
         return switch self {

@@ -158,7 +158,7 @@ struct BannerView: View {
         return VStack {
             thomasEnvironment.viewFactory.createView(
                 layout.view,
-                constraints: contentConstraints
+                constraints: contentConstraints.deductingBorder(of: layout.view)
             )
             .thomasBackground(
                 color: placement.backgroundColor,

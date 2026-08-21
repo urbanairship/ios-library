@@ -47,13 +47,13 @@ extension ThomasSizeConstraint {
     /// A percentage is a share of its parent, so it can only be resolved once the parent has a length
     /// to take a share of — it never supplies one. An auto-sized parent takes its length from its
     /// children, so children that all decline to supply one leave it nothing to work from: in
-    /// `H(1 - P) = S`, the extent of everything that isn't a percentage is `S = 0`. That forces `H` to
-    /// zero for any `P` other than 1, and admits every `H` when `P` is exactly 1 — so zero is the
-    /// answer where there is one, and the smallest of them where there isn't.
+    /// `H(1 - P) = S`, the extent of everything that isn't a percentage is `S = 0`.
     ///
-    /// Worth collapsing on sight rather than solving for. The solver arrives at the same number by
-    /// measuring, but only after feeding a measurement back through the children that produced it, and
-    /// at `P >= 1` that loop diverges instead of settling.
+    /// Worth answering on sight rather than solving for. The solver only gets there by feeding a
+    /// measurement back through the children that produced it, and at `P >= 1` that loop diverges
+    /// instead of settling. Knowing up front that there is no basis lets the percentages fall back to
+    /// auto, which is stable and leaves the items visible — `S = 0` also admits `H = 0`, but rendering
+    /// an author's `100%` label as an empty box hides the mistake instead of showing it.
     func establishesLength(view: ThomasViewInfo, on axis: Axis) -> Bool {
         switch self {
         case .points: true
@@ -68,9 +68,10 @@ extension ThomasSizeConstraint {
 extension ThomasViewInfo {
     /// Whether anything in this subtree gives [axis] a length that isn't a share of something above it.
     ///
-    /// Answers `true` for anything unrecognised. Collapsing a view that did have content of its own
-    /// hides it outright, where declining to collapse one that didn't leaves the size to be solved as
-    /// it was before — so uncertainty belongs on the side of drawing something.
+    /// Answers `true` for anything unrecognised. Calling a view basis-less takes the solve away from
+    /// the parent and sizes the percentages to their own content instead; declining to leaves the
+    /// size solved as it was before. The second is the smaller claim to make about a view we don't
+    /// recognise, so uncertainty belongs on the side of leaving the solve alone.
     func establishesLength(on axis: Axis) -> Bool {
         switch self {
         case .container(let info):

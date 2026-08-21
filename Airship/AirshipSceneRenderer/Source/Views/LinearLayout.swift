@@ -28,27 +28,50 @@ struct LinearLayout: View {
 
     /// Whether this stack has no length of its own and no item that could give it one.
     ///
-    /// Settled in `init` because it is read once per child and again while resolving the base, and
-    /// answering it walks the whole subtree. Neither input changes for the life of the view.
-    private let collapsesStackAxis: Bool
+    /// Settled in `init` because answering it walks the whole subtree, while neither input changes
+    /// for the life of the view: `body` runs as often as SwiftUI likes, the walk happens once.
+    private let stackAxisLacksBasis: Bool
+
+    /// The same question on the other axis.
+    ///
+    /// The cross axis looked safe because items can't grow it — a percentage there resolves against
+    /// a measurement it had no part in. True while the axis is fixed. When it is auto the stack
+    /// takes it from its widest item, so an item that is both the widest and a percentage of it is
+    /// a fraction of a length it sets itself: `w = Pw`, which walks to zero a pass at a time and
+    /// takes the stack down with it. A sibling with a length of its own breaks the loop, which is
+    /// what this asks about.
+    private let crossAxisLacksBasis: Bool
 
     init(info: ThomasViewInfo.LinearLayout, constraints: ViewConstraints) {
         self.info = info
         self.constraints = constraints
-        self.collapsesStackAxis = Self.collapsesStackAxis(info: info, constraints: constraints)
+        let isVertical = info.properties.direction == .vertical
+        self.stackAxisLacksBasis = Self.lacksBasis(
+            info: info,
+            constraints: constraints,
+            on: isVertical ? .vertical : .horizontal
+        )
+        self.crossAxisLacksBasis = Self.lacksBasis(
+            info: info,
+            constraints: constraints,
+            on: isVertical ? .horizontal : .vertical
+        )
     }
 
-    /// Only the stack axis: items can't grow the cross axis, so a percentage there resolves against a
-    /// measurement that doesn't depend on it.
-    private static func collapsesStackAxis(
+    private static func lacksBasis(
         info: ThomasViewInfo.LinearLayout,
-        constraints: ViewConstraints
+        constraints: ViewConstraints,
+        on axis: Axis
     ) -> Bool {
-        let isVertical = info.properties.direction == .vertical
-        let isAuto = isVertical ? constraints.height == nil : constraints.width == nil
+        let isAuto = axis == .vertical ? constraints.height == nil : constraints.width == nil
         guard isAuto else { return false }
 
-        let axis: Axis = isVertical ? .vertical : .horizontal
+        // A ratio is a length by another route: it derives one axis from the other, so the box that
+        // reaches us is settled before any item is asked for anything. Auto on both axes only means
+        // nothing was declared, not that nothing supplies it — the items are a share of a length
+        // that exists, and asking them about it gets the wrong answer.
+        guard constraints.aspectRatio == nil else { return false }
+
         let items = info.properties.items
         return !items.isEmpty && items.allSatisfy {
             !$0.size.constraint(on: axis).establishesLength(view: $0.view, on: axis)
@@ -168,19 +191,22 @@ struct LinearLayout: View {
         _ item: ThomasViewInfo.LinearLayout.Item,
         parentConstraints: ViewConstraints
     ) -> some View {
+        // Our own stroke isn't deducted here any more: our length already had it taken out when our
+        // parent sized us, so what we hand out is the content box. The child's stroke comes out of
+        // the child's length for the same reason.
         let constraints = parentConstraints.childConstraints(
             item.size,
             margin: item.margin,
-            padding: self.info.commonProperties.border?.strokeWidth ?? 0,
+            borderStrokeWidth: item.view.borderStrokeWidth,
             safeAreaInsetsMode: .consume
         )
 
         thomasEnvironment.viewFactory.createView(item.view, constraints: constraints)
             // A percentage is a footprint — `childConstraints` takes the margins out of the share and
-            // `.margin()` puts them back, so the two make up the item's whole extent. A collapsed
-            // stack gives out shares of nothing, and the margins are inside those shares, so applying
-            // them would leave a stack of gaps where the collapse said there is nothing at all.
-            .airshipApplyIf(!collapsesStackAxis) { $0.margin(item.margin) }
+            // `.margin()` puts them back, so the two make up the item's whole extent. When there is no
+            // basis the share is never taken out in the first place: the item falls back to its own
+            // content, and its margins belong around that content like any other item's.
+            .margin(item.margin)
 #if os(tvOS)
             .focusSection()
 #endif
@@ -199,9 +225,17 @@ struct LinearLayout: View {
             isAuto: isVertical ? self.constraints.height == nil : self.constraints.width == nil
         )
 
+        // Unless nothing supplies the cross axis either, in which case the measurement is the
+        // items' own extent coming back to them and "items can't grow it" stops being true. Hand
+        // back nothing, the same answer the stack axis gives: the percentages fall back to their
+        // content and there is nothing to re-resolve on the next pass.
+        let crossAxisBase = crossAxisLacksBasis
+            ? nil
+            : (isVertical ? measuredSize?.width : measuredSize?.height)
+
         var constraints = self.constraints.fillingMeasured(
-            width: isVertical ? measuredSize?.width : stackAxisBase,
-            height: isVertical ? stackAxisBase : measuredSize?.height
+            width: isVertical ? crossAxisBase : stackAxisBase,
+            height: isVertical ? stackAxisBase : crossAxisBase
         )
 
         if isVertical {
@@ -231,10 +265,13 @@ struct LinearLayout: View {
 
         let isVertical = self.info.properties.direction == .vertical
 
-        // Every item is a share of a length none of them supplies. Answer zero without measuring:
-        // it is what the solve arrives at anyway, and reaching it by measurement means feeding the
-        // items' own extent back to them, which diverges rather than settles once the shares reach 1.
-        guard !collapsesStackAxis else { return 0 }
+        // Every item is a share of a length none of them supplies, so there is no base here to take a
+        // share of. Answer nothing rather than measuring: percent children of a nil length resolve to
+        // auto, so they size to their own content and nothing is fed back for the next pass to
+        // re-resolve. Zero is the other reading — `H(1 - P) = S` with `S = 0` forces `H` to zero — but
+        // it renders the items away, and an author who wrote `100%` on a label wants to see the label,
+        // not an empty stack. Both answers settle; only this one is visible enough to debug.
+        guard !stackAxisLacksBasis else { return nil }
 
         guard let measured else { return nil }
 
@@ -307,13 +344,13 @@ struct LinearLayout: View {
 
     /// The space the percent items occupy on the stack axis, given [base] — their resolved size
     /// on the stack axis (margins cancel: `.margin()` re-adds what `childConstraints` removed).
+    /// Our stroke isn't taken out here any more. It comes out of our own length before we get it, so
+    /// `base` is already the content box the percentages were resolved against — subtracting it a
+    /// second time recovered an `S` that was short by the stroke, and the stack settled oversized.
     private func resolvedPercentExtent(base: CGFloat) -> CGFloat {
-        let padding = (self.info.commonProperties.border?.strokeWidth ?? 0) * 2
-        let inner = base - padding
-
         return self.info.properties.items.reduce(0) { total, item in
             guard let fraction = stackAxisConstraint(item).percentFraction else { return total }
-            return total + max(0, min(fraction * inner, inner))
+            return total + max(0, min(fraction * base, base))
         }
     }
 

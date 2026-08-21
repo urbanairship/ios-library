@@ -166,7 +166,7 @@ struct ModalView: View {
         return VStack {
             thomasEnvironment.viewFactory.createView(
                 self.layout.view,
-                constraints: contentConstraints
+                constraints: contentConstraints.deductingBorder(of: self.layout.view)
             )
             .background(
                 GeometryReader { contentMetrics -> Color in

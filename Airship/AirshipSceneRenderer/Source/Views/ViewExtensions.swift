@@ -71,6 +71,33 @@ extension View {
                     && constraints.height != nil
             )
         }
+        // An axis the ratio derives has to be free of the content's own idea of how big it is.
+        // `.aspectRatio(.fit)` proposes a ratio-fitted box and then lets the child answer — a
+        // stretchy view accepts it, a rigid one like a label reports its text size instead, which
+        // left the ratio a no-op on exactly the content that needed it. Filling first means the box
+        // is what answers. The proposal still comes from SwiftUI, so several ratio items in a stack
+        // keep fair-sharing what they're offered, which pre-computing a size here would have cost.
+        //
+        // Anything with a length of its own is already a concrete box by this point and must not be
+        // stretched. Keyed on the lengths rather than `frameWidth`/`frameHeight`, which also read
+        // nil on an axis a scroll layout left uncapped — that item has a length, it just isn't a
+        // ceiling.
+        //
+        // Carries the alignment, which is the caller's and not ours to change: with no length on
+        // either axis every dimension of the frame above is nil, so it sizes to its content and its
+        // alignment never applies. This is the only frame that positions anything here, and a
+        // vertical stack that asked to lay out from the top would otherwise be centered.
+        .airshipApplyIf(
+            constraints.aspectRatio != nil
+                && constraints.width == nil
+                && constraints.height == nil
+        ) { view in
+            view.frame(
+                maxWidth: .infinity,
+                maxHeight: .infinity,
+                alignment: alignment ?? .center
+            )
+        }
         .airshipApplyIfPresent(constraints.aspectRatio) { view, ratio in
             view.aspectRatio(ratio, contentMode: .fit)
         }
