@@ -53,7 +53,9 @@ public struct AirshipSimpleLayoutView: View {
         placement: ThomasPresentationInfo.Embedded.Placement
     ) -> some View {
         return viewModel.environment.viewFactory
-            .createView(layout.view, constraints: constraints)
+            // The root has no container above it to take its stroke out of its length, so it gets
+            // the same deduction Banner and Modal roots do.
+            .createView(layout.view, constraints: constraints.deductingBorder(of: layout.view))
             .thomasBackground(
                 color: placement.backgroundColor,
                 border: placement.border

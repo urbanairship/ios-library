@@ -39,7 +39,8 @@ struct LinearLayout: View {
     /// takes it from its widest item, so an item that is both the widest and a percentage of it is
     /// a fraction of a length it sets itself: `w = Pw`, which walks to zero a pass at a time and
     /// takes the stack down with it. A sibling with a length of its own breaks the loop, which is
-    /// what this asks about.
+    /// what this asks about. So does an item at exactly 100%: the whole of the widest is the
+    /// widest, so the feedback settles where it starts instead of walking.
     private let crossAxisLacksBasis: Bool
 
     init(info: ThomasViewInfo.LinearLayout, constraints: ViewConstraints) {
@@ -49,19 +50,22 @@ struct LinearLayout: View {
         self.stackAxisLacksBasis = Self.lacksBasis(
             info: info,
             constraints: constraints,
-            on: isVertical ? .vertical : .horizontal
+            on: isVertical ? .vertical : .horizontal,
+            lengthIsWidestItem: false
         )
         self.crossAxisLacksBasis = Self.lacksBasis(
             info: info,
             constraints: constraints,
-            on: isVertical ? .horizontal : .vertical
+            on: isVertical ? .horizontal : .vertical,
+            lengthIsWidestItem: true
         )
     }
 
     private static func lacksBasis(
         info: ThomasViewInfo.LinearLayout,
         constraints: ViewConstraints,
-        on axis: Axis
+        on axis: Axis,
+        lengthIsWidestItem: Bool
     ) -> Bool {
         let isAuto = axis == .vertical ? constraints.height == nil : constraints.width == nil
         guard isAuto else { return false }
@@ -73,8 +77,17 @@ struct LinearLayout: View {
         guard constraints.aspectRatio == nil else { return false }
 
         let items = info.properties.items
-        return !items.isEmpty && items.allSatisfy {
-            !$0.size.constraint(on: axis).establishesLength(view: $0.view, on: axis)
+        return !items.isEmpty && items.allSatisfy { item in
+            let constraint = item.size.constraint(on: axis)
+            // Exactly 100% counts as a basis on an axis whose length is the widest item: 100% of
+            // the widest is the widest, so the measurement fed back settles on the first pass
+            // instead of walking. This is what makes a stack of all-100% buttons match the widest
+            // one. Fractions below the whole still walk to zero, and on the stack axis items sum
+            // rather than overlay, where 100% diverges, so it stays basis-less there.
+            if lengthIsWidestItem, case .percent(let percent) = constraint, percent == 100 {
+                return false
+            }
+            return !constraint.establishesLength(view: item.view, on: axis)
         }
     }
 

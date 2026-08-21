@@ -58,8 +58,15 @@ fileprivate struct NewContainer: View {
 
     private static func lacksBasis(info: ThomasViewInfo.Container, on axis: Axis) -> Bool {
         let items = info.properties.items
-        return !items.isEmpty && items.allSatisfy {
-            !$0.size.constraint(on: axis).establishesLength(view: $0.view, on: axis)
+        return !items.isEmpty && items.allSatisfy { item in
+            let constraint = item.size.constraint(on: axis)
+            // Exactly 100% counts as a basis: a container is its largest item on either axis, and
+            // 100% of the largest is the largest, so the measurement fed back settles on the first
+            // pass instead of walking. Fractions below the whole still walk to zero.
+            if case .percent(let percent) = constraint, percent == 100 {
+                return false
+            }
+            return !constraint.establishesLength(view: item.view, on: axis)
         }
     }
 
