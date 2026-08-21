@@ -51,18 +51,16 @@
 
 /* Begin PBXBuildFile section */
 		1A9DBFB4891B4752A115259D /* AirshipFoundationModelsSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B81AD3732B84B9CA6E58DA1 /* AirshipFoundationModelsSDKModule.swift */; };
-		6EAFC4A12FF32A6C005FA5A1 /* AvailabilityObservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC4A02FF32A6C005FA5A1 /* AvailabilityObservation.swift */; };
-		6EAFC4A32FF32A6C005FA5A1 /* GenerationSchemaBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC4A22FF32A6C005FA5A1 /* GenerationSchemaBridge.swift */; };
-		6EAFC4A52FF32A6C005FA5A1 /* AirshipFoundationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC4A42FF32A6C005FA5A1 /* AirshipFoundationModel.swift */; };
 		1C3CB5F0AA3805397BC51E57 /* AirshipDebugJSONEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E42A9F4A0E1F3961F3E4B53D /* AirshipDebugJSONEditor.swift */; };
+		1F1E5329D7C64F18A0711B7A /* EmbeddedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC1F242E5A4954AACBAF5A /* EmbeddedViewModel.swift */; };
 		27051CD72EE75E3300C770D5 /* AutomationEventsHistoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27051CD62EE75E3300C770D5 /* AutomationEventsHistoryTest.swift */; };
 		27077E4C2EE7531C0027A282 /* AutomationEventsHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27077E4B2EE7531C0027A282 /* AutomationEventsHistory.swift */; };
 		271B38652DB2866200495D9F /* TagActionMutation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271B38642DB2866200495D9F /* TagActionMutation.swift */; };
 		273899812F7EA8EA00741963 /* MessageCenterMessageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273899802F7EA8EA00741963 /* MessageCenterMessageError.swift */; };
 		273DC3AD2F60836F0025637D /* MessageCenterStoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273DC3AC2F60836F0025637D /* MessageCenterStoriesViewModel.swift */; };
 		273DC3AF2F60898C0025637D /* MessageCenterStoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 273DC3AE2F60898C0025637D /* MessageCenterStoriesView.swift */; };
-		2753F6422F6C5BB50073882C /* BuildFile in Sources */ = {isa = PBXBuildFile; };
-		2753F6FA2F71507E0073882C /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		2753F6422F6C5BB50073882C /* (null) in Sources */ = {isa = PBXBuildFile; };
+		2753F6FA2F71507E0073882C /* (null) in Sources */ = {isa = PBXBuildFile; };
 		2797B4192F47687800A7F848 /* NativeLayoutPersistentDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2797B4182F47687800A7F848 /* NativeLayoutPersistentDataStore.swift */; };
 		27AFE70F2E733F4400767044 /* ModifyTagsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFE70E2E733F4400767044 /* ModifyTagsAction.swift */; };
 		27AFE7112E73477200767044 /* ModifyTagsActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFE7102E73477200767044 /* ModifyTagsActionTest.swift */; };
@@ -77,16 +75,6 @@
 		322AAB222B5FCB6B00652DAC /* ContactManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322AAB1C2B5A869000652DAC /* ContactManagementView.swift */; };
 		3231126A29D5E4F600CF0D86 /* AirshipAutomationResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231126929D5E4F600CF0D86 /* AirshipAutomationResources.swift */; };
 		3231128229D5E67200CF0D86 /* FrequencyLimitStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231127B29D5E67200CF0D86 /* FrequencyLimitStore.swift */; };
-		FADE000000000000000000A1 /* LedgerEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A2 /* LedgerEvent.swift */; };
-		FADE000000000000000000C0 /* LimitConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C1 /* LimitConfig.swift */; };
-		FADE000000000000000000C2 /* LedgerLimitEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C3 /* LedgerLimitEvaluator.swift */; };
-		FADE000000000000000000B0 /* AutomationLedger.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000B1 /* AutomationLedger.swift */; };
-		FADE000000000000000000A3 /* LedgerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A4 /* LedgerStore.swift */; };
-		FADE000000000000000000A5 /* LedgerStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A6 /* LedgerStoreTest.swift */; };
-		FADE000000000000000000C4 /* LimitConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C5 /* LimitConfigTest.swift */; };
-		FADE000000000000000000C6 /* LedgerLimitEvaluatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C7 /* LedgerLimitEvaluatorTest.swift */; };
-		FADE000000000000000000B4 /* AutomationLedgerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000B3 /* AutomationLedgerTest.swift */; };
-		FADE000000000000000000A7 /* AirshipLedger.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A8 /* AirshipLedger.xcdatamodeld */; };
 		3231128329D5E67200CF0D86 /* FrequencyLimitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231127C29D5E67200CF0D86 /* FrequencyLimitManager.swift */; };
 		3231128429D5E67200CF0D86 /* Occurrence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231127D29D5E67200CF0D86 /* Occurrence.swift */; };
 		3231128729D5E67200CF0D86 /* FrequencyConstraint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3231128029D5E67200CF0D86 /* FrequencyConstraint.swift */; };
@@ -359,7 +347,6 @@
 		6E21C3262FEC3B9900EA3E56 /* ThomasWindowSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2F62FEC3B9900EA3E56 /* ThomasWindowSize.swift */; };
 		6E21C3272FEC3B9900EA3E56 /* ThomasBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2D92FEC3B9900EA3E56 /* ThomasBorder.swift */; };
 		6E21C3322FEC3BD600EA3E56 /* EmbeddedLastDisplayedTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3312FEC3BD600EA3E56 /* EmbeddedLastDisplayedTracker.swift */; };
-		1F1E5329D7C64F18A0711B7A /* EmbeddedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC1F242E5A4954AACBAF5A /* EmbeddedViewModel.swift */; };
 		6E21C3332FEC3BD600EA3E56 /* AirshipEmbeddedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C32A2FEC3BD600EA3E56 /* AirshipEmbeddedView.swift */; };
 		6E21C3342FEC3BD600EA3E56 /* AirshipEmbeddedObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C32C2FEC3BD600EA3E56 /* AirshipEmbeddedObserver.swift */; };
 		6E21C3352FEC3BD600EA3E56 /* AirshipEmbeddedSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C32F2FEC3BD600EA3E56 /* AirshipEmbeddedSize.swift */; };
@@ -811,6 +798,9 @@
 		6E9D529826C195F7004EA16B /* ActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D529726C195F7004EA16B /* ActionRunner.swift */; };
 		6E9D529B26C1A77C004EA16B /* ActionRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D529A26C1A77C004EA16B /* ActionRegistry.swift */; };
 		6EA11A0F2F7E100100FD8194 /* AirshipImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA11A0E2F7E100100FD8194 /* AirshipImageData.swift */; };
+		6EA1D0B00000000000000001 /* AirshipDebugAIStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA1D0A00000000000000001 /* AirshipDebugAIStore.swift */; };
+		6EA1D0B00000000000000002 /* AirshipDebugAITestDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA1D0A00000000000000002 /* AirshipDebugAITestDataSection.swift */; };
+		6EA1D0B00000000000000003 /* AirshipDebugAIContextSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA1D0A00000000000000003 /* AirshipDebugAIContextSection.swift */; };
 		6EAC295A27580063006DFA63 /* ChannelRegistrarTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAC295927580063006DFA63 /* ChannelRegistrarTest.swift */; };
 		6EAD3AF82F45305E00FF274E /* AirshipSwizzler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD3AF72F45305B00FF274E /* AirshipSwizzler.swift */; };
 		6EAD3AFA2F4530BE00FF274E /* AutoIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAD3AF92F4530AD00FF274E /* AutoIntegration.swift */; };
@@ -842,7 +832,10 @@
 		6EAFC4772FF32A08005FA58D /* AirshipCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494DD9571B0EB677009C134E /* AirshipCore.framework */; };
 		6EAFC4802FF32A2C005FA58D /* AirshipFoundationModels.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EAFC4592FF329F3005FA58D /* AirshipFoundationModels.framework */; platformFilters = (ios, maccatalyst, tvos, xros, ); };
 		6EAFC4952FF32A6C005FA58D /* DefaultOnDeviceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC48B2FF32A6C005FA58D /* DefaultOnDeviceModel.swift */; };
+		6EAFC4A12FF32A6C005FA5A1 /* AvailabilityObservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC4A02FF32A6C005FA5A1 /* AvailabilityObservation.swift */; };
 		6EAFC4A22FF33FD9005FA58D /* AirshipAITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC4A12FF33FD9005FA58D /* AirshipAITest.swift */; };
+		6EAFC4A32FF32A6C005FA5A1 /* GenerationSchemaBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC4A22FF32A6C005FA5A1 /* GenerationSchemaBridge.swift */; };
+		6EAFC4A52FF32A6C005FA5A1 /* AirshipFoundationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC4A42FF32A6C005FA5A1 /* AirshipFoundationModel.swift */; };
 		6EAFC5B22FF32A6C005FA58E /* TestAIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAFC5B12FF32A6C005FA58E /* TestAIManager.swift */; };
 		6EB11C872697ACBF00DC698F /* ContactOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C862697ACBF00DC698F /* ContactOperation.swift */; };
 		6EB11C892697AF5600DC698F /* TagGroupUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */; };
@@ -892,9 +885,6 @@
 		6EB21A932E81C7AB001A5660 /* AirshipDebugAddStringPropertyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21A922E81C7A2001A5660 /* AirshipDebugAddStringPropertyView.swift */; };
 		6EB21AFC2E8216A4001A5660 /* AirshipoDebugTriggers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21AFB2E82169F001A5660 /* AirshipoDebugTriggers.swift */; };
 		6EB21B022E81BB6E001A5660 /* AirshipDebugAIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21B012E81BB6E001A5660 /* AirshipDebugAIView.swift */; };
-		6EA1D0B00000000000000001 /* AirshipDebugAIStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA1D0A00000000000000001 /* AirshipDebugAIStore.swift */; };
-		6EA1D0B00000000000000002 /* AirshipDebugAITestDataSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA1D0A00000000000000002 /* AirshipDebugAITestDataSection.swift */; };
-		6EA1D0B00000000000000003 /* AirshipDebugAIContextSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA1D0A00000000000000003 /* AirshipDebugAIContextSection.swift */; };
 		6EB21B5F2E82FE9F001A5660 /* AirshipDebugAudienceSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21B5E2E82FE98001A5660 /* AirshipDebugAudienceSubject.swift */; };
 		6EB3FCEF2ABCFA680018594E /* RemoteDataProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */; };
 		6EB5156E28A42B5800870C5A /* AirshipPreferenceCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB5156D28A42B5800870C5A /* AirshipPreferenceCenterResources.swift */; };
@@ -1124,8 +1114,8 @@
 		6EFE7E3F2A97ED660064AC31 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6EFE7E3E2A97ED600064AC31 /* PrivacyInfo.xcprivacy */; };
 		7A5723022FEC3C1E00EA3E56 /* StackImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5723012FEC3C1E00EA3E56 /* StackImageView.swift */; };
 		7ACACE022ECEEC5200C031E5 /* AssetCacheImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ACACE012ECEEC5200C031E5 /* AssetCacheImageProvider.swift */; };
-		7F527ABE7E4504EA714ED6AE /* DefaultEmbeddedAISelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99645A6605A96722CFAE4327 /* DefaultEmbeddedAISelector.swift */; };
 		7F2A1B0E3D4E5F901234567C /* ThomasOrientationTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F2A1B0F3D4E5F901234567D /* ThomasOrientationTrackerTest.swift */; };
+		7F527ABE7E4504EA714ED6AE /* DefaultEmbeddedAISelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99645A6605A96722CFAE4327 /* DefaultEmbeddedAISelector.swift */; };
 		8401769426C5671100373AF7 /* JSONMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769326C5671100373AF7 /* JSONMatcher.swift */; };
 		8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769726C5722400373AF7 /* JSONPredicate.swift */; };
 		8401769C26C5729E00373AF7 /* JSONValueMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769B26C5729E00373AF7 /* JSONValueMatcher.swift */; };
@@ -1234,6 +1224,16 @@
 		EE295608520F2D2BD620F749 /* AirshipDebugSchemaBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4069204909960C806AB521D /* AirshipDebugSchemaBuilder.swift */; };
 		F653DE79C6B4C8A537B3BDF0 /* AirshipScenes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EB723342FEB3FF7001FBB9F /* AirshipScenes.framework */; };
 		F797D433210B6125C32E3F9D /* ThomasAIInferenceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5185C83FBF3B88E6C218B38 /* ThomasAIInferenceInfo.swift */; };
+		FADE000000000000000000A1 /* LedgerEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A2 /* LedgerEvent.swift */; };
+		FADE000000000000000000A3 /* LedgerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A4 /* LedgerStore.swift */; };
+		FADE000000000000000000A5 /* LedgerStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A6 /* LedgerStoreTest.swift */; };
+		FADE000000000000000000A7 /* AirshipLedger.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000A8 /* AirshipLedger.xcdatamodeld */; };
+		FADE000000000000000000B0 /* AutomationLedger.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000B1 /* AutomationLedger.swift */; };
+		FADE000000000000000000B4 /* AutomationLedgerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000B3 /* AutomationLedgerTest.swift */; };
+		FADE000000000000000000C0 /* LimitConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C1 /* LimitConfig.swift */; };
+		FADE000000000000000000C2 /* LedgerLimitEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C3 /* LedgerLimitEvaluator.swift */; };
+		FADE000000000000000000C4 /* LimitConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C5 /* LimitConfigTest.swift */; };
+		FADE000000000000000000C6 /* LedgerLimitEvaluatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C7 /* LedgerLimitEvaluatorTest.swift */; };
 		FEFE000000000000000000B1 /* AirshipTestExpectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEFE000000000000000000A1 /* AirshipTestExpectation.swift */; };
 /* End PBXBuildFile section */
 
@@ -1693,21 +1693,11 @@
 		322AAB202B5ACB2800652DAC /* ChannelListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListView.swift; sourceTree = "<group>"; };
 		3231126929D5E4F600CF0D86 /* AirshipAutomationResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAutomationResources.swift; sourceTree = "<group>"; };
 		3231127B29D5E67200CF0D86 /* FrequencyLimitStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrequencyLimitStore.swift; sourceTree = "<group>"; };
-		FADE000000000000000000A2 /* LedgerEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerEvent.swift; sourceTree = "<group>"; };
-		FADE000000000000000000C1 /* LimitConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LimitConfig.swift; sourceTree = "<group>"; };
-		FADE000000000000000000C3 /* LedgerLimitEvaluator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerLimitEvaluator.swift; sourceTree = "<group>"; };
-		FADE000000000000000000B1 /* AutomationLedger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomationLedger.swift; sourceTree = "<group>"; };
-		FADE000000000000000000A4 /* LedgerStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerStore.swift; sourceTree = "<group>"; };
-		FADE000000000000000000A6 /* LedgerStoreTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerStoreTest.swift; sourceTree = "<group>"; };
-		FADE000000000000000000C5 /* LimitConfigTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LimitConfigTest.swift; sourceTree = "<group>"; };
-		FADE000000000000000000C7 /* LedgerLimitEvaluatorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerLimitEvaluatorTest.swift; sourceTree = "<group>"; };
-		FADE000000000000000000B3 /* AutomationLedgerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomationLedgerTest.swift; sourceTree = "<group>"; };
 		3231127C29D5E67200CF0D86 /* FrequencyLimitManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrequencyLimitManager.swift; sourceTree = "<group>"; };
 		3231127D29D5E67200CF0D86 /* Occurrence.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Occurrence.swift; sourceTree = "<group>"; };
 		3231128029D5E67200CF0D86 /* FrequencyConstraint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrequencyConstraint.swift; sourceTree = "<group>"; };
 		3231128129D5E67200CF0D86 /* FrequencyChecker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrequencyChecker.swift; sourceTree = "<group>"; };
 		3231128B29D5E69400CF0D86 /* UAFrequencyLimits.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = UAFrequencyLimits.xcdatamodel; sourceTree = "<group>"; };
-		FADE000000000000000000A9 /* AirshipLedger.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipLedger.xcdatamodel; sourceTree = "<group>"; };
 		3231128F29D5E6C600CF0D86 /* FrequencyLimitManagerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrequencyLimitManagerTest.swift; sourceTree = "<group>"; };
 		3237D5F12B865D990055932B /* JSONValueTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONValueTransformer.swift; sourceTree = "<group>"; };
 		325108C72B7A596F0028F508 /* UAInbox 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "UAInbox 3.xcdatamodel"; sourceTree = "<group>"; };
@@ -1774,9 +1764,6 @@
 		494DD9571B0EB677009C134E /* AirshipCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		494DD95B1B0EB677009C134E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4B81AD3732B84B9CA6E58DA1 /* AirshipFoundationModelsSDKModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipFoundationModelsSDKModule.swift; sourceTree = "<group>"; };
-		6EAFC4A02FF32A6C005FA5A1 /* AvailabilityObservation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityObservation.swift; sourceTree = "<group>"; };
-		6EAFC4A22FF32A6C005FA5A1 /* GenerationSchemaBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationSchemaBridge.swift; sourceTree = "<group>"; };
-		6EAFC4A42FF32A6C005FA5A1 /* AirshipFoundationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipFoundationModel.swift; sourceTree = "<group>"; };
 		6014AD662C1B5F540072DCF0 /* ChallengeResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeResolver.swift; sourceTree = "<group>"; };
 		6014AD6A2C2032360072DCF0 /* ChallengeResolverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeResolverTest.swift; sourceTree = "<group>"; };
 		6014AD742C20410A0072DCF0 /* airship.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = airship.der; sourceTree = "<group>"; };
@@ -1982,7 +1969,6 @@
 		6E21C32F2FEC3BD600EA3E56 /* AirshipEmbeddedSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipEmbeddedSize.swift; sourceTree = "<group>"; };
 		6E21C3302FEC3BD600EA3E56 /* AirshipEmbeddedInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipEmbeddedInfo.swift; sourceTree = "<group>"; };
 		6E21C3312FEC3BD600EA3E56 /* EmbeddedLastDisplayedTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedLastDisplayedTracker.swift; sourceTree = "<group>"; };
-		F8FC1F242E5A4954AACBAF5A /* EmbeddedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedViewModel.swift; sourceTree = "<group>"; };
 		6E21C33B2FEC3BEF00EA3E56 /* ScoreController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreController.swift; sourceTree = "<group>"; };
 		6E21C33C2FEC3BEF00EA3E56 /* ScoreToggleLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreToggleLayout.swift; sourceTree = "<group>"; };
 		6E21C33D2FEC3BEF00EA3E56 /* AirshipCheckboxToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCheckboxToggleStyle.swift; sourceTree = "<group>"; };
@@ -2444,6 +2430,9 @@
 		6E9D529726C195F7004EA16B /* ActionRunner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActionRunner.swift; sourceTree = "<group>"; };
 		6E9D529A26C1A77C004EA16B /* ActionRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRegistry.swift; sourceTree = "<group>"; };
 		6EA11A0E2F7E100100FD8194 /* AirshipImageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipImageData.swift; sourceTree = "<group>"; };
+		6EA1D0A00000000000000001 /* AirshipDebugAIStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAIStore.swift; sourceTree = "<group>"; };
+		6EA1D0A00000000000000002 /* AirshipDebugAITestDataSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAITestDataSection.swift; sourceTree = "<group>"; };
+		6EA1D0A00000000000000003 /* AirshipDebugAIContextSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAIContextSection.swift; sourceTree = "<group>"; };
 		6EA5202227D1364E003011CA /* AirshipDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDateFormatter.swift; sourceTree = "<group>"; };
 		6EAC295927580063006DFA63 /* ChannelRegistrarTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRegistrarTest.swift; sourceTree = "<group>"; };
 		6EAD3AF72F45305B00FF274E /* AirshipSwizzler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipSwizzler.swift; sourceTree = "<group>"; };
@@ -2475,7 +2464,10 @@
 		6EAFC4592FF329F3005FA58D /* AirshipFoundationModels.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AirshipFoundationModels.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EAFC47D2FF32A08005FA58D /* AirshipFoundationModelsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirshipFoundationModelsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EAFC48B2FF32A6C005FA58D /* DefaultOnDeviceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultOnDeviceModel.swift; sourceTree = "<group>"; };
+		6EAFC4A02FF32A6C005FA5A1 /* AvailabilityObservation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityObservation.swift; sourceTree = "<group>"; };
 		6EAFC4A12FF33FD9005FA58D /* AirshipAITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipAITest.swift; sourceTree = "<group>"; };
+		6EAFC4A22FF32A6C005FA5A1 /* GenerationSchemaBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationSchemaBridge.swift; sourceTree = "<group>"; };
+		6EAFC4A42FF32A6C005FA5A1 /* AirshipFoundationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipFoundationModel.swift; sourceTree = "<group>"; };
 		6EAFC5B12FF32A6C005FA58E /* TestAIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAIManager.swift; sourceTree = "<group>"; };
 		6EB11C862697ACBF00DC698F /* ContactOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactOperation.swift; sourceTree = "<group>"; };
 		6EB11C882697AF5600DC698F /* TagGroupUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagGroupUpdate.swift; sourceTree = "<group>"; };
@@ -2524,9 +2516,6 @@
 		6EB21A922E81C7A2001A5660 /* AirshipDebugAddStringPropertyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAddStringPropertyView.swift; sourceTree = "<group>"; };
 		6EB21AFB2E82169F001A5660 /* AirshipoDebugTriggers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipoDebugTriggers.swift; sourceTree = "<group>"; };
 		6EB21B012E81BB6E001A5660 /* AirshipDebugAIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAIView.swift; sourceTree = "<group>"; };
-		6EA1D0A00000000000000001 /* AirshipDebugAIStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAIStore.swift; sourceTree = "<group>"; };
-		6EA1D0A00000000000000002 /* AirshipDebugAITestDataSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAITestDataSection.swift; sourceTree = "<group>"; };
-		6EA1D0A00000000000000003 /* AirshipDebugAIContextSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAIContextSection.swift; sourceTree = "<group>"; };
 		6EB21B5E2E82FE98001A5660 /* AirshipDebugAudienceSubject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDebugAudienceSubject.swift; sourceTree = "<group>"; };
 		6EB3FCEE2ABCFA680018594E /* RemoteDataProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteDataProtocol.swift; sourceTree = "<group>"; };
 		6EB4E4A32549F95200E3FFD0 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
@@ -2860,21 +2849,22 @@
 		E99605A627A075C600365AE4 /* OpenRegistrationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenRegistrationOptions.swift; sourceTree = "<group>"; };
 		EAB57CAC0000000000000001 /* AirshipCoalescingCacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCoalescingCacheTest.swift; sourceTree = "<group>"; };
 		EAB57CAC0000000000000003 /* AirshipCoalescingCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipCoalescingCache.swift; sourceTree = "<group>"; };
+		F8FC1F242E5A4954AACBAF5A /* EmbeddedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedViewModel.swift; sourceTree = "<group>"; };
+		FADE000000000000000000A2 /* LedgerEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerEvent.swift; sourceTree = "<group>"; };
+		FADE000000000000000000A4 /* LedgerStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerStore.swift; sourceTree = "<group>"; };
+		FADE000000000000000000A6 /* LedgerStoreTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerStoreTest.swift; sourceTree = "<group>"; };
+		FADE000000000000000000A9 /* AirshipLedger.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipLedger.xcdatamodel; sourceTree = "<group>"; };
+		FADE000000000000000000B1 /* AutomationLedger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomationLedger.swift; sourceTree = "<group>"; };
+		FADE000000000000000000B3 /* AutomationLedgerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomationLedgerTest.swift; sourceTree = "<group>"; };
+		FADE000000000000000000C1 /* LimitConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LimitConfig.swift; sourceTree = "<group>"; };
+		FADE000000000000000000C3 /* LedgerLimitEvaluator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerLimitEvaluator.swift; sourceTree = "<group>"; };
+		FADE000000000000000000C5 /* LimitConfigTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LimitConfigTest.swift; sourceTree = "<group>"; };
+		FADE000000000000000000C7 /* LedgerLimitEvaluatorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerLimitEvaluatorTest.swift; sourceTree = "<group>"; };
 		FEFE000000000000000000A1 /* AirshipTestExpectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AirshipTestExpectation.swift; path = Support/AirshipTestExpectation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		6E128BA02D305F2E00733024 /* Source */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = Source;
-			sourceTree = "<group>";
-		};
+		6E128BA02D305F2E00733024 /* Source */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Source; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -4723,16 +4713,8 @@
 			isa = PBXGroup;
 			children = (
 				6EAFC48C2FF32A6C005FA58D /* Source */,
-				6EAFC5A02FF32A6C005FA58E /* Tests */,
 			);
 			path = AirshipFoundationModels;
-			sourceTree = "<group>";
-		};
-		6EAFC5A02FF32A6C005FA58E /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Tests;
 			sourceTree = "<group>";
 		};
 		6EB21A392E81BB6E001A5660 /* Analytics */ = {
@@ -6739,7 +6721,7 @@
 				32F68CF328F07C2C00F7F52A /* MessageCenter.swift in Sources */,
 				99FD20A52DEFC35900242551 /* MessageCenterUIKitAppearance.swift in Sources */,
 				6EC81D032F2D445500E1C0C6 /* UAInboxDataMappingV1toV4.xcmappingmodel in Sources */,
-				2753F6422F6C5BB50073882C /* BuildFile in Sources */,
+				2753F6422F6C5BB50073882C /* (null) in Sources */,
 				6EC81D082F2D44D700E1C0C6 /* UAInboxDataMappingV3toV4.xcmappingmodel in Sources */,
 				6E4D22542E6FA5ED00A8D641 /* MessageCenterWebView.swift in Sources */,
 				6E4D20722E6B761200A8D641 /* MessageCenterListViewWithNavigation.swift in Sources */,
@@ -6994,7 +6976,7 @@
 				6E698E41267BEDC300654DB2 /* TagGroupsEditor.swift in Sources */,
 				6E739D6B26B9DFFB00BC6F6D /* AttributePendingMutations.swift in Sources */,
 				A67F87D2268DECCE00EF5F43 /* ContactAPIClient.swift in Sources */,
-				2753F6FA2F71507E0073882C /* BuildFile in Sources */,
+				2753F6FA2F71507E0073882C /* (null) in Sources */,
 				6E6BD2722AF1B05500B9DFC9 /* UAirshipCache.xcdatamodeld in Sources */,
 				6EE49C182A0C3CC600AB1CF4 /* ContactRemoteDataProviderDelegate.swift in Sources */,
 				6E4325F82B7C08A600A9B000 /* AirshipAnalyticsFeed.swift in Sources */,
@@ -8948,13 +8930,11 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				MACOSX_DEPLOYMENT_TARGET = 26.6;
+				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipPreferenceCenter;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipFoundationModels;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
@@ -8988,12 +8968,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.urbanairship.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				MACOSX_DEPLOYMENT_TARGET = 26.6;
+				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipPreferenceCenter;
+				PRODUCT_BUNDLE_IDENTIFIER = com.urbanairship.AirshipFoundationModels;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
@@ -9936,16 +9914,6 @@
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
-		FADE000000000000000000A8 /* AirshipLedger.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				FADE000000000000000000A9 /* AirshipLedger.xcdatamodel */,
-			);
-			currentVersion = FADE000000000000000000A9 /* AirshipLedger.xcdatamodel */;
-			path = AirshipLedger.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
 		3CA0E222237CCBA600EE76CF /* AirshipDebugEventData.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
@@ -10053,6 +10021,16 @@
 			);
 			currentVersion = 83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */;
 			path = AirshipDebugPushData.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		FADE000000000000000000A8 /* AirshipLedger.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				FADE000000000000000000A9 /* AirshipLedger.xcdatamodel */,
+			);
+			currentVersion = FADE000000000000000000A9 /* AirshipLedger.xcdatamodel */;
+			path = AirshipLedger.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
