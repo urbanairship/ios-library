@@ -36,7 +36,6 @@ extension View {
         }
     }
 
-    @ViewBuilder
     /// A length is also the ideal and the maximum here, which is what nearly every view wants. On
     /// an axis named in `uncappedAxes` the length doesn't reach the frame at all and serves only as
     /// the reference percent children resolve against — a scroll layout's content takes its
@@ -54,7 +53,32 @@ extension View {
         alignment: Alignment? = nil,
         fixedSize: Bool = false
     ) -> some View {
-        self.frame(
+        self.modifier(
+            ThomasConstraintsViewModifier(
+                constraints: constraints,
+                alignment: alignment,
+                fixedSize: fixedSize
+            )
+        )
+    }
+}
+
+/// The chain lives in a `ViewModifier` instead of inline in the `View` extension so that a caller's
+/// static type stays one node wide.
+///
+/// Each `airshipApplyIf` below is an `_ConditionalContent` that names its input type twice, so
+/// applied inline every Thomas view's type doubled per branch — and this is the one modifier
+/// applied to nearly every view, often more than once on a path. A stack of shapes under a toggle
+/// style multiplied those branches out far enough to abort the optimizer's opaque-type
+/// substitution in `-O` archive builds. A named modifier is opaque to callers: the branching is
+/// expanded once, here.
+private struct ThomasConstraintsViewModifier: ViewModifier {
+    let constraints: ViewConstraints
+    let alignment: Alignment?
+    let fixedSize: Bool
+
+    func body(content: Content) -> some View {
+        content.frame(
             minWidth: constraints.isHorizontalAbsoluteSize ? constraints.frameWidth : nil,
             idealWidth: constraints.frameWidth,
             maxWidth: constraints.frameWidth,
@@ -102,7 +126,10 @@ extension View {
             view.aspectRatio(ratio, contentMode: .fit)
         }
     }
-    
+}
+
+extension View {
+
     @ViewBuilder
     internal func thomasToggleStyle(
         _ style: ThomasToggleStyleInfo,

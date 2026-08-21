@@ -7,27 +7,17 @@ import SwiftUI
 
 struct Shapes {
 
-    @ViewBuilder
     @MainActor
     static func shape(
         info: ThomasShapeInfo,
         constraints: ViewConstraints,
         colorScheme: ColorScheme
     ) -> some View {
-        switch info {
-        case .ellipse(let info):
-            ellipse(
-                info: info,
-                constraints: constraints,
-                colorScheme: colorScheme
-            )
-        case .rectangle(let info):
-            rectangle(
-                info: info,
-                constraints: constraints,
-                colorScheme: colorScheme
-            )
-        }
+        ShapeContent(
+            info: info,
+            constraints: constraints,
+            colorScheme: colorScheme
+        )
     }
 
     @ViewBuilder
@@ -75,7 +65,7 @@ struct Shapes {
 
     @ViewBuilder
     @MainActor
-    private static func rectangle(
+    fileprivate static func rectangle(
         info: ThomasShapeInfo.Rectangle,
         constraints: ViewConstraints,
         colorScheme: ColorScheme
@@ -140,7 +130,7 @@ struct Shapes {
 
     @ViewBuilder
     @MainActor
-    private static func ellipse(
+    fileprivate static func ellipse(
         info: ThomasShapeInfo.Ellipse,
         constraints: ViewConstraints,
         colorScheme: ColorScheme
@@ -163,6 +153,37 @@ struct Shapes {
                     view.constraints(scaled)
                 }
                 .constraints(constraints)
+        }
+    }
+}
+
+/// A single shape, extracted into its own concrete `View` type for the same reason as
+/// `IconsContent`: inlining the two-case `@ViewBuilder` switch (whose cases each return a
+/// `constraints`-wrapped opaque result) into callers' bodies builds an opaque-type tree that the
+/// optimizer can't substitute under `-O`. Shapes come in stacks — a toggle style or a score item
+/// renders several plus an icon — so the caller multiplies whatever this returns. Referencing a
+/// named struct keeps those bodies one node wide per shape while preserving full static typing
+/// (and so view identity and animations), unlike erasing to `AnyView`.
+@MainActor
+private struct ShapeContent: View {
+    fileprivate let info: ThomasShapeInfo
+    fileprivate let constraints: ViewConstraints
+    fileprivate let colorScheme: ColorScheme
+
+    var body: some View {
+        switch info {
+        case .ellipse(let info):
+            Shapes.ellipse(
+                info: info,
+                constraints: constraints,
+                colorScheme: colorScheme
+            )
+        case .rectangle(let info):
+            Shapes.rectangle(
+                info: info,
+                constraints: constraints,
+                colorScheme: colorScheme
+            )
         }
     }
 }
