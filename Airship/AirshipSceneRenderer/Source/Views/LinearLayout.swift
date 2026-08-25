@@ -215,6 +215,27 @@ struct LinearLayout: View {
         )
 
         thomasEnvironment.viewFactory.createView(item.view, constraints: constraints)
+            // Only a stack with a length of its own has anything to divide up. This one has none, so
+            // it is as long as its ratio items turn out to be and they never go short: the item takes
+            // the length its ratio implies and the stack grows past whatever it was offered, rather
+            // than passing a shortfall down that isn't really its to pass.
+            //
+            // SwiftUI proposes a share regardless — an auto stack still gets a proposal from its own
+            // parent and hands slices of it out — so the item has to be told to keep its ideal.
+            // Without that, a stack sitting under something short shrinks the very items whose
+            // lengths it is supposed to be taking its own length from, and shrinks them unevenly,
+            // since what each one is offered depends on where the layout got to before reaching it.
+            //
+            // Android gates the same case on a bounded parent height (`WeightlessLinearLayout`) and
+            // web on `!isAutoMain` (`percentInAuto.ts`, `ratioActive`).
+            .airshipApplyIf(
+                stackAxisIsAuto && item.takesRatioLengthOnStackAxis(info.properties.direction)
+            ) { view in
+                view.fixedSize(
+                    horizontal: info.properties.direction == .horizontal,
+                    vertical: info.properties.direction == .vertical
+                )
+            }
             // A percentage is a footprint — `childConstraints` takes the margins out of the share and
             // `.margin()` puts them back, so the two make up the item's whole extent. When there is no
             // basis the share is never taken out in the first place: the item falls back to its own
@@ -225,6 +246,13 @@ struct LinearLayout: View {
 #endif
     }
 
+
+    /// Whether this stack has no length of its own on the axis it lays out along.
+    private var stackAxisIsAuto: Bool {
+        self.info.properties.direction == .vertical
+            ? self.constraints.height == nil
+            : self.constraints.width == nil
+    }
 
     private func parentConstraints() -> ViewConstraints {
         let isVertical = self.info.properties.direction == .vertical
@@ -423,6 +451,21 @@ fileprivate final class RepeatableNumberGenerator: RandomNumberGenerator {
 }
 
 fileprivate extension ThomasViewInfo.LinearLayout.Item {
+    /// Whether this item's length along the stack comes from its ratio rather than from its content.
+    ///
+    /// Only then is the length the stack's to divide up, which is what makes it worth protecting
+    /// when there is nothing to divide. An item that declares a length on the stack axis has one
+    /// either way, and one with no ratio takes its length from what is inside it.
+    func takesRatioLengthOnStackAxis(_ direction: ThomasDirection) -> Bool {
+        guard self.size.aspectRatio != nil else { return false }
+
+        let stackAxis: Axis = direction == .vertical ? .vertical : .horizontal
+        return switch self.size.constraint(on: stackAxis) {
+        case .auto: true
+        default: false
+        }
+    }
+
     func hasPerItemAlignment(stackDirection: ThomasDirection) -> Bool {
         guard let position = self.position else { return false }
         switch(stackDirection) {

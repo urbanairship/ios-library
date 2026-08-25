@@ -95,36 +95,166 @@ private struct ThomasConstraintsViewModifier: ViewModifier {
                     && constraints.height != nil
             )
         }
-        // An axis the ratio derives has to be free of the content's own idea of how big it is.
-        // `.aspectRatio(.fit)` proposes a ratio-fitted box and then lets the child answer — a
-        // stretchy view accepts it, a rigid one like a label reports its text size instead, which
-        // left the ratio a no-op on exactly the content that needed it. Filling first means the box
-        // is what answers. The proposal still comes from SwiftUI, so several ratio items in a stack
-        // keep fair-sharing what they're offered, which pre-computing a size here would have cost.
+        // An axis the ratio derives has to be free of the content's own idea of how big it is, and
+        // `RatioLayout` is what frees it. `.aspectRatio(.fit)` can't: it proposes a ratio-fitted box
+        // and then lets the child answer, so a stretchy view accepts it but a rigid one like a label
+        // reports its text size instead, leaving the ratio a no-op on exactly the content that
+        // needed it. Filling first — a greedy frame under the ratio — made the box answer, but left
+        // the ratio deriving against whatever proposal arrived, and an unbounded one yields a box
+        // far larger than the space it is in, which the parent then clips. `RatioLayout` reads the
+        // proposal itself, treats infinite and absent alike as "no length on this axis", and tells
+        // the content what size to be. The proposal still comes from SwiftUI, so several ratio items
+        // in a stack keep fair-sharing what they're offered, which pre-computing a size here would
+        // have cost.
         //
-        // Anything with a length of its own is already a concrete box by this point and must not be
-        // stretched. Keyed on the lengths rather than `frameWidth`/`frameHeight`, which also read
-        // nil on an axis a scroll layout left uncapped — that item has a length, it just isn't a
-        // ceiling.
-        //
-        // Carries the alignment, which is the caller's and not ours to change: with no length on
+        // It carries the alignment, which is the caller's and not ours to change: with no length on
         // either axis every dimension of the frame above is nil, so it sizes to its content and its
-        // alignment never applies. This is the only frame that positions anything here, and a
+        // alignment never applies. This is the only thing that positions anything here, and a
         // vertical stack that asked to lay out from the top would otherwise be centered.
-        .airshipApplyIf(
-            constraints.aspectRatio != nil
-                && constraints.width == nil
-                && constraints.height == nil
-        ) { view in
-            view.frame(
-                maxWidth: .infinity,
-                maxHeight: .infinity,
+        .airshipApplyIfPresent(unboundedRatio) { view, ratio in
+            RatioLayout(
+                ratio: ratio,
+                // The one place `maxWidth`/`maxHeight` are a ceiling on the view rather than the
+                // space its children are measured against: for this case and only this case,
+                // `childConstraints` has already tightened them to the ratio box itself, so they
+                // are the answer, and a proposal that says otherwise is the thing to ignore.
+                maxWidth: constraints.maxWidth,
+                maxHeight: constraints.maxHeight,
                 alignment: alignment ?? .center
-            )
+            ) {
+                view
+            }
         }
-        .airshipApplyIfPresent(constraints.aspectRatio) { view, ratio in
+        // Both lengths are set by this point, so the frame above is already the box. The ratio stays
+        // applied over the top to hold it through a pass that proposes something else — a stack
+        // fair-sharing, a nil proposal, a rotation.
+        .airshipApplyIfPresent(derivedRatio) { view, ratio in
             view.aspectRatio(ratio, contentMode: .fit)
         }
+    }
+
+    /// The ratio when it is the only thing giving this view a size, and `nil` otherwise.
+    ///
+    /// Keyed on the lengths rather than `frameWidth`/`frameHeight`, which also read nil on an axis a
+    /// scroll layout left uncapped — that item has a length, it just isn't a ceiling.
+    private var unboundedRatio: Double? {
+        guard constraints.width == nil, constraints.height == nil else { return nil }
+        return constraints.aspectRatio
+    }
+
+    /// The ratio when the view already has both lengths, one of them derived from the other.
+    private var derivedRatio: Double? {
+        guard constraints.width != nil || constraints.height != nil else { return nil }
+        return constraints.aspectRatio
+    }
+}
+
+/// Sizes content to an aspect ratio, deciding the box itself rather than negotiating for one.
+///
+/// Both the proposal and the constraint ceilings are read directly, and the smaller of the two wins
+/// on each axis. Neither alone is enough. SwiftUI's own `.aspectRatio` sees only the proposal, and
+/// gets no say in what is in it: handed an unbounded height it derives against it anyway, which is
+/// how an item with both axes auto in a 60pt row became a full-width box 200pt tall with the rest
+/// clipped off. But a proposal arriving as "this wide, height up to you" is the normal way a stack
+/// asks a child for its size, so treating an absent height as a licence to derive from the width
+/// lands in the same place. The ceilings are what settle it: for this case `childConstraints` has
+/// already tightened them to the ratio box, so they say what the proposal can't.
+///
+/// The ratio is width over height, and the caller guarantees it is greater than zero —
+/// `ViewConstraints` only carries a ratio it has already checked.
+private struct RatioLayout: Layout {
+    let ratio: Double
+    let maxWidth: CGFloat?
+    let maxHeight: CGFloat?
+    let alignment: Alignment
+
+    func sizeThatFits(
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) -> CGSize {
+        // `safeValue` drops infinity and NaN, so nil means "unbounded" on that axis either way.
+        let width = smaller(proposal.width?.safeValue, maxWidth)
+        let height = smaller(proposal.height?.safeValue, maxHeight)
+
+        return switch (width, height) {
+        case (let width?, let height?):
+            // Both bounded: the largest box of this ratio that fits inside them.
+            CGSize(
+                width: min(width, height * ratio),
+                height: min(height, width / ratio)
+            )
+        case (let width?, nil):
+            CGSize(width: width, height: width / ratio)
+        case (nil, let height?):
+            CGSize(width: height * ratio, height: height)
+        case (nil, nil):
+            // Nothing to fit inside, so fit around the content instead.
+            fittedAroundContent(subviews.first?.sizeThatFits(.unspecified) ?? .zero)
+        }
+    }
+
+    func placeSubviews(
+        in bounds: CGRect,
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) {
+        let anchor = self.anchor
+        let point = CGPoint(
+            x: bounds.minX + (bounds.width * anchor.x),
+            y: bounds.minY + (bounds.height * anchor.y)
+        )
+
+        for subview in subviews {
+            subview.place(
+                at: point,
+                anchor: anchor,
+                proposal: ProposedViewSize(bounds.size)
+            )
+        }
+    }
+
+    /// Whichever bound is tighter, or the one that exists, or nothing if neither does.
+    private func smaller(_ proposed: CGFloat?, _ ceiling: CGFloat?) -> CGFloat? {
+        return switch (proposed, ceiling) {
+        case (let proposed?, let ceiling?): min(proposed, ceiling)
+        case (let proposed?, nil): proposed
+        case (nil, let ceiling?): ceiling
+        case (nil, nil): nil
+        }
+    }
+
+    /// The smallest box of this ratio that the content fits inside: take its ideal size and grow
+    /// whichever axis the ratio leaves short.
+    private func fittedAroundContent(_ content: CGSize) -> CGSize {
+        let fromWidth = CGSize(width: content.width, height: content.width / ratio)
+        return if fromWidth.height >= content.height {
+            fromWidth
+        } else {
+            CGSize(width: content.height * ratio, height: content.height)
+        }
+    }
+
+    /// Where the content sits when it ends up smaller than the box it was given.
+    private var anchor: UnitPoint {
+        let x: CGFloat = if alignment.horizontal == .leading {
+            0
+        } else if alignment.horizontal == .trailing {
+            1
+        } else {
+            0.5
+        }
+
+        let y: CGFloat = if alignment.vertical == .top {
+            0
+        } else if alignment.vertical == .bottom {
+            1
+        } else {
+            0.5
+        }
+
+        return UnitPoint(x: x, y: y)
     }
 }
 
