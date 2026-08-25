@@ -7,8 +7,10 @@ import Foundation
 
 @Suite struct PreferenceDataStoreTest {
 
+    private static let airshipSuiteName =
+        "\(Bundle.main.bundleIdentifier ?? "").airship.settings"
     private let airshipDefaults = UserDefaults(
-        suiteName: "\(Bundle.main.bundleIdentifier ?? "").airship.settings"
+        suiteName: PreferenceDataStoreTest.airshipSuiteName
     )!
     private let appKey = UUID().uuidString
     private let testDeviceID = TestDeviceID()
@@ -248,6 +250,108 @@ import Foundation
         )
 
         #expect(dataStore.bool(forKey: "some-key"))
+    }
+
+    /// Migrating out of the standard defaults is a one-time repair for
+    /// SDK 15.x-16.0.1. Once it has run for an app key, later launches must not
+    /// scan or copy anything.
+    @Test
+    func testStandardDefaultsMigrationRunsOnce() {
+        UserDefaults.standard.set("first", forKey: "\(self.appKey)first-key")
+
+        let first = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: testDeviceID
+        )
+        #expect(first.string(forKey: "first-key") == "first")
+        first.waitForWrites()
+
+        // A key that lands in the standard defaults after the migration already
+        // completed. A later launch must leave it where it is.
+        let lateKey = "\(self.appKey)second-key"
+        UserDefaults.standard.set("second", forKey: lateKey)
+
+        let second = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: testDeviceID
+        )
+        #expect(second.string(forKey: "second-key") == nil)
+        #expect(UserDefaults.standard.string(forKey: lateKey) == "second")
+
+        UserDefaults.standard.removeObject(forKey: lateKey)
+    }
+
+    /// The same for the second scan, which merges legacy keys already sitting in
+    /// the Airship suite.
+    @Test
+    func testMergeKeysRunsOnce() {
+        let legacyKey = "com.urbanairship.\(self.appKey).late-key"
+
+        let first = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: testDeviceID
+        )
+        first.waitForWrites()
+
+        self.airshipDefaults.set("late", forKey: legacyKey)
+
+        let second = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: testDeviceID
+        )
+        #expect(second.string(forKey: "late-key") == nil)
+
+        // The old key is left untouched, proving the merge never ran.
+        #expect(self.airshipDefaults.string(forKey: legacyKey) == "late")
+
+        self.airshipDefaults.removeObject(forKey: legacyKey)
+    }
+
+    /// The completion flag is scoped per app key, so an app key that has never
+    /// migrated still does so even after another one has finished.
+    @Test
+    func testMigrationRunsOncePerAppKey() {
+        let otherAppKey = UUID().uuidString
+        UserDefaults.standard.set("a", forKey: "\(self.appKey)shared-key")
+        UserDefaults.standard.set("b", forKey: "\(otherAppKey)shared-key")
+
+        let first = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: testDeviceID
+        )
+        #expect(first.string(forKey: "shared-key") == "a")
+        first.waitForWrites()
+
+        let second = PreferenceDataStore(
+            appKey: otherAppKey,
+            deviceID: testDeviceID
+        )
+        #expect(second.string(forKey: "shared-key") == "b")
+    }
+
+    /// The scan only covers the app's own preferences domain. Registered defaults
+    /// live in the registration domain, which `removeObject(forKey:)` cannot clear,
+    /// so copying from there would repeat on every launch forever.
+    @Test
+    func testMigrationIgnoresRegisteredDefaults() {
+        let registeredKey = "\(self.appKey)registered-key"
+        UserDefaults.standard.register(
+            defaults: [registeredKey: "registered-value"]
+        )
+
+        let dataStore = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: testDeviceID
+        )
+        dataStore.waitForWrites()
+
+        // Checked against the suite's persistent domain rather than
+        // `object(forKey:)`, which falls through to the process-wide registration
+        // domain and would report the value whether or not it was copied.
+        let persisted = self.airshipDefaults.persistentDomain(
+            forName: PreferenceDataStoreTest.airshipSuiteName
+        )
+        #expect(persisted?[registeredKey] == nil)
     }
 }
 

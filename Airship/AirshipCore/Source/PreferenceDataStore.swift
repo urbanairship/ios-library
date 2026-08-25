@@ -44,28 +44,20 @@ public final class PreferenceDataStore: @unchecked Sendable {
     }
 
     init(appKey: String, deviceID: any AirshipDeviceIDProtocol) {
-        self.defaults = PreferenceDataStore.createDefaults(appKey: appKey)
+        self.defaults = PreferenceDataStore.createDefaults()
         self.appKey = appKey
         self.queue = DispatchQueue(
             label: "com.urbanairship.preferencedatastore.serial_queue"
         )
         self.deviceID = deviceID
-        mergeKeys()
+        migrateLegacyKeysIfNeeded()
     }
 
-    class func createDefaults(appKey: String) -> UserDefaults {
+    class func createDefaults() -> UserDefaults {
         let suiteName = "\(Bundle.main.bundleIdentifier ?? "").airship.settings"
         guard let defaults = UserDefaults(suiteName: suiteName) else {
             AirshipLogger.error("Failed to create defaults \(suiteName)")
             return UserDefaults.standard
-        }
-
-        let legacyPrefix = legacyKeyPrefix(appKey: appKey)
-        for (key, value) in UserDefaults.standard.dictionaryRepresentation() {
-            if key.hasPrefix(appKey) || key.hasPrefix(legacyPrefix) {
-                defaults.set(value, forKey: key)
-                UserDefaults.standard.removeObject(forKey: key)
-            }
         }
 
         return defaults
@@ -212,9 +204,60 @@ public final class PreferenceDataStore: @unchecked Sendable {
         write(key, value: data)
     }
 
+    /// Repairs the key-format bug from SDK 15.x-16.0.1, where the key changed but
+    /// we didn't migrate the data. Both steps below are one-time repairs, so they
+    /// run once per app key and are skipped on every launch after that.
+    ///
+    /// The completion flag is written through `write` like any other value, so it
+    /// queues behind the migration's own writes on the serial queue. If the app
+    /// dies before those flush, the flag doesn't persist either and the migration
+    /// is retried on the next launch rather than being lost.
+    private func migrateLegacyKeysIfNeeded() {
+        let completedKey = PreferenceDataStore.legacyKeyMigrationCompletedKey
+        guard !bool(forKey: completedKey) else {
+            return
+        }
+
+        migrateStandardDefaultsKeys()
+        mergeKeys()
+
+        setBool(true, forKey: completedKey)
+    }
+
+    /// Moves Airship keys that SDK 15.x-16.0.1 wrote to the standard defaults into
+    /// the Airship suite.
+    ///
+    /// Scoped to the app's own preferences domain rather than
+    /// `dictionaryRepresentation()`, which also exposes `NSGlobalDomain`, managed
+    /// configuration and registered defaults. We never wrote to any of those, and
+    /// `removeObject(forKey:)` can't remove from them either.
+    private func migrateStandardDefaultsKeys() {
+        let standardDefaults = UserDefaults.standard
+
+        let appDomain: [String: Any]
+        if let domainName = Bundle.main.bundleIdentifier,
+            let domain = standardDefaults.persistentDomain(forName: domainName)
+        {
+            appDomain = domain
+        } else {
+            // No bundle identifier, so there is no app domain to scope to.
+            appDomain = standardDefaults.dictionaryRepresentation()
+        }
+
+        let legacyPrefix = PreferenceDataStore.legacyKeyPrefix(
+            appKey: self.appKey
+        )
+
+        for (key, value) in appDomain {
+            if key.hasPrefix(self.appKey) || key.hasPrefix(legacyPrefix) {
+                self.defaults.set(value, forKey: key)
+                standardDefaults.removeObject(forKey: key)
+            }
+        }
+    }
+
     /// Merges old key formats `com.urbanairship.<APP_KEY>.<PREFERENCE>` to
-    /// the new key formats `<APP_KEY><PREFERENCE>`. Fixes a bug in SDK 15.x-16.0.1
-    /// where the key changed but we didn't migrate the data.
+    /// the new key formats `<APP_KEY><PREFERENCE>`.
     private func mergeKeys() {
         let legacyKeyPrefix = PreferenceDataStore.legacyKeyPrefix(
             appKey: self.appKey
@@ -251,6 +294,11 @@ public final class PreferenceDataStore: @unchecked Sendable {
     private class func legacyKeyPrefix(appKey: String) -> String {
         return "com.urbanairship.\(appKey)."
     }
+
+    /// Records that the legacy key migration has run. `prefixKey` prepends the app
+    /// key, so each app key is migrated exactly once.
+    private static let legacyKeyMigrationCompletedKey =
+        "com.urbanairship.preference_data_store.legacy_key_migration_completed"
 
     private func read<T>(_ key: String, defaultValue: T) -> T {
         return read(key) ?? defaultValue
