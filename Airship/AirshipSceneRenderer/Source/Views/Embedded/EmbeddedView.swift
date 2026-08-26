@@ -26,6 +26,7 @@ struct AdoptLayout<Content: View>: View {
 
     @State private var viewConstraints: ViewConstraints?
     @State private var constraintsPublisher = AdoptLayoutConstraintsPublisher()
+    @Environment(\.layoutDirection) private var layoutDirection
 
     /// A presentation resolved per orientation/window size, e.g. `EmbeddedView`'s.
     init(
@@ -85,7 +86,7 @@ struct AdoptLayout<Content: View>: View {
 
     var body: some View {
         if usesAutoMeasurement {
-            AdoptLayoutEngine(placement: placement, embeddedSize: embeddedSize, viewConstraints: $viewConstraints, constraintsPublisher: constraintsPublisher) {
+            AdoptLayoutEngine(placement: placement, embeddedSize: embeddedSize, layoutDirection: layoutDirection, viewConstraints: $viewConstraints, constraintsPublisher: constraintsPublisher) {
                 if let viewConstraints {
                     content(viewConstraints, placement)
                 } else {
@@ -93,7 +94,7 @@ struct AdoptLayout<Content: View>: View {
                 }
             }
         } else {
-            AdoptLayoutEngine(placement: placement, embeddedSize: embeddedSize) {
+            AdoptLayoutEngine(placement: placement, embeddedSize: embeddedSize, layoutDirection: layoutDirection) {
                 GeometryReader { metrics in
                     content(
                         ViewConstraints(
@@ -152,11 +153,17 @@ final class AdoptLayoutConstraintsPublisher {
 
 /// The actual `SwiftUI.Layout` conformance that resolves `placement` against the real, proposed
 /// geometry. Implementation detail of `AdoptLayout` -- callers should use that instead.
+///
+/// Internal rather than fileprivate so `size(_:)` can be exercised directly: it is a pure function
+/// of a placement's declared constraints and two lengths, which is where the min/max resolution
+/// lives, and testing it through a hosted view instead means testing it through an async publish
+/// and a run loop for no gain in coverage.
 @available(iOS 16, tvOS 16, watchOS 9.0, *)
-private struct AdoptLayoutEngine: SwiftUI.Layout {
+struct AdoptLayoutEngine: SwiftUI.Layout {
 
     let placement: ThomasPresentationInfo.Embedded.Placement
     let embeddedSize: AirshipEmbeddedSize?
+    let layoutDirection: LayoutDirection
     var viewConstraints: Binding<ViewConstraints?>? = nil
     var constraintsPublisher: AdoptLayoutConstraintsPublisher? = nil
 
@@ -207,35 +214,56 @@ private struct AdoptLayoutEngine: SwiftUI.Layout {
             trusted: viewConstraints?.wrappedValue?.height,
             last: &cache.lastRealProposalHeight
         )
-        let viewSize = subviews.first?.sizeThatFits(proposal)
+        // What a percentage is a share of: the space the host offered this placement. `remembered`
+        // has already reduced a nil proposal to the last real one, so this is a length even on the
+        // ideal-size pass.
+        let widthBasis = self.embeddedSize?.parentWidth ?? proposalWidth?.safeValue
+        let heightBasis = self.embeddedSize?.parentHeight ?? proposalHeight?.safeValue
 
-        let height = size(
-            constraint: placement.size.height,
-            minConstraint: placement.size.minHeight,
-            maxConstraint: placement.size.maxHeight,
-            parent: self.embeddedSize?.parentHeight,
-            proposal: proposalHeight,
-            sizeThataFits: viewSize?.height
-        )
+        let viewSize = subviews.first?.sizeThatFits(proposal)
 
         let width = size(
             constraint: placement.size.width,
             minConstraint: placement.size.minWidth,
             maxConstraint: placement.size.maxWidth,
             parent: self.embeddedSize?.parentWidth,
+            boundParent: widthBasis,
             proposal: proposalWidth,
             sizeThataFits: viewSize?.width
+        )
+
+        // Re-measured against the width this layout resolved, when that differs from the width the
+        // content was first measured at. A narrowed width rewraps text, so a height carried over
+        // from the unclamped measurement describes a layout the content will not get: with
+        // `max_width: 300`, content that is one line at 390pt and two at 300pt reported a 40pt
+        // height for a card that needs 80. That was merely visible overflow before anything
+        // clipped; with the clip it would be a silently missing second line.
+        let heightMeasurement = width == viewSize?.width
+            ? viewSize?.height
+            : subviews.first?.sizeThatFits(
+                ProposedViewSize(width: width, height: proposalHeight)
+            ).height
+
+        let height = size(
+            constraint: placement.size.height,
+            minConstraint: placement.size.minHeight,
+            maxConstraint: placement.size.maxHeight,
+            parent: self.embeddedSize?.parentHeight,
+            boundParent: heightBasis,
+            proposal: proposalHeight,
+            sizeThataFits: heightMeasurement
         )
 
         /// proposal.replacingUnspecifiedDimensions() uses `10`, so we shall as well
         return CGSize(width: width ?? 10, height: height ?? 10)
     }
 
-    private func size(
+    func size(
         constraint: ThomasSizeConstraint,
         minConstraint: ThomasSizeConstraint?,
         maxConstraint: ThomasSizeConstraint?,
         parent: CGFloat?,
+        boundParent: CGFloat?,
         proposal: CGFloat?,
         sizeThataFits: CGFloat? = nil
     ) -> CGFloat? {
@@ -260,13 +288,51 @@ private struct AdoptLayoutEngine: SwiftUI.Layout {
         }
 
         guard var value = resolved else { return nil }
-        if let maxValue = bound(maxConstraint, parent: parent) {
+        // `boundParent`, not `parent`. The base constraint resolves its percentage against
+        // `bounds` when the host stated no parent, and has to keep doing so -- that fallback is
+        // what gives a `width: 50%` placement its half. A *bound* must not, because `bounds` means
+        // two different things by axis: on a percent axis this layout is greedy and reports the
+        // whole proposal, so `bounds` is the host's offer; but on an auto axis it reports the
+        // child's measurement, so a percentage of it is a fraction of whatever the content
+        // happened to want. `max_height: 50%` on an auto axis capped the offer at half the
+        // content's own height that way -- reading the child's measurement back as a constraint on
+        // the child, which the comment above forbids for the same reason.
+        //
+        // `boundParent` is the host's offer directly, so it means one thing on every axis: the
+        // space this placement was given, never anything measured from what it contains.
+        if let maxValue = bound(maxConstraint, parent: boundParent) {
             value = min(value, maxValue)
         }
-        if let minValue = bound(minConstraint, parent: parent) {
+        if let minValue = bound(minConstraint, parent: boundParent) {
             value = max(value, minValue)
         }
         return value
+    }
+
+    /// Where to put content of a given size in a given slot: centred while it fits, and pinned to
+    /// the top and the leading edge once it does not, so the overflow comes off the end.
+    ///
+    /// Separate and static so it can be exercised directly. The right-to-left case is the reason:
+    /// it is a single term that is invisible in a screenshot and awkward to observe through a
+    /// hosted view, and getting it backwards trims the start of every line instead of the end.
+    static func origin(
+        forContent content: CGSize,
+        in bounds: CGRect,
+        layoutDirection: LayoutDirection
+    ) -> CGPoint {
+        let x: CGFloat = if content.width > bounds.width {
+            layoutDirection == .leftToRight ? bounds.minX : bounds.maxX - content.width
+        } else {
+            (bounds.midX - content.width / 2).safeValue ?? bounds.minX
+        }
+
+        let y: CGFloat = if content.height > bounds.height {
+            bounds.minY
+        } else {
+            (bounds.midY - content.height / 2).safeValue ?? bounds.minY
+        }
+
+        return CGPoint(x: x, y: y)
     }
 
     /// Resolves a `min`/`max` constraint to a concrete value, independent of the base
@@ -290,6 +356,9 @@ private struct AdoptLayoutEngine: SwiftUI.Layout {
             minConstraint: placement.size.minWidth,
             maxConstraint: placement.size.maxWidth,
             parent: embeddedSize?.parentWidth ?? bounds.width,
+            boundParent: embeddedSize?.parentWidth
+                ?? proposal.width?.safeValue
+                ?? cache.lastRealProposalWidth,
             proposal: proposal.width
         )
 
@@ -298,6 +367,9 @@ private struct AdoptLayoutEngine: SwiftUI.Layout {
             minConstraint: placement.size.minHeight,
             maxConstraint: placement.size.maxHeight,
             parent: embeddedSize?.parentHeight ?? bounds.height,
+            boundParent: embeddedSize?.parentHeight
+                ?? proposal.height?.safeValue
+                ?? cache.lastRealProposalHeight,
             proposal: proposal.height
         )
 
@@ -334,11 +406,35 @@ private struct AdoptLayoutEngine: SwiftUI.Layout {
             }
         }
 
-        let viewProposal = ProposedViewSize(width: width, height: height)
+        // Never more than the slot this layout committed to. A bound narrows what the child is
+        // offered, but on an auto axis `size()` answers `sizeThataFits ?? proposal`, and here
+        // `sizeThataFits` is nil -- so an unspecified proposal leaves the offer nil and the child
+        // takes its full ideal inside a slot that is smaller. That is why a `scroll_layout` in a
+        // bounded placement did not scroll: nothing ever told it there was less room than its
+        // content wanted. This clamp is what squeezes it. The clip is only a backstop, for content
+        // that cannot be squeezed at all.
+        let viewProposal = ProposedViewSize(
+            width: min(width ?? bounds.width, bounds.width),
+            height: min(height ?? bounds.height, bounds.height)
+        )
 
-        let center = CGPoint(x: bounds.midX, y: bounds.midY)
+        // Centred while the content fits its slot; once it does not, pinned per axis to the top
+        // and to the leading edge so the overflow comes off the end. Content larger than its slot
+        // has to lose something, and centring trims both ends at once -- cutting a headline off
+        // the top and a button off the bottom of the same card. `layoutDirection` because a custom
+        // `Layout`'s coordinates are not mirrored for us: in an RTL locale the content's own first
+        // line sits at the right, so the trim has to come off the left instead. `Container` reads
+        // the same environment for the same reason.
         subviews.forEach { layout in
-            layout.place(at: center, anchor: .center, proposal: viewProposal)
+            layout.place(
+                at: Self.origin(
+                    forContent: layout.sizeThatFits(viewProposal),
+                    in: bounds,
+                    layoutDirection: layoutDirection
+                ),
+                anchor: .topLeading,
+                proposal: viewProposal
+            )
         }
     }
 }
@@ -373,6 +469,31 @@ struct EmbeddedView: View {
             ) { constraints, placement in
                 createView(constraints: constraints, placement: placement)
             }
+            // A layout bounds what its child is *offered*, not what it paints. `AdoptLayoutEngine`
+            // already reports `min(content, bound)` and proposes that down, but content that
+            // cannot compress to it still draws at its own size -- over the host app's own views,
+            // which is the reported bug. Clipping is the only thing that stops that.
+            //
+            // Applied out here rather than inside `AdoptLayout`: within the layout, a subview's
+            // frame is its own reported size, not what it was proposed, so there is nothing to
+            // clip against.
+            //
+            // `.contentShape` is what keeps the clip honest for touch. Clipping affects rendering
+            // only -- hit testing still reaches content that is no longer drawn, so without it a
+            // button clipped out of sight stays tappable through whatever the host app drew in its
+            // place. VoiceOver can still reach it; that needs focus work this does not attempt.
+            //
+            // Unconditional, rather than gated on the placement declaring a ceiling. A slot can
+            // be smaller than its content without any `max_*` at all -- `height: 50%` or a points
+            // height does it too -- so a gate keyed on ceilings would leave exactly those payloads
+            // trimmed to one end by `placeSubviews` and then not clipped, which is worse than the
+            // centred overflow they had before. It also costs nothing here: unlike Banner and
+            // Modal placements, an embedded placement declares only `margin`, `size`, `border` and
+            // `backgroundColor` -- no shadow, no `ignore_safe_area` -- so there is nothing it draws
+            // outside its own bounds for a clip to cut. And being unconditional, it introduces no
+            // `_ConditionalContent` whose branch could flip on rotation.
+            .clipped()
+            .contentShape(Rectangle())
         }
 
 #if os(macOS)

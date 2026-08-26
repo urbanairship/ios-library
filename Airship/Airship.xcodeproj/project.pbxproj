@@ -474,6 +474,7 @@
 		6E21C4752FEC586A00EA3E56 /* LayoutModelsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4672FEC586A00EA3E56 /* LayoutModelsTest.swift */; };
 		6E21C4762FEC586A00EA3E56 /* ThomasAsyncViewStateTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C46B2FEC586A00EA3E56 /* ThomasAsyncViewStateTest.swift */; };
 		6E21C4782FEC586A00EA3E56 /* AirshipLayoutTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4682FEC586A00EA3E56 /* AirshipLayoutTest.swift */; };
+		6E21C4B02FEC586A00EA3E56 /* EmbeddedPlacementBoundsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4A02FEC586A00EA3E56 /* EmbeddedPlacementBoundsTest.swift */; };
 		6E21C4792FEC586A00EA3E56 /* ThomasValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4692FEC586A00EA3E56 /* ThomasValidationTests.swift */; };
 		6E21C47A2FEC586A00EA3E56 /* PagerControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C46F2FEC586A00EA3E56 /* PagerControllerTest.swift */; };
 		6E21C4812FEC587900EA3E56 /* ThomasStateTriggerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4802FEC587900EA3E56 /* ThomasStateTriggerTest.swift */; };
@@ -2083,6 +2084,7 @@
 		6E21C4652FEC585F00EA3E56 /* VideoMediaWebViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMediaWebViewTests.swift; sourceTree = "<group>"; };
 		6E21C4672FEC586A00EA3E56 /* LayoutModelsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutModelsTest.swift; sourceTree = "<group>"; };
 		6E21C4682FEC586A00EA3E56 /* AirshipLayoutTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipLayoutTest.swift; sourceTree = "<group>"; };
+		6E21C4A02FEC586A00EA3E56 /* EmbeddedPlacementBoundsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedPlacementBoundsTest.swift; sourceTree = "<group>"; };
 		6E21C4692FEC586A00EA3E56 /* ThomasValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasValidationTests.swift; sourceTree = "<group>"; };
 		6E21C46A2FEC586A00EA3E56 /* ThomasViewModelTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewModelTest.swift; sourceTree = "<group>"; };
 		6E21C46B2FEC586A00EA3E56 /* ThomasAsyncViewStateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasAsyncViewStateTest.swift; sourceTree = "<group>"; };
@@ -4962,6 +4964,7 @@
 				6E21C47B2FEC587300EA3E56 /* Types */,
 				6E21C4672FEC586A00EA3E56 /* LayoutModelsTest.swift */,
 				6E21C4682FEC586A00EA3E56 /* AirshipLayoutTest.swift */,
+				6E21C4A02FEC586A00EA3E56 /* EmbeddedPlacementBoundsTest.swift */,
 				6E21C4692FEC586A00EA3E56 /* ThomasValidationTests.swift */,
 				6E21C46A2FEC586A00EA3E56 /* ThomasViewModelTest.swift */,
 				6E21C46B2FEC586A00EA3E56 /* ThomasAsyncViewStateTest.swift */,
@@ -7560,6 +7563,7 @@
 				6E21C4762FEC586A00EA3E56 /* ThomasAsyncViewStateTest.swift in Sources */,
 				7F2A1B0E3D4E5F901234567C /* ThomasOrientationTrackerTest.swift in Sources */,
 				6E21C4782FEC586A00EA3E56 /* AirshipLayoutTest.swift in Sources */,
+				6E21C4B02FEC586A00EA3E56 /* EmbeddedPlacementBoundsTest.swift in Sources */,
 				6E21C4792FEC586A00EA3E56 /* ThomasValidationTests.swift in Sources */,
 				6E21C4812FEC587900EA3E56 /* ThomasStateTriggerTest.swift in Sources */,
 				6E21C4822FEC587900EA3E56 /* ThomasButtonClickBehavior.swift in Sources */,
