@@ -115,6 +115,11 @@ struct EmbeddedPlaygroundMenuView: View {
                  title: "Fixed frame",
                  description: "Embedded scene that is bounded to a fixed frame size",
                  destination: AnyView(EmbeddedFixedFrameView()
+                    .environmentObject(model))),
+            Item(icon: "sparkles.square.filled.on.square",
+                 title: "AI selection",
+                 description: "On-device model picks between pending instances using content_description",
+                 destination: AnyView(EmbeddedAISelectionView()
                     .environmentObject(model)))
         ]
     }

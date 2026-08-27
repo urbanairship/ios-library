@@ -72,7 +72,11 @@ public final class AirshipEmbeddedViewManager: AirshipEmbeddedViewManagerProtoco
                     instanceID: id,
                     embeddedID: presentation.embeddedID,
                     extras: extras,
-                    priority: priority
+                    priority: priority,
+                    contentDescription: layout.contentDescription?.description,
+                    additionalContext: (layout.contentDescription?.additionalContext ?? []).map {
+                        ThomasAIContextItem(content: $0.content, priority: $0.priority ?? 0.0)
+                    }
                 ),
                 dismissHandle: dismissHandle
             )

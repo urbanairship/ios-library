@@ -36,6 +36,50 @@ extension AirshipAI {
     }
 }
 
+private extension AirshipEmbeddedInfo {
+    /// Whether this candidate carries anything that could set it apart from the others. An
+    /// instance ID alone is not something to reason about — it's a UUID.
+    ///
+    /// `additionalContext` deliberately doesn't count: it's pooled into the shared context,
+    /// so it's background for the whole decision and identical for every candidate. Only
+    /// what stays on the candidate can differentiate it.
+    var isDescribable: Bool {
+        contentDescription?.isEmpty == false || extras != nil
+    }
+}
+
+@_spi(AirshipInternal)
+public extension EmbeddedAISelectionRequest {
+    /// The candidates' authored `content_description.additional_context`, folded into one
+    /// context the manager appends after the app provider's.
+    ///
+    /// Pooled rather than attached per candidate so every context item — app-supplied or
+    /// layout-supplied — renders in one section and rides the same trimmed channel, which
+    /// is what makes the authored `priority` mean something. The trade is attribution: an
+    /// item reads as background for the whole decision, not as a fact about the one
+    /// candidate that declared it.
+    ///
+    /// Deduped by content because sibling layouts in a campaign routinely repeat a line;
+    /// a repeat keeps its most important (lowest) priority and its first-seen position.
+    var layoutContext: AirshipAI.Context {
+        var order: [String] = []
+        var priorities: [String: Double] = [:]
+
+        for item in candidates.flatMap(\.additionalContext) where !item.content.isEmpty {
+            if let existing = priorities[item.content] {
+                priorities[item.content] = min(existing, item.priority)
+            } else {
+                priorities[item.content] = item.priority
+                order.append(item.content)
+            }
+        }
+
+        return AirshipAI.Context(
+            items: order.map { .init(content: $0, priority: priorities[$0] ?? 0) }
+        )
+    }
+}
+
 /// Ranks pending embedded instances with the on-device model. Wired into the renderer via
 /// `DefaultThomasExtensions` when the host has an AI manager. Its own usage
 /// (`embedded_selection`) — independent of text-input inference.
@@ -57,12 +101,23 @@ public struct DefaultEmbeddedAISelector: EmbeddedAISelector {
     public func rank(_ request: EmbeddedAISelectionRequest) async -> [String]? {
         guard !request.candidates.isEmpty else { return nil }
 
-        // Embedded selection requires user context to be meaningful — without it the model
-        // would infer a preference from the candidate text itself, inconsistently and never
-        // from a real user signal. `EmbeddedSelectionEvaluation.requiresContext` makes the
-        // manager skip the run when context is empty, and the `.skipped` case below falls
-        // back to the caller's deterministic priority ordering.
-        let result = await aiManager.evaluate(EmbeddedSelectionEvaluation(request: request))
+        // All-or-nothing, never per-candidate: if even one candidate is describable the model
+        // runs and every candidate goes into the prompt, however thin. Only when NOTHING is
+        // describable is the run skipped — with bare UUIDs the instructions say score
+        // everything 5, which is the fallback's own ordering, so the round-trip buys nothing
+        // and the caller shows a placeholder through it.
+        //
+        // Note this is not a filter: a candidate the model declines to score still lands in
+        // the ranking, at the end and in priority order — see `unscored` below.
+        guard request.candidates.contains(where: \.isDescribable) else {
+            AirshipLogger.debug("Embedded AI selection has nothing to rank on, using fallback")
+            return nil
+        }
+
+        let result = await aiManager.evaluate(
+            EmbeddedSelectionEvaluation(request: request),
+            additionalContext: request.layoutContext
+        )
 
         switch result {
         case .completed(let output):
@@ -140,9 +195,11 @@ public struct EmbeddedSelectionEvaluation: AirshipAI.Evaluation {
 
     public let usage: AirshipAI.Usage<AirshipAI.EmbeddedSelection.Subject> = AirshipAI.EmbeddedSelection.usage
 
-    /// Embedded selection is only meaningful with user context — skip the model when
-    /// there's none rather than let it guess from the candidate text.
-    public var requiresContext: Bool { true }
+    // `requiresContext` stays at the protocol default (false): the author's prompt and the
+    // candidates' `content_description` can carry a ranking on their own, so demanding an
+    // app-registered context provider would block selection for apps that don't need one.
+    // `DefaultEmbeddedAISelector.rank` applies the narrower guard that actually matters —
+    // that the candidates are distinguishable at all.
 
     public var subject: AirshipAI.EmbeddedSelection.Subject {
         AirshipAI.EmbeddedSelection.Subject(embeddedID: request.embeddedID, pending: request.candidates, hints: request.subjectHints)
@@ -175,10 +232,14 @@ public struct EmbeddedSelectionEvaluation: AirshipAI.Evaluation {
         <prompt>\(request.prompt)</prompt>
 
         Steps:
-        1. Read the background context for facts about the user (interests, history). The \
-        candidate descriptions are content to be scored, NOT evidence about the user — never \
-        infer the user's preferences from the candidates themselves.
-        2. Carefully read each candidate's description text.
+        1. Read the "User context" section, if there is one, for facts about the user \
+        (interests, history, how they were targeted). That section is the only evidence about \
+        the user, and it applies to the decision as a whole rather than to any one candidate. \
+        There may be no user context at all; that is normal, and the instruction above may be \
+        all you need to rank on.
+        2. Carefully read each candidate's `description` and any `extras` it carries — those \
+        describe that one candidate, and they are the content being scored. Never read a \
+        candidate's own text as evidence about the user.
         3. Give every candidate a score from 1 to 10 for how well it matches the instruction \
         and the user context. Return exactly one score per candidate id; never omit or invent an id.
 
@@ -186,8 +247,9 @@ public struct EmbeddedSelectionEvaluation: AirshipAI.Evaluation {
         - 9–10: Direct match to a stated user interest or the instruction.
         - 6–8: Plausibly relevant or broadly applicable.
         - 1–4: Mismatch or a competing item (e.g., dog items when the user likes cats).
-        - If the context contains no information relevant to differentiating the candidates, \
-        score every candidate exactly 5.
+        - Score every candidate exactly 5 only when NEITHER the instruction NOR the user \
+        context gives you any basis to tell the candidates apart. Missing user context on its \
+        own is not such a case: if the instruction alone ranks them, rank them.
 
         Important: Match each candidate's description to its correct id.
         """
@@ -201,6 +263,13 @@ public struct EmbeddedSelectionEvaluation: AirshipAI.Evaluation {
             // like `id` would otherwise collide with the instance ID that scores are
             // matched back by, silently dropping the candidate from the ranking.
             var dict: [String: AirshipJSON] = ["id": .string(candidate.instanceID)]
+            if let description = candidate.contentDescription {
+                dict["description"] = .string(description)
+            }
+            // `additional_context` is deliberately NOT here: it's pooled into the shared
+            // context (see `EmbeddedAISelectionRequest.layoutContext`) so every context item
+            // renders in one section and can be trimmed by priority. A candidate carries only
+            // what identifies it — its description and its extras.
             if let extras = candidate.extras {
                 dict["extras"] = extras
             }
@@ -211,6 +280,9 @@ public struct EmbeddedSelectionEvaluation: AirshipAI.Evaluation {
         let candidateBlock = (try? AirshipJSON.array(candidateObjects).toString(encoder: encoder)) ?? "[]"
         parts.append("Score each of the following candidates according to the system instructions.\n\nCandidates:\n\(candidateBlock)")
 
+        // One section for every context item, whatever supplied it — the app's provider and
+        // the layouts' `additional_context` render identically and are indistinguishable to
+        // the model by design. Both are expected to be user-framed facts.
         if let bullets = context.renderBullets() {
             parts.append("User context:\n\(bullets)")
         }

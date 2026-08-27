@@ -68,10 +68,17 @@ public enum AirshipEmbeddedSelection: Sendable {
 
         /// Instruction describing how to choose among the pending instances.
         ///
-        /// The model scores each candidate 1–10 based on this prompt and the user's context,
-        /// then displays the highest-scoring instance. Write the prompt as a relevance
-        /// description: e.g. `"Show content that matches the user's interests."` or
-        /// `"Prioritize time-sensitive offers over evergreen content."`
+        /// The model scores each candidate 1–10 against this prompt, what each candidate's
+        /// layout says about itself (`content_description`), and any user context an app
+        /// context provider supplies; the highest-scoring instance is displayed. A context
+        /// provider is optional — a prompt that ranks on the content alone
+        /// (`"Prioritize time-sensitive offers over evergreen content."`) works without one,
+        /// while a prompt about the person (`"Show content that matches the user's
+        /// interests."`) only differentiates if a provider is registered for
+        /// `AirshipAI.EmbeddedSelection.usage`.
+        ///
+        /// Selection is skipped, and `fallback` used, when no candidate carries anything to
+        /// rank on — no `content_description` and no extras.
         public let prompt: String
 
         /// Strategy for ordering candidates using AI scores and priority.

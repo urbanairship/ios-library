@@ -552,9 +552,17 @@ struct AirshipDebugEmbeddedSelectionView: View {
                                 .foregroundStyle(.secondary)
                                 .frame(width: 24)
                         }
+                        TextField("Content description", text: $candidate.contentDescription)
+                            .focused($keyboardActive)
+                        AirshipDebugPlainTextEditor(
+                            title: "Additional user context",
+                            placeholder: "One fact about the user per line",
+                            text: $candidate.additionalContext,
+                            focus: $keyboardActive
+                        )
                         AirshipDebugJSONEditor(
                             title: "Extras",
-                            placeholder: "{\"description\": \"...\"}",
+                            placeholder: "{\"tier\": \"gold\"}",
                             text: $candidate.extrasJSON,
                             focus: $keyboardActive
                         )
@@ -702,6 +710,23 @@ private struct EmbeddedCandidate: Identifiable, Codable, Equatable {
     var instanceID: String
     var extrasJSON: String
     var priority: Int
+
+    /// Stands in for the layout's `content_description.description`.
+    var contentDescription: String = ""
+
+    /// Stands in for `content_description.additional_context`, one item per line. Pooled
+    /// across candidates and merged into the user context, so these read as facts about the
+    /// user rather than about this candidate. Priority isn't editable here — it only matters
+    /// once the context is big enough to trim, which this sandbox never reaches.
+    var additionalContext: String = ""
+
+    var contextItems: [ThomasAIContextItem] {
+        additionalContext
+            .split(separator: "\n")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+            .map { ThomasAIContextItem(content: $0) }
+    }
 }
 
 /// Persisted inputs for the embedded selection sandbox.
@@ -820,8 +845,12 @@ private final class EmbeddedSelectionViewModel: ObservableObject {
 
         await fetchContext()
 
-        let evaluation = EmbeddedSelectionEvaluation(request: makeRequest())
-        let additional: AirshipAI.Context = (contextMode == .append) ? contextItems.airshipContext : .empty
+        let request = makeRequest()
+        let evaluation = EmbeddedSelectionEvaluation(request: request)
+        // Mirrors DefaultEmbeddedAISelector.rank: the candidates' pooled additional_context
+        // is appended after whatever the sandbox's context mode contributes.
+        let sandboxContext: AirshipAI.Context = (contextMode == .append) ? contextItems.airshipContext : .empty
+        let additional = sandboxContext.appending(request.layoutContext)
 
         let outcome: EmbeddedSelectionResult
         switch await manager.evaluate(evaluation, additionalContext: additional) {
@@ -850,7 +879,12 @@ private final class EmbeddedSelectionViewModel: ObservableObject {
     }
 
     var assembledPrompt: String {
-        EmbeddedSelectionEvaluation(request: makeRequest()).prompt(context: context ?? .empty)
+        // The candidates' pooled additional_context lands in the same "User context" section
+        // as the app's, so the preview has to add it or it won't match a real run.
+        let request = makeRequest()
+        let base: AirshipAI.Context = context ?? .empty
+        return EmbeddedSelectionEvaluation(request: request)
+            .prompt(context: base.appending(request.layoutContext))
     }
 
     private func makeRequest() -> EmbeddedAISelectionRequest {
@@ -877,16 +911,34 @@ private final class EmbeddedSelectionViewModel: ObservableObject {
                 instanceID: candidate.instanceID,
                 embeddedID: "debug",
                 extras: try? AirshipJSON.from(json: candidate.extrasJSON),
-                priority: candidate.priority
+                priority: candidate.priority,
+                contentDescription: candidate.contentDescription.isEmpty ? nil : candidate.contentDescription,
+                additionalContext: candidate.contextItems
             )
         }
     }
 
     private static func defaultCandidates() -> [EmbeddedCandidate] {
         [
-            EmbeddedCandidate(instanceID: UUID().uuidString, extrasJSON: "{\"description\": \"Adopt a rescue cat today — find your perfect feline companion.\"}", priority: 0),
-            EmbeddedCandidate(instanceID: UUID().uuidString, extrasJSON: "{\"description\": \"Top-rated dog food for active breeds — fuel your pup's adventures.\"}", priority: 1),
-            EmbeddedCandidate(instanceID: UUID().uuidString, extrasJSON: "{\"description\": \"Spring sale on cat trees, toys, and grooming supplies.\"}", priority: 2),
+            EmbeddedCandidate(
+                instanceID: UUID().uuidString,
+                extrasJSON: "",
+                priority: 0,
+                contentDescription: "Adopt a rescue cat today — find your perfect feline companion. Adoption fees waived this month.",
+                additionalContext: "Targeted: opted into shelter adoption alerts"
+            ),
+            EmbeddedCandidate(
+                instanceID: UUID().uuidString,
+                extrasJSON: "",
+                priority: 1,
+                contentDescription: "Top-rated dog food for active breeds — fuel your pup's adventures."
+            ),
+            EmbeddedCandidate(
+                instanceID: UUID().uuidString,
+                extrasJSON: "",
+                priority: 2,
+                contentDescription: "Spring sale on cat trees, toys, and grooming supplies."
+            ),
         ]
     }
 

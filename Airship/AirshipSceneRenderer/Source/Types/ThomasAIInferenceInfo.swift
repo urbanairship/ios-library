@@ -20,7 +20,7 @@ struct ThomasAIInferenceInfo: ThomasSerializable {
     /// Layout-authored context items appended to the prompt after any context the app's
     /// context provider returns. Lower-priority items are dropped first when the model's
     /// context window is tight.
-    var additionalContext: [ContextItem]?
+    var additionalContext: [ThomasAIContextItemInfo]?
 
     /// Extra key-value data carried on the subject handed to the app's context provider
     /// (as `subject.hints`). Not added to the prompt by the renderer — the app decides
@@ -33,15 +33,18 @@ struct ThomasAIInferenceInfo: ThomasSerializable {
         case additionalContext = "additional_context"
         case subjectHints = "subject_hints"
     }
+}
 
-    /// A single layout-authored context item. `content` is self-describing text
-    /// (e.g. `"Favorite category: hiking"`) inserted into the prompt as-is.
-    struct ContextItem: ThomasSerializable {
-        var content: String
+/// A single layout-authored context item. `content` is self-describing text
+/// (e.g. `"Favorite category: hiking"`) inserted into the prompt as-is.
+///
+/// Shared by every payload that carries authored context — text-input inference
+/// (`ai_inference.additional_context`) and the layout's `content_description`.
+struct ThomasAIContextItemInfo: ThomasSerializable {
+    var content: String
 
-        /// Relative importance, where **lower is more important** (negatives allowed).
-        /// The model drops the highest-valued items first when trimming context.
-        /// Optional — defaults to `0` when omitted.
-        var priority: Double?
-    }
+    /// Relative importance, where **lower is more important** (negatives allowed).
+    /// The model drops the highest-valued items first when trimming context.
+    /// Optional — defaults to `0` when omitted.
+    var priority: Double?
 }

@@ -19,6 +19,18 @@ public struct AirshipLayout: ThomasSerializable {
     /// - Note: For internal use only. :nodoc:
     public let options: NativeLayoutControlOptions?
 
+    /// What this content is about, for machine consumers — currently the on-device model
+    /// that ranks pending embedded instances for `.ai` selection.
+    let contentDescription: ThomasContentDescriptionInfo?
+
+    enum CodingKeys: String, CodingKey {
+        case view
+        case version
+        case presentation
+        case options
+        case contentDescription = "content_description"
+    }
+
     public var isEmbedded: Bool {
         guard case .embedded(_) = presentation else {
             return false

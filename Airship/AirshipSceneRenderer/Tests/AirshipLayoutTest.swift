@@ -241,6 +241,52 @@ struct AirshipLayoutTest {
         try decodeEncodeCompare(source: json, type: AirshipLayout.self)
     }
 
+    @Test
+    func decodesContentDescription() throws {
+        let json = """
+        {
+          "version": 1,
+          "presentation": {
+            "type": "embedded",
+            "embedded_id": "slot",
+            "default_placement": { "size": { "width": "100%", "height": "auto" } }
+          },
+          "view": { "type": "empty_view" },
+          "content_description": {
+            "description": "Spring sale on cat trees and toys",
+            "additional_context": [
+              { "content": "Sale ends Friday", "priority": -1 },
+              { "content": "Cat category" }
+            ]
+          }
+        }
+        """
+        let layout = try decode(json)
+
+        #expect(layout.contentDescription?.description == "Spring sale on cat trees and toys")
+        #expect(layout.contentDescription?.additionalContext?.count == 2)
+        #expect(layout.contentDescription?.additionalContext?.first?.content == "Sale ends Friday")
+        #expect(layout.contentDescription?.additionalContext?.first?.priority == -1)
+        // Priority is optional on the wire; the consumer defaults it to 0.
+        #expect(layout.contentDescription?.additionalContext?.last?.priority == nil)
+    }
+
+    @Test
+    func contentDescriptionIsOptional() throws {
+        let json = """
+        {
+          "version": 1,
+          "presentation": {
+            "type": "embedded",
+            "embedded_id": "slot",
+            "default_placement": { "size": { "width": "100%", "height": "auto" } }
+          },
+          "view": { "type": "empty_view" }
+        }
+        """
+        #expect(try decode(json).contentDescription == nil)
+    }
+
     private func decode(_ json: String) throws -> AirshipLayout {
         guard let data = json.data(using: .utf8) else {
             struct Encoding: Error {}

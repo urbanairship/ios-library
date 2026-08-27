@@ -215,6 +215,81 @@ struct EmbeddedFixedFrameView: View, EmbeddedViewMaker {
     }
 }
 
+/// Lets the on-device model pick which pending instance to show, using each scene's
+/// `content_description`.
+///
+/// To exercise it: select every `ai-selection-*` scene in the picker (each one stacks a
+/// pending instance under the shared `ai selection` embedded ID), then open this screen.
+/// The user context below is what the model ranks against — flip it to dogs and the
+/// winner should change.
+struct EmbeddedAISelectionView: View {
+
+    private static let catContext = "User interests: cats"
+    private static let dogContext = "User interests: dogs"
+
+    /// Holds the context the provider hands back. A box rather than a captured snapshot:
+    /// toggling re-creates the embedded view (via `.id`), and that re-ask races the
+    /// `onChange` that would reinstall a snapshot provider — so the provider reads live
+    /// state instead of being replaced. Seeded to match `likesCats`, so a re-ask that
+    /// lands before the first `onChange` still sees real context.
+    @MainActor
+    final class ContextBox {
+        var summary: String = EmbeddedAISelectionView.catContext
+    }
+
+    @EnvironmentObject var model: EmbeddedPlaygroundMenuViewModel
+
+    @State private var likesCats: Bool = true
+    @State private var box = ContextBox()
+
+    private var contextSummary: String {
+        likesCats ? Self.catContext : Self.dogContext
+    }
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Toggle("User likes cats", isOn: $likesCats)
+
+            Text("Context: \(contextSummary)")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+
+            AirshipEmbeddedView(
+                embeddedID: model.selectedEmbeddedID,
+                selection: .ai(
+                    prompt: "Show content that matches the user's interests.",
+                    fallback: .priority
+                )
+            ) {
+                Text("Deciding…")
+                    .font(.callout)
+                    .frame(maxWidth: .infinity, minHeight: 80)
+                    .background(Color.green.opacity(0.3))
+            }
+            // The model runs once per pending set; rebuild the view so toggling the
+            // context re-asks rather than showing the previous winner.
+            .id(likesCats)
+            .border(Color.red, width: 3)
+
+            Spacer()
+        }
+        .padding()
+        .navigationTitle("AI selection")
+        .onChangeOfCompat(likesCats, initial: true) { _ in
+            box.summary = contextSummary
+        }
+        .onAppear {
+            let box = box
+            Airship.ai.setContextProvider(for: AirshipAI.EmbeddedSelection.usage) { _ in
+                AirshipAI.Context(items: [.init(content: await box.summary)])
+            }
+        }
+        .onDisappear {
+            Airship.ai.setContextProvider(for: AirshipAI.EmbeddedSelection.usage, nil)
+        }
+    }
+}
+
 #Preview {
     EmbeddedUnboundedHorizontalScrollView()
 }

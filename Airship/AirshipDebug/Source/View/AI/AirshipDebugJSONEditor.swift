@@ -127,3 +127,60 @@ struct AirshipDebugJSONEditor: View {
         case invalid
     }
 }
+
+/// A titled multi-line plain-text editor, styled to sit next to ``AirshipDebugJSONEditor``
+/// in the AI sandboxes. For free-form prose that isn't JSON — layout-authored content
+/// descriptions and context items.
+struct AirshipDebugPlainTextEditor: View {
+    let title: String
+    let placeholder: String
+    @Binding var text: String
+
+    var focus: FocusState<Bool>.Binding?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title)
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            editor
+                .frame(minHeight: 60)
+                .font(.footnote)
+                .freeInput()
+                .overlay(alignment: .topLeading) {
+                    if text.isEmpty {
+                        Text(placeholder)
+                            .font(.footnote)
+                            .foregroundStyle(.tertiary)
+                            .padding(.top, 8)
+                            .padding(.leading, 5)
+                            .allowsHitTesting(false)
+                    }
+                }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.secondary.opacity(0.25), lineWidth: 1)
+                )
+        }
+        .padding(.vertical, 4)
+    }
+
+    @ViewBuilder
+    private var editor: some View {
+#if os(tvOS)
+        // tvOS has no TextEditor; fall back to a single-line field.
+        if let focus {
+            TextField("", text: $text).focused(focus)
+        } else {
+            TextField("", text: $text)
+        }
+#else
+        if let focus {
+            TextEditor(text: $text).focused(focus)
+        } else {
+            TextEditor(text: $text)
+        }
+#endif
+    }
+}

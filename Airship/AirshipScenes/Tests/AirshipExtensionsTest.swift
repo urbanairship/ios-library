@@ -149,8 +149,21 @@ struct ThomasAIInferenceEvaluationGuardTest {
 
 struct EmbeddedSelectionEvaluationTest {
 
-    private func candidate(_ id: String, extras: AirshipJSON? = nil, priority: Int = 0) -> AirshipEmbeddedInfo {
-        AirshipEmbeddedInfo(instanceID: id, embeddedID: "slot", extras: extras, priority: priority)
+    private func candidate(
+        _ id: String,
+        extras: AirshipJSON? = nil,
+        priority: Int = 0,
+        contentDescription: String? = nil,
+        additionalContext: [ThomasAIContextItem] = []
+    ) -> AirshipEmbeddedInfo {
+        AirshipEmbeddedInfo(
+            instanceID: id,
+            embeddedID: "slot",
+            extras: extras,
+            priority: priority,
+            contentDescription: contentDescription,
+            additionalContext: additionalContext
+        )
     }
 
     private func makeEvaluation(
@@ -219,6 +232,55 @@ struct EmbeddedSelectionEvaluationTest {
         #expect(prompt.contains("User is a dog owner"))
     }
 
+    @Test("The layout's content_description rides on the candidate")
+    func promptIncludesContentDescription() {
+        let eval = makeEvaluation(candidates: [
+            candidate("a", contentDescription: "Spring sale on cat trees"),
+            candidate("b"),
+        ])
+        let prompt = eval.prompt(context: .empty)
+        #expect(prompt.contains("\"description\" : \"Spring sale on cat trees\""))
+    }
+
+    @Test("additional_context never rides the candidate — it is pooled into the context")
+    func promptKeepsCandidateBlockFreeOfContext() {
+        let eval = makeEvaluation(candidates: [
+            candidate(
+                "a",
+                additionalContext: [
+                    .init(content: "Sale ends Friday", priority: -1),
+                    .init(content: "Cat category"),
+                ]
+            )
+        ])
+        let prompt = eval.prompt(context: .empty)
+        // The evaluation renders only what it is handed; pooling happens in `rank`, so an
+        // empty context here must produce no context section at all.
+        #expect(!prompt.contains("\"context\""))
+        #expect(!prompt.contains("Sale ends Friday"))
+        #expect(!prompt.contains("User context:"))
+    }
+
+    @Test("Pooled context renders in the one user-context section")
+    func promptRendersPooledContextAsUserContext() {
+        let eval = makeEvaluation(candidates: [candidate("a")])
+        let prompt = eval.prompt(
+            context: AirshipAI.Context(items: [
+                .init(content: "User interests: cats"),
+                .init(content: "Sale ends Friday", priority: -1),
+            ])
+        )
+        // App-supplied and layout-supplied items are indistinguishable here by design.
+        #expect(prompt.contains("User context:\n- User interests: cats\n- Sale ends Friday"))
+    }
+
+    @Test("A candidate with no content_description omits the key")
+    func promptOmitsEmptyContentDescription() {
+        let eval = makeEvaluation(candidates: [candidate("a")])
+        let prompt = eval.prompt(context: .empty)
+        #expect(!prompt.contains("\"description\""))
+    }
+
     @Test("Author prompt appears in instructions")
     func instructionsUseAuthorPrompt() {
         let eval = makeEvaluation(
@@ -229,12 +291,14 @@ struct EmbeddedSelectionEvaluationTest {
     }
 }
 
-/// Backs the ranking path. The "skip when no context" decision now lives in the manager
-/// (via `Evaluation.requiresContext`), so it's covered in AirshipAITest against the real
-/// manager; here the mock just returns a canned evaluation result to exercise `rank`.
+/// Backs the ranking path — the mock just returns a canned evaluation result to exercise
+/// `rank`. Selection deliberately does NOT require app-registered user context (a prompt
+/// plus `content_description` can rank on its own), so there is no context gate here; the
+/// only pre-flight guard is that some candidate is describable.
 private final class MockEmbeddedAIManager: AirshipAI.InternalManager, @unchecked Sendable {
     var evaluateResult: AirshipAI.Result<EmbeddedSelectionEvaluation.Output> = .skipped(reason: "test")
     private(set) var evaluateCallCount = 0
+    private(set) var lastAdditionalContext: AirshipAI.Context = .empty
 
     var defaultModel: (any AirshipAI.ModelProtocol)? { nil }
     func model<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.ModelProtocol)? { nil }
@@ -246,18 +310,191 @@ private final class MockEmbeddedAIManager: AirshipAI.InternalManager, @unchecked
     func gatedModel<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.ModelProtocol)? { nil }
     func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E, additionalContext: AirshipAI.Context) async -> AirshipAI.Result<E.Output> {
         evaluateCallCount += 1
+        lastAdditionalContext = additionalContext
         return (evaluateResult as? AirshipAI.Result<E.Output>) ?? .skipped(reason: "test: unexpected type")
     }
 }
 
 struct DefaultEmbeddedAISelectorTest {
 
+    /// Describable by default — a bare candidate is short-circuited before the model runs,
+    /// which is its own test below rather than the precondition for every ranking test.
     private func candidate(_ id: String, priority: Int = 0) -> AirshipEmbeddedInfo {
-        AirshipEmbeddedInfo(instanceID: id, embeddedID: "slot", extras: nil, priority: priority)
+        AirshipEmbeddedInfo(
+            instanceID: id,
+            embeddedID: "slot",
+            extras: nil,
+            priority: priority,
+            contentDescription: "content \(id)"
+        )
     }
 
     private func request(_ ids: [String]) -> EmbeddedAISelectionRequest {
         .init(embeddedID: "slot", prompt: "pick", candidates: ids.map { candidate($0) })
+    }
+
+    private func bareCandidate(_ id: String, priority: Int = 0) -> AirshipEmbeddedInfo {
+        AirshipEmbeddedInfo(instanceID: id, embeddedID: "slot", extras: nil, priority: priority)
+    }
+
+    private func contextCandidate(_ id: String, context: [ThomasAIContextItem]) -> AirshipEmbeddedInfo {
+        AirshipEmbeddedInfo(
+            instanceID: id,
+            embeddedID: "slot",
+            extras: nil,
+            priority: 0,
+            contentDescription: "content \(id)",
+            additionalContext: context
+        )
+    }
+
+    @Test("Every candidate's additional_context is pooled into one context")
+    func layoutContextIsPooled() async {
+        let manager = MockEmbeddedAIManager()
+        let selector = DefaultEmbeddedAISelector(aiManager: manager)
+
+        _ = await selector.rank(
+            .init(
+                embeddedID: "slot",
+                prompt: "pick",
+                candidates: [
+                    contextCandidate("a", context: [.init(content: "Owns two cats", priority: -1)]),
+                    contextCandidate("b", context: [.init(content: "Targeted: lapsed buyer")]),
+                ]
+            )
+        )
+
+        #expect(
+            manager.lastAdditionalContext.items == [
+                .init(content: "Owns two cats", priority: -1),
+                .init(content: "Targeted: lapsed buyer", priority: 0),
+            ]
+        )
+    }
+
+    @Test("A line repeated across sibling layouts is pooled once, at its best priority")
+    func repeatedContextIsDeduped() async {
+        let manager = MockEmbeddedAIManager()
+        let selector = DefaultEmbeddedAISelector(aiManager: manager)
+
+        _ = await selector.rank(
+            .init(
+                embeddedID: "slot",
+                prompt: "pick",
+                candidates: [
+                    contextCandidate("a", context: [.init(content: "Sale ends Friday", priority: 3)]),
+                    contextCandidate("b", context: [.init(content: "Sale ends Friday", priority: -1)]),
+                ]
+            )
+        )
+
+        // First-seen position, lowest (most important) priority — so a dedup can never make
+        // an item more likely to be trimmed than the author asked for.
+        #expect(manager.lastAdditionalContext.items == [.init(content: "Sale ends Friday", priority: -1)])
+    }
+
+    @Test("Candidates with no additional_context contribute no context")
+    func noLayoutContextIsEmpty() async {
+        let manager = MockEmbeddedAIManager()
+        let selector = DefaultEmbeddedAISelector(aiManager: manager)
+
+        _ = await selector.rank(request(["a", "b"]))
+
+        #expect(manager.lastAdditionalContext.items.isEmpty)
+    }
+
+    @Test("Selection runs with no app context when candidates describe themselves")
+    func runsWithoutAppContext() async {
+        let manager = MockEmbeddedAIManager()
+        let selector = DefaultEmbeddedAISelector(aiManager: manager)
+
+        // The mock's context provider returns `.empty`; the model must still be asked.
+        _ = await selector.rank(request(["a", "b"]))
+
+        #expect(manager.evaluateCallCount == 1)
+    }
+
+    @Test("The model is skipped only when NO candidate is describable")
+    func allIndistinguishableCandidatesSkipTheModel() async {
+        let manager = MockEmbeddedAIManager()
+        let selector = DefaultEmbeddedAISelector(aiManager: manager)
+
+        let result = await selector.rank(
+            .init(
+                embeddedID: "slot",
+                prompt: "pick",
+                candidates: [bareCandidate("a"), bareCandidate("b")]
+            )
+        )
+
+        // Bare UUIDs only — the model would score everything 5 and land on the fallback's
+        // ordering anyway, so don't pay for the round-trip.
+        #expect(result == nil)
+        #expect(manager.evaluateCallCount == 0)
+    }
+
+    @Test("One describable candidate carries the whole set into the model")
+    func oneDescribableCandidateRunsTheModel() async {
+        let manager = MockEmbeddedAIManager()
+        let selector = DefaultEmbeddedAISelector(aiManager: manager)
+
+        // The guard is all-or-nothing: `a` is bare but still gets sent along with `b`.
+        _ = await selector.rank(
+            .init(
+                embeddedID: "slot",
+                prompt: "pick",
+                candidates: [bareCandidate("a"), candidate("b")]
+            )
+        )
+
+        #expect(manager.evaluateCallCount == 1)
+    }
+
+    @Test("Extras alone make a candidate describable")
+    func extrasAloneAreDescribable() async throws {
+        let manager = MockEmbeddedAIManager()
+        let selector = DefaultEmbeddedAISelector(aiManager: manager)
+
+        _ = await selector.rank(
+            .init(
+                embeddedID: "slot",
+                prompt: "pick",
+                candidates: [
+                    AirshipEmbeddedInfo(
+                        instanceID: "a",
+                        embeddedID: "slot",
+                        extras: try AirshipJSON.wrap(["tier": "gold"]),
+                        priority: 0
+                    )
+                ]
+            )
+        )
+
+        #expect(manager.evaluateCallCount == 1)
+    }
+
+    @Test("A candidate the model never scored falls to the end, not out of the ranking")
+    func unscoredCandidatesRankLastRatherThanDrop() async {
+        let manager = MockEmbeddedAIManager()
+        manager.evaluateResult = .completed(
+            .init(scores: [.init(id: "b", score: 9)], reason: "only b was scored")
+        )
+        let selector = DefaultEmbeddedAISelector(aiManager: manager)
+
+        let result = await selector.rank(
+            .init(
+                embeddedID: "slot",
+                prompt: "pick",
+                candidates: [
+                    bareCandidate("c", priority: 2),
+                    candidate("b"),
+                    bareCandidate("a", priority: 1),
+                ]
+            )
+        )
+
+        // Every candidate survives the ranking; the unscored ones trail, in priority order.
+        #expect(result == ["b", "a", "c"])
     }
 
     @Test("A skipped evaluation falls back to the caller's ordering")

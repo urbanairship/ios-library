@@ -7,7 +7,7 @@ public import AirshipBasement
 /// of the AI framework's context item, kept Core-free so it can live in the renderer.
 /// - Note: For internal use only. :nodoc:
 @_spi(AirshipInternal)
-public struct ThomasAIContextItem: Sendable {
+public struct ThomasAIContextItem: Sendable, Equatable, Hashable {
     /// Self-describing text inserted into the prompt as-is.
     public let content: String
 
