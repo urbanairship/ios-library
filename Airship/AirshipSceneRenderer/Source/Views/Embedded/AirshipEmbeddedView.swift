@@ -8,6 +8,12 @@ import Combine
 /// Return `.orderedAscending` to display `lhs` before `rhs`. When set, this replaces the default priority ordering.
 public typealias AirshipEmbeddedComparator = @Sendable (_ lhs: AirshipEmbeddedInfo, _ rhs: AirshipEmbeddedInfo) -> ComparisonResult
 
+/// A closure deciding whether a pending embedded instance is eligible to be displayed.
+///
+/// Return `false` to drop it. Eligibility, not ordering — which one of the survivors is
+/// displayed is ``AirshipEmbeddedSelection``'s job.
+public typealias AirshipEmbeddedFilter = @MainActor (_ info: AirshipEmbeddedInfo) -> Bool
+
 /// Describes how an ``AirshipEmbeddedView`` chooses which pending embedded content
 /// to display when more than one instance is available for an embedded ID.
 public enum AirshipEmbeddedSelection: Sendable {
@@ -190,6 +196,7 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     private let embeddedID: String
     private let embeddedSize: AirshipEmbeddedSize?
     private let selection: AirshipEmbeddedSelection
+    private let filterInstances: AirshipEmbeddedFilter?
 
     /// Creates a new AirshipEmbeddedView.
     ///
@@ -197,16 +204,19 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     ///   - embeddedID: The embedded ID.
     ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
     ///   - selection: How to select which pending content to display when more than one is available. Defaults to `.priority`.
+    ///   - filterInstances: Optional filter deciding which pending instances are eligible. Applied before `selection`, so a filtered-out instance is never displayed even when `selection` targets it. Defaults to no filtering.
     ///   - placeholder: The place holder block.
     public init(
         embeddedID: String,
         embeddedSize: AirshipEmbeddedSize? = nil,
         selection: AirshipEmbeddedSelection = .priority,
+        filterInstances: AirshipEmbeddedFilter? = nil,
         @ViewBuilder placeholder: @escaping () -> PlaceHolder
     ) {
         self.embeddedID = embeddedID
         self.embeddedSize = embeddedSize
         self.selection = selection
+        self.filterInstances = filterInstances
         self.placeholder = placeholder
     }
 
@@ -216,14 +226,17 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     ///   - embeddedID: The embedded ID.
     ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
     ///   - selection: How to select which pending content to display when more than one is available. Defaults to `.priority`.
+    ///   - filterInstances: Optional filter deciding which pending instances are eligible. Applied before `selection`, so a filtered-out instance is never displayed even when `selection` targets it. Defaults to no filtering.
     public init(
         embeddedID: String,
         embeddedSize: AirshipEmbeddedSize? = nil,
-        selection: AirshipEmbeddedSelection = .priority
+        selection: AirshipEmbeddedSelection = .priority,
+        filterInstances: AirshipEmbeddedFilter? = nil
     ) where PlaceHolder == EmptyView {
         self.embeddedID = embeddedID
         self.embeddedSize = embeddedSize
         self.selection = selection
+        self.filterInstances = filterInstances
         self.placeholder = { EmptyView() }
     }
 
@@ -277,6 +290,7 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
             embeddedID: embeddedID,
             embeddedSize: embeddedSize,
             selection: selection,
+            filterInstances: filterInstances,
             placeholder: placeholder
         )
         .id("\(embeddedID)\u{1}\(selection.changeKey)")
@@ -297,24 +311,43 @@ private struct AirshipEmbeddedContent<PlaceHolder: View>: View {
     private let embeddedID: String
     private let embeddedSize: AirshipEmbeddedSize?
     private let selection: AirshipEmbeddedSelection
+    private let filterInstances: AirshipEmbeddedFilter?
 
     init(
         embeddedID: String,
         embeddedSize: AirshipEmbeddedSize?,
         selection: AirshipEmbeddedSelection,
+        filterInstances: AirshipEmbeddedFilter?,
         placeholder: @escaping () -> PlaceHolder
     ) {
         self.embeddedID = embeddedID
         self.embeddedSize = embeddedSize
         self.selection = selection
+        self.filterInstances = filterInstances
         self.placeholder = placeholder
         self._viewModel = StateObject(
-            wrappedValue: EmbeddedViewModel(embeddedID: embeddedID, selection: selection)
+            wrappedValue: EmbeddedViewModel(
+                embeddedID: embeddedID,
+                selection: selection,
+                filterInstances: filterInstances
+            )
         )
     }
 
+    /// The instances eligible to be displayed this render.
+    ///
+    /// Applied here rather than only in the model so a changed filter takes effect at once:
+    /// the model holds the closure it was built with (it needs one to decide what to send
+    /// the AI), and a closure can't be keyed. That copy can only affect which candidates
+    /// were scored, never what is shown.
+    private var eligiblePending: [PendingEmbedded] {
+        guard let filterInstances else { return viewModel.displayPending }
+        return viewModel.displayPending.filter { filterInstances($0.embeddedInfo) }
+    }
+
     var body: some View {
-        let pendingConfig = viewModel.displayPending.map { item in
+        let eligiblePending = self.eligiblePending
+        let pendingConfig = eligiblePending.map { item in
             AirshipEmbeddedViewStyleConfiguration.Pending(
                 content: AirshipEmbeddedContentView(
                     embeddedInfo: item.embeddedInfo,
@@ -364,9 +397,11 @@ private struct AirshipEmbeddedContent<PlaceHolder: View>: View {
     /// here. A fallback comparator would otherwise be the one captured at init, stale in
     /// exactly the way the rest of this avoids.
     private var selectedInstanceID: String? {
+        let eligible = self.eligiblePending
+
         guard case .ai(_, let fallback) = selection else {
             return selection.selectInstanceID(
-                from: viewModel.displayPending,
+                from: eligible,
                 embeddedID: embeddedID,
                 tracker: viewModel.tracker
             )
@@ -374,12 +409,21 @@ private struct AirshipEmbeddedContent<PlaceHolder: View>: View {
 
         switch viewModel.aiOutcome {
         case .resolved(let instanceID):
+            // The model may have scored under an older filter, or the filter may have
+            // changed since. The current one is the one that decides.
+            guard eligible.contains(where: { $0.embeddedInfo.instanceID == instanceID }) else {
+                return fallback.asSelection.selectInstanceID(
+                    from: eligible,
+                    embeddedID: embeddedID,
+                    tracker: viewModel.tracker
+                )
+            }
             return instanceID
         case .blocked:
             return nil
         case .fallback:
             return fallback.asSelection.selectInstanceID(
-                from: viewModel.displayPending,
+                from: eligible,
                 embeddedID: embeddedID,
                 tracker: viewModel.tracker
             )

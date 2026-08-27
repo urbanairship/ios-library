@@ -87,6 +87,11 @@ final class EmbeddedViewModel: ObservableObject {
     private var pending: [PendingEmbedded] = []
     private let embeddedID: String
     private let selection: AirshipEmbeddedSelection
+
+    /// Used only to keep ineligible instances out of the AI prompt. The view applies the
+    /// filter it has each render for anything that affects what's displayed, so this copy
+    /// being the one captured at init can narrow what was scored but never what is shown.
+    private let filterInstances: AirshipEmbeddedFilter?
     private var cancellable: AnyCancellable?
     private var viewManager: any AirshipEmbeddedViewManagerProtocol
 
@@ -109,11 +114,13 @@ final class EmbeddedViewModel: ObservableObject {
     init(
         embeddedID: String,
         selection: AirshipEmbeddedSelection,
+        filterInstances: AirshipEmbeddedFilter? = nil,
         manager: any AirshipEmbeddedViewManagerProtocol = AirshipEmbeddedViewManager.shared,
         tracker: EmbeddedLastDisplayedTracker = .shared
     ) {
         self.embeddedID = embeddedID
         self.selection = selection
+        self.filterInstances = filterInstances
         self.viewManager = manager
         self.tracker = tracker
         // `[weak self]` rather than passing `onNewViewReceived` directly: the cancellable is
@@ -145,7 +152,11 @@ final class EmbeddedViewModel: ObservableObject {
             return
         }
 
-        guard pending.count >= 2 else {
+        // Only eligible instances are worth scoring: an excluded one can never be shown, so
+        // sending it would waste the ask and let it skew the scores of the ones that can.
+        let scorable = eligiblePending
+
+        guard scorable.count >= 2 else {
             resolveTask?.cancel()
             selectionState = .fallback
             recomputeAISelection(config: config)
@@ -161,6 +172,13 @@ final class EmbeddedViewModel: ObservableObject {
             // candidate. Subsumes the displayed instance itself being dismissed.
             recomputeAISelection(config: config)
         }
+    }
+
+    /// Pending instances the filter allows. Everything the AI is asked about comes from
+    /// here; what is ultimately displayed is re-filtered by the view.
+    private var eligiblePending: [PendingEmbedded] {
+        guard let filterInstances else { return pending }
+        return pending.filter { filterInstances($0.embeddedInfo) }
     }
 
     // MARK: - AI selection
@@ -187,7 +205,7 @@ final class EmbeddedViewModel: ObservableObject {
             strategy: config.strategy,
             minScoreThreshold: config.minScoreThreshold,
             subjectHints: config.subjectHints,
-            candidates: pending.map(\.embeddedInfo)
+            candidates: eligiblePending.map(\.embeddedInfo)
         )
 
         let asked = incomingIDs
