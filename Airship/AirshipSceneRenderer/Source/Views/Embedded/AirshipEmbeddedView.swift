@@ -20,6 +20,10 @@ public enum AirshipEmbeddedSelection: Sendable {
     /// Sort the available contents with a comparator and display the first.
     ///
     /// Return `.orderedAscending` from the comparator to display `lhs` before `rhs`.
+    ///
+    /// Handing the view a comparator that sorts differently re-sorts what's on screen; the
+    /// comparator is applied on each render rather than captured when the view first
+    /// appeared.
     case comparator(AirshipEmbeddedComparator)
 
     /// Display a specific pending instance by its ``AirshipEmbeddedInfo/instanceID``,
@@ -117,6 +121,46 @@ public enum AirshipEmbeddedSelection: Sendable {
 }
 
 extension AirshipEmbeddedSelection {
+    /// Identifies the part of a selection the view model is built around, used to key the
+    /// content view so a change it can't otherwise see rebuilds that model.
+    ///
+    /// Only an `.ai` config contributes anything: it drives an asynchronous state machine
+    /// the model owns, so a reworded prompt or a new threshold has to re-ask rather than
+    /// keep a ranking made under the old config.
+    ///
+    /// Everything else — including an `.ai` selection's *fallback* — is resolved during
+    /// `body` from the value handed in that render, so it needs no identity here. That's
+    /// what lets a swapped comparator closure take effect despite closures having nothing
+    /// to compare.
+    var changeKey: String {
+        switch self {
+        case .priority, .comparator, .instance:
+            return "sync"
+        case .ai(let config, _):
+            return "ai:\(config.changeKey)"
+        }
+    }
+}
+
+extension AirshipEmbeddedSelection.AIConfig {
+    /// Every field that changes what the model is asked, so a reworded prompt or a new
+    /// threshold re-asks rather than keeping a ranking made under the old config.
+    var changeKey: String {
+        let hints = subjectHints
+            .sorted { $0.key < $1.key }
+            .map { "\($0.key)=\($0.value)" }
+            .joined(separator: ",")
+        return [
+            prompt,
+            "\(strategy)",
+            minScoreThreshold.map(String.init) ?? "-",
+            "\(allowDisplayInterruptions)",
+            hints,
+        ].joined(separator: "|")
+    }
+}
+
+extension AirshipEmbeddedSelection {
     /// Convenience factory for ``AirshipEmbeddedSelection/ai(config:fallback:)`` that avoids constructing ``AIConfig`` directly.
     public static func ai(
         prompt: String,
@@ -142,12 +186,6 @@ extension AirshipEmbeddedSelection {
 /// Airship embedded view - a scene that can be embedded in an app and managed remotely
 public struct AirshipEmbeddedView<PlaceHolder: View>: View {
 
-    @Environment(\.airshipEmbeddedViewStyle)
-    private var style
-
-    @StateObject
-    private var viewModel: EmbeddedViewModel
-
     private let placeholder: () -> PlaceHolder
     private let embeddedID: String
     private let embeddedSize: AirshipEmbeddedSize?
@@ -170,7 +208,6 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
         self.embeddedSize = embeddedSize
         self.selection = selection
         self.placeholder = placeholder
-        self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(embeddedID: embeddedID, selection: selection))
     }
 
     /// Creates a new AirshipEmbeddedView.
@@ -188,7 +225,6 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
         self.embeddedSize = embeddedSize
         self.selection = selection
         self.placeholder = { EmptyView() }
-        self._viewModel = StateObject(wrappedValue: EmbeddedViewModel(embeddedID: embeddedID, selection: selection))
     }
 
     /// Creates a new AirshipEmbeddedView.
@@ -233,6 +269,51 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     }
 
     public var body: some View {
+        // The content view owns the `@StateObject`, and `.id` gives it an identity derived
+        // from the parameters that model is built from. SwiftUI keys state by structural
+        // position, not by property values, so without this a new `embeddedID` or
+        // `selection` would reach the struct and never reach the model.
+        AirshipEmbeddedContent(
+            embeddedID: embeddedID,
+            embeddedSize: embeddedSize,
+            selection: selection,
+            placeholder: placeholder
+        )
+        .id("\(embeddedID)\u{1}\(selection.changeKey)")
+    }
+}
+
+/// Holds the state for one `(embeddedID, selection)` pair. Re-created by `.id` when either
+/// changes — see ``AirshipEmbeddedView/body``.
+private struct AirshipEmbeddedContent<PlaceHolder: View>: View {
+
+    @Environment(\.airshipEmbeddedViewStyle)
+    private var style
+
+    @StateObject
+    private var viewModel: EmbeddedViewModel
+
+    private let placeholder: () -> PlaceHolder
+    private let embeddedID: String
+    private let embeddedSize: AirshipEmbeddedSize?
+    private let selection: AirshipEmbeddedSelection
+
+    init(
+        embeddedID: String,
+        embeddedSize: AirshipEmbeddedSize?,
+        selection: AirshipEmbeddedSelection,
+        placeholder: @escaping () -> PlaceHolder
+    ) {
+        self.embeddedID = embeddedID
+        self.embeddedSize = embeddedSize
+        self.selection = selection
+        self.placeholder = placeholder
+        self._viewModel = StateObject(
+            wrappedValue: EmbeddedViewModel(embeddedID: embeddedID, selection: selection)
+        )
+    }
+
+    var body: some View {
         let pendingConfig = viewModel.displayPending.map { item in
             AirshipEmbeddedViewStyleConfiguration.Pending(
                 content: AirshipEmbeddedContentView(
@@ -251,15 +332,58 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
             )
         }
 
+        let selectedInstanceID = self.selectedInstanceID
+
         let configuration = AirshipEmbeddedViewStyleConfiguration(
             embeddedID: embeddedID,
             pending: pendingConfig,
             placeHolder: AnyView(self.placeholder()),
             selection: selection,
-            selected: pendingConfig.first { $0.id == viewModel.selectedInstanceID }
+            selected: pendingConfig.first { $0.id == selectedInstanceID }
         )
 
         return self.style.makeBody(configuration: configuration)
+            // Recording is a side effect, so it can't live in `body` — and this is the
+            // truer moment for it anyway: the tracker is "last displayed", and until now it
+            // recorded what was selected.
+            .task(id: selectedInstanceID) {
+                guard let selectedInstanceID else { return }
+                viewModel.tracker.record(
+                    embeddedID: embeddedID,
+                    instanceID: selectedInstanceID
+                )
+            }
+    }
+
+    /// Resolved fresh each render from the selection this render was handed, rather than the
+    /// one the view model was built with — so a changed `.instance`, comparator, or ordering
+    /// takes effect without the model knowing anything changed.
+    ///
+    /// `.ai` is only partly the model's: it decides *whether* it has an answer, since that
+    /// arrives asynchronously, but when it doesn't, naming the fallback instance happens
+    /// here. A fallback comparator would otherwise be the one captured at init, stale in
+    /// exactly the way the rest of this avoids.
+    private var selectedInstanceID: String? {
+        guard case .ai(_, let fallback) = selection else {
+            return selection.selectInstanceID(
+                from: viewModel.displayPending,
+                embeddedID: embeddedID,
+                tracker: viewModel.tracker
+            )
+        }
+
+        switch viewModel.aiOutcome {
+        case .resolved(let instanceID):
+            return instanceID
+        case .blocked:
+            return nil
+        case .fallback:
+            return fallback.asSelection.selectInstanceID(
+                from: viewModel.displayPending,
+                embeddedID: embeddedID,
+                tracker: viewModel.tracker
+            )
+        }
     }
 }
 
