@@ -125,16 +125,27 @@ struct ModalView: View {
             safeAreaInsets: safeAreaInsets
         )
 
+        // The placement's border is drawn inside the size the author declared, so the content is
+        // sized to that size less the stroke on both edges and the border modifier's padding brings
+        // the footprint back to what was asked for.
+        let strokeWidth = placement.border?.strokeWidth ?? 0
+        let placementStroke = CGFloat(strokeWidth * 2)
+
         let contentConstraints = windowConstraints.contentConstraints(
             placement.size,
             contentSize: self.contentSize,
-            margin: placement.margin
+            margin: placement.margin,
+            borderStrokeWidth: strokeWidth
         )
 
         // Min_height / min_width floor, in points. Kept as a frame below, after the content, so the
         // modal still stands at its floor if it is ever handed a layout whose root declines to.
         // `contentConstraints` carries the same floor down as `minHeight`/`minWidth`, which is what
         // holds the content itself open — and what a percentage inside it takes its share of.
+        //
+        // Less the stroke, like every other bound: this frame sits inside the border modifier, so a
+        // floor left at its declared value would hold the content open to the whole footprint and
+        // the modal would stand a stroke too tall on each edge.
         let parentWidth = windowConstraints.width?.subtract(
             placement.margin?.horizontalMargins ?? 0
         )
@@ -142,7 +153,9 @@ struct ModalView: View {
             placement.margin?.verticalMargins ?? 0
         )
         let minWidthFloor = placement.size.minWidth?.calculateSize(parentWidth)
+            .map { max(0, $0 - placementStroke) }
         let minHeightFloor = placement.size.minHeight?.calculateSize(parentHeight)
+            .map { max(0, $0 - placementStroke) }
 
         let safeAreasToIgnore: SafeAreaRegions = if ignoreSafeArea {
             [.container, .keyboard]

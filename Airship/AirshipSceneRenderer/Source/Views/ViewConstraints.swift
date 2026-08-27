@@ -152,7 +152,8 @@ struct ViewConstraints: Equatable {
     func contentConstraints(
         _ constrainedSize: ThomasConstrainedSize,
         contentSize: CGSize?,
-        margin: ThomasMargin?
+        margin: ThomasMargin?,
+        borderStrokeWidth: Double = 0
     ) -> ViewConstraints {
 
         let verticalMargins: CGFloat = margin?.verticalMargins ?? 0.0
@@ -161,6 +162,22 @@ struct ViewConstraints: Equatable {
         let parentWidth: CGFloat? = self.width
         let parentHeight: CGFloat? = self.height
 
+        // The placement's own stroke, taken out of every length and bound it declares: what the
+        // author asked for is the footprint, and the border is drawn within it. The same reading
+        // `childConstraints` already gives a child's own border, and the one Android and web give
+        // a placement's — iOS was alone in adding the border outside the declared size.
+        //
+        // Taken out here, before the bounds are rounded, rather than on the way out. A bound is
+        // compared against `contentSize` and then handed back as a length, so the two have to be
+        // in the same space; deducting afterwards would leave the comparison in footprint terms
+        // against a content-box measurement and reopen the clamp-and-regrow walk described below.
+        // Everything past this point is the content box.
+        let stroke = CGFloat(borderStrokeWidth * 2)
+        func deductingStroke(_ value: CGFloat?) -> CGFloat? {
+            guard stroke > 0 else { return value }
+            return value.map { max(0, $0 - stroke) }
+        }
+
         // Rounded where they are resolved, because a bound is compared against a measurement and
         // then handed back as a length — and the length that leaves here is rounded. A percentage
         // that lands on a fraction made those two different numbers: content measured at the
@@ -168,18 +185,37 @@ struct ViewConstraints: Equatable {
         // to its natural height, exceeded the bound, and clamped again, every pass, forever. Which
         // way the fraction has to fall differs by direction — under .5 for a maximum, over it for a
         // minimum — so both are rounded rather than the comparison being patched.
-        let childMinWidth = Self.resolve(constrainedSize.minWidth, parent: parentWidth, margins: horizontalMargins)?.rounded()
-        let childMaxWidth = Self.resolve(constrainedSize.maxWidth, parent: parentWidth, margins: horizontalMargins)?.rounded()
-        var childWidth = Self.resolve(constrainedSize.width, parent: parentWidth, margins: horizontalMargins)
+        // A placement with no maximum of its own still has one: the space it is displayed in, less
+        // its margins and its own stroke. Without it an `auto` axis had no ceiling at all, so
+        // content wider than the window carried the footprint past the screen edge and the border
+        // was clipped off the trailing side — where Android and web both stop at the window and let
+        // the content take the shortfall.
+        //
+        // A ceiling only. It becomes a length below, and only once the content has actually reached
+        // it, so a placement whose content fits still hugs that content rather than filling the
+        // window. The smaller of the two when a maximum *was* declared: a `max_width: 200%` is still
+        // bounded by the screen it is drawn on.
+        let widthCeiling = deductingStroke(parentWidth.map { max(0, $0 - horizontalMargins) })
+        let heightCeiling = deductingStroke(parentHeight.map { max(0, $0 - verticalMargins) })
+
+        let childMinWidth = deductingStroke(Self.resolve(constrainedSize.minWidth, parent: parentWidth, margins: horizontalMargins))?.rounded()
+        let childMaxWidth = [
+            deductingStroke(Self.resolve(constrainedSize.maxWidth, parent: parentWidth, margins: horizontalMargins)),
+            widthCeiling
+        ].compactMap { $0 }.min()?.rounded()
+        var childWidth = deductingStroke(Self.resolve(constrainedSize.width, parent: parentWidth, margins: horizontalMargins))
 
         childWidth = childWidth?.bound(
             minValue: childMinWidth,
             maxValue: childMaxWidth
         )
 
-        let childMinHeight = Self.resolve(constrainedSize.minHeight, parent: parentHeight, margins: verticalMargins)?.rounded()
-        let childMaxHeight = Self.resolve(constrainedSize.maxHeight, parent: parentHeight, margins: verticalMargins)?.rounded()
-        var childHeight = Self.resolve(constrainedSize.height, parent: parentHeight, margins: verticalMargins)
+        let childMinHeight = deductingStroke(Self.resolve(constrainedSize.minHeight, parent: parentHeight, margins: verticalMargins))?.rounded()
+        let childMaxHeight = [
+            deductingStroke(Self.resolve(constrainedSize.maxHeight, parent: parentHeight, margins: verticalMargins)),
+            heightCeiling
+        ].compactMap { $0 }.min()?.rounded()
+        var childHeight = deductingStroke(Self.resolve(constrainedSize.height, parent: parentHeight, margins: verticalMargins))
 
         childHeight = childHeight?.bound(
             minValue: childMinHeight,
@@ -212,12 +248,18 @@ struct ViewConstraints: Equatable {
 
         var aspectRatio: Double? = nil
         if let ratio = constrainedSize.aspectRatio, ratio > 0 {
+            // Derived in footprint terms and brought back down, because the ratio describes the box
+            // the author sees — border included — the same reason `childConstraints` derives before
+            // it deducts. Deriving straight from an already-reduced length would leave the visible
+            // box off-ratio by the stroke.
             switch (childWidth, childHeight) {
             case (nil, let h?):
-                childWidth = (h * ratio).bound(minValue: childMinWidth, maxValue: childMaxWidth)
+                childWidth = max(0, (h + stroke) * ratio - stroke)
+                    .bound(minValue: childMinWidth, maxValue: childMaxWidth)
                 aspectRatio = ratio
             case (let w?, nil):
-                childHeight = (w / ratio).bound(minValue: childMinHeight, maxValue: childMaxHeight)
+                childHeight = max(0, (w + stroke) / ratio - stroke)
+                    .bound(minValue: childMinHeight, maxValue: childMaxHeight)
                 aspectRatio = ratio
             case (nil, nil):
                 aspectRatio = ratio
@@ -270,6 +312,55 @@ struct ViewConstraints: Equatable {
         copy.width = copy.width.map { max(0, $0 - stroke) }
         copy.height = copy.height.map { max(0, $0 - stroke) }
         return copy
+    }
+
+    /// The footprint a placement occupies: its content box with the border drawn back around it.
+    ///
+    /// The inverse of what `contentConstraints(_:contentSize:margin:borderStrokeWidth:)` took out,
+    /// for the caller that needs the size the placement *renders* at rather than the size its
+    /// content was given — the banner's host window, which is sized to the banner and would clip
+    /// the border off if it were only told about the content.
+    ///
+    /// Every length and bound the deduction touched, not only the lengths. Today's one caller reads
+    /// `width`/`height` and nothing else, so restoring the bounds changes nothing it can see — but a
+    /// partial conversion is a trap to leave lying around, since what comes back would carry a
+    /// footprint length beside content-space bounds and nothing in the type says which is which.
+    ///
+    /// Not exact at the very bottom of the range: the deduction clamps at zero, so a bound smaller
+    /// than the stroke comes back as the stroke rather than as itself. A bound that small is already
+    /// beyond what the placement can honour, and the alternative — leaving it in the other space —
+    /// is wrong everywhere rather than just there.
+    func addingBorder(_ strokeWidth: Double) -> ViewConstraints {
+        let stroke = CGFloat(strokeWidth * 2)
+        guard stroke > 0 else { return self }
+
+        var copy = self
+        copy.width = copy.width.map { $0 + stroke }
+        copy.height = copy.height.map { $0 + stroke }
+        copy.minWidth = copy.minWidth.map { $0 + stroke }
+        copy.minHeight = copy.minHeight.map { $0 + stroke }
+        copy.maxWidth = copy.maxWidth.map { $0 + stroke }
+        copy.maxHeight = copy.maxHeight.map { $0 + stroke }
+        return copy
+    }
+
+    /// The content box inside a footprint of [size]: `addingBorder(_:)` in the other direction.
+    ///
+    /// Lives here, next to its partner, because the two have to agree and the caller that needs
+    /// both — `BannerView`, which measures outside its border modifier and so caches a footprint —
+    /// applies them about sixty lines apart. Written inline at one end and named at the other, the
+    /// pair had no single place that said what the rule was.
+    ///
+    /// A measurement rather than a set of constraints, since that is what a banner has to convert:
+    /// the constraints go the other way, through `addingBorder(_:)`.
+    static func deductingBorder(from size: CGSize, strokeWidth: Double) -> CGSize {
+        let stroke = CGFloat(strokeWidth * 2)
+        guard stroke > 0 else { return size }
+
+        return CGSize(
+            width: max(0, size.width - stroke),
+            height: max(0, size.height - stroke)
+        )
     }
 
     func childConstraints(

@@ -143,10 +143,24 @@ struct BannerView: View {
             safeAreaInsets: placement.ignoreSafeArea != true ? EdgeInsets() : metrics.safeAreaInsets
         )
 
+        // The placement's border is drawn inside the size the author declared, as it is on Android
+        // and on a modal here, so the content is sized to that size less the stroke on both edges
+        // and the border modifier's padding brings the footprint back to what was asked for.
+        let strokeWidth = placement.border?.strokeWidth ?? 0
+
+        // Unlike a modal, the measurement below is taken *outside* the border modifier, so it is
+        // the footprint rather than the content box. The bounds it gets compared against are the
+        // content box, so bring it into those terms before handing it over. The trip back out is
+        // `addingBorder` at the measurement callback below; the two are defined together.
+        let measuredContent = self.contentSize.map { measured in
+            ViewConstraints.deductingBorder(from: measured, strokeWidth: strokeWidth)
+        }
+
         let contentConstraints = constraints.contentConstraints(
             placement.size,
-            contentSize: self.contentSize,
-            margin: placement.margin
+            contentSize: measuredContent,
+            margin: placement.margin,
+            borderStrokeWidth: strokeWidth
         )
 
         /**
@@ -187,9 +201,13 @@ struct BannerView: View {
                         // measurement stands.
                         guard size.width > 0, size.height > 0 else { return }
 
+                        // The host window is sized to the banner as rendered, so it wants the
+                        // footprint: `size` already is one, and the constraints are put back into
+                        // the same terms. Left as the content box, the window would come up short
+                        // by the stroke on each edge and clip the border it sits behind.
                         self.bannerConstraints.updateContentSize(
                             size,
-                            constraints: contentConstraints,
+                            constraints: contentConstraints.addingBorder(strokeWidth),
                             placement: placement
                         )
                         if self.contentSize != size {
