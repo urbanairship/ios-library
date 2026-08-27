@@ -958,6 +958,127 @@ struct AutomationPreparerTest {
     }
 
     @Test
+    func testPrepareDeferredAISuppressionOverridesSchedule() async throws {
+        let scheduleSuppression = AutomationAISuppression(
+            condition: "from the schedule",
+            subjectHints: nil,
+            missBehavior: .skip
+        )
+
+        let deferredSuppression = AutomationAISuppression(
+            condition: "from the deferred response",
+            subjectHints: ["tier": "gold"],
+            missBehavior: .penalize
+        )
+
+        let prepared = try await prepareDeferredMessage(
+            scheduleAISuppression: scheduleSuppression,
+            deferredAISuppression: deferredSuppression
+        )
+
+        #expect(prepared.info.aiSuppression == deferredSuppression)
+    }
+
+    @Test
+    func testPrepareDeferredAISuppressionWithoutScheduleConfig() async throws {
+        let deferredSuppression = AutomationAISuppression(
+            condition: "from the deferred response",
+            subjectHints: nil,
+            missBehavior: nil
+        )
+
+        let prepared = try await prepareDeferredMessage(
+            scheduleAISuppression: nil,
+            deferredAISuppression: deferredSuppression
+        )
+
+        #expect(prepared.info.aiSuppression == deferredSuppression)
+    }
+
+    @Test
+    func testPrepareDeferredWithoutAISuppressionKeepsScheduleConfig() async throws {
+        let scheduleSuppression = AutomationAISuppression(
+            condition: "from the schedule",
+            subjectHints: nil,
+            missBehavior: .skip
+        )
+
+        let prepared = try await prepareDeferredMessage(
+            scheduleAISuppression: scheduleSuppression,
+            deferredAISuppression: nil
+        )
+
+        #expect(prepared.info.aiSuppression == scheduleSuppression)
+    }
+
+    /// Prepares a deferred in-app message schedule, resolving the deferred with a
+    /// response that carries `deferredAISuppression` when one is provided.
+    private func prepareDeferredMessage(
+        scheduleAISuppression: AutomationAISuppression?,
+        deferredAISuppression: AutomationAISuppression?
+    ) async throws -> PreparedSchedule {
+        let message = InAppMessage(
+            name: "some name",
+            displayContent: .custom(.string("custom")),
+            source: .remoteData
+        )
+
+        let automationSchedule = AutomationSchedule(
+            identifier: UUID().uuidString,
+            data: .deferred(
+                DeferredAutomationData(
+                    url: URL(string: "example://")!,
+                    retryOnTimeOut: false,
+                    type: .inAppMessage
+                )
+            ),
+            triggers: [],
+            created: Date(),
+            lastUpdated: Date(),
+            audience: AutomationAudience(
+                audienceSelector: DeviceAudienceSelector(),
+                missBehavior: .penalize
+            ),
+            aiSuppression: scheduleAISuppression
+        )
+
+        self.remoteDataAccess.contactIDBlock = { _ in
+            return self.deviceInfoProvider.stableContactInfo.contactID
+        }
+
+        self.remoteDataAccess.requiresUpdateBlock = { _ in false }
+        self.remoteDataAccess.bestEffortRefreshBlock = { _ in true }
+        self.audienceChecker.onEvaluate = { _, _, _ in .match }
+
+        await self.deferredResolver.onData { _ in
+            var body: [String: Any] = [
+                "audience_match": true,
+                "message": message
+            ]
+            if let deferredAISuppression {
+                body["ai_suppression"] = deferredAISuppression
+            }
+            return .success(try! AirshipJSON.wrap(body).toData())
+        }
+
+        let preparedData = self.preparedMessageData!
+        self.messagePreparer.prepareBlock = { _, _ in preparedData }
+
+        let result = await self.preparer.prepare(
+            schedule: automationSchedule,
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
+        )
+
+        guard case .prepared(let prepared) = result else {
+            Issue.record("Expected the schedule to prepare, got \(result)")
+            throw AirshipErrors.error("not prepared")
+        }
+
+        return prepared
+    }
+
+    @Test
     func testExperiements() async throws {
         let automationSchedule = AutomationSchedule(
             identifier: UUID().uuidString,

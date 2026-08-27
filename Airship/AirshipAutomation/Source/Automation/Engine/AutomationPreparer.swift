@@ -167,6 +167,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
             return try await self.prepareData(
                 data: schedule.data,
                 schedule: schedule,
+                aiSuppression: schedule.aiSuppression,
                 triggerID: triggerID,
                 retryState: retryState,
                 deferredRequest: { url in
@@ -179,7 +180,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                         notificationOptIn: await deviceInfoProvider.isUserOptedInPushNotifications
                     )
                 },
-                prepareScheduleInfo: {
+                prepareScheduleInfo: { aiSuppression in
                     let result = try await additionalAudienceResolver.resolve(
                         deviceInfoProvider: deviceInfoProvider,
                         additionalAudienceCheckOverrides: schedule.additionalAudienceCheckOverrides
@@ -196,7 +197,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                         additionalAudienceCheckResult: result,
                         priority: schedule.priority ?? 0,
                         sendMetadata: schedule.sendMetadata,
-                        aiSuppression: schedule.aiSuppression,
+                        aiSuppression: aiSuppression,
                         ledgerSharedID: schedule.ledgerSharedID,
                         triggerID: triggerID
                     )
@@ -215,15 +216,16 @@ struct AutomationPreparer: AutomationPreparerProtocol {
     private func prepareData(
         data: AutomationSchedule.ScheduleData,
         schedule: AutomationSchedule,
+        aiSuppression: AutomationAISuppression?,
         triggerID: String?,
         retryState: RetryingQueue<SchedulePrepareResult>.State,
         deferredRequest:  @escaping @Sendable (URL) async throws -> DeferredRequest,
-        prepareScheduleInfo:  @escaping @Sendable () async throws -> PreparedScheduleInfo,
+        prepareScheduleInfo:  @escaping @Sendable (AutomationAISuppression?) async throws -> PreparedScheduleInfo,
         prepareSchedule:  @escaping @Sendable (PreparedScheduleInfo, PreparedScheduleData) -> PreparedSchedule
     ) async throws -> RetryingQueue<SchedulePrepareResult>.Result {
         switch (data) {
         case .actions(let data):
-            let preparedInfo = try await prepareScheduleInfo()
+            let preparedInfo = try await prepareScheduleInfo(aiSuppression)
             switch try await self.actionPreparer.prepare(data: data, preparedScheduleInfo: preparedInfo) {
             case .prepared(let result):
                 return .success(result: .prepared(prepareSchedule(preparedInfo, .actions(result))))
@@ -241,7 +243,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 return .success(result: .skip)
             }
 
-            let preparedInfo = try await prepareScheduleInfo()
+            let preparedInfo = try await prepareScheduleInfo(aiSuppression)
             switch try await self.messagePreparer.prepare(data: data, preparedScheduleInfo: preparedInfo) {
             case .prepared(let result):
                 return .success(result: .prepared(prepareSchedule(preparedInfo, .inAppMessage(result))))
@@ -260,10 +262,12 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 triggerID: triggerID,
                 retryState: retryState,
                 deferredRequest: deferredRequest
-            ) { data in
+            ) { data, deferredAISuppression in
                 try await self.prepareData(
                     data: data,
                     schedule: schedule,
+                    // The deferred response wins when it provides its own config.
+                    aiSuppression: deferredAISuppression ?? aiSuppression,
                     triggerID: triggerID,
                     retryState: retryState,
                     deferredRequest: deferredRequest,
@@ -281,16 +285,16 @@ struct AutomationPreparer: AutomationPreparerProtocol {
         triggerID: String?,
         retryState: RetryingQueue<SchedulePrepareResult>.State,
         deferredRequest:  @escaping @Sendable (URL) async throws -> DeferredRequest,
-        onResult: @escaping @Sendable (AutomationSchedule.ScheduleData) async throws -> RetryingQueue<SchedulePrepareResult>.Result
+        onResult: @escaping @Sendable (AutomationSchedule.ScheduleData, AutomationAISuppression?) async throws -> RetryingQueue<SchedulePrepareResult>.Result
     ) async throws -> RetryingQueue<SchedulePrepareResult>.Result {
 
         AirshipLogger.trace("Resolving deferred \(schedule.identifier)")
 
         let request = try await deferredRequest(deferred.url)
 
-        if let cached: AutomationSchedule.ScheduleData = await retryState.value(key: Self.deferredResultKey) {
+        if let cached: CachedDeferredResult = await retryState.value(key: Self.deferredResultKey) {
             AirshipLogger.trace("Deferred resolved from cache \(schedule.identifier)")
-            return try await onResult(cached)
+            return try await onResult(cached.data, cached.aiSuppression)
         }
 
         let result: AirshipDeferredResult<DeferredScheduleResult> = await deferredResolver.resolve(request: request) { data in
@@ -308,14 +312,14 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                         AirshipLogger.error("Failed to get result for deferred.")
                         return .retry
                     }
-                    return try await onResult(.actions(actions))
+                    return try await onResult(.actions(actions), result.aiSuppression)
                 case .inAppMessage:
                     guard var message = result.message else {
                         AirshipLogger.error("Failed to get result for deferred.")
                         return .retry
                     }
                     message.source = .remoteData
-                    return try await onResult(.inAppMessage(message))
+                    return try await onResult(.inAppMessage(message), result.aiSuppression)
                 }
             } else {
                 await self.recordAudienceMiss(schedule: schedule, triggerID: triggerID)
@@ -346,6 +350,13 @@ struct AutomationPreparer: AutomationPreparerProtocol {
             return .retry
         }
     }
+}
+
+/// A resolved deferred response held across retries: the schedule data plus any
+/// AI suppression config the response carried.
+fileprivate struct CachedDeferredResult: Sendable {
+    let data: AutomationSchedule.ScheduleData
+    let aiSuppression: AutomationAISuppression?
 }
 
 extension AutomationPreparer {
