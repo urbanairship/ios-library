@@ -40,9 +40,13 @@ final class TestFrequencyChecker: FrequencyCheckerProtocol, @unchecked Sendable 
     var isOverLimit: Bool = false
     var checkAndIncrementBlock: (() -> Bool)?
     var checkAndIncrementCalled: Bool = false
+    /// Occurrences charged. Counted, not just flagged: charging twice for one
+    /// execution spends a budget that is supposed to cover many.
+    var checkAndIncrementCount: Int = 0
 
     func checkAndIncrement() -> Bool {
         checkAndIncrementCalled = true
+        checkAndIncrementCount += 1
         return checkAndIncrementBlock!()
     }
 

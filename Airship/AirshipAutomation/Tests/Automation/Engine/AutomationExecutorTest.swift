@@ -91,9 +91,13 @@ struct AutomationExecutorTest {
         }
     }
 
+    /// `isReady` is evaluated more than once per execution — again after waiting
+    /// on a ledger group — so it must not spend the frequency budget, whatever
+    /// the delegate says.
     @Test
-    func testFrequencyChekerNotCheckedIfDelegateNotReady() async throws {
+    func testIsReadyNeverChargesTheFrequencyBudget() async throws {
         let frequencyChecker = TestFrequencyChecker()
+        frequencyChecker.checkAndIncrementBlock = { true }
 
         let schedule = PreparedSchedule(
             info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString, priority: 0),
@@ -101,25 +105,21 @@ struct AutomationExecutorTest {
             frequencyChecker: frequencyChecker
         )
 
-        self.actionExecutor.isReadyBlock = { _, _ in
-            return .notReady
+        for readyResult in ScheduleReadyResult.allResults {
+            self.actionExecutor.isReadyBlock = { _, _ in readyResult }
+
+            let result = self.executor.isReady(preparedSchedule: schedule)
+
+            #expect(result == readyResult)
         }
 
-        frequencyChecker.checkAndIncrementBlock = {
-            return false
-        }
-
-        let result = self.executor.isReady(
-            preparedSchedule: schedule
-        )
-
-        #expect(result == .notReady)
-        #expect(!(frequencyChecker.checkAndIncrementCalled))
+        #expect(frequencyChecker.checkAndIncrementCount == 0)
     }
 
     @Test
-    func testFrequencyCheckerCheckFailed() async throws {
+    func testCheckFrequencyLimitOverLimit() async throws {
         let frequencyChecker = TestFrequencyChecker()
+        frequencyChecker.checkAndIncrementBlock = { false }
 
         let schedule = PreparedSchedule(
             info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString, priority: 0),
@@ -127,25 +127,14 @@ struct AutomationExecutorTest {
             frequencyChecker: frequencyChecker
         )
 
-        self.actionExecutor.isReadyBlock = { _, _ in
-            return .ready
-        }
-        
-        frequencyChecker.checkAndIncrementBlock = {
-            return false
-        }
-
-        let result = self.executor.isReady(
-            preparedSchedule: schedule
-        )
-
-        #expect(result == .skip)
-        #expect(frequencyChecker.checkAndIncrementCalled)
+        #expect(!self.executor.checkFrequencyLimit(preparedSchedule: schedule))
+        #expect(frequencyChecker.checkAndIncrementCount == 1)
     }
 
     @Test
-    func testFrequencyCheckerCheckSuccess() async throws {
+    func testCheckFrequencyLimitUnderLimit() async throws {
         let frequencyChecker = TestFrequencyChecker()
+        frequencyChecker.checkAndIncrementBlock = { true }
 
         let schedule = PreparedSchedule(
             info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString, priority: 0),
@@ -153,21 +142,20 @@ struct AutomationExecutorTest {
             frequencyChecker: frequencyChecker
         )
 
-        frequencyChecker.checkAndIncrementBlock = {
-            return true
-        }
+        #expect(self.executor.checkFrequencyLimit(preparedSchedule: schedule))
+        #expect(frequencyChecker.checkAndIncrementCount == 1)
+    }
 
-        self.actionExecutor.isReadyBlock = { _, _ in
-            return .ready
-        }
-
-        let result = self.executor.isReady(
-            preparedSchedule: schedule
+    /// No constraints means nothing to charge, and nothing to hold the schedule back.
+    @Test
+    func testCheckFrequencyLimitWithoutAChecker() async throws {
+        let schedule = PreparedSchedule(
+            info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString, priority: 0),
+            data: .actions(AirshipJSON.string("neat")),
+            frequencyChecker: nil
         )
 
-        #expect(result == .ready)
-        #expect(frequencyChecker.checkAndIncrementCalled)
-        #expect(actionExecutor.isReadyCalled)
+        #expect(self.executor.checkFrequencyLimit(preparedSchedule: schedule))
     }
 
     @Test

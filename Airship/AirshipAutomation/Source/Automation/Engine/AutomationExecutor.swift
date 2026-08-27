@@ -15,6 +15,9 @@ fileprivate protocol AutomationExecutorProtocol: Sendable {
     func isReady(preparedSchedule: PreparedSchedule) -> ScheduleReadyResult
 
     @MainActor
+    func checkFrequencyLimit(preparedSchedule: PreparedSchedule) -> Bool
+
+    @MainActor
     func execute(preparedSchedule: PreparedSchedule) async -> ScheduleExecuteResult
 
     func interrupted(
@@ -66,9 +69,15 @@ final class AutomationExecutor: AutomationExecutorProtocol {
         return await self.remoteDataAccess.isCurrent(schedule: schedule)
     }
 
+    /// Whether the schedule is ready to execute.
+    ///
+    /// Free of side effects on purpose: readiness is evaluated more than once per
+    /// execution — again after waiting on a ledger group — so anything here that
+    /// spent a budget would spend it twice. The frequency limit is charged
+    /// separately, by ``checkFrequencyLimit(preparedSchedule:)``.
     @MainActor
     func isReady(preparedSchedule: PreparedSchedule) -> ScheduleReadyResult {
-        let result = switch (preparedSchedule.data) {
+        return switch (preparedSchedule.data) {
         case .inAppMessage(let data):
             self.messageExecutor.isReady(
                 data: data,
@@ -80,16 +89,19 @@ final class AutomationExecutor: AutomationExecutorProtocol {
                 preparedScheduleInfo: preparedSchedule.info
             )
         }
+    }
 
-        guard result == .ready else {
-            return result
-        }
-
-        if (preparedSchedule.frequencyChecker?.checkAndIncrement() == false) {
-            return .skip
-        }
-
-        return .ready
+    /// Charges the schedule's frequency budget, recording an occurrence.
+    ///
+    /// Call once, immediately before the execution it pays for — an occurrence
+    /// spent on an execution that then gets skipped is gone for the rest of the
+    /// constraint's window.
+    ///
+    /// - Returns: `true` if the schedule was under its frequency limits and the
+    /// occurrence was recorded, `false` if it is over and should be skipped.
+    @MainActor
+    func checkFrequencyLimit(preparedSchedule: PreparedSchedule) -> Bool {
+        return preparedSchedule.frequencyChecker?.checkAndIncrement() != false
     }
 
     @MainActor

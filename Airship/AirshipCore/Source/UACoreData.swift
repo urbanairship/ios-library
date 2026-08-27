@@ -43,7 +43,20 @@ public actor UACoreData {
                 return context
             }
 
-            let context = try await container.newBackgroundContext()
+            // Resolve the container first. That is the only suspension point
+            // here, so concurrent callers all park on it and then resume one at
+            // a time on the actor.
+            let container = try await self.container
+
+            // Re-check after the suspension: another caller may have built the
+            // context while this one was parked. `newBackgroundContext()` is
+            // synchronous, so from here to the assignment there is no further
+            // suspension and the check-then-assign cannot be interleaved.
+            if let context = _context {
+                return context
+            }
+
+            let context = container.newBackgroundContext()
             _context = context
             return context
         }
@@ -97,6 +110,11 @@ public actor UACoreData {
                     try context.saveIfChanged()
                     continuation.resume()
                 } catch {
+                    // The context is long lived and shared by every operation on
+                    // this store, so changes left pending by a failed block would
+                    // be committed by the next `saveIfChanged` — including one in
+                    // an unrelated read.
+                    context.rollback()
                     continuation.resume(throwing: error)
                 }
             }
@@ -128,6 +146,9 @@ public actor UACoreData {
                     try context.saveIfChanged()
                     continuation.resume(returning: result)
                 } catch {
+                    // See `perform` above: a failed block must not leave changes
+                    // pending on the shared context.
+                    context.rollback()
                     continuation.resume(throwing: error)
                 }
             }
@@ -159,23 +180,42 @@ public actor UACoreData {
             return
         }
 
-        try? await prepareCoreDataTask?.value
+        // Share the in-flight attempt. Starting a new one per caller would have
+        // each build its own container over the same store file — harmless while
+        // the container was cached on the first attempt, but not now that it is
+        // only cached after a successful load.
+        if let prepareCoreDataTask {
+            return try await prepareCoreDataTask.value
+        }
 
         let task = Task {
             let container = try (_container ?? makeContainer())
-            if (_container == nil) {
-                _container = container
-            } 
 
             if !coreDataPrepared {
                 try await prepareStore()
                 try await loadStores(container: container)
                 coreDataPrepared = true
             }
+
+            // Cache only after a successful load, so a failed attempt isn't
+            // retried against a half-loaded container.
+            if (_container == nil) {
+                _container = container
+            }
         }
 
         prepareCoreDataTask = task
-        try await task.value
+
+        do {
+            try await task.value
+        } catch {
+            // Cleared by the creator only, so no concurrent caller starts a
+            // second prepare. Waiters may be rescheduled before the creator
+            // clears this, so a retry issued immediately can still observe the
+            // failed task; the attempt after that starts fresh.
+            prepareCoreDataTask = nil
+            throw error
+        }
     }
 
     private func prepareStore() async throws {
@@ -279,9 +319,10 @@ public actor UACoreData {
                     failures.update { $0.append(failure) }
                 }
 
-                remaining.update { $0 -= 1 }
-
-                if (remaining.value <= 0) {
+                // Decrement and test in one locked step. Taking the lock twice
+                // lets two concurrent callbacks both observe zero and resume the
+                // continuation twice, which traps.
+                if remaining.getAndUpdate({ $0 -= 1 }) <= 0 {
                     continuation.resume(returning: failures.value)
                 }
             }

@@ -25,8 +25,10 @@ actor AutomationEngine : AutomationEngineProtocol {
     private let eventsHistory: any AutomationEventsHistory
     private let ledger: any AutomationLedgerProtocol
     private let limitEvaluator: any LedgerLimitEvaluatorProtocol
+    private let groupReservations: LedgerGroupReservations = LedgerGroupReservations()
 
     private var processPendingExecutionTask: Task<Void, Never>?
+    private var needsAnotherPendingExecutionPass: Bool = false
     private var pendingExecution: [String: PreparedData] = [:]
     private var preprocessDelayTasks: Set<Task<Bool, any Error>> = Set()
 
@@ -506,9 +508,24 @@ fileprivate extension AutomationEngine {
     }
 
     private func startProcessingPendingExecution() async {
-        await self.processPendingExecutionTask?.value
+        // Drains must not overlap: two of them pulling from `pendingExecution` can
+        // select the same schedule, because there are awaits between picking it and
+        // removing it. Queueing one per caller is wasteful though — a drain re-reads
+        // `pendingExecution` from scratch, so only one waiting behind the running
+        // one is ever useful.
+        guard self.processPendingExecutionTask != nil else {
+            self.processPendingExecutionTask = Task { await self.processPendingExecution() }
+            return
+        }
+
+        guard self.needsAnotherPendingExecutionPass == false else { return }
+        self.needsAnotherPendingExecutionPass = true
+
+        let previous = self.processPendingExecutionTask
         self.processPendingExecutionTask = Task {
-            await processPendingExecution()
+            await previous?.value
+            self.needsAnotherPendingExecutionPass = false
+            await self.processPendingExecution()
         }
     }
 
@@ -671,15 +688,18 @@ fileprivate extension AutomationEngine {
         }
     }
 
+    /// Applies the state changes a non-ready ``checkReady`` result calls for.
+    ///
+    /// - Returns: what `attemptExecution` should return, or nil when the schedule
+    /// is ready and execution should continue.
     @MainActor
-    private func attemptExecution(data: AutomationScheduleData, preparedSchedule: PreparedSchedule) async throws -> Bool {
-        AirshipLogger.trace("Starting to execute schedule \(data)")
-
-
-        let readyResult = self.checkReady(data: data, preparedSchedule: preparedSchedule)
-        switch (readyResult) {
+    private func applyNonReadyActions(
+        _ result: ScheduleReadyResult,
+        data: AutomationScheduleData
+    ) async throws -> Bool? {
+        switch (result) {
         case .ready:
-            break
+            return nil
 
         case .invalidate:
             let isOverLimit = await self.isOverLimit(schedule: data.schedule)
@@ -707,9 +727,124 @@ fileprivate extension AutomationEngine {
             await self.preparer.cancelled(schedule: data.schedule)
             return true
         }
+    }
+
+    @MainActor
+    private func attemptExecution(data: AutomationScheduleData, preparedSchedule: PreparedSchedule) async throws -> Bool {
+        AirshipLogger.trace("Starting to execute schedule \(data)")
 
 
-        let executeResult = try await self.execute(preparedSchedule: preparedSchedule)
+        if let handled = try await self.applyNonReadyActions(
+            self.checkReady(data: data, preparedSchedule: preparedSchedule),
+            data: data
+        ) {
+            return handled
+        }
+
+
+        // Schedules sharing a `ledger_config.shared_id` share one execution budget,
+        // so another schedule using that ID may have spent it since this one was
+        // prepared. Without a shared ID nothing else can add to the count, since
+        // the only thing that does is executing, which cannot happen while waiting.
+        //
+        // This runs even for schedules that skip the reservation below, since the
+        // budget can be spent either way.
+        if data.schedule.ledgerSharedID != nil,
+           await self.isOverLimit(schedule: data.schedule) {
+            AirshipLogger.trace(
+                "Over ledger limit at execution time, skipping \(data.schedule.identifier)"
+            )
+            try await self.updateState(data: data) { [date] data in
+                data.executionSkipped(date: date.now, isOverLimit: true)
+            }
+            await self.preparer.cancelled(schedule: data.schedule)
+            return true
+        }
+
+        let reservedGroupID: String? = preparedSchedule.reservesLedgerGroup
+            ? data.schedule.ledgerSharedID
+            : nil
+        if let reservedGroupID {
+
+            // Hold the group for the duration of the execution. The check above
+            // cannot see a sibling that is mid-display, because its event is not
+            // written until the display ends — the reservation covers exactly
+            // that window. Suspending here holds nothing else up: the drain
+            // dispatches executions without awaiting them, so only this group
+            // queues behind the holder.
+            await self.groupReservations.reserve(reservedGroupID)
+
+            // Waking can be much later — a sibling's display may have run for
+            // minutes. Everything `checkReady` established above may be stale by
+            // now: execution could have been paused, or the schedule could have
+            // expired. Re-validate instead of walking straight into `execute`,
+            // and requeue so the normal path re-evaluates from the top.
+            // Release before handling, so the outcome's own cleanup — which can
+            // re-enter the engine — never runs while holding the group.
+            let readyAfterWaiting = self.checkReady(data: data, preparedSchedule: preparedSchedule)
+            if readyAfterWaiting != .ready {
+                AirshipLogger.trace(
+                    "No longer ready after waiting on ledger group \(reservedGroupID): \(data.schedule.identifier)"
+                )
+                await self.releaseGroup(reservedGroupID)
+
+                // Released first: `applyNonReadyActions` always returns or throws for a
+                // non-`.ready` result, so a trailing release would be skipped and
+                // the group wedged. `?? false` keeps that guarantee structural
+                // rather than relying on the mapping staying non-nil.
+                return try await self.applyNonReadyActions(readyAfterWaiting, data: data) ?? false
+            }
+
+            // `checkReady` covers pause, expiry and display readiness, but not
+            // whether the definition still exists: that lives in `checkStillValid`,
+            // which the drain runs microseconds before dispatching. Waiting on the
+            // group makes that gap unbounded, long enough for a remote-data refresh
+            // to remove or replace the campaign while a sibling was displaying.
+            guard await self.checkStillValid(
+                prepared: PreparedData(scheduleData: data, preparedSchedule: preparedSchedule)
+            ) else {
+                AirshipLogger.trace(
+                    "No longer valid after waiting on ledger group \(reservedGroupID): \(data.schedule.identifier)"
+                )
+                await self.releaseGroup(reservedGroupID)
+                return try await self.applyNonReadyActions(.invalidate, data: data) ?? false
+            }
+
+            // The previous holder has recorded by now, so the ledger can answer.
+            if await self.isOverLimit(schedule: data.schedule) {
+                AirshipLogger.trace(
+                    "Ledger group \(reservedGroupID) spent while waiting, skipping \(data.schedule.identifier)"
+                )
+                await self.releaseGroup(reservedGroupID)
+                try await self.updateState(data: data) { [date] data in
+                    data.executionSkipped(date: date.now, isOverLimit: true)
+                }
+                await self.preparer.cancelled(schedule: data.schedule)
+                return true
+            }
+        }
+
+        // Charged here rather than as part of `checkReady`, and so exactly once:
+        // recording an occurrence is a spend, and readiness is evaluated twice on
+        // the reserved path. Doing it last also keeps the occurrence off attempts
+        // that were ready but got skipped above by the ledger.
+        guard self.executor.checkFrequencyLimit(preparedSchedule: preparedSchedule) else {
+            AirshipLogger.trace(
+                "Over frequency limit, skipping \(data.schedule.identifier)"
+            )
+            await self.releaseGroup(reservedGroupID)
+            return try await self.applyNonReadyActions(.skip, data: data) ?? false
+        }
+
+        let executeResult: ScheduleExecuteResult
+        do {
+            executeResult = try await self.execute(preparedSchedule: preparedSchedule)
+        } catch {
+            await self.releaseGroup(reservedGroupID)
+            throw error
+        }
+        await self.releaseGroup(reservedGroupID)
+
         let scheduleID = data.schedule.identifier
 
         switch (executeResult) {
@@ -756,6 +891,12 @@ fileprivate extension AutomationEngine {
         AirshipLogger.trace("Executing result \(preparedSchedule.info.scheduleID) \(executeResult)")
 
         return executeResult
+    }
+
+    /// Releases a group reservation, letting the next execution in that group run.
+    private func releaseGroup(_ sharedID: String?) async {
+        guard let sharedID else { return }
+        await self.groupReservations.release(sharedID)
     }
 
     @MainActor
@@ -886,3 +1027,24 @@ protocol AutomationEngineProtocol: Actor, Sendable {
     func getSchedules(group: String) async throws -> [AutomationSchedule]
 }
 
+fileprivate extension PreparedSchedule {
+    /// Whether this schedule should hold its ledger group while it executes.
+    ///
+    /// Embedded messages are excluded. Their display resolves only when the view
+    /// is unmounted, which can be the rest of the session — or never, if no
+    /// ``AirshipEmbeddedView`` is ever mounted for the ID — so holding the group
+    /// across one would park every sibling indefinitely. They are also built to
+    /// run alongside others: ``EmbeddedDisplayCoordinator`` does not count them as
+    /// displaying for any other coordinator, so serializing them would contradict
+    /// that. (``ImmediateDisplayCoordinator`` messages share that intent, but
+    /// their displays resolve, so queueing one behind a sibling is bounded.)
+    ///
+    /// The trade-off is that a pooled group of embedded messages can still
+    /// over-display; the ledger limit remains their only bound.
+    var reservesLedgerGroup: Bool {
+        switch self.data {
+        case .inAppMessage(let messageData): return !messageData.message.isEmbedded
+        case .actions: return true
+        }
+    }
+}

@@ -90,6 +90,7 @@
 		3299EF172948CBC100251E70 /* RemoteDataAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */; };
 		3299EF222949EC3E00251E70 /* AirshipBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */; };
 		3299EF26294B222F00251E70 /* RemoteDataStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF25294B222F00251E70 /* RemoteDataStoreTest.swift */; };
+		3299EF31294B222F00251E71 /* UACoreDataTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF30294B222F00251E71 /* UACoreDataTest.swift */; };
 		329DFCCF2B7E4DDA0039C8C0 /* UARemoteDataMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329DFCCE2B7E4DDA0039C8C0 /* UARemoteDataMapping.swift */; };
 		329DFCD52B7E59700039C8C0 /* UAInboxDataMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329DFCD42B7E59700039C8C0 /* UAInboxDataMapping.swift */; };
 		329DFCFF2B7FB8810039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel in Resources */ = {isa = PBXBuildFile; fileRef = 329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel */; };
@@ -1233,6 +1234,7 @@
 		FADE000000000000000000B4 /* AutomationLedgerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000B3 /* AutomationLedgerTest.swift */; };
 		FADE000000000000000000C0 /* LimitConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C1 /* LimitConfig.swift */; };
 		FADE000000000000000000C2 /* LedgerLimitEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C3 /* LedgerLimitEvaluator.swift */; };
+		3299EF41294B222F00251E81 /* LedgerGroupReservations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF40294B222F00251E81 /* LedgerGroupReservations.swift */; };
 		FADE000000000000000000C4 /* LimitConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C5 /* LimitConfigTest.swift */; };
 		FADE000000000000000000C6 /* LedgerLimitEvaluatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C7 /* LedgerLimitEvaluatorTest.swift */; };
 		FEFE000000000000000000B1 /* AirshipTestExpectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEFE000000000000000000A1 /* AirshipTestExpectation.swift */; };
@@ -1707,6 +1709,7 @@
 		3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataAPIClientTest.swift; sourceTree = "<group>"; };
 		3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipBaseTest.swift; sourceTree = "<group>"; };
 		3299EF25294B222F00251E70 /* RemoteDataStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteDataStoreTest.swift; sourceTree = "<group>"; };
+		3299EF30294B222F00251E71 /* UACoreDataTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UACoreDataTest.swift; sourceTree = "<group>"; };
 		329DFCCA2B7E4DA10039C8C0 /* UARemoteDataMappingV3toV4.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = UARemoteDataMappingV3toV4.xcmappingmodel; sourceTree = "<group>"; };
 		329DFCCE2B7E4DDA0039C8C0 /* UARemoteDataMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UARemoteDataMapping.swift; sourceTree = "<group>"; };
 		329DFCD42B7E59700039C8C0 /* UAInboxDataMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UAInboxDataMapping.swift; sourceTree = "<group>"; };
@@ -2860,6 +2863,7 @@
 		FADE000000000000000000B3 /* AutomationLedgerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomationLedgerTest.swift; sourceTree = "<group>"; };
 		FADE000000000000000000C1 /* LimitConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LimitConfig.swift; sourceTree = "<group>"; };
 		FADE000000000000000000C3 /* LedgerLimitEvaluator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerLimitEvaluator.swift; sourceTree = "<group>"; };
+		3299EF40294B222F00251E81 /* LedgerGroupReservations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LedgerGroupReservations.swift; sourceTree = "<group>"; };
 		FADE000000000000000000C5 /* LimitConfigTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LimitConfigTest.swift; sourceTree = "<group>"; };
 		FADE000000000000000000C7 /* LedgerLimitEvaluatorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerLimitEvaluatorTest.swift; sourceTree = "<group>"; };
 		FEFE000000000000000000A1 /* AirshipTestExpectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AirshipTestExpectation.swift; path = Support/AirshipTestExpectation.swift; sourceTree = "<group>"; };
@@ -3110,6 +3114,7 @@
 				FADE000000000000000000A4 /* LedgerStore.swift */,
 				FADE000000000000000000C1 /* LimitConfig.swift */,
 				FADE000000000000000000C3 /* LedgerLimitEvaluator.swift */,
+				3299EF40294B222F00251E81 /* LedgerGroupReservations.swift */,
 				FADE000000000000000000B1 /* AutomationLedger.swift */,
 			);
 			path = Limits;
@@ -5779,6 +5784,7 @@
 				32C68D0429424449006BBB29 /* RemoteDataTest.swift */,
 				3299EF162948CBC100251E70 /* RemoteDataAPIClientTest.swift */,
 				3299EF25294B222F00251E70 /* RemoteDataStoreTest.swift */,
+				3299EF30294B222F00251E71 /* UACoreDataTest.swift */,
 				6EFB7B322A14A0EC00133115 /* RemoteDataProviderTest.swift */,
 				6E4007132A153AB20013C2DE /* AppRemoteDataProviderDelegateTest.swift */,
 				6E4007152A153ABE0013C2DE /* ContactRemoteDataProviderTest.swift */,
@@ -7076,6 +7082,7 @@
 				FADE000000000000000000A1 /* LedgerEvent.swift in Sources */,
 				FADE000000000000000000C0 /* LimitConfig.swift in Sources */,
 				FADE000000000000000000C2 /* LedgerLimitEvaluator.swift in Sources */,
+				3299EF41294B222F00251E81 /* LedgerGroupReservations.swift in Sources */,
 				FADE000000000000000000B0 /* AutomationLedger.swift in Sources */,
 				FADE000000000000000000A3 /* LedgerStore.swift in Sources */,
 				FADE000000000000000000A7 /* AirshipLedger.xcdatamodeld in Sources */,
@@ -7768,6 +7775,7 @@
 				6E1767F629B923D100D65F60 /* ChannelAuthTokenProviderTest.swift in Sources */,
 				6EC755AF2A4FCD8800851ABB /* AudienceHashSelectorTest.swift in Sources */,
 				3299EF26294B222F00251E70 /* RemoteDataStoreTest.swift in Sources */,
+				3299EF31294B222F00251E71 /* UACoreDataTest.swift in Sources */,
 				99C3CC792BCF3E5B00B5BED5 /* SMSValidatorAPIClientTest.swift in Sources */,
 				A629F7DA295B514C00671647 /* PasteboardActionTest.swift in Sources */,
 				FEFE000000000000000000B1 /* AirshipTestExpectation.swift in Sources */,

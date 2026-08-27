@@ -354,14 +354,17 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         guard let coredata = self.coreData else {
             throw AirshipErrors.error("Failed to create core data.")
         }
-        do {
-            if let migrationTask = migrationTask {
-                try await migrationTask.value
-                return
-            }
-        } catch {}
+        // Waiters share the in-flight migration's outcome. Swallowing the error
+        // and falling through would let every caller parked on a failed task
+        // start its own migration, and `backfillCurrentStoreIfNeeded` would then
+        // run concurrently with itself and record the pre-ledger execution counts
+        // more than once. A later call still retries, because the task is cleared
+        // on failure below.
+        if let migrationTask = migrationTask {
+            return try await migrationTask.value
+        }
 
-        self.migrationTask = Task {
+        let task = Task {
             let legacyData = try await self.legacyStore.legacyScheduleData
 
             // Pre-18 (Objective-C) store migration: move any legacy schedules into
@@ -420,7 +423,17 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
             await self.backfillCurrentStoreIfNeeded(coreData: coredata)
         }
 
-        try await self.migrationTask?.value
+        self.migrationTask = task
+
+        do {
+            try await task.value
+        } catch {
+            // Cleared in exactly one place, so no concurrent caller can start a
+            // second migration. A retry issued before this runs can still observe
+            // the failed task; the attempt after that starts fresh.
+            self.migrationTask = nil
+            throw error
+        }
     }
 
     private func backfillLedger(legacyData: [LegacyScheduleData]) async {
