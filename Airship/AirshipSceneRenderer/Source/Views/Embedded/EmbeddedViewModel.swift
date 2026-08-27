@@ -18,14 +18,16 @@ extension AirshipEmbeddedSelection {
         tracker: EmbeddedLastDisplayedTracker
     ) -> String? {
         switch self {
-        case .instance(let instanceID):
-            let found = views.contains { $0.embeddedInfo.instanceID == instanceID }
-            if found {
-                AirshipLogger.trace("Selecting targeted instance view for \(embeddedID): \(instanceID)")
-            } else {
-                AirshipLogger.trace("No pending view matches targeted instance \(instanceID) for \(embeddedID)")
+        case .instance(let instanceIDs):
+            // First pending match wins — the list is an order of preference, so a caller can
+            // name a chain and let it degrade rather than pass a single ID and get nothing.
+            let pendingIDs = Set(views.map(\.embeddedInfo.instanceID))
+            guard let found = instanceIDs.first(where: { pendingIDs.contains($0) }) else {
+                AirshipLogger.trace("No pending view matches targeted instances \(instanceIDs) for \(embeddedID)")
+                return nil
             }
-            return found ? instanceID : nil
+            AirshipLogger.trace("Selecting targeted instance view for \(embeddedID): \(found)")
+            return found
 
         case .comparator(let comparator):
             let view = views.sorted { comparator($0.embeddedInfo, $1.embeddedInfo) == .orderedAscending }.first

@@ -32,11 +32,20 @@ public enum AirshipEmbeddedSelection: Sendable {
     /// appeared.
     case comparator(AirshipEmbeddedComparator)
 
-    /// Display a specific pending instance by its ``AirshipEmbeddedInfo/instanceID``,
+    /// Display the first of these ``AirshipEmbeddedInfo/instanceID``s that is pending,
     /// bypassing ordering.
     ///
-    /// The placeholder is shown until that instance is pending.
-    case instance(String)
+    /// The list is an explicit order of preference, not a set: the earliest entry that is
+    /// currently pending wins. The placeholder is shown while none of them are.
+    ///
+    /// Unlike ``comparator(_:)`` this carries no closure, so it survives a bridge to a
+    /// wrapper SDK — an app that wants ordering it computes itself can observe the pending
+    /// set, work out the order, and hand back the IDs.
+    ///
+    /// - Note: This is an allow-list. Newly pending content that isn't named here won't be
+    /// displayed until the app includes it. Use `filterInstances` instead when the intent is
+    /// to exclude specific instances rather than to enumerate the acceptable ones.
+    case instance([String])
 
     /// Let the on-device model pick which pending instance to display.
     ///
@@ -52,14 +61,14 @@ public enum AirshipEmbeddedSelection: Sendable {
         /// Sort the available contents with a comparator and display the first.
         case comparator(AirshipEmbeddedComparator)
 
-        /// Display a specific pending instance by its ``AirshipEmbeddedInfo/instanceID``.
-        case instance(String)
+        /// Display the first of these ``AirshipEmbeddedInfo/instanceID``s that is pending.
+        case instance([String])
 
         var asSelection: AirshipEmbeddedSelection {
             switch self {
             case .priority: return .priority
             case .comparator(let c): return .comparator(c)
-            case .instance(let id): return .instance(id)
+            case .instance(let instanceIDs): return .instance(instanceIDs)
             }
         }
     }
@@ -163,6 +172,23 @@ extension AirshipEmbeddedSelection.AIConfig {
             "\(allowDisplayInterruptions)",
             hints,
         ].joined(separator: "|")
+    }
+}
+
+extension AirshipEmbeddedSelection {
+    /// Display one specific pending instance — ``AirshipEmbeddedSelection/instance(_:)-swift.enum.case``
+    /// with a single entry.
+    ///
+    /// The placeholder is shown until that instance is pending.
+    public static func instance(_ instanceID: String) -> Self {
+        .instance([instanceID])
+    }
+}
+
+extension AirshipEmbeddedSelection.Fallback {
+    /// Fall back to one specific pending instance.
+    public static func instance(_ instanceID: String) -> Self {
+        .instance([instanceID])
     }
 }
 
