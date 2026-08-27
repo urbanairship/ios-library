@@ -178,6 +178,15 @@ struct BannerView: View {
                 GeometryReader(content: { contentMetrics -> Color in
                     let size = contentMetrics.size
                     DispatchQueue.main.async {
+                        // A zero is not an answer about how big the content is. A banner sized to
+                        // its content applies its maximum by comparing this measurement against it,
+                        // and a zero fails that comparison, releasing a bound that was correctly
+                        // held - which is what sent a capped modal round the same loop forever
+                        // until it was guarded there. Nothing here can legitimately be zero: a
+                        // banner with nothing to measure has no bound to release. So the last real
+                        // measurement stands.
+                        guard size.width > 0, size.height > 0 else { return }
+
                         self.bannerConstraints.updateContentSize(
                             size,
                             constraints: contentConstraints,

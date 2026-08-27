@@ -209,17 +209,29 @@ struct Score: View {
 
     private func modifiedConstraints() -> ViewConstraints {
         var constraints = self.constraints
-        if self.constraints.width == nil && self.constraints.height == nil {
-            constraints.height = 32
-        } else {
-            switch self.info.properties.style {
-            case .numberRange(let style):
-                constraints.height = self.calculateHeight(
-                    style: style,
-                    width: constraints.width
-                )
-            }
+
+        switch self.info.properties.style {
+        case .numberRange(let style):
+            // The row divides whatever width it has between its items, so what it needs is a width
+            // — a length if it was given one, and otherwise the space it has to work in. Reading
+            // only the length gave up whenever there wasn't one, and a score alone on the stack
+            // axis of a horizontal layout is exactly that case: a percentage there is a share of a
+            // sum it belongs to, so it settles no length, and the row fell back to laying its items
+            // out at their own size, overflowing the width it was standing in.
+            //
+            // A declared height caps the result rather than being replaced by it. Both are ceilings
+            // on the same square and the smaller wins, so a row with no usable width still has
+            // something to go on. Android and web both size against the width they turn out to have
+            // — a chain of square items in their parent, and `min` of the share, the maximum and
+            // the row height — so neither has a length to give up on.
+            let available = constraints.width ?? constraints.maxWidth
+            let fromWidth = self.calculateHeight(style: style, width: available)
+
+            constraints.height = [fromWidth, constraints.height]
+                .compactMap { $0 }
+                .min() ?? 32
         }
+
         return constraints
     }
 
@@ -320,7 +332,17 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
         let selectedAppearance = style.bindings.selected.textAppearance
         let unselectedAppearance = style.bindings.unselected.textAppearance
 
-        let maxDimension = max(measureForAppearance(selectedAppearance), measureForAppearance(unselectedAppearance))
+        // What the text needs, and what the row has room for. A wrapping row has as many lines as
+        // it takes, so its items are as big as their numbers; a single row divides one width
+        // between all of them, and that share is a ceiling the text does not get to exceed. Taking
+        // the text alone is what put eleven 24pt numbers in a row 282pt wide and left five of them
+        // visible — the row had already worked out that each item had 23pt, and nothing read it.
+        let textDimension = max(measureForAppearance(selectedAppearance), measureForAppearance(unselectedAppearance))
+        let maxDimension: CGFloat = if style.wrapping == nil, let share = viewConstraints.height {
+            min(textDimension, share)
+        } else {
+            textDimension
+        }
 
         /// Inject new constraints
         let viewConstraints = ViewConstraints(
@@ -352,6 +374,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                     }
                     Text(String(self.value))
                         .textAppearance(style.bindings.selected.textAppearance, colorScheme: colorScheme)
+                        .scoreItemText()
                 }
                 .opacity(isOn ? 1 : 0)
                 .airshipApplyIf(disabled) { view in
@@ -370,6 +393,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                     }
                     Text(String(self.value))
                         .textAppearance(style.bindings.unselected.textAppearance, colorScheme: colorScheme)
+                        .scoreItemText()
                 }
                 .opacity(isOn ? 0 : 1)
             }
@@ -411,5 +435,21 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
 
         let font = appearance.nativeFont
         return (text as String).size(withAttributes: [.font: font]).height
+    }
+}
+
+fileprivate extension View {
+    /// A number that shrinks to fit its item rather than being cut short by it.
+    ///
+    /// An item is sized for the longest number in the range, but a single row divides one width
+    /// between all of them and the share can be less than that — eleven items across 282pt leaves
+    /// 23pt each, where "10" at 24pt wants nearer 50. Truncating turns the last number into an
+    /// ellipsis, which is the one number a 0-10 scale cannot do without.
+    ///
+    /// Web has the same squeeze and never shows it: its number is drawn inside the item's SVG, so
+    /// it scales with the box. This is that, said to a `Text`.
+    func scoreItemText() -> some View {
+        self.lineLimit(1)
+            .minimumScaleFactor(0.4)
     }
 }

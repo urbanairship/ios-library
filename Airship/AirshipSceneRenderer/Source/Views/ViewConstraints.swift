@@ -25,6 +25,19 @@ struct ViewConstraints: Equatable {
 
     var maxWidth: CGFloat?
     var maxHeight: CGFloat?
+    /// A floor the view may not shrink below, and which it may grow past.
+    ///
+    /// The counterpart to `maxWidth`/`maxHeight`, and the only part of a declared size that can be
+    /// handed down before anything has been measured: `min_height: 80%` is a share of the window,
+    /// settled the moment the window is known, where an `auto` length is settled by the content and
+    /// so cannot be. Without somewhere to put it a modal could only apply its floor as a frame
+    /// around its content, outside the layout, where nothing inside could see it — a background at
+    /// `100%` filled the content it was behind rather than the modal it was in.
+    ///
+    /// A minimum bounds without capping, so a floor never stops content growing past it: an auto
+    /// item still sets the length, and `100%` beside it still follows.
+    var minWidth: CGFloat?
+    var minHeight: CGFloat?
     var width: CGFloat?
     var height: CGFloat?
     /// Axes this view may measure past its length on.
@@ -55,6 +68,8 @@ struct ViewConstraints: Equatable {
         height: CGFloat? = nil,
         maxWidth: CGFloat? = nil,
         maxHeight: CGFloat? = nil,
+        minWidth: CGFloat? = nil,
+        minHeight: CGFloat? = nil,
         uncappedAxes: Axis.Set = [],
         measuredAxes: Axis.Set = [],
         isHorizontalFixedSize: Bool = false,
@@ -69,6 +84,8 @@ struct ViewConstraints: Equatable {
         self.height = height
         self.maxWidth = maxWidth
         self.maxHeight = maxHeight
+        self.minWidth = minWidth
+        self.minHeight = minHeight
         self.uncappedAxes = uncappedAxes
         self.measuredAxes = measuredAxes
         self.safeAreaInsets = safeAreaInsets
@@ -86,6 +103,11 @@ struct ViewConstraints: Equatable {
     /// length there is an invalid frame dimension, and an unset one is merely auto.
     var frameWidth: CGFloat? { uncappedAxes.contains(.horizontal) ? nil : width?.safeValue }
     var frameHeight: CGFloat? { uncappedAxes.contains(.vertical) ? nil : height?.safeValue }
+
+    /// The floor the frame should take, on the same terms: nothing on an uncapped axis, where the
+    /// view is being asked to measure freely and a floor would be one more thing holding it open.
+    var frameMinWidth: CGFloat? { uncappedAxes.contains(.horizontal) ? nil : minWidth?.safeValue }
+    var frameMinHeight: CGFloat? { uncappedAxes.contains(.vertical) ? nil : minHeight?.safeValue }
 
     init(size: CGSize, safeAreaInsets: EdgeInsets) {
         self.init(
@@ -112,6 +134,19 @@ struct ViewConstraints: Equatable {
         guard let constraint, let value = constraint.calculateSize(parent) else { return nil }
         guard constraint.isPercent, let parent else { return value }
         return max(0, min(value, parent) - margins)
+    }
+
+    /// A child's share of a floor its parent is holding, for a child that asked for a share.
+    ///
+    /// Margins come out of it for the same reason they come out of a percentage's length: the share
+    /// covers the space the item occupies, margins included.
+    private static func resolvedMinimum(
+        _ constraint: ThomasSizeConstraint,
+        parentMin: CGFloat?,
+        margins: CGFloat
+    ) -> CGFloat? {
+        guard let parentMin, case .percent(let percent) = constraint else { return nil }
+        return max(0, (percent / 100.0 * parentMin) - margins)
     }
 
     func contentConstraints(
@@ -160,21 +195,18 @@ struct ViewConstraints: Equatable {
         let isHorizontalAbsoluteSize: Bool = constrainedSize.width.isPoints
         let isVerticalAbsoluteSize: Bool = constrainedSize.height.isPoints
 
+        // A maximum has to become the length, because a length is the only thing that caps a view.
+        // A minimum does not, and must not: it travels as a floor instead. Written into the length
+        // it would decide whether the view was still short, having just made it taller — the walk
+        // between hugging and the floor that the modal used to unpick by discarding the length
+        // altogether, taking the floor with it.
         if let contentSize = contentSize {
             if let maxWidth = childMaxWidth, contentSize.width >= maxWidth {
                 childWidth = maxWidth
-            } else if let minWidth = childMinWidth,
-                contentSize.width <= minWidth
-            {
-                childWidth = minWidth
             }
 
             if let maxHeight = childMaxHeight, contentSize.height >= maxHeight {
                 childHeight = maxHeight
-            } else if let minHeight = childMinHeight,
-                contentSize.height <= minHeight
-            {
-                childHeight = minHeight
             }
         }
 
@@ -202,6 +234,10 @@ struct ViewConstraints: Equatable {
             height: roundedHeight,
             maxWidth: roundedWidth ?? parentWidth,
             maxHeight: roundedHeight ?? parentHeight,
+            // Only where there is no length to hold the view open. A length has already been bound
+            // by the floor above, so repeating it would say nothing.
+            minWidth: roundedWidth == nil ? childMinWidth?.bound(maxValue: childMaxWidth) : nil,
+            minHeight: roundedHeight == nil ? childMinHeight?.bound(maxValue: childMaxHeight) : nil,
             isHorizontalFixedSize: isHorizontalFixedSize,
             isVerticalFixedSize: isVerticalFixedSize,
             isHorizontalAbsoluteSize: isHorizontalAbsoluteSize,
@@ -267,6 +303,14 @@ struct ViewConstraints: Equatable {
 
         var childWidth = Self.resolve(size.width, parent: parentWidth, margins: horizontalMargins)
         var childHeight = Self.resolve(size.height, parent: parentHeight, margins: verticalMargins)
+
+        // A floor descends the way a length does: through percentages, and only through them. A
+        // child that asks for the whole of a parent that will be at least this tall will itself be
+        // at least this tall, and half of it asks for half. Anything else keeps its own size — an
+        // item with a length has one already, and an `auto` item is sized by what is inside it,
+        // which a floor from above has no business holding open.
+        let childMinWidth = Self.resolvedMinimum(size.width, parentMin: minWidth, margins: horizontalMargins)
+        let childMinHeight = Self.resolvedMinimum(size.height, parentMin: minHeight, margins: verticalMargins)
 
         // Pre-compute derived dimension so children receive concrete parent bounds.
         // Also carry the ratio through to ViewConstraints so the .constraints()
@@ -354,6 +398,8 @@ struct ViewConstraints: Equatable {
             height: childHeight,
             maxWidth: childWidth ?? maxWidth,
             maxHeight: childHeight ?? maxHeight,
+            minWidth: childWidth == nil ? childMinWidth : nil,
+            minHeight: childHeight == nil ? childMinHeight : nil,
             // Not inherited: a child gets its own length from us, so it is capped by that.
             // Only the view a scroll layout hands its constraints to may exceed its length.
             uncappedAxes: [],

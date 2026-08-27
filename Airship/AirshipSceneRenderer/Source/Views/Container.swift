@@ -93,6 +93,28 @@ fileprivate struct NewContainer: View {
     private func childItem(_ index: Int, item: ThomasViewInfo.Container.Item) -> some View {
         let consumeSafeAreaInsets = item.ignoreSafeArea != true
 
+        // A share of our own measurement is a floor for the item, not a length.
+        //
+        // We are as tall as our tallest item, so an item asking for the whole of us is asking for
+        // the whole of itself. Handed that as a length it is capped at what it was already measured
+        // to be, and then we measure the cap coming back — an answer any height satisfies, so the
+        // container held whatever it started at and nothing below could grow it. A scroll whose
+        // content had reached 812 sat in a container settled at 389, which was only ever its own
+        // answer going round.
+        //
+        // As a floor it still fills us, since that is what a share of the whole means, but it is
+        // free to be taller — and what it turns out to be is what we measure, and what we are. The
+        // space we were given still caps it, so it cannot outrun a ceiling further up.
+        //
+        // Only for a length that came from measuring ourselves. One handed down by our own parent
+        // is a real length, and a share of it is exactly that share.
+        let measuredShareAxes: Axis.Set = {
+            var axes: Axis.Set = []
+            if constraints.width == nil { axes.insert(.horizontal) }
+            if constraints.height == nil { axes.insert(.vertical) }
+            return axes
+        }()
+
         let childConstraints = self.constraints
             // Nothing rather than the measurement on an axis with no basis. Feeding the measurement
             // back would let the items settle on their own content while still calling it a share of
@@ -111,6 +133,7 @@ fileprivate struct NewContainer: View {
                 borderStrokeWidth: item.view.borderStrokeWidth,
                 safeAreaInsetsMode: consumeSafeAreaInsets ? .consumeMargin : .ignore
             )
+            .flooringMeasuredShare(of: item.size, on: measuredShareAxes)
 
         thomasEnvironment.viewFactory.createView(
             item.view,
@@ -206,5 +229,36 @@ fileprivate struct ContainerLayout: Layout {
                 proposal: placementProposal
             )
         }
+    }
+}
+
+fileprivate extension ViewConstraints {
+    /// Moves a percentage's length to the floor, on an axis where the share came from a measurement.
+    ///
+    /// The length is taken as it stands rather than worked out again from the percentage. It has
+    /// already had this item's margins, any safe-area insets it consumes and its own border stroke
+    /// taken out of it, and a floor recomputed from the raw share carries none of that: the item
+    /// stands at the whole share and wears its margins outside it, so its footprint comes to more
+    /// than the measurement the share was taken from, and the next pass takes a share of that.
+    ///
+    /// A ratio is left alone. It has already derived one axis from the other by this point, and the
+    /// two are a pair — releasing the one the share settled leaves a hard length on one axis, a free
+    /// one on the other, and `.aspectRatio(.fit)` over the top of both.
+    func flooringMeasuredShare(of size: ThomasSize, on axes: Axis.Set) -> ViewConstraints {
+        guard size.aspectRatio == nil else { return self }
+
+        var copy = self
+
+        if axes.contains(.horizontal), case .percent = size.width, let share = copy.width {
+            copy.width = nil
+            copy.minWidth = max(copy.minWidth ?? 0, share)
+        }
+
+        if axes.contains(.vertical), case .percent = size.height, let share = copy.height {
+            copy.height = nil
+            copy.minHeight = max(copy.minHeight ?? 0, share)
+        }
+
+        return copy
     }
 }

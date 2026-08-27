@@ -77,12 +77,31 @@ private struct ThomasConstraintsViewModifier: ViewModifier {
     let alignment: Alignment?
     let fixedSize: Bool
 
+    /// The frame's floor: whichever of the view's own minimum and its absolute length is larger.
+    ///
+    /// An absolute length has always been set as a minimum as well as a maximum, so a points-sized
+    /// view is not squeezed below what it asked for. A declared minimum is the same kind of claim
+    /// from a different source, so the two meet here rather than one replacing the other.
+    private var floorWidth: CGFloat? {
+        [
+            constraints.isHorizontalAbsoluteSize ? constraints.frameWidth : nil,
+            constraints.frameMinWidth
+        ].compactMap { $0 }.max()
+    }
+
+    private var floorHeight: CGFloat? {
+        [
+            constraints.isVerticalAbsoluteSize ? constraints.frameHeight : nil,
+            constraints.frameMinHeight
+        ].compactMap { $0 }.max()
+    }
+
     func body(content: Content) -> some View {
         content.frame(
-            minWidth: constraints.isHorizontalAbsoluteSize ? constraints.frameWidth : nil,
+            minWidth: floorWidth,
             idealWidth: constraints.frameWidth,
             maxWidth: constraints.frameWidth,
-            minHeight: constraints.isVerticalAbsoluteSize ? constraints.frameHeight : nil,
+            minHeight: floorHeight,
             idealHeight: constraints.frameHeight,
             maxHeight: constraints.frameHeight,
             alignment: alignment ?? .center

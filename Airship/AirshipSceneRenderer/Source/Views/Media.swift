@@ -154,9 +154,17 @@ extension Image {
                 // than the raw maximum — the same reading the crop decision above uses. A measured
                 // maximum is the siblings' extent handed back, and clamping to it is what the
                 // decision declined to crop for.
+                //
+                // Carries the alignment because on an `auto` axis this is the frame that crops.
+                // The one above takes its lengths from the declared size, so an auto axis leaves it
+                // nil there and it sizes to the filled image instead — the image exactly fills it,
+                // and an alignment with no slack to distribute does nothing. The overflow is still
+                // ahead of it, and this is where it gets cut: left to its default, a `fit_crop`
+                // image declared `width: auto` was centered whatever `position` asked for.
                 .frame(
                     maxWidth: constraints.limit(on: .horizontal),
-                    maxHeight: constraints.limit(on: .vertical)
+                    maxHeight: constraints.limit(on: .vertical),
+                    alignment: alignment
                 )
                 .clipped()
         }
@@ -206,10 +214,13 @@ extension View {
         } else {
             self.aspectRatio(videoAspectRatio, contentMode: .fill)
                 .constraints(constraints, alignment: alignment)
-                // As above: a measured maximum is not a ceiling this view has to fit inside.
+                // As above: a measured maximum is not a ceiling this view has to fit inside, and
+                // this is the frame that crops on an axis the declared size left auto, so it is the
+                // one the alignment has to reach.
                 .frame(
                     maxWidth: constraints.limit(on: .horizontal),
-                    maxHeight: constraints.limit(on: .vertical)
+                    maxHeight: constraints.limit(on: .vertical),
+                    alignment: alignment
                 )
                 .clipped()
         }

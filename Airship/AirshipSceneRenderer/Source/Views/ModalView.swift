@@ -125,13 +125,16 @@ struct ModalView: View {
             safeAreaInsets: safeAreaInsets
         )
 
-        var contentConstraints = windowConstraints.contentConstraints(
+        let contentConstraints = windowConstraints.contentConstraints(
             placement.size,
             contentSize: self.contentSize,
             margin: placement.margin
         )
 
-        // Min_height / min_width floor, in points.
+        // Min_height / min_width floor, in points. Kept as a frame below, after the content, so the
+        // modal still stands at its floor if it is ever handed a layout whose root declines to.
+        // `contentConstraints` carries the same floor down as `minHeight`/`minWidth`, which is what
+        // holds the content itself open — and what a percentage inside it takes its share of.
         let parentWidth = windowConstraints.width?.subtract(
             placement.margin?.horizontalMargins ?? 0
         )
@@ -140,22 +143,6 @@ struct ModalView: View {
         )
         let minWidthFloor = placement.size.minWidth?.calculateSize(parentWidth)
         let minHeightFloor = placement.size.minHeight?.calculateSize(parentHeight)
-
-        // For an auto axis shorter than its min, let the content hug its natural size (so it's
-        // measured stably) and enforce the min as an outer frame floor below. Baking the min
-        // into the child height instead makes it flicker between hugging and the min.
-        if placement.size.height.isAuto, let floor = minHeightFloor,
-            let measured = self.contentSize, measured.height <= floor
-        {
-            contentConstraints.height = nil
-            contentConstraints.maxHeight = parentHeight
-        }
-        if placement.size.width.isAuto, let floor = minWidthFloor,
-            let measured = self.contentSize, measured.width <= floor
-        {
-            contentConstraints.width = nil
-            contentConstraints.maxWidth = parentWidth
-        }
 
         let safeAreasToIgnore: SafeAreaRegions = if ignoreSafeArea {
             [.container, .keyboard]
@@ -170,8 +157,16 @@ struct ModalView: View {
             )
             .background(
                 GeometryReader { contentMetrics -> Color in
+                    let measured = contentMetrics.size
                     DispatchQueue.main.async {
-                        self.contentSize = contentMetrics.size
+                        // A zero is not an answer about how tall the content is, and taking it as
+                        // one made a capped auto-height modal jitter forever: zero fails the
+                        // comparison against the ceiling, so the length is dropped, so a scroll
+                        // inside goes back to hugging its full content, so the modal measures its
+                        // uncapped self and caps again. Nothing here can legitimately be zero, so
+                        // the last real measurement stands.
+                        guard measured.width > 0, measured.height > 0 else { return }
+                        self.contentSize = measured
                     }
                     return Color.clear
                 }

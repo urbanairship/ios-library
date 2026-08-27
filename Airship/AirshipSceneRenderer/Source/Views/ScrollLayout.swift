@@ -83,13 +83,21 @@ struct ScrollLayout: View {
         }
         .airshipApplyIf(self.shouldApplyFrameSize) { view in
             if let limit = self.measuredContentDimension {
-                // Content has been measured: pin the scroll to it so it hugs its content, while
-                // remaining squeezable/scrollable if an ancestor offers less than this.
+                // Content has been measured: ask for that height, and take no more. The ideal is
+                // what does the asking — a maximum alone permits an ancestor to offer the content
+                // height without ever prompting it to, so an auto-height ancestor kept offering
+                // whatever it already had and the scroll sat there. It hugged on the first pass,
+                // where `fixedSize` below takes the ideal, and then let go the moment it had
+                // measured itself: a modal grew to its content, dropped back, and stayed put while
+                // the content inside went on growing.
+                //
+                // Still squeezable, since the ideal is a request and the maximum is the only cap:
+                // an ancestor with less to give offers less, and the scroll scrolls.
                 switch (info.properties.direction) {
                 case .vertical:
-                    view.frame(maxHeight: limit)
+                    view.frame(idealHeight: limit, maxHeight: limit)
                 case .horizontal:
-                    view.frame(maxWidth: limit)
+                    view.frame(idealWidth: limit, maxWidth: limit)
                 }
             } else {
                 // Not yet measured: hug the content's natural size on this first pass. Previously the
