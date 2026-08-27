@@ -15,6 +15,9 @@ extension AirshipAI {
         @MainActor
         private let providerRegistry = ProviderRegistry()
 
+        @MainActor
+        private var evaluationObserver: AirshipAI.EvaluationObserver?
+
         private let evaluator = AirshipAI.Evaluator()
 
         private let privacyManager: any AirshipPrivacyManager
@@ -89,6 +92,11 @@ extension AirshipAI {
             defaultModelFactory = factory
         }
 
+        @MainActor
+        public func setEvaluationObserver(_ observer: AirshipAI.EvaluationObserver?) {
+            evaluationObserver = observer
+        }
+
         public func fetchContext<S: Sendable>(
             for usage: AirshipAI.Usage<S>,
             subject: S
@@ -118,7 +126,12 @@ extension AirshipAI {
                 return .skipped(reason: "No context to personalize on")
             }
 
-            return await evaluator.evaluate(evaluation, model: resolved.model, context: merged)
+            return await evaluator.evaluate(
+                evaluation,
+                model: resolved.model,
+                context: merged,
+                observer: resolved.observer
+            )
         }
 
         /// Resolves the model and fetches the provider's context. Model resolution and the
@@ -128,13 +141,20 @@ extension AirshipAI {
         @MainActor
         private func resolve<E: AirshipAI.Evaluation>(
             _ evaluation: E
-        ) async -> (model: any AirshipAI.ModelProtocol, context: AirshipAI.Context)? {
+        ) async -> (
+            model: any AirshipAI.ModelProtocol,
+            context: AirshipAI.Context,
+            observer: AirshipAI.EvaluationObserver?
+        )? {
             guard let model = self.model(for: evaluation.usage) else { return nil }
+            // Snapshotted on the same main-actor hop as the model and provider, so one
+            // evaluation can't run against an observer that was replaced mid-flight.
+            let observer = evaluationObserver
             let context = await providerContext(
                 forUsage: evaluation.usage.rawValue,
                 subject: evaluation.subject
             )
-            return (model, context)
+            return (model, context, observer)
         }
 
         /// Fetches the registered provider's context for a usage, or `.empty` when none is

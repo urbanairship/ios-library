@@ -312,6 +312,77 @@ public enum AirshipAI {
     /// weakly if the closure reaches back into an object that owns the registration.
     public typealias ContextProvider<Subject: Sendable> = @Sendable (Subject) async -> Context
 
+    // MARK: - EvaluationRecord
+
+    /// A finished evaluation, handed to the observer registered with
+    /// `setEvaluationObserver(_:)`.
+    ///
+    /// - Important: This carries the evaluation's context and rendered prompt, which came
+    /// from your own context provider. Sending it to a third-party analytics service sends
+    /// that context off the device — the built-in model otherwise keeps it local. That's a
+    /// legitimate choice; just make it deliberately.
+    ///
+    /// Reported for every usage and every outcome, including the ones that never reached a
+    /// model — an unavailable model is the most common result in the field and the one
+    /// worth knowing about.
+    public struct EvaluationRecord: Sendable {
+
+        /// Which feature ran, e.g. `AirshipAI.EmbeddedSelection.usage`.
+        public let usage: AnyUsage
+
+        /// What was asked: instructions, schema, context, and `prompt()`.
+        ///
+        /// - Note: The context here is what was *offered* to the model. A model that trims
+        /// to fit its input window does so on its own copy, so a long context may have
+        /// reached the model shorter than this. Retries can also trim differently, which is
+        /// why a record with `attempts > 1` has no single prompt.
+        public let request: Request
+
+        /// How it ended.
+        public let outcome: Outcome
+
+        /// Wall-clock time across every attempt, including retries.
+        public let duration: TimeInterval
+
+        /// How many times the model was called. Greater than 1 means output failed schema
+        /// validation, or the model threw, and it was retried.
+        public let attempts: Int
+
+        /// The result of an evaluation, before it is decoded into the feature's own type.
+        ///
+        /// `completed` carries the raw model output rather than a typed value so one
+        /// observer can serve every usage — for embedded selection that's the scores and
+        /// the model's stated reason.
+        public enum Outcome: Sendable {
+            case completed(AirshipJSON)
+            case skipped(reason: String)
+            case failed(any Error)
+        }
+
+        public init(
+            usage: AnyUsage,
+            request: Request,
+            outcome: Outcome,
+            duration: TimeInterval,
+            attempts: Int
+        ) {
+            self.usage = usage
+            self.request = request
+            self.outcome = outcome
+            self.duration = duration
+            self.attempts = attempts
+        }
+    }
+
+    /// Observes finished evaluations.
+    ///
+    /// Delivered on a task of its own, off the main actor: reporting never sits between the
+    /// model returning and the feature acting on the result, and never occupies the main
+    /// actor. Hop to the main actor yourself if your reporting needs it.
+    ///
+    /// Records from concurrent evaluations may arrive in any order.
+    public typealias EvaluationObserver = @Sendable (EvaluationRecord) -> Void
+
     // MARK: - Manager protocol
 
     /// Public entry point for Airship's on-device AI features.
@@ -345,6 +416,32 @@ public enum AirshipAI {
         /// are never combined. Pass `nil` to remove a previously registered default provider.
         @MainActor
         func setDefaultContextProvider(_ provider: (@Sendable () async -> Context)?)
+
+        /// Registers an observer called when any evaluation finishes, for reporting on what
+        /// the on-device model was asked and what it answered. Pass `nil` to clear it.
+        ///
+        /// - Important: This is per *evaluation*, not per display. A feature that
+        /// re-evaluates — an embedded view with `allowDisplayInterruptions` re-ranking as
+        /// content comes and goes — produces a record each time, so dedupe before treating
+        /// these as impressions.
+        ///
+        /// Fires once per evaluation across every usage, whatever the outcome — including
+        /// evaluations skipped before a model ran. Airship does not report any of this; it
+        /// is handed to you and nowhere else.
+        ///
+        ///     Airship.ai.setEvaluationObserver { record in
+        ///         guard case .completed(let output) = record.outcome else { return }
+        ///         myAnalytics.track("ai_evaluation", [
+        ///             "usage": record.usage.rawValue,
+        ///             "output": output,
+        ///             "ms": record.duration * 1000
+        ///         ])
+        ///     }
+        ///
+        /// The closure runs on a task of its own, off the main actor, so it never delays
+        /// the evaluation it describes and never occupies the main actor.
+        @MainActor
+        func setEvaluationObserver(_ observer: EvaluationObserver?)
 
         /// Registers a per-usage model resolver that routes each usage to a model backend.
         ///

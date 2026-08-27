@@ -160,7 +160,9 @@ public struct DefaultEmbeddedAISelector: EmbeddedAISelector {
                     return nil
                 }
             }
-            AirshipLogger.debug("Embedded AI ranking \(ranking): \(output.reason)")
+            // Instance IDs are generated per pending instance and carry nothing about the
+            // user; the model's stated reason does, so it stays out — see AirshipAIEvaluator.
+            AirshipLogger.debug("Embedded AI ranking \(ranking)")
             return ranking
         case .skipped(let reason):
             AirshipLogger.debug("Embedded AI selection skipped: \(reason)")

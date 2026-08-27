@@ -304,6 +304,7 @@ private final class MockEmbeddedAIManager: AirshipAI.InternalManager, @unchecked
     func model<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.ModelProtocol)? { nil }
     func setContextProvider<S: Sendable>(for usage: AirshipAI.Usage<S>, _ provider: AirshipAI.ContextProvider<S>?) {}
     func setDefaultContextProvider(_ provider: (@Sendable () async -> AirshipAI.Context)?) {}
+    func setEvaluationObserver(_ observer: AirshipAI.EvaluationObserver?) {}
     func setModelResolver(_ resolver: (@MainActor @Sendable (AirshipAI.AnyUsage) -> AirshipAI.ModelSelector)?) {}
     func registerModelFactory(_ factory: @MainActor @Sendable @escaping () -> any AirshipAI.ModelProtocol) {}
     func fetchContext<S: Sendable>(for usage: AirshipAI.Usage<S>, subject: S) async -> AirshipAI.Context { .empty }

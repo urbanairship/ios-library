@@ -115,7 +115,8 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
                 )
             )
             if result.output?.allow == false {
-                AirshipLogger.debug("AI suppressed message \(message.name): \(result.output?.reason ?? "")")
+                // The model's stated reason is deliberately not logged — see AirshipAIEvaluator.
+                AirshipLogger.debug("AI suppressed message \(message.name)")
                 return await suppressed(suppression.missBehavior ?? .skip, event: .aiSuppressed(), preparedScheduleInfo: preparedScheduleInfo, message: message)
             }
         }
