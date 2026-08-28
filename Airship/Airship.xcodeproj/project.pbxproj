@@ -1221,7 +1221,6 @@
 		CC64F1521D8B7954009CEF27 /* production-embedded.mobileprovision in Resources */ = {isa = PBXBuildFile; fileRef = CC64F14A1D8B7954009CEF27 /* production-embedded.mobileprovision */; };
 		DEF3EBE4D16B1E1DF5B6E995 /* AutomationAISuppression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D21C417AFF6695BD8DBFB7 /* AutomationAISuppression.swift */; };
 		DFD2464E2473404C000FD565 /* DebugSDKModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD2464D2473404C000FD565 /* DebugSDKModule.swift */; };
-		E57C25223ED6CFFC1AF4DA98 /* ViewConstraintsBorderBoxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FBABB7FAA3F8AD2BFC2A46C /* ViewConstraintsBorderBoxTest.swift */; };
 		E976486F27A46CC50024518D /* ChannelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E976486E27A46CC50024518D /* ChannelType.swift */; };
 		E99605A127A071EA00365AE4 /* EmailRegistrationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99605A027A071EA00365AE4 /* EmailRegistrationOptions.swift */; };
 		E99605A427A075B800365AE4 /* SMSRegistrationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E99605A327A075B800365AE4 /* SMSRegistrationOptions.swift */; };
@@ -1679,7 +1678,6 @@
 		03525B96280DE60200320AA9 /* zh-HK */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-HK"; path = "zh-HK.lproj/UrbanAirship.strings"; sourceTree = "<group>"; };
 		03525B97280DE61200320AA9 /* zu */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zu; path = zu.lproj/UrbanAirship.strings; sourceTree = "<group>"; };
 		1D501534ADFFC096F3D2D624 /* AirshipEmbeddedViewManagerTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AirshipEmbeddedViewManagerTest.swift; sourceTree = "<group>"; };
-		1FBABB7FAA3F8AD2BFC2A46C /* ViewConstraintsBorderBoxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewConstraintsBorderBoxTest.swift; sourceTree = "<group>"; };
 		22428F9BC1764F89B2B096F2 /* InboxStoreMigrationRecoveryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxStoreMigrationRecoveryTest.swift; sourceTree = "<group>"; };
 		22C5FC4ED41B8E598DC279EB /* EmbeddedAISelector.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = EmbeddedAISelector.swift; sourceTree = "<group>"; };
 		24C973AEBF3714F46E6D3808 /* EmbeddedDisplayCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedDisplayCoordinator.swift; sourceTree = "<group>"; };
@@ -4990,7 +4988,6 @@
 				6E21C4682FEC586A00EA3E56 /* AirshipLayoutTest.swift */,
 				6E21C4A02FEC586A00EA3E56 /* EmbeddedPlacementBoundsTest.swift */,
 				6E21C4692FEC586A00EA3E56 /* ThomasValidationTests.swift */,
-				1FBABB7FAA3F8AD2BFC2A46C /* ViewConstraintsBorderBoxTest.swift */,
 				6E21C46A2FEC586A00EA3E56 /* ThomasViewModelTest.swift */,
 				6E21C46B2FEC586A00EA3E56 /* ThomasAsyncViewStateTest.swift */,
 				6E21C46D2FEC586A00EA3E56 /* ThomasAssociatedLabelResolverTest.swift */,
@@ -7616,7 +7613,6 @@
 				6E21C4642FEC585400EA3E56 /* EventHandlerViewModifierOutcomeTest.swift in Sources */,
 				6E21C4BD2FEC5B3B00EA3E56 /* TestDate.swift in Sources */,
 				533F7A4FE399DDB948108702 /* AirshipEmbeddedViewManagerTest.swift in Sources */,
-				E57C25223ED6CFFC1AF4DA98 /* ViewConstraintsBorderBoxTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
