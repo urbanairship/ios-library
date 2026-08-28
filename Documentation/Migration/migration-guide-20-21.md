@@ -41,6 +41,7 @@ required to migrate an app from SDK 20.x to SDK 21.0.
 - [Removed APIs](#removed-apis)
 - [Changed APIs](#changed-apis)
   - [Feature Flag Status Updates](#feature-flag-status-updates)
+- [Scene Rendering Changes](#scene-rendering-changes)
 - [Troubleshooting](#troubleshooting)
 
 ## Requirements
@@ -283,6 +284,15 @@ for await status in await Airship.featureFlagManager.featureFlagStatusUpdates {
     handle(status)   // already a FeatureFlagUpdateStatus
 }
 ```
+
+## Scene Rendering Changes
+
+21.0 includes a broad set of fixes to the Scene layout engine. No code changes
+need to be made.
+
+**Verify your live Scenes render as intended after upgrading**, especially any
+you have tuned to look right in 20.x. If a Scene needs adjusting, it is a
+content change in the Composer.
 
 ## Troubleshooting
 
