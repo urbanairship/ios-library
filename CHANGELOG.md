@@ -4,6 +4,15 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.12.0 - August 27, 2026
+Minor release that adds support for resizable scenes on iOS 27 and fixes a few layout glitches during live window resizing.
+
+### Changes
+- Added support for iOS 27's resizable scenes by resolving Thomas orientation and sizing from the scene itself and dropping the old forced orientation lock.
+- Fixed Message Center losing its message list and any in-progress selection when switching between split and stack layouts during a resize.
+- Fixed embedded content, including Message Center native-layout messages, sometimes collapsing or freezing at a tiny size during a live window resize.
+- Fixed Pager losing page alignment during a live window resize.
+
 ## Version 20.11.0 - July 22, 2026
 Minor release that adds build version support to version triggers and audience checks, a dedup option for Live Activity watching, and a fix for story pager gestures.
 
