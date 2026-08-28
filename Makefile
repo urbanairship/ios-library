@@ -70,16 +70,16 @@ fetch-layouts:
 	bash ./scripts/fetch-layouts.sh
 
 .PHONY: build-sample-ios
-build-sample-ios: setup fetch-layouts
+build-sample-ios: setup
 	bash ./scripts/build_sample.sh "DevApp" "${derived_data_path}"
 
 # Release archive + App Store IPA export + altool validation (requires ASC API key + distribution cert in CI).
 .PHONY: archive-devapp-store
-archive-devapp-store: setup fetch-layouts
+archive-devapp-store: setup
 	bash ./scripts/archive_devapp_store.sh "${derived_data_devapp_store}" "${devapp_store_out}"
-	
+
 .PHONY: build-sample-macos
-build-sample-macos: setup fetch-layouts
+build-sample-macos: setup
 	bash ./scripts/build_sample.sh "DevApp" "${derived_data_path}" "macOS"
 	
 .PHONY: build-sample-watchos

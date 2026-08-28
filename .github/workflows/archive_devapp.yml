@@ -54,6 +54,11 @@ jobs:
           owner: ${{ github.repository_owner }}
           repositories: thomas-layouts
 
+      - name: Fetch layouts
+        env:
+          LAYOUTS_REPO_TOKEN: ${{ steps.layouts_token.outputs.token }}
+        run: make fetch-layouts
+
       - name: Install Apple Certificate
         uses: apple-actions/import-codesign-certs@v3
         with:
@@ -65,5 +70,4 @@ jobs:
           ASC_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           ASC_API_KEY_P8_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_P8_BASE64 }}
-          LAYOUTS_REPO_TOKEN: ${{ steps.layouts_token.outputs.token }}
         run: make archive-devapp-store
