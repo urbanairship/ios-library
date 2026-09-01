@@ -522,6 +522,47 @@ extension ViewConstraints {
         }
         return copy
     }
+
+    /// Returns a copy of these constraints filled in with a scroll layout's measured frame, holding
+    /// the axis it scrolls back from a scene authored before that was offered.
+    ///
+    /// The scroll axis is the one measured unbounded, so it is the one where a percentage has
+    /// nothing of its own to resolve against. A version 1 scene was laid out with those percentages
+    /// falling back to their own content, and handing one the viewport now gives an empty `100%` a
+    /// screenful of blank its author never saw. So that axis is cleared for version 1, which is
+    /// what `ScrollLayout` did for every scene before the viewport was offered; the other axis is
+    /// left exactly as it arrived. Web and Android hand down the scroll axis alone for the same
+    /// reason.
+    ///
+    /// - Parameters:
+    ///   - measured: the scroll's own frame, once it has one
+    ///   - isVertical: whether the scroll runs down the page, naming which axis it scrolls
+    ///   - layoutVersion: the DSL version the scene states
+    /// - Returns: the constraints its content should be given
+    func fillingScrollViewport(
+        _ measured: CGSize?,
+        isVertical: Bool,
+        layoutVersion: Int
+    ) -> ViewConstraints {
+        guard layoutVersion > AirshipLayout.minLayoutVersion else {
+            // What the renderer did before it had a viewport to offer: clear the axis it scrolls
+            // and hand nothing on. Declining to *fill* that axis is not enough — a scroll given a
+            // length by its parent, a `height: 300` item say, carries one already, and passing it
+            // down resolves the percentages inside against 300 where they used to fall back to
+            // their own content.
+            var copy = self
+            if isVertical {
+                copy.height = nil
+                copy.measuredAxes.remove(.vertical)
+            } else {
+                copy.width = nil
+                copy.measuredAxes.remove(.horizontal)
+            }
+            return copy
+        }
+
+        return fillingMeasured(width: measured?.width, height: measured?.height)
+    }
 }
 
 extension ThomasSizeConstraint {

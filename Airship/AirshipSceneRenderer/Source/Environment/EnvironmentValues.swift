@@ -39,6 +39,18 @@ private struct PagerTapExclusionSpaceKey: EnvironmentKey {
     static let defaultValue: String? = nil
 }
 
+/// The DSL version the scene being drawn states.
+///
+/// Version 1 predates a percentage taking a share of the scroll layout above it: such a percentage
+/// had nothing to be a fraction of and fell back to its own content, and every scene published then
+/// was laid out around that. Handing one the viewport now gives an empty `100%` a screenful of
+/// blank it never used to take, so a version 1 scene is left without one and draws as its author
+/// saw it. Nothing else reads it -- the stack solve and the container rules run at either version,
+/// as they do on web and Android.
+private struct LayoutVersionKey: EnvironmentKey {
+    static let defaultValue: Int = AirshipLayout.minLayoutVersion
+}
+
 private struct ThomasFocusedInputKey: EnvironmentKey {
     // Constant nil — the non-Sendable FocusState.Binding is only ever the real value
     // injected by RootView on the main actor; the default carries no shared state.
@@ -46,6 +58,12 @@ private struct ThomasFocusedInputKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
+    /// The DSL version of the scene being drawn, published by `RootView`. See `LayoutVersionKey`.
+    var layoutVersion: Int {
+        get { self[LayoutVersionKey.self] }
+        set { self[LayoutVersionKey.self] = newValue }
+    }
+
     var orientation: ThomasOrientation? {
         get { self[OrientationKey.self] }
         set { self[OrientationKey.self] = newValue }

@@ -104,6 +104,7 @@ struct RootView<Content: View>: View {
             .environmentObject(self.defaultVideoState)
             .environmentObject(self.defaultAsyncViewState)
             .environment(\.windowSize, resolveWindowSize())
+            .environment(\.layoutVersion, layout.version)
             .environment(\.isVisible, isVisible)
             .environment(\.isVoiceOverRunning, isVoiceOverRunning)
             .environment(\.thomasAssociatedLabelResolver, associatedLabelResolver)

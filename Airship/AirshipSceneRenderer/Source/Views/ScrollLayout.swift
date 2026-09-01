@@ -17,6 +17,7 @@ struct ScrollLayout: View {
     @State private var contentSize: CGSize? = nil
     @State private var measuredFrameSize: CGSize? = nil
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
+    @Environment(\.layoutVersion) private var layoutVersion
     @State private var scrollTask: (String, Task<Void, Never>)?
     
     private static let scrollInterval: TimeInterval = 0.01
@@ -167,9 +168,13 @@ struct ScrollLayout: View {
         // length. Naming the scroll axis as uncapped is what lets the content measure past it —
         // otherwise the length doubles as the frame's maximum and `100% + 50% + 25%` compresses
         // into a single screen instead of scrolling a screen and three quarters.
-        var childConstraints = constraints.fillingMeasured(
-            width: measuredFrameSize?.width,
-            height: measuredFrameSize?.height
+        //
+        // Except on the axis this scrolls, for a scene that predates the offer — see
+        // `fillingScrollViewport` and `LayoutVersionKey`.
+        var childConstraints = constraints.fillingScrollViewport(
+            measuredFrameSize,
+            isVertical: isVertical,
+            layoutVersion: layoutVersion
         )
         childConstraints.uncappedAxes = isVertical ? .vertical : .horizontal
 
