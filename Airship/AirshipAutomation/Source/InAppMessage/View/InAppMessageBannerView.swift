@@ -15,8 +15,6 @@ struct InAppMessageBannerView: View {
     @ObservedObject
     var bannerConstraints: InAppMessageBannerConstraints
 
-    /// A state variable to prevent endless size refreshing
-    @State private var lastSize: CGSize?
     @State private var isShowing: Bool = false
     @State private var swipeOffset: CGFloat = 0
     @State private var isButtonTapsDisabled: Bool = false
@@ -185,10 +183,12 @@ struct InAppMessageBannerView: View {
         let body = VStack(spacing: 0) {
             if (displayContent.placement == .top) {
                 messageContent
+                    .padding(.top, itemSpacing)
                 nub
             } else {
                 nub
                 messageContent
+                    .padding(.bottom, itemSpacing)
             }
         }
         .padding(.horizontal, itemSpacing)
@@ -227,18 +227,6 @@ struct InAppMessageBannerView: View {
         messageBody
             .frame(maxWidth: theme.maxWidth)
             .background(
-                GeometryReader(content: { contentMetrics -> Color in
-                    let size = contentMetrics.size
-                    DispatchQueue.main.async {
-                        if self.lastSize != size {
-                            self.bannerConstraints.size = size
-                            self.lastSize = size
-                        }
-                    }
-                    return Color.airshipTappableClear
-                })
-            )
-            .background(
                 (displayContent.backgroundColor?.color ?? Color.white)
                     .cornerRadius(displayContent.borderRadius ?? 0)
                     .edgesIgnoringSafeArea(displayContent.placement == .top ? .top : .bottom)
@@ -250,6 +238,15 @@ struct InAppMessageBannerView: View {
                     )
             )
             .showing(isShowing: isShowing)
+            .background(
+                GeometryReader(content: { contentMetrics -> Color in
+                    let size = contentMetrics.size
+                    DispatchQueue.main.async {
+                        self.bannerConstraints.updateSize(size)
+                    }
+                    return Color.airshipTappableClear
+                })
+            )
             .padding(theme.padding)
             .airshipApplyTransitioningPlacement(isTopPlacement: displayContent.placement == .top)
             .offset(x: 0, y: swipeOffset)

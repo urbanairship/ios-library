@@ -140,8 +140,13 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
         }
 
         subscription = bannerConstraints.$size.sink { [weak self] size in
-            self?.handleBannerConstraints(size: size)
-            self?.view.layoutIfNeeded()
+            guard let self else { return }
+            self.handleBannerConstraints(size: size)
+            // Don't force layoutIfNeeded() here -- it re-enters viewDidLayoutSubviews
+            // (which reads window.safeAreaLayoutGuide) synchronously and reentrantly,
+            // which can hand back a transient/stale safe-area value mid-computation.
+            // Let the next natural layout pass pick up the constraint change instead.
+            self.view.setNeedsLayout()
         }
     }
 
@@ -153,13 +158,25 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.bannerConstraints.updateWindowSize(self.view.window?.bounds.size)
+        // Use the safe area's width, not the full window's, so the banner never extends
+        // under a side notch/camera housing in landscape. window.bounds/safeAreaInsets are
+        // always available directly (unlike safeAreaLayoutGuide.layoutFrame, which only
+        // reflects the safe area once the guide itself has resolved).
+        let newWindowSize = self.view.window.map { $0.bounds.inset(by: $0.safeAreaInsets).size }
+        self.bannerConstraints.updateWindowSize(newWindowSize)
+        handleBannerConstraints(size: self.bannerConstraints.size)
     }
 
     func createBannerConstraints() {
         self.view.translatesAutoresizingMaskIntoConstraints = false
         if let window = self.view.window {
-            centerXConstraint = self.view.centerXAnchor.constraint(equalTo: window.centerXAnchor)
+            // Set this before the first layout pass too, so a landscape entrance
+            // doesn't briefly render at the full window width.
+            self.bannerConstraints.updateWindowSize(window.bounds.inset(by: window.safeAreaInsets).size)
+
+            // Center within the safe area rather than the full window so asymmetric
+            // insets (e.g. a side notch in landscape) don't push the banner off-center.
+            centerXConstraint = self.view.centerXAnchor.constraint(equalTo: window.safeAreaLayoutGuide.centerXAnchor)
             topConstraint = self.view.topAnchor.constraint(equalTo: window.topAnchor)
             bottomConstraint = self.view.bottomAnchor.constraint(equalTo: window.bottomAnchor)
 
@@ -195,17 +212,24 @@ class InAppMessageBannerViewController: InAppMessageHostingController<InAppMessa
 @MainActor
 class InAppMessageBannerConstraints: ObservableObject {
     @Published
-    var size: CGSize
+    private(set) var size: CGSize
 
-    /// Space available to the banner's window. The banner cannot measure this itself -- its
-    /// own width is what drives the hosting controller's width constraint -- so it has to be
-    /// supplied from outside and refreshed when the window is resized.
+    /// Space available to the banner within the window's safe area. The banner cannot
+    /// measure this itself -- its own width is what drives the hosting controller's width
+    /// constraint -- so it has to be supplied from outside and refreshed when the window
+    /// is resized.
     @Published
     private(set) var windowSize: CGSize
 
     init(size: CGSize) {
         self.size = size
         self.windowSize = size
+    }
+
+    func updateSize(_ size: CGSize) {
+        if self.size != size {
+            self.size = size
+        }
     }
 
     func updateWindowSize(_ size: CGSize?) {
