@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.12.1 - September 2, 2026
+Patch release that fixes in-app message banner layout during device rotation.
+
+### Changes
+- Fixed the in-app message banner not recomputing its safe-area constraints on rotation, causing clipping under a notch/camera housing in landscape and a layout-thrash width oscillation.
+
 ## Version 20.12.0 - August 27, 2026
 Minor release that adds support for resizable scenes on iOS 27 and fixes a few layout glitches during live window resizing.
 
