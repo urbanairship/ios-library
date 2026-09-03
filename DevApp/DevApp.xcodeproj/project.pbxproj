@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0672945E4FD9B38050935474 /* ClaudeAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AEE82CB0EA053D93EC55B9 /* ClaudeAIModel.swift */; };
 		279DCED42E85A544008B5542 /* BiometricLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 279DCECE2E85A544008B5542 /* BiometricLoginView.swift */; };
 		279DCED52E85A544008B5542 /* WeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 279DCECF2E85A544008B5542 /* WeatherView.swift */; };
 		279DCED62E85A544008B5542 /* MapRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 279DCECB2E85A544008B5542 /* MapRouteView.swift */; };
@@ -51,6 +52,11 @@
 		32B5BE4F28F94FD200F2254B /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B5BE4D28F94FD200F2254B /* ToastView.swift */; };
 		45AA81872F4A697800B81FBC /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45AA81862F4A697800B81FBC /* AirshipConfig.plist */; };
 		45AA81882F4A697800B81FBC /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 45AA81862F4A697800B81FBC /* AirshipConfig.plist */; };
+		4F06F25B3167DC030BB3C974 /* OpenAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1172461942BA6D5637D488 /* OpenAIModel.swift */; };
+		5455666730373BA6009F71B9 /* AirshipScenes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E21C4482FEC574A00EA3E56 /* AirshipScenes.framework */; };
+		5455666830373BA6009F71B9 /* AirshipScenes.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E21C4482FEC574A00EA3E56 /* AirshipScenes.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		66E95686C07EE271B565025B /* ClaudeAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AEE82CB0EA053D93EC55B9 /* ClaudeAIModel.swift */; };
+		6DE647A17590C250D4EB83DE /* OpenAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1172461942BA6D5637D488 /* OpenAIModel.swift */; };
 		6E7DB38F28ED0AF3002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6E7DB39028ED0AF4002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
 		6E7DB39128ED0AF5002725F6 /* DeliveryAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7DB37B28ECA830002725F6 /* DeliveryAttributes.swift */; };
@@ -85,10 +91,6 @@
 		6EB21AA12E82008A001A5660 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21A962E820088001A5660 /* AppRouter.swift */; };
 		6EB21AA32E820C5A001A5660 /* AirshipInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21AA22E820C55001A5660 /* AirshipInitializer.swift */; };
 		6EB21AA42E820C5A001A5660 /* AirshipInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21AA22E820C55001A5660 /* AirshipInitializer.swift */; };
-		66E95686C07EE271B565025B /* ClaudeAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AEE82CB0EA053D93EC55B9 /* ClaudeAIModel.swift */; };
-		0672945E4FD9B38050935474 /* ClaudeAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AEE82CB0EA053D93EC55B9 /* ClaudeAIModel.swift */; };
-		6DE647A17590C250D4EB83DE /* OpenAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1172461942BA6D5637D488 /* OpenAIModel.swift */; };
-		4F06F25B3167DC030BB3C974 /* OpenAIModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1172461942BA6D5637D488 /* OpenAIModel.swift */; };
 		6EB21AFE2E821E01001A5660 /* LiveActivityHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21AFD2E821DFD001A5660 /* LiveActivityHandler.swift */; };
 		6EB21AFF2E821E01001A5660 /* LiveActivityHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21AFD2E821DFD001A5660 /* LiveActivityHandler.swift */; };
 		6EB21B022E821E34001A5660 /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB21B012E821E30001A5660 /* DeepLinkHandler.swift */; };
@@ -399,6 +401,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		5455666930373BA6009F71B9 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				5455666830373BA6009F71B9 /* AirshipScenes.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EAAE9AF28C7E309003CAE53 /* Embed App Clips */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -499,8 +512,6 @@
 		6EAAE9F328C7E417003CAE53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EB21A962E820088001A5660 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
 		6EB21AA22E820C55001A5660 /* AirshipInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipInitializer.swift; sourceTree = "<group>"; };
-		B6AEE82CB0EA053D93EC55B9 /* ClaudeAIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAIModel.swift; sourceTree = "<group>"; };
-		9B1172461942BA6D5637D488 /* OpenAIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIModel.swift; sourceTree = "<group>"; };
 		6EB21AFD2E821DFD001A5660 /* LiveActivityHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityHandler.swift; sourceTree = "<group>"; };
 		6EB21B012E821E30001A5660 /* DeepLinkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
 		6EB21B042E821E4C001A5660 /* PushNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationHandler.swift; sourceTree = "<group>"; };
@@ -513,6 +524,8 @@
 		6EDB2B0D28D4E25100A01377 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6EDB2B0F28D4E25100A01377 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EDB2B2A28D4F27800A01377 /* Widgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets.swift; sourceTree = "<group>"; };
+		9B1172461942BA6D5637D488 /* OpenAIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIModel.swift; sourceTree = "<group>"; };
+		B6AEE82CB0EA053D93EC55B9 /* ClaudeAIModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAIModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -538,6 +551,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5455666730373BA6009F71B9 /* AirshipScenes.framework in Frameworks */,
 				279DCF142E85A9DE008B5542 /* Yams in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -814,6 +828,7 @@
 				6EAAE99828C7E308003CAE53 /* Sources */,
 				6EAAE99928C7E308003CAE53 /* Frameworks */,
 				6EAAE99A28C7E308003CAE53 /* Resources */,
+				5455666930373BA6009F71B9 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

@@ -138,6 +138,16 @@ struct HomeView: View {
     }
 
     @ViewBuilder
+    private var carousel: some View {
+        AirshipEmbeddedCarousel(
+            embeddedID: "carousel",
+            placeholder: {}
+        )
+        .frame(height: 160)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    @ViewBuilder
     private var pushButton: some View {
         Button(action: { viewModel.toggleNotifications() }) {
             if let optedIn = viewModel.notificationStatus?.isUserOptedIn {
@@ -162,6 +172,7 @@ struct HomeView: View {
             HStack(spacing: 16) {
                 VStack(spacing: 16) {
                     hero.frame(maxHeight: .infinity)
+                    carousel
                     pushButton
                 }
                 .frame(maxHeight: .infinity)
@@ -171,6 +182,7 @@ struct HomeView: View {
             VStack(spacing: 16) {
                 VStack(spacing: 16) {
                     hero.frame(maxHeight: .infinity)
+                    carousel
                     pushButton
                 }
                 .frame(maxHeight: .infinity)
