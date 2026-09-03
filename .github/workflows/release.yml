@@ -18,12 +18,22 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="${GITHUB_REF#refs/tags/}"
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          # Defense in depth only - the primary control is that VERSION is never
+          # interpolated into a shell script body. The tag filter's trailing "**" accepts
+          # arbitrary suffixes, so fail closed on anything outside the charset our real
+          # tags use (20.12.0, 20.0.0-rc1, 18.0.0-beta.2, 19.9.0-swift5, 19.0.0.1).
+          if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+[0-9A-Za-z.-]*$'; then
+            echo "::error::Refusing to release: tag is not a valid version string"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Check Version
+        env:
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
         run: |
           set -euo pipefail
-          bash ./scripts/check_version.sh "${{ steps.get_version.outputs.VERSION }}"
+          bash ./scripts/check_version.sh "$VERSION"
 
       - name: Slack Notification
         uses: lazy-actions/slatify@master
@@ -209,15 +219,15 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="${GITHUB_REF#refs/tags/}"
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Get the release notes
         id: get_release_notes
+        env:
+          VERSION: ${{ steps.get_version.outputs.VERSION }}
         run: |
           set -euo pipefail
-          
-          VERSION="${{ steps.get_version.outputs.VERSION }}"
-          
+
           # Match line starting with '## Version [VERSION]' 
           # but allow for the date suffix that follows.
           NOTES=$(awk -v ver="$VERSION" '
@@ -296,7 +306,7 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="${GITHUB_REF#refs/tags/}"
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Publish Pods
         env:
@@ -315,13 +325,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [deploy-github, deploy-pods]
     steps:
-      - name: Get the version
-        id: get_version
-        run: |
-          set -euo pipefail
-          VERSION="${GITHUB_REF#refs/tags/}"
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-
       - name: Slack Notification
         uses: lazy-actions/slatify@master
         if: always()

@@ -1,12 +1,12 @@
 #!/bin/bash
-set -e
-set -x
+set -euo pipefail
 
-ROOT_PATH=`dirname "${0}"`/..
-AIRSHIP_VERSION=$(bash "$ROOT_PATH/scripts/airship_version.sh")
+ROOT_PATH="$(dirname "$0")/.."
+AIRSHIP_VERSION="$(bash "$ROOT_PATH/scripts/airship_version.sh")"
 
-if [ $1 = $AIRSHIP_VERSION ]; then
- exit 0
-else
- exit 1
+if [ "${1:-}" = "$AIRSHIP_VERSION" ]; then
+  exit 0
 fi
+
+echo "Version mismatch: tag does not match AirshipConfig.xcconfig ($AIRSHIP_VERSION)" >&2
+exit 1
