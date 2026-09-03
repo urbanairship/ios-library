@@ -36,9 +36,9 @@ jobs:
           set -euo pipefail
           VERSION="${GITHUB_REF#refs/tags/}"
           MAJOR_VERSION=$(echo "$VERSION" | cut -d. -f1)
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-          echo "VERSION_DIR=v$MAJOR_VERSION" >> $GITHUB_OUTPUT
-          echo "VERSION_DIR=v$MAJOR_VERSION" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "VERSION_DIR=v$MAJOR_VERSION" >> "$GITHUB_OUTPUT"
+          echo "VERSION_DIR=v$MAJOR_VERSION" >> "$GITHUB_ENV"
 
       - name: Check Version
         env:
@@ -79,12 +79,12 @@ jobs:
           # Compare major versions
           if [ "$CURRENT_MAJOR" = "$LATEST_MAJOR" ]; then
             echo "✅ Current major version IS the latest!"
-            echo "IS_LATEST=true" >> $GITHUB_OUTPUT
+            echo "IS_LATEST=true" >> "$GITHUB_OUTPUT"
           else
             echo "⚠️  Current major version is NOT the latest"
             echo "   Current major: $CURRENT_MAJOR"
             echo "   Latest major:  $LATEST_MAJOR"
-            echo "IS_LATEST=false" >> $GITHUB_OUTPUT
+            echo "IS_LATEST=false" >> "$GITHUB_OUTPUT"
             
             # For non-latest major versions, deploy to version-only
             echo "🔄 This will deploy documentation for major version $CURRENT_MAJOR only"
@@ -98,7 +98,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "🔨 Building DocC for version: $VERSION_DIR"
-          make build-docC version=$VERSION_DIR
+          make build-docC version="$VERSION_DIR"
           
       # Prepare complete deployment structure in temp_root
       - name: Prepare deployment structure
@@ -122,7 +122,7 @@ jobs:
           
           # 1. Always deploy to versioned directory
           echo "📁 Copying temp_docs to temp_root/$VERSION_DIR/"
-          cp -r temp_docs temp_root/$VERSION_DIR
+          cp -r temp_docs "temp_root/$VERSION_DIR"
           
           # 2. For latest version, also deploy to 'latest' and root index
           if [ "$IS_LATEST" = "true" ]; then
