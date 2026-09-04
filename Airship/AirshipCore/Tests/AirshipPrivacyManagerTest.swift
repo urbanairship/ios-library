@@ -135,6 +135,108 @@ struct DefaultAirshipPrivacyManagerTest {
         #expect([] == self.privacyManager.enabledFeatures)
     }
 
+    /// Enabling a feature while another is remotely disabled must not persist the
+    /// remote-config subtraction — the remotely disabled feature has to come back
+    /// once the remote disablement is lifted.
+    @Test
+    @MainActor
+    func testEnableFeaturesDoesNotPersistRemoteDisabledFeatures() async {
+        self.config.updateRemoteConfig(
+            RemoteConfig(disabledFeatures: .analytics)
+        )
+
+        self.privacyManager.enableFeatures(.push)
+        #expect(self.privacyManager.enabledFeatures == AirshipFeature.all.subtracting(.analytics))
+
+        self.config.updateRemoteConfig(
+            RemoteConfig(disabledFeatures: [])
+        )
+
+        #expect(self.privacyManager.enabledFeatures == .all)
+    }
+
+    /// Same as above through `disableFeatures`: only the requested feature may be
+    /// removed from the local set.
+    @Test
+    @MainActor
+    func testDisableFeaturesDoesNotPersistRemoteDisabledFeatures() async {
+        self.config.updateRemoteConfig(
+            RemoteConfig(disabledFeatures: .analytics)
+        )
+
+        self.privacyManager.disableFeatures(.push)
+        #expect(
+            self.privacyManager.enabledFeatures == AirshipFeature.all.subtracting([.analytics, .push])
+        )
+
+        self.config.updateRemoteConfig(
+            RemoteConfig(disabledFeatures: [])
+        )
+
+        #expect(self.privacyManager.enabledFeatures == AirshipFeature.all.subtracting(.push))
+    }
+
+    /// `migrateData` runs inside `init` and calls `disableFeatures`, so it must not
+    /// bake in features that are remotely disabled at takeOff.
+    @Test
+    @MainActor
+    func testMigrateDataDoesNotPersistRemoteDisabledFeatures() async {
+        let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
+        dataStore.setBool(false, forKey: "UAAnalyticsEnabled")
+
+        let config = RuntimeConfig.testConfig()
+        config.updateRemoteConfig(
+            RemoteConfig(disabledFeatures: .push)
+        )
+
+        let privacyManager = DefaultAirshipPrivacyManager(
+            dataStore: dataStore,
+            config: config,
+            defaultEnabledFeatures: .all,
+            notificationCenter: notificationCenter
+        )
+
+        #expect(
+            privacyManager.enabledFeatures == AirshipFeature.all.subtracting([.analytics, .push])
+        )
+
+        config.updateRemoteConfig(
+            RemoteConfig(disabledFeatures: [])
+        )
+
+        // Analytics stays off — that is the migrated legacy value. Push comes back.
+        #expect(privacyManager.enabledFeatures == AirshipFeature.all.subtracting(.analytics))
+    }
+
+    /// The read-modify-write has to happen under the lock, otherwise concurrent
+    /// enables lose updates.
+    @Test
+    func testConcurrentEnableFeatures() async {
+        self.privacyManager.disableFeatures(.all)
+        #expect(self.privacyManager.enabledFeatures == [])
+
+        let features: [AirshipFeature] = [
+            .inAppAutomation,
+            .messageCenter,
+            .push,
+            .analytics,
+            .tagsAndAttributes,
+            .contacts,
+            .featureFlags,
+            .onDeviceAI
+        ]
+
+        await withTaskGroup(of: Void.self) { group in
+            for feature in features {
+                group.addTask {
+                    self.privacyManager.enableFeatures(feature)
+                }
+            }
+        }
+
+        #expect(self.privacyManager.enabledFeatures == .all)
+    }
+
 
     @Test
     @MainActor

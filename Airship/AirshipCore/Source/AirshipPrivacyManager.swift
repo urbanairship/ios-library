@@ -142,11 +142,20 @@ final class DefaultAirshipPrivacyManager: InternalAirshipPrivacyManager {
     }
 
     func enableFeatures(_ features: AirshipFeature) {
-        self.enabledFeatures.insert(features)
+        // Mutate the local set, not the `enabledFeatures` view. Going through the
+        // getter would persist the remote-config subtraction and permanently bake in
+        // whatever was remotely disabled at this instant.
+        lock.sync {
+            self.localEnabledFeatures.insert(features)
+            notifyUpdateLocked()
+        }
     }
 
     func disableFeatures(_ features: AirshipFeature) {
-        self.enabledFeatures.remove(features)
+        lock.sync {
+            self.localEnabledFeatures.remove(features)
+            notifyUpdateLocked()
+        }
     }
 
     func isEnabled(_ feature: AirshipFeature) -> Bool {

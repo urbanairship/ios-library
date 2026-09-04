@@ -80,11 +80,17 @@ final class TestPrivacyManager: InternalAirshipPrivacyManager, @unchecked Sendab
     }
 
     func enableFeatures(_ features: AirshipFeature) {
-        self.enabledFeatures.insert(features)
+        lock.sync {
+            self.localEnabledFeatures.insert(features)
+            notifyUpdateLocked()
+        }
     }
 
     func disableFeatures(_ features: AirshipFeature) {
-        self.enabledFeatures.remove(features)
+        lock.sync {
+            self.localEnabledFeatures.remove(features)
+            notifyUpdateLocked()
+        }
     }
 
     func isEnabled(_ feature: AirshipFeature) -> Bool {
