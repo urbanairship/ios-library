@@ -352,7 +352,7 @@ final class DefaultAirshipURLAllowList: AirshipURLAllowList {
         let matches = expression.numberOfMatches(
             in: pattern,
             options: [],
-            range: NSMakeRange(0, pattern.count)
+            range: NSRange(pattern.startIndex..., in: pattern)
         )
 
         return matches > 0

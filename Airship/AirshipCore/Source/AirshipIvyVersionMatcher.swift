@@ -222,7 +222,7 @@ public struct AirshipIvyVersionMatcher: Sendable {
         return regex.matches(
             in: string,
             options: [],
-            range: NSRange(location: 0, length: string.count)
+            range: NSRange(string.startIndex..., in: string)
         )
     }
 

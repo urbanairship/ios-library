@@ -18,6 +18,40 @@ final class AirshipIvyVersionMatcherTest: XCTestCase {
         XCTAssertNotNil(try? AirshipIvyVersionMatcher(versionConstraint: "1.2.3-junk"))
     }
 
+    /// Regression test for String.count vs NSString/UTF-16 length conflation.
+    func testSubVersionConstraintWithSupplementaryScalar() throws {
+        // "🚀" is a single grapheme but 2 UTF-16 code units, so
+        // "1.0🚀+".count (5) < "1.0🚀+".utf16.count (6).
+        let matcher = try AirshipIvyVersionMatcher(versionConstraint: "1.0🚀+")
+
+        XCTAssertTrue(matcher.evaluate(version: "1.0🚀"))
+        XCTAssertTrue(matcher.evaluate(version: "1.0🚀.5"))
+        XCTAssertFalse(matcher.evaluate(version: "1.0"))
+        XCTAssertFalse(matcher.evaluate(version: "2.0🚀"))
+    }
+
+    /// Same conflation, but with multiple supplementary-plane characters so the
+    /// UTF-16 length exceeds the grapheme count by more than one.
+    func testSubVersionConstraintWithMultipleSupplementaryScalars() throws {
+        // count (6) vs utf16.count (8)
+        let matcher = try AirshipIvyVersionMatcher(versionConstraint: "1.0🚀🚀+")
+
+        XCTAssertTrue(matcher.evaluate(version: "1.0🚀🚀"))
+        XCTAssertTrue(matcher.evaluate(version: "1.0🚀🚀.1"))
+        XCTAssertFalse(matcher.evaluate(version: "1.0🚀"))
+    }
+
+    /// Baseline: pure-ASCII sub-versions (where count == utf16.count) are
+    /// unaffected by the fix and keep working.
+    func testSubVersionConstraintASCIIStillMatches() throws {
+        let matcher = try AirshipIvyVersionMatcher(versionConstraint: "1.0+")
+
+        XCTAssertTrue(matcher.evaluate(version: "1.0"))
+        XCTAssertTrue(matcher.evaluate(version: "1.0.1"))
+        XCTAssertFalse(matcher.evaluate(version: "1"))
+        XCTAssertFalse(matcher.evaluate(version: "2"))
+    }
+
     func testRangeLongVersion() throws {
         let matcher = try AirshipIvyVersionMatcher(versionConstraint: "[1.22.6.189,)")
 

@@ -336,7 +336,7 @@ final class DefaultAirshipPush: AirshipPush, @unchecked Sendable {
                 if regex.numberOfMatches(
                     in: deviceToken,
                     options: [],
-                    range: NSRange(location: 0, length: deviceToken.count)
+                    range: NSRange(deviceToken.startIndex..., in: deviceToken)
                 ) != 0 {
                     AirshipLogger.error(
                         "Device token \(deviceToken) contains invalid characters. Only hex characters are allowed"
