@@ -206,6 +206,12 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>JurassicPark.otf</string>
+		<string>NotoSans-Regular.ttf</string>
+		<string>NotoSans-Bold.ttf</string>
+		<string>NotoSans-Italic.ttf</string>
+		<string>NotoSans-BoldItalic.ttf</string>
+		<string>NotoSansArabic-Regular.ttf</string>
+		<string>NotoSansArabic-Bold.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

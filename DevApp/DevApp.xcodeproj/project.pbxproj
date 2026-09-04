@@ -29,6 +29,18 @@
 		279DCEF92E85A6A7008B5542 /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = 279DCEF82E85A6A7008B5542 /* Yams */; };
 		279DCEFB2E85A6C6008B5542 /* JurassicPark.otf in Resources */ = {isa = PBXBuildFile; fileRef = 279DCEFA2E85A6C6008B5542 /* JurassicPark.otf */; };
 		279DCEFC2E85A6C6008B5542 /* JurassicPark.otf in Resources */ = {isa = PBXBuildFile; fileRef = 279DCEFA2E85A6C6008B5542 /* JurassicPark.otf */; };
+		27F07A5C2E85A6C6008B5F03 /* NotoSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F07A5A2E85A6C6008B5F01 /* NotoSans-Regular.ttf */; };
+		27F07A5D2E85A6C6008B5F04 /* NotoSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F07A5A2E85A6C6008B5F01 /* NotoSans-Regular.ttf */; };
+		27F07A5E2E85A6C6008B5F05 /* NotoSansArabic-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F07A5B2E85A6C6008B5F02 /* NotoSansArabic-Regular.ttf */; };
+		27F07A5F2E85A6C6008B5F06 /* NotoSansArabic-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F07A5B2E85A6C6008B5F02 /* NotoSansArabic-Regular.ttf */; };
+		27F07A642E85A6C6008B5F0B /* NotoSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F07A602E85A6C6008B5F07 /* NotoSans-Bold.ttf */; };
+		27F07A652E85A6C6008B5F0C /* NotoSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F07A602E85A6C6008B5F07 /* NotoSans-Bold.ttf */; };
+		27F07A662E85A6C6008B5F0D /* NotoSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F07A612E85A6C6008B5F08 /* NotoSans-Italic.ttf */; };
+		27F07A672E85A6C6008B5F0E /* NotoSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F07A612E85A6C6008B5F08 /* NotoSans-Italic.ttf */; };
+		27F07A682E85A6C6008B5F0F /* NotoSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F07A622E85A6C6008B5F09 /* NotoSans-BoldItalic.ttf */; };
+		27F07A692E85A6C6008B5F10 /* NotoSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F07A622E85A6C6008B5F09 /* NotoSans-BoldItalic.ttf */; };
+		27F07A6A2E85A6C6008B5F11 /* NotoSansArabic-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F07A632E85A6C6008B5F0A /* NotoSansArabic-Bold.ttf */; };
+		27F07A6B2E85A6C6008B5F12 /* NotoSansArabic-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27F07A632E85A6C6008B5F0A /* NotoSansArabic-Bold.ttf */; };
 		279DCF032E85A75C008B5542 /* EmbeddedPlaygroundPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 279DCEFE2E85A75C008B5542 /* EmbeddedPlaygroundPicker.swift */; };
 		279DCF042E85A75C008B5542 /* PlaceholderToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 279DCF012E85A75C008B5542 /* PlaceholderToggleView.swift */; };
 		279DCF052E85A75C008B5542 /* EmbeddedPlaygroundMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 279DCEFD2E85A75C008B5542 /* EmbeddedPlaygroundMenuView.swift */; };
@@ -482,6 +494,12 @@
 		279DCEE32E85A5BD008B5542 /* Messages */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Messages; sourceTree = "<group>"; };
 		279DCEE42E85A5BD008B5542 /* Scenes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scenes; sourceTree = "<group>"; };
 		279DCEFA2E85A6C6008B5542 /* JurassicPark.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = JurassicPark.otf; sourceTree = "<group>"; };
+		27F07A5A2E85A6C6008B5F01 /* NotoSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSans-Regular.ttf"; sourceTree = "<group>"; };
+		27F07A5B2E85A6C6008B5F02 /* NotoSansArabic-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansArabic-Regular.ttf"; sourceTree = "<group>"; };
+		27F07A602E85A6C6008B5F07 /* NotoSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSans-Bold.ttf"; sourceTree = "<group>"; };
+		27F07A612E85A6C6008B5F08 /* NotoSans-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSans-Italic.ttf"; sourceTree = "<group>"; };
+		27F07A622E85A6C6008B5F09 /* NotoSans-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSans-BoldItalic.ttf"; sourceTree = "<group>"; };
+		27F07A632E85A6C6008B5F0A /* NotoSansArabic-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansArabic-Bold.ttf"; sourceTree = "<group>"; };
 		279DCEFD2E85A75C008B5542 /* EmbeddedPlaygroundMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedPlaygroundMenuView.swift; sourceTree = "<group>"; };
 		279DCEFE2E85A75C008B5542 /* EmbeddedPlaygroundPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedPlaygroundPicker.swift; sourceTree = "<group>"; };
 		279DCEFF2E85A75C008B5542 /* EmbeddedPlaygroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedPlaygroundView.swift; sourceTree = "<group>"; };
@@ -580,6 +598,12 @@
 			isa = PBXGroup;
 			children = (
 				279DCEFA2E85A6C6008B5542 /* JurassicPark.otf */,
+				27F07A5A2E85A6C6008B5F01 /* NotoSans-Regular.ttf */,
+				27F07A5B2E85A6C6008B5F02 /* NotoSansArabic-Regular.ttf */,
+				27F07A602E85A6C6008B5F07 /* NotoSans-Bold.ttf */,
+				27F07A612E85A6C6008B5F08 /* NotoSans-Italic.ttf */,
+				27F07A622E85A6C6008B5F09 /* NotoSans-BoldItalic.ttf */,
+				27F07A632E85A6C6008B5F0A /* NotoSansArabic-Bold.ttf */,
 				279DCED32E85A544008B5542 /* CustomView */,
 				279DCEE02E85A558008B5542 /* ThomasLayoutViewModel.swift */,
 				279DCF022E85A75C008B5542 /* Embedded Playground View */,
@@ -1120,6 +1144,12 @@
 				279DCEE82E85A5BD008B5542 /* Scenes in Resources */,
 				279DCEE92E85A5BD008B5542 /* Messages in Resources */,
 				279DCEFB2E85A6C6008B5542 /* JurassicPark.otf in Resources */,
+				27F07A5C2E85A6C6008B5F03 /* NotoSans-Regular.ttf in Resources */,
+				27F07A5E2E85A6C6008B5F05 /* NotoSansArabic-Regular.ttf in Resources */,
+				27F07A642E85A6C6008B5F0B /* NotoSans-Bold.ttf in Resources */,
+				27F07A662E85A6C6008B5F0D /* NotoSans-Italic.ttf in Resources */,
+				27F07A682E85A6C6008B5F0F /* NotoSans-BoldItalic.ttf in Resources */,
+				27F07A6A2E85A6C6008B5F11 /* NotoSansArabic-Bold.ttf in Resources */,
 				45AA81882F4A697800B81FBC /* AirshipConfig.plist in Resources */,
 				6EAAE97F28C7E18C003CAE53 /* Assets.xcassets in Resources */,
 			);
@@ -1132,6 +1162,12 @@
 				279DCEE62E85A5BD008B5542 /* Scenes in Resources */,
 				279DCEE72E85A5BD008B5542 /* Messages in Resources */,
 				279DCEFC2E85A6C6008B5542 /* JurassicPark.otf in Resources */,
+				27F07A5D2E85A6C6008B5F04 /* NotoSans-Regular.ttf in Resources */,
+				27F07A5F2E85A6C6008B5F06 /* NotoSansArabic-Regular.ttf in Resources */,
+				27F07A652E85A6C6008B5F0C /* NotoSans-Bold.ttf in Resources */,
+				27F07A672E85A6C6008B5F0E /* NotoSans-Italic.ttf in Resources */,
+				27F07A692E85A6C6008B5F10 /* NotoSans-BoldItalic.ttf in Resources */,
+				27F07A6B2E85A6C6008B5F12 /* NotoSansArabic-Bold.ttf in Resources */,
 				45AA81872F4A697800B81FBC /* AirshipConfig.plist in Resources */,
 				6EAAE9BE28C7E31E003CAE53 /* Assets.xcassets in Resources */,
 			);
