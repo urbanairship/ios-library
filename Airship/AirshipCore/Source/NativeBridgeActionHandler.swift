@@ -61,17 +61,17 @@ final class NativeBridgeActionHandler: NativeBridgeActionHandlerProtocol {
          * run-action-cb/<actionName>/<actionValue>/<callbackID>
          */
         if command.name == "run-action-cb" {
-            if command.arguments.count != 3 {
-                AirshipLogger.debug(
-                    String(
-                        format:
-                            "Unable to run-action-cb, wrong number of arguments. %@",
-                        command.arguments
-                    )
+            // Must return, not just log: the subscripts below are exactly what this
+            // check guards. `JavaScriptCommand` legitimately yields fewer than three
+            // arguments -- an empty path gives none, and a component whose percent
+            // encoding does not decode is dropped -- so falling through traps.
+            guard command.arguments.count == 3 else {
+                AirshipLogger.error(
+                    "Unable to run-action-cb, wrong number of arguments: \(command.arguments)"
                 )
-                AirshipLogger.error("Unable to run-action-cb, wrong number of arguments")
+                return nil
             }
-            
+
             let actionName = command.arguments[0]
             let actionValue = NativeBridgeActionHandler.parse(
                 command.arguments[1]

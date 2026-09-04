@@ -186,6 +186,65 @@ struct NativeBridgeActionHandlerTest {
         #expect(expecteActions == self.testActionRunner.ranActions)
     }
 
+    /// `uairship://run-action-cb` with no path yields zero arguments. The handler
+    /// must reject it rather than subscript its way off the end.
+    @Test
+    @MainActor
+    func testRunActionCBNoArguments() async throws {
+        let command = JavaScriptCommand(
+            url: URL(string: "uairship://run-action-cb")!
+        )
+        #expect(command.arguments.isEmpty)
+
+        let result = await self.actionHandler.runActionsForCommand(
+            command: command,
+            metadata: metadata,
+            webView: self.webView
+        )
+
+        #expect(result == nil)
+        #expect(self.testActionRunner.ranActions.isEmpty)
+    }
+
+    /// A component whose percent-encoding does not decode is dropped by
+    /// `JavaScriptCommand`, so a three-segment URL can arrive with two arguments.
+    @Test
+    @MainActor
+    func testRunActionCBDroppedArgument() async throws {
+        let command = JavaScriptCommand(
+            url: URL(string: "uairship://run-action-cb/test_action/%FF/callback-id")!
+        )
+        #expect(command.arguments.count == 2)
+
+        let result = await self.actionHandler.runActionsForCommand(
+            command: command,
+            metadata: metadata,
+            webView: self.webView
+        )
+
+        #expect(result == nil)
+        #expect(self.testActionRunner.ranActions.isEmpty)
+    }
+
+    /// Too many arguments is the symmetric case.
+    @Test
+    @MainActor
+    func testRunActionCBTooManyArguments() async throws {
+        let command = JavaScriptCommand(
+            url: URL(string: "uairship://run-action-cb/test_action/%22hi%22/callback-id/extra")!
+        )
+        #expect(command.arguments.count == 4)
+
+        let result = await self.actionHandler.runActionsForCommand(
+            command: command,
+            metadata: metadata,
+            webView: self.webView
+        )
+
+        #expect(result == nil)
+        #expect(self.testActionRunner.ranActions.isEmpty)
+    }
+
     @Test
     @MainActor
     func testRunBasicActions() async throws {
