@@ -7,7 +7,11 @@ import Foundation
 /// Expected arguments, dictionary with keys:
 /// -`enable_airship_usage`: Bool?. If related airship features should be enabled if the permission is granted.
 /// -`fallback_system_settings`: Bool?. If denied, fallback to system settings.
-/// -`permission`: String. The name of the permission. `post_notifications`, `bluetooth`, `mic`, `location`, `contacts`, `camera`, etc...
+/// -`permission`: String. An `AirshipPermission` raw value, e.g. `display_notifications`, `location`, `camera`, `photo_library`.
+///
+/// Only `.displayNotifications` has a built-in delegate. Prompting for any other permission
+/// requires the app to register an `AirshipPermissionDelegate` with `PermissionsManager`,
+/// otherwise the prompt resolves to `.notDetermined` and nothing is shown.
 ///
 /// Valid situations: `ActionSituation.foregroundPush`, `ActionSituation.launchedFromPush`,
 /// `ActionSituation.webViewInvocation`, `ActionSituation.manualInvocation`,

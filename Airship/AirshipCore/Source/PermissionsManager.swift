@@ -385,18 +385,33 @@ fileprivate struct SystemSettingsNavigator: SystemSettingsNavigatorProtocol {
     @MainActor
     private func systemSettingURLForPermission(_ permission: AirshipPermission) -> URL? {
 #if os(macOS)
-        let path = switch(permission) {
+        let path: String? = switch(permission) {
         case .displayNotifications:
             "x-apple.systempreferences:com.apple.Notifications-Settings.extension"
         case .location:
             "x-apple.systempreferences:com.apple.preference.security?Privacy_LocationServices"
+        case .camera:
+            "x-apple.systempreferences:com.apple.preference.security?Privacy_Camera"
+        case .microphone:
+            "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone"
+        case .bluetooth:
+            "x-apple.systempreferences:com.apple.preference.security?Privacy_Bluetooth"
+        case .photoLibrary:
+            "x-apple.systempreferences:com.apple.preference.security?Privacy_Photos"
+        case .contacts:
+            "x-apple.systempreferences:com.apple.preference.security?Privacy_Contacts"
+        case .appTrackingTransparency:
+            // No App Tracking Transparency on macOS.
+            nil
         }
+        guard let path else { return nil }
         return URL(string: path)
 #elseif !os(watchOS)
         let string = switch(permission) {
         case .displayNotifications:
             UIApplication.openNotificationSettingsURLString
-        case .location:
+        default:
+            // Every other permission is toggled on the app's own settings page.
             UIApplication.openSettingsURLString
         }
         return URL(string: string)

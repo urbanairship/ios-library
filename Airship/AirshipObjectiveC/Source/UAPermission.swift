@@ -13,10 +13,34 @@ public enum UAPermission: Int, Sendable {
     /// Location
     case location = 1
 
+    /// App Tracking Transparency
+    case appTrackingTransparency = 2
+
+    /// Camera
+    case camera = 3
+
+    /// Microphone
+    case microphone = 4
+
+    /// Bluetooth
+    case bluetooth = 5
+
+    /// Photo library
+    case photoLibrary = 6
+
+    /// Contacts
+    case contacts = 7
+
     var airshipPermission: AirshipPermission {
         switch self {
         case .displayNotifications: return .displayNotifications
         case .location: return .location
+        case .appTrackingTransparency: return .appTrackingTransparency
+        case .camera: return .camera
+        case .microphone: return .microphone
+        case .bluetooth: return .bluetooth
+        case .photoLibrary: return .photoLibrary
+        case .contacts: return .contacts
         }
     }
 
@@ -24,6 +48,12 @@ public enum UAPermission: Int, Sendable {
         switch permission {
         case .displayNotifications: self = .displayNotifications
         case .location: self = .location
+        case .appTrackingTransparency: self = .appTrackingTransparency
+        case .camera: self = .camera
+        case .microphone: self = .microphone
+        case .bluetooth: self = .bluetooth
+        case .photoLibrary: self = .photoLibrary
+        case .contacts: self = .contacts
         @unknown default: self = .displayNotifications
         }
     }

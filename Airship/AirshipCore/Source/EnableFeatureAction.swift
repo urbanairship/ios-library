@@ -7,6 +7,11 @@
 /// - "user_notifications": To enable user notifications.
 /// - "location": To enable location updates.
 /// - "background_location": To enable location and allow background updates.
+/// - Any `AirshipPermission` raw value, e.g. "camera" or "photo_library".
+///
+/// Only `.displayNotifications` has a built-in delegate. Prompting for any other permission
+/// requires the app to register an `AirshipPermissionDelegate` with `PermissionsManager`,
+/// otherwise the prompt resolves to `.notDetermined` and nothing is shown.
 ///
 /// Valid situations:  `ActionSituation.launchedFromPush`,
 /// `ActionSituation.webViewInvocation`, `ActionSituation.manualInvocation`,
@@ -90,7 +95,12 @@ public final class EnableFeatureAction: AirshipAction {
         case EnableFeatureAction.backgroundLocationActionValue:
             return .location
         default:
-            throw AirshipErrors.error("Invalid argument \(value)")
+            // Permissions added after these three are named by their AirshipPermission
+            // raw value, so no per-permission argument constant is needed.
+            guard let permission = AirshipPermission(rawValue: value) else {
+                throw AirshipErrors.error("Invalid argument \(value)")
+            }
+            return permission
         }
     }
 }

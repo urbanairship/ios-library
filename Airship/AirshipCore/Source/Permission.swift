@@ -9,4 +9,22 @@ public enum AirshipPermission: String, Sendable, Codable {
 
     /// Location
     case location
+
+    /// App Tracking Transparency
+    case appTrackingTransparency = "app_tracking_transparency"
+
+    /// Camera
+    case camera
+
+    /// Microphone
+    case microphone
+
+    /// Bluetooth
+    case bluetooth
+
+    /// Photo library
+    case photoLibrary = "photo_library"
+
+    /// Contacts
+    case contacts
 }

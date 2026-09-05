@@ -122,6 +122,41 @@ struct EnableFeatureActionTest {
         await fulfillment(of: [prompted], timeout: 10)
     }
 
+    @Test(
+        arguments: [
+            ("app_tracking_transparency", AirshipPermission.appTrackingTransparency),
+            ("camera", .camera),
+            ("microphone", .microphone),
+            ("bluetooth", .bluetooth),
+            ("photo_library", .photoLibrary),
+            ("contacts", .contacts),
+        ]
+    )
+    func testPermissionRawValueArguments(
+        argument: String,
+        expected: AirshipPermission
+    ) async throws {
+        let arguments = ActionArguments(
+            string: argument,
+            situation: .manualInvocation
+        )
+
+        let prompted = AirshipTestExpectation(description: "Prompted")
+        testPrompter.onPrompt = {
+            permission,
+            enableAirshipUsage,
+            fallbackSystemSetting in
+            #expect(permission == expected)
+            #expect(enableAirshipUsage)
+            #expect(fallbackSystemSetting)
+            prompted.fulfill()
+            return AirshipPermissionResult(startStatus: .notDetermined, endStatus: .notDetermined)
+        }
+
+        _ = try await self.action.perform(arguments: arguments)
+        await fulfillment(of: [prompted], timeout: 10)
+    }
+
     @Test
     func testInvalidArgument() async throws {
         let arguments = ActionArguments(
