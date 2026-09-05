@@ -95,6 +95,7 @@ struct RootView<Content: View>: View {
         // Orientation is read straight off the tracker, so a resize re-renders through the usual
         // observation path -- no notification to subscribe to and no state to keep in sync.
         content(orientationTracker.orientation, resolveWindowSize())
+            .accessibilityIdentifier("thomas:root")
             .environmentObject(self.thomasEnvironment)
             .environmentObject(self.thomasState)
             .environmentObject(self.formInputCollector)

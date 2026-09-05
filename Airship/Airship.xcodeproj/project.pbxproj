@@ -342,6 +342,7 @@
 		6E21C31B2FEC3B9900EA3E56 /* ThomasToggleStyleInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2F22FEC3B9900EA3E56 /* ThomasToggleStyleInfo.swift */; };
 		6E21C31C2FEC3B9900EA3E56 /* ThomasOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2E72FEC3B9900EA3E56 /* ThomasOrientation.swift */; };
 		6E21C31D2FEC3B9900EA3E56 /* ThomasViewInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2F42FEC3B9900EA3E56 /* ThomasViewInfo.swift */; };
+		6EA11D022FEC3B9900EA3E56 /* ThomasViewInfo+AccessibilityIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA11D012FEC3B9900EA3E56 /* ThomasViewInfo+AccessibilityIdentifier.swift */; };
 		6E21C31E2FEC3B9900EA3E56 /* ThomasAttributeName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2D52FEC3B9900EA3E56 /* ThomasAttributeName.swift */; };
 		6E21C31F2FEC3B9900EA3E56 /* ThomasFormValidationMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2CE2FEC3B9900EA3E56 /* ThomasFormValidationMode.swift */; };
 		6E21C3202FEC3B9900EA3E56 /* ThomasPresentationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2EA2FEC3B9900EA3E56 /* ThomasPresentationInfo.swift */; };
@@ -1968,6 +1969,7 @@
 		6E21C2F22FEC3B9900EA3E56 /* ThomasToggleStyleInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasToggleStyleInfo.swift; sourceTree = "<group>"; };
 		6E21C2F32FEC3B9900EA3E56 /* ThomasValidationInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasValidationInfo.swift; sourceTree = "<group>"; };
 		6E21C2F42FEC3B9900EA3E56 /* ThomasViewInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewInfo.swift; sourceTree = "<group>"; };
+		6EA11D012FEC3B9900EA3E56 /* ThomasViewInfo+AccessibilityIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ThomasViewInfo+AccessibilityIdentifier.swift"; sourceTree = "<group>"; };
 		6E21C2F52FEC3B9900EA3E56 /* ThomasVisibilityInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasVisibilityInfo.swift; sourceTree = "<group>"; };
 		6E21C2F62FEC3B9900EA3E56 /* ThomasWindowSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasWindowSize.swift; sourceTree = "<group>"; };
 		6E21C2F72FEC3B9900EA3E56 /* ThomasPagerControllerBranching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasPagerControllerBranching.swift; sourceTree = "<group>"; };
@@ -3726,6 +3728,7 @@
 				6E21C2F22FEC3B9900EA3E56 /* ThomasToggleStyleInfo.swift */,
 				6E21C2F32FEC3B9900EA3E56 /* ThomasValidationInfo.swift */,
 				6E21C2F42FEC3B9900EA3E56 /* ThomasViewInfo.swift */,
+				6EA11D012FEC3B9900EA3E56 /* ThomasViewInfo+AccessibilityIdentifier.swift */,
 				6E21C2F52FEC3B9900EA3E56 /* ThomasVisibilityInfo.swift */,
 				6E21C2F62FEC3B9900EA3E56 /* ThomasWindowSize.swift */,
 				6E21C2F72FEC3B9900EA3E56 /* ThomasPagerControllerBranching.swift */,
@@ -7517,6 +7520,7 @@
 				6E21C3AF2FEC3C1E00EA3E56 /* PagerSwipeDirection.swift in Sources */,
 				6EAFC25D2FF2DEE5005FA58D /* AirshipWebViewChallengeResolver.swift in Sources */,
 				6E21C31D2FEC3B9900EA3E56 /* ThomasViewInfo.swift in Sources */,
+				6EA11D022FEC3B9900EA3E56 /* ThomasViewInfo+AccessibilityIdentifier.swift in Sources */,
 				6E21C31E2FEC3B9900EA3E56 /* ThomasAttributeName.swift in Sources */,
 				6E21C31F2FEC3B9900EA3E56 /* ThomasFormValidationMode.swift in Sources */,
 				6E21C3202FEC3B9900EA3E56 /* ThomasPresentationInfo.swift in Sources */,

@@ -19,6 +19,16 @@ struct ViewFactory: Sendable {
         _ viewInfo: ThomasViewInfo,
         constraints: ViewConstraints
     ) -> some View {
+        makeView(viewInfo, constraints: constraints)
+            .modifier(ThomasAccessibilityIdentifierModifier(identifier: viewInfo.accessibilityIdentifier))
+    }
+
+    @MainActor
+    @ViewBuilder
+    private func makeView(
+        _ viewInfo: ThomasViewInfo,
+        constraints: ViewConstraints
+    ) -> some View {
         switch viewInfo {
         case .container(let info):
             Container(info: info, constraints: constraints)
@@ -97,6 +107,22 @@ struct ViewFactory: Sendable {
             AsyncViewController(info: info, constraints: constraints, resolver: extensions.asyncViewResolver, imageLoader: extensions.imageLoader)
         case .videoController(let info):
             VideoController(info: info, constraints: constraints)
+        }
+    }
+}
+
+/// A named modifier keeps the optional branch out of every caller's static type: `createView` wraps
+/// every Thomas view, so an inline conditional here would double each view's type and risk the
+/// `-O` archive-build opaque-type blowup described on `ThomasConstraintsViewModifier`.
+private struct ThomasAccessibilityIdentifierModifier: ViewModifier {
+    let identifier: String?
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if let identifier {
+            content.accessibilityIdentifier("thomas:\(identifier)")
+        } else {
+            content
         }
     }
 }
