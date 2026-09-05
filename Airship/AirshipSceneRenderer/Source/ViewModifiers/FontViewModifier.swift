@@ -79,22 +79,22 @@ extension View {
         scaledFontSize: Double
     ) -> some View {
         if let multiplier {
-            if #available(iOS 26.0, macOS 26.0, tvOS 26.0, watchOS 26.0, visionOS 26.0, *) {
-                self.lineHeight(.multiple(factor: multiplier))
-            } else {
-                // Fallback: approximate using scaled font size as base line height.
-                //
-                // Natural line height ~= scaledFontSize * (font's internal multiplier).
-                // We don't know that exact internal multiplier in SwiftUI,
-                // but using scaledFontSize as the "1.0" baseline is a reasonable approximation.
-                let baseLineHeight = scaledFontSize
-                let effective = baseLineHeight * multiplier
-                let extra = max(effective - baseLineHeight, 0)
-                self
-                    .lineSpacing(extra)
-                    .frame(minHeight: effective, alignment: .top) 
-
-            }
+            // Approximate using the scaled font size as the base line height.
+            //
+            // Natural line height ~= scaledFontSize * (font's internal multiplier).
+            // We don't know that exact internal multiplier in SwiftUI, but using
+            // scaledFontSize as the "1.0" baseline is a reasonable approximation.
+            //
+            // SwiftUI's `lineHeight(.multiple(factor:))` (iOS 26+) is intentionally
+            // not used here: it resolves against the font's own line height, which
+            // produces different results than Android. This approximation matches
+            // Android's line height handling more closely.
+            let baseLineHeight = scaledFontSize
+            let effective = baseLineHeight * multiplier
+            let extra = max(effective - baseLineHeight, 0)
+            self
+                .lineSpacing(extra)
+                .frame(minHeight: effective, alignment: .top)
         } else {
             self
         }
