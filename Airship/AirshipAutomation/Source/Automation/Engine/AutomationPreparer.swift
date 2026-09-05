@@ -141,9 +141,14 @@ struct AutomationPreparer: AutomationPreparerProtocol {
 
                 if (!match.isMatch) {
                     AirshipLogger.trace("Local audience miss \(schedule.identifier)")
-                    await self.recordAudienceMiss(schedule: schedule, triggerID: triggerID)
+                    let behavior = schedule.effectiveAudienceMissBehavior
+                    await self.recordAudienceMiss(
+                        schedule: schedule,
+                        triggerID: triggerID,
+                        behavior: behavior
+                    )
                     return .success(
-                        result: schedule.audienceMissBehaviorResult,
+                        result: behavior.schedulePrepareResult,
                         ignoreReturnOrder: true
                     )
                 }
@@ -322,9 +327,15 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                     return try await onResult(.inAppMessage(message), result.aiSuppression)
                 }
             } else {
-                await self.recordAudienceMiss(schedule: schedule, triggerID: triggerID)
+                // The deferred response wins when it provides its own behavior.
+                let behavior = result.missBehavior ?? schedule.effectiveAudienceMissBehavior
+                await self.recordAudienceMiss(
+                    schedule: schedule,
+                    triggerID: triggerID,
+                    behavior: behavior
+                )
                 return .success(
-                    result: schedule.audienceMissBehaviorResult,
+                    result: behavior.schedulePrepareResult,
                     ignoreReturnOrder: true
                 )
             }
@@ -360,14 +371,22 @@ fileprivate struct CachedDeferredResult: Sendable {
 }
 
 extension AutomationPreparer {
-    /// Records the audience-miss outcome when the schedule's miss behavior
-    /// consumes budget. `penalize` records `audience_miss`; `cancel` records
-    /// `audience_miss` with `cancel: true`; `skip` records nothing.
+    /// Records the audience-miss outcome when the miss behavior consumes budget.
+    /// `penalize` records `audience_miss`; `cancel` records `audience_miss` with
+    /// `cancel: true`; `skip` records nothing.
+    ///
+    /// - Parameters:
+    ///   - schedule: The schedule that missed.
+    ///   - triggerID: The trigger that produced the miss, if any.
+    ///   - behavior: The behavior actually applied, which a deferred response may
+    ///     have overridden. Passed in rather than read off the schedule so the
+    ///     ledger entry and the prepare result cannot disagree.
     fileprivate func recordAudienceMiss(
         schedule: AutomationSchedule,
-        triggerID: String?
+        triggerID: String?,
+        behavior: AutomationAudience.MissBehavior
     ) async {
-        switch schedule.effectiveAudienceMissBehavior {
+        switch behavior {
         case .skip:
             return
         case .penalize, .cancel:
@@ -376,7 +395,7 @@ extension AutomationPreparer {
                 sharedID: schedule.ledgerSharedID,
                 triggerID: triggerID,
                 result: .audienceMiss,
-                cancel: schedule.effectiveAudienceMissBehavior == .cancel
+                cancel: behavior == .cancel
             )
         }
     }
@@ -384,8 +403,7 @@ extension AutomationPreparer {
 
 fileprivate extension AutomationSchedule {
     /// The effective miss behavior after combining compound and device
-    /// audiences. Mirrors `audienceMissBehaviorResult`, defaulting to
-    /// `penalize` when no behavior is configured.
+    /// audiences, defaulting to `penalize` when no behavior is configured.
     var effectiveAudienceMissBehavior: AutomationAudience.MissBehavior {
         if let compoundAudience {
             return compoundAudience.missBehavior
@@ -394,10 +412,6 @@ fileprivate extension AutomationSchedule {
         } else {
             return .penalize
         }
-    }
-
-    var audienceMissBehaviorResult: SchedulePrepareResult {
-        return effectiveAudienceMissBehavior.schedulePrepareResult
     }
 
     var evaluateExperiments: Bool {

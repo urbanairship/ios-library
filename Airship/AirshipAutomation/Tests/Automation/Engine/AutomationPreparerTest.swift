@@ -958,6 +958,102 @@ struct AutomationPreparerTest {
     }
 
     @Test
+    func testPrepareDeferredMissBehaviorOverridesSchedule() async throws {
+        let result = try await prepareDeferredAudienceMiss(
+            scheduleMissBehavior: .skip,
+            deferredMissBehavior: .cancel
+        )
+
+        #expect(result.isCancelled)
+        #expect(await self.ledger.recorded == [
+            .execution(
+                scheduleID: "deferred-miss",
+                sharedID: nil,
+                triggerID: "trigger-1",
+                result: .audienceMiss,
+                cancel: true
+            )
+        ])
+    }
+
+    @Test
+    func testPrepareDeferredMissBehaviorSkipRecordsNothing() async throws {
+        let result = try await prepareDeferredAudienceMiss(
+            scheduleMissBehavior: .penalize,
+            deferredMissBehavior: .skip
+        )
+
+        /// The ledger has to follow the behavior that was applied, not the schedule's.
+        #expect(result.isSkipped)
+        #expect(await self.ledger.recorded.isEmpty)
+    }
+
+    @Test
+    func testPrepareDeferredWithoutMissBehaviorKeepsScheduleBehavior() async throws {
+        let result = try await prepareDeferredAudienceMiss(
+            scheduleMissBehavior: .penalize,
+            deferredMissBehavior: nil
+        )
+
+        #expect(result.isPenalize)
+        #expect(await self.ledger.recorded == [
+            .execution(
+                scheduleID: "deferred-miss",
+                sharedID: nil,
+                triggerID: "trigger-1",
+                result: .audienceMiss,
+                cancel: false
+            )
+        ])
+    }
+
+    /// Prepares a deferred schedule whose local audience matches but whose deferred
+    /// response reports an audience miss, carrying `deferredMissBehavior` when one is
+    /// provided.
+    private func prepareDeferredAudienceMiss(
+        scheduleMissBehavior: AutomationAudience.MissBehavior,
+        deferredMissBehavior: AutomationAudience.MissBehavior?
+    ) async throws -> SchedulePrepareResult {
+        let automationSchedule = AutomationSchedule(
+            identifier: "deferred-miss",
+            data: .deferred(
+                DeferredAutomationData(
+                    url: URL(string: "example://")!,
+                    retryOnTimeOut: false,
+                    type: .inAppMessage
+                )
+            ),
+            triggers: [],
+            created: Date(),
+            lastUpdated: Date(),
+            audience: AutomationAudience(
+                audienceSelector: DeviceAudienceSelector(),
+                missBehavior: scheduleMissBehavior
+            )
+        )
+
+        self.remoteDataAccess.contactIDBlock = { _ in "contact ID" }
+        self.remoteDataAccess.requiresUpdateBlock = { _ in false }
+        self.remoteDataAccess.bestEffortRefreshBlock = { _ in true }
+        self.audienceChecker.onEvaluate = { _, _, _ in .match }
+
+        await self.deferredResolver.onData { _ in
+            var body: [String: Any] = ["audience_match": false]
+            if let deferredMissBehavior {
+                body["miss_behavior"] = deferredMissBehavior.rawValue
+            }
+            return .success(try! AirshipJSON.wrap(body).toData())
+        }
+
+        return await self.preparer.prepare(
+            schedule: automationSchedule,
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString,
+            triggerID: "trigger-1"
+        )
+    }
+
+    @Test
     func testPrepareDeferredAISuppressionOverridesSchedule() async throws {
         let scheduleSuppression = AutomationAISuppression(
             condition: "from the schedule",
