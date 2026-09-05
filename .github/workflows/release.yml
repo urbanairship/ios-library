@@ -4,6 +4,21 @@ on:
   push:
     tags:
       - "[0-9]+.[0-9]+.[0-9]+**"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (must match an existing tag and AirshipConfig.xcconfig)"
+        required: true
+        type: string
+      stage:
+        description: "Which stage to run on its own"
+        required: true
+        type: choice
+        default: create-release
+        options:
+          - create-release
+          - attach-packages
+          - kickoff-prebuilt
 
 permissions:
   contents: read
@@ -11,14 +26,21 @@ permissions:
 jobs:
   check-version:
     if: github.repository == 'urbanairship/ios-library'
-    runs-on: xcode-27-xlarge
+    # Reads a version out of a source file and diffs it against the tag - no
+    # Xcode involved. On Linux so the manual stages, which all depend on this,
+    # never queue behind the Mac fleet.
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.VERSION }}
     steps:
       - uses: actions/checkout@v4
       - name: Get the version
         id: get_version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
           set -euo pipefail
-          VERSION="${GITHUB_REF#refs/tags/}"
+          VERSION="${INPUT_VERSION:-${GITHUB_REF#refs/tags/}}"
           # Defense in depth only - the primary control is that VERSION is never
           # interpolated into a shell script body. The tag filter's trailing "**" accepts
           # arbitrary suffixes, so fail closed on anything outside the charset our real
@@ -45,6 +67,7 @@ jobs:
 
   build-package:
     needs: check-version
+    if: github.event_name == 'push' || inputs.stage == 'attach-packages'
     runs-on: xcode-27-xlarge
     steps:
       - uses: actions/checkout@v4
@@ -115,6 +138,7 @@ jobs:
 
   build-samples:
     needs: check-version
+    if: github.event_name == 'push' || inputs.stage == 'attach-packages'
     runs-on: xcode-27-xlarge
     steps:
       - uses: actions/checkout@v4
@@ -124,6 +148,7 @@ jobs:
   # Test jobs, all depend on check-version
   run-tests-basement:
     needs: check-version
+    if: github.event_name == 'push'
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
@@ -135,6 +160,7 @@ jobs:
 
   run-tests-core:
     needs: check-version
+    if: github.event_name == 'push'
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
@@ -146,6 +172,7 @@ jobs:
         
   run-tests-preference-center:
     needs: check-version
+    if: github.event_name == 'push'
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
@@ -157,6 +184,7 @@ jobs:
         
   run-tests-message-center:
     needs: check-version
+    if: github.event_name == 'push'
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
@@ -168,6 +196,7 @@ jobs:
 
   run-tests-scene-renderer:
     needs: check-version
+    if: github.event_name == 'push'
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
@@ -179,6 +208,7 @@ jobs:
 
   run-tests-scenes:
     needs: check-version
+    if: github.event_name == 'push'
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
@@ -190,6 +220,7 @@ jobs:
 
   run-tests-automation:
     needs: check-version
+    if: github.event_name == 'push'
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
@@ -201,6 +232,7 @@ jobs:
 
   run-tests-feature-flags:
     needs: check-version
+    if: github.event_name == 'push'
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
@@ -212,6 +244,7 @@ jobs:
 
   run-tests-service-extension:
     needs: check-version
+    if: github.event_name == 'push'
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
@@ -221,11 +254,17 @@ jobs:
       - name: Test Service Extension
         run: make test-service-extension
 
-  deploy-github:
+  # Stage 1 of 3. Publishes the release notes as a draft, gated on the test
+  # suite but NOT on build-package: the notes are ready long before the zips
+  # are, and on a release where the CI image is behind the required Xcode the
+  # zips may be built by hand days later. Draft, so nothing is visible until
+  # stage 2 attaches the assets and flips it live.
+  create-release:
     permissions:
       contents: write
-    runs-on: xcode-27-xlarge
+    runs-on: ubuntu-latest
     needs:
+      - check-version
       - run-tests-basement
       - run-tests-core
       - run-tests-preference-center
@@ -235,47 +274,31 @@ jobs:
       - run-tests-automation
       - run-tests-feature-flags
       - run-tests-service-extension
-      - build-package
-      - build-samples
+    if: ${{ !cancelled() && !failure() && (github.event_name == 'push' || inputs.stage == 'create-release') }}
     steps:
       - uses: actions/checkout@v4
-      - name: Get the version
-        id: get_version
-        run: |
-          set -euo pipefail
-          VERSION="${GITHUB_REF#refs/tags/}"
-          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Get the release notes
-        id: get_release_notes
+      - name: Create draft release
         env:
-          VERSION: ${{ steps.get_version.outputs.VERSION }}
-        run: |
-          set -euo pipefail
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.check-version.outputs.version }}
+        run: bash ./scripts/release_create.sh "$VERSION"
 
-          # Match line starting with '## Version [VERSION]' 
-          # but allow for the date suffix that follows.
-          NOTES=$(awk -v ver="$VERSION" '
-            $0 ~ "^## Version " ver "($|[ ]-)" {flag=1; next} 
-            $0 ~ "^## Version " {flag=0} 
-            flag
-          ' CHANGELOG.md)
-
-          # Strip potential leading/trailing whitespace/newlines
-          NOTES="$(echo "$NOTES" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
-
-          if [ -z "$NOTES" ]; then
-            echo "::error::Could not find notes for Version $VERSION in CHANGELOG.md"
-            exit 1
-          fi
-
-          DELIMITER="EOF_$(uuidgen)"
-          {
-            echo "NOTES<<$DELIMITER"
-            echo "$NOTES"
-            echo "$DELIMITER"
-          } >> "$GITHUB_OUTPUT"
-
+  # Stage 2 of 3. Attaches the distribution zips to the draft and publishes it.
+  # This is the Xcode- and certificate-bound stage, so it is the one to run by
+  # hand (scripts/release_attach.sh) when the runner image lags the release
+  # Xcode. Publishing lives here so a release never goes live without assets.
+  attach-packages:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    needs:
+      - check-version
+      - create-release
+      - build-package
+      - build-samples
+    if: ${{ !cancelled() && !failure() && (github.event_name == 'push' || inputs.stage == 'attach-packages') }}
+    steps:
+      - uses: actions/checkout@v4
       - name: Download zip distribution
         uses: actions/download-artifact@v4
         with:
@@ -286,34 +309,37 @@ jobs:
         with:
           name: airship-carthage
           path: ./build
-
       - name: Download .NET xcframeworks
         uses: actions/download-artifact@v4
         with:
           name: airship-dotnet
           path: ./build
+      - name: Attach packages and publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.check-version.outputs.version }}
+        run: bash ./scripts/release_attach.sh "$VERSION" --skip-build
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.get_version.outputs.VERSION }}
-          release_name: ${{ steps.get_version.outputs.VERSION }}
-          body: ${{ steps.get_release_notes.outputs.NOTES }}
-          draft: false
-          prerelease: false
-          files: |
-            ./build/Airship.zip
-            ./build/Airship.xcframeworks.zip
-            ./build/Airship.dotnet.xcframeworks.zip
+  # Stage 3 of 3. The prebuilt repo builds its own binaries, so this is just the
+  # trigger — separated so it can be re-fired without redoing stages 1 and 2.
+  kickoff-prebuilt:
+    runs-on: ubuntu-latest
+    needs:
+      - check-version
+      - attach-packages
+    if: ${{ !cancelled() && !failure() && (github.event_name == 'push' || inputs.stage == 'kickoff-prebuilt') }}
+    steps:
+      - uses: actions/checkout@v4
       - name: Kickoff prebuilt repo
         env:
           GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
-        run: gh --repo urbanairship/ios-library-prebuilt workflow run release.yml
+          VERSION: ${{ needs.check-version.outputs.version }}
+        run: bash ./scripts/release_prebuilt.sh "$VERSION"
 
   finished:
     runs-on: ubuntu-latest
-    needs: [deploy-github]
+    needs: [kickoff-prebuilt]
+    if: ${{ !cancelled() && github.event_name == 'push' }}
     steps:
       - name: Slack Notification
         uses: lazy-actions/slatify@master
