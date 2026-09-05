@@ -18,6 +18,43 @@ struct AirshipIvyVersionMatcherTest {
         #expect((try? AirshipIvyVersionMatcher(versionConstraint: "1.2.3-junk")) != nil)
     }
 
+    /// Regression test for String.count vs NSString/UTF-16 length conflation.
+    @Test
+    func subVersionConstraintWithSupplementaryScalar() throws {
+        // "🚀" is a single grapheme but 2 UTF-16 code units, so
+        // "1.0🚀+".count (5) < "1.0🚀+".utf16.count (6).
+        let matcher = try AirshipIvyVersionMatcher(versionConstraint: "1.0🚀+")
+
+        #expect(matcher.evaluate(version: "1.0🚀"))
+        #expect(matcher.evaluate(version: "1.0🚀.5"))
+        #expect(!matcher.evaluate(version: "1.0"))
+        #expect(!matcher.evaluate(version: "2.0🚀"))
+    }
+
+    /// Same conflation, but with multiple supplementary-plane characters so the
+    /// UTF-16 length exceeds the grapheme count by more than one.
+    @Test
+    func subVersionConstraintWithMultipleSupplementaryScalars() throws {
+        // count (6) vs utf16.count (8)
+        let matcher = try AirshipIvyVersionMatcher(versionConstraint: "1.0🚀🚀+")
+
+        #expect(matcher.evaluate(version: "1.0🚀🚀"))
+        #expect(matcher.evaluate(version: "1.0🚀🚀.1"))
+        #expect(!matcher.evaluate(version: "1.0🚀"))
+    }
+
+    /// Baseline: pure-ASCII sub-versions (where count == utf16.count) are
+    /// unaffected by the fix and keep working.
+    @Test
+    func subVersionConstraintASCIIStillMatches() throws {
+        let matcher = try AirshipIvyVersionMatcher(versionConstraint: "1.0+")
+
+        #expect(matcher.evaluate(version: "1.0"))
+        #expect(matcher.evaluate(version: "1.0.1"))
+        #expect(!matcher.evaluate(version: "1"))
+        #expect(!matcher.evaluate(version: "2"))
+    }
+
     @Test
     func rangeLongVersion() throws {
         let matcher = try AirshipIvyVersionMatcher(versionConstraint: "[1.22.6.189,)")
