@@ -487,7 +487,7 @@ final class DefaultAirshipAnalytics: AirshipAnalytics, @unchecked Sendable {
             return
         }
 
-        Task {
+        self.serialQueue.enqueue {
             await self.eventFeed.notifyEvent(.screen(screen: screen))
         }
 
