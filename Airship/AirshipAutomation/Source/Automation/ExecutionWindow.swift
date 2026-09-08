@@ -355,6 +355,12 @@ fileprivate extension ExecutionWindow.Rule {
         }
     }
 
+    /// Upper bound on candidate days `resolve` will try before giving up. A well
+    /// formed rule resolves in a couple of iterations; the cap is a backstop so a
+    /// rule that can never intersect returns nil instead of spinning, since both
+    /// entry points are `@MainActor`.
+    fileprivate static let maxCandidateDays: Int = 366
+
     func resolve(date: Date, currentTimeZone: Foundation.TimeZone) throws -> DateInterval? {
         switch (self) {
         case .daily(timeRange: let timeRange, timeZone: let timeZone):
@@ -381,13 +387,23 @@ fileprivate extension ExecutionWindow.Rule {
 
             var nextDate = calendar.nextDate(date: date, weekdays: daysOfWeek)
 
-            while true {
+            for _ in 0..<Self.maxCandidateDays {
                 let timeInterval = calendar.dateInterval(date: nextDate, timeRange: timeRange)
                 let remainingDay = calendar.remainingDay(date: nextDate)
 
                 guard let result = timeInterval.intersection(with: remainingDay) else {
+                    // Advance from `nextDate`, not `date`. Recomputing from the
+                    // caller's fixed evaluation date yields the same candidate every
+                    // time, so the loop never makes progress.
+                    //
+                    // Not directly covered by a test, and cannot be: every advance
+                    // lands on a start-of-day, where the intersection always
+                    // succeeds, so iteration 2 always terminates. `date` and
+                    // `nextDate` can only diverge from iteration 3, which was
+                    // reachable only through the `distantFuture` sentinel now
+                    // rejected in the monthly branch. Kept as defensive correctness.
                     nextDate = calendar.nextDate(
-                        date: calendar.startOfDay(date: date, dayOffset: 1),
+                        date: calendar.startOfDay(date: nextDate, dayOffset: 1),
                         weekdays: daysOfWeek
                     )
                     continue
@@ -395,6 +411,14 @@ fileprivate extension ExecutionWindow.Rule {
 
                 return result
             }
+
+            // Throw rather than return nil: `nextAvailability` builds its candidate
+            // list with `compactMap`, so a nil rule disappears and an unresolvable
+            // window reads as `.now` -- it would display immediately. A throw is
+            // caught by `ExecutionWindowProcessor` and becomes `.retry(24h)`.
+            throw AirshipErrors.error(
+                "Unable to resolve a window for rule \(self) within \(Self.maxCandidateDays) candidate days."
+            )
 
         case .monthly(months: let months, daysOfMonth: let daysOfMonth, timeRange: let timeRange, timeZone: let timeZone):
             guard let calendar = try calendar(
@@ -411,13 +435,25 @@ fileprivate extension ExecutionWindow.Rule {
 
             var nextDate = calendar.nextDate(date: date, months: months, days: daysOfMonth)
 
-            while true {
+            for _ in 0..<Self.maxCandidateDays {
                 let timeInterval = calendar.dateInterval(date: nextDate, timeRange: timeRange)
                 let remainingDay = calendar.remainingDay(date: nextDate)
 
                 guard let result = timeInterval.intersection(with: remainingDay) else {
+                    // `nextDate(date:months:days:)` returns `Date.distantFuture` as
+                    // its "no such day" sentinel. Advancing from it cannot make
+                    // progress, so bail out here rather than burning the cap --
+                    // 366 iterations of unsatisfiable `Calendar.nextDate` costs
+                    // over ten seconds, all of it on the main actor.
+                    guard nextDate != Date.distantFuture else {
+                        throw AirshipErrors.error(
+                            "Rule \(self) has no satisfiable date."
+                        )
+                    }
+
+                    // Advance from `nextDate`, not `date` -- see the weekly branch.
                     nextDate = calendar.nextDate(
-                        date: calendar.startOfDay(date: date, dayOffset: 1),
+                        date: calendar.startOfDay(date: nextDate, dayOffset: 1),
                         months: months,
                         days: daysOfMonth
                     )
@@ -425,6 +461,10 @@ fileprivate extension ExecutionWindow.Rule {
                 }
                 return result
             }
+
+            throw AirshipErrors.error(
+                "Unable to resolve a window for rule \(self) within \(Self.maxCandidateDays) candidate days."
+            )
         }
     }
 }
@@ -506,16 +546,25 @@ fileprivate struct AirshipCalendar : Hashable, Equatable, Sendable {
                 minute: timeRange.startMinute
             )
 
-            if (todayStart == date) {
-                return DateInterval(start: todayStart, duration: 1)
-            } else {
-                let tomorrowStart = self.date(
-                    date: startOfDay(date: date, dayOffset: 1),
-                    hour: timeRange.startHour,
-                    minute: timeRange.startMinute
-                )
-                return DateInterval(start: tomorrowStart, duration: 1)
+            let todayInterval = DateInterval(start: todayStart, duration: 1)
+
+            // Mirrors the non-zero-length branch below. Exact equality against
+            // `date` sent every other instant of the day to tomorrow, which both
+            // skipped a day and produced an interval that could never intersect the
+            // remainder of today. `isWithin` is needed alongside `start >= date`
+            // because re-evaluation after a retry lands *inside* the one-second
+            // window, never exactly on its start -- without it the window is
+            // pushed to tomorrow on every pass and never opens at all.
+            if todayInterval.isWithin(date: date) || todayInterval.start >= date {
+                return todayInterval
             }
+
+            let tomorrowStart = self.date(
+                date: startOfDay(date: date, dayOffset: 1),
+                hour: timeRange.startHour,
+                minute: timeRange.startMinute
+            )
+            return DateInterval(start: tomorrowStart, duration: 1)
         }
 
         /// start: 23, end: 1

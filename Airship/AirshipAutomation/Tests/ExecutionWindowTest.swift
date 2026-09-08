@@ -517,6 +517,102 @@ struct ExectutionWindowTest {
         #expect(windowAvailibility(window, date: date) == .retry(1.seconds))
     }
 
+    /// A weekly rule with a zero-length time range used to spin forever: the retry
+    /// recomputed its candidate from the caller's fixed date, so every iteration
+    /// took the same branch. Jan 1 2024 is a Monday; evaluate an hour before.
+    @Test
+    func testWeeklyZeroLengthTimeRange() throws {
+        let window = try ExecutionWindow(
+            include: [
+                .weekly(daysOfWeek: [2], timeRange: .init(startHour: 9, endHour: 9))
+            ]
+        )
+
+        #expect(
+            windowAvailibility(window, date: referenceDate + 8.hours) == .retry(1.hours)
+        )
+    }
+
+    /// Same root cause on the monthly branch.
+    @Test
+    func testMonthlyZeroLengthTimeRange() throws {
+        let window = try ExecutionWindow(
+            include: [
+                .monthly(
+                    months: [1],
+                    daysOfMonth: [1],
+                    timeRange: .init(startHour: 9, endHour: 9)
+                )
+            ]
+        )
+
+        #expect(
+            windowAvailibility(window, date: referenceDate + 8.hours) == .retry(1.hours)
+        )
+    }
+
+    /// The same exact-equality check made a daily zero-length window skip a whole
+    /// day: evaluated at 08:00, a 09:00 window resolved to *tomorrow* 09:00.
+    @Test
+    func testDailyZeroLengthTimeRangeDoesNotSkipADay() throws {
+        let window = try ExecutionWindow(
+            include: [
+                .daily(timeRange: .init(startHour: 9, endHour: 9))
+            ]
+        )
+
+        #expect(
+            windowAvailibility(window, date: referenceDate + 8.hours) == .retry(1.hours)
+        )
+    }
+
+    /// And it has to actually open once that hour is up. `AirshipTaskSleeper`
+    /// guarantees *at least* the retry interval, so re-evaluation always lands
+    /// inside the one-second window rather than exactly on its start. Comparing
+    /// only against the start instant pushed it to tomorrow on every pass, so the
+    /// window never opened.
+    @Test
+    func testDailyZeroLengthTimeRangeOpensInsideTheWindow() throws {
+        let window = try ExecutionWindow(
+            include: [
+                .daily(timeRange: .init(startHour: 9, endHour: 9))
+            ]
+        )
+
+        #expect(windowAvailibility(window, date: referenceDate + 9.hours) == .now)
+        #expect(windowAvailibility(window, date: referenceDate + 9.hours + 0.5) == .now)
+
+        // One second on is past the window, so back to tomorrow.
+        #expect(
+            windowAvailibility(window, date: referenceDate + 9.hours + 1)
+                == .retry(1.days - 1.seconds)
+        )
+    }
+
+    /// A rule whose day never exists resolves to `Date.distantFuture`. In a
+    /// UTC-negative zone that lands late in the day, past the window, so the
+    /// intersection fails and the loop is entered. It must throw rather than
+    /// return nil: `nextAvailability` drops nil rules with `compactMap`, so nil
+    /// would surface as `.now` and display the message immediately.
+    @Test
+    func testImpossibleMonthlyInNegativeUTCZoneThrows() throws {
+        let window = try ExecutionWindow(
+            include: [
+                .monthly(
+                    months: [2],
+                    daysOfMonth: [31],
+                    timeRange: .init(startHour: 5, endHour: 17)
+                )
+            ]
+        )
+
+        let newYork = TimeZone(identifier: "America/New_York")!
+
+        #expect(throws: (any Error).self) {
+            try window.nextAvailability(date: referenceDate, currentTimeZone: newYork)
+        }
+    }
+
     @Test
     func testIncludeTimeRange() throws {
         var date = referenceDate
