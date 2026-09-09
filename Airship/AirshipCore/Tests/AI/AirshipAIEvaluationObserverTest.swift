@@ -76,6 +76,31 @@ struct AirshipAIEvaluationObserverTest {
         #expect(records.first?.attempts == 1)
     }
 
+    @Test("Output that passes schema validation but fails to decode reports once, as completed")
+    func unparseableOutputReportsOnceAsCompleted() async throws {
+        let recorder = Recorder()
+        let model = MockAIModel(response: .success(["count": 1.5]))
+
+        let result = await AirshipAI.Evaluator().evaluate(
+            UnparseableOutputEvaluation(),
+            model: model,
+            context: .empty,
+            observer: recorder.observer
+        )
+        try await waitForRecords(recorder, count: 1)
+
+        guard case .failed = result else {
+            Issue.record("Expected .failed")
+            return
+        }
+        let records = recorder.records.value
+        #expect(records.count == 1)
+        guard case .completed = records.first?.outcome else {
+            Issue.record("Expected .completed")
+            return
+        }
+    }
+
     @Test("An unavailable model still reports, so absence is visible")
     func unavailableModelReports() async throws {
         let recorder = Recorder()

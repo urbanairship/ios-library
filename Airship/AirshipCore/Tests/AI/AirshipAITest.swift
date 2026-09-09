@@ -510,6 +510,25 @@ struct ContextRequiredEvaluation: AirshipAI.Evaluation {
 }
 
 
+/// A schema loose enough to accept output its `Output` type can't decode — `count` only
+/// has to be *a number*, but `Output` requires a whole one.
+struct UnparseableOutputEvaluation: AirshipAI.Evaluation {
+    struct Output: Decodable, Sendable, Equatable {
+        let count: Int
+    }
+
+    typealias Subject = Void
+
+    let subject: Void = ()
+    let usage: AirshipAI.Usage<Void> = .testUsage
+    let schema = AirshipJSONSchema.object(
+        properties: ["count": .number()],
+        required: ["count"]
+    )
+    func instructions() -> String { "rules" }
+    func prompt(context: AirshipAI.Context) -> String { "subject" }
+}
+
 /// Context provider returning a fixed set of items.
 func itemsProvider(_ items: [AirshipAI.Context.Item]) -> AirshipAI.ContextProvider<Void> {
     { _ in .init(items: items) }

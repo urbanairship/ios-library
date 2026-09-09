@@ -79,8 +79,15 @@ extension AirshipAI {
                 // Reported before decoding, so an output the feature can't decode is still
                 // visible to whoever is watching — that's exactly when you want to see it.
                 report(.completed(json))
-                let output: E.Output = try json.decode()
-                return .completed(output)
+                do {
+                    let output: E.Output = try json.decode()
+                    return .completed(output)
+                } catch {
+                    // Already reported above: a decode failure here is the feature's problem,
+                    // not a second evaluation outcome.
+                    AirshipLogger.warn("AI evaluation failed for \(usage): \(error)")
+                    return .failed(error)
+                }
             } catch {
                 AirshipLogger.warn("AI evaluation failed for \(usage): \(error)")
                 report(.failed(error))
