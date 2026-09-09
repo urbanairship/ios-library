@@ -230,19 +230,17 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     ///   - embeddedID: The embedded ID.
     ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
     ///   - selection: How to select which pending content to display when more than one is available. Defaults to `.priority`.
-    ///   - filterInstances: Optional filter deciding which pending instances are eligible. Applied before `selection`, so a filtered-out instance is never displayed even when `selection` targets it. Defaults to no filtering.
     ///   - placeholder: The place holder block.
     public init(
         embeddedID: String,
         embeddedSize: AirshipEmbeddedSize? = nil,
         selection: AirshipEmbeddedSelection = .priority,
-        filterInstances: AirshipEmbeddedFilter? = nil,
         @ViewBuilder placeholder: @escaping () -> PlaceHolder
     ) {
         self.embeddedID = embeddedID
         self.embeddedSize = embeddedSize
         self.selection = selection
-        self.filterInstances = filterInstances
+        self.filterInstances = nil
         self.placeholder = placeholder
     }
 
@@ -252,12 +250,52 @@ public struct AirshipEmbeddedView<PlaceHolder: View>: View {
     ///   - embeddedID: The embedded ID.
     ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
     ///   - selection: How to select which pending content to display when more than one is available. Defaults to `.priority`.
-    ///   - filterInstances: Optional filter deciding which pending instances are eligible. Applied before `selection`, so a filtered-out instance is never displayed even when `selection` targets it. Defaults to no filtering.
+    public init(
+        embeddedID: String,
+        embeddedSize: AirshipEmbeddedSize? = nil,
+        selection: AirshipEmbeddedSelection = .priority
+    ) where PlaceHolder == EmptyView {
+        self.embeddedID = embeddedID
+        self.embeddedSize = embeddedSize
+        self.selection = selection
+        self.filterInstances = nil
+        self.placeholder = { EmptyView() }
+    }
+
+    /// Creates a new AirshipEmbeddedView that filters which pending instances are eligible.
+    ///
+    /// - Parameters:
+    ///   - embeddedID: The embedded ID.
+    ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
+    ///   - selection: How to select which pending content to display when more than one is available. Defaults to `.priority`.
+    ///   - filterInstances: Filter deciding which pending instances are eligible. Applied before `selection`, so a filtered-out instance is never displayed even when `selection` targets it.
+    ///   - placeholder: The place holder block.
     public init(
         embeddedID: String,
         embeddedSize: AirshipEmbeddedSize? = nil,
         selection: AirshipEmbeddedSelection = .priority,
-        filterInstances: AirshipEmbeddedFilter? = nil
+        filterInstances: @escaping AirshipEmbeddedFilter,
+        @ViewBuilder placeholder: @escaping () -> PlaceHolder
+    ) {
+        self.embeddedID = embeddedID
+        self.embeddedSize = embeddedSize
+        self.selection = selection
+        self.filterInstances = filterInstances
+        self.placeholder = placeholder
+    }
+
+    /// Creates a new AirshipEmbeddedView that filters which pending instances are eligible.
+    ///
+    /// - Parameters:
+    ///   - embeddedID: The embedded ID.
+    ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
+    ///   - selection: How to select which pending content to display when more than one is available. Defaults to `.priority`.
+    ///   - filterInstances: Filter deciding which pending instances are eligible. Applied before `selection`, so a filtered-out instance is never displayed even when `selection` targets it.
+    public init(
+        embeddedID: String,
+        embeddedSize: AirshipEmbeddedSize? = nil,
+        selection: AirshipEmbeddedSelection = .priority,
+        filterInstances: @escaping AirshipEmbeddedFilter
     ) where PlaceHolder == EmptyView {
         self.embeddedID = embeddedID
         self.embeddedSize = embeddedSize

@@ -71,7 +71,6 @@ public struct AirshipEmbeddedCarousel<PlaceHolder: View, Indicator: View, Previo
     ///   - embeddedID: The embedded ID.
     ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
     ///   - selection: How to select which pending content is included, and its ordering. Defaults to `.priority`.
-    ///   - filterInstances: Optional filter deciding which pending instances are eligible. Applied before `selection`, so a filtered-out instance never becomes a page. Defaults to no filtering.
     ///   - indicatorAlignment: Where the `indicator` overlay is placed on top of the carousel. Defaults to `.bottom`.
     ///   - indicator: Overlay slot rendered on top of the carousel, given the current page and page count.
     ///   - previousArrow: Overlay slot positioned at the leading edge, given a tap action and whether there is a previous page.
@@ -81,7 +80,48 @@ public struct AirshipEmbeddedCarousel<PlaceHolder: View, Indicator: View, Previo
         embeddedID: String,
         embeddedSize: AirshipEmbeddedSize? = nil,
         selection: AirshipEmbeddedSelection = .priority,
-        filterInstances: AirshipEmbeddedFilter? = nil,
+        indicatorAlignment: Alignment = .bottom,
+        @ViewBuilder indicator: @escaping (_ currentPage: Int, _ pageCount: Int) -> Indicator = { currentPage, pageCount in
+            AirshipEmbeddedCarouselDefaults.dotsIndicator(currentPage: currentPage, pageCount: pageCount)
+        },
+        @ViewBuilder previousArrow: @escaping (_ onTap: @escaping () -> Void, _ isEnabled: Bool) -> PreviousArrow = { onTap, isEnabled in
+            AirshipEmbeddedCarouselDefaults.previousArrow(onTap: onTap, isEnabled: isEnabled)
+        },
+        @ViewBuilder nextArrow: @escaping (_ onTap: @escaping () -> Void, _ isEnabled: Bool) -> NextArrow = { onTap, isEnabled in
+            AirshipEmbeddedCarouselDefaults.nextArrow(onTap: onTap, isEnabled: isEnabled)
+        },
+        @ViewBuilder placeholder: @escaping () -> PlaceHolder = { EmptyView() }
+    ) {
+        self.usesOwnedState = true
+        self._providedState = ObservedObject(wrappedValue: AirshipEmbeddedCarouselState())
+        self.embeddedID = embeddedID
+        self.embeddedSize = embeddedSize
+        self.selection = selection
+        self.filterInstances = nil
+        self.indicatorAlignment = indicatorAlignment
+        self.indicator = indicator
+        self.previousArrow = previousArrow
+        self.nextArrow = nextArrow
+        self.placeholder = placeholder
+    }
+
+    /// Creates a new AirshipEmbeddedCarousel that owns its own state, filtering which pending instances are eligible.
+    ///
+    /// - Parameters:
+    ///   - embeddedID: The embedded ID.
+    ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
+    ///   - selection: How to select which pending content is included, and its ordering. Defaults to `.priority`.
+    ///   - filterInstances: Filter deciding which pending instances are eligible. Applied before `selection`, so a filtered-out instance never becomes a page.
+    ///   - indicatorAlignment: Where the `indicator` overlay is placed on top of the carousel. Defaults to `.bottom`.
+    ///   - indicator: Overlay slot rendered on top of the carousel, given the current page and page count.
+    ///   - previousArrow: Overlay slot positioned at the leading edge, given a tap action and whether there is a previous page.
+    ///   - nextArrow: Overlay slot positioned at the trailing edge, given a tap action and whether there is a next page.
+    ///   - placeholder: The placeholder shown while no content is available.
+    public init(
+        embeddedID: String,
+        embeddedSize: AirshipEmbeddedSize? = nil,
+        selection: AirshipEmbeddedSelection = .priority,
+        filterInstances: @escaping AirshipEmbeddedFilter,
         indicatorAlignment: Alignment = .bottom,
         @ViewBuilder indicator: @escaping (_ currentPage: Int, _ pageCount: Int) -> Indicator = { currentPage, pageCount in
             AirshipEmbeddedCarouselDefaults.dotsIndicator(currentPage: currentPage, pageCount: pageCount)
@@ -118,7 +158,6 @@ public struct AirshipEmbeddedCarousel<PlaceHolder: View, Indicator: View, Previo
     ///   - embeddedID: The embedded ID.
     ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
     ///   - selection: How to select which pending content is included, and its ordering. Defaults to `.priority`.
-    ///   - filterInstances: Optional filter deciding which pending instances are eligible. Applied before `selection`, so a filtered-out instance never becomes a page. Defaults to no filtering.
     ///   - indicatorAlignment: Where the `indicator` overlay is placed on top of the carousel. Defaults to `.bottom`.
     ///   - indicator: Overlay slot rendered on top of the carousel, given the current page and page count.
     ///   - previousArrow: Overlay slot positioned at the leading edge, given a tap action and whether there is a previous page.
@@ -129,7 +168,50 @@ public struct AirshipEmbeddedCarousel<PlaceHolder: View, Indicator: View, Previo
         embeddedID: String,
         embeddedSize: AirshipEmbeddedSize? = nil,
         selection: AirshipEmbeddedSelection = .priority,
-        filterInstances: AirshipEmbeddedFilter? = nil,
+        indicatorAlignment: Alignment = .bottom,
+        @ViewBuilder indicator: @escaping (_ currentPage: Int, _ pageCount: Int) -> Indicator = { currentPage, pageCount in
+            AirshipEmbeddedCarouselDefaults.dotsIndicator(currentPage: currentPage, pageCount: pageCount)
+        },
+        @ViewBuilder previousArrow: @escaping (_ onTap: @escaping () -> Void, _ isEnabled: Bool) -> PreviousArrow = { onTap, isEnabled in
+            AirshipEmbeddedCarouselDefaults.previousArrow(onTap: onTap, isEnabled: isEnabled)
+        },
+        @ViewBuilder nextArrow: @escaping (_ onTap: @escaping () -> Void, _ isEnabled: Bool) -> NextArrow = { onTap, isEnabled in
+            AirshipEmbeddedCarouselDefaults.nextArrow(onTap: onTap, isEnabled: isEnabled)
+        },
+        @ViewBuilder placeholder: @escaping () -> PlaceHolder = { EmptyView() }
+    ) {
+        self.embeddedID = embeddedID
+        self.embeddedSize = embeddedSize
+        self.selection = selection
+        self.filterInstances = nil
+        self.indicatorAlignment = indicatorAlignment
+        self.indicator = indicator
+        self.previousArrow = previousArrow
+        self.nextArrow = nextArrow
+        self.placeholder = placeholder
+        self.usesOwnedState = false
+        self._providedState = ObservedObject(wrappedValue: state)
+    }
+
+    /// Creates a new AirshipEmbeddedCarousel with hoisted state, filtering which pending instances are eligible.
+    ///
+    /// - Parameters:
+    ///   - state: The carousel's state. Own it with `@StateObject` in the parent view.
+    ///   - embeddedID: The embedded ID.
+    ///   - embeddedSize: The embedded size info. This is needed in a scroll view to determine proper percent based sizing.
+    ///   - selection: How to select which pending content is included, and its ordering. Defaults to `.priority`.
+    ///   - filterInstances: Filter deciding which pending instances are eligible. Applied before `selection`, so a filtered-out instance never becomes a page.
+    ///   - indicatorAlignment: Where the `indicator` overlay is placed on top of the carousel. Defaults to `.bottom`.
+    ///   - indicator: Overlay slot rendered on top of the carousel, given the current page and page count.
+    ///   - previousArrow: Overlay slot positioned at the leading edge, given a tap action and whether there is a previous page.
+    ///   - nextArrow: Overlay slot positioned at the trailing edge, given a tap action and whether there is a next page.
+    ///   - placeholder: The placeholder shown while no content is available.
+    public init(
+        state: AirshipEmbeddedCarouselState,
+        embeddedID: String,
+        embeddedSize: AirshipEmbeddedSize? = nil,
+        selection: AirshipEmbeddedSelection = .priority,
+        filterInstances: @escaping AirshipEmbeddedFilter,
         indicatorAlignment: Alignment = .bottom,
         @ViewBuilder indicator: @escaping (_ currentPage: Int, _ pageCount: Int) -> Indicator = { currentPage, pageCount in
             AirshipEmbeddedCarouselDefaults.dotsIndicator(currentPage: currentPage, pageCount: pageCount)
@@ -181,45 +263,57 @@ public struct AirshipEmbeddedCarousel<PlaceHolder: View, Indicator: View, Previo
         }
     }
 
-    public var body: some View {
-        AirshipEmbeddedView(
+    private var embeddedView: AirshipEmbeddedView<PlaceHolder> {
+        if let filterInstances {
+            return AirshipEmbeddedView(
+                embeddedID: embeddedID,
+                embeddedSize: embeddedSize,
+                selection: selection,
+                filterInstances: filterInstances,
+                placeholder: placeholder
+            )
+        }
+        return AirshipEmbeddedView(
             embeddedID: embeddedID,
             embeddedSize: embeddedSize,
             selection: selection,
-            filterInstances: filterInstances,
             placeholder: placeholder
         )
-        .setAirshipEmbeddedStyle(
-            CarouselEmbeddedViewStyle(
-                currentPage: Binding(
-                    get: { state.currentPage },
-                    set: { state.currentPage = $0 }
-                ),
-                pageCount: Binding(
-                    get: { state.pageCount },
-                    set: { state.pageCount = $0 }
-                ),
-                lastPendingIDs: Binding(
-                    get: { state.lastPendingIDs },
-                    set: { state.lastPendingIDs = $0 }
+    }
+
+    public var body: some View {
+        embeddedView
+            .setAirshipEmbeddedStyle(
+                CarouselEmbeddedViewStyle(
+                    currentPage: Binding(
+                        get: { state.currentPage },
+                        set: { state.currentPage = $0 }
+                    ),
+                    pageCount: Binding(
+                        get: { state.pageCount },
+                        set: { state.pageCount = $0 }
+                    ),
+                    lastPendingIDs: Binding(
+                        get: { state.lastPendingIDs },
+                        set: { state.lastPendingIDs = $0 }
+                    )
                 )
             )
-        )
-        .overlay(alignment: indicatorAlignment) {
-            if state.isAvailable {
-                indicator(state.currentPage ?? 0, state.pageCount)
+            .overlay(alignment: indicatorAlignment) {
+                if state.isAvailable {
+                    indicator(state.currentPage ?? 0, state.pageCount)
+                }
             }
-        }
-        .overlay(alignment: .leading) {
-            if state.isAvailable {
-                previousArrow(goToPrevious, hasPrevious)
+            .overlay(alignment: .leading) {
+                if state.isAvailable {
+                    previousArrow(goToPrevious, hasPrevious)
+                }
             }
-        }
-        .overlay(alignment: .trailing) {
-            if state.isAvailable {
-                nextArrow(goToNext, hasNext)
+            .overlay(alignment: .trailing) {
+                if state.isAvailable {
+                    nextArrow(goToNext, hasNext)
+                }
             }
-        }
     }
 
     private struct CarouselEmbeddedViewStyle: AirshipEmbeddedViewStyle {
