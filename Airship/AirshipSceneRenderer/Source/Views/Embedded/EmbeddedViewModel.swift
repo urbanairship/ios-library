@@ -5,51 +5,48 @@ import SwiftUI
 @_spi(AirshipInternal) import AirshipBasement
 
 extension AirshipEmbeddedSelection {
-    /// Picks an instance out of `views`, or nil to show the placeholder.
+    /// Orders `views` by preference, most preferred first.
     ///
     /// A pure function of `(views, self)` for every case but `.ai` — which resolves through
     /// its fallback here, since the model owns the asynchronous part. That purity is what
     /// lets ``AirshipEmbeddedView`` resolve selection during `body` from the value it was
     /// handed this render, so a changed selection takes effect with nothing to invalidate.
     @MainActor
-    func selectInstanceID(
+    func orderedInstanceIDs(
         from views: [PendingEmbedded],
         embeddedID: String,
         tracker: EmbeddedLastDisplayedTracker
-    ) -> String? {
+    ) -> [String] {
         switch self {
         case .instance(let instanceIDs):
-            // First pending match wins — the list is an order of preference, so a caller can
-            // name a chain and let it degrade rather than pass a single ID and get nothing.
+            // An allow-list, not a full ordering: anything not named here is excluded
+            // entirely rather than sorted last.
             let pendingIDs = Set(views.map(\.embeddedInfo.instanceID))
-            guard let found = instanceIDs.first(where: { pendingIDs.contains($0) }) else {
-                AirshipLogger.trace("No pending view matches targeted instances \(instanceIDs) for \(embeddedID)")
-                return nil
-            }
-            AirshipLogger.trace("Selecting targeted instance view for \(embeddedID): \(found)")
-            return found
+            let ordered = instanceIDs.filter { pendingIDs.contains($0) }
+            AirshipLogger.trace("Targeted instance order for \(embeddedID): \(ordered)")
+            return ordered
 
         case .comparator(let comparator):
-            let view = views.sorted { comparator($0.embeddedInfo, $1.embeddedInfo) == .orderedAscending }.first
-            if let view {
-                AirshipLogger.trace("Selecting comparator sorted view for \(embeddedID): \(view.embeddedInfo)")
-            }
-            return view?.embeddedInfo.instanceID
+            let ordered = views
+                .sorted { comparator($0.embeddedInfo, $1.embeddedInfo) == .orderedAscending }
+                .map(\.embeddedInfo.instanceID)
+            AirshipLogger.trace("Comparator sorted order for \(embeddedID): \(ordered)")
+            return ordered
 
         case .priority:
+            var ordered = views
+                .sorted { $0.embeddedInfo.priority < $1.embeddedInfo.priority }
+                .map(\.embeddedInfo.instanceID)
             if let lastID = tracker.lastDisplayedID(for: embeddedID),
-               views.contains(where: { $0.embeddedInfo.instanceID == lastID }) {
-                AirshipLogger.trace("Selecting previously displayed view for \(embeddedID): \(lastID)")
-                return lastID
+               let index = ordered.firstIndex(of: lastID) {
+                ordered.remove(at: index)
+                ordered.insert(lastID, at: 0)
             }
-            let view = views.sorted { $0.embeddedInfo.priority < $1.embeddedInfo.priority }.first
-            if let view {
-                AirshipLogger.trace("Selecting priority sorted view for \(embeddedID): \(view.embeddedInfo)")
-            }
-            return view?.embeddedInfo.instanceID
+            AirshipLogger.trace("Priority sorted order for \(embeddedID): \(ordered)")
+            return ordered
 
         case .ai(_, let fallback):
-            return fallback.asSelection.selectInstanceID(
+            return fallback.asSelection.orderedInstanceIDs(
                 from: views,
                 embeddedID: embeddedID,
                 tracker: tracker
@@ -69,12 +66,13 @@ final class EmbeddedViewModel: ObservableObject {
     /// What the `.ai` selection has decided. Meaningless for any other selection, which the
     /// view resolves itself.
     ///
-    /// Deliberately stops short of naming an instance in the `.fallback` case: the fallback
-    /// may be a closure, and a closure held here would be the one captured when the model
-    /// was built. The view applies it instead, against the selection it has this render.
+    /// Deliberately stops short of naming an order in the `.fallback` case: the fallback may
+    /// be a closure, and a closure held here would be the one captured when the model was
+    /// built. The view applies it instead, against the selection it has this render.
     enum AIOutcome: Equatable {
-        /// Settled on this instance — either the model's pick or one already on screen.
-        case resolved(String)
+        /// Settled on this order, most preferred first — either the model's ranking or the
+        /// order already on screen, per `allowDisplayInterruptions`.
+        case resolved([String])
 
         /// Still resolving with nothing on screen; block on the placeholder.
         case blocked
@@ -111,7 +109,11 @@ final class EmbeddedViewModel: ObservableObject {
     private var selectionState: SelectionState = .idle
     private var askedIDs: Set<String> = []
     private var knownIDs: Set<String> = []
-    private var displayedInstanceID: String?
+
+    /// The order last committed to the screen, most preferred first. Consulted when
+    /// `allowDisplayInterruptions` is `false` so a re-rank can only append newly-eligible
+    /// arrivals rather than reshuffle what's already there.
+    private var committedOrder: [String] = []
 
     init(
         embeddedID: String,
@@ -170,8 +172,8 @@ final class EmbeddedViewModel: ObservableObject {
             recomputeAISelection(config: config)
         } else if idsChanged {
             // Something was removed with nothing new arriving — no reason to re-score,
-            // but displayPending and the selection still need to drop the departed
-            // candidate. Subsumes the displayed instance itself being dismissed.
+            // but displayPending and the order still need to drop the departed
+            // candidate(s). Subsumes a displayed instance itself being dismissed.
             recomputeAISelection(config: config)
         }
     }
@@ -230,36 +232,40 @@ final class EmbeddedViewModel: ObservableObject {
 
         let pendingIDs = Set(pending.map(\.embeddedInfo.instanceID))
 
-        let target: String?
+        let order: [String]
         switch selectionState {
         case .ranked(let ranking):
-            if !config.allowDisplayInterruptions,
-               let shown = displayedInstanceID, pendingIDs.contains(shown) {
-                target = shown
+            let ranked = ranking.filter { pendingIDs.contains($0) }
+            let stillCommitted = committedOrder.filter { pendingIDs.contains($0) }
+            if !config.allowDisplayInterruptions, !stillCommitted.isEmpty {
+                // Keep what's already on screen in place; anything newly ranked that wasn't
+                // committed yet is new, not a reshuffle, so it's fine to append.
+                let arrivals = ranked.filter { !stillCommitted.contains($0) }
+                order = stillCommitted + arrivals
             } else {
-                target = ranking.first { pendingIDs.contains($0) }
+                order = ranked
             }
         case .resolving, .idle:
-            // Keep showing what's on screen during a re-ask; block (nil) if nothing is up yet.
-            target = displayedInstanceID.flatMap { pendingIDs.contains($0) ? $0 : nil }
+            // Keep showing the committed order during a re-ask; empty if nothing is up yet.
+            order = committedOrder.filter { pendingIDs.contains($0) }
         case .fallback:
-            target = nil
+            order = []
         }
 
         withAnimation {
-            if let target {
-                displayedInstanceID = target
+            if !order.isEmpty {
+                committedOrder = order
                 displayPending = pending
-                aiOutcome = .resolved(target)
-            } else if case .resolving = selectionState, displayedInstanceID == nil {
-                displayedInstanceID = nil
+                aiOutcome = .resolved(order)
+            } else if case .resolving = selectionState {
+                committedOrder = []
                 displayPending = []
                 aiOutcome = .blocked
             } else {
-                displayedInstanceID = nil
+                committedOrder = []
                 displayPending = pending
-                // Which instance the fallback names is the view's call, not ours — it has
-                // the fallback this render, we have the one we were built with.
+                // Which order the fallback names is the view's call, not ours — it has the
+                // fallback this render, we have the one we were built with.
                 aiOutcome = .fallback
             }
         }

@@ -410,8 +410,8 @@ private struct AirshipEmbeddedContent<PlaceHolder: View>: View {
     }
 
     var body: some View {
-        let eligiblePending = self.eligiblePending
-        let pendingConfig = eligiblePending.map { item in
+        let resolvedPending = self.resolvedPending
+        let pendingConfig = resolvedPending.map { item in
             AirshipEmbeddedViewStyleConfiguration.Pending(
                 content: AirshipEmbeddedContentView(
                     embeddedInfo: item.embeddedInfo,
@@ -429,22 +429,20 @@ private struct AirshipEmbeddedContent<PlaceHolder: View>: View {
             )
         }
 
-        let selectedInstanceID = self.selectedInstanceID
-
         let configuration = AirshipEmbeddedViewStyleConfiguration(
             embeddedID: embeddedID,
             pending: pendingConfig,
             placeHolder: AnyView(self.placeholder()),
             selection: selection,
-            selected: pendingConfig.first { $0.id == selectedInstanceID }
+            selected: pendingConfig.first
         )
 
         return self.style.makeBody(configuration: configuration)
             // Recording is a side effect, so it can't live in `body` — and this is the
             // truer moment for it anyway: the tracker is "last displayed", and until now it
             // recorded what was selected.
-            .task(id: selectedInstanceID) {
-                guard let selectedInstanceID else { return }
+            .task(id: pendingConfig.first?.id) {
+                guard let selectedInstanceID = pendingConfig.first?.id else { return }
                 viewModel.tracker.record(
                     embeddedID: embeddedID,
                     instanceID: selectedInstanceID
@@ -452,44 +450,58 @@ private struct AirshipEmbeddedContent<PlaceHolder: View>: View {
             }
     }
 
-    /// Resolved fresh each render from the selection this render was handed, rather than the
-    /// one the view model was built with — so a changed `.instance`, comparator, or ordering
-    /// takes effect without the model knowing anything changed.
+    /// Eligible pending, ordered by `selection` preference — most preferred first. A single-
+    /// instance style shows the first element; a style that shows more than one, like a
+    /// carousel, can use the rest.
     ///
-    /// `.ai` is only partly the model's: it decides *whether* it has an answer, since that
-    /// arrives asynchronously, but when it doesn't, naming the fallback instance happens
-    /// here. A fallback comparator would otherwise be the one captured at init, stale in
-    /// exactly the way the rest of this avoids.
-    private var selectedInstanceID: String? {
+    /// Resolved fresh each render from the selection this render was handed, rather than the
+    /// one the view model was built with, for every case but `.ai` — so a changed `.instance`,
+    /// comparator, or ordering takes effect without the model knowing anything changed.
+    ///
+    /// `.ai` is only partly the model's: it decides *whether* it has an order, since that
+    /// arrives asynchronously, but naming the fallback order when it doesn't happens here. A
+    /// fallback comparator would otherwise be the one captured at init, stale in exactly the
+    /// way the rest of this avoids.
+    private var resolvedPending: [PendingEmbedded] {
         let eligible = self.eligiblePending
 
-        guard case .ai(_, let fallback) = selection else {
-            return selection.selectInstanceID(
-                from: eligible,
-                embeddedID: embeddedID,
-                tracker: viewModel.tracker
-            )
+        func reorder(_ order: [String]) -> [PendingEmbedded] {
+            order.compactMap { id in eligible.first { $0.embeddedInfo.instanceID == id } }
         }
 
-        switch viewModel.aiOutcome {
-        case .resolved(let instanceID):
-            // The model may have scored under an older filter, or the filter may have
-            // changed since. The current one is the one that decides.
-            guard eligible.contains(where: { $0.embeddedInfo.instanceID == instanceID }) else {
-                return fallback.asSelection.selectInstanceID(
+        guard case .ai(_, let fallback) = selection else {
+            return reorder(
+                selection.orderedInstanceIDs(
                     from: eligible,
                     embeddedID: embeddedID,
                     tracker: viewModel.tracker
                 )
-            }
-            return instanceID
+            )
+        }
+
+        switch viewModel.aiOutcome {
+        case .resolved(let order):
+            // The model may have ranked under an older filter, or the filter may have
+            // changed since. The current one decides what's eligible: anything ranked
+            // that's no longer eligible is dropped, anything eligible it never ranked is
+            // appended by priority.
+            let eligibleIDs = Set(eligible.map(\.embeddedInfo.instanceID))
+            let ranked = order.filter { eligibleIDs.contains($0) }
+            let rankedIDs = Set(ranked)
+            let unranked = eligible
+                .filter { !rankedIDs.contains($0.embeddedInfo.instanceID) }
+                .sorted { $0.embeddedInfo.priority < $1.embeddedInfo.priority }
+                .map(\.embeddedInfo.instanceID)
+            return reorder(ranked + unranked)
         case .blocked:
-            return nil
+            return []
         case .fallback:
-            return fallback.asSelection.selectInstanceID(
-                from: eligible,
-                embeddedID: embeddedID,
-                tracker: viewModel.tracker
+            return reorder(
+                fallback.asSelection.orderedInstanceIDs(
+                    from: eligible,
+                    embeddedID: embeddedID,
+                    tracker: viewModel.tracker
+                )
             )
         }
     }
@@ -535,14 +547,18 @@ public struct AirshipEmbeddedViewStyleConfiguration {
     }
 
     public let embeddedID: String
+
+    /// Eligible pending content, already ordered by `selection` preference — most preferred
+    /// first. `selected` is this array's first element. A style that shows more than one
+    /// instance, like a carousel, can use the rest in this same order.
     public let pending: [Pending]
     public let placeHolder: AnyView
 
-    /// How the view model selected content. Custom styles can use `selected` for the
-    /// pre-computed result, or inspect this and `pending` to apply their own ordering.
+    /// How the view model ordered `pending`. Exposed for a custom style that wants to
+    /// re-derive its own order instead of using `pending`'s.
     public let selection: AirshipEmbeddedSelection
 
-    /// The pre-computed selected content. `nil` means show the placeholder.
+    /// The pre-computed selected content — `pending.first`. `nil` means show the placeholder.
     public let selected: Pending?
 
     /// Optional comparator used to sort the available embedded contents.

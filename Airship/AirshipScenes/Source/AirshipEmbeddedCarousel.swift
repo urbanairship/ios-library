@@ -321,48 +321,6 @@ public struct AirshipEmbeddedCarousel<PlaceHolder: View, Indicator: View, Previo
         @Binding var pageCount: Int
         @Binding var lastPendingIDs: [String]
 
-        /// Applies `selection`'s filtering/ordering to `pending`.
-        ///
-        /// `EmbeddedViewModel` only uses `selection` to pick one winner for
-        /// `configuration.selected`, which this style never reads - so the carousel has to
-        /// resolve `selection` itself.
-        @MainActor
-        private func resolvePending(
-            _ pending: [Configuration.Pending],
-            selection: AirshipEmbeddedSelection
-        ) -> [Configuration.Pending] {
-            switch selection {
-            case .priority:
-                return pending.sorted {
-                    $0.content.embeddedInfo.priority < $1.content.embeddedInfo.priority
-                }
-            case .comparator(let comparator):
-                return pending.sorted {
-                    comparator($0.content.embeddedInfo, $1.content.embeddedInfo) == .orderedAscending
-                }
-            case .instance(let instanceIDs):
-                // Named pages only, in the given order; ids that aren't pending are skipped.
-                return instanceIDs.compactMap { id in
-                    pending.first { $0.content.embeddedInfo.instanceID == id }
-                }
-            case .ai(_, let fallback):
-                // Fallback.asSelection isn't public; map its cases by hand.
-                switch fallback {
-                case .priority:
-                    return resolvePending(pending, selection: .priority)
-                case .comparator(let comparator):
-                    return resolvePending(pending, selection: .comparator(comparator))
-                case .instance(let instanceIDs):
-                    return resolvePending(pending, selection: .instance(instanceIDs))
-                @unknown default:
-                    return pending
-                }
-            @unknown default:
-                // Unknown future case - show everything, unordered.
-                return pending
-            }
-        }
-
         @ViewBuilder
         @MainActor
         private func makeContent(pending: [Configuration.Pending], placeholder: AnyView) -> some View {
@@ -422,7 +380,7 @@ public struct AirshipEmbeddedCarousel<PlaceHolder: View, Indicator: View, Previo
         @MainActor
         @preconcurrency
         func makeBody(configuration: Configuration) -> some View {
-            let pending = resolvePending(configuration.pending, selection: configuration.selection)
+            let pending = configuration.pending
             return makeContent(pending: pending, placeholder: configuration.placeHolder)
                 .onPendingChange(pending.map(\.id)) { ids in
                     let oldIDs = lastPendingIDs
