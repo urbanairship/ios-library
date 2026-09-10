@@ -4,6 +4,20 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 21.0.0-beta.3 - September 9, 2026
+Third beta of the 21.0.0 major release. This release reworks on-device AI's retry policy and adds an Embedded Carousel view along with a set of Scene rendering fixes. See the [Migration Guide](https://github.com/urbanairship/ios-library/blob/main/Documentation/Migration/migration-guide-20-21.md) for details.
+
+### Changes
+- On-device AI: `AirshipAI.ModelProtocol`'s `maxAttempts`/`responseTimeout` requirements are replaced by a single `retryDecision(usage:error:attempt:) -> RetryDecision`, so a model can retry a schema-validation failure differently than a thrown error like a network timeout. `AirshipFoundationModel.backed(by:)`/`.privateCloudCompute(...)` take an optional `retryDecision` override in place of the old parameters; `nil` keeps the framework default (retry a schema mismatch immediately, back off 1s/4s on any other error, fail after 3 attempts). A custom `ModelProtocol` conformance needs to adopt the new requirement.
+- On-device AI: fixed the evaluation observer reporting an evaluation twice — once as `.completed`, again as `.failed` — when decoding the model's response failed after the response had already passed schema validation.
+- Embedded views: `AirshipEmbeddedViewStyleConfiguration.pending` is now ordered by selection preference (most-preferred first), so a custom embedded style no longer has to re-derive ordering itself. Added `AirshipEmbeddedCarousel`, a carousel container for embedded content, which now honors `.ai` selection ranking instead of falling back silently.
+- Scenes: `AirshipPermission` gains six cases — `.appTrackingTransparency`, `.camera`, `.microphone`, `.bluetooth`, `.photoLibrary`, `.contacts` — for the Composer's new system-permission action. Only `.displayNotifications` ships a built-in prompt delegate; the others parse and prompt but resolve to `.notDetermined` until the app registers its own `AirshipPermissionDelegate`.
+- Scenes: text line height now always uses the scaled-font-size approximation instead of iOS 26's native line-height API, which rendered differently than Android.
+- Fixed in-app message banners clipping or oscillating in width on rotation, including under a side notch or camera housing in landscape.
+- Fixed `AirshipPrivacyManager.enableFeatures`/`disableFeatures` permanently baking a server-side feature disable into local storage instead of leaving it as a read-time subtraction.
+- Fixed a crash handling certain native-bridge `run-action-cb` URLs from web content with fewer or more than three arguments.
+- Fixed a regex range mismatch between Swift's `String.count` and `NSString.length` that could misparse non-ASCII version-constraint audience matches, device tokens, or URL allow-list patterns.
+
 ## Version 21.0.0-beta.2 - August 27, 2026
 Second beta of the 21.0.0 major release. This release requires Xcode 27, brings on-device AI to Scenes and in-app experiences, includes a broad set of Scene layout fixes, and continues tightening the public API surface. See the [Migration Guide](https://github.com/urbanairship/ios-library/blob/main/Documentation/Migration/migration-guide-20-21.md) for details.
 
