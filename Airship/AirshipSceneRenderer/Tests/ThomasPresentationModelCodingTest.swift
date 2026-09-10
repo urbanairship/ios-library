@@ -90,10 +90,9 @@ struct ThomasPresentationModelCodingTest {
               "horizontal": "end",
               "vertical": "top"
             },
-            "animation": {
-              "type": "slide",
-              "animate_in_seconds": 0.3,
-              "animate_out_seconds": 0.3
+            "transition": {
+              "in": { "type": "slide", "duration_milliseconds": 300 },
+              "out": { "type": "slide", "duration_milliseconds": 300 }
             },
             "swipe_to_dismiss": false,
             "shadow": {
@@ -226,13 +225,16 @@ struct ThomasPresentationModelCodingTest {
               "width": "100%",
               "max_width": "100%"
             },
-            "animation":{
-              "type": "slide",
-              "animate_in_seconds": 0.3,
-              "animate_out_seconds": 0.3,
-              "origin":{
-                "horizontal": "center",
-                "vertical": "bottom"
+            "transition":{
+              "in": {
+                "type": "slide",
+                "duration_milliseconds": 300,
+                "edge": { "horizontal": "center", "vertical": "bottom" }
+              },
+              "out": {
+                "type": "slide",
+                "duration_milliseconds": 300,
+                "edge": { "horizontal": "center", "vertical": "bottom" }
               }
             },
             "device": {

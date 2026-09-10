@@ -92,10 +92,10 @@ struct BannerView: View {
                     }
                     .airshipApplyBannerTransition(
                         position: placement.position,
-                        animation: placement.animation
+                        transition: placement.transition
                     )
                     .airshipOnChangeOf(thomasEnvironment.isDismissed) { _ in
-                        setShowing(state: false, animation: placement.animation) {
+                        setShowing(state: false, transition: placement.transition) {
                             self.swipeOffset = 0
                             onDismiss()
                         }
@@ -104,12 +104,12 @@ struct BannerView: View {
                     .onAppear {
                         timer.onAppear()
                         if contentSize != nil {
-                            setShowing(state: true, animation: placement.animation)
+                            setShowing(state: true, transition: placement.transition)
                         }
                     }
                     .airshipOnChangeOf(contentSize) { size in
                         if size != nil && !isShowing {
-                            setShowing(state: true, animation: placement.animation)
+                            setShowing(state: true, transition: placement.transition)
                         }
                     }
                 }
@@ -252,19 +252,11 @@ struct BannerView: View {
         return placement
     }
 
-    private func setShowing(state: Bool, animation: ThomasPresentationInfo.Banner.Animation? , completion: (() -> Void)? = nil) {
-        let duration = if (state) {
-            switch animation {
-            case .fade(let fadeAnimation): fadeAnimation.animateInSeconds ?? BannerView.animationInOutDuration
-            case .slide(let slideAnimation): slideAnimation.animateInSeconds ?? BannerView.animationInOutDuration
-            default: BannerView.animationInOutDuration
-            }
+    private func setShowing(state: Bool, transition: ThomasPresentationInfo.Banner.Transition? , completion: (() -> Void)? = nil) {
+        let duration = if state {
+            transition?.enter.durationMilliseconds.map { Double($0) / 1000 } ?? BannerView.animationInOutDuration
         } else {
-            switch animation {
-            case .fade(let fadeAnimation): fadeAnimation.animateOutSeconds ?? BannerView.animationInOutDuration
-            case .slide(let slideAnimation): slideAnimation.animateOutSeconds ?? BannerView.animationInOutDuration
-            default: BannerView.animationInOutDuration
-            }
+            transition?.exit.durationMilliseconds.map { Double($0) / 1000 } ?? BannerView.animationInOutDuration
         }
         let animation: Animation = state ? .easeIn(duration: duration) : .easeOut(duration: duration)
         withAnimation(animation) {
@@ -398,20 +390,35 @@ private extension View {
     @ViewBuilder
     func airshipApplyBannerTransition(
         position: ThomasEdgePosition,
-        animation: ThomasPresentationInfo.Banner.Animation?
+        transition: ThomasPresentationInfo.Banner.Transition?
     ) -> some View {
-        switch animation {
-        // A missing animation defaults to slide-from-placement-edge to match Android
-        case .slide, nil:
-            let edge = position.bannerSlideEdge
-            self.transition(
-                .asymmetric(
-                    insertion: .move(edge: edge),
-                    removal: .move(edge: edge).combined(with: .opacity)
-                )
+        // A missing transition defaults to sliding both ways, matching Android.
+        let enter = transition?.enter ?? .slide(.init())
+        let exit = transition?.exit ?? .slide(.init())
+        let edge = position.bannerSlideEdge
+        self.transition(
+            .asymmetric(
+                insertion: .bannerTransition(for: enter, edge: edge, isExit: false),
+                removal: .bannerTransition(for: exit, edge: edge, isExit: true)
             )
+        )
+    }
+}
+
+private extension AnyTransition {
+    /// The transition for one direction of a banner's own effect -- a slide's exit also fades,
+    /// which the entrance does not. A banner's slide has no shape of its own to resolve, unlike
+    /// a modal's -- it's always the banner's own placement edge.
+    static func bannerTransition(
+        for effect: ThomasPresentationInfo.Banner.Effect,
+        edge: Edge,
+        isExit: Bool
+    ) -> AnyTransition {
+        switch effect {
         case .fade:
-            self.transition(.opacity)
+            return .opacity
+        case .slide:
+            return isExit ? .move(edge: edge).combined(with: .opacity) : .move(edge: edge)
         }
     }
 }

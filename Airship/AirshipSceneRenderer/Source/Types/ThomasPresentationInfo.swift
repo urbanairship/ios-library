@@ -106,7 +106,7 @@ public enum ThomasPresentationInfo: ThomasSerializable {
             var border: ThomasBorder?
             var backgroundColor: ThomasColor?
             // Optional for legacy payloads; nil renders as slide
-            var animation: Animation?
+            var transition: Transition?
             var swipeToDismiss: Bool?
             var shadow: ThomasShadow?
 
@@ -121,27 +121,41 @@ public enum ThomasPresentationInfo: ThomasSerializable {
                 case ignoreSafeArea = "ignore_safe_area"
                 case border
                 case backgroundColor = "background_color"
-                case animation
+                case transition
                 case swipeToDismiss = "swipe_to_dismiss"
                 case shadow
             }
         }
-        
-        enum Animation: ThomasSerializable {
-            case fade(FadeAnimation)
-            case slide(SlideAnimation)
-            
+
+        /// A banner's own enter and exit transition.
+        struct Transition: ThomasSerializable {
+            var enter: Effect
+            var exit: Effect
+
+            private enum CodingKeys: String, CodingKey {
+                case enter = "in"
+                case exit = "out"
+            }
+        }
+
+        /// What a banner draws for one direction of its transition. Same pattern as
+        /// `Modal.Effect`, but slide has no edge of its own -- it's always the banner's own
+        /// placement edge, so there's no sensible independent value to give it.
+        enum Effect: ThomasSerializable {
+            case fade(FadeEffect)
+            case slide(SlideEffect)
+
             private enum CodingKeys: String, CodingKey {
                 case type = "type"
             }
 
             init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
-                let type = try container.decode(AnimationType.self, forKey: .type)
+                let type = try container.decode(EffectType.self, forKey: .type)
 
                 self = switch type {
-                case .fade: .fade(try FadeAnimation(from: decoder))
-                case .slide: .slide(try SlideAnimation(from: decoder))
+                case .fade: .fade(try FadeEffect(from: decoder))
+                case .slide: .slide(try SlideEffect(from: decoder))
                 }
             }
 
@@ -151,34 +165,37 @@ public enum ThomasPresentationInfo: ThomasSerializable {
                 case .slide(let info): try info.encode(to: encoder)
                 }
             }
+
+            var durationMilliseconds: Int? {
+                switch self {
+                case .fade(let effect): effect.durationMilliseconds
+                case .slide(let effect): effect.durationMilliseconds
+                }
+            }
         }
-        
-        enum AnimationType: String, ThomasSerializable {
+
+        enum EffectType: String, ThomasSerializable {
             case fade
             case slide
         }
-        
-        struct FadeAnimation: ThomasSerializable {
-            var type: AnimationType = .fade
-            var animateInSeconds: Double?
-            var animateOutSeconds: Double?
-            
+
+        struct FadeEffect: ThomasSerializable {
+            var type: EffectType = .fade
+            var durationMilliseconds: Int?
+
             private enum CodingKeys: String, CodingKey {
                 case type
-                case animateInSeconds = "animate_in_seconds"
-                case animateOutSeconds = "animate_out_seconds"
+                case durationMilliseconds = "duration_milliseconds"
             }
         }
-        
-        struct SlideAnimation: ThomasSerializable {
-            var type: AnimationType = .slide
-            var animateInSeconds: Double?
-            var animateOutSeconds: Double?
-            
+
+        struct SlideEffect: ThomasSerializable {
+            var type: EffectType = .slide
+            var durationMilliseconds: Int?
+
             private enum CodingKeys: String, CodingKey {
                 case type
-                case animateInSeconds = "animate_in_seconds"
-                case animateOutSeconds = "animate_out_seconds"
+                case durationMilliseconds = "duration_milliseconds"
             }
         }
     }
@@ -210,7 +227,7 @@ public enum ThomasPresentationInfo: ThomasSerializable {
             var border: ThomasBorder?
             var backgroundColor: ThomasColor?
             var shadow: ThomasShadow?
-            var animation: Animation?
+            var transition: Transition?
 
             private enum CodingKeys: String, CodingKey {
                 case margin
@@ -222,27 +239,53 @@ public enum ThomasPresentationInfo: ThomasSerializable {
                 case border
                 case backgroundColor = "background_color"
                 case shadow
-                case animation
+                case transition
             }
         }
-        
-        enum Animation: ThomasSerializable {
-            case fade(FadeAnimation)
-            case slide(SlideAnimation)
-            case explode(ExplodeAnimation)
-            
+
+        /// A modal's own enter and exit transition -- a plain transition and one whose entrance
+        /// and exit are different effects entirely (explode in, fade out) are both just this,
+        /// played twice, rather than a symmetric case with a separate "asymmetric" one bolted on
+        /// beside it.
+        struct Transition: ThomasSerializable {
+            var enter: Effect
+            var exit: Effect
+
+            private enum CodingKeys: String, CodingKey {
+                case enter = "in"
+                case exit = "out"
+            }
+
+            /// Whether both directions are a plain fade, with no shape of their own to give a
+            /// transition anything to move -- the shade can then animate as one unit with the
+            /// content instead of needing its own, separate transition.
+            var isPlainFade: Bool {
+                if case .fade = enter, case .fade = exit { return true }
+                return false
+            }
+        }
+
+        /// What a modal draws for one direction of its transition. An effect only ever plays its
+        /// own direction, so its own `durationMilliseconds` lives here rather than on a wrapper as
+        /// an `animateInSeconds`/`animateOutSeconds` pair that `enter`/`exit` would otherwise have
+        /// to be cross-referenced against by name.
+        enum Effect: ThomasSerializable {
+            case fade(FadeEffect)
+            case slide(SlideEffect)
+            case explode(ExplodeEffect)
+
             private enum CodingKeys: String, CodingKey {
                 case type = "type"
             }
 
             init(from decoder: any Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
-                let type = try container.decode(AnimationType.self, forKey: .type)
+                let type = try container.decode(EffectType.self, forKey: .type)
 
                 self = switch type {
-                case .fade: .fade(try FadeAnimation(from: decoder))
-                case .slide: .slide(try SlideAnimation(from: decoder))
-                case .explode: .explode(try ExplodeAnimation(from: decoder))
+                case .fade: .fade(try FadeEffect(from: decoder))
+                case .slide: .slide(try SlideEffect(from: decoder))
+                case .explode: .explode(try ExplodeEffect(from: decoder))
                 }
             }
 
@@ -253,53 +296,53 @@ public enum ThomasPresentationInfo: ThomasSerializable {
                 case .explode(let info): try info.encode(to: encoder)
                 }
             }
+
+            var durationMilliseconds: Int? {
+                switch self {
+                case .fade(let effect): effect.durationMilliseconds
+                case .slide(let effect): effect.durationMilliseconds
+                case .explode(let effect): effect.durationMilliseconds
+                }
+            }
         }
-        
-        enum AnimationType: String, ThomasSerializable {
+
+        enum EffectType: String, ThomasSerializable {
             case fade
             case slide
             case explode
         }
-        
-        struct FadeAnimation: ThomasSerializable {
-            var type: AnimationType = .fade
-            var animateInSeconds: Double?
-            var animateOutSeconds: Double?
-            
+
+        struct FadeEffect: ThomasSerializable {
+            var type: EffectType = .fade
+            var durationMilliseconds: Int?
+
             private enum CodingKeys: String, CodingKey {
                 case type
-                case animateInSeconds = "animate_in_seconds"
-                case animateOutSeconds = "animate_out_seconds"
+                case durationMilliseconds = "duration_milliseconds"
             }
         }
-        
-        struct SlideAnimation: ThomasSerializable {
-            var type: AnimationType = .slide
-            var animateInSeconds: Double?
-            var animateOutSeconds: Double?
-            var origin: ThomasEdgePosition
-            
+
+        struct SlideEffect: ThomasSerializable {
+            var type: EffectType = .slide
+            var durationMilliseconds: Int?
+            var edge: ThomasEdgePosition
+
             private enum CodingKeys: String, CodingKey {
                 case type
-                case animateInSeconds = "animate_in_seconds"
-                case animateOutSeconds = "animate_out_seconds"
-                case origin
+                case durationMilliseconds = "duration_milliseconds"
+                case edge
             }
         }
-        
-        struct ExplodeAnimation: ThomasSerializable {
-            var type: AnimationType = .explode
-            var animateInSeconds: Double?
-            var animateOutSeconds: Double?
-            var enter: ThomasCornerPosition
-            var exit: ThomasCornerPosition
-            
+
+        struct ExplodeEffect: ThomasSerializable {
+            var type: EffectType = .explode
+            var durationMilliseconds: Int?
+            var corner: ThomasCornerPosition
+
             private enum CodingKeys: String, CodingKey {
                 case type
-                case animateInSeconds = "animate_in_seconds"
-                case animateOutSeconds = "animate_out_seconds"
-                case enter
-                case exit
+                case durationMilliseconds = "duration_milliseconds"
+                case corner
             }
         }
     }

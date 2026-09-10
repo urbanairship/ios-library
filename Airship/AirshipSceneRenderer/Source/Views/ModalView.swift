@@ -37,30 +37,29 @@ struct ModalView: View {
                 )
                 ZStack {
                     if isShowing {
-                        switch placement.animation {
-                        case .slide, .explode:
-                            modalBackground(placement)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .transition(.opacity)
-                            
-                            createModalContent(placement: placement, metrics: metrics)
-                                .airshipApplyModalTransition(animation: placement.animation)
-                        case .fade, _:
+                        if placement.transition?.isPlainFade ?? true {
                             createModalContent(placement: placement, metrics: metrics)
                                 .background(
                                     modalBackground(placement)
                                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 )
-                                .airshipApplyModalTransition(animation: placement.animation)
+                                .airshipApplyModalTransition(transition: placement.transition)
+                        } else {
+                            modalBackground(placement)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .transition(.opacity)
+
+                            createModalContent(placement: placement, metrics: metrics)
+                                .airshipApplyModalTransition(transition: placement.transition)
                         }
                     }
                 }
                 .onAppear {
-                    setShowing(animation: placement.animation, state: true)
+                    setShowing(transition: placement.transition, state: true)
                 }
                 .airshipOnChangeOf(thomasEnvironment.isDismissed) { _ in
                     isDismissing = true
-                    setShowing(animation: placement.animation, state: false) {
+                    setShowing(transition: placement.transition, state: false) {
                         onDismiss()
                     }
                 }
@@ -71,24 +70,14 @@ struct ModalView: View {
     }
 
     private func setShowing(
-        animation: ThomasPresentationInfo.Modal.Animation?,
+        transition: ThomasPresentationInfo.Modal.Transition?,
         state: Bool,
         completion: (() -> Void)? = nil)
     {
-        let duration = if (state) {
-            switch animation {
-            case .fade(let fadeAnimation): fadeAnimation.animateInSeconds ?? Self.animateInDuration
-            case .slide(let slideAnimation): slideAnimation.animateInSeconds ?? Self.animateInDuration
-            case .explode(let explodeAnimation): explodeAnimation.animateInSeconds ?? Self.animateInDuration
-            default: Self.animateInDuration
-            }
+        let duration = if state {
+            transition?.enter.durationMilliseconds.map { Double($0) / 1000 } ?? Self.animateInDuration
         } else {
-            switch animation {
-            case .fade(let fadeAnimation): fadeAnimation.animateOutSeconds ?? Self.animateOutDuration
-            case .slide(let slideAnimation): slideAnimation.animateOutSeconds ?? Self.animateOutDuration
-            case .explode(let explodeAnimation): explodeAnimation.animateOutSeconds ?? Self.animateOutDuration
-            default: Self.animateOutDuration
-            }
+            transition?.exit.durationMilliseconds.map { Double($0) / 1000 } ?? Self.animateOutDuration
         }
         let animation: Animation = state ? .easeIn(duration: duration) : .easeOut(duration: duration)
         withAnimation(animation) {
@@ -306,26 +295,39 @@ extension ThomasPresentationInfo.Modal.Placement {
 }
 
 private extension View {
-    
+
     @ViewBuilder
     func airshipApplyModalTransition(
-        animation: ThomasPresentationInfo.Modal.Animation?
+        transition: ThomasPresentationInfo.Modal.Transition?
     ) -> some View {
-        switch animation {
-        case .slide(let slideAnimation):
-            self.transition(.move(edge: slideAnimation.origin))
-        case .explode(let explodeAnimation):
+        if let transition {
             self.transition(
-                .explode(enterCorner: explodeAnimation.enter, exitCorner: explodeAnimation.exit)
+                .asymmetric(
+                    insertion: .thomasTransition(for: transition.enter),
+                    removal: .thomasTransition(for: transition.exit)
+                )
             )
-        case .fade, _:
+        } else {
             self.transition(.opacity)
         }
     }
 }
 
 private extension AnyTransition {
-    
+
+    /// The transition for one direction's own effect -- shared by insertion and removal, so a
+    /// shape animates identically regardless of which side of a mixed pair it came from.
+    static func thomasTransition(for effect: ThomasPresentationInfo.Modal.Effect) -> AnyTransition {
+        switch effect {
+        case .fade:
+            return .opacity
+        case .slide(let slideEffect):
+            return .move(edge: slideEffect.edge)
+        case .explode(let explodeEffect):
+            return .move(corner: explodeEffect.corner)
+        }
+    }
+
     static func move(edge: ThomasEdgePosition) -> AnyTransition {
         if (edge.horizontal == .center) {
             switch edge.vertical {
@@ -334,7 +336,7 @@ private extension AnyTransition {
             case .center: break
             }
         }
-        
+
         if (edge.vertical == .center) {
             switch edge.horizontal {
             case .start: return .move(edge: .leading)
@@ -342,21 +344,16 @@ private extension AnyTransition {
             case .center: break
             }
         }
-        
+
         return .opacity
     }
-    
-    static func explode(enterCorner: ThomasCornerPosition, exitCorner: ThomasCornerPosition) -> AnyTransition {
-        let insertionVerticalEdge: Edge = (enterCorner.vertical == .top) ? .top : .bottom
-        let insertionHorizontalEdge: Edge = (enterCorner.horizontal == .start) ? .leading : .trailing
-        let insertionTransition: AnyTransition = .move(edge: insertionVerticalEdge)
-            .combined(with: .move(edge: insertionHorizontalEdge))
-        
-        let removalVerticalEdge: Edge = (exitCorner.vertical == .top) ? .top : .bottom
-        let removalHorizontalEdge: Edge = (exitCorner.horizontal == .start) ? .leading : .trailing
-        let removalTransition: AnyTransition = .move(edge: removalVerticalEdge)
-            .combined(with: .move(edge: removalHorizontalEdge))
-        
-        return .asymmetric(insertion: insertionTransition, removal: removalTransition)
+
+    /// A diagonal move to (or from) one corner -- `insertion`/`removal` on the outer
+    /// `.asymmetric` transition already say which direction this plays, so there's only ever
+    /// the one corner to move against here, not an enter/exit pair.
+    static func move(corner: ThomasCornerPosition) -> AnyTransition {
+        let verticalEdge: Edge = (corner.vertical == .top) ? .top : .bottom
+        let horizontalEdge: Edge = (corner.horizontal == .start) ? .leading : .trailing
+        return .move(edge: verticalEdge).combined(with: .move(edge: horizontalEdge))
     }
 }
