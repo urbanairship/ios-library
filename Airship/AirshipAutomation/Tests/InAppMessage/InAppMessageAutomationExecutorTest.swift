@@ -192,6 +192,93 @@ struct InAppMessageAutomationExecutorTest {
     }
 
     @Test
+    func testExecuteVariantControl() async throws {
+        let scene = TestScene()
+        self.sceneManager.onScene = { [preparedData] message in
+            #expect(message == preparedData!.message)
+            return scene
+        }
+
+        var preparedInfo = preparedInfo
+        preparedInfo.variantAudienceResult = VariantAudienceResult(outcome: .holdout)
+
+        let result = try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
+
+        let expected = ThomasLayoutResolutionEvent.variantControl()
+        #expect(analytics.events.first!.0.name == expected.name)
+        #expect(try AirshipJSON.wrap(analytics.events.first!.0.data) == AirshipJSON.wrap(expected.data))
+        #expect(!(self.displayAdapter.displayed))
+        #expect(result == .finished)
+        #expect(self.actionRunner.actionPayloads.isEmpty)
+
+        #expect(await self.ledger.recorded == [
+            .execution(
+                scheduleID: preparedInfo.scheduleID,
+                sharedID: nil,
+                triggerID: nil,
+                result: .holdout,
+                cancel: false
+            )
+        ])
+    }
+
+    @Test
+    func testExecuteVariantMiss() async throws {
+        let scene = TestScene()
+        self.sceneManager.onScene = { [preparedData] message in
+            #expect(message == preparedData!.message)
+            return scene
+        }
+
+        var preparedInfo = preparedInfo
+        preparedInfo.variantAudienceResult = VariantAudienceResult(outcome: .variantMiss)
+
+        let result = try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
+
+        let expected = ThomasLayoutResolutionEvent.variantMiss()
+        #expect(analytics.events.first!.0.name == expected.name)
+        #expect(try AirshipJSON.wrap(analytics.events.first!.0.data) == AirshipJSON.wrap(expected.data))
+        #expect(!(self.displayAdapter.displayed))
+        #expect(result == .finished)
+        #expect(self.actionRunner.actionPayloads.isEmpty)
+
+        #expect(await self.ledger.recorded == [
+            .execution(
+                scheduleID: preparedInfo.scheduleID,
+                sharedID: nil,
+                triggerID: nil,
+                result: .variantMiss,
+                cancel: false
+            )
+        ])
+    }
+
+    @Test
+    func testExecuteVariantMatchedDisplaysNormally() async throws {
+        self.displayAdapter.onDisplay = { [preparedData] displayTarget, incomingAnalytics in
+            #expect(preparedData!.analytics === incomingAnalytics)
+            return .finished
+        }
+
+        var preparedInfo = preparedInfo
+        preparedInfo.variantAudienceResult = VariantAudienceResult(outcome: .matched)
+
+        let result = try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
+        #expect(self.displayAdapter.displayed)
+        #expect(result == .finished)
+
+        #expect(await self.ledger.recorded == [
+            .execution(
+                scheduleID: preparedInfo.scheduleID,
+                sharedID: nil,
+                triggerID: nil,
+                result: .succeeded,
+                cancel: false
+            )
+        ])
+    }
+
+    @Test
     func testExecuteDisplayAdapter() async throws  {
         let delegate = TestDisplayDelegate()
         self.executor.displayDelegate = delegate

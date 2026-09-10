@@ -1509,6 +1509,131 @@ struct AutomationPreparerTest {
 
         #expect(prepared.info.experimentResult == nil)
     }
+
+    /// Same fixture as AudienceHashSelectorTest.testBoundaries: this hash prefix and
+    /// contactID resolve to bucket 9908 of 16384 via farm hash.
+    private func makeVariantAudienceJSON(
+        audienceSubset: (min: UInt64, max: UInt64),
+        holdoutSubset: (min: UInt64, max: UInt64)? = nil
+    ) -> String {
+        let holdoutJSON: String = if let holdoutSubset {
+            """
+            , "holdout_subset": { "min_hash_bucket": \(holdoutSubset.min), "max_hash_bucket": \(holdoutSubset.max) }
+            """
+        } else {
+            ""
+        }
+
+        return """
+        {
+            "audience_hash": {
+                "hash_prefix": "686f2c15-cf8c-47a6-ae9f-e749fc792a9d:",
+                "num_hash_buckets": 16384,
+                "hash_identifier": "contact",
+                "hash_algorithm": "farm_hash"
+            },
+            "audience_subset": { "min_hash_bucket": \(audienceSubset.min), "max_hash_bucket": \(audienceSubset.max) }
+            \(holdoutJSON)
+        }
+        """
+    }
+
+    private func variantAudienceSchedule(json: String) throws -> AutomationSchedule {
+        var schedule = AutomationSchedule(
+            identifier: UUID().uuidString,
+            data: .inAppMessage(
+                InAppMessage(name: "name", displayContent: .custom(.null))
+            ),
+            triggers: []
+        )
+        schedule.variantAudience = try JSONDecoder().decode(VariantAudience.self, from: Data(json.utf8))
+        return schedule
+    }
+
+    @Test
+    func testVariantAudienceMatched() async throws {
+        let schedule = try variantAudienceSchedule(
+            json: makeVariantAudienceJSON(audienceSubset: (9908, 9908))
+        )
+
+        self.remoteDataAccess.contactIDBlock = { _ in "contactId" }
+        self.remoteDataAccess.requiresUpdateBlock = { _ in false }
+        self.remoteDataAccess.bestEffortRefreshBlock = { _ in true }
+
+        let preparedData = self.preparedMessageData!
+        self.messagePreparer.prepareBlock = { message, info in
+            #expect(info.variantAudienceResult == VariantAudienceResult(outcome: .matched))
+            return preparedData
+        }
+
+        let result = await self.preparer.prepare(
+            schedule: schedule,
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
+        )
+
+        guard case .prepared(let prepared) = result else {
+            Issue.record()
+            return
+        }
+        #expect(prepared.info.variantAudienceResult == VariantAudienceResult(outcome: .matched))
+    }
+
+    @Test
+    func testVariantAudienceHoldout() async throws {
+        let schedule = try variantAudienceSchedule(
+            json: makeVariantAudienceJSON(audienceSubset: (0, 0), holdoutSubset: (9908, 9908))
+        )
+
+        self.remoteDataAccess.contactIDBlock = { _ in "contactId" }
+        self.remoteDataAccess.requiresUpdateBlock = { _ in false }
+        self.remoteDataAccess.bestEffortRefreshBlock = { _ in true }
+
+        let preparedData = self.preparedMessageData!
+        self.messagePreparer.prepareBlock = { _, _ in
+            return preparedData
+        }
+
+        let result = await self.preparer.prepare(
+            schedule: schedule,
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
+        )
+
+        guard case .prepared(let prepared) = result else {
+            Issue.record()
+            return
+        }
+        #expect(prepared.info.variantAudienceResult == VariantAudienceResult(outcome: .holdout))
+    }
+
+    @Test
+    func testVariantAudienceMiss() async throws {
+        let schedule = try variantAudienceSchedule(
+            json: makeVariantAudienceJSON(audienceSubset: (0, 0))
+        )
+
+        self.remoteDataAccess.contactIDBlock = { _ in "contactId" }
+        self.remoteDataAccess.requiresUpdateBlock = { _ in false }
+        self.remoteDataAccess.bestEffortRefreshBlock = { _ in true }
+
+        let preparedData = self.preparedMessageData!
+        self.messagePreparer.prepareBlock = { _, _ in
+            return preparedData
+        }
+
+        let result = await self.preparer.prepare(
+            schedule: schedule,
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
+        )
+
+        guard case .prepared(let prepared) = result else {
+            Issue.record()
+            return
+        }
+        #expect(prepared.info.variantAudienceResult == VariantAudienceResult(outcome: .variantMiss))
+    }
 }
 
 

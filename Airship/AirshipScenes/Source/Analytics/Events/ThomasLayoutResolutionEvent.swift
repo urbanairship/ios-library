@@ -83,6 +83,27 @@ public struct ThomasLayoutResolutionEvent: ThomasLayoutEvent {
         )
     }
 
+    /// A variant experiment resolved this schedule to its own no-message arm. Distinct from
+    /// ``control(experimentResult:)``, which is the (unrelated) global holdout mechanism.
+    public static func variantControl() -> ThomasLayoutResolutionEvent {
+        return ThomasLayoutResolutionEvent(
+            data: ResolutionData(
+                resolutionType: .variantControl,
+                displayTime: 0.0
+            )
+        )
+    }
+
+    /// A variant experiment resolved this device to a sibling schedule's arm.
+    public static func variantMiss() -> ThomasLayoutResolutionEvent {
+        return ThomasLayoutResolutionEvent(
+            data: ResolutionData(
+                resolutionType: .variantMiss,
+                displayTime: 0.0
+            )
+        )
+    }
+
     public static func audienceExcluded() -> ThomasLayoutResolutionEvent {
         return ThomasLayoutResolutionEvent(
             data: ResolutionData(
@@ -129,6 +150,8 @@ public struct ThomasLayoutResolutionEvent: ThomasLayoutEvent {
             case timedOut
             case interrupted
             case control
+            case variantControl
+            case variantMiss
             case audienceCheckExcluded
             case appSuppressed
             case aiSuppressed
@@ -137,6 +160,16 @@ public struct ThomasLayoutResolutionEvent: ThomasLayoutEvent {
         let resolutionType: ResolutionType
         let displayTime: TimeInterval
         var device: DeviceInfo?
+
+        init(
+            resolutionType: ResolutionType,
+            displayTime: TimeInterval,
+            device: DeviceInfo? = nil
+        ) {
+            self.resolutionType = resolutionType
+            self.displayTime = displayTime
+            self.device = device
+        }
 
         enum CodingKeys: String, CodingKey {
             case resolutionType = "type"
@@ -177,6 +210,10 @@ public struct ThomasLayoutResolutionEvent: ThomasLayoutEvent {
                 try resolution.encode("interrupted", forKey: .resolutionType)
             case .control:
                 try resolution.encode("control", forKey: .resolutionType)
+            case .variantControl:
+                try resolution.encode("variant_control", forKey: .resolutionType)
+            case .variantMiss:
+                try resolution.encode("variant_miss", forKey: .resolutionType)
             case .audienceCheckExcluded:
                 try resolution.encode("audience_check_excluded", forKey: .resolutionType)
             case .appSuppressed:

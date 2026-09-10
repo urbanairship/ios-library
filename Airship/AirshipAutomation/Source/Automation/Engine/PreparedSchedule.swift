@@ -2,7 +2,7 @@
 
 import Foundation
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 /// A prepared schedule
 struct PreparedSchedule: Sendable {
@@ -19,6 +19,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
     var campaigns: AirshipJSON?
     var contactID: String?
     var experimentResult: ExperimentResult?
+    var variantAudienceResult: VariantAudienceResult?
     var reportingContext: AirshipJSON?
     var triggerSessionID: String
     var additionalAudienceCheckResult: Bool
@@ -41,6 +42,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
         campaigns: AirshipJSON? = nil,
         contactID: String? = nil,
         experimentResult: ExperimentResult? = nil,
+        variantAudienceResult: VariantAudienceResult? = nil,
         reportingContext: AirshipJSON? = nil,
         triggerSessionID: String,
         additionalAudienceCheckResult: Bool = true,
@@ -55,6 +57,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.campaigns = campaigns
         self.contactID = contactID
         self.experimentResult = experimentResult
+        self.variantAudienceResult = variantAudienceResult
         self.reportingContext = reportingContext
         self.triggerSessionID = triggerSessionID
         self.additionalAudienceCheckResult = additionalAudienceCheckResult
@@ -72,6 +75,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.campaigns = try container.decodeIfPresent(AirshipJSON.self, forKey: .campaigns)
         self.contactID = try container.decodeIfPresent(String.self, forKey: .contactID)
         self.experimentResult = try container.decodeIfPresent(ExperimentResult.self, forKey: .experimentResult)
+        self.variantAudienceResult = try container.decodeIfPresent(VariantAudienceResult.self, forKey: .variantAudienceResult)
         self.reportingContext = try container.decodeIfPresent(AirshipJSON.self, forKey: .reportingContext)
         self.triggerSessionID = try container.decodeIfPresent(String.self, forKey: .triggerSessionID) ?? UUID().uuidString
         self.additionalAudienceCheckResult = try container.decodeIfPresent(Bool.self, forKey: .additionalAudienceCheckResult) ?? true
@@ -81,6 +85,12 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.ledgerSharedID = try container.decodeIfPresent(String.self, forKey: .ledgerSharedID)
         self.triggerID = try container.decodeIfPresent(String.self, forKey: .triggerID)
     }
+}
+
+/// This schedule's resolved outcome within its variant experiment, stamped at prepare time so
+/// execution acts on the same resolution it reports rather than re-hashing at execute time.
+struct VariantAudienceResult: Codable, Sendable, Equatable {
+    var outcome: VariantAudience.Outcome
 }
 
 /// Prepared schedule data

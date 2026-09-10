@@ -4,7 +4,7 @@ public import Foundation
 
 @_spi(AirshipInternal) import AirshipBasement
 
-public import AirshipCore
+@_spi(AirshipInternal) public import AirshipCore
 
 /// Automation schedule
 public struct AutomationSchedule: Sendable, Codable, Equatable {
@@ -63,6 +63,11 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     /// If the schedule should bypass holdout groups or not
     public var bypassHoldoutGroups: Bool?
 
+    /// Makes this schedule one arm of an Experiment Groups variant experiment. Nil for
+    /// schedules that aren't part of one. Independent of `bypassHoldoutGroups`, which
+    /// applies to the (unrelated) global holdout mechanism.
+    var variantAudience: VariantAudience?
+
     /// Ledger configuration for shared display limiting. When present with a
     /// `shared_id`, ledger events this schedule records are pooled across every
     /// schedule sharing that ID (e.g. A/B variants).
@@ -114,6 +119,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         case reportingContext = "reporting_context"
         case productID = "product_id"
         case bypassHoldoutGroups = "bypass_holdout_groups"
+        case variantAudience = "variant_audience"
         case ledgerConfig = "ledger_config"
         case limitConfig = "limit_config"
         case editGracePeriodDays = "edit_grace_period"
@@ -200,6 +206,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.interval = interval
         self.data = data
         self.bypassHoldoutGroups = bypassHoldoutGroups
+        self.variantAudience = nil
         self.ledgerConfig = nil
         self.limitConfig = nil
         self.editGracePeriodDays = editGracePeriodDays
@@ -232,6 +239,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         delay: AutomationDelay? = nil,
         interval: TimeInterval? = nil,
         bypassHoldoutGroups: Bool? = nil,
+        variantAudience: VariantAudience? = nil,
         ledgerConfig: LedgerConfig? = nil,
         limitConfig: LimitConfig? = nil,
         editGracePeriodDays: UInt? = nil,
@@ -260,6 +268,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.interval = interval
         self.data = data
         self.bypassHoldoutGroups = bypassHoldoutGroups
+        self.variantAudience = variantAudience
         self.ledgerConfig = ledgerConfig
         self.limitConfig = limitConfig
         self.editGracePeriodDays = editGracePeriodDays
@@ -297,6 +306,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         self.reportingContext = try container.decodeIfPresent(AirshipJSON.self, forKey: .reportingContext)
         self.productID = try container.decodeIfPresent(String.self, forKey: .productID)
         self.bypassHoldoutGroups = try container.decodeIfPresent(Bool.self, forKey: .bypassHoldoutGroups)
+        self.variantAudience = try container.decodeIfPresent(VariantAudience.self, forKey: .variantAudience)
         self.ledgerConfig = try container.decodeIfPresent(LedgerConfig.self, forKey: .ledgerConfig)
         self.limitConfig = try container.decodeIfPresent(LimitConfig.self, forKey: .limitConfig)
         self.editGracePeriodDays = try container.decodeIfPresent(UInt.self, forKey: .editGracePeriodDays)
@@ -357,6 +367,7 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
         try container.encodeIfPresent(self.reportingContext, forKey: .reportingContext)
         try container.encodeIfPresent(self.productID, forKey: .productID)
         try container.encodeIfPresent(self.bypassHoldoutGroups, forKey: .bypassHoldoutGroups)
+        try container.encodeIfPresent(self.variantAudience, forKey: .variantAudience)
         try container.encodeIfPresent(self.ledgerConfig, forKey: .ledgerConfig)
         try container.encodeIfPresent(self.limitConfig, forKey: .limitConfig)
         try container.encodeIfPresent(self.editGracePeriodDays, forKey: .editGracePeriodDays)

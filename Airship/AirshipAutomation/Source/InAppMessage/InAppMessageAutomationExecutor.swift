@@ -198,6 +198,25 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
                 layoutContext: nil
             )
             await self.recordLedgerExecution(preparedScheduleInfo, result: .holdout)
+        } else if let variantResult = preparedScheduleInfo.variantAudienceResult, variantResult.outcome.isDisplaySkipped {
+            switch variantResult.outcome {
+            case .holdout:
+                AirshipLogger.info("Schedule \(preparedScheduleInfo.scheduleID) resolved to variant holdout")
+                data.analytics.recordEvent(
+                    ThomasLayoutResolutionEvent.variantControl(),
+                    layoutContext: nil
+                )
+                await self.recordLedgerExecution(preparedScheduleInfo, result: .holdout)
+            case .variantMiss:
+                AirshipLogger.info("Schedule \(preparedScheduleInfo.scheduleID) resolved to a sibling variant")
+                data.analytics.recordEvent(
+                    ThomasLayoutResolutionEvent.variantMiss(),
+                    layoutContext: nil
+                )
+                await self.recordLedgerExecution(preparedScheduleInfo, result: .variantMiss)
+            case .matched:
+                break // Unreachable: filtered by `isDisplaySkipped` above.
+            }
         } else {
             do {
                 AirshipLogger.info("Displaying message \(preparedScheduleInfo.scheduleID)")

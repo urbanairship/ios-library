@@ -124,7 +124,9 @@ final class InAppMessageAutomationPreparer: AutomationPreparerDelegate {
         let assets = try await self.prepareAssets(
             message: message,
             scheduleID: preparedScheduleInfo.scheduleID,
-            skip: preparedScheduleInfo.additionalAudienceCheckResult == false || preparedScheduleInfo.experimentResult?.isMatch == true
+            skip: preparedScheduleInfo.additionalAudienceCheckResult == false
+                || preparedScheduleInfo.experimentResult?.isMatch == true
+                || preparedScheduleInfo.variantAudienceResult?.outcome.isDisplaySkipped == true
         )
 
         let displayCoordinator = self.displayCoordinatorManager.displayCoordinator(message: message)

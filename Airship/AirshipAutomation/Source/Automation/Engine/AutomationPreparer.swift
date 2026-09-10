@@ -167,6 +167,18 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                 nil
             }
 
+            let variantAudienceResult: VariantAudienceResult? = if let variantAudience = schedule.variantAudience,
+               schedule.isInAppMessageType {
+                VariantAudienceResult(
+                    outcome: variantAudience.resolve(
+                        channelID: try await deviceInfoProvider.channelID,
+                        contactID: await deviceInfoProvider.stableContactInfo.contactID
+                    )
+                )
+            } else {
+                nil
+            }
+
             AirshipLogger.trace("Preparing data \(schedule.identifier)")
 
             return try await self.prepareData(
@@ -197,6 +209,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                         campaigns: schedule.campaigns,
                         contactID: await deviceInfoProvider.stableContactInfo.contactID,
                         experimentResult: experimentResult,
+                        variantAudienceResult: variantAudienceResult,
                         reportingContext: schedule.reportingContext,
                         triggerSessionID: triggerSessionID,
                         additionalAudienceCheckResult: result,

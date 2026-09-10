@@ -121,6 +121,44 @@ struct ThomasLayoutResolutionEventTest {
     }
 
     @Test
+    func testVariantControl() throws {
+        let event = ThomasLayoutResolutionEvent.variantControl()
+        #expect(event.name.reportingName == "in_app_resolution")
+
+        let expectedJSON = """
+        {
+           "resolution": {
+              "display_time":"0.00",
+              "type":"variant_control"
+           }
+        }
+        """
+
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
+    }
+
+    @Test
+    func testVariantMiss() throws {
+        let event = ThomasLayoutResolutionEvent.variantMiss()
+        #expect(event.name.reportingName == "in_app_resolution")
+
+        let expectedJSON = """
+        {
+           "resolution": {
+              "display_time":"0.00",
+              "type":"variant_miss"
+           }
+        }
+        """
+
+        let expected = try AirshipJSON.from(json: expectedJSON)
+        let actual = try event.bodyJSON
+        #expect(actual == expected)
+    }
+
+    @Test
     func testAudienceExcluded() throws {
         let event = ThomasLayoutResolutionEvent.audienceExcluded()
         #expect(event.name.reportingName == "in_app_resolution")

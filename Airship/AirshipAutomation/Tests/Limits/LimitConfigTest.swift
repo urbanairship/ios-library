@@ -94,7 +94,7 @@ struct LimitConfigTest {
         let events = [
             execution(result: .succeeded),
             execution(result: .holdout),
-            execution(result: .control),
+            execution(result: .variantMiss),
             execution(result: .audienceMiss),
             execution(result: .backfill)
         ]
@@ -150,15 +150,15 @@ struct LimitConfigTest {
     func testExcludeByResult() {
         let events = [
             execution(result: .succeeded),
-            execution(result: .control)
+            execution(result: .holdout)
         ]
         let exclude = ExclusionSet(or: [
             ExclusionRule(
                 source: .any,
-                match: .execution(.init(results: [.control]))
+                match: .execution(.init(results: [.holdout]))
             )
         ])
-        // The control execution is subtracted; only the succeeded one counts.
+        // The holdout execution is subtracted; only the succeeded one counts.
         #expect(isOverLimit(limit: 1, events: events, exclude: exclude))
         #expect(!isOverLimit(limit: 2, events: events, exclude: exclude))
     }
@@ -310,7 +310,7 @@ struct LimitConfigTest {
                 "source": { "type": "schedule", "schedule_id": "sched-x" },
                 "match": {
                   "type": "execution",
-                  "results": ["control", "holdout"],
+                  "results": ["variant_miss", "holdout"],
                   "cancel": true,
                   "trigger_id": "trig-1",
                   "shared_group": { "type": "id", "shared_id": "grp" },
@@ -333,7 +333,7 @@ struct LimitConfigTest {
             Issue.record("Expected execution match")
             return
         }
-        #expect(match.results == [.control, .holdout])
+        #expect(match.results == [.variantMiss, .holdout])
         #expect(match.cancel == true)
         #expect(match.triggerID == "trig-1")
         #expect(match.sharedGroup == .id("grp"))
@@ -351,7 +351,7 @@ struct LimitConfigTest {
     func testLimitConfigCodableRoundTrip() throws {
         let config = LimitConfig(
             exclude: ExclusionSet(or: [
-                ExclusionRule(source: .ownSchedule, match: .execution(.init(results: [.control]))),
+                ExclusionRule(source: .ownSchedule, match: .execution(.init(results: [.holdout]))),
                 ExclusionRule(source: .schedule("x"), match: .triggered(.init(triggerID: "t"))),
                 ExclusionRule(source: .otherSchedules, match: nil)
             ])
@@ -364,11 +364,11 @@ struct LimitConfigTest {
     // MARK: - Winner-selection scenarios (web-push-sdk#959)
 
     /// A pooled A/B group: two variants recorded executions under the shared
-    /// group; the winner also has a variant-control event.
+    /// group; the winner also has a holdout event.
     private func experimentEvents() -> [LedgerEvent] {
         return [
             execution(scheduleID: scheduleID, sharedID: sharedID, result: .succeeded),
-            execution(scheduleID: scheduleID, sharedID: sharedID, result: .control),
+            execution(scheduleID: scheduleID, sharedID: sharedID, result: .holdout),
             execution(scheduleID: otherScheduleID, sharedID: sharedID, result: .succeeded),
             execution(scheduleID: otherScheduleID, sharedID: sharedID, result: .succeeded)
         ]
@@ -377,11 +377,11 @@ struct LimitConfigTest {
     @Test
     func testScenarioDifference() {
         // Pick up where the winner left off: exclude other schedules' events and
-        // the winner's own control events. Only the winner's one succeeded
+        // the winner's own holdout events. Only the winner's one succeeded
         // execution counts.
         let exclude = ExclusionSet(or: [
             ExclusionRule(source: .otherSchedules, match: nil),
-            ExclusionRule(source: .ownSchedule, match: .execution(.init(results: [.control])))
+            ExclusionRule(source: .ownSchedule, match: .execution(.init(results: [.holdout])))
         ])
         #expect(isOverLimit(limit: 1, events: experimentEvents(), exclude: exclude))
         #expect(!isOverLimit(limit: 2, events: experimentEvents(), exclude: exclude))
@@ -389,10 +389,10 @@ struct LimitConfigTest {
 
     @Test
     func testScenarioContinue() {
-        // Count all shared history, excluding only the winner's own control.
+        // Count all shared history, excluding only the winner's own holdout.
         // 3 succeeded executions remain (1 own + 2 other).
         let exclude = ExclusionSet(or: [
-            ExclusionRule(source: .ownSchedule, match: .execution(.init(results: [.control])))
+            ExclusionRule(source: .ownSchedule, match: .execution(.init(results: [.holdout])))
         ])
         #expect(isOverLimit(limit: 3, events: experimentEvents(), exclude: exclude))
         #expect(!isOverLimit(limit: 4, events: experimentEvents(), exclude: exclude))
@@ -406,7 +406,7 @@ struct LimitConfigTest {
         // post-reset scope: the ledger returns just the winner's own events.
         let ownEvents = [
             execution(scheduleID: scheduleID, sharedID: nil, result: .succeeded),
-            execution(scheduleID: scheduleID, sharedID: nil, result: .control)
+            execution(scheduleID: scheduleID, sharedID: nil, result: .holdout)
         ]
         #expect(isOverLimit(limit: 2, events: ownEvents, exclude: nil))
         #expect(!isOverLimit(limit: 3, events: ownEvents, exclude: nil))

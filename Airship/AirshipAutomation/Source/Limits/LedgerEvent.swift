@@ -21,13 +21,23 @@ enum LedgerExecutionResult: String, Sendable, Codable, Equatable, CaseIterable {
     /// The schedule did its thing: the scene was displayed or the actions ran.
     case succeeded
 
-    /// A holdout group execution: everything except display or actions
-    /// occurred. Counts toward the limit like a real execution.
+    /// The user reached the last mile before display — trigger fired,
+    /// audience and frequency checks passed, assets loaded — but the
+    /// resolved outcome was "no message." Everything except display or
+    /// actions occurred, so it counts toward the limit like a real
+    /// execution. Emitted by the global holdout mechanism (holdout
+    /// experiment groups / `bypass_holdout_groups`), and equally by a
+    /// variant experiment whose resolved bucket lands in its own no-message
+    /// arm — the two are indistinguishable in their effect on the ledger,
+    /// only in why they occurred.
     case holdout
 
-    /// A variant control: the user triggered the experiment but was assigned a
-    /// different variant. Not a holdout.
-    case control
+    /// The user reached the same last mile as `holdout`, but the resolved
+    /// bucket belongs to a sibling schedule's arm in the same variant
+    /// experiment. Not a holdout: the user wasn't assigned "no message,"
+    /// just not this schedule's message. Counts toward the limit by
+    /// default, same as any other execution.
+    case variantMiss = "variant_miss"
 
     /// The audience check failed with a budget-consuming miss behavior.
     case audienceMiss = "audience_miss"
