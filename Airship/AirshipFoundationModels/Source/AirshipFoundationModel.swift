@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-public import Foundation
+import Foundation
 @_spi(AirshipImport) public import AirshipCore
 @_spi(AirshipInternal) import AirshipBasement
 
@@ -11,10 +11,10 @@ public import FoundationModels
 
 /// An `AirshipAI.ModelProtocol` backed by a Foundation Models `LanguageModel`.
 ///
-/// Build one with ``backed(by:reasoningLevel:maxAttempts:responseTimeout:availability:)`` to
-/// wrap any `LanguageModel` — Apple's on-device `SystemLanguageModel` or your own conformance
-/// — or with ``privateCloudCompute(reasoningLevel:maxAttempts:responseTimeout:)`` for Apple's
-/// Private Cloud Compute model:
+/// Build one with ``backed(by:reasoningLevel:availability:retryDecision:)`` to wrap any
+/// `LanguageModel` — Apple's on-device `SystemLanguageModel` or your own conformance — or
+/// with ``privateCloudCompute(reasoningLevel:retryDecision:)`` for Apple's Private Cloud
+/// Compute model:
 ///
 ///     Airship.ai.setModelResolver { _ in
 ///         .custom(AirshipFoundationModel.privateCloudCompute(reasoningLevel: .deep))
@@ -22,8 +22,8 @@ public import FoundationModels
 ///
 /// Requests use guided generation, so responses are structurally constrained to the
 /// evaluation's schema. Like the SDK's built-in on-device model, this answers a single
-/// request per `respond` call — retry, timeout, and output validation live in the
-/// framework's evaluator.
+/// request per `respond` call — retry and output validation live in the framework's
+/// evaluator.
 ///
 /// - Note: Requires iOS 27. The SDK's built-in on-device model — used when no resolver is
 ///   set — works on iOS 26.
@@ -39,8 +39,7 @@ public struct AirshipFoundationModel<Backing: LanguageModel>: AirshipAI.ModelPro
     /// `.reasoning` capability; `nil` leaves the level to the model's own default.
     public let reasoningLevel: ContextOptions.ReasoningLevel?
 
-    public let maxAttempts: Int
-    public let responseTimeout: TimeInterval
+    private let retryDecisionProvider: (@Sendable (AirshipAI.AnyUsage, any Error, Int) -> AirshipAI.RetryDecision)?
 
     private let availabilityProvider: @Sendable () -> AirshipAI.Availability
     private let availabilityStreamProvider: @Sendable () -> AsyncStream<AirshipAI.Availability>
@@ -53,18 +52,24 @@ public struct AirshipFoundationModel<Backing: LanguageModel>: AirshipAI.ModelPro
         availabilityStreamProvider()
     }
 
+    public func retryDecision(
+        usage: AirshipAI.AnyUsage,
+        error: any Error,
+        attempt: Int
+    ) -> AirshipAI.RetryDecision {
+        retryDecisionProvider?(usage, error, attempt) ?? .defaultBackoff(error: error, attempt: attempt)
+    }
+
     init(
         model: Backing,
         reasoningLevel: ContextOptions.ReasoningLevel?,
-        maxAttempts: Int,
-        responseTimeout: TimeInterval,
+        retryDecision: (@Sendable (AirshipAI.AnyUsage, any Error, Int) -> AirshipAI.RetryDecision)?,
         availabilityProvider: @escaping @Sendable () -> AirshipAI.Availability,
         availabilityStreamProvider: @escaping @Sendable () -> AsyncStream<AirshipAI.Availability>
     ) {
         self.model = model
         self.reasoningLevel = reasoningLevel
-        self.maxAttempts = maxAttempts
-        self.responseTimeout = responseTimeout
+        self.retryDecisionProvider = retryDecision
         self.availabilityProvider = availabilityProvider
         self.availabilityStreamProvider = availabilityStreamProvider
     }
@@ -94,26 +99,24 @@ public struct AirshipFoundationModel<Backing: LanguageModel>: AirshipAI.ModelPro
     ///   - model: the model to run requests against.
     ///   - reasoningLevel: reasoning effort for models that declare `.reasoning`. Defaults
     ///     to `nil`, which leaves the level to the model.
-    ///   - maxAttempts: attempts (including the first) the evaluator makes before failing.
-    ///   - responseTimeout: total wall-clock budget across all attempts. Raise it for a
-    ///     backend slower than an on-device model.
     ///   - availability: maps `model` to its current availability. Read fresh before every
     ///     evaluation, and evaluated under Observation tracking to drive
     ///     `availabilityUpdates` — so when the backing model is `@Observable` (as Apple's
     ///     are), availability changes are published without any further work.
+    ///   - retryDecision: overrides the framework's default retry policy (retry a schema
+    ///     mismatch immediately, back off 1s then 4s on any other error, failing after 3
+    ///     attempts). `nil` keeps the default.
     public static func backed(
         by model: Backing,
         reasoningLevel: ContextOptions.ReasoningLevel? = nil,
-        maxAttempts: Int = 3,
-        responseTimeout: TimeInterval = 30,
-        availability: (@Sendable (Backing) -> AirshipAI.Availability)? = nil
+        availability: (@Sendable (Backing) -> AirshipAI.Availability)? = nil,
+        retryDecision: (@Sendable (AirshipAI.AnyUsage, any Error, Int) -> AirshipAI.RetryDecision)? = nil
     ) -> Self {
         guard let availability else {
             return AirshipFoundationModel(
                 model: model,
                 reasoningLevel: reasoningLevel,
-                maxAttempts: maxAttempts,
-                responseTimeout: responseTimeout,
+                retryDecision: retryDecision,
                 availabilityProvider: { .available },
                 // Nothing to observe, so emit once and finish — the same contract as
                 // `AirshipAI.ModelProtocol`'s default implementation.
@@ -129,8 +132,7 @@ public struct AirshipFoundationModel<Backing: LanguageModel>: AirshipAI.ModelPro
         return AirshipFoundationModel(
             model: model,
             reasoningLevel: reasoningLevel,
-            maxAttempts: maxAttempts,
-            responseTimeout: responseTimeout,
+            retryDecision: retryDecision,
             availabilityProvider: { availability(model) },
             availabilityStreamProvider: {
                 AvailabilityObservation.stream { availability(model) }
@@ -212,20 +214,18 @@ extension AirshipFoundationModel where Backing == PrivateCloudComputeLanguageMod
     /// - Parameters:
     ///   - reasoningLevel: how much the model should reason before answering. Defaults to
     ///     `.moderate`; `.light` trades quality for latency, `.deep` the reverse.
-    ///   - maxAttempts: attempts (including the first) the evaluator makes before failing.
-    ///   - responseTimeout: total wall-clock budget across all attempts. Defaults to 60
-    ///     seconds — twice the on-device budget, since each attempt is a network round trip.
+    ///   - retryDecision: overrides the framework's default retry policy (retry a schema
+    ///     mismatch immediately, back off 1s then 4s on any other error, failing after 3
+    ///     attempts). `nil` keeps the default.
     public static func privateCloudCompute(
         reasoningLevel: ContextOptions.ReasoningLevel? = .moderate,
-        maxAttempts: Int = 3,
-        responseTimeout: TimeInterval = 60
+        retryDecision: (@Sendable (AirshipAI.AnyUsage, any Error, Int) -> AirshipAI.RetryDecision)? = nil
     ) -> Self {
         let model = PrivateCloudComputeLanguageModel()
         return AirshipFoundationModel(
             model: model,
             reasoningLevel: reasoningLevel,
-            maxAttempts: maxAttempts,
-            responseTimeout: responseTimeout,
+            retryDecision: retryDecision,
             availabilityProvider: { map(model.availability) },
             // `PrivateCloudComputeLanguageModel` is `@Observable`, so availability updates
             // publish themselves once read under observation tracking.

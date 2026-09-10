@@ -12,9 +12,8 @@ import Foundation
 struct ClaudeAIModel: AirshipAI.ModelProtocol {
     let apiKey: String
 
-    // availability, availabilityUpdates, maxAttempts and responseTimeout all have
-    // protocol defaults that suit a network-backed model, so respond(_:) is the
-    // only requirement.
+    // availability, availabilityUpdates, and retryDecision all have protocol defaults
+    // that suit a network-backed model, so respond(_:) is the only requirement.
 
     func respond(_ request: AirshipAI.Request) async throws -> AirshipJSON {
         let body: [String: Any] = [

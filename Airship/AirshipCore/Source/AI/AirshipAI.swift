@@ -237,14 +237,36 @@ public enum AirshipAI {
         }
     }
 
+    // MARK: - RetryDecision
+
+    /// What the evaluator should do after a failed attempt.
+    public enum RetryDecision: Sendable, Equatable {
+        /// Try again after this delay (`0` for immediately).
+        case retry(after: TimeInterval)
+        /// Stop; the evaluation fails with the error that triggered this decision.
+        case fail
+    }
+
+    // MARK: - SchemaValidationError
+
+    /// Thrown when a model's response doesn't conform to the evaluation's schema.
+    ///
+    /// The model already answered — it just produced a shape that doesn't match — so this
+    /// is a different failure than a thrown network or timeout error. A `retryDecision`
+    /// implementation can check `error is SchemaValidationError` to retry it faster (or on
+    /// a different schedule) than an error from `respond(_:)` itself.
+    public struct SchemaValidationError: Error, Sendable {
+        /// The error describing what didn't conform.
+        public let underlyingError: any Error
+    }
+
     // MARK: - Model protocol
 
     /// The framework's interface to a model backend.
     ///
-    /// Takes a `Request` and returns the model's structured response as parsed JSON. Retry,
-    /// timeout, and output validation live in the framework — a model answers one request
-    /// and tunes the retry/timeout budget through `maxAttempts`/`responseTimeout`, both of
-    /// which have defaults.
+    /// Takes a `Request` and returns the model's structured response as parsed JSON. Retry
+    /// and output validation live in the framework — a model answers one request and tunes
+    /// the retry budget through `retryDecision(usage:error:attempt:)`, which has a default.
     ///
     /// No FoundationModels types appear here — that framework is confined to the
     /// `AirshipFoundationModels` module.
@@ -270,17 +292,27 @@ public enum AirshipAI {
         /// notifications and read `availability` when you need the value right now.
         var availabilityUpdates: AsyncStream<Availability> { get }
 
-        /// How many attempts (including the first) the framework should make before
-        /// failing the evaluation. Defaults to 3.
-        var maxAttempts: Int { get }
-
-        /// Total wall-clock budget across *all* attempts, not per attempt. The framework
-        /// fails the evaluation when it expires. Defaults to 30 seconds.
+        /// Decides what happens after a failed attempt.
         ///
-        /// A model that answers over the network should raise the budget, lower the
-        /// attempt count, or both — three attempts sharing 30 seconds leaves little room
-        /// per round trip.
-        var responseTimeout: TimeInterval { get }
+        /// Called each time `respond(_:)` throws or the response fails schema validation
+        /// (as a `SchemaValidationError`). Return `.retry(after:)` to try again after a
+        /// delay, or `.fail` to give up — the evaluation fails with `error`. There is no
+        /// separate attempt cap; cap it yourself by returning `.fail` once `attempt` says to
+        /// stop. The framework still enforces its own hard ceiling on total wall-clock time
+        /// as a backstop, independent of whatever this returns.
+        ///
+        /// Defaults to failing after 3 attempts. A schema mismatch retries immediately —
+        /// the model already answered, so trying again right away is the right instinct.
+        /// Any other error backs off: 1s after the first failure, 4s after the second.
+        /// Override for a backend where a retry is expensive or slow (fewer, or no,
+        /// attempts) or one that wants a different schedule.
+        ///
+        /// - Parameters:
+        ///   - usage: which feature's evaluation this is.
+        ///   - error: the error from the attempt that just failed.
+        ///   - attempt: the attempt number that just failed (`1` for the first).
+        /// - Returns: `.retry(after:)` to try again, or `.fail` to stop.
+        func retryDecision(usage: AnyUsage, error: any Error, attempt: Int) -> RetryDecision
 
         /// Answers a single request, returning the model's structured response as JSON.
         ///
@@ -603,11 +635,27 @@ extension AirshipAI.ModelProtocol {
         }
     }
 
-    /// A reasonable default. Override for a backend where a retry is expensive.
-    public var maxAttempts: Int { 3 }
+    /// Retries a schema mismatch immediately; backs off 1s, then 4s, on any other error.
+    /// Fails after 3 attempts either way.
+    public func retryDecision(usage: AirshipAI.AnyUsage, error: any Error, attempt: Int) -> AirshipAI.RetryDecision {
+        AirshipAI.RetryDecision.defaultBackoff(error: error, attempt: attempt)
+    }
+}
 
-    /// A reasonable default. Override for a backend that answers over the network.
-    public var responseTimeout: TimeInterval { 30 }
+extension AirshipAI.RetryDecision {
+    /// The framework's default retry policy, shared by `ModelProtocol`'s default
+    /// implementation and models that want to fall back to it selectively.
+    ///
+    /// A schema mismatch (`error is AirshipAI.SchemaValidationError`) retries immediately —
+    /// the model already answered, it just didn't conform. Any other error backs off: 1s
+    /// after the first failure, 4s after the second. Fails after 3 attempts either way.
+    public static func defaultBackoff(error: any Error, attempt: Int) -> Self {
+        guard attempt < 3 else { return .fail }
+        if error is AirshipAI.SchemaValidationError {
+            return .retry(after: 0)
+        }
+        return .retry(after: attempt == 1 ? 1 : 4)
+    }
 }
 
 @_spi(AirshipInternal)

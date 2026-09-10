@@ -220,8 +220,9 @@ extension AirshipAI {
             }
         }
 
-        var maxAttempts: Int { wrapped.maxAttempts }
-        var responseTimeout: TimeInterval { wrapped.responseTimeout }
+        func retryDecision(usage: AnyUsage, error: any Error, attempt: Int) -> RetryDecision {
+            wrapped.retryDecision(usage: usage, error: error, attempt: attempt)
+        }
 
         func respond(_ request: Request) async throws -> AirshipJSON {
             try await wrapped.respond(request)

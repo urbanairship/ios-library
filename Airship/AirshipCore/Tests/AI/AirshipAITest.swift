@@ -91,6 +91,21 @@ struct AirshipAIValueTests {
         #expect(base.appending(.empty) == base)
     }
 
+    @Test
+    func defaultBackoffRetriesSchemaMismatchImmediately() {
+        let error = AirshipAI.SchemaValidationError(underlyingError: SampleError.boom)
+        #expect(AirshipAI.RetryDecision.defaultBackoff(error: error, attempt: 1) == .retry(after: 0))
+        #expect(AirshipAI.RetryDecision.defaultBackoff(error: error, attempt: 2) == .retry(after: 0))
+        #expect(AirshipAI.RetryDecision.defaultBackoff(error: error, attempt: 3) == .fail)
+    }
+
+    @Test
+    func defaultBackoffBacksOffOnAnyOtherError() {
+        #expect(AirshipAI.RetryDecision.defaultBackoff(error: SampleError.boom, attempt: 1) == .retry(after: 1))
+        #expect(AirshipAI.RetryDecision.defaultBackoff(error: SampleError.boom, attempt: 2) == .retry(after: 4))
+        #expect(AirshipAI.RetryDecision.defaultBackoff(error: SampleError.boom, attempt: 3) == .fail)
+    }
+
 }
 
 // MARK: - Schema (nested types + validation)
@@ -440,8 +455,10 @@ struct AirshipAIContextProviderTests {
 final class MockAIModel: AirshipAI.ModelProtocol, @unchecked Sendable {
     var availabilityValue: AirshipAI.Availability
     var responses: [Swift.Result<AirshipJSON, any Error>]
+    /// Attempts (including the first) `retryDecision` allows before returning `.fail`.
     var maxAttempts: Int
-    var responseTimeout: TimeInterval
+    /// The delay `retryDecision` hands back on each `.retry(after:)`.
+    var retryDelay: TimeInterval = 0
     var respondDelay: TimeInterval = 0
 
     private(set) var respondCallCount = 0
@@ -450,16 +467,18 @@ final class MockAIModel: AirshipAI.ModelProtocol, @unchecked Sendable {
     init(
         availability: AirshipAI.Availability = .available,
         response: Swift.Result<AirshipJSON, any Error> = .success(["allow": true, "reason": "ok"]),
-        maxAttempts: Int = 1,
-        responseTimeout: TimeInterval = 5
+        maxAttempts: Int = 1
     ) {
         self.availabilityValue = availability
         self.responses = [response]
         self.maxAttempts = maxAttempts
-        self.responseTimeout = responseTimeout
     }
 
     var availability: AirshipAI.Availability { availabilityValue }
+
+    func retryDecision(usage: AirshipAI.AnyUsage, error: any Error, attempt: Int) -> AirshipAI.RetryDecision {
+        attempt < maxAttempts ? .retry(after: retryDelay) : .fail
+    }
 
     func respond(_ request: AirshipAI.Request) async throws -> AirshipJSON {
         respondCallCount += 1
@@ -539,9 +558,10 @@ struct AirshipAIEvaluatorTests {
 
     private func eval(
         model: any AirshipAI.ModelProtocol,
-        context: AirshipAI.Context = .empty
+        context: AirshipAI.Context = .empty,
+        maxResponseTimeout: TimeInterval = 120
     ) async -> AirshipAI.Result<TestEvaluation.Output> {
-        await AirshipAI.Evaluator().evaluate(
+        await AirshipAI.Evaluator(maxResponseTimeout: maxResponseTimeout).evaluate(
             TestEvaluation(),
             model: model,
             context: context
@@ -602,7 +622,7 @@ struct AirshipAIEvaluatorTests {
         #expect(model.lastRequest?.context == .empty)
     }
 
-    // MARK: retry / timeout
+    // MARK: retry
 
     @Test
     func retriesUntilOutputConformsToSchema() async throws {
@@ -660,12 +680,24 @@ struct AirshipAIEvaluatorTests {
     }
 
     @Test
+    func retryDelayIsAwaitedBetweenAttempts() async {
+        let model = MockAIModel(response: .failure(SampleError.boom), maxAttempts: 2)
+        model.retryDelay = 0.2
+
+        let start = ContinuousClock.now
+        _ = await eval(model: model)
+        let elapsed = ContinuousClock.now - start
+
+        #expect(elapsed >= .milliseconds(200))
+    }
+
+    @Test
     func timeoutTerminatesSlowModel() async {
-        let model = MockAIModel(responseTimeout: 0.1)
+        let model = MockAIModel()
         model.respondDelay = 60  // model would hang for 60s without the timeout
 
         let start = ContinuousClock.now
-        let result = await eval(model: model)
+        let result = await eval(model: model, maxResponseTimeout: 0.1)
         let elapsed = ContinuousClock.now - start
 
         guard case .failed = result else {
@@ -674,6 +706,22 @@ struct AirshipAIEvaluatorTests {
         }
         // If cancellation leaked and the operation task wasn't cut off, this
         // would take the full 60s. Allow 5s of headroom for slow CI runners.
+        #expect(elapsed < .seconds(5))
+    }
+
+    @Test
+    func nonFiniteRetryDelayDoesNotCrash() async {
+        let model = MockAIModel(response: .failure(SampleError.boom), maxAttempts: 2)
+        model.retryDelay = .infinity
+
+        let start = ContinuousClock.now
+        let result = await eval(model: model, maxResponseTimeout: 0.1)
+        let elapsed = ContinuousClock.now - start
+
+        guard case .failed = result else {
+            Issue.record("Expected .failed on timeout, got \(result)")
+            return
+        }
         #expect(elapsed < .seconds(5))
     }
 

@@ -6,6 +6,16 @@ import Foundation
 extension AirshipAI {
     struct Evaluator {
 
+        /// A hard ceiling on an evaluation's total wall-clock time — including every retry
+        /// and delay between them — independent of whatever schedule `retryDecision` picks.
+        /// A backstop against a pathological hang, not a latency target. Injectable so tests
+        /// can dial it down instead of waiting on the real default.
+        private let maxResponseTimeout: TimeInterval
+
+        init(maxResponseTimeout: TimeInterval = 120) {
+            self.maxResponseTimeout = maxResponseTimeout
+        }
+
         func evaluate<E: Evaluation>(
             _ evaluation: E,
             model: any ModelProtocol,
@@ -65,13 +75,18 @@ extension AirshipAI {
             }
 
             do {
-                let json = try await Self.withTimeout(model.responseTimeout) {
-                    try await Self.withRetry(maxAttempts: model.maxAttempts, usage: usage) {
+                let json = try await Self.withTimeout(maxResponseTimeout) {
+                    try await Self.withRetry(model: model, usage: anyUsage, usageString: usage, maxDelay: maxResponseTimeout) {
                         attempts.update { $0 += 1 }
                         let json = try await model.respond(request)
-                        // Reject non-conforming output inside the retry loop so
-                        // another attempt can correct it.
-                        try schema.validate(json)
+                        // Reject non-conforming output inside the retry loop so another attempt
+                        // can correct it. Wrapped so a model's retryDecision can tell a schema
+                        // mismatch apart from a failure thrown by respond(_:) itself.
+                        do {
+                            try schema.validate(json)
+                        } catch {
+                            throw SchemaValidationError(underlyingError: error)
+                        }
                         return json
                     }
                 }
@@ -112,9 +127,8 @@ extension AirshipAI {
             }
         }
 
-        /// Races `operation` against a wall-clock budget. A backstop against a
-        /// pathological hang, not a latency target — on expiry the evaluation fails
-        /// open at the call site.
+        /// Races `operation` against `timeout`. On expiry the evaluation fails open at the
+        /// call site.
         private static func withTimeout<T: Sendable>(
             _ timeout: TimeInterval,
             operation: @escaping @Sendable () async throws -> T
@@ -132,26 +146,40 @@ extension AirshipAI {
             }
         }
 
+        /// Runs `operation`, asking the model after each failure whether to retry (and
+        /// after how long) or give up. The model's `retryDecision` picks the schedule;
+        /// `withTimeout` above still caps the total time it's given to do so.
         private static func withRetry<T: Sendable>(
-            maxAttempts: Int,
-            usage: String,
+            model: any ModelProtocol,
+            usage: AnyUsage,
+            usageString: String,
+            maxDelay: TimeInterval,
             operation: @Sendable () async throws -> T
         ) async throws -> T {
-            let attempts = max(1, maxAttempts)
-            for attempt in 1...attempts {
+            var attempt = 0
+            while true {
+                attempt += 1
                 try Task.checkCancellation()
                 do {
                     return try await operation()
                 } catch is CancellationError {
-                    // Cancellation (e.g. the timeout firing) is terminal — propagate it
-                    // rather than burning a retry on it.
                     throw CancellationError()
                 } catch {
-                    AirshipLogger.warn("AI evaluation attempt \(attempt)/\(attempts) failed for \(usage): \(error)")
-                    if attempt == attempts { throw error }
+                    AirshipLogger.warn("AI evaluation attempt \(attempt) failed for \(usageString): \(error)")
+                    switch model.retryDecision(usage: usage, error: error, attempt: attempt) {
+                    case .fail:
+                        throw error
+                    case .retry(after: let delay):
+                        if delay > 0 {
+                            // `retryDecision` is customer-implementable; clamp so a non-finite
+                            // or huge delay can't trap the UInt64 conversion below. Anything
+                            // past `maxDelay` is cut off by the outer timeout regardless.
+                            let clamped = delay.isFinite ? min(delay, maxDelay) : maxDelay
+                            try await Task.sleep(nanoseconds: UInt64(clamped * 1_000_000_000))
+                        }
+                    }
                 }
             }
-            preconditionFailure("withRetry exhausted — unreachable")
         }
     }
 }
