@@ -1,0 +1,37 @@
+{
+  "ios": {
+    "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro-Max",
+    "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+    "simulatorName": "AirshipUITest",
+    "appId": "com.urbanairship.richpush",
+    "scheme": "DevApp",
+    "workspace": "Airship.xcworkspace",
+    "derivedDataPath": "build/derived_data"
+  },
+  "maestro": {
+    "minVersion": "1.39.0",
+    "version": "1.39.13"
+  },
+  "diff": {
+    "threshold": 0.1,
+    "antialiasing": true
+  },
+  "baselines": {
+    "branch": "next",
+    "workflow": "thomas-ui-tests.yml"
+  },
+  "reports": {
+    "branch": "gh-pages",
+    "directory": "ui-tests"
+  },
+  "sweep": {
+    "fixtures": "DevApp/Dev App/Thomas/Resources/Scenes",
+    "mediaSettleMs": 2500,
+    "skip": {
+      "Scenes/Modal/nps.yml": "does not decode on iOS",
+      "Scenes/Modal/pager-fullsize.yml": "does not decode on iOS",
+      "Scenes/Modal/safe-areas-pager-forms.yml": "does not decode on iOS",
+      "Scenes/Modal/safe-areas-pager-remote.yml": "does not decode on iOS"
+    }
+  }
+}

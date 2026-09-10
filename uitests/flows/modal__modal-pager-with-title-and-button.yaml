@@ -1,0 +1,23 @@
+appId: com.urbanairship.richpush
+---
+- launchApp:
+    clearState: true
+    arguments:
+      uiTestMode: true
+      thomasLayout: "Scenes/Modal/modal-pager-with-title-and-button.yml"
+- extendedWaitUntil:
+    visible:
+      id: "thomas:root"
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: modal__modal-pager-with-title-and-button__p0
+# A slow explicit drag through the pager area - the default center swipe is too fast
+# for the SwiftUI drag recognizer and silently no-ops. Text asserts can't verify the
+# page position (adjacent pages stay in the accessibility tree), so page advancement
+# is asserted by the p1 baseline being page 2.
+- swipe:
+    start: 80%, 48%
+    end: 20%, 48%
+    duration: 800
+- waitForAnimationToEnd
+- takeScreenshot: modal__modal-pager-with-title-and-button__p1

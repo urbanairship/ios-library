@@ -1,0 +1,626 @@
+#!/bin/bash
+# Single entry point for Thomas scene UI tests. Runs identically locally and in CI.
+#
+#   uitest doctor          verify toolchain (maestro, java, xcode, simctl, node, gh)
+#   uitest build           build the DevApp for the iOS simulator
+#   uitest boot-sim        create/erase/boot the pinned test simulator, pin status bar
+#   uitest install         install the built DevApp on the test simulator
+#   uitest generate        write one flow per scene fixture (+ the authored flows) to build/flows
+#   uitest run-flows [d]   run Maestro flows (default: generate, then build/flows), screenshots into build/shots
+#   uitest baseline-pull   download the latest baselines minted on `next` into build/baselines
+#   uitest diff            compare build/shots against build/baselines (odiff)
+#   uitest report          write build/report/index.html + summary.md from the last diff
+#   uitest set-baseline    promote build/shots into the LOCAL baseline cache (never committed)
+#   uitest run             build + boot-sim + install + run-flows + diff + report
+#   uitest mint            build + boot-sim + install + run-flows (CI uses this on `next`)
+#   uitest shutdown        shut down the test simulator
+#   uitest delete-sim      shut down and delete the test simulator (CI cleanup)
+#   uitest publish-report N publish build/report to the private Pages site as ui-tests/pr-N/
+#   uitest prune-reports   remove published reports for PRs that are no longer open
+#
+# Baselines are never committed: the public SPM checkout would carry them forever.
+# CI mints them on every `next` run and stores them as a workflow artifact.
+# PR reports go to the repo's private GitHub Pages site (the `gh-pages` branch, which
+# is not mirrored to the public repo). Every publish rewrites that branch as a single
+# commit and drops reports for closed PRs, so neither the tree nor the history grows.
+
+set -o pipefail
+set -e
+
+UITESTS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+REPO_ROOT="$(cd "$UITESTS_DIR/.." && pwd)"
+CONFIG="$UITESTS_DIR/config.json"
+
+export MAESTRO_CLI_NO_ANALYTICS=1
+export MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED=true
+export MAESTRO_DRIVER_STARTUP_TIMEOUT=${MAESTRO_DRIVER_STARTUP_TIMEOUT:-120000}
+
+cfg() {
+  python3 -c "import json,sys; print(json.load(open('$CONFIG'))$1)"
+}
+
+DEVICE_TYPE=$(cfg "['ios']['deviceType']")
+# UITEST_RUNTIME overrides the pinned runtime for local iteration on a machine that
+# lacks it; baselines are stored per runtime and only the pinned runtime's are canonical.
+RUNTIME=${UITEST_RUNTIME:-$(cfg "['ios']['runtime']")}
+RUNTIME_LABEL=$(python3 -c "r='$RUNTIME'.split('.')[-1].split('-'); print(r[0].lower()+'-'+'.'.join(r[1:]))")
+# UITEST_SIM_NAME gives each CI run its own simulator so concurrent jobs on one host cannot collide.
+SIM_NAME=${UITEST_SIM_NAME:-$(cfg "['ios']['simulatorName']")}
+APP_ID=$(cfg "['ios']['appId']")
+SCHEME=$(cfg "['ios']['scheme']")
+WORKSPACE=$(cfg "['ios']['workspace']")
+DERIVED_DATA=$(cfg "['ios']['derivedDataPath']")
+MAESTRO_MIN_VERSION=$(cfg "['maestro']['minVersion']")
+DIFF_THRESHOLD=$(cfg "['diff']['threshold']")
+DIFF_ANTIALIASING=$(cfg "['diff']['antialiasing']")
+BASELINE_BRANCH=$(cfg "['baselines']['branch']")
+BASELINE_WORKFLOW=$(cfg "['baselines']['workflow']")
+PAGES_BRANCH=$(cfg "['reports']['branch']")
+PAGES_DIR=$(cfg "['reports']['directory']")
+
+BUILD_DIR="$UITESTS_DIR/build"
+BASELINE_DIR="$BUILD_DIR/baselines/$RUNTIME_LABEL"
+BASELINE_ARTIFACT="baselines-$RUNTIME_LABEL"
+SHOTS_DIR="$BUILD_DIR/shots"
+FLOWS_DIR="$BUILD_DIR/flows"
+DIFF_DIR="$BUILD_DIR/diffs"
+REPORT_DIR="$BUILD_DIR/report"
+PAGES_CHECKOUT="$BUILD_DIR/pages"
+BUILD_LOG="$BUILD_DIR/xcodebuild.log"
+APP_PATH="$REPO_ROOT/$DERIVED_DATA/Build/Products/Debug-iphonesimulator/$SCHEME.app"
+
+repo_slug() {
+  git -C "$REPO_ROOT" remote get-url origin | sed -E 's#.*github\.com[:/]##; s#\.git$##'
+}
+
+sim_udid() {
+  xcrun simctl list devices --json | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+for runtime, devices in data['devices'].items():
+    if runtime != '$RUNTIME':
+        continue
+    for device in devices:
+        if device['name'] == '$SIM_NAME':
+            print(device['udid'])
+            sys.exit(0)
+"
+}
+
+write_provenance() {
+  python3 - "$1" <<EOF
+import json, subprocess, sys, datetime
+def out(cmd):
+    try:
+        return subprocess.run(cmd, shell=True, capture_output=True, text=True).stdout.strip()
+    except Exception:
+        return "unknown"
+json.dump({
+    "capturedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+    "runtime": "$RUNTIME",
+    "commit": out("git -C '$REPO_ROOT' rev-parse HEAD"),
+    "xcode": out("xcrun xcodebuild -version | tr '\n' ' '"),
+    "macos": out("sw_vers -productVersion"),
+    "maestro": out("maestro --version 2>/dev/null | tail -1"),
+    "odiff": out("node -p \"require('$UITESTS_DIR/node_modules/odiff-bin/package.json').version\""),
+}, open(sys.argv[1], "w"), indent=2)
+EOF
+}
+
+cmd_doctor() {
+  local failed=0
+  check() {
+    if eval "$2" >/dev/null 2>&1; then
+      echo "ok    $1"
+    else
+      echo "FAIL  $1 - $3"
+      failed=1
+    fi
+  }
+  local maestro_version
+  maestro_version=$(maestro --version 2>/dev/null | tail -1)
+  check "xcode" "xcrun xcodebuild -version" "Xcode not found (xcode-select -p)"
+  check "simctl runtime $RUNTIME" "xcrun simctl list runtimes | grep -q '$RUNTIME'" "pinned iOS runtime missing; install via Xcode, or set UITEST_RUNTIME for local iteration"
+  check "maestro >= $MAESTRO_MIN_VERSION (found: ${maestro_version:-none})" \
+    "test -n '$maestro_version' && test \"\$(printf '%s\n' '$MAESTRO_MIN_VERSION' '$maestro_version' | sort -V | head -1)\" = '$MAESTRO_MIN_VERSION'" \
+    "install/update: brew install maestro (or https://maestro.mobile.dev)"
+  check "java" "java -version" "Maestro needs a JRE; install: brew install openjdk"
+  check "python3" "python3 --version" "needed to parse uitests/config.json"
+  check "node" "node --version" "needed for odiff image diffs; install: brew install node"
+  if [ -x "$UITESTS_DIR/node_modules/.bin/odiff" ] && [ -d "$UITESTS_DIR/node_modules/yaml" ]; then
+    echo "ok    odiff + yaml (npm)"
+  else
+    echo "info  npm packages missing (odiff, yaml) - run: npm --prefix uitests install"
+  fi
+  if gh auth status >/dev/null 2>&1; then
+    echo "ok    gh (baseline-pull can fetch CI baselines)"
+  else
+    echo "info  gh not authenticated - baseline-pull unavailable, set-baseline still works locally"
+  fi
+  exit $failed
+}
+
+cmd_build() {
+  local config="$REPO_ROOT/DevApp/AirshipConfig.plist"
+  local sample="$REPO_ROOT/DevApp/AirshipConfig.plist.sample"
+  # The sample config's placeholder keys fail validation and the app crashes on first
+  # Airship access; a syntactically valid dummy key lets takeOff succeed offline.
+  # Only write it when there is no config yet or it is still the untouched sample copy -
+  # never overwrite a developer's real (gitignored) credentials.
+  if [ ! -f "$config" ] || cmp -s "$config" "$sample"; then
+    cat > "$config" <<'PLIST'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>developmentAppKey</key>
+    <string>uitestdummykey00000000</string>
+    <key>developmentAppSecret</key>
+    <string>uitestdummysecret00000</string>
+    <key>inProduction</key>
+    <false/>
+</dict>
+</plist>
+PLIST
+  fi
+
+  mkdir -p "$BUILD_DIR"
+  local build_status=0
+  xcrun xcodebuild \
+    -configuration Debug \
+    -workspace "$REPO_ROOT/$WORKSPACE" \
+    -scheme "$SCHEME" \
+    -sdk iphonesimulator \
+    -derivedDataPath "$REPO_ROOT/$DERIVED_DATA" \
+    build > "$BUILD_LOG" 2>&1 || build_status=$?
+  grep -E "error:|BUILD (SUCCEEDED|FAILED)" "$BUILD_LOG" | tail -20 || true
+  if [ "$build_status" -ne 0 ]; then
+    echo "xcodebuild failed (exit $build_status) - full log: $BUILD_LOG"
+    exit "$build_status"
+  fi
+  test -d "$APP_PATH"
+  echo "built: $APP_PATH"
+}
+
+cmd_boot_sim() {
+  local udid
+  udid=$(sim_udid)
+  if [ -z "$udid" ]; then
+    echo "creating simulator $SIM_NAME ($DEVICE_TYPE, $RUNTIME)"
+    udid=$(xcrun simctl create "$SIM_NAME" "$DEVICE_TYPE" "$RUNTIME")
+  fi
+  xcrun simctl shutdown "$udid" >/dev/null 2>&1 || true
+  xcrun simctl erase "$udid"
+  xcrun simctl boot "$udid"
+  xcrun simctl bootstatus "$udid" -b
+  xcrun simctl ui "$udid" appearance light
+  xcrun simctl status_bar "$udid" override \
+    --time "9:41" --batteryState charged --batteryLevel 100 \
+    --cellularMode active --cellularBars 4 --wifiBars 3 \
+    --dataNetwork wifi --operatorName ""
+  echo "booted: $udid"
+}
+
+cmd_install() {
+  xcrun simctl install "$(sim_udid)" "$APP_PATH"
+  echo "installed: $APP_ID"
+}
+
+cmd_generate() {
+  if [ ! -d "$UITESTS_DIR/node_modules/yaml" ]; then
+    echo "yaml package missing - run: npm --prefix uitests install"
+    exit 2
+  fi
+  node "$UITESTS_DIR/tools/generate-flows.js" "$FLOWS_DIR"
+}
+
+cmd_run_flows() {
+  local flows="${1:-}"
+  local udid attempt flow_status
+  if [ -z "$flows" ]; then
+    cmd_generate
+    flows="$FLOWS_DIR"
+  elif [ "$(cd "$flows" && pwd)" != "$FLOWS_DIR" ]; then
+    # An explicit directory is not the generated sweep, so its coverage manifest does not apply.
+    rm -f "$FLOWS_DIR/manifest.json"
+  fi
+  udid=$(sim_udid)
+  rm -rf "$SHOTS_DIR"
+  mkdir -p "$SHOTS_DIR"
+  for attempt in 1 2; do
+    flow_status=0
+    # Screenshots use relative paths in flows, landing in the cwd.
+    (cd "$SHOTS_DIR" && maestro --device "$udid" test "$flows") || flow_status=$?
+    if [ "$flow_status" -eq 0 ]; then
+      # Provenance is captured at run time so shots minted on CI carry the CI toolchain.
+      write_provenance "$SHOTS_DIR/provenance.json"
+      # set-baseline and the CI mint require this marker so a partial or failed run
+      # can never become a baseline.
+      touch "$SHOTS_DIR/.complete"
+      return 0
+    fi
+    # A failure with zero screenshots means the iOS driver never started (a known
+    # cold-boot flake), not a test failure; retry once. Real flow failures produce
+    # screenshots and are not retried.
+    if ls "$SHOTS_DIR"/*.png >/dev/null 2>&1 || [ "$attempt" -eq 2 ]; then
+      return "$flow_status"
+    fi
+    echo "maestro failed before any screenshot (driver startup flake) - retrying once"
+  done
+}
+
+cmd_baseline_pull() {
+  # Baselines live as the `$BASELINE_ARTIFACT` artifact of the newest successful
+  # `$BASELINE_WORKFLOW` run on `$BASELINE_BRANCH`. UITEST_BASELINE_RUN pins a run id.
+  #
+  # Exit codes: 0 pulled; 3 bootstrap (the workflow has never run on the baseline
+  # branch, so there is nothing to compare against yet); 1 anything else, including
+  # an expired artifact or a broken mint, which callers must treat as a failure and
+  # never as "no diffs".
+  local slug run_id runs err
+  slug=$(repo_slug)
+  rm -rf "$BASELINE_DIR"
+  mkdir -p "$(dirname "$BASELINE_DIR")"
+  if [ -n "${UITEST_BASELINE_RUN:-}" ]; then
+    if err=$(gh run download "$UITEST_BASELINE_RUN" --repo "$slug" --name "$BASELINE_ARTIFACT" --dir "$BASELINE_DIR" 2>&1); then
+      echo "baselines: run $UITEST_BASELINE_RUN -> $BASELINE_DIR"
+      return 0
+    fi
+    echo "no $BASELINE_ARTIFACT artifact on run $UITEST_BASELINE_RUN: $err"
+    return 1
+  fi
+  if ! runs=$(gh run list --repo "$slug" --workflow "$BASELINE_WORKFLOW" --branch "$BASELINE_BRANCH" \
+      --limit 20 --json databaseId,conclusion 2>&1); then
+    echo "could not list $BASELINE_WORKFLOW runs on $BASELINE_BRANCH: $runs"
+    return 1
+  fi
+  if [ "$(printf '%s' "$runs" | python3 -c 'import json,sys; print(len(json.load(sys.stdin)))')" = "0" ]; then
+    echo "$BASELINE_WORKFLOW has never run on $BASELINE_BRANCH - no baselines exist yet"
+    return 3
+  fi
+  for run_id in $(printf '%s' "$runs" | python3 -c 'import json,sys; print(" ".join(str(r["databaseId"]) for r in json.load(sys.stdin) if r["conclusion"] == "success"))'); do
+    if err=$(gh run download "$run_id" --repo "$slug" --name "$BASELINE_ARTIFACT" --dir "$BASELINE_DIR" 2>&1); then
+      echo "baselines: $BASELINE_BRANCH run $run_id -> $BASELINE_DIR"
+      [ -f "$BASELINE_DIR/provenance.json" ] && echo "  minted: $(python3 -c "import json; p=json.load(open('$BASELINE_DIR/provenance.json')); print(p.get('capturedAt'), p.get('commit','')[:11], p.get('xcode'))")"
+      return 0
+    fi
+  done
+  echo "$BASELINE_WORKFLOW has run on $BASELINE_BRANCH but no recent successful run carries a $BASELINE_ARTIFACT artifact"
+  echo "(expired after its retention window, or the mint is failing) - re-mint with: gh workflow run $BASELINE_WORKFLOW --ref $BASELINE_BRANCH"
+  [ -n "${err:-}" ] && echo "last download error: $err"
+  return 1
+}
+
+cmd_diff() {
+  local odiff="$UITESTS_DIR/node_modules/.bin/odiff"
+  if [ ! -x "$odiff" ]; then
+    echo "odiff missing - run: npm --prefix uitests install"
+    exit 2
+  fi
+  if ! ls "$SHOTS_DIR"/*.png >/dev/null 2>&1; then
+    echo "no screenshots at $SHOTS_DIR - run: uitest run-flows"
+    exit 2
+  fi
+  if ! ls "$BASELINE_DIR"/*.png >/dev/null 2>&1; then
+    echo "no baselines at $BASELINE_DIR - pulling from CI"
+    local pull_status=0
+    cmd_baseline_pull || pull_status=$?
+    if [ "$pull_status" -eq 3 ] && [ -n "${UITEST_DIFF_REPORT_ONLY:-}" ]; then
+      # Bootstrap: nothing minted on the baseline branch yet, so every screenshot
+      # is new; report them rather than failing.
+      echo "report-only mode: treating every screenshot as new"
+      mkdir -p "$BASELINE_DIR"
+    elif [ "$pull_status" -ne 0 ]; then
+      echo "hint: uitest set-baseline promotes the current shots locally"
+      exit 2
+    fi
+  fi
+  rm -rf "$DIFF_DIR"
+  mkdir -p "$DIFF_DIR"
+
+  # --fail-on-layout: without it odiff compares only the overlapping region of two
+  # differently sized images and reports them equal.
+  local odiff_args=(--threshold "$DIFF_THRESHOLD" --fail-on-layout)
+  if [ "$DIFF_ANTIALIASING" = "True" ]; then
+    odiff_args+=(--antialiasing)
+  fi
+
+  local results="$DIFF_DIR/results.jsonl"
+  : > "$results"
+  local failures=0 checked=0
+  for shot in "$SHOTS_DIR"/*.png; do
+    local name output odiff_status
+    name=$(basename "$shot")
+    local baseline="$BASELINE_DIR/$name"
+    checked=$((checked + 1))
+    if [ ! -f "$baseline" ]; then
+      echo "NEW   $name (no baseline yet)"
+      echo "{\"name\":\"$name\",\"status\":\"new\"}" >> "$results"
+      failures=$((failures + 1))
+      continue
+    fi
+    odiff_status=0
+    output=$("$odiff" "${odiff_args[@]}" "$baseline" "$shot" "$DIFF_DIR/$name" 2>&1) || odiff_status=$?
+    case "$odiff_status" in
+      0)  echo "ok    $name"
+          echo "{\"name\":\"$name\",\"status\":\"ok\"}" >> "$results" ;;
+      22) echo "DIFF  $name -> $DIFF_DIR/$name"
+          echo "{\"name\":\"$name\",\"status\":\"diff\"}" >> "$results"
+          failures=$((failures + 1)) ;;
+      21) echo "DIFF  $name (size mismatch)"
+          echo "{\"name\":\"$name\",\"status\":\"diff\",\"detail\":\"size mismatch\"}" >> "$results"
+          failures=$((failures + 1)) ;;
+      *)  echo "ERROR $name (odiff exit $odiff_status): $output"
+          echo "{\"name\":\"$name\",\"status\":\"error\",\"detail\":$(python3 -c "import json,sys; print(json.dumps(sys.argv[1]))" "$output")}" >> "$results"
+          failures=$((failures + 1)) ;;
+    esac
+  done
+  for baseline in "$BASELINE_DIR"/*.png; do
+    [ -e "$baseline" ] || break
+    if [ ! -f "$SHOTS_DIR/$(basename "$baseline")" ]; then
+      echo "GONE  $(basename "$baseline") (baseline has no screenshot)"
+      echo "{\"name\":\"$(basename "$baseline")\",\"status\":\"gone\"}" >> "$results"
+      failures=$((failures + 1))
+    fi
+  done
+  echo "$checked screenshots checked, $failures failures"
+  if [ "$failures" -gt 0 ] && [ -n "${UITEST_DIFF_REPORT_ONLY:-}" ]; then
+    echo "report-only mode: not failing on visual differences"
+    return 0
+  fi
+  return $((failures > 0 ? 1 : 0))
+}
+
+cmd_report() {
+  if [ ! -f "$DIFF_DIR/results.jsonl" ]; then
+    echo "no diff results - run: uitest diff"
+    exit 2
+  fi
+  mkdir -p "$REPORT_DIR"
+  python3 - "$DIFF_DIR/results.jsonl" "$BASELINE_DIR" "$SHOTS_DIR" "$DIFF_DIR" "$REPORT_DIR" "$RUNTIME_LABEL" "$FLOWS_DIR/manifest.json" <<'EOF'
+import base64, html, json, os, sys
+results, baseline_dir, shots_dir, diff_dir, report_dir, runtime, manifest_path = sys.argv[1:8]
+manifest = json.load(open(manifest_path)) if os.path.isfile(manifest_path) else None
+rows = [json.loads(l) for l in open(results) if l.strip()]
+order = {"diff": 0, "error": 1, "new": 2, "gone": 3, "ok": 4}
+rows.sort(key=lambda r: (order.get(r["status"], 9), r["name"]))
+counts = {}
+for r in rows:
+    counts[r["status"]] = counts.get(r["status"], 0) + 1
+
+def img(path):
+    if not os.path.isfile(path):
+        return '<div class="missing">missing</div>'
+    data = base64.b64encode(open(path, "rb").read()).decode()
+    return f'<img src="data:image/png;base64,{data}" loading="lazy">'
+
+provenance = {}
+ppath = os.path.join(baseline_dir, "provenance.json")
+if os.path.isfile(ppath):
+    provenance = json.load(open(ppath))
+
+parts = [f"""<!doctype html><meta charset="utf-8"><title>Thomas scene visual diff ({html.escape(runtime)})</title>
+<style>
+body{{font:14px -apple-system,system-ui,sans-serif;margin:24px;color:#222}}
+h1{{font-size:20px}} .summary span{{margin-right:16px}}
+.row{{border-top:1px solid #ddd;padding:16px 0}} .row h2{{font-size:15px;margin:0 0 8px}}
+.status{{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;color:#fff;margin-right:8px}}
+.diff{{background:#c0392b}} .error{{background:#8e44ad}} .new{{background:#d68910}} .gone{{background:#7f8c8d}} .ok{{background:#27ae60}}
+.imgs{{display:flex;gap:12px}} .imgs figure{{margin:0;flex:1;min-width:0}} .imgs img{{width:100%;border:1px solid #ccc}}
+figcaption{{font-size:12px;color:#666;margin-bottom:4px}} .missing{{padding:40px;background:#eee;text-align:center;color:#888}}
+.oklist{{color:#555}} .prov{{color:#666;font-size:12px}}
+</style>
+<h1>Thomas scene visual diff <small>({html.escape(runtime)})</small></h1>
+<p class="summary">""" + "".join(f'<span class="status {s}">{s}</span>{n}' for s, n in sorted(counts.items(), key=lambda kv: order.get(kv[0], 9))) + "</p>"]
+if provenance:
+    parts.append('<p class="prov">baselines minted ' + html.escape(str(provenance.get("capturedAt", "?"))) +
+                 " at " + html.escape(str(provenance.get("commit", "?"))[:11]) + " with " + html.escape(str(provenance.get("xcode", "?"))) + "</p>")
+
+# Coverage: which fixtures the sweep captured and which it skipped, and why.
+coverage_line = None
+if manifest:
+    captured = len(manifest["generated"]) + sum(1 for a in manifest["authored"] if a.get("fixture"))
+    reasons = {}
+    for entry in manifest["skipped"]:
+        reasons.setdefault(entry["reason"], []).append(entry["fixture"])
+    reason_summary = ", ".join(f"{len(v)} {k}" for k, v in sorted(reasons.items(), key=lambda kv: -len(kv[1])))
+    coverage_line = f"{captured} of {manifest['fixtures']} scene fixtures captured"
+    if reasons:
+        coverage_line += f"; {len(manifest['skipped'])} skipped ({reason_summary})"
+    parts.append('<details class="prov"><summary>' + html.escape(coverage_line) + "</summary><ul>")
+    for reason, fixtures in sorted(reasons.items(), key=lambda kv: -len(kv[1])):
+        parts.append("<li><b>" + html.escape(reason) + "</b>: " + ", ".join(html.escape(f) for f in fixtures) + "</li>")
+    parts.append("</ul></details>")
+for r in rows:
+    if r["status"] == "ok":
+        continue
+    name = r["name"]
+    parts.append(f'<div class="row"><h2><span class="status {r["status"]}">{r["status"]}</span>{html.escape(name)}'
+                 + (f' <small>{html.escape(r["detail"])}</small>' if r.get("detail") else "") + "</h2>")
+    parts.append('<div class="imgs">'
+                 f'<figure><figcaption>baseline</figcaption>{img(os.path.join(baseline_dir, name))}</figure>'
+                 f'<figure><figcaption>this run</figcaption>{img(os.path.join(shots_dir, name))}</figure>'
+                 f'<figure><figcaption>diff</figcaption>{img(os.path.join(diff_dir, name))}</figure>'
+                 "</div></div>")
+oks = [r["name"] for r in rows if r["status"] == "ok"]
+if oks:
+    parts.append('<div class="row oklist"><h2><span class="status ok">ok</span>unchanged</h2>' + ", ".join(html.escape(n) for n in oks) + "</div>")
+open(os.path.join(report_dir, "index.html"), "w").write("\n".join(parts))
+
+# Markdown summary for the PR comment.
+failing = [r for r in rows if r["status"] != "ok"]
+lines = []
+if failing:
+    lines.append(f"**{len(failing)} of {len(rows)} screenshots need a look** ({runtime}):")
+    lines.append("")
+    for r in failing:
+        lines.append(f"- `{r['status']}` {r['name']}" + (f" ({r['detail']})" if r.get("detail") else ""))
+else:
+    lines.append(f"All {len(rows)} screenshots match the `{provenance.get('commit', '?')[:11] if provenance else 'current'}` baselines ({runtime}).")
+if coverage_line:
+    lines += ["", f"Coverage: {coverage_line}."]
+open(os.path.join(report_dir, "summary.md"), "w").write("\n".join(lines) + "\n")
+print(f"report: {os.path.join(report_dir, 'index.html')}")
+EOF
+}
+
+cmd_set_baseline() {
+  if ! ls "$SHOTS_DIR"/*.png >/dev/null 2>&1; then
+    echo "no screenshots to promote - run: uitest run-flows"
+    exit 2
+  fi
+  if [ ! -f "$SHOTS_DIR/.complete" ]; then
+    echo "refusing: last run-flows did not complete successfully, promoting it would bless a partial run"
+    exit 2
+  fi
+  rm -rf "$BASELINE_DIR"
+  mkdir -p "$BASELINE_DIR"
+  cp "$SHOTS_DIR"/*.png "$BASELINE_DIR/"
+  [ -f "$SHOTS_DIR/provenance.json" ] && cp "$SHOTS_DIR/provenance.json" "$BASELINE_DIR/"
+  echo "set $(ls "$SHOTS_DIR"/*.png | wc -l | tr -d ' ') local baselines in $BASELINE_DIR (not committed; CI mints canonical ones on $BASELINE_BRANCH)"
+}
+
+# Clone only the trees of the Pages branch (no blobs: it holds ~800MB of generated docs)
+# and check out just our reports directory. Sets PAGES_BASE_SHA for the push lease.
+pages_checkout() {
+  local slug
+  slug=$(repo_slug)
+  rm -rf "$PAGES_CHECKOUT"
+  git clone --quiet --filter=blob:none --depth 1 --no-checkout --branch "$PAGES_BRANCH" \
+    "https://github.com/$slug.git" "$PAGES_CHECKOUT"
+  git -C "$PAGES_CHECKOUT" sparse-checkout set "$PAGES_DIR"
+  git -C "$PAGES_CHECKOUT" checkout --quiet "$PAGES_BRANCH"
+  PAGES_BASE_SHA=$(git -C "$PAGES_CHECKOUT" rev-parse HEAD)
+  mkdir -p "$PAGES_CHECKOUT/$PAGES_DIR"
+}
+
+# Drop reports whose PR is no longer open. Prints the number removed.
+pages_prune() {
+  local slug open dir pr removed=0
+  slug=$(repo_slug)
+  open=" $(gh pr list --repo "$slug" --state open --limit 1000 --json number --jq '.[].number' | tr '\n' ' ') "
+  for dir in "$PAGES_CHECKOUT/$PAGES_DIR"/pr-*; do
+    [ -d "$dir" ] || continue
+    pr=${dir##*/pr-}
+    case "$open" in
+      *" $pr "*) ;;
+      *) rm -rf "$dir"; removed=$((removed + 1)); echo "pruned report for closed PR #$pr" ;;
+    esac
+  done
+  echo "$removed report(s) pruned"
+}
+
+# Index page listing the published reports.
+pages_index() {
+  python3 - "$PAGES_CHECKOUT/$PAGES_DIR" "$(repo_slug)" <<'PY'
+import html, os, sys, time
+root, slug = sys.argv[1], sys.argv[2]
+prs = sorted((int(d[3:]) for d in os.listdir(root) if d.startswith("pr-") and d[3:].isdigit()), reverse=True)
+items = "".join(f'<li><a href="pr-{n}/">PR #{n}</a> <a class="gh" href="https://github.com/{slug}/pull/{n}">on GitHub</a></li>' for n in prs) or "<li>none</li>"
+open(os.path.join(root, "index.html"), "w").write(f"""<!doctype html><meta charset="utf-8"><title>Thomas UI test reports</title>
+<style>body{{font:14px -apple-system,system-ui,sans-serif;margin:24px;color:#222}} li{{margin:4px 0}} .gh{{color:#888;font-size:12px;margin-left:8px}}</style>
+<h1>Thomas UI test reports</h1><p>Visual diff reports for open pull requests in {html.escape(slug)}. Reports are removed when the PR closes.</p>
+<ul>{items}</ul><p style="color:#888;font-size:12px">updated {time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime())}</p>""")
+PY
+}
+
+# Commit the reports directory as a brand-new root commit carrying the full current tree
+# (docs included) and force-push it, so the branch history is always exactly one commit.
+# The lease makes a concurrent docs deploy fail this push instead of being overwritten;
+# CI serialises both under the `pages` concurrency group so that should not happen.
+pages_push() {
+  local message="$1" tree commit
+  git -C "$PAGES_CHECKOUT" -c user.name="ui-tests" -c user.email="ui-tests@users.noreply.github.com" \
+    add -A "$PAGES_DIR"
+  if git -C "$PAGES_CHECKOUT" diff --cached --quiet; then
+    echo "reports unchanged - nothing to publish"
+    return 0
+  fi
+  tree=$(git -C "$PAGES_CHECKOUT" write-tree)
+  commit=$(git -C "$PAGES_CHECKOUT" -c user.name="ui-tests" -c user.email="ui-tests@users.noreply.github.com" \
+    commit-tree "$tree" -m "$message")
+  if [ -n "${UITEST_PAGES_DRY_RUN:-}" ]; then
+    echo "dry run: would force-push $commit (tree $tree) to $PAGES_BRANCH, replacing $PAGES_BASE_SHA"
+    git -C "$PAGES_CHECKOUT" diff --cached --stat | tail -3
+    return 0
+  fi
+  git -C "$PAGES_CHECKOUT" push --quiet --force-with-lease="refs/heads/$PAGES_BRANCH:$PAGES_BASE_SHA" \
+    origin "$commit:refs/heads/$PAGES_BRANCH"
+  echo "published $PAGES_BRANCH as single commit $commit"
+}
+
+cmd_publish_report() {
+  local pr="$1"
+  if [ -z "$pr" ] || ! [[ "$pr" =~ ^[0-9]+$ ]]; then
+    echo "usage: uitest publish-report <pr-number>"
+    exit 2
+  fi
+  if [ ! -f "$REPORT_DIR/index.html" ]; then
+    echo "no report at $REPORT_DIR/index.html - run: uitest report"
+    exit 2
+  fi
+  pages_checkout
+  pages_prune
+  mkdir -p "$PAGES_CHECKOUT/$PAGES_DIR/pr-$pr"
+  cp "$REPORT_DIR/index.html" "$PAGES_CHECKOUT/$PAGES_DIR/pr-$pr/index.html"
+  pages_index
+  pages_push "ui-tests: report for PR #$pr"
+}
+
+cmd_prune_reports() {
+  pages_checkout
+  pages_prune
+  pages_index
+  pages_push "ui-tests: prune reports for closed PRs"
+}
+
+cmd_shutdown() {
+  local udid
+  udid=$(sim_udid)
+  [ -n "$udid" ] && xcrun simctl shutdown "$udid" || true
+}
+
+cmd_delete_sim() {
+  local udid
+  udid=$(sim_udid)
+  [ -n "$udid" ] || return 0
+  xcrun simctl shutdown "$udid" >/dev/null 2>&1 || true
+  xcrun simctl delete "$udid"
+  echo "deleted simulator $SIM_NAME ($udid)"
+}
+
+cmd_run() {
+  cmd_build
+  cmd_boot_sim
+  cmd_install
+  cmd_run_flows
+  local diff_status=0
+  cmd_diff || diff_status=$?
+  if [ -f "$DIFF_DIR/results.jsonl" ]; then
+    cmd_report
+  fi
+  return "$diff_status"
+}
+
+case "${1:-}" in
+  doctor)        cmd_doctor ;;
+  build)         cmd_build ;;
+  boot-sim)      cmd_boot_sim ;;
+  install)       cmd_install ;;
+  generate)      cmd_generate ;;
+  run-flows)     shift; cmd_run_flows "$@" ;;
+  baseline-pull) cmd_baseline_pull ;;
+  diff)          cmd_diff ;;
+  report)        cmd_report ;;
+  set-baseline)  cmd_set_baseline ;;
+  run)           cmd_run ;;
+  mint)          cmd_build; cmd_boot_sim; cmd_install; cmd_run_flows ;;
+  shutdown)      cmd_shutdown ;;
+  delete-sim)    cmd_delete_sim ;;
+  publish-report) shift; cmd_publish_report "${1:-}" ;;
+  prune-reports) cmd_prune_reports ;;
+  *)
+    sed -n '2,23p' "$0" | sed 's/^# \{0,1\}//'
+    exit 1
+    ;;
+esac

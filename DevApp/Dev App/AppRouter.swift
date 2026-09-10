@@ -28,6 +28,8 @@ final class AppRouter: ObservableObject {
     enum ThomasRoute: Hashable {
         case home
         case layoutList(LayoutType)
+        /// UI-test host for a directly launched embedded scene (see `UITestLaunch`).
+        case embeddedHost(embeddedID: String)
     }
 
     let messageCenterController: MessageCenterController = MessageCenterController()
@@ -56,6 +58,8 @@ extension AppRouter.ThomasRoute {
     func destination() -> some View {
         switch self {
         case .home: ThomasLayoutListView()
+        case .embeddedHost(let embeddedID):
+            UITestEmbeddedHostView(embeddedID: embeddedID)
         case .layoutList(let type):
             if case .sceneEmbedded = type {
                 EmbeddedPlaygroundMenuView()

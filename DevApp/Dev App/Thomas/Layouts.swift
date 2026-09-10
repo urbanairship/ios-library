@@ -69,14 +69,16 @@ enum LayoutType: Equatable, Hashable, Codable {
 }
 
 extension LayoutFile {
+    /// - Parameter imageURLOverride: when set, every remote image in a scene is replaced with
+    ///   this URL before display. UI tests use it so screenshots never depend on the network.
     @MainActor
-    func open() async throws {
+    func open(imageURLOverride: URL? = nil) async throws {
         let filePath = Bundle.main.resourcePath! + directory + "/" + fileName
         let data = try loadData(filePath: filePath)
 
         switch self.type {
         case .sceneModal, .sceneBanner, .sceneEmbedded:
-            try await displayScene(data)
+            try await displayScene(data, imageURLOverride: imageURLOverride)
         case .messageModal, .messageBanner, .messageFullscreen, .messageHTML:
             try await displayMessage(data)
         }
@@ -194,13 +196,39 @@ extension LayoutFile {
 
 
     @MainActor
-    private func displayScene(_ data: Data) async throws {
+    private func displayScene(_ data: Data, imageURLOverride: URL?) async throws {
         // Extract layout from potentially wrapped payload (in_app_message.message.display.layout)
-        let layoutData = try extractLayoutFromPayload(data)
+        var layoutData = try extractLayoutFromPayload(data)
+        if let imageURLOverride {
+            layoutData = try Self.replacingRemoteImages(in: layoutData, with: imageURLOverride)
+        }
         let layout = try JSONDecoder().decode(AirshipLayout.self, from: layoutData)
 
         let message = InAppMessage(name: "thomas", displayContent: .airshipLayout(layout))
         try await Airship.inAppAutomation.viewTester.display(message: message)
+    }
+
+    /// Points image media and image buttons at `url`. Videos and web content are left alone.
+    private static func replacingRemoteImages(in data: Data, with url: URL) throws -> Data {
+        func rewrite(_ node: Any) -> Any {
+            if var dict = node as? [String: Any] {
+                let isImageMedia = dict["type"] as? String == "media" && dict["media_type"] as? String == "image"
+                let isImageButton = dict["type"] as? String == "url" && dict["url"] is String
+                if isImageMedia || isImageButton {
+                    dict["url"] = url.absoluteString
+                }
+                for (key, value) in dict {
+                    dict[key] = rewrite(value)
+                }
+                return dict
+            }
+            if let array = node as? [Any] {
+                return array.map(rewrite)
+            }
+            return node
+        }
+        let json = try JSONSerialization.jsonObject(with: data)
+        return try JSONSerialization.data(withJSONObject: rewrite(json))
     }
 
     @MainActor

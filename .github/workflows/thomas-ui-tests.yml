@@ -1,0 +1,231 @@
+name: Thomas UI Tests
+
+# Pull requests: screenshot the Thomas scenes and pixel-diff them against the
+# baselines minted on `next`; the HTML report is published to the repo's private
+# GitHub Pages site (the `gh-pages` branch, not mirrored to the public repo) and
+# linked from a PR comment. Every publish rewrites that branch as one commit and
+# drops reports for closed PRs, so nothing accumulates. Intentional visual
+# changes: add the `visual-change-accepted` label to make the diff report-only,
+# then merge.
+#
+# Pushes to `next` mint fresh baselines and publish them as the
+# `baselines-<runtime>` artifact. Scheduled runs only fire from the default
+# branch, so the weekly job dispatches a mint on `next` rather than minting
+# itself; that keeps the artifact from expiring on a quiet branch. Nothing
+# image-shaped is ever committed: the public SPM checkout would carry it forever.
+on:
+  pull_request:
+    # `labeled` so adding `visual-change-accepted` re-runs the check; a plain
+    # re-run replays the original event payload and would not see the label.
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+    paths:
+      - "Airship/AirshipSceneRenderer/**"
+      - "Airship/AirshipScenes/**"
+      - "Airship/AirshipCore/**"
+      - "Airship/AirshipBasement/**"
+      - "Package.swift"
+      - "DevApp/**"
+      - "uitests/**"
+      - "layouts.version"
+      - ".github/workflows/thomas-ui-tests.yml"
+  push:
+    branches: [next]
+  schedule:
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: write
+
+jobs:
+  refresh-baselines:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - run: gh workflow run thomas-ui-tests.yml --repo "${{ github.repository }}" --ref next
+
+  prune-reports:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: gh auth setup-git
+      - run: bash ./uitests/bin/uitest prune-reports
+
+  ui-tests:
+    # Skip label events for unrelated labels, and PRs into `main` (a different
+    # release line than the `next` baselines).
+    if: >-
+      github.event_name != 'schedule'
+      && (github.event_name != 'pull_request' || github.base_ref != 'main')
+      && (!github.event.label || github.event.label.name == 'visual-change-accepted')
+    runs-on: xcode-27-xlarge
+    # Build plus ~130 flows at a few seconds each.
+    timeout-minutes: 90
+    # Job-level so a skipped run (unrelated label event) never cancels a live one.
+    concurrency:
+      group: thomas-ui-tests-${{ github.ref }}
+      cancel-in-progress: true
+    env:
+      GH_TOKEN: ${{ github.token }}
+      # One simulator per run so concurrent jobs on a shared host cannot collide.
+      UITEST_SIM_NAME: AirshipUITest-${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache Thomas layouts
+        uses: actions/cache@v4
+        with:
+          path: |
+            DevApp/Dev App/Thomas/Resources/Scenes
+            DevApp/Dev App/Thomas/Resources/.layouts.version
+          key: thomas-layouts-${{ hashFiles('layouts.version') }}
+      - name: Mint layouts read token
+        id: layouts_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.ACTIONS_REPO_READER_APP_ID }}
+          private-key: ${{ secrets.ACTIONS_REPO_READER_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: thomas-layouts
+      - name: Install Maestro
+        run: |
+          brew install --quiet openjdk
+          echo "JAVA_HOME=$(brew --prefix openjdk)" >> "$GITHUB_ENV"
+          echo "$(brew --prefix openjdk)/bin" >> "$GITHUB_PATH"
+          # Exact pin: maestro versions change driver and capture behavior, which
+          # would churn baselines with no relation to the PR under test.
+          MAESTRO_VERSION=$(python3 -c "import json; print(json.load(open('uitests/config.json'))['maestro']['version'])")
+          test -n "$MAESTRO_VERSION"
+          export MAESTRO_VERSION
+          curl -fsSL https://get.maestro.mobile.dev | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      - name: Install odiff
+        run: npm --prefix uitests ci
+      - name: Doctor
+        run: make uitest-doctor
+      - name: Runtime label
+        id: runtime
+        run: echo "label=$(python3 -c "r=__import__('json').load(open('uitests/config.json'))['ios']['runtime'].split('.')[-1].split('-'); print(r[0].lower()+'-'+'.'.join(r[1:]))")" >> "$GITHUB_OUTPUT"
+
+      # --- pull requests: diff against the `next` baselines and report ---
+      - name: Pull baselines from next
+        if: github.event_name == 'pull_request'
+        run: |
+          status=0
+          bash ./uitests/bin/uitest baseline-pull || status=$?
+          case "$status" in
+            0) ;;
+            3) echo "Bootstrap: no run on next yet - reporting every screenshot as new."
+               echo "UITEST_DIFF_REPORT_ONLY=1" >> "$GITHUB_ENV" ;;
+            *) echo "Could not fetch baselines; refusing to report a green result without them."
+               exit "$status" ;;
+          esac
+      - name: Accepted visual change
+        if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'visual-change-accepted')
+        run: echo "UITEST_DIFF_REPORT_ONLY=1" >> "$GITHUB_ENV"
+      - name: Run UI tests
+        if: github.event_name == 'pull_request'
+        env:
+          LAYOUTS_REPO_TOKEN: ${{ steps.layouts_token.outputs.token }}
+        run: make uitest-run
+      - name: Upload report, screenshots and diffs
+        if: github.event_name == 'pull_request' && !cancelled()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-report
+          path: |
+            uitests/build/report
+            uitests/build/shots
+            uitests/build/diffs
+          include-hidden-files: true
+          retention-days: 14
+      # --- next and dispatch: mint and publish baselines ---
+      - name: Mint baselines
+        if: github.event_name != 'pull_request'
+        env:
+          LAYOUTS_REPO_TOKEN: ${{ steps.layouts_token.outputs.token }}
+        run: make uitest-mint
+      - name: Publish baselines
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: baselines-${{ steps.runtime.outputs.label }}
+          path: uitests/build/shots
+          include-hidden-files: true
+          retention-days: 90
+
+      - name: Delete simulator
+        if: always()
+        run: bash ./uitests/bin/uitest delete-sim
+
+  publish-report:
+    needs: ui-tests
+    if: >-
+      !cancelled()
+      && needs.ui-tests.result != 'skipped'
+      && github.event_name == 'pull_request'
+      && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      pages: read
+      actions: read
+    # Serialised with the docs deploy, which pushes to the same branch.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download report
+        run: gh run download "${{ github.run_id }}" --name ui-test-report --dir uitests/build || echo "no report artifact on this run"
+      - name: Publish report to Pages
+        id: publish
+        run: |
+          if [ -f uitests/build/report/index.html ]; then
+            gh auth setup-git
+            bash ./uitests/bin/uitest publish-report "${{ github.event.pull_request.number }}"
+            PAGES_URL=$(gh api "repos/${{ github.repository }}/pages" --jq .html_url)
+            echo "url=${PAGES_URL%/}/ui-tests/pr-${{ github.event.pull_request.number }}/" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Comment on PR
+        if: ${{ !cancelled() }}
+        run: |
+          MARKER="<!-- thomas-ui-tests -->"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          if [ -f uitests/build/report/summary.md ]; then
+            SUMMARY=$(cat uitests/build/report/summary.md)
+          else
+            SUMMARY="The UI test run did not produce a diff report; see the [run log]($RUN_URL)."
+          fi
+          REPORT_URL="${{ steps.publish.outputs.url }}"
+          if [ -n "$REPORT_URL" ]; then
+            LINKS="[Open the visual diff report]($REPORT_URL) (org members only; also in the \`ui-test-report\` [artifact]($RUN_URL#artifacts))."
+          else
+            LINKS="Visual diff report: \`ui-test-report\` [artifact]($RUN_URL#artifacts), open \`report/index.html\`."
+          fi
+          BODY="$MARKER"$'\n'"### Thomas UI tests"$'\n\n'"$SUMMARY"$'\n\n'"$LINKS Intentional change? Add the \`visual-change-accepted\` label."
+          PR=${{ github.event.pull_request.number }}
+          EXISTING=$(gh api "repos/${{ github.repository }}/issues/$PR/comments" --paginate \
+            --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"$MARKER\"))) | .id" | tail -1)
+          if [ -n "$EXISTING" ]; then
+            gh api "repos/${{ github.repository }}/issues/comments/$EXISTING" -X PATCH -f body="$BODY" >/dev/null
+          else
+            gh pr comment "$PR" --repo "${{ github.repository }}" --body "$BODY"
+          fi

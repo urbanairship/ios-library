@@ -1,0 +1,29 @@
+appId: com.urbanairship.richpush
+---
+# The one flow that drives the DevApp menus instead of direct launch, so the
+# Layout Viewer chrome (navigation, list, recents write path) keeps coverage.
+- launchApp:
+    clearState: true
+    arguments:
+      uiTestMode: true
+- extendedWaitUntil:
+    visible: "Thomas Layouts"
+    timeout: 15000
+- tapOn: "Thomas Layouts"
+- extendedWaitUntil:
+    visible: "Layout Viewer"
+    timeout: 5000
+# "Modal" appears under both Scenes and In-App Automations; index 0 is Scenes.
+- tapOn:
+    text: "Modal"
+    index: 0
+- extendedWaitUntil:
+    visible: "1-pager-different-path.yml"
+    timeout: 5000
+- tapOn: "1-pager-different-path.yml"
+- extendedWaitUntil:
+    visible:
+      id: "thomas:root"
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: devapp-menu-canary__p0

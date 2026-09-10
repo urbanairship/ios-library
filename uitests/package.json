@@ -1,0 +1,9 @@
+{
+  "name": "airship-uitests",
+  "private": true,
+  "description": "Maestro UI test harness for Thomas scenes",
+  "devDependencies": {
+    "odiff-bin": "^3.2.1",
+    "yaml": "2.9.0"
+  }
+}

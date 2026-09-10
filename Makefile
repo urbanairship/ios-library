@@ -73,6 +73,23 @@ fetch-layouts:
 build-sample-ios: setup
 	bash ./scripts/build_sample.sh "DevApp" "${derived_data_path}"
 
+# Maestro UI tests for Thomas scenes (see uitests/bin/uitest for subcommands).
+.PHONY: uitest-doctor
+uitest-doctor:
+	bash ./uitests/bin/uitest doctor
+
+.PHONY: uitest-run
+uitest-run: fetch-layouts
+	bash ./uitests/bin/uitest run
+
+.PHONY: uitest-mint
+uitest-mint: fetch-layouts
+	bash ./uitests/bin/uitest mint
+
+.PHONY: uitest-set-baseline
+uitest-set-baseline:
+	bash ./uitests/bin/uitest set-baseline
+
 # Release archive + App Store IPA export + altool validation (requires ASC API key + distribution cert in CI).
 .PHONY: archive-devapp-store
 archive-devapp-store: setup
