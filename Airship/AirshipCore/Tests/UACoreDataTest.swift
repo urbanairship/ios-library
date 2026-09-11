@@ -196,4 +196,54 @@ extension UACoreDataTest {
         let count = try await coreData.performWithResult { try self.rowCount($0) }
         #expect(count == 0)
     }
+
+    /// SQLite in WAL mode leaves `-wal` and `-shm` companion files next to the
+    /// store. `deleteStoresOnDisk` must remove those too, or they orphan on disk
+    /// with nothing left to clean them up.
+    @Test
+    func testDeleteStoresOnDiskRemovesWalAndShmFiles() async throws {
+        guard
+            let modelURL = AirshipCoreResources.bundle.url(
+                forResource: "UAEvents", withExtension: "momd"
+            )
+        else {
+            throw Boom()
+        }
+
+        let storeName = "UACoreDataTest-delete-\(UUID().uuidString).sqlite"
+        // Mirror `UACoreData.storeSQLDirectory()`, which differs on tvOS.
+        #if os(tvOS)
+        let searchPath: FileManager.SearchPathDirectory = .cachesDirectory
+        #else
+        let searchPath: FileManager.SearchPathDirectory = .libraryDirectory
+        #endif
+        let directory = FileManager.default
+            .urls(for: searchPath, in: .userDomainMask).last!
+            .appendingPathComponent("com.urbanairship.no-backup")
+        let storeURL = directory.appendingPathComponent(storeName)
+        defer {
+            for suffix in ["", "-wal", "-shm"] {
+                try? FileManager.default.removeItem(atPath: storeURL.path + suffix)
+            }
+        }
+
+        let coreData = UACoreData(
+            name: "UAEvents", modelURL: modelURL, inMemory: false, stores: [storeName]
+        )
+
+        // A write forces SQLite to actually create the on-disk WAL/SHM files.
+        try await coreData.perform { context in
+            self.insertRow(context, identifier: "seed")
+        }
+
+        #expect(FileManager.default.fileExists(atPath: storeURL.path))
+        #expect(FileManager.default.fileExists(atPath: storeURL.path + "-wal"))
+        #expect(FileManager.default.fileExists(atPath: storeURL.path + "-shm"))
+
+        try await coreData.deleteStoresOnDisk()
+
+        #expect(!FileManager.default.fileExists(atPath: storeURL.path))
+        #expect(!FileManager.default.fileExists(atPath: storeURL.path + "-wal"))
+        #expect(!FileManager.default.fileExists(atPath: storeURL.path + "-shm"))
+    }
 }
