@@ -177,14 +177,14 @@ public enum AirshipAI {
         case defaultModel
         /// Use a custom model. `AirshipFoundationModels` ships `AirshipFoundationModel` for anything
         /// conforming to Foundation Models' `LanguageModel`, including Apple's Private Cloud
-        /// Compute; implement `AirshipAI.ModelProtocol` directly to wrap anything else — your own
+        /// Compute; implement `AirshipAI.ModelAdapter` directly to wrap anything else — your own
         /// backend, a third-party inference API, or another on-device runtime.
-        case custom(any ModelProtocol)
+        case custom(any ModelAdapter)
     }
 
     // MARK: - Request
 
-    /// A single request handed to a `ModelProtocol`.
+    /// A single request handed to a `ModelAdapter`.
     ///
     /// Bundles the instructions, output schema, and prioritized context, and knows how to
     /// render itself into prompt text (`prompt()`). Context labeling and layout are owned by
@@ -192,7 +192,7 @@ public enum AirshipAI {
     /// if its input window is tight, trims.
     ///
     /// A model doesn't construct these — the framework builds one per evaluation and hands it
-    /// to `ModelProtocol.respond(_:)`.
+    /// to `ModelAdapter.respond(_:)`.
     public struct Request: Sendable {
 
         /// The system instructions (the model's role and rules).
@@ -270,7 +270,7 @@ public enum AirshipAI {
     ///
     /// No FoundationModels types appear here — that framework is confined to the
     /// `AirshipFoundationModels` module.
-    public protocol ModelProtocol: Sendable {
+    public protocol ModelAdapter: Sendable {
 
         /// Whether the model can be used right now, and if not, why.
         ///
@@ -505,7 +505,7 @@ public enum AirshipAI {
         ///         return .custom(myFallbackModel)
         ///     }
         @MainActor
-        var defaultModel: (any ModelProtocol)? { get }
+        var defaultModel: (any ModelAdapter)? { get }
 
         /// Returns the model currently resolved for `usage`, or nil when no model is
         /// configured or available (none registered, below OS minimum, etc.).
@@ -518,7 +518,7 @@ public enum AirshipAI {
         ///
         /// The per-usage resolver (set via `setModelResolver`) wins over the SDK default.
         @MainActor
-        func model<S: Sendable>(for usage: Usage<S>) -> (any ModelProtocol)?
+        func model<S: Sendable>(for usage: Usage<S>) -> (any ModelAdapter)?
     }
 
     // MARK: - Evaluation protocol (SPI)
@@ -591,7 +591,7 @@ public enum AirshipAI {
         /// default. Replaces the current model immediately.
         @MainActor
         func registerModelFactory(
-            _ factory: @MainActor @Sendable @escaping () -> any ModelProtocol
+            _ factory: @MainActor @Sendable @escaping () -> any ModelAdapter
         )
 
         /// Fetches the registered provider's context for the given usage and subject —
@@ -607,7 +607,7 @@ public enum AirshipAI {
         /// re-resolving on every check. `model(for:)` itself is untouched, so callers that need
         /// the exact registered instance (identity/type checks) keep getting it.
         @MainActor
-        func gatedModel<S: Sendable>(for usage: Usage<S>) -> (any ModelProtocol)?
+        func gatedModel<S: Sendable>(for usage: Usage<S>) -> (any ModelAdapter)?
     }
 }
 
@@ -619,7 +619,7 @@ extension AirshipAI.Evaluation {
     public var requiresContext: Bool { false }
 }
 
-extension AirshipAI.ModelProtocol {
+extension AirshipAI.ModelAdapter {
     /// Assumes the model can be used. Correct for a backend that has no readiness
     /// state of its own — a failure surfaces from `respond(_:)` instead. Models
     /// that can genuinely be unusable override this.
@@ -643,7 +643,7 @@ extension AirshipAI.ModelProtocol {
 }
 
 extension AirshipAI.RetryDecision {
-    /// The framework's default retry policy, shared by `ModelProtocol`'s default
+    /// The framework's default retry policy, shared by `ModelAdapter`'s default
     /// implementation and models that want to fall back to it selectively.
     ///
     /// A schema mismatch (`error is AirshipAI.SchemaValidationError`) retries immediately —

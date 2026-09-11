@@ -18,7 +18,7 @@ extension AirshipAI {
 
         func evaluate<E: Evaluation>(
             _ evaluation: E,
-            model: any ModelProtocol,
+            model: any ModelAdapter,
             context: Context,
             observer: AirshipAI.EvaluationObserver? = nil
         ) async -> Result<E.Output> {
@@ -150,7 +150,7 @@ extension AirshipAI {
         /// after how long) or give up. The model's `retryDecision` picks the schedule;
         /// `withTimeout` above still caps the total time it's given to do so.
         private static func withRetry<T: Sendable>(
-            model: any ModelProtocol,
+            model: any ModelAdapter,
             usage: AnyUsage,
             usageString: String,
             maxDelay: TimeInterval,
@@ -176,6 +176,10 @@ extension AirshipAI {
                             // past `maxDelay` is cut off by the outer timeout regardless.
                             let clamped = delay.isFinite ? min(delay, maxDelay) : maxDelay
                             try await Task.sleep(nanoseconds: UInt64(clamped * 1_000_000_000))
+                        } else {
+                            // A zero-delay policy would otherwise never suspend, so
+                            // `checkCancellation` above never gets scheduled a chance to run.
+                            await Task.yield()
                         }
                     }
                 }

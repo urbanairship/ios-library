@@ -4,10 +4,10 @@ import Foundation
 @_spi(AirshipInternal) import AirshipCore
 
 final class TestAIManager: AirshipAI.InternalManager, @unchecked Sendable {
-    var stubModel: (any AirshipAI.ModelProtocol)?
+    var stubModel: (any AirshipAI.ModelAdapter)?
 
-    var defaultModel: (any AirshipAI.ModelProtocol)? { nil }
-    func model<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.ModelProtocol)? { stubModel }
+    var defaultModel: (any AirshipAI.ModelAdapter)? { nil }
+    func model<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.ModelAdapter)? { stubModel }
     func setContextProvider<S: Sendable>(for usage: AirshipAI.Usage<S>, _ provider: AirshipAI.ContextProvider<S>?) {}
     func setDefaultContextProvider(_ provider: (@Sendable () async -> AirshipAI.Context)?) {}
     func setEvaluationObserver(_ observer: AirshipAI.EvaluationObserver?) {}
@@ -23,7 +23,7 @@ final class TestAIManager: AirshipAI.InternalManager, @unchecked Sendable {
         }
         return result
     }
-    func registerModelFactory(_ factory: @MainActor @Sendable @escaping () -> any AirshipAI.ModelProtocol) {}
+    func registerModelFactory(_ factory: @MainActor @Sendable @escaping () -> any AirshipAI.ModelAdapter) {}
     func fetchContext<S: Sendable>(for usage: AirshipAI.Usage<S>, subject: S) async -> AirshipAI.Context { .empty }
-    func gatedModel<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.ModelProtocol)? { nil }
+    func gatedModel<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.ModelAdapter)? { nil }
 }

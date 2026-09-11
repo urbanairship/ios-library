@@ -452,7 +452,7 @@ struct AirshipAIContextProviderTests {
 
 /// Reusable stub model. Records what it was asked and returns canned responses —
 /// one per attempt when `responses` holds several, repeating the last.
-final class MockAIModel: AirshipAI.ModelProtocol, @unchecked Sendable {
+final class MockAIModel: AirshipAI.ModelAdapter, @unchecked Sendable {
     var availabilityValue: AirshipAI.Availability
     var responses: [Swift.Result<AirshipJSON, any Error>]
     /// Attempts (including the first) `retryDecision` allows before returning `.fail`.
@@ -557,7 +557,7 @@ func itemsProvider(_ items: [AirshipAI.Context.Item]) -> AirshipAI.ContextProvid
 struct AirshipAIEvaluatorTests {
 
     private func eval(
-        model: any AirshipAI.ModelProtocol,
+        model: any AirshipAI.ModelAdapter,
         context: AirshipAI.Context = .empty,
         maxResponseTimeout: TimeInterval = 120
     ) async -> AirshipAI.Result<TestEvaluation.Output> {

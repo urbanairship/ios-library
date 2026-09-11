@@ -41,7 +41,7 @@ public struct DefaultSceneAIExecutor: SceneAIExecutor {
 
     private let aiManager: any AirshipAI.InternalManager
     private let usage: AirshipAI.Usage<AirshipAI.TextInputInference.Subject>
-    private let resolvedModel: (any AirshipAI.ModelProtocol)?
+    private let resolvedModel: (any AirshipAI.ModelAdapter)?
 
     @MainActor
     public init(aiManager: any AirshipAI.InternalManager) {

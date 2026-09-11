@@ -978,14 +978,14 @@ private final class EmbeddedSelectionViewModel: ObservableObject {
 }
 
 private final class PreviewAIManager: AirshipAI.InternalManager, @unchecked Sendable {
-    var defaultModel: (any AirshipAI.ModelProtocol)? { nil }
-    func model<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.ModelProtocol)? { nil }
+    var defaultModel: (any AirshipAI.ModelAdapter)? { nil }
+    func model<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.ModelAdapter)? { nil }
     func setContextProvider<S: Sendable>(for usage: AirshipAI.Usage<S>, _ provider: AirshipAI.ContextProvider<S>?) {}
     func setDefaultContextProvider(_ provider: (@Sendable () async -> AirshipAI.Context)?) {}
     func setEvaluationObserver(_ observer: AirshipAI.EvaluationObserver?) {}
     func setModelResolver(_ resolver: (@MainActor @Sendable (AirshipAI.AnyUsage) -> AirshipAI.ModelSelector)?) {}
     func evaluate<E: AirshipAI.Evaluation>(_ evaluation: E, additionalContext: AirshipAI.Context) async -> AirshipAI.Result<E.Output> { .skipped(reason: "preview") }
-    func registerModelFactory(_ factory: @MainActor @Sendable @escaping () -> any AirshipAI.ModelProtocol) {}
+    func registerModelFactory(_ factory: @MainActor @Sendable @escaping () -> any AirshipAI.ModelAdapter) {}
     func fetchContext<S: Sendable>(for usage: AirshipAI.Usage<S>, subject: S) async -> AirshipAI.Context { .empty }
-    func gatedModel<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.ModelProtocol)? { nil }
+    func gatedModel<S: Sendable>(for usage: AirshipAI.Usage<S>) -> (any AirshipAI.ModelAdapter)? { nil }
 }

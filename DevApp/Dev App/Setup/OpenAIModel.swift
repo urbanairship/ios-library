@@ -3,14 +3,14 @@
 import AirshipCore
 import Foundation
 
-/// Example `AirshipAI.ModelProtocol` that routes on-device AI evaluations to OpenAI's Chat
+/// Example `AirshipAI.ModelAdapter` that routes on-device AI evaluations to OpenAI's Chat
 /// Completions API.
 ///
 /// - Note: This is an example - do not ship an API key embedded in a real app. Proxy the
 ///   request through your own backend instead. Reads its key from the `OPENAI_API_KEY`
 ///   environment variable (Scheme > Run > Arguments > Environment Variables) so it never
 ///   gets committed.
-struct OpenAIModel: AirshipAI.ModelProtocol {
+struct OpenAIModel: AirshipAI.ModelAdapter {
     let apiKey: String
 
     // availability, availabilityUpdates, and retryDecision all have protocol defaults

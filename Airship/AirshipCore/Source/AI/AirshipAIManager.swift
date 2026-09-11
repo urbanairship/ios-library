@@ -10,7 +10,7 @@ extension AirshipAI {
         private var overrideResolver: (@MainActor @Sendable (AnyUsage) -> ModelSelector)?
 
         @MainActor
-        private var defaultModelFactory: (@MainActor @Sendable () -> any AirshipAI.ModelProtocol)?
+        private var defaultModelFactory: (@MainActor @Sendable () -> any AirshipAI.ModelAdapter)?
 
         @MainActor
         private let providerRegistry = ProviderRegistry()
@@ -34,7 +34,7 @@ extension AirshipAI {
         }
 
         @MainActor
-        private func resolve(_ selector: ModelSelector) -> (any AirshipAI.ModelProtocol)? {
+        private func resolve(_ selector: ModelSelector) -> (any AirshipAI.ModelAdapter)? {
             switch selector {
             case .defaultModel: return defaultModelFactory?()
             case .custom(let m): return m
@@ -42,13 +42,13 @@ extension AirshipAI {
         }
 
         @MainActor
-        public var defaultModel: (any AirshipAI.ModelProtocol)? {
+        public var defaultModel: (any AirshipAI.ModelAdapter)? {
             guard enabled else { return nil }
             return defaultModelFactory?()
         }
 
         @MainActor
-        public func model<S: Sendable>(for usage: Usage<S>) -> (any AirshipAI.ModelProtocol)? {
+        public func model<S: Sendable>(for usage: Usage<S>) -> (any AirshipAI.ModelAdapter)? {
             guard enabled else { return nil }
             let selector = overrideResolver?(AnyUsage(rawValue: usage.rawValue)) ?? .defaultModel
             return resolve(selector)
@@ -61,7 +61,7 @@ extension AirshipAI {
         /// re-resolving on every check. `model(for:)` itself is left untouched so callers that
         /// need the exact registered instance (identity/type checks) keep getting it.
         @MainActor
-        public func gatedModel<S: Sendable>(for usage: Usage<S>) -> (any AirshipAI.ModelProtocol)? {
+        public func gatedModel<S: Sendable>(for usage: Usage<S>) -> (any AirshipAI.ModelAdapter)? {
             let selector = overrideResolver?(AnyUsage(rawValue: usage.rawValue)) ?? .defaultModel
             guard let model = resolve(selector) else { return nil }
             return PrivacyGatedModel(wrapped: model, privacyManager: privacyManager)
@@ -87,7 +87,7 @@ extension AirshipAI {
 
         @MainActor
         public func registerModelFactory(
-            _ factory: @MainActor @Sendable @escaping () -> any AirshipAI.ModelProtocol
+            _ factory: @MainActor @Sendable @escaping () -> any AirshipAI.ModelAdapter
         ) {
             defaultModelFactory = factory
         }
@@ -142,7 +142,7 @@ extension AirshipAI {
         private func resolve<E: AirshipAI.Evaluation>(
             _ evaluation: E
         ) async -> (
-            model: any AirshipAI.ModelProtocol,
+            model: any AirshipAI.ModelAdapter,
             context: AirshipAI.Context,
             observer: AirshipAI.EvaluationObserver?
         )? {
@@ -170,8 +170,8 @@ extension AirshipAI {
 
     /// A resolved model wrapped so its availability reflects `AirshipFeature.onDeviceAI` in
     /// addition to the underlying model's own state. See `DefaultManager.gatedModel(for:)`.
-    private struct PrivacyGatedModel: ModelProtocol {
-        let wrapped: any ModelProtocol
+    private struct PrivacyGatedModel: ModelAdapter {
+        let wrapped: any ModelAdapter
         let privacyManager: any AirshipPrivacyManager
 
         private func gate(_ availability: Availability) -> Availability {

@@ -44,7 +44,7 @@ struct AirshipAIEvaluationObserverTest {
     }
 
     private func evaluate(
-        model: any AirshipAI.ModelProtocol,
+        model: any AirshipAI.ModelAdapter,
         context: AirshipAI.Context = .empty,
         observer: AirshipAI.EvaluationObserver?
     ) async -> AirshipAI.Result<TestEvaluation.Output> {
