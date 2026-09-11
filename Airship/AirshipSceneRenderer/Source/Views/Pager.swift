@@ -761,16 +761,23 @@ struct Pager: View {
     }
 
     private func onTimer() {
+        // `pageIndex` comes from `pageItems`, so `pageItems` still needs its own bounds
+        // check here; `currentPageState` already guards the `pageStates` side for the
+        // same index.
+        let index = self.pagerState.pageIndex
+
         guard !isVoiceOverRunning,
-              let automatedActions = self.pagerState.pageItems[self.pagerState.pageIndex].automatedActions
+              self.pagerState.pageItems.indices.contains(index),
+              let pageState = self.pagerState.currentPageState,
+              let automatedActions = self.pagerState.pageItems[index].automatedActions
         else {
             return
         }
 
-        let duration = self.pagerState.pageStates[pagerState.pageIndex].delay
+        let duration = pageState.delay
         let safeDuration = (duration > 0 && duration.isFinite) ? duration : 1.0
 
-        if self.pagerState.inProgress && (self.pagerState.pageIndex < pagerState.pageItems.count) {
+        if self.pagerState.inProgress {
             if (self.pagerState.progress < 1) {
                 self.pagerState.progress += Pager.timerTransition / safeDuration
             }
