@@ -102,13 +102,7 @@ struct Label: View {
                     .truncationMode(.tail)
             }
 
-
             if let icon = resolvedEndIcon {
-                // Add a spacer if we are not auto to push the icon to the edge
-                if constraints.width != nil {
-                    Spacer()
-                }
-
                 let size = scaledFontSize
                 Icons.icon(info: icon.icon, colorScheme: colorScheme)
                     .frame(width: size, height: size)
