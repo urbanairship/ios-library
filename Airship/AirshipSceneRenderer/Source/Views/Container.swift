@@ -252,11 +252,22 @@ fileprivate extension ViewConstraints {
         if axes.contains(.horizontal), case .percent = size.width, let share = copy.width {
             copy.width = nil
             copy.minWidth = max(copy.minWidth ?? 0, share)
+            // Only the whole share is pinned, matching `lacksBasis`'s own special case: 100% of
+            // the largest is the largest, so the floor this just raised and the ceiling already
+            // sitting in `maxWidth` name the same number on this pass and the next. A fractional
+            // share is only ever a share of *this* pass's measurement — nothing says it stays that
+            // fraction once the container measures again — so it isn't a length to crop into.
+            if case .percent(100) = size.width {
+                copy.pinnedAxes.insert(.horizontal)
+            }
         }
 
         if axes.contains(.vertical), case .percent = size.height, let share = copy.height {
             copy.height = nil
             copy.minHeight = max(copy.minHeight ?? 0, share)
+            if case .percent(100) = size.height {
+                copy.pinnedAxes.insert(.vertical)
+            }
         }
 
         return copy

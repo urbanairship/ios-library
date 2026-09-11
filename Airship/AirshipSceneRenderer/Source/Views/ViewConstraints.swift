@@ -56,6 +56,16 @@ struct ViewConstraints: Equatable {
     /// already contains the stack is circular, and feeding it back diverges. Inherited by children,
     /// since a length derived from a measured one is measured too.
     var measuredAxes: Axis.Set = []
+    /// Measured axes whose floor was raised to match the ceiling because a child asked for the
+    /// whole of the measurement, rather than a share smaller than it.
+    ///
+    /// `Container.flooringMeasuredShare` produces this: it floors a 100% share back to `(length:
+    /// nil, minimum: share)` so the container stays free to grow past its own first measurement,
+    /// but a share of the *whole* means the floor and the ceiling name the same number. That pair
+    /// is as real a length as one declared outright — unlike an ordinary measured maximum, which
+    /// is a sibling's extent handed back as a ceiling with nothing underneath it. Subset of
+    /// `measuredAxes`; only meaningful where that axis is also set.
+    var pinnedAxes: Axis.Set = []
     var safeAreaInsets: EdgeInsets
     var isHorizontalFixedSize: Bool
     var isVerticalFixedSize: Bool
@@ -72,6 +82,7 @@ struct ViewConstraints: Equatable {
         minHeight: CGFloat? = nil,
         uncappedAxes: Axis.Set = [],
         measuredAxes: Axis.Set = [],
+        pinnedAxes: Axis.Set = [],
         isHorizontalFixedSize: Bool = false,
         isVerticalFixedSize: Bool = false,
         isHorizontalAbsoluteSize: Bool = false,
@@ -88,6 +99,7 @@ struct ViewConstraints: Equatable {
         self.minHeight = minHeight
         self.uncappedAxes = uncappedAxes
         self.measuredAxes = measuredAxes
+        self.pinnedAxes = pinnedAxes
         self.safeAreaInsets = safeAreaInsets
         self.isHorizontalFixedSize = isHorizontalFixedSize
         self.isVerticalFixedSize = isVerticalFixedSize
@@ -477,11 +489,14 @@ struct ViewConstraints: Equatable {
         // those rather than diverge: `60 + 100% + 100%` in a 200pt box drew 60 and two text-height
         // rows, leaving the rest of the box empty.
         var childMeasuredAxes = measuredAxes
+        var childPinnedAxes = pinnedAxes
         if isHorizontalAbsoluteSize {
             childMeasuredAxes.remove(.horizontal)
+            childPinnedAxes.remove(.horizontal)
         }
         if isVerticalAbsoluteSize {
             childMeasuredAxes.remove(.vertical)
+            childPinnedAxes.remove(.vertical)
         }
 
         return ViewConstraints(
@@ -495,6 +510,7 @@ struct ViewConstraints: Equatable {
             // Only the view a scroll layout hands its constraints to may exceed its length.
             uncappedAxes: [],
             measuredAxes: childMeasuredAxes,
+            pinnedAxes: childPinnedAxes,
             isHorizontalFixedSize: isHorizontalFixedSize,
             isVerticalFixedSize: isVerticalFixedSize,
             isHorizontalAbsoluteSize: isHorizontalAbsoluteSize,
@@ -554,9 +570,11 @@ extension ViewConstraints {
             if isVertical {
                 copy.height = nil
                 copy.measuredAxes.remove(.vertical)
+                copy.pinnedAxes.remove(.vertical)
             } else {
                 copy.width = nil
                 copy.measuredAxes.remove(.horizontal)
+                copy.pinnedAxes.remove(.horizontal)
             }
             return copy
         }

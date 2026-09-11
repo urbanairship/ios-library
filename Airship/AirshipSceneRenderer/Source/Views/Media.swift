@@ -243,8 +243,8 @@ extension View {
 /// A maximum that isn't there imposes no limit, so nothing can exceed it. Reading an absent one as a
 /// reason to crop is what left an auto-height image scaled to fill and clipped to whatever height its
 /// siblings happened to settle on, rather than to its own proportions.
-private func shouldShowMediaWhole(constraints: ViewConstraints, aspectRatio: CGFloat) -> Bool {
-    switch (constraints.width, constraints.height) {
+func shouldShowMediaWhole(constraints: ViewConstraints, aspectRatio: CGFloat) -> Bool {
+    switch (constraints.resolvedLength(on: .horizontal), constraints.resolvedLength(on: .vertical)) {
     case (nil, let height?):
         guard let maxWidth = constraints.limit(on: .horizontal) else { return true }
         return height * aspectRatio <= maxWidth
@@ -265,7 +265,7 @@ private func shouldShowMediaWhole(constraints: ViewConstraints, aspectRatio: CGF
     }
 }
 
-private extension ViewConstraints {
+extension ViewConstraints {
     /// The maximum on [axis], where there is one that actually limits anything.
     ///
     /// A maximum that isn't there imposes no limit, so nothing can exceed it. Neither does one an
@@ -273,9 +273,34 @@ private extension ViewConstraints {
     /// a ceiling, and the view now being measured against it is one of the children it was taken
     /// from. Media sized from such a maximum is capped by whatever its siblings happened to settle
     /// on — and it settles there, since the measurement that produced the cap then reproduces it.
+    ///
+    /// Except where `pinnedAxes` marks it: a child that asked for the whole of its container has
+    /// its share floored rather than kept as a length, so the container stays free to grow past its
+    /// own first measurement — but that floor and this ceiling name the same number, which is what
+    /// a share of the whole *is*, not a coincidence of measuring. That pair is as real a length as
+    /// one declared outright.
     func limit(on axis: Axis) -> CGFloat? {
-        let measured: Axis.Set = axis == .vertical ? .vertical : .horizontal
-        guard !self.measuredAxes.contains(measured) else { return nil }
-        return axis == .vertical ? self.maxHeight : self.maxWidth
+        let axisSet: Axis.Set = axis == .vertical ? .vertical : .horizontal
+        let ceiling = axis == .vertical ? self.maxHeight : self.maxWidth
+        guard self.measuredAxes.contains(axisSet) else { return ceiling }
+        return self.pinnedAxes.contains(axisSet) ? ceiling : nil
+    }
+
+    /// [axis]'s length, including one pinned by an equal floor rather than stated outright.
+    ///
+    /// A child that asked for the whole of a measured container ends up pinned rather than in
+    /// `width`/`height` themselves — see `limit(on:)` — so deciding whether a box exists on this
+    /// axis at all has to look at both.
+    ///
+    /// Only a pinned axis can carry a length this way. An un-measured maximum is the room the view
+    /// was given, not a length it has, and reading it as one turned every declared-plus-auto media
+    /// into a box on the auto axis too — crop always won, and the fits-so-show-it-whole comparison
+    /// below it never ran.
+    func resolvedLength(on axis: Axis) -> CGFloat? {
+        let declared = axis == .vertical ? self.height : self.width
+        if let declared { return declared }
+        let axisSet: Axis.Set = axis == .vertical ? .vertical : .horizontal
+        guard self.pinnedAxes.contains(axisSet) else { return nil }
+        return limit(on: axis)
     }
 }
