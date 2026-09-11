@@ -161,8 +161,11 @@ public actor UACoreData {
                 continue
             }
 
-            if FileManager.default.fileExists(atPath: storeURL.path) {
-                try FileManager.default.removeItem(atPath: storeURL.path)
+            let paths = [storeURL.path, storeURL.path + "-wal", storeURL.path + "-shm"]
+            for path in paths {
+                if FileManager.default.fileExists(atPath: path) {
+                    try FileManager.default.removeItem(atPath: path)
+                }
             }
         }
     }

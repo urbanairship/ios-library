@@ -105,9 +105,12 @@ final class PagerState: ObservableObject {
     private var mediaReadyState: [MediaKey: Bool] = [:]
 
     var currentPageState: PageState? {
-        get { pageStates.isEmpty ? nil : pageStates[pageIndex] }
+        // `pageIndex` is derived from `pageItems`, so a non-empty `pageStates` is not
+        // on its own enough to make it a valid subscript here — the two arrays have to
+        // agree in length. Check the index, not just emptiness.
+        get { pageStates.indices.contains(pageIndex) ? pageStates[pageIndex] : nil }
         set {
-            guard let newValue, !pageStates.isEmpty else { return }
+            guard let newValue, pageStates.indices.contains(pageIndex) else { return }
             pageStates[pageIndex] = newValue
         }
     }
@@ -162,6 +165,47 @@ final class PagerState: ObservableObject {
         }
     }
     
+    /// Aligns restored page states with the page list they are being restored into.
+    ///
+    /// A persisted snapshot can disagree with the layout it lands in: it may be empty
+    /// (one is written when the state is first built, before the pager has populated
+    /// it), shorter than the current list, or name pages that no longer exist. Taking
+    /// it verbatim leaves `pageStates` out of step with `pageItems` — and since
+    /// `pageIndex` is derived from `pageItems`, that index is then out of range for
+    /// `pageStates`, trapping in callers such as `Pager.onTimer()`.
+    ///
+    /// Rebuilding from `pages` keeps the two arrays the same length and order, while
+    /// still carrying over the state of any page that survived.
+    ///
+    /// - Parameters:
+    ///   - restored: The persisted per-page state, if any, from a prior snapshot.
+    ///   - pages: The page list being restored into.
+    /// - Returns: One state per entry in `pages`, in the same order, reusing a restored
+    ///   state where `restored` names a matching, not-yet-consumed page.
+    private static func reconcilePageStates(
+        restored: [PageState]?,
+        with pages: [ThomasViewInfo.Pager.Item]
+    ) -> [PageState] {
+        guard let restored, !restored.isEmpty else {
+            return pages.map { $0.toPageState() }
+        }
+
+        // Grouped rather than keyed by identifier so that a layout repeating an
+        // identifier consumes one restored state per occurrence, in order, instead of
+        // handing every occurrence the same one.
+        var remaining = Dictionary(grouping: restored, by: \.identifier)
+
+        return pages.map { page in
+            guard var queue = remaining[page.identifier], !queue.isEmpty else {
+                return page.toPageState()
+            }
+
+            let state = queue.removeFirst()
+            remaining[page.identifier] = queue
+            return state
+        }
+    }
+
     func setPagesAndListenForUpdates(
         pages: [ThomasViewInfo.Pager.Item],
         thomasState: ThomasState,
@@ -175,7 +219,10 @@ final class PagerState: ObservableObject {
                 thomasState: thomasState
             )
         } else {
-            self.pageStates = restoredState?.pageStates ?? pages.map({ $0.toPageState() })
+            self.pageStates = Self.reconcilePageStates(
+                restored: restoredState?.pageStates,
+                with: pages
+            )
             self.pageItems = pages
         }
 
@@ -189,10 +236,32 @@ final class PagerState: ObservableObject {
         }
 
         if let restored = restoredState {
-            // pager uses scrollview + lazystack. in this configuration it could ignore scrolling to position
-            // until the stack is initialized and loaded. schedule a page navigation task
-            restored.currentPageId.flatMap(self.schedulePageNavigation)
-            self.progress = restored.progress
+            // A snapshot can name a page this layout no longer has, or no page at all
+            // (one is persisted when the state is first built, before the pager has
+            // populated). Only treat it as a restore target if the layout still has
+            // that page — otherwise `currentPageId` is left nil or pointing at a page
+            // that does not exist, and the page is never reported.
+            //
+            // Membership is tested against the authored `pages` rather than the
+            // resolved `pageItems`, because a branching pager's `pageItems` holds only
+            // the current route. A restored page on another route is off `pageItems`
+            // but still a legitimate target for `schedulePageNavigation` to walk to.
+            let restoredPageId = restored.currentPageId.flatMap { pageId in
+                pages.contains(where: { $0.identifier == pageId }) ? pageId : nil
+            }
+
+            if let restoredPageId {
+                // pager uses scrollview + lazystack. in this configuration it could ignore scrolling to position
+                // until the stack is initialized and loaded. schedule a page navigation task
+                self.schedulePageNavigation(restoredPageId)
+                self.progress = restored.progress
+            } else {
+                // Fall back to the no-snapshot behaviour. `progress` is deliberately not
+                // carried over: it measures how far through the page we could not restore,
+                // and applying it to a different page would misreport that page's dwell
+                // and could fire its automated actions immediately.
+                self.currentPageId = pageItems.first?.identifier
+            }
 
             self.restoredState = nil
         } else if self.currentPageId == nil || (branchControl == nil && pagesChanged) {
@@ -523,8 +592,12 @@ private final class BranchControl: Sendable {
         else {
             return
         }
-        
+
         history.append(page)
+        // Otherwise `pages`/`pageItems` still reflect the route this page was added
+        // from, not one that resolves through it — as when a restored page is off
+        // the currently-resolved route.
+        reEvaluatePath()
     }
 
     private func reEvaluatePath() {
