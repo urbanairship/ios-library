@@ -91,6 +91,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
 /// execution acts on the same resolution it reports rather than re-hashing at execute time.
 struct VariantAudienceResult: Codable, Sendable, Equatable {
     var outcome: VariantAudience.Outcome
+    var reportingContext: AirshipJSON? = nil
 }
 
 /// Prepared schedule data

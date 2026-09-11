@@ -36,10 +36,14 @@ public struct VariantAudience: Codable, Sendable, Equatable {
     private let audienceSubset: AudienceHashSelector.Bucket
     private let holdoutSubset: AudienceHashSelector.Bucket?
 
+    /// Additional context to be appended to the `experiments` reporting context on reporting events.
+    public let reportingContext: AirshipJSON?
+
     enum CodingKeys: String, CodingKey {
         case hash = "audience_hash"
         case audienceSubset = "audience_subset"
         case holdoutSubset = "holdout_subset"
+        case reportingContext = "reporting_context"
     }
 
     public init(from decoder: any Decoder) throws {
@@ -47,6 +51,7 @@ public struct VariantAudience: Codable, Sendable, Equatable {
         self.hash = try container.decode(AudienceHashSelector.Hash.self, forKey: .hash)
         self.audienceSubset = try container.decode(AudienceHashSelector.Bucket.self, forKey: .audienceSubset)
         self.holdoutSubset = try container.decodeIfPresent(AudienceHashSelector.Bucket.self, forKey: .holdoutSubset)
+        self.reportingContext = try container.decodeIfPresent(AirshipJSON.self, forKey: .reportingContext)
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -54,6 +59,7 @@ public struct VariantAudience: Codable, Sendable, Equatable {
         try container.encode(hash, forKey: .hash)
         try container.encode(audienceSubset, forKey: .audienceSubset)
         try container.encodeIfPresent(holdoutSubset, forKey: .holdoutSubset)
+        try container.encodeIfPresent(reportingContext, forKey: .reportingContext)
     }
 
     /// Resolves this schedule's outcome within its variant experiment.

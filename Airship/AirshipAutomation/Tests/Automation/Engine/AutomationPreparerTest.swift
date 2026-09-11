@@ -1514,11 +1514,20 @@ struct AutomationPreparerTest {
     /// contactID resolve to bucket 9908 of 16384 via farm hash.
     private func makeVariantAudienceJSON(
         audienceSubset: (min: UInt64, max: UInt64),
-        holdoutSubset: (min: UInt64, max: UInt64)? = nil
+        holdoutSubset: (min: UInt64, max: UInt64)? = nil,
+        reportingContext: String? = nil
     ) -> String {
         let holdoutJSON: String = if let holdoutSubset {
             """
             , "holdout_subset": { "min_hash_bucket": \(holdoutSubset.min), "max_hash_bucket": \(holdoutSubset.max) }
+            """
+        } else {
+            ""
+        }
+
+        let reportingContextJSON: String = if let reportingContext {
+            """
+            , "reporting_context": \(reportingContext)
             """
         } else {
             ""
@@ -1534,6 +1543,7 @@ struct AutomationPreparerTest {
             },
             "audience_subset": { "min_hash_bucket": \(audienceSubset.min), "max_hash_bucket": \(audienceSubset.max) }
             \(holdoutJSON)
+            \(reportingContextJSON)
         }
         """
     }
@@ -1633,6 +1643,42 @@ struct AutomationPreparerTest {
             return
         }
         #expect(prepared.info.variantAudienceResult == VariantAudienceResult(outcome: .variantMiss))
+    }
+
+    @Test
+    func testVariantAudienceCarriesReportingContext() async throws {
+        let schedule = try variantAudienceSchedule(
+            json: makeVariantAudienceJSON(
+                audienceSubset: (9908, 9908),
+                reportingContext: #"{"foo": "bar"}"#
+            )
+        )
+
+        self.remoteDataAccess.contactIDBlock = { _ in "contactId" }
+        self.remoteDataAccess.requiresUpdateBlock = { _ in false }
+        self.remoteDataAccess.bestEffortRefreshBlock = { _ in true }
+
+        let preparedData = self.preparedMessageData!
+        self.messagePreparer.prepareBlock = { _, _ in
+            return preparedData
+        }
+
+        let result = await self.preparer.prepare(
+            schedule: schedule,
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
+        )
+
+        guard case .prepared(let prepared) = result else {
+            Issue.record()
+            return
+        }
+        #expect(
+            prepared.info.variantAudienceResult == VariantAudienceResult(
+                outcome: .matched,
+                reportingContext: try AirshipJSON.wrap(["foo": "bar"])
+            )
+        )
     }
 }
 

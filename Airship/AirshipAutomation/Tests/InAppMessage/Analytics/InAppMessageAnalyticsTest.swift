@@ -195,7 +195,46 @@ struct InAppMessageAnalyticsTest {
         #expect(data.renderedLocale == AirshipJSON.string("rendered locale"))
         #expect(data.event.name == AirshipEventType.customEvent)
     }
-    
+
+    @Test
+    func testDataAppendsVariantAudienceReportingContext() async throws {
+        var infoWithVariantAudience = preparedInfo
+        infoWithVariantAudience.variantAudienceResult = VariantAudienceResult(
+            outcome: .holdout,
+            reportingContext: AirshipJSON.string("variant reporting")
+        )
+
+        let expectedContext = ThomasLayoutEventContext.makeContext(
+            reportingContext: infoWithVariantAudience.reportingContext,
+            experimentsResult: infoWithVariantAudience.experimentResult,
+            variantAudienceReportingContext: AirshipJSON.string("variant reporting"),
+            layoutContext: nil,
+            displayContext: .init(
+                triggerSessionID: infoWithVariantAudience.triggerSessionID,
+                isFirstDisplay: true,
+                isFirstDisplayTriggerSessionID: true
+            )
+        )
+
+        let analytics = InAppMessageAnalytics(
+            preparedScheduleInfo: infoWithVariantAudience,
+            message: InAppMessage(
+                name: "name",
+                displayContent: .custom(.string("custom")),
+                source: .legacyPush
+            ),
+            displayImpressionRule: .once,
+            eventRecorder: eventRecorder,
+            historyStore: historyStore,
+            displayHistory: MessageDisplayHistory()
+        )
+
+        analytics.recordEvent(TestThomasLayoutEvent(), layoutContext: nil)
+
+        let data = self.eventRecorder.eventData.first!
+        #expect(data.context == expectedContext)
+    }
+
     @Test
     func testSingleImpression() async throws {
         let date = UATestDate(offset: 0, dateOverride: Date())

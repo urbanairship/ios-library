@@ -10,11 +10,20 @@ import Foundation
     // combination resolves to bucket 9908 of 16384 via farm hash.
     private func makeVariantAudience(
         audienceSubset: (min: UInt64, max: UInt64),
-        holdoutSubset: (min: UInt64, max: UInt64)? = nil
+        holdoutSubset: (min: UInt64, max: UInt64)? = nil,
+        reportingContext: String? = nil
     ) throws -> VariantAudience {
         let holdoutJSON: String = if let holdoutSubset {
             """
             , "holdout_subset": { "min_hash_bucket": \(holdoutSubset.min), "max_hash_bucket": \(holdoutSubset.max) }
+            """
+        } else {
+            ""
+        }
+
+        let reportingContextJSON: String = if let reportingContext {
+            """
+            , "reporting_context": \(reportingContext)
             """
         } else {
             ""
@@ -30,6 +39,7 @@ import Foundation
             },
             "audience_subset": { "min_hash_bucket": \(audienceSubset.min), "max_hash_bucket": \(audienceSubset.max) }
             \(holdoutJSON)
+            \(reportingContextJSON)
         }
         """
 
@@ -64,6 +74,21 @@ import Foundation
     func testResolveVariantMissWithoutHoldoutArm() throws {
         let variantAudience = try makeVariantAudience(audienceSubset: (0, 0))
         #expect(variantAudience.resolve(channelID: "", contactID: "contactId") == .variantMiss)
+    }
+
+    @Test
+    func testDecodesReportingContext() throws {
+        let variantAudience = try makeVariantAudience(
+            audienceSubset: (9908, 9908),
+            reportingContext: #"{"foo": "bar"}"#
+        )
+        #expect(variantAudience.reportingContext == (try AirshipJSON.wrap(["foo": "bar"])))
+    }
+
+    @Test
+    func testReportingContextDefaultsToNil() throws {
+        let variantAudience = try makeVariantAudience(audienceSubset: (9908, 9908))
+        #expect(variantAudience.reportingContext == nil)
     }
 
     @Test

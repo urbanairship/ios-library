@@ -49,6 +49,7 @@ public extension ThomasLayoutEventContext {
     static func makeContext(
         reportingContext: AirshipJSON?,
         experimentsResult: ExperimentResult?,
+        variantAudienceReportingContext: AirshipJSON? = nil,
         layoutContext: ThomasLayoutContext?,
         displayContext: ThomasLayoutEventContext.Display?
     ) -> ThomasLayoutEventContext? {
@@ -56,7 +57,12 @@ public extension ThomasLayoutEventContext {
         let button = layoutContext?.button
         let form = layoutContext?.form
         let reportingContext = reportingContext
-        let experimentsReportingData = experimentsResult?.reportingMetadata
+
+        var reportingMetadata = experimentsResult?.reportingMetadata ?? []
+        if let variantAudienceReportingContext {
+            reportingMetadata.append(variantAudienceReportingContext)
+        }
+        let experimentsReportingData: [AirshipJSON]? = reportingMetadata.isEmpty ? nil : reportingMetadata
 
         guard
             pager == nil,

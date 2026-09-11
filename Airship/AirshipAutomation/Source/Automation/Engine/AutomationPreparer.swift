@@ -173,7 +173,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                     outcome: variantAudience.resolve(
                         channelID: try await deviceInfoProvider.channelID,
                         contactID: await deviceInfoProvider.stableContactInfo.contactID
-                    )
+                    ),
+                    reportingContext: variantAudience.reportingContext
                 )
             } else {
                 nil

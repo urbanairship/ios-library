@@ -102,6 +102,7 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
             context: ThomasLayoutEventContext.makeContext(
                 reportingContext: self.preparedScheduleInfo.reportingContext,
                 experimentsResult: self.preparedScheduleInfo.experimentResult,
+                variantAudienceReportingContext: self.preparedScheduleInfo.variantAudienceResult?.reportingContext,
                 layoutContext: layoutContext,
                 displayContext: self.displayContext.value
             )
@@ -156,6 +157,7 @@ final class InAppMessageAnalytics: InAppMessageAnalyticsProtocol {
             context: ThomasLayoutEventContext.makeContext(
                 reportingContext: self.preparedScheduleInfo.reportingContext,
                 experimentsResult: self.preparedScheduleInfo.experimentResult,
+                variantAudienceReportingContext: self.preparedScheduleInfo.variantAudienceResult?.reportingContext,
                 layoutContext: layoutContext,
                 displayContext: self.displayContext.value
             ),

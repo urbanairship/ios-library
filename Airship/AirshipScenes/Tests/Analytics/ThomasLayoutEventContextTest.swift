@@ -147,6 +147,44 @@ struct ThomasLayoutEventContextTest {
     }
 
     @Test
+    func testMakeAppendsVariantAudienceReportingContext() throws {
+        let experimentResult = ExperimentResult(
+            channelID: "some channel",
+            contactID: "some contact",
+            isMatch: true,
+            reportingMetadata: [AirshipJSON.string("some reporting")]
+        )
+
+        let context = ThomasLayoutEventContext.makeContext(
+            reportingContext: nil,
+            experimentsResult: experimentResult,
+            variantAudienceReportingContext: AirshipJSON.string("variant reporting"),
+            layoutContext: nil,
+            displayContext: nil
+        )
+
+        #expect(
+            context?.experimentsReportingData == [
+                AirshipJSON.string("some reporting"),
+                AirshipJSON.string("variant reporting")
+            ]
+        )
+    }
+
+    @Test
+    func testMakeVariantAudienceReportingContextOnly() throws {
+        let context = ThomasLayoutEventContext.makeContext(
+            reportingContext: nil,
+            experimentsResult: nil,
+            variantAudienceReportingContext: AirshipJSON.string("variant reporting"),
+            layoutContext: nil,
+            displayContext: nil
+        )
+
+        #expect(context?.experimentsReportingData == [AirshipJSON.string("variant reporting")])
+    }
+
+    @Test
     func testMakeEmpty() throws {
         let context = ThomasLayoutEventContext.makeContext(
             reportingContext: nil,
