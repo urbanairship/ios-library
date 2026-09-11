@@ -26,21 +26,34 @@ Individual steps via `uitests/bin/uitest`: `build`, `boot-sim`, `install`, `gene
   the reason. Screenshots are named `<category>__<fixture stem>__p<page>.png`.
 - A flow launches the DevApp with `-thomasLayout <Scenes|Messages>/<Category>/<file>` and
   `-uiTestMode true` (see `UITestLaunch` in `DevApp/Dev App/MainApp.swift`), waits for the
-  scene root (`id: thomas:root`), and screenshots. Embedded fixtures add
+  scene root (`id: thomas:root`), and screenshots. Launch arguments must be quoted strings
+  in the flow YAML (`uiTestMode: "true"`): Maestro passes a bare boolean to iOS without the
+  leading dash, `UserDefaults` never sees it, and the app silently runs without test mode.
+  The generator rejects boolean arguments in authored flows for that reason. Embedded fixtures add
   `-thomasEmbeddedID` so the app pushes a bounded host view for that ID. Rendered views expose
   `thomas:<payload identifier>` accessibility identifiers for stable targeting.
 - Generated flows capture the first page only. Anything interactive (paging, form input)
   is an authored flow in `flows/`; an authored flow that launches a fixture owns it, and the
   generator skips that fixture.
-- In test mode the app swaps every remote image in the launched layout for a locally
-  generated placeholder (1200x800, bordered, off-center disc), so image sizing, cropping and
-  scaling are exercised without the network. Several fixture hosts refuse non-browser
-  clients anyway, which would otherwise leave spinners in the screenshot.
-- The generator skips, with the reason recorded in the manifest: animated media (video,
-  YouTube, Vimeo, gif) and auto-advancing pagers (the frame lands at a random animation
-  phase), web views (remote content the repo does not control), and banner fixtures whose
-  placement uses a string `position` (a schema drift iOS cannot decode yet). Extra
-  exclusions go under `sweep.skip` in `config.json` as `"Scenes/<Category>/<file>": "reason"`.
+- In test mode the app stubs whatever would make a frame non-deterministic (see
+  `stubbingRemoteContent` in `DevApp/Dev App/Thomas/Layouts.swift`): every remote image
+  becomes a locally generated placeholder (1200x800, bordered, off-center disc), so sizing,
+  cropping and scaling are exercised without the network; video, YouTube and Vimeo media
+  become that placeholder image; web views show an inline placeholder page; pager
+  automated actions are dropped so stories hold their first page; and `randomize_children`
+  is turned off so option order is stable. The manifest records which
+  stubs each fixture relied on and the report shows it, so a green screenshot never claims
+  more than it exercised.
+- The generator skips, with the reason recorded in the manifest, banner fixtures whose
+  placement uses a string `position` (a schema drift iOS cannot decode yet) and anything
+  under `sweep.skip` in `config.json` (`"Scenes/<Category>/<file>": "reason"`).
+- The fixtures directory holds the fetched thomas-layouts scenes plus a handful of scenes
+  the DevApp tracks in git itself (the Truck Finder AI demo, the embedded sizing cases).
+  `fetch-layouts` keeps the tracked ones when it refetches, so every run, cached or not,
+  sees the same set.
+- The status bar is masked out of the diff (`diff.ignoreRegions` in `config.json`): its
+  text flips between black and white depending on which window iOS consults first, a race
+  the screenshots cannot control.
 - Screenshots land in `build/shots/`; `uitest diff` compares them against
   `build/baselines/<runtime>/` with odiff and writes heatmaps to `build/diffs/`;
   `uitest report` turns the result into `build/report/index.html`.
@@ -53,21 +66,25 @@ Individual steps via `uitests/bin/uitest`: `build`, `boot-sim`, `install`, `gene
 
 - **Nothing image-shaped is committed.** The public `ios-library` repo is a mirror of this one
   and SPM users clone it in full, so baseline PNGs in git would land in every customer
-  checkout forever. Baselines are minted by CI on every push to `next` (plus a weekly
-  refresh so the artifact never expires) and stored as the `baselines-<runtime>` workflow
-  artifact; `uitest baseline-pull` fetches the newest one into `build/baselines/` (needs
-  `gh auth login`), and `uitest diff` pulls automatically when the cache is empty. If the
-  artifact cannot be fetched the PR check fails rather than passing without a comparison;
-  the one exception is before the first mint on `next`, when everything reports as new.
-- **PR flow.** The workflow diffs the PR's screenshots against the `next` baselines, builds
-  a self-contained HTML report (baseline / this run / diff side by side), publishes it to
-  the repo's private GitHub Pages site under `ui-tests/pr-<n>/` (org members only; the
-  `ui-test-report` artifact holds the same file plus raw screenshots) and posts one bot
-  comment with the summary and link. Reports live on the `gh-pages` branch, which is not
+  checkout forever. Baselines are minted by CI on every push to `next` and `main` (plus a
+  weekly refresh so the artifacts never expire) and stored as the `baselines-<runtime>`
+  workflow artifact of that branch's run; `uitest baseline-pull` fetches the newest one into
+  `build/baselines/` (needs `gh auth login`; `UITEST_BASELINE_BRANCH` picks the branch,
+  falling back to `next` for a branch that was never minted), and `uitest diff` pulls
+  automatically when the cache is empty. If the artifact cannot be fetched the PR check
+  fails rather than passing without a comparison; the one exception is before the first
+  mint, when everything reports as new. A pull that finds the mint still running waits for
+  it rather than failing.
+- **PR flow.** The workflow diffs the PR's screenshots against its base branch's baselines, builds
+  a gallery report (every screenshot as a card, filter by status, a viewer that flips between
+  baseline / this run / diff; images are half-width WebP so a full sweep stays a few MB, the
+  full-size PNGs live in the `ui-test-report` artifact), publishes it to the repo's private
+  GitHub Pages site under `ui-tests/pr-<n>/` (org members only) and posts one bot comment
+  with the summary and link. Reports live on the `gh-pages` branch, which is not
   mirrored to the public repo; every publish rewrites that branch as a single commit and
   removes reports for closed PRs, and a weekly job prunes as well, so nothing accumulates. An intentional visual change is accepted by adding the `visual-change-accepted`
-  label, which re-runs the check in report-only mode; merging to `next` then mints the new
-  baselines. PRs into `main` are skipped: that release line has no baselines of its own.
+  label, which re-runs the check in report-only mode; merging then mints the new baselines
+  on the base branch.
 - **Local iteration.** `uitest set-baseline` promotes the current screenshots into the local
   cache so you can diff your own change against itself while iterating. It is never
   committed. `provenance.json` next to any baseline set records the toolchain, commit,

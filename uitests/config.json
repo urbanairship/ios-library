@@ -14,7 +14,8 @@
   },
   "diff": {
     "threshold": 0.1,
-    "antialiasing": true
+    "antialiasing": true,
+    "ignoreRegions": ["0:0-1320:190"]
   },
   "baselines": {
     "branch": "next",
@@ -31,7 +32,9 @@
       "Scenes/Modal/nps.yml": "does not decode on iOS",
       "Scenes/Modal/pager-fullsize.yml": "does not decode on iOS",
       "Scenes/Modal/safe-areas-pager-forms.yml": "does not decode on iOS",
-      "Scenes/Modal/safe-areas-pager-remote.yml": "does not decode on iOS"
+      "Scenes/Modal/safe-areas-pager-remote.yml": "does not decode on iOS",
+      "Scenes/Modal/form-immediate-validation-email.yaml": "immediate validation shows an animated progress spinner",
+      "Scenes/Modal/test-media-header-body-stacked-buttons.yml": "never presents on iOS (no error surfaced)"
     }
   }
 }

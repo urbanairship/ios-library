@@ -7,11 +7,14 @@
 //
 // Every fixture gets a launch + wait-for-root + screenshot flow, except:
 //   - fixtures a flow in flows/ already opens (authored flows own their fixture)
-//   - animated media (video, YouTube, Vimeo, gif) and auto-advancing pagers: the frame
-//     lands at a random animation phase, so the pixel diff is noise
-//   - web views: remote content the repo does not control
 //   - banners whose placement uses a string position (a schema drift iOS cannot decode yet)
 //   - anything listed under sweep.skip in config.json, with the reason given there
+// In test mode the DevApp stubs whatever would make a frame non-deterministic (see
+// `stubbingRemoteContent` in DevApp/Dev App/Thomas/Layouts.swift): remote images become a
+// local placeholder, video/YouTube/Vimeo media become that placeholder image, web views show
+// an inline placeholder page, and pager automated actions are dropped so stories hold their
+// first page. The manifest records which of those stubs a fixture relied on, so the report
+// can say what a screenshot does and does not exercise.
 // Pagers are captured on their first page only; per-page flows are authored by hand.
 // Authored flows are copied alongside so one `maestro test <out-dir>` runs everything, and
 // manifest.json records what was generated, authored and skipped (the report shows it).
@@ -37,7 +40,7 @@ const manualSkips = config.sweep.skip || {};
 const categories = ["Modal", "Banner", "Embedded"];
 const animatedMedia = new Set(["video", "youtube", "vimeo"]);
 
-// Walks a fixture and records what would make its screenshot non-deterministic.
+// Walks a fixture and records which remote or animated content the test-mode stubs replace.
 function inspect(node, facts) {
   if (Array.isArray(node)) {
     node.forEach((child) => inspect(child, facts));
@@ -52,6 +55,7 @@ function inspect(node, facts) {
   }
   if (node.type === "web_view") facts.webView = true;
   if (node.automated_actions) facts.autoAdvance = true;
+  if (node.randomize_children === true) facts.randomized = true;
   Object.values(node).forEach((child) => inspect(child, facts));
 }
 
@@ -59,13 +63,24 @@ function skipReason(category, doc, facts) {
   if (doc?.presentation?.type === "banner" && typeof doc?.presentation?.default_placement?.position === "string") {
     return "banner position is a string (known iOS decode gap)";
   }
-  if (facts.animated) return "animated media";
-  if (facts.autoAdvance) return "auto-advancing pager";
-  if (facts.webView) return "remote web content";
   return null;
 }
 
-// Fixtures that an authored flow already launches.
+// What the DevApp swaps out for this fixture in test mode; surfaced in the report.
+function stubs(facts) {
+  const notes = [];
+  if (facts.media) notes.push("images are placeholders");
+  if (facts.animated) notes.push("video shown as a placeholder image");
+  if (facts.webView) notes.push("web view shows a placeholder page");
+  if (facts.autoAdvance) notes.push("auto-advance disabled, first page held");
+  if (facts.randomized) notes.push("randomized child order fixed");
+  return notes;
+}
+
+// Fixtures that an authored flow already launches. Also rejects boolean launch arguments:
+// Maestro passes those to iOS without the leading dash (`uiTestMode true` rather than
+// `-uiTestMode true`), so UserDefaults never sees them and the app silently runs without
+// test mode. Strings get the dash, so `uiTestMode: "true"` is the form that works.
 function authoredFixtures() {
   const owned = new Map();
   for (const file of fs.readdirSync(authoredDir).filter((f) => /\.ya?ml$/.test(f)).sort()) {
@@ -74,8 +89,14 @@ function authoredFixtures() {
       const commands = doc.toJS();
       if (!Array.isArray(commands)) continue;
       for (const command of commands) {
-        const fixture = command?.launchApp?.arguments?.thomasLayout;
-        if (typeof fixture === "string") owned.set(fixture, file);
+        const args = command?.launchApp?.arguments;
+        if (!args) continue;
+        for (const [key, value] of Object.entries(args)) {
+          if (typeof value === "boolean") {
+            throw new Error(`${file}: launch argument ${key} is a boolean; quote it ("${value}") or iOS never receives it`);
+          }
+        }
+        if (typeof args.thomasLayout === "string") owned.set(args.thomasLayout, file);
       }
     }
   }
@@ -92,7 +113,8 @@ function flowName(category, file) {
 }
 
 function flowText(name, fixture, embeddedID, waitForMedia) {
-  const args = { uiTestMode: true, thomasLayout: fixture };
+  // uiTestMode is a string on purpose; see authoredFixtures().
+  const args = { uiTestMode: "true", thomasLayout: fixture };
   if (embeddedID) args.thomasEmbeddedID = embeddedID;
   const commands = [
     { launchApp: { clearState: true, arguments: args } },
@@ -160,8 +182,8 @@ for (const category of categories) {
     const name = flowName(category, file);
     if (names.has(name)) throw new Error(`two fixtures map to the same flow name: ${name}`);
     names.add(name);
-    fs.writeFileSync(path.join(outDir, `${name}.yaml`), flowText(name, fixture, embeddedID, !!facts.media));
-    manifest.generated.push({ flow: `${name}.yaml`, fixture });
+    fs.writeFileSync(path.join(outDir, `${name}.yaml`), flowText(name, fixture, embeddedID, !!facts.media || !!facts.animated));
+    manifest.generated.push({ flow: `${name}.yaml`, fixture, stubs: stubs(facts) });
   }
 }
 

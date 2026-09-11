@@ -5,7 +5,7 @@ appId: com.urbanairship.richpush
 - launchApp:
     clearState: true
     arguments:
-      uiTestMode: true
+      uiTestMode: "true"
 - extendedWaitUntil:
     visible: "Thomas Layouts"
     timeout: 15000

@@ -3,7 +3,7 @@ appId: com.urbanairship.richpush
 - launchApp:
     clearState: true
     arguments:
-      uiTestMode: true
+      uiTestMode: "true"
       thomasLayout: "Scenes/Modal/modal-pager-with-title-and-button.yml"
 - extendedWaitUntil:
     visible:

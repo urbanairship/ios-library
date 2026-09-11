@@ -9,7 +9,7 @@
 #   uitest run-flows [d]   run Maestro flows (default: generate, then build/flows), screenshots into build/shots
 #   uitest baseline-pull   download the latest baselines minted on `next` into build/baselines
 #   uitest diff            compare build/shots against build/baselines (odiff)
-#   uitest report          write build/report/index.html + summary.md from the last diff
+#   uitest report          write build/report (gallery + summary.md) from the last diff
 #   uitest set-baseline    promote build/shots into the LOCAL baseline cache (never committed)
 #   uitest run             build + boot-sim + install + run-flows + diff + report
 #   uitest mint            build + boot-sim + install + run-flows (CI uses this on `next`)
@@ -53,7 +53,10 @@ DERIVED_DATA=$(cfg "['ios']['derivedDataPath']")
 MAESTRO_MIN_VERSION=$(cfg "['maestro']['minVersion']")
 DIFF_THRESHOLD=$(cfg "['diff']['threshold']")
 DIFF_ANTIALIASING=$(cfg "['diff']['antialiasing']")
-BASELINE_BRANCH=$(cfg "['baselines']['branch']")
+# UITEST_BASELINE_BRANCH selects which branch's mint to diff against (CI passes the PR's
+# base branch); the config value is the default and the fallback for branches never minted.
+BASELINE_BRANCH=${UITEST_BASELINE_BRANCH:-$(cfg "['baselines']['branch']")}
+BASELINE_DEFAULT_BRANCH=$(cfg "['baselines']['branch']")
 BASELINE_WORKFLOW=$(cfg "['baselines']['workflow']")
 PAGES_BRANCH=$(cfg "['reports']['branch']")
 PAGES_DIR=$(cfg "['reports']['directory']")
@@ -127,6 +130,7 @@ cmd_doctor() {
   check "java" "java -version" "Maestro needs a JRE; install: brew install openjdk"
   check "python3" "python3 --version" "needed to parse uitests/config.json"
   check "node" "node --version" "needed for odiff image diffs; install: brew install node"
+  check "cwebp" "cwebp -version" "needed to build the report; install: brew install webp"
   if [ -x "$UITESTS_DIR/node_modules/.bin/odiff" ] && [ -d "$UITESTS_DIR/node_modules/yaml" ]; then
     echo "ok    odiff + yaml (npm)"
   else
@@ -254,10 +258,10 @@ cmd_baseline_pull() {
   # `$BASELINE_WORKFLOW` run on `$BASELINE_BRANCH`. UITEST_BASELINE_RUN pins a run id.
   #
   # Exit codes: 0 pulled; 3 bootstrap (the workflow has never run on the baseline
-  # branch, so there is nothing to compare against yet); 1 anything else, including
-  # an expired artifact or a broken mint, which callers must treat as a failure and
-  # never as "no diffs".
-  local slug run_id runs err
+  # branch or its fallback, so there is nothing to compare against yet); 1 anything
+  # else, including an expired artifact or a broken mint, which callers must treat
+  # as a failure and never as "no diffs".
+  local slug err status
   slug=$(repo_slug)
   rm -rf "$BASELINE_DIR"
   mkdir -p "$(dirname "$BASELINE_DIR")"
@@ -269,26 +273,51 @@ cmd_baseline_pull() {
     echo "no $BASELINE_ARTIFACT artifact on run $UITEST_BASELINE_RUN: $err"
     return 1
   fi
-  if ! runs=$(gh run list --repo "$slug" --workflow "$BASELINE_WORKFLOW" --branch "$BASELINE_BRANCH" \
-      --limit 20 --json databaseId,conclusion 2>&1); then
-    echo "could not list $BASELINE_WORKFLOW runs on $BASELINE_BRANCH: $runs"
-    return 1
+  status=0
+  pull_branch_baselines "$slug" "$BASELINE_BRANCH" || status=$?
+  if [ "$status" -eq 3 ] && [ "$BASELINE_BRANCH" != "$BASELINE_DEFAULT_BRANCH" ]; then
+    # A branch that is never minted (e.g. the parent of a stacked PR): use the default.
+    echo "falling back to the $BASELINE_DEFAULT_BRANCH baselines"
+    status=0
+    pull_branch_baselines "$slug" "$BASELINE_DEFAULT_BRANCH" || status=$?
   fi
-  if [ "$(printf '%s' "$runs" | python3 -c 'import json,sys; print(len(json.load(sys.stdin)))')" = "0" ]; then
-    echo "$BASELINE_WORKFLOW has never run on $BASELINE_BRANCH - no baselines exist yet"
-    return 3
-  fi
-  for run_id in $(printf '%s' "$runs" | python3 -c 'import json,sys; print(" ".join(str(r["databaseId"]) for r in json.load(sys.stdin) if r["conclusion"] == "success"))'); do
-    if err=$(gh run download "$run_id" --repo "$slug" --name "$BASELINE_ARTIFACT" --dir "$BASELINE_DIR" 2>&1); then
-      echo "baselines: $BASELINE_BRANCH run $run_id -> $BASELINE_DIR"
-      [ -f "$BASELINE_DIR/provenance.json" ] && echo "  minted: $(python3 -c "import json; p=json.load(open('$BASELINE_DIR/provenance.json')); print(p.get('capturedAt'), p.get('commit','')[:11], p.get('xcode'))")"
-      return 0
+  return "$status"
+}
+
+# Download the newest successful mint on one branch. If the only runs on the branch are
+# still in progress (a PR opened right after a merge races the mint), wait for them for
+# up to UITEST_BASELINE_WAIT seconds (default 20 minutes) rather than failing.
+pull_branch_baselines() {
+  local slug="$1" branch="$2" run_id runs err deadline
+  deadline=$(( $(date +%s) + ${UITEST_BASELINE_WAIT:-1200} ))
+  while :; do
+    if ! runs=$(gh run list --repo "$slug" --workflow "$BASELINE_WORKFLOW" --branch "$branch" \
+        --limit 20 --json databaseId,conclusion,status 2>&1); then
+      echo "could not list $BASELINE_WORKFLOW runs on $branch: $runs"
+      return 1
     fi
+    if [ "$(printf '%s' "$runs" | python3 -c 'import json,sys; print(len(json.load(sys.stdin)))')" = "0" ]; then
+      echo "$BASELINE_WORKFLOW has never run on $branch - no baselines exist yet"
+      return 3
+    fi
+    for run_id in $(printf '%s' "$runs" | python3 -c 'import json,sys; print(" ".join(str(r["databaseId"]) for r in json.load(sys.stdin) if r["conclusion"] == "success"))'); do
+      if err=$(gh run download "$run_id" --repo "$slug" --name "$BASELINE_ARTIFACT" --dir "$BASELINE_DIR" 2>&1); then
+        echo "baselines: $branch run $run_id -> $BASELINE_DIR"
+        [ -f "$BASELINE_DIR/provenance.json" ] && echo "  minted: $(python3 -c "import json; p=json.load(open('$BASELINE_DIR/provenance.json')); print(p.get('capturedAt'), p.get('commit','')[:11], p.get('xcode'))")"
+        return 0
+      fi
+    done
+    if [ "$(printf '%s' "$runs" | python3 -c 'import json,sys; print(sum(1 for r in json.load(sys.stdin) if r["status"] in ("in_progress","queued","waiting","pending","requested")))')" != "0" ] \
+        && [ "$(date +%s)" -lt "$deadline" ]; then
+      echo "a $BASELINE_WORKFLOW run on $branch is still in progress - waiting for it to mint baselines"
+      sleep 30
+      continue
+    fi
+    echo "$BASELINE_WORKFLOW has run on $branch but no recent successful run carries a $BASELINE_ARTIFACT artifact"
+    echo "(expired after its retention window, or the mint is failing) - re-mint with: gh workflow run $BASELINE_WORKFLOW --ref $branch"
+    [ -n "${err:-}" ] && echo "last download error: $err"
+    return 1
   done
-  echo "$BASELINE_WORKFLOW has run on $BASELINE_BRANCH but no recent successful run carries a $BASELINE_ARTIFACT artifact"
-  echo "(expired after its retention window, or the mint is failing) - re-mint with: gh workflow run $BASELINE_WORKFLOW --ref $BASELINE_BRANCH"
-  [ -n "${err:-}" ] && echo "last download error: $err"
-  return 1
 }
 
 cmd_diff() {
@@ -321,6 +350,14 @@ cmd_diff() {
   # --fail-on-layout: without it odiff compares only the overlapping region of two
   # differently sized images and reports them equal.
   local odiff_args=(--threshold "$DIFF_THRESHOLD" --fail-on-layout)
+  # Regions the diff ignores (config diff.ignoreRegions, "x1:y1-x2:y2"): the status bar text
+  # flips between black and white depending on which window iOS consults first, a race the
+  # screenshots cannot control.
+  local ignore
+  ignore=$(cfg "['diff'].get('ignoreRegions', [])" | python3 -c "import ast,sys; print(','.join(ast.literal_eval(sys.stdin.read())))")
+  if [ -n "$ignore" ]; then
+    odiff_args+=(--ignore "$ignore")
+  fi
   if [ "$DIFF_ANTIALIASING" = "True" ]; then
     odiff_args+=(--antialiasing)
   fi
@@ -377,91 +414,8 @@ cmd_report() {
     exit 2
   fi
   mkdir -p "$REPORT_DIR"
-  python3 - "$DIFF_DIR/results.jsonl" "$BASELINE_DIR" "$SHOTS_DIR" "$DIFF_DIR" "$REPORT_DIR" "$RUNTIME_LABEL" "$FLOWS_DIR/manifest.json" <<'EOF'
-import base64, html, json, os, sys
-results, baseline_dir, shots_dir, diff_dir, report_dir, runtime, manifest_path = sys.argv[1:8]
-manifest = json.load(open(manifest_path)) if os.path.isfile(manifest_path) else None
-rows = [json.loads(l) for l in open(results) if l.strip()]
-order = {"diff": 0, "error": 1, "new": 2, "gone": 3, "ok": 4}
-rows.sort(key=lambda r: (order.get(r["status"], 9), r["name"]))
-counts = {}
-for r in rows:
-    counts[r["status"]] = counts.get(r["status"], 0) + 1
-
-def img(path):
-    if not os.path.isfile(path):
-        return '<div class="missing">missing</div>'
-    data = base64.b64encode(open(path, "rb").read()).decode()
-    return f'<img src="data:image/png;base64,{data}" loading="lazy">'
-
-provenance = {}
-ppath = os.path.join(baseline_dir, "provenance.json")
-if os.path.isfile(ppath):
-    provenance = json.load(open(ppath))
-
-parts = [f"""<!doctype html><meta charset="utf-8"><title>Thomas scene visual diff ({html.escape(runtime)})</title>
-<style>
-body{{font:14px -apple-system,system-ui,sans-serif;margin:24px;color:#222}}
-h1{{font-size:20px}} .summary span{{margin-right:16px}}
-.row{{border-top:1px solid #ddd;padding:16px 0}} .row h2{{font-size:15px;margin:0 0 8px}}
-.status{{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;color:#fff;margin-right:8px}}
-.diff{{background:#c0392b}} .error{{background:#8e44ad}} .new{{background:#d68910}} .gone{{background:#7f8c8d}} .ok{{background:#27ae60}}
-.imgs{{display:flex;gap:12px}} .imgs figure{{margin:0;flex:1;min-width:0}} .imgs img{{width:100%;border:1px solid #ccc}}
-figcaption{{font-size:12px;color:#666;margin-bottom:4px}} .missing{{padding:40px;background:#eee;text-align:center;color:#888}}
-.oklist{{color:#555}} .prov{{color:#666;font-size:12px}}
-</style>
-<h1>Thomas scene visual diff <small>({html.escape(runtime)})</small></h1>
-<p class="summary">""" + "".join(f'<span class="status {s}">{s}</span>{n}' for s, n in sorted(counts.items(), key=lambda kv: order.get(kv[0], 9))) + "</p>"]
-if provenance:
-    parts.append('<p class="prov">baselines minted ' + html.escape(str(provenance.get("capturedAt", "?"))) +
-                 " at " + html.escape(str(provenance.get("commit", "?"))[:11]) + " with " + html.escape(str(provenance.get("xcode", "?"))) + "</p>")
-
-# Coverage: which fixtures the sweep captured and which it skipped, and why.
-coverage_line = None
-if manifest:
-    captured = len(manifest["generated"]) + sum(1 for a in manifest["authored"] if a.get("fixture"))
-    reasons = {}
-    for entry in manifest["skipped"]:
-        reasons.setdefault(entry["reason"], []).append(entry["fixture"])
-    reason_summary = ", ".join(f"{len(v)} {k}" for k, v in sorted(reasons.items(), key=lambda kv: -len(kv[1])))
-    coverage_line = f"{captured} of {manifest['fixtures']} scene fixtures captured"
-    if reasons:
-        coverage_line += f"; {len(manifest['skipped'])} skipped ({reason_summary})"
-    parts.append('<details class="prov"><summary>' + html.escape(coverage_line) + "</summary><ul>")
-    for reason, fixtures in sorted(reasons.items(), key=lambda kv: -len(kv[1])):
-        parts.append("<li><b>" + html.escape(reason) + "</b>: " + ", ".join(html.escape(f) for f in fixtures) + "</li>")
-    parts.append("</ul></details>")
-for r in rows:
-    if r["status"] == "ok":
-        continue
-    name = r["name"]
-    parts.append(f'<div class="row"><h2><span class="status {r["status"]}">{r["status"]}</span>{html.escape(name)}'
-                 + (f' <small>{html.escape(r["detail"])}</small>' if r.get("detail") else "") + "</h2>")
-    parts.append('<div class="imgs">'
-                 f'<figure><figcaption>baseline</figcaption>{img(os.path.join(baseline_dir, name))}</figure>'
-                 f'<figure><figcaption>this run</figcaption>{img(os.path.join(shots_dir, name))}</figure>'
-                 f'<figure><figcaption>diff</figcaption>{img(os.path.join(diff_dir, name))}</figure>'
-                 "</div></div>")
-oks = [r["name"] for r in rows if r["status"] == "ok"]
-if oks:
-    parts.append('<div class="row oklist"><h2><span class="status ok">ok</span>unchanged</h2>' + ", ".join(html.escape(n) for n in oks) + "</div>")
-open(os.path.join(report_dir, "index.html"), "w").write("\n".join(parts))
-
-# Markdown summary for the PR comment.
-failing = [r for r in rows if r["status"] != "ok"]
-lines = []
-if failing:
-    lines.append(f"**{len(failing)} of {len(rows)} screenshots need a look** ({runtime}):")
-    lines.append("")
-    for r in failing:
-        lines.append(f"- `{r['status']}` {r['name']}" + (f" ({r['detail']})" if r.get("detail") else ""))
-else:
-    lines.append(f"All {len(rows)} screenshots match the `{provenance.get('commit', '?')[:11] if provenance else 'current'}` baselines ({runtime}).")
-if coverage_line:
-    lines += ["", f"Coverage: {coverage_line}."]
-open(os.path.join(report_dir, "summary.md"), "w").write("\n".join(lines) + "\n")
-print(f"report: {os.path.join(report_dir, 'index.html')}")
-EOF
+  python3 "$UITESTS_DIR/tools/build-report.py" \
+    "$DIFF_DIR/results.jsonl" "$BASELINE_DIR" "$SHOTS_DIR" "$DIFF_DIR" "$REPORT_DIR" "$RUNTIME_LABEL" "$FLOWS_DIR/manifest.json"
 }
 
 cmd_set_baseline() {
@@ -561,8 +515,10 @@ cmd_publish_report() {
   fi
   pages_checkout
   pages_prune
-  mkdir -p "$PAGES_CHECKOUT/$PAGES_DIR/pr-$pr"
-  cp "$REPORT_DIR/index.html" "$PAGES_CHECKOUT/$PAGES_DIR/pr-$pr/index.html"
+  rm -rf "$PAGES_CHECKOUT/$PAGES_DIR/pr-$pr"
+  mkdir -p "$PAGES_CHECKOUT/$PAGES_DIR"
+  cp -R "$REPORT_DIR" "$PAGES_CHECKOUT/$PAGES_DIR/pr-$pr"
+  rm -f "$PAGES_CHECKOUT/$PAGES_DIR/pr-$pr/summary.md"
   pages_index
   pages_push "ui-tests: report for PR #$pr"
 }

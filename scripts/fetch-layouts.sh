@@ -75,6 +75,19 @@ if [ -n "${LAYOUTS_REPO_TOKEN:-}" ]; then
   CLONE_URL="https://x-access-token:${LAYOUTS_REPO_TOKEN}@${LAYOUTS_REPO_URL#https://}"
 fi
 
+# Clears a destination directory of everything a previous fetch put there while keeping the
+# files git tracks: the DevApp ships a few scenes of its own next to the fetched ones, and
+# they must survive a refetch (and land in the CI cache) so every run sees the same set.
+prune_fetched() {
+  local dir="$1"
+  if git -C "$dir" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    (cd "$dir" && git ls-files -z --others -- . | xargs -0 rm -f 2>/dev/null) || true
+    find "$dir" -mindepth 1 -type d -empty -delete 2>/dev/null || true
+  else
+    find "$dir" -mindepth 1 ! -name '.gitkeep' -delete 2>/dev/null || true
+  fi
+}
+
 echo "fetch-layouts: fetching Thomas scenes @ ${REF} ..."
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
@@ -126,7 +139,7 @@ for i in "${!SRC_DIRS[@]}"; do
   src="${SRC_DIRS[$i]}"
   dst="${DEST_DIRS[$i]}"
   mkdir -p "${DEST}/${dst}"
-  find "${DEST}/${dst}" -mindepth 1 ! -name '.gitkeep' -delete 2>/dev/null || true
+  prune_fetched "${DEST}/${dst}"
   cp -R "${TMP_DIR}/${src}/." "${DEST}/${dst}/"
 done
 

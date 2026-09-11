@@ -8,10 +8,11 @@ name: Thomas UI Tests
 # changes: add the `visual-change-accepted` label to make the diff report-only,
 # then merge.
 #
-# Pushes to `next` mint fresh baselines and publish them as the
-# `baselines-<runtime>` artifact. Scheduled runs only fire from the default
-# branch, so the weekly job dispatches a mint on `next` rather than minting
-# itself; that keeps the artifact from expiring on a quiet branch. Nothing
+# Pushes to `next` and `main` mint fresh baselines and publish them as the
+# `baselines-<runtime>` artifact; a PR diffs against its base branch's mint.
+# Scheduled runs only fire from the default branch, so the weekly job
+# dispatches mints rather than minting itself; that keeps the artifacts from
+# expiring on a quiet branch. Nothing
 # image-shaped is ever committed: the public SPM checkout would carry it forever.
 on:
   pull_request:
@@ -29,7 +30,7 @@ on:
       - "layouts.version"
       - ".github/workflows/thomas-ui-tests.yml"
   push:
-    branches: [next]
+    branches: [next, main]
   schedule:
     - cron: "0 9 * * 1"
   workflow_dispatch:
@@ -48,7 +49,10 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
-      - run: gh workflow run thomas-ui-tests.yml --repo "${{ github.repository }}" --ref next
+      - run: |
+          for ref in next main; do
+            gh workflow run thomas-ui-tests.yml --repo "${{ github.repository }}" --ref "$ref"
+          done
 
   prune-reports:
     if: github.event_name == 'schedule'
@@ -67,11 +71,9 @@ jobs:
       - run: bash ./uitests/bin/uitest prune-reports
 
   ui-tests:
-    # Skip label events for unrelated labels, and PRs into `main` (a different
-    # release line than the `next` baselines).
+    # Skip label events for unrelated labels.
     if: >-
       github.event_name != 'schedule'
-      && (github.event_name != 'pull_request' || github.base_ref != 'main')
       && (!github.event.label || github.event.label.name == 'visual-change-accepted')
     runs-on: xcode-27-xlarge
     # Build plus ~130 flows at a few seconds each.
@@ -92,7 +94,8 @@ jobs:
           path: |
             DevApp/Dev App/Thomas/Resources/Scenes
             DevApp/Dev App/Thomas/Resources/.layouts.version
-          key: thomas-layouts-${{ hashFiles('layouts.version') }}
+          # The fetch script is part of the key: what it keeps or prunes shapes the cache.
+          key: thomas-layouts-${{ hashFiles('layouts.version', 'scripts/fetch-layouts.sh') }}
       - name: Mint layouts read token
         id: layouts_token
         uses: actions/create-github-app-token@v1
@@ -101,9 +104,10 @@ jobs:
           private-key: ${{ secrets.ACTIONS_REPO_READER_KEY }}
           owner: ${{ github.repository_owner }}
           repositories: thomas-layouts
-      - name: Install Maestro
+      - name: Install Maestro and webp
         run: |
-          brew install --quiet openjdk
+          # openjdk for Maestro, webp (cwebp) for the report's downscaled screenshots.
+          brew install --quiet openjdk webp
           echo "JAVA_HOME=$(brew --prefix openjdk)" >> "$GITHUB_ENV"
           echo "$(brew --prefix openjdk)/bin" >> "$GITHUB_PATH"
           # Exact pin: maestro versions change driver and capture behavior, which
@@ -121,15 +125,17 @@ jobs:
         id: runtime
         run: echo "label=$(python3 -c "r=__import__('json').load(open('uitests/config.json'))['ios']['runtime'].split('.')[-1].split('-'); print(r[0].lower()+'-'+'.'.join(r[1:]))")" >> "$GITHUB_OUTPUT"
 
-      # --- pull requests: diff against the `next` baselines and report ---
-      - name: Pull baselines from next
+      # --- pull requests: diff against the base branch's baselines and report ---
+      - name: Pull baselines from the base branch
         if: github.event_name == 'pull_request'
+        env:
+          UITEST_BASELINE_BRANCH: ${{ github.base_ref }}
         run: |
           status=0
           bash ./uitests/bin/uitest baseline-pull || status=$?
           case "$status" in
             0) ;;
-            3) echo "Bootstrap: no run on next yet - reporting every screenshot as new."
+            3) echo "Bootstrap: no mint on ${{ github.base_ref }} yet - reporting every screenshot as new."
                echo "UITEST_DIFF_REPORT_ONLY=1" >> "$GITHUB_ENV" ;;
             *) echo "Could not fetch baselines; refusing to report a green result without them."
                exit "$status" ;;

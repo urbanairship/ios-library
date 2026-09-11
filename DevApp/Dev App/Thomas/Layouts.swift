@@ -69,8 +69,9 @@ enum LayoutType: Equatable, Hashable, Codable {
 }
 
 extension LayoutFile {
-    /// - Parameter imageURLOverride: when set, every remote image in a scene is replaced with
-    ///   this URL before display. UI tests use it so screenshots never depend on the network.
+    /// - Parameter imageURLOverride: when set, every piece of remote content in a scene is stubbed
+    ///   before display (see `stubbingRemoteContent`), with images pointed at this URL. UI tests
+    ///   use it so screenshots never depend on the network or on animation timing.
     @MainActor
     func open(imageURLOverride: URL? = nil) async throws {
         let filePath = Bundle.main.resourcePath! + directory + "/" + fileName
@@ -200,7 +201,7 @@ extension LayoutFile {
         // Extract layout from potentially wrapped payload (in_app_message.message.display.layout)
         var layoutData = try extractLayoutFromPayload(data)
         if let imageURLOverride {
-            layoutData = try Self.replacingRemoteImages(in: layoutData, with: imageURLOverride)
+            layoutData = try Self.stubbingRemoteContent(in: layoutData, imageURL: imageURLOverride)
         }
         let layout = try JSONDecoder().decode(AirshipLayout.self, from: layoutData)
 
@@ -208,14 +209,43 @@ extension LayoutFile {
         try await Airship.inAppAutomation.viewTester.display(message: message)
     }
 
-    /// Points image media and image buttons at `url`. Videos and web content are left alone.
-    private static func replacingRemoteImages(in data: Data, with url: URL) throws -> Data {
+    /// Makes a scene render deterministically without the network, for UI test screenshots:
+    ///   - image media, image buttons and every `url_selectors` entry point at `imageURL`
+    ///   - video, YouTube and Vimeo media become image media showing `imageURL`, so the frame
+    ///     never lands at a random playback phase (the player chrome itself is not exercised)
+    ///   - web views load a small inline placeholder page instead of remote content
+    ///   - pager `automated_actions` are dropped, so stories stay on their first page
+    ///   - `randomize_children` is turned off, so option order is stable
+    /// The generator in `uitests/tools/generate-flows.js` mirrors these rules when it decides
+    /// what is capturable; keep the two in sync.
+    private static func stubbingRemoteContent(in data: Data, imageURL: URL) throws -> Data {
+        let webViewPlaceholder = "data:text/html," + "<html><body style=\"margin:0;background:#dbe6f7;font:24px -apple-system,sans-serif;color:#1a4099\"><div style=\"padding:24px\">web view placeholder</div></body></html>"
+            .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
         func rewrite(_ node: Any) -> Any {
             if var dict = node as? [String: Any] {
-                let isImageMedia = dict["type"] as? String == "media" && dict["media_type"] as? String == "image"
-                let isImageButton = dict["type"] as? String == "url" && dict["url"] is String
-                if isImageMedia || isImageButton {
-                    dict["url"] = url.absoluteString
+                let type = dict["type"] as? String
+                if type == "media" {
+                    let mediaType = dict["media_type"] as? String
+                    if mediaType == "image" || mediaType == "video" || mediaType == "youtube" || mediaType == "vimeo" {
+                        dict["media_type"] = "image"
+                        dict["url"] = imageURL.absoluteString
+                        if let selectors = dict["url_selectors"] as? [[String: Any]] {
+                            dict["url_selectors"] = selectors.map { selector in
+                                var selector = selector
+                                selector["url"] = imageURL.absoluteString
+                                return selector
+                            }
+                        }
+                    }
+                } else if type == "url" && dict["url"] is String {
+                    dict["url"] = imageURL.absoluteString
+                } else if type == "web_view" {
+                    dict["url"] = webViewPlaceholder
+                }
+                dict["automated_actions"] = nil
+                // Randomized child order is a different screenshot on every run.
+                if dict["randomize_children"] as? Bool == true {
+                    dict["randomize_children"] = false
                 }
                 for (key, value) in dict {
                     dict[key] = rewrite(value)
