@@ -3,6 +3,7 @@
     "deviceType": "com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro-Max",
     "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
     "simulatorName": "AirshipUITest",
+    "shards": 1,
     "appId": "com.urbanairship.richpush",
     "scheme": "DevApp",
     "workspace": "Airship.xcworkspace",
@@ -27,7 +28,7 @@
   },
   "sweep": {
     "fixtures": "DevApp/Dev App/Thomas/Resources/Scenes",
-    "mediaSettleMs": 2500,
+    "runners": 5,
     "skip": {
       "Scenes/Modal/nps.yml": "does not decode on iOS",
       "Scenes/Modal/pager-fullsize.yml": "does not decode on iOS",

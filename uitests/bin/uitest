@@ -13,13 +13,20 @@
 #   uitest set-baseline    promote build/shots into the LOCAL baseline cache (never committed)
 #   uitest run             build + boot-sim + install + run-flows + diff + report
 #   uitest mint            build + boot-sim + install + run-flows (CI uses this on `next`)
+#   uitest promote-baselines <merge-sha>
+#                          reuse the merged PR's passing screenshots as the new baselines
+#   uitest capture <i> <n> build + boot-sim + install + run slice i of n of the generated flows
+#   uitest merge-shots <dir> <n>
+#                          merge n shard screenshot sets (<dir>/shots-*/) into build/shots
 #   uitest shutdown        shut down the test simulator
 #   uitest delete-sim      shut down and delete the test simulator (CI cleanup)
 #   uitest publish-report N publish build/report to the private Pages site as ui-tests/pr-N/
 #   uitest prune-reports   remove published reports for PRs that are no longer open
 #
 # Baselines are never committed: the public SPM checkout would carry them forever.
-# CI mints them on every `next` run and stores them as a workflow artifact.
+# CI stores them as a workflow artifact of the base branch. A merge promotes the merged
+# PR's own passing screenshots when they were taken against the current base, and only
+# runs a full mint when they were not.
 # PR reports go to the repo's private GitHub Pages site (the `gh-pages` branch, which
 # is not mirrored to the public repo). Every publish rewrites that branch as a single
 # commit and drops reports for closed PRs, so neither the tree nor the history grows.
@@ -46,6 +53,10 @@ RUNTIME=${UITEST_RUNTIME:-$(cfg "['ios']['runtime']")}
 RUNTIME_LABEL=$(python3 -c "r='$RUNTIME'.split('.')[-1].split('-'); print(r[0].lower()+'-'+'.'.join(r[1:]))")
 # UITEST_SIM_NAME gives each CI run its own simulator so concurrent jobs on one host cannot collide.
 SIM_NAME=${UITEST_SIM_NAME:-$(cfg "['ios']['simulatorName']")}
+# UITEST_SHARDS boots that many simulators and lets Maestro split the flows across them
+# (`--shard-split`). Flow time divides by the shard count; boot time barely grows because
+# the simulators boot in parallel. The CI runner (5 cores, 14GB) copes with 3.
+SHARDS=${UITEST_SHARDS:-$(cfg "['ios']['shards']")}
 APP_ID=$(cfg "['ios']['appId']")
 SCHEME=$(cfg "['ios']['scheme']")
 WORKSPACE=$(cfg "['ios']['workspace']")
@@ -76,7 +87,16 @@ repo_slug() {
   git -C "$REPO_ROOT" remote get-url origin | sed -E 's#.*github\.com[:/]##; s#\.git$##'
 }
 
-sim_udid() {
+# Simulator names: the configured name for shard 1, "<name>-2", "<name>-3", ... after that.
+sim_names() {
+  local i
+  for i in $(seq 1 "$SHARDS"); do
+    if [ "$i" -eq 1 ]; then echo "$SIM_NAME"; else echo "$SIM_NAME-$i"; fi
+  done
+}
+
+# UDID of the simulator with the given name (empty if none), under the pinned runtime.
+sim_udid_named() {
   xcrun simctl list devices --json | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
@@ -84,10 +104,20 @@ for runtime, devices in data['devices'].items():
     if runtime != '$RUNTIME':
         continue
     for device in devices:
-        if device['name'] == '$SIM_NAME':
+        if device['name'] == '$1':
             print(device['udid'])
             sys.exit(0)
 "
+}
+
+# UDIDs of every existing shard simulator, one per line.
+sim_udids() {
+  local name udid
+  for name in $(sim_names); do
+    udid=$(sim_udid_named "$name")
+    [ -n "$udid" ] && echo "$udid"
+  done
+  return 0
 }
 
 write_provenance() {
@@ -102,6 +132,7 @@ json.dump({
     "capturedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
     "runtime": "$RUNTIME",
     "commit": out("git -C '$REPO_ROOT' rev-parse HEAD"),
+    "baseSha": "${UITEST_BASE_SHA:-}",
     "xcode": out("xcrun xcodebuild -version | tr '\n' ' '"),
     "macos": out("sw_vers -productVersion"),
     "maestro": out("maestro --version 2>/dev/null | tail -1"),
@@ -145,6 +176,11 @@ cmd_doctor() {
 }
 
 cmd_build() {
+  # Local iteration only: reuse the app already in derived data instead of rebuilding.
+  if [ -n "${UITEST_SKIP_BUILD:-}" ] && [ -d "$APP_PATH" ]; then
+    echo "using existing build: $APP_PATH"
+    return 0
+  fi
   local config="$REPO_ROOT/DevApp/AirshipConfig.plist"
   local sample="$REPO_ROOT/DevApp/AirshipConfig.plist.sample"
   # The sample config's placeholder keys fail validation and the app crashes on first
@@ -187,27 +223,40 @@ PLIST
 }
 
 cmd_boot_sim() {
-  local udid
-  udid=$(sim_udid)
-  if [ -z "$udid" ]; then
-    echo "creating simulator $SIM_NAME ($DEVICE_TYPE, $RUNTIME)"
-    udid=$(xcrun simctl create "$SIM_NAME" "$DEVICE_TYPE" "$RUNTIME")
-  fi
-  xcrun simctl shutdown "$udid" >/dev/null 2>&1 || true
-  xcrun simctl erase "$udid"
-  xcrun simctl boot "$udid"
-  xcrun simctl bootstatus "$udid" -b
-  xcrun simctl ui "$udid" appearance light
-  xcrun simctl status_bar "$udid" override \
-    --time "9:41" --batteryState charged --batteryLevel 100 \
-    --cellularMode active --cellularBars 4 --wifiBars 3 \
-    --dataNetwork wifi --operatorName ""
-  echo "booted: $udid"
+  local name udid udids=()
+  for name in $(sim_names); do
+    udid=$(sim_udid_named "$name")
+    if [ -z "$udid" ]; then
+      echo "creating simulator $name ($DEVICE_TYPE, $RUNTIME)"
+      udid=$(xcrun simctl create "$name" "$DEVICE_TYPE" "$RUNTIME")
+    fi
+    xcrun simctl shutdown "$udid" >/dev/null 2>&1 || true
+    # A CI runner is a fresh VM with a freshly created simulator; erasing it again only
+    # costs time. Locally the simulator is reused, so it is reset to a known state.
+    if [ "${CI:-}" != "true" ]; then
+      xcrun simctl erase "$udid"
+    fi
+    xcrun simctl boot "$udid"
+    udids+=("$udid")
+  done
+  # Boots overlap; wait for each, then pin the appearance and status bar.
+  for udid in "${udids[@]}"; do
+    xcrun simctl bootstatus "$udid" -b
+    xcrun simctl ui "$udid" appearance light
+    xcrun simctl status_bar "$udid" override \
+      --time "9:41" --batteryState charged --batteryLevel 100 \
+      --cellularMode active --cellularBars 4 --wifiBars 3 \
+      --dataNetwork wifi --operatorName ""
+    echo "booted: $udid"
+  done
 }
 
 cmd_install() {
-  xcrun simctl install "$(sim_udid)" "$APP_PATH"
-  echo "installed: $APP_ID"
+  local udid
+  for udid in $(sim_udids); do
+    xcrun simctl install "$udid" "$APP_PATH"
+  done
+  echo "installed: $APP_ID on $SHARDS simulator(s)"
 }
 
 cmd_generate() {
@@ -220,21 +269,33 @@ cmd_generate() {
 
 cmd_run_flows() {
   local flows="${1:-}"
-  local udid attempt flow_status
+  local attempt flow_status
   if [ -z "$flows" ]; then
     cmd_generate
     flows="$FLOWS_DIR"
-  elif [ "$(cd "$flows" && pwd)" != "$FLOWS_DIR" ]; then
-    # An explicit directory is not the generated sweep, so its coverage manifest does not apply.
-    rm -f "$FLOWS_DIR/manifest.json"
+  else
+    # Absolute, since Maestro runs from the screenshots directory. An explicit directory
+    # is not the generated sweep, so its coverage manifest does not apply.
+    flows="$(cd "$flows" && pwd)"
+    if [ "$flows" != "$FLOWS_DIR" ]; then
+      rm -f "$FLOWS_DIR/manifest.json"
+    fi
   fi
-  udid=$(sim_udid)
+  local devices shard_args=()
+  devices=$(sim_udids | paste -sd, -)
+  if [ -z "$devices" ]; then
+    echo "no test simulator booted - run: uitest boot-sim"
+    exit 2
+  fi
+  if [ "$SHARDS" -gt 1 ]; then
+    shard_args=(--shard-split "$SHARDS")
+  fi
   rm -rf "$SHOTS_DIR"
   mkdir -p "$SHOTS_DIR"
   for attempt in 1 2; do
     flow_status=0
     # Screenshots use relative paths in flows, landing in the cwd.
-    (cd "$SHOTS_DIR" && maestro --device "$udid" test "$flows") || flow_status=$?
+    (cd "$SHOTS_DIR" && maestro --device "$devices" test "${shard_args[@]}" "$flows") || flow_status=$?
     if [ "$flow_status" -eq 0 ]; then
       # Provenance is captured at run time so shots minted on CI carry the CI toolchain.
       write_provenance "$SHOTS_DIR/provenance.json"
@@ -284,40 +345,152 @@ cmd_baseline_pull() {
   return "$status"
 }
 
-# Download the newest successful mint on one branch. If the only runs on the branch are
-# still in progress (a PR opened right after a merge races the mint), wait for them for
-# up to UITEST_BASELINE_WAIT seconds (default 20 minutes) rather than failing.
+# Download the newest successful mint on one branch. Exit 3 when the branch has no
+# completed run yet (nothing to compare against, a one-time state right after a branch
+# starts minting); exit 1 when it has completed runs but none carries the artifact.
 pull_branch_baselines() {
-  local slug="$1" branch="$2" run_id runs err deadline
-  deadline=$(( $(date +%s) + ${UITEST_BASELINE_WAIT:-1200} ))
-  while :; do
-    if ! runs=$(gh run list --repo "$slug" --workflow "$BASELINE_WORKFLOW" --branch "$branch" \
-        --limit 20 --json databaseId,conclusion,status 2>&1); then
-      echo "could not list $BASELINE_WORKFLOW runs on $branch: $runs"
-      return 1
-    fi
-    if [ "$(printf '%s' "$runs" | python3 -c 'import json,sys; print(len(json.load(sys.stdin)))')" = "0" ]; then
-      echo "$BASELINE_WORKFLOW has never run on $branch - no baselines exist yet"
-      return 3
-    fi
-    for run_id in $(printf '%s' "$runs" | python3 -c 'import json,sys; print(" ".join(str(r["databaseId"]) for r in json.load(sys.stdin) if r["conclusion"] == "success"))'); do
-      if err=$(gh run download "$run_id" --repo "$slug" --name "$BASELINE_ARTIFACT" --dir "$BASELINE_DIR" 2>&1); then
-        echo "baselines: $branch run $run_id -> $BASELINE_DIR"
-        [ -f "$BASELINE_DIR/provenance.json" ] && echo "  minted: $(python3 -c "import json; p=json.load(open('$BASELINE_DIR/provenance.json')); print(p.get('capturedAt'), p.get('commit','')[:11], p.get('xcode'))")"
-        return 0
-      fi
-    done
-    if [ "$(printf '%s' "$runs" | python3 -c 'import json,sys; print(sum(1 for r in json.load(sys.stdin) if r["status"] in ("in_progress","queued","waiting","pending","requested")))')" != "0" ] \
-        && [ "$(date +%s)" -lt "$deadline" ]; then
-      echo "a $BASELINE_WORKFLOW run on $branch is still in progress - waiting for it to mint baselines"
-      sleep 30
-      continue
-    fi
-    echo "$BASELINE_WORKFLOW has run on $branch but no recent successful run carries a $BASELINE_ARTIFACT artifact"
-    echo "(expired after its retention window, or the mint is failing) - re-mint with: gh workflow run $BASELINE_WORKFLOW --ref $branch"
-    [ -n "${err:-}" ] && echo "last download error: $err"
+  local slug="$1" branch="$2" run_id runs err
+  if ! runs=$(gh run list --repo "$slug" --workflow "$BASELINE_WORKFLOW" --branch "$branch" \
+      --limit 20 --json databaseId,conclusion,status 2>&1); then
+    echo "could not list $BASELINE_WORKFLOW runs on $branch: $runs"
     return 1
+  fi
+  if [ "$(printf '%s' "$runs" | python3 -c 'import json,sys; print(sum(1 for r in json.load(sys.stdin) if r["status"] == "completed"))')" = "0" ]; then
+    echo "$BASELINE_WORKFLOW has no completed run on $branch - no baselines exist yet"
+    return 3
+  fi
+  for run_id in $(printf '%s' "$runs" | python3 -c 'import json,sys; print(" ".join(str(r["databaseId"]) for r in json.load(sys.stdin) if r["conclusion"] == "success"))'); do
+    if err=$(gh run download "$run_id" --repo "$slug" --name "$BASELINE_ARTIFACT" --dir "$BASELINE_DIR" 2>&1); then
+      echo "baselines: $branch run $run_id -> $BASELINE_DIR"
+      [ -f "$BASELINE_DIR/provenance.json" ] && echo "  minted: $(python3 -c "import json; p=json.load(open('$BASELINE_DIR/provenance.json')); print(p.get('capturedAt'), p.get('commit','')[:11], p.get('xcode'))")"
+      return 0
+    fi
   done
+  echo "$BASELINE_WORKFLOW has run on $branch but no recent successful run carries a $BASELINE_ARTIFACT artifact"
+  echo "(expired after its retention window, or the mint is failing) - re-mint with: gh workflow run $BASELINE_WORKFLOW --ref $branch"
+  [ -n "${err:-}" ] && echo "last download error: $err"
+  return 1
+}
+
+# Reuse the merged PR's screenshots as the baselines for the branch its merge commit
+# landed on. They qualify when the PR's last UI test run on that head passed and was
+# taken against the base exactly as it was at merge time (provenance baseSha equals the
+# merge commit's first parent). Anything else returns 1 and the caller mints in full.
+# UITEST_PROMOTE_PR names the PR directly (local testing, or if the lookup by commit
+# finds none).
+cmd_promote_baselines() {
+  local merge_sha="$1" slug pr head_sha run_id parent base tmp
+  if [ -z "$merge_sha" ]; then
+    echo "usage: uitest promote-baselines <merge-sha>"
+    exit 2
+  fi
+  slug=$(repo_slug)
+  if [ -n "${UITEST_PROMOTE_PR:-}" ]; then
+    pr="$UITEST_PROMOTE_PR"
+  else
+    pr=$(gh api "repos/$slug/commits/$merge_sha/pulls" --jq '[.[] | select(.merged_at != null)][0].number' 2>/dev/null || true)
+  fi
+  if [ -z "$pr" ] || [ "$pr" = "null" ]; then
+    echo "no merged pull request found for $merge_sha"
+    return 1
+  fi
+  head_sha=$(gh pr view "$pr" --repo "$slug" --json headRefOid --jq .headRefOid)
+  run_id=$(gh run list --repo "$slug" --workflow "$BASELINE_WORKFLOW" --commit "$head_sha" --event pull_request \
+    --status success --limit 1 --json databaseId --jq '.[0].databaseId' 2>/dev/null || true)
+  if [ -z "$run_id" ] || [ "$run_id" = "null" ]; then
+    echo "PR #$pr has no passing UI test run on its merged head $head_sha"
+    return 1
+  fi
+  tmp=$(mktemp -d)
+  if ! gh run download "$run_id" --repo "$slug" --name ui-test-report --dir "$tmp" >/dev/null 2>&1; then
+    echo "PR #$pr run $run_id has no ui-test-report artifact"
+    rm -rf "$tmp"
+    return 1
+  fi
+  if [ ! -f "$tmp/shots/.complete" ] || [ ! -f "$tmp/shots/provenance.json" ]; then
+    echo "PR #$pr run $run_id did not complete its screenshots"
+    rm -rf "$tmp"
+    return 1
+  fi
+  base=$(python3 -c "import json; print(json.load(open('$tmp/shots/provenance.json')).get('baseSha', ''))")
+  parent=$(git -C "$REPO_ROOT" rev-parse "$merge_sha^")
+  if [ -z "$base" ]; then
+    echo "PR #$pr run $run_id recorded no base commit"
+    rm -rf "$tmp"
+    return 1
+  fi
+  if [ "$base" != "$parent" ]; then
+    echo "PR #$pr run $run_id was taken against $base but $merge_sha merged onto $parent - the base moved"
+    rm -rf "$tmp"
+    return 1
+  fi
+  rm -rf "$SHOTS_DIR"
+  mv "$tmp/shots" "$SHOTS_DIR"
+  rm -rf "$tmp"
+  python3 - "$SHOTS_DIR/provenance.json" "$merge_sha" "$pr" "$run_id" <<'PY'
+import json, sys
+path, merge_sha, pr, run_id = sys.argv[1:5]
+p = json.load(open(path))
+p.update({"commit": merge_sha, "promotedFromPR": int(pr), "promotedFromRun": int(run_id)})
+json.dump(p, open(path, "w"), indent=2)
+PY
+  echo "promoted $(ls "$SHOTS_DIR"/*.png | wc -l | tr -d ' ') screenshots from PR #$pr run $run_id as the baselines for $merge_sha"
+}
+
+# Runs slice i (1-based) of n of the generated flows on this machine: every n-th flow file
+# in sorted order, so the slices are disjoint, cover everything and are stable across
+# machines. CI fans the slices out over separate runners and merges the screenshots.
+cmd_capture() {
+  local i="$1" n="$2" slice
+  if ! [[ "$i" =~ ^[0-9]+$ && "$n" =~ ^[0-9]+$ ]] || [ "$i" -lt 1 ] || [ "$i" -gt "$n" ]; then
+    echo "usage: uitest capture <i> <n>  (1 <= i <= n)"
+    exit 2
+  fi
+  cmd_build
+  cmd_boot_sim
+  cmd_install
+  cmd_generate
+  slice="$BUILD_DIR/flows-slice"
+  rm -rf "$slice"
+  mkdir -p "$slice"
+  python3 - "$FLOWS_DIR" "$slice" "$i" "$n" <<'PY'
+import os, shutil, sys
+flows, slice_dir, i, n = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4])
+names = sorted(f for f in os.listdir(flows) if f.endswith((".yaml", ".yml")))
+mine = names[i - 1::n]
+for f in mine:
+    shutil.copy(os.path.join(flows, f), os.path.join(slice_dir, f))
+print(f"slice {i} of {n}: {len(mine)} of {len(names)} flows")
+PY
+  cmd_run_flows "$slice"
+}
+
+# Merges the screenshot sets of n shards, each a completed `uitest capture`, into
+# build/shots. Refuses if any shard is missing or incomplete, so a partial sweep can never
+# be diffed or promoted as if it were whole.
+cmd_merge_shots() {
+  local dir="$1" n="$2" i shard
+  if [ -z "$dir" ] || ! [[ "$n" =~ ^[0-9]+$ ]]; then
+    echo "usage: uitest merge-shots <dir> <n>"
+    exit 2
+  fi
+  rm -rf "$SHOTS_DIR"
+  mkdir -p "$SHOTS_DIR"
+  for i in $(seq 1 "$n"); do
+    shard=$(ls -d "$dir"/*-"$i" 2>/dev/null | head -1)
+    if [ -z "$shard" ] || [ ! -f "$shard/.complete" ]; then
+      echo "shard $i of $n is missing or did not complete (${shard:-no directory})"
+      exit 1
+    fi
+    cp "$shard"/*.png "$SHOTS_DIR/"
+  done
+  cp "$(ls -d "$dir"/*-1 | head -1)/provenance.json" "$SHOTS_DIR/provenance.json"
+  python3 - "$SHOTS_DIR/provenance.json" "$n" <<'PY'
+import json, sys
+p = json.load(open(sys.argv[1])); p["shards"] = int(sys.argv[2]); json.dump(p, open(sys.argv[1], "w"), indent=2)
+PY
+  touch "$SHOTS_DIR/.complete"
+  echo "merged $(ls "$SHOTS_DIR"/*.png | wc -l | tr -d ' ') screenshots from $n shards"
 }
 
 cmd_diff() {
@@ -334,11 +507,12 @@ cmd_diff() {
     echo "no baselines at $BASELINE_DIR - pulling from CI"
     local pull_status=0
     cmd_baseline_pull || pull_status=$?
-    if [ "$pull_status" -eq 3 ] && [ -n "${UITEST_DIFF_REPORT_ONLY:-}" ]; then
-      # Bootstrap: nothing minted on the baseline branch yet, so every screenshot
-      # is new; report them rather than failing.
-      echo "report-only mode: treating every screenshot as new"
+    if [ "$pull_status" -eq 3 ]; then
+      # Bootstrap: nothing minted on the baseline branch yet, so there is nothing to
+      # compare against. Report every screenshot as new and do not fail on it.
+      echo "bootstrap: no mint on $BASELINE_BRANCH (or $BASELINE_DEFAULT_BRANCH) yet - reporting every screenshot as new"
       mkdir -p "$BASELINE_DIR"
+      UITEST_DIFF_REPORT_ONLY=1
     elif [ "$pull_status" -ne 0 ]; then
       echo "hint: uitest set-baseline promotes the current shots locally"
       exit 2
@@ -498,9 +672,34 @@ pages_push() {
     git -C "$PAGES_CHECKOUT" diff --cached --stat | tail -3
     return 0
   fi
+  local pushed_at
+  pushed_at=$(date +%s)
   git -C "$PAGES_CHECKOUT" push --quiet --force-with-lease="refs/heads/$PAGES_BRANCH:$PAGES_BASE_SHA" \
     origin "$commit:refs/heads/$PAGES_BRANCH"
   echo "published $PAGES_BRANCH as single commit $commit"
+  pages_wait_built "$pushed_at"
+}
+
+# GitHub Pages rebuilds the whole site after every push (the docs make it ~800MB, so a
+# build takes a couple of minutes) and serves the previous build meanwhile: a link posted
+# before the build finishes 404s. Wait for a build that started after our push to finish,
+# up to ten minutes. (The build's reported commit lags the push, so time is the signal.)
+pages_wait_built() {
+  local pushed_at="$1" slug deadline status created
+  slug=$(repo_slug)
+  deadline=$(( $(date +%s) + 600 ))
+  while [ "$(date +%s)" -lt "$deadline" ]; do
+    status=$(gh api "repos/$slug/pages/builds/latest" --jq '"\(.status) \(.created_at)"' 2>/dev/null || echo "unknown")
+    created=$(python3 -c "import sys,datetime; t=sys.argv[1]; print(int(datetime.datetime.fromisoformat(t.replace('Z','+00:00')).timestamp()) if t and t!='null' else 0)" "${status#* }" 2>/dev/null || echo 0)
+    if [ "$created" -ge "$((pushed_at - 30))" ]; then
+      case "${status%% *}" in
+        built)   echo "pages build finished"; return 0 ;;
+        errored) echo "pages build failed (GitHub reported: Page build failed)"; return 0 ;;
+      esac
+    fi
+    sleep 15
+  done
+  echo "pages build still not finished after ten minutes; the report link may 404 for a while"
 }
 
 cmd_publish_report() {
@@ -532,17 +731,18 @@ cmd_prune_reports() {
 
 cmd_shutdown() {
   local udid
-  udid=$(sim_udid)
-  [ -n "$udid" ] && xcrun simctl shutdown "$udid" || true
+  for udid in $(sim_udids); do
+    xcrun simctl shutdown "$udid" >/dev/null 2>&1 || true
+  done
 }
 
 cmd_delete_sim() {
   local udid
-  udid=$(sim_udid)
-  [ -n "$udid" ] || return 0
-  xcrun simctl shutdown "$udid" >/dev/null 2>&1 || true
-  xcrun simctl delete "$udid"
-  echo "deleted simulator $SIM_NAME ($udid)"
+  for udid in $(sim_udids); do
+    xcrun simctl shutdown "$udid" >/dev/null 2>&1 || true
+    xcrun simctl delete "$udid"
+    echo "deleted simulator $udid"
+  done
 }
 
 cmd_run() {
@@ -571,6 +771,9 @@ case "${1:-}" in
   set-baseline)  cmd_set_baseline ;;
   run)           cmd_run ;;
   mint)          cmd_build; cmd_boot_sim; cmd_install; cmd_run_flows ;;
+  promote-baselines) shift; cmd_promote_baselines "${1:-}" ;;
+  capture)       shift; cmd_capture "${1:-}" "${2:-}" ;;
+  merge-shots)   shift; cmd_merge_shots "${1:-}" "${2:-}" ;;
   shutdown)      cmd_shutdown ;;
   delete-sim)    cmd_delete_sim ;;
   publish-report) shift; cmd_publish_report "${1:-}" ;;

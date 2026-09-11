@@ -35,7 +35,6 @@ if (!outDir) {
 const appId = config.ios.appId;
 const fixturesRoot = path.join(repoRoot, config.sweep.fixtures);
 const authoredDir = path.join(uitestsDir, "flows");
-const settleMs = config.sweep.mediaSettleMs;
 const manualSkips = config.sweep.skip || {};
 const categories = ["Modal", "Banner", "Embedded"];
 const animatedMedia = new Set(["video", "youtube", "vimeo"]);
@@ -112,21 +111,24 @@ function flowName(category, file) {
   return `${category.toLowerCase()}__${stem}`;
 }
 
-function flowText(name, fixture, embeddedID, waitForMedia) {
+function flowText(name, fixture, embeddedID, waitForMedia, waitForWebView) {
   // uiTestMode is a string on purpose; see authoredFixtures().
   const args = { uiTestMode: "true", thomasLayout: fixture };
   if (embeddedID) args.thomasEmbeddedID = embeddedID;
   const commands = [
+    // clearState costs ~2s per launch but is what makes every screenshot independent of
+    // what ran before it: without it the DevApp home screen behind a modal carries state
+    // between launches and shifts by a few pixels (57 of 167 screenshots changed in CI).
     { launchApp: { clearState: true, arguments: args } },
     { extendedWaitUntil: { visible: { id: "thomas:root" }, timeout: 15000 } },
     "waitForAnimationToEnd",
   ];
-  if (waitForMedia) {
-    // Maestro has no sleep: waiting for an element that never appears, marked optional,
-    // gives remote images a moment to load without failing the flow.
-    commands.push({
-      extendedWaitUntil: { visible: { id: "uitest:media-settle" }, timeout: settleMs, optional: true },
-    });
+  if (waitForMedia || waitForWebView) {
+    // Every loading state in the renderer (images, media, web views) is drawn by one view
+    // tagged `thomas:loading`. Wait for the last of them to go away rather than guessing
+    // how long a load takes: WebKit's first content process on a CI runner can take
+    // seconds, and a screenshot taken early catches the spinner.
+    commands.push({ extendedWaitUntil: { notVisible: { id: "thomas:loading" }, timeout: 15000 } });
   }
   commands.push({ takeScreenshot: `${name}__p0` });
   return (
@@ -182,7 +184,7 @@ for (const category of categories) {
     const name = flowName(category, file);
     if (names.has(name)) throw new Error(`two fixtures map to the same flow name: ${name}`);
     names.add(name);
-    fs.writeFileSync(path.join(outDir, `${name}.yaml`), flowText(name, fixture, embeddedID, !!facts.media || !!facts.animated));
+    fs.writeFileSync(path.join(outDir, `${name}.yaml`), flowText(name, fixture, embeddedID, !!facts.media || !!facts.animated, !!facts.webView));
     manifest.generated.push({ flow: `${name}.yaml`, fixture, stubs: stubs(facts) });
   }
 }

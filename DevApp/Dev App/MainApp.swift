@@ -51,6 +51,14 @@ struct MainApp: App {
 #if DEBUG && canImport(AirshipDebug)
                 .airshipDebug(triggers: [.shake, .cmdShiftD])
 #endif
+                .overlay {
+                    // A scene screenshot should test the scene, not the home screen behind
+                    // it: the home screen laid itself out a few pixels differently from
+                    // launch to launch and every modal screenshot picked that up.
+                    if UITestLaunch.hidesHomeScreen {
+                        Color(white: 0.94).ignoresSafeArea()
+                    }
+                }
                 .task {
                     await UITestLaunch.displayLayoutIfRequested(router: appRouter, toast: toast)
                 }
@@ -72,6 +80,14 @@ struct MainApp: App {
 /// placeholder, so screenshots exercise image sizing and cropping without touching the network.
 @MainActor
 enum UITestLaunch {
+
+    /// Whether the app hides its home screen behind a flat color: test mode with a modal or
+    /// banner layout launched directly. Embedded layouts need the pushed host view visible.
+    static var hidesHomeScreen: Bool {
+        UserDefaults.standard.bool(forKey: "uiTestMode")
+            && UserDefaults.standard.string(forKey: "thomasLayout") != nil
+            && UserDefaults.standard.string(forKey: "thomasEmbeddedID") == nil
+    }
 
     static func prepare() {
         guard UserDefaults.standard.bool(forKey: "uiTestMode") else { return }

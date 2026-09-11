@@ -64,10 +64,15 @@ def convert(job):
     args = [cwebp, "-quiet", "-q", "80", "-resize", str(width), "0"]
     if subprocess.run(args + [source, "-o", target], capture_output=True).returncode == 0:
         return
-    # cwebp's libpng rejects the PNGs odiff writes ("invalid read length"); a pass through
-    # sips (always present on macOS, which this tooling already requires) normalises them.
+    # cwebp's libpng rejects the PNGs odiff writes ("invalid read length"); re-encoding them
+    # normalises them. Pillow where available (the CI report job installs it), else sips,
+    # which is always present on macOS.
     reencoded = target + ".png"
-    subprocess.run(["sips", "-s", "format", "png", source, "--out", reencoded], check=True, capture_output=True)
+    try:
+        from PIL import Image
+        Image.open(source).save(reencoded)
+    except ImportError:
+        subprocess.run(["sips", "-s", "format", "png", source, "--out", reencoded], check=True, capture_output=True)
     try:
         subprocess.run(args + [reencoded, "-o", target], check=True)
     finally:
@@ -411,22 +416,26 @@ os.makedirs(report_dir, exist_ok=True)
 open(os.path.join(report_dir, "index.html"), "w").write(page)
 
 # --- PR comment ----------------------------------------------------------------------------
+# One line, plus the changed screenshots as links into the report. `__REPORT_URL__` is the
+# published report's URL, which only the publish job knows; it substitutes the real one, or
+# drops the links when there is nothing published.
 
 failing = [c for c in cards if c["status"] != "ok"]
 lines = []
 if failing:
     breakdown = ", ".join(f"{counts[s]} {STATUS_LABEL[s]}" for s in ORDER if s != "ok" and counts.get(s))
-    lines.append(f"**{len(failing)} of {len(cards)} screenshots need a look** ({runtime}): {breakdown}.")
-    items = [f"- `{STATUS_LABEL[c['status']]}` {c['name']}" + (f" ({c['detail']})" if c.get("detail") else "") for c in failing]
-    if len(items) > 8:
-        lines += ["", "<details><summary>Screenshots</summary>", ""] + items + ["", "</details>"]
-    else:
-        lines += [""] + items
+    filt = ",".join(s for s in ORDER if s != "ok" and counts.get(s))
+    lines.append(f"**Thomas UI tests:** {len(failing)} of {len(cards)} screenshots need a look ({breakdown}). "
+                 f"[Report](__REPORT_URL__#status={filt})")
+    shown = failing[:12]
+    lines.append("")
+    for c in shown:
+        label = STATUS_LABEL[c["status"]]
+        lines.append(f"- {label}: [{c['name'].removesuffix('.png')}](__REPORT_URL__#open={c['name']})")
+    if len(failing) > len(shown):
+        lines.append(f"- and {len(failing) - len(shown)} more in the report")
 else:
-    minted = provenance.get("commit", "")[:11] if provenance else ""
-    lines.append(f"All {len(cards)} screenshots match the {'`' + minted + '` ' if minted else ''}baselines ({runtime}).")
-if coverage:
-    lines += ["", f"Coverage: {coverage['line']}."]
+    lines.append(f"**Thomas UI tests:** all {len(cards)} screenshots match. [Report](__REPORT_URL__)")
 open(os.path.join(report_dir, "summary.md"), "w").write("\n".join(lines) + "\n")
 
 size = sum(os.path.getsize(os.path.join(root, f)) for root, _, files in os.walk(report_dir) for f in files)

@@ -1,24 +1,27 @@
 name: Thomas UI Tests
 
-# Pull requests: screenshot the Thomas scenes and pixel-diff them against the
-# baselines minted on `next`; the HTML report is published to the repo's private
-# GitHub Pages site (the `gh-pages` branch, not mirrored to the public repo) and
-# linked from a PR comment. Every publish rewrites that branch as one commit and
-# drops reports for closed PRs, so nothing accumulates. Intentional visual
-# changes: add the `visual-change-accepted` label to make the diff report-only,
-# then merge.
+# Pull requests opt in with the `run-ui-tests` label. The sweep is split across
+# `sweep.runners` (config.json) macOS runners, one simulator each, which capture
+# disjoint slices of the generated flows; a Linux job merges the screenshots,
+# pixel-diffs them against the base branch's baselines, and publishes the report
+# to the repo's private GitHub Pages site (the `gh-pages` branch, not mirrored to
+# the public repo) with one PR comment. Intentional visual changes: add the
+# `visual-change-accepted` label to make the diff report-only, then merge.
 #
-# Pushes to `next` and `main` mint fresh baselines and publish them as the
-# `baselines-<runtime>` artifact; a PR diffs against its base branch's mint.
-# Scheduled runs only fire from the default branch, so the weekly job
-# dispatches mints rather than minting itself; that keeps the artifacts from
-# expiring on a quiet branch. Nothing
+# A merge into `next` or `main` publishes fresh baselines as the `baselines-<runtime>`
+# artifact: the merged PR's own passing screenshots when they were taken against the
+# current base (a copy, no simulators), a full capture otherwise. Scheduled runs only
+# fire from the default branch, so the weekly job dispatches mints rather than minting
+# itself; that keeps the artifacts from expiring on a quiet branch. Nothing
 # image-shaped is ever committed: the public SPM checkout would carry it forever.
 on:
   pull_request:
-    # `labeled` so adding `visual-change-accepted` re-runs the check; a plain
-    # re-run replays the original event payload and would not see the label.
+    # `labeled` so adding `run-ui-tests` starts a run and `visual-change-accepted`
+    # re-runs in report-only mode; a plain re-run replays the original event payload.
     types: [opened, synchronize, reopened, labeled, unlabeled]
+  push:
+    branches: [next, main]
+    # A merge that cannot change a pixel leaves the baselines alone.
     paths:
       - "Airship/AirshipSceneRenderer/**"
       - "Airship/AirshipScenes/**"
@@ -29,11 +32,13 @@ on:
       - "uitests/**"
       - "layouts.version"
       - ".github/workflows/thomas-ui-tests.yml"
-  push:
-    branches: [next, main]
   schedule:
     - cron: "0 9 * * 1"
   workflow_dispatch:
+    inputs:
+      runners:
+        description: "Runners to split the flows across (default: sweep.runners in config.json)"
+        default: ""
 
 permissions:
   contents: read
@@ -70,22 +75,71 @@ jobs:
       - run: gh auth setup-git
       - run: bash ./uitests/bin/uitest prune-reports
 
-  ui-tests:
-    # Skip label events for unrelated labels.
+  # Decides what this run does: how many capture shards, and for a merge whether the
+  # merged PR's screenshots can simply be promoted (then no simulator boots at all).
+  plan:
+    # PRs run only while labelled `run-ui-tests`; label events for other labels are ignored.
     if: >-
       github.event_name != 'schedule'
-      && (!github.event.label || github.event.label.name == 'visual-change-accepted')
+      && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-ui-tests'))
+      && (!github.event.label || github.event.label.name == 'run-ui-tests' || github.event.label.name == 'visual-change-accepted')
+    runs-on: ubuntu-latest
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+      count: ${{ steps.plan.outputs.count }}
+      label: ${{ steps.plan.outputs.label }}
+      promoted: ${{ steps.promote.outputs.promoted }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The merge commit's parent is what promotion checks the PR run against.
+          fetch-depth: 2
+      - id: plan
+        run: |
+          COUNT="${{ inputs.runners }}"
+          [ -n "$COUNT" ] || COUNT=$(python3 -c "import json; print(json.load(open('uitests/config.json'))['sweep']['runners'])")
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "shards=$(python3 -c "print(list(range(1, $COUNT + 1)))")" >> "$GITHUB_OUTPUT"
+          echo "label=$(python3 -c "r=__import__('json').load(open('uitests/config.json'))['ios']['runtime'].split('.')[-1].split('-'); print(r[0].lower()+'-'+'.'.join(r[1:]))")" >> "$GITHUB_OUTPUT"
+      - name: Promote the merged PR's screenshots
+        if: github.event_name == 'push'
+        id: promote
+        run: |
+          if bash ./uitests/bin/uitest promote-baselines "${{ github.sha }}"; then
+            echo "promoted=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Nothing to promote; capturing in full."
+          fi
+      - name: Publish promoted baselines
+        if: steps.promote.outputs.promoted == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: baselines-${{ steps.plan.outputs.label }}
+          path: uitests/build/shots
+          include-hidden-files: true
+          retention-days: 90
+
+  # One runner per shard, one simulator each: build the DevApp, boot, and screenshot
+  # this shard's slice of the generated flows.
+  capture:
+    needs: plan
+    if: needs.plan.outputs.promoted != 'true'
     runs-on: xcode-27-xlarge
-    # Build plus ~130 flows at a few seconds each.
-    timeout-minutes: 90
-    # Job-level so a skipped run (unrelated label event) never cancels a live one.
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    # Job-level so a skipped run never cancels a live one; a newer push cancels every shard.
     concurrency:
-      group: thomas-ui-tests-${{ github.ref }}
+      group: thomas-ui-tests-${{ github.ref }}-shard-${{ matrix.shard }}
       cancel-in-progress: true
     env:
       GH_TOKEN: ${{ github.token }}
       # One simulator per run so concurrent jobs on a shared host cannot collide.
-      UITEST_SIM_NAME: AirshipUITest-${{ github.run_id }}
+      UITEST_SIM_NAME: AirshipUITest-${{ github.run_id }}-${{ matrix.shard }}
     steps:
       - uses: actions/checkout@v4
       - name: Cache Thomas layouts
@@ -106,7 +160,6 @@ jobs:
           repositories: thomas-layouts
       - name: Install Maestro and webp
         run: |
-          # openjdk for Maestro, webp (cwebp) for the report's downscaled screenshots.
           brew install --quiet openjdk webp
           echo "JAVA_HOME=$(brew --prefix openjdk)" >> "$GITHUB_ENV"
           echo "$(brew --prefix openjdk)/bin" >> "$GITHUB_PATH"
@@ -117,37 +170,81 @@ jobs:
           export MAESTRO_VERSION
           curl -fsSL https://get.maestro.mobile.dev | bash
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
-      - name: Install odiff
+      - name: Install node packages
         run: npm --prefix uitests ci
       - name: Doctor
         run: make uitest-doctor
-      - name: Runtime label
-        id: runtime
-        run: echo "label=$(python3 -c "r=__import__('json').load(open('uitests/config.json'))['ios']['runtime'].split('.')[-1].split('-'); print(r[0].lower()+'-'+'.'.join(r[1:]))")" >> "$GITHUB_OUTPUT"
+      - name: Fetch layouts
+        env:
+          LAYOUTS_REPO_TOKEN: ${{ steps.layouts_token.outputs.token }}
+        run: make fetch-layouts
+      - name: Capture shard ${{ matrix.shard }} of ${{ needs.plan.outputs.count }}
+        env:
+          # Recorded in provenance.json so a merge can tell whether these screenshots
+          # were taken against the base as it was at merge time.
+          UITEST_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: bash ./uitests/bin/uitest capture "${{ matrix.shard }}" "${{ needs.plan.outputs.count }}"
+      - name: Upload screenshots
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: shots-${{ needs.plan.outputs.label }}-${{ matrix.shard }}
+          path: uitests/build/shots
+          include-hidden-files: true
+          retention-days: 1
+      - name: Delete simulator
+        if: always()
+        run: bash ./uitests/bin/uitest delete-sim
+
+  # Merges the shards, then either diffs and reports (pull request) or publishes the
+  # merged screenshots as the branch's baselines (merge, dispatch).
+  report:
+    needs: [plan, capture]
+    if: >-
+      !cancelled()
+      && needs.plan.outputs.promoted != 'true'
+      && needs.capture.result != 'cancelled'
+      && needs.capture.result != 'skipped'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      pages: read
+      actions: read
+    # Serialised with the docs deploy, which pushes to the same Pages branch.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install odiff and webp
+        run: |
+          sudo apt-get install -y -qq webp python3-pil >/dev/null
+          npm --prefix uitests ci
+      - name: Download shard screenshots
+        uses: actions/download-artifact@v4
+        with:
+          pattern: shots-${{ needs.plan.outputs.label }}-*
+          path: uitests/build/shards
+      - name: Merge shards
+        run: bash ./uitests/bin/uitest merge-shots uitests/build/shards "${{ needs.plan.outputs.count }}"
 
       # --- pull requests: diff against the base branch's baselines and report ---
-      - name: Pull baselines from the base branch
+      - name: Accepted visual change
+        if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'visual-change-accepted')
+        run: echo "UITEST_DIFF_REPORT_ONLY=1" >> "$GITHUB_ENV"
+      - name: Diff
         if: github.event_name == 'pull_request'
         env:
           UITEST_BASELINE_BRANCH: ${{ github.base_ref }}
         run: |
           status=0
-          bash ./uitests/bin/uitest baseline-pull || status=$?
-          case "$status" in
-            0) ;;
-            3) echo "Bootstrap: no mint on ${{ github.base_ref }} yet - reporting every screenshot as new."
-               echo "UITEST_DIFF_REPORT_ONLY=1" >> "$GITHUB_ENV" ;;
-            *) echo "Could not fetch baselines; refusing to report a green result without them."
-               exit "$status" ;;
-          esac
-      - name: Accepted visual change
-        if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'visual-change-accepted')
-        run: echo "UITEST_DIFF_REPORT_ONLY=1" >> "$GITHUB_ENV"
-      - name: Run UI tests
-        if: github.event_name == 'pull_request'
-        env:
-          LAYOUTS_REPO_TOKEN: ${{ steps.layouts_token.outputs.token }}
-        run: make uitest-run
+          bash ./uitests/bin/uitest diff || status=$?
+          bash ./uitests/bin/uitest report
+          exit "$status"
       - name: Upload report, screenshots and diffs
         if: github.event_name == 'pull_request' && !cancelled()
         uses: actions/upload-artifact@v4
@@ -159,49 +256,8 @@ jobs:
             uitests/build/diffs
           include-hidden-files: true
           retention-days: 14
-      # --- next and dispatch: mint and publish baselines ---
-      - name: Mint baselines
-        if: github.event_name != 'pull_request'
-        env:
-          LAYOUTS_REPO_TOKEN: ${{ steps.layouts_token.outputs.token }}
-        run: make uitest-mint
-      - name: Publish baselines
-        if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: baselines-${{ steps.runtime.outputs.label }}
-          path: uitests/build/shots
-          include-hidden-files: true
-          retention-days: 90
-
-      - name: Delete simulator
-        if: always()
-        run: bash ./uitests/bin/uitest delete-sim
-
-  publish-report:
-    needs: ui-tests
-    if: >-
-      !cancelled()
-      && needs.ui-tests.result != 'skipped'
-      && github.event_name == 'pull_request'
-      && github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      pages: read
-      actions: read
-    # Serialised with the docs deploy, which pushes to the same branch.
-    concurrency:
-      group: pages
-      cancel-in-progress: false
-    env:
-      GH_TOKEN: ${{ github.token }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Download report
-        run: gh run download "${{ github.run_id }}" --name ui-test-report --dir uitests/build || echo "no report artifact on this run"
       - name: Publish report to Pages
+        if: github.event_name == 'pull_request' && !cancelled() && github.event.pull_request.head.repo.full_name == github.repository
         id: publish
         run: |
           if [ -f uitests/build/report/index.html ]; then
@@ -211,22 +267,23 @@ jobs:
             echo "url=${PAGES_URL%/}/ui-tests/pr-${{ github.event.pull_request.number }}/" >> "$GITHUB_OUTPUT"
           fi
       - name: Comment on PR
-        if: ${{ !cancelled() }}
+        if: github.event_name == 'pull_request' && !cancelled() && github.event.pull_request.head.repo.full_name == github.repository
         run: |
           MARKER="<!-- thomas-ui-tests -->"
           RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          if [ -f uitests/build/report/summary.md ]; then
-            SUMMARY=$(cat uitests/build/report/summary.md)
-          else
-            SUMMARY="The UI test run did not produce a diff report; see the [run log]($RUN_URL)."
-          fi
           REPORT_URL="${{ steps.publish.outputs.url }}"
-          if [ -n "$REPORT_URL" ]; then
-            LINKS="[Open the visual diff report]($REPORT_URL) (org members only; also in the \`ui-test-report\` [artifact]($RUN_URL#artifacts))."
+          if [ ! -f uitests/build/report/summary.md ]; then
+            BODY="**Thomas UI tests:** the run produced no report, see the [run log]($RUN_URL)."
+          elif [ -n "$REPORT_URL" ]; then
+            BODY=$(sed "s#__REPORT_URL__#$REPORT_URL#g" uitests/build/report/summary.md)
           else
-            LINKS="Visual diff report: \`ui-test-report\` [artifact]($RUN_URL#artifacts), open \`report/index.html\`."
+            # No published report to link into: keep the summary line, point at the artifact.
+            BODY=$(head -1 uitests/build/report/summary.md | sed "s#\[Report\](__REPORT_URL__[^)]*)#[Report]($RUN_URL#artifacts) (artifact)#")
           fi
-          BODY="$MARKER"$'\n'"### Thomas UI tests"$'\n\n'"$SUMMARY"$'\n\n'"$LINKS Intentional change? Add the \`visual-change-accepted\` label."
+          if grep -q "need a look" <<<"$BODY"; then
+            BODY="$BODY"$'\n\n'"Intentional? Add the \`visual-change-accepted\` label."
+          fi
+          BODY="$MARKER"$'\n'"$BODY"
           PR=${{ github.event.pull_request.number }}
           EXISTING=$(gh api "repos/${{ github.repository }}/issues/$PR/comments" --paginate \
             --jq ".[] | select(.user.login == \"github-actions[bot]\" and (.body | startswith(\"$MARKER\"))) | .id" | tail -1)
@@ -235,3 +292,13 @@ jobs:
           else
             gh pr comment "$PR" --repo "${{ github.repository }}" --body "$BODY"
           fi
+
+      # --- merges, dispatch: the merged screenshots are the branch's new baselines ---
+      - name: Publish baselines
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: baselines-${{ needs.plan.outputs.label }}
+          path: uitests/build/shots
+          include-hidden-files: true
+          retention-days: 90

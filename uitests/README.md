@@ -41,7 +41,9 @@ Individual steps via `uitests/bin/uitest`: `build`, `boot-sim`, `install`, `gene
   cropping and scaling are exercised without the network; video, YouTube and Vimeo media
   become that placeholder image; web views show an inline placeholder page; pager
   automated actions are dropped so stories hold their first page; and `randomize_children`
-  is turned off so option order is stable. The manifest records which
+  is turned off so option order is stable. Every loading state the renderer draws (image,
+  media, web view) carries the `thomas:loading` identifier, and a generated flow waits for
+  the last one to disappear before it screenshots, so no load timing ever reaches a diff. The manifest records which
   stubs each fixture relied on and the report shows it, so a green screenshot never claims
   more than it exercised.
 - The generator skips, with the reason recorded in the manifest, banner fixtures whose
@@ -59,6 +61,13 @@ Individual steps via `uitests/bin/uitest`: `build`, `boot-sim`, `install`, `gene
   `uitest report` turns the result into `build/report/index.html`.
 - The device, OS runtime, thresholds, and exact Maestro version are pinned in `config.json`.
   Pinned on purpose: a floating "latest" (runtime or Maestro) silently shifts baselines.
+- CI splits the sweep across `sweep.runners` (config.json) macOS runners, one simulator
+  each: every runner does `uitest capture <i> <n>` (build, boot, and slice i of the sorted
+  generated flows), uploads its screenshots, and a Linux job runs `uitest merge-shots`
+  before diffing and reporting. A single machine cannot go faster by adding simulators,
+  measured: the xlarge runner is CPU-bound with one, three costs as much boot time as it
+  saves, five is twice as slow. `UITEST_SHARDS=N` still boots N simulators on one machine
+  for local runs where the Mac has the cores for it.
 - No Airship credentials are needed: the build materializes a syntactically valid dummy
   app key, which is enough for takeOff and scene display offline.
 
@@ -66,16 +75,22 @@ Individual steps via `uitests/bin/uitest`: `build`, `boot-sim`, `install`, `gene
 
 - **Nothing image-shaped is committed.** The public `ios-library` repo is a mirror of this one
   and SPM users clone it in full, so baseline PNGs in git would land in every customer
-  checkout forever. Baselines are minted by CI on every push to `next` and `main` (plus a
-  weekly refresh so the artifacts never expire) and stored as the `baselines-<runtime>`
-  workflow artifact of that branch's run; `uitest baseline-pull` fetches the newest one into
+  checkout forever. A merge into `next` or `main` that touches anything rendering-related
+  publishes new baselines as the `baselines-<runtime>` workflow artifact of that branch's
+  run: the merged PR's own passing screenshots when they were taken against the base as it
+  was at merge time (a copy, seconds), otherwise a full mint (`uitest promote-baselines`
+  decides, `uitest mint` is the fallback). A weekly refresh keeps the artifacts from
+  expiring; `uitest baseline-pull` fetches the newest one into
   `build/baselines/` (needs `gh auth login`; `UITEST_BASELINE_BRANCH` picks the branch,
   falling back to `next` for a branch that was never minted), and `uitest diff` pulls
   automatically when the cache is empty. If the artifact cannot be fetched the PR check
-  fails rather than passing without a comparison; the one exception is before the first
-  mint, when everything reports as new. A pull that finds the mint still running waits for
-  it rather than failing.
-- **PR flow.** The workflow diffs the PR's screenshots against its base branch's baselines, builds
+  fails rather than passing without a comparison; the one exception is a base branch with
+  no completed run yet, when everything reports as new. `uitest run` pulls after the
+  screenshots are taken.
+- **PR flow.** Opt in by adding the `run-ui-tests` label to the PR; the check starts right
+  away and keeps running on later pushes while the label stays on. The runners capture in
+  parallel, then the merged screenshots are diffed against the base branch's baselines, and
+  the job builds
   a gallery report (every screenshot as a card, filter by status, a viewer that flips between
   baseline / this run / diff; images are half-width WebP so a full sweep stays a few MB, the
   full-size PNGs live in the `ui-test-report` artifact), publishes it to the repo's private
@@ -98,8 +113,10 @@ Individual steps via `uitests/bin/uitest`: `build`, `boot-sim`, `install`, `gene
   perpetually animating content, or the screenshot lands at a random animation phase.
   Scrollable fixtures are only captured at the top viewport unless the flow scrolls and takes
   extra screenshots.
-- Modal screenshots include the DevApp screen behind the modal shade, so DevApp UI changes
-  churn baselines too (the workflow's path filter covers `DevApp/**` for this reason).
+- Behind a directly launched modal or banner the app shows a flat light gray instead of its
+  home screen, so a scene screenshot tests the scene alone: the home screen laid itself out
+  a few pixels differently from launch to launch and every modal screenshot picked it up.
+  Embedded layouts keep the host view they render in.
 - On a machine without the pinned runtime, iterate with an override, e.g.
   `UITEST_RUNTIME=com.apple.CoreSimulator.SimRuntime.iOS-26-5 uitests/bin/uitest run`.
   Baselines are stored per runtime; only the pinned runtime's set is canonical.
