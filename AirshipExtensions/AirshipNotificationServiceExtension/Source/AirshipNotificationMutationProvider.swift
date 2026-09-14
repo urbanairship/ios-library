@@ -15,25 +15,30 @@ final class AirshipNotificationMutationProvider: Sendable {
     }
 
     func mutations(for args: MediaAttachmentPayload) async throws -> AirshipNotificationMutations? {
-        let attachments = try await withThrowingTaskGroup(of: AirshipAttachment?.self) { [weak self, args] group in
-            try Task.checkCancellation()
+        try Task.checkCancellation()
 
+        // Each task swallows its own failure so one bad/expired media URL doesn't
+        // discard the title/subtitle/body overrides for the whole notification.
+        let attachments = await withTaskGroup(of: AirshipAttachment?.self) { [weak self, args, logger] group in
             var attachments: [AirshipAttachment] = []
 
             args.media.forEach { media in
                 group.addTask { [weak self] in
-                    try Task.checkCancellation()
-                    return try await self?.load(
-                        attachment: media,
-                        defaultOptions: args.options,
-                        thumbnailID: args.thumbnailID
-                    )
+                    do {
+                        try Task.checkCancellation()
+                        return try await self?.load(
+                            attachment: media,
+                            defaultOptions: args.options,
+                            thumbnailID: args.thumbnailID
+                        )
+                    } catch {
+                        logger.error("Failed to load attachment \(media.url): \(error)")
+                        return nil
+                    }
                 }
             }
 
-            for try await result in group {
-                try Task.checkCancellation()
-
+            for await result in group {
                 if let result = result {
                     attachments.append(result)
                 }
@@ -65,6 +70,10 @@ final class AirshipNotificationMutationProvider: Sendable {
         logger.debug("Downloading attachment result: \(response)")
 
         try Task.checkCancellation()
+
+        if let httpResponse = response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
+            throw AttachmentDownloadError.unexpectedStatusCode(httpResponse.statusCode)
+        }
 
         var mimeType = response.mimeType
         if mimeType == nil, let httpResponse = response as? HTTPURLResponse {
@@ -138,6 +147,7 @@ final class AirshipNotificationMutationProvider: Sendable {
             delegate: ChallengeResolver.shared,
             delegateQueue: nil
         )
+        defer { session.finishTasksAndInvalidate() }
 
         return try await session.download(from: url)
     }
@@ -198,24 +208,30 @@ struct AirshipNotificationMutations: Sendable {
     var attachments: [AirshipAttachment]
 
     func apply(to notificationContent: UNMutableNotificationContent) throws {
-        try attachments
-            .map { try $0.notificationAttachment }
-            .forEach {
-                notificationContent.attachments.append($0)
-            }
-
+        // Text overrides land first: a rejected attachment must never cost the
+        // notification its title/subtitle/body.
         if let title = title {
             notificationContent.title = title
         }
-        
+
         if let subtitle = subtitle {
             notificationContent.subtitle = subtitle
         }
-        
+
         if let body = body {
             notificationContent.body = body
         }
+
+        for attachment in attachments {
+            if let notificationAttachment = try? attachment.notificationAttachment {
+                notificationContent.attachments.append(notificationAttachment)
+            }
+        }
     }
+}
+
+private enum AttachmentDownloadError: Error {
+    case unexpectedStatusCode(Int)
 }
 
 
