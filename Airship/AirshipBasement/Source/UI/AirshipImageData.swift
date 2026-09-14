@@ -139,10 +139,19 @@ fileprivate actor AirshipImageDataFrameActor {
             return AirshipImageData.minFrameDuration
         }
 
-        let delayTime = properties[kCGImageAnimationDelayTime as String] as? TimeInterval
-        let gifDelayTime = properties[[kCGImagePropertyGIFUnclampedDelayTime as String]] as? TimeInterval
+        var unclampedDelayTime = (properties[kCGImagePropertyGIFUnclampedDelayTime as String]
+            ?? properties[kCGImagePropertyWebPUnclampedDelayTime as String]) as? TimeInterval
 
-        return max(gifDelayTime ?? delayTime ?? 0.0, AirshipImageData.minFrameDuration)
+        // A 0 unclamped delay is almost always unintentional; fall back to
+        // the clamped delay (typically 0.1 s) like browsers do.
+        if unclampedDelayTime == 0 {
+            unclampedDelayTime = nil
+        }
+
+        let clampedDelayTime = (properties[kCGImagePropertyGIFDelayTime as String]
+            ?? properties[kCGImagePropertyWebPDelayTime as String]) as? TimeInterval
+
+        return max(unclampedDelayTime ?? clampedDelayTime ?? 0.0, AirshipImageData.minFrameDuration)
     }
 
     private static func imageProperties(
