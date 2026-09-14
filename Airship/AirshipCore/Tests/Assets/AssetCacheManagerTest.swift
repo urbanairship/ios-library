@@ -353,6 +353,48 @@ struct AssetCacheManagerTest {
             Issue.record("Concurrent caching should handle race conditions gracefully: \(error)")
         }
     }
+
+    /// Tests that a failed download leaves the asset uncached and a later attempt for the same identifier can retry and succeed
+    @Test
+    func testFailedDownloadIsRetryable() async throws {
+        let downloader = TestAssetDownloader()
+        downloader.downloadResult = .failure(URLError(.badServerResponse))
+
+        let assetRemoteURL = URL(string: "http://airship.com/asset1")!
+        let testScheduleIdentifier = "test-schedule-id"
+
+        let cacheDirectory = URL(fileURLWithPath: "test-user-cache/com.urbanairship.iamassetcache/\(testScheduleIdentifier)", isDirectory: true)
+        let expectedFileURL = cacheDirectory.appendingPathComponent(assetRemoteURL.assetFilename, isDirectory: false)
+
+        let fileManager = TestAssetFileManager()
+        fileManager.onEnsureDirectory = { _ in cacheDirectory }
+
+        var assetMoved = false
+        fileManager.onAssetItemExists = { url in
+            if url == cacheDirectory {
+                return true
+            }
+            return url == expectedFileURL && assetMoved
+        }
+        fileManager.onMoveAsset = { _, cachedURL in
+            #expect(cachedURL == expectedFileURL)
+            assetMoved = true
+        }
+
+        let manager = AssetCacheManager(assetDownloader: downloader, assetFileManager: fileManager)
+
+        await #expect(throws: URLError.self, "The download failure should fail the caching operation") {
+            try await manager.cacheAssets(identifier: testScheduleIdentifier, assets: [assetRemoteURL.absoluteString])
+        }
+        #expect(!assetMoved, "A failed download should not be moved into the cache")
+
+        downloader.downloadResult = .success(URL(fileURLWithPath: "/temp/asset"))
+
+        let cachedAssets = try await manager.cacheAssets(identifier: testScheduleIdentifier, assets: [assetRemoteURL.absoluteString])
+
+        #expect(assetMoved, "The retried download should be moved into the cache")
+        #expect(cachedAssets.isCached(remoteURL: assetRemoteURL))
+    }
 }
 
 fileprivate extension URL {
