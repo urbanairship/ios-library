@@ -153,7 +153,7 @@ private extension String {
             let firstLetter = String(self.prefix(1))
             if let atIndex = self.firstIndex(of: "@") {
                 let suffix = self.suffix(self.count - self.distance(from: self.startIndex, to: atIndex) - 1)
-                return "\(firstLetter)*******\(suffix)"
+                return "\(firstLetter)*******@\(suffix)"
             }
         }
 
