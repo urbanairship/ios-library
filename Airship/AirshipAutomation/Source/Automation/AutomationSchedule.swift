@@ -69,14 +69,17 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     var variantAudience: VariantAudience?
 
     /// Ledger configuration for shared display limiting. When present with a
-    /// `shared_id`, ledger events this schedule records are pooled across every
-    /// schedule sharing that ID (e.g. A/B variants).
+    /// `shared_id`, ledger events this schedule records are tagged under that
+    /// ID unconditionally — but this schedule's OWN limit only reads that
+    /// pooled history back when ``limitConfig`` is `.shared` (see
+    /// ``LimitConfig``).
     public var ledgerConfig: LedgerConfig?
 
-    /// Ledger-based limit configuration. When present, its `exclude` rules
-    /// subtract recorded events from this schedule's limit tally. The limit is
-    /// always evaluated against the ledger regardless of this field; it only
-    /// changes what counts against the cap, never the cap itself.
+    /// Ledger-based limit configuration. The limit is always evaluated against
+    /// the ledger regardless of this field, counting this schedule's own
+    /// events; `.shared` opts into also counting its shared group's events,
+    /// and `exclude` rules subtract from whatever that tally includes. With no
+    /// config, behaves as `.selfOnly` with no exclusions. See ``LimitConfig``.
     var limitConfig: LimitConfig?
 
 
@@ -146,8 +149,10 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     /// top-level field.
     public struct LedgerConfig: Sendable, Codable, Equatable {
 
-        /// Shared group ID that pools ledger history across schedules. When set,
-        /// events are recorded under this ID in addition to the schedule ID.
+        /// Shared group ID. When set, events are recorded under this ID in
+        /// addition to the schedule ID — unconditionally, regardless of whether
+        /// this schedule itself reads that pooled history back (see
+        /// `.shared` on `LimitConfig`).
         public var sharedID: String?
 
         enum CodingKeys: String, CodingKey {
