@@ -431,7 +431,7 @@ fileprivate extension AutomationEngine {
 
         if await self.isEnginePaused.value {
             // Wait for resume
-            _ = await self.isExecutionPaused.updates.first(where: { paused in paused == false })
+            _ = await self.isEnginePaused.updates.first(where: { paused in paused == false })
         }
 
         guard
