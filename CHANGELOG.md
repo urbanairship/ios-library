@@ -4,43 +4,50 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
-## Version 21.0.0-beta.3 - September 9, 2026
-Third beta of the 21.0.0 major release. This release reworks on-device AI's retry policy and adds an Embedded Carousel view along with a set of Scene rendering fixes. See the [Migration Guide](https://github.com/urbanairship/ios-library/blob/main/Documentation/Migration/migration-guide-20-21.md) for details.
-
-### Changes
-- On-device AI: `AirshipAI.ModelProtocol`'s `maxAttempts`/`responseTimeout` requirements are replaced by a single `retryDecision(usage:error:attempt:) -> RetryDecision`, so a model can retry a schema-validation failure differently than a thrown error like a network timeout. `AirshipFoundationModel.backed(by:)`/`.privateCloudCompute(...)` take an optional `retryDecision` override in place of the old parameters; `nil` keeps the framework default (retry a schema mismatch immediately, back off 1s/4s on any other error, fail after 3 attempts). A custom `ModelProtocol` conformance needs to adopt the new requirement.
-- On-device AI: fixed the evaluation observer reporting an evaluation twice — once as `.completed`, again as `.failed` — when decoding the model's response failed after the response had already passed schema validation.
-- Embedded views: `AirshipEmbeddedViewStyleConfiguration.pending` is now ordered by selection preference (most-preferred first), so a custom embedded style no longer has to re-derive ordering itself. Added `AirshipEmbeddedCarousel`, a carousel container for embedded content, which now honors `.ai` selection ranking instead of falling back silently.
-- Scenes: `AirshipPermission` gains six cases — `.appTrackingTransparency`, `.camera`, `.microphone`, `.bluetooth`, `.photoLibrary`, `.contacts` — for the Composer's new system-permission action. Only `.displayNotifications` ships a built-in prompt delegate; the others parse and prompt but resolve to `.notDetermined` until the app registers its own `AirshipPermissionDelegate`.
-- Scenes: text line height now always uses the scaled-font-size approximation instead of iOS 26's native line-height API, which rendered differently than Android.
-- Fixed in-app message banners clipping or oscillating in width on rotation, including under a side notch or camera housing in landscape.
-- Fixed `AirshipPrivacyManager.enableFeatures`/`disableFeatures` permanently baking a server-side feature disable into local storage instead of leaving it as a read-time subtraction.
-- Fixed a crash handling certain native-bridge `run-action-cb` URLs from web content with fewer or more than three arguments.
-- Fixed a regex range mismatch between Swift's `String.count` and `NSString.length` that could misparse non-ASCII version-constraint audience matches, device tokens, or URL allow-list patterns.
-
-## Version 21.0.0-beta.2 - August 27, 2026
-Second beta of the 21.0.0 major release. This release requires Xcode 27, brings on-device AI to Scenes and in-app experiences, includes a broad set of Scene layout fixes, and continues tightening the public API surface. See the [Migration Guide](https://github.com/urbanairship/ios-library/blob/main/Documentation/Migration/migration-guide-20-21.md) for details.
+## Version 21.0.0 - September 14, 2026
+SDK 21.0 splits the Scene/layout rendering engine out of `AirshipCore` into new modules, removes CocoaPods support, requires Xcode 27, brings on-device AI to Scenes and in-app experiences, includes a broad set of Scene layout fixes, and tightens the public API surface across modules. See the [Migration Guide](https://github.com/urbanairship/ios-library/blob/main/Documentation/Migration/migration-guide-20-21.md) for details.
 
 ### Changes
 - Xcode 27 is now required to build the SDK.
-- Scenes: a broad set of layout and sizing fixes across the rendering engine. Existing Scenes may lay out differently than they did in 20.x; verify your live Scenes after upgrading.
-- In-App Automation: display limits are now calculated from the ledger, with retention and compaction, and a concurrency fix for shared display limits.
-- Message Center: removed the user credentials and message native bridge from the public API — `MessageCenterUser`, the `user` property on `MessageCenterInbox`, and `MessageCenterNativeBridgeExtension`, along with the Objective-C equivalents (`UAMessageCenterUser`, `UAMessageCenterInbox.getUser()`, and `UAMessageCenterNativeBridge`). Display messages through `MessageCenterMessageView` or `MessageCenterMessageContentView`, which resolve web vs. native content and handle authentication.
-- Preference Center: the `ChannelTextField` and `ErrorLabel` views and the `AddChannelState` enum are now `internal`.
-- `AirshipUtils` is now `internal` and no longer part of the public API.
-- Feature Flags: `FeatureFlagManager.featureFlagStatusUpdates` now emits `FeatureFlagUpdateStatus` instead of `any Sendable`.
-- Continued to tighten the public API surface across modules (`@_spi(AirshipInternal)`/`internal`), and Swift Package targets now use internal imports by default.
-- On-device AI: a new optional module, `AirshipFoundationModels`, lets you wire an on-device model into the SDK and put it to work across three usages — in-app message suppression, embedded view selection, and Scene text-input inference. The framework ships in `AirshipCore` and no-ops until you configure a model, so nothing changes unless you opt in. Linking the module registers Apple's on-device model on iOS 26; prompts and context stay on the device. See [On-device AI](https://www.airship.com/docs/developer/sdk-integration/apple/on-device-ai) for setup, context providers, and model routing.
-- On-device AI is gated by a new privacy manager feature, `AirshipFeature.onDeviceAI`. It is included in `.all`, but apps that enable an explicit set of features must add it or `Airship.ai` will behave as though no model were configured.
+- Removed CocoaPods support, ahead of [Trunk's specs repo going read-only in December](https://blog.cocoapods.org/CocoaPods-Specs-Repo/). Integrate via Swift Package Manager (recommended) or the prebuilt XCFrameworks.
+- Tightened the public API surface across modules with `@_spi(AirshipInternal)`/`internal`, and Swift Package targets now use internal imports by default.
+- Marked `AirshipUtils` `@_spi(AirshipInternal)` and removed its unused public helper methods.
+- Removed the background-fetch app-integration method `AppIntegration.application(_:performFetchWithCompletionHandler:)` and its `UAAppIntegration` Objective-C equivalent.
 
-## Version 21.0.0-beta.1 - June 30, 2026
-First beta of the 21.0.0 major release. This release splits the Scene/layout rendering engine out of `AirshipCore` into new modules and removes CocoaPods support. See the [Migration Guide](https://github.com/urbanairship/ios-library/blob/main/Documentation/Migration/migration-guide-20-21.md) for details.
+#### On-Device AI
+- Added on-device AI support for three usages: in-app message suppression, embedded view selection, and Scene text-input inference.
+- Added an optional `AirshipFoundationModels` module that wires a built-in on-device model into those usages.
+- Added the `AirshipFeature.onDeviceAI` privacy manager feature gating on-device AI.
 
-### Changes
-- Split the Scene rendering engine out of `AirshipCore` into the new `AirshipSceneRenderer` and `AirshipScenes` modules. Embedded views and custom views now require `import AirshipScenes`. No package changes are needed for Swift Package Manager; manual XCFramework/Carthage integrations must add the new frameworks.
-- Removed CocoaPods support. Integrate via Swift Package Manager (recommended) or the prebuilt XCFrameworks.
-- Xcode 27 will be required for the final 21.0 release.
-- Tightened the public API surface: internal-only helpers that were unintentionally exposed are now `internal` or `@_spi(AirshipInternal)`.
-- Removed public `AirshipUtils` helper methods: `compareVersion(_:toVersion:maxVersionParts:)`, `hasNetworkConnection()`, `deviceModelName()`, and `mergeFetchResults(_:)`.
-- Removed the background-fetch app-integration method `AppIntegration.application(_:performFetchWithCompletionHandler:)` and its `UAAppIntegration` Objective-C equivalent. `UIApplicationDelegate.application(_:performFetchWithCompletionHandler:)` was deprecated by Apple in iOS 13; use background push or `BGAppRefreshTask` instead.
+#### Scenes
+- Split the Scene rendering engine out of `AirshipCore` into new `AirshipSceneRenderer` and `AirshipScenes` modules. Embedded views and custom views now require `import AirshipScenes`.
+- Added six `AirshipPermission` cases for the Composer's system-permission action.
+- Fixed a broad set of Scene layout and sizing issues. Verify your live Scenes after upgrading.
+- Fixed in-app message banners clipping or oscillating in width on rotation.
+- Fixed background media cropping instead of filling behind an auto-height layout.
+- Fixed a label's end icon pulling its `[icon, text, icon]` group off-center.
+- Fixed Scene text line height to consistently use the scaled-font-size approximation.
+- Fixed a Pager crash when a page list emptied out or restored state drifted from it.
+
+#### Embedded Views
+- Added `AirshipEmbeddedCarousel`, a carousel container for embedded content.
+- Ordered `AirshipEmbeddedViewStyleConfiguration.pending` by selection preference.
+- Added `filterInstances`, a closure to exclude specific pending instances from selection.
+- Let `.instance` selection take an ordered list of instance IDs instead of just one.
+- Fixed embedded views not reacting to a changed `embeddedID` or `selection`.
+
+#### Message Center
+- Removed `MessageCenterUser`, `MessageCenterInbox.user`, and `MessageCenterNativeBridgeExtension` from the public API, along with their Objective-C equivalents. Use the provided `MessageCenterMessageView`/`MessageCenterMessageContentView` UI instead.
+
+#### Preference Center
+- Marked `ChannelTextField`, `ErrorLabel`, and `AddChannelState` internal.
+
+#### Feature Flags
+- Changed `FeatureFlagManager.featureFlagStatusUpdates` to emit `FeatureFlagUpdateStatus` instead of `any Sendable`.
+
+### Other Fixes
+- Fixed `AirshipPrivacyManager.enableFeatures`/`disableFeatures` permanently baking a server-side feature disable into local storage.
+- Fixed a crash handling malformed native-bridge `run-action-cb` URLs.
+- Fixed a regex range mismatch that could misparse non-ASCII audience matches, device tokens, or URL allow-list patterns.
+- Fixed the Core Data store's `-wal` and `-shm` files being left behind when the store file is deleted.
 

@@ -2,117 +2,29 @@
 
 import CommonCrypto
 import Foundation
-public import SwiftUI
 
 #if canImport(AirshipBasement)
 @_spi(AirshipInternal) import AirshipBasement
 #endif
 
-#if !os(watchOS)
-import SystemConfiguration
-#endif
-
-#if os(iOS) && !targetEnvironment(macCatalyst)
-import CoreTelephony
+#if !os(watchOS) && !os(macOS)
+import UIKit
 #endif
 
 
 /// The `Utils` object provides an interface for utility methods.
+@_spi(AirshipInternal)
 public final class AirshipUtils {
 
     // MARK: Device Utilities
 
-    /// Get the device model name (e.g.,` iPhone3,1`).
-    ///
-    /// - Returns: The device model name.
-    @available(*, deprecated, message: "This method is no longer supported and will be removed in a future SDK version.")
-    public class func deviceModelName() -> String? {
-        return AirshipDevice.modelIdentifier
-    }
-
     /// Gets the short bundle version string.
     ///
     /// - Returns: A short bundle version string value.
+    @_spi(AirshipInternal)
     public class func bundleShortVersionString() -> String? {
         return Bundle.main.infoDictionary?["CFBundleShortVersionString"]
             as? String
-    }
-
-    #if !os(watchOS)
-    /// Checks if the device has network connection.
-    ///
-    /// - Returns: The true if it has connection, false otherwise.
-    public class func hasNetworkConnection() -> Bool {
-        var zeroAddress = sockaddr_in()
-        zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
-        zeroAddress.sin_family = sa_family_t(AF_INET)
-
-        guard
-            let reachability = withUnsafePointer(
-                to: &zeroAddress,
-                {
-                    $0.withMemoryRebound(
-                        to: sockaddr.self,
-                        capacity: MemoryLayout<sockaddr>.size
-                    ) { ptr in
-                        SCNetworkReachabilityCreateWithAddress(nil, ptr)
-                    }
-                }
-            )
-        else {
-            return false
-        }
-
-        var flags = SCNetworkReachabilityFlags()
-        let isSuccess = SCNetworkReachabilityGetFlags(reachability, &flags)
-        return isSuccess && flags.contains(.reachable)
-    }
-
-    #endif
-
-    /// Compares two version strings and determines their order.
-    ///
-    /// - Parameters:
-    ///   - fromVersion: The first version.
-    ///   - toVersion: The second version.
-    ///   - maxVersionParts: Max number of version parts to compare. Use 3 to only compare major.minor.patch
-    ///
-    /// - Returns: a `ComparisonResult`.
-    public class func compareVersion(
-        _ fromVersion: String,
-        toVersion: String,
-        maxVersionParts: Int? = nil
-    ) -> ComparisonResult {
-        if let maxVersionParts, maxVersionParts <= 0 {
-            return .orderedSame
-        }
-
-        let fromParts = fromVersion.components(separatedBy: ".").map {
-            ($0 as NSString).integerValue
-        }
-
-        let toParts = toVersion.components(separatedBy: ".").map {
-            ($0 as NSString).integerValue
-        }
-
-        var i = 0
-        while fromParts.count > i || toParts.count > i {
-            let from: Int = fromParts.count > i ? fromParts[i] : 0
-            let to: Int = toParts.count > i ? toParts[i] : 0
-
-            if from < to {
-                return .orderedAscending
-            } else if from > to {
-                return .orderedDescending
-            }
-            i += 1
-
-            if let maxVersionParts, maxVersionParts <= i {
-                break
-            }
-        }
-
-        return .orderedSame
     }
 
     /// Gets the bundle version string (build number / CFBundleVersion).
@@ -160,7 +72,7 @@ public final class AirshipUtils {
     ///
     /// - Returns: The main window, or `nil` if the window cannot be found.
     @MainActor
-    public class func mainWindow() throws -> UIWindow? {
+    class func mainWindow() throws -> UIWindow? {
         let scene = try AirshipSceneManager.shared.lastActiveScene
 
         let sharedApp: UIApplication = UIApplication.shared
@@ -181,7 +93,7 @@ public final class AirshipUtils {
     ///
     /// - Returns: The main window, or `nil` if the window cannot be found.
     @MainActor
-    public class func mainWindow(scene: UIWindowScene) -> UIWindow? {
+    class func mainWindow(scene: UIWindowScene) -> UIWindow? {
         for w in scene.windows {
             if !w.isHidden {
                 return w
@@ -194,50 +106,6 @@ public final class AirshipUtils {
 
     #endif
 
-    // MARK: Fetch Results
-
-    #if !os(watchOS) && !os(macOS)
-    ///  Takes an array of fetch results and returns the merged result.
-    ///
-    /// - Parameter results: An `Array` of fetch results.
-    ///
-    /// - Returns: The merged fetch result.
-    public class func mergeFetchResults(
-        _ results: [UInt]
-    ) -> UIBackgroundFetchResult {
-        var mergedResult: UIBackgroundFetchResult = .noData
-        for r in results {
-            if r == UIBackgroundFetchResult.newData.rawValue {
-                return .newData
-            } else if r == UIBackgroundFetchResult.failed.rawValue {
-                mergedResult = .failed
-            }
-        }
-        return mergedResult
-    }
-    #endif
-    
-    #if os(watchOS)
-    ///  Takes an array of fetch results and returns the merged result.
-    ///
-    /// - Parameter results: An `Array` of fetch results.
-    ///
-    /// - Returns: The merged fetch result.
-    public class func mergeFetchResults(_ results: [UInt])
-        -> WKBackgroundFetchResult
-    {
-        var mergedResult: WKBackgroundFetchResult = .noData
-        for r in results {
-            if r == WKBackgroundFetchResult.newData.rawValue {
-                return .newData
-            } else if r == WKBackgroundFetchResult.failed.rawValue {
-                mergedResult = .failed
-            }
-        }
-        return mergedResult
-    }
-    #endif
-
     // MARK: Notification Payload
 
     /// Determine if the notification payload is a silent push (no notification elements).
@@ -245,7 +113,7 @@ public final class AirshipUtils {
     /// - Parameter notification The notification payload.
     ///
     /// - Returns: `true` the notification is a silent push, `false` otherwise.
-    public class func isSilentPush(_ notification: [AnyHashable: Any]) -> Bool {
+    class func isSilentPush(_ notification: [AnyHashable: Any]) -> Bool {
         guard let apsDict = notification["aps"] as? [AnyHashable: Any] else {
             return true
         }
@@ -272,7 +140,7 @@ public final class AirshipUtils {
     /// - Parameter notification The notification payload.
     ///
     /// - Returns: `true` the notification is an alerting  push, `false` otherwise.
-    public class func isAlertingPush(_ notification: [AnyHashable: Any]) -> Bool
+    class func isAlertingPush(_ notification: [AnyHashable: Any]) -> Bool
     {
         guard let apsDict = notification["aps"] as? [AnyHashable: Any] else {
             return false
@@ -310,7 +178,7 @@ public final class AirshipUtils {
     /// - Parameter token: An APNS-provided device token.
     ///
     /// - Returns: The decoded Airship device token.
-    public class func deviceTokenStringFromDeviceToken(_ token: Data) -> String
+    class func deviceTokenStringFromDeviceToken(_ token: Data) -> String
     {
         var tokenString = ""
 
@@ -328,7 +196,7 @@ public final class AirshipUtils {
     ///
     /// - Parameter input: `String` for which to calculate SHA.
     /// - Returns: The `SHA256` digest as `NSData`.
-    public class func sha256Digest(input: String) -> NSData {
+    class func sha256Digest(input: String) -> NSData {
         guard let dataIn = input.data(using: .utf8) as NSData? else {
             return NSData()
         }
@@ -344,7 +212,7 @@ public final class AirshipUtils {
     /// - Parameter input: Input string for which to calculate SHA.
     ///
     /// - Returns: SHA256 digest as a hex string
-    public class func sha256Hash(input: String) -> String {
+    class func sha256Hash(input: String) -> String {
         let digestLength = Int(CC_SHA256_DIGEST_LENGTH)
         let digest = sha256Digest(input: input)
         var buffer = [UInt8](repeating: 0, count: digestLength)
@@ -353,32 +221,6 @@ public final class AirshipUtils {
         return buffer.map { String(format: "%02x", $0) }.joined(separator: "")
     }
 
-    // MARK: UAHTTP Authenticated Request Helpers
-
-    /// Returns a basic auth header string.
-    ///
-    /// - Parameters:
-    ///   - username: The username.
-    ///   - password: The password.
-    /// - Returns: An HTTP Basic Auth header string value for the provided credentials in the form of: `Basic [Base64 Encoded "username:password"]`
-    public class func authHeader(username: String, password: String) -> String?
-    {
-        guard let data = "\(username):\(password)".data(using: .utf8) else {
-            return nil
-        }
-        guard let encodedData = AirshipBase64.string(from: data) else {
-            return nil
-        }
-        let authString =
-            encodedData
-            //strip carriage return and linefeed characters
-            .replacingOccurrences(of: "\n", with: "")
-            .replacingOccurrences(of: "\r", with: "")
-
-        return "Basic \(authString)"
-    }
-
-   
     // MARK: URL
 
     /// Parse url for the input string.
@@ -386,7 +228,7 @@ public final class AirshipUtils {
     /// - Parameter value: Input string for which to create the URL.
     ///
     /// - Returns: returns the created URL otherwise return nil.
-    public class func parseURL(_ value: String) -> URL? {
+    class func parseURL(_ value: String) -> URL? {
         if let url = URL(string: value) {
             return url
         }

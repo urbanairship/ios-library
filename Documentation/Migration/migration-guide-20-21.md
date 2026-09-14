@@ -6,9 +6,21 @@ rendering engine has been split out of `AirshipCore` into two new modules,
 the toolchain requirement moves to Xcode 27. This guide outlines the changes
 required to migrate an app from SDK 20.x to SDK 21.0.
 
-> **Note**
-> This guide is a work in progress and will be updated as SDK 21.0 development
-> continues.
+> **Upgrading from a 21.0 beta?**
+> On-device AI's model protocol changed twice during the beta cycle, both changes
+> final as of this release:
+> - `AirshipAI.ModelProtocol` was renamed to `AirshipAI.ModelAdapter`, for parity
+>   with the equivalent type on Android.
+> - `maxAttempts`/`responseTimeout` were replaced by a single
+>   `retryDecision(usage:error:attempt:) -> RetryDecision`, so a model can retry a
+>   schema-validation failure differently than a thrown error like a network
+>   timeout. `AirshipFoundationModel.backed(by:)`/`.privateCloudCompute(...)` take
+>   an optional `retryDecision` override in place of the old parameters; `nil`
+>   keeps the framework default (retry a schema mismatch immediately, back off
+>   1s/4s on any other error, fail after 3 attempts).
+>
+> If you implemented a custom on-device AI model against a beta, rename your
+> conformance to `ModelAdapter` and adopt `retryDecision`.
 
 > **Migrate with AI**
 > Airship provides AI developer tools — an MCP server and a set of Agent Skills —
@@ -46,9 +58,8 @@ required to migrate an app from SDK 20.x to SDK 21.0.
 
 ## Requirements
 
-SDK 21.0 requires **Xcode 27**, as of 21.0.0-beta.2. Earlier betas built with
-Xcode 26; that is no longer the case, and Xcode 26 will fail to compile the SDK.
-Update your build environment, including CI, before taking the update.
+SDK 21.0 requires **Xcode 27**; Xcode 26 will fail to compile the SDK. Update
+your build environment, including CI, before taking the update.
 
 ## Dependency Manager Changes
 
@@ -58,9 +69,10 @@ Update your build environment, including CI, before taking the update.
 `AirshipServiceExtension.podspec` files have been removed, and no new podspecs
 will be published.
 
-CocoaPods is being sunset (the Trunk service and CDN are shutting down at the end
-of 2026), and we cannot commit to supporting it for the full lifetime of SDK 21.
-If your project integrates Airship via CocoaPods, you must migrate to **Swift
+CocoaPods is being sunset — [Trunk stops accepting new podspecs on December 2,
+2026](https://blog.cocoapods.org/CocoaPods-Specs-Repo/) — and we cannot commit to
+supporting it for the full lifetime of SDK 21. If your project integrates Airship
+via CocoaPods, you must migrate to **Swift
 Package Manager** (recommended), or integrate the prebuilt **XCFrameworks**
 manually / via Carthage.
 
@@ -206,7 +218,7 @@ supported public use; replacements are noted below where relevant.
 
 ### AirshipUtils
 
-`AirshipUtils` has been marked `internal` and is no longer part of the public API.
+`AirshipUtils` is now `@_spi(AirshipInternal)` and no longer part of the public API.
 It was a grab-bag of general-purpose helpers that were unintentionally exposed and
 have no supported public replacement. If you depended on any of them, copy the
 implementation into your own codebase. Alternatively, if you have a real use case,
