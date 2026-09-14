@@ -204,13 +204,25 @@ import Foundation
             appKey: self.appKey,
             deviceID: testDeviceID
         )
-        var value = await dataStore.isAppRestore
+        let value = await dataStore.isAppRestore
         #expect(!(value))
 
-
+        // A later read on the same instance must return the same cached answer even
+        // if the device ID changes afterward - isAppRestore is a query every consumer
+        // reads once each, not a one-shot flag that flips the answer for whoever asks
+        // second (MOBILE-5852).
         await self.testDeviceID.setValue(value: UUID().uuidString)
-        value = await dataStore.isAppRestore
-        #expect(value)
+        let secondReadSameInstance = await dataStore.isAppRestore
+        #expect(secondReadSameInstance == value)
+
+        // A genuinely new launch - a fresh PreferenceDataStore sharing the same
+        // underlying storage - with a changed device ID must still detect the restore.
+        let nextLaunchDataStore = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: testDeviceID
+        )
+        let restored = await nextLaunchDataStore.isAppRestore
+        #expect(restored)
     }
 
     @Test
