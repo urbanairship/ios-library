@@ -127,8 +127,10 @@ actor AdditionalAudienceCheckerResolver: AdditionalAudienceCheckerResolverProtoc
             return result.isMatched
         } else if response.isServerError {
             throw AirshipErrors.error("Failed to perform additional check due to server error \(response)")
+        } else if response.isClientError {
+            throw AirshipErrors.error("Failed to perform additional check due to client error \(response)")
         } else {
-            return false
+            throw AirshipErrors.error("Failed to perform additional check, unexpected response \(response)")
         }
     }
 

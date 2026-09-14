@@ -212,9 +212,9 @@ struct AdditionalAudienceCheckerResolverTest {
     }
     
     @Test
-    mutating func testIsNotCachedOnError() async throws {
+    mutating func testThrowsAndDoesNotCacheOnClientError() async throws {
         makeResolver(config: defaultAudienceConfig)
-        
+
         deviceInfoProvider.stableContactInfo = StableContactInfo(contactID: "existing-contact-id", namedUserID: "some user id")
         deviceInfoProvider.channelID = "channel-id"
 
@@ -224,23 +224,24 @@ struct AdditionalAudienceCheckerResolverTest {
                 statusCode: 400,
                 headers: [:])
         }
-        
+
         let cacheKey = "https://test.config:\"default context\":existing-contact-id:channel-id"
-        
+
         var cached: AdditionalAudienceCheckResult? = await cache.getCachedValue(key: cacheKey)
         #expect(cached == nil)
-        
-        let result = try await resolver.resolve(
-            deviceInfoProvider: deviceInfoProvider,
-            additionalAudienceCheckOverrides: .init(
-                bypass: false,
-                context: "default context",
-                url: nil
-            )
-        )
 
-        #expect(!(result))
-        
+        do {
+            _ = try await resolver.resolve(
+                deviceInfoProvider: deviceInfoProvider,
+                additionalAudienceCheckOverrides: .init(
+                    bypass: false,
+                    context: "default context",
+                    url: nil
+                )
+            )
+            Issue.record()
+        } catch {}
+
         cached = await cache.getCachedValue(key: cacheKey)
         #expect(cached == nil)
     }
