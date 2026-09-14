@@ -198,4 +198,15 @@ extension MessageCenterMessage {
     var productID: String? {
         return self.rawMessageObject.object?[Self.productIDKey]?.string
     }
+
+    /// The localized VoiceOver description, including read/unread state and send date.
+    var accessibilityDescription: String {
+        String(
+            format: unread
+                ? "ua_message_unread_description".messageCenterLocalizedString
+                : "ua_message_description".messageCenterLocalizedString,
+            title,
+            AirshipDateFormatter.string(fromDate: sentDate, relativeFormat: .shortDate)
+        )
+    }
 }

@@ -55,7 +55,7 @@ fileprivate struct PreferenceCloseButton: View {
             }
             .frame(width: tappableWidth, height: tappableHeight)
         }
-        .accessibilityLabel("Dismiss")
+        .accessibilityLabel("ua_dismiss".airshipLocalizedString(fallback: "Dismiss"))
     }
 }
 
