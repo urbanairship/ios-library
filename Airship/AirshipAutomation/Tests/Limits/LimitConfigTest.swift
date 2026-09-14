@@ -60,7 +60,7 @@ struct LimitConfigTest {
             limit: limit,
             events: events,
             context: self.context,
-            exclude: exclude,
+            limitConfig: .shared(exclude: exclude),
             now: self.now
         )
     }
@@ -303,6 +303,7 @@ struct LimitConfigTest {
     func testDecodeLimitConfig() throws {
         let json = """
         {
+          "type": "shared",
           "exclude": {
             "or": [
               { "source": { "type": "other_schedules" } },
@@ -323,7 +324,11 @@ struct LimitConfigTest {
         """
         let config = try JSONDecoder().decode(LimitConfig.self, from: Data(json.utf8))
 
-        let exclude = try #require(config.exclude)
+        guard case .shared(let excludeOpt) = config else {
+            Issue.record("Expected .shared limitConfig")
+            return
+        }
+        let exclude = try #require(excludeOpt)
         #expect(exclude.or.count == 2)
         #expect(exclude.or[0].source == .otherSchedules)
         #expect(exclude.or[0].match == nil)
@@ -340,20 +345,36 @@ struct LimitConfigTest {
     }
 
     @Test
-    func testDecodeLimitConfigWithoutExclude() throws {
+    func testDecodeSharedLimitConfigWithoutExclude() throws {
         // `exclude` is optional: a config with no exclusions decodes to nil, so
         // every execution counts against the cap.
-        let config = try JSONDecoder().decode(LimitConfig.self, from: Data("{}".utf8))
-        #expect(config.exclude == nil)
+        let config = try JSONDecoder().decode(LimitConfig.self, from: Data(#"{"type": "shared"}"#.utf8))
+        guard case .shared(let exclude) = config else {
+            Issue.record("Expected .shared limitConfig")
+            return
+        }
+        #expect(exclude == nil)
     }
 
     @Test
     func testLimitConfigCodableRoundTrip() throws {
-        let config = LimitConfig(
+        let config = LimitConfig.shared(
             exclude: ExclusionSet(or: [
                 ExclusionRule(source: .ownSchedule, match: .execution(.init(results: [.holdout]))),
                 ExclusionRule(source: .schedule("x"), match: .triggered(.init(triggerID: "t"))),
                 ExclusionRule(source: .otherSchedules, match: nil)
+            ])
+        )
+        let data = try JSONEncoder().encode(config)
+        let decoded = try JSONDecoder().decode(LimitConfig.self, from: data)
+        #expect(decoded == config)
+    }
+
+    @Test
+    func testSelfLimitConfigCodableRoundTrip() throws {
+        let config = LimitConfig.selfOnly(
+            exclude: SelfExclusionSet(or: [
+                SelfExclusionRule(match: .execution(.init(results: [.variantMiss])))
             ])
         )
         let data = try JSONEncoder().encode(config)

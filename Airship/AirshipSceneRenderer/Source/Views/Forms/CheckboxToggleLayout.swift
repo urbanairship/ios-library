@@ -61,5 +61,6 @@ struct CheckboxToggleLayout: View {
             hideIfDescriptionIsMissing: false
         )
         .formElement()
+        .disabled(!self.isEnabled)
     }
 }

@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import SwiftUI
+import AirshipCore
 
 struct CloseButton: View {
     internal init(
@@ -49,7 +50,7 @@ struct CloseButton: View {
                     height: max(tappableHeight, height)
                 )
         }
-        .accessibilityLabel("Dismiss")
+        .accessibilityLabel("ua_dismiss".airshipLocalizedString(fallback: "Dismiss"))
 #if os(tvOS)
         .buttonStyle(.card)
 #endif

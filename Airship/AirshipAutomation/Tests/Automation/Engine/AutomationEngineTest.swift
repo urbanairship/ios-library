@@ -512,6 +512,7 @@ final class SharedLedgerGroupLimitTest {
             triggers: [],
             limit: limit,
             ledgerConfig: .init(sharedID: sharedID),
+            limitConfig: .shared(exclude: nil),
             frequencyConstraintIDs: frequencyConstraintIDs
         )
     }

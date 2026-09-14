@@ -117,6 +117,7 @@
 		32E339E32A334A2000CD3BE5 /* AddCustomEventActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E339E22A334A2000CD3BE5 /* AddCustomEventActionTest.swift */; };
 		32F293D5295AFD94004A7D9C /* ActionArgumentsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F293D4295AFD94004A7D9C /* ActionArgumentsTest.swift */; };
 		32F615A728F708980015696D /* MessageCenterListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F615A628F708980015696D /* MessageCenterListTests.swift */; };
+		4D5914AA2F0000010000A002 /* MessageCenterStoriesViewAccessibilityTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5914AA2F0000010000A001 /* MessageCenterStoriesViewAccessibilityTest.swift */; };
 		32F615A828F708AD0015696D /* TestChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7E48426A60CDF0038CFDD /* TestChannel.swift */; };
 		32F68CDC28F02A7100F7F52A /* MessageCenterStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */; };
 		32F68CEE28F07C2C00F7F52A /* AirshipMessageCenterResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F68CE828F07C2B00F7F52A /* AirshipMessageCenterResources.swift */; };
@@ -1248,6 +1249,7 @@
 		FADE000000000000000000C4 /* LimitConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C5 /* LimitConfigTest.swift */; };
 		FADE000000000000000000C6 /* LedgerLimitEvaluatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C7 /* LedgerLimitEvaluatorTest.swift */; };
 		FEFE000000000000000000B1 /* AirshipTestExpectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEFE000000000000000000A1 /* AirshipTestExpectation.swift */; };
+		FFE2411BC69F1027C03B740B /* AirshipImageDataTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DFDD433477456A34D32B2F /* AirshipImageDataTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1747,6 +1749,7 @@
 		32E339E22A334A2000CD3BE5 /* AddCustomEventActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCustomEventActionTest.swift; sourceTree = "<group>"; };
 		32F293D4295AFD94004A7D9C /* ActionArgumentsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionArgumentsTest.swift; sourceTree = "<group>"; };
 		32F615A628F708980015696D /* MessageCenterListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterListTests.swift; sourceTree = "<group>"; };
+		4D5914AA2F0000010000A001 /* MessageCenterStoriesViewAccessibilityTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterStoriesViewAccessibilityTest.swift; sourceTree = "<group>"; };
 		32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterStoreTest.swift; sourceTree = "<group>"; };
 		32F68CE828F07C2B00F7F52A /* AirshipMessageCenterResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipMessageCenterResources.swift; sourceTree = "<group>"; };
 		32F68CE928F07C2C00F7F52A /* MessageCenterSDKModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterSDKModule.swift; sourceTree = "<group>"; };
@@ -2755,6 +2758,7 @@
 		7ACACE012ECEEC5200C031E5 /* AssetCacheImageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetCacheImageProvider.swift; sourceTree = "<group>"; };
 		7F2A1B0F3D4E5F901234567D /* ThomasOrientationTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasOrientationTrackerTest.swift; sourceTree = "<group>"; };
 		83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipDebugPushData.xcdatamodel; sourceTree = "<group>"; };
+		83DFDD433477456A34D32B2F /* AirshipImageDataTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipImageDataTest.swift; sourceTree = "<group>"; };
 		8401769326C5671100373AF7 /* JSONMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONMatcher.swift; sourceTree = "<group>"; };
 		8401769726C5722400373AF7 /* JSONPredicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONPredicate.swift; sourceTree = "<group>"; };
 		8401769B26C5729E00373AF7 /* JSONValueMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValueMatcher.swift; sourceTree = "<group>"; };
@@ -3677,6 +3681,7 @@
 			children = (
 				6EB969B12FEF2D4900459ED3 /* App State */,
 				6EDAB53D2FE9A1AB00FD8194 /* Json */,
+				74B0913870516D9EE796BB13 /* UI */,
 				6EDAB53A2FE9A16700FD8194 /* Utils */,
 			);
 			path = Tests;
@@ -4386,6 +4391,7 @@
 				32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */,
 				22428F9BC1764F89B2B096F2 /* InboxStoreMigrationRecoveryTest.swift */,
 				32F615A628F708980015696D /* MessageCenterListTests.swift */,
+				4D5914AA2F0000010000A001 /* MessageCenterStoriesViewAccessibilityTest.swift */,
 				27CCF77E2F16DA500018058F /* MessageViewAnalyticsTest.swift */,
 			);
 			path = Tests;
@@ -5413,6 +5419,14 @@
 				6EF1933D28380644005F192A /* DefaultLogHandler.swift */,
 			);
 			name = Logger;
+			sourceTree = "<group>";
+		};
+		74B0913870516D9EE796BB13 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				83DFDD433477456A34D32B2F /* AirshipImageDataTest.swift */,
+			);
+			path = UI;
 			sourceTree = "<group>";
 		};
 		847B0011267CD925007CD249 /* Source */ = {
@@ -7276,6 +7290,7 @@
 				6EDAB5382FE99F0D00FD8194 /* AirshipVersionUtilsTest.swift in Sources */,
 				6EAFC2972FF2FA08005FA58D /* AirshipColorTests.swift in Sources */,
 				6ED2F52B2B7FC5C8000AFC80 /* AirshipIvyVersionMatcherTest.swift in Sources */,
+				FFE2411BC69F1027C03B740B /* AirshipImageDataTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7331,6 +7346,7 @@
 			files = (
 				6EB8394C2BC8AB51006611C4 /* TestWorkManager.swift in Sources */,
 				32F615A728F708980015696D /* MessageCenterListTests.swift in Sources */,
+				4D5914AA2F0000010000A002 /* MessageCenterStoriesViewAccessibilityTest.swift in Sources */,
 				32F615A828F708AD0015696D /* TestChannel.swift in Sources */,
 				32F68CDC28F02A7100F7F52A /* MessageCenterStoreTest.swift in Sources */,
 				60F06D2BFC694D178A1EB398 /* InboxStoreMigrationRecoveryTest.swift in Sources */,

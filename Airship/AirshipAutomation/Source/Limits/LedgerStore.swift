@@ -18,17 +18,22 @@ protocol LedgerStoreProtocol: Sendable {
     func recordEvents(_ events: [LedgerEvent]) async throws
 
     /// Fetches the events eligible for a schedule's limit evaluation: every
-    /// event recorded under the schedule's own ID, plus every event recorded
-    /// under the schedule's current shared group ID (if any).
+    /// event recorded under the schedule's own ID, plus — only when the caller
+    /// passes a non-nil `sharedID` — every event whose `schedule_id` or
+    /// `shared_id` equals it.
     ///
-    /// The two IDs are matched with a logical **OR**, not an AND: an event
-    /// qualifies if its `schedule_id` matches `scheduleID` OR its `shared_id`
-    /// matches `sharedID`. Despite the AND-like parameter list, an event does
-    /// not need to match both — passing a `sharedID` widens the result set, it
-    /// does not narrow it.
+    /// The `schedule_id` side of that second check is what lets a schedule
+    /// inherit a specifically-named schedule's pre-existing history, even
+    /// history recorded before that schedule ever had a `shared_id` at all
+    /// (e.g. backfilled pre-ledger history, which only ever carries a bare
+    /// `schedule_id`). Passing `sharedID` only ever widens the result set, never
+    /// narrows it — the caller decides whether to pass it at all based on
+    /// whether this schedule has opted into shared events (see
+    /// `.shared` on `LimitConfig`).
     /// - Parameters:
     ///   - scheduleID: The evaluating schedule's ID.
-    ///   - sharedID: The schedule's current shared group ID, if any.
+    ///   - sharedID: The schedule's current shared group ID, if it has opted
+    ///     into shared events; nil to restrict to its own events only.
     /// - Returns: The eligible events.
     func events(scheduleID: String, sharedID: String?) async throws -> [LedgerEvent]
 
@@ -116,11 +121,19 @@ actor LedgerStore: LedgerStoreProtocol {
         )
 
         return try await coreData.performWithResult { context in
-            // Logical OR, not AND: an event qualifies if it was recorded under
-            // this schedule's ID OR under its current shared group ID. Both are
-            // not required despite the AND-like parameter list.
+            // An event always qualifies under this schedule's own ID. When a
+            // shared ID is passed (the caller already decided this schedule
+            // opts into shared events), it also qualifies by EITHER of the
+            // shared event's own two fields: `scheduleID == sharedID` picks up
+            // a named schedule's bare events — pre-existing history recorded
+            // before it had any shared ID at all (e.g. backfill) — and
+            // `sharedID == sharedID` picks up events explicitly tagged into
+            // the same group.
             let predicate: NSPredicate = if let sharedID {
-                NSPredicate(format: "scheduleID == %@ OR sharedID == %@", scheduleID, sharedID)
+                NSPredicate(
+                    format: "scheduleID == %@ OR scheduleID == %@ OR sharedID == %@",
+                    scheduleID, sharedID, sharedID
+                )
             } else {
                 NSPredicate(format: "scheduleID == %@", scheduleID)
             }

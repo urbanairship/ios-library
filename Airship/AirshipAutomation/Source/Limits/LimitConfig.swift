@@ -4,24 +4,38 @@ import Foundation
 
 @_spi(AirshipInternal) import AirshipCore
 
-/// Opts a schedule's limit evaluation into ledger-based counting with optional
-/// exclusions.
+/// Configures how the limit is evaluated against the ledger.
 ///
-/// The limit is always evaluated against the ledger — counting `execution`
-/// events of every ``LedgerExecutionResult`` (never `triggered`) recorded under
-/// either of the schedule's ledger IDs. This config only subtracts from that
-/// tally via ``exclude``; it never changes the cap itself (the schedule's
-/// `limit`). With no config, every such execution counts.
-struct LimitConfig: Sendable, Codable, Equatable {
+/// The limit always counts this schedule's own `execution` events, of every
+/// ``LedgerExecutionResult`` (never `triggered`); it never changes the cap
+/// itself (the schedule's `limit`), only what counts toward it.
+///
+/// The two cases are a hard split, not a flag with a doc caveat: with
+/// ``selfOnly(exclude:)`` (or no `limit_config` at all), the tally is this
+/// schedule's own events, full stop — nothing another schedule declares can
+/// affect it, and there's no `source` field around to write a no-op
+/// reference to another schedule with. Only ``shared(exclude:)`` additionally
+/// counts events whose `schedule_id` OR `shared_id` matches this schedule's
+/// `ledger_config.shared_id` — not just events from schedules that also
+/// declare that `shared_id` themselves, but any event carrying it in either
+/// field, including a named schedule's own un-tagged history. Only then does
+/// ``ExclusionRule``'s `source` have another schedule's events to actually
+/// subtract.
+enum LimitConfig: Sendable, Equatable {
 
-    /// Rules that remove recorded events from this schedule's limit tally.
-    /// Events are always recorded; these rules only affect what counts against
-    /// the cap. When absent, nothing is excluded and every execution counts.
-    var exclude: ExclusionSet?
+    /// Counts only this schedule's own events. `exclude` rules have no
+    /// `source` field to misuse, since nothing else is in scope.
+    case selfOnly(exclude: SelfExclusionSet?)
 
-    enum CodingKeys: String, CodingKey {
-        case exclude
-    }
+    /// Also counts events matching this schedule's `shared_id`, in either
+    /// field. `exclude` rules can reference other schedules, since they're
+    /// actually in scope now.
+    case shared(exclude: ExclusionSet?)
+
+    /// A limit-config type this SDK version does not recognize. Falls back to
+    /// counting only this schedule's own events — the same safe default as no
+    /// config at all.
+    case unknown
 }
 
 /// A set of exclusion rules combined with a boolean operator. An event is
@@ -46,9 +60,32 @@ struct ExclusionSet: Sendable, Codable, Equatable {
     }
 }
 
-/// Excludes recorded events from a schedule's limit tally. A rule subtracts
-/// events that both come from ``source`` and satisfy ``match`` (every event
-/// from the source when `match` is nil).
+/// A set of self-only exclusion rules, mirroring ``ExclusionSet``'s shape but
+/// restricted to ``SelfExclusionRule``, used when `limit_config.type` is
+/// `"self"`.
+struct SelfExclusionSet: Sendable, Codable, Equatable {
+
+    /// The rules OR'd together. An event is excluded when it matches any rule.
+    var or: [SelfExclusionRule]
+
+    enum CodingKeys: String, CodingKey {
+        case or
+    }
+
+    init(or: [SelfExclusionRule]) {
+        self.or = or
+    }
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.or = try container.decodeIfPresent([SelfExclusionRule].self, forKey: .or) ?? []
+    }
+}
+
+/// Excludes recorded events from a schedule's limit tally when its
+/// `limit_config.type` is `"shared"`. A rule subtracts events that both come
+/// from ``source`` and satisfy ``match`` (every event from the source when
+/// `match` is nil).
 struct ExclusionRule: Sendable, Codable, Equatable {
 
     /// Which schedule's events this rule can subtract.
@@ -60,6 +97,21 @@ struct ExclusionRule: Sendable, Codable, Equatable {
 
     enum CodingKeys: String, CodingKey {
         case source
+        case match
+    }
+}
+
+/// Excludes recorded events from a schedule's own limit tally when its
+/// `limit_config.type` is `"self"`. No `source` field: with no shared group
+/// in scope, "this schedule's own events" is the only possible source, so a
+/// rule is just what to subtract.
+struct SelfExclusionRule: Sendable, Codable, Equatable {
+
+    /// Which of this schedule's own events to subtract. If nil, every event
+    /// is subtracted.
+    var match: LedgerEventMatch?
+
+    enum CodingKeys: String, CodingKey {
         case match
     }
 }
@@ -152,8 +204,11 @@ enum SharedGroupMatch: Sendable, Equatable {
     /// the schedule has no shared group, matches events recorded with none.
     case current
 
-    /// Events NOT recorded under the evaluating schedule's current shared
-    /// group, including events recorded with no shared group at all.
+    /// The complement of `current` — matches whatever that doesn't. When the
+    /// schedule has a current shared group, that's every event whose
+    /// `sharedID` differs, including events recorded with no shared group at
+    /// all. When the schedule has no current shared group, `current` already
+    /// matches events recorded with none, so this matches none of them.
     case notCurrent
 
     /// Events recorded under a specific shared group, named absolutely.
@@ -165,6 +220,49 @@ enum SharedGroupMatch: Sendable, Equatable {
 }
 
 // MARK: - Codable
+
+extension LimitConfig: Codable {
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case exclude
+    }
+
+    private enum RawType: String {
+        case selfOnly = "self"
+        case shared
+    }
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let rawType = try container.decode(String.self, forKey: .type)
+        switch RawType(rawValue: rawType) {
+        case .selfOnly:
+            self = .selfOnly(
+                exclude: try container.decodeIfPresent(SelfExclusionSet.self, forKey: .exclude)
+            )
+        case .shared:
+            self = .shared(
+                exclude: try container.decodeIfPresent(ExclusionSet.self, forKey: .exclude)
+            )
+        case nil:
+            self = .unknown
+        }
+    }
+
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .selfOnly(let exclude):
+            try container.encode(RawType.selfOnly.rawValue, forKey: .type)
+            try container.encodeIfPresent(exclude, forKey: .exclude)
+        case .shared(let exclude):
+            try container.encode(RawType.shared.rawValue, forKey: .type)
+            try container.encodeIfPresent(exclude, forKey: .exclude)
+        case .unknown:
+            try container.encode("unknown", forKey: .type)
+        }
+    }
+}
 
 extension LedgerSource: Codable {
     private enum CodingKeys: String, CodingKey {
@@ -332,8 +430,21 @@ struct LedgerLimitContext: Sendable, Equatable {
     let currentSharedID: String?
 }
 
-extension ExclusionSet {
+/// Common interface for a schedule's exclude rules, whichever `LimitConfig`
+/// case they came from — `ExclusionSet` (`"shared"`) and `SelfExclusionSet`
+/// (`"self"`) both subtract from the tally the same way.
+protocol Excluder: Sendable {
     /// Whether `event` is removed from the tally: true when it matches ANY rule.
+    func excludes(_ event: LedgerEvent, context: LedgerLimitContext, now: Date) -> Bool
+}
+
+extension ExclusionSet: Excluder {
+    func excludes(_ event: LedgerEvent, context: LedgerLimitContext, now: Date) -> Bool {
+        return self.or.contains { $0.matches(event, context: context, now: now) }
+    }
+}
+
+extension SelfExclusionSet: Excluder {
     func excludes(_ event: LedgerEvent, context: LedgerLimitContext, now: Date) -> Bool {
         return self.or.contains { $0.matches(event, context: context, now: now) }
     }
@@ -344,6 +455,16 @@ extension ExclusionRule {
     /// (if present) satisfies ``match``.
     func matches(_ event: LedgerEvent, context: LedgerLimitContext, now: Date) -> Bool {
         guard self.source.matches(event, context: context) else { return false }
+        guard let match else { return true }
+        return match.matches(event, context: context, now: now)
+    }
+}
+
+extension SelfExclusionRule {
+    /// Whether this rule subtracts `event`. No `source` to check — with no
+    /// shared group in scope, every candidate event is already this
+    /// schedule's own.
+    func matches(_ event: LedgerEvent, context: LedgerLimitContext, now: Date) -> Bool {
         guard let match else { return true }
         return match.matches(event, context: context, now: now)
     }

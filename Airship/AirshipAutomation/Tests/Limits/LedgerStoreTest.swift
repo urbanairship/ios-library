@@ -84,6 +84,21 @@ struct LedgerStoreTest {
     }
 
     @Test
+    func testQueryMatchesSharedIDAgainstBareScheduleID() async throws {
+        // A schedule's pre-group history — e.g. backfilled pre-ledger events —
+        // carries no sharedID at all, only its own scheduleID. A schedule that
+        // names it via sharedID must still inherit it.
+        let bareHistory = execution(scheduleID: "schedule-original")
+        // Unrelated, must not match.
+        let unrelated = execution(scheduleID: "schedule-3", sharedID: "group-2")
+
+        try await store.recordEvents([bareHistory, unrelated])
+
+        let result = try await store.events(scheduleID: "schedule-new", sharedID: "schedule-original")
+        #expect(result == [bareHistory])
+    }
+
+    @Test
     func testQueryIgnoresSharedWhenNil() async throws {
         let sharedEvent = execution(scheduleID: "schedule-2", sharedID: "group-1")
         let ownEvent = execution(scheduleID: "schedule-1", sharedID: "group-1")

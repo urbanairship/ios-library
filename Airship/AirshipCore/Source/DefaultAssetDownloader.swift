@@ -46,6 +46,16 @@ public struct DefaultAssetDownloader: AssetDownloader, Sendable {
                         return
                     }
 
+                    if let httpResponse = response as? HTTPURLResponse,
+                       !(200..<300).contains(httpResponse.statusCode) {
+                        continuation.resume(
+                            throwing: AirshipErrors.error(
+                                "Asset download failed for \(remoteURL) with status \(httpResponse.statusCode)"
+                            )
+                        )
+                        return
+                    }
+
                     guard let data = data else {
                         continuation.resume(throwing: URLError(.badServerResponse))
                         return

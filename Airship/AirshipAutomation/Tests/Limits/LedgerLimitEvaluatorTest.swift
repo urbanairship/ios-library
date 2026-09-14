@@ -92,7 +92,58 @@ struct LedgerLimitEvaluatorTest {
         try await recordExecution(scheduleID: "schedule-B", sharedID: "group-1")
 
         let over = await evaluator.isOverLimit(
+            schedule: schedule(
+                id: "schedule-A", limit: 2, sharedID: "group-1",
+                limitConfig: .shared(exclude: nil)
+            )
+        )
+        #expect(over)
+    }
+
+    @Test
+    func testSharedEventsIgnoredWithoutSharedLimitConfig() async throws {
+        // Same setup as testCountsAcrossSharedGroup, but this schedule never
+        // opted in — its own payload alone must determine its tally, so
+        // schedule-B's contribution must not count, no matter what schedule-B
+        // itself declares. No limit_config at all defaults to .selfOnly.
+        try await recordExecution(scheduleID: "schedule-A", sharedID: "group-1")
+        try await recordExecution(scheduleID: "schedule-B", sharedID: "group-1")
+
+        let over = await evaluator.isOverLimit(
             schedule: schedule(id: "schedule-A", limit: 2, sharedID: "group-1")
+        )
+        #expect(!over)
+    }
+
+    @Test
+    func testExplicitSelfOnlyIgnoresSharedGroup() async throws {
+        // An explicit .selfOnly behaves the same as no limit_config at all.
+        try await recordExecution(scheduleID: "schedule-A", sharedID: "group-1")
+        try await recordExecution(scheduleID: "schedule-B", sharedID: "group-1")
+
+        let over = await evaluator.isOverLimit(
+            schedule: schedule(
+                id: "schedule-A", limit: 2, sharedID: "group-1",
+                limitConfig: .selfOnly(exclude: nil)
+            )
+        )
+        #expect(!over)
+    }
+
+    @Test
+    func testSharedInheritsNamedSchedulesBareHistory() async throws {
+        // schedule-original has pre-existing history recorded before it was
+        // ever part of a group (e.g. backfilled pre-ledger executions) — no
+        // sharedID on the event at all, just its own scheduleID.
+        try await recordExecution(scheduleID: "schedule-original", result: .backfill, count: 3)
+
+        // schedule-new joins by naming schedule-original's own ID as its
+        // shared_id, and opts into counting it.
+        let over = await evaluator.isOverLimit(
+            schedule: schedule(
+                id: "schedule-new", limit: 3, sharedID: "schedule-original",
+                limitConfig: .shared(exclude: nil)
+            )
         )
         #expect(over)
     }
@@ -103,7 +154,10 @@ struct LedgerLimitEvaluatorTest {
         try await recordExecution(scheduleID: "schedule-Z", sharedID: "other-group")
 
         let over = await evaluator.isOverLimit(
-            schedule: schedule(id: "schedule-A", limit: 1, sharedID: "group-1")
+            schedule: schedule(
+                id: "schedule-A", limit: 1, sharedID: "group-1",
+                limitConfig: .shared(exclude: nil)
+            )
         )
         #expect(!over)
     }
@@ -113,7 +167,7 @@ struct LedgerLimitEvaluatorTest {
         try await recordExecution(scheduleID: "schedule-A", sharedID: "group-1")
         try await recordExecution(scheduleID: "schedule-B", sharedID: "group-1")
 
-        let config = LimitConfig(
+        let config = LimitConfig.shared(
             exclude: ExclusionSet(or: [ExclusionRule(source: .otherSchedules, match: nil)])
         )
 
@@ -130,6 +184,31 @@ struct LedgerLimitEvaluatorTest {
     }
 
     @Test
+    func testSelfOnlyExcludesOwnEvents() async throws {
+        // .selfOnly's exclude rules have no `source` — they always apply to
+        // this schedule's own events, the only thing in scope.
+        try await recordExecution(scheduleID: "schedule-A", result: .variantMiss)
+        try await recordExecution(scheduleID: "schedule-A", result: .succeeded)
+
+        let config = LimitConfig.selfOnly(
+            exclude: SelfExclusionSet(
+                or: [SelfExclusionRule(match: .execution(.init(results: [.variantMiss])))]
+            )
+        )
+
+        // The variantMiss event is excluded, leaving only the succeeded one.
+        let overAt1 = await evaluator.isOverLimit(
+            schedule: schedule(id: "schedule-A", limit: 1, limitConfig: config)
+        )
+        #expect(overAt1)
+
+        let overAt2 = await evaluator.isOverLimit(
+            schedule: schedule(id: "schedule-A", limit: 2, limitConfig: config)
+        )
+        #expect(!overAt2)
+    }
+
+    @Test
     func testBackfillCountContributes() async throws {
         try await recordExecution(result: .backfill, count: 4)
         #expect(await evaluator.isOverLimit(schedule: schedule(limit: 4)))
@@ -139,7 +218,7 @@ struct LedgerLimitEvaluatorTest {
     // MARK: - Schedule parsing
 
     @Test
-    func testScheduleDecodesLimitConfig() throws {
+    func testScheduleDecodesSharedLimitConfig() throws {
         let json = """
         {
           "id": "test-schedule",
@@ -149,9 +228,10 @@ struct LedgerLimitEvaluatorTest {
           "limit": 3,
           "ledger_config": { "shared_id": "group-1" },
           "limit_config": {
+            "type": "shared",
             "exclude": {
               "or": [
-                { "source": { "type": "own_schedule" }, "match": { "type": "execution", "results": ["control"] } }
+                { "source": { "type": "own_schedule" }, "match": { "type": "execution", "results": ["variant_miss"] } }
               ]
             }
           }
@@ -162,8 +242,57 @@ struct LedgerLimitEvaluatorTest {
         #expect(schedule.limit == 3)
         #expect(schedule.ledgerSharedID == "group-1")
 
-        let rule = try #require(schedule.limitConfig?.exclude?.or.first)
+        guard case .shared(let exclude) = schedule.limitConfig else {
+            Issue.record("Expected .shared limitConfig")
+            return
+        }
+        let rule = try #require(exclude?.or.first)
         #expect(rule.source == .ownSchedule)
+    }
+
+    @Test
+    func testScheduleDecodesSelfLimitConfig() throws {
+        let json = """
+        {
+          "id": "test-schedule",
+          "type": "actions",
+          "actions": { "foo": "bar" },
+          "triggers": [],
+          "limit": 3,
+          "limit_config": {
+            "type": "self",
+            "exclude": {
+              "or": [
+                { "match": { "type": "execution", "results": ["variant_miss"] } }
+              ]
+            }
+          }
+        }
+        """
+        let schedule = try JSONDecoder().decode(AutomationSchedule.self, from: Data(json.utf8))
+
+        guard case .selfOnly(let exclude) = schedule.limitConfig else {
+            Issue.record("Expected .selfOnly limitConfig")
+            return
+        }
+        #expect(exclude?.or.count == 1)
+    }
+
+    @Test
+    func testScheduleDecodesUnknownLimitConfigType() throws {
+        // A `type` this SDK version does not recognize falls back to a safe
+        // .unknown case rather than failing the whole schedule decode.
+        let json = """
+        {
+          "id": "test-schedule",
+          "type": "actions",
+          "actions": { "foo": "bar" },
+          "triggers": [],
+          "limit_config": { "type": "some_future_type" }
+        }
+        """
+        let schedule = try JSONDecoder().decode(AutomationSchedule.self, from: Data(json.utf8))
+        #expect(schedule.limitConfig == .unknown)
     }
 
     @Test

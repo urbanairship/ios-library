@@ -68,7 +68,6 @@ public struct MessageCenterStoriesView: View {
     private var storyViewStyle
 
     public var body: some View {
-        //TODO: localization
         if viewModel.isLoaded {
             if viewModel.stories.isEmpty {
                 emptyView()
@@ -81,6 +80,13 @@ public struct MessageCenterStoriesView: View {
                                 .onTapGesture {
                                     onMessageSelected(message)
                                 }
+                                .accessibilityElement()
+                                .accessibilityLabel(Self.accessibilityLabel(for: message))
+                                .accessibilityHint("ua_message_cell_description".messageCenterLocalizedString)
+                                .accessibilityAddTraits(.isButton)
+                                .accessibilityAction {
+                                    onMessageSelected(message)
+                                }
                         }
                     }
                     .padding(.horizontal, 12)
@@ -91,6 +97,10 @@ public struct MessageCenterStoriesView: View {
                 .frame(height: Self.preferredSize)
                 .frame(maxWidth: .infinity)
         }
+    }
+
+    static func accessibilityLabel(for message: MessageCenterMessage) -> String {
+        message.accessibilityDescription
     }
 }
 
