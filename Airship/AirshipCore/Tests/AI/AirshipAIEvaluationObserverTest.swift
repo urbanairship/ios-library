@@ -164,6 +164,32 @@ struct AirshipAIEvaluationObserverTest {
         }
     }
 
+    @Test("A privacy disable mid-evaluation reports as skipped")
+    func privacyDisableMidEvaluationReportsSkipped() async throws {
+        let recorder = Recorder()
+        let privacyManager = TestPrivacyManager(
+            dataStore: PreferenceDataStore(appKey: UUID().uuidString),
+            config: RuntimeConfig.testConfig(),
+            defaultEnabledFeatures: .all
+        )
+        let manager = AirshipAI.DefaultManager(privacyManager: privacyManager)
+        manager.setEvaluationObserver(recorder.observer)
+        let model = DisablingAIModel(privacyManager: privacyManager)
+        manager.setModelResolver { _ in .custom(model) }
+
+        _ = await manager.evaluate(TestEvaluation())
+        try await waitForRecords(recorder, count: 1)
+
+        let records = recorder.records.value
+        #expect(records.count == 1)
+        guard case .skipped(let reason) = records.first?.outcome else {
+            Issue.record("Expected .skipped, got \(String(describing: records.first?.outcome))")
+            return
+        }
+        #expect(reason == "AI disabled by privacy manager")
+        #expect(records.first?.attempts == 1)
+    }
+
     @Test("The manager hands the observer to the evaluation")
     func managerForwardsObserver() async throws {
         let recorder = Recorder()

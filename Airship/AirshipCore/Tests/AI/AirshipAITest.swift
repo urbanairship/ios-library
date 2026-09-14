@@ -491,6 +491,32 @@ final class MockAIModel: AirshipAI.ModelAdapter, @unchecked Sendable {
     }
 }
 
+/// Fails every attempt and flips `.onDeviceAI` off from its first `retryDecision`, landing
+/// the disable squarely between attempts. Gives up after the second attempt so a missing
+/// recheck fails the test quickly instead of riding the retry loop into the timeout.
+final class DisablingAIModel: AirshipAI.ModelAdapter, @unchecked Sendable {
+    struct ModelError: Error {}
+
+    private let privacyManager: TestPrivacyManager
+    private(set) var respondCallCount = 0
+
+    init(privacyManager: TestPrivacyManager) {
+        self.privacyManager = privacyManager
+    }
+
+    var availability: AirshipAI.Availability { .available }
+
+    func retryDecision(usage: AirshipAI.AnyUsage, error: any Error, attempt: Int) -> AirshipAI.RetryDecision {
+        privacyManager.disableFeatures(.onDeviceAI)
+        return attempt < 2 ? .retry(after: 0) : .fail
+    }
+
+    func respond(_ request: AirshipAI.Request) async throws -> AirshipJSON {
+        respondCallCount += 1
+        throw ModelError()
+    }
+}
+
 let testSchema = AirshipJSONSchema.object(
     properties: [
         "allow": .boolean(description: "whether to allow"),
@@ -957,6 +983,63 @@ struct AirshipAIPrivacyManagerTests {
             return
         }
         #expect(model.respondCallCount == 0)
+    }
+
+    @Test
+    func evaluateSkipsWhenAIDisabledDuringContextFetch() async {
+        let privacyManager = TestPrivacyManager(
+            dataStore: PreferenceDataStore(appKey: UUID().uuidString),
+            config: RuntimeConfig.testConfig(),
+            defaultEnabledFeatures: .all
+        )
+        let manager = AirshipAI.DefaultManager(privacyManager: privacyManager)
+        let model = MockAIModel()
+        manager.setModelResolver { _ in .custom(model) }
+
+        // A provider that signals when the fetch starts and suspends until released, so
+        // the disable lands while context resolution is in flight.
+        let (fetchStarted, fetchStartedContinuation) = AsyncStream.makeStream(of: Void.self)
+        let (release, releaseContinuation) = AsyncStream.makeStream(of: Void.self)
+        manager.setContextProvider(for: .testUsage) { _ in
+            fetchStartedContinuation.yield(())
+            for await _ in release { break }
+            return .empty
+        }
+        defer { manager.setContextProvider(for: .testUsage, nil) }
+
+        async let pendingResult = manager.evaluate(TestEvaluation())
+        for await _ in fetchStarted { break }
+        privacyManager.disableFeatures(.onDeviceAI)
+        releaseContinuation.yield(())
+
+        let result = await pendingResult
+
+        guard case .skipped = result else {
+            Issue.record("Expected .skipped when AI is disabled during the context fetch, got \(result)")
+            return
+        }
+        #expect(model.respondCallCount == 0)
+    }
+
+    @Test
+    func evaluateStopsRetryingWhenAIDisabledBetweenAttempts() async {
+        let privacyManager = TestPrivacyManager(
+            dataStore: PreferenceDataStore(appKey: UUID().uuidString),
+            config: RuntimeConfig.testConfig(),
+            defaultEnabledFeatures: .all
+        )
+        let manager = AirshipAI.DefaultManager(privacyManager: privacyManager)
+        let model = DisablingAIModel(privacyManager: privacyManager)
+        manager.setModelResolver { _ in .custom(model) }
+
+        let result = await manager.evaluate(TestEvaluation())
+
+        guard case .skipped = result else {
+            Issue.record("Expected .skipped when AI is disabled between attempts, got \(result)")
+            return
+        }
+        // The disable happened in the first attempt's retryDecision, so no second attempt.
+        #expect(model.respondCallCount == 1)
     }
 
     @Test

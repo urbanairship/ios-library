@@ -16,11 +16,16 @@ extension AirshipAI {
             self.maxResponseTimeout = maxResponseTimeout
         }
 
+        /// Thrown when `isAllowed` turns false mid-evaluation; surfaced as `.skipped`,
+        /// not `.failed`, and never handed to the model's `retryDecision`.
+        private struct DisallowedError: Error {}
+
         func evaluate<E: Evaluation>(
             _ evaluation: E,
             model: any ModelAdapter,
             context: Context,
-            observer: AirshipAI.EvaluationObserver? = nil
+            observer: AirshipAI.EvaluationObserver? = nil,
+            isAllowed: @escaping @Sendable () -> Bool = { true }
         ) async -> Result<E.Output> {
             let schema = evaluation.schema
             let instructions = evaluation.instructions()
@@ -76,7 +81,7 @@ extension AirshipAI {
 
             do {
                 let json = try await Self.withTimeout(maxResponseTimeout) {
-                    try await Self.withRetry(model: model, usage: anyUsage, usageString: usage, maxDelay: maxResponseTimeout) {
+                    try await Self.withRetry(model: model, usage: anyUsage, usageString: usage, maxDelay: maxResponseTimeout, isAllowed: isAllowed) {
                         attempts.update { $0 += 1 }
                         let json = try await model.respond(request)
                         // Reject non-conforming output inside the retry loop so another attempt
@@ -103,6 +108,10 @@ extension AirshipAI {
                     AirshipLogger.warn("AI evaluation failed for \(usage): \(error)")
                     return .failed(error)
                 }
+            } catch is DisallowedError {
+                let reason = "AI disabled by privacy manager"
+                report(.skipped(reason: reason))
+                return .skipped(reason: reason)
             } catch {
                 AirshipLogger.warn("AI evaluation failed for \(usage): \(error)")
                 report(.failed(error))
@@ -149,17 +158,23 @@ extension AirshipAI {
         /// Runs `operation`, asking the model after each failure whether to retry (and
         /// after how long) or give up. The model's `retryDecision` picks the schedule;
         /// `withTimeout` above still caps the total time it's given to do so.
+        ///
+        /// `isAllowed` is re-checked right before every attempt: the caller's entry
+        /// check may be stale by now (a context fetch suspended, a retry delay slept),
+        /// and nothing may reach the model after the feature is turned off.
         private static func withRetry<T: Sendable>(
             model: any ModelAdapter,
             usage: AnyUsage,
             usageString: String,
             maxDelay: TimeInterval,
+            isAllowed: @Sendable () -> Bool,
             operation: @Sendable () async throws -> T
         ) async throws -> T {
             var attempt = 0
             while true {
                 attempt += 1
                 try Task.checkCancellation()
+                guard isAllowed() else { throw DisallowedError() }
                 do {
                     return try await operation()
                 } catch is CancellationError {

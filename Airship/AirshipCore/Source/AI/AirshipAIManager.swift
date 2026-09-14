@@ -126,11 +126,15 @@ extension AirshipAI {
                 return .skipped(reason: "No context to personalize on")
             }
 
+            // The entry check above may be stale by now (the context fetch inside
+            // `resolve` can suspend for a while), so the evaluator re-checks this
+            // before each model call, including retries.
             return await evaluator.evaluate(
                 evaluation,
                 model: resolved.model,
                 context: merged,
-                observer: resolved.observer
+                observer: resolved.observer,
+                isAllowed: { self.enabled }
             )
         }
 
