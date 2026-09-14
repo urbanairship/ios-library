@@ -160,7 +160,12 @@ jobs:
           repositories: thomas-layouts
       - name: Install Maestro and webp
         run: |
-          brew install --quiet openjdk webp
+          # openjdk/webp pinned to a specific homebrew-core commit so the build
+          # toolchain doesn't silently change between runs; bump to pick up a
+          # reviewed update.
+          brew install --quiet \
+            https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/o/openjdk.rb \
+            https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/w/webp.rb
           echo "JAVA_HOME=$(brew --prefix openjdk)" >> "$GITHUB_ENV"
           echo "$(brew --prefix openjdk)/bin" >> "$GITHUB_PATH"
           # Exact pin: maestro versions change driver and capture behavior, which
