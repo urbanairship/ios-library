@@ -34,6 +34,15 @@ public struct DefaultAssetFileManager: AssetFileManager, Sendable {
     public func ensureCacheDirectory(identifier: String) throws -> URL {
         let url = try ensureCacheRootDirectory(rootPathComponent: rootPathComponent)
         let cacheDirectory = url.appendingPathComponent(identifier, isDirectory: true)
+
+        // `identifier` is server-supplied (usually a schedule ID); reject anything whose
+        // resolved path (e.g. via `..` components) escapes the cache root.
+        let rootPath = url.standardizedFileURL.path
+        let resolvedPath = cacheDirectory.standardizedFileURL.path
+        guard resolvedPath == rootPath || resolvedPath.hasPrefix(rootPath + "/") else {
+            throw AirshipErrors.error("Invalid cache identifier, resolves outside the cache root: \(identifier)")
+        }
+
         return try ensureCacheDirectory(url: cacheDirectory)
     }
 

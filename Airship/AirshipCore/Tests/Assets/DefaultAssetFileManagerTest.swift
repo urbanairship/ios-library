@@ -46,6 +46,15 @@ import Foundation
     }
 
     @Test
+    func testEnsureCacheDirectoryRejectsPathTraversal() {
+        let assetManager = DefaultAssetFileManager(rootPathComponent: "testCacheRoot")
+
+        #expect(throws: (any Error).self) {
+            try assetManager.ensureCacheDirectory(identifier: "../../../databases/airship")
+        }
+    }
+
+    @Test
     func testClearAssetsSuccess() throws {
         let rootPathComponent = "testCacheRoot"
         let assetManager = DefaultAssetFileManager(rootPathComponent: rootPathComponent)
