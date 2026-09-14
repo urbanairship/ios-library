@@ -132,12 +132,14 @@ actor RetryingQueue<T: Sendable> {
         config: RemoteConfig.RetryingQueueConfig? = nil,
         taskSleeper: any AirshipTaskSleeper = .shared
     ) {
-        self.id = id
-        self.maxConcurrentOperations = config?.maxConcurrentOperations ?? 3
-        self.maxPendingResults = config?.maxPendingResults ?? 2
-        self.initialBackOff = config?.initialBackoff ?? 15
-        self.maxBackOff = config?.maxBackOff ?? 60
-        self.taskSleeper = taskSleeper
+        self.init(
+            id: id,
+            maxConcurrentOperations: config?.maxConcurrentOperations ?? 3,
+            maxPendingResults: config?.maxPendingResults ?? 2,
+            initialBackOff: config?.initialBackoff ?? 15,
+            maxBackOff: config?.maxBackOff ?? 60,
+            taskSleeper: taskSleeper
+        )
     }
 
     init(
@@ -152,7 +154,7 @@ actor RetryingQueue<T: Sendable> {
         self.maxConcurrentOperations = max(1, maxConcurrentOperations)
         self.maxPendingResults = max(1, maxPendingResults)
         self.initialBackOff = max(1, initialBackOff)
-        self.maxBackOff = max(initialBackOff, maxBackOff)
+        self.maxBackOff = max(self.initialBackOff, maxBackOff)
         self.taskSleeper = taskSleeper
     }
 

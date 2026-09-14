@@ -252,6 +252,42 @@ struct RetryingQueueTests {
 
         #expect((await results.get()) == [2, 1])
     }
+
+    @Test(.timeLimit(.minutes(1)))
+    func testRemoteConfigValuesAreClamped() async throws {
+        // Zeroed remote config values must be clamped like the manual
+        // initializer clamps its parameters, otherwise a zero concurrency
+        // limit stops the queue entirely.
+        let json = """
+        {
+            "max_concurrent_operations": 0,
+            "max_pending_results": 0,
+            "initial_back_off_seconds": 0,
+            "max_back_off_seconds": 0
+        }
+        """
+        let config = try JSONDecoder().decode(
+            RemoteConfig.RetryingQueueConfig.self,
+            from: Data(json.utf8)
+        )
+
+        let queue = RetryingQueue<Bool>(
+            id: "test",
+            config: config,
+            taskSleeper: taskSleeper
+        )
+
+        let result = await queue.run(name: "clamped") { state in
+            let attempt: Int = await state.value(key: "attempt") ?? 1
+            await state.setValue(attempt + 1, key: "attempt")
+            return attempt >= 3 ? .success(result: true, ignoreReturnOrder: true) : .retry
+        }
+
+        #expect(result)
+        // Zero backoffs clamp to 1 second, and maxBackOff clamps against the
+        // clamped initial backoff, so the second retry stays at 1 too.
+        #expect(taskSleeper.sleeps == [1, 1])
+    }
 }
 
 actor ActorValue<T: Sendable> {

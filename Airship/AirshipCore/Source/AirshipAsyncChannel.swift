@@ -12,7 +12,7 @@ public actor AirshipAsyncChannel<T: Sendable> {
         case bufferingNewest(Int)
         case bufferingOldest(Int)
 
-        fileprivate func toStreamPolicy() -> AsyncStream<T>.Continuation.BufferingPolicy {
+        fileprivate func toStreamPolicy<V>() -> AsyncStream<V>.Continuation.BufferingPolicy {
             switch (self) {
             case .unbounded: return .unbounded
             case .bufferingOldest(let buffer): return .bufferingOldest(buffer)
@@ -79,7 +79,7 @@ public extension AirshipAsyncChannel {
         initialValue: (@Sendable () async -> R?)? = nil,
         transform: @escaping @Sendable (T) async -> R?
     ) -> AsyncStream<R> {
-        return AsyncStream<R> { [weak self] continuation in
+        return AsyncStream<R>(bufferingPolicy: bufferPolicy.toStreamPolicy()) { [weak self] continuation in
             let task = Task { [weak self] in
                 guard let stream = await self?.makeStream() else {
                     return
@@ -139,7 +139,7 @@ public extension AirshipAsyncChannel {
         initialValue: (@Sendable () async -> R?)? = nil,
         transform: @escaping @Sendable (T) async -> R?
     ) -> AsyncStream<R> {
-        return AsyncStream<R> { [weak self] continuation in
+        return AsyncStream<R>(bufferingPolicy: bufferPolicy.toStreamPolicy()) { [weak self] continuation in
             let task = Task { [weak self] in
                 guard let stream = await self?.makeStream() else {
                     return

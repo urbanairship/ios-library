@@ -165,4 +165,84 @@ struct AirshipAsyncChannelTest {
         #expect([1, 1, 1, 2, 2, 3] == received)
     }
 
+    @Test
+    func testNonIsolatedStreamBufferPolicy() async throws {
+        let counter = Counter()
+        var updates = channel.makeNonIsolatedStream(
+            bufferPolicy: .bufferingNewest(1),
+            initialValue: { 0 },
+            transform: { value in
+                await counter.increment()
+                return value
+            }
+        ).makeAsyncIterator()
+
+        // Wait for first so we know the task is setup to listen for changes
+        #expect(await updates.next() == 0)
+
+        for value in 1...4 {
+            await channel.send(value)
+        }
+
+        // Wait until the transform has processed the sentinel (4) so 1...3
+        // have all been yielded into the returned stream while unconsumed.
+        while await counter.count < 4 {
+            await Task.yield()
+        }
+
+        var received: [Int] = []
+        while let next = await updates.next(), next != 4 {
+            received.append(next)
+        }
+
+        // With a bufferingNewest(1) policy, the unconsumed 1 and 2 must
+        // have been dropped in favor of newer values.
+        #expect(!received.contains(1))
+        #expect(!received.contains(2))
+    }
+
+    @Test
+    func testNonIsolatedDedupingStreamBufferPolicy() async throws {
+        let counter = Counter()
+        var updates = channel.makeNonIsolatedDedupingStream(
+            bufferPolicy: .bufferingNewest(1),
+            initialValue: { 0 },
+            transform: { value in
+                await counter.increment()
+                return value
+            }
+        ).makeAsyncIterator()
+
+        // Wait for first so we know the task is setup to listen for changes
+        #expect(await updates.next() == 0)
+
+        for value in 1...4 {
+            await channel.send(value)
+        }
+
+        // Wait until the transform has processed the sentinel (4) so 1...3
+        // have all been yielded into the returned stream while unconsumed.
+        while await counter.count < 4 {
+            await Task.yield()
+        }
+
+        var received: [Int] = []
+        while let next = await updates.next(), next != 4 {
+            received.append(next)
+        }
+
+        // With a bufferingNewest(1) policy, the unconsumed 1 and 2 must
+        // have been dropped in favor of newer values.
+        #expect(!received.contains(1))
+        #expect(!received.contains(2))
+    }
+
+}
+
+fileprivate actor Counter {
+    private(set) var count = 0
+
+    func increment() {
+        count += 1
+    }
 }
