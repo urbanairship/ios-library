@@ -142,10 +142,37 @@ import Foundation
             ]
         ]
 
+        let titleOnlyNotification: [String: Any] = [
+            "aps": [
+                "alert": [
+                    "title": "Breaking News"
+                ]
+            ]
+        ]
+
+        let titleLocKeyNotification: [String: Any] = [
+            "aps": [
+                "alert": [
+                    "title-loc-key": "cool"
+                ]
+            ]
+        ]
+
+        let subtitleOnlyNotification: [String: Any] = [
+            "aps": [
+                "alert": [
+                    "subtitle": "cool"
+                ]
+            ]
+        ]
+
         #expect(AirshipUtils.isAlertingPush(alertNotification))
         #expect(AirshipUtils.isAlertingPush(notification))
         #expect(AirshipUtils.isAlertingPush(locKeyNotification))
         #expect(AirshipUtils.isAlertingPush(bodyNotification))
+        #expect(AirshipUtils.isAlertingPush(titleOnlyNotification))
+        #expect(AirshipUtils.isAlertingPush(titleLocKeyNotification))
+        #expect(AirshipUtils.isAlertingPush(subtitleOnlyNotification))
     }
 
     @Test

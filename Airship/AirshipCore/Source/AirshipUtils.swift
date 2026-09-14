@@ -285,6 +285,15 @@ public final class AirshipUtils {
             if (alert["loc-key"] as? String)?.isEmpty == false {
                 return true
             }
+            if (alert["title"] as? String)?.isEmpty == false {
+                return true
+            }
+            if (alert["title-loc-key"] as? String)?.isEmpty == false {
+                return true
+            }
+            if (alert["subtitle"] as? String)?.isEmpty == false {
+                return true
+            }
         } else if let alert = apsDict["alert"] as? String {
             if !alert.isEmpty {
                 return true
