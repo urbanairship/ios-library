@@ -582,16 +582,16 @@ extension AirshipConfig {
 
         let matchPred = NSPredicate(format: "SELF MATCHES %@", "^\\S{22}+$")
 
-        guard
-            let appKey,
-            matchPred.evaluate(with: appKey),
-            let appSecret,
-            matchPred.evaluate(with: appSecret),
-            appKey != appSecret
-        else {
-            throw AirshipErrors.error(
-                "Invalid app credentials \(appKey ?? ""):\(appSecret ?? "")"
-            )
+        guard let appKey, matchPred.evaluate(with: appKey) else {
+            throw AirshipErrors.error("Invalid app credentials: app key is missing or not in the expected format")
+        }
+
+        guard let appSecret, matchPred.evaluate(with: appSecret) else {
+            throw AirshipErrors.error("Invalid app credentials: app secret is missing or not in the expected format")
+        }
+
+        guard appKey != appSecret else {
+            throw AirshipErrors.error("Invalid app credentials: app key and app secret must not match")
         }
 
         return AirshipAppCredentials(
