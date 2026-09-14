@@ -105,5 +105,44 @@ struct UANotificationServiceExtensionTests {
         #expect("" == deliveredContent.launchImageName)
         #expect("" == deliveredContent.threadIdentifier)
     }
-    
+
+    @Test
+    func contentHandlerRunsOnlyOnce() async throws {
+        let content = UNNotificationContent()
+        let request = UNNotificationRequest(
+            identifier: "identifier", content: content, trigger: nil
+        )
+
+        let callCount = CallCounter()
+        await withCheckedContinuation { continuation in
+            subject.didReceive(request) { _ in
+                if callCount.increment() == 1 {
+                    continuation.resume()
+                }
+            }
+        }
+
+        subject.serviceExtensionTimeWillExpire()
+
+        #expect(callCount.value == 1)
+    }
+
+}
+
+private final class CallCounter: @unchecked Sendable {
+    private let lock = NSLock()
+    private var count = 0
+
+    var value: Int {
+        lock.lock()
+        defer { lock.unlock() }
+        return count
+    }
+
+    func increment() -> Int {
+        lock.lock()
+        defer { lock.unlock() }
+        count += 1
+        return count
+    }
 }

@@ -22,7 +22,11 @@ open class UANotificationServiceExtension: UNNotificationServiceExtension {
             logHandler: config.logHandler,
             logLevel: config.logLevel
         )
-        
+
+        // The download task and the expiry path race to finish the request;
+        // the content handler must only ever be invoked once.
+        let finish = OnceContentHandler(contentHandler)
+
         let downloadTask = Task { @MainActor in
             logger.debug(
                 "New request received: \(request)"
@@ -33,7 +37,7 @@ open class UANotificationServiceExtension: UNNotificationServiceExtension {
                     "Unable to make mutable copy of request"
                 )
                 try Task.checkCancellation()
-                contentHandler(request.content)
+                finish(request.content)
                 return
             }
 
@@ -44,7 +48,7 @@ open class UANotificationServiceExtension: UNNotificationServiceExtension {
                         "Finishing request, no Airship args: \(request.identifier)"
                     )
                     try Task.checkCancellation()
-                    contentHandler(request.content)
+                    finish(request.content)
                     return
                 }
 
@@ -66,7 +70,7 @@ open class UANotificationServiceExtension: UNNotificationServiceExtension {
             logger.info(
                 "Finished processing request: \(request.identifier): \(mutableContent)"
             )
-            contentHandler(mutableContent)
+            finish(mutableContent)
         }
 
         self.onExpire = {
@@ -74,12 +78,31 @@ open class UANotificationServiceExtension: UNNotificationServiceExtension {
                 "serviceExtensionTimeWillExpire expiring, canceling airshipTask"
             )
             downloadTask.cancel()
-            contentHandler(request.content)
+            finish(request.content)
         }
     }
 
     open override func serviceExtensionTimeWillExpire() {
         self.onExpire?()
+    }
+}
+
+/// Wraps a content handler so it can only be invoked once, no matter
+/// which path (download task or expiry) finishes the request first.
+private final class OnceContentHandler: @unchecked Sendable {
+    private let lock = NSLock()
+    private var handler: (@Sendable (UNNotificationContent) -> Void)?
+
+    init(_ handler: @Sendable @escaping (UNNotificationContent) -> Void) {
+        self.handler = handler
+    }
+
+    func callAsFunction(_ content: UNNotificationContent) {
+        lock.lock()
+        let handler = self.handler
+        self.handler = nil
+        lock.unlock()
+        handler?(content)
     }
 }
 
