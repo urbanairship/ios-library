@@ -74,7 +74,7 @@ jobs:
       - name: Install Coreutils
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
-        run: brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/c/coreutils.rb
+        run: ./scripts/brew_install_pinned.sh coreutils https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/c/coreutils.rb
       - name: Install Apple Certificate
         uses: apple-actions/import-codesign-certs@v3
         with:
@@ -158,7 +158,7 @@ jobs:
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
-        run: brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
+        run: ./scripts/brew_install_pinned.sh xcodegen https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
       - name: Test Basement
         run: make test-basement
 
@@ -172,7 +172,7 @@ jobs:
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
-        run: brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
+        run: ./scripts/brew_install_pinned.sh xcodegen https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
       - name: Test Core
         run: make test-core
         
@@ -186,7 +186,7 @@ jobs:
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
-        run: brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
+        run: ./scripts/brew_install_pinned.sh xcodegen https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
       - name: Test Preference Center
         run: make test-preference-center
         
@@ -200,7 +200,7 @@ jobs:
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
-        run: brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
+        run: ./scripts/brew_install_pinned.sh xcodegen https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
       - name: Test Message Center
         run: make test-message-center
 
@@ -214,7 +214,7 @@ jobs:
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
-        run: brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
+        run: ./scripts/brew_install_pinned.sh xcodegen https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
       - name: Test Scene Renderer
         run: make test-scene-renderer
 
@@ -228,7 +228,7 @@ jobs:
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
-        run: brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
+        run: ./scripts/brew_install_pinned.sh xcodegen https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
       - name: Test Scenes
         run: make test-scenes
 
@@ -242,7 +242,7 @@ jobs:
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
-        run: brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
+        run: ./scripts/brew_install_pinned.sh xcodegen https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
       - name: Test Automation
         run: make test-automation
 
@@ -256,7 +256,7 @@ jobs:
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
-        run: brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
+        run: ./scripts/brew_install_pinned.sh xcodegen https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
       - name: Test Feature Flags
         run: make test-feature-flags
 
@@ -270,7 +270,7 @@ jobs:
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
-        run: brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
+        run: ./scripts/brew_install_pinned.sh xcodegen https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/x/xcodegen.rb
       - name: Test Service Extension
         run: make test-service-extension
 
