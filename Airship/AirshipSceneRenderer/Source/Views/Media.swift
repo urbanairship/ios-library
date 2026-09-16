@@ -135,38 +135,33 @@ extension Image {
         }
     }
 
-    private func shouldCenterInside(constraints: ViewConstraints, imageSize: CGSize) -> Bool {
-        let aspectRatio = imageSize.height > 0 ? imageSize.width/imageSize.height : 1.0
-        return shouldShowMediaWhole(constraints: constraints, aspectRatio: aspectRatio)
+    /// Whether there is nothing here to crop into: no length on either axis, and no ceiling that is
+    /// a box rather than a measurement.
+    ///
+    /// One length is box enough, because the axis left `auto` is capped at the aspect — filling that
+    /// box throws away nothing the aspect could have covered, and a stack that rations the axis down
+    /// crops, which is what a cropping fit asks for. Comparing the aspect against the *maximum*
+    /// instead answers for a box the item may never get: a stack settles the length afterwards, and
+    /// an image that was told it fits letterboxes inside whatever it is finally given.
+    private func hasNoBoxToCropInto(constraints: ViewConstraints) -> Bool {
+        constraints.resolvedLength(on: .horizontal) == nil
+            && constraints.resolvedLength(on: .vertical) == nil
+            && constraints.limit(on: .horizontal) == nil
+            && constraints.limit(on: .vertical) == nil
     }
 
     @ViewBuilder
     @MainActor
     private func cropAligned(constraints: ViewConstraints, imageSize: CGSize, alignment: Alignment = .center) -> some View {
-        // If we have an auto bound constraint and we can fit the image then centerInside
-        if shouldCenterInside(constraints: constraints, imageSize: imageSize) {
+        if hasNoBoxToCropInto(constraints: constraints) {
             centerInside(constraints: constraints)
         } else {
-            self.resizable()
-                .scaledToFill()
-                .constraints(constraints, alignment: alignment)
-                // Bounds the fill on an axis with no length of its own, so `limit(on:)` rather
-                // than the raw maximum — the same reading the crop decision above uses. A measured
-                // maximum is the siblings' extent handed back, and clamping to it is what the
-                // decision declined to crop for.
-                //
-                // Carries the alignment because on an `auto` axis this is the frame that crops.
-                // The one above takes its lengths from the declared size, so an auto axis leaves it
-                // nil there and it sizes to the filled image instead — the image exactly fills it,
-                // and an alignment with no slack to distribute does nothing. The overflow is still
-                // ahead of it, and this is where it gets cut: left to its default, a `fit_crop`
-                // image declared `width: auto` was centered whatever `position` asked for.
-                .frame(
-                    maxWidth: constraints.limit(on: .horizontal),
-                    maxHeight: constraints.limit(on: .vertical),
-                    alignment: alignment
-                )
-                .clipped()
+            CroppedImage(
+                image: self,
+                constraints: constraints,
+                imageSize: imageSize,
+                alignment: alignment
+            )
         }
     }
 
@@ -177,6 +172,121 @@ extension Image {
             .constraints(constraints)
             .ignoresSafeArea()
             .clipped()
+    }
+}
+
+/// An image scaled to fill the space it was given and cropped to it.
+///
+/// What the layout sees is the sizing element; the image only draws. Filling makes an image answer
+/// with the length its aspect implies whatever it is proposed, which reads as rigid: a stack pays
+/// the least flexible item first, so a filled image takes the whole axis and a percentage beside it
+/// is left with its own content. An `auto` axis is a preference rather than a claim, and stating it
+/// as an ideal lets equal claimants divide the axis the way they do everywhere else.
+///
+/// The fitted path needs none of this — `scaledToFit` answers within what it is offered — which is
+/// why `center_inside` divided an axis while the cropping fits did not.
+private struct CroppedImage: View {
+    let image: Image
+    let constraints: ViewConstraints
+    let imageSize: CGSize
+    let alignment: Alignment
+
+    var body: some View {
+        let horizontal = autoBound(on: .horizontal)
+        let vertical = autoBound(on: .vertical)
+
+        Color.clear
+            .frame(
+                idealWidth: horizontal,
+                maxWidth: horizontal,
+                idealHeight: vertical,
+                maxHeight: vertical
+            )
+            .constraints(constraints, alignment: alignment)
+            // Carries the alignment because the image overflows the box it fills, and this is what
+            // decides which side is cut: centered by default, and where `position` asked for an
+            // edge, that edge is kept.
+            .overlay(alignment: alignment) {
+                image.resizable().scaledToFill()
+            }
+            // The same bound again on the way out, because a frame fills what it is proposed up to
+            // its maximum: left at `limit(on:)` this one grew past the aspect the sizing element
+            // had just settled, and the fill was drawn in the middle of the slack.
+            .frame(
+                maxWidth: horizontal ?? constraints.limit(on: .horizontal),
+                maxHeight: vertical ?? constraints.limit(on: .vertical),
+                alignment: alignment
+            )
+            .clipped()
+    }
+
+    /// The most an axis without a length of its own may take, which is also what it takes when
+    /// nothing squeezes it. Nil on an axis the author gave a length, which `constraints(_:)` sets.
+    ///
+    /// Three readings, in order:
+    ///
+    /// - The other axis has a length the author wrote. Then this one is the aspect applied to it.
+    ///   A ceiling caps that, so an image longer than the room is cropped into the room — unless
+    ///   the ceiling is this view's own extent handed back, which caps nothing: the parent is
+    ///   measuring this axis *from* us, and answering with its last measurement is how an
+    ///   auto-sized box settles as a strip of itself.
+    /// - Neither axis was declared, and there is a ceiling here. Then the ceiling is a box the
+    ///   author can point at, and a cropping fit means fill it.
+    /// - Neither, and no ceiling here either. Then the aspect off the other axis's ceiling, and
+    ///   failing that the image's own length.
+    ///
+    /// Android splits the same cases in `MediaView.onMeasure`, reading the item's declared size
+    /// rather than the spec for the same reason: a stack that has settled its own length remeasures
+    /// its children against it, and an `auto` child is one of the children that length came from.
+    ///
+    /// Stated with no floor under it, so a stack with less to give rations this axis down and the
+    /// fill crops.
+    private func autoBound(on axis: Axis) -> CGFloat? {
+        guard imageSize.width > 0,
+              imageSize.height > 0,
+              declaredLength(on: axis) == nil
+        else {
+            return nil
+        }
+
+        let other: Axis = axis == .vertical ? .horizontal : .vertical
+        let axisSet: Axis.Set = axis == .vertical ? .vertical : .horizontal
+        let floor = (axis == .vertical ? constraints.frameMinHeight : constraints.frameMinWidth) ?? 0
+
+        if let basis = declaredLength(on: other)?.safeValue {
+            guard let length = derived(from: basis, on: axis) else { return nil }
+            let ceiling = constraints.pinnedAxes.contains(axisSet)
+                ? nil
+                : constraints.limit(on: axis)?.safeValue
+            return max(ceiling.map { min(length, $0) } ?? length, floor)
+        }
+
+        if let ceiling = constraints.limit(on: axis)?.safeValue {
+            return max(ceiling, floor)
+        }
+
+        guard let basis = constraints.limit(on: other)?.safeValue,
+              let length = derived(from: basis, on: axis)
+        else {
+            return max(axis == .horizontal ? imageSize.width : imageSize.height, floor)
+        }
+
+        return max(length, floor)
+    }
+
+    /// The length the author wrote on [axis], as opposed to one a parent arrived at by measuring
+    /// this view and handed back as a share of itself.
+    private func declaredLength(on axis: Axis) -> CGFloat? {
+        axis == .vertical ? constraints.height : constraints.width
+    }
+
+    /// [axis]'s length at the image's own aspect, given the other axis's [basis].
+    private func derived(from basis: CGFloat, on axis: Axis) -> CGFloat? {
+        let aspectRatio = imageSize.width / imageSize.height
+        return switch axis {
+        case .horizontal: (basis * aspectRatio).safeValue
+        case .vertical: (basis / aspectRatio).safeValue
+        }
     }
 }
 
@@ -235,14 +345,13 @@ extension View {
 
 /// Whether media of [aspectRatio] can be shown whole at the length it was given.
 ///
-/// Cropping is what you do to fit media into a box. An auto axis isn't a box — it takes whatever the
-/// media turns out to be — so the only question is whether scaling to the axis that *was* given pushes
-/// the other one past its maximum. If it doesn't, the media fits, and cropping would throw away pixels
-/// for nothing.
+/// The video path only. An image asks the narrower `hasNoBoxToCropInto`, because `CroppedImage` caps
+/// its auto axis at the aspect and so has a box to crop into as soon as one length exists. Here the
+/// aspect sets the frame outright, and the comparison below is against a maximum rather than the
+/// length a stack finally rations out.
 ///
-/// A maximum that isn't there imposes no limit, so nothing can exceed it. Reading an absent one as a
-/// reason to crop is what left an auto-height image scaled to fill and clipped to whatever height its
-/// siblings happened to settle on, rather than to its own proportions.
+/// A maximum that isn't there imposes no limit, so nothing can exceed it, and one an auto-sized
+/// ancestor arrived at by measuring is its own children's extent rather than a box.
 func shouldShowMediaWhole(constraints: ViewConstraints, aspectRatio: CGFloat) -> Bool {
     switch (constraints.resolvedLength(on: .horizontal), constraints.resolvedLength(on: .vertical)) {
     case (nil, let height?):

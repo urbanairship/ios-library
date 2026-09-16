@@ -136,17 +136,34 @@ for card in cards:
 
 # --- coverage ----------------------------------------------------------------------------
 
+# Scenes the sweep launched and never saw: the renderer would not display them, so there is
+# no screenshot either way. A skip rather than a failure — the layout cannot be shown, which
+# is a fact about the layout, not a change in what is being measured.
+undisplayed = []
+undisplayed_path = os.path.join(shots_dir, "undisplayed.txt")
+if os.path.isfile(undisplayed_path):
+    undisplayed = sorted({line.strip() for line in open(undisplayed_path) if line.strip()})
+
 coverage = None
 if manifest:
     captured = len(manifest["generated"]) + sum(1 for a in manifest["authored"] if a.get("fixture"))
+    captured = max(0, captured - len(undisplayed))
     reasons = {}
     for entry in manifest["skipped"]:
         reasons.setdefault(entry["reason"], []).append(entry["fixture"])
+    if undisplayed:
+        reasons["never displayed"] = undisplayed
     reasons = dict(sorted(reasons.items(), key=lambda kv: -len(kv[1])))
     line = f"{captured} of {manifest['fixtures']} scene fixtures captured"
     if reasons:
-        line += f"; {len(manifest['skipped'])} skipped (" + ", ".join(f"{len(v)} {k}" for k, v in reasons.items()) + ")"
+        skipped = len(manifest["skipped"]) + len(undisplayed)
+        line += f"; {skipped} skipped (" + ", ".join(f"{len(v)} {k}" for k, v in reasons.items()) + ")"
     coverage = {"line": line, "skipped": reasons}
+elif undisplayed:
+    coverage = {
+        "line": f"{len(undisplayed)} scene fixtures never displayed and were skipped",
+        "skipped": {"never displayed": undisplayed},
+    }
 
 # --- page --------------------------------------------------------------------------------
 
@@ -436,6 +453,14 @@ if failing:
         lines.append(f"- and {len(failing) - len(shown)} more in the report")
 else:
     lines.append(f"**Thomas UI tests:** all {len(cards)} screenshots match. [Report](__REPORT_URL__)")
+if undisplayed:
+    shown = ", ".join(f"`{name}`" for name in undisplayed[:6])
+    if len(undisplayed) > 6:
+        shown += f" and {len(undisplayed) - 6} more"
+    lines.append("")
+    lines.append(f"Skipped {len(undisplayed)} scene(s) the renderer never displayed, so they have no "
+                 f"screenshot: {shown}. A scene that cannot be shown does not fail the sweep — check the "
+                 f"layout itself.")
 open(os.path.join(report_dir, "summary.md"), "w").write("\n".join(lines) + "\n")
 
 size = sum(os.path.getsize(os.path.join(root, f)) for root, _, files in os.walk(report_dir) for f in files)

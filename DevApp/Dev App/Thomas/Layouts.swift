@@ -85,6 +85,16 @@ extension LayoutFile {
         }
     }
 
+    /// Decodes the file's layout without displaying it, so a host other than the normal
+    /// presentation pipeline can render it (see "MC mode" in `LayoutsList`).
+    @MainActor
+    func loadAirshipLayout() throws -> AirshipLayout {
+        let filePath = Bundle.main.resourcePath! + directory + "/" + fileName
+        let data = try loadData(filePath: filePath)
+        let layoutData = try extractLayoutFromPayload(data)
+        return try JSONDecoder().decode(AirshipLayout.self, from: layoutData)
+    }
+
     private func loadData(filePath: String) throws -> Data {
         /// Retrieve the content
         let stringContent = try getContentOfFile(filePath: filePath)

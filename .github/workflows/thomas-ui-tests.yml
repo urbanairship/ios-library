@@ -163,11 +163,12 @@ jobs:
           # openjdk/webp pinned to a specific homebrew-core commit so the build
           # toolchain doesn't silently change between runs; bump to pick up a
           # reviewed update.
-          brew install --quiet \
-            https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/o/openjdk.rb \
+          ./scripts/brew_install_pinned.sh openjdk \
+            https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/o/openjdk.rb
+          ./scripts/brew_install_pinned.sh webp \
             https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/w/webp.rb
-          echo "JAVA_HOME=$(brew --prefix openjdk)" >> "$GITHUB_ENV"
-          echo "$(brew --prefix openjdk)/bin" >> "$GITHUB_PATH"
+          echo "JAVA_HOME=$(brew --prefix airship/pinned/openjdk)" >> "$GITHUB_ENV"
+          echo "$(brew --prefix airship/pinned/openjdk)/bin" >> "$GITHUB_PATH"
           # Exact pin: maestro versions change driver and capture behavior, which
           # would churn baselines with no relation to the PR under test.
           MAESTRO_VERSION=$(python3 -c "import json; print(json.load(open('uitests/config.json'))['maestro']['version'])")

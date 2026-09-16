@@ -2,11 +2,16 @@
 
 import AirshipCore
 import SwiftUI
+@_spi(AirshipInternal) import AirshipScenes
+@_spi(AirshipInternal) import AirshipSceneRenderer
 
 struct LayoutsList: View {
 
     @ObservedObject
     private var viewModel: ViewModel
+
+    @State
+    private var mcModeLayout: MCModeLayout?
 
     init(
         layoutType: LayoutType,
@@ -21,8 +26,14 @@ struct LayoutsList: View {
                 Button(layout.fileName) {
                     open(layout)
                 }
+                .contextMenu {
+                    Button("Open in MC mode") {
+                        openInMCMode(layout)
+                    }
+                }
             }
         }
+        .mcModePresentation(item: $mcModeLayout)
         .sheet(isPresented: Binding(get: { viewModel.openError != nil }, set: { if !$0 { viewModel.openError = nil } })) {
             NavigationStack {
                 ScrollView {
@@ -67,6 +78,94 @@ struct LayoutsList: View {
             }
         }
     }
+
+    /// Renders the layout through the same path Message Center uses for native content
+    /// (`AirshipSimpleLayoutView`) rather than the normal presentation pipeline, so the two can be
+    /// compared against the same file.
+    private func openInMCMode(_ layout: LayoutFile) {
+        do {
+            self.mcModeLayout = MCModeLayout(
+                layout: try layout.loadAirshipLayout(),
+                title: layout.fileName
+            )
+        } catch {
+            viewModel.openError = error
+        }
+    }
+}
+
+struct MCModeLayout: Identifiable {
+    let id: UUID = UUID()
+    let layout: AirshipLayout
+    let title: String
+}
+
+private extension View {
+    /// `fullScreenCover` where it exists, so MC mode gets the whole screen -- a page sheet would
+    /// change the very geometry being compared.
+    @ViewBuilder
+    func mcModePresentation(item: Binding<MCModeLayout?>) -> some View {
+#if os(macOS)
+        self.sheet(item: item) { ThomasMCModeView(layout: $0.layout, title: $0.title) }
+#else
+        self.fullScreenCover(item: item) { ThomasMCModeView(layout: $0.layout, title: $0.title) }
+#endif
+    }
+}
+
+/// Hosts a layout the way `MessageCenterMessageView` hosts native message content: a bare `ZStack`
+/// with no frame of its own, pushed under a navigation bar. Mirroring that chrome is the point --
+/// it is what the scene is actually measured against in Message Center.
+struct ThomasMCModeView: View {
+
+    private let layout: AirshipLayout
+    private let title: String
+
+    @Environment(\.dismiss)
+    private var dismiss
+
+    @StateObject
+    private var layoutViewModel: AirshipSimpleLayoutViewModel
+
+    init(layout: AirshipLayout, title: String) {
+        self.layout = layout
+        self.title = title
+        self._layoutViewModel = StateObject(
+            wrappedValue: AirshipSimpleLayoutViewModel(
+                delegate: MCModeThomasDelegate(),
+                extensions: DefaultThomasExtensions()
+            )
+        )
+    }
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AirshipSimpleLayoutView(
+                    layout: layout,
+                    viewModel: layoutViewModel
+                )
+            }
+            .navigationTitle(title)
+#if !os(macOS) && !os(tvOS)
+            .navigationBarTitleDisplayMode(.inline)
+#endif
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+    }
+}
+
+/// Reporting goes nowhere in MC mode: the point is the layout, and there is no message to report
+/// against.
+@MainActor
+private final class MCModeThomasDelegate: ThomasDelegate {
+    func onVisibilityChanged(isVisible: Bool, isForegrounded: Bool) {}
+    func onReportingEvent(_ event: ThomasReportingEvent) {}
+    func onDismissed(cancel: Bool) {}
 }
 
 @MainActor

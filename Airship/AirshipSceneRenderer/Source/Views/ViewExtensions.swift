@@ -82,16 +82,25 @@ private struct ThomasConstraintsViewModifier: ViewModifier {
     /// An absolute length has always been set as a minimum as well as a maximum, so a points-sized
     /// view is not squeezed below what it asked for. A declared minimum is the same kind of claim
     /// from a different source, so the two meet here rather than one replacing the other.
+    ///
+    /// Except where a ratio derived the box. Then the declared length is one side of a shape rather
+    /// than a length in its own right, and holding it open while the other side is rationed down
+    /// renders the item at a shape the scene never asked for — a `0.5` ratio off a 200pt width came
+    /// out 200 by 284. The ratio is the thing to keep: it is the only reason the other axis has a
+    /// length at all. Android resolves the same conflict the same way, deriving the declared axis
+    /// back from whatever the other one got (`WeightlessLinearLayout`: `childW = min(idealW, childH
+    /// * ratio)`), and web contains the ratio box. A declared minimum still stands — that one is a
+    /// floor the author wrote, not one implied by a length.
     private var floorWidth: CGFloat? {
         [
-            constraints.isHorizontalAbsoluteSize ? constraints.frameWidth : nil,
+            constraints.isHorizontalAbsoluteSize && derivedRatio == nil ? constraints.frameWidth : nil,
             constraints.frameMinWidth
         ].compactMap { $0 }.max()
     }
 
     private var floorHeight: CGFloat? {
         [
-            constraints.isVerticalAbsoluteSize ? constraints.frameHeight : nil,
+            constraints.isVerticalAbsoluteSize && derivedRatio == nil ? constraints.frameHeight : nil,
             constraints.frameMinHeight
         ].compactMap { $0 }.max()
     }

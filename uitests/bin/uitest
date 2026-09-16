@@ -291,16 +291,29 @@ cmd_run_flows() {
     shard_args=(--shard-split "$SHARDS")
   fi
   rm -rf "$SHOTS_DIR"
-  mkdir -p "$SHOTS_DIR"
+  mkdir -p "$SHOTS_DIR" "$BUILD_DIR"
+  local log="$BUILD_DIR/maestro.log"
   for attempt in 1 2; do
     flow_status=0
-    # Screenshots use relative paths in flows, landing in the cwd.
-    (cd "$SHOTS_DIR" && maestro --device "$devices" test "${shard_args[@]}" "$flows") || flow_status=$?
+    # Screenshots use relative paths in flows, landing in the cwd. The log is kept so a
+    # failure can be read back per flow rather than only as an exit code.
+    (cd "$SHOTS_DIR" && maestro --device "$devices" test "${shard_args[@]}" "$flows" 2>&1 | tee "$log") || flow_status=$?
     if [ "$flow_status" -eq 0 ]; then
       # Provenance is captured at run time so shots minted on CI carry the CI toolchain.
       write_provenance "$SHOTS_DIR/provenance.json"
       # set-baseline and the CI mint require this marker so a partial or failed run
       # can never become a baseline.
+      touch "$SHOTS_DIR/.complete"
+      return 0
+    fi
+    # A scene that never appeared is a layout this SDK cannot display: a payload it
+    # rejects, an asset that will not load. Nothing the sweep measures has regressed, and
+    # there is no screenshot to diff either way, so record it and carry on rather than
+    # spending every other screenshot on the shard. Anything else stays a failure.
+    if undisplayed_only "$log" "$SHOTS_DIR/undisplayed.txt"; then
+      echo "warning: $(wc -l < "$SHOTS_DIR/undisplayed.txt" | tr -d ' ') scene(s) never displayed, skipped:"
+      sed 's/^/  - /' "$SHOTS_DIR/undisplayed.txt"
+      write_provenance "$SHOTS_DIR/provenance.json"
       touch "$SHOTS_DIR/.complete"
       return 0
     fi
@@ -468,6 +481,36 @@ PY
 # Merges the screenshot sets of n shards, each a completed `uitest capture`, into
 # build/shots. Refuses if any shard is missing or incomplete, so a partial sweep can never
 # be diffed or promoted as if it were whole.
+# Writes to [out] the flows that failed only because their scene never appeared, and
+# succeeds when those account for every failure in [log].
+#
+# Displaying is gated on one `extendedWaitUntil` for `thomas:root`, so that assertion is
+# what a layout the renderer will not show fails on, and it fails before the flow can take
+# a screenshot. Every other failure -- a crash, a driver fault, an element missing partway
+# through a flow -- names something else and stays a failure.
+undisplayed_only() {
+  local log="$1" out="$2"
+  python3 - "$log" "$out" <<'UNDISPLAYED'
+import re, sys
+
+log, out = sys.argv[1], sys.argv[2]
+text = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", open(log, errors="replace").read())
+
+# `[Failed] <flow> (<duration>) (<reason>)`, the reason only there when maestro has one.
+failures = re.findall(r"\[Failed\]\s+(\S+)\s+\([^)]*\)(?:\s+\((.*?)\))?\s*$", text, re.M)
+if not failures:
+    sys.exit(1)
+
+never_displayed = [name for name, reason in failures
+                   if "thomas:root" in reason and "is visible" in reason]
+if len(never_displayed) != len(failures):
+    sys.exit(1)
+
+with open(out, "w") as handle:
+    handle.write("\n".join(sorted(set(never_displayed))) + "\n")
+UNDISPLAYED
+}
+
 cmd_merge_shots() {
   local dir="$1" n="$2" i shard
   if [ -z "$dir" ] || ! [[ "$n" =~ ^[0-9]+$ ]]; then
@@ -483,7 +526,16 @@ cmd_merge_shots() {
       exit 1
     fi
     cp "$shard"/*.png "$SHOTS_DIR/"
+    # Each shard skips its own undisplayable scenes; the report wants all of them.
+    if [ -f "$shard/undisplayed.txt" ]; then
+      cat "$shard/undisplayed.txt" >> "$SHOTS_DIR/.undisplayed.parts"
+    fi
   done
+  if [ -f "$SHOTS_DIR/.undisplayed.parts" ]; then
+    sort -u "$SHOTS_DIR/.undisplayed.parts" > "$SHOTS_DIR/undisplayed.txt"
+    rm -f "$SHOTS_DIR/.undisplayed.parts"
+    echo "note: $(wc -l < "$SHOTS_DIR/undisplayed.txt" | tr -d ' ') scene(s) never displayed across the sweep"
+  fi
   cp "$(ls -d "$dir"/*-1 | head -1)/provenance.json" "$SHOTS_DIR/provenance.json"
   python3 - "$SHOTS_DIR/provenance.json" "$n" <<'PY'
 import json, sys
