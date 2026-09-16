@@ -4,6 +4,13 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 21.0.1 - September 16, 2026
+Patch release with a few Scene layout and sizing fixes. Apps that use Scenes should update to this version or later.
+
+### Changes
+- Fixed Scene media with a cropping fit and an auto-sized dimension rendering at the wrong size, sometimes overflowing its box or appearing letterboxed.
+- Fixed a Scene view combining a fixed dimension with an aspect ratio not preserving its declared aspect ratio.
+
 ## Version 21.0.0 - September 14, 2026
 SDK 21.0 splits the Scene/layout rendering engine out of `AirshipCore` into new modules, removes CocoaPods support, requires Xcode 27, brings on-device AI to Scenes and in-app experiences, includes a broad set of Scene layout fixes, and tightens the public API surface across modules. See the [Migration Guide](https://github.com/urbanairship/ios-library/blob/main/Documentation/Migration/migration-guide-20-21.md) for details.
 

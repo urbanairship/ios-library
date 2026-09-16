@@ -48,7 +48,7 @@ Add the Airship SDK to your project using Swift Package Manager:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/urbanairship/ios-library.git", from: "21.0.0")
+    .package(url: "https://github.com/urbanairship/ios-library.git", from: "21.0.1")
 ]
 ```
 
