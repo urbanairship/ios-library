@@ -206,7 +206,7 @@ final class ThomasAsyncViewState: ObservableObject {
             }
         } catch {
             resolvedLayoutAwaitingPrefetch = viewInfo
-            throw PrefetchError()
+            throw PrefetchError(underlying: error)
         }
 
         resolvedLayoutAwaitingPrefetch = nil
@@ -257,4 +257,7 @@ final class ThomasAsyncViewState: ObservableObject {
 }
 
 /// Internal marker for an image prefetch failure during async-view resolution.
-private struct PrefetchError: Error {}
+private struct PrefetchError: Error, CustomStringConvertible {
+    let underlying: any Error
+    var description: String { "PrefetchError(underlying: \(underlying))" }
+}
