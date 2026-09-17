@@ -54,6 +54,29 @@ import Foundation
         }
     }
 
+    @Test(arguments: ["", ".", "..", "/etc/passwd", "foo/", "foo/../bar"])
+    func testEnsureCacheDirectoryRejectsInvalidIdentifiers(identifier: String) {
+        let assetManager = DefaultAssetFileManager(rootPathComponent: "testCacheRoot")
+
+        #expect(throws: (any Error).self) {
+            try assetManager.ensureCacheDirectory(identifier: identifier)
+        }
+    }
+
+    @Test
+    func testEnsureCacheDirectoryAcceptsUUIDIdentifier() throws {
+        let rootPathComponent = "testCacheRoot"
+        let identifier = UUID().uuidString
+        let assetManager = DefaultAssetFileManager(rootPathComponent: rootPathComponent)
+
+        let cacheDirectory = try assetManager.ensureCacheDirectory(identifier: identifier)
+
+        #expect(FileManager.default.fileExists(atPath: cacheDirectory.path))
+
+        /// Cleanup
+        try? FileManager.default.removeItem(at: cacheDirectory)
+    }
+
     @Test
     func testClearAssetsSuccess() throws {
         let rootPathComponent = "testCacheRoot"
