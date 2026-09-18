@@ -91,7 +91,8 @@ extension LayoutFile {
     func loadAirshipLayout() throws -> AirshipLayout {
         let filePath = Bundle.main.resourcePath! + directory + "/" + fileName
         let data = try loadData(filePath: filePath)
-        let layoutData = try extractLayoutFromPayload(data)
+        var layoutData = try extractLayoutFromPayload(data)
+        layoutData = try Self.resolvingTestLayoutURLs(in: layoutData)
         return try JSONDecoder().decode(AirshipLayout.self, from: layoutData)
     }
 
@@ -212,6 +213,8 @@ extension LayoutFile {
         var layoutData = try extractLayoutFromPayload(data)
         if let imageURLOverride {
             layoutData = try Self.stubbingRemoteContent(in: layoutData, imageURL: imageURLOverride)
+        } else {
+            layoutData = try Self.resolvingTestLayoutURLs(in: layoutData)
         }
         let layout = try JSONDecoder().decode(AirshipLayout.self, from: layoutData)
 
@@ -231,6 +234,14 @@ extension LayoutFile {
     private static func stubbingRemoteContent(in data: Data, imageURL: URL) throws -> Data {
         let webViewPlaceholder = "data:text/html," + "<html><body style=\"margin:0;background:#dbe6f7;font:24px -apple-system,sans-serif;color:#1a4099\"><div style=\"padding:24px\">web view placeholder</div></body></html>"
             .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        // A `test-layout.internal` URL already renders deterministically at the aspect ratio the
+        // scene asked for, so it's left alone rather than flattened to the one override image.
+        func resolvedURL(_ original: String?) -> String {
+            if let original, let resolved = TestLayoutPlaceholder.resolve(urlString: original) {
+                return resolved.absoluteString
+            }
+            return imageURL.absoluteString
+        }
         func rewrite(_ node: Any) -> Any {
             if var dict = node as? [String: Any] {
                 let type = dict["type"] as? String
@@ -238,11 +249,11 @@ extension LayoutFile {
                     let mediaType = dict["media_type"] as? String
                     if mediaType == "image" || mediaType == "video" || mediaType == "youtube" || mediaType == "vimeo" {
                         dict["media_type"] = "image"
-                        dict["url"] = imageURL.absoluteString
+                        dict["url"] = resolvedURL(dict["url"] as? String)
                         if let selectors = dict["url_selectors"] as? [[String: Any]] {
                             dict["url_selectors"] = selectors.map { selector in
                                 var selector = selector
-                                selector["url"] = imageURL.absoluteString
+                                selector["url"] = resolvedURL(selector["url"] as? String)
                                 return selector
                             }
                         }
@@ -256,6 +267,44 @@ extension LayoutFile {
                 // Randomized child order is a different screenshot on every run.
                 if dict["randomize_children"] as? Bool == true {
                     dict["randomize_children"] = false
+                }
+                for (key, value) in dict {
+                    dict[key] = rewrite(value)
+                }
+                return dict
+            }
+            if let array = node as? [Any] {
+                return array.map(rewrite)
+            }
+            return node
+        }
+        let json = try JSONSerialization.jsonObject(with: data)
+        return try JSONSerialization.data(withJSONObject: rewrite(json))
+    }
+
+    /// Resolves any `test-layout.internal` media URL (see `TestLayoutPlaceholder`) to its
+    /// synthesized image, leaving every other URL and field untouched. Runs on ordinary scene
+    /// display, where `stubbingRemoteContent`'s blanket override doesn't apply.
+    private static func resolvingTestLayoutURLs(in data: Data) throws -> Data {
+        func rewrite(_ node: Any) -> Any {
+            if var dict = node as? [String: Any] {
+                if dict["type"] as? String == "media",
+                   let mediaType = dict["media_type"] as? String,
+                   mediaType == "image" || mediaType == "video" || mediaType == "youtube" || mediaType == "vimeo" {
+                    if let url = dict["url"] as? String,
+                       let resolved = TestLayoutPlaceholder.resolve(urlString: url) {
+                        dict["url"] = resolved.absoluteString
+                    }
+                    if let selectors = dict["url_selectors"] as? [[String: Any]] {
+                        dict["url_selectors"] = selectors.map { selector in
+                            var selector = selector
+                            if let url = selector["url"] as? String,
+                               let resolved = TestLayoutPlaceholder.resolve(urlString: url) {
+                                selector["url"] = resolved.absoluteString
+                            }
+                            return selector
+                        }
+                    }
                 }
                 for (key, value) in dict {
                     dict[key] = rewrite(value)
