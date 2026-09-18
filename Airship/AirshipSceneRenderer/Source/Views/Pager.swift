@@ -78,6 +78,12 @@ struct Pager: View {
 #endif
     }
 
+    /// Whether the pager's own height is a floor to grow past, rather than a fixed cap --
+    /// `makePager()` only calls into `makeAutoHeightPager` when this holds.
+    private var pagerHeightIsFloor: Bool {
+        constraints.height == nil
+    }
+
     private var isLegacyPageSwipeEnabled: Bool {
         if #available(iOS 17.0, *) {
             return if Self.forceLegacyPager {
@@ -211,7 +217,11 @@ struct Pager: View {
     }
 
     @ViewBuilder
-    private func makeLegacyPager(childConstraints: ViewConstraints, width: CGFloat?, height: CGFloat?) -> some View {
+    private func makeLegacyPager(
+        childConstraints: ViewConstraints,
+        width: CGFloat?,
+        height: CGFloat?
+    ) -> some View {
         VStack {
             HStack(spacing: 0) {
                 ForEach(0..<pagerState.pageItems.count, id: \.self) { index in
@@ -233,18 +243,19 @@ struct Pager: View {
             .offset(x: calcDragOffset(index: pagerState.pageIndex))
             .animation(.interactiveSpring(duration: Pager.animationSpeed), value: pagerState.pageIndex)
         }
-        .frame(
-            width: width,
-            height: height,
-            alignment: .leading
-        )
+        .frame(width: width, alignment: .leading)
+        .airshipHeight(height, floor: pagerHeightIsFloor, alignment: .leading)
         .clipped()
     }
 
 
     @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
     @ViewBuilder
-    private func makeScrollViewPager(childConstraints: ViewConstraints, width: CGFloat?, height: CGFloat?) -> some View {
+    private func makeScrollViewPager(
+        childConstraints: ViewConstraints,
+        width: CGFloat?,
+        height: CGFloat?
+    ) -> some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal) {
                 LazyHStack(spacing: 0) {
@@ -301,11 +312,8 @@ struct Pager: View {
                     }
                 }
             }
-            .frame(
-                width: width,
-                height: height,
-                alignment: .leading
-            )
+            .frame(width: width, alignment: .leading)
+            .airshipHeight(height, floor: pagerHeightIsFloor, alignment: .leading)
             .clipped()
             .id(resolvedPagerID)
             .task(id: resolvedPagerID) {
@@ -406,16 +414,14 @@ struct Pager: View {
         }
         .airshipApplyIf(self.constraints.height == nil) { view in
             view.airshipMeasureView { newSize in
-                if pageHeights[pageItem.identifier] != newSize.height {
-                    pageHeights[pageItem.identifier] = newSize.height
+                guard let height = newSize.height.safeValue else { return }
+                if pageHeights[pageItem.identifier] != height {
+                    pageHeights[pageItem.identifier] = height
                 }
             }
         }
-        .frame(
-            width: width,
-            height: height,
-            alignment: .top
-        )
+        .frame(width: width, alignment: .top)
+        .airshipHeight(height, floor: pagerHeightIsFloor, alignment: .top)
         .environment(
             \.isButtonActionsEnabled,
              (!self.isLegacyPageSwipeEnabled || self.translation == 0)
@@ -982,6 +988,26 @@ extension Pager {
         } else {
             return .viewAligned(limitBehavior: .always)
         }
+    }
+}
+
+private extension View {
+    /// Pins `height` as a hard limit, or leaves it open as only a floor.
+    ///
+    /// A single `.frame(_:)` call whose arguments vary, not two conditionally-applied modifiers
+    /// -- branching the modifier would give this view a different identity per branch, so if a
+    /// still-live pager's own height ever flips between fixed and auto (a placement selector
+    /// swapping in a different height mode on rotation), unrelated @State like `pageHeights`
+    /// would reset for no reason related to height.
+    ///
+    /// - Parameters:
+    ///   - height: The height to apply; `nil` leaves the axis unconstrained.
+    ///   - heightIsFloor: `true` lets the view grow past `height`; `false` pins it exactly.
+    ///   - alignment: Alignment within the resulting frame.
+    /// - Returns: This view with the height constraint applied.
+    @ViewBuilder
+    func airshipHeight(_ height: CGFloat?, floor heightIsFloor: Bool, alignment: Alignment) -> some View {
+        self.frame(minHeight: height, maxHeight: heightIsFloor ? nil : height, alignment: alignment)
     }
 }
 

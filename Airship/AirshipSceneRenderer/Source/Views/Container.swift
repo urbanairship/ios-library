@@ -87,7 +87,6 @@ fileprivate struct NewContainer: View {
         .thomasCommon(self.info)
     }
 
-
     @ViewBuilder
     @MainActor
     private func childItem(_ index: Int, item: ThomasViewInfo.Container.Item) -> some View {
@@ -164,7 +163,7 @@ fileprivate struct ContainerLayout: Layout {
     struct ContainerItemPositionKey: LayoutValueKey {
         static let defaultValue: ThomasPosition = ThomasPosition(horizontal: .center, vertical: .center)
     }
-    
+
     let constraints: ViewConstraints
     let layoutDirection: LayoutDirection
 

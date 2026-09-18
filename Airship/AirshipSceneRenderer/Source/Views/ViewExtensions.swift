@@ -142,10 +142,9 @@ private struct ThomasConstraintsViewModifier: ViewModifier {
         .airshipApplyIfPresent(unboundedRatio) { view, ratio in
             RatioLayout(
                 ratio: ratio,
-                // The one place `maxWidth`/`maxHeight` are a ceiling on the view rather than the
-                // space its children are measured against: for this case and only this case,
-                // `childConstraints` has already tightened them to the ratio box itself, so they
-                // are the answer, and a proposal that says otherwise is the thing to ignore.
+                // A ceiling on the view here, not the space its children are measured against
+                // (`centerInside` in Media.swift reads them the same way, for its own reason) --
+                // `childConstraints` already tightened them to the ratio box itself.
                 maxWidth: constraints.maxWidth,
                 maxHeight: constraints.maxHeight,
                 alignment: alignment ?? .center

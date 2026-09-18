@@ -131,7 +131,7 @@ extension Image {
         case .centerCrop:
             cropAligned(constraints: constraints, imageSize: imageSize)
         case .centerInside:
-            centerInside(constraints: constraints)
+            centerInside(constraints: constraints, alignment: cropPosition?.alignment ?? .top)
         }
     }
 
@@ -154,7 +154,7 @@ extension Image {
     @MainActor
     private func cropAligned(constraints: ViewConstraints, imageSize: CGSize, alignment: Alignment = .center) -> some View {
         if hasNoBoxToCropInto(constraints: constraints) {
-            centerInside(constraints: constraints)
+            centerInside(constraints: constraints, alignment: alignment)
         } else {
             CroppedImage(
                 image: self,
@@ -166,13 +166,21 @@ extension Image {
     }
 
     @MainActor
-    private func centerInside(constraints: ViewConstraints) -> some View {
+    private func centerInside(constraints: ViewConstraints, alignment: Alignment = .top) -> some View {
         // Only the keyboard: a pinned background must not rescale when the keyboard shows up
         // (Mobile-5409). An auto-height image has no fixed box to defend, and ignoring the
         // container's safe area here inflates the size Container measures it at instead.
         self.resizable()
             .scaledToFit()
-            .constraints(constraints)
+            .constraints(constraints, alignment: alignment)
+            // Bounds a leaf with no declared length, since `.constraints(_:)` alone won't.
+            // Excludes a measured axis outright (unlike `limit(on:)`, which trusts a pinned one):
+            // `flooringMeasuredShare` made it a floor, not a ceiling, on either reading.
+            .frame(
+                maxWidth: constraints.measuredAxes.contains(.horizontal) ? nil : constraints.maxWidth,
+                maxHeight: constraints.measuredAxes.contains(.vertical) ? nil : constraints.maxHeight,
+                alignment: alignment
+            )
             .ignoresSafeArea(.keyboard)
             .clipped()
     }
