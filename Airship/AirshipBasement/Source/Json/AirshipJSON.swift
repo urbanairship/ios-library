@@ -115,6 +115,11 @@ public enum AirshipJSON: Codable, Equatable, Sendable, Hashable {
             return .null
         }
 
+        // Bridged Obj-C containers carry NSNull in place of nil
+        if value is NSNull {
+            return .null
+        }
+
         if let json = value as? AirshipJSON {
             return json
         }

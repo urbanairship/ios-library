@@ -81,6 +81,30 @@ struct AirshipJSONTest {
     }
 
     @Test
+    func wrapNSNull() throws {
+        #expect(try AirshipJSON.wrap(NSNull()) == .null)
+    }
+
+    @Test
+    func wrapObjCContainersWithNSNull() throws {
+        let object = NSMutableDictionary()
+        object.setObject(NSNull(), forKey: "null" as NSString)
+        object.setObject("hello" as NSString, forKey: "string" as NSString)
+        object.setObject(
+            NSArray(array: [NSNull(), "story"]),
+            forKey: "array" as NSString
+        )
+
+        let expected: [String: AirshipJSON] = [
+            "null": nil,
+            "string": "hello",
+            "array": [nil, "story"],
+        ]
+
+        #expect(try AirshipJSON.wrap(object) == .object(expected))
+    }
+
+    @Test
     func wrapInvalid() throws {
         #expect(throws: (any Error).self) {
             try AirshipJSON.wrap(InvalidJSON())
