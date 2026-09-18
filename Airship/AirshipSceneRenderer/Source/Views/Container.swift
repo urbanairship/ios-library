@@ -108,10 +108,18 @@ fileprivate struct NewContainer: View {
         //
         // Only for a length that came from measuring ourselves. One handed down by our own parent
         // is a real length, and a share of it is exactly that share.
+        //
+        // Excludes an uncapped axis — a scroll's own scrolling direction — which has no real ceiling
+        // to converge to: a floor that only ever grows just keeps raising what we measure ourselves
+        // at next, with nothing to stop it.
         let measuredShareAxes: Axis.Set = {
             var axes: Axis.Set = []
-            if constraints.width == nil { axes.insert(.horizontal) }
-            if constraints.height == nil { axes.insert(.vertical) }
+            if constraints.width == nil, !constraints.uncappedAxes.contains(.horizontal) {
+                axes.insert(.horizontal)
+            }
+            if constraints.height == nil, !constraints.uncappedAxes.contains(.vertical) {
+                axes.insert(.vertical)
+            }
             return axes
         }()
 
@@ -178,6 +186,13 @@ fileprivate struct ContainerLayout: Layout {
             maxHeight = max(maxHeight, size.height.safeValue ?? 0)
         }
 
+        // A floor from flooringMeasuredShare, not just the children's own extent — otherwise this
+        // reports (and gets placed at) their small natural size, and the outer frame that does read
+        // the floor centers that whole island inside the larger space instead of us filling it, which
+        // moves every child's own position along with it.
+        maxWidth = max(maxWidth, constraints.minWidth ?? 0)
+        maxHeight = max(maxHeight, constraints.minHeight ?? 0)
+
         return CGSize(width: maxWidth, height: maxHeight)
     }
 
@@ -232,7 +247,7 @@ fileprivate struct ContainerLayout: Layout {
     }
 }
 
-fileprivate extension ViewConstraints {
+extension ViewConstraints {
     /// Moves a percentage's length to the floor, on an axis where the share came from a measurement.
     ///
     /// The length is taken as it stands rather than worked out again from the percentage. It has
@@ -249,25 +264,22 @@ fileprivate extension ViewConstraints {
 
         var copy = self
 
-        if axes.contains(.horizontal), case .percent = size.width, let share = copy.width {
+        // Only the whole share is floored, matching `lacksBasis`'s own special case: 100% of the
+        // largest is the largest, so the floor this raises and the ceiling already sitting in
+        // `maxWidth`/`maxHeight` name the same number on this pass and the next. A fractional share
+        // is only ever a share of *this* pass's measurement — nothing says it stays that fraction
+        // once the container measures again — so fixing it, not flooring it, is what keeps a 50%
+        // item at 50% instead of freeing it to grow into whatever its content wants.
+        if axes.contains(.horizontal), case .percent(100) = size.width, let share = copy.width {
             copy.width = nil
             copy.minWidth = max(copy.minWidth ?? 0, share)
-            // Only the whole share is pinned, matching `lacksBasis`'s own special case: 100% of
-            // the largest is the largest, so the floor this just raised and the ceiling already
-            // sitting in `maxWidth` name the same number on this pass and the next. A fractional
-            // share is only ever a share of *this* pass's measurement — nothing says it stays that
-            // fraction once the container measures again — so it isn't a length to crop into.
-            if case .percent(100) = size.width {
-                copy.pinnedAxes.insert(.horizontal)
-            }
+            copy.pinnedAxes.insert(.horizontal)
         }
 
-        if axes.contains(.vertical), case .percent = size.height, let share = copy.height {
+        if axes.contains(.vertical), case .percent(100) = size.height, let share = copy.height {
             copy.height = nil
             copy.minHeight = max(copy.minHeight ?? 0, share)
-            if case .percent(100) = size.height {
-                copy.pinnedAxes.insert(.vertical)
-            }
+            copy.pinnedAxes.insert(.vertical)
         }
 
         return copy

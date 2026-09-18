@@ -207,11 +207,25 @@ struct LinearLayout: View {
         // Our own stroke isn't deducted here any more: our length already had it taken out when our
         // parent sized us, so what we hand out is the content box. The child's stroke comes out of
         // the child's length for the same reason.
+        let crossAxisSet: Axis.Set = info.properties.direction == .vertical ? .horizontal : .vertical
+
         let constraints = parentConstraints.childConstraints(
             item.size,
             margin: item.margin,
             borderStrokeWidth: item.view.borderStrokeWidth,
             safeAreaInsetsMode: .consume
+        )
+        // Floors rather than fixes the cross-axis share, so a box can grow past our first measurement;
+        // left alone on the stack axis, where percent items sum and growing one would grow the stack.
+        // Also left alone where the cross axis is uncapped (a scroll's own scrolling axis): there is
+        // no real ceiling there to converge to, so a floor that only ever grows has nothing to stop
+        // it — three 100% rows measure taller, which raises the measurement fed back as the next
+        // floor, which grows the rows again, without end.
+        .flooringMeasuredShare(
+            of: item.size,
+            on: (crossAxisIsAuto && !self.constraints.uncappedAxes.contains(crossAxisSet))
+                ? crossAxisSet
+                : []
         )
 
         thomasEnvironment.viewFactory.createView(item.view, constraints: constraints)
@@ -252,6 +266,13 @@ struct LinearLayout: View {
         self.info.properties.direction == .vertical
             ? self.constraints.height == nil
             : self.constraints.width == nil
+    }
+
+    /// The same question on the axis items overlay along rather than the one they sum along.
+    private var crossAxisIsAuto: Bool {
+        self.info.properties.direction == .vertical
+            ? self.constraints.width == nil
+            : self.constraints.height == nil
     }
 
     private func parentConstraints() -> ViewConstraints {

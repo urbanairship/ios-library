@@ -50,7 +50,7 @@ struct CheckboxToggleLayout: View {
         ) {
             thomasEnvironment.viewFactory.createView(
                 self.info.properties.view,
-                constraints: constraints
+                constraints: constraints.deductingBorder(of: self.info.properties.view)
             )
         }
         .constraints(self.constraints)

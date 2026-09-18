@@ -231,7 +231,11 @@ private struct CroppedImage: View {
     ///   measuring this axis *from* us, and answering with its last measurement is how an
     ///   auto-sized box settles as a strip of itself.
     /// - Neither axis was declared, and there is a ceiling here. Then the ceiling is a box the
-    ///   author can point at, and a cropping fit means fill it.
+    ///   author can point at, and a cropping fit means fill it — unless the ceiling is this view's
+    ///   own extent pinned rather than measured, in which case the aspect off the other axis's
+    ///   ceiling gets a vote too, and the larger of the two wins. A pinned ceiling alone only ever
+    ///   reports what this view already was, so a sibling settling wider than it, the way the
+    ///   widest item in the stack does, would otherwise never pull this axis up to match.
     /// - Neither, and no ceiling here either. Then the aspect off the other axis's ceiling, and
     ///   failing that the image's own length.
     ///
@@ -262,7 +266,19 @@ private struct CroppedImage: View {
         }
 
         if let ceiling = constraints.limit(on: axis)?.safeValue {
-            return max(ceiling, floor)
+            // A pinned ceiling on this same axis is our own extent handed back rather than a box the
+            // author pointed at, so on its own it only ever reports what we already were — a sibling
+            // that grows past it, the way the widest item in the stack does, would otherwise never
+            // pull us up past a first measurement taken before either of us had settled. Deriving from
+            // the other axis is the same claim a real box would make, so the larger of the two wins:
+            // whichever candidate is closer to what the stack actually needs next.
+            guard constraints.pinnedAxes.contains(axisSet),
+                  let basis = constraints.limit(on: other)?.safeValue,
+                  let derivedLength = derived(from: basis, on: axis)
+            else {
+                return max(ceiling, floor)
+            }
+            return max(ceiling, derivedLength, floor)
         }
 
         guard let basis = constraints.limit(on: other)?.safeValue,

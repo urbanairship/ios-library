@@ -59,8 +59,8 @@ struct ViewConstraints: Equatable {
     /// Measured axes whose floor was raised to match the ceiling because a child asked for the
     /// whole of the measurement, rather than a share smaller than it.
     ///
-    /// `Container.flooringMeasuredShare` produces this: it floors a 100% share back to `(length:
-    /// nil, minimum: share)` so the container stays free to grow past its own first measurement,
+    /// `flooringMeasuredShare` produces this: it floors a 100% share back to `(length:
+    /// nil, minimum: share)` so the parent stays free to grow past its own first measurement,
     /// but a share of the *whole* means the floor and the ceiling name the same number. That pair
     /// is as real a length as one declared outright — unlike an ordinary measured maximum, which
     /// is a sibling's extent handed back as a ceiling with nothing underneath it. Subset of
@@ -315,7 +315,13 @@ struct ViewConstraints: Equatable {
     ///
     /// `childConstraints` does this for anything a container or a stack sizes, which is nearly
     /// everything. A placement root has no such parent — its length comes from the placement — so it
-    /// asks for the same treatment here, and a bordered root card stays the size it was placed at.
+    /// asks for the same treatment here, and a bordered root card stays the size it was placed at. A
+    /// toggle layout's content view is the same case one level further in: the toggle hands its own
+    /// received constraints straight through with no `childConstraints` call of its own, so a bound
+    /// pinned rather than fixed — `height` nil, `minHeight`/`maxHeight` equal — needs the same
+    /// deduction `addingBorder(_:)` gives it coming back, or the border this view draws lands outside
+    /// what it was given and the toggle measures the overshoot as its own next floor, growing without
+    /// end.
     func deductingBorder(of view: ThomasViewInfo) -> ViewConstraints {
         let stroke = CGFloat(view.borderStrokeWidth * 2)
         guard stroke > 0 else { return self }
@@ -323,6 +329,10 @@ struct ViewConstraints: Equatable {
         var copy = self
         copy.width = copy.width.map { max(0, $0 - stroke) }
         copy.height = copy.height.map { max(0, $0 - stroke) }
+        copy.minWidth = copy.minWidth.map { max(0, $0 - stroke) }
+        copy.minHeight = copy.minHeight.map { max(0, $0 - stroke) }
+        copy.maxWidth = copy.maxWidth.map { max(0, $0 - stroke) }
+        copy.maxHeight = copy.maxHeight.map { max(0, $0 - stroke) }
         return copy
     }
 
