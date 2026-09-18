@@ -4,6 +4,21 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 21.0.2 - September 18, 2026
+Patch release with additional Scene fixes plus fixes for Message Center, In-App Automation, and on-device AI.
+
+### Changes
+- Fixed a Scene center_inside image measuring taller than its content and centering by default instead of aligning to the top like other platforms.
+- Fixed an auto-height Pager not growing past an earlier page's smaller cached height.
+- Fixed Scene media with a cropping fit and a percent height not filling an auto-height row shared with another item.
+- Scoped a Scene center_inside image's keyboard safe-area handling to the keyboard only.
+- Fixed the Message Center unread badge and read-state sync not converging with the actual read state.
+- Fixed an In-App Automation frequency limit configured in weeks under-throttling by ~14%.
+- Fixed a false-positive cache-root escape rejection that could block a push-triggered Scene from displaying on older devices or ones restored from a cloud backup.
+- Fixed NSNull not being treated as null when wrapping bridged Objective-C containers.
+- Fixed a prefetch failure log not including the underlying error.
+- Fixed on-device AI evaluations being skipped without reporting to the evaluation observer.
+
 ## Version 21.0.1 - September 16, 2026
 Patch release with a few Scene layout and sizing fixes. Apps that use Scenes should update to this version or later.
 
