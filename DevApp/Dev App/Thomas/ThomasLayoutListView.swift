@@ -9,6 +9,9 @@ struct ThomasLayoutListView: View {
     @StateObject
     private var viewModel = ThomasLayoutViewModel()
 
+    @State
+    private var mcModeLayout: MCModeLayout?
+
     private enum SceneRoutes: Hashable, CaseIterable {
         case embedded
         case modal
@@ -32,12 +35,28 @@ struct ThomasLayoutListView: View {
         }
     }
 
+    private func openInMCMode(_ layout: LayoutFile) {
+        do {
+            self.mcModeLayout = MCModeLayout(
+                layout: try layout.loadAirshipLayout(),
+                title: layout.fileName
+            )
+        } catch {
+            viewModel.openError = error
+        }
+    }
+
     private var layoutsView: some View {
         Form {
             Section {
                 ForEach(viewModel.recentLayouts) { layout in
                     Button(layout.fileName) {
                        open(layout, addToRecents: false)
+                    }
+                    .contextMenu {
+                        Button("Open in MC mode") {
+                            openInMCMode(layout)
+                        }
                     }
                 }
             } header: {
@@ -78,6 +97,7 @@ struct ThomasLayoutListView: View {
             }
         }
         .navigationTitle("Layout Viewer")
+        .mcModePresentation(item: $mcModeLayout)
         .sheet(isPresented: Binding(get: { viewModel.openError != nil }, set: { if !$0 { viewModel.openError = nil } })) {
             NavigationStack {
                 ScrollView {

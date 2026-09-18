@@ -100,7 +100,7 @@ struct MCModeLayout: Identifiable {
     let title: String
 }
 
-private extension View {
+extension View {
     /// `fullScreenCover` where it exists, so MC mode gets the whole screen -- a page sheet would
     /// change the very geometry being compared.
     @ViewBuilder
@@ -114,8 +114,9 @@ private extension View {
 }
 
 /// Hosts a layout the way `MessageCenterMessageView` hosts native message content: a bare `ZStack`
-/// with no frame of its own, pushed under a navigation bar. Mirroring that chrome is the point --
-/// it is what the scene is actually measured against in Message Center.
+/// with no frame of its own, pushed under a navigation bar, under a tab bar. Mirroring that chrome
+/// is the point -- it is what the scene is actually measured against in Message Center, tab bar
+/// height and all.
 struct ThomasMCModeView: View {
 
     private let layout: AirshipLayout
@@ -139,22 +140,37 @@ struct ThomasMCModeView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AirshipSimpleLayoutView(
-                    layout: layout,
-                    viewModel: layoutViewModel
-                )
-            }
-            .navigationTitle(title)
+        TabView {
+            NavigationStack {
+                ZStack {
+                    AirshipSimpleLayoutView(
+                        layout: layout,
+                        viewModel: layoutViewModel
+                    )
+                }
+                .navigationTitle(title)
 #if !os(macOS) && !os(tvOS)
-            .navigationBarTitleDisplayMode(.inline)
+                .navigationBarTitleDisplayMode(.inline)
 #endif
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { dismiss() }
+                    }
                 }
             }
+            .tabItem {
+                Label("Message Center", systemImage: "tray.fill")
+            }
+
+            Text("Junk")
+                .tabItem {
+                    Label("Junk", systemImage: "questionmark.circle")
+                }
+
+            Text("More Junk")
+                .tabItem {
+                    Label("More Junk", systemImage: "ellipsis.circle")
+                }
         }
     }
 }

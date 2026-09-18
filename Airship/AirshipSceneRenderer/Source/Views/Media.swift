@@ -167,10 +167,13 @@ extension Image {
 
     @MainActor
     private func centerInside(constraints: ViewConstraints) -> some View {
+        // Only the keyboard: a pinned background must not rescale when the keyboard shows up
+        // (Mobile-5409). An auto-height image has no fixed box to defend, and ignoring the
+        // container's safe area here inflates the size Container measures it at instead.
         self.resizable()
             .scaledToFit()
             .constraints(constraints)
-            .ignoresSafeArea()
+            .ignoresSafeArea(.keyboard)
             .clipped()
     }
 }
