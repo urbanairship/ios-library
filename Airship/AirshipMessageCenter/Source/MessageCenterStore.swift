@@ -28,6 +28,10 @@ actor MessageCenterStore {
     private static let userRegisteredChannelID = "UAUserRegisteredChannelID"
     private static let userRequireUpdate = "UAUserRequireUpdate"
 
+    /// Shared by every fetch that should exclude expired or pending-client-deletion messages.
+    private static let activeMessagePredicateFragment =
+        "(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)"
+
     private let coreData: UACoreData?
     private let config: RuntimeConfig
     private let dataStore: PreferenceDataStore
@@ -87,11 +91,10 @@ actor MessageCenterStore {
     var messages: [MessageCenterMessage] {
         get async {
             let predicate = AirshipCoreDataPredicate(
-                format:
-                    "(messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
+                format: MessageCenterStore.activeMessagePredicateFragment,
                 args: [self.date.now]
             )
-            
+
             let messages = try? await fetchMessages(withPredicate: predicate)
             return messages ?? []
         }
@@ -154,7 +157,7 @@ actor MessageCenterStore {
 
             let predicate = AirshipCoreDataPredicate(
                 format:
-                    "unread == YES && unreadClient == YES && (messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
+                    "unread == YES && unreadClient == YES && " + MessageCenterStore.activeMessagePredicateFragment,
                 args: [self.date.now]
             )
 
@@ -175,7 +178,7 @@ actor MessageCenterStore {
     {
         let predicate = AirshipCoreDataPredicate(
             format:
-                "messageID == %@ && (messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
+                "messageID == %@ && " + MessageCenterStore.activeMessagePredicateFragment,
             args: [
                 messageID,
                 self.date.now
@@ -190,7 +193,7 @@ actor MessageCenterStore {
     {
         let predicate = AirshipCoreDataPredicate(
             format:
-                "messageBodyURL == %@ && (messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
+                "messageBodyURL == %@ && " + MessageCenterStore.activeMessagePredicateFragment,
             args: [
                 bodyURL,
                 self.date.now
@@ -212,7 +215,7 @@ actor MessageCenterStore {
         AirshipLogger.trace("Mark messages with IDs: \(messageIDs) read")
 
         try await coreData.perform { context in
-            let propertiesToUpdate: [AnyHashable: Any]
+            let propertiesToUpdate: [String: Any]
             switch level {
             case .local:
                 propertiesToUpdate = ["unreadClient": false]
@@ -226,7 +229,6 @@ actor MessageCenterStore {
                     format: "messageID IN %@",
                     messageIDs
                 ),
-                useBatch: !self.inMemory,
                 context: context
             )
         }
@@ -245,7 +247,6 @@ actor MessageCenterStore {
                     format: "messageID IN %@",
                     messageIDs
                 ),
-                useBatch: !self.inMemory,
                 context: context
             )
         }
@@ -265,7 +266,6 @@ actor MessageCenterStore {
                     format: "messageID IN %@",
                     messageIDs
                 ),
-                useBatch: !self.inMemory,
                 context: context
             )
         }
@@ -280,6 +280,8 @@ actor MessageCenterStore {
     }
 
     func fetchLocallyReadOnlyMessages() async throws -> [MessageCenterMessage] {
+        // Left unfiltered on purpose: a message pending deletion or expiration
+        // still needs its read state reported before the row is gone for good.
         let predicate = AirshipCoreDataPredicate(
             format: "unreadClient == NO && unread == YES"
         )
@@ -372,15 +374,18 @@ actor MessageCenterStore {
     }
 
     /// Updates properties on messages matching `predicate`.
-    /// - Note: `NSBatchUpdateRequest` is not supported against an in-memory store, so
-    ///   `useBatch` must be `false` (e.g. `self.inMemory`) in that case, mirroring `delete(predicate:useBatch:context:)`.
+    /// - Note: falls back to a fetch-and-set loop against an in-memory store, since
+    ///   `NSBatchUpdateRequest` is not supported there, mirroring `delete(predicate:context:)`.
+    /// - Parameters:
+    ///   - propertiesToUpdate: the property names and new values to apply.
+    ///   - predicate: the predicate selecting which messages to update.
+    ///   - context: the managed object context to execute against.
     nonisolated private func update(
-        propertiesToUpdate: [AnyHashable: Any],
+        propertiesToUpdate: [String: Any],
         predicate: NSPredicate,
-        useBatch: Bool,
         context: NSManagedObjectContext
     ) throws {
-        if useBatch {
+        if !self.inMemory {
             let request = InboxMessageData.batchUpdateRequest()
             request.predicate = predicate
             request.propertiesToUpdate = propertiesToUpdate
@@ -390,10 +395,10 @@ actor MessageCenterStore {
             let request: NSFetchRequest<InboxMessageData> =
                 InboxMessageData.fetchRequest()
             request.predicate = predicate
+            request.includesPropertyValues = false
             let fetchedMessages = try context.fetch(request)
             fetchedMessages.forEach { message in
                 propertiesToUpdate.forEach { key, value in
-                    guard let key = key.base as? String else { return }
                     message.setValue(value, forKey: key)
                 }
             }
@@ -402,10 +407,9 @@ actor MessageCenterStore {
 
     nonisolated private func delete(
         predicate: NSPredicate,
-        useBatch: Bool,
         context: NSManagedObjectContext
     ) throws {
-        if useBatch {
+        if !self.inMemory {
             let request = InboxMessageData.fetchRequest()
             request.predicate = predicate
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
@@ -525,7 +529,6 @@ actor MessageCenterStore {
                     format: "NOT(messageID IN %@)",
                     messageIDs
                 ),
-                useBatch: !self.inMemory,
                 context: context
             )
         }
