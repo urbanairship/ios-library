@@ -182,6 +182,46 @@ struct MessageCenterStoreTest {
     }
 
     @Test
+    func testFetchLocallyReadOnlyMessagesIncludesLocallyReadMessages() async throws {
+        let message = MessageCenterMessage.generateMessage()
+        try await store.updateMessages(messages: [message], lastModifiedTime: "")
+
+        try await store.markRead(messageIDs: [message.id], level: .local)
+
+        let messages = try await store.fetchLocallyReadOnlyMessages()
+        #expect(messages.map { $0.id } == [message.id])
+    }
+
+    @Test
+    func testFetchLocallyReadOnlyMessagesIncludesExpiredMessages() async throws {
+        // Expiration must not suppress the read-state report; the backend
+        // still needs to hear about it before the message is gone for good.
+        let expired = MessageCenterMessage.generateMessage(
+            expiry: Date().addingTimeInterval(-1000)
+        )
+        try await store.updateMessages(messages: [expired], lastModifiedTime: "")
+
+        try await store.markRead(messageIDs: [expired.id], level: .local)
+
+        let messages = try await store.fetchLocallyReadOnlyMessages()
+        #expect(messages.map { $0.id } == [expired.id])
+    }
+
+    @Test
+    func testFetchLocallyReadOnlyMessagesIncludesPendingDeleteMessages() async throws {
+        // Same reasoning as expiration: the read report and the delete report
+        // are two independent facts the backend needs, both fired in the same refresh.
+        let message = MessageCenterMessage.generateMessage()
+        try await store.updateMessages(messages: [message], lastModifiedTime: "")
+
+        try await store.markRead(messageIDs: [message.id], level: .local)
+        try await store.markDeleted(messageIDs: [message.id])
+
+        let messages = try await store.fetchLocallyReadOnlyMessages()
+        #expect(messages.map { $0.id } == [message.id])
+    }
+
+    @Test
     func testSyncMessages() async throws {
         let generated = MessageCenterMessage.generateMessages(5)
         var messages = Array(generated[0...2])
