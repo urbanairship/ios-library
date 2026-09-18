@@ -39,7 +39,7 @@ struct FrequencyConstraint: Equatable, Hashable, Sendable, Decodable {
             case .days:
                 return value * 60 * 60 * 24
             case .weeks:
-                return value * 60 * 60 * 24 * 6
+                return value * 60 * 60 * 24 * 7
             case .months:
                 return value * 60 * 60 * 24 * 30
             case .years:

@@ -1248,6 +1248,7 @@
 		FADE000000000000000000C2 /* LedgerLimitEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C3 /* LedgerLimitEvaluator.swift */; };
 		FADE000000000000000000C4 /* LimitConfigTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C5 /* LimitConfigTest.swift */; };
 		FADE000000000000000000C6 /* LedgerLimitEvaluatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000C7 /* LedgerLimitEvaluatorTest.swift */; };
+		FADE000000000000000000D0 /* FrequencyConstraintTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FADE000000000000000000D1 /* FrequencyConstraintTest.swift */; };
 		FEFE000000000000000000B1 /* AirshipTestExpectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEFE000000000000000000A1 /* AirshipTestExpectation.swift */; };
 		FFE2411BC69F1027C03B740B /* AirshipImageDataTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DFDD433477456A34D32B2F /* AirshipImageDataTest.swift */; };
 /* End PBXBuildFile section */
@@ -2890,6 +2891,7 @@
 		FADE000000000000000000C3 /* LedgerLimitEvaluator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerLimitEvaluator.swift; sourceTree = "<group>"; };
 		FADE000000000000000000C5 /* LimitConfigTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LimitConfigTest.swift; sourceTree = "<group>"; };
 		FADE000000000000000000C7 /* LedgerLimitEvaluatorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerLimitEvaluatorTest.swift; sourceTree = "<group>"; };
+		FADE000000000000000000D1 /* FrequencyConstraintTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrequencyConstraintTest.swift; sourceTree = "<group>"; };
 		FEFE000000000000000000A1 /* AirshipTestExpectation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AirshipTestExpectation.swift; path = Support/AirshipTestExpectation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -3181,6 +3183,7 @@
 				FADE000000000000000000C5 /* LimitConfigTest.swift */,
 				FADE000000000000000000C7 /* LedgerLimitEvaluatorTest.swift */,
 				FADE000000000000000000B3 /* AutomationLedgerTest.swift */,
+				FADE000000000000000000D1 /* FrequencyConstraintTest.swift */,
 			);
 			path = Limits;
 			sourceTree = "<group>";
@@ -7249,6 +7252,7 @@
 				FADE000000000000000000C4 /* LimitConfigTest.swift in Sources */,
 				FADE000000000000000000C6 /* LedgerLimitEvaluatorTest.swift in Sources */,
 				FADE000000000000000000B4 /* AutomationLedgerTest.swift in Sources */,
+				FADE000000000000000000D0 /* FrequencyConstraintTest.swift in Sources */,
 				6EC0CA4F2B48987700333A87 /* AutomationRemoteDataAccessTest.swift in Sources */,
 				6E1473EA2F527C4D00320A36 /* TestURLOpener.swift in Sources */,
 				6E1A9BB72B5B1D9E00A6489B /* TestActiveTimer.swift in Sources */,
