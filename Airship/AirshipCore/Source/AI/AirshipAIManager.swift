@@ -109,11 +109,26 @@ extension AirshipAI {
             _ evaluation: E,
             additionalContext: AirshipAI.Context
         ) async -> AirshipAI.Result<E.Output> {
+            // The privacy gate turns the whole feature off, observer included — an app that
+            // opted out doesn't need a record per evaluation telling it so.
             guard enabled else {
                 return .skipped(reason: "AI disabled by privacy manager")
             }
+
+            // Snapshotted before the model check so a skip decided here still reaches the
+            // observer that was registered when the evaluation started.
+            let observer = await self.currentObserver()
+
             guard let resolved = await resolve(evaluation) else {
-                return .skipped(reason: "No model configured")
+                let reason = "No model configured"
+                // No provider has run at this point, so there is no context to report.
+                evaluator.reportSkipped(
+                    evaluation,
+                    context: .empty,
+                    reason: reason,
+                    observer: observer
+                )
+                return .skipped(reason: reason)
             }
             // Provider context first, then the caller's additional context appended after
             // (later items win priority ties when the model trims to fit its window).
@@ -123,7 +138,14 @@ extension AirshipAI {
             // with none, the model would guess from the prompt alone, so skip and let the
             // caller fall back. Most evaluations opt out and run regardless (fail open).
             if evaluation.requiresContext, merged.items.isEmpty {
-                return .skipped(reason: "No context to personalize on")
+                let reason = "No context to personalize on"
+                evaluator.reportSkipped(
+                    evaluation,
+                    context: merged,
+                    reason: reason,
+                    observer: observer
+                )
+                return .skipped(reason: reason)
             }
 
             // The entry check above may be stale by now (the context fetch inside
@@ -133,9 +155,17 @@ extension AirshipAI {
                 evaluation,
                 model: resolved.model,
                 context: merged,
-                observer: resolved.observer,
+                observer: observer,
                 isAllowed: { self.enabled }
             )
+        }
+
+        /// Reads the registered observer. Its own main-actor hop, taken before the model
+        /// check, so one evaluation can't report to an observer that replaced the one in
+        /// place when it started.
+        @MainActor
+        private func currentObserver() -> AirshipAI.EvaluationObserver? {
+            evaluationObserver
         }
 
         /// Resolves the model and fetches the provider's context. Model resolution and the
@@ -147,18 +177,14 @@ extension AirshipAI {
             _ evaluation: E
         ) async -> (
             model: any AirshipAI.ModelAdapter,
-            context: AirshipAI.Context,
-            observer: AirshipAI.EvaluationObserver?
+            context: AirshipAI.Context
         )? {
             guard let model = self.model(for: evaluation.usage) else { return nil }
-            // Snapshotted on the same main-actor hop as the model and provider, so one
-            // evaluation can't run against an observer that was replaced mid-flight.
-            let observer = evaluationObserver
             let context = await providerContext(
                 forUsage: evaluation.usage.rawValue,
                 subject: evaluation.subject
             )
-            return (model, context, observer)
+            return (model, context)
         }
 
         /// Fetches the registered provider's context for a usage, or `.empty` when none is
