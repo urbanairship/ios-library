@@ -539,6 +539,75 @@ struct MessageCenterListTest {
     }
 
     @Test
+    func testSyncReadMessageStateConvergesGlobalUnreadState() async throws {
+        self.channel.identifier = UUID().uuidString
+
+        let messages = MessageCenterMessage.generateMessages(1)
+        let message = try #require(messages.first)
+        let mcUser = MessageCenterUser(
+            username: UUID().uuidString,
+            password: UUID().uuidString
+        )
+
+        try await self.store.updateMessages(messages: messages, lastModifiedTime: "")
+
+        self.inbox.enabled = true
+
+        // Simulate the user reading the message locally, before the server has
+        // acknowledged the read state.
+        await self.inbox.markRead(messageIDs: [message.id])
+
+        let pendingBeforeSync = try await self.store.fetchLocallyReadOnlyMessages()
+        #expect(pendingBeforeSync.map { $0.id } == [message.id])
+
+        self.client.onCreateUser = { _ in
+            return AirshipHTTPResponse(
+                result: mcUser,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        self.client.onRetrieve = { _, _, _ in
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode: 304,
+                headers: [:]
+            )
+        }
+
+        var readSyncCount = 0
+        self.client.onRead = { syncedMessages, user, channelID in
+            readSyncCount += 1
+            #expect(syncedMessages.map { $0.id } == [message.id])
+            #expect(user == mcUser)
+            #expect(channelID == self.channel.identifier)
+            return AirshipHTTPResponse(
+                result: nil,
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        self.workManager.autoLaunchRequests = true
+
+        // First refresh syncs the locally read message to the server, and should
+        // converge the global `unread` state so it's no longer pending a resync.
+        let firstResult = await self.inbox.refreshMessages()
+        #expect(firstResult)
+        #expect(readSyncCount == 1)
+
+        let pendingAfterSync = try await self.store.fetchLocallyReadOnlyMessages()
+        #expect(pendingAfterSync.isEmpty)
+
+        // A second refresh should not need to resync the same message again, since
+        // it already converged to the global read state.
+        let secondResult = await self.inbox.refreshMessages()
+        #expect(secondResult)
+        #expect(readSyncCount == 1)
+    }
+
+    @Test
     func testRefreshOnMessageExpiresOnAfterUpdate() async throws {
         var sleeps = await self.sleeper.sleepUpdates.makeStream().makeAsyncIterator()
 

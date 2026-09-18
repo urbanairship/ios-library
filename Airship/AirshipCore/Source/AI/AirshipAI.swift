@@ -458,8 +458,12 @@ public enum AirshipAI {
         /// these as impressions.
         ///
         /// Fires once per evaluation across every usage, whatever the outcome — including
-        /// evaluations skipped before a model ran. Airship does not report any of this; it
-        /// is handed to you and nowhere else.
+        /// evaluations skipped before a model ran, such as when none is configured. Airship
+        /// does not report any of this; it is handed to you and nowhere else.
+        ///
+        /// The one exception is `AirshipFeature.onDeviceAI`: while that is disabled nothing
+        /// fires at all, because the gate turns the feature off rather than producing a
+        /// record per evaluation to say so.
         ///
         ///     Airship.ai.setEvaluationObserver { record in
         ///         guard case .completed(let output) = record.outcome else { return }

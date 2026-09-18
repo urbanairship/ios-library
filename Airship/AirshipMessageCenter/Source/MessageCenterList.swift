@@ -705,7 +705,7 @@ final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
 
                 try await self.store.markRead(
                     messageIDs: messages.compactMap { $0.id },
-                    level: .local
+                    level: .global
                 )
                 return true
             }

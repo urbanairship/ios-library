@@ -129,6 +129,59 @@ struct MessageCenterStoreTest {
     }
 
     @Test
+    func testUnreadCountExcludesLocallyReadMessages() async throws {
+        let messages = MessageCenterMessage.generateMessages(2)
+        try await store.updateMessages(messages: messages, lastModifiedTime: "")
+
+        var count = await store.unreadCount
+        #expect(count == 2)
+
+        // Locally marking a message read only flips `unreadClient`. The server hasn't
+        // acknowledged it yet, so `unread` is still YES, but it must not count as unread.
+        try await store.markRead(messageIDs: [messages[0].id], level: .local)
+
+        count = await store.unreadCount
+        #expect(count == 1)
+    }
+
+    @Test
+    func testUnreadCountExcludesExpiredMessages() async throws {
+        let expired = MessageCenterMessage.generateMessage(
+            expiry: Date().addingTimeInterval(-1000)
+        )
+        try await store.updateMessages(messages: [expired], lastModifiedTime: "")
+
+        let count = await store.unreadCount
+        #expect(count == 0)
+    }
+
+    @Test
+    func testUnreadCountExcludesPendingDeleteMessages() async throws {
+        let message = MessageCenterMessage.generateMessage()
+        try await store.updateMessages(messages: [message], lastModifiedTime: "")
+
+        try await store.markDeleted(messageIDs: [message.id])
+
+        let count = await store.unreadCount
+        #expect(count == 0)
+    }
+
+    @Test
+    func testUnreadCountReflectsGlobalMarkRead() async throws {
+        let message = MessageCenterMessage.generateMessage()
+        try await store.updateMessages(messages: [message], lastModifiedTime: "")
+
+        var count = await store.unreadCount
+        #expect(count == 1)
+
+        // `.global` is the level that converges with the server-acknowledged state.
+        try await store.markRead(messageIDs: [message.id], level: .global)
+
+        count = await store.unreadCount
+        #expect(count == 0)
+    }
+
+    @Test
     func testSyncMessages() async throws {
         let generated = MessageCenterMessage.generateMessages(5)
         var messages = Array(generated[0...2])

@@ -152,10 +152,16 @@ actor MessageCenterStore {
                 return 0
             }
 
+            let predicate = AirshipCoreDataPredicate(
+                format:
+                    "unread == YES && unreadClient == YES && (messageExpiration == nil || messageExpiration >= %@) && (deletedClient == NO || deletedClient == nil)",
+                args: [self.date.now]
+            )
+
             let result: Int? = try? await coreData.performWithResult { context in
                 let request: NSFetchRequest<InboxMessageData> =
                     InboxMessageData.fetchRequest()
-                request.predicate = NSPredicate(format: "unread == YES")
+                request.predicate = predicate.toNSPredicate()
                 request.includesPropertyValues = false
                 let fetchedMessages = try context.fetch(request)
                 return fetchedMessages.count
@@ -206,19 +212,23 @@ actor MessageCenterStore {
         AirshipLogger.trace("Mark messages with IDs: \(messageIDs) read")
 
         try await coreData.perform { context in
-            let request = InboxMessageData.batchUpdateRequest()
-            request.predicate = NSPredicate(
-                format: "messageID IN %@",
-                messageIDs
-            )
-            if level == .local {
-                request.propertiesToUpdate = ["unreadClient": false]
-            } else if level == .global {
-                request.propertiesToUpdate = ["unread": false]
+            let propertiesToUpdate: [AnyHashable: Any]
+            switch level {
+            case .local:
+                propertiesToUpdate = ["unreadClient": false]
+            case .global:
+                propertiesToUpdate = ["unread": false]
             }
 
-            request.resultType = .updatedObjectsCountResultType
-            try context.execute(request)
+            try self.update(
+                propertiesToUpdate: propertiesToUpdate,
+                predicate: NSPredicate(
+                    format: "messageID IN %@",
+                    messageIDs
+                ),
+                useBatch: !self.inMemory,
+                context: context
+            )
         }
     }
 
@@ -249,14 +259,15 @@ actor MessageCenterStore {
         AirshipLogger.trace("Mark messages with IDs: \(messageIDs) deleted")
 
         try await coreData.perform { context in
-            let request = InboxMessageData.batchUpdateRequest()
-            request.predicate = NSPredicate(
-                format: "messageID IN %@",
-                messageIDs
+            try self.update(
+                propertiesToUpdate: ["deletedClient": true],
+                predicate: NSPredicate(
+                    format: "messageID IN %@",
+                    messageIDs
+                ),
+                useBatch: !self.inMemory,
+                context: context
             )
-            request.propertiesToUpdate = ["deletedClient": true]
-            request.resultType = .updatedObjectsCountResultType
-            try context.execute(request)
         }
     }
 
@@ -357,6 +368,35 @@ actor MessageCenterStore {
 
             let fetchedMessages = try context.fetch(request)
             return fetchedMessages.compactMap { data in data.message() }
+        }
+    }
+
+    /// Updates properties on messages matching `predicate`.
+    /// - Note: `NSBatchUpdateRequest` is not supported against an in-memory store, so
+    ///   `useBatch` must be `false` (e.g. `self.inMemory`) in that case, mirroring `delete(predicate:useBatch:context:)`.
+    nonisolated private func update(
+        propertiesToUpdate: [AnyHashable: Any],
+        predicate: NSPredicate,
+        useBatch: Bool,
+        context: NSManagedObjectContext
+    ) throws {
+        if useBatch {
+            let request = InboxMessageData.batchUpdateRequest()
+            request.predicate = predicate
+            request.propertiesToUpdate = propertiesToUpdate
+            request.resultType = .updatedObjectsCountResultType
+            try context.execute(request)
+        } else {
+            let request: NSFetchRequest<InboxMessageData> =
+                InboxMessageData.fetchRequest()
+            request.predicate = predicate
+            let fetchedMessages = try context.fetch(request)
+            fetchedMessages.forEach { message in
+                propertiesToUpdate.forEach { key, value in
+                    guard let key = key.base as? String else { return }
+                    message.setValue(value, forKey: key)
+                }
+            }
         }
     }
 

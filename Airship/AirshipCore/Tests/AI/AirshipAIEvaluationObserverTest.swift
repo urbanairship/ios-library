@@ -220,6 +220,72 @@ struct AirshipAIEvaluationObserverTest {
         #expect(recorder.records.value.count == 1)
     }
 
+    @Test("No model configured reports, so absence is visible even when nothing was registered")
+    func noModelConfiguredReports() async throws {
+        let recorder = Recorder()
+        let manager = makeObserverManager()
+        // Deliberately no registerModelFactory and no resolver: the evaluation is skipped
+        // before a model is ever consulted, which is the common case in the field.
+        manager.setEvaluationObserver(recorder.observer)
+
+        _ = await manager.evaluate(TestEvaluation())
+        try await waitForRecords(recorder, count: 1)
+
+        let records = recorder.records.value
+        #expect(records.count == 1)
+        guard case .skipped(let reason) = records.first?.outcome else {
+            Issue.record("Expected .skipped, got \(String(describing: records.first?.outcome))")
+            return
+        }
+        #expect(reason == "No model configured")
+        // No model call was made, and no provider ran, so there is nothing to count or offer.
+        #expect(records.first?.attempts == 0)
+        #expect(records.first?.duration == 0)
+        #expect(records.first?.request.instructions == "rules")
+        #expect(records.first?.request.context == .empty)
+    }
+
+    @Test("An evaluation skipped for missing required context reports the context it had")
+    func missingRequiredContextReports() async throws {
+        let recorder = Recorder()
+        let manager = makeObserverManager()
+        manager.registerModelFactory { MockAIModel() }
+        manager.setEvaluationObserver(recorder.observer)
+        // No context provider registered, so the resolved context is empty and an
+        // evaluation that requires context is skipped before the model is called.
+
+        _ = await manager.evaluate(ContextRequiredEvaluation())
+        try await waitForRecords(recorder, count: 1)
+
+        let records = recorder.records.value
+        #expect(records.count == 1)
+        guard case .skipped(let reason) = records.first?.outcome else {
+            Issue.record("Expected .skipped, got \(String(describing: records.first?.outcome))")
+            return
+        }
+        #expect(reason == "No context to personalize on")
+        #expect(records.first?.attempts == 0)
+    }
+
+    @Test("Nothing reports while AI is disabled — the gate turns the feature off, observer included")
+    func nothingReportsWhileDisabled() async throws {
+        let recorder = Recorder()
+        let privacyManager = TestPrivacyManager(
+            dataStore: PreferenceDataStore(appKey: UUID().uuidString),
+            config: RuntimeConfig.testConfig(),
+            defaultEnabledFeatures: .all
+        )
+        privacyManager.disableFeatures(.onDeviceAI)
+        let manager = AirshipAI.DefaultManager(privacyManager: privacyManager)
+        manager.registerModelFactory { MockAIModel() }
+        manager.setEvaluationObserver(recorder.observer)
+
+        _ = await manager.evaluate(TestEvaluation())
+        try await settle()
+
+        #expect(recorder.records.value.isEmpty)
+    }
+
     private func makeObserverManager() -> AirshipAI.DefaultManager {
         AirshipAI.DefaultManager(
             privacyManager: TestPrivacyManager(

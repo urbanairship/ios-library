@@ -120,6 +120,41 @@ extension AirshipAI {
         }
 
 
+        /// Reports an evaluation that was skipped before a model was ever consulted.
+        ///
+        /// These skips are decided by the manager, which can't build a `Request` itself: the
+        /// initializer and the `render` closure are internal to the evaluator. The record
+        /// carries the instructions and schema the evaluation would have used, plus whatever
+        /// context had been gathered by then — `.empty` when the skip happened before the
+        /// provider ran, which is accurate, since nothing was offered to a model.
+        ///
+        /// `duration` and `attempts` are zero for the same reason: no model call was made.
+        func reportSkipped<E: Evaluation>(
+            _ evaluation: E,
+            context: Context,
+            reason: String,
+            observer: AirshipAI.EvaluationObserver?
+        ) {
+            // Bail before building the record: most apps never register an observer, and
+            // there is no reason to render instructions for one that isn't listening.
+            guard observer != nil else { return }
+            Self.report(
+                to: observer,
+                AirshipAI.EvaluationRecord(
+                    usage: AnyUsage(rawValue: evaluation.usage.rawValue),
+                    request: AirshipAI.Request(
+                        instructions: evaluation.instructions(),
+                        schema: evaluation.schema,
+                        context: context,
+                        render: evaluation.prompt(context:)
+                    ),
+                    outcome: .skipped(reason: reason),
+                    duration: 0,
+                    attempts: 0
+                )
+            )
+        }
+
         /// Hands a finished evaluation to the observer on a task of its own.
         ///
         /// Detached so an observer that blocks — or one that reaches back into the SDK —
