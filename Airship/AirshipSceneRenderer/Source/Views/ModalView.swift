@@ -74,6 +74,11 @@ struct ModalView: View {
         state: Bool,
         completion: (() -> Void)? = nil)
     {
+        guard thomasEnvironment.extensions.animationsEnabled else {
+            isShowing = state
+            completion?()
+            return
+        }
         let duration = if state {
             transition?.enter.durationMilliseconds.map { Double($0) / 1000 } ?? Self.animateInDuration
         } else {

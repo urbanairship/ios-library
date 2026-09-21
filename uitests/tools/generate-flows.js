@@ -22,6 +22,7 @@
 const fs = require("fs");
 const path = require("path");
 const YAML = require("yaml");
+const { fixturesRoot: resolveFixturesRoot, listFixtures, embeddedIDFor } = require("./fixtures");
 
 const uitestsDir = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(uitestsDir, "..");
@@ -33,10 +34,9 @@ if (!outDir) {
 }
 
 const appId = config.ios.appId;
-const fixturesRoot = path.join(repoRoot, config.sweep.fixtures);
+const fixturesRoot = resolveFixturesRoot(config, repoRoot);
 const authoredDir = path.join(uitestsDir, "flows");
 const manualSkips = config.sweep.skip || {};
-const categories = ["Modal", "Banner", "Embedded"];
 const animatedMedia = new Set(["video", "youtube", "vimeo"]);
 
 // Walks a fixture and records which remote or animated content the test-mode stubs replace.
@@ -116,10 +116,13 @@ function flowText(name, fixture, embeddedID, waitForMedia, waitForWebView) {
   const args = { uiTestMode: "true", thomasLayout: fixture };
   if (embeddedID) args.thomasEmbeddedID = embeddedID;
   const commands = [
-    // clearState costs ~2s per launch but is what makes every screenshot independent of
-    // what ran before it: without it the DevApp home screen behind a modal carries state
-    // between launches and shifts by a few pixels (57 of 167 screenshots changed in CI).
-    { launchApp: { clearState: true, arguments: args } },
+    // clearState used to be required here: without it the DevApp home screen behind a modal
+    // carried state between launches and shifted by a few pixels (57 of 167 screenshots
+    // changed in CI). hidesHomeScreen (MainApp.swift) now blanks that screen outright for
+    // Modal/Banner, and UITestEmbeddedHostView hides the tab bar for Embedded, so the thing
+    // clearState was covering for is independently handled - testing whether a plain
+    // relaunch (still a fresh process each flow, just without the ~2s data wipe) is enough.
+    { launchApp: { arguments: args } },
     { extendedWaitUntil: { visible: { id: "thomas:root" }, timeout: 15000 } },
     "waitForAnimationToEnd",
   ];
@@ -145,48 +148,43 @@ const owned = authoredFixtures();
 const manifest = { fixtures: 0, generated: [], authored: [], skipped: [] };
 const names = new Set();
 
-for (const category of categories) {
-  const dir = path.join(fixturesRoot, category);
-  if (!fs.existsSync(dir)) continue;
-  for (const file of fs.readdirSync(dir).filter((f) => /\.ya?ml$/.test(f)).sort()) {
-    const fixture = `Scenes/${category}/${file}`;
-    manifest.fixtures += 1;
-    const skip = (reason) => manifest.skipped.push({ fixture, reason });
+for (const { category, file, fixture } of listFixtures(config, repoRoot)) {
+  manifest.fixtures += 1;
+  const skip = (reason) => manifest.skipped.push({ fixture, reason });
 
-    if (owned.has(fixture)) {
-      manifest.authored.push({ flow: owned.get(fixture), fixture });
-      continue;
-    }
-    if (manualSkips[fixture]) {
-      skip(manualSkips[fixture]);
-      continue;
-    }
-    let doc;
-    try {
-      doc = YAML.parse(fs.readFileSync(path.join(dir, file), "utf8"));
-    } catch (error) {
-      skip(`fixture does not parse: ${error.message.split("\n")[0]}`);
-      continue;
-    }
-    const facts = {};
-    inspect(doc, facts);
-    const reason = skipReason(category, doc, facts);
-    if (reason) {
-      skip(reason);
-      continue;
-    }
-    const embeddedID = category === "Embedded" ? doc?.presentation?.embedded_id : null;
-    if (category === "Embedded" && typeof embeddedID !== "string") {
-      skip("embedded fixture has no presentation.embedded_id");
-      continue;
-    }
-
-    const name = flowName(category, file);
-    if (names.has(name)) throw new Error(`two fixtures map to the same flow name: ${name}`);
-    names.add(name);
-    fs.writeFileSync(path.join(outDir, `${name}.yaml`), flowText(name, fixture, embeddedID, !!facts.media || !!facts.animated, !!facts.webView));
-    manifest.generated.push({ flow: `${name}.yaml`, fixture, stubs: stubs(facts) });
+  if (owned.has(fixture)) {
+    manifest.authored.push({ flow: owned.get(fixture), fixture });
+    continue;
   }
+  if (manualSkips[fixture]) {
+    skip(manualSkips[fixture]);
+    continue;
+  }
+  let doc;
+  try {
+    doc = YAML.parse(fs.readFileSync(path.join(fixturesRoot, category, file), "utf8"));
+  } catch (error) {
+    skip(`fixture does not parse: ${error.message.split("\n")[0]}`);
+    continue;
+  }
+  const facts = {};
+  inspect(doc, facts);
+  const reason = skipReason(category, doc, facts);
+  if (reason) {
+    skip(reason);
+    continue;
+  }
+  const embeddedID = embeddedIDFor(category, doc);
+  if (category === "Embedded" && !embeddedID) {
+    skip("embedded fixture has no presentation.embedded_id");
+    continue;
+  }
+
+  const name = flowName(category, file);
+  if (names.has(name)) throw new Error(`two fixtures map to the same flow name: ${name}`);
+  names.add(name);
+  fs.writeFileSync(path.join(outDir, `${name}.yaml`), flowText(name, fixture, embeddedID, !!facts.media || !!facts.animated, !!facts.webView));
+  manifest.generated.push({ flow: `${name}.yaml`, fixture, stubs: stubs(facts) });
 }
 
 // Authored flows run from the same directory; those without a fixture (DevApp chrome

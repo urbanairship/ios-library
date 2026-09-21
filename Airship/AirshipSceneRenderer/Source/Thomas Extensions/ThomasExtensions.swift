@@ -39,8 +39,18 @@ public protocol ThomasExtensions: Sendable {
     /// Applies form-submission results (channel registrations, attribute edits) to the audience.
     var audienceEditor: any ThomasAudienceEditor { get }
 
+    /// Whether presentation transitions (modal/banner show and dismiss) animate. Defaulted to
+    /// `true`; a host sets `false` to make a screenshot flow deterministic without waiting out
+    /// a real fade.
+    var animationsEnabled: Bool { get }
+
 #if !os(tvOS) && !os(watchOS)
     /// Builds web views for `webView` layout nodes (renderer owns no WebKit/native bridge).
     var webViewFactory: any ThomasWebViewFactory { get }
 #endif
+}
+
+@_spi(AirshipInternal)
+extension ThomasExtensions {
+    public var animationsEnabled: Bool { true }
 }

@@ -253,6 +253,11 @@ struct BannerView: View {
     }
 
     private func setShowing(state: Bool, transition: ThomasPresentationInfo.Banner.Transition? , completion: (() -> Void)? = nil) {
+        guard thomasEnvironment.extensions.animationsEnabled else {
+            self.isShowing = state
+            completion?()
+            return
+        }
         let duration = if state {
             transition?.enter.durationMilliseconds.map { Double($0) / 1000 } ?? BannerView.animationInOutDuration
         } else {

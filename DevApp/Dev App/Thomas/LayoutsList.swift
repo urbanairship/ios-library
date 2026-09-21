@@ -1,6 +1,6 @@
 /* Copyright Airship and Contributors */
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 import SwiftUI
 @_spi(AirshipInternal) import AirshipScenes
 @_spi(AirshipInternal) import AirshipSceneRenderer
@@ -134,7 +134,13 @@ struct ThomasMCModeView: View {
         self._layoutViewModel = StateObject(
             wrappedValue: AirshipSimpleLayoutViewModel(
                 delegate: MCModeThomasDelegate(),
-                extensions: DefaultThomasExtensions()
+                extensions: DefaultThomasExtensions(
+                    // Renders outside `viewTester`, so `test-layout.internal` URLs need their
+                    // own resolver here rather than the one `LayoutFile.open` wires in.
+                    imageProvider: NonExtendableAssetCacheImageProvider { url in
+                        TestLayoutImageLoader.resolve(urlString: url.absoluteString)
+                    }
+                )
             )
         )
     }

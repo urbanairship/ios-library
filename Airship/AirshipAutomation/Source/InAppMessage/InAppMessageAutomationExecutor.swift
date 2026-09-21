@@ -135,13 +135,27 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     /// Displays a message directly for view-testing, bypassing the automation pipeline.
     /// Reuses the same scene plumbing as the normal execute path and the AI manager
     /// injected at module load, so nothing is resolved from the shared `Airship` instance.
+    ///
+    /// - Parameters:
+    ///   - imageProviderOverride: consulted for any image URL the message's own (empty, for
+    ///     view-testing) assets don't already have an answer for. A host can use this to fake
+    ///     image loads deterministically, without it ever reaching real assets.
+    ///   - animationsEnabled: whether the message's presentation transitions animate. A host
+    ///     sets this to `false` to make a screenshot flow deterministic without waiting out a
+    ///     real fade.
     @MainActor
-    func displayTest(message: InAppMessage) async throws {
+    func displayTest(
+        message: InAppMessage,
+        imageProviderOverride: (@Sendable (URL) -> AirshipImageData?)? = nil,
+        animationsEnabled: Bool = true
+    ) async throws {
         let adapter = try AirshipLayoutDisplayAdapter(
             message: message,
             priority: 0,
             assets: EmptyAirshipCachedAssets(),
-            aiManager: self.aiManager
+            aiManager: self.aiManager,
+            imageProviderOverride: imageProviderOverride,
+            animationsEnabled: animationsEnabled
         )
 
 #if os(macOS)

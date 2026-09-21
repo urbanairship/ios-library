@@ -15,6 +15,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     private let aiManager: (any AirshipAI.InternalManager)?
     private let networkChecker: any AirshipNetworkCheckerProtocol
     private let provider: @Sendable (URL) -> AirshipImageData?
+    private let animationsEnabled: Bool
 
     @MainActor
     private var themeManager: InAppAutomationThemeManager {
@@ -27,7 +28,9 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         assets: any AirshipCachedAssetsProtocol,
         actionRunner: (any InternalInAppActionRunner)? = nil,
         aiManager: (any AirshipAI.InternalManager)? = nil,
-        networkChecker: any AirshipNetworkCheckerProtocol = AirshipNetworkChecker.shared
+        networkChecker: any AirshipNetworkCheckerProtocol = AirshipNetworkChecker.shared,
+        imageProviderOverride: (@Sendable (URL) -> AirshipImageData?)? = nil,
+        animationsEnabled: Bool = true
     ) throws {
         self.message = message
         self.priority = priority
@@ -35,21 +38,25 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         self.actionRunner = actionRunner
         self.aiManager = aiManager
         self.networkChecker = networkChecker
+        self.animationsEnabled = animationsEnabled
 
         if case .custom(_) = message.displayContent {
             throw AirshipErrors.error("Invalid adapter for layout type")
         }
 
-        self.provider = { [assets] url in
-            guard
-                let url = assets.cachedURL(remoteURL: url),
-                let data = FileManager.default.contents(atPath: url.path),
+        // `imageProviderOverride` is consulted only when the cached assets don't have an
+        // answer, same precedence as the asset cache today - it's the view-testing path's
+        // way to fake an image load deterministically (see `InAppMessageViewTester`), not a
+        // replacement for a real prefetched asset.
+        self.provider = { [assets, imageProviderOverride] url in
+            if
+                let cachedURL = assets.cachedURL(remoteURL: url),
+                let data = FileManager.default.contents(atPath: cachedURL.path),
                 let imageData = try? AirshipImageData(data: data)
-            else {
-                return nil
+            {
+                return imageData
             }
-
-            return imageData
+            return imageProviderOverride?(url)
         }
     }
 
@@ -352,13 +359,15 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 imageProvider: imageProvider,
                 actionRunner: actionRunner,
                 nativeBridgeExtension: InAppMessageNativeBridgeExtension(message: message),
-                aiManager: aiManager
+                aiManager: aiManager,
+                animationsEnabled: animationsEnabled
             )
 #else
             let extensions = DefaultThomasExtensions(
                 imageProvider: imageProvider,
                 actionRunner: actionRunner,
-                aiManager: aiManager
+                aiManager: aiManager,
+                animationsEnabled: animationsEnabled
             )
 #endif
             let listener = ThomasDisplayListener(

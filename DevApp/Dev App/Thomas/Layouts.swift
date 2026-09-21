@@ -69,30 +69,32 @@ enum LayoutType: Equatable, Hashable, Codable {
 }
 
 extension LayoutFile {
-    /// - Parameter imageURLOverride: when set, every piece of remote content in a scene is stubbed
-    ///   before display (see `stubbingRemoteContent`), with images pointed at this URL. UI tests
-    ///   use it so screenshots never depend on the network or on animation timing.
+    /// - Parameter skipRealImages: when true, every Thomas image request falls back to a
+    ///   generated placeholder instead of the network for any URL that isn't already the
+    ///   shared `test-layout.internal` convention (see `thomasImageProvider`), and the
+    ///   presentation's show/dismiss transitions don't animate. UI tests set this so
+    ///   screenshots never depend on the network or on animation timing.
     @MainActor
-    func open(imageURLOverride: URL? = nil) async throws {
+    func open(skipRealImages: Bool = false) async throws {
         let filePath = Bundle.main.resourcePath! + directory + "/" + fileName
         let data = try loadData(filePath: filePath)
 
         switch self.type {
         case .sceneModal, .sceneBanner, .sceneEmbedded:
-            try await displayScene(data, imageURLOverride: imageURLOverride)
+            try await displayScene(data, skipRealImages: skipRealImages)
         case .messageModal, .messageBanner, .messageFullscreen, .messageHTML:
             try await displayMessage(data)
         }
     }
 
     /// Decodes the file's layout without displaying it, so a host other than the normal
-    /// presentation pipeline can render it (see "MC mode" in `LayoutsList`).
+    /// presentation pipeline can render it (see "MC mode" in `LayoutsList`, which wires its own
+    /// `test-layout.internal`-resolving image provider since it renders outside `viewTester`).
     @MainActor
     func loadAirshipLayout() throws -> AirshipLayout {
         let filePath = Bundle.main.resourcePath! + directory + "/" + fileName
         let data = try loadData(filePath: filePath)
-        var layoutData = try extractLayoutFromPayload(data)
-        layoutData = try Self.resolvingTestLayoutURLs(in: layoutData)
+        let layoutData = try extractLayoutFromPayload(data)
         return try JSONDecoder().decode(AirshipLayout.self, from: layoutData)
     }
 
@@ -208,103 +210,53 @@ extension LayoutFile {
 
 
     @MainActor
-    private func displayScene(_ data: Data, imageURLOverride: URL?) async throws {
+    private func displayScene(_ data: Data, skipRealImages: Bool) async throws {
         // Extract layout from potentially wrapped payload (in_app_message.message.display.layout)
         var layoutData = try extractLayoutFromPayload(data)
-        if let imageURLOverride {
-            layoutData = try Self.stubbingRemoteContent(in: layoutData, imageURL: imageURLOverride)
-        } else {
-            layoutData = try Self.resolvingTestLayoutURLs(in: layoutData)
-        }
+        layoutData = try Self.applyingUITestFixups(in: layoutData, isUITest: skipRealImages)
         let layout = try JSONDecoder().decode(AirshipLayout.self, from: layoutData)
 
         let message = InAppMessage(name: "thomas", displayContent: .airshipLayout(layout))
-        try await Airship.inAppAutomation.viewTester.display(message: message)
+        try await Airship.inAppAutomation.viewTester.display(
+            message: message,
+            imageProviderOverride: Self.thomasImageProvider(fallbackToPlaceholder: skipRealImages),
+            animationsEnabled: !skipRealImages
+        )
     }
 
-    /// Makes a scene render deterministically without the network, for UI test screenshots:
-    ///   - image media, image buttons and every `url_selectors` entry point at `imageURL`
-    ///   - video, YouTube and Vimeo media become image media showing `imageURL`, so the frame
-    ///     never lands at a random playback phase (the player chrome itself is not exercised)
+    /// The image any Thomas view's URL resolves to when the SDK's own image loader has no
+    /// answer for it otherwise - media, image buttons, stack image items, whatever needs one,
+    /// uniformly, with nothing here that enumerates view types. See `TestLayoutImageLoader`.
+    private static func thomasImageProvider(fallbackToPlaceholder: Bool) -> @Sendable (URL) -> AirshipImageData? {
+        { url in TestLayoutImageLoader.resolve(urlString: url.absoluteString, useFallback: fallbackToPlaceholder) }
+    }
+
+    /// Determinism fixes for UI test screenshots that `thomasImageProvider` can't give them,
+    /// because they change which view gets built rather than what a URL resolves to:
+    ///   - video, YouTube and Vimeo media become image media, so the frame never lands at a
+    ///     random playback phase (the player chrome itself is not exercised)
     ///   - web views load a small inline placeholder page instead of remote content
     ///   - pager `automated_actions` are dropped, so stories stay on their first page
     ///   - `randomize_children` is turned off, so option order is stable
-    /// The generator in `uitests/tools/generate-flows.js` mirrors these rules when it decides
-    /// what is capturable; keep the two in sync.
-    private static func stubbingRemoteContent(in data: Data, imageURL: URL) throws -> Data {
+    private static func applyingUITestFixups(in data: Data, isUITest: Bool) throws -> Data {
+        guard isUITest else {
+            return data
+        }
         let webViewPlaceholder = "data:text/html," + "<html><body style=\"margin:0;background:#dbe6f7;font:24px -apple-system,sans-serif;color:#1a4099\"><div style=\"padding:24px\">web view placeholder</div></body></html>"
             .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-        // A `test-layout.internal` URL already renders deterministically at the aspect ratio the
-        // scene asked for, so it's left alone rather than flattened to the one override image.
-        func resolvedURL(_ original: String?) -> String {
-            if let original, let resolved = TestLayoutPlaceholder.resolve(urlString: original) {
-                return resolved.absoluteString
-            }
-            return imageURL.absoluteString
-        }
         func rewrite(_ node: Any) -> Any {
             if var dict = node as? [String: Any] {
-                let type = dict["type"] as? String
-                if type == "media" {
-                    let mediaType = dict["media_type"] as? String
-                    if mediaType == "image" || mediaType == "video" || mediaType == "youtube" || mediaType == "vimeo" {
-                        dict["media_type"] = "image"
-                        dict["url"] = resolvedURL(dict["url"] as? String)
-                        if let selectors = dict["url_selectors"] as? [[String: Any]] {
-                            dict["url_selectors"] = selectors.map { selector in
-                                var selector = selector
-                                selector["url"] = resolvedURL(selector["url"] as? String)
-                                return selector
-                            }
-                        }
-                    }
-                } else if type == "url" && dict["url"] is String {
-                    dict["url"] = imageURL.absoluteString
-                } else if type == "web_view" {
+                if dict["type"] as? String == "web_view" {
                     dict["url"] = webViewPlaceholder
+                }
+                if let mediaType = dict["media_type"] as? String,
+                   mediaType == "video" || mediaType == "youtube" || mediaType == "vimeo" {
+                    dict["media_type"] = "image"
                 }
                 dict["automated_actions"] = nil
                 // Randomized child order is a different screenshot on every run.
                 if dict["randomize_children"] as? Bool == true {
                     dict["randomize_children"] = false
-                }
-                for (key, value) in dict {
-                    dict[key] = rewrite(value)
-                }
-                return dict
-            }
-            if let array = node as? [Any] {
-                return array.map(rewrite)
-            }
-            return node
-        }
-        let json = try JSONSerialization.jsonObject(with: data)
-        return try JSONSerialization.data(withJSONObject: rewrite(json))
-    }
-
-    /// Resolves any `test-layout.internal` media URL (see `TestLayoutPlaceholder`) to its
-    /// synthesized image, leaving every other URL and field untouched. Runs on ordinary scene
-    /// display, where `stubbingRemoteContent`'s blanket override doesn't apply.
-    private static func resolvingTestLayoutURLs(in data: Data) throws -> Data {
-        func rewrite(_ node: Any) -> Any {
-            if var dict = node as? [String: Any] {
-                if dict["type"] as? String == "media",
-                   let mediaType = dict["media_type"] as? String,
-                   mediaType == "image" || mediaType == "video" || mediaType == "youtube" || mediaType == "vimeo" {
-                    if let url = dict["url"] as? String,
-                       let resolved = TestLayoutPlaceholder.resolve(urlString: url) {
-                        dict["url"] = resolved.absoluteString
-                    }
-                    if let selectors = dict["url_selectors"] as? [[String: Any]] {
-                        dict["url_selectors"] = selectors.map { selector in
-                            var selector = selector
-                            if let url = selector["url"] as? String,
-                               let resolved = TestLayoutPlaceholder.resolve(urlString: url) {
-                                selector["url"] = resolved.absoluteString
-                            }
-                            return selector
-                        }
-                    }
                 }
                 for (key, value) in dict {
                     dict[key] = rewrite(value)

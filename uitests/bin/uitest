@@ -15,6 +15,9 @@
 #   uitest mint            build + boot-sim + install + run-flows (CI uses this on `next`)
 #   uitest promote-baselines <merge-sha>
 #                          reuse the merged PR's passing screenshots as the new baselines
+#   uitest open <fixture> [--screenshot [path]]
+#                          build (unless UITEST_SKIP_BUILD) + boot-sim + install, then launch one
+#                          fixture directly on the simulator - no Maestro, for fast local iteration
 #   uitest capture <i> <n> build + boot-sim + install + run slice i of n of the generated flows
 #   uitest merge-shots <dir> <n>
 #                          merge n shard screenshot sets (<dir>/shots-*/) into build/shots
@@ -265,6 +268,46 @@ cmd_generate() {
     exit 2
   fi
   node "$UITESTS_DIR/tools/generate-flows.js" "$FLOWS_DIR"
+}
+
+cmd_open() {
+  local query="$1" screenshot="" out=""
+  if [ -z "$query" ]; then
+    echo "usage: uitest open <fixture> [--screenshot [path]]"
+    exit 2
+  fi
+  shift
+  if [ "${1:-}" = "--screenshot" ]; then
+    screenshot=1
+    out="${2:-$BUILD_DIR/open-screenshot.png}"
+  fi
+  if [ ! -d "$UITESTS_DIR/node_modules/yaml" ]; then
+    echo "yaml package missing - run: npm --prefix uitests install"
+    exit 2
+  fi
+  local resolved fixture embedded_id
+  resolved=$(node "$UITESTS_DIR/tools/open-layout.js" "$query") || exit 1
+  fixture=$(printf '%s' "$resolved" | python3 -c "import json,sys; print(json.load(sys.stdin)['fixture'])")
+  embedded_id=$(printf '%s' "$resolved" | python3 -c "import json,sys; d=json.load(sys.stdin)['embeddedID']; print(d or '')")
+
+  cmd_build
+  cmd_boot_sim
+  cmd_install
+  local udid
+  udid=$(sim_udids | head -1)
+  open -a Simulator >/dev/null 2>&1 || true
+
+  local launch_args=(-uiTestMode true -thomasLayout "$fixture")
+  [ -n "$embedded_id" ] && launch_args+=(-thomasEmbeddedID "$embedded_id")
+  xcrun simctl launch --terminate-running-app "$udid" "$APP_ID" "${launch_args[@]}" >/dev/null
+  echo "opened: $fixture${embedded_id:+ (embedded: $embedded_id)} on $udid"
+
+  if [ -n "$screenshot" ]; then
+    sleep 1
+    mkdir -p "$(dirname "$out")"
+    xcrun simctl io "$udid" screenshot "$out"
+    echo "screenshot: $out"
+  fi
 }
 
 cmd_run_flows() {
@@ -816,6 +859,7 @@ case "${1:-}" in
   boot-sim)      cmd_boot_sim ;;
   install)       cmd_install ;;
   generate)      cmd_generate ;;
+  open)          shift; cmd_open "$@" ;;
   run-flows)     shift; cmd_run_flows "$@" ;;
   baseline-pull) cmd_baseline_pull ;;
   diff)          cmd_diff ;;

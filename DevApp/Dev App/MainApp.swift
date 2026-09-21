@@ -111,40 +111,10 @@ enum UITestLaunch {
             router.homePath = [.thomas(.embeddedHost(embeddedID: embeddedID))]
         }
         do {
-            try await layoutFile(path: path).open(imageURLOverride: placeholderImageURL())
+            try await layoutFile(path: path).open(skipRealImages: UserDefaults.standard.bool(forKey: "uiTestMode"))
         } catch {
             toast.message = .init(text: "Failed to open \(path): \(error.localizedDescription)", duration: 5.0)
         }
-    }
-
-    /// A 1200x800 image with enough structure (border, off-center disc) that cropping and
-    /// scaling differences show up in a screenshot. Written once per launch to the temp dir.
-    private static func placeholderImageURL() -> URL? {
-        guard UserDefaults.standard.bool(forKey: "uiTestMode") else { return nil }
-#if canImport(UIKit)
-        let size = CGSize(width: 1200, height: 800)
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = 1
-        let data = UIGraphicsImageRenderer(size: size, format: format).pngData { context in
-            let cg = context.cgContext
-            cg.setFillColor(UIColor(red: 0.85, green: 0.90, blue: 0.97, alpha: 1).cgColor)
-            cg.fill(CGRect(origin: .zero, size: size))
-            cg.setFillColor(UIColor(red: 0.10, green: 0.25, blue: 0.60, alpha: 1).cgColor)
-            cg.fillEllipse(in: CGRect(x: 250, y: 150, width: 400, height: 400))
-            cg.setStrokeColor(UIColor(red: 0.10, green: 0.25, blue: 0.60, alpha: 1).cgColor)
-            cg.setLineWidth(40)
-            cg.stroke(CGRect(origin: .zero, size: size))
-        }
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("uitest-placeholder.png")
-        do {
-            try data.write(to: url)
-            return url
-        } catch {
-            return nil
-        }
-#else
-        return nil
-#endif
     }
 
     private struct LaunchError: LocalizedError {
@@ -203,5 +173,11 @@ struct UITestEmbeddedHostView: View {
             Spacer()
         }
         .navigationTitle(embeddedID)
+        // This route only exists for UITestLaunch: the tab bar below it renders real,
+        // async-loaded state (the message center unread badge), so it's a source of
+        // screenshot diffs unrelated to the embedded scene under test.
+#if !os(macOS)
+        .toolbar(.hidden, for: .tabBar)
+#endif
     }
 }
