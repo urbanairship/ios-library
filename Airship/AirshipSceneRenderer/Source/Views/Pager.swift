@@ -976,10 +976,22 @@ struct Pager: View {
         return -(width * CGFloat(pagerState.pageIndex)) + calcDragOffset(index: pagerState.pageIndex)
     }
 
-    /// One page width per page, matching Android and web's parallax travel range.
     private var pagerMaxTravel: CGFloat {
-        let width = self.size?.width ?? 0
-        return width * CGFloat(pagerState.pageItems.count)
+        Self.parallaxTravel(pageWidth: self.size?.width ?? 0, pageCount: pagerState.pageItems.count)
+    }
+
+    /// Returns how far the page track can move from the first page to the last: one page width
+    /// per page after the first.
+    ///
+    /// A layer is oversized by `factor` times this, so counting the first page too oversizes (and
+    /// zooms) it by an extra `factor` page widths and misplaces it on every page.
+    ///
+    /// - Parameters:
+    ///   - pageWidth: The width of one page.
+    ///   - pageCount: The number of pages in the track.
+    /// - Returns: The track's full travel, `0` for a single page or none.
+    static func parallaxTravel(pageWidth: CGFloat, pageCount: Int) -> CGFloat {
+        pageWidth * CGFloat(max(0, pageCount - 1))
     }
 }
 

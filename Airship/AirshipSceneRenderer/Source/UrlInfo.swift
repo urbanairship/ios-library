@@ -103,7 +103,14 @@ private extension ThomasBackground {
         guard case .media(let media) = self else { return [] }
         switch media.mediaType {
         case .image:
-            return [.image(url: media.url)] + media.urlSelectors.imageURLInfos
+            var images: [URLInfo] = [.image(url: media.url)] + media.urlSelectors.imageURLInfos
+            for override in media.overrides?.url ?? [] {
+                if let url = override.value { images.append(.image(url: url)) }
+            }
+            for override in media.overrides?.urlSelectors ?? [] {
+                images.append(contentsOf: override.value.imageURLInfos)
+            }
+            return images
         case .video, .youtube, .vimeo:
             return [.video(url: media.url)]
         }

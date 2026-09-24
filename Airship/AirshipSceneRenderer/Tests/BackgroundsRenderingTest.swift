@@ -25,9 +25,10 @@ struct BackgroundsRenderingTest {
         func onStateChanged(_ state: AirshipJSON) {}
     }
 
-    // Hosted media layers read ThomasEnvironment, VideoState and PagerState as environment
-    // objects, and crash if any is missing.
+    // Hosted media layers read ThomasEnvironment, ThomasState, VideoState and PagerState as
+    // environment objects, and crash if any is missing.
     private let thomasEnvironment = ThomasEnvironment(delegate: StubThomasDelegate(), extensions: TestThomasExtensions())
+    private let thomasState = ThomasState(onStateChange: { _ in })
     private let videoState = VideoState(identifier: "test")
     private let pagerState = PagerState(identifier: "test", branching: nil)
 
@@ -35,6 +36,7 @@ struct BackgroundsRenderingTest {
         var reported: CGSize?
         let probed = content
             .environmentObject(thomasEnvironment)
+            .environmentObject(thomasState)
             .environmentObject(videoState)
             .environmentObject(pagerState)
             .background(

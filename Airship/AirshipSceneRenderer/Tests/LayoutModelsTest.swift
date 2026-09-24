@@ -398,6 +398,48 @@ struct LayoutModelsTest {
     }
 
     @Test
+    func backgroundImageOverrideIsPrefetched() throws {
+        let json = """
+            {
+                "presentation": {
+                    "type": "modal",
+                    "default_placement": {
+                        "size": { "width": "80%", "height": "80%" },
+                        "placement": { "horizontal": "center", "vertical": "center" }
+                    }
+                },
+                "version": 1,
+                "view": {
+                    "type": "container",
+                    "items": [],
+                    "backgrounds": [
+                        {
+                            "type": "media",
+                            "media_type": "image",
+                            "url": "https://example.com/a.jpg",
+                            "media_fit": "fit_crop",
+                            "view_overrides": {
+                                "url": [
+                                    {
+                                        "when_state_matches": { "scope": ["backdrop"], "value": { "equals": "b" } },
+                                        "value": "https://example.com/b.jpg"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+            """
+
+        let layout = try decode(json.data(using: .utf8)!)
+        #expect(layout.urlInfos == [
+            .image(url: "https://example.com/a.jpg"),
+            .image(url: "https://example.com/b.jpg")
+        ])
+    }
+
+    @Test
     func pagerBackgroundVideoIsPrefetched() throws {
         let json = """
             {

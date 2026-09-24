@@ -89,6 +89,55 @@ struct PagerStateLastPageTest {
         #expect(pagerState.isLastPage == true)
     }
 
+    @MainActor
+    @Test
+    func branchingNextFollowsStateSetInTheSameTurn() throws {
+        let pagerState = PagerState(
+            identifier: "branch",
+            branching: ThomasPagerControllerBranching(completions: [])
+        )
+        let thomasState = ThomasState(
+            pagerState: pagerState,
+            mutableState: ThomasState.MutableState(),
+            onStateChange: { _ in }
+        )
+        let branching = try JSONDecoder().decode(
+            ThomasPageBranching.self,
+            from: Data("""
+            {
+                "next_page": {
+                    "selectors": [
+                        {
+                            "when_state_matches": { "scope": ["choice"], "value": { "equals": "skip" } },
+                            "page_id": "d"
+                        },
+                        { "page_id": "b" }
+                    ]
+                }
+            }
+            """.utf8)
+        )
+        pagerState.setPagesAndListenForUpdates(
+            pages: [
+                makePageItem(id: "a", branching: branching),
+                makePageItem(id: "b"),
+                makePageItem(id: "c"),
+                makePageItem(id: "d")
+            ],
+            thomasState: thomasState,
+            swipeDisableSelectors: nil
+        )
+
+        let setChoice = try JSONDecoder().decode(
+            ThomasStateAction.self,
+            from: Data(#"{ "type": "set", "key": "choice", "value": "skip" }"#.utf8)
+        )
+        thomasState.processSync(outcomes: [setChoice.asOutcome])
+
+        _ = pagerState.process(request: .next)
+        #expect(pagerState.currentPageId == "d")
+    }
+
     // MARK: - Restored state / authored page list alignment
 
     /// A snapshot shorter than the layout it lands in must not leave `pageIndex`
@@ -362,7 +411,7 @@ struct PagerStateLastPageTest {
         #expect(pagerState.progress == 0.4)
     }
 
-    private func makePageItem(id: String) -> ThomasViewInfo.Pager.Item {
+    private func makePageItem(id: String, branching: ThomasPageBranching? = nil) -> ThomasViewInfo.Pager.Item {
         ThomasViewInfo.Pager.Item(
             identifier: id,
             view: .emptyView(.init(commonProperties: .init(), properties: .init())),
@@ -371,7 +420,7 @@ struct PagerStateLastPageTest {
             accessibilityActions: nil,
             stateActions: nil,
             displayOutcomes: nil,
-            branching: nil
+            branching: branching
         )
     }
 }

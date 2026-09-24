@@ -79,6 +79,9 @@ struct RootView<Content: View>: View {
         self._isForeground = State(initialValue: AppStateTracker.shared.isForegrounded)
         self._thomasState = StateObject(
             wrappedValue: ThomasState(
+                // A scene-wide store so state actions outside any `state_controller` still land
+                // somewhere; a `state_controller` replaces it with its own for its subtree.
+                mutableState: ThomasState.MutableState(),
                 sceneAIExecutor: thomasEnvironment.extensions.aiInferenceExecutor
             ) { [weak thomasEnvironment] state in
                 thomasEnvironment?.onStateChange(state)

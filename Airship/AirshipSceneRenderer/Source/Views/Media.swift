@@ -70,8 +70,9 @@ struct Media: View {
             )
         case .video:
 #if !os(watchOS) && !os(macOS)
+            let resolvedInfo = self.info.resolvingURLOverrides(state: thomasState)
             VideoMediaNativeView(
-                info: self.info,
+                info: resolvedInfo,
                 videoIdentifier: self.info.properties.identifier ?? mediaID.uuidString,
                 constraints: constraints,
                 videoAspectRatio: videoAspectRatio,
@@ -83,6 +84,7 @@ struct Media: View {
                     )
                 }
             )
+            .id(resolvedInfo.properties.url)
             .onAppear {
                 pagerState.registerMedia(pageId: pageIdentifier ?? "", id: mediaID)
             }
@@ -90,8 +92,9 @@ struct Media: View {
 #endif
         case .youtube, .vimeo:
 #if !os(tvOS) && !os(watchOS)
+            let resolvedInfo = self.info.resolvingURLOverrides(state: thomasState)
             VideoMediaWebView(
-                info: self.info,
+                info: resolvedInfo,
                 videoIdentifier: self.info.properties.identifier ?? mediaID.uuidString
             ) {
                 pagerState.setMediaReady(
@@ -100,6 +103,7 @@ struct Media: View {
                     isReady: true
                 )
             }
+            .id(resolvedInfo.properties.url)
             .airshipApplyIf(self.constraints.width == nil || self.constraints.height == nil) {
                 $0.aspectRatio(videoAspectRatio, contentMode: ContentMode.fit)
             }
@@ -110,6 +114,31 @@ struct Media: View {
             .thomasCommon(self.info)
 #endif
         }
+    }
+}
+
+extension ThomasViewInfo.Media {
+    /// Returns a copy whose `url` and `url_selectors` are the values `view_overrides` resolve to for `state`.
+    ///
+    /// The video players read `properties.url` once when they build, so a caller also keys the player
+    /// on the resolved url to rebuild it when an override swaps the url.
+    ///
+    /// - Parameter state: The scene state the overrides are matched against.
+    /// - Returns: The info with overridden url fields applied.
+    @MainActor
+    func resolvingURLOverrides(state: ThomasState) -> ThomasViewInfo.Media {
+        var resolved = self
+        resolved.properties.url = ThomasPropertyOverride.resolveRequired(
+            state: state,
+            overrides: overrides?.url,
+            defaultValue: properties.url
+        )
+        resolved.properties.urlSelectors = ThomasPropertyOverride.resolveOptional(
+            state: state,
+            overrides: overrides?.urlSelectors,
+            defaultValue: properties.urlSelectors
+        )
+        return resolved
     }
 }
 

@@ -289,6 +289,12 @@ struct BackgroundParallaxTest {
         // Allows 1px for the sampling scan's resolution.
         #expect(abs((restEdge - movedEdge) - 60) <= 1)
     }
-}
 
-#endif
+    @Test
+    func pagerTravelIsOneWidthPerPageAfterTheFirst() {
+        #expect(Pager.parallaxTravel(pageWidth: 300, pageCount: 0) == 0)
+        #expect(Pager.parallaxTravel(pageWidth: 300, pageCount: 1) == 0)
+        #expect(Pager.parallaxTravel(pageWidth: 300, pageCount: 2) == 300)
+        #expect(Pager.parallaxTravel(pageWidth: 300, pageCount: 4) == 900)
+    }
+}

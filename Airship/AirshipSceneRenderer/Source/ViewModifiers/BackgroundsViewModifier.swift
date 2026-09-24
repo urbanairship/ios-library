@@ -431,12 +431,27 @@ private struct ThomasBackgroundGradientView: View {
 private struct ThomasBackgroundImageView: View {
     let info: ThomasBackground.MediaBackground.ImageMediaBackground
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
+    @EnvironmentObject private var thomasState: ThomasState
     @Environment(\.colorScheme) private var colorScheme
+
+    private var resolvedURL: String {
+        let url = ThomasPropertyOverride.resolveRequired(
+            state: thomasState,
+            overrides: info.overrides?.url,
+            defaultValue: info.url
+        )
+        let urlSelectors = ThomasPropertyOverride.resolveOptional(
+            state: thomasState,
+            overrides: info.overrides?.urlSelectors,
+            defaultValue: info.urlSelectors
+        )
+        return urlSelectors?.resolve(colorScheme: colorScheme) ?? url
+    }
 
     var body: some View {
         GeometryReader { proxy in
             ThomasAsyncImage(
-                url: info.urlSelectors?.resolve(colorScheme: colorScheme) ?? info.url,
+                url: resolvedURL,
                 loadImage: thomasEnvironment.imageLoader.load
             ) { image, imageSize in
                 image.fitMedia(
@@ -457,6 +472,7 @@ private struct ThomasBackgroundImageView: View {
 private struct ThomasBackgroundVideoView: View {
     let info: ThomasBackground.MediaBackground.VideoMediaBackground
     @EnvironmentObject private var pagerState: PagerState
+    @EnvironmentObject private var thomasState: ThomasState
     @Environment(\.pageIdentifier) private var pageIdentifier
     @State private var videoID = UUID()
     @State private var registeredPageId: String?
@@ -498,11 +514,13 @@ private struct ThomasBackgroundVideoView: View {
             // through the WebKit-backed `VideoMediaWebView` instead, which already handles a
             // plain `<video>` tag.
             GeometryReader { proxy in
+                let playerInfo = info.playerInfo.resolvingURLOverrides(state: thomasState)
                 VideoMediaWebView(
-                    info: info.playerInfo,
+                    info: playerInfo,
                     videoIdentifier: videoID.uuidString,
                     onMediaReady: markMediaReady
                 )
+                .id(playerInfo.properties.url)
                 .constraints(ViewConstraints(width: proxy.size.width, height: proxy.size.height))
                 .onAppear(perform: registerMedia)
             }
@@ -511,14 +529,16 @@ private struct ThomasBackgroundVideoView: View {
             // (`Media.swift`), fed the `ThomasViewInfo.Media` decoded alongside this layer. It
             // reads `isVisible`/`VideoState` from this view's own position in the tree.
             GeometryReader { proxy in
+                let playerInfo = info.playerInfo.resolvingURLOverrides(state: thomasState)
                 VideoMediaNativeView(
-                    info: info.playerInfo,
+                    info: playerInfo,
                     videoIdentifier: videoID.uuidString,
                     constraints: ViewConstraints(width: proxy.size.width, height: proxy.size.height),
                     videoAspectRatio: CGFloat(info.video?.aspectRatio ?? (16.0 / 9.0)),
                     showsErrorView: false,
                     onMediaReady: markMediaReady
                 )
+                .id(playerInfo.properties.url)
                 .onAppear(perform: registerMedia)
             }
 #endif
@@ -527,11 +547,13 @@ private struct ThomasBackgroundVideoView: View {
             // The same `WKWebView`-backed player the in-flow `youtube`/`vimeo` case renders
             // (`Media.swift`), fed the same `playerInfo` the `.video` case above uses.
             GeometryReader { proxy in
+                let playerInfo = info.playerInfo.resolvingURLOverrides(state: thomasState)
                 VideoMediaWebView(
-                    info: info.playerInfo,
+                    info: playerInfo,
                     videoIdentifier: videoID.uuidString,
                     onMediaReady: markMediaReady
                 )
+                .id(playerInfo.properties.url)
                 .constraints(ViewConstraints(width: proxy.size.width, height: proxy.size.height))
                 .onAppear(perform: registerMedia)
             }

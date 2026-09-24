@@ -151,6 +151,7 @@ enum ThomasBackground: Codable, Equatable, Sendable {
             var position: ThomasPosition?
             var blendMode: ThomasBlendMode?
             var opacity: Double?
+            var overrides: ThomasViewInfo.Media.Overrides?
 
             enum CodingKeys: String, CodingKey {
                 case type
@@ -161,6 +162,7 @@ enum ThomasBackground: Codable, Equatable, Sendable {
                 case position
                 case blendMode = "blend_mode"
                 case opacity
+                case overrides = "view_overrides"
             }
         }
 
@@ -237,6 +239,13 @@ enum ThomasBackground: Codable, Equatable, Sendable {
             switch self {
             case .image(let info): info.urlSelectors
             case .video(let info): info.urlSelectors
+            }
+        }
+
+        var overrides: ThomasViewInfo.Media.Overrides? {
+            switch self {
+            case .image(let info): info.overrides
+            case .video(let info): info.playerInfo.overrides
             }
         }
 
