@@ -298,3 +298,5 @@ struct BackgroundParallaxTest {
         #expect(Pager.parallaxTravel(pageWidth: 300, pageCount: 4) == 900)
     }
 }
+
+#endif

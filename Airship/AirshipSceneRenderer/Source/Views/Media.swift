@@ -160,7 +160,8 @@ extension Image {
         case .centerCrop:
             cropAligned(constraints: constraints, imageSize: imageSize)
         case .centerInside:
-            centerInside(constraints: constraints, alignment: cropPosition?.alignment ?? .top)
+            // `position` is a crop anchor for `fit_crop`; a letterboxed image always centers.
+            centerInside(constraints: constraints, imageSize: imageSize, alignment: .center)
         }
     }
 
@@ -183,7 +184,7 @@ extension Image {
     @MainActor
     private func cropAligned(constraints: ViewConstraints, imageSize: CGSize, alignment: Alignment = .center) -> some View {
         if hasNoBoxToCropInto(constraints: constraints) {
-            centerInside(constraints: constraints, alignment: alignment)
+            centerInside(constraints: constraints, imageSize: imageSize, alignment: alignment)
         } else {
             CroppedImage(
                 image: self,
@@ -195,22 +196,49 @@ extension Image {
     }
 
     @MainActor
-    private func centerInside(constraints: ViewConstraints, alignment: Alignment = .top) -> some View {
+    private func centerInside(constraints: ViewConstraints, imageSize: CGSize, alignment: Alignment = .top) -> some View {
+        // Bounds only the un-measured axis; `.constraints(_:)` alone leaves a leaf's own
+        // length unbounded, and a measured axis already has its own floor, not a ceiling.
+        let roomWidth = constraints.measuredAxes.contains(.horizontal) ? nil : constraints.maxWidth
+        let roomHeight = constraints.measuredAxes.contains(.vertical) ? nil : constraints.maxHeight
+        // Only ever tightens a maximum that is already there: with none, the frame hugs the image,
+        // and adding one would make it fill whatever it is offered up to the fitted length.
+        let maxWidth = roomWidth.map { min($0, fittedLength(on: .horizontal, constraints: constraints, imageSize: imageSize) ?? $0) }
+        let maxHeight = roomHeight.map { min($0, fittedLength(on: .vertical, constraints: constraints, imageSize: imageSize) ?? $0) }
+
         // Only the keyboard: a pinned background must not rescale when the keyboard shows up
         // (Mobile-5409). An auto-height image has no fixed box to defend, and ignoring the
         // container's safe area here inflates the size Container measures it at instead.
-        self.resizable()
+        return self.resizable()
             .scaledToFit()
             .constraints(constraints, alignment: alignment)
-            // Bounds only the un-measured axis; `.constraints(_:)` alone leaves a leaf's own
-            // length unbounded, and a measured axis already has its own floor, not a ceiling.
-            .frame(
-                maxWidth: constraints.measuredAxes.contains(.horizontal) ? nil : constraints.maxWidth,
-                maxHeight: constraints.measuredAxes.contains(.vertical) ? nil : constraints.maxHeight,
-                alignment: alignment
-            )
+            .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: alignment)
             .ignoresSafeArea(.keyboard)
             .clipped()
+    }
+
+    /// Returns the length an `auto` axis needs to show the whole image across the other axis, or
+    /// nil where this axis has a length of its own or the other axis has nothing to measure from.
+    ///
+    /// A frame with only a maximum takes all it is offered up to that maximum, so without this an
+    /// `auto` axis grows to its ceiling and the image letterboxes inside the extra length.
+    ///
+    /// - Parameters:
+    ///   - axis: The axis to bound.
+    ///   - constraints: The media's constraints.
+    ///   - imageSize: The image's own size, for its aspect.
+    /// - Returns: The fitted length on `axis`, or nil.
+    private func fittedLength(on axis: Axis, constraints: ViewConstraints, imageSize: CGSize) -> CGFloat? {
+        guard imageSize.width > 0, imageSize.height > 0, constraints.resolvedLength(on: axis) == nil else {
+            return nil
+        }
+        let other: Axis = axis == .vertical ? .horizontal : .vertical
+        guard let basis = (constraints.resolvedLength(on: other) ?? constraints.limit(on: other))?.safeValue else {
+            return nil
+        }
+        return axis == .vertical
+            ? basis * imageSize.height / imageSize.width
+            : basis * imageSize.width / imageSize.height
     }
 }
 
