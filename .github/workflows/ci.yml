@@ -14,7 +14,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Test
         run: make test-basement
 
@@ -22,7 +22,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Test
         run: make test-core
 
@@ -30,7 +30,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Test
         run: make test-message-center
 
@@ -38,7 +38,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Test
         run: make test-preference-center
 
@@ -46,7 +46,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Test
         run: make test-feature-flags
 
@@ -54,7 +54,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Test
         run: make test-scene-renderer
 
@@ -62,7 +62,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Test
         run: make test-scenes
 
@@ -70,7 +70,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Test
         run: make test-automation
 
@@ -78,7 +78,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Test
         run: make test-service-extension
 
@@ -86,7 +86,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Build AirshipObjectiveC target
         run: make build-airship-objectiveC
         
@@ -94,7 +94,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Build samples
         run: make build-samples
 
@@ -102,7 +102,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Build SDK for tvOS
         run: make build-sdk-tvos
 
@@ -110,7 +110,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Build SDK for visionOS
         run: make build-sdk-visionos
 
@@ -118,7 +118,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Build SDK for Mac Catalyst
         run: make build-sdk-maccatalyst
 
@@ -126,14 +126,14 @@ jobs:
   # run-tests-watchos:
   #   runs-on: xcode-27-xlarge
   #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: ruby/setup-ruby@v1
+  #     - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+  #     - uses: ruby/setup-ruby@a0102e0972be65f351c307e2d64b9314a57c8073 # v1.324.0
   #       with:
   #         bundler-cache: true
   #     - name: Install xcodegen
   #       run: brew install xcodegen
   #     - name: Install Apple Certificate
-  #       uses: apple-actions/import-codesign-certs@v1
+  #       uses: apple-actions/import-codesign-certs@253ddeeac23f2bdad1646faac5c8c2832e800071 # v1.0.4
   #       with:
   #         p12-file-base64: ${{ secrets.CERTIFICATE_P12_BASE64 }}
   #         p12-password: ${{ secrets.CERTIFICATE_P12_PASSWORD }}

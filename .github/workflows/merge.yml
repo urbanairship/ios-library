@@ -15,11 +15,11 @@ jobs:
     runs-on: xcode-27-xlarge
     steps:
       - name: Install Apple Certificate
-        uses: apple-actions/import-codesign-certs@v3
+        uses: apple-actions/import-codesign-certs@63fff01cd422d4b7b855d40ca1e9d34d2de9427d # v3.0.0
         with:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Build SDK
         run: make build-xcframeworks-no-sign
 
@@ -28,7 +28,7 @@ jobs:
     needs: [build-sdk]
     steps:
       - name: Slack Notification
-        uses: lazy-actions/slatify@master
+        uses: lazy-actions/slatify@cd4b4a1158cfb3e26fe1ee35c1cd4f0247dfbf96 # master
         if: ${{ failure() }}
         with:
           type: ${{ job.status }}
