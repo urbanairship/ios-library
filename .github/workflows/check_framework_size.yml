@@ -11,23 +11,23 @@ jobs:
   framework-size:
     runs-on: xcode-27-xlarge
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Restore Size
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
             path: build/previous-size.txt
             key: size-cache-${{ github.head_ref }}
             restore-keys: |
              size-cache-
       - name: Install Apple Certificate
-        uses: apple-actions/import-codesign-certs@v3
+        uses: apple-actions/import-codesign-certs@63fff01cd422d4b7b855d40ca1e9d34d2de9427d # v3.0.0
         with:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
       - name: Framework size
         run: make compare-framework-size
       - name: Save Size
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
            path: build/previous-size.txt
            key: size-cache-${{ github.head_ref }}-${{ github.run_id }}

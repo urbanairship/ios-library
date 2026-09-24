@@ -33,7 +33,7 @@ jobs:
     outputs:
       version: ${{ steps.get_version.outputs.VERSION }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Get the version
         id: get_version
         env:
@@ -59,7 +59,7 @@ jobs:
           bash ./scripts/check_version.sh "$VERSION"
 
       - name: Slack Notification
-        uses: lazy-actions/slatify@master
+        uses: lazy-actions/slatify@cd4b4a1158cfb3e26fe1ee35c1cd4f0247dfbf96 # master
         with:
           type: ${{ job.status }}
           job_name: "iOS SDK Release Started :apple_og:"
@@ -70,13 +70,13 @@ jobs:
     if: github.event_name == 'push' || inputs.stage == 'attach-packages'
     runs-on: xcode-27-xlarge
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Install Coreutils
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
         run: ./scripts/brew_install_pinned.sh coreutils https://raw.githubusercontent.com/Homebrew/homebrew-core/f83d63f1f1e5d2eb2468e2d7de14866f2ac55ecb/Formula/c/coreutils.rb
       - name: Install Apple Certificate
-        uses: apple-actions/import-codesign-certs@v3
+        uses: apple-actions/import-codesign-certs@63fff01cd422d4b7b855d40ca1e9d34d2de9427d # v3.0.0
         with:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}
@@ -120,19 +120,19 @@ jobs:
       - name: Build SDK
         run: make build-package
       - name: Upload zip distribution
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: airship
           path: ./build/Airship.zip
 
       - name: Upload zip distribution (Carthage)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: airship-carthage
           path: ./build/Airship.xcframeworks.zip
 
       - name: Upload .NET xcframeworks
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: airship-dotnet
           path: ./build/Airship.dotnet.xcframeworks.zip
@@ -143,7 +143,7 @@ jobs:
     if: github.event_name == 'push' || inputs.stage == 'attach-packages'
     runs-on: xcode-27-xlarge
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Build samples
         run: make build-samples
 
@@ -154,7 +154,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
@@ -168,7 +168,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
@@ -182,7 +182,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
@@ -196,7 +196,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
@@ -210,7 +210,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
@@ -224,7 +224,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
@@ -238,7 +238,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
@@ -252,7 +252,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
@@ -266,7 +266,7 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Install xcodegen
         # Pinned to a specific homebrew-core commit so the build toolchain doesn't
         # silently change between runs; bump the commit to pick up a reviewed update.
@@ -296,7 +296,7 @@ jobs:
       - run-tests-service-extension
     if: ${{ !cancelled() && !failure() && (github.event_name == 'push' || inputs.stage == 'create-release') }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Create draft release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -318,19 +318,19 @@ jobs:
       - build-samples
     if: ${{ !cancelled() && !failure() && (github.event_name == 'push' || inputs.stage == 'attach-packages') }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Download zip distribution
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: airship
           path: ./build
       - name: Download Carthage zip distribution
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: airship-carthage
           path: ./build
       - name: Download .NET xcframeworks
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: airship-dotnet
           path: ./build
@@ -349,7 +349,7 @@ jobs:
       - attach-packages
     if: ${{ !cancelled() && !failure() && (github.event_name == 'push' || inputs.stage == 'kickoff-prebuilt') }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Kickoff prebuilt repo
         env:
           GITHUB_TOKEN: ${{ secrets.IOS_DEPLOY_PREBUILT_PAT }}
@@ -362,7 +362,7 @@ jobs:
     if: ${{ !cancelled() && github.event_name == 'push' }}
     steps:
       - name: Slack Notification
-        uses: lazy-actions/slatify@master
+        uses: lazy-actions/slatify@cd4b4a1158cfb3e26fe1ee35c1cd4f0247dfbf96 # master
         if: always()
         with:
           type: ${{ job.status }}
