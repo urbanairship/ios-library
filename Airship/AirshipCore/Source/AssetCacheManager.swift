@@ -161,6 +161,11 @@ public actor AssetCacheManager: AssetCacheManagerProtocol {
         taskMap[identifier]?.task.cancel()
         taskMap.removeValue(forKey: identifier)
 
+        guard isValidCacheIdentifier(identifier) else {
+            AirshipLogger.debug("Invalid cache identifier, resolves outside the cache root: \(identifier)")
+            return
+        }
+
         if let root = self.cacheRoot {
             let cache = root.appendingPathComponent(identifier, isDirectory: true)
 
