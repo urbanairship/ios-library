@@ -215,10 +215,12 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         struct Properties: ThomasSerializable {
             let type: ViewType = .container
             let items: [Item]
+            var backgrounds: [ThomasBackground]?
 
             private enum CodingKeys: String, CodingKey {
                 case type
                 case items
+                case backgrounds
             }
         }
 
@@ -262,12 +264,14 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var direction: ThomasDirection
             var randomizeChildren: Bool?
             var items: [Item]
+            var backgrounds: [ThomasBackground]?
 
             private enum CodingKeys: String, CodingKey {
                 case type
                 case direction
                 case randomizeChildren = "randomize_children"
                 case items
+                case backgrounds
             }
         }
 
@@ -301,11 +305,13 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             let type: ViewType = .scrollLayout
             var direction: ThomasDirection
             var view: ThomasViewInfo
+            var backgrounds: [ThomasParallaxBackgroundLayer]?
 
             private enum CodingKeys: String, CodingKey {
                 case type
                 case direction
                 case view
+                case backgrounds
             }
         }
     }
@@ -655,6 +661,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var tapEffect: ThomasButtonTapEffect?
             var accessibilityRole: AccessibilityRole?
             var view: ThomasViewInfo
+            var backgrounds: [ThomasBackground]?
 
             private enum CodingKeys: String, CodingKey {
                 case identifier
@@ -666,6 +673,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case view
                 case accessibilityRole = "accessibility_role"
                 case reportingMetadata = "reporting_metadata"
+                case backgrounds
             }
         }
 
@@ -1030,6 +1038,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             let gestures: [Gesture]?
             let disableSwipePredicate: [DisableSwipeSelector]?
             var identifier: String? // Added later so its treated as optional.
+            var backgrounds: [ThomasParallaxBackgroundLayer]?
 
             enum CodingKeys: String, CodingKey {
                 case identifier
@@ -1038,6 +1047,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case gestures
                 case type
                 case disableSwipePredicate = "disable_swipe_when"
+                case backgrounds
             }
         }
 
@@ -1716,6 +1726,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var onToggleOff: ToggleActions
             var view: ThomasViewInfo
             var reportingValue: AirshipJSON
+            var backgrounds: [ThomasBackground]?
 
             private enum CodingKeys: String, CodingKey {
                 case identifier
@@ -1725,6 +1736,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case view
                 case reportingValue = "reporting_value"
                 case type
+                case backgrounds
             }
         }
     }
@@ -1887,6 +1899,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var onToggleOn: ToggleActions
             var onToggleOff: ToggleActions
             var view: ThomasViewInfo
+            var backgrounds: [ThomasBackground]?
 
             private enum CodingKeys: String, CodingKey {
                 case identifier
@@ -1896,6 +1909,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case onToggleOff = "on_toggle_off"
                 case view
                 case type
+                case backgrounds
             }
         }
     }
@@ -1929,6 +1943,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var onToggleOff: ToggleActions
             var view: ThomasViewInfo
             var reportingValue: AirshipJSON
+            var backgrounds: [ThomasBackground]?
 
             private enum CodingKeys: String, CodingKey {
                 case identifier
@@ -1937,6 +1952,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case view
                 case reportingValue = "reporting_value"
                 case type
+                case backgrounds
             }
         }
     }
@@ -1971,6 +1987,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var onToggleOff: ToggleActions
             var view: ThomasViewInfo
             var reportingValue: AirshipJSON
+            var backgrounds: [ThomasBackground]?
 
             private enum CodingKeys: String, CodingKey {
                 case identifier
@@ -1980,6 +1997,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case view
                 case reportingValue = "reporting_value"
                 case type
+                case backgrounds
             }
         }
     }

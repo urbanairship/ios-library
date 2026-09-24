@@ -195,6 +195,7 @@ struct LinearLayout: View {
         makeStack()
             .airshipMeasureView($measuredSize)
             .clipped()
+            .thomasBackgrounds(info.properties.backgrounds)
             .thomasCommon(self.info)
     }
 

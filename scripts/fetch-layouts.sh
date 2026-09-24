@@ -19,9 +19,16 @@ set -e
 #   * CI         -> strict. When CI=true (GitHub Actions sets this) any failure
 #                   is fatal, so a bad pin or missing access fails the job fast.
 #
+# A pager scene in thomas-layouts is also published as one scene per page under
+# `uitests/`, because a screenshot can only reach a pager's first page. Those pages are
+# fetched only when asked for (`--uitests`): they multiply the Scene list by roughly
+# two, which is right for a capture sweep and unreadable for browsing. Switching modes
+# refetches, so `make fetch-layouts` is also how the list gets short again.
+#
 # Environment overrides:
 #   LAYOUTS_REPO_URL    - clone URL (default: the org https URL below)
 #   LAYOUTS_REPO_TOKEN  - token with read access, used for private/CI fetches
+#   LAYOUTS_UITESTS     - "1" is the same as passing --uitests
 #   CI                  - "true" enables strict mode
 
 ROOT_PATH=`dirname "${0}"`/..
@@ -36,6 +43,14 @@ SRC_DIRS=("modal" "banner" "embedded")
 DEST_DIRS=("Scenes/Modal" "Scenes/Banner" "Scenes/Embedded")
 
 IS_CI="${CI:-false}"
+
+WANT_UITESTS="${LAYOUTS_UITESTS:-0}"
+for arg in "$@"; do
+  case "$arg" in
+    --uitests) WANT_UITESTS=1 ;;
+    *) echo "usage: fetch-layouts.sh [--uitests]" >&2; exit 2 ;;
+  esac
+done
 
 fail_or_warn() {
   local msg="$1"
@@ -58,13 +73,21 @@ if [ -z "$REF" ]; then
   fail_or_warn "no ref found in layouts.version"
 fi
 
+# What a populated destination would have to match to be reusable: the ref alone is not
+# enough, because the same ref fetched with and without the UI-test pages gives two
+# different sets.
+STAMP="$REF"
+if [ "$WANT_UITESTS" = "1" ]; then
+  STAMP="$REF +uitests"
+fi
+
 # --- skip if already at the pinned ref (local cache) -----------------------
 # Only trust the marker if scene files are actually present; otherwise a stale
 # marker with a wiped Scenes/ directory would make the fetch a permanent no-op.
-if [ -f "$MARKER" ] && [ "$(cat "$MARKER" 2>/dev/null)" = "$REF" ]; then
+if [ -f "$MARKER" ] && [ "$(cat "$MARKER" 2>/dev/null)" = "$STAMP" ]; then
   EXISTING="$(find "${DEST}/Scenes" -type f ! -name '.gitkeep' 2>/dev/null | wc -l | tr -d '[:space:]')"
   if [ "${EXISTING:-0}" -gt 0 ]; then
-    echo "fetch-layouts: already at ${REF}, skipping."
+    echo "fetch-layouts: already at ${STAMP}, skipping."
     exit 0
   fi
 fi
@@ -88,7 +111,7 @@ prune_fetched() {
   fi
 }
 
-echo "fetch-layouts: fetching Thomas scenes @ ${REF} ..."
+echo "fetch-layouts: fetching Thomas scenes @ ${STAMP} ..."
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
@@ -128,6 +151,9 @@ for src in "${SRC_DIRS[@]}"; do
     fail_or_warn "fetched layouts are missing '${src}/' (wrong ref or repo layout changed)"
   fi
 done
+if [ "$WANT_UITESTS" = "1" ] && [ ! -d "${TMP_DIR}/uitests" ]; then
+  fail_or_warn "--uitests, but the pinned layouts have no 'uitests/' (bump layouts.version)"
+fi
 
 # --- copy each source subtree into its Scenes/ destination -----------------
 # Scenes/ subdirectories are part of an Xcode folder reference in the DevApp
@@ -141,6 +167,9 @@ for i in "${!SRC_DIRS[@]}"; do
   mkdir -p "${DEST}/${dst}"
   prune_fetched "${DEST}/${dst}"
   cp -R "${TMP_DIR}/${src}/." "${DEST}/${dst}/"
+  if [ "$WANT_UITESTS" = "1" ] && [ -d "${TMP_DIR}/uitests/${src}" ]; then
+    cp -R "${TMP_DIR}/uitests/${src}/." "${DEST}/${dst}/"
+  fi
 done
 
 # --- guard against a silently-empty result ---------------------------------
@@ -149,5 +178,5 @@ if [ "${COUNT:-0}" -eq 0 ]; then
   fail_or_warn "no scene files present after fetch"
 fi
 
-echo "$REF" > "$MARKER"
-echo "fetch-layouts: fetched ${COUNT} Thomas scene files @ ${REF}."
+echo "$STAMP" > "$MARKER"
+echo "fetch-layouts: fetched ${COUNT} Thomas scene files @ ${STAMP}."

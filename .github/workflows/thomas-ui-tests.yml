@@ -284,7 +284,7 @@ jobs:
             BODY=$(sed "s#__REPORT_URL__#$REPORT_URL#g" uitests/build/report/summary.md)
           else
             # No published report to link into: keep the summary line, point at the artifact.
-            BODY=$(head -1 uitests/build/report/summary.md | sed "s#\[Report\](__REPORT_URL__[^)]*)#[Report]($RUN_URL#artifacts) (artifact)#")
+            BODY=$(head -1 uitests/build/report/summary.md | sed "s|\[Report\](__REPORT_URL__[^)]*)|[Report]($RUN_URL#artifacts) (artifact)|")
           fi
           if grep -q "need a look" <<<"$BODY"; then
             BODY="$BODY"$'\n\n'"Intentional? Add the \`visual-change-accepted\` label."

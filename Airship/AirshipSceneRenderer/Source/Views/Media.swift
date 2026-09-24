@@ -173,9 +173,8 @@ extension Image {
         self.resizable()
             .scaledToFit()
             .constraints(constraints, alignment: alignment)
-            // Bounds a leaf with no declared length, since `.constraints(_:)` alone won't.
-            // Excludes a measured axis outright (unlike `limit(on:)`, which trusts a pinned one):
-            // `flooringMeasuredShare` made it a floor, not a ceiling, on either reading.
+            // Bounds only the un-measured axis; `.constraints(_:)` alone leaves a leaf's own
+            // length unbounded, and a measured axis already has its own floor, not a ceiling.
             .frame(
                 maxWidth: constraints.measuredAxes.contains(.horizontal) ? nil : constraints.maxWidth,
                 maxHeight: constraints.measuredAxes.contains(.vertical) ? nil : constraints.maxHeight,

@@ -317,6 +317,8 @@
 		6E21C3012FEC3B9900EA3E56 /* ThomasAutomatedAccessibilityAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2D72FEC3B9900EA3E56 /* ThomasAutomatedAccessibilityAction.swift */; };
 		6E21C3022FEC3B9900EA3E56 /* ThomasSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2EE2FEC3B9900EA3E56 /* ThomasSize.swift */; };
 		6E21C3032FEC3B9900EA3E56 /* ThomasMediaFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2E52FEC3B9900EA3E56 /* ThomasMediaFit.swift */; };
+		DD7EC68B862E3DE30BCAA5A5 /* ThomasBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B48AB6A7443046452763B6 /* ThomasBackground.swift */; };
+		E2C6BEDC88246398572B96DE /* ThomasBlendMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAB070BD461E06765B08F35 /* ThomasBlendMode.swift */; };
 		6E21C3042FEC3B9900EA3E56 /* ThomasDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2DE2FEC3B9900EA3E56 /* ThomasDirection.swift */; };
 		6E21C3052FEC3B9900EA3E56 /* ThomasShadow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2EC2FEC3B9900EA3E56 /* ThomasShadow.swift */; };
 		6E21C3062FEC3B9900EA3E56 /* ThomasEnableBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2DF2FEC3B9900EA3E56 /* ThomasEnableBehavior.swift */; };
@@ -444,6 +446,7 @@
 		6E21C3DF2FEC3C4600EA3E56 /* ThomasOutcomeProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3B12FEC3C4600EA3E56 /* ThomasOutcomeProcessor.swift */; };
 		6E21C3E02FEC3C4600EA3E56 /* ThomasFormPayloadGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3B92FEC3C4600EA3E56 /* ThomasFormPayloadGenerator.swift */; };
 		6E21C3EA2FEC3C5F00EA3E56 /* BackgroundColorViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3E82FEC3C5F00EA3E56 /* BackgroundColorViewModifier.swift */; };
+		7C465BCED3CE1C36235D633A /* BackgroundsViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4B6FBBF0508A22A9F83522 /* BackgroundsViewModifier.swift */; };
 		6E21C3EB2FEC3C5F00EA3E56 /* EventHandlerViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3E42FEC3C5F00EA3E56 /* EventHandlerViewModifier.swift */; };
 		6E21C3EC2FEC3C5F00EA3E56 /* VisibilityViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3E52FEC3C5F00EA3E56 /* VisibilityViewModifier.swift */; };
 		6E21C3ED2FEC3C5F00EA3E56 /* FormInputViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3E62FEC3C5F00EA3E56 /* FormInputViewModifier.swift */; };
@@ -1129,6 +1132,11 @@
 		7A5723022FEC3C1E00EA3E56 /* StackImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A5723012FEC3C1E00EA3E56 /* StackImageView.swift */; };
 		7ACACE022ECEEC5200C031E5 /* AssetCacheImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ACACE012ECEEC5200C031E5 /* AssetCacheImageProvider.swift */; };
 		7F2A1B0E3D4E5F901234567C /* ThomasOrientationTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F2A1B0F3D4E5F901234567D /* ThomasOrientationTrackerTest.swift */; };
+		3C78F2DE26739D4C2F7A9B80 /* BackgroundsRenderingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 105ACE2CCB21E9BB4B2353D6 /* BackgroundsRenderingTest.swift */; };
+		32B82358611842D6DFB1BDB7 /* ThomasBackgroundGradientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DA107FF1AF5F56894C6E10 /* ThomasBackgroundGradientTest.swift */; };
+		F9312649A15E92D5523657A9 /* BackgroundGradientRenderingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9143744CE7F39AF2F5A601C9 /* BackgroundGradientRenderingTest.swift */; };
+		B6B4C6DBE45B359F0C82AAB5 /* PixelSamplingTestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36CFE43824DBFD5D969681FC /* PixelSamplingTestSupport.swift */; };
+		B3BB4AC6D45BC3BCBC8CB931 /* BackgroundParallaxTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52754537CCC22E7B0A813908 /* BackgroundParallaxTest.swift */; };
 		7F527ABE7E4504EA714ED6AE /* DefaultEmbeddedAISelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99645A6605A96722CFAE4327 /* DefaultEmbeddedAISelector.swift */; };
 		8401769426C5671100373AF7 /* JSONMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769326C5671100373AF7 /* JSONMatcher.swift */; };
 		8401769826C5722400373AF7 /* JSONPredicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8401769726C5722400373AF7 /* JSONPredicate.swift */; };
@@ -1962,6 +1970,8 @@
 		6E21C2E32FEC3B9900EA3E56 /* ThomasMargin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasMargin.swift; sourceTree = "<group>"; };
 		6E21C2E42FEC3B9900EA3E56 /* ThomasMarkdownOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasMarkdownOptions.swift; sourceTree = "<group>"; };
 		6E21C2E52FEC3B9900EA3E56 /* ThomasMediaFit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasMediaFit.swift; sourceTree = "<group>"; };
+		73B48AB6A7443046452763B6 /* ThomasBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasBackground.swift; sourceTree = "<group>"; };
+		EBAB070BD461E06765B08F35 /* ThomasBlendMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasBlendMode.swift; sourceTree = "<group>"; };
 		6E21C2E62FEC3B9900EA3E56 /* ThomasMediaUrlSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasMediaUrlSelector.swift; sourceTree = "<group>"; };
 		6E21C2E72FEC3B9900EA3E56 /* ThomasOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasOrientation.swift; sourceTree = "<group>"; };
 		6E21C2E82FEC3B9900EA3E56 /* ThomasPlatform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasPlatform.swift; sourceTree = "<group>"; };
@@ -2079,6 +2089,7 @@
 		6E21C3E62FEC3C5F00EA3E56 /* FormInputViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormInputViewModifier.swift; sourceTree = "<group>"; };
 		6E21C3E72FEC3C5F00EA3E56 /* FontViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontViewModifier.swift; sourceTree = "<group>"; };
 		6E21C3E82FEC3C5F00EA3E56 /* BackgroundColorViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundColorViewModifier.swift; sourceTree = "<group>"; };
+		EF4B6FBBF0508A22A9F83522 /* BackgroundsViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundsViewModifier.swift; sourceTree = "<group>"; };
 		6E21C3E92FEC3C5F00EA3E56 /* TouchViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchViewModifier.swift; sourceTree = "<group>"; };
 		6E21C3F22FEC3C9700EA3E56 /* ThomasViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasViewController.swift; sourceTree = "<group>"; };
 		6E21C3F42FEC3CD000EA3E56 /* LayoutState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutState.swift; sourceTree = "<group>"; };
@@ -2758,6 +2769,11 @@
 		7A5723012FEC3C1E00EA3E56 /* StackImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackImageView.swift; sourceTree = "<group>"; };
 		7ACACE012ECEEC5200C031E5 /* AssetCacheImageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetCacheImageProvider.swift; sourceTree = "<group>"; };
 		7F2A1B0F3D4E5F901234567D /* ThomasOrientationTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasOrientationTrackerTest.swift; sourceTree = "<group>"; };
+		105ACE2CCB21E9BB4B2353D6 /* BackgroundsRenderingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundsRenderingTest.swift; sourceTree = "<group>"; };
+		53DA107FF1AF5F56894C6E10 /* ThomasBackgroundGradientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasBackgroundGradientTest.swift; sourceTree = "<group>"; };
+		9143744CE7F39AF2F5A601C9 /* BackgroundGradientRenderingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundGradientRenderingTest.swift; sourceTree = "<group>"; };
+		36CFE43824DBFD5D969681FC /* PixelSamplingTestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelSamplingTestSupport.swift; sourceTree = "<group>"; };
+		52754537CCC22E7B0A813908 /* BackgroundParallaxTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundParallaxTest.swift; sourceTree = "<group>"; };
 		83A674F723AA7AA4005C0C8F /* AirshipDebugPushData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipDebugPushData.xcdatamodel; sourceTree = "<group>"; };
 		83DFDD433477456A34D32B2F /* AirshipImageDataTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipImageDataTest.swift; sourceTree = "<group>"; };
 		8401769326C5671100373AF7 /* JSONMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONMatcher.swift; sourceTree = "<group>"; };
@@ -3720,6 +3736,8 @@
 				6E21C2E42FEC3B9900EA3E56 /* ThomasMarkdownOptions.swift */,
 				6E21C2E52FEC3B9900EA3E56 /* ThomasMediaFit.swift */,
 				6E21C2E62FEC3B9900EA3E56 /* ThomasMediaUrlSelector.swift */,
+				73B48AB6A7443046452763B6 /* ThomasBackground.swift */,
+				EBAB070BD461E06765B08F35 /* ThomasBlendMode.swift */,
 				6E21C2E72FEC3B9900EA3E56 /* ThomasOrientation.swift */,
 				6E21C2E82FEC3B9900EA3E56 /* ThomasPlatform.swift */,
 				6E21C2E92FEC3B9900EA3E56 /* ThomasPosition.swift */,
@@ -3888,6 +3906,7 @@
 				6E21C3E62FEC3C5F00EA3E56 /* FormInputViewModifier.swift */,
 				6E21C3E72FEC3C5F00EA3E56 /* FontViewModifier.swift */,
 				6E21C3E82FEC3C5F00EA3E56 /* BackgroundColorViewModifier.swift */,
+				EF4B6FBBF0508A22A9F83522 /* BackgroundsViewModifier.swift */,
 				6E21C3E92FEC3C5F00EA3E56 /* TouchViewModifier.swift */,
 			);
 			path = ViewModifiers;
@@ -5011,6 +5030,11 @@
 				6E21C46F2FEC586A00EA3E56 /* PagerControllerTest.swift */,
 				6E21C4702FEC586A00EA3E56 /* PagerStateLastPageTest.swift */,
 				7F2A1B0F3D4E5F901234567D /* ThomasOrientationTrackerTest.swift */,
+				105ACE2CCB21E9BB4B2353D6 /* BackgroundsRenderingTest.swift */,
+				53DA107FF1AF5F56894C6E10 /* ThomasBackgroundGradientTest.swift */,
+				9143744CE7F39AF2F5A601C9 /* BackgroundGradientRenderingTest.swift */,
+				36CFE43824DBFD5D969681FC /* PixelSamplingTestSupport.swift */,
+				52754537CCC22E7B0A813908 /* BackgroundParallaxTest.swift */,
 				6E21CB012FEC59AA00EA3E56 /* BannerSwipeDismissLogicTest.swift */,
 				6E21C4652FEC585F00EA3E56 /* VideoMediaWebViewTests.swift */,
 				9763EE5D73424951ACB1BC46 /* MediaCropDecisionTest.swift */,
@@ -7401,6 +7425,8 @@
 				6E21C3012FEC3B9900EA3E56 /* ThomasAutomatedAccessibilityAction.swift in Sources */,
 				6E21C3022FEC3B9900EA3E56 /* ThomasSize.swift in Sources */,
 				6E21C3032FEC3B9900EA3E56 /* ThomasMediaFit.swift in Sources */,
+				DD7EC68B862E3DE30BCAA5A5 /* ThomasBackground.swift in Sources */,
+				E2C6BEDC88246398572B96DE /* ThomasBlendMode.swift in Sources */,
 				6E21C3042FEC3B9900EA3E56 /* ThomasDirection.swift in Sources */,
 				6E21C3052FEC3B9900EA3E56 /* ThomasShadow.swift in Sources */,
 				6E21C3062FEC3B9900EA3E56 /* ThomasEnableBehavior.swift in Sources */,
@@ -7467,6 +7493,7 @@
 				6E21C4322FEC40BA00EA3E56 /* ThomasEvent.swift in Sources */,
 				6E21C38B2FEC3C1E00EA3E56 /* ThomasAsyncImage.swift in Sources */,
 				6E21C3EA2FEC3C5F00EA3E56 /* BackgroundColorViewModifier.swift in Sources */,
+				7C465BCED3CE1C36235D633A /* BackgroundsViewModifier.swift in Sources */,
 				6E21C3EB2FEC3C5F00EA3E56 /* EventHandlerViewModifier.swift in Sources */,
 				6E21C3EC2FEC3C5F00EA3E56 /* VisibilityViewModifier.swift in Sources */,
 				6E21C3ED2FEC3C5F00EA3E56 /* FormInputViewModifier.swift in Sources */,
@@ -7624,6 +7651,11 @@
 				6E21C4752FEC586A00EA3E56 /* LayoutModelsTest.swift in Sources */,
 				6E21C4762FEC586A00EA3E56 /* ThomasAsyncViewStateTest.swift in Sources */,
 				7F2A1B0E3D4E5F901234567C /* ThomasOrientationTrackerTest.swift in Sources */,
+				3C78F2DE26739D4C2F7A9B80 /* BackgroundsRenderingTest.swift in Sources */,
+				32B82358611842D6DFB1BDB7 /* ThomasBackgroundGradientTest.swift in Sources */,
+				F9312649A15E92D5523657A9 /* BackgroundGradientRenderingTest.swift in Sources */,
+				B6B4C6DBE45B359F0C82AAB5 /* PixelSamplingTestSupport.swift in Sources */,
+				B3BB4AC6D45BC3BCBC8CB931 /* BackgroundParallaxTest.swift in Sources */,
 				6E21C4782FEC586A00EA3E56 /* AirshipLayoutTest.swift in Sources */,
 				6E21C4B02FEC586A00EA3E56 /* EmbeddedPlacementBoundsTest.swift in Sources */,
 				6EA1C0A22FF1000000EA3E56 /* ScrollViewportVersionTest.swift in Sources */,

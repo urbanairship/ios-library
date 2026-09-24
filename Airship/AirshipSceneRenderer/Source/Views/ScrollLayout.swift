@@ -19,15 +19,24 @@ struct ScrollLayout: View {
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutVersion) private var layoutVersion
     @State private var scrollTask: (String, Task<Void, Never>)?
-    
+
+    /// The content's live position within the scroll's own coordinate space, read only by the
+    /// parallax layers. Negative once scrolled forward.
+    @State private var offsetTracker = ThomasContentOffsetTracker()
+    @State private var scrollSpaceID = UUID()
+
     private static let scrollInterval: TimeInterval = 0.01
-    
-    
+
+
     init(info: ThomasViewInfo.ScrollLayout, constraints: ViewConstraints) {
         self.info = info
         self.constraints = constraints
     }
-    
+
+    private var scrollSpaceName: String {
+        "airship.scrollLayout.offset.\(scrollSpaceID)"
+    }
+
     @ViewBuilder
     private func makeScrollView(axis: Axis.Set) -> some View {
         ScrollView(axis) {
@@ -43,7 +52,16 @@ struct ScrollLayout: View {
                         return Color.clear
                     })
                 )
+                .airshipApplyIf(self.info.properties.backgrounds?.hasParallax == true) {
+                    $0.thomasTrackContentOffset(
+                        offsetTracker,
+                        axis: scrollAxis,
+                        coordinateSpaceName: scrollSpaceName,
+                        viewportLength: (scrollAxis == .vertical ? measuredFrameSize?.height : measuredFrameSize?.width) ?? 0
+                    )
+                }
         }
+        .coordinateSpace(name: scrollSpaceName)
 #if os(iOS)
         .scrollDismissesKeyboard(
             self.thomasEnvironment.focusedID != nil ? .immediately : .never
@@ -155,10 +173,31 @@ struct ScrollLayout: View {
         makeScrollView()
             .constraints(self.constraints)
             .airshipMeasureView($measuredFrameSize)
+            .thomasParallaxBackgrounds(
+                info.properties.backgrounds,
+                axis: scrollAxis,
+                offsetTracker: offsetTracker,
+                maxTravel: scrollRange
+            )
             .thomasCommon(self.info)
 #if os(tvOS)
             .focusSection()
 #endif
+    }
+
+    private var scrollAxis: Axis {
+        info.properties.direction == .vertical ? .vertical : .horizontal
+    }
+
+    /// How far the content could ever need to travel: the difference between its own length and
+    /// the viewport's, along the scroll axis, floored at 0 for content that already fits without
+    /// scrolling.
+    private var scrollRange: CGFloat {
+        let isVertical = info.properties.direction == .vertical
+        let contentLength = isVertical ? contentSize?.height : contentSize?.width
+        let frameLength = isVertical ? measuredFrameSize?.height : measuredFrameSize?.width
+        guard let contentLength, let frameLength else { return 0 }
+        return max(0, contentLength - frameLength)
     }
     
     private func childConstraints() -> ViewConstraints {

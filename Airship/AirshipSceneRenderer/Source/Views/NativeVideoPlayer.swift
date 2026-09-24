@@ -94,8 +94,8 @@ struct NativeVideoPlayer: UIViewRepresentable {
             videoState: videoState,
             videoIdentifier: videoIdentifier,
             isAutoplay: video?.autoplay ?? false,
-            showControls: video?.showControls ?? true,
-            autoResetPosition: video?.autoResetPosition ?? ((video?.autoplay ?? false) && !(video?.showControls ?? true))
+            showControls: video?.showControls ?? false,
+            autoResetPosition: video?.autoResetPosition ?? ((video?.autoplay ?? false) && !(video?.showControls ?? false))
         )
     }
 

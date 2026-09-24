@@ -44,10 +44,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
             throw AirshipErrors.error("Invalid adapter for layout type")
         }
 
-        // `imageProviderOverride` is consulted only when the cached assets don't have an
-        // answer, same precedence as the asset cache today - it's the view-testing path's
-        // way to fake an image load deterministically (see `InAppMessageViewTester`), not a
-        // replacement for a real prefetched asset.
+        // Consulted only when the cached assets have no answer, so a real prefetched asset always wins.
         self.provider = { [assets, imageProviderOverride] url in
             if
                 let cachedURL = assets.cachedURL(remoteURL: url),

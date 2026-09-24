@@ -84,6 +84,7 @@ fileprivate struct NewContainer: View {
         .constraints(constraints)
         .airshipMeasureView($measuredSize)
         .clipped()
+        .thomasBackgrounds(info.properties.backgrounds)
         .thomasCommon(self.info)
     }
 

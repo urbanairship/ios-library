@@ -51,6 +51,10 @@ struct Pager: View {
     @State private var hasReportedCompleted: Bool = false
     @GestureState private var translation: CGFloat = 0
     @State private var size: CGSize?
+
+    /// The modern page track's live scroll position, read only by the parallax layers.
+    @State private var offsetTracker = ThomasContentOffsetTracker()
+    @State private var pagerScrollSpaceID = UUID()
     @State private var scrollPosition: String?
     @State private var pageHeights: [String: CGFloat] = [:]
     @State private var gestureExclusionFrames: [CGRect] = []
@@ -66,6 +70,19 @@ struct Pager: View {
     /// collisions between nested pagers.
     private var gestureExclusionSpaceName: String {
         "airship.pager.gestureExclusion.\(resolvedPagerID)"
+    }
+
+    private var pagerScrollSpaceName: String {
+        "airship.pager.scrollOffset.\(pagerScrollSpaceID)"
+    }
+
+    /// Mirrors `makePager`'s own choice, so a background reads the live signal that actually
+    /// matches which track is on screen rather than assuming one or the other.
+    private var usesScrollViewPager: Bool {
+        if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
+            return !Self.forceLegacyPager
+        }
+        return false
     }
 
     private var resolvedPagerID: String {
@@ -276,7 +293,16 @@ struct Pager: View {
                     }
                 }
                 .scrollTargetLayout()
+                .airshipApplyIf(info.properties.backgrounds?.hasParallax == true) {
+                    $0.thomasTrackContentOffset(
+                        offsetTracker,
+                        axis: .horizontal,
+                        coordinateSpaceName: pagerScrollSpaceName,
+                        viewportLength: size?.width ?? 0
+                    )
+                }
             }
+            .coordinateSpace(name: pagerScrollSpaceName)
             .scrollDisabled(self.info.properties.disableSwipe == true || self.pagerState.isScrollingDisabled)
             .allowsHitTesting(!pagerState.isNavigationInProgress)
             .scrollTargetBehavior(Self.scrollTargetBehavior)
@@ -532,6 +558,25 @@ struct Pager: View {
             }
 #endif
             .constraints(constraints)
+            .airshipApplyIf(usesScrollViewPager) {
+                $0.thomasParallaxBackgrounds(
+                    info.properties.backgrounds,
+                    axis: .horizontal,
+                    offsetTracker: offsetTracker,
+                    maxTravel: pagerMaxTravel
+                )
+            }
+            .airshipApplyIf(!usesScrollViewPager) {
+                // The same spring makeLegacyPager keys its own offset to.
+                $0.thomasParallaxBackgrounds(
+                    info.properties.backgrounds,
+                    axis: .horizontal,
+                    contentOffset: legacyPagerContentOffset,
+                    maxTravel: pagerMaxTravel,
+                    animation: .interactiveSpring(duration: Pager.animationSpeed),
+                    animationValue: pagerState.pageIndex
+                )
+            }
             .thomasCommon(self.info)
             .airshipGeometryGroupCompat()
             .accessibilityElement(children: .contain)
@@ -922,6 +967,19 @@ struct Pager: View {
         }
 
         return dragOffSet
+    }
+
+    /// The legacy page track's own offset (`makeLegacyPager`'s two `.offset(x:)` calls, combined).
+    /// Always <= 0: pages only ever advance forward from 0.
+    private var legacyPagerContentOffset: CGFloat {
+        let width = self.size?.width ?? 0
+        return -(width * CGFloat(pagerState.pageIndex)) + calcDragOffset(index: pagerState.pageIndex)
+    }
+
+    /// One page width per page, matching Android and web's parallax travel range.
+    private var pagerMaxTravel: CGFloat {
+        let width = self.size?.width ?? 0
+        return width * CGFloat(pagerState.pageItems.count)
     }
 }
 
