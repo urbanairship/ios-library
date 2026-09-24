@@ -169,7 +169,7 @@ internal struct VideoControls: ViewModifier {
     private func startHideTimer() {
         controlsTimer?.invalidate()
 
-        let visibilityBinding = _isControlsVisible
+        let visibilityBinding = $isControlsVisible
         controlsTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { _ in
             Task { @MainActor in
                 withAnimation(.easeInOut(duration: 0.3)) {
@@ -185,10 +185,10 @@ internal struct VideoControls: ViewModifier {
         observer.cleanup()
         observer.player = player
 
-        let isPlayingBinding = _isPlaying
-        let currentTimeBinding = _currentTime
-        let durationBinding = _duration
-        let isDraggingBinding = _isDraggingSlider
+        let isPlayingBinding = $isPlaying
+        let currentTimeBinding = $currentTime
+        let durationBinding = $duration
+        let isDraggingBinding = $isDraggingSlider
 
         observer.endTimeObserver = NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,

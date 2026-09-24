@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 19.11.10 - September 23, 2026
+Patch release that fixes Xcode 27 build issues.
+
+### Changes
+- Fixed Xcode 27 compilation errors in Scenes.
+
 ## Version 19.11.9 - July 2, 2026
 Patch release that signs the XCFrameworks with a new Apple Distribution certificate. No source changes since 19.11.8.
 
