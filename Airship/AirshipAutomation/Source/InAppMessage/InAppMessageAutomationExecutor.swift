@@ -290,6 +290,12 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             layoutContext: nil
         )
 
+        // `.finish` means this attempt is over for good - the display never
+        // resolved (the app died mid-display), so nothing else will ever record
+        // its outcome. Without this, the ledger has no record of the attempt and
+        // the schedule's limit is never considered reached.
+        await self.recordLedgerExecution(preparedScheduleInfo, result: .interrupted)
+
         await self.assetManager.clearCache(identifier: preparedScheduleInfo.scheduleID)
         return .finish
     }

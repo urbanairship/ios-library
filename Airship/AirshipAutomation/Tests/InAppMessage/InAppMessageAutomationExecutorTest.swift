@@ -128,10 +128,63 @@ struct InAppMessageAutomationExecutorTest {
             data: .inAppMessage(preparedData.message)
         )
 
-        _ = await self.executor.interrupted(schedule: schedule, preparedScheduleInfo: preparedInfo)
+        let behavior = await self.executor.interrupted(schedule: schedule, preparedScheduleInfo: preparedInfo)
+        #expect(behavior == .finish)
+
         let cleared = await self.assetManager.cleared
         #expect([self.preparedInfo.scheduleID] == cleared)
         #expect(analytics.events.first!.0.name == ThomasLayoutResolutionEvent.interrupted().name)
+
+        #expect(await self.ledger.recorded == [
+            .execution(
+                scheduleID: preparedInfo.scheduleID,
+                sharedID: nil,
+                triggerID: nil,
+                result: .interrupted,
+                cancel: false
+            )
+        ])
+    }
+
+    @Test
+    func testInterruptedEmbedded() async throws {
+        let airshipLayout = """
+        {
+          "version":1,
+          "presentation":{
+             "type":"embedded",
+             "embedded_id":"home_banner",
+             "default_placement":{
+                "size":{
+                   "width":"50%",
+                   "height":"50%"
+                }
+             }
+          },
+          "view":{
+             "type":"container",
+             "items":[]
+          }
+        }
+        """
+
+        let embeddedMessage = InAppMessage(
+            name: "embedded",
+            displayContent: .airshipLayout(
+                try JSONDecoder().decode(AirshipLayout.self, from: airshipLayout.data(using: .utf8)!)
+            )
+        )
+        let schedule = AutomationSchedule(
+            identifier: preparedInfo.scheduleID,
+            triggers: [],
+            data: .inAppMessage(embeddedMessage)
+        )
+
+        let behavior = await self.executor.interrupted(schedule: schedule, preparedScheduleInfo: preparedInfo)
+        #expect(behavior == .retry)
+
+        // A retry may still resolve later, so nothing is spent yet.
+        #expect(await self.ledger.recorded.isEmpty)
     }
 
     @Test

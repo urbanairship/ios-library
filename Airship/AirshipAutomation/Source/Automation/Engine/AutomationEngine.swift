@@ -279,10 +279,13 @@ actor AutomationEngine : AutomationEngineProtocol {
 
         for data in interrupted {
             var updated: AutomationScheduleData?
-            let isOverLimit = await self.isOverLimit(schedule: data.schedule)
 
             if data.scheduleState == .executing, let preparedInfo = data.preparedScheduleInfo {
                 let behavior = await self.executor.interrupted(schedule: data.schedule, preparedScheduleInfo: preparedInfo)
+
+                // Read after `interrupted()`, not before: a non-retry outcome may
+                // have just recorded the attempt's ledger event, and this must see it.
+                let isOverLimit = await self.isOverLimit(schedule: data.schedule)
 
                 updated = try await self.updateState(data: data) {  data in
                     data.executionInterrupted(date: now, retry: behavior == .retry, isOverLimit: isOverLimit)
@@ -291,6 +294,7 @@ actor AutomationEngine : AutomationEngineProtocol {
                     handleInterval(updated?.schedule.interval ?? 0.0, scheduleID: data.schedule.identifier)
                 }
             } else {
+                let isOverLimit = await self.isOverLimit(schedule: data.schedule)
                 updated = try await self.updateState(data: data) {  data in
                     data.prepareInterrupted(date: now, isOverLimit: isOverLimit)
                 }

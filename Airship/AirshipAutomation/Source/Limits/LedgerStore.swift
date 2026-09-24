@@ -75,7 +75,8 @@ actor LedgerStore: LedgerStoreProtocol {
                 name: "AirshipLedger",
                 modelURL: modelURL,
                 inMemory: inMemory,
-                stores: ["AirshipLedger-\(appKey).sqlite"]
+                stores: ["AirshipLedger-\(appKey).sqlite"],
+                recoverOnMigrationError: true
             )
         } else {
             self.coreData = nil
