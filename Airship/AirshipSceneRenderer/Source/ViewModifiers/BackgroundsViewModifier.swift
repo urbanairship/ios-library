@@ -101,6 +101,29 @@ extension View {
         }
     }
 
+    /// Writes how far this scroll view's content has moved from its leading edge into `offsetTracker`:
+    /// 0 at rest, negative as the user scrolls forward.
+    ///
+    /// Read from the scroll view itself rather than its content, so nothing wraps the content.
+    ///
+    /// - Parameters:
+    ///   - offsetTracker: The tracker to update.
+    ///   - axis: The scroll axis.
+    /// - Returns: This scroll view, reporting its offset.
+    @available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *)
+    func thomasTrackScrollOffset(
+        _ offsetTracker: ThomasContentOffsetTracker,
+        axis: Axis
+    ) -> some View {
+        self.onScrollGeometryChange(for: CGFloat.self) { geometry in
+            axis == .vertical
+                ? -(geometry.contentOffset.y + geometry.contentInsets.top)
+                : -(geometry.contentOffset.x + geometry.contentInsets.leading)
+        } action: { _, offset in
+            offsetTracker.offset = offset
+        }
+    }
+
     /// Writes how far this scroll content has moved from its leading edge into `offsetTracker`:
     /// 0 at rest, negative as the user scrolls forward, in either layout direction.
     ///

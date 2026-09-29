@@ -274,34 +274,7 @@ struct Pager: View {
         height: CGFloat?
     ) -> some View {
         ScrollViewReader { proxy in
-            ScrollView(.horizontal) {
-                LazyHStack(spacing: 0) {
-                    ForEach(0..<pagerState.pageItems.count, id: \.self) { index in
-                        makePageView(
-                            for: index,
-                            childConstraints: childConstraints,
-                            width: width,
-                            height: height,
-                            isLegacyPager: false
-                        )
-                        .containerRelativeFrame(.horizontal)
-                        .onAppear {
-                            if pagerState.pageItems[index].identifier == pagerState.currentPageId {
-                                pagerState.confirmNavigation()
-                            }
-                        }
-                    }
-                }
-                .scrollTargetLayout()
-                .airshipApplyIf(info.properties.backgrounds?.hasParallax == true) {
-                    $0.thomasTrackContentOffset(
-                        offsetTracker,
-                        axis: .horizontal,
-                        coordinateSpaceName: pagerScrollSpaceName,
-                        viewportLength: size?.width ?? 0
-                    )
-                }
-            }
+            makePageScrollView(childConstraints: childConstraints, width: width, height: height)
             .coordinateSpace(name: pagerScrollSpaceName)
             .scrollDisabled(self.info.properties.disableSwipe == true || self.pagerState.isScrollingDisabled)
             .allowsHitTesting(!pagerState.isNavigationInProgress)
@@ -367,6 +340,68 @@ struct Pager: View {
                 scheduleResync(isInitial: true, proxy: proxy)
             }
         }
+    }
+
+    /// The horizontal scroll view holding the pages, reporting its offset to parallax layers when it has any.
+    ///
+    /// The page track stays the scroll view's direct content. Wrapping it, even in a conditional that
+    /// applies nothing, stops the pager snapping when it is nested in another pager or has parallax.
+    @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+    @ViewBuilder
+    private func makePageScrollView(
+        childConstraints: ViewConstraints,
+        width: CGFloat?,
+        height: CGFloat?
+    ) -> some View {
+        let hasParallax = info.properties.backgrounds?.hasParallax == true
+        if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *) {
+            ScrollView(.horizontal) {
+                makePageTrack(childConstraints: childConstraints, width: width, height: height)
+            }
+            .airshipApplyIf(hasParallax) {
+                $0.thomasTrackScrollOffset(offsetTracker, axis: .horizontal)
+            }
+        } else if hasParallax {
+            ScrollView(.horizontal) {
+                makePageTrack(childConstraints: childConstraints, width: width, height: height)
+                    .thomasTrackContentOffset(
+                        offsetTracker,
+                        axis: .horizontal,
+                        coordinateSpaceName: pagerScrollSpaceName,
+                        viewportLength: size?.width ?? 0
+                    )
+            }
+        } else {
+            ScrollView(.horizontal) {
+                makePageTrack(childConstraints: childConstraints, width: width, height: height)
+            }
+        }
+    }
+
+    @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+    private func makePageTrack(
+        childConstraints: ViewConstraints,
+        width: CGFloat?,
+        height: CGFloat?
+    ) -> some View {
+        LazyHStack(spacing: 0) {
+            ForEach(0..<pagerState.pageItems.count, id: \.self) { index in
+                makePageView(
+                    for: index,
+                    childConstraints: childConstraints,
+                    width: width,
+                    height: height,
+                    isLegacyPager: false
+                )
+                .containerRelativeFrame(.horizontal)
+                .onAppear {
+                    if pagerState.pageItems[index].identifier == pagerState.currentPageId {
+                        pagerState.confirmNavigation()
+                    }
+                }
+            }
+        }
+        .scrollTargetLayout()
     }
 
     /// Corrects the scroll offset, either right away, after a short settle delay, or both.
