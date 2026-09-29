@@ -108,6 +108,7 @@ struct RootView<Content: View>: View {
             .environmentObject(self.defaultVideoState)
             .environmentObject(self.defaultAsyncViewState)
             .environment(\.windowSize, resolveWindowSize())
+            .environment(\.orientation, orientationTracker.orientation)
             .environment(\.layoutVersion, layout.version)
             .environment(\.isVisible, isVisible)
             .environment(\.isVoiceOverRunning, isVoiceOverRunning)

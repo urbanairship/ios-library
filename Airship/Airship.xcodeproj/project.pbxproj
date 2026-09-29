@@ -404,6 +404,8 @@
 		6E21C39C2FEC3C1E00EA3E56 /* ViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C37A2FEC3C1E00EA3E56 /* ViewFactory.swift */; };
 		6E21C39D2FEC3C1E00EA3E56 /* AirshipSimpleLayoutViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3892FEC3C1E00EA3E56 /* AirshipSimpleLayoutViewModel.swift */; };
 		6E21C39E2FEC3C1E00EA3E56 /* WrappingLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3672FEC3C1E00EA3E56 /* WrappingLayout.swift */; };
+		9C09532A97889317C15650C5 /* GridColumns.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D1DD8DD8A063A3F524C37DC /* GridColumns.swift */; };
+		5163160F7B40A151087D4E08 /* GridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D40DAE568722D0346B808A3 /* GridLayout.swift */; };
 		6E21C39F2FEC3C1E00EA3E56 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3852FEC3C1E00EA3E56 /* RootView.swift */; };
 		6E21C3A02FEC3C1E00EA3E56 /* StackImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3652FEC3C1E00EA3E56 /* StackImageButton.swift */; };
 		6E21C3A12FEC3C1E00EA3E56 /* StateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C3702FEC3C1E00EA3E56 /* StateController.swift */; };
@@ -478,6 +480,8 @@
 		6E21C4642FEC585400EA3E56 /* EventHandlerViewModifierOutcomeTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4592FEC585400EA3E56 /* EventHandlerViewModifierOutcomeTest.swift */; };
 		6E21C4662FEC585F00EA3E56 /* VideoMediaWebViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4652FEC585F00EA3E56 /* VideoMediaWebViewTests.swift */; };
 		DAB53AB8E241D551BF269655 /* MediaCropDecisionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9763EE5D73424951ACB1BC46 /* MediaCropDecisionTest.swift */; };
+		77FC81C9692E11D05FCA34BD /* GridLayoutRenderingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19444E34611076F65DF01D9 /* GridLayoutRenderingTest.swift */; };
+		010E8751CB1B12DC0E78191B /* GridLayoutTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D311ACFFD5A3A4E1F42DA39 /* GridLayoutTest.swift */; };
 		6E21C4712FEC586A00EA3E56 /* ThomasViewModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C46A2FEC586A00EA3E56 /* ThomasViewModelTest.swift */; };
 		6E21C4722FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C46E2FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift */; };
 		B6987A7142C54597BC6295ED /* ThomasTransitionEffectTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EEACD9DBF564C84AB064BAF /* ThomasTransitionEffectTest.swift */; };
@@ -2024,6 +2028,8 @@
 		6E21C3652FEC3C1E00EA3E56 /* StackImageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackImageButton.swift; sourceTree = "<group>"; };
 		6E21C3662FEC3C1E00EA3E56 /* IconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconView.swift; sourceTree = "<group>"; };
 		6E21C3672FEC3C1E00EA3E56 /* WrappingLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappingLayout.swift; sourceTree = "<group>"; };
+		7D1DD8DD8A063A3F524C37DC /* GridColumns.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridColumns.swift; sourceTree = "<group>"; };
+		7D40DAE568722D0346B808A3 /* GridLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLayout.swift; sourceTree = "<group>"; };
 		6E21C3682FEC3C1E00EA3E56 /* PagerSwipeDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerSwipeDirection.swift; sourceTree = "<group>"; };
 		6E21C3692FEC3C1E00EA3E56 /* PagerUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerUtils.swift; sourceTree = "<group>"; };
 		6E21C36A2FEC3C1E00EA3E56 /* PagerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerController.swift; sourceTree = "<group>"; };
@@ -2114,6 +2120,8 @@
 		6E21C4592FEC585400EA3E56 /* EventHandlerViewModifierOutcomeTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventHandlerViewModifierOutcomeTest.swift; sourceTree = "<group>"; };
 		6E21C4652FEC585F00EA3E56 /* VideoMediaWebViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMediaWebViewTests.swift; sourceTree = "<group>"; };
 		9763EE5D73424951ACB1BC46 /* MediaCropDecisionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCropDecisionTest.swift; sourceTree = "<group>"; };
+		C19444E34611076F65DF01D9 /* GridLayoutRenderingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLayoutRenderingTest.swift; sourceTree = "<group>"; };
+		9D311ACFFD5A3A4E1F42DA39 /* GridLayoutTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLayoutTest.swift; sourceTree = "<group>"; };
 		6E21C4672FEC586A00EA3E56 /* LayoutModelsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutModelsTest.swift; sourceTree = "<group>"; };
 		6E21C4682FEC586A00EA3E56 /* AirshipLayoutTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipLayoutTest.swift; sourceTree = "<group>"; };
 		6E21C4692FEC586A00EA3E56 /* ThomasValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasValidationTests.swift; sourceTree = "<group>"; };
@@ -3772,6 +3780,8 @@
 				7A5723012FEC3C1E00EA3E56 /* StackImageView.swift */,
 				6E21C3662FEC3C1E00EA3E56 /* IconView.swift */,
 				6E21C3672FEC3C1E00EA3E56 /* WrappingLayout.swift */,
+				7D1DD8DD8A063A3F524C37DC /* GridColumns.swift */,
+				7D40DAE568722D0346B808A3 /* GridLayout.swift */,
 				6E21C3682FEC3C1E00EA3E56 /* PagerSwipeDirection.swift */,
 				6E21C3692FEC3C1E00EA3E56 /* PagerUtils.swift */,
 				6E21C36A2FEC3C1E00EA3E56 /* PagerController.swift */,
@@ -5038,6 +5048,8 @@
 				6E21CB012FEC59AA00EA3E56 /* BannerSwipeDismissLogicTest.swift */,
 				6E21C4652FEC585F00EA3E56 /* VideoMediaWebViewTests.swift */,
 				9763EE5D73424951ACB1BC46 /* MediaCropDecisionTest.swift */,
+				C19444E34611076F65DF01D9 /* GridLayoutRenderingTest.swift */,
+				9D311ACFFD5A3A4E1F42DA39 /* GridLayoutTest.swift */,
 				6E21C44E2FEC583B00EA3E56 /* Outcomes */,
 				1D501534ADFFC096F3D2D624 /* AirshipEmbeddedViewManagerTest.swift */,
 			);
@@ -7523,6 +7535,8 @@
 				6E21C39C2FEC3C1E00EA3E56 /* ViewFactory.swift in Sources */,
 				6E21C39D2FEC3C1E00EA3E56 /* AirshipSimpleLayoutViewModel.swift in Sources */,
 				6E21C39E2FEC3C1E00EA3E56 /* WrappingLayout.swift in Sources */,
+				9C09532A97889317C15650C5 /* GridColumns.swift in Sources */,
+				5163160F7B40A151087D4E08 /* GridLayout.swift in Sources */,
 				6E21C39F2FEC3C1E00EA3E56 /* RootView.swift in Sources */,
 				6E21C3A02FEC3C1E00EA3E56 /* StackImageButton.swift in Sources */,
 				7A5723022FEC3C1E00EA3E56 /* StackImageView.swift in Sources */,
@@ -7669,6 +7683,8 @@
 				6E21C47A2FEC586A00EA3E56 /* PagerControllerTest.swift in Sources */,
 				6E21C4662FEC585F00EA3E56 /* VideoMediaWebViewTests.swift in Sources */,
 				DAB53AB8E241D551BF269655 /* MediaCropDecisionTest.swift in Sources */,
+				77FC81C9692E11D05FCA34BD /* GridLayoutRenderingTest.swift in Sources */,
+				010E8751CB1B12DC0E78191B /* GridLayoutTest.swift in Sources */,
 				6E21C45C2FEC585400EA3E56 /* ThomasValidationInfoOutcomeTest.swift in Sources */,
 				6E21C45D2FEC585400EA3E56 /* ThomasActionPayloadOutcomeTest.swift in Sources */,
 				6E21C45E2FEC585400EA3E56 /* ThomasOutcomeTest.swift in Sources */,

@@ -11,6 +11,8 @@ extension ThomasViewInfo {
             return nil
         case .linearLayout:
             return nil
+        case .gridLayout:
+            return nil
         #if !os(tvOS) && !os(watchOS)
         case .webView:
             return nil

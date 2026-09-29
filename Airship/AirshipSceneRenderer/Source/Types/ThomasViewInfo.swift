@@ -7,6 +7,7 @@ import Foundation
 indirect enum ThomasViewInfo: ThomasSerializable {
     case container(Container)
     case linearLayout(LinearLayout)
+    case gridLayout(GridLayout)
     #if !os(tvOS) && !os(watchOS)
     case webView(WebView)
     #endif
@@ -46,6 +47,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
     enum ViewType: String, Codable {
         case container
         case linearLayout = "linear_layout"
+        case gridLayout = "grid_layout"
         case webView = "web_view"
         case customView = "custom_view"
         case scrollLayout = "scroll_layout"
@@ -103,6 +105,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         return switch type {
         case .container: .container(try Container(from: decoder))
         case .linearLayout: .linearLayout(try LinearLayout(from: decoder))
+        case .gridLayout: .gridLayout(try GridLayout(from: decoder))
 
         case .webView:
 #if os(tvOS) || os(watchOS)
@@ -156,6 +159,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         switch viewInfo {
         case .container(let info): try info.encode(to: encoder)
         case .linearLayout(let info): try info.encode(to: encoder)
+        case .gridLayout(let info): try info.encode(to: encoder)
         #if !os(tvOS) && !os(watchOS)
         case .webView(let info): try info.encode(to: encoder)
         #endif
@@ -280,6 +284,143 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var margin: ThomasMargin?
             var view: ThomasViewInfo
             var position: ThomasPosition?
+        }
+    }
+
+    /// Rows of equal-width cells whose column count comes from the grid's own width, never its items.
+    struct GridLayout: BaseInfo {
+        var commonProperties: CommonViewProperties
+        var commonOverrides: CommonViewOverrides?
+        var properties: Properties
+
+        func encode(to encoder: any Encoder) throws {
+            try encoder.encode(
+                properties: commonProperties, properties,
+                overrides: commonOverrides
+            )
+        }
+
+        init(from decoder: any Decoder) throws {
+            self.commonProperties = try decoder.decodeProperties()
+            self.properties = try decoder.decodeProperties()
+            self.commonOverrides = try decoder.decodeOverrides()
+        }
+
+        struct Properties: ThomasSerializable {
+            let type: ViewType = .gridLayout
+            var config: Configs
+            var items: [Item]
+            var backgrounds: [ThomasBackground]?
+            var accessibilityRole: AccessibilityRole?
+
+            private enum CodingKeys: String, CodingKey {
+                case type
+                case config
+                case items
+                case backgrounds
+                case accessibilityRole = "accessibility_role"
+            }
+        }
+
+        struct Configs: ThomasSerializable {
+            var defaultConfig: Config
+            var selectors: [Selector]?
+
+            private enum CodingKeys: String, CodingKey {
+                case defaultConfig = "default"
+                case selectors
+            }
+        }
+
+        /// A config for the conditions it names. It replaces `default` whole; nothing is merged.
+        struct Selector: ThomasSerializable {
+            var platform: ThomasPlatform?
+            var windowSize: ThomasWindowSize?
+            var orientation: ThomasOrientation?
+            var gridWidth: LengthRange?
+            var config: Config
+
+            private enum CodingKeys: String, CodingKey {
+                case platform
+                case windowSize = "window_size"
+                case orientation
+                case gridWidth = "grid_width"
+                case config
+            }
+        }
+
+        struct Config: ThomasSerializable {
+            var maxColumns: Double
+            var minColumnWidth: MinColumnWidth?
+            var columnSpacing: Double?
+            var rowSpacing: Double?
+            var partialRowAlignment: ThomasPosition.Horizontal?
+            var rowAlignment: ThomasPosition.Vertical?
+            var cellAspectRatio: Double?
+
+            private enum CodingKeys: String, CodingKey {
+                case maxColumns = "max_columns"
+                case minColumnWidth = "min_column_width"
+                case columnSpacing = "column_spacing"
+                case rowSpacing = "row_spacing"
+                case partialRowAlignment = "partial_row_alignment"
+                case rowAlignment = "row_alignment"
+                case cellAspectRatio = "cell_aspect_ratio"
+            }
+        }
+
+        /// The narrowest a column may be before the grid drops one. `text_scaled` follows the text size.
+        struct MinColumnWidth: ThomasSerializable {
+            var type: MinColumnWidthType
+            var points: Double
+        }
+
+        enum MinColumnWidthType: String, ThomasSerializable {
+            case fixed
+            case textScaled = "text_scaled"
+        }
+
+        /// A range of lengths in points, both ends inclusive; an omitted end is unbounded.
+        struct LengthRange: ThomasSerializable {
+            var atLeast: Double?
+            var atMost: Double?
+
+            private enum CodingKeys: String, CodingKey {
+                case atLeast = "at_least"
+                case atMost = "at_most"
+            }
+        }
+
+        struct AccessibilityRole: ThomasSerializable {
+            var type: RoleType
+
+            enum RoleType: String, ThomasSerializable {
+                case listView = "list_view"
+            }
+        }
+
+        struct Item: ThomasSerializable {
+            static let defaultSize: ThomasSize = ThomasSize(width: .percent(100), height: .auto)
+            static let defaultPosition: ThomasPosition = ThomasPosition(horizontal: .center, vertical: .center)
+
+            var identifier: String?
+            var size: ThomasSize?
+            var columnSpan: Double?
+            var margin: ThomasMargin?
+            var view: ThomasViewInfo
+            var position: ThomasPosition?
+
+            private enum CodingKeys: String, CodingKey {
+                case identifier
+                case size
+                case columnSpan = "column_span"
+                case margin
+                case view
+                case position
+            }
+
+            var resolvedSize: ThomasSize { size ?? Self.defaultSize }
+            var resolvedPosition: ThomasPosition { position ?? Self.defaultPosition }
         }
     }
 

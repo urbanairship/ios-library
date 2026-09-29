@@ -216,6 +216,7 @@ struct ScrollLayout: View {
             layoutVersion: layoutVersion
         )
         childConstraints.uncappedAxes = isVertical ? .vertical : .horizontal
+        childConstraints.scrollingAxes.insert(isVertical ? .vertical : .horizontal)
 
         if isVertical {
             childConstraints.maxHeight = nil

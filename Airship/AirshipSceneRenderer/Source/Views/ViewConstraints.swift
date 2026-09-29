@@ -66,6 +66,9 @@ struct ViewConstraints: Equatable {
     /// is a sibling's extent handed back as a ceiling with nothing underneath it. Subset of
     /// `measuredAxes`; only meaningful where that axis is also set.
     var pinnedAxes: Axis.Set = []
+    /// Axes a scroll view above scrolls along with no declared length in between, so `maxWidth`/`maxHeight`
+    /// there is the viewport rather than a ceiling on what this view may take.
+    var scrollingAxes: Axis.Set = []
     var safeAreaInsets: EdgeInsets
     var isHorizontalFixedSize: Bool
     var isVerticalFixedSize: Bool
@@ -83,6 +86,7 @@ struct ViewConstraints: Equatable {
         uncappedAxes: Axis.Set = [],
         measuredAxes: Axis.Set = [],
         pinnedAxes: Axis.Set = [],
+        scrollingAxes: Axis.Set = [],
         isHorizontalFixedSize: Bool = false,
         isVerticalFixedSize: Bool = false,
         isHorizontalAbsoluteSize: Bool = false,
@@ -100,6 +104,7 @@ struct ViewConstraints: Equatable {
         self.uncappedAxes = uncappedAxes
         self.measuredAxes = measuredAxes
         self.pinnedAxes = pinnedAxes
+        self.scrollingAxes = scrollingAxes
         self.safeAreaInsets = safeAreaInsets
         self.isHorizontalFixedSize = isHorizontalFixedSize
         self.isVerticalFixedSize = isVerticalFixedSize
@@ -509,6 +514,10 @@ struct ViewConstraints: Equatable {
             childPinnedAxes.remove(.vertical)
         }
 
+        var childScrollingAxes = scrollingAxes
+        if childWidth != nil { childScrollingAxes.remove(.horizontal) }
+        if childHeight != nil { childScrollingAxes.remove(.vertical) }
+
         return ViewConstraints(
             width: childWidth,
             height: childHeight,
@@ -521,6 +530,7 @@ struct ViewConstraints: Equatable {
             uncappedAxes: [],
             measuredAxes: childMeasuredAxes,
             pinnedAxes: childPinnedAxes,
+            scrollingAxes: childScrollingAxes,
             isHorizontalFixedSize: isHorizontalFixedSize,
             isVerticalFixedSize: isVerticalFixedSize,
             isHorizontalAbsoluteSize: isHorizontalAbsoluteSize,
@@ -589,7 +599,12 @@ extension ViewConstraints {
             return copy
         }
 
-        return fillingMeasured(width: measured?.width, height: measured?.height)
+        // The scroll axis alone: on the other one an auto scroll is as long as its content, so its
+        // own frame there is that content's length and handing it back pins the content to it.
+        return fillingMeasured(
+            width: isVertical ? nil : measured?.width,
+            height: isVertical ? measured?.height : nil
+        )
     }
 }
 

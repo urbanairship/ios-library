@@ -148,8 +148,9 @@ jobs:
           path: |
             DevApp/Dev App/Thomas/Resources/Scenes
             DevApp/Dev App/Thomas/Resources/.layouts.version
-          # The fetch script is part of the key: what it keeps or prunes shapes the cache.
-          key: thomas-layouts-${{ hashFiles('layouts.version', 'scripts/fetch-layouts.sh') }}
+          # The fetch script is part of the key: what it keeps or prunes shapes the cache. So is
+          # the mode: a fetch without the UI-test pages is a different set of files.
+          key: thomas-layouts-uitests-${{ hashFiles('layouts.version', 'scripts/fetch-layouts.sh') }}
       - name: Mint layouts read token
         id: layouts_token
         uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
@@ -183,7 +184,8 @@ jobs:
       - name: Fetch layouts
         env:
           LAYOUTS_REPO_TOKEN: ${{ steps.layouts_token.outputs.token }}
-        run: make fetch-layouts
+        # The per-page scenes live under thomas-layouts' uitests/, which a plain fetch leaves out.
+        run: make fetch-layouts-uitests
       - name: Capture shard ${{ matrix.shard }} of ${{ needs.plan.outputs.count }}
         env:
           # Recorded in provenance.json so a merge can tell whether these screenshots

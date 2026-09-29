@@ -85,6 +85,7 @@ extension ThomasViewInfo {
         switch self {
         case .container(let info): info.properties.backgrounds
         case .linearLayout(let info): info.properties.backgrounds
+        case .gridLayout(let info): info.properties.backgrounds
         case .scrollLayout(let info): info.properties.backgrounds?.map(\.background)
         case .pager(let info): info.properties.backgrounds?.map(\.background)
         case .buttonLayout(let info): info.properties.backgrounds
