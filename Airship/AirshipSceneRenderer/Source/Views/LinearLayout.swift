@@ -8,6 +8,7 @@ import SwiftUI
 
 struct LinearLayout: View {
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
+    @Environment(\.pageIdentifier) private var pageIdentifier
 
     /// LinearLayout model.
     private let info: ThomasViewInfo.LinearLayout
@@ -15,8 +16,6 @@ struct LinearLayout: View {
     /// View constraints.
     private let constraints: ViewConstraints
 
-    @State
-    private var numberGenerator: RepeatableNumberGenerator = RepeatableNumberGenerator()
 
     @State
     private var measuredSize: CGSize? = nil
@@ -424,12 +423,9 @@ struct LinearLayout: View {
     }
 
     private func orderedItems() -> [ThomasViewInfo.LinearLayout.Item] {
-        guard self.info.properties.randomizeChildren == true else {
-            return self.info.properties.items
-        }
-        var generator = self.numberGenerator
-        generator.repeatNumbers()
-        return self.info.properties.items.shuffled(using: &generator)
+        let items = self.info.properties.items
+        guard self.info.properties.randomizeChildren == true else { return items }
+        return thomasEnvironment.shuffledOrder(count: items.count, page: pageIdentifier, identifier: nil).map { items[$0] }
     }
 }
 
@@ -446,29 +442,6 @@ fileprivate extension ThomasSizeConstraint {
             return percent / 100.0
         }
         return nil
-    }
-}
-
-fileprivate final class RepeatableNumberGenerator: RandomNumberGenerator {
-    private var numbers: [UInt64] = []
-    private var index: Int = 0
-    private var numberGenerator: SystemRandomNumberGenerator = SystemRandomNumberGenerator()
-
-    func next() -> UInt64 {
-        defer {
-            self.index += 1
-        }
-
-        guard index < numbers.count else {
-            let next = numberGenerator.next()
-            numbers.append(next)
-            return next
-        }
-        return numbers[index]
-    }
-
-    func repeatNumbers() {
-        index = 0
     }
 }
 

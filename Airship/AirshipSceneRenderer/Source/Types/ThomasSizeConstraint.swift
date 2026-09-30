@@ -84,16 +84,22 @@ extension ThomasViewInfo {
             }
         case .gridLayout(let info):
             // Only certain when every config the grid could pick sets it: rows a ratio derives from the
-            // width, or a minimum column width that sizes an unbounded grid to `n × min + gaps`.
+            // width, or a `fit` minimum that sizes an unbounded grid to `n × min + gaps`.
             let configs = [info.properties.config.defaultConfig]
                 + (info.properties.config.selectors ?? []).map(\.config)
             if axis == .vertical, configs.allSatisfy({ ($0.cellAspectRatio ?? 0) > 0 }) {
                 return true
             }
-            if axis == .horizontal, configs.allSatisfy({ ($0.minColumnWidth?.points ?? 0) > 0 }) {
+            if axis == .horizontal, configs.allSatisfy({ config in
+                guard case .fit(_, let minWidth, _) = config.columns else { return false }
+                return minWidth.size > 0
+            }) {
                 return true
             }
+            let edges = [info.properties.header, info.properties.footer].compactMap { $0 }
             return info.properties.items.contains {
+                $0.resolvedSize.constraint(on: axis).establishesLength(view: $0.view, on: axis)
+            } || edges.contains {
                 $0.resolvedSize.constraint(on: axis).establishesLength(view: $0.view, on: axis)
             }
         default:

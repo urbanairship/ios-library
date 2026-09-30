@@ -13,6 +13,7 @@ struct GridLayout: View {
     @Environment(\.layoutDirection) private var layoutDirection
     // Read so a text size change re-renders a `text_scaled` minimum.
     @Environment(\.sizeCategory) private var sizeCategory
+    @Environment(\.pageIdentifier) private var pageIdentifier
 
     private let info: ThomasViewInfo.GridLayout
     private let constraints: ViewConstraints
@@ -37,9 +38,11 @@ struct GridLayout: View {
             measuredWidth: metrics.fillsOffer ? $measuredWidth : nil,
             measuredRowHeights: metrics.hasPercentHeights ? $measuredRowHeights : nil
         ) {
+            edge(info.properties.header, slot: .header, metrics: metrics)
             ForEach(0..<info.properties.items.count, id: \.self) { index in
                 cell(index, metrics: metrics)
             }
+            edge(info.properties.footer, slot: .footer, metrics: metrics)
         }
         .accessibilityElement(children: .contain)
         .constraints(constraints, alignment: .top)
@@ -77,17 +80,14 @@ struct GridLayout: View {
     private func makeMetrics() -> GridMetrics {
         let items = info.properties.items
         let width = gridWidth
-        let config = GridColumns.resolveConfig(
-            info.properties.config,
-            environment: GridColumns.Environment(
-                windowSize: windowSize,
-                orientation: orientation,
-                gridWidth: width
-            )
+        let environment = GridColumns.Environment(
+            windowSize: windowSize,
+            orientation: orientation,
+            gridWidth: width
         )
+        let config = GridColumns.resolveConfig(info.properties.config, environment: environment)
         let textScale = CGFloat(AirshipFont.scaledSize(100) / 100)
         let columns = GridColumns.columnCount(config, width: width, textScale: textScale)
-        let spacing = CGFloat(config.columnSpacing ?? 0)
         let ratio = config.cellAspectRatio.flatMap { $0 > 0 ? CGFloat($0) : nil }
 
         let sizing: GridMetrics.Sizing = if let width {
@@ -98,13 +98,27 @@ struct GridLayout: View {
             .hugs
         }
 
-        let visible = items.indices.filter { index in
+        let itemConfigs = items.map { item in
+            item.config.map { GridColumns.resolveConfig($0, environment: environment) }
+        }
+        let ordered = GridColumns.placementOrder(
+            info.properties.randomizeChildren == true
+                ? thomasEnvironment.shuffledOrder(count: items.count, page: pageIdentifier, identifier: nil)
+                : Array(items.indices),
+            orders: itemConfigs.map { $0?.order }
+        )
+        var readingRank = [Int](repeating: 0, count: items.count)
+        for (rank, index) in ordered.enumerated() {
+            readingRank[index] = rank
+        }
+
+        let visible = ordered.filter { index in
             items[index].view.commonInfo.0.visibility?.isVisible(state: thomasState.state) ?? true
         }
         let visiblePlacements = GridColumns.place(
-            spans: visible.map { items[$0].columnSpan },
+            spans: visible.map { itemConfigs[$0]?.columnSpan },
             columns: columns,
-            alignment: config.partialRowAlignment ?? .start
+            alignment: config.partialRowPosition ?? .start
         )
         var placements = [GridColumns.Placement?](repeating: nil, count: items.count)
         for (placement, index) in zip(visiblePlacements, visible) {
@@ -123,15 +137,17 @@ struct GridLayout: View {
 
         return GridMetrics(
             columns: columns,
-            columnSpacing: spacing,
-            rowSpacing: CGFloat(config.rowSpacing ?? 0),
-            rowAlignment: config.rowAlignment ?? .top,
+            columnSpacing: config.columnSpacing,
+            rowSpacing: config.rowSpacing,
+            contentPosition: config.contentPosition ?? GridMetrics.defaultContentPosition,
             sizing: sizing,
+            maxColumnWidth: GridColumns.maxColumnWidth(config, textScale: textScale),
             fillsOffer: fillsOffer && width != nil,
             aspectRatio: ratio,
             placements: placements,
             rowHasBasis: rowHasBasis,
-            hasPercentHeights: ratio == nil && visible.contains { items[$0].resolvedSize.height.isPercent }
+            hasPercentHeights: ratio == nil && visible.contains { items[$0].resolvedSize.height.isPercent },
+            readingRank: readingRank
         )
     }
 
@@ -147,17 +163,56 @@ struct GridLayout: View {
             constraints: cell?.constraints ?? ViewConstraints()
         )
         .margin(item.margin)
-        // SwiftUI orders VoiceOver by position; reading order is list order.
-        .accessibilitySortPriority(Double(info.properties.items.count - index))
+        // SwiftUI orders VoiceOver by position; reading order is placement order.
+        .accessibilitySortPriority(Double(info.properties.items.count - metrics.readingRank[index]))
         .layoutValue(
             key: GridCellsLayout.CellKey.self,
             value: cell.map {
                 GridCellsLayout.Cell(
-                    placement: $0.placement,
+                    slot: .cell($0.placement),
                     position: item.resolvedPosition,
                     rowShare: $0.rowShare
                 )
             }
+        )
+    }
+
+    /// A header or footer: a row of its own, as wide as the block of columns, outside the list of items.
+    @ViewBuilder
+    @MainActor
+    private func edge(
+        _ edge: ThomasViewInfo.GridLayout.Edge?,
+        slot: GridCellsLayout.Cell.Slot,
+        metrics: GridMetrics
+    ) -> some View {
+        if let edge {
+            let isVisible = edge.view.commonInfo.0.visibility?.isVisible(state: thomasState.state) ?? true
+
+            thomasEnvironment.viewFactory.createView(
+                edge.view,
+                constraints: edgeConstraints(edge, metrics: metrics)
+            )
+            .margin(edge.margin)
+            .accessibilitySortPriority(slot == .header ? Double(info.properties.items.count + 1) : 0)
+            .layoutValue(
+                key: GridCellsLayout.CellKey.self,
+                value: isVisible
+                    ? GridCellsLayout.Cell(slot: slot, position: edge.resolvedPosition, rowShare: nil)
+                    : nil
+            )
+        }
+    }
+
+    private func edgeConstraints(_ edge: ThomasViewInfo.GridLayout.Edge, metrics: GridMetrics) -> ViewConstraints {
+        var size = edge.resolvedSize
+        // Its row is as tall as it is, so a percentage there has nothing to be a share of.
+        if size.height.isPercent { size.height = .auto }
+        let width = metrics.spanWidth(metrics.columns)
+        return ViewConstraints(width: width, maxWidth: width).childConstraints(
+            size,
+            margin: edge.margin,
+            borderStrokeWidth: edge.view.borderStrokeWidth,
+            safeAreaInsetsMode: .consume
         )
     }
 
@@ -239,11 +294,15 @@ struct GridMetrics: Equatable {
         case hugs
     }
 
+    static let defaultContentPosition: ThomasPosition = ThomasPosition(horizontal: .start, vertical: .top)
+
     var columns: Int
-    var columnSpacing: CGFloat
-    var rowSpacing: CGFloat
-    var rowAlignment: ThomasPosition.Vertical
+    var columnSpacing: ThomasViewInfo.GridLayout.Spacing?
+    var rowSpacing: ThomasViewInfo.GridLayout.Spacing?
+    var contentPosition: ThomasPosition
     var sizing: Sizing
+    /// The widest a column grows when the grid divides its width.
+    var maxColumnWidth: CGFloat?
     /// Whether the grid takes the width it is proposed rather than a length of its own.
     var fillsOffer: Bool
     var aspectRatio: CGFloat?
@@ -252,14 +311,25 @@ struct GridMetrics: Equatable {
     /// Whether something in each row gives it a height of its own.
     var rowHasBasis: [Bool]
     var hasPercentHeights: Bool
+    /// Each item's position in placement and reading order, by item index.
+    var readingRank: [Int]
+
+    var minColumnSpacing: CGFloat { GridColumns.minSpace(columnSpacing) }
+    var minRowSpacing: CGFloat { GridColumns.minSpace(rowSpacing) }
 
     /// One column's width, or `nil` when columns size to their content.
     var columnWidth: CGFloat? {
         switch sizing {
-        case .divides(let width): columnWidth(dividing: width)
+        case .divides(let width): columns(dividing: width).width
         case .fixed(let columnWidth): columnWidth
         case .hugs: nil
         }
+    }
+
+    /// The space between columns at the grid's own width.
+    var columnGap: CGFloat {
+        guard case .divides(let width) = sizing else { return minColumnSpacing }
+        return columns(dividing: width).spacing
     }
 
     /// Every row's height where the ratio and a known column width decide it.
@@ -268,14 +338,25 @@ struct GridMetrics: Equatable {
         return columnWidth / aspectRatio
     }
 
-    /// One column's width when `width` is divided among the columns.
-    func columnWidth(dividing width: CGFloat) -> CGFloat {
-        max(0, (width - CGFloat(columns - 1) * columnSpacing) / CGFloat(columns))
+    /// A column's width and the space between columns when `width` is divided among them.
+    ///
+    /// The share uses the minimum space. Past `maxColumnWidth` the columns stop growing, and
+    /// `spread` spacing takes the room they leave: 4 columns capped at 64 in 340 get gaps of 28.
+    func columns(dividing width: CGFloat) -> (width: CGFloat, spacing: CGFloat) {
+        let minimum = minColumnSpacing
+        let share = max(0, (width - CGFloat(columns - 1) * minimum) / CGFloat(columns))
+        guard let cap = maxColumnWidth, share > cap else { return (share, minimum) }
+        let spread = GridColumns.spreadSpace(
+            columnSpacing,
+            leftover: width - CGFloat(columns) * cap,
+            count: columns
+        )
+        return (cap, spread ?? minimum)
     }
 
     /// The width of a cell covering `span` columns, or `nil` when columns size to their content.
     func spanWidth(_ span: Int) -> CGFloat? {
-        columnWidth.map { CGFloat(span) * $0 + CGFloat(span - 1) * columnSpacing }
+        columnWidth.map { CGFloat(span) * $0 + CGFloat(span - 1) * columnGap }
     }
 }
 
@@ -285,8 +366,26 @@ struct GridMetrics: Equatable {
 /// exactly `(W - (n - 1) * g) / n` wide.
 struct GridCellsLayout: Layout {
     struct Cell: Equatable {
-        var placement: GridColumns.Placement
+        enum Slot: Equatable {
+            case cell(GridColumns.Placement)
+            /// A row above the cells, spanning the block of columns.
+            case header
+            /// A row below the cells, spanning the block of columns.
+            case footer
+        }
+
+        var slot: Slot
         var position: ThomasPosition
+
+        /// The cell's row, or `nil` for a header or footer.
+        var row: Int? {
+            if case .cell(let placement) = slot { placement.row } else { nil }
+        }
+
+        /// The columns the view covers: its placement, or every column for a header or footer.
+        func columns(_ count: Int) -> GridColumns.Placement {
+            if case .cell(let placement) = slot { placement } else { GridColumns.Placement(row: 0, halfColumn: 0, span: count) }
+        }
         /// The fraction of its row a percentage height takes, proposed once the row is measured.
         var rowShare: CGFloat?
     }
@@ -309,9 +408,21 @@ struct GridCellsLayout: Layout {
         var rowHeights: [CGFloat]
         var width: CGFloat
         var height: CGFloat
+        var headerHeight: CGFloat?
+        var footerHeight: CGFloat?
+        /// The space between columns.
+        var spacing: CGFloat = 0
+        /// The space between two rows of cells; the header and footer keep the minimum.
+        var rowGap: CGFloat = 0
+        /// Each row's top, and the header's and footer's, from the top of the block of rows.
+        var headerY: CGFloat = 0
+        var rowY: [CGFloat] = []
+        var footerY: CGFloat = 0
+        /// How far the block of columns sits from the grid's leading edge, where it is narrower than the grid.
+        var leadingOffset: CGFloat = 0
 
         func x(halfColumn: Int, spacing: CGFloat) -> CGFloat {
-            halfTracks.prefix(halfColumn).reduce(0, +) + CGFloat(halfColumn) * spacing
+            leadingOffset + halfTracks.prefix(halfColumn).reduce(0, +) + CGFloat(halfColumn) * spacing
         }
 
         func spanWidth(halfColumn: Int, span: Int, spacing: CGFloat) -> CGFloat {
@@ -326,7 +437,11 @@ struct GridCellsLayout: Layout {
         subviews: Subviews,
         cache: inout ()
     ) -> CGSize {
-        let solution = solve(subviews, width: width(for: proposal))
+        let solution = solve(
+            subviews,
+            width: width(for: proposal),
+            height: definiteHeight ? proposal.height?.safeValue : nil
+        )
         let height = definiteHeight ? (proposal.height?.safeValue ?? solution.height) : solution.height
         return CGSize(width: solution.width, height: height)
     }
@@ -337,35 +452,49 @@ struct GridCellsLayout: Layout {
         subviews: Subviews,
         cache: inout ()
     ) {
-        let solution = solve(subviews, width: bounds.width)
-        let spacing = metrics.columnSpacing
+        let solution = solve(subviews, width: bounds.width, height: definiteHeight ? bounds.height : nil)
+        let spacing = solution.spacing
 
         let leftoverHeight = bounds.height - solution.height
-        let rowsOffset: CGFloat = switch metrics.rowAlignment {
+        let rowsOffset: CGFloat = switch metrics.contentPosition.vertical {
         case .top: 0
         case .center: leftoverHeight / 2
         case .bottom: leftoverHeight
         }
-        var y = bounds.minY + rowsOffset
-        var rowY: [CGFloat] = []
-        for height in solution.rowHeights {
-            rowY.append(y)
-            y += height + metrics.rowSpacing
-        }
+        let top = bounds.minY + rowsOffset
+        let headerY = top + solution.headerY
+        let rowY = solution.rowY.map { top + $0 }
+        let footerY = top + solution.footerY
 
         for subview in subviews {
-            guard let cell = subview[CellKey.self], cell.placement.row < rowY.count else {
+            guard let cell = subview[CellKey.self] else {
                 subview.place(at: bounds.origin, proposal: .zero)
                 continue
             }
-            let placement = cell.placement
+            let placement = cell.columns(metrics.columns)
+            let top: CGFloat
+            let rowHeight: CGFloat
+            switch cell.slot {
+            case .header:
+                top = headerY
+                rowHeight = solution.headerHeight ?? 0
+            case .footer:
+                top = footerY
+                rowHeight = solution.footerHeight ?? 0
+            case .cell(let placement):
+                guard placement.row < rowY.count else {
+                    subview.place(at: bounds.origin, proposal: .zero)
+                    continue
+                }
+                top = rowY[placement.row]
+                rowHeight = solution.rowHeights[placement.row]
+            }
             let width = solution.spanWidth(halfColumn: placement.halfColumn, span: placement.span, spacing: spacing)
-            let rowHeight = solution.rowHeights[placement.row]
             let leadingX = solution.x(halfColumn: placement.halfColumn, spacing: spacing)
             let x = layoutDirection == .rightToLeft
                 ? bounds.maxX - leadingX - width
                 : bounds.minX + leadingX
-            let cellRect = CGRect(x: x, y: rowY[placement.row], width: width, height: rowHeight)
+            let cellRect = CGRect(x: x, y: top, width: width, height: rowHeight)
 
             let cellProposal = ProposedViewSize(width: width, height: rowHeight * (cell.rowShare ?? 1))
             let size = subview.dimensions(in: cellProposal)
@@ -405,14 +534,17 @@ struct GridCellsLayout: Layout {
         return CGPoint(x: x.safeValue ?? rect.minX, y: y.safeValue ?? rect.minY)
     }
 
-    /// - Parameter width: the inner width a bounded grid divides; ignored for an unbounded one
-    private func solve(_ subviews: Subviews, width: CGFloat?) -> Solution {
-        let spacing = metrics.columnSpacing
+    /// - Parameters:
+    ///   - width: the inner width a bounded grid divides; ignored for an unbounded one
+    ///   - height: the grid's own height, which `spread` rows share out; `nil` for an `auto` height
+    private func solve(_ subviews: Subviews, width: CGFloat?, height: CGFloat?) -> Solution {
         let trackCount = 2 * metrics.columns
         let cells = subviews.compactMap { subview in subview[CellKey.self].map { (subview, $0) } }
 
+        let divided = if case .divides = metrics.sizing, let width { metrics.columns(dividing: width) } else { nil as (width: CGFloat, spacing: CGFloat)? }
+        let spacing = divided?.spacing ?? metrics.minColumnSpacing
         let columnWidth: CGFloat? = switch metrics.sizing {
-        case .divides: width.map { metrics.columnWidth(dividing: $0) }
+        case .divides: divided?.width
         case .fixed(let columnWidth): columnWidth
         case .hugs: nil
         }
@@ -424,7 +556,7 @@ struct GridCellsLayout: Layout {
             // Columns size to their content: each cell spreads its width over the tracks it covers.
             halfTracks = Array(repeating: 0, count: trackCount)
             for (subview, cell) in cells {
-                let placement = cell.placement
+                let placement = cell.columns(metrics.columns)
                 let natural = subview.sizeThatFits(.unspecified).width.safeValue ?? 0
                 let share = max(0, (natural - CGFloat(2 * placement.span - 1) * spacing) / CGFloat(2 * placement.span))
                 let end = min(trackCount, placement.halfColumn + 2 * placement.span)
@@ -435,27 +567,78 @@ struct GridCellsLayout: Layout {
         }
 
         var solution = Solution(halfTracks: halfTracks, rowHeights: [], width: 0, height: 0)
-        solution.width = max(0, halfTracks.reduce(0, +) + CGFloat(trackCount - 1) * spacing)
+        solution.spacing = spacing
+        let blockWidth = max(0, halfTracks.reduce(0, +) + CGFloat(trackCount - 1) * spacing)
+        // A bounded grid keeps its width when capped columns leave it wider than they are.
+        let dividedWidth: CGFloat = if case .divides = metrics.sizing { width ?? 0 } else { 0 }
+        solution.width = max(blockWidth, dividedWidth)
+        let leftover = solution.width - blockWidth
+        solution.leadingOffset = switch metrics.contentPosition.horizontal {
+        case .start: 0
+        case .center: leftover / 2
+        case .end: leftover
+        }
 
         // Percentage heights are floored at their share, so measuring them unproposed gives the
         // larger of the share and their content: a row is as tall as its tallest content.
-        let rowCount = (cells.map(\.1.placement.row).max() ?? -1) + 1
+        let rowCount = (cells.compactMap(\.1.row).max() ?? -1) + 1
         var rowHeights = [CGFloat](repeating: 0, count: rowCount)
         for (subview, cell) in cells {
-            let placement = cell.placement
+            let placement = cell.columns(metrics.columns)
             let width = solution.spanWidth(halfColumn: placement.halfColumn, span: placement.span, spacing: spacing)
-            let height: CGFloat
+            // A header or footer keeps its own height, even beside rows a ratio sets.
+            guard case .cell(let placement) = cell.slot else {
+                let height = subview.sizeThatFits(ProposedViewSize(width: width, height: nil)).height.safeValue ?? 0
+                if cell.slot == .header { solution.headerHeight = height } else { solution.footerHeight = height }
+                continue
+            }
+            let rowHeight: CGFloat
             if let ratio = metrics.aspectRatio {
                 // One column's width sets the height, so a spanning cell isn't taller than its row.
-                height = (width - CGFloat(placement.span - 1) * spacing) / CGFloat(placement.span) / ratio
+                rowHeight = (width - CGFloat(placement.span - 1) * spacing) / CGFloat(placement.span) / ratio
             } else {
-                height = subview.sizeThatFits(ProposedViewSize(width: width, height: nil)).height
+                rowHeight = subview.sizeThatFits(ProposedViewSize(width: width, height: nil)).height
             }
-            rowHeights[placement.row] = max(rowHeights[placement.row], height.safeValue ?? 0)
+            rowHeights[placement.row] = max(rowHeights[placement.row], rowHeight.safeValue ?? 0)
         }
         solution.rowHeights = rowHeights
-        solution.height = rowHeights.reduce(0, +) + CGFloat(max(0, rowCount - 1)) * metrics.rowSpacing
+        stackRows(&solution, height: height)
         return solution
+    }
+
+    /// Places the header, rows and footer top to bottom, spreading the gaps between rows into `height` when asked.
+    ///
+    /// The header and footer sit the minimum row space from the cells. Rows spread only into a
+    /// height the grid has of its own, and only between two rows or more.
+    private func stackRows(_ solution: inout Solution, height: CGFloat?) {
+        let minimum = metrics.minRowSpacing
+        let rows = solution.rowHeights
+        let edges = [solution.headerHeight, solution.footerHeight].compactMap { $0 }.reduce(0) { $0 + $1 + minimum }
+        solution.rowGap = height.flatMap {
+            GridColumns.spreadSpace(metrics.rowSpacing, leftover: $0 - edges - rows.reduce(0, +), count: rows.count)
+        } ?? minimum
+
+        var y: CGFloat = 0
+        if let headerHeight = solution.headerHeight {
+            solution.headerY = 0
+            y = headerHeight
+        }
+        solution.rowY = []
+        for (index, rowHeight) in rows.enumerated() {
+            if index > 0 {
+                y += solution.rowGap
+            } else if solution.headerHeight != nil {
+                y += minimum
+            }
+            solution.rowY.append(y)
+            y += rowHeight
+        }
+        if let footerHeight = solution.footerHeight {
+            if !rows.isEmpty || solution.headerHeight != nil { y += minimum }
+            solution.footerY = y
+            y += footerHeight
+        }
+        solution.height = y
     }
 
     private func report(_ width: CGFloat, to binding: Binding<CGFloat?>?) {

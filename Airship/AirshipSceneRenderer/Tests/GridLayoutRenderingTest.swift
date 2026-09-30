@@ -111,7 +111,7 @@ struct GridLayoutRenderingTest {
         return Snapshot(pixels: pixels, width: width, height: height)
     }
 
-    private func grid(width: String, items: [String], config: String = #"{"max_columns": 2}"#) -> String {
+    private func grid(width: String, items: [String], config: String = #"{"columns": {"type": "fixed", "count": 2}}"#) -> String {
         #"""
         {"type": "linear_layout", "direction": "vertical", "items": [{
           "size": {"width": \#(width), "height": "auto"},
@@ -135,7 +135,7 @@ struct GridLayoutRenderingTest {
         {"type": "linear_layout", "direction": "horizontal", "items": [
           {"size": {"width": "auto", "height": "auto"}, "view": {
             "type": "grid_layout",
-            "config": {"default": {"max_columns": 3, "min_column_width": {"type": "fixed", "points": 40}, "column_spacing": 8}},
+            "config": {"default": {"columns": {"type": "fit", "max": 3, "min_width": {"type": "fixed", "size": 40}}, "column_spacing": {"type": "fixed", "space": 8}}},
             "items": [
               {"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))},
               {"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))},
@@ -154,6 +154,269 @@ struct GridLayoutRenderingTest {
         let blue = try #require(snapshot.horizontalRuns(y: 20, Self.blue).first)
         #expect(blue.0 == 136)
         #expect(blue.1 == 136)
+    }
+
+    private static let cappedColumns = #"{"type": "fit", "max": 4, "min_width": {"type": "fixed", "size": 44}, "max_width": {"type": "fixed", "size": 64}}"#
+
+    private func tiles(_ count: Int) -> [String] {
+        Array(repeating: #"{"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))}"#, count: count)
+    }
+
+    @Test("capped columns stop at max_width and content_position centres them")
+    func cappedColumnsCentred() async throws {
+        let snapshot = try await render(grid(
+            width: "400",
+            items: tiles(4),
+            config: #"{"columns": \#(Self.cappedColumns), "column_spacing": {"type": "fixed", "space": 8}, "content_position": {"horizontal": "center", "vertical": "top"}}"#
+        ), constraints: bounded)
+
+        // Four 64pt columns 8 apart are 280 wide, leaving 60 either side of a 400pt grid.
+        let runs = snapshot.horizontalRuns(y: 10, Self.red)
+        #expect(runs.map(\.1) == [64, 64, 64, 64])
+        #expect(runs.map(\.0) == [60, 132, 204, 276])
+    }
+
+    @Test("a short row aligns among the capped columns, not the whole grid")
+    func shortRowAlignsWithinBlock() async throws {
+        let snapshot = try await render(grid(
+            width: "400",
+            items: tiles(7),
+            config: #"{"columns": \#(Self.cappedColumns), "column_spacing": {"type": "fixed", "space": 8}, "row_spacing": {"type": "fixed", "space": 8}, "partial_row_position": "end", "content_position": {"horizontal": "start", "vertical": "top"}}"#
+        ), constraints: bounded)
+
+        let fullRow = snapshot.horizontalRuns(y: 10, Self.red)
+        let shortRow = snapshot.horizontalRuns(y: 38, Self.red)
+        #expect(fullRow.count == 4)
+        #expect(shortRow.count == 3)
+        // Both rows end at the block's trailing edge, 280pt in, rather than the grid's at 400.
+        #expect(fullRow.last.map { $0.0 + $0.1 } == 280)
+        #expect(shortRow.last.map { $0.0 + $0.1 } == 280)
+    }
+
+    private func edgeGrid(width: Int, config: String, header: String?, footer: String?, items: [String]) -> String {
+        let edges = [header.map { #""header": \#($0)"# }, footer.map { #""footer": \#($0)"# }]
+            .compactMap { $0 }
+            .map { $0 + "," }
+            .joined()
+        return #"""
+        {"type": "linear_layout", "direction": "vertical", "items": [{
+          "size": {"width": \#(width), "height": "auto"},
+          "view": {
+            "type": "grid_layout",
+            "background_color": {"default": {"type": "hex", "hex": "#00FF00", "alpha": 1}},
+            "config": {"default": \#(config)},
+            \#(edges)
+            "items": [\#(items.joined(separator: ","))]
+          }
+        }]}
+        """#
+    }
+
+    private static func edge(_ hex: String, height: Int) -> String {
+        #"{"size": {"width": "100%", "height": \#(height)}, "view": \#(fill(hex))}"#
+    }
+
+    @Test("a header and footer line up with a capped block's edges, separated by row_spacing")
+    func edgesMatchBlock() async throws {
+        let snapshot = try await render(edgeGrid(
+            width: 400,
+            config: #"{"columns": \#(Self.cappedColumns), "column_spacing": {"type": "fixed", "space": 8}, "row_spacing": {"type": "fixed", "space": 6}, "content_position": {"horizontal": "center", "vertical": "top"}}"#,
+            header: Self.edge("#0000FF", height: 12),
+            footer: Self.edge("#0000FF", height: 12),
+            items: tiles(4)
+        ), constraints: bounded)
+
+        // The block is four 64pt columns 8 apart, 280 wide from x = 60.
+        let headerRun = try #require(snapshot.horizontalRuns(y: 5, Self.blue).first)
+        #expect(headerRun.0 == 60)
+        #expect(headerRun.1 == 280)
+
+        // Header 12, gap 6, cells 20, gap 6, footer 12.
+        #expect(snapshot.verticalRuns(x: 90, Self.blue).map { [$0.0, $0.1] } == [[0, 12], [44, 12]])
+        #expect(snapshot.verticalRuns(x: 90, Self.red).map { [$0.0, $0.1] } == [[18, 20]])
+    }
+
+    @Test("a header keeps its own height beside rows a ratio sets")
+    func edgeKeepsOwnHeight() async throws {
+        let snapshot = try await render(edgeGrid(
+            width: 300,
+            config: #"{"columns": {"type": "fixed", "count": 3}, "cell_aspect_ratio": 1}"#,
+            header: Self.edge("#0000FF", height: 20),
+            footer: nil,
+            items: tiles(3)
+        ), constraints: bounded)
+
+        #expect(snapshot.verticalRuns(x: 55, Self.blue).map(\.1) == [20])
+        // The 20pt tile sits centred in its 100pt ratio row under the header.
+        #expect(snapshot.verticalRuns(x: 55, Self.red).map { [$0.0, $0.1] } == [[60, 20]])
+    }
+
+    @Test("a hidden header leaves no row")
+    func hiddenEdgeLeavesNoRow() async throws {
+        let hidden = #"""
+        {"size": {"width": "100%", "height": 20}, "view": {
+          "type": "empty_view",
+          "background_color": {"default": {"type": "hex", "hex": "#0000FF", "alpha": 1}},
+          "visibility": {"default": false, "invert_when_state_matches": {"key": "show", "value": {"is_present": true}}}
+        }}
+        """#
+        let snapshot = try await render(edgeGrid(
+            width: 300,
+            config: #"{"columns": {"type": "fixed", "count": 3}, "row_spacing": {"type": "fixed", "space": 10}}"#,
+            header: hidden,
+            footer: nil,
+            items: tiles(3)
+        ), constraints: bounded)
+
+        #expect(snapshot.verticalRuns(x: 55, Self.blue).isEmpty)
+        #expect(snapshot.verticalRuns(x: 55, Self.red).first?.0 == 0)
+    }
+
+    @Test("a container item with an aspect_ratio fills its ratio box, its border drawn inside")
+    func containerFillsRatioBox() async throws {
+        let box = #"""
+        {"size": {"width": "100%", "height": "auto", "aspect_ratio": 1}, "view": {
+          "type": "container",
+          "background_color": {"default": {"type": "hex", "hex": "#0000FF", "alpha": 1}},
+          "border": {"stroke_width": 5, "stroke_color": {"default": {"type": "hex", "hex": "#FF0000", "alpha": 1}}},
+          "items": []
+        }}
+        """#
+        let snapshot = try await render(grid(
+            width: "300",
+            items: [box, box, box],
+            config: #"{"columns": {"type": "fixed", "count": 3}}"#
+        ), constraints: bounded)
+
+        // The grid is centred at x = 50; the first box is 100 square with a 5pt stroke inside it.
+        #expect(snapshot.verticalRuns(x: 52, Self.red).map { [$0.0, $0.1] } == [[0, 100]])
+        #expect(snapshot.verticalRuns(x: 100, Self.blue).map { [$0.0, $0.1] } == [[5, 90]])
+    }
+
+    @Test("spread spacing widens capped columns' gaps so full rows reach both edges")
+    func spreadColumnGaps() async throws {
+        let snapshot = try await render(grid(
+            width: "340",
+            items: tiles(7),
+            config: #"{"columns": \#(Self.cappedColumns), "column_spacing": {"type": "spread", "min_space": 6}, "row_spacing": {"type": "fixed", "space": 8}, "partial_row_position": "center"}"#
+        ), constraints: bounded)
+
+        // The 340pt grid is centred in the 400pt stack, from x = 30. Four columns of 64 leave 84, so gaps of 28.
+        #expect(snapshot.horizontalRuns(y: 10, Self.red).map { [$0.0 - 30, $0.1] } == [[0, 64], [92, 64], [184, 64], [276, 64]])
+        // The short row of 3 starts half a column in: (64 + 28) / 2.
+        #expect(snapshot.horizontalRuns(y: 38, Self.red).first.map { $0.0 - 30 } == 46)
+    }
+
+    @Test("spread column gaps stop at max_space, and content_position places what's left")
+    func spreadColumnMaxSpace() async throws {
+        let snapshot = try await render(grid(
+            width: "340",
+            items: tiles(4),
+            config: #"{"columns": \#(Self.cappedColumns), "column_spacing": {"type": "spread", "min_space": 6, "max_space": 20}, "content_position": {"horizontal": "center", "vertical": "top"}}"#
+        ), constraints: bounded)
+
+        // Gaps of 20 make a 316pt block, centred 12 in from the grid's start at x = 30.
+        #expect(snapshot.horizontalRuns(y: 10, Self.red).map { $0.0 - 30 } == [12, 96, 180, 264])
+    }
+
+    private func tallGrid(rowSpacing: String, vertical: String = "top") -> String {
+        #"""
+        {"type": "linear_layout", "direction": "vertical", "items": [{
+          "size": {"width": 300, "height": 300},
+          "view": {
+            "type": "grid_layout",
+            "config": {"default": {"columns": {"type": "fixed", "count": 4}, "row_spacing": \#(rowSpacing), "content_position": {"horizontal": "start", "vertical": "\#(vertical)"}}},
+            "items": [\#(Array(repeating: #"{"size": {"width": "100%", "height": 32}, "view": \#(Self.fill("#FF0000"))}"#, count: 12).joined(separator: ","))]
+          }
+        }]}
+        """#
+    }
+
+    @Test("spread rows share a height the grid has of its own")
+    func spreadRows() async throws {
+        let snapshot = try await render(tallGrid(rowSpacing: #"{"type": "spread", "min_space": 8}"#), constraints: bounded)
+
+        // Three 32pt rows leave 204 of 300, so gaps of 102.
+        #expect(snapshot.verticalRuns(x: 60, Self.red).map(\.0) == [0, 134, 268])
+    }
+
+    @Test("spread rows stop at max_space, with the rest placed by content_position")
+    func spreadRowsMaxSpace() async throws {
+        let snapshot = try await render(
+            tallGrid(rowSpacing: #"{"type": "spread", "min_space": 8, "max_space": 40}"#, vertical: "center"),
+            constraints: bounded
+        )
+
+        // Gaps of 40 make a 176pt block, centred 62 down.
+        #expect(snapshot.verticalRuns(x: 60, Self.red).map(\.0) == [62, 134, 206])
+    }
+
+    @Test("an item's order moves it among its siblings")
+    func itemOrder() async throws {
+        let snapshot = try await render(grid(
+            width: "300",
+            items: [
+                #"{"config": {"default": {"order": 1}}, "size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#0000FF"))}"#,
+                #"{"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))}"#,
+                #"{"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))}"#,
+            ],
+            config: #"{"columns": {"type": "fixed", "count": 3}}"#
+        ), constraints: bounded)
+
+        // Listed first, the blue item at order 1 places last: the third 100pt column, from x = 50 + 200.
+        #expect(snapshot.horizontalRuns(y: 10, Self.blue).map { [$0.0, $0.1] } == [[250, 100]])
+        #expect(snapshot.horizontalRuns(y: 10, Self.red).map { [$0.0, $0.1] } == [[50, 200]])
+    }
+
+    @Test("a randomize_children order holds for the scene, however often the grid is rebuilt")
+    func shuffleHoldsForScene() async throws {
+        let colors: [(hex: String, rgb: (Int, Int, Int))] = [
+            ("#FF0000", (255, 0, 0)), ("#00FF00", (0, 255, 0)), ("#0000FF", (0, 0, 255)),
+            ("#FFFF00", (255, 255, 0)), ("#FF00FF", (255, 0, 255)), ("#00FFFF", (0, 255, 255)),
+        ]
+        let items = colors.map { #"{"size": {"width": "100%", "height": 20}, "view": \#(Self.fill($0.hex))}"# }
+        let json = #"""
+        {"type": "linear_layout", "direction": "vertical", "items": [{
+          "size": {"width": 360, "height": "auto"},
+          "view": {"type": "grid_layout", "randomize_children": true,
+            "config": {"default": {"columns": {"type": "fixed", "count": 6}}},
+            "items": [\#(items.joined(separator: ","))]}
+        }]}
+        """#
+
+        // Each render builds the grid afresh, as a pager does a page it comes back to.
+        var orders: [[Int]] = []
+        for _ in 0..<5 {
+            let snapshot = try await render(json, constraints: bounded)
+            let starts = colors.map { snapshot.horizontalRuns(y: 10, $0.rgb).first?.0 ?? -1 }
+            orders.append(colors.indices.sorted { starts[$0] < starts[$1] })
+        }
+        #expect(Set(orders.map { $0.description }).count == 1)
+        #expect(Set(orders[0]) == Set(colors.indices))
+    }
+
+    @Test("a linear layout's randomize_children order holds for the scene, however often it is rebuilt")
+    func linearShuffleHoldsForScene() async throws {
+        let colors: [(hex: String, rgb: (Int, Int, Int))] = [
+            ("#FF0000", (255, 0, 0)), ("#00FF00", (0, 255, 0)), ("#0000FF", (0, 0, 255)),
+            ("#FFFF00", (255, 255, 0)), ("#FF00FF", (255, 0, 255)), ("#00FFFF", (0, 255, 255)),
+        ]
+        let items = colors.map { #"{"size": {"width": 60, "height": 20}, "view": \#(Self.fill($0.hex))}"# }
+        let json = #"""
+        {"type": "linear_layout", "direction": "horizontal", "randomize_children": true,
+         "items": [\#(items.joined(separator: ","))]}
+        """#
+
+        var orders: [[Int]] = []
+        for _ in 0..<5 {
+            let snapshot = try await render(json, constraints: bounded)
+            let starts = colors.map { color in
+                (0..<Int(Self.size.height)).lazy.compactMap { snapshot.horizontalRuns(y: $0, color.rgb).first?.0 }.first ?? -1
+            }
+            orders.append(colors.indices.sorted { starts[$0] < starts[$1] })
+        }
+        #expect(Set(orders.map { $0.description }).count == 1)
+        #expect(Set(orders[0]) == Set(colors.indices))
     }
 
     @Test("a percentage beside a fixed item is that share of the row")
@@ -197,7 +460,7 @@ struct GridLayoutRenderingTest {
         {"type": "linear_layout", "direction": "horizontal", "items": [
           {"size": {"width": "auto", "height": "auto"}, "view": {
             "type": "grid_layout",
-            "config": {"default": {"max_columns": 3, "column_spacing": 10}},
+            "config": {"default": {"columns": {"type": "fixed", "count": 3}, "column_spacing": {"type": "fixed", "space": 10}}},
             "items": [
               {"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))},
               {"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))},
@@ -226,7 +489,7 @@ struct GridLayoutRenderingTest {
           "size": {"width": "auto", "height": "auto"},
           "view": {"type": "grid_layout",
             "border": {"stroke_width": 4, "stroke_color": {"default": {"type": "hex", "hex": "#00FF00", "alpha": 1}}},
-            "config": {"default": {"max_columns": 2}},
+            "config": {"default": {"columns": {"type": "fixed", "count": 2}}},
             "items": [
               {"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))},
               {"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#0000FF"))}

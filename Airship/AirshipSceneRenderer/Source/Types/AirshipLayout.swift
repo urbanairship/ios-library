@@ -128,7 +128,9 @@ extension ThomasViewInfo {
         return switch self {
         case .container(let info): info.properties.items.map { $0.view }
         case .linearLayout(let info): info.properties.items.map { $0.view }
-        case .gridLayout(let info): info.properties.items.map { $0.view }
+        case .gridLayout(let info):
+            ([info.properties.header?.view] + info.properties.items.map { $0.view } + [info.properties.footer?.view])
+                .compactMap { $0 }
         case .pager(let info): info.properties.items.map { $0.view }
         case .scrollLayout(let info): [info.properties.view]
         case .checkboxController(let info): [info.properties.view]

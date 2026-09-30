@@ -57,6 +57,30 @@ final class ThomasEnvironment: ObservableObject {
         return new
     }
 
+    /// Seeds every `randomize_children` order, so each holds for the life of the scene.
+    private let shuffleSeed: UInt64 = .random(in: .min ... .max)
+
+    /// A shuffled order of `count` item indices, the same every time it is asked for with the same inputs in this scene.
+    ///
+    /// Derived from the scene's seed rather than stored, so a view rebuilt with its pager page gets
+    /// the order it had. Layouts that pass the same inputs share an order: without an
+    /// `identifier`, two shuffled layouts on one page with the same count do.
+    ///
+    /// - Parameters:
+    ///   - count: how many items the layout has
+    ///   - page: the pager page it is on, if any
+    ///   - identifier: what tells the layout apart from others on its page, if it has anything
+    /// - Returns: the item indices in shuffled order
+    func shuffledOrder(count: Int, page: String?, identifier: String?) -> [Int] {
+        var hasher = Hasher()
+        hasher.combine(shuffleSeed)
+        hasher.combine(page)
+        hasher.combine(identifier)
+        hasher.combine(count)
+        var generator = SeededGenerator(seed: UInt64(bitPattern: Int64(hasher.finalize())))
+        return Array(0..<count).shuffled(using: &generator)
+    }
+
     @Published
     var isDismissed: Bool = false
 
@@ -502,4 +526,21 @@ enum KeyboardState: Equatable {
     case hidden
     case displaying(Double)
     case visible
+}
+
+/// SplitMix64: the same seed always gives the same sequence.
+private struct SeededGenerator: RandomNumberGenerator {
+    private var state: UInt64
+
+    init(seed: UInt64) {
+        self.state = seed
+    }
+
+    mutating func next() -> UInt64 {
+        state &+= 0x9E3779B97F4A7C15
+        var z = state
+        z = (z ^ (z >> 30)) &* 0xBF58476D1CE4E5B9
+        z = (z ^ (z >> 27)) &* 0x94D049BB133111EB
+        return z ^ (z >> 31)
+    }
 }

@@ -31,16 +31,18 @@ enum GridColumns {
 
     /// Picks the first selector whose conditions all match, or `default` when none does.
     ///
-    /// A selector naming `grid_width` never matches an unbounded grid.
+    /// The grid and each of its items resolve against the same environment, so a span and the
+    /// column count it is capped at come from one reading of the width. A selector naming
+    /// `grid_width` never matches an unbounded grid.
     ///
     /// - Parameters:
-    ///   - configs: the grid's `config`
+    ///   - configs: the grid's or an item's `config`
     ///   - environment: what the selectors are matched against
-    /// - Returns: the config to lay the grid out with
-    static func resolveConfig(
-        _ configs: ThomasViewInfo.GridLayout.Configs,
+    /// - Returns: the config to lay the grid or the item out with
+    static func resolveConfig<Value>(
+        _ configs: ThomasViewInfo.GridLayout.Configs<Value>,
         environment: Environment
-    ) -> Config {
+    ) -> Value {
         let match = configs.selectors?.first { selector in
             if let platform = selector.platform, platform != environment.platform { return false }
             if let windowSize = selector.windowSize, windowSize != environment.windowSize { return false }
@@ -65,24 +67,75 @@ enum GridColumns {
         return true
     }
 
-    /// The minimum column width after any text scaling the config asks for.
+    /// The minimum column width of `fit` columns, after any text scaling it asks for.
     ///
     /// - Parameters:
     ///   - config: the resolved config
     ///   - textScale: the text scale, 1 at the default size
-    /// - Returns: the minimum in points, or `nil` where the config sets none or one of 0 or less
+    /// - Returns: the minimum in points, or `nil` for `fixed` columns or a minimum of 0 or less
     static func minColumnWidth(_ config: Config, textScale: CGFloat) -> CGFloat? {
-        guard let minWidth = config.minColumnWidth, minWidth.points > 0 else { return nil }
-        let points = CGFloat(minWidth.points)
-        return switch minWidth.type {
+        guard case .fit(_, let minWidth, _) = config.columns else { return nil }
+        let points = self.points(minWidth, textScale: textScale)
+        return points > 0 ? points : nil
+    }
+
+    /// The widest `fit` columns grow, never below their minimum: a `max_width` under `min_width` counts as it.
+    ///
+    /// - Parameters:
+    ///   - config: the resolved config
+    ///   - textScale: the text scale, 1 at the default size
+    /// - Returns: the cap in points, or `nil` where columns grow to fill the grid
+    static func maxColumnWidth(_ config: Config, textScale: CGFloat) -> CGFloat? {
+        guard case .fit(_, _, let maxWidth?) = config.columns else { return nil }
+        let points = self.points(maxWidth, textScale: textScale)
+        guard points > 0 else { return nil }
+        return max(points, minColumnWidth(config, textScale: textScale) ?? 0)
+    }
+
+    /// A spacing's least space: its `fixed` space or its `spread` minimum, never below 0.
+    ///
+    /// - Parameter spacing: a grid's column or row spacing
+    /// - Returns: the space, 0 where none is set
+    static func minSpace(_ spacing: ThomasViewInfo.GridLayout.Spacing?) -> CGFloat {
+        let space: Double = switch spacing {
+        case .fixed(let space): space
+        case .spread(let minSpace, _): minSpace
+        case nil: 0
+        }
+        return max(0, CGFloat(space))
+    }
+
+    /// A `spread` gap: `leftover` shared between the gaps of `count` columns or rows, clamped to the spacing's bounds.
+    ///
+    /// 84 left over by 4 columns makes 3 gaps of 28; with a `max_space` of 20 they stop at 20.
+    ///
+    /// - Parameters:
+    ///   - spacing: a grid's column or row spacing
+    ///   - leftover: the room the columns or rows leave, before any gaps
+    ///   - count: how many columns or rows share it
+    /// - Returns: the gap, or `nil` for `fixed` spacing or fewer than two to spread between
+    static func spreadSpace(
+        _ spacing: ThomasViewInfo.GridLayout.Spacing?,
+        leftover: CGFloat,
+        count: Int
+    ) -> CGFloat? {
+        guard case .spread(_, let maxSpace) = spacing, count >= 2 else { return nil }
+        let minimum = minSpace(spacing)
+        let maximum = maxSpace.map { max(minimum, CGFloat($0)) } ?? .infinity
+        return min(maximum, max(minimum, leftover / CGFloat(count - 1)))
+    }
+
+    private static func points(_ width: ThomasViewInfo.GridLayout.ColumnWidth, textScale: CGFloat) -> CGFloat {
+        let points = CGFloat(width.size)
+        return switch width.type {
         case .fixed: points
         case .textScaled: points * textScale
         }
     }
 
-    /// The column count at a width: as many columns of at least the minimum as fit, from 1 up to `max_columns`.
+    /// The column count at a width: `fixed` is its `count`; `fit` is as many columns of at least `min_width` as fit, from 1 up to `max`.
     ///
-    /// 320 wide with a 44 minimum and 8 spacing fits `floor((320 + 8 + 0.5) / 52) = 6`.
+    /// 320 wide with a 44 minimum and 8 spacing fits `floor((320 + 8 + 0.5) / 52) = 6`. Unbounded, `fit` is `max`.
     ///
     /// - Parameters:
     ///   - config: the resolved config
@@ -90,14 +143,36 @@ enum GridColumns {
     ///   - textScale: the text scale, 1 at the default size
     /// - Returns: the column count, at least 1
     static func columnCount(_ config: Config, width: CGFloat?, textScale: CGFloat) -> Int {
-        let maxColumns = clampedCount(config.maxColumns, upperBound: nil)
+        let maxColumns = switch config.columns {
+        case .fixed(let count): clampedCount(count, upperBound: nil)
+        case .fit(let max, _, _): clampedCount(max, upperBound: nil)
+        }
         guard let minWidth = minColumnWidth(config, textScale: textScale), let width else {
             return maxColumns
         }
-        let spacing = CGFloat(config.columnSpacing ?? 0)
+        let spacing = minSpace(config.columnSpacing)
         let fits = ((width + spacing + fitEpsilon) / (minWidth + spacing)).rounded(.down)
         guard fits.isFinite else { return maxColumns }
         return Int(min(CGFloat(maxColumns), max(1, fits)))
+    }
+
+    /// Orders items for placement and reading: ascending `order`, keeping `base` order among equal ones.
+    ///
+    /// `base` is the list order, or the `randomize_children` shuffle, so shuffling mixes only items of
+    /// one order: a "None of these" at `order: 1` stays last.
+    ///
+    /// - Parameters:
+    ///   - base: item indices in list or shuffled order
+    ///   - orders: each item's resolved `order`, by item index; `nil` is 0
+    /// - Returns: the item indices in placement order
+    static func placementOrder(_ base: [Int], orders: [Double?]) -> [Int] {
+        base.enumerated()
+            .sorted { lhs, rhs in
+                let lhsOrder = orders[lhs.element] ?? 0
+                let rhsOrder = orders[rhs.element] ?? 0
+                return lhsOrder != rhsOrder ? lhsOrder < rhsOrder : lhs.offset < rhs.offset
+            }
+            .map(\.element)
     }
 
     /// Places items in rows in list order; an item that doesn't fit what's left of its row starts the next, and nothing backfills.
