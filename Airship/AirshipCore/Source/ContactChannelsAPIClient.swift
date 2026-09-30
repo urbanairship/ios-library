@@ -150,6 +150,10 @@ fileprivate struct ContactChannelsResponseBody: Decodable, Sendable {
         var transactionalOptedIn: Date?
         var transactionalOptedOut: Date?
 
+        var openTrackingOptedIn: Date?
+        var openTrackingOptedOut: Date?
+        var clickTrackingOptedIn: Date?
+        var clickTrackingOptedOut: Date?
 
         enum CodingKeys: String, CodingKey {
             case channelID = "channel_id"
@@ -158,6 +162,10 @@ fileprivate struct ContactChannelsResponseBody: Decodable, Sendable {
             case commericalOptedOut = "commercial_opted_out"
             case transactionalOptedIn = "transactional_opted_in"
             case transactionalOptedOut = "transactional_opted_out"
+            case openTrackingOptedIn = "open_tracking_opted_in"
+            case openTrackingOptedOut = "open_tracking_opted_out"
+            case clickTrackingOptedIn = "click_tracking_opted_in"
+            case clickTrackingOptedOut = "click_tracking_opted_out"
         }
     }
 }
@@ -174,7 +182,11 @@ fileprivate extension ContactChannelsResponseBody.Channel {
                         transactionalOptedIn: email.transactionalOptedIn,
                         transactionalOptedOut: email.transactionalOptedOut,
                         commercialOptedIn: email.commericalOptedIn,
-                        commercialOptedOut: email.commericalOptedOut
+                        commercialOptedOut: email.commericalOptedOut,
+                        openTrackingOptedIn: email.openTrackingOptedIn,
+                        openTrackingOptedOut: email.openTrackingOptedOut,
+                        clickTrackingOptedIn: email.clickTrackingOptedIn,
+                        clickTrackingOptedOut: email.clickTrackingOptedOut
                     )
                 )
             )

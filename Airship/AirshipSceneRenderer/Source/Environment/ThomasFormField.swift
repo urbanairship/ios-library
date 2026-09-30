@@ -36,6 +36,15 @@ final class ThomasFormField: Sendable {
         /// Projected into the form state payload for predicates/branching; not part of
         /// the submitted form value.
         var aiInference: AirshipJSON? = nil
+
+        /// An email input's address and its own options. The form turns it into a channel on
+        /// submit, after applying `registration_overrides`, so it never appears in `channels`.
+        var emailRegistration: EmailRegistration? = nil
+    }
+
+    struct EmailRegistration: Equatable, Sendable {
+        var address: String
+        var options: ThomasEmailRegistrationOption?
     }
     
     enum Status: Equatable, Sendable {

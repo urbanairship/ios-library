@@ -109,13 +109,29 @@ public enum ContactChannel: Sendable, Equatable, Codable, Hashable {
             /// Commercial opted-out value
             public let commercialOptedOut: Date?
 
+            /// Open tracking opted-in value
+            public let openTrackingOptedIn: Date?
+
+            /// Open tracking opted-out value
+            public let openTrackingOptedOut: Date?
+
+            /// Click tracking opted-in value
+            public let clickTrackingOptedIn: Date?
+
+            /// Click tracking opted-out value
+            public let clickTrackingOptedOut: Date?
+
             init(
                 channelID: String,
                 maskedAddress: String,
                 transactionalOptedIn: Date? = nil,
                 transactionalOptedOut: Date? = nil,
                 commercialOptedIn: Date? = nil,
-                commercialOptedOut: Date? = nil
+                commercialOptedOut: Date? = nil,
+                openTrackingOptedIn: Date? = nil,
+                openTrackingOptedOut: Date? = nil,
+                clickTrackingOptedIn: Date? = nil,
+                clickTrackingOptedOut: Date? = nil
             ) {
                 self.channelID = channelID
                 self.maskedAddress = maskedAddress
@@ -123,6 +139,10 @@ public enum ContactChannel: Sendable, Equatable, Codable, Hashable {
                 self.transactionalOptedOut = transactionalOptedOut
                 self.commercialOptedIn = commercialOptedIn
                 self.commercialOptedOut = commercialOptedOut
+                self.openTrackingOptedIn = openTrackingOptedIn
+                self.openTrackingOptedOut = openTrackingOptedOut
+                self.clickTrackingOptedIn = clickTrackingOptedIn
+                self.clickTrackingOptedOut = clickTrackingOptedOut
             }
         }
 

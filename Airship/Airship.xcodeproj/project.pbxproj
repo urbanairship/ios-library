@@ -314,6 +314,7 @@
 		6E21C2FE2FEC3B9900EA3E56 /* ThomasStateTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2CD2FEC3B9900EA3E56 /* ThomasStateTrigger.swift */; };
 		6E21C2FF2FEC3B9900EA3E56 /* ThomasValidationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2F32FEC3B9900EA3E56 /* ThomasValidationInfo.swift */; };
 		6E21C3002FEC3B9900EA3E56 /* ThomasEmailRegistrationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2CF2FEC3B9900EA3E56 /* ThomasEmailRegistrationOptions.swift */; };
+		A641FC135A5DF221A39A0BFA /* ThomasFormRegistrationOverrides.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9A98E266484F81AC68AA29 /* ThomasFormRegistrationOverrides.swift */; };
 		6E21C3012FEC3B9900EA3E56 /* ThomasAutomatedAccessibilityAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2D72FEC3B9900EA3E56 /* ThomasAutomatedAccessibilityAction.swift */; };
 		6E21C3022FEC3B9900EA3E56 /* ThomasSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2EE2FEC3B9900EA3E56 /* ThomasSize.swift */; };
 		6E21C3032FEC3B9900EA3E56 /* ThomasMediaFit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C2E52FEC3B9900EA3E56 /* ThomasMediaFit.swift */; };
@@ -497,6 +498,7 @@
 		6E21C4822FEC587900EA3E56 /* ThomasButtonClickBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C47E2FEC587900EA3E56 /* ThomasButtonClickBehavior.swift */; };
 		6E21C4832FEC587900EA3E56 /* ThomasEventHandlerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C47F2FEC587900EA3E56 /* ThomasEventHandlerTest.swift */; };
 		6E21C4842FEC587900EA3E56 /* ThomasEmailRegistrationOptionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C47C2FEC587900EA3E56 /* ThomasEmailRegistrationOptionsTest.swift */; };
+		F226A661B3E18C90B6F8628D /* ThomasFormRegistrationOverridesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E50D29A6AD0CD49D7E0A4F /* ThomasFormRegistrationOverridesTest.swift */; };
 		6E21C4852FEC587900EA3E56 /* PagerDisableSwipeSelectorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C47D2FEC587900EA3E56 /* PagerDisableSwipeSelectorTest.swift */; };
 		6E21C4B02FEC586A00EA3E56 /* EmbeddedPlacementBoundsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4A02FEC586A00EA3E56 /* EmbeddedPlacementBoundsTest.swift */; };
 		6E21C4B22FEC58A500EA3E56 /* ThomasFormPayloadGeneratorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4B12FEC58A500EA3E56 /* ThomasFormPayloadGeneratorTest.swift */; };
@@ -1168,6 +1170,7 @@
 		99560C2D2BB3855800F28BDC /* EmptySectionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C2C2BB3855800F28BDC /* EmptySectionLabel.swift */; };
 		99560C372BB38A5F00F28BDC /* ErrorLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99560C362BB38A5F00F28BDC /* ErrorLabel.swift */; };
 		9971A8852C125C0200092ED1 /* ContactChannelsProviderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9971A8842C125C0200092ED1 /* ContactChannelsProviderTest.swift */; };
+		EB3E4FF65AD079C7D07E8FE8 /* ContactChannelsAPIClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA1298E2A000694E92052776 /* ContactChannelsAPIClientTest.swift */; };
 		998572BF2B3CF95D0091E9C9 /* DefaultAssetDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998572BE2B3CF95D0091E9C9 /* DefaultAssetDownloader.swift */; };
 		998572C12B3CF97B0091E9C9 /* DefaultAssetFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998572C02B3CF97B0091E9C9 /* DefaultAssetFileManager.swift */; };
 		999DC85E2B5B721D0048C6AF /* HTMLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 999DC85D2B5B721D0048C6AF /* HTMLView.swift */; };
@@ -1953,6 +1956,7 @@
 		6E21C2CD2FEC3B9900EA3E56 /* ThomasStateTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasStateTrigger.swift; sourceTree = "<group>"; };
 		6E21C2CE2FEC3B9900EA3E56 /* ThomasFormValidationMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormValidationMode.swift; sourceTree = "<group>"; };
 		6E21C2CF2FEC3B9900EA3E56 /* ThomasEmailRegistrationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasEmailRegistrationOptions.swift; sourceTree = "<group>"; };
+		BC9A98E266484F81AC68AA29 /* ThomasFormRegistrationOverrides.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormRegistrationOverrides.swift; sourceTree = "<group>"; };
 		6E21C2D02FEC3B9900EA3E56 /* ThomasPropertyOverride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasPropertyOverride.swift; sourceTree = "<group>"; };
 		6E21C2D12FEC3B9900EA3E56 /* AirshipLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipLayout.swift; sourceTree = "<group>"; };
 		6E21C2D22FEC3B9900EA3E56 /* ThomasAccessibilityAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasAccessibilityAction.swift; sourceTree = "<group>"; };
@@ -2135,6 +2139,7 @@
 		6E21C46F2FEC586A00EA3E56 /* PagerControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerControllerTest.swift; sourceTree = "<group>"; };
 		6E21C4702FEC586A00EA3E56 /* PagerStateLastPageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerStateLastPageTest.swift; sourceTree = "<group>"; };
 		6E21C47C2FEC587900EA3E56 /* ThomasEmailRegistrationOptionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasEmailRegistrationOptionsTest.swift; sourceTree = "<group>"; };
+		E9E50D29A6AD0CD49D7E0A4F /* ThomasFormRegistrationOverridesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasFormRegistrationOverridesTest.swift; sourceTree = "<group>"; };
 		6E21C47D2FEC587900EA3E56 /* PagerDisableSwipeSelectorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerDisableSwipeSelectorTest.swift; sourceTree = "<group>"; };
 		6E21C47E2FEC587900EA3E56 /* ThomasButtonClickBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasButtonClickBehavior.swift; sourceTree = "<group>"; };
 		6E21C47F2FEC587900EA3E56 /* ThomasEventHandlerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasEventHandlerTest.swift; sourceTree = "<group>"; };
@@ -2814,6 +2819,7 @@
 		99560C362BB38A5F00F28BDC /* ErrorLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorLabel.swift; sourceTree = "<group>"; };
 		99645A6605A96722CFAE4327 /* DefaultEmbeddedAISelector.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DefaultEmbeddedAISelector.swift; sourceTree = "<group>"; };
 		9971A8842C125C0200092ED1 /* ContactChannelsProviderTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactChannelsProviderTest.swift; sourceTree = "<group>"; };
+		BA1298E2A000694E92052776 /* ContactChannelsAPIClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactChannelsAPIClientTest.swift; sourceTree = "<group>"; };
 		998572BE2B3CF95D0091E9C9 /* DefaultAssetDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAssetDownloader.swift; sourceTree = "<group>"; };
 		998572C02B3CF97B0091E9C9 /* DefaultAssetFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAssetFileManager.swift; sourceTree = "<group>"; };
 		999DC85D2B5B721D0048C6AF /* HTMLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLView.swift; sourceTree = "<group>"; };
@@ -3723,6 +3729,7 @@
 				6E21C2CD2FEC3B9900EA3E56 /* ThomasStateTrigger.swift */,
 				6E21C2CE2FEC3B9900EA3E56 /* ThomasFormValidationMode.swift */,
 				6E21C2CF2FEC3B9900EA3E56 /* ThomasEmailRegistrationOptions.swift */,
+				BC9A98E266484F81AC68AA29 /* ThomasFormRegistrationOverrides.swift */,
 				6E21C2D02FEC3B9900EA3E56 /* ThomasPropertyOverride.swift */,
 				6E21C2D12FEC3B9900EA3E56 /* AirshipLayout.swift */,
 				6E21C2D22FEC3B9900EA3E56 /* ThomasAccessibilityAction.swift */,
@@ -3946,6 +3953,7 @@
 			isa = PBXGroup;
 			children = (
 				6E21C47C2FEC587900EA3E56 /* ThomasEmailRegistrationOptionsTest.swift */,
+				E9E50D29A6AD0CD49D7E0A4F /* ThomasFormRegistrationOverridesTest.swift */,
 				6E21C47D2FEC587900EA3E56 /* PagerDisableSwipeSelectorTest.swift */,
 				6E21C47E2FEC587900EA3E56 /* ThomasButtonClickBehavior.swift */,
 				6E21C47F2FEC587900EA3E56 /* ThomasEventHandlerTest.swift */,
@@ -5596,6 +5604,7 @@
 			isa = PBXGroup;
 			children = (
 				9971A8842C125C0200092ED1 /* ContactChannelsProviderTest.swift */,
+				BA1298E2A000694E92052776 /* ContactChannelsAPIClientTest.swift */,
 				A6CDD8CF269491BE0040A673 /* ContactAPIClientTest.swift */,
 				6EC7E46D269E2A4C0038CFDD /* AttributeEditorTest.swift */,
 				6EC7E46F269E33290038CFDD /* TagGroupsEditorTest.swift */,
@@ -7437,6 +7446,7 @@
 				6EAFC25B2FF2DEC8005FA58D /* AsyncViewResolver.swift in Sources */,
 				6E21C3F32FEC3C9700EA3E56 /* ThomasViewController.swift in Sources */,
 				6E21C3002FEC3B9900EA3E56 /* ThomasEmailRegistrationOptions.swift in Sources */,
+				A641FC135A5DF221A39A0BFA /* ThomasFormRegistrationOverrides.swift in Sources */,
 				6E21C3012FEC3B9900EA3E56 /* ThomasAutomatedAccessibilityAction.swift in Sources */,
 				6E21C3022FEC3B9900EA3E56 /* ThomasSize.swift in Sources */,
 				6E21C3032FEC3B9900EA3E56 /* ThomasMediaFit.swift in Sources */,
@@ -7681,6 +7691,7 @@
 				6E21C4822FEC587900EA3E56 /* ThomasButtonClickBehavior.swift in Sources */,
 				6E21C4832FEC587900EA3E56 /* ThomasEventHandlerTest.swift in Sources */,
 				6E21C4842FEC587900EA3E56 /* ThomasEmailRegistrationOptionsTest.swift in Sources */,
+				F226A661B3E18C90B6F8628D /* ThomasFormRegistrationOverridesTest.swift in Sources */,
 				6E21C5352FEDE17200EA3E56 /* ThomasEnvironmentTest.swift in Sources */,
 				6E21C4852FEC587900EA3E56 /* PagerDisableSwipeSelectorTest.swift in Sources */,
 				6E21C47A2FEC586A00EA3E56 /* PagerControllerTest.swift in Sources */,
@@ -7991,6 +8002,7 @@
 				6EFAFB78295525C3008AD187 /* ChannelAPIClientTest.swift in Sources */,
 				6E4326072B7C364300A9B000 /* AssociatedIdentifiersTest.swift in Sources */,
 				9971A8852C125C0200092ED1 /* ContactChannelsProviderTest.swift in Sources */,
+				EB3E4FF65AD079C7D07E8FE8 /* ContactChannelsAPIClientTest.swift in Sources */,
 				6E65244C2A4FD4270019F353 /* DeviceTagSelectorTest.swift in Sources */,
 				3299EF222949EC3E00251E70 /* AirshipBaseTest.swift in Sources */,
 				6E7EACD12AF4192400DA286B /* AirshipCacheTest.swift in Sources */,

@@ -13,10 +13,14 @@ public enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
     public struct DoubleOptIn: ThomasSerializable, Hashable {
         let type: EmailRegistrationType = .doubleOptIn
         public var properties: AirshipJSON?
+        public var openTrackingOptedIn: Bool?
+        public var clickTrackingOptedIn: Bool?
 
         enum CodingKeys: String, CodingKey {
             case type
             case properties
+            case openTrackingOptedIn = "open_tracking_opted_in"
+            case clickTrackingOptedIn = "click_tracking_opted_in"
         }
     }
 
@@ -24,21 +28,29 @@ public enum ThomasEmailRegistrationOption: ThomasSerializable, Hashable {
         let type: EmailRegistrationType = .commercial
         public var optedIn: Bool
         public var properties: AirshipJSON?
+        public var openTrackingOptedIn: Bool?
+        public var clickTrackingOptedIn: Bool?
 
         enum CodingKeys: String, CodingKey {
             case type
             case properties
             case optedIn = "commercial_opted_in"
+            case openTrackingOptedIn = "open_tracking_opted_in"
+            case clickTrackingOptedIn = "click_tracking_opted_in"
         }
     }
 
     public struct Transactional: ThomasSerializable, Hashable {
         let type: EmailRegistrationType = .transactional
         public var properties: AirshipJSON?
+        public var openTrackingOptedIn: Bool?
+        public var clickTrackingOptedIn: Bool?
 
         enum CodingKeys: String, CodingKey {
             case type
             case properties
+            case openTrackingOptedIn = "open_tracking_opted_in"
+            case clickTrackingOptedIn = "click_tracking_opted_in"
         }
     }
 

@@ -334,27 +334,14 @@ struct TextInput: View {
             ]
         }
 
-        private func makeChannels(
+        private func makeSMSChannels(
             value: String,
-            selectedSMSLocale: ThomasSMSLocale? = nil
+            selectedSMSLocale: ThomasSMSLocale
         ) -> [ThomasFormField.Channel]? {
-            guard !value.isEmpty else { return nil }
-
-            switch(self.inputProperties.inputType) {
-            case .email:
-                return if let options = self.inputProperties.emailRegistration {
-                    [.email(value, options)]
-                } else {
-                    nil
-                }
-            case .sms:
-                return if let options = selectedSMSLocale?.registration {
-                    [.sms(value, options)]
-                } else {
-                    nil
-                }
-            case .number, .text, .textMultiline: return nil
+            guard !value.isEmpty, let options = selectedSMSLocale.registration else {
+                return nil
             }
+            return [.sms(value, options)]
         }
 
         private func makeFormField(input: String) -> ThomasFormField {
@@ -405,8 +392,11 @@ struct TextInput: View {
                         return .valid(
                             .init(
                                 value: .email(address),
-                                channels: self.makeChannels(value: address),
-                                attributes: self.makeAttributes(value: address)
+                                attributes: self.makeAttributes(value: address),
+                                emailRegistration: .init(
+                                    address: address,
+                                    options: self.inputProperties.emailRegistration
+                                )
                             )
                         )
                     @unknown default:
@@ -457,7 +447,7 @@ struct TextInput: View {
                         return .valid(
                             .init(
                                 value: .sms(address, selectedSMSLocale),
-                                channels: self.makeChannels(
+                                channels: self.makeSMSChannels(
                                     value: address,
                                     selectedSMSLocale: selectedSMSLocale
                                 ),

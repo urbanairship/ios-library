@@ -12,6 +12,25 @@ struct AirshipExtensionsTest {
     private let date: Date = Date.now
 
     @Test
+    func trackingFlagsToContactOptions() {
+        let options: ThomasEmailRegistrationOption = .transactional(
+            ThomasEmailRegistrationOption.Transactional(
+                openTrackingOptedIn: true,
+                clickTrackingOptedIn: false
+            )
+        )
+
+        let expected = EmailRegistrationOptions.options(
+            transactionalOptedIn: nil,
+            properties: nil,
+            doubleOptIn: false,
+            openTracking: .optedIn(date),
+            clickTracking: .optedOut(date)
+        )
+        #expect(options.makeContactOptions(date: date) == expected)
+    }
+
+    @Test
     func commercialToContactOptions() throws {
         let options: ThomasEmailRegistrationOption = .commercial(
             ThomasEmailRegistrationOption.Commercial(

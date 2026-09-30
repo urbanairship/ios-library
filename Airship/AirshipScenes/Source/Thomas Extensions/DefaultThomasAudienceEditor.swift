@@ -82,18 +82,24 @@ extension ThomasEmailRegistrationOption {
             return .commercialOptions(
                 transactionalOptedIn: nil,
                 commercialOptedIn: properties.optedIn ? date : nil,
-                properties: properties.properties?.unWrap() as? [String: Any]
+                properties: properties.properties?.unWrap() as? [String: Any],
+                openTracking: EmailRegistrationOptions.TrackingConsent(optedIn: properties.openTrackingOptedIn, date: date),
+                clickTracking: EmailRegistrationOptions.TrackingConsent(optedIn: properties.clickTrackingOptedIn, date: date)
             )
         case .doubleOptIn(let properties):
             return .options(
                 properties: properties.properties?.unWrap() as? [String: Any],
-                doubleOptIn: true
+                doubleOptIn: true,
+                openTracking: EmailRegistrationOptions.TrackingConsent(optedIn: properties.openTrackingOptedIn, date: date),
+                clickTracking: EmailRegistrationOptions.TrackingConsent(optedIn: properties.clickTrackingOptedIn, date: date)
             )
         case .transactional(let properties):
             return .options(
                 transactionalOptedIn: nil,
                 properties: properties.properties?.unWrap() as? [String: Any],
-                doubleOptIn: false
+                doubleOptIn: false,
+                openTracking: EmailRegistrationOptions.TrackingConsent(optedIn: properties.openTrackingOptedIn, date: date),
+                clickTracking: EmailRegistrationOptions.TrackingConsent(optedIn: properties.clickTrackingOptedIn, date: date)
             )
         }
     }
@@ -105,5 +111,13 @@ extension ThomasSMSRegistrationOption {
         case .optIn(let properties):
             return .optIn(senderID: properties.senderID)
         }
+    }
+}
+
+fileprivate extension EmailRegistrationOptions.TrackingConsent {
+    /// Creates the consent for a layout's tracking flag, or nil when the flag is omitted.
+    init?(optedIn: Bool?, date: Date) {
+        guard let optedIn else { return nil }
+        self = optedIn ? .optedIn(date) : .optedOut(date)
     }
 }

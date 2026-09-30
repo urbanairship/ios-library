@@ -69,6 +69,7 @@ struct FormController: View {
                     formType: info.formType,
                     formResponseType: info.responseType,
                     validationMode: info.validationMode ?? .immediate,
+                    registrationOverrides: info.registrationOverrides,
                     parentFormState: info.isParent ? nil : parentFormState
                 )
             }
@@ -186,6 +187,13 @@ fileprivate extension FormController.FormInfo {
         switch(self) {
         case .nps(let info): info.properties.validationMode
         case .form(let info): info.properties.validationMode
+        }
+    }
+
+    var registrationOverrides: ThomasFormRegistrationOverrides? {
+        switch(self) {
+        case .nps(let info): info.properties.registrationOverrides
+        case .form(let info): info.properties.registrationOverrides
         }
     }
 

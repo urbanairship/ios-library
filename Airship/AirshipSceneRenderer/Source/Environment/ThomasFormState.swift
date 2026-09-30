@@ -78,6 +78,7 @@ final class ThomasFormState: ObservableObject {
     let formType: FormType
     let formResponseType: String?
     let validationMode: ThomasFormValidationMode
+    let registrationOverrides: ThomasFormRegistrationOverrides?
 
     private var children: [Child] = []
     private var subscriptions: Set<AnyCancellable> = Set()
@@ -91,12 +92,14 @@ final class ThomasFormState: ObservableObject {
         formType: FormType,
         formResponseType: String?,
         validationMode: ThomasFormValidationMode,
+        registrationOverrides: ThomasFormRegistrationOverrides? = nil,
         parentFormState: ThomasFormState? = nil,
     ) {
         self.identifier = identifier
         self.formType = formType
         self.formResponseType = formResponseType
         self.validationMode = validationMode
+        self.registrationOverrides = registrationOverrides
         self.parentFormState = parentFormState
         self.status = if validationMode == .immediate {
             .invalid
@@ -138,7 +141,15 @@ final class ThomasFormState: ObservableObject {
         return await self.processChildren(children: self.filteredChildren())
     }
 
-    func submit(layoutState: LayoutState) async throws {
+    /// Validates and submits the form.
+    ///
+    /// Email inputs become channels here, after `registration_overrides` are applied against
+    /// `thomasState` as it is once validation finishes.
+    ///
+    /// - Parameters:
+    ///   - layoutState: The layout state reported with the submission.
+    ///   - thomasState: The state scoped to this form, so `$forms.current` is this form.
+    func submit(layoutState: LayoutState, thomasState: ThomasState) async throws {
         guard self.status != .submitted else {
             throw AirshipErrors.error("Form already submitted")
         }
@@ -157,12 +168,24 @@ final class ThomasFormState: ObservableObject {
         var attributesResult: [ThomasFormField.Attribute] = []
         var channelsResult: [ThomasFormField.Channel] = []
         var resultMap: [String: ThomasFormField.Value] = [:]
+        let state = thomasState.state
 
         try children.forEach {
             if case let .valid(result) = $0.field.status {
                 resultMap[$0.field.identifier] = result.value
                 if let channels = result.channels {
                     channelsResult.append(contentsOf: channels)
+                }
+
+                if let email = result.emailRegistration {
+                    let options = registrationOverrides?.resolveEmail(
+                        inputID: $0.field.identifier,
+                        options: email.options,
+                        state: state
+                    ) ?? email.options
+                    if let options {
+                        channelsResult.append(.email(email.address, options))
+                    }
                 }
 
                 if let attributes = result.attributes {
