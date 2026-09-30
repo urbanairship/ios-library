@@ -212,7 +212,7 @@ extension Image {
         return self.resizable()
             .scaledToFit()
             .constraints(constraints, alignment: alignment)
-            .frame(maxWidth: maxWidth, maxHeight: maxHeight, alignment: alignment)
+            .modifier(HuggingCap(maxWidth: maxWidth, maxHeight: maxHeight, alignment: alignment))
             .ignoresSafeArea(.keyboard)
             .clipped()
     }
@@ -239,6 +239,60 @@ extension Image {
         return axis == .vertical
             ? basis * imageSize.height / imageSize.width
             : basis * imageSize.width / imageSize.height
+    }
+}
+
+/// Caps the size proposed to its content and takes whatever size the content answers.
+///
+/// `.frame(maxWidth:maxHeight:)` instead fills what it is offered up to its maximum, so an image a
+/// stack rations on one axis is drawn narrower than its frame, letterboxed inside the border.
+private struct HuggingCap: ViewModifier {
+    let maxWidth: CGFloat?
+    let maxHeight: CGFloat?
+    let alignment: Alignment
+
+    func body(content: Content) -> some View {
+        HuggingCapLayout(maxWidth: maxWidth, maxHeight: maxHeight, alignment: alignment) {
+            content
+        }
+    }
+}
+
+private struct HuggingCapLayout: Layout {
+    let maxWidth: CGFloat?
+    let maxHeight: CGFloat?
+    let alignment: Alignment
+
+    func sizeThatFits(
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) -> CGSize {
+        subviews.first?.sizeThatFits(capped(proposal)) ?? .zero
+    }
+
+    func placeSubviews(
+        in bounds: CGRect,
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) {
+        let anchor = alignment.unitPoint
+        let point = CGPoint(
+            x: bounds.minX + (bounds.width * anchor.x),
+            y: bounds.minY + (bounds.height * anchor.y)
+        )
+        for subview in subviews {
+            subview.place(at: point, anchor: anchor, proposal: ProposedViewSize(bounds.size))
+        }
+    }
+
+    /// An absent proposal takes the cap, so a stack asking for an ideal size gets the fitted box.
+    private func capped(_ proposal: ProposedViewSize) -> ProposedViewSize {
+        ProposedViewSize(
+            width: maxWidth.map { min(proposal.width ?? $0, $0) } ?? proposal.width,
+            height: maxHeight.map { min(proposal.height ?? $0, $0) } ?? proposal.height
+        )
     }
 }
 
