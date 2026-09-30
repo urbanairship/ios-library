@@ -55,6 +55,12 @@ final class SceneAction: AirshipAction {
 
     private struct ActionArgs: Decodable, Sendable {
         fileprivate var dsl: String
+        fileprivate var reportingContext: AirshipJSON?
+
+        enum CodingKeys: String, CodingKey {
+            case dsl
+            case reportingContext = "reporting_context"
+        }
     }
 
     @MainActor
@@ -93,6 +99,7 @@ final class SceneAction: AirshipAction {
         )
 
         schedule.sendMetadata = sendMetadata
+        schedule.reportingContext = args.reportingContext
 
         try await self.scheduler(schedule)
         return nil

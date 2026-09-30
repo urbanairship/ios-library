@@ -92,6 +92,7 @@ struct SceneActionTests {
                     let rawLayout = try AirshipJSON.from(json: minimalLayoutJSON)
                     #expect(intermediate.layoutJSON == .object(["layout": rawLayout]))
                     #expect(intermediate.layoutJSON.object?["layout"] == rawLayout)
+                    #expect(schedule.reportingContext == nil)
 
                     await self.expectStandardSceneSchedule(schedule)
                     confirm()
@@ -156,6 +157,33 @@ struct SceneActionTests {
                 value: try AirshipJSON.from(json: #"{"dsl":"\#(compressedSceneBase64)"}"#),
                 situation: .manualInvocation,
                 metadata: [ActionArguments.pushPayloadJSONMetadataKey: pushPayload]
+            )
+
+            let result = try await action.perform(arguments: args)
+            #expect(result == nil)
+        }
+    }
+
+    @Test("perform propagates reporting context to schedule")
+    func performReportingContextPropagatedToSchedule() async throws {
+        try await confirmation(expectedCount: 1) { confirm in
+            let action = SceneAction(
+                scheduler: { schedule in
+                    #expect(
+                        schedule.reportingContext == .object([
+                            "campaign": .string("fall-sale"),
+                            "variant": .number(2)
+                        ])
+                    )
+                    confirm()
+                }
+            )
+
+            let args = ActionArguments(
+                value: try AirshipJSON.from(
+                    json: #"{"dsl":"\#(compressedSceneBase64)","reporting_context":{"campaign":"fall-sale","variant":2}}"#
+                ),
+                situation: .manualInvocation
             )
 
             let result = try await action.perform(arguments: args)

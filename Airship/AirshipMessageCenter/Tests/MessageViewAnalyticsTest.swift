@@ -43,6 +43,33 @@ struct DefaultMessageViewAnalyticsTests {
         #expect(capturedData.context!.reportingContext == ["test": "reporting"])
     }
     
+    @Test("Record event forwards a nested scene template reporting context")
+    @MainActor
+    func recordEventNestedReportingContext() async throws {
+        // message_reporting is forwarded wholesale as the event reporting context, so a nested
+        // reporting_context has to survive verbatim rather than being hoisted or dropped.
+        let reporting: AirshipJSON = .object([
+            "message_id": .string("test-message-id"),
+            "reporting_context": .object(["campaign": .string("fall-sale")])
+        ])
+
+        let message = createStubMessage(
+            id: "test-message-id",
+            reporting: reporting,
+            productID: "product-id"
+        )
+        let analytics = makeAnalytics(message: message)
+
+        analytics.recordEvent(ThomasLayoutDisplayEvent(), layoutContext: ThomasLayoutContext())
+        await operationsQueue.waitForCurrentOperations()
+
+        let capturedData = try #require(mockRecorder.lastCapturedData, "No event data was captured")
+        #expect(capturedData.context!.reportingContext == reporting)
+
+        let impression = try #require(mockRecorder.lastRecordedImpression)
+        #expect(impression.reportingContext == reporting)
+    }
+
     @Test("Record events with no saved history")
     @MainActor
     func recordEventNoHistory() async throws {

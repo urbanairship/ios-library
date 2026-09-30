@@ -23,7 +23,10 @@ struct MessageCenterAPIClientTest {
             extra: [:],
             bodyURL: URL(string: "anyurl.com")!,
             expirationDate: nil,
-            messageReporting: ["foo": "reporting"],
+            messageReporting: [
+                "foo": "reporting",
+                "reporting_context": ["campaign": "fall-sale"]
+            ],
             unread: true,
             sentDate: Date(),
             messageURL: URL(string: "anyurl.com")!,
@@ -62,7 +65,10 @@ struct MessageCenterAPIClientTest {
                         "extra": {
                             "some_key": "some_value"
                         },
-                        "message_reporting": { "cool": "story" },
+                        "message_reporting": {
+                            "cool": "story",
+                            "reporting_context": { "campaign": "fall-sale" }
+                        },
                         "content_type": "text/html",
                         "content_size": "128"
                     }
@@ -83,6 +89,12 @@ struct MessageCenterAPIClientTest {
         #expect(message.id == "some_mesg_id")
         #expect(message.title == "Message title")
         #expect(message.contentType == .html)
+        #expect(
+            message.messageReporting == .object([
+                "cool": .string("story"),
+                "reporting_context": .object(["campaign": .string("fall-sale")])
+            ])
+        )
 
         let request = self.session.lastRequest!
         #expect(
@@ -184,9 +196,11 @@ struct MessageCenterAPIClientTest {
             with: request.body!
         )
 
-        let expected: [String: AnyHashable] = [
-            "messages": [["foo": "reporting"]]
+        let expectedMessage: [String: AnyHashable] = [
+            "foo": "reporting",
+            "reporting_context": ["campaign": "fall-sale"]
         ]
+        let expected: [String: AnyHashable] = ["messages": [expectedMessage]]
 
         #expect(
             expected as NSDictionary ==
@@ -235,9 +249,11 @@ struct MessageCenterAPIClientTest {
             with: request.body!
         )
 
-        let expected: [String: AnyHashable] = [
-            "messages": [["foo": "reporting"]]
+        let expectedMessage: [String: AnyHashable] = [
+            "foo": "reporting",
+            "reporting_context": ["campaign": "fall-sale"]
         ]
+        let expected: [String: AnyHashable] = ["messages": [expectedMessage]]
 
         #expect(
             expected as NSDictionary ==
