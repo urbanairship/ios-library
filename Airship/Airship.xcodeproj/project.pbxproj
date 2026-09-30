@@ -482,6 +482,7 @@
 		DAB53AB8E241D551BF269655 /* MediaCropDecisionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9763EE5D73424951ACB1BC46 /* MediaCropDecisionTest.swift */; };
 		77FC81C9692E11D05FCA34BD /* GridLayoutRenderingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19444E34611076F65DF01D9 /* GridLayoutRenderingTest.swift */; };
 		010E8751CB1B12DC0E78191B /* GridLayoutTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D311ACFFD5A3A4E1F42DA39 /* GridLayoutTest.swift */; };
+		088FEEFDABE7A8C400B97EAA /* ScoreWrappingRenderingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7087C65DEEF5505626699554 /* ScoreWrappingRenderingTest.swift */; };
 		6E21C4712FEC586A00EA3E56 /* ThomasViewModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C46A2FEC586A00EA3E56 /* ThomasViewModelTest.swift */; };
 		6E21C4722FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C46E2FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift */; };
 		B6987A7142C54597BC6295ED /* ThomasTransitionEffectTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EEACD9DBF564C84AB064BAF /* ThomasTransitionEffectTest.swift */; };
@@ -2122,6 +2123,7 @@
 		9763EE5D73424951ACB1BC46 /* MediaCropDecisionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCropDecisionTest.swift; sourceTree = "<group>"; };
 		C19444E34611076F65DF01D9 /* GridLayoutRenderingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLayoutRenderingTest.swift; sourceTree = "<group>"; };
 		9D311ACFFD5A3A4E1F42DA39 /* GridLayoutTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLayoutTest.swift; sourceTree = "<group>"; };
+		7087C65DEEF5505626699554 /* ScoreWrappingRenderingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreWrappingRenderingTest.swift; sourceTree = "<group>"; };
 		6E21C4672FEC586A00EA3E56 /* LayoutModelsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutModelsTest.swift; sourceTree = "<group>"; };
 		6E21C4682FEC586A00EA3E56 /* AirshipLayoutTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipLayoutTest.swift; sourceTree = "<group>"; };
 		6E21C4692FEC586A00EA3E56 /* ThomasValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasValidationTests.swift; sourceTree = "<group>"; };
@@ -5050,6 +5052,7 @@
 				9763EE5D73424951ACB1BC46 /* MediaCropDecisionTest.swift */,
 				C19444E34611076F65DF01D9 /* GridLayoutRenderingTest.swift */,
 				9D311ACFFD5A3A4E1F42DA39 /* GridLayoutTest.swift */,
+				7087C65DEEF5505626699554 /* ScoreWrappingRenderingTest.swift */,
 				6E21C44E2FEC583B00EA3E56 /* Outcomes */,
 				1D501534ADFFC096F3D2D624 /* AirshipEmbeddedViewManagerTest.swift */,
 			);
@@ -7685,6 +7688,7 @@
 				DAB53AB8E241D551BF269655 /* MediaCropDecisionTest.swift in Sources */,
 				77FC81C9692E11D05FCA34BD /* GridLayoutRenderingTest.swift in Sources */,
 				010E8751CB1B12DC0E78191B /* GridLayoutTest.swift in Sources */,
+				088FEEFDABE7A8C400B97EAA /* ScoreWrappingRenderingTest.swift in Sources */,
 				6E21C45C2FEC585400EA3E56 /* ThomasValidationInfoOutcomeTest.swift in Sources */,
 				6E21C45D2FEC585400EA3E56 /* ThomasActionPayloadOutcomeTest.swift in Sources */,
 				6E21C45E2FEC585400EA3E56 /* ThomasOutcomeTest.swift in Sources */,
