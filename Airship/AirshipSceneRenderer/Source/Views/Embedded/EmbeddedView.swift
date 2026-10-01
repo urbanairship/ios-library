@@ -27,6 +27,7 @@ struct AdoptLayout<Content: View>: View {
     @State private var viewConstraints: ViewConstraints?
     @State private var constraintsPublisher = AdoptLayoutConstraintsPublisher()
     @Environment(\.layoutDirection) private var layoutDirection
+    @Environment(\.thomasEnvironmentState) private var environmentState
 
     /// A presentation resolved per orientation/window size, e.g. `EmbeddedView`'s.
     init(
@@ -86,7 +87,7 @@ struct AdoptLayout<Content: View>: View {
 
     var body: some View {
         if usesAutoMeasurement {
-            AdoptLayoutEngine(placement: placement, embeddedSize: embeddedSize, layoutDirection: layoutDirection, viewConstraints: $viewConstraints, constraintsPublisher: constraintsPublisher) {
+            AdoptLayoutEngine(placement: placement, embeddedSize: embeddedSize, layoutDirection: layoutDirection, environmentState: environmentState, viewConstraints: $viewConstraints, constraintsPublisher: constraintsPublisher) {
                 if let viewConstraints {
                     content(viewConstraints, placement)
                 } else {
@@ -94,7 +95,7 @@ struct AdoptLayout<Content: View>: View {
                 }
             }
         } else {
-            AdoptLayoutEngine(placement: placement, embeddedSize: embeddedSize, layoutDirection: layoutDirection) {
+            AdoptLayoutEngine(placement: placement, embeddedSize: embeddedSize, layoutDirection: layoutDirection, environmentState: environmentState) {
                 GeometryReader { metrics in
                     content(
                         ViewConstraints(
@@ -164,6 +165,8 @@ struct AdoptLayoutEngine: SwiftUI.Layout {
     let placement: ThomasPresentationInfo.Embedded.Placement
     let embeddedSize: AirshipEmbeddedSize?
     let layoutDirection: LayoutDirection
+    /// Receives the host's proposal as `$environment.frame`.
+    var environmentState: ThomasEnvironmentState? = nil
     var viewConstraints: Binding<ViewConstraints?>? = nil
     var constraintsPublisher: AdoptLayoutConstraintsPublisher? = nil
 
@@ -373,6 +376,20 @@ struct AdoptLayoutEngine: SwiftUI.Layout {
             proposal: proposal.height
         )
 
+        // See the probe note below: a zero proposal on either axis is SwiftUI measuring, not placing.
+        let isProbe = proposal.width == 0 || proposal.height == 0
+
+        if !isProbe, let environmentState {
+            // The proposal, not `bounds`: an axis the host leaves open is the content's to decide.
+            let frame = ThomasEnvironmentState.HostFrame(
+                width: proposal.width?.safeValue,
+                height: proposal.height?.safeValue
+            )
+            Task { @MainActor in
+                environmentState.update(frame: frame)
+            }
+        }
+
         if let viewConstraints {
             let newConstraints = ViewConstraints(
                 width: placement.size.width.isAuto ? nil : width,
@@ -390,7 +407,6 @@ struct AdoptLayoutEngine: SwiftUI.Layout {
             // on either axis marks a probe (a nil axis does not -- parents may legitimately place
             // with an unspecified axis), and degenerate bounds mark a pass not worth publishing;
             // constraints keep their last real value until the next committed pass.
-            let isProbe = proposal.width == 0 || proposal.height == 0
             if !isProbe && bounds.width > 0 && bounds.height > 0 {
                 if let constraintsPublisher {
                     MainActor.assumeIsolated {

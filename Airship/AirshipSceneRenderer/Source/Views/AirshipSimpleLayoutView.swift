@@ -43,6 +43,7 @@ public struct AirshipSimpleLayoutView: View {
                     ),
                     placement: placement
                 )
+                .reportsHostFrame(.init(width: metrics.size.width, height: metrics.size.height))
             }
         }
     }

@@ -11,6 +11,11 @@ struct RootView<Content: View>: View {
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 #endif
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.layoutDirection) private var layoutDirection
+    @Environment(\.locale) private var locale
+    // Read so a text size change recomputes `$environment.text_scale`.
+    @Environment(\.sizeCategory) private var sizeCategory
 
     /// Orientation to resolve placement selectors against. Self-contained: we find the window we
     /// were put in and track its shape, so no presentation has to plumb this in.
@@ -28,6 +33,8 @@ struct RootView<Content: View>: View {
 
     @ObservedObject var thomasEnvironment: ThomasEnvironment
     @StateObject var thomasState: ThomasState
+    // Held, not observed: a resize re-renders through `thomasState` rather than this whole view.
+    @State private var environmentState: ThomasEnvironmentState
     @StateObject var validatableHelper: ValidatableHelper = ValidatableHelper()
     @StateObject private var formInputCollector: ThomasFormDataCollector = ThomasFormDataCollector()
 
@@ -77,11 +84,16 @@ struct RootView<Content: View>: View {
         )
         self.content = content
         self._isForeground = State(initialValue: AppStateTracker.shared.isForegrounded)
+        let environmentState = ThomasEnvironmentState(
+            values: .seed(window: initialWindowSize)
+        )
+        self._environmentState = State(initialValue: environmentState)
         self._thomasState = StateObject(
             wrappedValue: ThomasState(
                 // A scene-wide store so state actions outside any `state_controller` still land
                 // somewhere; a `state_controller` replaces it with its own for its subtree.
                 mutableState: ThomasState.MutableState(),
+                environmentState: environmentState,
                 sceneAIExecutor: thomasEnvironment.extensions.aiInferenceExecutor
             ) { [weak thomasEnvironment] state in
                 thomasEnvironment?.onStateChange(state)
@@ -114,6 +126,10 @@ struct RootView<Content: View>: View {
             .environment(\.isVoiceOverRunning, isVoiceOverRunning)
             .environment(\.thomasAssociatedLabelResolver, associatedLabelResolver)
             .environment(\.thomasFocusedInput, $focusedInputID)
+            .environment(\.thomasEnvironmentState, environmentState)
+            .airshipOnChangeOf(resolveEnvironmentTraits(), initial: true) { traits in
+                environmentState.update(traits: traits)
+            }
             // Bridge the SwiftUI focus state (the owner of the keyboard) to the
             // environment object's `focusedID` (what callers read/write), both ways.
             // User-driven focus flows FocusState -> focusedID; programmatic focus and
@@ -158,7 +174,7 @@ struct RootView<Content: View>: View {
             }
 #if !os(watchOS)
             .background(
-                ThomasSceneSizeReader { size in
+                ThomasSceneSizeReader(onChange: { size in
                     // `report()` calls this synchronously from the representable's own
                     // layout()/layoutSubviews(), which SwiftUI drives as part of resolving
                     // this very view's layout -- mutating `@Published` state inline here is
@@ -167,7 +183,11 @@ struct RootView<Content: View>: View {
                     Task { @MainActor in
                         orientationTracker.update(size)
                     }
-                }
+                }, onWindowChange: { window, safeWindow in
+                    Task { @MainActor in
+                        environmentState.update(window: window, safeWindow: safeWindow)
+                    }
+                })
             )
 #endif
     }
@@ -191,6 +211,19 @@ struct RootView<Content: View>: View {
             return .medium
         }
 #endif
+    }
+
+    /// The traits `$environment` publishes, read from the same sources the rest of the tree uses.
+    ///
+    /// - Returns: The current traits.
+    private func resolveEnvironmentTraits() -> ThomasEnvironmentState.Traits {
+        ThomasEnvironmentState.Traits(
+            darkMode: colorScheme == .dark,
+            textScale: ThomasEnvironmentState.currentTextScale,
+            windowSize: resolveWindowSize(),
+            layoutDirection: layoutDirection,
+            locale: locale
+        )
     }
 
     private func updateVoiceoverRunningState() {
@@ -271,17 +304,21 @@ struct ThomasSceneSizeReader: AirshipNativeViewRepresentable {
 
     let onChange: @MainActor (CGSize?) -> Void
 
+    /// Receives the window's size and its size less its safe-area insets, measured together.
+    var onWindowChange: (@MainActor (_ window: CGSize, _ safeWindow: CGSize) -> Void)? = nil
+
 #if os(macOS)
     typealias NSViewType = NSView
 
     func makeNSView(context: Context) -> NSView {
-        ProbeView(onChange: self.onChange)
+        ProbeView(onChange: self.onChange, onWindowChange: self.onWindowChange)
     }
 
     func updateNSView(_ nsView: NSView, context: Context) {}
 
     private final class ProbeView: NSView {
         private let onChange: @MainActor (CGSize?) -> Void
+        private let onWindowChange: (@MainActor (_ window: CGSize, _ safeWindow: CGSize) -> Void)?
 
         /// `deinit` runs nonisolated even for a MainActor class -- deallocation can happen from
         /// any thread -- so this can't be a normal (implicitly MainActor-isolated) stored
@@ -289,8 +326,12 @@ struct ThomasSceneSizeReader: AirshipNativeViewRepresentable {
         /// (`syncWindowObserver()`); `removeObserver` itself is documented safe from any thread.
         nonisolated(unsafe) private var resizeObserver: AnyObject?
 
-        init(onChange: @escaping @MainActor (CGSize?) -> Void) {
+        init(
+            onChange: @escaping @MainActor (CGSize?) -> Void,
+            onWindowChange: (@MainActor (_ window: CGSize, _ safeWindow: CGSize) -> Void)?
+        ) {
             self.onChange = onChange
+            self.onWindowChange = onWindowChange
             super.init(frame: .zero)
         }
 
@@ -350,26 +391,33 @@ struct ThomasSceneSizeReader: AirshipNativeViewRepresentable {
         /// display it happens to be on, and `frame` would fold in the title bar and chrome.
         private func report() {
             guard let window = self.window else { return }
-            self.onChange(window.contentLayoutRect.size)
+            let size = window.contentLayoutRect.size
+            self.onChange(size)
+            self.onWindowChange?(size, size)
         }
     }
 #else
     typealias UIViewType = UIView
 
     func makeUIView(context: Context) -> UIView {
-        ProbeView(onChange: self.onChange)
+        ProbeView(onChange: self.onChange, onWindowChange: self.onWindowChange)
     }
 
     func updateUIView(_ uiView: UIView, context: Context) {}
 
     private final class ProbeView: UIView {
         private let onChange: @MainActor (CGSize?) -> Void
+        private let onWindowChange: (@MainActor (_ window: CGSize, _ safeWindow: CGSize) -> Void)?
 
         /// Owned by the window, so held weakly.
         private weak var resizeObserver: WindowResizeObserverView?
 
-        init(onChange: @escaping @MainActor (CGSize?) -> Void) {
+        init(
+            onChange: @escaping @MainActor (CGSize?) -> Void,
+            onWindowChange: (@MainActor (_ window: CGSize, _ safeWindow: CGSize) -> Void)?
+        ) {
             self.onChange = onChange
+            self.onWindowChange = onWindowChange
             super.init(frame: .zero)
             self.isUserInteractionEnabled = false
             self.backgroundColor = .clear
@@ -422,7 +470,14 @@ struct ThomasSceneSizeReader: AirshipNativeViewRepresentable {
 
         private func report() {
             guard let window = self.window else { return }
-            self.onChange(window.windowScene?.airshipAvailableSpace ?? window.bounds.size)
+            let size = window.windowScene?.airshipAvailableSpace ?? window.bounds.size
+            self.onChange(size)
+
+            let insets = window.safeAreaInsets
+            self.onWindowChange?(size, CGSize(
+                width: max(0, size.width - insets.left - insets.right),
+                height: max(0, size.height - insets.top - insets.bottom)
+            ))
         }
     }
 
@@ -446,6 +501,12 @@ struct ThomasSceneSizeReader: AirshipNativeViewRepresentable {
 
         override func layoutSubviews() {
             super.layoutSubviews()
+            self.onLayout()
+        }
+
+        // Insets change without a resize when a bar shows or hides.
+        override func safeAreaInsetsDidChange() {
+            super.safeAreaInsetsDidChange()
             self.onLayout()
         }
     }

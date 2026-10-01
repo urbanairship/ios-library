@@ -19,7 +19,11 @@ public extension View {
                 action(value)
             })
         } else {
+            // `onChange(of:perform:)` has no `initial`, so appearing stands in for it.
             self.onChange(of: value, perform: action)
+                .onAppear {
+                    if initial { action(value) }
+                }
         }
     }
     

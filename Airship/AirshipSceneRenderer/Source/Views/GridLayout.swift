@@ -86,7 +86,7 @@ struct GridLayout: View {
             gridWidth: width
         )
         let config = GridColumns.resolveConfig(info.properties.config, environment: environment)
-        let textScale = CGFloat(AirshipFont.scaledSize(100) / 100)
+        let textScale = CGFloat(ThomasEnvironmentState.currentTextScale)
         let columns = GridColumns.columnCount(config, width: width, textScale: textScale)
         let ratio = config.cellAspectRatio.flatMap { $0 > 0 ? CGFloat($0) : nil }
 

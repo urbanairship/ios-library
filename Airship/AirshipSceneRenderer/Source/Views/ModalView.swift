@@ -54,6 +54,10 @@ struct ModalView: View {
                         }
                     }
                 }
+                .reportsHostFrame(.init(
+                    width: metrics.size.width + metrics.safeAreaInsets.leading + metrics.safeAreaInsets.trailing,
+                    height: metrics.size.height + metrics.safeAreaInsets.top + metrics.safeAreaInsets.bottom
+                ))
                 .onAppear {
                     setShowing(transition: placement.transition, state: true)
                 }

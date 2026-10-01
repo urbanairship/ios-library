@@ -94,6 +94,11 @@ struct BannerView: View {
                         position: placement.position,
                         transition: placement.transition
                     )
+                    // The window, not this view: the view controller shrinks this view to the banner.
+                    .reportsHostFrame(.init(
+                        width: bannerConstraints.windowSize.width,
+                        height: bannerConstraints.windowSize.height
+                    ))
                     .airshipOnChangeOf(thomasEnvironment.isDismissed) { _ in
                         setShowing(state: false, transition: placement.transition) {
                             self.swipeOffset = 0
