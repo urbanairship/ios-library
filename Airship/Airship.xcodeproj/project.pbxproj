@@ -62,6 +62,7 @@
 		2753F6422F6C5BB50073882C /* (null) in Sources */ = {isa = PBXBuildFile; };
 		2753F6FA2F71507E0073882C /* (null) in Sources */ = {isa = PBXBuildFile; };
 		2797B4192F47687800A7F848 /* NativeLayoutPersistentDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2797B4182F47687800A7F848 /* NativeLayoutPersistentDataStore.swift */; };
+		39B703E5C407F9CA4062036B /* NativeLayoutPersistentDataStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96CE88F97B16AA0136FBC87 /* NativeLayoutPersistentDataStoreTest.swift */; };
 		27AFE70F2E733F4400767044 /* ModifyTagsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFE70E2E733F4400767044 /* ModifyTagsAction.swift */; };
 		27AFE7112E73477200767044 /* ModifyTagsActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AFE7102E73477200767044 /* ModifyTagsActionTest.swift */; };
 		27C0DE012F7EA8EA00741963 /* MessageCenterMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C0DE002F7EA8EA00741963 /* MessageCenterMessageContentView.swift */; };
@@ -1752,6 +1753,7 @@
 		32F615A628F708980015696D /* MessageCenterListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterListTests.swift; sourceTree = "<group>"; };
 		4D5914AA2F0000010000A001 /* MessageCenterStoriesViewAccessibilityTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterStoriesViewAccessibilityTest.swift; sourceTree = "<group>"; };
 		32F68CDA28F02A6B00F7F52A /* MessageCenterStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCenterStoreTest.swift; sourceTree = "<group>"; };
+		D96CE88F97B16AA0136FBC87 /* NativeLayoutPersistentDataStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeLayoutPersistentDataStoreTest.swift; sourceTree = "<group>"; };
 		32F68CE828F07C2B00F7F52A /* AirshipMessageCenterResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipMessageCenterResources.swift; sourceTree = "<group>"; };
 		32F68CE928F07C2C00F7F52A /* MessageCenterSDKModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenterSDKModule.swift; sourceTree = "<group>"; };
 		32F68CED28F07C2C00F7F52A /* MessageCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCenter.swift; sourceTree = "<group>"; };
@@ -4396,6 +4398,7 @@
 				32F615A628F708980015696D /* MessageCenterListTests.swift */,
 				4D5914AA2F0000010000A001 /* MessageCenterStoriesViewAccessibilityTest.swift */,
 				27CCF77E2F16DA500018058F /* MessageViewAnalyticsTest.swift */,
+				D96CE88F97B16AA0136FBC87 /* NativeLayoutPersistentDataStoreTest.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -7363,6 +7366,7 @@
 				6E4A468128EF4FAF00A25617 /* TestAirshipRequestSession.swift in Sources */,
 				60A292112CB7C5C30096F5EB /* TestDate.swift in Sources */,
 				6EC824A42F33A5F600E1C0C6 /* MessageCenterMessageTest.swift in Sources */,
+				39B703E5C407F9CA4062036B /* NativeLayoutPersistentDataStoreTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
