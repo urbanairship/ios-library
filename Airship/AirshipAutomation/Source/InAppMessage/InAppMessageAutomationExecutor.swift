@@ -143,11 +143,14 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     ///   - animationsEnabled: whether the message's presentation transitions animate. A host
     ///     sets this to `false` to make a screenshot flow deterministic without waiting out a
     ///     real fade.
+    ///   - randomSeed: seeds every `randomize_children` order, so a screenshot flow gets the same
+    ///     orders on every run and every platform. `nil` draws one per display.
     @MainActor
     func displayTest(
         message: InAppMessage,
         imageProviderOverride: (@Sendable (URL) -> AirshipImageData?)? = nil,
-        animationsEnabled: Bool = true
+        animationsEnabled: Bool = true,
+        randomSeed: String? = nil
     ) async throws {
         let adapter = try AirshipLayoutDisplayAdapter(
             message: message,
@@ -155,7 +158,8 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             assets: EmptyAirshipCachedAssets(),
             aiManager: self.aiManager,
             imageProviderOverride: imageProviderOverride,
-            animationsEnabled: animationsEnabled
+            animationsEnabled: animationsEnabled,
+            randomSeed: randomSeed
         )
 
 #if os(macOS)

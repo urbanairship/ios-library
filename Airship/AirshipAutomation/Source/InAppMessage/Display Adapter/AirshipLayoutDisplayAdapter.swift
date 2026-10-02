@@ -16,6 +16,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
     private let networkChecker: any AirshipNetworkCheckerProtocol
     private let provider: @Sendable (URL) -> AirshipImageData?
     private let animationsEnabled: Bool
+    private let randomSeed: String?
 
     @MainActor
     private var themeManager: InAppAutomationThemeManager {
@@ -30,7 +31,8 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         aiManager: (any AirshipAI.InternalManager)? = nil,
         networkChecker: any AirshipNetworkCheckerProtocol = AirshipNetworkChecker.shared,
         imageProviderOverride: (@Sendable (URL) -> AirshipImageData?)? = nil,
-        animationsEnabled: Bool = true
+        animationsEnabled: Bool = true,
+        randomSeed: String? = nil
     ) throws {
         self.message = message
         self.priority = priority
@@ -39,6 +41,7 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
         self.aiManager = aiManager
         self.networkChecker = networkChecker
         self.animationsEnabled = animationsEnabled
+        self.randomSeed = randomSeed
 
         if case .custom(_) = message.displayContent {
             throw AirshipErrors.error("Invalid adapter for layout type")
@@ -357,14 +360,16 @@ final class AirshipLayoutDisplayAdapter: DisplayAdapter {
                 actionRunner: actionRunner,
                 nativeBridgeExtension: InAppMessageNativeBridgeExtension(message: message),
                 aiManager: aiManager,
-                animationsEnabled: animationsEnabled
+                animationsEnabled: animationsEnabled,
+                randomSeed: randomSeed
             )
 #else
             let extensions = DefaultThomasExtensions(
                 imageProvider: imageProvider,
                 actionRunner: actionRunner,
                 aiManager: aiManager,
-                animationsEnabled: animationsEnabled
+                animationsEnabled: animationsEnabled,
+                randomSeed: randomSeed
             )
 #endif
             let listener = ThomasDisplayListener(

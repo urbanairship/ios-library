@@ -111,7 +111,7 @@ enum UITestLaunch {
             router.homePath = [.thomas(.embeddedHost(embeddedID: embeddedID))]
         }
         do {
-            try await layoutFile(path: path).open(skipRealImages: UserDefaults.standard.bool(forKey: "uiTestMode"))
+            try await layoutFile(path: path).open(isUITest: UserDefaults.standard.bool(forKey: "uiTestMode"))
         } catch {
             toast.message = .init(text: "Failed to open \(path): \(error.localizedDescription)", duration: 5.0)
         }

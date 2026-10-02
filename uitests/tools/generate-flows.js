@@ -54,7 +54,6 @@ function inspect(node, facts) {
   }
   if (node.type === "web_view") facts.webView = true;
   if (node.automated_actions) facts.autoAdvance = true;
-  if (node.randomize_children === true) facts.randomized = true;
   Object.values(node).forEach((child) => inspect(child, facts));
 }
 
@@ -72,7 +71,6 @@ function stubs(facts) {
   if (facts.animated) notes.push("video shown as a placeholder image");
   if (facts.webView) notes.push("web view shows a placeholder page");
   if (facts.autoAdvance) notes.push("auto-advance disabled, first page held");
-  if (facts.randomized) notes.push("randomized child order fixed");
   return notes;
 }
 

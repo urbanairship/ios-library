@@ -8,7 +8,6 @@ import SwiftUI
 
 struct LinearLayout: View {
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
-    @Environment(\.pageIdentifier) private var pageIdentifier
 
     /// LinearLayout model.
     private let info: ThomasViewInfo.LinearLayout
@@ -93,12 +92,13 @@ struct LinearLayout: View {
     @ViewBuilder
     @MainActor
     private func makeVStack(
-        items: [ThomasViewInfo.LinearLayout.Item],
+        order: [Int],
         parentConstraints: ViewConstraints
     ) -> some View {
+        let items = self.info.properties.items
 
         VStack(alignment: .center, spacing: 0) {
-            ForEach(0..<items.count, id: \.self) { index in
+            ForEach(order, id: \.self) { index in
 #if os(tvOS)
                 HStack {
                     childItem(items[index], parentConstraints: parentConstraints)
@@ -136,12 +136,13 @@ struct LinearLayout: View {
     @ViewBuilder
     @MainActor
     private func makeHStack(
-        items: [ThomasViewInfo.LinearLayout.Item],
+        order: [Int],
         parentConstraints: ViewConstraints
     ) -> some View {
+        let items = self.info.properties.items
 
         HStack(alignment: .center, spacing: 0) {
-            ForEach(0..<items.count, id: \.self) { index in
+            ForEach(order, id: \.self) { index in
 #if os(tvOS)
                 VStack {
                     childItem(items[index], parentConstraints: parentConstraints)
@@ -177,16 +178,24 @@ struct LinearLayout: View {
     @ViewBuilder
     @MainActor
     private func makeStack() -> some View {
-        if self.info.properties.direction == .vertical {
-            makeVStack(
-                items: orderedItems(),
-                parentConstraints: parentConstraints()
-            )
+        let parentConstraints = self.parentConstraints()
+        // Only a stack whose order changes with state observes it; the rest skip a re-render per change.
+        if hasItemOverrides {
+            ThomasStateReader { state in
+                makeStack(order: itemOrder(state: state), parentConstraints: parentConstraints)
+            }
         } else {
-            makeHStack(
-                items: orderedItems(),
-                parentConstraints: parentConstraints()
-            )
+            makeStack(order: itemOrder(state: nil), parentConstraints: parentConstraints)
+        }
+    }
+
+    @ViewBuilder
+    @MainActor
+    private func makeStack(order: [Int], parentConstraints: ViewConstraints) -> some View {
+        if self.info.properties.direction == .vertical {
+            makeVStack(order: order, parentConstraints: parentConstraints)
+        } else {
+            makeHStack(order: order, parentConstraints: parentConstraints)
         }
     }
 
@@ -422,10 +431,38 @@ struct LinearLayout: View {
         self.info.properties.direction == .vertical ? item.size.height : item.size.width
     }
 
-    private func orderedItems() -> [ThomasViewInfo.LinearLayout.Item] {
+    private var hasItemOverrides: Bool {
+        self.info.properties.items.contains { $0.overrides?.config != nil }
+    }
+
+    /// Item indices in the order to place and read them: the shuffle, if any, then by `order`.
+    ///
+    /// - Parameter state: what `overrides` resolve against, or `nil` to read each item's `config`
+    /// - Returns: the item indices in placement order
+    private func itemOrder(state: ThomasState?) -> [Int] {
         let items = self.info.properties.items
-        guard self.info.properties.randomizeChildren == true else { return items }
-        return thomasEnvironment.shuffledOrder(count: items.count, page: pageIdentifier, identifier: nil).map { items[$0] }
+        let base = self.info.properties.randomizeChildren == true
+            ? thomasEnvironment.shuffledOrder(count: items.count, identifier: self.info.properties.identifier)
+            : Array(items.indices)
+        let orders = items.map { item in
+            guard let state else { return item.config?.order }
+            return ThomasPropertyOverride.resolveOptional(
+                state: state,
+                overrides: item.overrides?.config,
+                defaultValue: item.config
+            )?.order
+        }
+        return ItemOrder.sorted(base, orders: orders)
+    }
+}
+
+/// Hands its content the current state, so only it re-renders when the state changes.
+private struct ThomasStateReader<Content: View>: View {
+    @EnvironmentObject private var thomasState: ThomasState
+    let content: (ThomasState) -> Content
+
+    var body: some View {
+        content(thomasState)
     }
 }
 

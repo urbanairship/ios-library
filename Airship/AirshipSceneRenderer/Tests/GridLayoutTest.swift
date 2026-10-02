@@ -138,30 +138,35 @@ struct GridLayoutTest {
     @Test("a scene's shuffled order is derived from its seed, so it is the same every time")
     func sceneShuffledOrder() {
         let environment = ThomasEnvironment(delegate: StubThomasDelegate(), extensions: TestThomasExtensions())
-        let first = environment.shuffledOrder(count: 6, page: "page-1", identifier: nil)
+        let first = environment.shuffledOrder(count: 6, identifier: nil)
         #expect(Set(first) == Set(0..<6))
-        #expect(environment.shuffledOrder(count: 6, page: "page-1", identifier: nil) == first)
-        #expect(Set(environment.shuffledOrder(count: 3, page: "page-1", identifier: nil)) == Set(0..<3))
-
-        // An identifier tells layouts on one page apart: across a few, the orders don't all match.
-        let identified = (0..<8).map { environment.shuffledOrder(count: 6, page: "page-1", identifier: "grid-\($0)") }
-        #expect(identified.contains { $0 != first })
-        #expect(environment.shuffledOrder(count: 6, page: "page-1", identifier: "grid-3") == identified[3])
+        #expect(environment.shuffledOrder(count: 6, identifier: nil) == first)
 
         // A new scene gets a new seed: across a few scenes the order doesn't stay fixed.
         let others = (0..<8).map { _ in
             ThomasEnvironment(delegate: StubThomasDelegate(), extensions: TestThomasExtensions())
-                .shuffledOrder(count: 6, page: "page-1", identifier: nil)
+                .shuffledOrder(count: 6, identifier: nil)
         }
         #expect(others.contains { $0 != first })
+    }
+
+    @MainActor
+    @Test("a host's random seed fixes every shuffled order")
+    func hostSeededShuffledOrder() {
+        let environment = ThomasEnvironment(
+            delegate: StubThomasDelegate(),
+            extensions: TestThomasExtensions(randomSeed: SeededShuffle.uiTestSeed)
+        )
+        #expect(environment.shuffledOrder(count: 5, identifier: "survey_options") == [0, 4, 3, 2, 1])
+        #expect(environment.shuffledOrder(count: 5, identifier: nil) == [1, 3, 2, 0, 4])
     }
 
     @Test("items place by order, keeping list or shuffled order among equal ones")
     func placementOrder() {
         // An item at order 1 goes last, one at -1 first; the rest keep their places.
-        #expect(GridColumns.placementOrder([0, 1, 2, 3], orders: [1, nil, -1, 0]) == [2, 1, 3, 0])
+        #expect(ItemOrder.sorted([0, 1, 2, 3], orders: [1, nil, -1, 0]) == [2, 1, 3, 0])
         // After a shuffle, a "None of these" at order 1 still comes last.
-        #expect(GridColumns.placementOrder([2, 4, 0, 1, 3], orders: [nil, nil, nil, nil, 1]) == [2, 0, 1, 3, 4])
+        #expect(ItemOrder.sorted([2, 4, 0, 1, 3], orders: [nil, nil, nil, nil, 1]) == [2, 0, 1, 3, 4])
     }
 
     @Test("fixed is always its count, at least one, and has no minimum width")

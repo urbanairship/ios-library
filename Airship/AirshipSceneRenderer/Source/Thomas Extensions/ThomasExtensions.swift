@@ -44,6 +44,10 @@ public protocol ThomasExtensions: Sendable {
     /// a real fade.
     var animationsEnabled: Bool { get }
 
+    /// Seeds every `randomize_children` order, so the same seed gives the same orders on every
+    /// platform. Defaulted to `nil`, a seed drawn per scene; set only for UI tests and screenshots.
+    var randomSeed: String? { get }
+
 #if !os(tvOS) && !os(watchOS)
     /// Builds web views for `webView` layout nodes (renderer owns no WebKit/native bridge).
     var webViewFactory: any ThomasWebViewFactory { get }
@@ -53,4 +57,5 @@ public protocol ThomasExtensions: Sendable {
 @_spi(AirshipInternal)
 extension ThomasExtensions {
     public var animationsEnabled: Bool { true }
+    public var randomSeed: String? { nil }
 }

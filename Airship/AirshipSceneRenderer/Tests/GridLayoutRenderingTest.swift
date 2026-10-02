@@ -79,7 +79,12 @@ struct GridLayoutRenderingTest {
     """#
 
     /// Hosts `json` at the top-leading corner of a white window with `constraints`, and snapshots it once it settles.
-    private func render(_ json: String, constraints: ViewConstraints) async throws -> Snapshot {
+    private func render(
+        _ json: String,
+        constraints: ViewConstraints,
+        environment: ThomasEnvironment? = nil
+    ) async throws -> Snapshot {
+        let thomasEnvironment = environment ?? self.thomasEnvironment
         let view = try JSONDecoder().decode(ThomasViewInfo.self, from: Data(json.utf8))
         let content = thomasEnvironment.viewFactory.createView(view, constraints: constraints)
             .frame(width: Self.size.width, height: Self.size.height, alignment: .topLeading)
@@ -418,6 +423,52 @@ struct GridLayoutRenderingTest {
         }
         #expect(Set(orders.map { $0.description }).count == 1)
         #expect(Set(orders[0]) == Set(colors.indices))
+    }
+
+    private static let sixColors: [(hex: String, rgb: (Int, Int, Int))] = [
+        ("#FF0000", (255, 0, 0)), ("#00FF00", (0, 255, 0)), ("#0000FF", (0, 0, 255)),
+        ("#FFFF00", (255, 255, 0)), ("#FF00FF", (255, 0, 255)), ("#00FFFF", (0, 255, 255)),
+    ]
+
+    /// The indices of `colors`, left to right by where each first appears.
+    private static func horizontalOrder(_ snapshot: Snapshot, _ colors: [(hex: String, rgb: (Int, Int, Int))]) -> [Int] {
+        let starts = colors.map { color in
+            (0..<snapshot.height).lazy.compactMap { snapshot.horizontalRuns(y: $0, color.rgb).first?.0 }.first ?? -1
+        }
+        return colors.indices.sorted { starts[$0] < starts[$1] }
+    }
+
+    @Test("a seeded linear layout shuffles to the order every platform gives its key")
+    func seededLinearShuffle() async throws {
+        let items = Self.sixColors.map { #"{"size": {"width": 60, "height": 20}, "view": \#(Self.fill($0.hex))}"# }
+        let json = #"""
+        {"type": "linear_layout", "identifier": "colors", "direction": "horizontal", "randomize_children": true,
+         "items": [\#(items.joined(separator: ","))]}
+        """#
+        let environment = ThomasEnvironment(
+            delegate: StubThomasDelegate(),
+            extensions: TestThomasExtensions(randomSeed: SeededShuffle.uiTestSeed)
+        )
+        let snapshot = try await render(json, constraints: bounded, environment: environment)
+
+        // ui-test:colors:6 → 5, 4, 3, 0, 1, 2
+        #expect(Self.horizontalOrder(snapshot, Self.sixColors) == [5, 4, 3, 0, 1, 2])
+    }
+
+    @Test("linear layout items lay out by order, an override's order replacing the config's")
+    func linearItemOrder() async throws {
+        let colors = Array(Self.sixColors.prefix(3))
+        let json = #"""
+        {"type": "linear_layout", "direction": "horizontal", "items": [
+          {"size": {"width": 60, "height": 20}, "config": {"order": 1}, "view": \#(Self.fill(colors[0].hex))},
+          {"size": {"width": 60, "height": 20}, "view": \#(Self.fill(colors[1].hex))},
+          {"size": {"width": 60, "height": 20}, "config": {"order": 2},
+           "overrides": {"config": [{"value": {"order": -1}}]}, "view": \#(Self.fill(colors[2].hex))}
+        ]}
+        """#
+        let snapshot = try await render(json, constraints: bounded)
+
+        #expect(Self.horizontalOrder(snapshot, colors) == [2, 1, 0])
     }
 
     @Test("a percentage beside a fixed item is that share of the row")

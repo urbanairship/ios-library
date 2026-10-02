@@ -27,7 +27,6 @@ private struct GridLayoutContent: View {
     @Environment(\.layoutDirection) private var layoutDirection
     // Read so a text size change re-renders a `text_scaled` minimum.
     @Environment(\.sizeCategory) private var sizeCategory
-    @Environment(\.pageIdentifier) private var pageIdentifier
 
     private let info: ThomasViewInfo.GridLayout
     private let constraints: ViewConstraints
@@ -174,9 +173,9 @@ private struct GridLayoutContent: View {
                 defaultValue: item.config
             )
         }
-        let ordered = GridColumns.placementOrder(
+        let ordered = ItemOrder.sorted(
             info.properties.randomizeChildren == true
-                ? thomasEnvironment.shuffledOrder(count: items.count, page: pageIdentifier, identifier: nil)
+                ? thomasEnvironment.shuffledOrder(count: items.count, identifier: info.properties.identifier)
                 : Array(items.indices),
             orders: itemConfigs.map { $0?.order }
         )

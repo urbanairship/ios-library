@@ -140,6 +140,7 @@ public struct MessageCenterMessageContentView: View {
             MessageCenterThomasView(
                 phase: self.$phase,
                 layoutRequest: { try await Self.makeRequest(viewModel: viewModel) },
+                randomSeed: { viewModel.makeRandomSeed() },
                 displayListener: displayListener,
                 dismissHandle: self.viewModel.thomasDismissHandle,
                 stateStorage: { viewModel.getOrCreateNativeStateStorage() }

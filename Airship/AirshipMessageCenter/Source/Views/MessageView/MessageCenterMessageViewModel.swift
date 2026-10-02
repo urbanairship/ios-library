@@ -61,6 +61,16 @@ public final class MessageCenterMessageViewModel: ObservableObject {
         return result
     }
     
+    /// Seeds a native message's `randomize_children` orders per message and channel, so reopening it keeps them.
+    ///
+    /// - Parameter channel: the channel whose ID keys the seed
+    /// - Returns: `<messageID>:<channelID>`, or the message ID alone before the channel registers
+    func makeRandomSeed(channel: any AirshipChannel = Airship.channel) -> String {
+        [messageID, channel.identifier]
+            .compactMap { $0 }
+            .joined(separator: ":")
+    }
+
     func getOrCreateNativeStateStorage(
         messageCenter: DefaultMessageCenter = Airship.internalMessageCenter
     ) -> any LayoutDataStorage {

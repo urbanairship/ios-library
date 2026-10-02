@@ -69,19 +69,19 @@ enum LayoutType: Equatable, Hashable, Codable {
 }
 
 extension LayoutFile {
-    /// - Parameter skipRealImages: when true, every Thomas image request falls back to a
-    ///   generated placeholder instead of the network for any URL that isn't already the
-    ///   shared `test-layout.internal` convention (see `thomasImageProvider`), and the
-    ///   presentation's show/dismiss transitions don't animate. UI tests set this so
-    ///   screenshots never depend on the network or on animation timing.
+    /// - Parameter isUITest: when true, the scene is made deterministic for screenshots: image
+    ///   requests fall back to a generated placeholder for any URL that isn't already the shared
+    ///   `test-layout.internal` convention (see `thomasImageProvider`), show/dismiss transitions
+    ///   don't animate, `randomize_children` uses the shared `ui-test` seed, and
+    ///   `applyingUITestFixups` rewrites what those can't cover.
     @MainActor
-    func open(skipRealImages: Bool = false) async throws {
+    func open(isUITest: Bool = false) async throws {
         let filePath = Bundle.main.resourcePath! + directory + "/" + fileName
         let data = try loadData(filePath: filePath)
 
         switch self.type {
         case .sceneModal, .sceneBanner, .sceneEmbedded:
-            try await displayScene(data, skipRealImages: skipRealImages)
+            try await displayScene(data, isUITest: isUITest)
         case .messageModal, .messageBanner, .messageFullscreen, .messageHTML:
             try await displayMessage(data)
         }
@@ -210,19 +210,23 @@ extension LayoutFile {
 
 
     @MainActor
-    private func displayScene(_ data: Data, skipRealImages: Bool) async throws {
+    private func displayScene(_ data: Data, isUITest: Bool) async throws {
         // Extract layout from potentially wrapped payload (in_app_message.message.display.layout)
         var layoutData = try extractLayoutFromPayload(data)
-        layoutData = try Self.applyingUITestFixups(in: layoutData, isUITest: skipRealImages)
+        layoutData = try Self.applyingUITestFixups(in: layoutData, isUITest: isUITest)
         let layout = try JSONDecoder().decode(AirshipLayout.self, from: layoutData)
 
         let message = InAppMessage(name: "thomas", displayContent: .airshipLayout(layout))
         try await Airship.inAppAutomation.viewTester.display(
             message: message,
-            imageProviderOverride: Self.thomasImageProvider(fallbackToPlaceholder: skipRealImages),
-            animationsEnabled: !skipRealImages
+            imageProviderOverride: Self.thomasImageProvider(fallbackToPlaceholder: isUITest),
+            animationsEnabled: !isUITest,
+            randomSeed: isUITest ? Self.uiTestRandomSeed : nil
         )
     }
+
+    /// The seed web's UI tests pass too, so randomized option order compares across platforms.
+    private static let uiTestRandomSeed: String = "ui-test"
 
     /// The image any Thomas view's URL resolves to when the SDK's own image loader has no
     /// answer for it otherwise - media, image buttons, stack image items, whatever needs one,
@@ -237,7 +241,6 @@ extension LayoutFile {
     ///     random playback phase (the player chrome itself is not exercised)
     ///   - web views load a small inline placeholder page instead of remote content
     ///   - pager `automated_actions` are dropped, so stories stay on their first page
-    ///   - `randomize_children` is turned off, so option order is stable
     private static func applyingUITestFixups(in data: Data, isUITest: Bool) throws -> Data {
         guard isUITest else {
             return data
@@ -254,10 +257,6 @@ extension LayoutFile {
                     dict["media_type"] = "image"
                 }
                 dict["automated_actions"] = nil
-                // Randomized child order is a different screenshot on every run.
-                if dict["randomize_children"] as? Bool == true {
-                    dict["randomize_children"] = false
-                }
                 for (key, value) in dict {
                     dict[key] = rewrite(value)
                 }

@@ -109,25 +109,6 @@ enum GridColumns {
         return Int(min(CGFloat(maxColumns), max(1, fits)))
     }
 
-    /// Orders items for placement and reading: ascending `order`, keeping `base` order among equal ones.
-    ///
-    /// `base` is the list order, or the `randomize_children` shuffle, so shuffling mixes only items of
-    /// one order: a "None of these" at `order: 1` stays last.
-    ///
-    /// - Parameters:
-    ///   - base: item indices in list or shuffled order
-    ///   - orders: each item's resolved `order`, by item index; `nil` is 0
-    /// - Returns: the item indices in placement order
-    static func placementOrder(_ base: [Int], orders: [Double?]) -> [Int] {
-        base.enumerated()
-            .sorted { lhs, rhs in
-                let lhsOrder = orders[lhs.element] ?? 0
-                let rhsOrder = orders[rhs.element] ?? 0
-                return lhsOrder != rhsOrder ? lhsOrder < rhsOrder : lhs.offset < rhs.offset
-            }
-            .map(\.element)
-    }
-
     /// Places items in rows in list order; an item that doesn't fit what's left of its row starts the next, and nothing backfills.
     ///
     /// A short row keeps its cells' widths and is offset by `alignment`: one item in 3 columns

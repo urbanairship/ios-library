@@ -265,6 +265,8 @@ indirect enum ThomasViewInfo: ThomasSerializable {
 
         struct Properties: ThomasSerializable {
             let type: ViewType = .linearLayout
+            /// Tells a `randomize_children` shuffle apart from others with the same item count.
+            var identifier: String?
             var direction: ThomasDirection
             var randomizeChildren: Bool?
             var items: [Item]
@@ -272,6 +274,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
 
             private enum CodingKeys: String, CodingKey {
                 case type
+                case identifier
                 case direction
                 case randomizeChildren = "randomize_children"
                 case items
@@ -284,6 +287,24 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var margin: ThomasMargin?
             var view: ThomasViewInfo
             var position: ThomasPosition?
+            /// Where the item falls among its siblings.
+            var config: ItemConfig?
+            /// Changes to the item's properties with state: per property, the first match replaces it whole.
+            var overrides: ItemOverrides?
+        }
+
+        /// How one item is placed among its siblings.
+        struct ItemConfig: ThomasSerializable {
+            /// Items lay out, and are read, in ascending `order`, list order among equal ones. Defaults to 0.
+            ///
+            /// With `randomize_children` the shuffle comes first and mixes only items of one `order`,
+            /// so a "None of these" at `order: 1` stays last.
+            var order: Double?
+        }
+
+        /// An item's overrides: the same shape as `view_overrides`, for an item that isn't a view.
+        struct ItemOverrides: ThomasSerializable {
+            var config: [ThomasPropertyOverride<ItemConfig>]?
         }
     }
 
