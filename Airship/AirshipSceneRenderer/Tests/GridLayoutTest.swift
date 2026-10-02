@@ -22,10 +22,6 @@ struct GridLayoutTest {
         try JSONDecoder().decode(Config.self, from: Data(json.utf8))
     }
 
-    private func configs(_ json: String) throws -> ThomasViewInfo.GridLayout.Configs<Config> {
-        try JSONDecoder().decode(ThomasViewInfo.GridLayout.Configs<Config>.self, from: Data(json.utf8))
-    }
-
     private func fit(_ max: Int, minWidth: String, spacing: Int? = nil) -> String {
         let spacingField = spacing.map { #", "column_spacing": {"type": "fixed", "space": \#($0)}"# } ?? ""
         return #"{"columns": {"type": "fit", "max": \#(max), "min_width": \#(minWidth)}\#(spacingField)}"#
@@ -188,24 +184,70 @@ struct GridLayoutTest {
         #expect(GridColumns.columnCount(scaled, width: 320, textScale: 1) == 6)
     }
 
-    @Test("takes the first matching selector, with inclusive grid_width bounds")
-    func selectors() throws {
-        let configs = try configs(#"""
+    private static func gridWidth(_ range: String) -> String {
+        #"{"scope": ["$grids", "current", "width"], "value": \#(range)}"#
+    }
+
+    @MainActor
+    private func gridScopedState(_ state: AirshipJSON = [:], width: CGFloat?) -> ThomasState {
+        ThomasState(
+            mutableState: ThomasState.MutableState(initialState: state),
+            gridState: ThomasGridState(width: width),
+            onStateChange: { _ in }
+        )
+    }
+
+    @MainActor
+    private func gridConfig(
+        _ grid: ThomasViewInfo.GridLayout,
+        state: AirshipJSON = [:],
+        width: CGFloat?
+    ) -> Config {
+        ThomasPropertyOverride.resolveRequired(
+            state: gridScopedState(state, width: width),
+            overrides: grid.overrides?.config,
+            defaultValue: grid.properties.config
+        )
+    }
+
+    @MainActor
+    private func itemSpans(_ grid: ThomasViewInfo.GridLayout, width: CGFloat?) -> [Double?] {
+        let state = gridScopedState(width: width)
+        return grid.properties.items.map { item in
+            ThomasPropertyOverride.resolveOptional(
+                state: state,
+                overrides: item.overrides?.config,
+                defaultValue: item.config
+            )?.columnSpan
+        }
+    }
+
+    private func gridInfo(_ json: String) throws -> ThomasViewInfo.GridLayout {
+        let view = try JSONDecoder().decode(ThomasViewInfo.self, from: Data(json.utf8))
+        guard case .gridLayout(let grid) = view else {
+            throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "expected a grid layout"))
+        }
+        return grid
+    }
+
+    @MainActor
+    @Test("takes the first matching config override, with inclusive $grids.current.width bounds")
+    func configOverrides() throws {
+        let grid = try gridInfo(#"""
         {
-          "default": \#(fixed(1)),
-          "selectors": [
-            {"grid_width": {"at_most": 300}, "config": \#(fixed(2))},
-            {"grid_width": {"at_least": 300}, "config": \#(fixed(3))},
-            {"platform": "android", "config": \#(fixed(4))}
-          ]
+          "type": "grid_layout", "identifier": "grid-1",
+          "config": \#(fixed(1)),
+          "view_overrides": {
+            "config": [
+              {"when_state_matches": \#(Self.gridWidth(#"{"at_most": 300}"#)), "value": \#(fixed(2))},
+              {"when_state_matches": \#(Self.gridWidth(#"{"at_least": 300}"#)), "value": \#(fixed(3))}
+            ]
+          },
+          "items": []
         }
         """#)
         func columns(_ width: CGFloat?) -> Int {
-            GridColumns.columnCount(
-                GridColumns.resolveConfig(configs, environment: .init(gridWidth: width)),
-                width: width,
-                textScale: 1
-            )
+            GridColumns.columnCount(gridConfig(grid, width: width), width: width, textScale: 1)
         }
         #expect(columns(250) == 2)
         #expect(columns(300) == 2)
@@ -213,69 +255,76 @@ struct GridLayoutTest {
         #expect(columns(nil) == 1)
     }
 
-    @Test("matches platform, window size and orientation")
-    func environmentSelectors() throws {
-        let configs = try configs(#"""
+    @MainActor
+    @Test("config overrides match the scene state alongside $grids")
+    func configOverridesMatchState() throws {
+        let grid = try gridInfo(#"""
         {
-          "default": \#(fixed(1)),
-          "selectors": [
-            {"platform": "web", "config": \#(fixed(4))},
-            {"window_size": "large", "orientation": "landscape", "config": \#(fixed(5))},
-            {"platform": "ios", "window_size": "small", "config": \#(fixed(2))}
+          "type": "grid_layout", "identifier": "grid-2",
+          "config": \#(fixed(1)),
+          "view_overrides": {
+            "config": [
+              {"when_state_matches": {"key": "layout", "value": {"equals": "wide"}}, "value": \#(fixed(5))}
+            ]
+          },
+          "items": []
+        }
+        """#)
+        #expect(GridColumns.columnCount(gridConfig(grid, state: ["layout": "wide"], width: 300), width: 300, textScale: 1) == 5)
+        #expect(GridColumns.columnCount(gridConfig(grid, state: ["layout": "narrow"], width: 300), width: 300, textScale: 1) == 1)
+    }
+
+    @MainActor
+    @Test("$grids follows the grid's width, leaves width out when unbounded, and stays out of the parent state")
+    func gridsState() {
+        let parent = ThomasState(mutableState: ThomasState.MutableState(), onStateChange: { _ in })
+        let gridState = ThomasGridState(width: nil)
+        let scoped = parent.with(gridState: gridState)
+        #expect(scoped.state.object?["$grids"] == ["current": [:]])
+
+        gridState.width = 320
+        #expect(scoped.state.object?["$grids"] == ["current": ["width": 320]])
+        #expect(parent.state.object?["$grids"] == nil)
+    }
+
+    @MainActor
+    @Test("an item override resolves its span by the grid's width")
+    func itemOverrides() throws {
+        let grid = try gridInfo(#"""
+        {
+          "type": "grid_layout", "identifier": "grid-3",
+          "config": \#(fixed(12)),
+          "items": [
+            {
+              "config": {"column_span": 6},
+              "overrides": {"config": [{"when_state_matches": \#(Self.gridWidth(#"{"at_most": 400}"#)), "value": {"column_span": 12}}]},
+              "view": {"type": "empty_view"}
+            }
           ]
         }
         """#)
-        func columns(_ windowSize: ThomasWindowSize, _ orientation: ThomasOrientation) -> Int {
-            GridColumns.columnCount(
-                GridColumns.resolveConfig(
-                    configs,
-                    environment: .init(windowSize: windowSize, orientation: orientation)
-                ),
-                width: 300,
-                textScale: 1
-            )
-        }
-        #expect(columns(.small, .portrait) == 2)
-        #expect(columns(.large, .landscape) == 5)
-        #expect(columns(.large, .portrait) == 1)
+        #expect(itemSpans(grid, width: 600) == [6])
+        #expect(itemSpans(grid, width: 400) == [12])
+        #expect(itemSpans(grid, width: 250) == [12])
+        #expect(itemSpans(grid, width: nil) == [6])
     }
 
-    @Test("an item config resolves its span by the grid's selectors and width")
-    func itemSelectors() throws {
-        let item = try JSONDecoder().decode(
-            ThomasViewInfo.GridLayout.Configs<ThomasViewInfo.GridLayout.ItemConfig>.self,
-            from: Data(#"""
-            {
-              "default": {"column_span": 6},
-              "selectors": [{"grid_width": {"at_most": 400}, "config": {"column_span": 12}}]
-            }
-            """#.utf8)
-        )
-        func span(_ width: CGFloat?) -> Double? {
-            GridColumns.resolveConfig(item, environment: .init(gridWidth: width)).columnSpan
-        }
-        #expect(span(600) == 6)
-        #expect(span(400) == 12)
-        #expect(span(250) == 12)
-        #expect(span(nil) == 6)
-    }
-
+    @MainActor
     @Test("a 12-column grid lays halves and thirds out by width")
     func twelveColumnSpans() throws {
-        let halvesToFull = try JSONDecoder().decode(
-            ThomasViewInfo.GridLayout.Configs<ThomasViewInfo.GridLayout.ItemConfig>.self,
-            from: Data(#"{"default": {"column_span": 6}, "selectors": [{"grid_width": {"at_most": 300}, "config": {"column_span": 12}}]}"#.utf8)
-        )
-        let third = try JSONDecoder().decode(
-            ThomasViewInfo.GridLayout.Configs<ThomasViewInfo.GridLayout.ItemConfig>.self,
-            from: Data(#"{"default": {"column_span": 4}}"#.utf8)
-        )
+        let half = #"""
+        {
+          "config": {"column_span": 6},
+          "overrides": {"config": [{"when_state_matches": \#(Self.gridWidth(#"{"at_most": 300}"#)), "value": {"column_span": 12}}]},
+          "view": {"type": "empty_view"}
+        }
+        """#
+        let third = #"{"config": {"column_span": 4}, "view": {"type": "empty_view"}}"#
+        let grid = try gridInfo(#"""
+        {"type": "grid_layout", "identifier": "grid-4", "config": \#(fixed(12)), "items": [\#(half), \#(half), \#(third), \#(third), \#(third)]}
+        """#)
         func rows(at width: CGFloat) -> [Int] {
-            let environment = GridColumns.Environment(gridWidth: width)
-            let spans = [halvesToFull, halvesToFull, third, third, third].map {
-                GridColumns.resolveConfig($0, environment: environment).columnSpan
-            }
-            return GridColumns.place(spans: spans, columns: 12, alignment: .start).map(\.row)
+            GridColumns.place(spans: itemSpans(grid, width: width), columns: 12, alignment: .start).map(\.row)
         }
         #expect(rows(at: 360) == [0, 0, 1, 1, 1])
         #expect(rows(at: 250) == [0, 1, 2, 2, 2])
@@ -304,24 +353,25 @@ struct GridLayoutTest {
         #expect(placements.map(\.row) == [0, 1, 1])
     }
 
+    @MainActor
     @Test("decodes a grid_layout view")
     func decoding() throws {
         let json = #"""
         {
-          "type": "grid_layout",
+          "type": "grid_layout", "identifier": "grid-5",
           "config": {
-            "default": {
-              "columns": {"type": "fit", "max": 11, "min_width": {"type": "text_scaled", "size": 44}, "max_width": {"type": "fixed", "size": 64}},
-              "column_spacing": {"type": "fixed", "space": 6},
-              "row_spacing": {"type": "fixed", "space": 6},
-              "partial_row_position": "center",
-              "content_position": {"horizontal": "center", "vertical": "bottom"},
-              "cell_aspect_ratio": 1
-            },
-            "selectors": [{"grid_width": {"at_least": 480}, "config": {"columns": {"type": "fixed", "count": 6}}}]
+            "columns": {"type": "fit", "max": 11, "min_width": {"type": "text_scaled", "size": 44}, "max_width": {"type": "fixed", "size": 64}},
+            "column_spacing": {"type": "fixed", "space": 6},
+            "row_spacing": {"type": "fixed", "space": 6},
+            "partial_row_position": "center",
+            "content_position": {"horizontal": "center", "vertical": "bottom"},
+            "cell_aspect_ratio": 1
+          },
+          "view_overrides": {
+            "config": [{"when_state_matches": \#(Self.gridWidth(#"{"at_least": 480}"#)), "value": {"columns": {"type": "fixed", "count": 6}}}]
           },
           "items": [
-            {"config": {"default": {"column_span": 2}, "selectors": [{"platform": "ios", "config": {"column_span": 3}}]}, "view": {"type": "empty_view"}},
+            {"config": {"column_span": 2}, "overrides": {"config": [{"value": {"column_span": 3}}]}, "view": {"type": "empty_view"}},
             {"size": {"width": 50, "height": "auto"}, "position": {"horizontal": "start", "vertical": "top"}, "view": {"type": "empty_view"}}
           ],
           "header": {"size": {"width": "100%", "height": "auto"}, "position": {"horizontal": "start", "vertical": "center"}, "view": {"type": "empty_view"}},
@@ -336,24 +386,27 @@ struct GridLayoutTest {
             return
         }
         let properties = grid.properties
-        #expect(properties.config.defaultConfig.columns == .fit(
+        #expect(properties.config.columns == .fit(
             max: 11,
             minWidth: .init(type: .textScaled, size: 44),
             maxWidth: .init(type: .fixed, size: 64)
         ))
-        #expect(properties.config.defaultConfig.contentPosition == ThomasPosition(horizontal: .center, vertical: .bottom))
-        #expect(properties.config.selectors?.first?.config.columns == .fixed(count: 6))
-        #expect(properties.config.defaultConfig.partialRowPosition == .center)
-        #expect(properties.config.selectors?.first?.gridWidth?.atLeast == 480)
-        #expect(properties.items[0].config?.defaultConfig.columnSpan == 2)
-        #expect(properties.items[0].config?.selectors?.first?.config.columnSpan == 3)
+        #expect(properties.identifier == "grid-5")
+        #expect(properties.config.contentPosition == ThomasPosition(horizontal: .center, vertical: .bottom))
+        #expect(properties.config.partialRowPosition == .center)
+        #expect(grid.overrides?.config?.first?.value?.columns == .fixed(count: 6))
+        #expect(gridConfig(grid, width: 480).columns == .fixed(count: 6))
+        #expect(gridConfig(grid, width: 479).columns == properties.config.columns)
+        #expect(properties.items[0].config?.columnSpan == 2)
+        #expect(properties.items[0].overrides?.config?.first?.value?.columnSpan == 3)
         #expect(properties.items[1].config == nil)
+        #expect(properties.items[1].overrides == nil)
         #expect(properties.items[0].resolvedSize == ThomasSize(width: .percent(100), height: .auto))
         #expect(properties.items[0].resolvedPosition == ThomasPosition(horizontal: .center, vertical: .center))
         #expect(properties.items[1].resolvedPosition == ThomasPosition(horizontal: .start, vertical: .top))
         #expect(properties.accessibilityRole?.type == .listView)
         #expect(properties.randomizeChildren == true)
-        #expect(properties.config.defaultConfig.columnSpacing == .fixed(space: 6))
+        #expect(properties.config.columnSpacing == .fixed(space: 6))
         #expect(properties.header?.resolvedPosition == ThomasPosition(horizontal: .start, vertical: .center))
         #expect(properties.footer?.resolvedSize == ThomasSize(width: .percent(100), height: .auto))
         #expect(view.immediateChildren?.count == 4)
@@ -361,22 +414,23 @@ struct GridLayoutTest {
 
     @Test("a grid supplies its own width only when every config is fit with a minimum")
     func establishesWidthFromMinimum() throws {
-        func grid(_ configs: String) throws -> ThomasViewInfo {
-            try JSONDecoder().decode(ThomasViewInfo.self, from: Data(#"""
-            {"type": "grid_layout", "config": \#(configs),
+        func grid(_ config: String, overrides: String? = nil) throws -> ThomasViewInfo {
+            let viewOverrides = overrides.map { #", "view_overrides": {"config": \#($0)}"# } ?? ""
+            return try JSONDecoder().decode(ThomasViewInfo.self, from: Data(#"""
+            {"type": "grid_layout", "identifier": "grid-6", "config": \#(config)\#(viewOverrides),
              "items": [{"size": {"width": "100%", "height": "100%"}, "view": {"type": "empty_view"}}]}
             """#.utf8))
         }
         let minimum = #"{"columns": {"type": "fit", "max": 3, "min_width": {"type": "fixed", "size": 80}}}"#
+        let narrowFixed = #"[{"when_state_matches": \#(Self.gridWidth(#"{"at_most": 200}"#)), "value": {"columns": {"type": "fixed", "count": 2}}}]"#
 
-        #expect(try grid(#"{"default": \#(minimum)}"#).establishesLength(on: .horizontal))
-        #expect(try !grid(#"{"default": {"columns": {"type": "fixed", "count": 3}}}"#).establishesLength(on: .horizontal))
-        #expect(try !grid(#"{"default": \#(minimum), "selectors": [{"grid_width": {"at_most": 200}, "config": {"columns": {"type": "fixed", "count": 2}}}]}"#)
-            .establishesLength(on: .horizontal))
-        #expect(try !grid(#"{"default": {"columns": {"type": "fit", "max": 3, "min_width": {"type": "fixed", "size": 0}}}}"#)
+        #expect(try grid(minimum).establishesLength(on: .horizontal))
+        #expect(try !grid(#"{"columns": {"type": "fixed", "count": 3}}"#).establishesLength(on: .horizontal))
+        #expect(try !grid(minimum, overrides: narrowFixed).establishesLength(on: .horizontal))
+        #expect(try !grid(#"{"columns": {"type": "fit", "max": 3, "min_width": {"type": "fixed", "size": 0}}}"#)
             .establishesLength(on: .horizontal))
         // A minimum says nothing about the grid's height; the items here take a share of theirs.
-        #expect(try !grid(#"{"default": \#(minimum)}"#).establishesLength(on: .vertical))
+        #expect(try !grid(minimum).establishesLength(on: .vertical))
     }
 
     @Test("an auto child of a horizontal scroll's content carries the scrolling axis until a length is declared")

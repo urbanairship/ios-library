@@ -17,6 +17,7 @@ final class ThomasState: ObservableObject {
     private let mutableState: MutableState?
     private let asyncViewState: ThomasAsyncViewState?
     private let environmentState: ThomasEnvironmentState?
+    private let gridState: ThomasGridState?
 
     // On-device AI status source. Not a state object — its value is streamed from
     // the executor and bridged onto a publisher below.
@@ -40,6 +41,7 @@ final class ThomasState: ObservableObject {
         fileprivate var asyncViewStatus: ThomasAsyncViewState.Status?
         fileprivate var aiStatus: SceneAIStatus?
         fileprivate var environment: ThomasEnvironmentState.Values?
+        fileprivate var grid: AirshipJSON?
 
         /// Generates the final AirshipJSON based strictly on this snapshot data
         func toAirshipJSON() -> AirshipJSON {
@@ -93,6 +95,10 @@ final class ThomasState: ObservableObject {
                 result["$ai"] = .object(["current": encoded])
             }
 
+            if let grid {
+                result[ThomasGridState.stateKey] = grid
+            }
+
             // Last, so a `$environment` key in the mutable state can't shadow the platform's values.
             if let environment {
                 result[ThomasEnvironmentState.stateKey] = environment.json
@@ -112,6 +118,7 @@ final class ThomasState: ObservableObject {
         mutableState: MutableState? = nil,
         asyncViewState: ThomasAsyncViewState? = nil,
         environmentState: ThomasEnvironmentState? = nil,
+        gridState: ThomasGridState? = nil,
         sceneAIExecutor: (any SceneAIExecutor)? = nil,
         onStateChange: @escaping @Sendable @MainActor (AirshipJSON) -> Void
     ) {
@@ -121,6 +128,7 @@ final class ThomasState: ObservableObject {
         self.mutableState = mutableState
         self.asyncViewState = asyncViewState
         self.environmentState = environmentState
+        self.gridState = gridState
         self.sceneAIExecutor = sceneAIExecutor
         self.onStateChange = onStateChange
         
@@ -146,7 +154,8 @@ final class ThomasState: ObservableObject {
             videoMuted: videoState?.isMuted,
             mutableStateValue: mutableState?.state,
             asyncViewStatus: asyncViewState?.status,
-            environment: environmentState?.values
+            environment: environmentState?.values,
+            grid: gridState.map { ThomasGridState.json(width: $0.width) }
         )
     }
 
@@ -160,6 +169,7 @@ final class ThomasState: ObservableObject {
         asyncViewState?.$status.sink { [weak self] in self?.updateSnapshot(asyncViewStatus: $0) }.store(in: &subscriptions)
         aiStatusSubject.sink { [weak self] in self?.updateSnapshot(aiStatus: $0) }.store(in: &subscriptions)
         environmentState?.$values.sink { [weak self] in self?.updateSnapshot(environment: $0) }.store(in: &subscriptions)
+        gridState?.$width.sink { [weak self] in self?.updateSnapshot(grid: ThomasGridState.json(width: $0)) }.store(in: &subscriptions)
     }
 
     /// Bridges the executor's `statusUpdates` async stream onto `aiStatusSubject`
@@ -185,7 +195,8 @@ final class ThomasState: ObservableObject {
         mutableStateValue: AirshipJSON? = nil,
         asyncViewStatus: ThomasAsyncViewState.Status? = nil,
         aiStatus: SceneAIStatus? = nil,
-        environment: ThomasEnvironmentState.Values? = nil
+        environment: ThomasEnvironmentState.Values? = nil,
+        grid: AirshipJSON? = nil
     ) {
         // Update the snapshot with provided values
         if let val = formStatus { stateSnapshot.formStatus = val }
@@ -198,6 +209,7 @@ final class ThomasState: ObservableObject {
         if let val = asyncViewStatus { stateSnapshot.asyncViewStatus = val }
         if let val = aiStatus { stateSnapshot.aiStatus = val }
         if let val = environment { stateSnapshot.environment = val }
+        if let val = grid { stateSnapshot.grid = val }
 
         // Compute new output directly from the snapshot
         let newOutput = stateSnapshot.toAirshipJSON()
@@ -220,20 +232,23 @@ final class ThomasState: ObservableObject {
         pagerState: PagerState? = nil,
         videoState: VideoState? = nil,
         mutableState: MutableState? = nil,
-        asyncViewState: ThomasAsyncViewState? = nil
+        asyncViewState: ThomasAsyncViewState? = nil,
+        gridState: ThomasGridState? = nil
     ) -> ThomasState {
         let newFormState = formState ?? self.formState
         let newPagerState = pagerState ?? self.pagerState
         let newVideoState = videoState ?? self.videoState
         let newMutableState = mutableState ?? self.mutableState
         let newAsyncViewState = asyncViewState ?? self.asyncViewState
+        let newGridState = gridState ?? self.gridState
 
         // Return self if nothing changed to avoid redundant copies
         if newFormState === self.formState,
            newPagerState === self.pagerState,
            newVideoState === self.videoState,
            newMutableState === self.mutableState,
-           newAsyncViewState === self.asyncViewState {
+           newAsyncViewState === self.asyncViewState,
+           newGridState === self.gridState {
             return self
         }
 
@@ -244,6 +259,7 @@ final class ThomasState: ObservableObject {
             mutableState: newMutableState,
             asyncViewState: newAsyncViewState,
             environmentState: self.environmentState,
+            gridState: newGridState,
             sceneAIExecutor: self.sceneAIExecutor,
             onStateChange: self.onStateChange
         )

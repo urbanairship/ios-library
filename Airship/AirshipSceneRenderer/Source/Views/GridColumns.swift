@@ -3,21 +3,12 @@
 import Foundation
 import CoreGraphics
 
-/// The config selection, column fit and row placement behind `grid_layout`.
+/// The config overrides, column fit and row placement behind `grid_layout`.
 enum GridColumns {
     typealias Config = ThomasViewInfo.GridLayout.Config
 
     /// Slack in the column fit so a width that fits a whole number of columns exactly still fits them after rounding.
     static let fitEpsilon: CGFloat = 0.5
-
-    /// What a config selector is matched against.
-    struct Environment: Equatable {
-        var platform: ThomasPlatform = .ios
-        var windowSize: ThomasWindowSize?
-        var orientation: ThomasOrientation?
-        /// The grid's inner width, or `nil` for an unbounded grid.
-        var gridWidth: CGFloat?
-    }
 
     /// Where one item sits in the grid.
     struct Placement: Equatable, Sendable {
@@ -27,44 +18,6 @@ enum GridColumns {
         var halfColumn: Int
         /// The whole columns the item covers, between 1 and the column count.
         var span: Int
-    }
-
-    /// Picks the first selector whose conditions all match, or `default` when none does.
-    ///
-    /// The grid and each of its items resolve against the same environment, so a span and the
-    /// column count it is capped at come from one reading of the width. A selector naming
-    /// `grid_width` never matches an unbounded grid.
-    ///
-    /// - Parameters:
-    ///   - configs: the grid's or an item's `config`
-    ///   - environment: what the selectors are matched against
-    /// - Returns: the config to lay the grid or the item out with
-    static func resolveConfig<Value>(
-        _ configs: ThomasViewInfo.GridLayout.Configs<Value>,
-        environment: Environment
-    ) -> Value {
-        let match = configs.selectors?.first { selector in
-            if let platform = selector.platform, platform != environment.platform { return false }
-            if let windowSize = selector.windowSize, windowSize != environment.windowSize { return false }
-            if let orientation = selector.orientation, orientation != environment.orientation { return false }
-            if let range = selector.gridWidth {
-                guard let width = environment.gridWidth, inRange(width, range) else { return false }
-            }
-            return true
-        }
-        return match?.config ?? configs.defaultConfig
-    }
-
-    /// Whether a length falls inside a range, both ends inclusive.
-    ///
-    /// - Parameters:
-    ///   - length: the length in points
-    ///   - range: the range to test against
-    /// - Returns: true when the length is inside it
-    static func inRange(_ length: CGFloat, _ range: ThomasViewInfo.GridLayout.LengthRange) -> Bool {
-        if let atLeast = range.atLeast, length < atLeast { return false }
-        if let atMost = range.atMost, length > atMost { return false }
-        return true
     }
 
     /// The minimum column width of `fit` columns, after any text scaling it asks for.

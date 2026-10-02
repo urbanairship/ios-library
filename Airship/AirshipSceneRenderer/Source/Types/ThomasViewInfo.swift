@@ -288,15 +288,20 @@ indirect enum ThomasViewInfo: ThomasSerializable {
     }
 
     /// Rows of equal-width cells whose column count comes from the grid's own width, never its items.
+    ///
+    /// `view_overrides.config` changes the config with state. The grid's width is at
+    /// `$grids.current.width` for the grid itself, its items' `overrides` and everything inside it,
+    /// until a nested grid takes over.
     struct GridLayout: BaseInfo {
         var commonProperties: CommonViewProperties
         var commonOverrides: CommonViewOverrides?
         var properties: Properties
+        var overrides: Overrides?
 
         func encode(to encoder: any Encoder) throws {
             try encoder.encode(
                 properties: commonProperties, properties,
-                overrides: commonOverrides
+                overrides: commonOverrides, overrides
             )
         }
 
@@ -304,11 +309,17 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             self.commonProperties = try decoder.decodeProperties()
             self.properties = try decoder.decodeProperties()
             self.commonOverrides = try decoder.decodeOverrides()
+            self.overrides = try decoder.decodeOverrides()
+        }
+
+        struct Overrides: ThomasSerializable {
+            var config: [ThomasPropertyOverride<Config>]?
         }
 
         struct Properties: ThomasSerializable {
             let type: ViewType = .gridLayout
-            var config: Configs<Config>
+            var identifier: String
+            var config: Config
             var items: [Item]
             /// A view above the cells, as wide as the block of columns.
             var header: Edge?
@@ -321,6 +332,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
 
             private enum CodingKeys: String, CodingKey {
                 case type
+                case identifier
                 case config
                 case items
                 case header
@@ -328,34 +340,6 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case randomizeChildren = "randomize_children"
                 case backgrounds
                 case accessibilityRole = "accessibility_role"
-            }
-        }
-
-        /// A `default` config and the selectors that can replace it, for a grid or one of its items.
-        struct Configs<Value: ThomasSerializable>: ThomasSerializable {
-            var defaultConfig: Value
-            var selectors: [Selector<Value>]?
-
-            private enum CodingKeys: String, CodingKey {
-                case defaultConfig = "default"
-                case selectors
-            }
-        }
-
-        /// A config for the conditions it names. It replaces `default` whole; nothing is merged.
-        struct Selector<Value: ThomasSerializable>: ThomasSerializable {
-            var platform: ThomasPlatform?
-            var windowSize: ThomasWindowSize?
-            var orientation: ThomasOrientation?
-            var gridWidth: LengthRange?
-            var config: Value
-
-            private enum CodingKeys: String, CodingKey {
-                case platform
-                case windowSize = "window_size"
-                case orientation
-                case gridWidth = "grid_width"
-                case config
             }
         }
 
@@ -500,17 +484,6 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             case textScaled = "text_scaled"
         }
 
-        /// A range of lengths in points, both ends inclusive; an omitted end is unbounded.
-        struct LengthRange: ThomasSerializable {
-            var atLeast: Double?
-            var atMost: Double?
-
-            private enum CodingKeys: String, CodingKey {
-                case atLeast = "at_least"
-                case atMost = "at_most"
-            }
-        }
-
         struct AccessibilityRole: ThomasSerializable {
             var type: RoleType
 
@@ -540,8 +513,10 @@ indirect enum ThomasViewInfo: ThomasSerializable {
 
             var identifier: String?
             var size: ThomasSize?
-            /// The item's placement, resolved by the same selectors and width as the grid's own config.
-            var config: Configs<ItemConfig>?
+            /// Where the item sits among its grid's columns.
+            var config: ItemConfig?
+            /// Changes to the item's properties with state: per property, the first match replaces it whole.
+            var overrides: ItemOverrides?
             var margin: ThomasMargin?
             var view: ThomasViewInfo
             var position: ThomasPosition?
@@ -550,6 +525,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case identifier
                 case size
                 case config
+                case overrides
                 case margin
                 case view
                 case position
@@ -557,6 +533,11 @@ indirect enum ThomasViewInfo: ThomasSerializable {
 
             var resolvedSize: ThomasSize { size ?? Self.defaultSize }
             var resolvedPosition: ThomasPosition { position ?? Self.defaultPosition }
+        }
+
+        /// An item's overrides: the same shape as `view_overrides`, for an item that isn't a view.
+        struct ItemOverrides: ThomasSerializable {
+            var config: [ThomasPropertyOverride<ItemConfig>]?
         }
     }
 

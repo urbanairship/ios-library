@@ -6,10 +6,24 @@ import SwiftUI
 
 /// Grid layout: rows of equal-width cells whose column count comes from the grid's own width.
 struct GridLayout: View {
-    @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject private var thomasState: ThomasState
-    @Environment(\.windowSize) private var windowSize
-    @Environment(\.orientation) private var orientation
+
+    private let info: ThomasViewInfo.GridLayout
+    private let constraints: ViewConstraints
+
+    init(info: ThomasViewInfo.GridLayout, constraints: ViewConstraints) {
+        self.info = info
+        self.constraints = constraints
+    }
+
+    var body: some View {
+        GridLayoutContent(info: info, constraints: constraints, parentState: thomasState)
+            .id(info.properties.identifier)
+    }
+}
+
+private struct GridLayoutContent: View {
+    @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @Environment(\.layoutDirection) private var layoutDirection
     // Read so a text size change re-renders a `text_scaled` minimum.
     @Environment(\.sizeCategory) private var sizeCategory
@@ -19,14 +33,24 @@ struct GridLayout: View {
     private let constraints: ViewConstraints
 
     /// The inner width an `auto` grid was last laid out at, which a sibling in a stack can make narrower than the offer.
-    @State private var measuredWidth: CGFloat?
+    @State private var measurement: Measurement?
 
     /// Each row's height from the last layout pass, the base its percentage heights resolve against.
     @State private var measuredRowHeights: [CGFloat] = []
 
-    init(info: ThomasViewInfo.GridLayout, constraints: ViewConstraints) {
+    @StateObject private var gridState: ThomasGridState
+
+    /// The state with this grid as `$grids.current`, for the grid itself, its items and everything inside it.
+    @StateObject private var gridScopedState: ThomasState
+
+    init(info: ThomasViewInfo.GridLayout, constraints: ViewConstraints, parentState: ThomasState) {
         self.info = info
         self.constraints = constraints
+        let gridState = ThomasGridState(
+            width: Self.gridWidth(constraints: constraints, measuredWidth: nil, borderStrokeWidth: info.commonProperties.border?.strokeWidth ?? 0)
+        )
+        self._gridState = StateObject(wrappedValue: gridState)
+        self._gridScopedState = StateObject(wrappedValue: parentState.with(gridState: gridState))
     }
 
     var body: some View {
@@ -35,7 +59,7 @@ struct GridLayout: View {
             metrics: metrics,
             layoutDirection: layoutDirection,
             definiteHeight: constraints.height != nil,
-            measuredWidth: metrics.fillsOffer ? $measuredWidth : nil,
+            measuredWidth: metrics.fillsOffer ? measuredWidthBinding : nil,
             measuredRowHeights: metrics.hasPercentHeights ? $measuredRowHeights : nil
         ) {
             edge(info.properties.header, slot: .header, metrics: metrics)
@@ -47,45 +71,90 @@ struct GridLayout: View {
         .accessibilityElement(children: .contain)
         .constraints(constraints, alignment: .top)
         .clipped()
-        // Kept out of sight until measured, so the first frame never shows the wrong columns or row heights.
-        .opacity(isAwaitingMeasurement(metrics) ? 0 : 1)
         .thomasBackgrounds(info.properties.backgrounds)
         .thomasCommon(info)
+        .environmentObject(gridScopedState)
+        .airshipOnChangeOf(gridWidth, initial: true) { width in
+            gridState.width = width
+        }
     }
 
-    private func isAwaitingMeasurement(_ metrics: GridMetrics) -> Bool {
-        (metrics.fillsOffer && measuredWidth == nil)
-            || (metrics.hasPercentHeights && measuredRowHeights.isEmpty)
+    private struct Measurement: Equatable {
+        var width: CGFloat
+        /// The offer it was measured under.
+        var maxWidth: CGFloat?
+    }
+
+    /// The measured width, while the offer is still the one it was measured under.
+    ///
+    /// The measurement lands a pass after layout, so during a resize the fresh offer is closer than
+    /// the last measurement; a sibling taking part of the offer corrects it a pass later.
+    private var measuredWidth: CGFloat? {
+        guard let measurement, measurement.maxWidth == constraints.maxWidth else { return nil }
+        return measurement.width
+    }
+
+    private var measuredWidthBinding: Binding<CGFloat?> {
+        let maxWidth = constraints.maxWidth
+        return Binding(
+            get: { measuredWidth },
+            set: { width in measurement = width.map { Measurement(width: $0, maxWidth: maxWidth) } }
+        )
+    }
+
+    private var gridWidth: CGFloat? {
+        Self.gridWidth(constraints: constraints, measuredWidth: measuredWidth, borderStrokeWidth: drawnStrokeWidth)
+    }
+
+    /// The stroke the grid draws, which `BackgroundViewModifier` pads inside an `auto` grid's offer.
+    private var drawnStrokeWidth: Double {
+        let border = ThomasPropertyOverride.resolveOptional(
+            state: gridScopedState,
+            overrides: info.commonOverrides?.border,
+            defaultValue: info.commonProperties.border
+        )
+        return border?.strokeWidth ?? 0
     }
 
     /// Whether the grid takes its width from what its parent offers rather than a length of its own.
-    private var fillsOffer: Bool {
+    private static func fillsOffer(_ constraints: ViewConstraints) -> Bool {
         constraints.width == nil && !constraints.scrollingAxes.contains(.horizontal)
     }
 
-    /// The grid's inner width, or `nil` when nothing offers it one.
+    private var fillsOffer: Bool { Self.fillsOffer(constraints) }
+
+    /// Returns the grid's inner width, or `nil` when nothing offers it one.
     ///
     /// `auto` fills what the parent offers rather than hugging the cells, which would make the column
     /// count depend on the items. Under a horizontal scroll the offer is the viewport, not a bound.
-    private var gridWidth: CGFloat? {
+    ///
+    /// - Parameters:
+    ///   - constraints: the grid's constraints
+    ///   - measuredWidth: the inner width an `auto` grid was last laid out at, if any
+    ///   - borderStrokeWidth: the grid's border stroke, taken off both sides of the offer
+    /// - Returns: the width the columns divide, or `nil` for an unbounded grid
+    private static func gridWidth(
+        constraints: ViewConstraints,
+        measuredWidth: CGFloat?,
+        borderStrokeWidth: Double
+    ) -> CGFloat? {
         if let width = constraints.width?.safeValue, !constraints.uncappedAxes.contains(.horizontal) {
             return width
         }
-        guard fillsOffer else { return nil }
+        guard fillsOffer(constraints) else { return nil }
         if let measuredWidth { return measuredWidth }
-        let stroke = CGFloat(info.commonProperties.border?.strokeWidth ?? 0) * 2
+        let stroke = CGFloat(borderStrokeWidth) * 2
         return constraints.maxWidth?.safeValue.map { max(0, $0 - stroke) }
     }
 
     private func makeMetrics() -> GridMetrics {
         let items = info.properties.items
         let width = gridWidth
-        let environment = GridColumns.Environment(
-            windowSize: windowSize,
-            orientation: orientation,
-            gridWidth: width
+        let config = ThomasPropertyOverride.resolveRequired(
+            state: gridScopedState,
+            overrides: info.overrides?.config,
+            defaultValue: info.properties.config
         )
-        let config = GridColumns.resolveConfig(info.properties.config, environment: environment)
         let textScale = CGFloat(ThomasEnvironmentState.currentTextScale)
         let columns = GridColumns.columnCount(config, width: width, textScale: textScale)
         let ratio = config.cellAspectRatio.flatMap { $0 > 0 ? CGFloat($0) : nil }
@@ -99,7 +168,11 @@ struct GridLayout: View {
         }
 
         let itemConfigs = items.map { item in
-            item.config.map { GridColumns.resolveConfig($0, environment: environment) }
+            ThomasPropertyOverride.resolveOptional(
+                state: gridScopedState,
+                overrides: item.overrides?.config,
+                defaultValue: item.config
+            )
         }
         let ordered = GridColumns.placementOrder(
             info.properties.randomizeChildren == true
@@ -113,7 +186,7 @@ struct GridLayout: View {
         }
 
         let visible = ordered.filter { index in
-            items[index].view.commonInfo.0.visibility?.isVisible(state: thomasState.state) ?? true
+            items[index].view.commonInfo.0.visibility?.isVisible(state: gridScopedState.state) ?? true
         }
         let visiblePlacements = GridColumns.place(
             spans: visible.map { itemConfigs[$0]?.columnSpan },
@@ -186,7 +259,7 @@ struct GridLayout: View {
         metrics: GridMetrics
     ) -> some View {
         if let edge {
-            let isVisible = edge.view.commonInfo.0.visibility?.isVisible(state: thomasState.state) ?? true
+            let isVisible = edge.view.commonInfo.0.visibility?.isVisible(state: gridScopedState.state) ?? true
 
             thomasEnvironment.viewFactory.createView(
                 edge.view,

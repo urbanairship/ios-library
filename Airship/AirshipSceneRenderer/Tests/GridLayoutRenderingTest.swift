@@ -3,6 +3,7 @@
 #if !os(macOS) && !os(watchOS) && !os(tvOS)
 
 import Foundation
+import Combine
 import SwiftUI
 import Testing
 import UIKit
@@ -116,9 +117,9 @@ struct GridLayoutRenderingTest {
         {"type": "linear_layout", "direction": "vertical", "items": [{
           "size": {"width": \#(width), "height": "auto"},
           "view": {
-            "type": "grid_layout",
+            "type": "grid_layout", "identifier": "grid-1",
             "background_color": {"default": {"type": "hex", "hex": "#00FF00", "alpha": 1}},
-            "config": {"default": \#(config)},
+            "config": \#(config),
             "items": [\#(items.joined(separator: ","))]
           }
         }]}
@@ -134,8 +135,8 @@ struct GridLayoutRenderingTest {
         let json = #"""
         {"type": "linear_layout", "direction": "horizontal", "items": [
           {"size": {"width": "auto", "height": "auto"}, "view": {
-            "type": "grid_layout",
-            "config": {"default": {"columns": {"type": "fit", "max": 3, "min_width": {"type": "fixed", "size": 40}}, "column_spacing": {"type": "fixed", "space": 8}}},
+            "type": "grid_layout", "identifier": "grid-2",
+            "config": {"columns": {"type": "fit", "max": 3, "min_width": {"type": "fixed", "size": 40}}, "column_spacing": {"type": "fixed", "space": 8}},
             "items": [
               {"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))},
               {"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))},
@@ -202,9 +203,9 @@ struct GridLayoutRenderingTest {
         {"type": "linear_layout", "direction": "vertical", "items": [{
           "size": {"width": \#(width), "height": "auto"},
           "view": {
-            "type": "grid_layout",
+            "type": "grid_layout", "identifier": "grid-3",
             "background_color": {"default": {"type": "hex", "hex": "#00FF00", "alpha": 1}},
-            "config": {"default": \#(config)},
+            "config": \#(config),
             \#(edges)
             "items": [\#(items.joined(separator: ","))]
           }
@@ -324,8 +325,8 @@ struct GridLayoutRenderingTest {
         {"type": "linear_layout", "direction": "vertical", "items": [{
           "size": {"width": 300, "height": 300},
           "view": {
-            "type": "grid_layout",
-            "config": {"default": {"columns": {"type": "fixed", "count": 4}, "row_spacing": \#(rowSpacing), "content_position": {"horizontal": "start", "vertical": "\#(vertical)"}}},
+            "type": "grid_layout", "identifier": "grid-4",
+            "config": {"columns": {"type": "fixed", "count": 4}, "row_spacing": \#(rowSpacing), "content_position": {"horizontal": "start", "vertical": "\#(vertical)"}},
             "items": [\#(Array(repeating: #"{"size": {"width": "100%", "height": 32}, "view": \#(Self.fill("#FF0000"))}"#, count: 12).joined(separator: ","))]
           }
         }]}
@@ -356,7 +357,7 @@ struct GridLayoutRenderingTest {
         let snapshot = try await render(grid(
             width: "300",
             items: [
-                #"{"config": {"default": {"order": 1}}, "size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#0000FF"))}"#,
+                #"{"config": {"order": 1}, "size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#0000FF"))}"#,
                 #"{"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))}"#,
                 #"{"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))}"#,
             ],
@@ -378,8 +379,8 @@ struct GridLayoutRenderingTest {
         let json = #"""
         {"type": "linear_layout", "direction": "vertical", "items": [{
           "size": {"width": 360, "height": "auto"},
-          "view": {"type": "grid_layout", "randomize_children": true,
-            "config": {"default": {"columns": {"type": "fixed", "count": 6}}},
+          "view": {"type": "grid_layout", "identifier": "grid-5", "randomize_children": true,
+            "config": {"columns": {"type": "fixed", "count": 6}},
             "items": [\#(items.joined(separator: ","))]}
         }]}
         """#
@@ -459,8 +460,8 @@ struct GridLayoutRenderingTest {
         let json = #"""
         {"type": "linear_layout", "direction": "horizontal", "items": [
           {"size": {"width": "auto", "height": "auto"}, "view": {
-            "type": "grid_layout",
-            "config": {"default": {"columns": {"type": "fixed", "count": 3}, "column_spacing": {"type": "fixed", "space": 10}}},
+            "type": "grid_layout", "identifier": "grid-6",
+            "config": {"columns": {"type": "fixed", "count": 3}, "column_spacing": {"type": "fixed", "space": 10}},
             "items": [
               {"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))},
               {"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))},
@@ -487,9 +488,9 @@ struct GridLayoutRenderingTest {
         let json = #"""
         {"type": "linear_layout", "direction": "vertical", "items": [{
           "size": {"width": "auto", "height": "auto"},
-          "view": {"type": "grid_layout",
+          "view": {"type": "grid_layout", "identifier": "grid-7",
             "border": {"stroke_width": 4, "stroke_color": {"default": {"type": "hex", "hex": "#00FF00", "alpha": 1}}},
-            "config": {"default": {"columns": {"type": "fixed", "count": 2}}},
+            "config": {"columns": {"type": "fixed", "count": 2}},
             "items": [
               {"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))},
               {"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#0000FF"))}
@@ -503,6 +504,177 @@ struct GridLayoutRenderingTest {
         #expect(red.0 == 4)
         #expect(red.1 == 146)
         #expect(snapshot.horizontalRuns(y: 14, Self.blue).first?.1 == 146)
+    }
+
+    /// A 20pt-tall fill shown only while `$grids.current.width` is in `range`.
+    private static func shownWhenGridWidth(_ range: String, hex: String) -> String {
+        #"""
+        {"size": {"width": "100%", "height": 20}, "view": {
+          "type": "empty_view",
+          "background_color": {"default": {"type": "hex", "hex": "\#(hex)", "alpha": 1}},
+          "visibility": {"default": false, "invert_when_state_matches": {"scope": ["$grids", "current", "width"], "value": \#(range)}}
+        }}
+        """#
+    }
+
+    @Test("the grid, its items' placement and the views in its cells see its width")
+    func gridWidthReachesGridAndCells() async throws {
+        let json = #"""
+        {"type": "linear_layout", "direction": "vertical", "items": [{
+          "size": {"width": 300, "height": "auto"},
+          "view": {
+            "type": "grid_layout", "identifier": "grid",
+            "background_color": {"default": {"type": "hex", "hex": "#00FF00", "alpha": 1}},
+            "visibility": {"default": false, "invert_when_state_matches": {"scope": ["$grids", "current", "width"], "value": {"at_least": 300}}},
+            "config": {"columns": {"type": "fixed", "count": 2}},
+            "items": [
+              \#(Self.shownWhenGridWidth(#"{"at_most": 200}"#, hex: "#0000FF")),
+              \#(Self.shownWhenGridWidth(#"{"at_least": 300}"#, hex: "#FF0000"))
+            ]
+          }
+        }]}
+        """#
+        let snapshot = try await render(json, constraints: bounded)
+
+        // The 300pt grid sits centred in the window. The hidden item takes no place, so the shown one
+        // starts the row and the grid's background fills the rest.
+        #expect(snapshot.horizontalRuns(y: 10, Self.red).map { [$0.0, $0.1] } == [[50, 150]])
+        #expect(snapshot.horizontalRuns(y: 10, Self.green).map { [$0.0, $0.1] } == [[200, 150]])
+        #expect(snapshot.horizontalRuns(y: 10, Self.blue).isEmpty)
+    }
+
+    @MainActor
+    private final class ResizableWidth: ObservableObject {
+        @Published var width: CGFloat = 400
+    }
+
+    private struct ResizableHost: View {
+        let view: ThomasViewInfo
+        let environment: ThomasEnvironment
+        @ObservedObject var model: ResizableWidth
+
+        var body: some View {
+            environment.viewFactory
+                .createView(view, constraints: ViewConstraints(width: model.width, height: Self.height))
+                .frame(width: GridLayoutRenderingTest.size.width, height: Self.height, alignment: .topLeading)
+                .background(Color.white)
+        }
+
+        private static let height: CGFloat = GridLayoutRenderingTest.size.height
+    }
+
+    @Test("an auto grid's column count follows a new offer on the first pass, not a pass later")
+    func columnCountFollowsNewOffer() async throws {
+        // The blue fill marks the first pass laid out at the new offer.
+        let json = #"""
+        {"type": "linear_layout", "direction": "vertical", "items": [{
+          "size": {"width": "auto", "height": "auto"},
+          "view": {
+            "type": "grid_layout", "identifier": "grid",
+            "config": {"columns": {"type": "fit", "max": 10, "min_width": {"type": "fixed", "size": 100}}},
+            "items": [{"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#FF0000"))}]
+          }
+        }, {"size": {"width": "100%", "height": 20}, "view": \#(Self.fill("#0000FF"))}]}
+        """#
+        let view = try JSONDecoder().decode(ThomasViewInfo.self, from: Data(json.utf8))
+        let model = ResizableWidth()
+        let renderer = ImageRenderer(
+            content: ResizableHost(view: view, environment: thomasEnvironment, model: model)
+                .environment(\.layoutDirection, .leftToRight)
+                .environmentObject(thomasEnvironment)
+                .environmentObject(thomasState)
+        )
+        renderer.scale = 1
+
+        func snapshot() throws -> Snapshot {
+            let cgImage = try #require(renderer.cgImage)
+            let width = Int(Self.size.width)
+            let height = Int(Self.size.height)
+            var pixels = [UInt8](repeating: 0, count: width * height * 4)
+            let context = try #require(CGContext(
+                data: &pixels,
+                width: width,
+                height: height,
+                bitsPerComponent: 8,
+                bytesPerRow: width * 4,
+                space: CGColorSpace(name: CGColorSpace.sRGB)!,
+                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+            ))
+            context.draw(cgImage, in: CGRect(origin: .zero, size: Self.size))
+            return Snapshot(pixels: pixels, width: width, height: height)
+        }
+
+        for _ in 0..<6 {
+            _ = renderer.cgImage
+            try await Task.sleep(for: .milliseconds(30))
+        }
+        // 4 columns of 100 fit in 400.
+        #expect(try snapshot().horizontalRuns(y: 10, Self.red).first?.1 == 100)
+
+        model.width = 300
+        var firstPass: Snapshot?
+        for _ in 0..<50 {
+            let frame = try snapshot()
+            if frame.horizontalRuns(y: 30, Self.blue).first?.1 == 300 {
+                firstPass = frame
+                break
+            }
+            await Task.yield()
+        }
+        // 3 columns of 100 fit in 300; the 400 measurement would still draw 4 of 75.
+        #expect(try #require(firstPass).horizontalRuns(y: 10, Self.red).first?.1 == 100)
+    }
+
+    @Test(
+        "$grids.current.width is the content width inside the border drawn, an override's included",
+        arguments: ["360", "\"auto\""]
+    )
+    func gridWidthIsInsideDrawnBorder(width: String) async throws {
+        let json = #"""
+        {"type": "linear_layout", "direction": "vertical", "items": [{
+          "size": {"width": \#(width), "height": "auto"},
+          "view": {
+            "type": "grid_layout", "identifier": "grid",
+            "border": {"stroke_width": 4, "stroke_color": {"default": {"type": "hex", "hex": "#00FF00", "alpha": 1}}},
+            "view_overrides": {"border": [{
+              "when_state_matches": {"key": "unset", "value": {"is_present": false}},
+              "value": {"stroke_width": 12, "stroke_color": {"default": {"type": "hex", "hex": "#00FF00", "alpha": 1}}}
+            }]},
+            "config": {"columns": {"type": "fixed", "count": 1}},
+            "items": [\#(Self.shownWhenGridWidth(#"{"at_least": 336, "at_most": 336}"#, hex: "#FF0000"))]
+          }
+        }]}
+        """#
+        let snapshot = try await render(json, constraints: ViewConstraints(width: 360, height: Self.size.height))
+
+        // 360 less the 12pt drawn stroke each side.
+        #expect(snapshot.horizontalRuns(y: 20, Self.red).map { [$0.0, $0.1] } == [[12, 336]])
+    }
+
+    @Test("a nested grid's width takes over for the views inside it")
+    func nestedGridTakesOver() async throws {
+        let json = #"""
+        {"type": "linear_layout", "direction": "vertical", "items": [{
+          "size": {"width": 300, "height": "auto"},
+          "view": {
+            "type": "grid_layout", "identifier": "outer",
+            "config": {"columns": {"type": "fixed", "count": 2}},
+            "items": [
+              \#(Self.shownWhenGridWidth(#"{"at_least": 300}"#, hex: "#FF0000")),
+              {"view": {
+                "type": "grid_layout", "identifier": "inner",
+                "config": {"columns": {"type": "fixed", "count": 1}},
+                "items": [\#(Self.shownWhenGridWidth(#"{"at_most": 200}"#, hex: "#0000FF"))]
+              }}
+            ]
+          }
+        }]}
+        """#
+        let snapshot = try await render(json, constraints: bounded)
+
+        // The 300pt outer grid sits centred in the window; the inner grid is its second 150pt cell.
+        #expect(snapshot.horizontalRuns(y: 10, Self.red).map { [$0.0, $0.1] } == [[50, 150]])
+        #expect(snapshot.horizontalRuns(y: 10, Self.blue).map { [$0.0, $0.1] } == [[200, 150]])
     }
 }
 
