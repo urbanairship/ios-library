@@ -218,11 +218,12 @@ fileprivate struct ContainerLayout: Layout {
                 height: dims.height.safeValue ?? 0
             )
 
+            // SwiftUI mirrors a layout's placements in RTL, so start is always minX here.
             let x: CGFloat = switch position.horizontal {
             case .start:
-                layoutDirection == .leftToRight ? bounds.minX : bounds.maxX - childSize.width
+                bounds.minX
             case .end:
-                layoutDirection == .leftToRight ? bounds.maxX - childSize.width : bounds.minX
+                bounds.maxX - childSize.width
             case .center:
                 bounds.midX - (childSize.width / 2)
             }

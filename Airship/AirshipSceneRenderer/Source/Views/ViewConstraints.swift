@@ -66,6 +66,12 @@ struct ViewConstraints: Equatable {
     /// is a sibling's extent handed back as a ceiling with nothing underneath it. Subset of
     /// `measuredAxes`; only meaningful where that axis is also set.
     var pinnedAxes: Axis.Set = []
+    /// Whether the view takes whatever height it is proposed, with no floor, instead of sizing itself.
+    ///
+    /// Measured with no proposed height it reports its content's, so a parent can find the tallest
+    /// content and then hand every view that height. A floor from an earlier measurement can't
+    /// shrink. Not inherited: a child gets its own length from this view.
+    var fillsProposedHeight: Bool = false
     /// Axes a scroll view above scrolls along with no declared length in between, so `maxWidth`/`maxHeight`
     /// there is the viewport rather than a ceiling on what this view may take.
     var scrollingAxes: Axis.Set = []

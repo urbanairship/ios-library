@@ -110,9 +110,9 @@ private struct ThomasConstraintsViewModifier: ViewModifier {
             minWidth: floorWidth,
             idealWidth: constraints.frameWidth,
             maxWidth: constraints.frameWidth,
-            minHeight: floorHeight,
+            minHeight: constraints.fillsProposedHeight ? nil : floorHeight,
             idealHeight: constraints.frameHeight,
-            maxHeight: constraints.frameHeight,
+            maxHeight: constraints.fillsProposedHeight ? .infinity : constraints.frameHeight,
             alignment: alignment ?? .center
         )
         .airshipApplyIf(fixedSize) { view in

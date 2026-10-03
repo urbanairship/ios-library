@@ -518,7 +518,7 @@ fileprivate extension View {
                 $0.hasPerItemAlignment(stackDirection: .horizontal)
             }
 
-            if hasPerItemAlignment, constraints.height == nil {
+            if hasPerItemAlignment, constraints.height == nil, !constraints.fillsProposedHeight {
                 self.fixedSize(horizontal: false, vertical: true)
             } else {
                 self

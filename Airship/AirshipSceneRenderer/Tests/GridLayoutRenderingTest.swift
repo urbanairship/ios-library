@@ -82,19 +82,48 @@ struct GridLayoutRenderingTest {
     private func render(
         _ json: String,
         constraints: ViewConstraints,
-        environment: ThomasEnvironment? = nil
+        environment: ThomasEnvironment? = nil,
+        layoutDirection: LayoutDirection = .leftToRight
     ) async throws -> Snapshot {
+        let renderer = try makeRenderer(json, constraints: constraints, environment: environment, layoutDirection: layoutDirection)
+        return try await settle(renderer)
+    }
+
+    /// Snapshots `json` once it settles, then again after `change` on the same view, so measurements it keeps carry over.
+    private func render(
+        _ json: String,
+        constraints: ViewConstraints,
+        state: ThomasState,
+        change: () -> Void
+    ) async throws -> (before: Snapshot, after: Snapshot) {
+        let renderer = try makeRenderer(json, constraints: constraints, state: state)
+        let before = try await settle(renderer)
+        change()
+        return (before, try await settle(renderer))
+    }
+
+    private func makeRenderer(
+        _ json: String,
+        constraints: ViewConstraints,
+        environment: ThomasEnvironment? = nil,
+        state: ThomasState? = nil,
+        layoutDirection: LayoutDirection = .leftToRight
+    ) throws -> ImageRenderer<some View> {
         let thomasEnvironment = environment ?? self.thomasEnvironment
         let view = try JSONDecoder().decode(ThomasViewInfo.self, from: Data(json.utf8))
         let content = thomasEnvironment.viewFactory.createView(view, constraints: constraints)
             .frame(width: Self.size.width, height: Self.size.height, alignment: .topLeading)
             .background(Color.white)
-            .environment(\.layoutDirection, .leftToRight)
+            .environment(\.layoutDirection, layoutDirection)
             .environmentObject(thomasEnvironment)
-            .environmentObject(thomasState)
+            .environmentObject(state ?? thomasState)
 
         let renderer = ImageRenderer(content: content)
         renderer.scale = 1
+        return renderer
+    }
+
+    private func settle(_ renderer: ImageRenderer<some View>) async throws -> Snapshot {
         // Each render is one layout pass; the grid's measurements land on the main queue between them.
         for _ in 0..<6 {
             _ = renderer.cgImage
@@ -727,6 +756,263 @@ struct GridLayoutRenderingTest {
         #expect(snapshot.horizontalRuns(y: 10, Self.red).map { [$0.0, $0.1] } == [[50, 150]])
         #expect(snapshot.horizontalRuns(y: 10, Self.blue).map { [$0.0, $0.1] } == [[200, 150]])
     }
+
+    // MARK: column_start
+
+    /// A 360pt grid of 12 columns, 30pt each, centred in the 400pt stack from x = 20.
+    private func twelveColumns(_ items: [String]) -> String {
+        grid(width: "360", items: items, config: #"{"columns": {"type": "fixed", "count": 12}}"#)
+    }
+
+    @Test("column_start centres an 8-of-12 card")
+    func columnStartCentres() async throws {
+        let snapshot = try await render(twelveColumns([
+            #"{"size": {"width": "100%", "height": 20}, "config": {"column_span": 8, "column_start": 2}, "view": \#(Self.fill("#FF0000"))}"#,
+        ]), constraints: bounded)
+
+        // Columns 2 to 9: 60pt in from the grid's left edge, 240 wide.
+        #expect(snapshot.horizontalRuns(y: 10, Self.red).map { [$0.0, $0.1] } == [[80, 240]])
+    }
+
+    @Test("column_start counts from the right in RTL")
+    func columnStartRTL() async throws {
+        let snapshot = try await render(twelveColumns([
+            #"{"size": {"width": "100%", "height": 20}, "config": {"column_span": 4, "column_start": 1}, "view": \#(Self.fill("#FF0000"))}"#,
+        ]), constraints: bounded, layoutDirection: .rightToLeft)
+
+        // One column in from the grid's right edge at 380: 230 to 350.
+        #expect(snapshot.horizontalRuns(y: 10, Self.red).map { [$0.0, $0.1] } == [[230, 120]])
+    }
+
+    @Test("a short row starts at the right edge in RTL")
+    func shortRowRTL() async throws {
+        let snapshot = try await render(twelveColumns([
+            #"{"size": {"width": "100%", "height": 20}, "config": {"column_span": 4}, "view": \#(Self.fill("#FF0000"))}"#,
+        ]), constraints: bounded, layoutDirection: .rightToLeft)
+
+        // The first four columns from the grid's right edge at 380.
+        #expect(snapshot.horizontalRuns(y: 10, Self.red).map { [$0.0, $0.1] } == [[260, 120]])
+    }
+
+    @Test("column_start follows an override on the grid's width")
+    func columnStartOverride() async throws {
+        let snapshot = try await render(twelveColumns([
+            #"""
+            {"size": {"width": "100%", "height": 20}, "config": {"column_span": 8, "column_start": 2},
+             "overrides": {"config": [{"when_state_matches": {"scope": ["$grids", "current", "width"], "value": {"at_most": 400}},
+                                       "value": {"column_span": 4, "column_start": 4}}]},
+             "view": \#(Self.fill("#FF0000"))}
+            """#,
+        ]), constraints: bounded)
+
+        // Columns 4 to 7, so both the overriding span and start are read.
+        #expect(snapshot.horizontalRuns(y: 10, Self.red).map { [$0.0, $0.1] } == [[140, 120]])
+    }
+
+    // MARK: percent_height_basis
+
+    private static let yellow = (255, 255, 0)
+    private static let magenta = (255, 0, 255)
+
+    /// A card filled `hex`, as tall as `height` points of filler inside it.
+    private static func card(_ hex: String, _ height: Int, filler: String = "") -> String {
+        #"""
+        {"type": "linear_layout", "direction": "vertical",
+         "background_color": {"default": {"type": "hex", "hex": "\#(hex)", "alpha": 1}},
+         "items": [{"size": {"width": "100%", "height": \#(height)}, "view": {"type": "empty_view"\#(filler)}}]}
+        """#
+    }
+
+    private static func item(_ view: String, height: String = #""100%""#, span: Int = 1) -> String {
+        #"{"size": {"width": "100%", "height": \#(height)}, "config": {"column_span": \#(span)}, "view": \#(view)}"#
+    }
+
+    /// Two 200pt columns with 8pt between rows, pooling percentage rows when `tallest` is set.
+    private func cards(_ items: [String], tallest: Bool = true, height: String = #""auto""#) -> String {
+        let basis = tallest ? #", "percent_height_basis": "tallest_row""# : ""
+        return #"""
+        {"type": "linear_layout", "direction": "vertical", "items": [{
+          "size": {"width": 400, "height": \#(height)},
+          "view": {
+            "type": "grid_layout", "identifier": "grid-cards",
+            "config": {"columns": {"type": "fixed", "count": 2}, "row_spacing": {"type": "fixed", "space": 8}\#(basis)},
+            "items": [\#(items.joined(separator: ","))]
+          }
+        }]}
+        """#
+    }
+
+    /// The height of each `color` card down column `x`, top to bottom.
+    private static func heights(_ snapshot: Snapshot, x: Int, _ color: (Int, Int, Int)) -> [Int] {
+        snapshot.verticalRuns(x: x, color).map(\.1)
+    }
+
+    @Test("tallest_row gives every 100% card the tallest card's height")
+    func tallestRowEqualCards() async throws {
+        let snapshot = try await render(cards([
+            Self.item(Self.card("#FF0000", 20)), Self.item(Self.card("#0000FF", 80)),
+            Self.item(Self.card("#FFFF00", 40)), Self.item(Self.card("#FF00FF", 10)),
+        ]), constraints: bounded)
+
+        #expect(Self.heights(snapshot, x: 100, Self.red) == [80])
+        #expect(Self.heights(snapshot, x: 300, Self.blue) == [80])
+        #expect(Self.heights(snapshot, x: 100, Self.yellow) == [80])
+        #expect(Self.heights(snapshot, x: 300, Self.magenta) == [80])
+    }
+
+    @Test("without percent_height_basis each row keeps its own height")
+    func rowBasisByDefault() async throws {
+        let snapshot = try await render(cards([
+            Self.item(Self.card("#FF0000", 20)), Self.item(Self.card("#0000FF", 80)),
+            Self.item(Self.card("#FFFF00", 40)), Self.item(Self.card("#FF00FF", 10)),
+        ], tallest: false), constraints: bounded)
+
+        #expect(Self.heights(snapshot, x: 100, Self.red) == [80])
+        #expect(Self.heights(snapshot, x: 100, Self.yellow) == [40])
+        #expect(Self.heights(snapshot, x: 300, Self.magenta) == [40])
+    }
+
+    @Test("tallest_row leaves a row of only auto cells at its own height")
+    func tallestRowKeepsAutoRow() async throws {
+        let snapshot = try await render(cards([
+            Self.item(Self.card("#FF0000", 20)), Self.item(Self.card("#0000FF", 30)),
+            Self.item(Self.card("#FFFF00", 120), height: #""auto""#, span: 2),
+        ]), constraints: bounded)
+
+        #expect(Self.heights(snapshot, x: 100, Self.red) == [30])
+        #expect(Self.heights(snapshot, x: 300, Self.blue) == [30])
+        #expect(Self.heights(snapshot, x: 100, Self.yellow) == [120])
+    }
+
+    @Test("tallest_row resolves a share under 100% against the tallest row")
+    func tallestRowHalfShare() async throws {
+        let snapshot = try await render(cards([
+            // A fixed height gives the pooled rows a basis: H is 100.
+            Self.item(Self.fill("#00FFFF"), height: "100"), Self.item(Self.card("#FF0000", 10)),
+            Self.item(Self.card("#0000FF", 10), height: #""50%""#), Self.item(Self.card("#FFFF00", 10)),
+        ]), constraints: bounded)
+
+        #expect(Self.heights(snapshot, x: 300, Self.red) == [100])
+        #expect(Self.heights(snapshot, x: 100, Self.blue) == [50])
+        #expect(Self.heights(snapshot, x: 300, Self.yellow) == [100])
+    }
+
+    @Test("tallest_row keeps a share under 100% at least as tall as its content")
+    func tallestRowShareFloorsAtContent() async throws {
+        let snapshot = try await render(cards([
+            // A fixed height gives the pooled rows a basis; the 50% card's content is the tallest.
+            Self.item(Self.fill("#00FFFF"), height: "20"), Self.item(Self.card("#FF0000", 40)),
+            Self.item(Self.card("#0000FF", 80), height: #""50%""#), Self.item(Self.card("#FFFF00", 10)),
+        ]), constraints: bounded)
+
+        #expect(Self.heights(snapshot, x: 100, Self.blue) == [80])
+        #expect(Self.heights(snapshot, x: 300, Self.yellow) == [80])
+    }
+
+    @Test("tallest_row keeps a share under 100% at least as tall as its wrapping label")
+    func tallestRowShareFloorsAtLabel() async throws {
+        let label = #"""
+        {"type": "label", "text": "A much longer body that wraps across several lines inside its narrow grid cell for sure",
+         "text_appearance": {"font_size": 14, "color": {"default": {"type": "hex", "hex": "#000000", "alpha": 1}}},
+         "background_color": {"default": {"type": "hex", "hex": "#FF0000", "alpha": 1}}}
+        """#
+        let snapshot = try await render(cards([
+            Self.item(Self.fill("#00FFFF"), height: "20"), Self.item(Self.card("#0000FF", 10)),
+            Self.item(label, height: #""50%""#), Self.item(Self.card("#FFFF00", 10)),
+        ]), constraints: bounded)
+
+        // Text can split the label's fill, so measure from its first red pixel to its last.
+        let runs = snapshot.verticalRuns(x: 199, Self.red)
+        let labelHeight = runs.last.map { $0.0 + $0.1 - runs[0].0 }
+        // The label's wrapped text sets the pooled height, so its 50% share can't be less than that.
+        #expect(labelHeight == Self.heights(snapshot, x: 300, Self.yellow).first)
+    }
+
+    @Test("tallest_row caps a share over 100% at the tallest row")
+    func tallestRowCapsShare() async throws {
+        let snapshot = try await render(cards([
+            Self.item(Self.card("#FF0000", 40)), Self.item(Self.card("#0000FF", 10), height: #""200%""#),
+        ]), constraints: bounded)
+
+        #expect(Self.heights(snapshot, x: 100, Self.red) == [40])
+        #expect(Self.heights(snapshot, x: 300, Self.blue) == [40])
+    }
+
+    @Test("tallest_row ignores the grid's own height")
+    func tallestRowIgnoresGridHeight() async throws {
+        let snapshot = try await render(cards([
+            Self.item(Self.card("#FF0000", 20)), Self.item(Self.card("#0000FF", 40)),
+            Self.item(Self.card("#FFFF00", 10)),
+        ], height: "300"), constraints: bounded)
+
+        #expect(Self.heights(snapshot, x: 100, Self.red) == [40])
+        #expect(Self.heights(snapshot, x: 300, Self.blue) == [40])
+        #expect(Self.heights(snapshot, x: 100, Self.yellow) == [40])
+    }
+
+    @Test("tallest_row shrinks when the tallest card's content does")
+    func tallestRowShrinks() async throws {
+        let hideWhenSmall = #", "visibility": {"default": true, "invert_when_state_matches": {"scope": ["small"], "value": {"equals": true}}}"#
+        let json = cards([
+            Self.item(Self.card("#FF0000", 200, filler: hideWhenSmall)), Self.item(Self.card("#0000FF", 30)),
+        ])
+        let state = ThomasState(mutableState: ThomasState.MutableState(), onStateChange: { _ in })
+        let (before, after) = try await render(json, constraints: bounded, state: state) {
+            state.processSync(outcomes: [ThomasStateAction.setState(.init(key: "small", value: .bool(true), ttl: nil)).asOutcome])
+        }
+
+        #expect(Self.heights(before, x: 100, Self.red) == [200])
+        #expect(Self.heights(before, x: 300, Self.blue) == [200])
+        // The hidden filler takes no room, so both cards drop to the short one's 30.
+        #expect(Self.heights(after, x: 300, Self.blue) == [30])
+        #expect(Self.heights(after, x: 100, Self.red) == [30])
+    }
+
+
+    // MARK: Review follow-ups
+
+    /// A label card filled `hex`.
+    private static func labelCard(_ hex: String) -> String {
+        #"""
+        {"type": "label", "text": "short",
+         "text_appearance": {"font_size": 14, "color": {"default": {"type": "hex", "hex": "#000000", "alpha": 1}}},
+         "background_color": {"default": {"type": "hex", "hex": "\#(hex)", "alpha": 1}}}
+        """#
+    }
+
+    @Test("tallest_row stretches a 100% label card to the tallest card")
+    func tallestRowLabelCard() async throws {
+        let snapshot = try await render(cards([
+            Self.item(Self.labelCard("#FF0000")), Self.item(Self.card("#0000FF", 80)),
+        ]), constraints: bounded)
+
+        #expect(Self.heights(snapshot, x: 300, Self.blue) == [80])
+        #expect(Self.heights(snapshot, x: 20, Self.red) == [80])
+    }
+
+    @Test("a share over 100% stops at its own row")
+    func rowShareCapped() async throws {
+        let snapshot = try await render(cards([
+            Self.item(Self.fill("#FF0000"), height: "40"), Self.item(Self.fill("#0000FF"), height: #""200%""#),
+            Self.item(Self.fill("#FFFF00"), height: "40"),
+        ], tallest: false), constraints: bounded)
+
+        #expect(Self.heights(snapshot, x: 300, Self.blue) == [40])
+        #expect(Self.heights(snapshot, x: 100, Self.yellow) == [40])
+    }
+
+    @Test("a container child at start sits at the right edge in RTL")
+    func containerStartRTL() async throws {
+        let json = #"""
+        {"type": "container", "items": [
+          {"position": {"horizontal": "start", "vertical": "top"}, "size": {"width": 100, "height": 20}, "view": \#(Self.fill("#FF0000"))}
+        ]}
+        """#
+        let snapshot = try await render(json, constraints: bounded, layoutDirection: .rightToLeft)
+
+        #expect(snapshot.horizontalRuns(y: 10, Self.red).map { [$0.0, $0.1] } == [[300, 100]])
+    }
+
 }
 
 #endif

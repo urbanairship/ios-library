@@ -375,6 +375,8 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             /// Where the block of cells sits when the grid is wider or taller than it. Defaults to start and top.
             var contentPosition: ThomasPosition?
             var cellAspectRatio: Double?
+            /// What a cell's percentage height is a share of. Defaults to its own row.
+            var percentHeightBasis: PercentHeightBasis?
 
             private enum CodingKeys: String, CodingKey {
                 case columns
@@ -383,7 +385,19 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case partialRowPosition = "partial_row_position"
                 case contentPosition = "content_position"
                 case cellAspectRatio = "cell_aspect_ratio"
+                case percentHeightBasis = "percent_height_basis"
             }
+        }
+
+        enum PercentHeightBasis: String, ThomasSerializable {
+            /// The cell's own row, as a percentage across a horizontal stack is.
+            case row
+            /// The tallest of the rows holding a percentage cell, which all take that height.
+            ///
+            /// `100%` on every item gives equal-height cards. Rows of only `auto` and fixed cells keep
+            /// their own heights, and the grid's own height never counts. No effect with
+            /// `cell_aspect_ratio`, which already sets every row's height.
+            case tallestRow = "tallest_row"
         }
 
         /// How many columns a grid has: always `count`, or as many of at least `minWidth` as fit, up to `max`.
@@ -442,10 +456,15 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var columnSpan: Double?
             /// Where the item falls among its siblings: ascending, list order among equal ones. Defaults to 0.
             var order: Double?
+            /// The column the item starts at, from 0 at the start edge, instead of the next free one.
+            ///
+            /// Clamped so the span fits. `column_span: 8, column_start: 2` centres a card in 12 columns.
+            var columnStart: Double?
 
             private enum CodingKeys: String, CodingKey {
                 case columnSpan = "column_span"
                 case order
+                case columnStart = "column_start"
             }
         }
 

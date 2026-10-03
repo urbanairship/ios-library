@@ -24,7 +24,6 @@ struct GridLayout: View {
 
 private struct GridLayoutContent: View {
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
-    @Environment(\.layoutDirection) private var layoutDirection
     // Read so a text size change re-renders a `text_scaled` minimum.
     @Environment(\.sizeCategory) private var sizeCategory
 
@@ -56,10 +55,9 @@ private struct GridLayoutContent: View {
         let metrics = makeMetrics()
         GridCellsLayout(
             metrics: metrics,
-            layoutDirection: layoutDirection,
             definiteHeight: constraints.height != nil,
             measuredWidth: metrics.fillsOffer ? measuredWidthBinding : nil,
-            measuredRowHeights: metrics.hasPercentHeights ? $measuredRowHeights : nil
+            measuredRowHeights: metrics.hasUnpooledPercentRows ? $measuredRowHeights : nil
         ) {
             edge(info.properties.header, slot: .header, metrics: metrics)
             ForEach(0..<info.properties.items.count, id: \.self) { index in
@@ -188,7 +186,7 @@ private struct GridLayoutContent: View {
             items[index].view.commonInfo.0.visibility?.isVisible(state: gridScopedState.state) ?? true
         }
         let visiblePlacements = GridColumns.place(
-            spans: visible.map { itemConfigs[$0]?.columnSpan },
+            visible.map { GridColumns.Request(span: itemConfigs[$0]?.columnSpan, start: itemConfigs[$0]?.columnStart) },
             columns: columns,
             alignment: config.partialRowPosition ?? .start
         )
@@ -198,12 +196,28 @@ private struct GridLayoutContent: View {
         }
 
         let rowCount = (visiblePlacements.map(\.row).max() ?? -1) + 1
+        var rowHasPercent = [Bool](repeating: false, count: rowCount)
         var rowHasBasis = [Bool](repeating: ratio != nil, count: rowCount)
-        if ratio == nil {
-            for (placement, index) in zip(visiblePlacements, visible) where !rowHasBasis[placement.row] {
-                let item = items[index]
+        for (placement, index) in zip(visiblePlacements, visible) {
+            let item = items[index]
+            if item.resolvedSize.height.isPercent { rowHasPercent[placement.row] = true }
+            if ratio == nil, !rowHasBasis[placement.row] {
                 rowHasBasis[placement.row] = item.resolvedSize.height
                     .establishesLength(view: item.view, on: .vertical)
+            }
+        }
+
+        // Pooled rows are one row for the basis question as for their height.
+        let pooledRows = config.percentHeightBasis == .tallestRow && ratio == nil
+            ? rowHasPercent
+            : [Bool](repeating: false, count: rowCount)
+        if pooledRows.contains(true) {
+            let pooledBasis = zip(visiblePlacements, visible).contains { placement, index in
+                pooledRows[placement.row] && items[index].resolvedSize.height
+                    .establishesLength(view: items[index].view, on: .vertical)
+            }
+            for row in rowHasBasis.indices where pooledRows[row] {
+                rowHasBasis[row] = pooledBasis
             }
         }
 
@@ -218,7 +232,8 @@ private struct GridLayoutContent: View {
             aspectRatio: ratio,
             placements: placements,
             rowHasBasis: rowHasBasis,
-            hasPercentHeights: ratio == nil && visible.contains { items[$0].resolvedSize.height.isPercent },
+            pooledRows: pooledRows,
+            hasUnpooledPercentRows: ratio == nil && zip(rowHasPercent, pooledRows).contains { $0 && !$1 },
             readingRank: readingRank
         )
     }
@@ -301,6 +316,11 @@ private struct GridLayoutContent: View {
     ) -> CellInfo {
         var size = item.resolvedSize
 
+        // A share over the whole is capped at its row, as on web and Android.
+        if let fraction = size.height.percentFraction, fraction > 1 {
+            size.height = .percent(100)
+        }
+
         // As across a horizontal stack: with nothing in the row to take a share of, a share under the
         // whole hugs its content. The whole still takes the row, so a row of 100% cards is one height.
         if !metrics.rowHasBasis[placement.row], let fraction = size.height.percentFraction, fraction < 1 {
@@ -308,39 +328,59 @@ private struct GridLayoutContent: View {
         }
 
         let cellWidth = metrics.spanWidth(placement.span)
-        let fixedRowHeight = metrics.fixedRowHeight
-        let rowShare = fixedRowHeight == nil ? size.height.percentFraction : nil
-        let measuredRowHeight = rowShare == nil
-            ? nil
-            : measuredRowHeights[safe: placement.row].flatMap { $0 > 0 ? $0 : nil }
-        let rowHeight = fixedRowHeight ?? measuredRowHeight
-
-        var cell = ViewConstraints(
-            width: cellWidth,
-            height: rowHeight,
-            maxWidth: cellWidth,
-            maxHeight: rowHeight ?? constraints.maxHeight,
-            isHorizontalFixedSize: cellWidth != nil,
-            isVerticalFixedSize: fixedRowHeight != nil
-        )
-        if measuredRowHeight != nil {
-            cell.measuredAxes.insert(.vertical)
-        }
-
-        var child = cell
-            .childConstraints(
+        var child: ViewConstraints
+        let rowShare: CGFloat?
+        if metrics.pooledRows[safe: placement.row] == true, let share = size.height.percentFraction {
+            // Measured as content, then given its share of the pooled height, so the height can fall.
+            size.height = .auto
+            child = ViewConstraints(
+                width: cellWidth,
+                maxWidth: cellWidth,
+                maxHeight: constraints.maxHeight,
+                isHorizontalFixedSize: cellWidth != nil
+            ).childConstraints(
                 size,
                 margin: item.margin,
                 borderStrokeWidth: item.view.borderStrokeWidth,
                 safeAreaInsetsMode: .consume
             )
-            .flooringMeasuredShare(of: size, on: measuredRowHeight == nil ? [] : .vertical)
+            child.fillsProposedHeight = true
+            rowShare = share
+        } else {
+            let fixedRowHeight = metrics.fixedRowHeight
+            rowShare = fixedRowHeight == nil ? size.height.percentFraction : nil
+            let measuredRowHeight = rowShare == nil
+                ? nil
+                : measuredRowHeights[safe: placement.row].flatMap { $0 > 0 ? $0 : nil }
+            let rowHeight = fixedRowHeight ?? measuredRowHeight
 
-        // A share is floored rather than fixed so the row can measure the content it would hug, as
-        // web sizes a row with its percentages taken as auto; the layout then proposes the share.
-        if measuredRowHeight != nil, size.aspectRatio == nil, let share = child.height {
-            child.height = nil
-            child.minHeight = max(child.minHeight ?? 0, share)
+            var cell = ViewConstraints(
+                width: cellWidth,
+                height: rowHeight,
+                maxWidth: cellWidth,
+                maxHeight: rowHeight ?? constraints.maxHeight,
+                isHorizontalFixedSize: cellWidth != nil,
+                isVerticalFixedSize: fixedRowHeight != nil
+            )
+            if measuredRowHeight != nil {
+                cell.measuredAxes.insert(.vertical)
+            }
+
+            child = cell
+                .childConstraints(
+                    size,
+                    margin: item.margin,
+                    borderStrokeWidth: item.view.borderStrokeWidth,
+                    safeAreaInsetsMode: .consume
+                )
+                .flooringMeasuredShare(of: size, on: measuredRowHeight == nil ? [] : .vertical)
+
+            // A share is floored rather than fixed so the row can measure the content it would hug, as
+            // web sizes a row with its percentages taken as auto; the layout then proposes the share.
+            if measuredRowHeight != nil, size.aspectRatio == nil, let share = child.height {
+                child.height = nil
+                child.minHeight = max(child.minHeight ?? 0, share)
+            }
         }
 
         // An item wider than its cell stops at the cell rather than running into the next one.
@@ -382,7 +422,10 @@ struct GridMetrics: Equatable {
     var placements: [GridColumns.Placement?]
     /// Whether something in each row gives it a height of its own.
     var rowHasBasis: [Bool]
-    var hasPercentHeights: Bool
+    /// The rows `tallest_row` gives one height: the tallest of them, measured with percentages as content.
+    var pooledRows: [Bool]
+    /// Whether a row outside the pool holds a percentage, which resolves against the row's measured height.
+    var hasUnpooledPercentRows: Bool
     /// Each item's position in placement and reading order, by item index.
     var readingRank: [Int]
 
@@ -467,7 +510,6 @@ struct GridCellsLayout: Layout {
     }
 
     let metrics: GridMetrics
-    let layoutDirection: LayoutDirection
     /// Whether the grid has a height of its own, which `row_alignment` places the rows within.
     let definiteHeight: Bool
     /// Where the width an `auto` grid is laid out at is reported back, for its columns to divide.
@@ -562,13 +604,17 @@ struct GridCellsLayout: Layout {
                 rowHeight = solution.rowHeights[placement.row]
             }
             let width = solution.spanWidth(halfColumn: placement.halfColumn, span: placement.span, spacing: spacing)
-            let leadingX = solution.x(halfColumn: placement.halfColumn, spacing: spacing)
-            let x = layoutDirection == .rightToLeft
-                ? bounds.maxX - leadingX - width
-                : bounds.minX + leadingX
+            // SwiftUI mirrors a layout's placements in RTL, so leading is always minX here.
+            let x = bounds.minX + solution.x(halfColumn: placement.halfColumn, spacing: spacing)
             let cellRect = CGRect(x: x, y: top, width: width, height: rowHeight)
 
-            let cellProposal = ProposedViewSize(width: width, height: rowHeight * (cell.rowShare ?? 1))
+            var proposedHeight = rowHeight * (cell.rowShare ?? 1)
+            if cell.rowShare != nil, let row = cell.row, metrics.pooledRows[safe: row] == true {
+                // A share never squeezes its content, as the per-row path's floor ensures.
+                let content = subview.sizeThatFits(ProposedViewSize(width: width, height: nil)).height.safeValue ?? 0
+                proposedHeight = min(rowHeight, max(proposedHeight, content))
+            }
+            let cellProposal = ProposedViewSize(width: width, height: proposedHeight)
             let size = subview.dimensions(in: cellProposal)
             subview.place(
                 at: origin(of: size, in: cellRect, position: cell.position),
@@ -590,12 +636,11 @@ struct GridCellsLayout: Layout {
     }
 
     private func origin(of size: ViewDimensions, in rect: CGRect, position: ThomasPosition) -> CGPoint {
-        let isRTL = layoutDirection == .rightToLeft
         let width = size.width.safeValue ?? 0
         let height = size.height.safeValue ?? 0
         let x: CGFloat = switch position.horizontal {
-        case .start: isRTL ? rect.maxX - width : rect.minX
-        case .end: isRTL ? rect.minX : rect.maxX - width
+        case .start: rect.minX
+        case .end: rect.maxX - width
         case .center: rect.midX - width / 2
         }
         let y: CGFloat = switch position.vertical {
@@ -672,6 +717,12 @@ struct GridCellsLayout: Layout {
                 rowHeight = subview.sizeThatFits(ProposedViewSize(width: width, height: nil)).height
             }
             rowHeights[placement.row] = max(rowHeights[placement.row], rowHeight.safeValue ?? 0)
+        }
+        let pooledHeight = rowHeights.indices.filter { metrics.pooledRows[safe: $0] == true }.map { rowHeights[$0] }.max()
+        if let pooledHeight {
+            for row in rowHeights.indices where metrics.pooledRows[safe: row] == true {
+                rowHeights[row] = pooledHeight
+            }
         }
         solution.rowHeights = rowHeights
         stackRows(&solution, height: height)

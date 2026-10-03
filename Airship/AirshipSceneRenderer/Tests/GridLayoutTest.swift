@@ -124,7 +124,8 @@ struct GridLayoutTest {
                 aspectRatio: nil,
                 placements: [],
                 rowHasBasis: [],
-                hasPercentHeights: false,
+                pooledRows: [],
+                hasUnpooledPercentRows: false,
                 readingRank: []
             )
         }
@@ -329,7 +330,7 @@ struct GridLayoutTest {
         {"type": "grid_layout", "identifier": "grid-4", "config": \#(fixed(12)), "items": [\#(half), \#(half), \#(third), \#(third), \#(third)]}
         """#)
         func rows(at width: CGFloat) -> [Int] {
-            GridColumns.place(spans: itemSpans(grid, width: width), columns: 12, alignment: .start).map(\.row)
+            Self.place(spans: itemSpans(grid, width: width), columns: 12, alignment: .start).map(\.row)
         }
         #expect(rows(at: 360) == [0, 0, 1, 1, 1])
         #expect(rows(at: 250) == [0, 1, 2, 2, 2])
@@ -337,25 +338,89 @@ struct GridLayoutTest {
 
     @Test("fills rows in order without backfilling, offsetting short rows by half-columns")
     func placement() {
-        let start = GridColumns.place(spans: [2, 2, 1], columns: 3, alignment: .start)
+        let start = Self.place(spans: [2, 2, 1], columns: 3, alignment: .start)
         #expect(start == [
             .init(row: 0, halfColumn: 0, span: 2),
             .init(row: 1, halfColumn: 0, span: 2),
             .init(row: 1, halfColumn: 4, span: 1),
         ])
 
-        let center = GridColumns.place(spans: [nil, nil, nil, nil], columns: 3, alignment: .center)
+        let center = Self.place(spans: [nil, nil, nil, nil], columns: 3, alignment: .center)
         #expect(center.last == .init(row: 1, halfColumn: 2, span: 1))
 
-        let end = GridColumns.place(spans: [1], columns: 3, alignment: .end)
+        let end = Self.place(spans: [1], columns: 3, alignment: .end)
         #expect(end == [.init(row: 0, halfColumn: 4, span: 1)])
     }
 
     @Test("clamps spans to between one and the column count")
     func spanClamping() {
-        let placements = GridColumns.place(spans: [5, 0, 1.7], columns: 3, alignment: .start)
+        let placements = Self.place(spans: [5, 0, 1.7], columns: 3, alignment: .start)
         #expect(placements.map(\.span) == [3, 1, 1])
         #expect(placements.map(\.row) == [0, 1, 1])
+    }
+
+    /// Places items with these spans and no start.
+    private static func place(
+        spans: [Double?],
+        columns: Int,
+        alignment: ThomasPosition.Horizontal
+    ) -> [GridColumns.Placement] {
+        GridColumns.place(spans.map { GridColumns.Request(span: $0) }, columns: columns, alignment: alignment)
+    }
+
+    /// Each placement's row and whole start column.
+    private static func cells(_ placements: [GridColumns.Placement]) -> [[Int]] {
+        placements.map { [$0.row, $0.halfColumn / 2] }
+    }
+
+    @Test("column_start places an item at its column, clamped so its span fits")
+    func columnStart() {
+        #expect(GridColumns.place([.init(span: 8, start: 2)], columns: 12, alignment: .start) == [
+            .init(row: 0, halfColumn: 4, span: 8),
+        ])
+        // 10 clamps to 8; -3 to 0, a new row; 5.7 floors to 5.
+        let clamped = GridColumns.place(
+            [.init(span: 4, start: 10), .init(span: 4, start: -3), .init(span: 2, start: 5.7)],
+            columns: 12,
+            alignment: .start
+        )
+        #expect(Self.cells(clamped) == [[0, 8], [1, 0], [1, 5]])
+        // In 6 columns the span caps at 6 and the start at 0, so a centred block stays valid.
+        #expect(GridColumns.place([.init(span: 8, start: 2)], columns: 6, alignment: .start) == [
+            .init(row: 0, halfColumn: 0, span: 6),
+        ])
+    }
+
+    @Test("column_start behind the next free column begins a new row; skipped columns stay empty")
+    func columnStartRows() {
+        let behind = GridColumns.place([.init(span: 6), .init(span: 4, start: 2)], columns: 12, alignment: .start)
+        #expect(Self.cells(behind) == [[0, 0], [1, 2]])
+
+        // Columns 2–5 stay empty; the third item follows at 8, the fourth doesn't fit.
+        let skipped = GridColumns.place(
+            [.init(span: 2), .init(span: 2, start: 6), .init(span: 2), .init(span: 4)],
+            columns: 12,
+            alignment: .start
+        )
+        #expect(Self.cells(skipped) == [[0, 0], [0, 6], [0, 8], [1, 0]])
+    }
+
+    @Test("a row holding a column_start ignores partial_row_position; other rows still align")
+    func columnStartAlignment() {
+        let placed = GridColumns.place(
+            [.init(span: 4, start: 0), .init(span: 2), .init(span: 2)],
+            columns: 12,
+            alignment: .center
+        )
+        #expect(placed.map(\.halfColumn) == [0, 8, 12])
+
+        // Row 1 holds a start and stays put; row 3, short by 8, centres at half-column 8.
+        let mixed = GridColumns.place(
+            [.init(span: 12), .init(span: 4, start: 4), .init(span: 2), .init(span: 12), .init(span: 4)],
+            columns: 12,
+            alignment: .center
+        )
+        #expect(Self.cells(mixed) == [[0, 0], [1, 4], [1, 8], [2, 0], [3, 4]])
     }
 
     @MainActor

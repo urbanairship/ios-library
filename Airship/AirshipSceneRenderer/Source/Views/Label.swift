@@ -118,7 +118,7 @@ struct Label: View {
         )
         .fixedSize(
             horizontal: false,
-            vertical: self.constraints.height == nil
+            vertical: self.constraints.height == nil && !self.constraints.fillsProposedHeight
         )
         .thomasCommon(self.info)
         .accessible(self.info.accessible, associatedLabel: nil, hideIfDescriptionIsMissing: true)

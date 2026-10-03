@@ -109,47 +109,74 @@ enum GridColumns {
         return Int(min(CGFloat(maxColumns), max(1, fits)))
     }
 
-    /// Places items in rows in list order; an item that doesn't fit what's left of its row starts the next, and nothing backfills.
+    /// What one item asks of placement.
+    struct Request: Equatable {
+        /// The columns it covers; capped at the column count, `nil` is 1.
+        var span: Double?
+        /// The column it starts at, from 0 at the start edge, if it names one.
+        var start: Double?
+    }
+
+    /// Places items in rows in list order; an item without a start that doesn't fit what's left of its row starts the next, and nothing backfills.
     ///
     /// A short row keeps its cells' widths and is offset by `alignment`: one item in 3 columns
     /// starts at half-column 0 for `start`, 2 for `center` and 4 for `end`.
     ///
+    /// An item with a `start` goes at that column, clamped so its span fits: in 12 columns, 8 wide
+    /// from 2 covers columns 2 to 9. A start behind the next free column begins a new row, and
+    /// skipped columns stay empty. A row holding any item with a `start` ignores `alignment`.
+    ///
     /// - Parameters:
-    ///   - spans: each item's requested `column_span`, in item order
+    ///   - items: each item's requested `column_span` and `column_start`, in item order
     ///   - columns: the column count, at least 1
     ///   - alignment: where a short row sits
     /// - Returns: each item's placement, in item order
     static func place(
-        spans: [Double?],
+        _ items: [Request],
         columns: Int,
         alignment: ThomasPosition.Horizontal
     ) -> [Placement] {
-        var rows: [[(index: Int, span: Int)]] = []
-        var row: [(index: Int, span: Int)] = []
-        var used = 0
-        for (index, requested) in spans.enumerated() {
-            let span = clampedCount(requested ?? 1, upperBound: columns)
-            if used + span > columns {
-                rows.append(row)
-                row = []
-                used = 0
-            }
-            row.append((index, span))
-            used += span
+        typealias Cell = (index: Int, span: Int, column: Int)
+        var rows: [(cells: [Cell], positioned: Bool)] = []
+        var row: [Cell] = []
+        var positioned = false
+        var cursor = 0
+        func nextRow() {
+            rows.append((row, positioned))
+            row = []
+            positioned = false
+            cursor = 0
         }
-        if !row.isEmpty { rows.append(row) }
-
-        var placements = [Placement](repeating: Placement(row: 0, halfColumn: 0, span: 1), count: spans.count)
-        for (rowIndex, cells) in rows.enumerated() {
-            let leftover = columns - cells.reduce(0) { $0 + $1.span }
-            var halfColumn = switch alignment {
-            case .start: 0
-            case .center: leftover
-            case .end: 2 * leftover
+        for (index, item) in items.enumerated() {
+            let span = clampedCount(item.span ?? 1, upperBound: columns)
+            if let requested = item.start {
+                let start = requested.isNaN ? 0 : Int(min(Double(columns - span), max(0, requested.rounded(.down))))
+                if start < cursor { nextRow() }
+                row.append((index, span, start))
+                positioned = true
+                cursor = start
+            } else {
+                if cursor + span > columns { nextRow() }
+                row.append((index, span, cursor))
             }
-            for cell in cells {
-                placements[cell.index] = Placement(row: rowIndex, halfColumn: halfColumn, span: cell.span)
-                halfColumn += 2 * cell.span
+            cursor += span
+        }
+        if !row.isEmpty { nextRow() }
+
+        var placements = [Placement](repeating: Placement(row: 0, halfColumn: 0, span: 1), count: items.count)
+        for (rowIndex, row) in rows.enumerated() {
+            let leftover = columns - row.cells.reduce(0) { $0 + $1.span }
+            let offset = if row.positioned {
+                0
+            } else {
+                switch alignment {
+                case .start: 0
+                case .center: leftover
+                case .end: 2 * leftover
+                }
+            }
+            for cell in row.cells {
+                placements[cell.index] = Placement(row: rowIndex, halfColumn: offset + 2 * cell.column, span: cell.span)
             }
         }
         return placements
