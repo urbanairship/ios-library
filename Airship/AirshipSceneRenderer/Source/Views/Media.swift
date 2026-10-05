@@ -18,7 +18,7 @@ struct Media: View {
     private let defaultAspectRatio: Double = 16.0 / 9.0
     @EnvironmentObject private var pagerState: PagerState
     @Environment(\.pageIdentifier) private var pageIdentifier
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
 
     private var resolvedURL: String {
         ThomasPropertyOverride.resolveRequired(
@@ -49,7 +49,7 @@ struct Media: View {
         switch self.info.properties.mediaType {
         case .image:
             ThomasAsyncImage(
-                url: resolvedURLSelectors?.resolve(colorScheme: colorScheme) ?? resolvedURL,
+                url: resolvedURLSelectors?.resolve(selectorEnvironment) ?? resolvedURL,
                 loadImage: thomasEnvironment.imageLoader.load
             ) { image, imageSize in
                 image.fitMedia(

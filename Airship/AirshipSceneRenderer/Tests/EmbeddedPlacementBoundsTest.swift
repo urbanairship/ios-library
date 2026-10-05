@@ -244,8 +244,7 @@ struct EmbeddedPlacementBoundsLayoutPassTest {
 
         let placement = AdoptLayout(
             presentation: presentation,
-            orientation: .portrait,
-            windowSize: .medium,
+            environment: ThomasSelectorEnvironment(darkMode: false, windowSize: .medium, orientation: .portrait),
             embeddedSize: nil
         ) { _, _ in
             ProbeLayout(probe: probe) { Color.clear }

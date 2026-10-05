@@ -22,7 +22,7 @@ struct Label: View {
 
     @EnvironmentObject private var thomasState: ThomasState
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
     @Environment(\.sizeCategory) private var sizeCategory
 
     private static let defaultHighlightColor: Color = Color(
@@ -85,7 +85,7 @@ struct Label: View {
         HStack(spacing: 0) {
             if let icon = resolvedStartIcon {
                 let size = scaledFontSize
-                Icons.icon(info: icon.icon, colorScheme: colorScheme)
+                Icons.icon(info: icon.icon, selectorEnvironment: selectorEnvironment)
                     .frame(width: size, height: size)
                     .padding(.trailing, icon.space)
                     .accessibilityHidden(true)
@@ -93,18 +93,18 @@ struct Label: View {
 
             if #available(iOS 26.0, visionOS 26.0, *) {
                 self.textView
-                    .textAppearance(resolvedTextAppearance, colorScheme: colorScheme)
+                    .textAppearance(resolvedTextAppearance, selectorEnvironment: selectorEnvironment)
                     .truncationMode(.tail)
                     .textRenderer(HighlightRenderer())
             } else {
                 self.textView
-                    .textAppearance(resolvedTextAppearance, colorScheme: colorScheme)
+                    .textAppearance(resolvedTextAppearance, selectorEnvironment: selectorEnvironment)
                     .truncationMode(.tail)
             }
 
             if let icon = resolvedEndIcon {
                 let size = scaledFontSize
-                Icons.icon(info: icon.icon, colorScheme: colorScheme)
+                Icons.icon(info: icon.icon, selectorEnvironment: selectorEnvironment)
                     .frame(width: size, height: size)
                     .padding(.leading, icon.space)
                     .accessibilityHidden(true)
@@ -393,13 +393,13 @@ extension Label {
                     // For custom cornerRadius we have to use a custom attribute and renderer
                     if #available(iOS 18.0, visionOS 2.0, *), let cornerRadius = highlightOptions?.cornerRadius {
                         let highlight = HighlightAttribute(
-                            color: highlightOptions?.color?.toColor(colorScheme) ?? Self.defaultHighlightColor,
+                            color: highlightOptions?.color?.toColor(selectorEnvironment) ?? Self.defaultHighlightColor,
                             cornerRadius: cornerRadius
                         )
                         piece = Text(AttributedString(slice))
                             .customAttribute(highlight)
                     } else {
-                        slice.backgroundColor = highlightOptions?.color?.toColor(colorScheme) ?? Self.defaultHighlightColor
+                        slice.backgroundColor = highlightOptions?.color?.toColor(selectorEnvironment) ?? Self.defaultHighlightColor
                         piece = Text(AttributedString(slice))
                     }
                 } else {

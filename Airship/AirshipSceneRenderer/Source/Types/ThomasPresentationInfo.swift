@@ -375,15 +375,34 @@ public enum ThomasPresentationInfo: ThomasSerializable {
         }
     }
 
-    struct PlacementSelector<Placement: ThomasSerializable>: ThomasSerializable {
+    struct PlacementSelector<Placement: ThomasSerializable>: ThomasSerializable, ThomasSelectorConditions {
         var placement: Placement
+        var platform: ThomasPlatform?
+        var darkMode: Bool?
         var windowSize: ThomasWindowSize?
         var orientation: ThomasOrientation?
 
         private enum CodingKeys: String, CodingKey {
             case placement
+            case platform
+            case darkMode = "dark_mode"
             case windowSize = "window_size"
             case orientation
         }
+    }
+
+    /// Returns the first matching selector's placement, else `defaultPlacement`.
+    ///
+    /// - Parameters:
+    ///   - selectors: the presentation's `placement_selectors`
+    ///   - defaultPlacement: the presentation's `default_placement`
+    ///   - environment: what the scene is shown in
+    /// - Returns: the placement to use
+    static func placement<Placement>(
+        selectors: [PlacementSelector<Placement>]?,
+        defaultPlacement: Placement,
+        in environment: ThomasSelectorEnvironment
+    ) -> Placement {
+        selectors?.firstMatch(environment)?.placement ?? defaultPlacement
     }
 }

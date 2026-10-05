@@ -18,7 +18,7 @@ struct AirshipCheckboxToggleStyle: ToggleStyle {
         let viewConstraints: ViewConstraints
 
         @Environment(\.isEnabled) var isEnabled
-        @Environment(\.colorScheme) var colorScheme
+        @Environment(\.thomasSelectorEnvironment) var selectorEnvironment
 
         var body: some View {
             let binding = configuration.isOn ? info.bindings.selected : info.bindings.unselected
@@ -36,7 +36,7 @@ struct AirshipCheckboxToggleStyle: ToggleStyle {
                                 Shapes.shape(
                                     info: shapes[index],
                                     constraints: constraints,
-                                    colorScheme: colorScheme
+                                    selectorEnvironment: selectorEnvironment
                                 )
                             }
                             .airshipApplyIf(!isEnabled) {  view in
@@ -47,14 +47,14 @@ struct AirshipCheckboxToggleStyle: ToggleStyle {
                                 Shapes.shape(
                                     info: shapes[index],
                                     constraints: constraints,
-                                    colorScheme: colorScheme
+                                    selectorEnvironment: selectorEnvironment
                                 )
                             }
                         }
                     }
 
                     if let iconModel = binding.icon {
-                        Icons.icon(info: iconModel, colorScheme: colorScheme)
+                        Icons.icon(info: iconModel, selectorEnvironment: selectorEnvironment)
                     }
                 }
                 .constraints(constraints, fixedSize: true)

@@ -28,7 +28,7 @@ public struct AirshipSimpleLayoutView: View {
         RootView(
             thomasEnvironment: viewModel.environment,
             layout: layout
-        ) { orientation, windowSize in
+        ) { _ in
             // Placement is always 100%x100% here (never configurable, unlike EmbeddedView) --
             // there's no percent/points/auto math to resolve, no embeddedSize, and no placement
             // selectors, so AdoptLayout's machinery (built for that generality) would be pure

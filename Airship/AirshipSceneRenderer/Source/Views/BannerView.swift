@@ -73,10 +73,11 @@ struct BannerView: View {
                     thomasEnvironment: thomasEnvironment,
                     layout: layout,
                     initialWindowSize: bannerConstraints.windowSize
-                ) { orientation, windowSize in
-                    let placement = resolvePlacement(
-                        orientation: orientation,
-                        windowSize: windowSize
+                ) { environment in
+                    let placement = ThomasPresentationInfo.placement(
+                        selectors: presentation.placementSelectors,
+                        defaultPlacement: presentation.defaultPlacement,
+                        in: environment
                     )
 
                     let banner = createBanner(
@@ -231,30 +232,6 @@ struct BannerView: View {
         .accessibilityAction(.escape) {
             onDismiss()
         }
-    }
-
-    private func resolvePlacement(
-        orientation: ThomasOrientation,
-        windowSize: ThomasWindowSize
-    ) -> ThomasPresentationInfo.Banner.Placement {
-
-        var placement = presentation.defaultPlacement
-        for placementSelector in presentation.placementSelectors ?? [] {
-            if let requiredSize = placementSelector.windowSize,
-               requiredSize != windowSize {
-                continue
-            }
-
-            if let requiredOrientation = placementSelector.orientation,
-               requiredOrientation != orientation {
-                continue
-            }
-
-            // its a match!
-            placement = placementSelector.placement
-        }
-
-        return placement
     }
 
     private func setShowing(state: Bool, transition: ThomasPresentationInfo.Banner.Transition? , completion: (() -> Void)? = nil) {

@@ -29,48 +29,21 @@ struct AdoptLayout<Content: View>: View {
     @Environment(\.layoutDirection) private var layoutDirection
     @Environment(\.thomasEnvironmentState) private var environmentState
 
-    /// A presentation resolved per orientation/window size, e.g. `EmbeddedView`'s.
+    /// A presentation resolved against the scene's selector environment, e.g. `EmbeddedView`'s.
     init(
         presentation: ThomasPresentationInfo.Embedded,
-        orientation: ThomasOrientation,
-        windowSize: ThomasWindowSize,
+        environment: ThomasSelectorEnvironment,
         embeddedSize: AirshipEmbeddedSize?,
         @ViewBuilder content: @escaping (ViewConstraints, ThomasPresentationInfo.Embedded.Placement) -> Content
     ) {
-        self.placement = Self.resolvePlacement(
-            presentation: presentation,
-            orientation: orientation,
-            windowSize: windowSize
+        self.placement = ThomasPresentationInfo.placement(
+            selectors: presentation.placementSelectors,
+            defaultPlacement: presentation.defaultPlacement,
+            in: environment
         )
         self.embeddedSize = embeddedSize
         self.usesAutoMeasurement = Self.mayResolveToAuto(presentation)
         self.content = content
-    }
-
-    private static func resolvePlacement(
-        presentation: ThomasPresentationInfo.Embedded,
-        orientation: ThomasOrientation,
-        windowSize: ThomasWindowSize
-    ) -> ThomasPresentationInfo.Embedded.Placement {
-        var placement = presentation.defaultPlacement
-        for placementSelector in presentation.placementSelectors ?? [] {
-            if placementSelector.windowSize != nil
-                && placementSelector.windowSize != windowSize
-            {
-                continue
-            }
-
-            if placementSelector.orientation != nil
-                && placementSelector.orientation != orientation
-            {
-                continue
-            }
-
-            // its a match!
-            placement = placementSelector.placement
-        }
-
-        return placement
     }
 
     private static func mayResolveToAuto(_ presentation: ThomasPresentationInfo.Embedded) -> Bool {
@@ -476,11 +449,10 @@ struct EmbeddedView: View {
     }
 
     var body: some View {
-        RootView(thomasEnvironment: thomasEnvironment, layout: layout) { orientation, windowSize in
+        RootView(thomasEnvironment: thomasEnvironment, layout: layout) { environment in
             AdoptLayout(
                 presentation: presentation,
-                orientation: orientation,
-                windowSize: windowSize,
+                environment: environment,
                 embeddedSize: embeddedSize
             ) { constraints, placement in
                 createView(constraints: constraints, placement: placement)

@@ -13,7 +13,7 @@ struct TextInput: View {
 
     @Environment(\.pageIdentifier) private var pageID
     @Environment(\.sizeCategory) private var sizeCategory
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
 
     @EnvironmentObject private var formDataCollector: ThomasFormDataCollector
     @EnvironmentObject private var formState: ThomasFormState
@@ -135,7 +135,7 @@ struct TextInput: View {
         ZStack {
             if let hint = self.info.properties.placeholder ?? self.viewModel.selectedSMSLocale?.prefix {
                 Text(hint)
-                    .textAppearance(placeHolderTextAppearance(), colorScheme: colorScheme)
+                    .textAppearance(placeHolderTextAppearance(), selectorEnvironment: selectorEnvironment)
                     .padding(5)
                     .constraints(constraints, alignment: self.placeHolderAlignment)
                     .opacity(self.viewModel.input.isEmpty && !isEditing ? 1 : 0)
@@ -153,7 +153,7 @@ struct TextInput: View {
 
                 if let resolvedIconEndInfo = resolvedIconEndInfo?.icon {
                     let size = scaledFontSize
-                    Icons.icon(info: resolvedIconEndInfo, colorScheme: colorScheme, resizable: false)
+                    Icons.icon(info: resolvedIconEndInfo, selectorEnvironment: selectorEnvironment, resizable: false)
                         .frame(maxWidth: size, maxHeight: size)
                         .padding(5)
                 }
@@ -587,7 +587,7 @@ fileprivate struct AirshipTextField: View {
     @Binding private var binding: String
     @Binding private var isEditing: Bool
 
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
     @Environment(\.isVisible) private var isVisible
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject private var viewState: ThomasState
@@ -626,7 +626,7 @@ fileprivate struct AirshipTextField: View {
             .padding(5)
             .constraints(constraints, alignment: alignment)
             .focused(focusBinding, equals: identifier)
-            .foregroundColor(self.info.properties.textAppearance.color.toColor(colorScheme))
+            .foregroundColor(self.info.properties.textAppearance.color.toColor(selectorEnvironment))
             .contentShape(Rectangle())
             // Remove the field from the focus system entirely while its page is
             // off-screen. Resigning focus after the fact loses the race — UIKit
@@ -637,7 +637,7 @@ fileprivate struct AirshipTextField: View {
             .onTapGesture {
                 focusBinding.wrappedValue = identifier
             }
-            .applyViewAppearance(self.info.properties.textAppearance, colorScheme: colorScheme)
+            .applyViewAppearance(self.info.properties.textAppearance, selectorEnvironment: selectorEnvironment)
             .airshipApplyIf(isUnderlined, transform: { content in
                 content.underline()
             })

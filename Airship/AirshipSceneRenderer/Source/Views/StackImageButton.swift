@@ -13,7 +13,7 @@ struct StackImageButton : View {
     /// View constraints.
     private let constraints: ViewConstraints
 
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
     @Environment(\.layoutState) private var layoutState
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject private var thomasState: ThomasState
@@ -135,7 +135,7 @@ struct StackImageItemsView: View {
     let items: [ThomasViewInfo.StackImageButton.Item]
     let constraints: ViewConstraints
 
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
 
     var body: some View {
@@ -144,10 +144,10 @@ struct StackImageItemsView: View {
                 let item = items[index]
                 switch(item) {
                 case .icon(let item):
-                    Icons.icon(info: item.icon, colorScheme: colorScheme)
+                    Icons.icon(info: item.icon, selectorEnvironment: selectorEnvironment)
                 case .imageURL(let info):
                     ThomasAsyncImage(
-                        url: info.urlSelectors?.resolve(colorScheme: colorScheme) ?? info.url,
+                        url: info.urlSelectors?.resolve(selectorEnvironment) ?? info.url,
                         loadImage: thomasEnvironment.imageLoader.load,
                         image: { image, imageSize in
                             image.fitMedia(
@@ -163,7 +163,7 @@ struct StackImageItemsView: View {
                     )
                 case .shape(let info):
                     Shapes.shape(
-                        info: info.shape, constraints: constraints, colorScheme: colorScheme
+                        info: info.shape, constraints: constraints, selectorEnvironment: selectorEnvironment
                     )
                 }
             }

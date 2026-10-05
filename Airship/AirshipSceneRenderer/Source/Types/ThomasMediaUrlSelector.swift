@@ -3,26 +3,24 @@
 import Foundation
 import SwiftUI
 
-struct ThomasMediaUrlSelector: ThomasSerializable {
+struct ThomasMediaUrlSelector: ThomasSerializable, ThomasSelectorConditions {
     var platform: ThomasPlatform?
-    fileprivate var darkMode: Bool?
+    var darkMode: Bool?
+    var windowSize: ThomasWindowSize?
+    var orientation: ThomasOrientation?
     var url: String
 
     private enum CodingKeys: String, CodingKey {
         case platform
         case darkMode = "dark_mode"
+        case windowSize = "window_size"
+        case orientation
         case url
     }
 }
 
 extension Array where Element == ThomasMediaUrlSelector {
-    func resolve(colorScheme: ColorScheme) -> String? {
-        let isDarkMode = colorScheme == .dark
-        for selector in self {
-            if let platform = selector.platform, platform != .ios { continue }
-            if let selectorDarkMode = selector.darkMode, isDarkMode != selectorDarkMode { continue }
-            return selector.url
-        }
-        return nil
+    func resolve(_ environment: ThomasSelectorEnvironment) -> String? {
+        firstMatch(environment)?.url
     }
 }

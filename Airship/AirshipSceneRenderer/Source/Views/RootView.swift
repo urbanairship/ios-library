@@ -65,7 +65,7 @@ struct RootView<Content: View>: View {
     private var defaultAsyncViewState: ThomasAsyncViewState = ThomasAsyncViewState()
     
     let layout: AirshipLayout
-    let content: (ThomasOrientation, ThomasWindowSize) -> Content
+    let content: (ThomasSelectorEnvironment) -> Content
 
     let associatedLabelResolver: ThomasAssociatedLabelResolver
 
@@ -75,7 +75,7 @@ struct RootView<Content: View>: View {
         thomasEnvironment: ThomasEnvironment,
         layout: AirshipLayout,
         initialWindowSize: CGSize = .zero,
-        @ViewBuilder content: @escaping (ThomasOrientation, ThomasWindowSize) -> Content
+        @ViewBuilder content: @escaping (ThomasSelectorEnvironment) -> Content
     ) {
         self.thomasEnvironment = thomasEnvironment
         self.layout = layout
@@ -109,7 +109,7 @@ struct RootView<Content: View>: View {
     var body: some View {
         // Orientation is read straight off the tracker, so a resize re-renders through the usual
         // observation path -- no notification to subscribe to and no state to keep in sync.
-        content(orientationTracker.orientation, resolveWindowSize())
+        content(selectorEnvironment)
             .accessibilityIdentifier("thomas:root")
             .environmentObject(self.thomasEnvironment)
             .environmentObject(self.thomasState)
@@ -127,6 +127,7 @@ struct RootView<Content: View>: View {
             .environment(\.thomasAssociatedLabelResolver, associatedLabelResolver)
             .environment(\.thomasFocusedInput, $focusedInputID)
             .environment(\.thomasEnvironmentState, environmentState)
+            .environment(\.thomasSelectorEnvironment, selectorEnvironment)
             .airshipOnChangeOf(resolveEnvironmentTraits(), initial: true) { traits in
                 environmentState.update(traits: traits)
             }
@@ -190,6 +191,15 @@ struct RootView<Content: View>: View {
                 })
             )
 #endif
+    }
+
+    /// What placement, color and media URL selectors match, as of this render.
+    private var selectorEnvironment: ThomasSelectorEnvironment {
+        ThomasSelectorEnvironment(
+            darkMode: colorScheme == .dark,
+            windowSize: resolveWindowSize(),
+            orientation: orientationTracker.orientation
+        )
     }
 
     /// Uses the vertical and horizontal class size to determine small, medium, large window size:
@@ -265,11 +275,15 @@ private enum RootViewResolver {
 @MainActor
 final class ThomasOrientationTracker: ObservableObject {
 
+    /// The window's orientation, or `nil` until a size has been reported.
+    ///
+    /// Unknown rather than guessed: a selector naming an orientation then matches nothing, instead
+    /// of an embedded scene on a portrait phone loading a landscape URL before it corrects.
     @Published
-    private(set) var orientation: ThomasOrientation = .landscape
+    private(set) var orientation: ThomasOrientation?
 
     /// - Parameter initialSize: Size of the window at display time, so the first frame resolves
-    /// against the real window rather than the default above. Empty sizes leave the default.
+    /// against the real window. Empty sizes leave the orientation unknown.
     init(initialSize: CGSize = .zero) {
         self.update(initialSize)
     }

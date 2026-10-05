@@ -305,7 +305,7 @@ private struct ThomasBackgroundStack: View {
 
 private struct ThomasBackgroundLayerView: View, Equatable {
     let background: ThomasBackground
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
 
     var body: some View {
         layerContent
@@ -324,7 +324,7 @@ private struct ThomasBackgroundLayerView: View, Equatable {
     private var layerContent: some View {
         switch background {
         case .color(let info):
-            info.color.toColor(colorScheme)
+            info.color.toColor(selectorEnvironment)
         case .gradient(let info):
             ThomasBackgroundGradientView(gradient: info.gradient)
         case .media(.image(let info)):
@@ -337,7 +337,7 @@ private struct ThomasBackgroundLayerView: View, Equatable {
 
 private struct ThomasBackgroundGradientView: View {
     let gradient: ThomasBackground.GradientBackground.Gradient
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
 
     /// Pre-blended in sRGB, rather than handed to `LinearGradient`/`RadialGradient` as the DSL's
     /// own stops directly: neither exposes a way to request sRGB-space interpolation, and their
@@ -345,7 +345,7 @@ private struct ThomasBackgroundGradientView: View {
     /// confines the mismatch to a span too small to see.
     private var stops: [Gradient.Stop] {
         let resolved = gradient.stops.map { stop in
-            let color = stop.color.toColor(colorScheme)
+            let color = stop.color.toColor(selectorEnvironment)
             return (color: color, components: Self.sRGBComponents(of: color), position: stop.position)
         }
         guard resolved.count >= 2 else {
@@ -455,7 +455,7 @@ private struct ThomasBackgroundImageView: View {
     let info: ThomasBackground.MediaBackground.ImageMediaBackground
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject private var thomasState: ThomasState
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
 
     private var resolvedURL: String {
         let url = ThomasPropertyOverride.resolveRequired(
@@ -468,7 +468,7 @@ private struct ThomasBackgroundImageView: View {
             overrides: info.overrides?.urlSelectors,
             defaultValue: info.urlSelectors
         )
-        return urlSelectors?.resolve(colorScheme: colorScheme) ?? url
+        return urlSelectors?.resolve(selectorEnvironment) ?? url
     }
 
     var body: some View {

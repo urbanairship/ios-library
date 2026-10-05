@@ -6,7 +6,7 @@ import SwiftUI
 
 // Icon view that can be used to display icons inside a toggle layout
 struct IconView: View {
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
     @EnvironmentObject private var thomasState: ThomasState
 
     private let info: ThomasViewInfo.IconView
@@ -26,7 +26,7 @@ struct IconView: View {
     }
 
     var body: some View {
-        Icons.icon(info: resolvedIcon, colorScheme: colorScheme)
+        Icons.icon(info: resolvedIcon, selectorEnvironment: selectorEnvironment)
             .constraints(constraints, fixedSize: true)
             .background(Color.airshipTappableClear)
             .thomasCommon(self.info)

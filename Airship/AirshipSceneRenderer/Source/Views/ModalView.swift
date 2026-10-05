@@ -30,22 +30,25 @@ struct ModalView: View {
                 thomasEnvironment: thomasEnvironment,
                 layout: layout,
                 initialWindowSize: initialWindowSize
-            ) { orientation, windowSize in
-                let placement = resolvePlacement(
-                    orientation: orientation,
-                    windowSize: windowSize
+            ) { environment in
+                // Against the orientation we are actually in: `lock_orientation` doesn't override it,
+                // since nothing rotates the scene to match.
+                let placement = ThomasPresentationInfo.placement(
+                    selectors: presentation.placementSelectors,
+                    defaultPlacement: presentation.defaultPlacement,
+                    in: environment
                 )
                 ZStack {
                     if isShowing {
                         if placement.transition?.isPlainFade ?? true {
                             createModalContent(placement: placement, metrics: metrics)
                                 .background(
-                                    modalBackground(placement)
+                                    modalBackground(placement, environment: environment)
                                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 )
                                 .airshipApplyModalTransition(transition: placement.transition)
                         } else {
-                            modalBackground(placement)
+                            modalBackground(placement, environment: environment)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .transition(.opacity)
 
@@ -204,7 +207,10 @@ struct ModalView: View {
     }
 
     @ViewBuilder
-    private func modalBackground(_ placement: ThomasPresentationInfo.Modal.Placement) -> some View {
+    private func modalBackground(
+        _ placement: ThomasPresentationInfo.Modal.Placement,
+        environment: ThomasSelectorEnvironment
+    ) -> some View {
         GeometryReader { reader in
             VStack(spacing: 0) {
                 if placement.isFullscreen, placement.ignoreSafeArea != true {
@@ -213,7 +219,7 @@ struct ModalView: View {
                 }
 
                 Rectangle()
-                    .foreground(placement.shade, colorScheme: colorScheme, fallbackColor: .airshipTappableClear)
+                    .foreground(placement.shade, selectorEnvironment: environment, fallbackColor: .airshipTappableClear)
                     .ignoresSafeArea(.all)
                     .airshipApplyIf(self.presentation.dismissOnTouchOutside == true) {
                         view in
@@ -230,38 +236,6 @@ struct ModalView: View {
             }
             .ignoresSafeArea(.all)
         }
-    }
-
-    private func resolvePlacement(
-        orientation: ThomasOrientation,
-        windowSize: ThomasWindowSize
-    ) -> ThomasPresentationInfo.Modal.Placement {
-        var placement = self.presentation.defaultPlacement
-
-        // Resolve against the orientation we are actually in. `lock_orientation` used to override
-        // this, which only held together while it also rotated the scene to match -- without that
-        // it dresses a landscape window in a layout designed for portrait.
-        let resolvedOrientation = orientation
-
-        for placementSelector in self.presentation.placementSelectors ?? [] {
-            if placementSelector.windowSize != nil
-                && placementSelector.windowSize != windowSize
-            {
-                continue
-            }
-
-            if placementSelector.orientation != nil
-                && placementSelector.orientation != resolvedOrientation
-            {
-                continue
-            }
-
-            // its a match!
-            placement = placementSelector.placement
-            break
-        }
-
-        return placement
     }
 
     private func statusBarShimColor() -> Color {

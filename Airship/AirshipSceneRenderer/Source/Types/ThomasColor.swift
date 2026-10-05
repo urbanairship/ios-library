@@ -25,14 +25,18 @@ struct ThomasColor: ThomasSerializable {
         }
     }
 
-    struct Selector: ThomasSerializable {
+    struct Selector: ThomasSerializable, ThomasSelectorConditions {
         let darkMode: Bool?
         let platform: ThomasPlatform?
+        let windowSize: ThomasWindowSize?
+        let orientation: ThomasOrientation?
         let color: HexColor
 
         enum CodingKeys: String, CodingKey {
             case platform
             case darkMode = "dark_mode"
+            case windowSize = "window_size"
+            case orientation
             case color
         }
     }
@@ -57,25 +61,8 @@ extension ThomasColor.HexColor {
 }
 
 extension ThomasColor {
-    func toColor(_ colorScheme: ColorScheme) -> Color {
-        let isDarkMode = colorScheme == .dark
-
-        for selector in selectors ?? [] {
-            // Platform filtering
-            if let platform = selector.platform {
-                if platform != .ios { continue }
-            }
-
-            // Dark mode filtering
-            if let selectorDarkMode = selector.darkMode, isDarkMode != selectorDarkMode {
-                continue
-            }
-
-            return selector.color.toColor()
-        }
-
-        // Fallback to default if no selectors matched
-        return defaultColor.toColor()
+    func toColor(_ environment: ThomasSelectorEnvironment) -> Color {
+        (selectors?.firstMatch(environment)?.color ?? defaultColor).toColor()
     }
 }
 
