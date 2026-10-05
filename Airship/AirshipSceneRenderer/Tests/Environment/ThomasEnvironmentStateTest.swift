@@ -76,13 +76,19 @@ struct ThomasEnvironmentStateTest {
             "layout_direction": "ltr",
             "locale": ["identifier": "fr-CA", "language": "fr", "region": "CA"],
             "window": [
-                "width": 390,
-                "height": 844,
                 "orientation": "portrait",
                 "size": "medium"
-            ]
+            ],
+            "conditions": [:]
         ]
         #expect(values(darkMode: true, textScale: 1.5).json == expected)
+    }
+
+    /// The scene's `environment_state.conditions`: compact up to 599 wide, else expanded.
+    private func sizeConditions() throws -> [String: [ThomasEnvironmentConditionSelector]] {
+        try JSONDecoder().decode([String: [ThomasEnvironmentConditionSelector]].self, from: Data(#"""
+        {"size": [{"window_width": {"at_most": 599}, "value": "compact"}, {"value": "expanded"}]}
+        """#.utf8))
     }
 
     @Test
@@ -119,36 +125,56 @@ struct ThomasEnvironmentStateTest {
         #expect(french.evaluate(json: [ThomasEnvironmentState.stateKey: scene.json]))
     }
 
-    @Test
-    func safeWindowAndFrameAppearOnceMeasured() {
+    @Test("$environment holds no window, safe window or frame sizes")
+    func jsonHoldsNoSizes() {
         var measured = values()
         measured.geometry.safeWindow = CGSize(width: 390, height: 763)
         measured.geometry.frame = .init(width: 350, height: 500)
 
-        #expect(measured.json.object?["safe_window"] == ["width": 390, "height": 763])
-        #expect(measured.json.object?["frame"] == ["width": 350, "height": 500])
-        #expect(values().json.object?["safe_window"] == nil)
-        #expect(values().json.object?["frame"] == nil)
+        #expect(measured.json.object?["window"] == ["orientation": "portrait", "size": "medium"])
+        #expect(measured.json.object?["safe_window"] == nil)
+        #expect(measured.json.object?["frame"] == nil)
+    }
+
+    @Test("environment conditions are chosen from the window and follow it across a breakpoint")
+    func conditionsFollowTheWindow() throws {
+        let environmentState = ThomasEnvironmentState(values: values(), conditions: try sizeConditions())
+        #expect(environmentState.values.json.object?["conditions"] == ["size": "compact"])
+
+        environmentState.update(window: CGSize(width: 1024, height: 768), safeWindow: CGSize(width: 1024, height: 768))
+        #expect(environmentState.values.json.object?["conditions"] == ["size": "expanded"])
+    }
+
+    /// An embedded scene isn't seeded with the window, so its first renders come before any measure.
+    @Test("an unseeded scene publishes no conditions until the window is measured")
+    func conditionsWaitForTheWindow() throws {
+        let environmentState = ThomasEnvironmentState(values: values(window: nil), conditions: try sizeConditions())
+        #expect(environmentState.values.json.object?["conditions"] == [:])
+
+        environmentState.update(window: CGSize(width: 390, height: 844), safeWindow: CGSize(width: 390, height: 844))
+        #expect(environmentState.values.json.object?["conditions"] == ["size": "compact"])
     }
 
     /// An auto-height embedded view: the host decides the width, the scene's content the height.
-    @Test
-    func frameLeavesOutAnAxisTheHostLeftOpen() throws {
+    @Test("a frame length the host leaves open matches no range")
+    func frameLeftOpenMatchesNoRange() throws {
+        let conditions = try JSONDecoder().decode([String: [ThomasEnvironmentConditionSelector]].self, from: Data(#"""
+        {"tall": [{"frame_height": {"at_least": 0}, "value": true}],
+         "framed": [{"frame_width": {"at_least": 0}, "value": true}]}
+        """#.utf8))
         var embedded = values()
         embedded.geometry.frame = .init(width: 390, height: nil)
-        #expect(embedded.json.object?["frame"] == ["width": 390])
-
-        let tall = try predicate(#"{"scope": ["$environment", "frame", "height"], "value": {"at_least": 0}}"#)
-        #expect(!tall.evaluate(json: [ThomasEnvironmentState.stateKey: embedded.json]))
+        #expect(embedded.choosing(conditions).conditions == ["framed": true])
     }
 
     @Test
     func stateExposesEnvironmentWithoutAStateController() throws {
-        let state = ThomasState(environmentState: ThomasEnvironmentState(values: values())) { _ in }
-        #expect(environment(state) == values().json)
+        let environmentState = ThomasEnvironmentState(values: values(), conditions: try sizeConditions())
+        let state = ThomasState(environmentState: environmentState) { _ in }
+        #expect(environment(state) == environmentState.values.json)
 
-        let narrow = try predicate(#"{"scope": ["$environment", "window", "width"], "value": {"at_most": 400}}"#)
-        #expect(narrow.evaluate(json: state.state))
+        let compact = try predicate(#"{"scope": ["$environment", "conditions", "size"], "value": {"equals": "compact"}}"#)
+        #expect(compact.evaluate(json: state.state))
     }
 
     @Test

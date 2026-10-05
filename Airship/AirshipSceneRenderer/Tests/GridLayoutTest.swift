@@ -1,5 +1,6 @@
 /* Copyright Airship and Contributors */
 
+import Combine
 import Foundation
 import SwiftUI
 import Testing
@@ -190,15 +191,35 @@ struct GridLayoutTest {
         #expect(GridColumns.columnCount(scaled, width: 320, textScale: 1) == 6)
     }
 
+    /// The width ranges this suite reads, each declared as a grid condition that is `true` inside it.
+    private static let widthRanges: [String] = [
+        #"{"at_most": 200}"#, #"{"at_most": 300}"#, #"{"at_least": 300}"#, #"{"at_most": 400}"#, #"{"at_least": 480}"#,
+    ]
+
+    private static func conditionName(_ range: String) -> String {
+        String(range.map { $0.isLetter || $0.isNumber ? $0 : "_" })
+    }
+
+    private static let widthConditions: [String: [ThomasGridConditionSelector]] = Dictionary(
+        uniqueKeysWithValues: widthRanges.map { range in
+            let selector = try! JSONDecoder().decode(
+                ThomasGridConditionSelector.self,
+                from: Data(#"{"width": \#(range), "value": true}"#.utf8)
+            )
+            return (conditionName(range), [selector])
+        }
+    )
+
+    /// A predicate that holds while the grid's width is in `range`, read through its declared condition.
     private static func gridWidth(_ range: String) -> String {
-        #"{"scope": ["$grids", "current", "width"], "value": \#(range)}"#
+        #"{"scope": ["$grids", "current", "conditions", "\#(conditionName(range))"], "value": {"equals": true}}"#
     }
 
     @MainActor
     private func gridScopedState(_ state: AirshipJSON = [:], width: CGFloat?) -> ThomasState {
         ThomasState(
             mutableState: ThomasState.MutableState(initialState: state),
-            gridState: ThomasGridState(width: width),
+            gridState: ThomasGridState(width: width, conditions: Self.widthConditions),
             onStateChange: { _ in }
         )
     }
@@ -237,7 +258,7 @@ struct GridLayoutTest {
     }
 
     @MainActor
-    @Test("takes the first matching config override, with inclusive $grids.current.width bounds")
+    @Test("takes the first matching config override, with inclusive width condition bounds")
     func configOverrides() throws {
         let grid = try gridInfo(#"""
         {
@@ -281,16 +302,37 @@ struct GridLayoutTest {
     }
 
     @MainActor
-    @Test("$grids follows the grid's width, leaves width out when unbounded, and stays out of the parent state")
-    func gridsState() {
+    @Test("$grids holds the grid's chosen conditions, none when unbounded, and stays out of the parent state")
+    func gridsState() throws {
+        let conditions = try JSONDecoder().decode([String: [ThomasGridConditionSelector]].self, from: Data(#"""
+        {"columns": [{"width": {"at_most": 319}, "value": 1}, {"width": {"at_least": 320}, "value": 2}]}
+        """#.utf8))
         let parent = ThomasState(mutableState: ThomasState.MutableState(), onStateChange: { _ in })
-        let gridState = ThomasGridState(width: nil)
+        let gridState = ThomasGridState(width: nil, conditions: conditions)
         let scoped = parent.with(gridState: gridState)
-        #expect(scoped.state.object?["$grids"] == ["current": [:]])
+        #expect(scoped.state.object?["$grids"] == ["current": ["conditions": [:]]])
 
         gridState.width = 320
-        #expect(scoped.state.object?["$grids"] == ["current": ["width": 320]])
+        #expect(scoped.state.object?["$grids"] == ["current": ["conditions": ["columns": 2]]])
         #expect(parent.state.object?["$grids"] == nil)
+    }
+
+    @MainActor
+    @Test("a width change that crosses no breakpoint publishes nothing")
+    func gridConditionsOnlyChangeAtBreakpoints() throws {
+        let conditions = try JSONDecoder().decode([String: [ThomasGridConditionSelector]].self, from: Data(#"""
+        {"columns": [{"width": {"at_most": 319}, "value": 1}, {"value": 2}]}
+        """#.utf8))
+        let gridState = ThomasGridState(width: 400, conditions: conditions)
+        var published = 0
+        let subscription = gridState.$chosen.dropFirst().sink { _ in published += 1 }
+        gridState.width = 380
+        gridState.width = 340
+        #expect(published == 0)
+        gridState.width = 300
+        #expect(published == 1)
+        #expect(gridState.chosen == ["columns": 1])
+        subscription.cancel()
     }
 
     @MainActor
@@ -440,6 +482,7 @@ struct GridLayoutTest {
           "view_overrides": {
             "config": [{"when_state_matches": \#(Self.gridWidth(#"{"at_least": 480}"#)), "value": {"columns": {"type": "fixed", "count": 6}}}]
           },
+          "grid_state": {"conditions": {"wide": [{"width": {"at_least": 480}, "value": "wide"}]}},
           "items": [
             {"config": {"column_span": 2}, "overrides": {"config": [{"value": {"column_span": 3}}]}, "view": {"type": "empty_view"}},
             {"size": {"width": 50, "height": "auto"}, "position": {"horizontal": "start", "vertical": "top"}, "view": {"type": "empty_view"}}
@@ -464,6 +507,8 @@ struct GridLayoutTest {
         #expect(properties.identifier == "grid-5")
         #expect(properties.config.contentPosition == ThomasPosition(horizontal: .center, vertical: .bottom))
         #expect(properties.config.partialRowPosition == .center)
+        #expect(properties.gridState?.conditions?["wide"]?.first?.width == .init(atLeast: 480))
+        #expect(properties.gridState?.conditions?["wide"]?.first?.value == "wide")
         #expect(grid.overrides?.config?.first?.value?.columns == .fixed(count: 6))
         #expect(gridConfig(grid, width: 480).columns == .fixed(count: 6))
         #expect(gridConfig(grid, width: 479).columns == properties.config.columns)

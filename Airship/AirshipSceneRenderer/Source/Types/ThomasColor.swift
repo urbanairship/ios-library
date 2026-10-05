@@ -30,6 +30,7 @@ struct ThomasColor: ThomasSerializable {
         let platform: ThomasPlatform?
         let windowSize: ThomasWindowSize?
         let orientation: ThomasOrientation?
+        let environmentConditions: [String: AirshipJSON]?
         let color: HexColor
 
         enum CodingKeys: String, CodingKey {
@@ -37,6 +38,7 @@ struct ThomasColor: ThomasSerializable {
             case darkMode = "dark_mode"
             case windowSize = "window_size"
             case orientation
+            case environmentConditions = "environment_conditions"
             case color
         }
     }

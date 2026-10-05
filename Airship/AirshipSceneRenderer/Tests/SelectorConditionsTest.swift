@@ -1,8 +1,10 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+import SwiftUI
 import Testing
 
+@_spi(AirshipInternal) import AirshipBasement
 @testable @_spi(AirshipInternal) import AirshipSceneRenderer
 
 @Suite("Selector conditions")
@@ -136,5 +138,123 @@ struct SelectorConditionsTest {
     func placementFirstMatch() throws {
         let selectors = [#""window_size": "medium""#, #""orientation": "portrait""#]
         #expect(try Self.placementChosen(selectors, Self.shown) == 1)
+    }
+}
+
+@MainActor
+@Suite("Conditions")
+struct ConditionsTest {
+
+    /// A small, light, measured window of `width` × `height`, with safe window and frame the same unless given.
+    private static func measured(
+        width: CGFloat = 390,
+        height: CGFloat = 844,
+        safeWindow: CGSize? = nil,
+        frame: ThomasEnvironmentState.HostFrame? = nil
+    ) -> ThomasEnvironmentState.Values {
+        ThomasEnvironmentState.Values(
+            traits: .init(darkMode: false, textScale: 1, windowSize: .small, layoutDirection: .leftToRight, locale: Locale(identifier: "en-US")),
+            geometry: .init(
+                window: CGSize(width: width, height: height),
+                safeWindow: safeWindow ?? CGSize(width: width, height: height),
+                frame: frame ?? .init(width: width, height: height)
+            )
+        )
+    }
+
+    private static func environment(_ json: String) throws -> [String: [ThomasEnvironmentConditionSelector]] {
+        try JSONDecoder().decode([String: [ThomasEnvironmentConditionSelector]].self, from: Data(json.utf8))
+    }
+
+    private static let size = #"""
+    {"size": [{"window_width": {"at_most": 599}, "value": "compact"},
+              {"window_width": {"at_most": 1023}, "value": "medium"},
+              {"value": "expanded"}]}
+    """#
+
+    @Test(
+        "chooses the first matching bucket, both ends inclusive",
+        arguments: [(390, "compact"), (599, "compact"), (600, "medium"), (1023, "medium"), (1024, "expanded")]
+    )
+    func buckets(width: CGFloat, expected: String) throws {
+        let chosen = ThomasConditions.chooseEnvironment(try Self.environment(Self.size), values: Self.measured(width: width))
+        #expect(chosen == ["size": .string(expected)])
+    }
+
+    @Test("leaves out a condition nothing matches, and chooses nothing without conditions")
+    func noMatch() throws {
+        let wide = try Self.environment(#"{"wide": [{"window_width": {"at_least": 1000}, "value": true}]}"#)
+        #expect(ThomasConditions.chooseEnvironment(wide, values: Self.measured()) == [:])
+        #expect(ThomasConditions.chooseEnvironment(nil, values: Self.measured()) == [:])
+    }
+
+    @Test("chooses nothing until the window is measured, so a catch-all can't win first")
+    func nothingBeforeMeasure() throws {
+        var unmeasured = Self.measured()
+        unmeasured.geometry = .init()
+        #expect(ThomasConditions.chooseEnvironment(try Self.environment(Self.size), values: unmeasured) == [:])
+    }
+
+    @Test("matches no range on a length it doesn't know")
+    func unknownLength() throws {
+        let short = try Self.environment(#"{"short": [{"frame_height": {"at_most": 400}, "value": true}, {"value": false}]}"#)
+        let content = Self.measured(frame: .init(width: 320, height: nil))
+        #expect(ThomasConditions.chooseEnvironment(short, values: content) == ["short": false])
+    }
+
+    @Test("reads the safe window and frame, not just the window")
+    func safeWindowAndFrame() throws {
+        let conditions = try Self.environment(#"""
+        {"safe": [{"safe_window_width": {"at_most": 350}, "value": "inset"}],
+         "frame": [{"frame_height": {"at_most": 500}, "value": "short"}]}
+        """#)
+        let inset = Self.measured(safeWindow: CGSize(width: 350, height: 800), frame: .init(width: 300, height: 500))
+        #expect(ThomasConditions.chooseEnvironment(conditions, values: inset) == ["safe": "inset", "frame": "short"])
+    }
+
+    @Test("combines sizes with the shared selector fields")
+    func sizesWithSharedFields() throws {
+        let shape = try Self.environment(#"""
+        {"shape": [{"orientation": "landscape", "window_height": {"at_most": 500}, "value": "short_landscape"},
+                   {"value": "regular"}]}
+        """#)
+        #expect(ThomasConditions.chooseEnvironment(shape, values: Self.measured(width: 800, height: 400)) == ["shape": "short_landscape"])
+        #expect(ThomasConditions.chooseEnvironment(shape, values: Self.measured(width: 400, height: 450)) == ["shape": "regular"])
+    }
+
+    @Test("chooses grid conditions from the width, falling through without one")
+    func gridConditions() throws {
+        let layout = try JSONDecoder().decode([String: [ThomasGridConditionSelector]].self, from: Data(#"""
+        {"layout": [{"width": {"at_most": 360}, "value": "stacked"}, {"value": "columns"}]}
+        """#.utf8))
+        #expect(ThomasConditions.chooseGrid(layout, width: 360) == ["layout": "stacked"])
+        #expect(ThomasConditions.chooseGrid(layout, width: 361) == ["layout": "columns"])
+        #expect(ThomasConditions.chooseGrid(layout, width: nil) == ["layout": "columns"])
+    }
+
+    @Test(
+        "a selector's environment_conditions must each equal the chosen value",
+        arguments: [
+            (#"{"size": "compact"}"#, true),
+            (#"{"size": "medium"}"#, false),
+            (#"{"wide": false}"#, true),
+            (#"{"tag": {"a": 1}}"#, true),
+            (#"{"size": "compact", "wide": true}"#, false),
+            (#"{"missing": "x"}"#, false),
+        ]
+    )
+    func environmentConditions(conditions: String, expected: Bool) throws {
+        let selector = try JSONDecoder().decode(
+            ThomasMediaUrlSelector.self,
+            from: Data(#"{"environment_conditions": \#(conditions), "url": "x"}"#.utf8)
+        )
+        let environment = ThomasSelectorEnvironment(
+            darkMode: false,
+            windowSize: .small,
+            orientation: .portrait,
+            conditions: ["size": "compact", "wide": false, "tag": ["a": 1]]
+        )
+        #expect(selector.matches(environment) == expected)
+        #expect(!selector.matches(ThomasSelectorEnvironment(darkMode: false, windowSize: .small, orientation: .portrait)))
     }
 }

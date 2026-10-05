@@ -2,12 +2,14 @@
 
 import Foundation
 import SwiftUI
+@_spi(AirshipInternal) import AirshipBasement
 
 struct ThomasMediaUrlSelector: ThomasSerializable, ThomasSelectorConditions {
     var platform: ThomasPlatform?
     var darkMode: Bool?
     var windowSize: ThomasWindowSize?
     var orientation: ThomasOrientation?
+    var environmentConditions: [String: AirshipJSON]?
     var url: String
 
     private enum CodingKeys: String, CodingKey {
@@ -15,6 +17,7 @@ struct ThomasMediaUrlSelector: ThomasSerializable, ThomasSelectorConditions {
         case darkMode = "dark_mode"
         case windowSize = "window_size"
         case orientation
+        case environmentConditions = "environment_conditions"
         case url
     }
 }

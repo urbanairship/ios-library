@@ -85,7 +85,8 @@ struct RootView<Content: View>: View {
         self.content = content
         self._isForeground = State(initialValue: AppStateTracker.shared.isForegrounded)
         let environmentState = ThomasEnvironmentState(
-            values: .seed(window: initialWindowSize)
+            values: .seed(window: initialWindowSize),
+            conditions: layout.environmentState?.conditions
         )
         self._environmentState = State(initialValue: environmentState)
         self._thomasState = StateObject(
@@ -198,7 +199,8 @@ struct RootView<Content: View>: View {
         ThomasSelectorEnvironment(
             darkMode: colorScheme == .dark,
             windowSize: resolveWindowSize(),
-            orientation: orientationTracker.orientation
+            orientation: orientationTracker.orientation,
+            conditions: environmentState.values.conditions
         )
     }
 

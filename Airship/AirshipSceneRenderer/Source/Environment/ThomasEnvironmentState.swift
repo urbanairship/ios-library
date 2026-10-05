@@ -20,15 +20,19 @@ final class ThomasEnvironmentState: ObservableObject {
 
     @Published private(set) var values: Values
 
+    /// The scene's `environment_state.conditions`, chosen again whenever the values change.
+    private let conditions: [String: [ThomasEnvironmentConditionSelector]]?
     private let taskSleeper: any AirshipTaskSleeper
     private var pendingGeometry: Geometry?
     private var geometryCooldown: Task<Void, Never>?
 
     init(
         values: Values,
+        conditions: [String: [ThomasEnvironmentConditionSelector]]? = nil,
         taskSleeper: any AirshipTaskSleeper = DefaultAirshipTaskSleeper.shared
     ) {
-        self.values = values
+        self.conditions = conditions
+        self.values = values.choosing(conditions)
         self.taskSleeper = taskSleeper
     }
 
@@ -41,7 +45,7 @@ final class ThomasEnvironmentState: ObservableObject {
     /// - Parameter traits: The traits the platform reports now.
     func update(traits: Traits) {
         guard traits != values.traits else { return }
-        values = Values(traits: traits, geometry: pendingGeometry ?? values.geometry)
+        values = Values(traits: traits, geometry: pendingGeometry ?? values.geometry).choosing(conditions)
         pendingGeometry = nil
     }
 
@@ -82,7 +86,9 @@ final class ThomasEnvironmentState: ObservableObject {
             return
         }
 
-        values.geometry = next
+        var updated = values
+        updated.geometry = next
+        values = updated.choosing(conditions)
         startGeometryCooldown()
     }
 
@@ -148,54 +154,48 @@ final class ThomasEnvironmentState: ObservableObject {
         }
     }
 
-    /// Everything `$environment` publishes.
+    /// The environment as measured, and the environment conditions chosen from it.
     struct Values: Equatable, Sendable {
         var traits: Traits
         var geometry: Geometry = Geometry()
+        /// Each environment condition's chosen value; a condition no selector matched is left out.
+        var conditions: [String: AirshipJSON] = [:]
+
+        /// The window's orientation, or `nil` until the window is measured.
+        var orientation: ThomasOrientation? {
+            geometry.window.map { $0.width > $0.height ? .landscape : .portrait }
+        }
+
+        /// Returns the values with `conditions` chosen from them.
+        ///
+        /// - Parameter declared: the scene's `environment_state.conditions`
+        /// - Returns: the values, conditions chosen
+        @MainActor
+        func choosing(_ declared: [String: [ThomasEnvironmentConditionSelector]]?) -> Values {
+            var copy = self
+            copy.conditions = ThomasConditions.chooseEnvironment(declared, values: self)
+            return copy
+        }
 
         /// Returns the values as the `$environment` state object.
         ///
-        /// A size is left out until it is measured, so a predicate on it keeps its view at the default
-        /// instead of matching zero.
+        /// The window, safe window and frame sizes stay out, so a resize that crosses no
+        /// breakpoint changes nothing a predicate reads; conditions carry what a scene needs.
         ///
         /// - Returns: The state object.
         var json: AirshipJSON {
-            var window = Self.sizeJSON(geometry.window)
-            window["size"] = .string(traits.windowSize.rawValue)
-            if let size = geometry.window {
-                window["orientation"] = .string(
-                    size.width > size.height
-                        ? ThomasOrientation.landscape.rawValue
-                        : ThomasOrientation.portrait.rawValue
-                )
-            }
+            var window: [String: AirshipJSON] = ["size": .string(traits.windowSize.rawValue)]
+            window["orientation"] = orientation.map { .string($0.rawValue) }
 
-            var result: [String: AirshipJSON] = [
+            return .object([
                 "platform": .string("ios"),
                 "dark_mode": .bool(traits.darkMode),
                 "text_scale": .number(traits.textScale),
                 "layout_direction": .string(traits.layoutDirection == .rightToLeft ? "rtl" : "ltr"),
                 "locale": .object(Self.localeJSON(traits.locale)),
-                "window": .object(window)
-            ]
-            if geometry.safeWindow != nil {
-                result["safe_window"] = .object(Self.sizeJSON(geometry.safeWindow))
-            }
-            if let frame = geometry.frame {
-                result["frame"] = .object(Self.sizeJSON(width: frame.width, height: frame.height))
-            }
-            return .object(result)
-        }
-
-        private static func sizeJSON(_ size: CGSize?) -> [String: AirshipJSON] {
-            sizeJSON(width: size?.width, height: size?.height)
-        }
-
-        private static func sizeJSON(width: CGFloat?, height: CGFloat?) -> [String: AirshipJSON] {
-            var result: [String: AirshipJSON] = [:]
-            result["width"] = width.map { .number(Double($0)) }
-            result["height"] = height.map { .number(Double($0)) }
-            return result
+                "window": .object(window),
+                "conditions": .object(conditions)
+            ])
         }
 
         /// Returns the locale as its BCP 47 identifier and its parts, so a predicate can match

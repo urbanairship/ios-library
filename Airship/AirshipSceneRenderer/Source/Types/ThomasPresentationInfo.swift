@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
+@_spi(AirshipInternal) import AirshipBasement
 
 /// - Note: For internal use only. :nodoc:
 @_spi(AirshipInternal)
@@ -381,6 +382,7 @@ public enum ThomasPresentationInfo: ThomasSerializable {
         var darkMode: Bool?
         var windowSize: ThomasWindowSize?
         var orientation: ThomasOrientation?
+        var environmentConditions: [String: AirshipJSON]?
 
         private enum CodingKeys: String, CodingKey {
             case placement
@@ -388,6 +390,7 @@ public enum ThomasPresentationInfo: ThomasSerializable {
             case darkMode = "dark_mode"
             case windowSize = "window_size"
             case orientation
+            case environmentConditions = "environment_conditions"
         }
     }
 

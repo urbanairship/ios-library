@@ -151,7 +151,7 @@ struct GridLayoutRenderingTest {
         {"type": "linear_layout", "direction": "vertical", "items": [{
           "size": {"width": \#(width), "height": "auto"},
           "view": {
-            "type": "grid_layout", "identifier": "grid-1",
+            "type": "grid_layout", "identifier": "grid-1", \#(Self.widthState),
             "background_color": {"default": {"type": "hex", "hex": "#00FF00", "alpha": 1}},
             "config": \#(config),
             "items": [\#(items.joined(separator: ","))]
@@ -586,13 +586,33 @@ struct GridLayoutRenderingTest {
         #expect(snapshot.horizontalRuns(y: 14, Self.blue).first?.1 == 146)
     }
 
-    /// A 20pt-tall fill shown only while `$grids.current.width` is in `range`.
+    /// The width ranges this suite reads, each declared on a grid as a condition that is `true` inside it.
+    private static let widthRanges: [String] = [
+        #"{"at_most": 200}"#, #"{"at_least": 300}"#, #"{"at_least": 336, "at_most": 336}"#, #"{"at_most": 400}"#,
+    ]
+
+    private static func conditionName(_ range: String) -> String {
+        String(range.map { $0.isLetter || $0.isNumber ? $0 : "_" })
+    }
+
+    /// A grid's `grid_state`, declaring a condition for every range in `widthRanges`.
+    private static var widthState: String {
+        let conditions = widthRanges.map { #""\#(conditionName($0))": [{"width": \#($0), "value": true}]"# }
+        return #""grid_state": {"conditions": {\#(conditions.joined(separator: ","))}}"#
+    }
+
+    /// A predicate that holds while the grid's width is in `range`, read through its declared condition.
+    private static func gridWidth(_ range: String) -> String {
+        #"{"scope": ["$grids", "current", "conditions", "\#(conditionName(range))"], "value": {"equals": true}}"#
+    }
+
+    /// A 20pt-tall fill shown only while the grid's width is in `range`.
     private static func shownWhenGridWidth(_ range: String, hex: String) -> String {
         #"""
         {"size": {"width": "100%", "height": 20}, "view": {
           "type": "empty_view",
           "background_color": {"default": {"type": "hex", "hex": "\#(hex)", "alpha": 1}},
-          "visibility": {"default": false, "invert_when_state_matches": {"scope": ["$grids", "current", "width"], "value": \#(range)}}
+          "visibility": {"default": false, "invert_when_state_matches": \#(gridWidth(range))}
         }}
         """#
     }
@@ -603,9 +623,9 @@ struct GridLayoutRenderingTest {
         {"type": "linear_layout", "direction": "vertical", "items": [{
           "size": {"width": 300, "height": "auto"},
           "view": {
-            "type": "grid_layout", "identifier": "grid",
+            "type": "grid_layout", "identifier": "grid", \#(Self.widthState),
             "background_color": {"default": {"type": "hex", "hex": "#00FF00", "alpha": 1}},
-            "visibility": {"default": false, "invert_when_state_matches": {"scope": ["$grids", "current", "width"], "value": {"at_least": 300}}},
+            "visibility": {"default": false, "invert_when_state_matches": \#(Self.gridWidth(#"{"at_least": 300}"#))},
             "config": {"columns": {"type": "fixed", "count": 2}},
             "items": [
               \#(Self.shownWhenGridWidth(#"{"at_most": 200}"#, hex: "#0000FF")),
@@ -706,7 +726,7 @@ struct GridLayoutRenderingTest {
     }
 
     @Test(
-        "$grids.current.width is the content width inside the border drawn, an override's included",
+        "grid conditions are chosen from the content width inside the border drawn, an override's included",
         arguments: ["360", "\"auto\""]
     )
     func gridWidthIsInsideDrawnBorder(width: String) async throws {
@@ -714,7 +734,7 @@ struct GridLayoutRenderingTest {
         {"type": "linear_layout", "direction": "vertical", "items": [{
           "size": {"width": \#(width), "height": "auto"},
           "view": {
-            "type": "grid_layout", "identifier": "grid",
+            "type": "grid_layout", "identifier": "grid", \#(Self.widthState),
             "border": {"stroke_width": 4, "stroke_color": {"default": {"type": "hex", "hex": "#00FF00", "alpha": 1}}},
             "view_overrides": {"border": [{
               "when_state_matches": {"key": "unset", "value": {"is_present": false}},
@@ -737,12 +757,12 @@ struct GridLayoutRenderingTest {
         {"type": "linear_layout", "direction": "vertical", "items": [{
           "size": {"width": 300, "height": "auto"},
           "view": {
-            "type": "grid_layout", "identifier": "outer",
+            "type": "grid_layout", "identifier": "outer", \#(Self.widthState),
             "config": {"columns": {"type": "fixed", "count": 2}},
             "items": [
               \#(Self.shownWhenGridWidth(#"{"at_least": 300}"#, hex: "#FF0000")),
               {"view": {
-                "type": "grid_layout", "identifier": "inner",
+                "type": "grid_layout", "identifier": "inner", \#(Self.widthState),
                 "config": {"columns": {"type": "fixed", "count": 1}},
                 "items": [\#(Self.shownWhenGridWidth(#"{"at_most": 200}"#, hex: "#0000FF"))]
               }}
@@ -799,7 +819,7 @@ struct GridLayoutRenderingTest {
         let snapshot = try await render(twelveColumns([
             #"""
             {"size": {"width": "100%", "height": 20}, "config": {"column_span": 8, "column_start": 2},
-             "overrides": {"config": [{"when_state_matches": {"scope": ["$grids", "current", "width"], "value": {"at_most": 400}},
+             "overrides": {"config": [{"when_state_matches": \#(Self.gridWidth(#"{"at_most": 400}"#)),
                                        "value": {"column_span": 4, "column_start": 4}}]},
              "view": \#(Self.fill("#FF0000"))}
             """#,

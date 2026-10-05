@@ -45,7 +45,8 @@ private struct GridLayoutContent: View {
         self.info = info
         self.constraints = constraints
         let gridState = ThomasGridState(
-            width: Self.gridWidth(constraints: constraints, measuredWidth: nil, borderStrokeWidth: info.commonProperties.border?.strokeWidth ?? 0)
+            width: Self.gridWidth(constraints: constraints, measuredWidth: nil, borderStrokeWidth: info.commonProperties.border?.strokeWidth ?? 0),
+            conditions: info.properties.gridState?.conditions
         )
         self._gridState = StateObject(wrappedValue: gridState)
         self._gridScopedState = StateObject(wrappedValue: parentState.with(gridState: gridState))

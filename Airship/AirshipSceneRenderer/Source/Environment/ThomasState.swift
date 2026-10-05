@@ -155,7 +155,7 @@ final class ThomasState: ObservableObject {
             mutableStateValue: mutableState?.state,
             asyncViewStatus: asyncViewState?.status,
             environment: environmentState?.values,
-            grid: gridState.map { ThomasGridState.json(width: $0.width) }
+            grid: gridState.map { ThomasGridState.json(conditions: $0.chosen) }
         )
     }
 
@@ -169,7 +169,7 @@ final class ThomasState: ObservableObject {
         asyncViewState?.$status.sink { [weak self] in self?.updateSnapshot(asyncViewStatus: $0) }.store(in: &subscriptions)
         aiStatusSubject.sink { [weak self] in self?.updateSnapshot(aiStatus: $0) }.store(in: &subscriptions)
         environmentState?.$values.sink { [weak self] in self?.updateSnapshot(environment: $0) }.store(in: &subscriptions)
-        gridState?.$width.sink { [weak self] in self?.updateSnapshot(grid: ThomasGridState.json(width: $0)) }.store(in: &subscriptions)
+        gridState?.$chosen.sink { [weak self] in self?.updateSnapshot(grid: ThomasGridState.json(conditions: $0)) }.store(in: &subscriptions)
     }
 
     /// Bridges the executor's `statusUpdates` async stream onto `aiStatusSubject`

@@ -310,9 +310,9 @@ indirect enum ThomasViewInfo: ThomasSerializable {
 
     /// Rows of equal-width cells whose column count comes from the grid's own width, never its items.
     ///
-    /// `view_overrides.config` changes the config with state. The grid's width is at
-    /// `$grids.current.width` for the grid itself, its items' `overrides` and everything inside it,
-    /// until a nested grid takes over.
+    /// `view_overrides.config` changes the config with state. Its `grid_state.conditions`, chosen from
+    /// its width, are at `$grids.current.conditions` for the grid itself, its items' `overrides` and
+    /// everything inside it, until a nested grid takes over.
     struct GridLayout: BaseInfo {
         var commonProperties: CommonViewProperties
         var commonOverrides: CommonViewOverrides?
@@ -346,6 +346,8 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var header: Edge?
             /// A view below the cells, as wide as the block of columns.
             var footer: Edge?
+            /// Named breakpoints on the grid's width, at `$grids.current.conditions` inside it.
+            var gridState: ThomasGridStateInfo?
             /// Shuffle the items once, when the grid first appears; the header and footer never move.
             var randomizeChildren: Bool?
             var backgrounds: [ThomasBackground]?
@@ -358,6 +360,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case items
                 case header
                 case footer
+                case gridState = "grid_state"
                 case randomizeChildren = "randomize_children"
                 case backgrounds
                 case accessibilityRole = "accessibility_role"

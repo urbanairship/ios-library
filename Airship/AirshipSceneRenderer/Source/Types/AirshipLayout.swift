@@ -23,12 +23,16 @@ public struct AirshipLayout: ThomasSerializable {
     /// that ranks pending embedded instances for `.ai` selection.
     let contentDescription: ThomasContentDescriptionInfo?
 
+    /// What `$environment` holds beyond the platform's settings.
+    let environmentState: ThomasEnvironmentStateInfo?
+
     enum CodingKeys: String, CodingKey {
         case view
         case version
         case presentation
         case options
         case contentDescription = "content_description"
+        case environmentState = "environment_state"
     }
 
     public var isEmbedded: Bool {
