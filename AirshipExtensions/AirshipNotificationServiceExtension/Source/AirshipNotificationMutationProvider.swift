@@ -17,42 +17,52 @@ final class AirshipNotificationMutationProvider: Sendable {
     func mutations(for args: MediaAttachmentPayload) async throws -> AirshipNotificationMutations? {
         try Task.checkCancellation()
 
-        // Each task swallows its own failure so one bad/expired media URL doesn't
-        // discard the title/subtitle/body overrides for the whole notification.
-        let attachments = await withTaskGroup(of: AirshipAttachment?.self) { [weak self, args, logger] group in
-            var attachments: [AirshipAttachment] = []
-
-            args.media.forEach { media in
-                group.addTask { [weak self] in
-                    do {
-                        try Task.checkCancellation()
-                        return try await self?.load(
-                            attachment: media,
-                            defaultOptions: args.options,
-                            thumbnailID: args.thumbnailID
-                        )
-                    } catch {
-                        logger.error("Failed to load attachment \(media.url): \(error)")
-                        return nil
-                    }
-                }
+        // Downloads run concurrently, but results must come back in the authored
+        // order regardless of which finishes first. Each task also swallows its
+        // own failure so one bad/expired media URL doesn't discard the
+        // title/subtitle/body overrides for the whole notification.
+        let results = await Self.concurrentMapPreservingOrder(args.media) { [weak self, args, logger] media -> AirshipAttachment? in
+            do {
+                try Task.checkCancellation()
+                return try await self?.load(
+                    attachment: media,
+                    defaultOptions: args.options,
+                    thumbnailID: args.thumbnailID
+                )
+            } catch {
+                logger.error("Failed to load attachment \(media.url): \(error)")
+                return nil
             }
-
-            for await result in group {
-                if let result = result {
-                    attachments.append(result)
-                }
-            }
-
-            return attachments
         }
 
         return AirshipNotificationMutations(
             title: args.textContent?.title,
             subtitle: args.textContent?.subtitle,
             body: args.textContent?.body,
-            attachments: attachments
+            attachments: results.compactMap { $0 }
         )
+    }
+
+    /// Runs `transform` concurrently for every element, but returns the results in the
+    /// same order as `elements` regardless of which task finishes first.
+    static func concurrentMapPreservingOrder<Element: Sendable, Result: Sendable>(
+        _ elements: [Element],
+        transform: @escaping @Sendable (Element) async -> Result
+    ) async -> [Result] {
+        await withTaskGroup(of: (Int, Result).self) { group in
+            for (index, element) in elements.enumerated() {
+                group.addTask {
+                    (index, await transform(element))
+                }
+            }
+
+            var results = [Result?](repeating: nil, count: elements.count)
+            for await (index, result) in group {
+                results[index] = result
+            }
+
+            return results.compactMap { $0 }
+        }
     }
 
     private func load(
