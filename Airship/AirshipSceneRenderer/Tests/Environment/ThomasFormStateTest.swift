@@ -668,6 +668,11 @@ struct ThomasFormStateTest {
 
         let result = try await submit(form)
         #expect(result.channels == [.email("email@airship.com", .transactional(.init()))])
+        // Only the input that registered reports its options.
+        #expect(result.value == .form(responseType: nil, children: [
+            "email": .email("email@airship.com", registration: .transactional(.init())),
+            "no-options": .email("email@airship.com"),
+        ]))
     }
 
     @Test("Submit applies registration overrides against the form state.")
@@ -717,6 +722,94 @@ struct ThomasFormStateTest {
 
         let result = try await submit(form)
         #expect(result.channels == [.email("email@airship.com", .commercial(.init(optedIn: true)))])
+        // The reported options are the ones registered, after the override.
+        #expect(result.value == .form(responseType: nil, children: [
+            "email": .email("email@airship.com", registration: .commercial(.init(optedIn: true))),
+            "other": .email("email@airship.com"),
+            "promo": .toggle(true),
+        ]))
+    }
+
+    @Test("Submit records an SMS input's registration from the channel it produced.")
+    func testSubmitRecordsSMSRegistrationFromChannel() async throws {
+        let options: ThomasSMSRegistrationOption = .optIn(.init(senderID: "12345"))
+        let locale = ThomasSMSLocale(countryCode: "US", prefix: "+1", registration: options)
+        let form = ThomasFormState(
+            identifier: "some-form-id",
+            formType: .form,
+            formResponseType: nil,
+            validationMode: .onDemand
+        )
+        form.updateField(.validField(
+            identifier: "sms",
+            input: .sms("15035550123", locale),
+            result: .init(value: .sms("15035550123", locale), channels: [.sms("15035550123", options)])
+        ))
+        form.updateField(.validField(
+            identifier: "collected-sms",
+            input: .sms("15035550124", locale),
+            result: .init(value: .sms("15035550124", locale))
+        ))
+
+        let result = try await submit(form)
+        #expect(result.value == .form(responseType: nil, children: [
+            "sms": .sms("15035550123", locale, registration: options),
+            "collected-sms": .sms("15035550124", locale),
+        ]))
+    }
+
+    @Test("A parent's overrides don't reach a child form's inputs; the child's own do.")
+    func testOverridesStayWithTheirForm() async throws {
+        func overrides(_ json: String) throws -> ThomasFormRegistrationOverrides {
+            try JSONDecoder().decode(ThomasFormRegistrationOverrides.self, from: Data(json.utf8))
+        }
+        let promoOn = #"{"scope": ["$forms", "current", "data", "children", "promo"], "key": "value", "value": {"equals": true}}"#
+
+        let child = ThomasFormState(
+            identifier: "child",
+            formType: .form,
+            formResponseType: nil,
+            validationMode: .onDemand,
+            registrationOverrides: try overrides(#"""
+            {"email": [{"input_id": "child_email", "when_state_matches": \#(promoOn),
+                        "registration": {"type": "transactional"}}]}
+            """#)
+        )
+        child.updateField(makeEmailField(identifier: "child_email", options: .doubleOptIn(.init())))
+        child.updateField(.validField(identifier: "promo", input: .toggle(true), result: .init(value: .toggle(true))))
+        let childResult = try await submit(child)
+
+        // One override for every email input, one naming the child's: neither may apply to it.
+        let parent = ThomasFormState(
+            identifier: "parent",
+            formType: .form,
+            formResponseType: nil,
+            validationMode: .onDemand,
+            registrationOverrides: try overrides(#"""
+            {"email": [
+              {"when_state_matches": \#(promoOn), "registration": {"type": "commercial", "commercial_opted_in": {"type": "value", "value": true}}},
+              {"input_id": "child_email", "when_state_matches": \#(promoOn), "registration": {"type": "commercial", "commercial_opted_in": {"type": "value", "value": true}}}
+            ]}
+            """#)
+        )
+        parent.updateField(makeEmailField(identifier: "parent_email", options: .transactional(.init())))
+        parent.updateField(.validField(identifier: "promo", input: .toggle(true), result: .init(value: .toggle(true))))
+        parent.updateField(.validField(identifier: "child", input: childResult.value, result: childResult))
+        let result = try await submit(parent)
+
+        #expect(Set(result.channels ?? []) == [
+            .email("email@airship.com", .commercial(.init(optedIn: true))),
+            .email("email@airship.com", .transactional(.init())),
+        ])
+        guard case .form(_, let children) = result.value else {
+            Issue.record("expected a form")
+            return
+        }
+        #expect(children["parent_email"] == .email("email@airship.com", registration: .commercial(.init(optedIn: true))))
+        #expect(children["child"] == .form(responseType: nil, children: [
+            "child_email": .email("email@airship.com", registration: .transactional(.init())),
+            "promo": .toggle(true),
+        ]))
     }
 
     private func makeEmailField(

@@ -177,6 +177,12 @@ final class ThomasFormState: ObservableObject {
                     channelsResult.append(contentsOf: channels)
                 }
 
+                // Reports the registration from the channel itself, so the event can't disagree with it.
+                if case .sms(let value, let locale, _) = result.value,
+                   let registration = result.channels?.lazy.compactMap(\.smsOptions).first {
+                    resultMap[$0.field.identifier] = .sms(value, locale, registration: registration)
+                }
+
                 if let email = result.emailRegistration {
                     let options = registrationOverrides?.resolveEmail(
                         inputID: $0.field.identifier,
@@ -185,6 +191,7 @@ final class ThomasFormState: ObservableObject {
                     ) ?? email.options
                     if let options {
                         channelsResult.append(.email(email.address, options))
+                        resultMap[$0.field.identifier] = .email(email.address, registration: options)
                     }
                 }
 

@@ -222,12 +222,12 @@ struct TextInput: View {
     private func restoredValue() -> (String?, ThomasSMSLocale?) {
         let identifier = self.info.properties.identifier
         switch(self.info.properties.inputType, formState.fieldValue(identifier: identifier)) {
-        case(.email, .email(let value)),
+        case(.email, .email(let value, _)),
             (.number, .text(let value, _, _)),
             (.text, .text(let value, _, _)),
             (.textMultiline, .text(let value, _, _)):
             return (value, nil)
-        case (.sms, .sms(let value, let locale)):
+        case (.sms, .sms(let value, let locale, _)):
             return (value, locale)
         default:
             return (nil, nil)

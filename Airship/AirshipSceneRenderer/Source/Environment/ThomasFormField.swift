@@ -9,6 +9,11 @@ import AirshipBasement
 public enum ThomasChannelRegistration: Sendable, Equatable, Hashable {
     case email(String, ThomasEmailRegistrationOption)
     case sms(String, ThomasSMSRegistrationOption)
+
+    /// An SMS registration's options, or `nil` for an email one.
+    var smsOptions: ThomasSMSRegistrationOption? {
+        if case .sms(_, let options) = self { options } else { nil }
+    }
 }
 
 /// An attribute update produced by a form, to be handled by the host.
@@ -82,8 +87,12 @@ final class ThomasFormField: Sendable {
         /// so it survives form folding/nesting and reaches the event payload. nil when the
         /// field has no `ai_inference` config or on the raw input value.
         case text(String?, aiInference: ThomasAIInferenceReport?, isRedacted: Bool?)
-        case email(String?)
-        case sms(String?, ThomasSMSLocale?)
+        /// An email address, and the options the form registered it with after `registration_overrides`:
+        /// set on submit, and `nil` when the address was only collected.
+        case email(String?, registration: ThomasEmailRegistrationOption? = nil)
+        /// A phone number and its locale, and the options the form registered it with: set on submit
+        /// from the channel the input produced, and `nil` when the number was only collected.
+        case sms(String?, ThomasSMSLocale?, registration: ThomasSMSRegistrationOption? = nil)
         case score(AirshipJSON?)
     }
 
