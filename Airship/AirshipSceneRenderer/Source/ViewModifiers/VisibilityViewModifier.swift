@@ -16,11 +16,20 @@ internal struct VisibilityViewModifier: ViewModifier {
     }
 
     func isVisible() -> Bool {
-        let predicate = visibilityInfo.invertWhenStateMatches
-        guard predicate.evaluate(json: thomasState.state) else {
-            return visibilityInfo.defaultVisibility
+        visibilityInfo.isVisible(state: thomasState.state)
+    }
+}
+
+extension ThomasVisibilityInfo {
+    /// Whether the view is shown in a given state.
+    ///
+    /// - Parameter state: the state the predicate is matched against
+    /// - Returns: true when the view is shown
+    func isVisible(state: AirshipJSON) -> Bool {
+        guard invertWhenStateMatches.evaluate(json: state) else {
+            return defaultVisibility
         }
-        return !visibilityInfo.defaultVisibility
+        return !defaultVisibility
     }
 }
 

@@ -37,20 +37,13 @@ public struct DefaultAssetFileManager: AssetFileManager, Sendable {
         // is unreliable: the root exists on disk while the identifier directory doesn't yet, and
         // `standardizedFileURL` only resolves `/var` -> `/private/var`-style symlinks for paths
         // that already exist, so the two paths can standardize inconsistently.
-        guard Self.isValidCacheIdentifier(identifier) else {
+        guard isValidCacheIdentifier(identifier) else {
             throw AirshipErrors.error("Invalid cache identifier, resolves outside the cache root: \(identifier)")
         }
 
         let url = try ensureCacheRootDirectory(rootPathComponent: rootPathComponent)
         let cacheDirectory = url.appendingPathComponent(identifier, isDirectory: true)
         return try ensureCacheDirectory(url: cacheDirectory)
-    }
-
-    private static func isValidCacheIdentifier(_ identifier: String) -> Bool {
-        guard !identifier.isEmpty else { return false }
-        return identifier.split(separator: "/", omittingEmptySubsequences: false).allSatisfy {
-            $0 != "." && $0 != ".." && !$0.isEmpty
-        }
     }
 
     public func assetItemExists(at cacheURL: URL) -> Bool {
@@ -124,5 +117,12 @@ public struct DefaultAssetFileManager: AssetFileManager, Sendable {
             AirshipLogger.debug("Error creating directory at \(url): \(error)")
             throw error
         }
+    }
+}
+
+func isValidCacheIdentifier(_ identifier: String) -> Bool {
+    guard !identifier.isEmpty else { return false }
+    return identifier.split(separator: "/", omittingEmptySubsequences: false).allSatisfy {
+        $0 != "." && $0 != ".." && !$0.isEmpty
     }
 }

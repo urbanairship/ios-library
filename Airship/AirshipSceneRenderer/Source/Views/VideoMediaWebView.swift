@@ -194,7 +194,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
                             </script>
                         </body>
                         """,
-                video?.showControls ?? true ? "controls" : "",
+                video?.showControls ?? false ? "controls" : "",
                 video?.autoplay ?? false ? "autoplay" : "",
                 video?.muted ?? false ? "muted" : "",
                 video?.loop ?? false ? "loop" : "",
@@ -260,7 +260,7 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
                         </body>
                         """,
                     videoID,
-                    video?.showControls ?? true ? "1" : "0",
+                    video?.showControls ?? false ? "1" : "0",
                     video?.autoplay ?? false ? "1" : "0",
                     video?.muted ?? false ? "1" : "0",
                     video?.loop ?? false ? "1, \'playlist\': \'\(videoID)\'" : "0"
@@ -331,8 +331,8 @@ struct VideoMediaWebView: AirshipNativeViewRepresentable {
             videoState: videoState,
             mediaType: info.properties.mediaType,
             isAutoplay: video?.autoplay ?? false,
-            showControls: video?.showControls ?? true,
-            autoResetPosition: video?.autoResetPosition ?? ((video?.autoplay ?? false) && !(video?.showControls ?? true)),
+            showControls: video?.showControls ?? false,
+            autoResetPosition: video?.autoResetPosition ?? ((video?.autoplay ?? false) && !(video?.showControls ?? false)),
             isLooping: video?.loop ?? false,
             isMuted: video?.muted ?? false,
             resolver: thomasEnvironment.extensions.webViewChallengeResolver,

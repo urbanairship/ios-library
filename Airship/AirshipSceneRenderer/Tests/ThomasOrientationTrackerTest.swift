@@ -46,6 +46,19 @@ struct ThomasOrientationTrackerTest {
         #expect(tracker.orientation == .landscape)
     }
 
+    /// An embedded scene has no window size at display time.
+    @Test
+    func unknownUntilASizeIsReported() {
+        let tracker = ThomasOrientationTracker()
+        #expect(tracker.orientation == nil)
+
+        tracker.update(.zero)
+        #expect(tracker.orientation == nil)
+
+        tracker.update(CGSize(width: 400, height: 800))
+        #expect(tracker.orientation == .portrait)
+    }
+
     @Test
     func tracksAcrossAResize() {
         let tracker = ThomasOrientationTracker(initialSize: CGSize(width: 400, height: 800))

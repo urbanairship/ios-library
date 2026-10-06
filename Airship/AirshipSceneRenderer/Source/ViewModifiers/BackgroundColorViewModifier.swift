@@ -5,7 +5,7 @@ import SwiftUI
 
 
 struct BackgroundViewModifier: ViewModifier {
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
     @EnvironmentObject private var state: ThomasState
 
     var backgroundColor: ThomasColor?
@@ -34,12 +34,12 @@ struct BackgroundViewModifier: ViewModifier {
             .applyBackground(
                 color: resolvedBackgroundColor,
                 border: resolvedBorder,
-                colorScheme: colorScheme
+                selectorEnvironment: selectorEnvironment
             )
             .applyShadow(
                 shadow,
                 border: resolvedBorder,
-                colorScheme: colorScheme
+                selectorEnvironment: selectorEnvironment
             )
             .contentShape(
                 CustomRoundedRectangle(
@@ -61,13 +61,13 @@ fileprivate extension View {
     }
 
     @ViewBuilder
-    func applyShadow(_ shadow: ThomasShadow?, border: ThomasBorder?, colorScheme: ColorScheme) -> some View {
+    func applyShadow(_ shadow: ThomasShadow?, border: ThomasBorder?, selectorEnvironment: ThomasSelectorEnvironment) -> some View {
         if let boxShadow = shadow?.resolvedBoxShadow {
             if let borderShape = border?.borderShape {
                 self.background(
                     ZStack {
                         borderShape
-                            .fill(boxShadow.color.toColor(colorScheme))
+                            .fill(boxShadow.color.toColor(selectorEnvironment))
                             .padding(.all, -boxShadow.radius/2.0)
                             .blur(radius: boxShadow.blurRadius, opaque: false)
                             .offset(
@@ -83,7 +83,7 @@ fileprivate extension View {
                 self.background(
                     ZStack {
                         Rectangle()
-                            .fill(boxShadow.color.toColor(colorScheme))
+                            .fill(boxShadow.color.toColor(selectorEnvironment))
                             .padding(.all, -boxShadow.radius/2.0)
                             .blur(radius: boxShadow.blurRadius, opaque: false)
                             .offset(
@@ -105,11 +105,11 @@ fileprivate extension View {
     func applyBackground(
         color: ThomasColor?,
         border: ThomasBorder?,
-        colorScheme: ColorScheme
+        selectorEnvironment: ThomasSelectorEnvironment
     ) -> some View {
         // Defaults to black to match Android & Web
-        let strokeColor: Color = border?.strokeColor?.toColor(colorScheme) ?? .black
-        let backgroundColor: Color = color?.toColor(colorScheme) ?? .clear
+        let strokeColor: Color = border?.strokeColor?.toColor(selectorEnvironment) ?? .black
+        let backgroundColor: Color = color?.toColor(selectorEnvironment) ?? .clear
 
         if let strokeWidth = border?.strokeWidth, strokeWidth > 0 {
             if let borderShape = border?.borderShape {

@@ -57,6 +57,22 @@ final class ThomasEnvironment: ObservableObject {
         return new
     }
 
+    /// Seeds every `randomize_children` order: the host's `randomSeed`, else one drawn for this scene.
+    private let shuffleSeed: String
+
+    /// A shuffled order of `count` item indices, the same every time it is asked for with the same inputs in this scene.
+    ///
+    /// Derived from the scene's seed rather than stored, so a view rebuilt with its pager page gets
+    /// the order it had. Layouts without an `identifier` share an order when their counts match.
+    ///
+    /// - Parameters:
+    ///   - count: how many items the layout has
+    ///   - identifier: the layout's identifier, if it has one
+    /// - Returns: the item indices in shuffled order
+    func shuffledOrder(count: Int, identifier: String?) -> [Int] {
+        SeededShuffle.order(count: count, seed: shuffleSeed, identifier: identifier)
+    }
+
     @Published
     var isDismissed: Bool = false
 
@@ -94,7 +110,8 @@ final class ThomasEnvironment: ObservableObject {
         self.timer = timer ?? AirshipTimer()
         self.onDismiss = onDismiss
         self.stateStorage = stateStorage
-        
+        self.shuffleSeed = extensions.randomSeed ?? String(UInt32.random(in: .min ... .max), radix: 16)
+
         #if !os(tvOS) && !os(watchOS) && !os(macOS)
         self.subscribeKeyboard()
         #endif

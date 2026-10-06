@@ -18,6 +18,8 @@ public struct DefaultThomasExtensions: ThomasExtensions {
     public let imageLoader: any ThomasImageLoader
     public let actionRunner: any ThomasActionRunner
     public let aiInferenceExecutor: (any SceneAIExecutor)?
+    public let animationsEnabled: Bool
+    public let randomSeed: String?
     public var inputValidator: (any AirshipInputValidation.Validator)? {
         Airship.isFlying ? Airship.inputValidator : nil
     }
@@ -31,7 +33,9 @@ public struct DefaultThomasExtensions: ThomasExtensions {
         assetCacheManager: (any AssetCacheManagerProtocol)? = nil,
         actionRunner: (any ThomasActionRunner)? = nil,
         nativeBridgeExtension: (any NativeBridgeExtensionDelegate)? = nil,
-        aiManager: (any AirshipAI.InternalManager)? = nil
+        aiManager: (any AirshipAI.InternalManager)? = nil,
+        animationsEnabled: Bool = true,
+        randomSeed: String? = nil
     ) {
         let actionRunner = actionRunner ?? DefaultThomasActionRunner()
         self.imageLoader = DefaultThomasImageLoader(
@@ -46,6 +50,8 @@ public struct DefaultThomasExtensions: ThomasExtensions {
         self.aiInferenceExecutor = aiManager.map {
             DefaultSceneAIExecutor(aiManager: $0)
         }
+        self.animationsEnabled = animationsEnabled
+        self.randomSeed = randomSeed
     }
 #else
     @_spi(AirshipInternal)
@@ -53,7 +59,9 @@ public struct DefaultThomasExtensions: ThomasExtensions {
         imageProvider: (any AirshipImageProvider)? = nil,
         assetCacheManager: (any AssetCacheManagerProtocol)? = nil,
         actionRunner: (any ThomasActionRunner)? = nil,
-        aiManager: (any AirshipAI.InternalManager)? = nil
+        aiManager: (any AirshipAI.InternalManager)? = nil,
+        animationsEnabled: Bool = true,
+        randomSeed: String? = nil
     ) {
         self.imageLoader = DefaultThomasImageLoader(
             imageProvider: imageProvider,
@@ -63,6 +71,8 @@ public struct DefaultThomasExtensions: ThomasExtensions {
         self.aiInferenceExecutor = aiManager.map {
             DefaultSceneAIExecutor(aiManager: $0)
         }
+        self.animationsEnabled = animationsEnabled
+        self.randomSeed = randomSeed
     }
 #endif
 }

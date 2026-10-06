@@ -11,21 +11,21 @@ struct Shapes {
     static func shape(
         info: ThomasShapeInfo,
         constraints: ViewConstraints,
-        colorScheme: ColorScheme
+        selectorEnvironment: ThomasSelectorEnvironment
     ) -> some View {
         ShapeContent(
             info: info,
             constraints: constraints,
-            colorScheme: colorScheme
+            selectorEnvironment: selectorEnvironment
         )
     }
 
     @ViewBuilder
     private static func rectangle(
-        colorScheme: ColorScheme,
+        selectorEnvironment: ThomasSelectorEnvironment,
         border: ThomasBorder?
     ) -> some View {
-        let strokeColor = border?.strokeColor?.toColor(colorScheme) ?? Color.clear
+        let strokeColor = border?.strokeColor?.toColor(selectorEnvironment) ?? Color.clear
         let strokeWidth = border?.strokeWidth ?? 0
         let cornerRadius = border?.maxRadius ?? 0
 
@@ -68,11 +68,11 @@ struct Shapes {
     fileprivate static func rectangle(
         info: ThomasShapeInfo.Rectangle,
         constraints: ViewConstraints,
-        colorScheme: ColorScheme
+        selectorEnvironment: ThomasSelectorEnvironment
     ) -> some View {
-        let resolvedColor = info.color?.toColor(colorScheme) ?? Color.clear
+        let resolvedColor = info.color?.toColor(selectorEnvironment) ?? Color.clear
         if let border = info.border {
-            rectangle(colorScheme: colorScheme, border: border)
+            rectangle(selectorEnvironment: selectorEnvironment, border: border)
                 .background(
                     rectangleBackground(border: border, color: resolvedColor)
                 )
@@ -115,10 +115,10 @@ struct Shapes {
     }
 
     @ViewBuilder
-    private static func ellipse(colorScheme: ColorScheme, border: ThomasBorder?)
+    private static func ellipse(selectorEnvironment: ThomasSelectorEnvironment, border: ThomasBorder?)
         -> some View
     {
-        let strokeColor = border?.strokeColor?.toColor(colorScheme)
+        let strokeColor = border?.strokeColor?.toColor(selectorEnvironment)
         let strokeWidth = border?.strokeWidth ?? 0
 
         if let strokeColor = strokeColor, strokeWidth > 0 {
@@ -133,12 +133,12 @@ struct Shapes {
     fileprivate static func ellipse(
         info: ThomasShapeInfo.Ellipse,
         constraints: ViewConstraints,
-        colorScheme: ColorScheme
+        selectorEnvironment: ThomasSelectorEnvironment
     ) -> some View {
         let scaled = scaledConstraints(constraints, scale: info.scale)
-        let color = info.color?.toColor(colorScheme) ?? Color.clear
+        let color = info.color?.toColor(selectorEnvironment) ?? Color.clear
         if let border = info.border {
-            ellipse(colorScheme: colorScheme, border: border)
+            ellipse(selectorEnvironment: selectorEnvironment, border: border)
                 .aspectRatio(info.aspectRatio ?? 1, contentMode: .fit)
                 .background(Ellipse().fill(color))
                 .airshipApplyIf(info.scale != nil) { view in
@@ -168,7 +168,7 @@ struct Shapes {
 private struct ShapeContent: View {
     fileprivate let info: ThomasShapeInfo
     fileprivate let constraints: ViewConstraints
-    fileprivate let colorScheme: ColorScheme
+    fileprivate let selectorEnvironment: ThomasSelectorEnvironment
 
     var body: some View {
         switch info {
@@ -176,13 +176,13 @@ private struct ShapeContent: View {
             Shapes.ellipse(
                 info: info,
                 constraints: constraints,
-                colorScheme: colorScheme
+                selectorEnvironment: selectorEnvironment
             )
         case .rectangle(let info):
             Shapes.rectangle(
                 info: info,
                 constraints: constraints,
-                colorScheme: colorScheme
+                selectorEnvironment: selectorEnvironment
             )
         }
     }

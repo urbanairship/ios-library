@@ -44,6 +44,12 @@ enum LedgerExecutionResult: String, Sendable, Codable, Equatable, CaseIterable {
 
     /// Synthesized from a pre-ledger execution count during migration.
     case backfill
+
+    /// The app was torn down while the message was still displaying, so
+    /// nothing else will ever resolve the attempt. Counts toward the limit
+    /// like `succeeded` - the alternative is an attempt the ledger never
+    /// learns about, which never stops the schedule from re-triggering.
+    case interrupted
 }
 
 /// The scope an event was recorded under. An event is always recorded under

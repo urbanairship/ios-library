@@ -300,6 +300,43 @@ import Foundation
     }
 
     @Test
+    func testRegisterEmailTrackingConsent() async throws {
+        self.session.data = """
+            {
+                "channel_id": "some-channel",
+            }
+            """
+            .data(using: .utf8)
+        let date = Date()
+        _ = try await contactAPIClient.registerEmail(
+            contactID: "some-contact-id",
+            address: "ua@airship.com",
+            options: EmailRegistrationOptions.commercialOptions(
+                transactionalOptedIn: nil,
+                commercialOptedIn: date,
+                properties: nil,
+                openTracking: .optedIn(date),
+                clickTracking: .optedOut(date)
+            ),
+            locale: currentLocale
+        )
+
+        let previousRequest = try #require(self.session.previousRequest)
+        let previousBody = try JSONSerialization.jsonObject(
+            with: previousRequest.body!,
+            options: []
+        ) as! [String : AnyHashable]
+        let channel = try #require(previousBody["channel"] as? [String: AnyHashable])
+
+        let formatted = AirshipDateFormatter.string(fromDate: date, format: .iso8601)
+        #expect(channel["commercial_opted_in"] as? String == formatted)
+        #expect(channel["open_tracking_opted_in"] as? String == formatted)
+        #expect(channel["open_tracking_opted_out"] == nil)
+        #expect(channel["click_tracking_opted_in"] == nil)
+        #expect(channel["click_tracking_opted_out"] as? String == formatted)
+    }
+
+    @Test
     func testRegisterSMS() async throws {
         self.session.data = """
             {

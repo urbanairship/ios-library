@@ -51,6 +51,10 @@ struct Pager: View {
     @State private var hasReportedCompleted: Bool = false
     @GestureState private var translation: CGFloat = 0
     @State private var size: CGSize?
+
+    /// The modern page track's live scroll position, read only by the parallax layers.
+    @State private var offsetTracker = ThomasContentOffsetTracker()
+    @State private var pagerScrollSpaceID = UUID()
     @State private var scrollPosition: String?
     @State private var pageHeights: [String: CGFloat] = [:]
     @State private var gestureExclusionFrames: [CGRect] = []
@@ -66,6 +70,19 @@ struct Pager: View {
     /// collisions between nested pagers.
     private var gestureExclusionSpaceName: String {
         "airship.pager.gestureExclusion.\(resolvedPagerID)"
+    }
+
+    private var pagerScrollSpaceName: String {
+        "airship.pager.scrollOffset.\(pagerScrollSpaceID)"
+    }
+
+    /// Mirrors `makePager`'s own choice, so a background reads the live signal that actually
+    /// matches which track is on screen rather than assuming one or the other.
+    private var usesScrollViewPager: Bool {
+        if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
+            return !Self.forceLegacyPager
+        }
+        return false
     }
 
     private var resolvedPagerID: String {
@@ -257,26 +274,8 @@ struct Pager: View {
         height: CGFloat?
     ) -> some View {
         ScrollViewReader { proxy in
-            ScrollView(.horizontal) {
-                LazyHStack(spacing: 0) {
-                    ForEach(0..<pagerState.pageItems.count, id: \.self) { index in
-                        makePageView(
-                            for: index,
-                            childConstraints: childConstraints,
-                            width: width,
-                            height: height,
-                            isLegacyPager: false
-                        )
-                        .containerRelativeFrame(.horizontal)
-                        .onAppear {
-                            if pagerState.pageItems[index].identifier == pagerState.currentPageId {
-                                pagerState.confirmNavigation()
-                            }
-                        }
-                    }
-                }
-                .scrollTargetLayout()
-            }
+            makePageScrollView(childConstraints: childConstraints, width: width, height: height)
+            .coordinateSpace(name: pagerScrollSpaceName)
             .scrollDisabled(self.info.properties.disableSwipe == true || self.pagerState.isScrollingDisabled)
             .allowsHitTesting(!pagerState.isNavigationInProgress)
             .scrollTargetBehavior(Self.scrollTargetBehavior)
@@ -341,6 +340,68 @@ struct Pager: View {
                 scheduleResync(isInitial: true, proxy: proxy)
             }
         }
+    }
+
+    /// The horizontal scroll view holding the pages, reporting its offset to parallax layers when it has any.
+    ///
+    /// The page track stays the scroll view's direct content. Wrapping it, even in a conditional that
+    /// applies nothing, stops the pager snapping when it is nested in another pager or has parallax.
+    @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+    @ViewBuilder
+    private func makePageScrollView(
+        childConstraints: ViewConstraints,
+        width: CGFloat?,
+        height: CGFloat?
+    ) -> some View {
+        let hasParallax = info.properties.backgrounds?.hasParallax == true
+        if #available(iOS 18.0, macOS 15.0, tvOS 18.0, watchOS 11.0, visionOS 2.0, *) {
+            ScrollView(.horizontal) {
+                makePageTrack(childConstraints: childConstraints, width: width, height: height)
+            }
+            .airshipApplyIf(hasParallax) {
+                $0.thomasTrackScrollOffset(offsetTracker, axis: .horizontal)
+            }
+        } else if hasParallax {
+            ScrollView(.horizontal) {
+                makePageTrack(childConstraints: childConstraints, width: width, height: height)
+                    .thomasTrackContentOffset(
+                        offsetTracker,
+                        axis: .horizontal,
+                        coordinateSpaceName: pagerScrollSpaceName,
+                        viewportLength: size?.width ?? 0
+                    )
+            }
+        } else {
+            ScrollView(.horizontal) {
+                makePageTrack(childConstraints: childConstraints, width: width, height: height)
+            }
+        }
+    }
+
+    @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+    private func makePageTrack(
+        childConstraints: ViewConstraints,
+        width: CGFloat?,
+        height: CGFloat?
+    ) -> some View {
+        LazyHStack(spacing: 0) {
+            ForEach(0..<pagerState.pageItems.count, id: \.self) { index in
+                makePageView(
+                    for: index,
+                    childConstraints: childConstraints,
+                    width: width,
+                    height: height,
+                    isLegacyPager: false
+                )
+                .containerRelativeFrame(.horizontal)
+                .onAppear {
+                    if pagerState.pageItems[index].identifier == pagerState.currentPageId {
+                        pagerState.confirmNavigation()
+                    }
+                }
+            }
+        }
+        .scrollTargetLayout()
     }
 
     /// Corrects the scroll offset, either right away, after a short settle delay, or both.
@@ -532,6 +593,25 @@ struct Pager: View {
             }
 #endif
             .constraints(constraints)
+            .airshipApplyIf(usesScrollViewPager) {
+                $0.thomasParallaxBackgrounds(
+                    info.properties.backgrounds,
+                    axis: .horizontal,
+                    offsetTracker: offsetTracker,
+                    maxTravel: pagerMaxTravel
+                )
+            }
+            .airshipApplyIf(!usesScrollViewPager) {
+                // The same spring makeLegacyPager keys its own offset to.
+                $0.thomasParallaxBackgrounds(
+                    info.properties.backgrounds,
+                    axis: .horizontal,
+                    contentOffset: legacyPagerContentOffset,
+                    maxTravel: pagerMaxTravel,
+                    animation: .interactiveSpring(duration: Pager.animationSpeed),
+                    animationValue: pagerState.pageIndex
+                )
+            }
             .thomasCommon(self.info)
             .airshipGeometryGroupCompat()
             .accessibilityElement(children: .contain)
@@ -922,6 +1002,31 @@ struct Pager: View {
         }
 
         return dragOffSet
+    }
+
+    /// The legacy page track's own offset (`makeLegacyPager`'s two `.offset(x:)` calls, combined).
+    /// Always <= 0: pages only ever advance forward from 0.
+    private var legacyPagerContentOffset: CGFloat {
+        let width = self.size?.width ?? 0
+        return -(width * CGFloat(pagerState.pageIndex)) + calcDragOffset(index: pagerState.pageIndex)
+    }
+
+    private var pagerMaxTravel: CGFloat {
+        Self.parallaxTravel(pageWidth: self.size?.width ?? 0, pageCount: pagerState.pageItems.count)
+    }
+
+    /// Returns how far the page track can move from the first page to the last: one page width
+    /// per page after the first.
+    ///
+    /// A layer is oversized by `factor` times this, so counting the first page too oversizes (and
+    /// zooms) it by an extra `factor` page widths and misplaces it on every page.
+    ///
+    /// - Parameters:
+    ///   - pageWidth: The width of one page.
+    ///   - pageCount: The number of pages in the track.
+    /// - Returns: The track's full travel, `0` for a single page or none.
+    static func parallaxTravel(pageWidth: CGFloat, pageCount: Int) -> CGFloat {
+        pageWidth * CGFloat(max(0, pageCount - 1))
     }
 }
 

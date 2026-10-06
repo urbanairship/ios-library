@@ -9,6 +9,46 @@ import Foundation
 @MainActor
 struct ThomasFormPayloadGeneratorTest {
 
+    @Test("a registered email or SMS input reports its registration in the event, not in state")
+    func registrationReportedInEventOnly() throws {
+        let registeredEmail: ThomasFormField.Value = .email("user@example.com", registration: .commercial(.init(optedIn: true)))
+        let optInLocale = ThomasSMSLocale(countryCode: "US", prefix: "+1", registration: .optIn(.init(senderID: "12345")))
+        let form: ThomasFormField.Value = .form(
+            responseType: nil,
+            children: [
+                "email": registeredEmail,
+                "collected-email": .email("other@example.com"),
+                "sms": .sms("15035550123", optInLocale, registration: .optIn(.init(senderID: "12345"))),
+                // The locale could register, but the value says nothing was: reported as collected.
+                "collected-sms": .sms("15035550124", optInLocale),
+                // A nested form registers its own inputs on iOS, so it reports them too.
+                "child": .form(
+                    responseType: nil,
+                    children: ["child-email": .email("child@example.com", registration: .transactional(.init()))]
+                ),
+            ]
+        )
+
+        let payload = try ThomasFormPayloadGenerator.makeFormEventPayload(identifier: "form", formValue: form)
+        let children = payload.object?["form"]?.object?["children"]?.object
+        #expect(children?["email"]?.object?["registration"] == ["type": "commercial", "commercial_opted_in": true])
+        #expect(children?["collected-email"]?.object?["registration"] == nil)
+        #expect(children?["sms"]?.object?["registration"] == ["type": "opt_in", "sender_id": "12345"])
+        #expect(children?["collected-sms"]?.object?["registration"] == nil)
+        #expect(
+            children?["child"]?.object?["children"]?.object?["child-email"]?.object?["registration"] == ["type": "transactional"]
+        )
+
+        let state = ThomasFormPayloadGenerator.makeFormStatePayload(
+            status: .valid,
+            fields: [.validField(identifier: "email", input: registeredEmail, result: .init(value: registeredEmail))],
+            formType: .form
+        )
+        let stateEmail = state.object?["data"]?.object?["children"]?.object?["email"]?.object
+        #expect(stateEmail?["registration"] == nil)
+        #expect(stateEmail?["status"]?.object?["result"]?.object?["registration"] == nil)
+    }
+
     @Test("Test form data")
     func testFormData() throws {
         let form: ThomasFormField.Value = .form(

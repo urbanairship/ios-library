@@ -391,6 +391,9 @@ final class PagerState: ObservableObject {
 
     @discardableResult
     func process(request: PageRequest) -> NavigationResult? {
+        // The branch path follows state a runloop turn late, so a state write in the same tap
+        // as `pager_next` would otherwise navigate along the path from before the write.
+        branchControl?.resolvePath()
         guard !pageItems.isEmpty else { return nil }
         let id = pageItems[nextIndexNoBranching(request: request)].identifier
         guard
@@ -568,6 +571,11 @@ private final class BranchControl: Sendable {
     }
     
     
+    /// Re-resolves `pages` against the current state without waiting for the state subscription.
+    func resolvePath() {
+        reEvaluatePath()
+    }
+
     func onPageRequest(_ request: PageRequest) {
         self.updateState()
         

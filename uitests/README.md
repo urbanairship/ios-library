@@ -41,7 +41,7 @@ Individual steps via `uitests/bin/uitest`: `build`, `boot-sim`, `install`, `gene
   cropping and scaling are exercised without the network; video, YouTube and Vimeo media
   become that placeholder image; web views show an inline placeholder page; pager
   automated actions are dropped so stories hold their first page; and `randomize_children`
-  is turned off so option order is stable. Every loading state the renderer draws (image,
+  shuffles with the fixed `ui-test` seed web uses, so option order is stable and comparable. Every loading state the renderer draws (image,
   media, web view) carries the `thomas:loading` identifier, and a generated flow waits for
   the last one to disappear before it screenshots, so no load timing ever reaches a diff. The manifest records which
   stubs each fixture relied on and the report shows it, so a green screenshot never claims

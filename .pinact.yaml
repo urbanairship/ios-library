@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/suzuki-shunsuke/pinact/refs/heads/main/json-schema/pinact.json
+# pinact - https://github.com/suzuki-shunsuke/pinact
+version: 3
+
+rules:
+  # slatify has no release matching the master commit we run; see MOBILE-5871.
+  - ignore: true
+    conditions:
+      - expr: |
+          ActionName == "lazy-actions/slatify" && ActionVersion == "cd4b4a1158cfb3e26fe1ee35c1cd4f0247dfbf96"

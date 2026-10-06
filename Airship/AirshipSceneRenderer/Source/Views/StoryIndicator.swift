@@ -15,7 +15,7 @@ struct StoryIndicator: View {
 
     @EnvironmentObject private var pagerState: PagerState
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
     
     func announcePage(info: ThomasViewInfo.StoryIndicator) -> Bool {
         return info.properties.automatedAccessibilityActions?.contains{ $0.type == .announce} ?? false
@@ -92,7 +92,7 @@ struct StoryIndicator: View {
                     GeometryReader { metrics in
                         Rectangle()
                             .frame(width: (metrics.size.width * progressDelay.wrappedValue).safeValue)
-                            .foregroundColor(self.style.progressColor.toColor(colorScheme))
+                            .foregroundColor(self.style.progressColor.toColor(selectorEnvironment))
                             .animation(.linear(duration: Pager.animationSpeed), value: self.info)
                     }
                 }
@@ -120,13 +120,13 @@ struct StoryIndicator: View {
     
     private func indicatorColor(_ index: Int?) -> Color {
         guard let index = index else {
-            return self.style.progressColor.toColor(colorScheme)
+            return self.style.progressColor.toColor(selectorEnvironment)
         }
         
         if pagerState.completed && pagerState.progress >= 1 {
-            return self.style.progressColor.toColor(colorScheme)
+            return self.style.progressColor.toColor(selectorEnvironment)
         }
         
-        return index < pagerState.pageIndex ? self.style.progressColor.toColor(colorScheme) : self.style.trackColor.toColor(colorScheme)
+        return index < pagerState.pageIndex ? self.style.progressColor.toColor(selectorEnvironment) : self.style.trackColor.toColor(selectorEnvironment)
     }
 }

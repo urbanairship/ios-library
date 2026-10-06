@@ -81,8 +81,10 @@ internal struct WrappingLayout: Layout {
         // Calculate total height
         let totalHeight = calculateTotalHeight(linesNeeded: linesNeeded, itemHeight: itemHeight, lineSpacing: lineSpacing)
 
-        // Apply viewConstraints maxHeight if available
-        let finalHeight = min(totalHeight, viewConstraints.maxHeight ?? totalHeight)
+        // A measured maxHeight is this layout's own last height, so capping by it stops the score
+        // gaining a row when its width shrinks.
+        let heightCap = viewConstraints.measuredAxes.contains(.vertical) ? nil : viewConstraints.maxHeight
+        let finalHeight = min(totalHeight, heightCap ?? totalHeight)
         let finalWidth = min(maxWidth, viewConstraints.maxWidth ?? maxWidth)
 
         return CGSize(width: finalWidth, height: finalHeight)

@@ -14,7 +14,7 @@ struct ImageButton : View {
     /// View constraints.
     private let constraints: ViewConstraints
   
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
     @Environment(\.layoutState) private var layoutState
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject private var thomasState: ThomasState
@@ -76,7 +76,7 @@ struct ImageButton : View {
         switch resolvedImage {
         case .url(let info):
             ThomasAsyncImage(
-                url: info.urlSelectors?.resolve(colorScheme: colorScheme) ?? info.url,
+                url: info.urlSelectors?.resolve(selectorEnvironment) ?? info.url,
                 loadImage: thomasEnvironment.imageLoader.load,
                 image: { image, imageSize in
                     image.fitMedia(
@@ -91,7 +91,7 @@ struct ImageButton : View {
                 }
             )
         case .icon(let info):
-            Icons.icon(info: info, colorScheme: colorScheme)
+            Icons.icon(info: info, selectorEnvironment: selectorEnvironment)
         }
     }
     

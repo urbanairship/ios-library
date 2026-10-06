@@ -35,10 +35,10 @@ jobs:
     runs-on: xcode-27-xlarge
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       - name: Cache Thomas layouts
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
             DevApp/Dev App/Thomas/Resources/Scenes
@@ -47,7 +47,7 @@ jobs:
 
       - name: Mint layouts read token
         id: layouts_token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
         with:
           app-id: ${{ vars.ACTIONS_REPO_READER_APP_ID }}
           private-key: ${{ secrets.ACTIONS_REPO_READER_KEY }}
@@ -60,7 +60,7 @@ jobs:
         run: make fetch-layouts
 
       - name: Install Apple Certificate
-        uses: apple-actions/import-codesign-certs@v3
+        uses: apple-actions/import-codesign-certs@63fff01cd422d4b7b855d40ca1e9d34d2de9427d # v3.0.0
         with:
           p12-file-base64: ${{ secrets.CERTIFICATEXC }}
           p12-password: ${{ secrets.CERTIFICATEXC_PASS }}

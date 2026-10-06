@@ -806,7 +806,11 @@ fileprivate struct EmailChannelRegistrationBody: Encodable {
             localeCountry: locale.getRegionCode(),
             localeLanguage: locale.getLanguageCode(),
             commercialOptedIn: options.commercialOptedIn,
-            transactionalOptedIn: options.transactionalOptedIn
+            transactionalOptedIn: options.transactionalOptedIn,
+            openTrackingOptedIn: options.openTrackingOptedIn,
+            openTrackingOptedOut: options.openTrackingOptedOut,
+            clickTrackingOptedIn: options.clickTrackingOptedIn,
+            clickTrackingOptedOut: options.clickTrackingOptedOut
         )
 
         self.optInMode = options.doubleOptIn ? .double : .classic
@@ -832,6 +836,10 @@ fileprivate struct EmailChannelRegistrationBody: Encodable {
         let localeLanguage: String?
         let commercialOptedIn: Date?
         let transactionalOptedIn: Date?
+        let openTrackingOptedIn: Date?
+        let openTrackingOptedOut: Date?
+        let clickTrackingOptedIn: Date?
+        let clickTrackingOptedOut: Date?
 
         enum CodingKeys: String, CodingKey {
             case type
@@ -841,6 +849,10 @@ fileprivate struct EmailChannelRegistrationBody: Encodable {
             case localeLanguage  = "locale_language"
             case commercialOptedIn = "commercial_opted_in"
             case transactionalOptedIn = "transactional_opted_in"
+            case openTrackingOptedIn = "open_tracking_opted_in"
+            case openTrackingOptedOut = "open_tracking_opted_out"
+            case clickTrackingOptedIn = "click_tracking_opted_in"
+            case clickTrackingOptedOut = "click_tracking_opted_out"
         }
     }
 

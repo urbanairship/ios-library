@@ -80,8 +80,8 @@ struct Score: View {
     @EnvironmentObject
     private var thomasState: ThomasState
 
-    @Environment(\.colorScheme)
-    private var colorScheme
+    @Environment(\.thomasSelectorEnvironment)
+    private var selectorEnvironment
 
     @EnvironmentObject
     private var validatableHelper: ValidatableHelper
@@ -129,7 +129,7 @@ struct Score: View {
                         style: style,
                         viewConstraints: constraints,
                         value: index,
-                        colorScheme: colorScheme,
+                        selectorEnvironment: selectorEnvironment,
                         disabled: !formState.isFormInputEnabled
                     )
                 )
@@ -322,7 +322,7 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
     fileprivate let style: ThomasViewInfo.Score.ScoreStyle.NumberRange
     fileprivate let viewConstraints: ViewConstraints
     fileprivate let value: Int
-    fileprivate let colorScheme: ColorScheme
+    fileprivate let selectorEnvironment: ThomasSelectorEnvironment
     fileprivate let disabled: Bool
 
     func makeBody(configuration: Self.Configuration) -> some View {
@@ -367,13 +367,13 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                             Shapes.shape(
                                 info: shapes[index],
                                 constraints: viewConstraints,
-                                colorScheme: colorScheme
+                                selectorEnvironment: selectorEnvironment
                             )
                         }
                         .opacity(isOn ? 1 : 0)
                     }
                     Text(String(self.value))
-                        .textAppearance(style.bindings.selected.textAppearance, colorScheme: colorScheme)
+                        .textAppearance(style.bindings.selected.textAppearance, selectorEnvironment: selectorEnvironment)
                         .scoreItemText()
                 }
                 .opacity(isOn ? 1 : 0)
@@ -387,12 +387,12 @@ private struct AirshipNumberRangeToggleStyle: ToggleStyle {
                             Shapes.shape(
                                 info: shapes[index],
                                 constraints: viewConstraints,
-                                colorScheme: colorScheme
+                                selectorEnvironment: selectorEnvironment
                             )
                         }
                     }
                     Text(String(self.value))
-                        .textAppearance(style.bindings.unselected.textAppearance, colorScheme: colorScheme)
+                        .textAppearance(style.bindings.unselected.textAppearance, selectorEnvironment: selectorEnvironment)
                         .scoreItemText()
                 }
                 .opacity(isOn ? 0 : 1)

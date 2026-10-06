@@ -11,7 +11,7 @@ struct PagerIndicator: View {
 
     @EnvironmentObject var pagerState: PagerState
     @EnvironmentObject var thomasEnvironment: ThomasEnvironment
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.thomasSelectorEnvironment) var selectorEnvironment
 
     func announcePage(info: ThomasViewInfo.PagerIndicator) -> Bool {
         return info.properties.automatedAccessibilityActions?.contains{ $0.type == .announce} ?? false
@@ -70,7 +70,7 @@ private struct PagerIndicatorChild: View {
     fileprivate let binding: ThomasViewInfo.PagerIndicator.Properties.Binding
     fileprivate let constraints: ViewConstraints
 
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
 
     var body: some View {
         ZStack {
@@ -79,7 +79,7 @@ private struct PagerIndicatorChild: View {
                     Shapes.shape(
                         info: shapes[index],
                         constraints: constraints,
-                        colorScheme: colorScheme
+                        selectorEnvironment: selectorEnvironment
                     )
                 }
             }
@@ -87,7 +87,7 @@ private struct PagerIndicatorChild: View {
             if let iconModel = binding.icon {
                 Icons.icon(
                     info: iconModel,
-                    colorScheme: colorScheme
+                    selectorEnvironment: selectorEnvironment
                 )
             }
         }

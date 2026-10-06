@@ -118,7 +118,10 @@ struct AirshipButton<Label> : View  where Label : View {
                 case .submit:
                     asyncTasks.append(Task {
                         do {
-                            try await formState.submit(layoutState: layoutState)
+                            try await formState.submit(
+                                layoutState: layoutState,
+                                thomasState: thomasState
+                            )
                         } catch {
                             AirshipLogger.error("Failed to submit \(error)")
                         }

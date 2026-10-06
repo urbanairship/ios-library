@@ -82,6 +82,26 @@ extension ThomasViewInfo {
             return info.properties.items.contains {
                 $0.size.constraint(on: axis).establishesLength(view: $0.view, on: axis)
             }
+        case .gridLayout(let info):
+            // Only certain when every config the grid could pick sets it: rows a ratio derives from the
+            // width, or a `fit` minimum that sizes an unbounded grid to `n × min + gaps`.
+            let configs = [info.properties.config]
+                + (info.overrides?.config ?? []).compactMap(\.value)
+            if axis == .vertical, configs.allSatisfy({ ($0.cellAspectRatio ?? 0) > 0 }) {
+                return true
+            }
+            if axis == .horizontal, configs.allSatisfy({ config in
+                guard case .fit(_, let minWidth, _) = config.columns else { return false }
+                return minWidth.size > 0
+            }) {
+                return true
+            }
+            let edges = [info.properties.header, info.properties.footer].compactMap { $0 }
+            return info.properties.items.contains {
+                $0.resolvedSize.constraint(on: axis).establishesLength(view: $0.view, on: axis)
+            } || edges.contains {
+                $0.resolvedSize.constraint(on: axis).establishesLength(view: $0.view, on: axis)
+            }
         default:
             // Everything else either draws content of its own — a label, an image, a text field — or
             // wraps views without resizing them, so what it wraps answers for it.

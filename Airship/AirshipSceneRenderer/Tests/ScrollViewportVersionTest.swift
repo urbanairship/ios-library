@@ -70,6 +70,20 @@ struct ScrollViewportVersionTest {
         }
     }
 
+    @Test("an auto cross axis is not filled with the scroll's own frame")
+    func autoCrossAxisStaysAuto() {
+        let horizontal = ViewConstraints(width: 300, height: nil)
+            .fillingScrollViewport(measured, isVertical: false, layoutVersion: 2)
+        #expect(horizontal.width == 300)
+        #expect(horizontal.height == nil)
+        #expect(!horizontal.measuredAxes.contains(.vertical))
+
+        let vertical = ViewConstraints(width: nil, height: 300)
+            .fillingScrollViewport(measured, isVertical: true, layoutVersion: 2)
+        #expect(vertical.height == 300)
+        #expect(vertical.width == nil)
+    }
+
     @Test("a horizontal scroll clears its width instead")
     func horizontalClearsWidth() {
         let content = ViewConstraints(width: 300, height: 400)

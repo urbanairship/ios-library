@@ -15,6 +15,7 @@ struct ThomasFormPayloadGenerator {
     private static let dataKey: String = "data"
     private static let aiKey: String = "ai"
     private static let aiInferenceKey: String = "ai_inference"
+    private static let registrationKey: String = "registration"
 
     /**
      * This is using an opaque AirshipJSON instead of structured types so we could expose the value to
@@ -69,16 +70,15 @@ struct ThomasFormPayloadGenerator {
             throw AirshipErrors.error("Form value should be form or npsForm")
         }
 
-        // The event payload is the one place AI inference results are reported.
-        return .object([identifier: makeValuePayload(formValue, includeAIInference: true) ?? .object([:])])
+        return .object([identifier: makeValuePayload(formValue, forEvent: true) ?? .object([:])])
     }
 
-    /// - Parameter includeAIInference: emit the `ai_inference` payload carried on a text
-    ///   value. Only the form event payload sets this — the state projection omits it.
+    /// - Parameter forEvent: emit what only the form event reports, which the state projection
+    ///   omits: a text value's `ai_inference`, and a registered email or SMS input's `registration`.
     private static func makeValuePayload(
         _ value: ThomasFormField.Value,
         status: ThomasFormField.Status? = nil,
-        includeAIInference: Bool = false
+        forEvent: Bool = false
     ) -> AirshipJSON? {
         switch value {
         case .toggle(let value):
@@ -117,25 +117,31 @@ struct ThomasFormPayloadGenerator {
                 if let status {
                     builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)
                 }
-                if includeAIInference, let aiInference {
+                if forEvent, let aiInference {
                     builder.set(json: try? AirshipJSON.wrap(aiInference), key: Self.aiInferenceKey)
                 }
             }
-        case .email(let value):
+        case .email(let value, let registration):
             return AirshipJSON.makeObject { builder in
                 builder.set(string: "email_input", key: Self.typeKey)
                 builder.set(string: value, key: Self.valueKey)
                 if let status {
                     builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)
                 }
+                if forEvent, let registration {
+                    builder.set(json: try? AirshipJSON.wrap(registration), key: Self.registrationKey)
+                }
             }
 
-        case .sms(let value, _):
+        case .sms(let value, _, let registration):
             return AirshipJSON.makeObject { builder in
                 builder.set(string: "sms_input", key: Self.typeKey)
                 builder.set(string: value, key: Self.valueKey)
                 if let status {
                     builder.set(json: makeFieldStatusPayload(status), key: Self.statusKey)
+                }
+                if forEvent, let registration {
+                    builder.set(json: try? AirshipJSON.wrap(registration), key: Self.registrationKey)
                 }
             }
         case .score(let value):
@@ -159,7 +165,7 @@ struct ThomasFormPayloadGenerator {
                 let children = AirshipJSON.makeObject { builder in
                     children.forEach {
                         builder.set(
-                            json: Self.makeValuePayload($0.value, includeAIInference: includeAIInference),
+                            json: Self.makeValuePayload($0.value, forEvent: forEvent),
                             key: $0.key
                         )
                     }
@@ -181,7 +187,7 @@ struct ThomasFormPayloadGenerator {
                 let children = AirshipJSON.makeObject { builder in
                     children.forEach {
                         builder.set(
-                            json: Self.makeValuePayload($0.value, includeAIInference: includeAIInference),
+                            json: Self.makeValuePayload($0.value, forEvent: forEvent),
                             key: $0.key
                         )
                     }

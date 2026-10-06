@@ -73,8 +73,47 @@ extension ThomasViewInfo {
             }
         }
 
+        let backgroundURLs = extractDescendants { $0.backgroundLayers }.joined().flatMap(\.urlInfos)
+
         return urls.compactMap { $0 }.reduce(into: []) { result, urlArray in
             result.append(contentsOf: urlArray)
+        } + backgroundURLs
+    }
+
+    /// The `backgrounds` layers this view paints behind itself, or `nil` for a view that has none.
+    private var backgroundLayers: [ThomasBackground]? {
+        switch self {
+        case .container(let info): info.properties.backgrounds
+        case .linearLayout(let info): info.properties.backgrounds
+        case .gridLayout(let info): info.properties.backgrounds
+        case .scrollLayout(let info): info.properties.backgrounds?.map(\.background)
+        case .pager(let info): info.properties.backgrounds?.map(\.background)
+        case .buttonLayout(let info): info.properties.backgrounds
+        case .basicToggleLayout(let info): info.properties.backgrounds
+        case .checkboxToggleLayout(let info): info.properties.backgrounds
+        case .radioInputToggleLayout(let info): info.properties.backgrounds
+        case .scoreToggleLayout(let info): info.properties.backgrounds
+        default: nil
+        }
+    }
+}
+
+private extension ThomasBackground {
+    /// The URLs a `media` layer loads; color and gradient layers load none.
+    var urlInfos: [URLInfo] {
+        guard case .media(let media) = self else { return [] }
+        switch media.mediaType {
+        case .image:
+            var images: [URLInfo] = [.image(url: media.url)] + media.urlSelectors.imageURLInfos
+            for override in media.overrides?.url ?? [] {
+                if let url = override.value { images.append(.image(url: url)) }
+            }
+            for override in media.overrides?.urlSelectors ?? [] {
+                images.append(contentsOf: override.value.imageURLInfos)
+            }
+            return images
+        case .video, .youtube, .vimeo:
+            return [.video(url: media.url)]
         }
     }
 }

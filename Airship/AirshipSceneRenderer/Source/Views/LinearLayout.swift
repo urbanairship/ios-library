@@ -15,8 +15,6 @@ struct LinearLayout: View {
     /// View constraints.
     private let constraints: ViewConstraints
 
-    @State
-    private var numberGenerator: RepeatableNumberGenerator = RepeatableNumberGenerator()
 
     @State
     private var measuredSize: CGSize? = nil
@@ -94,12 +92,13 @@ struct LinearLayout: View {
     @ViewBuilder
     @MainActor
     private func makeVStack(
-        items: [ThomasViewInfo.LinearLayout.Item],
+        order: [Int],
         parentConstraints: ViewConstraints
     ) -> some View {
+        let items = self.info.properties.items
 
         VStack(alignment: .center, spacing: 0) {
-            ForEach(0..<items.count, id: \.self) { index in
+            ForEach(order, id: \.self) { index in
 #if os(tvOS)
                 HStack {
                     childItem(items[index], parentConstraints: parentConstraints)
@@ -137,12 +136,13 @@ struct LinearLayout: View {
     @ViewBuilder
     @MainActor
     private func makeHStack(
-        items: [ThomasViewInfo.LinearLayout.Item],
+        order: [Int],
         parentConstraints: ViewConstraints
     ) -> some View {
+        let items = self.info.properties.items
 
         HStack(alignment: .center, spacing: 0) {
-            ForEach(0..<items.count, id: \.self) { index in
+            ForEach(order, id: \.self) { index in
 #if os(tvOS)
                 VStack {
                     childItem(items[index], parentConstraints: parentConstraints)
@@ -178,16 +178,24 @@ struct LinearLayout: View {
     @ViewBuilder
     @MainActor
     private func makeStack() -> some View {
-        if self.info.properties.direction == .vertical {
-            makeVStack(
-                items: orderedItems(),
-                parentConstraints: parentConstraints()
-            )
+        let parentConstraints = self.parentConstraints()
+        // Only a stack whose order changes with state observes it; the rest skip a re-render per change.
+        if hasItemOverrides {
+            ThomasStateReader { state in
+                makeStack(order: itemOrder(state: state), parentConstraints: parentConstraints)
+            }
         } else {
-            makeHStack(
-                items: orderedItems(),
-                parentConstraints: parentConstraints()
-            )
+            makeStack(order: itemOrder(state: nil), parentConstraints: parentConstraints)
+        }
+    }
+
+    @ViewBuilder
+    @MainActor
+    private func makeStack(order: [Int], parentConstraints: ViewConstraints) -> some View {
+        if self.info.properties.direction == .vertical {
+            makeVStack(order: order, parentConstraints: parentConstraints)
+        } else {
+            makeHStack(order: order, parentConstraints: parentConstraints)
         }
     }
 
@@ -195,6 +203,7 @@ struct LinearLayout: View {
         makeStack()
             .airshipMeasureView($measuredSize)
             .clipped()
+            .thomasBackgrounds(info.properties.backgrounds)
             .thomasCommon(self.info)
     }
 
@@ -422,13 +431,38 @@ struct LinearLayout: View {
         self.info.properties.direction == .vertical ? item.size.height : item.size.width
     }
 
-    private func orderedItems() -> [ThomasViewInfo.LinearLayout.Item] {
-        guard self.info.properties.randomizeChildren == true else {
-            return self.info.properties.items
+    private var hasItemOverrides: Bool {
+        self.info.properties.items.contains { $0.overrides?.config != nil }
+    }
+
+    /// Item indices in the order to place and read them: the shuffle, if any, then by `order`.
+    ///
+    /// - Parameter state: what `overrides` resolve against, or `nil` to read each item's `config`
+    /// - Returns: the item indices in placement order
+    private func itemOrder(state: ThomasState?) -> [Int] {
+        let items = self.info.properties.items
+        let base = self.info.properties.randomizeChildren == true
+            ? thomasEnvironment.shuffledOrder(count: items.count, identifier: self.info.properties.identifier)
+            : Array(items.indices)
+        let orders = items.map { item in
+            guard let state else { return item.config?.order }
+            return ThomasPropertyOverride.resolveOptional(
+                state: state,
+                overrides: item.overrides?.config,
+                defaultValue: item.config
+            )?.order
         }
-        var generator = self.numberGenerator
-        generator.repeatNumbers()
-        return self.info.properties.items.shuffled(using: &generator)
+        return ItemOrder.sorted(base, orders: orders)
+    }
+}
+
+/// Hands its content the current state, so only it re-renders when the state changes.
+private struct ThomasStateReader<Content: View>: View {
+    @EnvironmentObject private var thomasState: ThomasState
+    let content: (ThomasState) -> Content
+
+    var body: some View {
+        content(thomasState)
     }
 }
 
@@ -445,29 +479,6 @@ fileprivate extension ThomasSizeConstraint {
             return percent / 100.0
         }
         return nil
-    }
-}
-
-fileprivate final class RepeatableNumberGenerator: RandomNumberGenerator {
-    private var numbers: [UInt64] = []
-    private var index: Int = 0
-    private var numberGenerator: SystemRandomNumberGenerator = SystemRandomNumberGenerator()
-
-    func next() -> UInt64 {
-        defer {
-            self.index += 1
-        }
-
-        guard index < numbers.count else {
-            let next = numberGenerator.next()
-            numbers.append(next)
-            return next
-        }
-        return numbers[index]
-    }
-
-    func repeatNumbers() {
-        index = 0
     }
 }
 
@@ -507,7 +518,7 @@ fileprivate extension View {
                 $0.hasPerItemAlignment(stackDirection: .horizontal)
             }
 
-            if hasPerItemAlignment, constraints.height == nil {
+            if hasPerItemAlignment, constraints.height == nil, !constraints.fillsProposedHeight {
                 self.fixedSize(horizontal: false, vertical: true)
             } else {
                 self

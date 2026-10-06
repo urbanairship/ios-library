@@ -45,6 +45,7 @@ struct ButtonLayout : View {
             if let contentDescription = thomasEnvironment.resolveContentDescription(for: info.accessible) {
                 // Container WITH content description: Add accessibility action
                 thomasEnvironment.viewFactory.createView(self.info.properties.view, constraints: constraints)
+                    .thomasBackgrounds(info.properties.backgrounds)
                     .thomasCommon(self.info, scope: [.background, .visibility])
                     .accessibilityElement(children: .contain)
                     .accessibilityLabel(contentDescription)
@@ -59,6 +60,7 @@ struct ButtonLayout : View {
             } else {
                 // Container WITHOUT content description: Transparent parent
                 thomasEnvironment.viewFactory.createView(self.info.properties.view, constraints: constraints)
+                    .thomasBackgrounds(info.properties.backgrounds)
                     .thomasCommon(self.info, scope: [.background, .visibility])
                     .accessibilityHidden(info.accessible.accessibilityHidden ?? false)
             }
@@ -72,6 +74,7 @@ struct ButtonLayout : View {
                 tapEffect: self.info.properties.tapEffect
             ) {
                 thomasEnvironment.viewFactory.createView(self.info.properties.view, constraints: constraints)
+                    .thomasBackgrounds(info.properties.backgrounds)
                     .thomasCommon(self.info, scope: [.background])
                     .background(Color.airshipTappableClear)
             }

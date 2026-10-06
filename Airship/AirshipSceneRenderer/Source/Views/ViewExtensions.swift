@@ -7,8 +7,8 @@ import SwiftUI
 extension View {
 
     @ViewBuilder
-    func foreground(_ color: ThomasColor?, colorScheme: ColorScheme, fallbackColor: Color? = nil) -> some View {
-        if let color = color?.toColor(colorScheme) ?? fallbackColor {
+    func foreground(_ color: ThomasColor?, selectorEnvironment: ThomasSelectorEnvironment, fallbackColor: Color? = nil) -> some View {
+        if let color = color?.toColor(selectorEnvironment) ?? fallbackColor {
             self.foregroundColor(color)
         } else {
             self
@@ -110,9 +110,9 @@ private struct ThomasConstraintsViewModifier: ViewModifier {
             minWidth: floorWidth,
             idealWidth: constraints.frameWidth,
             maxWidth: constraints.frameWidth,
-            minHeight: floorHeight,
+            minHeight: constraints.fillsProposedHeight ? nil : floorHeight,
             idealHeight: constraints.frameHeight,
-            maxHeight: constraints.frameHeight,
+            maxHeight: constraints.fillsProposedHeight ? .infinity : constraints.frameHeight,
             alignment: alignment ?? .center
         )
         .airshipApplyIf(fixedSize) { view in
@@ -264,18 +264,23 @@ private struct RatioLayout: Layout {
     }
 
     /// Where the content sits when it ends up smaller than the box it was given.
-    private var anchor: UnitPoint {
-        let x: CGFloat = if alignment.horizontal == .leading {
+    private var anchor: UnitPoint { alignment.unitPoint }
+}
+
+extension Alignment {
+    /// The unit point this alignment places content at, with any custom guide read as centered.
+    var unitPoint: UnitPoint {
+        let x: CGFloat = if horizontal == .leading {
             0
-        } else if alignment.horizontal == .trailing {
+        } else if horizontal == .trailing {
             1
         } else {
             0.5
         }
 
-        let y: CGFloat = if alignment.vertical == .top {
+        let y: CGFloat = if vertical == .top {
             0
-        } else if alignment.vertical == .bottom {
+        } else if vertical == .bottom {
             1
         } else {
             0.5

@@ -7,6 +7,7 @@ import Foundation
 indirect enum ThomasViewInfo: ThomasSerializable {
     case container(Container)
     case linearLayout(LinearLayout)
+    case gridLayout(GridLayout)
     #if !os(tvOS) && !os(watchOS)
     case webView(WebView)
     #endif
@@ -46,6 +47,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
     enum ViewType: String, Codable {
         case container
         case linearLayout = "linear_layout"
+        case gridLayout = "grid_layout"
         case webView = "web_view"
         case customView = "custom_view"
         case scrollLayout = "scroll_layout"
@@ -103,6 +105,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         return switch type {
         case .container: .container(try Container(from: decoder))
         case .linearLayout: .linearLayout(try LinearLayout(from: decoder))
+        case .gridLayout: .gridLayout(try GridLayout(from: decoder))
 
         case .webView:
 #if os(tvOS) || os(watchOS)
@@ -156,6 +159,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         switch viewInfo {
         case .container(let info): try info.encode(to: encoder)
         case .linearLayout(let info): try info.encode(to: encoder)
+        case .gridLayout(let info): try info.encode(to: encoder)
         #if !os(tvOS) && !os(watchOS)
         case .webView(let info): try info.encode(to: encoder)
         #endif
@@ -215,10 +219,12 @@ indirect enum ThomasViewInfo: ThomasSerializable {
         struct Properties: ThomasSerializable {
             let type: ViewType = .container
             let items: [Item]
+            var backgrounds: [ThomasBackground]?
 
             private enum CodingKeys: String, CodingKey {
                 case type
                 case items
+                case backgrounds
             }
         }
 
@@ -259,15 +265,20 @@ indirect enum ThomasViewInfo: ThomasSerializable {
 
         struct Properties: ThomasSerializable {
             let type: ViewType = .linearLayout
+            /// Tells a `randomize_children` shuffle apart from others with the same item count.
+            var identifier: String?
             var direction: ThomasDirection
             var randomizeChildren: Bool?
             var items: [Item]
+            var backgrounds: [ThomasBackground]?
 
             private enum CodingKeys: String, CodingKey {
                 case type
+                case identifier
                 case direction
                 case randomizeChildren = "randomize_children"
                 case items
+                case backgrounds
             }
         }
 
@@ -276,6 +287,300 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var margin: ThomasMargin?
             var view: ThomasViewInfo
             var position: ThomasPosition?
+            /// Where the item falls among its siblings.
+            var config: ItemConfig?
+            /// Changes to the item's properties with state: per property, the first match replaces it whole.
+            var overrides: ItemOverrides?
+        }
+
+        /// How one item is placed among its siblings.
+        struct ItemConfig: ThomasSerializable {
+            /// Items lay out, and are read, in ascending `order`, list order among equal ones. Defaults to 0.
+            ///
+            /// With `randomize_children` the shuffle comes first and mixes only items of one `order`,
+            /// so a "None of these" at `order: 1` stays last.
+            var order: Double?
+        }
+
+        /// An item's overrides: the same shape as `view_overrides`, for an item that isn't a view.
+        struct ItemOverrides: ThomasSerializable {
+            var config: [ThomasPropertyOverride<ItemConfig>]?
+        }
+    }
+
+    /// Rows of equal-width cells whose column count comes from the grid's own width, never its items.
+    ///
+    /// `view_overrides.config` changes the config with state. Its `grid_state.conditions`, chosen from
+    /// its width, are at `$grids.current.conditions` for the grid itself, its items' `overrides` and
+    /// everything inside it, until a nested grid takes over.
+    struct GridLayout: BaseInfo {
+        var commonProperties: CommonViewProperties
+        var commonOverrides: CommonViewOverrides?
+        var properties: Properties
+        var overrides: Overrides?
+
+        func encode(to encoder: any Encoder) throws {
+            try encoder.encode(
+                properties: commonProperties, properties,
+                overrides: commonOverrides, overrides
+            )
+        }
+
+        init(from decoder: any Decoder) throws {
+            self.commonProperties = try decoder.decodeProperties()
+            self.properties = try decoder.decodeProperties()
+            self.commonOverrides = try decoder.decodeOverrides()
+            self.overrides = try decoder.decodeOverrides()
+        }
+
+        struct Overrides: ThomasSerializable {
+            var config: [ThomasPropertyOverride<Config>]?
+        }
+
+        struct Properties: ThomasSerializable {
+            let type: ViewType = .gridLayout
+            var identifier: String
+            var config: Config
+            var items: [Item]
+            /// A view above the cells, as wide as the block of columns.
+            var header: Edge?
+            /// A view below the cells, as wide as the block of columns.
+            var footer: Edge?
+            /// Named breakpoints on the grid's width, at `$grids.current.conditions` inside it.
+            var gridState: ThomasGridStateInfo?
+            /// Shuffle the items once, when the grid first appears; the header and footer never move.
+            var randomizeChildren: Bool?
+            var backgrounds: [ThomasBackground]?
+            var accessibilityRole: AccessibilityRole?
+
+            private enum CodingKeys: String, CodingKey {
+                case type
+                case identifier
+                case config
+                case items
+                case header
+                case footer
+                case gridState = "grid_state"
+                case randomizeChildren = "randomize_children"
+                case backgrounds
+                case accessibilityRole = "accessibility_role"
+            }
+        }
+
+        struct Config: ThomasSerializable {
+            var columns: Columns
+            /// The space between columns. Defaults to a fixed 0.
+            var columnSpacing: Spacing?
+            /// The space between rows. Defaults to a fixed 0.
+            var rowSpacing: Spacing?
+            /// Where a short row sits among the columns above it.
+            var partialRowPosition: ThomasPosition.Horizontal?
+            /// Where the block of cells sits when the grid is wider or taller than it. Defaults to start and top.
+            var contentPosition: ThomasPosition?
+            var cellAspectRatio: Double?
+            /// What a cell's percentage height is a share of. Defaults to its own row.
+            var percentHeightBasis: PercentHeightBasis?
+
+            private enum CodingKeys: String, CodingKey {
+                case columns
+                case columnSpacing = "column_spacing"
+                case rowSpacing = "row_spacing"
+                case partialRowPosition = "partial_row_position"
+                case contentPosition = "content_position"
+                case cellAspectRatio = "cell_aspect_ratio"
+                case percentHeightBasis = "percent_height_basis"
+            }
+        }
+
+        enum PercentHeightBasis: String, ThomasSerializable {
+            /// The cell's own row, as a percentage across a horizontal stack is.
+            case row
+            /// The tallest of the rows holding a percentage cell, which all take that height.
+            ///
+            /// `100%` on every item gives equal-height cards. Rows of only `auto` and fixed cells keep
+            /// their own heights, and the grid's own height never counts. No effect with
+            /// `cell_aspect_ratio`, which already sets every row's height.
+            case tallestRow = "tallest_row"
+        }
+
+        /// How many columns a grid has: always `count`, or as many of at least `minWidth` as fit, up to `max`.
+        ///
+        /// `fixed` suits span layouts, since a span keeps its share of the row at every width. A `fit`
+        /// column stops growing at `maxWidth`, and the grid's `content_position` places the columns.
+        enum Columns: ThomasSerializable {
+            case fixed(count: Double)
+            case fit(max: Double, minWidth: ColumnWidth, maxWidth: ColumnWidth?)
+
+            private enum CodingKeys: String, CodingKey {
+                case type
+                case count
+                case max
+                case minWidth = "min_width"
+                case maxWidth = "max_width"
+            }
+
+            private enum ColumnsType: String, Codable {
+                case fixed
+                case fit
+            }
+
+            init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                switch try container.decode(ColumnsType.self, forKey: .type) {
+                case .fixed:
+                    self = .fixed(count: try container.decode(Double.self, forKey: .count))
+                case .fit:
+                    self = .fit(
+                        max: try container.decode(Double.self, forKey: .max),
+                        minWidth: try container.decode(ColumnWidth.self, forKey: .minWidth),
+                        maxWidth: try container.decodeIfPresent(ColumnWidth.self, forKey: .maxWidth)
+                    )
+                }
+            }
+
+            func encode(to encoder: any Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                switch self {
+                case .fixed(let count):
+                    try container.encode(ColumnsType.fixed, forKey: .type)
+                    try container.encode(count, forKey: .count)
+                case .fit(let max, let minWidth, let maxWidth):
+                    try container.encode(ColumnsType.fit, forKey: .type)
+                    try container.encode(max, forKey: .max)
+                    try container.encode(minWidth, forKey: .minWidth)
+                    try container.encodeIfPresent(maxWidth, forKey: .maxWidth)
+                }
+            }
+        }
+
+        /// How one item is placed among its grid's columns.
+        struct ItemConfig: ThomasSerializable {
+            /// Columns the cell covers, capped at the column count. Defaults to 1.
+            var columnSpan: Double?
+            /// Where the item falls among its siblings: ascending, list order among equal ones. Defaults to 0.
+            var order: Double?
+            /// The column the item starts at, from 0 at the start edge, instead of the next free one.
+            ///
+            /// Clamped so the span fits. `column_span: 8, column_start: 2` centres a card in 12 columns.
+            var columnStart: Double?
+
+            private enum CodingKeys: String, CodingKey {
+                case columnSpan = "column_span"
+                case order
+                case columnStart = "column_start"
+            }
+        }
+
+        /// A bound on `fit` columns' width. `text_scaled` follows the text size.
+        struct ColumnWidth: ThomasSerializable {
+            var type: ColumnWidthType
+            var size: Double
+        }
+
+        /// The space between columns or rows: always `space`, or at least `minSpace` and widened into
+        /// room the columns or rows leave over, up to `maxSpace`.
+        enum Spacing: ThomasSerializable {
+            case fixed(space: Double)
+            case spread(minSpace: Double, maxSpace: Double?)
+
+            private enum CodingKeys: String, CodingKey {
+                case type
+                case space
+                case minSpace = "min_space"
+                case maxSpace = "max_space"
+            }
+
+            private enum SpacingType: String, Codable {
+                case fixed
+                case spread
+            }
+
+            init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                switch try container.decode(SpacingType.self, forKey: .type) {
+                case .fixed:
+                    self = .fixed(space: try container.decode(Double.self, forKey: .space))
+                case .spread:
+                    self = .spread(
+                        minSpace: try container.decode(Double.self, forKey: .minSpace),
+                        maxSpace: try container.decodeIfPresent(Double.self, forKey: .maxSpace)
+                    )
+                }
+            }
+
+            func encode(to encoder: any Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                switch self {
+                case .fixed(let space):
+                    try container.encode(SpacingType.fixed, forKey: .type)
+                    try container.encode(space, forKey: .space)
+                case .spread(let minSpace, let maxSpace):
+                    try container.encode(SpacingType.spread, forKey: .type)
+                    try container.encode(minSpace, forKey: .minSpace)
+                    try container.encodeIfPresent(maxSpace, forKey: .maxSpace)
+                }
+            }
+        }
+
+        enum ColumnWidthType: String, ThomasSerializable {
+            case fixed
+            case textScaled = "text_scaled"
+        }
+
+        struct AccessibilityRole: ThomasSerializable {
+            var type: RoleType
+
+            enum RoleType: String, ThomasSerializable {
+                case listView = "list_view"
+            }
+        }
+
+        /// A view above or below the cells, exactly as wide as the block of columns and placed with it.
+        ///
+        /// It takes no part in placement and isn't one of the items `list_view` announces. `size`
+        /// resolves against its row, as an item's does against its cell.
+        struct Edge: ThomasSerializable {
+            var identifier: String?
+            var size: ThomasSize?
+            var margin: ThomasMargin?
+            var view: ThomasViewInfo
+            var position: ThomasPosition?
+
+            var resolvedSize: ThomasSize { size ?? Item.defaultSize }
+            var resolvedPosition: ThomasPosition { position ?? Item.defaultPosition }
+        }
+
+        struct Item: ThomasSerializable {
+            static let defaultSize: ThomasSize = ThomasSize(width: .percent(100), height: .auto)
+            static let defaultPosition: ThomasPosition = ThomasPosition(horizontal: .center, vertical: .center)
+
+            var identifier: String?
+            var size: ThomasSize?
+            /// Where the item sits among its grid's columns.
+            var config: ItemConfig?
+            /// Changes to the item's properties with state: per property, the first match replaces it whole.
+            var overrides: ItemOverrides?
+            var margin: ThomasMargin?
+            var view: ThomasViewInfo
+            var position: ThomasPosition?
+
+            private enum CodingKeys: String, CodingKey {
+                case identifier
+                case size
+                case config
+                case overrides
+                case margin
+                case view
+                case position
+            }
+
+            var resolvedSize: ThomasSize { size ?? Self.defaultSize }
+            var resolvedPosition: ThomasPosition { position ?? Self.defaultPosition }
+        }
+
+        /// An item's overrides: the same shape as `view_overrides`, for an item that isn't a view.
+        struct ItemOverrides: ThomasSerializable {
+            var config: [ThomasPropertyOverride<ItemConfig>]?
         }
     }
 
@@ -301,11 +606,13 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             let type: ViewType = .scrollLayout
             var direction: ThomasDirection
             var view: ThomasViewInfo
+            var backgrounds: [ThomasParallaxBackgroundLayer]?
 
             private enum CodingKeys: String, CodingKey {
                 case type
                 case direction
                 case view
+                case backgrounds
             }
         }
     }
@@ -655,6 +962,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var tapEffect: ThomasButtonTapEffect?
             var accessibilityRole: AccessibilityRole?
             var view: ThomasViewInfo
+            var backgrounds: [ThomasBackground]?
 
             private enum CodingKeys: String, CodingKey {
                 case identifier
@@ -666,6 +974,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case view
                 case accessibilityRole = "accessibility_role"
                 case reportingMetadata = "reporting_metadata"
+                case backgrounds
             }
         }
 
@@ -1030,6 +1339,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             let gestures: [Gesture]?
             let disableSwipePredicate: [DisableSwipeSelector]?
             var identifier: String? // Added later so its treated as optional.
+            var backgrounds: [ThomasParallaxBackgroundLayer]?
 
             enum CodingKeys: String, CodingKey {
                 case identifier
@@ -1038,6 +1348,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case gestures
                 case type
                 case disableSwipePredicate = "disable_swipe_when"
+                case backgrounds
             }
         }
 
@@ -1476,6 +1787,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var responseType: String?
             var formEnableBehaviors: [ThomasEnableBehavior]?
             var validationMode: ThomasFormValidationMode?
+            var registrationOverrides: ThomasFormRegistrationOverrides?
 
             enum CodingKeys: String, CodingKey {
                 case identifier = "identifier"
@@ -1485,6 +1797,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case formEnableBehaviors = "form_enabled"
                 case type
                 case validationMode = "validation_mode"
+                case registrationOverrides = "registration_overrides"
             }
         }
     }
@@ -1555,6 +1868,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var responseType: String?
             var formEnableBehaviors: [ThomasEnableBehavior]?
             var validationMode: ThomasFormValidationMode?
+            var registrationOverrides: ThomasFormRegistrationOverrides?
 
             enum CodingKeys: String, CodingKey {
                 case identifier
@@ -1565,6 +1879,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case formEnableBehaviors = "form_enabled"
                 case type
                 case validationMode = "validation_mode"
+                case registrationOverrides = "registration_overrides"
             }
         }
     }
@@ -1716,6 +2031,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var onToggleOff: ToggleActions
             var view: ThomasViewInfo
             var reportingValue: AirshipJSON
+            var backgrounds: [ThomasBackground]?
 
             private enum CodingKeys: String, CodingKey {
                 case identifier
@@ -1725,6 +2041,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case view
                 case reportingValue = "reporting_value"
                 case type
+                case backgrounds
             }
         }
     }
@@ -1887,6 +2204,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var onToggleOn: ToggleActions
             var onToggleOff: ToggleActions
             var view: ThomasViewInfo
+            var backgrounds: [ThomasBackground]?
 
             private enum CodingKeys: String, CodingKey {
                 case identifier
@@ -1896,6 +2214,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case onToggleOff = "on_toggle_off"
                 case view
                 case type
+                case backgrounds
             }
         }
     }
@@ -1929,6 +2248,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var onToggleOff: ToggleActions
             var view: ThomasViewInfo
             var reportingValue: AirshipJSON
+            var backgrounds: [ThomasBackground]?
 
             private enum CodingKeys: String, CodingKey {
                 case identifier
@@ -1937,6 +2257,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case view
                 case reportingValue = "reporting_value"
                 case type
+                case backgrounds
             }
         }
     }
@@ -1971,6 +2292,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             var onToggleOff: ToggleActions
             var view: ThomasViewInfo
             var reportingValue: AirshipJSON
+            var backgrounds: [ThomasBackground]?
 
             private enum CodingKeys: String, CodingKey {
                 case identifier
@@ -1980,6 +2302,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case view
                 case reportingValue = "reporting_value"
                 case type
+                case backgrounds
             }
         }
     }

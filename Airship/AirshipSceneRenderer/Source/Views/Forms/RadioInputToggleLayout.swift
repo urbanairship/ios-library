@@ -47,6 +47,7 @@ struct RadioInputToggleLayout: View {
             )
         }
         .constraints(self.constraints)
+        .thomasBackgrounds(info.properties.backgrounds)
         .thomasCommon(self.info, formInputID: self.info.properties.identifier)
         .accessible(
             self.info.accessible,

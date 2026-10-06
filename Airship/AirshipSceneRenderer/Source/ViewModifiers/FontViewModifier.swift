@@ -53,7 +53,7 @@ extension Text {
     @MainActor
     func textAppearance(
         _ textAppearance: ThomasTextAppearance?,
-        colorScheme: ColorScheme
+        selectorEnvironment: ThomasSelectorEnvironment
     ) -> some View {
         if let textAppearance = textAppearance {
             self.applyTextStyles(styles: textAppearance.styles)
@@ -63,7 +63,7 @@ extension Text {
                 .modifier(
                     TextAppearanceViewModifier(textAppearance: textAppearance)
                 )
-                .foreground(textAppearance.color, colorScheme: colorScheme)
+                .foreground(textAppearance.color, selectorEnvironment: selectorEnvironment)
         } else {
             self
         }
@@ -116,7 +116,7 @@ extension View {
     @ViewBuilder
     func applyViewAppearance(
         _ textAppearance: ThomasTextAppearance?,
-        colorScheme: ColorScheme
+        selectorEnvironment: ThomasSelectorEnvironment
     ) -> some View {
         if let textAppearance = textAppearance {
             self
@@ -126,7 +126,7 @@ extension View {
                 .modifier(
                     TextAppearanceViewModifier(textAppearance: textAppearance)
                 )
-                .foreground(textAppearance.color, colorScheme: colorScheme)
+                .foreground(textAppearance.color, selectorEnvironment: selectorEnvironment)
         } else {
             self
         }

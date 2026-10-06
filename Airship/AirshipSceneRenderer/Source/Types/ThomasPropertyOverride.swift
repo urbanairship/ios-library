@@ -31,7 +31,8 @@ extension ThomasPropertyOverride {
             return defaultValue
         }
 
-        return override.value
+        // A matched override with no value keeps the default rather than clearing the property.
+        return override.value ?? defaultValue
     }
 
     @MainActor

@@ -18,6 +18,7 @@ struct MessageCenterThomasView: View {
     init(
         phase: Binding<MessageCenterMessageContentPhase>,
         layoutRequest: @escaping () async throws -> URLRequest,
+        randomSeed: @escaping () -> String?,
         displayListener: ThomasDisplayListener,
         dismissHandle: ThomasDismissHandle,
         stateStorage: @escaping () -> any LayoutDataStorage
@@ -26,6 +27,7 @@ struct MessageCenterThomasView: View {
         self._viewModel = StateObject(
             wrappedValue: ViewModel(
                 request: layoutRequest,
+                randomSeed: randomSeed,
                 displayListener: displayListener,
                 dismissHandle: dismissHandle,
                 stateStorage: stateStorage
@@ -50,6 +52,7 @@ struct MessageCenterThomasView: View {
 @MainActor
 private final class ViewModel: ObservableObject {
     private let layoutRequest: () async throws -> URLRequest
+    private let randomSeed: () -> String?
     private let stateStorageBuilder: () -> any LayoutDataStorage
 
     @Published
@@ -62,11 +65,13 @@ private final class ViewModel: ObservableObject {
 
     init(
         request: @escaping () async throws -> URLRequest,
+        randomSeed: @escaping () -> String?,
         displayListener: ThomasDisplayListener,
         dismissHandle: ThomasDismissHandle,
         stateStorage: @escaping () -> any LayoutDataStorage
     ) {
         self.layoutRequest = request
+        self.randomSeed = randomSeed
         self.displayListener = displayListener
         self.dismissHandle = dismissHandle
         self.stateStorageBuilder = stateStorage
@@ -121,7 +126,7 @@ private final class ViewModel: ObservableObject {
     private func makeSimpleLayoutViewModel(with storage: (any LayoutDataStorage)?) -> AirshipSimpleLayoutViewModel {
         AirshipSimpleLayoutViewModel(
             delegate: displayListener,
-            extensions: DefaultThomasExtensions(),
+            extensions: DefaultThomasExtensions(randomSeed: randomSeed()),
             dismissHandle: dismissHandle,
             stateStorage: storage
         )

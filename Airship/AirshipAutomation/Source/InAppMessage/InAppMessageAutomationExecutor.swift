@@ -135,13 +135,31 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     /// Displays a message directly for view-testing, bypassing the automation pipeline.
     /// Reuses the same scene plumbing as the normal execute path and the AI manager
     /// injected at module load, so nothing is resolved from the shared `Airship` instance.
+    ///
+    /// - Parameters:
+    ///   - imageProviderOverride: consulted for any image URL the message's own (empty, for
+    ///     view-testing) assets don't already have an answer for. A host can use this to fake
+    ///     image loads deterministically, without it ever reaching real assets.
+    ///   - animationsEnabled: whether the message's presentation transitions animate. A host
+    ///     sets this to `false` to make a screenshot flow deterministic without waiting out a
+    ///     real fade.
+    ///   - randomSeed: seeds every `randomize_children` order, so a screenshot flow gets the same
+    ///     orders on every run and every platform. `nil` draws one per display.
     @MainActor
-    func displayTest(message: InAppMessage) async throws {
+    func displayTest(
+        message: InAppMessage,
+        imageProviderOverride: (@Sendable (URL) -> AirshipImageData?)? = nil,
+        animationsEnabled: Bool = true,
+        randomSeed: String? = nil
+    ) async throws {
         let adapter = try AirshipLayoutDisplayAdapter(
             message: message,
             priority: 0,
             assets: EmptyAirshipCachedAssets(),
-            aiManager: self.aiManager
+            aiManager: self.aiManager,
+            imageProviderOverride: imageProviderOverride,
+            animationsEnabled: animationsEnabled,
+            randomSeed: randomSeed
         )
 
 #if os(macOS)
@@ -275,6 +293,12 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             ThomasLayoutResolutionEvent.interrupted(),
             layoutContext: nil
         )
+
+        // `.finish` means this attempt is over for good - the display never
+        // resolved (the app died mid-display), so nothing else will ever record
+        // its outcome. Without this, the ledger has no record of the attempt and
+        // the schedule's limit is never considered reached.
+        await self.recordLedgerExecution(preparedScheduleInfo, result: .interrupted)
 
         await self.assetManager.clearCache(identifier: preparedScheduleInfo.scheduleID)
         return .finish

@@ -23,12 +23,16 @@ public struct AirshipLayout: ThomasSerializable {
     /// that ranks pending embedded instances for `.ai` selection.
     let contentDescription: ThomasContentDescriptionInfo?
 
+    /// What `$environment` holds beyond the platform's settings.
+    let environmentState: ThomasEnvironmentStateInfo?
+
     enum CodingKeys: String, CodingKey {
         case view
         case version
         case presentation
         case options
         case contentDescription = "content_description"
+        case environmentState = "environment_state"
     }
 
     public var isEmbedded: Bool {
@@ -75,9 +79,16 @@ extension ThomasViewInfo {
     }
 
     private var borderProperties: (ThomasBorder?, [ThomasPropertyOverride<ThomasBorder>]?) {
-        let properties: (CommonViewProperties, CommonViewOverrides?) = switch self {
+        let properties = commonInfo
+        return (properties.0.border, properties.1?.border)
+    }
+
+    /// The properties and overrides every view type shares.
+    var commonInfo: (CommonViewProperties, CommonViewOverrides?) {
+        return switch self {
         case .container(let info): (info.commonProperties, info.commonOverrides)
         case .linearLayout(let info): (info.commonProperties, info.commonOverrides)
+        case .gridLayout(let info): (info.commonProperties, info.commonOverrides)
         #if !os(tvOS) && !os(watchOS)
         case .webView(let info): (info.commonProperties, info.commonOverrides)
         #endif
@@ -114,7 +125,6 @@ extension ThomasViewInfo {
         case .asyncViewController(let info): (info.commonProperties, info.commonOverrides)
         case .videoController(let info): (info.commonProperties, info.commonOverrides)
         }
-        return (properties.0.border, properties.1?.border)
     }
 
     /// Nil for a view that draws its own content rather than hosting other views.
@@ -122,6 +132,9 @@ extension ThomasViewInfo {
         return switch self {
         case .container(let info): info.properties.items.map { $0.view }
         case .linearLayout(let info): info.properties.items.map { $0.view }
+        case .gridLayout(let info):
+            ([info.properties.header?.view] + info.properties.items.map { $0.view } + [info.properties.footer?.view])
+                .compactMap { $0 }
         case .pager(let info): info.properties.items.map { $0.view }
         case .scrollLayout(let info): [info.properties.view]
         case .checkboxController(let info): [info.properties.view]

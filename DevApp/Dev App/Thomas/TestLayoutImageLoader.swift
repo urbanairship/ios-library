@@ -8,14 +8,16 @@ import AppKit
 #endif
 @_spi(AirshipInternal) import AirshipBasement
 
-/// Resolves the shared `test-layout.internal` placeholder convention (also implemented on
-/// Android and web) into a locally synthesized image, so a scene authored against a specific
-/// aspect ratio renders the same way whether it's opened by hand in the Layout Viewer or
-/// captured by a UI test — no network, no third-party photo service.
+/// Loads the local image a Thomas scene's URL should resolve to for test/preview display,
+/// instead of the network: the shared `test-layout.internal` convention (also implemented on
+/// Android and web), or - when asked - a generic generated placeholder for anything else, so a
+/// scene renders the same way whether it's opened by hand in the Layout Viewer or captured by
+/// a UI test, with no third-party photo service in either case.
 ///
-/// URL shape: `https://test-layout.internal/{width}/{height}/{color}/{border}`, where `width`/
-/// `height`/`border` are points (unscaled) and `color` is one of the names in `namedColors`.
-enum TestLayoutPlaceholder {
+/// `test-layout.internal` URL shape: `https://test-layout.internal/{width}/{height}/{color}/
+/// {border}`, where `width`/`height`/`border` are points (unscaled) and `color` is one of the
+/// names in `namedColors`.
+enum TestLayoutImageLoader {
     private static let host = "test-layout.internal"
 
     // Fixed RGB, not a system/dynamic color: Android and web resolve the same names to these
@@ -34,13 +36,26 @@ enum TestLayoutPlaceholder {
         "grey": AirshipColor.resolveNativeColor("9E9E9E")!,
     ]
 
-    /// The local image URL for `urlString`, or nil if it isn't a `test-layout.internal` URL.
-    static func resolve(urlString: String) -> URL? {
+    /// The image for `urlString`: the shared `test-layout.internal` convention when it
+    /// matches, or - only when `useFallback` is true - a generic generated placeholder for
+    /// anything that convention doesn't recognize. nil when `useFallback` is false and the URL
+    /// isn't a `test-layout.internal` one, so a real image is used normally.
+    static func resolve(urlString: String, useFallback: Bool = false) -> AirshipImageData? {
+        guard
+            let url = resolveImageURL(urlString: urlString, useFallback: useFallback),
+            let data = FileManager.default.contents(atPath: url.path)
+        else {
+            return nil
+        }
+        return try? AirshipImageData(data: data)
+    }
+
+    private static func resolveImageURL(urlString: String, useFallback: Bool) -> URL? {
         guard
             let url = URL(string: urlString),
             url.host == host
         else {
-            return nil
+            return useFallback ? fallbackImageURL() : nil
         }
 
         let components = url.pathComponents.filter { $0 != "/" }
@@ -50,15 +65,45 @@ enum TestLayoutPlaceholder {
             let height = Double(components[1]),
             let border = Double(components[3])
         else {
-            return nil
+            return useFallback ? fallbackImageURL() : nil
         }
 
-        return try? renderedImageURL(
+        return (try? renderedImageURL(
             width: width,
             height: height,
             color: components[2],
             border: border
-        )
+        )) ?? (useFallback ? fallbackImageURL() : nil)
+    }
+
+    /// A 1200x800 image with enough structure (border, off-center disc) that cropping and
+    /// scaling differences show up in a screenshot: what a UI test falls back to for a URL
+    /// this convention doesn't recognize. Written once per launch to the temp dir, reused
+    /// after.
+    private static func fallbackImageURL() -> URL? {
+        let size = CGSize(width: 1200, height: 800)
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("uitest-placeholder.png")
+        guard !FileManager.default.fileExists(atPath: url.path) else {
+            return url
+        }
+        guard let data = renderPNG(size: size, draw: { cg in
+            let bounds = CGRect(origin: .zero, size: size)
+            cg.setFillColor(CGColor(red: 0.85, green: 0.90, blue: 0.97, alpha: 1))
+            cg.fill(bounds)
+            cg.setFillColor(CGColor(red: 0.10, green: 0.25, blue: 0.60, alpha: 1))
+            cg.fillEllipse(in: CGRect(x: 250, y: 150, width: 400, height: 400))
+            cg.setStrokeColor(CGColor(red: 0.10, green: 0.25, blue: 0.60, alpha: 1))
+            cg.setLineWidth(40)
+            cg.stroke(bounds)
+        }) else {
+            return nil
+        }
+        do {
+            try data.write(to: url)
+            return url
+        } catch {
+            return nil
+        }
     }
 
     /// Writes (or reuses) a PNG at exactly `width`x`height`, keyed by its parameters so repeated

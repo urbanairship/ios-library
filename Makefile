@@ -69,6 +69,13 @@ build-samples: build-sample-ios build-sample-macos
 fetch-layouts:
 	bash ./scripts/fetch-layouts.sh
 
+# The same fetch plus the per-page scenes cut from each pager, which is what a
+# capture sweep needs and roughly twice the Scene list to scroll. `fetch-layouts`
+# is the way back to the short list.
+.PHONY: fetch-layouts-uitests
+fetch-layouts-uitests:
+	bash ./scripts/fetch-layouts.sh --uitests
+
 .PHONY: build-sample-ios
 build-sample-ios: setup
 	bash ./scripts/build_sample.sh "DevApp" "${derived_data_path}"
@@ -79,11 +86,11 @@ uitest-doctor:
 	bash ./uitests/bin/uitest doctor
 
 .PHONY: uitest-run
-uitest-run: fetch-layouts
+uitest-run: fetch-layouts-uitests
 	bash ./uitests/bin/uitest run
 
 .PHONY: uitest-mint
-uitest-mint: fetch-layouts
+uitest-mint: fetch-layouts-uitests
 	bash ./uitests/bin/uitest mint
 
 .PHONY: uitest-set-baseline

@@ -18,7 +18,7 @@ struct Media: View {
     private let defaultAspectRatio: Double = 16.0 / 9.0
     @EnvironmentObject private var pagerState: PagerState
     @Environment(\.pageIdentifier) private var pageIdentifier
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
 
     private var resolvedURL: String {
         ThomasPropertyOverride.resolveRequired(
@@ -49,7 +49,7 @@ struct Media: View {
         switch self.info.properties.mediaType {
         case .image:
             ThomasAsyncImage(
-                url: resolvedURLSelectors?.resolve(colorScheme: colorScheme) ?? resolvedURL,
+                url: resolvedURLSelectors?.resolve(selectorEnvironment) ?? resolvedURL,
                 loadImage: thomasEnvironment.imageLoader.load
             ) { image, imageSize in
                 image.fitMedia(
@@ -70,8 +70,9 @@ struct Media: View {
             )
         case .video:
 #if !os(watchOS) && !os(macOS)
+            let resolvedInfo = self.info.resolvingURLOverrides(state: thomasState)
             VideoMediaNativeView(
-                info: self.info,
+                info: resolvedInfo,
                 videoIdentifier: self.info.properties.identifier ?? mediaID.uuidString,
                 constraints: constraints,
                 videoAspectRatio: videoAspectRatio,
@@ -83,6 +84,7 @@ struct Media: View {
                     )
                 }
             )
+            .id(resolvedInfo.properties.url)
             .onAppear {
                 pagerState.registerMedia(pageId: pageIdentifier ?? "", id: mediaID)
             }
@@ -90,8 +92,9 @@ struct Media: View {
 #endif
         case .youtube, .vimeo:
 #if !os(tvOS) && !os(watchOS)
+            let resolvedInfo = self.info.resolvingURLOverrides(state: thomasState)
             VideoMediaWebView(
-                info: self.info,
+                info: resolvedInfo,
                 videoIdentifier: self.info.properties.identifier ?? mediaID.uuidString
             ) {
                 pagerState.setMediaReady(
@@ -100,6 +103,7 @@ struct Media: View {
                     isReady: true
                 )
             }
+            .id(resolvedInfo.properties.url)
             .airshipApplyIf(self.constraints.width == nil || self.constraints.height == nil) {
                 $0.aspectRatio(videoAspectRatio, contentMode: ContentMode.fit)
             }
@@ -110,6 +114,31 @@ struct Media: View {
             .thomasCommon(self.info)
 #endif
         }
+    }
+}
+
+extension ThomasViewInfo.Media {
+    /// Returns a copy whose `url` and `url_selectors` are the values `view_overrides` resolve to for `state`.
+    ///
+    /// The video players read `properties.url` once when they build, so a caller also keys the player
+    /// on the resolved url to rebuild it when an override swaps the url.
+    ///
+    /// - Parameter state: The scene state the overrides are matched against.
+    /// - Returns: The info with overridden url fields applied.
+    @MainActor
+    func resolvingURLOverrides(state: ThomasState) -> ThomasViewInfo.Media {
+        var resolved = self
+        resolved.properties.url = ThomasPropertyOverride.resolveRequired(
+            state: state,
+            overrides: overrides?.url,
+            defaultValue: properties.url
+        )
+        resolved.properties.urlSelectors = ThomasPropertyOverride.resolveOptional(
+            state: state,
+            overrides: overrides?.urlSelectors,
+            defaultValue: properties.urlSelectors
+        )
+        return resolved
     }
 }
 
@@ -131,7 +160,8 @@ extension Image {
         case .centerCrop:
             cropAligned(constraints: constraints, imageSize: imageSize)
         case .centerInside:
-            centerInside(constraints: constraints, alignment: cropPosition?.alignment ?? .top)
+            // `position` is a crop anchor for `fit_crop`; a letterboxed image always centers.
+            centerInside(constraints: constraints, imageSize: imageSize, alignment: .center)
         }
     }
 
@@ -154,7 +184,7 @@ extension Image {
     @MainActor
     private func cropAligned(constraints: ViewConstraints, imageSize: CGSize, alignment: Alignment = .center) -> some View {
         if hasNoBoxToCropInto(constraints: constraints) {
-            centerInside(constraints: constraints, alignment: alignment)
+            centerInside(constraints: constraints, imageSize: imageSize, alignment: alignment)
         } else {
             CroppedImage(
                 image: self,
@@ -166,23 +196,103 @@ extension Image {
     }
 
     @MainActor
-    private func centerInside(constraints: ViewConstraints, alignment: Alignment = .top) -> some View {
+    private func centerInside(constraints: ViewConstraints, imageSize: CGSize, alignment: Alignment = .top) -> some View {
+        // Bounds only the un-measured axis; `.constraints(_:)` alone leaves a leaf's own
+        // length unbounded, and a measured axis already has its own floor, not a ceiling.
+        let roomWidth = constraints.measuredAxes.contains(.horizontal) ? nil : constraints.maxWidth
+        let roomHeight = constraints.measuredAxes.contains(.vertical) ? nil : constraints.maxHeight
+        // Only ever tightens a maximum that is already there: with none, the frame hugs the image,
+        // and adding one would make it fill whatever it is offered up to the fitted length.
+        let maxWidth = roomWidth.map { min($0, fittedLength(on: .horizontal, constraints: constraints, imageSize: imageSize) ?? $0) }
+        let maxHeight = roomHeight.map { min($0, fittedLength(on: .vertical, constraints: constraints, imageSize: imageSize) ?? $0) }
+
         // Only the keyboard: a pinned background must not rescale when the keyboard shows up
         // (Mobile-5409). An auto-height image has no fixed box to defend, and ignoring the
         // container's safe area here inflates the size Container measures it at instead.
-        self.resizable()
+        return self.resizable()
             .scaledToFit()
             .constraints(constraints, alignment: alignment)
-            // Bounds a leaf with no declared length, since `.constraints(_:)` alone won't.
-            // Excludes a measured axis outright (unlike `limit(on:)`, which trusts a pinned one):
-            // `flooringMeasuredShare` made it a floor, not a ceiling, on either reading.
-            .frame(
-                maxWidth: constraints.measuredAxes.contains(.horizontal) ? nil : constraints.maxWidth,
-                maxHeight: constraints.measuredAxes.contains(.vertical) ? nil : constraints.maxHeight,
-                alignment: alignment
-            )
+            .modifier(HuggingCap(maxWidth: maxWidth, maxHeight: maxHeight, alignment: alignment))
             .ignoresSafeArea(.keyboard)
             .clipped()
+    }
+
+    /// Returns the length an `auto` axis needs to show the whole image across the other axis, or
+    /// nil where this axis has a length of its own or the other axis has nothing to measure from.
+    ///
+    /// A frame with only a maximum takes all it is offered up to that maximum, so without this an
+    /// `auto` axis grows to its ceiling and the image letterboxes inside the extra length.
+    ///
+    /// - Parameters:
+    ///   - axis: The axis to bound.
+    ///   - constraints: The media's constraints.
+    ///   - imageSize: The image's own size, for its aspect.
+    /// - Returns: The fitted length on `axis`, or nil.
+    private func fittedLength(on axis: Axis, constraints: ViewConstraints, imageSize: CGSize) -> CGFloat? {
+        guard imageSize.width > 0, imageSize.height > 0, constraints.resolvedLength(on: axis) == nil else {
+            return nil
+        }
+        let other: Axis = axis == .vertical ? .horizontal : .vertical
+        guard let basis = (constraints.resolvedLength(on: other) ?? constraints.limit(on: other))?.safeValue else {
+            return nil
+        }
+        return axis == .vertical
+            ? basis * imageSize.height / imageSize.width
+            : basis * imageSize.width / imageSize.height
+    }
+}
+
+/// Caps the size proposed to its content and takes whatever size the content answers.
+///
+/// `.frame(maxWidth:maxHeight:)` instead fills what it is offered up to its maximum, so an image a
+/// stack rations on one axis is drawn narrower than its frame, letterboxed inside the border.
+private struct HuggingCap: ViewModifier {
+    let maxWidth: CGFloat?
+    let maxHeight: CGFloat?
+    let alignment: Alignment
+
+    func body(content: Content) -> some View {
+        HuggingCapLayout(maxWidth: maxWidth, maxHeight: maxHeight, alignment: alignment) {
+            content
+        }
+    }
+}
+
+private struct HuggingCapLayout: Layout {
+    let maxWidth: CGFloat?
+    let maxHeight: CGFloat?
+    let alignment: Alignment
+
+    func sizeThatFits(
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) -> CGSize {
+        subviews.first?.sizeThatFits(capped(proposal)) ?? .zero
+    }
+
+    func placeSubviews(
+        in bounds: CGRect,
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout ()
+    ) {
+        let anchor = alignment.unitPoint
+        let point = CGPoint(
+            x: bounds.minX + (bounds.width * anchor.x),
+            y: bounds.minY + (bounds.height * anchor.y)
+        )
+        for subview in subviews {
+            subview.place(at: point, anchor: anchor, proposal: ProposedViewSize(bounds.size))
+        }
+    }
+
+    /// An absent proposal takes the cap, so a stack asking for an ideal size gets the fitted box.
+    private func capped(_ proposal: ProposedViewSize) -> ProposedViewSize {
+        ProposedViewSize(
+            width: maxWidth.map { min(proposal.width ?? $0, $0) } ?? proposal.width,
+            height: maxHeight.map { min(proposal.height ?? $0, $0) } ?? proposal.height
+        )
     }
 }
 

@@ -41,6 +41,8 @@ struct VideoMediaNativeView: View {
     let videoIdentifier: String?
     let constraints: ViewConstraints
     let videoAspectRatio: CGFloat
+    /// `false` for a decorative background, which stays blank rather than showing a failure.
+    var showsErrorView: Bool = true
     let onMediaReady: @MainActor () -> Void
 
     @State private var hasError: Bool = false
@@ -55,7 +57,7 @@ struct VideoMediaNativeView: View {
     @Environment(\.isVisible) private var isVisible
 
     private var showControls: Bool {
-        info.properties.video?.showControls ?? true
+        info.properties.video?.showControls ?? false
     }
 
     private var shouldLoop: Bool {
@@ -81,7 +83,7 @@ struct VideoMediaNativeView: View {
         )
         .modifier(
             VideoControls(
-                hasError: hasError,
+                hasError: hasError && showsErrorView,
                 showControls: showControls,
                 shouldLoop: shouldLoop,
                 player: player,

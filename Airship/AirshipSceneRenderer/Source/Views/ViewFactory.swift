@@ -34,6 +34,8 @@ struct ViewFactory: Sendable {
             Container(info: info, constraints: constraints)
         case .linearLayout(let info):
             LinearLayout(info: info, constraints: constraints)
+        case .gridLayout(let info):
+            GridLayout(info: info, constraints: constraints)
         case .scrollLayout(let info):
             ScrollLayout(info: info, constraints: constraints)
         case .label(let info):

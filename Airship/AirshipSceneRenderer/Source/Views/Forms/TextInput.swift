@@ -13,7 +13,7 @@ struct TextInput: View {
 
     @Environment(\.pageIdentifier) private var pageID
     @Environment(\.sizeCategory) private var sizeCategory
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
 
     @EnvironmentObject private var formDataCollector: ThomasFormDataCollector
     @EnvironmentObject private var formState: ThomasFormState
@@ -135,7 +135,7 @@ struct TextInput: View {
         ZStack {
             if let hint = self.info.properties.placeholder ?? self.viewModel.selectedSMSLocale?.prefix {
                 Text(hint)
-                    .textAppearance(placeHolderTextAppearance(), colorScheme: colorScheme)
+                    .textAppearance(placeHolderTextAppearance(), selectorEnvironment: selectorEnvironment)
                     .padding(5)
                     .constraints(constraints, alignment: self.placeHolderAlignment)
                     .opacity(self.viewModel.input.isEmpty && !isEditing ? 1 : 0)
@@ -153,7 +153,7 @@ struct TextInput: View {
 
                 if let resolvedIconEndInfo = resolvedIconEndInfo?.icon {
                     let size = scaledFontSize
-                    Icons.icon(info: resolvedIconEndInfo, colorScheme: colorScheme, resizable: false)
+                    Icons.icon(info: resolvedIconEndInfo, selectorEnvironment: selectorEnvironment, resizable: false)
                         .frame(maxWidth: size, maxHeight: size)
                         .padding(5)
                 }
@@ -222,12 +222,12 @@ struct TextInput: View {
     private func restoredValue() -> (String?, ThomasSMSLocale?) {
         let identifier = self.info.properties.identifier
         switch(self.info.properties.inputType, formState.fieldValue(identifier: identifier)) {
-        case(.email, .email(let value)),
+        case(.email, .email(let value, _)),
             (.number, .text(let value, _, _)),
             (.text, .text(let value, _, _)),
             (.textMultiline, .text(let value, _, _)):
             return (value, nil)
-        case (.sms, .sms(let value, let locale)):
+        case (.sms, .sms(let value, let locale, _)):
             return (value, locale)
         default:
             return (nil, nil)
@@ -334,27 +334,14 @@ struct TextInput: View {
             ]
         }
 
-        private func makeChannels(
+        private func makeSMSChannels(
             value: String,
-            selectedSMSLocale: ThomasSMSLocale? = nil
+            selectedSMSLocale: ThomasSMSLocale
         ) -> [ThomasFormField.Channel]? {
-            guard !value.isEmpty else { return nil }
-
-            switch(self.inputProperties.inputType) {
-            case .email:
-                return if let options = self.inputProperties.emailRegistration {
-                    [.email(value, options)]
-                } else {
-                    nil
-                }
-            case .sms:
-                return if let options = selectedSMSLocale?.registration {
-                    [.sms(value, options)]
-                } else {
-                    nil
-                }
-            case .number, .text, .textMultiline: return nil
+            guard !value.isEmpty, let options = selectedSMSLocale.registration else {
+                return nil
             }
+            return [.sms(value, options)]
         }
 
         private func makeFormField(input: String) -> ThomasFormField {
@@ -405,8 +392,11 @@ struct TextInput: View {
                         return .valid(
                             .init(
                                 value: .email(address),
-                                channels: self.makeChannels(value: address),
-                                attributes: self.makeAttributes(value: address)
+                                attributes: self.makeAttributes(value: address),
+                                emailRegistration: .init(
+                                    address: address,
+                                    options: self.inputProperties.emailRegistration
+                                )
                             )
                         )
                     @unknown default:
@@ -457,7 +447,7 @@ struct TextInput: View {
                         return .valid(
                             .init(
                                 value: .sms(address, selectedSMSLocale),
-                                channels: self.makeChannels(
+                                channels: self.makeSMSChannels(
                                     value: address,
                                     selectedSMSLocale: selectedSMSLocale
                                 ),
@@ -597,7 +587,7 @@ fileprivate struct AirshipTextField: View {
     @Binding private var binding: String
     @Binding private var isEditing: Bool
 
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
     @Environment(\.isVisible) private var isVisible
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     @EnvironmentObject private var viewState: ThomasState
@@ -636,7 +626,7 @@ fileprivate struct AirshipTextField: View {
             .padding(5)
             .constraints(constraints, alignment: alignment)
             .focused(focusBinding, equals: identifier)
-            .foregroundColor(self.info.properties.textAppearance.color.toColor(colorScheme))
+            .foregroundColor(self.info.properties.textAppearance.color.toColor(selectorEnvironment))
             .contentShape(Rectangle())
             // Remove the field from the focus system entirely while its page is
             // off-screen. Resigning focus after the fact loses the race — UIKit
@@ -647,7 +637,7 @@ fileprivate struct AirshipTextField: View {
             .onTapGesture {
                 focusBinding.wrappedValue = identifier
             }
-            .applyViewAppearance(self.info.properties.textAppearance, colorScheme: colorScheme)
+            .applyViewAppearance(self.info.properties.textAppearance, selectorEnvironment: selectorEnvironment)
             .airshipApplyIf(isUnderlined, transform: { content in
                 content.underline()
             })

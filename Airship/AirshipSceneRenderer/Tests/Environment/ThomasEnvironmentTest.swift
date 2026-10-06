@@ -1040,6 +1040,7 @@ struct TestThomasExtensions: ThomasExtensions {
     var imageLoader: any ThomasImageLoader = EmptyThomasImageLoader()
     var actionRunner: any ThomasActionRunner = StubThomasActionRunner()
     var audienceEditor: any ThomasAudienceEditor = StubThomasAudienceEditor()
+    var randomSeed: String? = nil
 #if !os(tvOS) && !os(watchOS)
     var webViewFactory: any ThomasWebViewFactory = StubThomasWebViewFactory()
 #endif

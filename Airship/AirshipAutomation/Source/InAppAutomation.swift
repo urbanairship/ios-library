@@ -89,12 +89,32 @@ public struct InAppMessageViewTester: Sendable {
     }
 
     /// Displays the message directly, bypassing the automation pipeline.
+    ///
+    /// - Parameters:
+    ///   - imageProviderOverride: consulted for any image URL the message's own assets don't
+    ///     already have an answer for. A host can use this to fake image loads
+    ///     deterministically (e.g. for UI test screenshots), without it ever reaching real assets.
+    ///   - animationsEnabled: whether the message's presentation transitions animate. A host
+    ///     sets this to `false` to make a screenshot flow deterministic without waiting out a
+    ///     real fade.
+    ///   - randomSeed: seeds every `randomize_children` order, so a screenshot flow gets the same
+    ///     orders on every run and every platform. `nil` draws one per display.
     @MainActor
-    public func display(message: InAppMessage) async throws {
+    public func display(
+        message: InAppMessage,
+        imageProviderOverride: (@Sendable (URL) -> AirshipImageData?)? = nil,
+        animationsEnabled: Bool = true,
+        randomSeed: String? = nil
+    ) async throws {
         guard let executor else {
             throw AirshipErrors.error("In-app message view testing is unavailable")
         }
-        try await executor.displayTest(message: message)
+        try await executor.displayTest(
+            message: message,
+            imageProviderOverride: imageProviderOverride,
+            animationsEnabled: animationsEnabled,
+            randomSeed: randomSeed
+        )
     }
 }
 

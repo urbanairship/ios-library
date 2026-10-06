@@ -395,6 +395,29 @@ struct AssetCacheManagerTest {
         #expect(assetMoved, "The retried download should be moved into the cache")
         #expect(cachedAssets.isCached(remoteURL: assetRemoteURL))
     }
+
+    /// Tests that a path-traversal identifier cannot be used to delete files outside the cache root
+    @Test
+    func testClearCacheRejectsPathTraversal() async throws {
+        let rootPathComponent = "testCacheRootTraversal-\(UUID().uuidString)"
+        let fileManager = DefaultAssetFileManager(rootPathComponent: rootPathComponent)
+        let downloader = TestAssetDownloader()
+
+        let manager = AssetCacheManager(assetDownloader: downloader, assetFileManager: fileManager)
+
+        let cachesDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let victimFile = cachesDirectory.appendingPathComponent("victim-\(UUID().uuidString)")
+        FileManager.default.createFile(atPath: victimFile.path, contents: Data("secret".utf8), attributes: nil)
+
+        #expect(FileManager.default.fileExists(atPath: victimFile.path))
+
+        await manager.clearCache(identifier: "../\(victimFile.lastPathComponent)")
+
+        #expect(FileManager.default.fileExists(atPath: victimFile.path), "A path-traversal identifier must not delete files outside the cache root")
+
+        /// Cleanup
+        try? FileManager.default.removeItem(at: victimFile)
+    }
 }
 
 fileprivate extension URL {

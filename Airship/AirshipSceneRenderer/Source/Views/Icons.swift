@@ -140,10 +140,10 @@ struct Icons {
     @MainActor
     static func icon(
         info: ThomasIconInfo,
-        colorScheme: ColorScheme,
+        selectorEnvironment: ThomasSelectorEnvironment,
         resizable: Bool = true
     ) -> some View {
-        IconsContent(info: info, colorScheme: colorScheme, resizable: resizable)
+        IconsContent(info: info, selectorEnvironment: selectorEnvironment, resizable: resizable)
     }
 }
 
@@ -159,14 +159,14 @@ struct Icons {
 @MainActor
 private struct IconsContent: View {
     fileprivate let info: ThomasIconInfo
-    fileprivate let colorScheme: ColorScheme
+    fileprivate let selectorEnvironment: ThomasSelectorEnvironment
     fileprivate let resizable: Bool
 
     var body: some View {
         Icons.makeView(
             icon: info.icon,
             resizable: resizable,
-            color: info.color.toColor(colorScheme)
+            color: info.color.toColor(selectorEnvironment)
         )
         .aspectRatio(contentMode: .fit)
         .airshipApplyIf(info.scale != nil) { view in

@@ -29,7 +29,7 @@ struct AirshipSwitchToggleStyle: ToggleStyle {
 
             @Environment(\.isFocused) private var isFocused
             @Environment(\.isEnabled) private var isEnabled
-            @Environment(\.colorScheme) private var colorScheme
+            @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
 
             private static let trackWidth: Double = 50.0
             private static let thumbDiameter: Double = 30.0
@@ -58,7 +58,7 @@ struct AirshipSwitchToggleStyle: ToggleStyle {
             }
             
             var body: some View {
-                let fill = self.isOn.wrappedValue ? self.info.colors.on.toColor(colorScheme) : self.info.colors.off.toColor(colorScheme)
+                let fill = self.isOn.wrappedValue ? self.info.colors.on.toColor(selectorEnvironment) : self.info.colors.off.toColor(selectorEnvironment)
    
                 Capsule()
                     .fill(fill)
