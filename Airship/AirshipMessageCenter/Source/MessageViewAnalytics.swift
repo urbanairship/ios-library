@@ -33,7 +33,7 @@ final class DefaultMessageViewAnalytics: ThomasLayoutMessageAnalyticsProtocol {
     ) {
         self.messageID = .airship(identifier: message.id, campaigns: nil)
         self.productID = message.productID ?? Self.defaultProductID
-        self.reportingContext = message.messageReporting
+        self.reportingContext = Self.reportingContext(messageReporting: message.messageReporting)
         self.eventRecorder = eventRecorder
         self.eventSource = eventSource
         self.date = date
@@ -117,6 +117,15 @@ final class DefaultMessageViewAnalytics: ThomasLayoutMessageAnalyticsProtocol {
         }
     }
     
+    /// Returns the reporting context a native message's events carry: `message_reporting.reporting_context`
+    /// where it has one, else the whole `message_reporting`.
+    ///
+    /// - Parameter messageReporting: the message's `message_reporting`
+    /// - Returns: the reporting context, or `nil` when the message has no reporting
+    static func reportingContext(messageReporting: AirshipJSON?) -> AirshipJSON? {
+        messageReporting?.object?["reporting_context"] ?? messageReporting
+    }
+
     private func shouldRecordImpression(history: MessageDisplayHistory) -> Bool {
         if
             let lastImpression = history.lastImpression,

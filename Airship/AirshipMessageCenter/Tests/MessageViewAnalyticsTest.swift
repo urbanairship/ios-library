@@ -255,6 +255,45 @@ struct DefaultMessageViewAnalyticsTests {
         
     }
     
+    @Test(
+        "reporting_context is pulled out of message_reporting, falling back to the whole object",
+        arguments: [
+            (
+                #"{"message_id": "m", "reporting_context": {"content_types": ["scene"], "experiment_id": ""}, "campaign_categories": []}"#,
+                #"{"content_types": ["scene"], "experiment_id": ""}"#
+            ),
+            // No reporting_context: the whole message_reporting.
+            (#"{"message_id": "m", "group_id": "g"}"#, #"{"message_id": "m", "group_id": "g"}"#),
+        ]
+    )
+    func reportingContextFromMessageReporting(reporting: String, expected: String) throws {
+        let parsed = DefaultMessageViewAnalytics.reportingContext(messageReporting: try AirshipJSON.from(json: reporting))
+        #expect(parsed == (try AirshipJSON.from(json: expected)))
+    }
+
+    @Test("a message without message_reporting has no reporting context")
+    func noMessageReporting() {
+        #expect(DefaultMessageViewAnalytics.reportingContext(messageReporting: nil) == nil)
+    }
+
+    @Test("events and the impression both carry the parsed reporting_context")
+    @MainActor
+    func eventsCarryParsedReportingContext() async throws {
+        let message = createStubMessage(
+            id: "test-message-id",
+            reporting: ["message_id": "test-message-id", "reporting_context": ["content_types": ["native"]]]
+        )
+        let analytics = makeAnalytics(message: message)
+
+        analytics.recordEvent(ThomasLayoutDisplayEvent(), layoutContext: ThomasLayoutContext())
+        await operationsQueue.waitForCurrentOperations()
+
+        let captured = try #require(mockRecorder.lastCapturedData)
+        #expect(captured.context?.reportingContext == ["content_types": ["native"]])
+        let impression = try #require(mockRecorder.lastRecordedImpression)
+        #expect(impression.reportingContext == ["content_types": ["native"]])
+    }
+
     // MARK: - Helpers
     private func createStubMessage(
         id: String,
