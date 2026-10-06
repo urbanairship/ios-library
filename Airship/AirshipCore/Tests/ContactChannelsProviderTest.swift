@@ -236,6 +236,77 @@ struct ContactChannelsProviderTest {
     }
 
     @Test
+    func testConsumerCancellationStopsRefreshLoop() async throws {
+        let contactIDStream = AsyncStream<String> { continuation in
+            continuation.yield("test-contact-id-1")
+            continuation.finish()
+        }
+
+        self.apiClient.fetchResponse = AirshipHTTPResponse(
+            result: self.testChannels1,
+            statusCode: 200,
+            headers: [:]
+        )
+
+        var sleepUpdates = await self.taskSleeper.sleepUpdates.makeAsyncIterator()
+
+        let consumerTask = Task { [provider] in
+            for await _ in provider.contactChannels(stableContactIDUpdates: contactIDStream) {}
+        }
+
+        // First fetch completed and the refresh loop is parked on the success sleep
+        let sleep = await sleepUpdates.next()
+        #expect(sleep == 600)
+        #expect(self.apiClient.fetchAssociatedChannelsCallCount == 1)
+
+        consumerTask.cancel()
+
+        // Wait for the cancellation to reach the pending sleep so the loop teardown
+        // finished. Unbounded on purpose - the suite time limit catches a real hang.
+        while await self.taskSleeper.cancelledSleeps == 0 {
+            try await Task.sleep(nanoseconds: 20_000_000)
+        }
+
+        // Expire the cache; a leaked refresh loop would wake and fetch again
+        await provider.refresh()
+        try await Task.sleep(nanoseconds: 200_000_000)
+
+        #expect(self.apiClient.fetchAssociatedChannelsCallCount == 1)
+    }
+
+    @Test
+    func testConsumerCancellationCancelsPendingSleep() async throws {
+        let contactIDStream = AsyncStream<String> { continuation in
+            continuation.yield("test-contact-id-1")
+            continuation.finish()
+        }
+
+        self.apiClient.fetchResponse = AirshipHTTPResponse(
+            result: self.testChannels1,
+            statusCode: 200,
+            headers: [:]
+        )
+
+        var sleepUpdates = await self.taskSleeper.sleepUpdates.makeAsyncIterator()
+
+        let consumerTask = Task { [provider] in
+            for await _ in provider.contactChannels(stableContactIDUpdates: contactIDStream) {}
+        }
+
+        let sleep = await sleepUpdates.next()
+        #expect(sleep == 600)
+
+        consumerTask.cancel()
+
+        // Unbounded on purpose - the suite time limit catches a real hang.
+        while await self.taskSleeper.cancelledSleeps == 0 {
+            try await Task.sleep(nanoseconds: 20_000_000)
+        }
+
+        #expect(await self.taskSleeper.cancelledSleeps == 1)
+    }
+
+    @Test
     func testRefreshRateOnSuccess() async {
         let contactIDStream = AsyncStream<String> { continuation in
             continuation.yield("test-contact-id-1")
@@ -288,9 +359,9 @@ private actor TestSleeper: AirshipTaskSleeper, @unchecked Sendable {
 
 
     func advance() {
-        if let continuation = continuations.first {
+        if let entry = continuations.first {
             continuations.removeFirst()
-            continuation.resume()
+            entry.continuation.resume()
         } else {
             // The sleeper sends its update before parking, so a consumer can
             // call advance() before the continuation is registered. Bank the
@@ -301,8 +372,9 @@ private actor TestSleeper: AirshipTaskSleeper, @unchecked Sendable {
 
 
     var sleeps: [TimeInterval] = []
-    var continuations: [CheckedContinuation<Void, Never>] = []
+    var continuations: [(id: UUID, continuation: CheckedContinuation<Void, Never>)] = []
     private var pendingAdvances: Int = 0
+    private(set) var cancelledSleeps: Int = 0
 
     func sleep(timeInterval: TimeInterval) async throws {
         sleeps.append(timeInterval)
@@ -313,8 +385,27 @@ private actor TestSleeper: AirshipTaskSleeper, @unchecked Sendable {
             return
         }
 
-        await withCheckedContinuation { continuation in
-            continuations.append(continuation)
+        let id = UUID()
+        await withTaskCancellationHandler {
+            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                if Task.isCancelled {
+                    cancelledSleeps += 1
+                    continuation.resume()
+                } else {
+                    continuations.append((id: id, continuation: continuation))
+                }
+            }
+        } onCancel: {
+            Task { await self.cancelSleep(id: id) }
         }
+    }
+
+    private func cancelSleep(id: UUID) {
+        guard let index = continuations.firstIndex(where: { $0.id == id }) else {
+            return
+        }
+        let entry = continuations.remove(at: index)
+        cancelledSleeps += 1
+        entry.continuation.resume()
     }
 }
