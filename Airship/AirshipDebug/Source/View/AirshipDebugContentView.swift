@@ -83,6 +83,11 @@ public struct AirshipDebugContentView: View {
             icon: "cpu.fill",
             title: "On-Device AI",
             route: .ai
+        ),
+        DebugSection(
+            icon: "doc.text.magnifyingglass",
+            title: "Logs",
+            route: .logs
         )
     ]
 

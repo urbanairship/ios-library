@@ -80,6 +80,9 @@ public enum AirshipDebugRoute: Sendable, Equatable, Hashable {
     /// Navigate to the app information section.
     case appInfo
 
+    /// Navigate to the recorded SDK log viewer.
+    case logs
+
     /// Navigate to the on-device AI debug section.
     case ai
 
@@ -89,6 +92,9 @@ public enum AirshipDebugRoute: Sendable, Equatable, Hashable {
     /// Sub-routes for the AI debug section.
     public enum AIRoute: Sendable, Equatable, Hashable {
         case usage(key: String)
+
+        /// Navigate to the recorded evaluation log.
+        case evaluations
     }
 
     /// Sub-routes for the channel management section.
@@ -249,6 +255,7 @@ public extension AirshipDebugRoute {
             }
 
         case .appInfo: AirshipDebugAppInfoView()
+        case .logs: AirshipDebugLogsView()
         case .ai:
             // Uses the AI manager injected into the debug module at load
             // (`AirshipModuleLoaderArgs.aiManager`), never the shared `Airship` instance.
@@ -260,6 +267,10 @@ public extension AirshipDebugRoute {
             case .usage(let key):
                 if let manager = debugModuleAIManager {
                     AirshipDebugAIUsageView(usageKey: key, manager: manager)
+                }
+            case .evaluations:
+                if let manager = debugModuleAIManager {
+                    AirshipDebugAIEvaluationsView(manager: manager)
                 }
             }
         }

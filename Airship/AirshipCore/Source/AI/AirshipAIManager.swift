@@ -18,6 +18,11 @@ extension AirshipAI {
         @MainActor
         private var evaluationObserver: AirshipAI.EvaluationObserver?
 
+        /// SDK-internal observers, kept apart from the app's single slot so neither can
+        /// displace the other. See `addEvaluationTap(_:)`.
+        @MainActor
+        private var evaluationTaps: [UUID: AirshipAI.EvaluationObserver] = [:]
+
         private let evaluator = AirshipAI.Evaluator()
 
         private let privacyManager: any AirshipPrivacyManager
@@ -97,6 +102,19 @@ extension AirshipAI {
             evaluationObserver = observer
         }
 
+        @MainActor
+        public func addEvaluationTap(
+            _ tap: @escaping AirshipAI.EvaluationObserver
+        ) -> AirshipAI.EvaluationTapToken {
+            let id = UUID()
+            evaluationTaps[id] = tap
+            return AirshipAI.EvaluationTapToken {
+                Task { @MainActor [weak self] in
+                    self?.evaluationTaps[id] = nil
+                }
+            }
+        }
+
         public func fetchContext<S: Sendable>(
             for usage: AirshipAI.Usage<S>,
             subject: S
@@ -160,12 +178,24 @@ extension AirshipAI {
             )
         }
 
-        /// Reads the registered observer. Its own main-actor hop, taken before the model
-        /// check, so one evaluation can't report to an observer that replaced the one in
-        /// place when it started.
+        /// Reads the app's observer and any SDK-internal taps, fused into one closure. Its
+        /// own main-actor hop, taken before the model check, so one evaluation can't report
+        /// to an observer that replaced the one in place when it started.
+        ///
+        /// Returns nil when nobody is listening, so the skip paths can stay cheap.
         @MainActor
         private func currentObserver() -> AirshipAI.EvaluationObserver? {
-            evaluationObserver
+            let observer = evaluationObserver
+            let taps = Array(evaluationTaps.values)
+
+            guard !taps.isEmpty else { return observer }
+
+            return { record in
+                observer?(record)
+                for tap in taps {
+                    tap(record)
+                }
+            }
         }
 
         /// Resolves the model and fetches the provider's context. Model resolution and the

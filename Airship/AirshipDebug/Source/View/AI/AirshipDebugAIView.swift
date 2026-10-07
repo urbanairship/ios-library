@@ -38,6 +38,15 @@ struct AirshipDebugAIView: View {
                     }
                 }
             }
+
+            Section {
+                CommonItems.navigationLink(
+                    title: "Evaluation Log",
+                    route: .aiSub(.evaluations)
+                )
+            } footer: {
+                Text("Records what the model was asked and answered. Off until enabled.")
+            }
         }
         .navigationTitle("AI Debug")
         .onAppear { viewModel.setup() }

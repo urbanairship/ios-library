@@ -18,6 +18,26 @@ public final class AirshipLogger: Sendable {
         return configuration.storage.handler
     }
 
+    /// Secondary sinks that see every message alongside the configured handler.
+    ///
+    /// `AirshipConfig.logHandler` is the app's single slot, so an SDK component that wants
+    /// to watch the log — the debug kit's log viewer — can't take it without displacing the
+    /// app's own handler. Taps sit beside it instead: they never replace it, never see
+    /// anything it wouldn't, and are filtered by the same log level.
+    private static let taps: AirshipAtomicValue<[UUID: any AirshipLogHandler]> = .init([:])
+
+    /// Adds a secondary sink, returning a token that removes it again.
+    ///
+    /// The tap is called synchronously on whatever thread logged the message, so it must be
+    /// cheap: hand the message off and return. Anything slower belongs on the tap's own
+    /// queue. A tap that logs will recurse — don't.
+    @_spi(AirshipInternal)
+    public static func addTap(_ tap: any AirshipLogHandler) -> AirshipLogTapToken {
+        let id = UUID()
+        taps.update { $0[id] = tap }
+        return AirshipLogTapToken { taps.update { $0[id] = nil } }
+    }
+
     /// Configures the logger. Called once during takeOff before we use the logger, so it should be
     /// thread safe by convention. If we run into issues with this, we may need to introduce locking or
     /// create a single instance that we inject everywhere.
@@ -179,14 +199,52 @@ public final class AirshipLogger: Sendable {
         }
 
         if skipLogLevelCheck || self.logLevel.intValue >= logLevel.intValue {
+            // Resolved once: `message` is an autoclosure, and a tap must not cause the
+            // caller's string interpolation to run a second time.
+            let resolved = message()
+
             logHandler.log(
                 logLevel: logLevel,
-                message: message(),
+                message: resolved,
                 fileID: fileID,
                 line: line,
                 function: function
             )
+
+            let taps = Self.taps.value
+            guard !taps.isEmpty else { return }
+            for tap in taps.values {
+                tap.log(
+                    logLevel: logLevel,
+                    message: resolved,
+                    fileID: fileID,
+                    line: line,
+                    function: function
+                )
+            }
         }
+    }
+}
+
+/// Removes a log tap when cancelled or deallocated.
+///
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
+public final class AirshipLogTapToken: Sendable {
+    private let onCancel: AirshipAtomicValue<(@Sendable () -> Void)?>
+
+    init(_ onCancel: @escaping @Sendable () -> Void) {
+        self.onCancel = .init(onCancel)
+    }
+
+    public func cancel() {
+        let block = onCancel.value
+        onCancel.set(nil)
+        block?()
+    }
+
+    deinit {
+        onCancel.value?()
     }
 }
 

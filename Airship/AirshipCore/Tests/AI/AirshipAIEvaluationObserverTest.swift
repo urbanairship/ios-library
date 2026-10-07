@@ -286,6 +286,81 @@ struct AirshipAIEvaluationObserverTest {
         #expect(recorder.records.value.isEmpty)
     }
 
+    @Test("A tap sees records alongside the app's observer, without displacing it")
+    func tapRunsAlongsideObserver() async throws {
+        let app = Recorder()
+        let tap = Recorder()
+        let manager = makeObserverManager()
+        manager.registerModelFactory { MockAIModel() }
+
+        manager.setEvaluationObserver(app.observer)
+        let token = manager.addEvaluationTap(tap.observer)
+        defer { token.cancel() }
+
+        _ = await manager.evaluate(TestEvaluation())
+        try await waitForRecords(app, count: 1)
+        try await waitForRecords(tap, count: 1)
+
+        #expect(app.records.value.count == 1)
+        #expect(tap.records.value.count == 1)
+    }
+
+    @Test("A tap still fires when the app registered no observer of its own")
+    func tapFiresWithoutAppObserver() async throws {
+        let tap = Recorder()
+        let manager = makeObserverManager()
+        manager.registerModelFactory { MockAIModel() }
+
+        let token = manager.addEvaluationTap(tap.observer)
+        defer { token.cancel() }
+
+        _ = await manager.evaluate(TestEvaluation())
+        try await waitForRecords(tap, count: 1)
+
+        #expect(tap.records.value.count == 1)
+    }
+
+    @Test("A tap sees skips reported before a model is consulted")
+    func tapSeesPreModelSkips() async throws {
+        let tap = Recorder()
+        // No model registered, so the manager skips before reaching the evaluator.
+        let manager = makeObserverManager()
+
+        let token = manager.addEvaluationTap(tap.observer)
+        defer { token.cancel() }
+
+        _ = await manager.evaluate(TestEvaluation())
+        try await waitForRecords(tap, count: 1)
+
+        guard case .skipped(let reason) = tap.records.value.first?.outcome else {
+            Issue.record("Expected .skipped")
+            return
+        }
+        #expect(reason == "No model configured")
+    }
+
+    @Test("Clearing the app's observer leaves the tap running")
+    func clearingObserverLeavesTap() async throws {
+        let app = Recorder()
+        let tap = Recorder()
+        let manager = makeObserverManager()
+        manager.registerModelFactory { MockAIModel() }
+
+        manager.setEvaluationObserver(app.observer)
+        let token = manager.addEvaluationTap(tap.observer)
+        defer { token.cancel() }
+
+        _ = await manager.evaluate(TestEvaluation())
+        try await waitForRecords(tap, count: 1)
+
+        manager.setEvaluationObserver(nil)
+        _ = await manager.evaluate(TestEvaluation())
+        try await waitForRecords(tap, count: 2)
+
+        #expect(app.records.value.count == 1)
+        #expect(tap.records.value.count == 2)
+    }
+
     private func makeObserverManager() -> AirshipAI.DefaultManager {
         AirshipAI.DefaultManager(
             privacyManager: TestPrivacyManager(

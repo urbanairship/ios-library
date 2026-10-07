@@ -612,10 +612,60 @@ public enum AirshipAI {
         /// the exact registered instance (identity/type checks) keep getting it.
         @MainActor
         func gatedModel<S: Sendable>(for usage: Usage<S>) -> (any ModelAdapter)?
+
+        /// Adds an SDK-internal observer that sees every record alongside the app's.
+        ///
+        /// `setEvaluationObserver(_:)` is the app's single slot. An SDK component that wants
+        /// to watch evaluations — the debug kit's evaluation log — can't take that slot
+        /// without silently displacing whatever the app registered, so it adds a tap
+        /// instead. Taps are additive, never replace the app's observer, and see exactly
+        /// what it sees, including the skips reported before a model is consulted.
+        ///
+        /// Delivered like the app's observer: on a task of its own, off the main actor, in
+        /// no guaranteed order relative to other taps.
+        @MainActor
+        func addEvaluationTap(
+            _ tap: @escaping EvaluationObserver
+        ) -> EvaluationTapToken
+    }
+
+    // MARK: - EvaluationTapToken (SPI)
+
+    /// Removes an evaluation tap when cancelled or deallocated.
+    @_spi(AirshipInternal)
+    public final class EvaluationTapToken: Sendable {
+        private let onCancel: AirshipAtomicValue<(@Sendable () -> Void)?>
+
+        init(_ onCancel: @escaping @Sendable () -> Void) {
+            self.onCancel = .init(onCancel)
+        }
+
+        public func cancel() {
+            let block = onCancel.value
+            onCancel.set(nil)
+            block?()
+        }
+
+        deinit {
+            onCancel.value?()
+        }
     }
 }
 
 // MARK: - Default implementations
+
+@_spi(AirshipInternal)
+extension AirshipAI.InternalManager {
+    /// No-op, so the test and preview doubles that conform to this protocol don't each have
+    /// to carry a tap registry. `DefaultManager` overrides it; a real manager that doesn't
+    /// will silently drop taps, which is why there is only ever meant to be one.
+    @MainActor
+    public func addEvaluationTap(
+        _ tap: @escaping AirshipAI.EvaluationObserver
+    ) -> AirshipAI.EvaluationTapToken {
+        AirshipAI.EvaluationTapToken {}
+    }
+}
 
 @_spi(AirshipInternal)
 extension AirshipAI.Evaluation {
