@@ -10,8 +10,8 @@ import Foundation
 /// Scope of this store is persistence only: writing real events and reading
 /// during limit checks are handled by higher layers. It supports appending
 /// events, querying the events eligible for a schedule's limit evaluation
-/// (events recorded under the schedule's own ID or its current shared group
-/// ID), and deleting events by scope.
+/// (events recorded under the schedule's own ID or any of its current shared
+/// group IDs), and deleting events by scope.
 protocol LedgerStoreProtocol: Sendable {
     /// Appends events to the ledger.
     /// - Parameter events: The events to append.
@@ -19,23 +19,25 @@ protocol LedgerStoreProtocol: Sendable {
 
     /// Fetches the events eligible for a schedule's limit evaluation: every
     /// event recorded under the schedule's own ID, plus — only when the caller
-    /// passes a non-nil `sharedID` — every event whose `schedule_id` or
-    /// `shared_id` equals it.
+    /// passes a non-empty `sharedIDs` — every event whose `schedule_id`
+    /// matches one of them, or whose own `shared_ids` overlap them.
     ///
     /// The `schedule_id` side of that second check is what lets a schedule
     /// inherit a specifically-named schedule's pre-existing history, even
-    /// history recorded before that schedule ever had a `shared_id` at all
+    /// history recorded before that schedule ever had a shared ID at all
     /// (e.g. backfilled pre-ledger history, which only ever carries a bare
-    /// `schedule_id`). Passing `sharedID` only ever widens the result set, never
-    /// narrows it — the caller decides whether to pass it at all based on
-    /// whether this schedule has opted into shared events (see
-    /// `.shared` on `LimitConfig`).
+    /// `schedule_id`) — one of the caller's `sharedIDs` can literally BE
+    /// another schedule's own `schedule_id`. Passing `sharedIDs` only ever
+    /// widens the result set, never narrows it — the caller decides whether to
+    /// pass any at all based on whether this schedule has opted into shared
+    /// events (see `.shared` on `LimitConfig`), and an event recorded under
+    /// several groups the schedule also belongs to is still returned once.
     /// - Parameters:
     ///   - scheduleID: The evaluating schedule's ID.
-    ///   - sharedID: The schedule's current shared group ID, if it has opted
-    ///     into shared events; nil to restrict to its own events only.
+    ///   - sharedIDs: The schedule's current shared group IDs, if it has
+    ///     opted into shared events; empty to restrict to its own events only.
     /// - Returns: The eligible events.
-    func events(scheduleID: String, sharedID: String?) async throws -> [LedgerEvent]
+    func events(scheduleID: String, sharedIDs: [String]) async throws -> [LedgerEvent]
 
     /// Deletes every event recorded under any of the given scopes.
     /// - Parameter scopes: The scopes to delete events for.
@@ -46,7 +48,7 @@ protocol LedgerStoreProtocol: Sendable {
     /// An event survives while any of the IDs it was recorded under is still
     /// live, so a shared group's pooled history outlives individual variants. An
     /// event is deleted only when its `scheduleID` is not in `liveScheduleIDs`
-    /// **and** its `sharedID` (if any) is not in `liveSharedIDs`.
+    /// **and** none of its `sharedIDs` is in `liveSharedIDs`.
     /// - Parameters:
     ///   - liveScheduleIDs: Schedule IDs that still reference the ledger.
     ///   - liveSharedIDs: Shared group IDs that still reference the ledger.
@@ -67,6 +69,18 @@ actor LedgerStore: LedgerStoreProtocol {
 
     private let coreData: UACoreData?
     private let inMemory: Bool
+
+    /// Whether `compact` has already forced its once-per-process reindex pass.
+    ///
+    /// A migrated (v1→v2) event's shared-group index is only recoverable by
+    /// decoding its body — see `insertEvent`'s canonicalization and
+    /// `LedgerEvent`'s legacy-key decode fallback — and nothing else ever
+    /// leaves an event under-indexed, since every write from here on out goes
+    /// through `insertEvent`, which always indexes correctly. So this
+    /// condition can only ever be true once, immediately after an upgrade;
+    /// forcing exactly one full pass per launch catches it without paying a
+    /// full decode on every later `compact` call.
+    private var hasVerifiedSharedIDIndex = false
 
     init(appKey: String, inMemory: Bool) {
         let bundle = AirshipAutomationResources.bundle
@@ -103,41 +117,24 @@ actor LedgerStore: LedgerStoreProtocol {
             // one to avoid overlapping use from a re-entrant call.
             let encoder = JSONEncoder()
             try events.forEach { event in
-                let entity = try self.makeEventData(context: context)
-                entity.scheduleID = event.scheduleID
-                entity.sharedID = event.sharedID
-                entity.timestamp = event.timestamp
-                entity.body = try encoder.encode(event)
+                try self.insertEvent(event, encoder: encoder, context: context)
             }
         }
     }
 
-    func events(scheduleID: String, sharedID: String?) async throws -> [LedgerEvent] {
+    func events(scheduleID: String, sharedIDs: [String]) async throws -> [LedgerEvent] {
         guard let coreData = self.coreData else {
             throw LedgerStoreError.coreDataUnavailable
         }
 
         AirshipLogger.trace(
-            "Fetching ledger events for schedule \(scheduleID) sharedID \(sharedID ?? "nil")"
+            "Fetching ledger events for schedule \(scheduleID) sharedIDs \(sharedIDs)"
         )
 
         return try await coreData.performWithResult { context in
-            // An event always qualifies under this schedule's own ID. When a
-            // shared ID is passed (the caller already decided this schedule
-            // opts into shared events), it also qualifies by EITHER of the
-            // shared event's own two fields: `scheduleID == sharedID` picks up
-            // a named schedule's bare events — pre-existing history recorded
-            // before it had any shared ID at all (e.g. backfill) — and
-            // `sharedID == sharedID` picks up events explicitly tagged into
-            // the same group.
-            let predicate: NSPredicate = if let sharedID {
-                NSPredicate(
-                    format: "scheduleID == %@ OR scheduleID == %@ OR sharedID == %@",
-                    scheduleID, sharedID, sharedID
-                )
-            } else {
-                NSPredicate(format: "scheduleID == %@", scheduleID)
-            }
+            let predicate = try self.eligibilityPredicate(
+                scheduleID: scheduleID, sharedIDs: sharedIDs, context: context
+            )
 
             // `JSONDecoder` isn't thread-safe and this actor's `performWithResult`
             // closure can suspend, so use a closure-local decoder rather than a
@@ -146,6 +143,52 @@ actor LedgerStore: LedgerStoreProtocol {
             return try self.fetchEvents(predicate: predicate, context: context)
                 .map { try decoder.decode(LedgerEvent.self, from: $0.body) }
         }
+    }
+
+    /// The predicate `events(scheduleID:sharedIDs:)` fetches by: an event
+    /// qualifies if it was recorded under this schedule's ID, OR — only when
+    /// `sharedIDs` is non-empty — its `schedule_id` matches one of them, or
+    /// its own `shared_ids` overlap them. Logical OR throughout, not AND:
+    /// passing `sharedIDs` only ever widens the result set.
+    ///
+    /// The `scheduleID IN sharedIDs` branch is what lets a schedule inherit a
+    /// specifically-named schedule's pre-existing history, even history
+    /// recorded before that schedule ever had a shared ID at all (e.g.
+    /// backfilled pre-ledger events, which only ever carry a bare
+    /// `schedule_id`) — one of the caller's `sharedIDs` can literally BE
+    /// another schedule's own `schedule_id`. It's a plain indexed-column
+    /// match, so it costs nothing extra to include unconditionally alongside
+    /// the group lookup.
+    ///
+    /// The shared-group half is resolved in two steps — matching rows first,
+    /// then their events by object ID — rather than as one
+    /// `ANY sharedIDs.value IN %@` predicate. The single-predicate form reads
+    /// better but does not use the index on `value`: it scans, so its cost
+    /// tracks the whole ledger rather than the matches. At 20,000 rows that
+    /// measured 8.7ms against 0.16ms for this shape, and it degrades as the
+    /// ledger fills, on a path every trigger hits.
+    ///
+    /// Factored out so the OR-compound shape is exercised by exactly one piece
+    /// of code — a test built its own copy once and drifted from the real
+    /// predicate without anyone noticing.
+    private nonisolated func eligibilityPredicate(
+        scheduleID: String,
+        sharedIDs: [String],
+        context: NSManagedObjectContext
+    ) throws -> NSPredicate {
+        var subpredicates: [NSPredicate] = [
+            NSPredicate(format: "scheduleID == %@", scheduleID)
+        ]
+
+        if !sharedIDs.isEmpty {
+            subpredicates.append(NSPredicate(format: "scheduleID IN %@", sharedIDs))
+
+            if let eventIDs = try self.eventIDs(forSharedIDs: sharedIDs, context: context) {
+                subpredicates.append(NSPredicate(format: "SELF IN %@", eventIDs))
+            }
+        }
+
+        return NSCompoundPredicate(orPredicateWithSubpredicates: subpredicates)
     }
 
     func deleteEvents(scopes: [LedgerScope]) async throws {
@@ -161,7 +204,7 @@ actor LedgerStore: LedgerStoreProtocol {
             let subpredicates: [NSPredicate] = scopes.map { scope in
                 switch scope {
                 case .schedule(let id): NSPredicate(format: "scheduleID == %@", id)
-                case .shared(let id): NSPredicate(format: "sharedID == %@", id)
+                case .shared(let id): NSPredicate(format: "ANY sharedIDs.value == %@", id)
                 }
             }
 
@@ -181,13 +224,14 @@ actor LedgerStore: LedgerStoreProtocol {
 
         try await coreData.perform { context in
             // Delete an event only when it's orphaned on both axes: its recording
-            // schedule is gone AND (it has no shared group OR that group is gone).
-            // The predicates are written to be NULL-safe under SQL batch delete —
-            // `scheduleID` is non-optional, and the `sharedID == nil` clause keeps
-            // rows with no shared group from evaluating to SQL NULL.
+            // schedule is gone AND none of its shared groups is still live. The
+            // shared-group half is phrased as a SUBQUERY count rather than `NONE`
+            // so it stays correct for events with no shared groups at all, whose
+            // subquery is trivially empty and therefore dead.
             let scheduleDead = NSPredicate(format: "NOT (scheduleID IN %@)", liveScheduleIDs)
             let sharedDead = NSPredicate(
-                format: "sharedID == nil OR NOT (sharedID IN %@)", liveSharedIDs
+                format: "SUBQUERY(sharedIDs, $shared, $shared.value IN %@).@count == 0",
+                liveSharedIDs
             )
             let predicate = NSCompoundPredicate(
                 andPredicateWithSubpredicates: [scheduleDead, sharedDead]
@@ -200,6 +244,53 @@ actor LedgerStore: LedgerStoreProtocol {
         try await self.compact(now: now, maxEvents: LedgerCompactor.defaultMaxEvents)
     }
 
+    /// How many shared-ID rows the store holds. Test-only.
+    ///
+    /// Exposed because shared-ID rows are otherwise invisible from outside: a
+    /// leak here (a delete that drops events but strands their rows) would grow
+    /// the store without ever changing a query result, so nothing else could
+    /// catch it.
+    func sharedIDRowCount() async throws -> Int {
+        guard let coreData = self.coreData else {
+            throw LedgerStoreError.coreDataUnavailable
+        }
+
+        return try await coreData.performWithResult { context in
+            let request: NSFetchRequest<any NSFetchRequestResult> =
+                LedgerSharedIDData.fetchRequest()
+            return try context.count(for: request)
+        }
+    }
+
+    /// Records `event`, then runs the real `events(scheduleID:sharedIDs:)`
+    /// eligibility predicate against it inside the same transaction, before the
+    /// write is saved. Test-only.
+    ///
+    /// Exposed because the property it checks — that the query resolves
+    /// against unsaved work in the same context — is unreachable from outside,
+    /// since every public entry point saves before it returns. Goes through
+    /// ``eligibilityPredicate(scheduleID:sharedIDs:context:)`` rather than
+    /// calling ``eventIDs(forSharedIDs:context:)`` directly, so this guards the
+    /// whole `scheduleID OR sharedIDs` shape `events` actually runs — including
+    /// the `scheduleID` half — not just the shared-group lookup in isolation.
+    func eventsBeforeSaving(
+        recording event: LedgerEvent,
+        scheduleID: String,
+        sharedIDs: [String]
+    ) async throws -> Int {
+        guard let coreData = self.coreData else {
+            throw LedgerStoreError.coreDataUnavailable
+        }
+
+        return try await coreData.performWithResult { context in
+            try self.insertEvent(event, encoder: JSONEncoder(), context: context)
+            let predicate = try self.eligibilityPredicate(
+                scheduleID: scheduleID, sharedIDs: sharedIDs, context: context
+            )
+            return try self.fetchEvents(predicate: predicate, context: context).count
+        }
+    }
+
     /// Cap-injectable variant used by tests to exercise the backstop path without
     /// seeding tens of thousands of rows.
     func compact(now: Date, maxEvents: Int) async throws {
@@ -207,19 +298,27 @@ actor LedgerStore: LedgerStoreProtocol {
             throw LedgerStoreError.coreDataUnavailable
         }
 
+        // Read before the closure, which runs off-actor: this call's forced
+        // pass (if any) is decided now, and `hasVerifiedSharedIDIndex` is only
+        // set afterward, back on the actor, once the pass actually completes.
+        let mustForceReindexCheck = !self.hasVerifiedSharedIDIndex
+
         try await coreData.perform { context in
             // Cheap pre-check before the full fetch+decode: compaction can only
-            // remove rows when the ledger is over the global cap (backstop) or
-            // holds events old enough to age-bucket (older than `rawMaxAge`).
-            // Both are answerable from indexed columns without decoding any
-            // `body`, so the common case — a small, all-recent ledger with
-            // nothing to merge — skips the whole decode.
+            // remove rows when the ledger is over the global cap (backstop),
+            // holds events old enough to age-bucket (older than `rawMaxAge`),
+            // or — once per process, `mustForceReindexCheck` — hasn't yet been
+            // verified free of under-indexed migrated events. The first two
+            // are answerable from indexed columns without decoding any `body`,
+            // so the common case — a small, all-recent, already-verified
+            // ledger with nothing to merge — skips the whole decode.
             let countRequest: NSFetchRequest<any NSFetchRequestResult> =
                 LedgerEventData.fetchRequest()
             let total = try context.count(for: countRequest)
             guard total > 0 else { return }
 
-            if total <= maxEvents,
+            if !mustForceReindexCheck,
+               total <= maxEvents,
                let oldest = try self.oldestTimestamp(context: context),
                oldest >= now.addingTimeInterval(-LedgerCompactor.rawMaxAge) {
                 return
@@ -230,7 +329,9 @@ actor LedgerStore: LedgerStoreProtocol {
             // than shared ones to avoid overlapping use from a re-entrant call.
             let decoder = JSONDecoder()
 
-            let existing = try self.fetchEvents(predicate: nil, context: context)
+            let existing = try self.fetchEvents(
+                predicate: nil, context: context, prefetchSharedIDs: true
+            )
             guard !existing.isEmpty else { return }
 
             let events = try existing.map { try decoder.decode(LedgerEvent.self, from: $0.body) }
@@ -244,35 +345,88 @@ actor LedgerStore: LedgerStoreProtocol {
                 )
             }
 
-            // Compaction only ever removes rows (by merging), so an unchanged
-            // count means nothing merged — skip the rewrite to avoid churn.
-            guard compacted.count < events.count else { return }
+            // Merging isn't the only reason to rewrite. An event decoded via
+            // the legacy `shared_id` fallback (a body a pre-v2 build wrote)
+            // recovers its groups only in memory, right here — its stored rows
+            // are still whatever the migration left, which is none. Detect
+            // that mismatch and force the rewrite even when nothing merged, or
+            // a migrated event's group is queryable again only in memory, for
+            // exactly as long as the process that decoded it lives.
+            let needsReindex = zip(existing, events).contains { entity, event in
+                let indexed = Set(
+                    (entity.sharedIDs?.allObjects as? [LedgerSharedIDData] ?? []).map(\.value)
+                )
+                return indexed != Set(LedgerSharedIDs.canonical(event.sharedIDs))
+            }
+
+            // An unchanged count with already-matching rows means nothing to
+            // do; skip the rewrite to avoid churn.
+            guard compacted.count < events.count || needsReindex else { return }
 
             AirshipLogger.trace(
                 "Compacting ledger from \(events.count) to \(compacted.count) events"
             )
 
+            // Object-graph deletes rather than a batch delete, so the cascade
+            // rule clears each event's shared-ID rows with it.
             existing.forEach(context.delete)
             let encoder = JSONEncoder()
             try compacted.forEach { event in
-                let entity = try self.makeEventData(context: context)
-                entity.scheduleID = event.scheduleID
-                entity.sharedID = event.sharedID
-                entity.timestamp = event.timestamp
-                entity.body = try encoder.encode(event)
+                try self.insertEvent(event, encoder: encoder, context: context)
             }
         }
+
+        // Back on the actor: only reached once the pass above actually
+        // completes without throwing, so a failed attempt is retried by the
+        // next `compact` call rather than being marked verified regardless.
+        self.hasVerifiedSharedIDIndex = true
     }
 
     // MARK: - Helpers
 
+    /// Object IDs of the events recorded under any of `sharedIDs`, found by
+    /// querying the shared-ID rows on their own indexed `value` column.
+    ///
+    /// Returns nil when nothing matches, so the caller can leave the clause out
+    /// entirely rather than build an `SELF IN ()` that matches nothing but still
+    /// costs a term. De-duplicated because an event in several of the requested
+    /// groups contributes one row per group, and only the distinct events are
+    /// wanted.
+    ///
+    /// Deliberately a plain object fetch. Asking for just the `event` column via
+    /// `dictionaryResultType` is the obvious way to avoid materializing these
+    /// rows, but a dictionary fetch is resolved against the store alone and
+    /// cannot see unsaved inserts, where the object fetch it would replace can.
+    /// Every write here is saved before the block returns, so nothing is pending
+    /// by the time this runs today — but a caller that ever recorded and queried
+    /// within one block would silently miss its own events, and it costs nothing
+    /// to keep that impossible: at 20,000 rows both forms measure a quarter of a
+    /// millisecond, against 8.7ms for matching on the relationship directly.
+    private nonisolated func eventIDs(
+        forSharedIDs sharedIDs: [String],
+        context: NSManagedObjectContext
+    ) throws -> [NSManagedObjectID]? {
+        let request: NSFetchRequest<LedgerSharedIDData> = LedgerSharedIDData.fetchRequest()
+        request.predicate = NSPredicate(format: "value IN %@", sharedIDs)
+
+        let ids = Set(try context.fetch(request).compactMap { $0.event?.objectID })
+        return ids.isEmpty ? nil : Array(ids)
+    }
+
     private nonisolated func fetchEvents(
         predicate: NSPredicate?,
-        context: NSManagedObjectContext
+        context: NSManagedObjectContext,
+        prefetchSharedIDs: Bool = false
     ) throws -> [LedgerEventData] {
         let request: NSFetchRequest<LedgerEventData> = LedgerEventData.fetchRequest()
         request.includesPropertyValues = true
         request.predicate = predicate
+        // Only compaction's reindex check reads `.sharedIDs` back off the
+        // fetched entities; every other caller decodes `body` instead. Without
+        // this, that check would fault the relationship in one query per row.
+        if prefetchSharedIDs {
+            request.relationshipKeyPathsForPrefetching = ["sharedIDs"]
+        }
         return try context.fetch(request)
     }
 
@@ -305,8 +459,44 @@ actor LedgerStore: LedgerStoreProtocol {
             let results = try context.fetch(request) as? [NSManagedObject]
             results?.forEach(context.delete)
         } else {
+            // A shared-ID row is only reachable through its event, so a delete
+            // that dropped events but left their rows would leak storage no
+            // query could ever surface. The batch delete propagates the
+            // relationship's cascade rule and takes them with it;
+            // ``LedgerStoreOnDiskTest`` pins that, since the in-memory path
+            // above gets the cascade from the object graph instead and would
+            // not catch a regression here.
             let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
             try context.execute(deleteRequest)
+        }
+    }
+
+    /// Inserts one event plus a row per shared group it was recorded under.
+    ///
+    /// The shared IDs live in their own indexed entity rather than a column on
+    /// the event: an event can now belong to several groups at once, and a
+    /// limit check has to find it by any of them.
+    ///
+    /// Canonicalizes `sharedIDs` here rather than trusting the caller, so
+    /// every writer — direct recording and a compaction rewrite alike — ends
+    /// up with the same de-duplicated, sorted rows and a matching encoded
+    /// body, instead of only whichever caller happened to canonicalize first.
+    private nonisolated func insertEvent(
+        _ event: LedgerEvent,
+        encoder: JSONEncoder,
+        context: NSManagedObjectContext
+    ) throws {
+        let canonical = event.canonicalizingSharedIDs()
+
+        let entity = try self.makeEventData(context: context)
+        entity.scheduleID = canonical.scheduleID
+        entity.timestamp = canonical.timestamp
+        entity.body = try encoder.encode(canonical)
+
+        try canonical.sharedIDs.forEach { sharedID in
+            let shared = try self.makeSharedIDData(context: context)
+            shared.value = sharedID
+            shared.event = entity
         }
     }
 
@@ -318,6 +508,20 @@ actor LedgerStore: LedgerStoreProtocol {
                 forEntityName: LedgerEventData.entityName,
                 into: context
             ) as? LedgerEventData
+        else {
+            throw LedgerStoreError.coreDataError
+        }
+        return data
+    }
+
+    private nonisolated func makeSharedIDData(
+        context: NSManagedObjectContext
+    ) throws -> LedgerSharedIDData {
+        guard
+            let data = NSEntityDescription.insertNewObject(
+                forEntityName: LedgerSharedIDData.entityName,
+                into: context
+            ) as? LedgerSharedIDData
         else {
             throw LedgerStoreError.coreDataError
         }
@@ -366,7 +570,10 @@ enum LedgerCompactor {
     struct Key: Hashable {
         var type: LedgerEventType
         var scheduleID: String
-        var sharedID: String?
+        /// Canonical (sorted, de-duplicated), so two events belonging to the
+        /// same set of groups hash and compare equal regardless of the order
+        /// their IDs arrived in.
+        var sharedIDs: [String]
         var triggerID: String?
         var result: LedgerExecutionResult?
         var cancel: Bool?
@@ -393,7 +600,7 @@ enum LedgerCompactor {
             return Key(
                 type: .triggered,
                 scheduleID: payload.scheduleID,
-                sharedID: payload.sharedID,
+                sharedIDs: LedgerSharedIDs.canonical(payload.sharedIDs),
                 triggerID: payload.triggerID,
                 result: nil,
                 cancel: nil
@@ -402,7 +609,7 @@ enum LedgerCompactor {
             return Key(
                 type: .execution,
                 scheduleID: payload.scheduleID,
-                sharedID: payload.sharedID,
+                sharedIDs: LedgerSharedIDs.canonical(payload.sharedIDs),
                 triggerID: payload.triggerID,
                 result: payload.result,
                 cancel: payload.cancel
@@ -469,7 +676,7 @@ enum LedgerCompactor {
             return .triggered(
                 .init(
                     scheduleID: payload.scheduleID,
-                    sharedID: payload.sharedID,
+                    sharedIDs: payload.sharedIDs,
                     triggerID: payload.triggerID,
                     timestamp: newest,
                     count: total
@@ -479,7 +686,7 @@ enum LedgerCompactor {
             return .execution(
                 .init(
                     scheduleID: payload.scheduleID,
-                    sharedID: payload.sharedID,
+                    sharedIDs: payload.sharedIDs,
                     triggerID: payload.triggerID,
                     timestamp: newest,
                     count: total,
@@ -524,8 +731,8 @@ enum LedgerCompactor {
         if left.scheduleID != right.scheduleID {
             return left.scheduleID < right.scheduleID
         }
-        if (left.sharedID ?? "") != (right.sharedID ?? "") {
-            return (left.sharedID ?? "") < (right.sharedID ?? "")
+        if left.sharedIDs != right.sharedIDs {
+            return left.sharedIDs.lexicographicallyPrecedes(right.sharedIDs)
         }
 
         let leftKey = key(for: left)
@@ -555,8 +762,9 @@ fileprivate class LedgerEventData: NSManagedObject {
     /// ID of the schedule that recorded the event.
     @NSManaged var scheduleID: String
 
-    /// Shared group ID the recording schedule had at record time, if any.
-    @NSManaged var sharedID: String?
+    /// One row per shared group ID the recording schedule had at record time.
+    /// Empty when it had none.
+    @NSManaged var sharedIDs: NSSet?
 
     /// The event's timestamp, promoted out of ``body`` into an indexed column so
     /// compaction can cheaply test whether any event is old enough to merge
@@ -565,4 +773,23 @@ fileprivate class LedgerEventData: NSManagedObject {
 
     /// The JSON-encoded ``LedgerEvent``.
     @NSManaged var body: Data
+}
+
+/// One shared group ID an event was recorded under, promoted out of ``body``
+/// into its own indexed entity so a limit check can find events by group
+/// without decoding every row.
+@objc(UALedgerSharedIDData)
+fileprivate class LedgerSharedIDData: NSManagedObject {
+
+    static let entityName: String = "UALedgerSharedIDData"
+
+    @nonobjc class func fetchRequest<T>() -> NSFetchRequest<T> {
+        return NSFetchRequest<T>(entityName: LedgerSharedIDData.entityName)
+    }
+
+    /// The shared group ID.
+    @NSManaged var value: String
+
+    /// The event recorded under it.
+    @NSManaged var event: LedgerEventData?
 }

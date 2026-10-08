@@ -27,10 +27,10 @@ struct PreparedScheduleInfo: Codable, Equatable {
     var sendMetadata: String?
     var aiSuppression: AutomationAISuppression?
 
-    /// Shared ledger group ID the schedule had when prepared. Stamped here so
-    /// execution-outcome ledger events record under it without re-reading the
+    /// Shared ledger group IDs the schedule had when prepared. Stamped here so
+    /// execution-outcome ledger events record under them without re-reading the
     /// (possibly changed) schedule config.
-    var ledgerSharedID: String?
+    var ledgerSharedIDs: [String]
 
     /// ID of the execution-causing trigger, carried through for ledger event
     /// attribution.
@@ -49,7 +49,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
         priority: Int,
         sendMetadata: String? = nil,
         aiSuppression: AutomationAISuppression? = nil,
-        ledgerSharedID: String? = nil,
+        ledgerSharedIDs: [String] = [],
         triggerID: String? = nil
     ) {
         self.scheduleID = scheduleID
@@ -64,7 +64,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.priority = priority
         self.sendMetadata = sendMetadata
         self.aiSuppression = aiSuppression
-        self.ledgerSharedID = ledgerSharedID
+        self.ledgerSharedIDs = ledgerSharedIDs
         self.triggerID = triggerID
     }
 
@@ -82,8 +82,29 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.priority = try container.decodeIfPresent(Int.self, forKey: .priority) ?? 0
         self.sendMetadata = try container.decodeIfPresent(String.self, forKey: .sendMetadata)
         self.aiSuppression = try container.decodeIfPresent(AutomationAISuppression.self, forKey: .aiSuppression)
-        self.ledgerSharedID = try container.decodeIfPresent(String.self, forKey: .ledgerSharedID)
+        // Falls back to the single-ID key this field replaced. A prepared
+        // schedule is persisted as encoded JSON and outlives an app upgrade, so
+        // one prepared by the previous build and executed by this one would
+        // otherwise record its outcome under no shared group at all — silently
+        // missing from the pooled tally it was meant to count against.
+        //
+        // The legacy key gets its own small key type rather than an explicit
+        // `CodingKeys` listing every property, which would also forfeit the
+        // synthesized `encode(to:)`. Encoding still writes only the current key.
+        if let current = try container.decodeIfPresent([String].self, forKey: .ledgerSharedIDs) {
+            self.ledgerSharedIDs = current
+        } else {
+            let legacy = try decoder.container(keyedBy: LegacyCodingKeys.self)
+            self.ledgerSharedIDs = try legacy
+                .decodeIfPresent(String.self, forKey: .ledgerSharedID)
+                .map { [$0] } ?? []
+        }
+
         self.triggerID = try container.decodeIfPresent(String.self, forKey: .triggerID)
+    }
+
+    private enum LegacyCodingKeys: String, CodingKey {
+        case ledgerSharedID
     }
 }
 

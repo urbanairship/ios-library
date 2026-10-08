@@ -241,7 +241,7 @@ final class AutomationEngineTest {
 
         let recorded = await self.ledger.recorded
         #expect(recorded == [
-            .triggered(scheduleID: "record-schedule", sharedID: "group-1", triggerID: "trigger-1")
+            .triggered(scheduleID: "record-schedule", sharedIDs: ["group-1"], triggerID: "trigger-1")
         ])
     }
 
@@ -280,7 +280,7 @@ final class AutomationEngineTest {
 
         let recorded = await self.ledger.recorded
         #expect(recorded == [
-            .triggered(scheduleID: "barrier-schedule", sharedID: "barrier-group", triggerID: "trigger-barrier")
+            .triggered(scheduleID: "barrier-schedule", sharedIDs: ["barrier-group"], triggerID: "trigger-barrier")
         ])
     }
 
@@ -291,7 +291,7 @@ final class AutomationEngineTest {
                 InAppMessage(name: "test", displayContent: .custom(.string("test")))
             ),
             triggers: [],
-            ledgerConfig: sharedID.map { .init(sharedID: $0) }
+            ledgerConfig: sharedID.map { .init(sharedIDs: [$0]) }
         )
     }
 
@@ -386,7 +386,7 @@ final class TestHoldableActionRunner: AutomationActionRunnerProtocol, @unchecked
     }
 }
 
-/// Schedules sharing a `ledger_config.shared_id` pool one execution budget, so
+/// Schedules sharing a `ledger_config.shared_ids` pool one execution budget, so
 /// the limit has to hold across schedules and not just within one. The ledger is
 /// read outside the store transaction that moves the schedule's state, which
 /// makes every limit decision a check-then-act; these cover the two orderings
@@ -511,7 +511,7 @@ final class SharedLedgerGroupLimitTest {
             data: .actions(.string("run-\(identifier)")),
             triggers: [],
             limit: limit,
-            ledgerConfig: .init(sharedID: sharedID),
+            ledgerConfig: .init(sharedIDs: [sharedID]),
             limitConfig: .shared(exclude: nil),
             frequencyConstraintIDs: frequencyConstraintIDs
         )

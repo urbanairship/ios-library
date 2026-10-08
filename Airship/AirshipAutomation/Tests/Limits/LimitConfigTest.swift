@@ -14,12 +14,12 @@ struct LimitConfigTest {
     private let now = Date(timeIntervalSince1970: 10_000)
 
     private var context: LedgerLimitContext {
-        LedgerLimitContext(scheduleID: scheduleID, currentSharedID: sharedID)
+        LedgerLimitContext(scheduleID: scheduleID, currentSharedIDs: [sharedID])
     }
 
     private func execution(
         scheduleID: String? = nil,
-        sharedID: String? = nil,
+        sharedIDs: [String] = [],
         triggerID: String? = nil,
         timestamp: Date? = nil,
         count: Int? = nil,
@@ -29,7 +29,7 @@ struct LimitConfigTest {
         return .execution(
             LedgerEvent.Execution(
                 scheduleID: scheduleID ?? self.scheduleID,
-                sharedID: sharedID,
+                sharedIDs: sharedIDs.isEmpty ? nil : sharedIDs,
                 triggerID: triggerID,
                 timestamp: timestamp ?? self.now,
                 count: count,
@@ -43,7 +43,7 @@ struct LimitConfigTest {
         return .triggered(
             LedgerEvent.Triggered(
                 scheduleID: scheduleID ?? self.scheduleID,
-                sharedID: nil,
+                sharedIDs: nil,
                 triggerID: nil,
                 timestamp: self.now,
                 count: nil
@@ -107,7 +107,7 @@ struct LimitConfigTest {
     func testExcludeOtherSchedules() {
         let events = [
             execution(scheduleID: scheduleID),
-            execution(scheduleID: otherScheduleID, sharedID: sharedID)
+            execution(scheduleID: otherScheduleID, sharedIDs: [sharedID])
         ]
         let exclude = ExclusionSet(or: [ExclusionRule(source: .otherSchedules, match: nil)])
         // Only the own-schedule execution remains counted.
@@ -119,7 +119,7 @@ struct LimitConfigTest {
     func testExcludeOwnSchedule() {
         let events = [
             execution(scheduleID: scheduleID),
-            execution(scheduleID: otherScheduleID, sharedID: sharedID)
+            execution(scheduleID: otherScheduleID, sharedIDs: [sharedID])
         ]
         let exclude = ExclusionSet(or: [ExclusionRule(source: .ownSchedule, match: nil)])
         #expect(isOverLimit(limit: 1, events: events, exclude: exclude))
@@ -130,7 +130,7 @@ struct LimitConfigTest {
     func testExcludeSpecificSchedule() {
         let events = [
             execution(scheduleID: scheduleID),
-            execution(scheduleID: otherScheduleID, sharedID: sharedID)
+            execution(scheduleID: otherScheduleID, sharedIDs: [sharedID])
         ]
         let exclude = ExclusionSet(or: [ExclusionRule(source: .schedule(otherScheduleID), match: nil)])
         #expect(!isOverLimit(limit: 2, events: events, exclude: exclude))
@@ -213,8 +213,8 @@ struct LimitConfigTest {
     @Test
     func testExcludeCurrentSharedGroup() {
         let events = [
-            execution(sharedID: sharedID),
-            execution(sharedID: "other-group")
+            execution(sharedIDs: [sharedID]),
+            execution(sharedIDs: ["other-group"])
         ]
         let exclude = ExclusionSet(or: [
             ExclusionRule(source: .any, match: .execution(.init(sharedGroup: .current)))
@@ -227,9 +227,9 @@ struct LimitConfigTest {
     @Test
     func testExcludeNotCurrentSharedGroup() {
         let events = [
-            execution(sharedID: sharedID),
-            execution(sharedID: "stale-group"),
-            execution(sharedID: nil)
+            execution(sharedIDs: [sharedID]),
+            execution(sharedIDs: ["stale-group"]),
+            execution(sharedIDs: [])
         ]
         let exclude = ExclusionSet(or: [
             ExclusionRule(source: .any, match: .execution(.init(sharedGroup: .notCurrent)))
@@ -243,8 +243,8 @@ struct LimitConfigTest {
     @Test
     func testExcludeSharedGroupByID() {
         let events = [
-            execution(sharedID: sharedID),
-            execution(sharedID: "target-group")
+            execution(sharedIDs: [sharedID]),
+            execution(sharedIDs: ["target-group"])
         ]
         let exclude = ExclusionSet(or: [
             ExclusionRule(source: .any, match: .execution(.init(sharedGroup: .id("target-group"))))
@@ -388,10 +388,10 @@ struct LimitConfigTest {
     /// group; the winner also has a holdout event.
     private func experimentEvents() -> [LedgerEvent] {
         return [
-            execution(scheduleID: scheduleID, sharedID: sharedID, result: .succeeded),
-            execution(scheduleID: scheduleID, sharedID: sharedID, result: .holdout),
-            execution(scheduleID: otherScheduleID, sharedID: sharedID, result: .succeeded),
-            execution(scheduleID: otherScheduleID, sharedID: sharedID, result: .succeeded)
+            execution(scheduleID: scheduleID, sharedIDs: [sharedID], result: .succeeded),
+            execution(scheduleID: scheduleID, sharedIDs: [sharedID], result: .holdout),
+            execution(scheduleID: otherScheduleID, sharedIDs: [sharedID], result: .succeeded),
+            execution(scheduleID: otherScheduleID, sharedIDs: [sharedID], result: .succeeded)
         ]
     }
 
@@ -426,8 +426,8 @@ struct LimitConfigTest {
         // no exclusion, only the events still in scope count. Here we simulate the
         // post-reset scope: the ledger returns just the winner's own events.
         let ownEvents = [
-            execution(scheduleID: scheduleID, sharedID: nil, result: .succeeded),
-            execution(scheduleID: scheduleID, sharedID: nil, result: .holdout)
+            execution(scheduleID: scheduleID, sharedIDs: [], result: .succeeded),
+            execution(scheduleID: scheduleID, sharedIDs: [], result: .holdout)
         ]
         #expect(isOverLimit(limit: 2, events: ownEvents, exclude: nil))
         #expect(!isOverLimit(limit: 3, events: ownEvents, exclude: nil))
@@ -449,5 +449,47 @@ struct LimitConfigTest {
             )
         ])
         #expect(!isOverLimit(limit: 1, events: ownEvents, exclude: exclude))
+    }
+
+    // MARK: - Multiple shared groups
+
+    @Test
+    func testCurrentMatchesOnPartialOverlap() {
+        // The schedule is in `group-1`; the event was recorded while its schedule
+        // was in `group-1` and another. Sharing one group makes it current.
+        let event = execution(sharedIDs: [sharedID, "other-group"])
+        let rule = ExclusionRule(
+            source: .any,
+            match: .execution(.init(sharedGroup: .current))
+        )
+
+        #expect(rule.matches(event, context: context, now: now))
+    }
+
+    @Test
+    func testNotCurrentNeedsEveryGroupToDiffer() {
+        let overlapping = execution(sharedIDs: [sharedID, "other-group"])
+        let disjoint = execution(sharedIDs: ["other-group", "third-group"])
+        let rule = ExclusionRule(
+            source: .any,
+            match: .execution(.init(sharedGroup: .notCurrent))
+        )
+
+        #expect(!rule.matches(overlapping, context: context, now: now))
+        #expect(rule.matches(disjoint, context: context, now: now))
+    }
+
+    @Test
+    func testAbsoluteIDMatchesOneOfSeveralGroups() {
+        let event = execution(sharedIDs: ["group-a", "group-b"])
+
+        #expect(
+            ExclusionRule(source: .any, match: .execution(.init(sharedGroup: .id("group-b"))))
+                .matches(event, context: context, now: now)
+        )
+        #expect(
+            !ExclusionRule(source: .any, match: .execution(.init(sharedGroup: .id("group-c"))))
+                .matches(event, context: context, now: now)
+        )
     }
 }

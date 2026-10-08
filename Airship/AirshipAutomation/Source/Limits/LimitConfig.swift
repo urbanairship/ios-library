@@ -15,21 +15,21 @@ import Foundation
 /// schedule's own events, full stop — nothing another schedule declares can
 /// affect it, and there's no `source` field around to write a no-op
 /// reference to another schedule with. Only ``shared(exclude:)`` additionally
-/// counts events whose `schedule_id` OR `shared_id` matches this schedule's
-/// `ledger_config.shared_id` — not just events from schedules that also
-/// declare that `shared_id` themselves, but any event carrying it in either
-/// field, including a named schedule's own un-tagged history. Only then does
-/// ``ExclusionRule``'s `source` have another schedule's events to actually
-/// subtract.
+/// counts events whose `schedule_id` matches any of this schedule's
+/// `ledger_config.shared_ids`, or whose own `shared_ids` overlap them — not
+/// just events from schedules that also declare one of those IDs themselves,
+/// but any event carrying it in either field, including a named schedule's
+/// own un-tagged history. Only then does ``ExclusionRule``'s `source` have
+/// another schedule's events to actually subtract.
 enum LimitConfig: Sendable, Equatable {
 
     /// Counts only this schedule's own events. `exclude` rules have no
     /// `source` field to misuse, since nothing else is in scope.
     case selfOnly(exclude: SelfExclusionSet?)
 
-    /// Also counts events matching this schedule's `shared_id`, in either
-    /// field. `exclude` rules can reference other schedules, since they're
-    /// actually in scope now.
+    /// Also counts events matching any of this schedule's `shared_ids`, in
+    /// either field. `exclude` rules can reference other schedules, since
+    /// they're actually in scope now.
     case shared(exclude: ExclusionSet?)
 
     /// A limit-config type this SDK version does not recognize. Falls back to
@@ -118,7 +118,7 @@ struct SelfExclusionRule: Sendable, Codable, Equatable {
 
 /// Selects which schedule recorded the events a rule applies to, relative to
 /// the evaluating schedule. Candidates are already scoped to the schedule's
-/// ledger IDs (its schedule ID and shared ledger ID); this picks among the
+/// ledger IDs (its schedule ID and shared ledger IDs); this picks among the
 /// schedule IDs within that scope by matching each event's `schedule_id`.
 enum LedgerSource: Sendable, Equatable {
 
@@ -195,23 +195,31 @@ enum LedgerEventMatch: Sendable, Equatable {
     }
 }
 
-/// Matches events by the shared group they were recorded under (their
-/// `shared_id`), relative to the evaluating schedule's current shared group or
-/// by an absolute ID.
+/// Matches events by the shared groups they were recorded under (their
+/// `shared_ids`), relative to the evaluating schedule's current shared groups
+/// or by an absolute ID.
+///
+/// Both sides can hold several IDs, so the relative cases are overlap tests: an
+/// event matches ``current`` when it shares at least one group with the
+/// evaluating schedule. Partial overlap counts as current — an event recorded
+/// under `[experiment, promo]` is current for a schedule now in `[experiment]`
+/// alone.
 enum SharedGroupMatch: Sendable, Equatable {
 
-    /// Events recorded under the evaluating schedule's current shared group. If
-    /// the schedule has no shared group, matches events recorded with none.
+    /// Events sharing at least one group with the evaluating schedule's current
+    /// shared groups. If the schedule has none, matches events recorded with
+    /// none.
     case current
 
     /// The complement of `current` — matches whatever that doesn't. When the
-    /// schedule has a current shared group, that's every event whose
-    /// `sharedID` differs, including events recorded with no shared group at
-    /// all. When the schedule has no current shared group, `current` already
-    /// matches events recorded with none, so this matches none of them.
+    /// schedule has current shared groups, that's every event sharing none of
+    /// them, including events recorded with no shared group at all. When the
+    /// schedule has no current shared groups, `current` already matches
+    /// events recorded with none, so this matches none of them.
     case notCurrent
 
-    /// Events recorded under a specific shared group, named absolutely.
+    /// Events recorded under a specific shared group, named absolutely. Matches
+    /// when that ID is among the event's groups.
     case id(String)
 
     /// A shared-group match type this SDK version does not recognize. Matches
@@ -426,8 +434,9 @@ struct LedgerLimitContext: Sendable, Equatable {
     /// The evaluating schedule's own ID.
     let scheduleID: String
 
-    /// The evaluating schedule's current shared ledger ID, if any.
-    let currentSharedID: String?
+    /// The evaluating schedule's current shared ledger IDs. Empty when it has
+    /// no shared group.
+    let currentSharedIDs: Set<String>
 }
 
 /// Common interface for a schedule's exclude rules, whichever `LimitConfig`
@@ -487,7 +496,7 @@ extension LedgerEventMatch {
         switch (self, event) {
         case (.triggered(let match), .triggered(let payload)):
             guard match.timeBounds?.isActive(date: payload.timestamp) ?? true else { return false }
-            guard match.sharedGroup?.matches(sharedID: payload.sharedID, context: context) ?? true else {
+            guard match.sharedGroup?.matches(sharedIDs: payload.sharedIDs, context: context) ?? true else {
                 return false
             }
             if let triggerID = match.triggerID, payload.triggerID != triggerID { return false }
@@ -495,7 +504,7 @@ extension LedgerEventMatch {
 
         case (.execution(let match), .execution(let payload)):
             guard match.timeBounds?.isActive(date: payload.timestamp) ?? true else { return false }
-            guard match.sharedGroup?.matches(sharedID: payload.sharedID, context: context) ?? true else {
+            guard match.sharedGroup?.matches(sharedIDs: payload.sharedIDs, context: context) ?? true else {
                 return false
             }
             if let results = match.results, !results.contains(payload.result) { return false }
@@ -511,12 +520,23 @@ extension LedgerEventMatch {
 }
 
 extension SharedGroupMatch {
-    func matches(sharedID: String?, context: LedgerLimitContext) -> Bool {
+    func matches(sharedIDs: [String]?, context: LedgerLimitContext) -> Bool {
+        let recorded = Set(sharedIDs ?? [])
         switch self {
-        case .current: return sharedID == context.currentSharedID
-        case .notCurrent: return sharedID != context.currentSharedID
-        case .id(let id): return sharedID == id
-        case .unknown: return false
+        // A schedule with no groups is "current" with events that also have
+        // none, mirroring the single-ID behavior where nil equalled nil.
+        case .current:
+            return recorded.isEmpty
+                ? context.currentSharedIDs.isEmpty
+                : !recorded.isDisjoint(with: context.currentSharedIDs)
+        case .notCurrent:
+            return recorded.isEmpty
+                ? !context.currentSharedIDs.isEmpty
+                : recorded.isDisjoint(with: context.currentSharedIDs)
+        case .id(let id):
+            return recorded.contains(id)
+        case .unknown:
+            return false
         }
     }
 }

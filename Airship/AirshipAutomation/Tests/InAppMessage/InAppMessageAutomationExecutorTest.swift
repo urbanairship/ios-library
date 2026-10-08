@@ -138,7 +138,7 @@ struct InAppMessageAutomationExecutorTest {
         #expect(await self.ledger.recorded == [
             .execution(
                 scheduleID: preparedInfo.scheduleID,
-                sharedID: nil,
+                sharedIDs: [],
                 triggerID: nil,
                 result: .interrupted,
                 cancel: false
@@ -201,7 +201,7 @@ struct InAppMessageAutomationExecutorTest {
         #expect(await self.ledger.recorded == [
             .execution(
                 scheduleID: preparedInfo.scheduleID,
-                sharedID: nil,
+                sharedIDs: [],
                 triggerID: nil,
                 result: .succeeded,
                 cancel: false
@@ -236,7 +236,7 @@ struct InAppMessageAutomationExecutorTest {
         #expect(await self.ledger.recorded == [
             .execution(
                 scheduleID: preparedInfo.scheduleID,
-                sharedID: nil,
+                sharedIDs: [],
                 triggerID: nil,
                 result: .holdout,
                 cancel: false
@@ -267,7 +267,7 @@ struct InAppMessageAutomationExecutorTest {
         #expect(await self.ledger.recorded == [
             .execution(
                 scheduleID: preparedInfo.scheduleID,
-                sharedID: nil,
+                sharedIDs: [],
                 triggerID: nil,
                 result: .holdout,
                 cancel: false
@@ -298,7 +298,7 @@ struct InAppMessageAutomationExecutorTest {
         #expect(await self.ledger.recorded == [
             .execution(
                 scheduleID: preparedInfo.scheduleID,
-                sharedID: nil,
+                sharedIDs: [],
                 triggerID: nil,
                 result: .variantMiss,
                 cancel: false
@@ -323,7 +323,7 @@ struct InAppMessageAutomationExecutorTest {
         #expect(await self.ledger.recorded == [
             .execution(
                 scheduleID: preparedInfo.scheduleID,
-                sharedID: nil,
+                sharedIDs: [],
                 triggerID: nil,
                 result: .succeeded,
                 cancel: false

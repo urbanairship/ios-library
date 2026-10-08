@@ -16,7 +16,7 @@ protocol AutomationLedgerProtocol: Sendable {
     /// goal.
     func recordTriggered(
         scheduleID: String,
-        sharedID: String?,
+        sharedIDs: [String],
         triggerID: String?
     ) async
 
@@ -26,7 +26,7 @@ protocol AutomationLedgerProtocol: Sendable {
     ///   - cancel: True if this outcome also cancelled the schedule.
     func recordExecution(
         scheduleID: String,
-        sharedID: String?,
+        sharedIDs: [String],
         triggerID: String?,
         result: LedgerExecutionResult,
         cancel: Bool
@@ -49,14 +49,14 @@ final class AutomationLedger: AutomationLedgerProtocol {
 
     func recordTriggered(
         scheduleID: String,
-        sharedID: String?,
+        sharedIDs: [String],
         triggerID: String?
     ) async {
         await self.record(
             .triggered(
                 .init(
                     scheduleID: scheduleID,
-                    sharedID: sharedID,
+                    sharedIDs: LedgerSharedIDs.canonicalOrNil(sharedIDs),
                     triggerID: triggerID,
                     timestamp: self.date.now,
                     count: nil
@@ -67,7 +67,7 @@ final class AutomationLedger: AutomationLedgerProtocol {
 
     func recordExecution(
         scheduleID: String,
-        sharedID: String?,
+        sharedIDs: [String],
         triggerID: String?,
         result: LedgerExecutionResult,
         cancel: Bool
@@ -76,7 +76,7 @@ final class AutomationLedger: AutomationLedgerProtocol {
             .execution(
                 .init(
                     scheduleID: scheduleID,
-                    sharedID: sharedID,
+                    sharedIDs: LedgerSharedIDs.canonicalOrNil(sharedIDs),
                     triggerID: triggerID,
                     timestamp: self.date.now,
                     count: nil,

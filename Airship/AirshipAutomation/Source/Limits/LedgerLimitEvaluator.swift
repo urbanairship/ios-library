@@ -11,11 +11,12 @@ protocol LedgerLimitEvaluatorProtocol: Sendable {
     ///
     /// Counts this schedule's own `execution` events (every
     /// ``LedgerExecutionResult``, never `triggered`), plus — only when
-    /// `limit_config.type` is `"shared"` — events whose `schedule_id` or
-    /// `shared_id` matches its current `shared_id` too (the `schedule_id` half
-    /// is what lets it inherit a named schedule's pre-existing history, even
-    /// history recorded before that schedule ever had a `shared_id` at all —
-    /// see ``LedgerStoreProtocol/events(scheduleID:sharedID:)``), minus any
+    /// `limit_config.type` is `"shared"` — events whose `schedule_id` matches
+    /// any of its current `shared_ids`, or whose own `shared_ids` overlap them
+    /// too (the `schedule_id` half is what lets it inherit a named schedule's
+    /// pre-existing history, even history recorded before that schedule ever
+    /// had a shared ID at all — see
+    /// ``LedgerStoreProtocol/events(scheduleID:sharedIDs:)``), minus any
     /// events removed by `limit_config.exclude`, and compares the total
     /// against the schedule's `limit` (nil → 1, 0 → unlimited).
     func isOverLimit(schedule: AutomationSchedule) async -> Bool
@@ -44,20 +45,20 @@ final class LedgerLimitEvaluator: LedgerLimitEvaluatorProtocol {
 
         // Only look beyond this schedule's own events when it has explicitly
         // opted in — its own payload alone must determine this, independent of
-        // what any other schedule declares as its shared_id.
-        let sharedID: String?
+        // what any other schedule declares as its shared_ids.
+        let sharedIDs: [String]
         switch limitConfig {
         case .selfOnly, .unknown:
-            sharedID = nil
+            sharedIDs = []
         case .shared:
-            sharedID = schedule.ledgerSharedID
+            sharedIDs = schedule.ledgerSharedIDs
         }
 
         let events: [LedgerEvent]
         do {
             events = try await self.store.events(
                 scheduleID: schedule.identifier,
-                sharedID: sharedID
+                sharedIDs: sharedIDs
             )
         } catch {
             // A ledger read failure must never wedge execution. Err toward
@@ -71,7 +72,7 @@ final class LedgerLimitEvaluator: LedgerLimitEvaluatorProtocol {
             events: events,
             context: LedgerLimitContext(
                 scheduleID: schedule.identifier,
-                currentSharedID: schedule.ledgerSharedID
+                currentSharedIDs: Set(schedule.ledgerSharedIDs)
             ),
             limitConfig: limitConfig,
             now: self.date.now

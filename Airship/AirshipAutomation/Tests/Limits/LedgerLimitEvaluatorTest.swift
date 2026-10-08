@@ -20,7 +20,7 @@ struct LedgerLimitEvaluatorTest {
     private func schedule(
         id: String = "schedule-A",
         limit: UInt?,
-        sharedID: String? = nil,
+        sharedIDs: [String] = [],
         limitConfig: LimitConfig? = nil
     ) -> AutomationSchedule {
         return AutomationSchedule(
@@ -28,14 +28,14 @@ struct LedgerLimitEvaluatorTest {
             data: .actions(.string("actions")),
             triggers: [],
             limit: limit,
-            ledgerConfig: sharedID.map { AutomationSchedule.LedgerConfig(sharedID: $0) },
+            ledgerConfig: sharedIDs.isEmpty ? nil : AutomationSchedule.LedgerConfig(sharedIDs: sharedIDs),
             limitConfig: limitConfig
         )
     }
 
     private func recordExecution(
         scheduleID: String = "schedule-A",
-        sharedID: String? = nil,
+        sharedIDs: [String] = [],
         result: LedgerExecutionResult = .succeeded,
         count: Int? = nil
     ) async throws {
@@ -43,7 +43,7 @@ struct LedgerLimitEvaluatorTest {
             .execution(
                 LedgerEvent.Execution(
                     scheduleID: scheduleID,
-                    sharedID: sharedID,
+                    sharedIDs: sharedIDs.isEmpty ? nil : sharedIDs,
                     triggerID: nil,
                     timestamp: self.date.now,
                     count: count,
@@ -88,12 +88,12 @@ struct LedgerLimitEvaluatorTest {
     @Test
     func testCountsAcrossSharedGroup() async throws {
         // Two different schedules recording under the same shared group pool.
-        try await recordExecution(scheduleID: "schedule-A", sharedID: "group-1")
-        try await recordExecution(scheduleID: "schedule-B", sharedID: "group-1")
+        try await recordExecution(scheduleID: "schedule-A", sharedIDs: ["group-1"])
+        try await recordExecution(scheduleID: "schedule-B", sharedIDs: ["group-1"])
 
         let over = await evaluator.isOverLimit(
             schedule: schedule(
-                id: "schedule-A", limit: 2, sharedID: "group-1",
+                id: "schedule-A", limit: 2, sharedIDs: ["group-1"],
                 limitConfig: .shared(exclude: nil)
             )
         )
@@ -106,11 +106,11 @@ struct LedgerLimitEvaluatorTest {
         // opted in — its own payload alone must determine its tally, so
         // schedule-B's contribution must not count, no matter what schedule-B
         // itself declares. No limit_config at all defaults to .selfOnly.
-        try await recordExecution(scheduleID: "schedule-A", sharedID: "group-1")
-        try await recordExecution(scheduleID: "schedule-B", sharedID: "group-1")
+        try await recordExecution(scheduleID: "schedule-A", sharedIDs: ["group-1"])
+        try await recordExecution(scheduleID: "schedule-B", sharedIDs: ["group-1"])
 
         let over = await evaluator.isOverLimit(
-            schedule: schedule(id: "schedule-A", limit: 2, sharedID: "group-1")
+            schedule: schedule(id: "schedule-A", limit: 2, sharedIDs: ["group-1"])
         )
         #expect(!over)
     }
@@ -118,12 +118,12 @@ struct LedgerLimitEvaluatorTest {
     @Test
     func testExplicitSelfOnlyIgnoresSharedGroup() async throws {
         // An explicit .selfOnly behaves the same as no limit_config at all.
-        try await recordExecution(scheduleID: "schedule-A", sharedID: "group-1")
-        try await recordExecution(scheduleID: "schedule-B", sharedID: "group-1")
+        try await recordExecution(scheduleID: "schedule-A", sharedIDs: ["group-1"])
+        try await recordExecution(scheduleID: "schedule-B", sharedIDs: ["group-1"])
 
         let over = await evaluator.isOverLimit(
             schedule: schedule(
-                id: "schedule-A", limit: 2, sharedID: "group-1",
+                id: "schedule-A", limit: 2, sharedIDs: ["group-1"],
                 limitConfig: .selfOnly(exclude: nil)
             )
         )
@@ -134,14 +134,14 @@ struct LedgerLimitEvaluatorTest {
     func testSharedInheritsNamedSchedulesBareHistory() async throws {
         // schedule-original has pre-existing history recorded before it was
         // ever part of a group (e.g. backfilled pre-ledger executions) — no
-        // sharedID on the event at all, just its own scheduleID.
+        // sharedIDs on the event at all, just its own scheduleID.
         try await recordExecution(scheduleID: "schedule-original", result: .backfill, count: 3)
 
-        // schedule-new joins by naming schedule-original's own ID as its
-        // shared_id, and opts into counting it.
+        // schedule-new joins by naming schedule-original's own ID as one of
+        // its shared_ids, and opts into counting it.
         let over = await evaluator.isOverLimit(
             schedule: schedule(
-                id: "schedule-new", limit: 3, sharedID: "schedule-original",
+                id: "schedule-new", limit: 3, sharedIDs: ["schedule-original"],
                 limitConfig: .shared(exclude: nil)
             )
         )
@@ -151,11 +151,11 @@ struct LedgerLimitEvaluatorTest {
     @Test
     func testEventsOutsideScopeIgnored() async throws {
         // An event for an unrelated schedule/group must not count.
-        try await recordExecution(scheduleID: "schedule-Z", sharedID: "other-group")
+        try await recordExecution(scheduleID: "schedule-Z", sharedIDs: ["other-group"])
 
         let over = await evaluator.isOverLimit(
             schedule: schedule(
-                id: "schedule-A", limit: 1, sharedID: "group-1",
+                id: "schedule-A", limit: 1, sharedIDs: ["group-1"],
                 limitConfig: .shared(exclude: nil)
             )
         )
@@ -164,8 +164,8 @@ struct LedgerLimitEvaluatorTest {
 
     @Test
     func testLimitConfigExcludesOtherSchedules() async throws {
-        try await recordExecution(scheduleID: "schedule-A", sharedID: "group-1")
-        try await recordExecution(scheduleID: "schedule-B", sharedID: "group-1")
+        try await recordExecution(scheduleID: "schedule-A", sharedIDs: ["group-1"])
+        try await recordExecution(scheduleID: "schedule-B", sharedIDs: ["group-1"])
 
         let config = LimitConfig.shared(
             exclude: ExclusionSet(or: [ExclusionRule(source: .otherSchedules, match: nil)])
@@ -173,12 +173,12 @@ struct LedgerLimitEvaluatorTest {
 
         // schedule-B's event is excluded, leaving only schedule-A's one event.
         let overAt1 = await evaluator.isOverLimit(
-            schedule: schedule(id: "schedule-A", limit: 1, sharedID: "group-1", limitConfig: config)
+            schedule: schedule(id: "schedule-A", limit: 1, sharedIDs: ["group-1"], limitConfig: config)
         )
         #expect(overAt1)
 
         let overAt2 = await evaluator.isOverLimit(
-            schedule: schedule(id: "schedule-A", limit: 2, sharedID: "group-1", limitConfig: config)
+            schedule: schedule(id: "schedule-A", limit: 2, sharedIDs: ["group-1"], limitConfig: config)
         )
         #expect(!overAt2)
     }
@@ -226,7 +226,7 @@ struct LedgerLimitEvaluatorTest {
           "actions": { "foo": "bar" },
           "triggers": [],
           "limit": 3,
-          "ledger_config": { "shared_id": "group-1" },
+          "ledger_config": { "shared_ids": ["group-1"] },
           "limit_config": {
             "type": "shared",
             "exclude": {
@@ -240,7 +240,7 @@ struct LedgerLimitEvaluatorTest {
         let schedule = try JSONDecoder().decode(AutomationSchedule.self, from: Data(json.utf8))
 
         #expect(schedule.limit == 3)
-        #expect(schedule.ledgerSharedID == "group-1")
+        #expect(schedule.ledgerSharedIDs == ["group-1"])
 
         guard case .shared(let exclude) = schedule.limitConfig else {
             Issue.record("Expected .shared limitConfig")
@@ -307,5 +307,94 @@ struct LedgerLimitEvaluatorTest {
         """
         let schedule = try JSONDecoder().decode(AutomationSchedule.self, from: Data(json.utf8))
         #expect(schedule.limitConfig == nil)
+    }
+
+    // MARK: - Multiple shared groups
+
+    @Test
+    func testCountsAcrossEveryGroupTheScheduleBelongsTo() async throws {
+        try await recordExecution(scheduleID: "schedule-B", sharedIDs: ["group-1"])
+        try await recordExecution(scheduleID: "schedule-C", sharedIDs: ["group-2"])
+
+        // One event from each pool, against a cap of 2.
+        #expect(
+            await evaluator.isOverLimit(
+                schedule: schedule(
+                    limit: 2, sharedIDs: ["group-1", "group-2"],
+                    limitConfig: .shared(exclude: nil)
+                )
+            )
+        )
+        #expect(
+            !(await evaluator.isOverLimit(
+                schedule: schedule(
+                    limit: 3, sharedIDs: ["group-1", "group-2"],
+                    limitConfig: .shared(exclude: nil)
+                )
+            ))
+        )
+    }
+
+    @Test
+    func testGroupTheScheduleHasLeftDoesNotCount() async throws {
+        try await recordExecution(scheduleID: "schedule-B", sharedIDs: ["group-2"])
+
+        // Only in group-1 now, so group-2's history is out of scope.
+        #expect(
+            !(await evaluator.isOverLimit(
+                schedule: schedule(limit: 1, sharedIDs: ["group-1"], limitConfig: .shared(exclude: nil))
+            ))
+        )
+    }
+
+    @Test
+    func testEventInSeveralGroupsCountsOnce() async throws {
+        // Recorded by a sibling that was in both pools. The evaluating schedule is
+        // in both too, so the event matches twice over — it must still count once.
+        try await recordExecution(scheduleID: "schedule-B", sharedIDs: ["group-1", "group-2"])
+
+        #expect(
+            !(await evaluator.isOverLimit(
+                schedule: schedule(
+                    limit: 2, sharedIDs: ["group-1", "group-2"],
+                    limitConfig: .shared(exclude: nil)
+                )
+            ))
+        )
+    }
+
+    @Test
+    func testCombinedExperimentPoolsBothPriorGroups() async throws {
+        // A pooled with its partner under group-a, B with its partner under
+        // group-b. Combining them adds `shared` without either leaving its own
+        // group, so A's tally now sees both partners' history.
+        try await recordExecution(scheduleID: "a-partner", sharedIDs: ["group-a"])
+        try await recordExecution(scheduleID: "b-partner", sharedIDs: ["group-b", "shared"])
+
+        #expect(
+            await evaluator.isOverLimit(
+                schedule: schedule(
+                    id: "a", limit: 2, sharedIDs: ["group-a", "shared"],
+                    limitConfig: .shared(exclude: nil)
+                )
+            )
+        )
+    }
+
+    @Test
+    func testParsesMultipleSharedIDs() throws {
+        let json = """
+        {
+          "id": "test-schedule",
+          "type": "actions",
+          "actions": { "foo": "bar" },
+          "triggers": [],
+          "ledger_config": { "shared_ids": ["group-2", "group-1", "group-1"] }
+        }
+        """
+        let schedule = try JSONDecoder().decode(AutomationSchedule.self, from: Data(json.utf8))
+
+        // Canonical form: de-duplicated and sorted, whatever order they arrive in.
+        #expect(schedule.ledgerSharedIDs == ["group-1", "group-2"])
     }
 }

@@ -208,7 +208,7 @@ struct AutomationPreparerTest {
         #expect(await self.ledger.recorded == [
             .execution(
                 scheduleID: automationSchedule.identifier,
-                sharedID: nil,
+                sharedIDs: [],
                 triggerID: "trigger-1",
                 result: .audienceMiss,
                 cancel: false
@@ -379,7 +379,7 @@ struct AutomationPreparerTest {
         #expect(await self.ledger.recorded == [
             .execution(
                 scheduleID: automationSchedule.identifier,
-                sharedID: nil,
+                sharedIDs: [],
                 triggerID: nil,
                 result: .audienceMiss,
                 cancel: true
@@ -968,7 +968,7 @@ struct AutomationPreparerTest {
         #expect(await self.ledger.recorded == [
             .execution(
                 scheduleID: "deferred-miss",
-                sharedID: nil,
+                sharedIDs: [],
                 triggerID: "trigger-1",
                 result: .audienceMiss,
                 cancel: true
@@ -999,7 +999,7 @@ struct AutomationPreparerTest {
         #expect(await self.ledger.recorded == [
             .execution(
                 scheduleID: "deferred-miss",
-                sharedID: nil,
+                sharedIDs: [],
                 triggerID: "trigger-1",
                 result: .audienceMiss,
                 cancel: false

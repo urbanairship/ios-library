@@ -310,7 +310,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     ) async {
         await self.ledger.recordExecution(
             scheduleID: info.scheduleID,
-            sharedID: info.ledgerSharedID,
+            sharedIDs: info.ledgerSharedIDs,
             triggerID: info.triggerID,
             result: result,
             cancel: false

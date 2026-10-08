@@ -68,11 +68,11 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     /// applies to the (unrelated) global holdout mechanism.
     var variantAudience: VariantAudience?
 
-    /// Ledger configuration for shared display limiting. When present with a
-    /// `shared_id`, ledger events this schedule records are tagged under that
-    /// ID unconditionally — but this schedule's OWN limit only reads that
-    /// pooled history back when ``limitConfig`` is `.shared` (see
-    /// ``LimitConfig``).
+    /// Ledger configuration for shared display limiting. When present with
+    /// `shared_ids`, ledger events this schedule records are tagged under
+    /// every one of those IDs unconditionally — but this schedule's OWN limit
+    /// only reads that pooled history back when ``limitConfig`` is `.shared`
+    /// (see ``LimitConfig``).
     public var ledgerConfig: LedgerConfig?
 
     /// Ledger-based limit configuration. The limit is always evaluated against
@@ -149,18 +149,49 @@ public struct AutomationSchedule: Sendable, Codable, Equatable {
     /// top-level field.
     public struct LedgerConfig: Sendable, Codable, Equatable {
 
-        /// Shared group ID. When set, events are recorded under this ID in
-        /// addition to the schedule ID — unconditionally, regardless of whether
-        /// this schedule itself reads that pooled history back (see
-        /// `.shared` on `LimitConfig`).
-        public var sharedID: String?
+        /// Shared group IDs. When set, events are recorded under every one of
+        /// these IDs in addition to the schedule ID — unconditionally,
+        /// regardless of whether this schedule itself reads that pooled
+        /// history back (see `.shared` on `LimitConfig`).
+        ///
+        /// More than one ID lets a schedule belong to several pools at once —
+        /// combining messages that already pool separately into one experiment
+        /// without either losing its existing group.
+        public var sharedIDs: [String]?
 
         enum CodingKeys: String, CodingKey {
-            case sharedID = "shared_id"
+            case sharedIDs = "shared_ids"
+            case legacySharedID = "shared_id"
         }
 
-        public init(sharedID: String? = nil) {
-            self.sharedID = sharedID
+        public init(sharedIDs: [String]? = nil) {
+            self.sharedIDs = sharedIDs
+        }
+
+        /// Accepts the single-ID `shared_id` this field replaced, so a payload
+        /// written against the older shape still pools.
+        ///
+        /// Worth the branch because the failure it prevents is silent and
+        /// wrong in the expensive direction: an unrecognized key decodes to no
+        /// shared group at all, which is indistinguishable from "pooling was
+        /// never configured," and every variant of an experiment would then
+        /// spend its own full budget instead of the one they were meant to
+        /// share. `shared_ids` wins when both are present.
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            if let sharedIDs = try container.decodeIfPresent([String].self, forKey: .sharedIDs) {
+                self.sharedIDs = sharedIDs
+            } else {
+                self.sharedIDs = try container
+                    .decodeIfPresent(String.self, forKey: .legacySharedID)
+                    .map { [$0] }
+            }
+        }
+
+        /// Only ever writes the current shape; the legacy key is read-only.
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encodeIfPresent(self.sharedIDs, forKey: .sharedIDs)
         }
     }
 
@@ -410,10 +441,11 @@ fileprivate extension Date {
 }
 
 extension AutomationSchedule {
-    /// The shared ledger group ID this schedule records under, if any. Stamped
-    /// onto every ledger event at record time.
-    var ledgerSharedID: String? {
-        return self.ledgerConfig?.sharedID
+    /// The shared ledger group IDs this schedule records under, in canonical
+    /// form. Stamped onto every ledger event at record time. Empty when the
+    /// schedule has no shared group.
+    var ledgerSharedIDs: [String] {
+        return LedgerSharedIDs.canonical(self.ledgerConfig?.sharedIDs)
     }
 
     var isInAppMessageType: Bool {

@@ -73,6 +73,95 @@ struct AutomationScheduleTests {
         try verify(json: jsonString, expected: expectedSchedule)
     }
 
+    /// The single-ID shape this field replaced still pools, so a payload written
+    /// against the older shape does not silently lose its shared group.
+    @Test
+    func testParseLegacySingleSharedID() throws {
+        let json = """
+        {
+           "id": "test_schedule",
+           "type": "actions",
+           "actions": { "foo": "bar" },
+           "triggers": [],
+           "ledger_config": {
+              "shared_id": "group-1"
+           }
+        }
+        """
+
+        let decoded = try JSONDecoder().decode(AutomationSchedule.self, from: Data(json.utf8))
+        #expect(decoded.ledgerSharedIDs == ["group-1"])
+    }
+
+    /// Both keys present: the current shape wins rather than merging, so a
+    /// payload that carries `shared_id` for older SDKs does not widen the pool
+    /// on newer ones.
+    @Test
+    func testCurrentSharedIDsWinOverLegacyKey() throws {
+        let json = """
+        {
+           "id": "test_schedule",
+           "type": "actions",
+           "actions": { "foo": "bar" },
+           "triggers": [],
+           "ledger_config": {
+              "shared_ids": ["group-1"],
+              "shared_id": "legacy-group"
+           }
+        }
+        """
+
+        let decoded = try JSONDecoder().decode(AutomationSchedule.self, from: Data(json.utf8))
+        #expect(decoded.ledgerSharedIDs == ["group-1"])
+    }
+
+    /// Re-encoding a schedule decoded from the legacy key emits the current
+    /// shape, so the old spelling never round-trips back out.
+    /// An explicitly empty `shared_ids` means "no pooling" and must not fall
+    /// through to the legacy key, or a payload carrying both for mixed SDK
+    /// versions would pool on new SDKs when it meant not to. An explicit null
+    /// is treated as absent, so it does fall through.
+    @Test
+    func testEmptySharedIDsDoesNotFallBackToLegacyKey() throws {
+        func decode(_ ledgerConfig: String) throws -> AutomationSchedule {
+            let json = """
+            { "id": "test_schedule", "type": "actions", "actions": { "foo": "bar" },
+              "triggers": [], "ledger_config": \(ledgerConfig) }
+            """
+            return try JSONDecoder().decode(AutomationSchedule.self, from: Data(json.utf8))
+        }
+
+        #expect(try decode(#"{ "shared_ids": [], "shared_id": "legacy" }"#).ledgerSharedIDs == [])
+        #expect(try decode(#"{ "shared_ids": null, "shared_id": "legacy" }"#).ledgerSharedIDs == ["legacy"])
+        #expect(try decode(#"{ "shared_id": null }"#).ledgerSharedIDs == [])
+    }
+
+    @Test
+    func testLegacySharedIDReencodesAsArray() throws {
+        let json = """
+        {
+           "id": "test_schedule",
+           "type": "actions",
+           "actions": { "foo": "bar" },
+           "triggers": [],
+           "ledger_config": { "shared_id": "group-1" }
+        }
+        """
+
+        let decoded = try JSONDecoder().decode(AutomationSchedule.self, from: Data(json.utf8))
+        let reencoded = try JSONEncoder().encode(decoded)
+        let body = try #require(String(data: reencoded, encoding: .utf8))
+
+        #expect(body.contains("shared_ids"))
+        #expect(!body.contains("\"shared_id\""))
+
+        let roundTripped = try JSONDecoder().decode(
+            AutomationSchedule.self,
+            from: reencoded
+        )
+        #expect(roundTripped.ledgerSharedIDs == ["group-1"])
+    }
+
     @Test
     func testParseLedgerConfig() throws {
         let jsonString = """
@@ -84,7 +173,7 @@ struct AutomationScheduleTests {
                "type": "actions",
                "actions": { "foo": "bar" },
                "ledger_config": {
-                   "shared_id": "group-1"
+                   "shared_ids": ["group-1"]
                }
            }
            """
@@ -94,7 +183,7 @@ struct AutomationScheduleTests {
             data: .actions(try AirshipJSON.wrap(["foo": "bar"])),
             triggers: [.event(EventAutomationTrigger(id: "json-id", type: .customEventCount, goal: 1.0))],
             created: nil,
-            ledgerConfig: AutomationSchedule.LedgerConfig(sharedID: "group-1")
+            ledgerConfig: AutomationSchedule.LedgerConfig(sharedIDs: ["group-1"])
         )
 
         try verify(json: jsonString, expected: expectedSchedule)
@@ -103,7 +192,7 @@ struct AutomationScheduleTests {
             AutomationSchedule.self,
             from: jsonString.data(using: .utf8)!
         )
-        #expect(decoded.ledgerSharedID == "group-1")
+        #expect(decoded.ledgerSharedIDs == ["group-1"])
     }
 
     @Test

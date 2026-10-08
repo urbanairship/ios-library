@@ -33,7 +33,7 @@ struct ActionAutomationExecutor: AutomationExecutorDelegate {
 
         await self.ledger.recordExecution(
             scheduleID: preparedScheduleInfo.scheduleID,
-            sharedID: preparedScheduleInfo.ledgerSharedID,
+            sharedIDs: preparedScheduleInfo.ledgerSharedIDs,
             triggerID: preparedScheduleInfo.triggerID,
             result: .succeeded,
             cancel: false

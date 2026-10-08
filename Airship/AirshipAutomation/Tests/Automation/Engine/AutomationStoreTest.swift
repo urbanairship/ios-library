@@ -10,6 +10,57 @@ import AirshipAutomation
 
 struct AutomationStoreTest {
 
+    /// `AutomationStore` persists a prepared schedule as encoded JSON, so one
+    /// prepared by the previous build outlives an upgrade. Its ledger group was
+    /// written under the single-ID key this field replaced; without the
+    /// fallback that execution records under no group and silently misses the
+    /// pooled tally.
+    @Test
+    func testPreparedScheduleInfoDecodesLegacyLedgerSharedIDKey() throws {
+        let json = """
+        {
+          "scheduleID": "s",
+          "triggerSessionID": "t",
+          "priority": 0,
+          "additionalAudienceCheckResult": true,
+          "ledgerSharedID": "group-1"
+        }
+        """
+
+        let info = try JSONDecoder().decode(
+            PreparedScheduleInfo.self,
+            from: Data(json.utf8)
+        )
+        #expect(info.ledgerSharedIDs == ["group-1"])
+    }
+
+    /// The current key wins, and re-encoding emits only it — the legacy
+    /// spelling is read-only and never round-trips back out.
+    @Test
+    func testPreparedScheduleInfoPrefersCurrentKeyAndReencodesAsArray() throws {
+        let json = """
+        {
+          "scheduleID": "s",
+          "triggerSessionID": "t",
+          "priority": 0,
+          "additionalAudienceCheckResult": true,
+          "ledgerSharedIDs": ["group-1"],
+          "ledgerSharedID": "legacy-group"
+        }
+        """
+
+        let info = try JSONDecoder().decode(
+            PreparedScheduleInfo.self,
+            from: Data(json.utf8)
+        )
+        #expect(info.ledgerSharedIDs == ["group-1"])
+
+        let reencoded = try JSONEncoder().encode(info)
+        let body = try #require(String(data: reencoded, encoding: .utf8))
+        #expect(body.contains("ledgerSharedIDs"))
+        #expect(!body.contains("\"ledgerSharedID\""))
+    }
+
     private let store: AutomationStore = {
         let appKey = UUID().uuidString
         return AutomationStore(
@@ -321,7 +372,7 @@ struct AutomationStoreTest {
             .execution(
                 .init(
                     scheduleID: "a",
-                    sharedID: nil,
+                    sharedIDs: nil,
                     triggerID: nil,
                     timestamp: timestamp,
                     count: 3,
@@ -332,7 +383,7 @@ struct AutomationStoreTest {
             .execution(
                 .init(
                     scheduleID: "c",
-                    sharedID: nil,
+                    sharedIDs: nil,
                     triggerID: nil,
                     timestamp: timestamp,
                     count: 1,
@@ -390,7 +441,7 @@ struct AutomationStoreTest {
         #expect(execution.scheduleID == "legacy-1")
         #expect(execution.count == 5)
         #expect(execution.result == .backfill)
-        #expect(execution.sharedID == nil)
+        #expect(execution.sharedIDs == nil)
         #expect(execution.triggerID == nil)
     }
 
@@ -471,7 +522,7 @@ struct AutomationStoreTest {
         #expect(execution.scheduleID == "current-1")
         #expect(execution.count == 4)
         #expect(execution.result == .backfill)
-        #expect(execution.sharedID == nil)
+        #expect(execution.sharedIDs == nil)
         #expect(execution.triggerID == nil)
     }
 
@@ -519,7 +570,7 @@ struct AutomationStoreTest {
     // MARK: - Ledger reconciliation
 
     @Test
-    func testReconcileLedgerDerivesLiveIDsAndRetainsBeforeCompacting() async throws {
+    func testReconcileLedgerDerivesLiveIDsAndCompactsBeforeRetaining() async throws {
         let appKey = UUID().uuidString
         let ledger = TestLedgerStore()
         let store = AutomationStore(appKey: appKey, inMemory: true, ledgerStore: ledger)
@@ -540,9 +591,13 @@ struct AutomationStoreTest {
         #expect(await ledger.retainedLiveScheduleIDs == ["a", "b", "c"])
         #expect(await ledger.retainedLiveSharedIDs == ["shared-1", "shared-2"])
         #expect(await ledger.compactCount == 1)
-        // Retention must run before compaction so orphaned events are dropped
-        // before the survivors are merged.
-        #expect(await ledger.reconcileCalls == ["retain", "compact"])
+        // Compaction must run before retention: retention's liveness check
+        // reads each event's shared-group *index*, not its body, so a
+        // migrated event whose index hasn't been rebuilt yet would look
+        // group-less and could be deleted even though its group is still
+        // live. Compacting first guarantees the index is correct by the time
+        // retention reads it.
+        #expect(await ledger.reconcileCalls == ["compact", "retain"])
     }
 
     @Test
@@ -736,7 +791,7 @@ struct AutomationStoreTest {
             triggers: [],
             created: Date.distantPast,
             group: group,
-            ledgerConfig: sharedID.map { AutomationSchedule.LedgerConfig(sharedID: $0) }
+            ledgerConfig: sharedID.map { AutomationSchedule.LedgerConfig(sharedIDs: [$0]) }
         )
 
         return AutomationScheduleData(
@@ -785,7 +840,7 @@ private actor TestLedgerStore: LedgerStoreProtocol {
         recorded.append(contentsOf: events)
     }
 
-    func events(scheduleID: String, sharedID: String?) async throws -> [LedgerEvent] {
+    func events(scheduleID: String, sharedIDs: [String]) async throws -> [LedgerEvent] {
         return []
     }
 

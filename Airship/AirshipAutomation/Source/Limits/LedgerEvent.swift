@@ -53,28 +53,55 @@ enum LedgerExecutionResult: String, Sendable, Codable, Equatable, CaseIterable {
 }
 
 /// The scope an event was recorded under. An event is always recorded under
-/// its schedule's ID, and additionally under a shared group ID when the
-/// recording schedule had a `ledger_config.shared_id` at record time.
+/// its schedule's ID, and additionally under every shared group ID the
+/// recording schedule had in `ledger_config.shared_ids` at record time.
 enum LedgerScope: Sendable, Equatable, Hashable {
     /// Events recorded by a specific schedule (matched on `scheduleID`).
     case schedule(String)
 
-    /// Events recorded under a specific shared group (matched on `sharedID`).
+    /// Events recorded under a specific shared group (matched against the
+    /// event's `sharedIDs`).
     case shared(String)
+}
+
+/// Canonicalization for the shared group IDs carried by a config or an event.
+///
+/// A schedule's `ledger_config.shared_ids` is an unordered set in intent but
+/// arrives as a JSON array, so it is reduced to one canonical form — empties
+/// dropped, duplicates removed, sorted — before it is stamped onto an event or
+/// used for matching. Canonical form matters beyond tidiness: it makes two
+/// events that belong to the same groups compare and hash equal, which is what
+/// lets ``LedgerCompactor`` merge them, and it gives every caller of
+/// ``LedgerGroupReservations`` the same lock ordering.
+enum LedgerSharedIDs {
+
+    /// The canonical form of `ids`: non-empty, de-duplicated, sorted. Empty
+    /// when there are no usable IDs.
+    static func canonical(_ ids: [String]?) -> [String] {
+        guard let ids, !ids.isEmpty else { return [] }
+        return Set(ids.filter { !$0.isEmpty }).sorted()
+    }
+
+    /// The canonical form of `ids`, or nil when empty — for optional payload
+    /// fields that should be omitted from JSON rather than encoded as `[]`.
+    static func canonicalOrNil(_ ids: [String]?) -> [String]? {
+        let canonical = self.canonical(ids)
+        return canonical.isEmpty ? nil : canonical
+    }
 }
 
 /// A single event recorded by the ledger.
 ///
-/// Every event carries the scope it was recorded under: `scheduleID` always,
-/// and `sharedID` (the `ledger_config.shared_id` active at record time) when
-/// the recording schedule had one. Neither ID is ever rewritten, so an event
-/// stays with the scopes it was recorded under even after the schedule changes
-/// its config.
+/// Every event carries the scopes it was recorded under: `scheduleID` always,
+/// and `sharedIDs` (the `ledger_config.shared_ids` active at record time) when
+/// the recording schedule had any. No ID is ever rewritten, so an event stays
+/// with the scopes it was recorded under even after the schedule changes its
+/// config.
 ///
-/// An event is eligible for a schedule's limit evaluation when either scope ID
+/// An event is eligible for a schedule's limit evaluation when any scope ID
 /// matches one of the schedule's ledger IDs: its `scheduleID` equals the
-/// schedule's own ID, or its `sharedID` equals the schedule's current shared
-/// ledger ID.
+/// schedule's own ID, or its `sharedIDs` intersect the schedule's current
+/// shared ledger IDs.
 enum LedgerEvent: Sendable, Equatable, Hashable {
 
     /// Recorded when an execution-causing trigger reaches its goal.
@@ -88,8 +115,9 @@ enum LedgerEvent: Sendable, Equatable, Hashable {
         /// ID of the schedule that recorded the event.
         var scheduleID: String
 
-        /// Shared group ID the recording schedule had at record time, if any.
-        var sharedID: String?
+        /// Shared group IDs the recording schedule had at record time, if any.
+        /// Canonical form: non-empty, de-duplicated, sorted.
+        var sharedIDs: [String]?
 
         /// ID of the execution-causing trigger, if known. A plain attribute
         /// for matching and reporting only; never a recording scope key.
@@ -107,10 +135,10 @@ enum LedgerEvent: Sendable, Equatable, Hashable {
         /// ID of the schedule that recorded the event.
         var scheduleID: String
 
-        /// Shared group ID the recording schedule had at record time, if any.
-        /// Always nil for `backfill`, so legacy history never pollutes a
-        /// group's pooled tally.
-        var sharedID: String?
+        /// Shared group IDs the recording schedule had at record time, if any.
+        /// Canonical form: non-empty, de-duplicated, sorted. Always nil for
+        /// `backfill`, so legacy history never pollutes a group's pooled tally.
+        var sharedIDs: [String]?
 
         /// ID of the execution-causing trigger, if known. A plain attribute
         /// for matching and reporting only; never a recording scope key.
@@ -148,11 +176,12 @@ extension LedgerEvent {
         }
     }
 
-    /// Shared group ID the recording schedule had at record time, if any.
-    var sharedID: String? {
+    /// Shared group IDs the recording schedule had at record time. Empty when
+    /// it had none.
+    var sharedIDs: [String] {
         switch self {
-        case .triggered(let event): return event.sharedID
-        case .execution(let event): return event.sharedID
+        case .triggered(let event): return event.sharedIDs ?? []
+        case .execution(let event): return event.sharedIDs ?? []
         }
     }
 
@@ -181,14 +210,27 @@ extension LedgerEvent {
         return raw ?? 1
     }
 
-    /// The scopes this event was recorded under: always its schedule, plus its
-    /// shared group when present.
+    /// The scopes this event was recorded under: always its schedule, plus one
+    /// for each shared group it carries.
     var scopes: [LedgerScope] {
-        var result: [LedgerScope] = [.schedule(scheduleID)]
-        if let sharedID {
-            result.append(.shared(sharedID))
+        return [.schedule(scheduleID)] + sharedIDs.map { LedgerScope.shared($0) }
+    }
+
+    /// A copy of this event with `sharedIDs` replaced by their canonical form.
+    ///
+    /// Used at the storage boundary so every writer — direct recording and a
+    /// compaction rewrite alike — persists the same de-duplicated, sorted
+    /// rows and a matching encoded body, rather than depending on every
+    /// caller (and every future one) canonicalizing before it gets there.
+    func canonicalizingSharedIDs() -> LedgerEvent {
+        switch self {
+        case .triggered(var payload):
+            payload.sharedIDs = LedgerSharedIDs.canonicalOrNil(payload.sharedIDs)
+            return .triggered(payload)
+        case .execution(var payload):
+            payload.sharedIDs = LedgerSharedIDs.canonicalOrNil(payload.sharedIDs)
+            return .execution(payload)
         }
-        return result
     }
 }
 
@@ -221,21 +263,93 @@ extension LedgerEvent: Codable {
 extension LedgerEvent.Triggered {
     private enum CodingKeys: String, CodingKey {
         case scheduleID = "schedule_id"
-        case sharedID = "shared_id"
+        case sharedIDs = "shared_ids"
         case triggerID = "trigger_id"
         case timestamp
         case count
+    }
+
+    /// The single-ID key `sharedIDs` replaced. Bodies recorded by 21.0.0-beta.2/
+    /// .3 are persisted as opaque JSON and outlive the Core Data model upgrade
+    /// to v2 (a lightweight migration copies the blob's bytes as-is; it cannot
+    /// rewrite what's inside them) — without this fallback, every such event
+    /// would decode with no shared group at all, and the next compaction pass
+    /// would re-encode it that way permanently.
+    private enum LegacyCodingKeys: String, CodingKey {
+        case sharedID = "shared_id"
+    }
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.scheduleID = try container.decode(String.self, forKey: .scheduleID)
+        self.triggerID = try container.decodeIfPresent(String.self, forKey: .triggerID)
+        self.timestamp = try container.decode(Date.self, forKey: .timestamp)
+        self.count = try container.decodeIfPresent(Int.self, forKey: .count)
+
+        if let sharedIDs = try container.decodeIfPresent([String].self, forKey: .sharedIDs) {
+            self.sharedIDs = sharedIDs
+        } else {
+            let legacy = try decoder.container(keyedBy: LegacyCodingKeys.self)
+            self.sharedIDs = try legacy
+                .decodeIfPresent(String.self, forKey: .sharedID)
+                .map { [$0] }
+        }
+    }
+
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.scheduleID, forKey: .scheduleID)
+        try container.encodeIfPresent(self.sharedIDs, forKey: .sharedIDs)
+        try container.encodeIfPresent(self.triggerID, forKey: .triggerID)
+        try container.encode(self.timestamp, forKey: .timestamp)
+        try container.encodeIfPresent(self.count, forKey: .count)
     }
 }
 
 extension LedgerEvent.Execution {
     private enum CodingKeys: String, CodingKey {
         case scheduleID = "schedule_id"
-        case sharedID = "shared_id"
+        case sharedIDs = "shared_ids"
         case triggerID = "trigger_id"
         case timestamp
         case count
         case result
         case cancel
+    }
+
+    /// See ``LedgerEvent/Triggered/LegacyCodingKeys``: the same single-ID key,
+    /// for the same reason, on the other event payload.
+    private enum LegacyCodingKeys: String, CodingKey {
+        case sharedID = "shared_id"
+    }
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.scheduleID = try container.decode(String.self, forKey: .scheduleID)
+        self.triggerID = try container.decodeIfPresent(String.self, forKey: .triggerID)
+        self.timestamp = try container.decode(Date.self, forKey: .timestamp)
+        self.count = try container.decodeIfPresent(Int.self, forKey: .count)
+        self.result = try container.decode(LedgerExecutionResult.self, forKey: .result)
+        self.cancel = try container.decodeIfPresent(Bool.self, forKey: .cancel)
+
+        if let sharedIDs = try container.decodeIfPresent([String].self, forKey: .sharedIDs) {
+            self.sharedIDs = sharedIDs
+        } else {
+            let legacy = try decoder.container(keyedBy: LegacyCodingKeys.self)
+            self.sharedIDs = try legacy
+                .decodeIfPresent(String.self, forKey: .sharedID)
+                .map { [$0] }
+        }
+    }
+
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.scheduleID, forKey: .scheduleID)
+        try container.encodeIfPresent(self.sharedIDs, forKey: .sharedIDs)
+        try container.encodeIfPresent(self.triggerID, forKey: .triggerID)
+        try container.encode(self.timestamp, forKey: .timestamp)
+        try container.encodeIfPresent(self.count, forKey: .count)
+        try container.encode(self.result, forKey: .result)
+        try container.encodeIfPresent(self.cancel, forKey: .cancel)
     }
 }

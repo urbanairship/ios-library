@@ -17,7 +17,7 @@ struct ActionAutomationExecutorTest {
         scheduleID: "some id",
         triggerSessionID: UUID().uuidString,
         priority: 0,
-        ledgerSharedID: "group-1",
+        ledgerSharedIDs: ["group-1"],
         triggerID: "trigger-1"
     )
     private let actions = try! AirshipJSON.wrap(["some-action": "some-value"])
@@ -38,7 +38,7 @@ struct ActionAutomationExecutorTest {
         #expect(await self.ledger.recorded == [
             .execution(
                 scheduleID: "some id",
-                sharedID: "group-1",
+                sharedIDs: ["group-1"],
                 triggerID: "trigger-1",
                 result: .succeeded,
                 cancel: false

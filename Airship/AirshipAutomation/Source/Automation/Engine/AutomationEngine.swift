@@ -372,7 +372,7 @@ fileprivate extension AutomationEngine {
                        updated.triggerInfo == result.triggerInfo {
                         await self.ledger.recordTriggered(
                             scheduleID: updated.schedule.identifier,
-                            sharedID: updated.schedule.ledgerSharedID,
+                            sharedIDs: updated.schedule.ledgerSharedIDs,
                             triggerID: result.triggerInfo.triggerID
                         )
                     }
@@ -746,14 +746,15 @@ fileprivate extension AutomationEngine {
         }
 
 
-        // Schedules sharing a `ledger_config.shared_id` share one execution budget,
-        // so another schedule using that ID may have spent it since this one was
-        // prepared. Without a shared ID nothing else can add to the count, since
-        // the only thing that does is executing, which cannot happen while waiting.
+        // Schedules sharing a `ledger_config.shared_ids` entry share one execution
+        // budget, so another schedule using any of those IDs may have spent it since
+        // this one was prepared. Without a shared ID nothing else can add to the
+        // count, since the only thing that does is executing, which cannot happen
+        // while waiting.
         //
         // This runs even for schedules that skip the reservation below, since the
         // budget can be spent either way.
-        if data.schedule.ledgerSharedID != nil,
+        if !data.schedule.ledgerSharedIDs.isEmpty,
            await self.isOverLimit(schedule: data.schedule) {
             AirshipLogger.trace(
                 "Over ledger limit at execution time, skipping \(data.schedule.identifier)"
@@ -765,18 +766,20 @@ fileprivate extension AutomationEngine {
             return true
         }
 
-        let reservedGroupID: String? = preparedSchedule.reservesLedgerGroup
-            ? data.schedule.ledgerSharedID
-            : nil
-        if let reservedGroupID {
+        let reservedGroupIDs: [String] = preparedSchedule.reservesLedgerGroup
+            ? data.schedule.ledgerSharedIDs
+            : []
+        if !reservedGroupIDs.isEmpty {
 
-            // Hold the group for the duration of the execution. The check above
+            // Hold every group for the duration of the execution. The check above
             // cannot see a sibling that is mid-display, because its event is not
             // written until the display ends — the reservation covers exactly
-            // that window. Suspending here holds nothing else up: the drain
-            // dispatches executions without awaiting them, so only this group
-            // queues behind the holder.
-            await self.groupReservations.reserve(reservedGroupID)
+            // that window. A schedule in several groups has to hold all of them,
+            // since a sibling in any one of them would otherwise slip through.
+            // Suspending here holds nothing else up: the drain dispatches
+            // executions without awaiting them, so only these groups queue behind
+            // the holder.
+            await self.groupReservations.reserve(reservedGroupIDs)
 
             // Waking can be much later — a sibling's display may have run for
             // minutes. Everything `checkReady` established above may be stale by
@@ -788,9 +791,9 @@ fileprivate extension AutomationEngine {
             let readyAfterWaiting = self.checkReady(data: data, preparedSchedule: preparedSchedule)
             if readyAfterWaiting != .ready {
                 AirshipLogger.trace(
-                    "No longer ready after waiting on ledger group \(reservedGroupID): \(data.schedule.identifier)"
+                    "No longer ready after waiting on ledger groups \(reservedGroupIDs): \(data.schedule.identifier)"
                 )
-                await self.releaseGroup(reservedGroupID)
+                await self.releaseGroup(reservedGroupIDs)
 
                 // Released first: `applyNonReadyActions` always returns or throws for a
                 // non-`.ready` result, so a trailing release would be skipped and
@@ -808,18 +811,18 @@ fileprivate extension AutomationEngine {
                 prepared: PreparedData(scheduleData: data, preparedSchedule: preparedSchedule)
             ) else {
                 AirshipLogger.trace(
-                    "No longer valid after waiting on ledger group \(reservedGroupID): \(data.schedule.identifier)"
+                    "No longer valid after waiting on ledger groups \(reservedGroupIDs): \(data.schedule.identifier)"
                 )
-                await self.releaseGroup(reservedGroupID)
+                await self.releaseGroup(reservedGroupIDs)
                 return try await self.applyNonReadyActions(.invalidate, data: data) ?? false
             }
 
             // The previous holder has recorded by now, so the ledger can answer.
             if await self.isOverLimit(schedule: data.schedule) {
                 AirshipLogger.trace(
-                    "Ledger group \(reservedGroupID) spent while waiting, skipping \(data.schedule.identifier)"
+                    "Ledger groups \(reservedGroupIDs) spent while waiting, skipping \(data.schedule.identifier)"
                 )
-                await self.releaseGroup(reservedGroupID)
+                await self.releaseGroup(reservedGroupIDs)
                 try await self.updateState(data: data) { [date] data in
                     data.executionSkipped(date: date.now, isOverLimit: true)
                 }
@@ -836,7 +839,7 @@ fileprivate extension AutomationEngine {
             AirshipLogger.trace(
                 "Over frequency limit, skipping \(data.schedule.identifier)"
             )
-            await self.releaseGroup(reservedGroupID)
+            await self.releaseGroup(reservedGroupIDs)
             return try await self.applyNonReadyActions(.skip, data: data) ?? false
         }
 
@@ -844,10 +847,10 @@ fileprivate extension AutomationEngine {
         do {
             executeResult = try await self.execute(preparedSchedule: preparedSchedule)
         } catch {
-            await self.releaseGroup(reservedGroupID)
+            await self.releaseGroup(reservedGroupIDs)
             throw error
         }
-        await self.releaseGroup(reservedGroupID)
+        await self.releaseGroup(reservedGroupIDs)
 
         let scheduleID = data.schedule.identifier
 
@@ -897,10 +900,11 @@ fileprivate extension AutomationEngine {
         return executeResult
     }
 
-    /// Releases a group reservation, letting the next execution in that group run.
-    private func releaseGroup(_ sharedID: String?) async {
-        guard let sharedID else { return }
-        await self.groupReservations.release(sharedID)
+    /// Releases the group reservations, letting the next execution in each of
+    /// those groups run.
+    private func releaseGroup(_ sharedIDs: [String]) async {
+        guard !sharedIDs.isEmpty else { return }
+        await self.groupReservations.release(sharedIDs)
     }
 
     @MainActor

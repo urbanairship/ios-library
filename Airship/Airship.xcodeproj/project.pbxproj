@@ -2951,6 +2951,7 @@
 		FADE000000000000000000A4 /* LedgerStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerStore.swift; sourceTree = "<group>"; };
 		FADE000000000000000000A6 /* LedgerStoreTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LedgerStoreTest.swift; sourceTree = "<group>"; };
 		FADE000000000000000000A9 /* AirshipLedger.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AirshipLedger.xcdatamodel; sourceTree = "<group>"; };
+		FADE000000000000000000AA /* AirshipLedger 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "AirshipLedger 2.xcdatamodel"; sourceTree = "<group>"; };
 		FADE000000000000000000B1 /* AutomationLedger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomationLedger.swift; sourceTree = "<group>"; };
 		FADE000000000000000000B3 /* AutomationLedgerTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomationLedgerTest.swift; sourceTree = "<group>"; };
 		FADE000000000000000000C1 /* LimitConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LimitConfig.swift; sourceTree = "<group>"; };
@@ -10239,9 +10240,10 @@
 		FADE000000000000000000A8 /* AirshipLedger.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				FADE000000000000000000AA /* AirshipLedger 2.xcdatamodel */,
 				FADE000000000000000000A9 /* AirshipLedger.xcdatamodel */,
 			);
-			currentVersion = FADE000000000000000000A9 /* AirshipLedger.xcdatamodel */;
+			currentVersion = FADE000000000000000000AA /* AirshipLedger 2.xcdatamodel */;
 			path = AirshipLedger.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

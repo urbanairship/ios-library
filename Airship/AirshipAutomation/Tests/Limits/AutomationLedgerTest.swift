@@ -10,10 +10,10 @@ import Foundation
 actor TestAutomationLedger: AutomationLedgerProtocol {
 
     enum Recorded: Equatable, Sendable {
-        case triggered(scheduleID: String, sharedID: String?, triggerID: String?)
+        case triggered(scheduleID: String, sharedIDs: [String], triggerID: String?)
         case execution(
             scheduleID: String,
-            sharedID: String?,
+            sharedIDs: [String],
             triggerID: String?,
             result: LedgerExecutionResult,
             cancel: Bool
@@ -24,17 +24,17 @@ actor TestAutomationLedger: AutomationLedgerProtocol {
 
     func recordTriggered(
         scheduleID: String,
-        sharedID: String?,
+        sharedIDs: [String],
         triggerID: String?
     ) async {
         self.recorded.append(
-            .triggered(scheduleID: scheduleID, sharedID: sharedID, triggerID: triggerID)
+            .triggered(scheduleID: scheduleID, sharedIDs: sharedIDs, triggerID: triggerID)
         )
     }
 
     func recordExecution(
         scheduleID: String,
-        sharedID: String?,
+        sharedIDs: [String],
         triggerID: String?,
         result: LedgerExecutionResult,
         cancel: Bool
@@ -42,7 +42,7 @@ actor TestAutomationLedger: AutomationLedgerProtocol {
         self.recorded.append(
             .execution(
                 scheduleID: scheduleID,
-                sharedID: sharedID,
+                sharedIDs: sharedIDs,
                 triggerID: triggerID,
                 result: result,
                 cancel: cancel
@@ -57,13 +57,13 @@ actor TestAutomationLedger: AutomationLedgerProtocol {
 struct NoOpAutomationLedger: AutomationLedgerProtocol {
     func recordTriggered(
         scheduleID: String,
-        sharedID: String?,
+        sharedIDs: [String],
         triggerID: String?
     ) async {}
 
     func recordExecution(
         scheduleID: String,
-        sharedID: String?,
+        sharedIDs: [String],
         triggerID: String?,
         result: LedgerExecutionResult,
         cancel: Bool
@@ -81,16 +81,16 @@ struct AutomationLedgerTest {
 
         await ledger.recordTriggered(
             scheduleID: "schedule-1",
-            sharedID: "group-1",
+            sharedIDs: ["group-1"],
             triggerID: "trigger-1"
         )
 
-        let events = try await store.events(scheduleID: "schedule-1", sharedID: "group-1")
+        let events = try await store.events(scheduleID: "schedule-1", sharedIDs: ["group-1"])
         #expect(events == [
             .triggered(
                 .init(
                     scheduleID: "schedule-1",
-                    sharedID: "group-1",
+                    sharedIDs: ["group-1"],
                     triggerID: "trigger-1",
                     timestamp: Date(timeIntervalSince1970: 1000),
                     count: nil
@@ -105,18 +105,18 @@ struct AutomationLedgerTest {
 
         await ledger.recordExecution(
             scheduleID: "schedule-1",
-            sharedID: nil,
+            sharedIDs: [],
             triggerID: nil,
             result: .succeeded,
             cancel: false
         )
 
-        let events = try await store.events(scheduleID: "schedule-1", sharedID: nil)
+        let events = try await store.events(scheduleID: "schedule-1", sharedIDs: [])
         #expect(events == [
             .execution(
                 .init(
                     scheduleID: "schedule-1",
-                    sharedID: nil,
+                    sharedIDs: nil,
                     triggerID: nil,
                     timestamp: Date(timeIntervalSince1970: 1000),
                     count: nil,
@@ -133,18 +133,18 @@ struct AutomationLedgerTest {
 
         await ledger.recordExecution(
             scheduleID: "schedule-1",
-            sharedID: "group-1",
+            sharedIDs: ["group-1"],
             triggerID: "trigger-1",
             result: .audienceMiss,
             cancel: true
         )
 
-        let events = try await store.events(scheduleID: "schedule-1", sharedID: "group-1")
+        let events = try await store.events(scheduleID: "schedule-1", sharedIDs: ["group-1"])
         #expect(events == [
             .execution(
                 .init(
                     scheduleID: "schedule-1",
-                    sharedID: "group-1",
+                    sharedIDs: ["group-1"],
                     triggerID: "trigger-1",
                     timestamp: Date(timeIntervalSince1970: 1000),
                     count: nil,
@@ -177,10 +177,10 @@ struct LedgerGroupReservationsTest {
     func testReserveThenReleaseFreesTheGroup() async throws {
         let reservations = LedgerGroupReservations()
 
-        await reservations.reserve("group")
+        await reservations.reserve(["group"])
         #expect(await reservations.isReserved("group"))
 
-        await reservations.release("group")
+        await reservations.release(["group"])
         #expect(!(await reservations.isReserved("group")))
     }
 
@@ -188,22 +188,90 @@ struct LedgerGroupReservationsTest {
     func testDifferentGroupsDoNotBlockEachOther() async throws {
         let reservations = LedgerGroupReservations()
 
-        await reservations.reserve("a")
+        await reservations.reserve(["a"])
         // Would hang if groups shared a single slot.
-        await reservations.reserve("b")
+        await reservations.reserve(["b"])
 
         #expect(await reservations.isReserved("a"))
         #expect(await reservations.isReserved("b"))
     }
 
+    /// `reserve` sorts its input but must also de-duplicate it: a repeated ID
+    /// within one call would otherwise try to take a group the same call
+    /// already holds, parking forever on a release only that call could ever
+    /// issue. Not reachable through `AutomationSchedule.ledgerSharedIDs`, which
+    /// is always canonical — this pins the actor's own behavior directly so a
+    /// future caller that isn't canonical doesn't wedge a group permanently.
+    @Test
+    func testDuplicateIDWithinOneReserveCallDoesNotDeadlock() async throws {
+        let reservations = LedgerGroupReservations()
+
+        // Would hang forever before the fix.
+        await reservations.reserve(["a", "a"])
+
+        #expect(await reservations.isReserved("a"))
+        #expect(await reservations.waitingCount("a") == 0)
+
+        await reservations.release(["a", "a"])
+        #expect(!(await reservations.isReserved("a")))
+    }
+
+    /// The failure mode `release`'s own dedup guards against: without it, a
+    /// duplicate-containing release fires twice for one real acquisition — the
+    /// first hands the group to a legitimate waiter, and the un-deduplicated
+    /// second call finds no one waiting and clears `reserved` anyway, letting
+    /// an unrelated third caller acquire a group someone else still holds.
+    @Test
+    func testDuplicateIDWithinOneReleaseCallDoesNotStealFromTheNewHolder() async throws {
+        let reservations = LedgerGroupReservations()
+
+        await reservations.reserve(["a", "a"])
+
+        let task2Acquired = AirshipAtomicValue(false)
+        let task2 = Task {
+            await reservations.reserve(["a"])
+            task2Acquired.set(true)
+        }
+        for _ in 0..<200 {
+            if await reservations.waitingCount("a") == 1 { break }
+            try? await Task.sleep(nanoseconds: 10_000_000)
+        }
+        #expect(await reservations.waitingCount("a") == 1)
+
+        // Releasing with the same duplicate array the reservation was taken
+        // with must not also clear the group out from under task 2.
+        await reservations.release(["a", "a"])
+
+        for _ in 0..<200 {
+            if task2Acquired.value { break }
+            try? await Task.sleep(nanoseconds: 10_000_000)
+        }
+        #expect(task2Acquired.value)
+        #expect(await reservations.isReserved("a"))
+
+        // An unrelated third caller must still be blocked.
+        let task3Acquired = AirshipAtomicValue(false)
+        let task3 = Task {
+            await reservations.reserve(["a"])
+            task3Acquired.set(true)
+        }
+        try? await Task.sleep(nanoseconds: 150_000_000)
+        #expect(!task3Acquired.value)
+
+        await reservations.release(["a"])
+        await task3.value
+        await reservations.release(["a"])
+        _ = task2
+    }
+
     @Test
     func testSecondReserveWaitsUntilTheFirstReleases() async throws {
         let reservations = LedgerGroupReservations()
-        await reservations.reserve("group")
+        await reservations.reserve(["group"])
 
         let acquired = AirshipAtomicValue(false)
         let waiter = Task {
-            await reservations.reserve("group")
+            await reservations.reserve(["group"])
             acquired.set(true)
         }
 
@@ -211,7 +279,7 @@ struct LedgerGroupReservationsTest {
         try? await Task.sleep(nanoseconds: 100_000_000)
         #expect(!acquired.value)
 
-        await reservations.release("group")
+        await reservations.release(["group"])
         await waiter.value
         #expect(acquired.value)
     }
@@ -221,12 +289,12 @@ struct LedgerGroupReservationsTest {
     @Test
     func testOnlyOneOfManyWaitersProceedsPerRelease() async throws {
         let reservations = LedgerGroupReservations()
-        await reservations.reserve("group")
+        await reservations.reserve(["group"])
 
         let acquired = AirshipAtomicValue(0)
         let waiters = (0..<3).map { _ in
             Task {
-                await reservations.reserve("group")
+                await reservations.reserve(["group"])
                 acquired.update { $0 += 1 }
             }
         }
@@ -236,7 +304,7 @@ struct LedgerGroupReservationsTest {
 
         // Each release lets exactly one more through.
         for expected in 1...3 {
-            await reservations.release("group")
+            await reservations.release(["group"])
             var observed = 0
             for _ in 0..<50 {
                 observed = acquired.value
@@ -247,7 +315,7 @@ struct LedgerGroupReservationsTest {
         }
 
         for waiter in waiters { await waiter.value }
-        await reservations.release("group")
+        await reservations.release(["group"])
         #expect(!(await reservations.isReserved("group")))
     }
 
@@ -257,14 +325,14 @@ struct LedgerGroupReservationsTest {
     @Test
     func testWaitersAreServedInArrivalOrder() async throws {
         let reservations = LedgerGroupReservations()
-        await reservations.reserve("group")
+        await reservations.reserve(["group"])
 
         let order = AirshipAtomicValue<[Int]>([])
         var waiters: [Task<Void, Never>] = []
         for index in 0..<3 {
             waiters.append(
                 Task {
-                    await reservations.reserve("group")
+                    await reservations.reserve(["group"])
                     order.update { $0.append(index) }
                 }
             )
@@ -272,14 +340,14 @@ struct LedgerGroupReservationsTest {
         }
 
         for expected in 1...3 {
-            await reservations.release("group")
+            await reservations.release(["group"])
             try await Self.waitUntil { order.value.count == expected }
         }
 
         for waiter in waiters { await waiter.value }
         #expect(order.value == [0, 1, 2])
 
-        await reservations.release("group")
+        await reservations.release(["group"])
         #expect(!(await reservations.isReserved("group")))
     }
 
@@ -289,22 +357,22 @@ struct LedgerGroupReservationsTest {
     @Test
     func testGroupIsNeverFreeWhileAWaiterIsQueued() async throws {
         let reservations = LedgerGroupReservations()
-        await reservations.reserve("group")
+        await reservations.reserve(["group"])
 
         let acquired = AirshipAtomicValue(false)
         let waiter = Task {
-            await reservations.reserve("group")
+            await reservations.reserve(["group"])
             acquired.set(true)
         }
         try await Self.waitUntil { await reservations.waitingCount("group") == 1 }
 
-        await reservations.release("group")
+        await reservations.release(["group"])
         #expect(await reservations.isReserved("group"))
 
         // A newcomer racing the handoff finds the group taken and queues.
         let newcomerAcquired = AirshipAtomicValue(false)
         let newcomer = Task {
-            await reservations.reserve("group")
+            await reservations.reserve(["group"])
             newcomerAcquired.set(true)
         }
 
@@ -312,7 +380,7 @@ struct LedgerGroupReservationsTest {
         #expect(acquired.value)
         #expect(!newcomerAcquired.value)
 
-        await reservations.release("group")
+        await reservations.release(["group"])
         await newcomer.value
         #expect(newcomerAcquired.value)
     }
@@ -321,12 +389,88 @@ struct LedgerGroupReservationsTest {
     func testReleasingAnUnheldGroupIsANoOp() async throws {
         let reservations = LedgerGroupReservations()
 
-        await reservations.release("never-held")
-        await reservations.release("never-held")
+        await reservations.release(["never-held"])
+        await reservations.release(["never-held"])
 
         #expect(!(await reservations.isReserved("never-held")))
         // Still usable afterwards.
-        await reservations.reserve("never-held")
+        await reservations.reserve(["never-held"])
         #expect(await reservations.isReserved("never-held"))
+    }
+
+    // MARK: - Multiple groups per execution
+
+    @Test
+    func testReserveHoldsEveryGroupInTheSet() async throws {
+        let reservations = LedgerGroupReservations()
+
+        await reservations.reserve(["a", "b"])
+
+        #expect(await reservations.isReserved("a"))
+        #expect(await reservations.isReserved("b"))
+
+        await reservations.release(["a", "b"])
+
+        #expect(!(await reservations.isReserved("a")))
+        #expect(!(await reservations.isReserved("b")))
+    }
+
+    @Test
+    func testOverlappingSetsSerialize() async throws {
+        let reservations = LedgerGroupReservations()
+
+        // Holds `shared`; a schedule in `[group-b, shared]` overlaps on it.
+        await reservations.reserve(["group-a", "shared"])
+
+        let acquired = AirshipAtomicValue(false)
+        let waiter = Task {
+            await reservations.reserve(["group-b", "shared"])
+            acquired.set(true)
+        }
+
+        try await Self.waitUntil { await reservations.waitingCount("shared") == 1 }
+        #expect(!acquired.value)
+
+        await reservations.release(["group-a", "shared"])
+        await waiter.value
+        #expect(acquired.value)
+    }
+
+    @Test
+    func testDisjointSetsDoNotBlockEachOther() async throws {
+        let reservations = LedgerGroupReservations()
+
+        await reservations.reserve(["a", "b"])
+        // Would hang if any group were shared between the two sets.
+        await reservations.reserve(["c", "d"])
+
+        #expect(await reservations.isReserved("c"))
+        #expect(await reservations.isReserved("d"))
+    }
+
+    @Test
+    func testOppositeOrderInputsDoNotDeadlock() async throws {
+        let reservations = LedgerGroupReservations()
+
+        // Two schedules over the same pair, handed to `reserve` in opposite
+        // orders. Sorted acquisition is what keeps one from holding `b` while
+        // waiting on `a` as the other does the reverse — without it these two
+        // can wedge against each other forever.
+        await reservations.reserve(["a", "b"])
+
+        let acquired = AirshipAtomicValue(false)
+        let waiter = Task {
+            await reservations.reserve(["b", "a"])
+            acquired.set(true)
+        }
+
+        // Blocked on the lower of the two, never holding the higher one.
+        try await Self.waitUntil { await reservations.waitingCount("a") == 1 }
+        #expect(await reservations.waitingCount("b") == 0)
+        #expect(!acquired.value)
+
+        await reservations.release(["b", "a"])
+        await waiter.value
+        #expect(acquired.value)
     }
 }

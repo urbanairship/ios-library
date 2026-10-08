@@ -217,7 +217,7 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                         priority: schedule.priority ?? 0,
                         sendMetadata: schedule.sendMetadata,
                         aiSuppression: aiSuppression,
-                        ledgerSharedID: schedule.ledgerSharedID,
+                        ledgerSharedIDs: schedule.ledgerSharedIDs,
                         triggerID: triggerID
                     )
                 },
@@ -406,7 +406,7 @@ extension AutomationPreparer {
         case .penalize, .cancel:
             await self.ledger.recordExecution(
                 scheduleID: schedule.identifier,
-                sharedID: schedule.ledgerSharedID,
+                sharedIDs: schedule.ledgerSharedIDs,
                 triggerID: triggerID,
                 result: .audienceMiss,
                 cancel: behavior == .cancel

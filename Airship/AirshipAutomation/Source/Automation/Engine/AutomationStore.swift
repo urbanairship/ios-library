@@ -530,7 +530,7 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
             return .execution(
                 LedgerEvent.Execution(
                     scheduleID: entry.id,
-                    sharedID: nil,
+                    sharedIDs: nil,
                     triggerID: nil,
                     timestamp: timestamp,
                     count: entry.count,
@@ -541,8 +541,17 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
         }
     }
 
-    /// Reconciles the ledger against the currently persisted schedules: drops
-    /// events orphaned by schedules that are gone, then compacts what remains.
+    /// Reconciles the ledger against the currently persisted schedules: first
+    /// compacts (which also verifies every event's shared-group index is
+    /// correct — see `LedgerStore.compact`'s once-per-process reindex pass),
+    /// then drops events orphaned by schedules that are gone.
+    ///
+    /// Compacting first is load-bearing, not incidental: retention's
+    /// liveness check reads the shared-group *index*, not each event's body,
+    /// so a migrated event whose index hasn't been rebuilt yet would look
+    /// group-less and could be deleted even though its group is still live.
+    /// Running compact first guarantees the index is correct by the time
+    /// retention reads it.
     ///
     /// Run off the same post-fetch reconciliation that removes schedules missing
     /// from the remote listing. Schedules linger in the store through their edit
@@ -551,15 +560,16 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
     /// moment a schedule disappears from a listing.
     /// - Parameter now: Reference time used to bucket events by age.
     func reconcileLedger(now: Date) async throws {
+        try await self.ledgerStore.compact(now: now)
+
         let schedules = try await self.getSchedules()
         let liveScheduleIDs = Set(schedules.map { $0.schedule.identifier })
-        let liveSharedIDs = Set(schedules.compactMap { $0.schedule.ledgerConfig?.sharedID })
+        let liveSharedIDs = Set(schedules.flatMap { $0.schedule.ledgerSharedIDs })
 
         try await self.ledgerStore.retainEvents(
             liveScheduleIDs: liveScheduleIDs,
             liveSharedIDs: liveSharedIDs
         )
-        try await self.ledgerStore.compact(now: now)
     }
 
     func prepareCoreData() async throws -> UACoreData {
