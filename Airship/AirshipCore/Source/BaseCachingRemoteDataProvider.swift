@@ -76,11 +76,14 @@ final actor BaseCachingRemoteDataProvider<Output: CachingRemoteDataProviderResul
     /// Returns the latest channel result stream from the latest stable identifier
     nonisolated func updates(identifierUpdates: AsyncStream<String>) -> AsyncStream<Output> {
         return AsyncStream { continuation in
+            // The resolver task outlives the fetch task when the identifier stream
+            // finishes, so termination has to be able to cancel it directly.
+            let resolverTask = AirshipAtomicValue<Task<Void, Never>?>(nil)
+
             let fetchTask = Task { [weak self] in
-                var resolverTask: Task<Void, Never>?
                 var lastKnownIdentifier: String? = nil
                 for await identifier in identifierUpdates {
-                    resolverTask?.cancel()
+                    resolverTask.value?.cancel()
                     guard !Task.isCancelled else { return }
 
                     guard
@@ -92,11 +95,19 @@ final actor BaseCachingRemoteDataProvider<Output: CachingRemoteDataProviderResul
                         return
                     }
 
-                    resolverTask = Task {
+                    let task = Task {
                         for await update in await resolver.updates() {
                             guard !Task.isCancelled else { return }
                             continuation.yield(update)
                         }
+                    }
+                    resolverTask.set(task)
+
+                    // Termination might have fired between spawning the task and
+                    // storing it, in which case it missed this one - cancel it here.
+                    if Task.isCancelled {
+                        task.cancel()
+                        return
                     }
 
                     lastKnownIdentifier  = identifier
@@ -105,6 +116,7 @@ final actor BaseCachingRemoteDataProvider<Output: CachingRemoteDataProviderResul
 
             continuation.onTermination = { _ in
                 fetchTask.cancel()
+                resolverTask.value?.cancel()
             }
         }
     }
@@ -157,6 +169,8 @@ final actor BaseCachingRemoteDataProvider<Output: CachingRemoteDataProviderResul
 
             return AsyncStream { continuation in
                 let refreshTask = Task {
+                    defer { lastResults[id] = nil }
+
                     var backoff = self.initialBackoff
 
                     repeat {
@@ -181,6 +195,11 @@ final actor BaseCachingRemoteDataProvider<Output: CachingRemoteDataProviderResul
                                 
                                 let result = await overridesApplier(workingResult, overrides)
 
+                                // Cancellation can land while applying overrides, after the
+                                // refresh task's defer already cleaned up lastResults[id] -
+                                // writing here would re-leak the entry.
+                                guard !Task.isCancelled else { return }
+
                                 if (lastResults[id] != result) {
                                     continuation.yield(result)
                                     lastResults[id] = result
@@ -201,11 +220,19 @@ final actor BaseCachingRemoteDataProvider<Output: CachingRemoteDataProviderResul
                             }
                         }
                         
-                        waitTask = Task {
+                        let wait: Task<Void, Never> = Task {
                             try? await self.taskSleeper.sleep(timeInterval: timeToWait)
                         }
-                        
-                        await waitTask?.value
+                        waitTask = wait
+
+                        // Awaiting a task's value ignores the awaiting task's
+                        // cancellation, so forward it to the sleep instead of
+                        // staying parked for the rest of the interval.
+                        await withTaskCancellationHandler {
+                            await wait.value
+                        } onCancel: {
+                            wait.cancel()
+                        }
 
                         updateTask.cancel()
                     } while (!Task.isCancelled)
