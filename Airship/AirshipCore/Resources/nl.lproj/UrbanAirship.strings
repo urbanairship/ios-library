@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Markeer geselecteerde berichten als gelezen";
 "ua_mc_failed_to_load" = "Kan bericht niet laden. Probeer het later opnieuw.";
 "ua_mc_no_longer_available" = "Het geselecteerde bericht is niet meer beschikbaar.";
+"ua_mc_unsupported_on_device" = "Dit bericht kan niet op dit apparaat worden weergegeven.";
 "ua_message_cell_description" = "Geeft volledig bericht weer";
 "ua_message_cell_editing_description" = "Schakelt selectie in";
 "ua_message_center_title" = "Berichtencentrum";

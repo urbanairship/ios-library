@@ -57,6 +57,12 @@ public struct MessageCenterMessageContentView: View {
                 do {
                     let message = try await viewModel.fetchMessageThrowing()
                     self.contentType = message.contentType
+#if !canImport(WebKit)
+                    switch message.contentType {
+                    case .native: break
+                    case .html, .plain, .unknown: self.phase = .error(.unsupportedOnDevice)
+                    }
+#endif
                 } catch {
                     self.phase = .error(.from(error))
                 }
@@ -128,9 +134,8 @@ public struct MessageCenterMessageContentView: View {
             }
         )
 #else
-        Text("ua_mc_failed_to_load".messageCenterLocalizedString)
-            .font(.headline)
-            .foregroundColor(.primary)
+        // The task in `body` reports `.unsupportedOnDevice` once the content type is known.
+        Color.clear
 #endif
     }
 

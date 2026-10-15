@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Označit vybrané zprávy jako přečtené";
 "ua_mc_failed_to_load" = "Zprávu nelze načíst. Zkuste to prosím později znovu.";
 "ua_mc_no_longer_available" = "Vybraná zpráva již není dostupná.";
+"ua_mc_unsupported_on_device" = "Tuto zprávu nelze na tomto zařízení zobrazit.";
 "ua_message_cell_description" = "Zobrazí celou zprávu";
 "ua_message_cell_editing_description" = "Přepíná výběr";
 "ua_message_center_title" = "Centrum zpráv";

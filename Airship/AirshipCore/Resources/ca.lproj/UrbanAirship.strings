@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Marcar els missatges seleccionats com a llegits";
 "ua_mc_failed_to_load" = "No es pot carregar el missatge. Si us plau, intenteu-ho més tard.";
 "ua_mc_no_longer_available" = "El missatge seleccionat ja no està disponible.";
+"ua_mc_unsupported_on_device" = "Aquest missatge no es pot mostrar en aquest dispositiu.";
 "ua_message_cell_description" = "Mostra el missatge complet";
 "ua_message_cell_editing_description" = "Selecció de toggles";
 "ua_message_center_title" = "Centre de missatges";

@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "चयनित संदेशों को पढ़े के रूप में चिह्नित करें";
 "ua_mc_failed_to_load" = "संदेश लोड करने में असमर्थ। कृपया दोबारा कोशिश करें।";
 "ua_mc_no_longer_available" = "चयनित संदेश अब उपलब्ध नहीं है.";
+"ua_mc_unsupported_on_device" = "यह संदेश इस डिवाइस पर नहीं दिखाया जा सकता.";
 "ua_message_cell_description" = "पूरा संदेश प्रदर्शित करता है";
 "ua_message_cell_editing_description" = "चयन टॉगल करता है";
 "ua_message_center_title" = "संदेश केंद्र";

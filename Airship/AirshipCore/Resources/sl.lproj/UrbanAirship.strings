@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Označi izbrana sporočila kot prebrana";
 "ua_mc_failed_to_load" = "Sporočila ni mogoče naložiti. Prosim poskusite kasneje.";
 "ua_mc_no_longer_available" = "Izbrano sporočilo ni več na voljo.";
+"ua_mc_unsupported_on_device" = "Tega sporočila ni mogoče prikazati v tej napravi.";
 "ua_message_cell_description" = "Prikaže celotno sporočilo";
 "ua_message_cell_editing_description" = "Preklopi izbiro";
 "ua_message_center_title" = "Center za sporočila";

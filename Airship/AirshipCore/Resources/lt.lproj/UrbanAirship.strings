@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Pažymėti pasirinktas žinutes kaip perskaitytas";
 "ua_mc_failed_to_load" = "Nepavyko įkelti žinutės. Pabandykite dar kartą vėliau.";
 "ua_mc_no_longer_available" = "Pasirinkta žinutė nebepasiekiama.";
+"ua_mc_unsupported_on_device" = "Šios žinutės negalima rodyti šiame įrenginyje.";
 "ua_message_cell_description" = "Rodo visą žinutę";
 "ua_message_cell_editing_description" = "Perjungia pasirinkimą";
 "ua_message_center_title" = "Žinučių centras";

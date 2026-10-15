@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Označite odabrane poruke kao pročitane";
 "ua_mc_failed_to_load" = "Nije moguće učitati poruku. Molimo pokušajte ponovno kasnije.";
 "ua_mc_no_longer_available" = "Odabrana poruka više nije dostupna.";
+"ua_mc_unsupported_on_device" = "Ova poruka ne može se prikazati na ovom uređaju.";
 "ua_message_cell_description" = "Prikazuje cijelu poruku";
 "ua_message_cell_editing_description" = "Prebacuje odabir";
 "ua_message_center_title" = "Centar za poruke";

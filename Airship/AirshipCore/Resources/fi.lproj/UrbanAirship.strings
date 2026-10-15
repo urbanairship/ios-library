@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Merkitse valitut viestit luetuiksi";
 "ua_mc_failed_to_load" = "Viestin lataaminen ei onnistu. Yritä uudelleen myöhemmin.";
 "ua_mc_no_longer_available" = "Valittu viesti ei ole enää saatavilla.";
+"ua_mc_unsupported_on_device" = "Tätä viestiä ei voi näyttää tällä laitteella.";
 "ua_message_cell_description" = "Näyttää koko viestin";
 "ua_message_cell_editing_description" = "Vaihtaa valinnan";
 "ua_message_center_title" = "Viestikeskus";

@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Επισημάνετε επιλεγμένα μηνύματα ως αναγνωσμένα";
 "ua_mc_failed_to_load" = "Δεν είναι δυνατή η φόρτωση του μηνύματος. Παρακαλώ δοκιμάστε ξανά αργότερα.";
 "ua_mc_no_longer_available" = "Το επιλεγμένο μήνυμα δεν είναι πλέον διαθέσιμο.";
+"ua_mc_unsupported_on_device" = "Αυτό το μήνυμα δεν μπορεί να εμφανιστεί σε αυτήν τη συσκευή.";
 "ua_message_cell_description" = "Εμφανίζει πλήρες μήνυμα";
 "ua_message_cell_editing_description" = "Εναλλάσσει την επιλογή";
 "ua_message_center_title" = "Κέντρο μηνυμάτων";

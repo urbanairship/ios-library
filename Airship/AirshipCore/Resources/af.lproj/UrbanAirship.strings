@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Merk geselekteerde boodskappe as gelees";
 "ua_mc_failed_to_load" = "Kan nie boodskap laai nie. Probeer asseblief weer later.";
 "ua_mc_no_longer_available" = "Die geselekteerde boodskap is nie meer beskikbaar nie.";
+"ua_mc_unsupported_on_device" = "Hierdie boodskap kan nie op hierdie toestel gewys word nie.";
 "ua_message_cell_description" = "Wys volledige boodskap";
 "ua_message_cell_editing_description" = "Wissel seleksie";
 "ua_message_center_title" = "Boodskapsentrum";

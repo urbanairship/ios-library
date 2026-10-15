@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "وضع علامة \"مقروءة\" على الرسائل المحددة";
 "ua_mc_failed_to_load" = "غير قادر على تحميل الرسالة. الرجاء معاودة المحاولة في وقت لاحق.";
 "ua_mc_no_longer_available" = "الرسالة المحددة لم تعد متوفرة.";
+"ua_mc_unsupported_on_device" = "لا يمكن عرض هذه الرسالة على هذا الجهاز.";
 "ua_message_cell_description" = "يعرض الرسالة كاملة";
 "ua_message_cell_editing_description" = "يبدل التحديد";
 "ua_message_center_title" = "مركز الرسائل";

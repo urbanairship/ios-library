@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Označiť vybrané správy ako prečítané";
 "ua_mc_failed_to_load" = "Nie je možné načítať správu. Skúste to neskôr, prosím.";
 "ua_mc_no_longer_available" = "Vybratá správa už nie je k dispozícii.";
+"ua_mc_unsupported_on_device" = "Túto správu nie je možné zobraziť na tomto zariadení.";
 "ua_message_cell_description" = "Zobrazí celú správu";
 "ua_message_cell_editing_description" = "Prepína výber";
 "ua_message_center_title" = "Centrum správ";

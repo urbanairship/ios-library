@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "將所選消息標記為已讀";
 "ua_mc_failed_to_load" = "無法加載消息。請稍後再試。";
 "ua_mc_no_longer_available" = "所選消息不再可用。";
+"ua_mc_unsupported_on_device" = "此訊息無法在此裝置上顯示。";
 "ua_message_cell_description" = "顯示完整消息";
 "ua_message_cell_editing_description" = "切換選擇";
 "ua_message_center_title" = "留言中心";

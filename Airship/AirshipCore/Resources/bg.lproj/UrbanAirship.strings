@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Маркирай избраните съобщения като прочетени";
 "ua_mc_failed_to_load" = "Съобщението не може да се зареди. Моля, опитайте отново по-късно.";
 "ua_mc_no_longer_available" = "Избраното съобщение вече не е налично.";
+"ua_mc_unsupported_on_device" = "Това съобщение не може да бъде показано на това устройство.";
 "ua_message_cell_description" = "Показва пълно съобщение";
 "ua_message_cell_editing_description" = "Превключване на избора";
 "ua_message_center_title" = "Център за съобщения";

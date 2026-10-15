@@ -37,6 +37,7 @@
 
 "ua_mc_failed_to_load" = "Unable to load message. Please try again later.";
 "ua_mc_no_longer_available" = "The selected message is no longer available.";
+"ua_mc_unsupported_on_device" = "This message can't be shown on this device.";
 "ua_message_center_title" = "Message Center";
 "ua_message_not_selected" = "No messages selected";
 

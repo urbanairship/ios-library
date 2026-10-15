@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Atzīmēt atlasītās ziņojumus kā izlasītus";
 "ua_mc_failed_to_load" = "Nevar ielādēt ziņojumu. Lūdzu, pamēģiniet vēlreiz vēlāk.";
 "ua_mc_no_longer_available" = "Atlasītais ziņojums vairs nav pieejama.";
+"ua_mc_unsupported_on_device" = "Šo ziņojumu nevar parādīt šajā ierīcē.";
 "ua_message_cell_description" = "Parāda pilnu ziņojumu";
 "ua_message_cell_editing_description" = "Pārslēdz atlasi";
 "ua_message_center_title" = "Ziņojumu centrs";

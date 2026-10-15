@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Segna i messaggi selezionati come letti";
 "ua_mc_failed_to_load" = "Impossibile caricare i messaggi. Riprovare più tardi";
 "ua_mc_no_longer_available" = "Il messaggio selezionato non è più disponibile.";
+"ua_mc_unsupported_on_device" = "Questo messaggio non può essere visualizzato su questo dispositivo.";
 "ua_message_cell_description" = "Visualizza il messaggio completo";
 "ua_message_cell_editing_description" = "Commuta la selezione";
 "ua_message_center_title" = "Centro messaggi";

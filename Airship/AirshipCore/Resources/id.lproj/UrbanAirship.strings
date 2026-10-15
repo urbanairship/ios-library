@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Tandai pesan yang dipilih telah dibaca";
 "ua_mc_failed_to_load" = "Tidak dapat memuat pesan. Silakan coba lagi nanti.";
 "ua_mc_no_longer_available" = "Pesan yang dipilih tidak lagi tersedia.";
+"ua_mc_unsupported_on_device" = "Pesan ini tidak dapat ditampilkan di perangkat ini.";
 "ua_message_cell_description" = "Menampilkan pesan lengkap";
 "ua_message_cell_editing_description" = "Mengalihkan pilihan";
 "ua_message_center_title" = "Pusat Pesan";

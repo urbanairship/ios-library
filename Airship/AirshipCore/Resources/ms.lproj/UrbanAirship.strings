@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Tanda mesej yang dipilih telah dibaca";
 "ua_mc_failed_to_load" = "Tidak dapat memuatkan mesej. Sila cuba sebentar lagi.";
 "ua_mc_no_longer_available" = "Mesej yang dipilih tidak lagi tersedia.";
+"ua_mc_unsupported_on_device" = "Mesej ini tidak boleh dipaparkan pada peranti ini.";
 "ua_message_cell_description" = "Memaparkan mesej penuh";
 "ua_message_cell_editing_description" = "Togol pemilihan";
 "ua_message_center_title" = "Pusat Mesej";

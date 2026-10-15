@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Marcați mesajele selectate ca citite";
 "ua_mc_failed_to_load" = "Imposibil de încărcat mesaje. Te rugăm să încerci mai târziu.";
 "ua_mc_no_longer_available" = "Mesajul selectat nu mai este disponibil.";
+"ua_mc_unsupported_on_device" = "Acest mesaj nu poate fi afișat pe acest dispozitiv.";
 "ua_message_cell_description" = "Afișează mesajul complet";
 "ua_message_cell_editing_description" = "Comută selecția";
 "ua_message_center_title" = "Centrul de Mesaje";

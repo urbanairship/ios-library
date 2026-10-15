@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Seçilen mesajları okundu olarak işaretle";
 "ua_mc_failed_to_load" = "Mesaj yüklenemiyor. Lütfen daha sonra tekrar deneyin.";
 "ua_mc_no_longer_available" = "Seçilen mesaj artık mevcut değil.";
+"ua_mc_unsupported_on_device" = "Bu mesaj bu cihazda gösterilemiyor.";
 "ua_message_cell_description" = "Tam mesajı görüntüler";
 "ua_message_cell_editing_description" = "Seçimi değiştirir";
 "ua_message_center_title" = "Mesaj Merkezi";

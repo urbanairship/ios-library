@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Markera valda meddelanden som lästa";
 "ua_mc_failed_to_load" = "Det går inte att läsa in meddelande. Försök igen senare.";
 "ua_mc_no_longer_available" = "Det valda meddelandet är inte längre tillgängligt.";
+"ua_mc_unsupported_on_device" = "Det här meddelandet kan inte visas på den här enheten.";
 "ua_message_cell_description" = "Visar hela meddelandet";
 "ua_message_cell_editing_description" = "Växlar val";
 "ua_message_center_title" = "Meddelandecenter";

@@ -217,11 +217,9 @@ private struct DefaultMessageCenterMessageContentView: View {
             if case .loading = self.messageLoadingPhase {
                 ProgressView()
             } else if case .error(let error) = self.messageLoadingPhase {
-                if error == .messageGone {
+                if error == .messageGone || error == .unsupportedOnDevice {
                     VStack {
-                        Text(
-                            "ua_mc_no_longer_available".messageCenterLocalizedString
-                        )
+                        Text(error.localizedDescriptionKey.messageCenterLocalizedString)
                         .font(.headline)
                         .foregroundColor(.primary)
                         .padding()

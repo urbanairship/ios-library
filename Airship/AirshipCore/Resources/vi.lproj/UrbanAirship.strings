@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Đánh dấu các tin nhắn đã chọn là đã đọc";
 "ua_mc_failed_to_load" = "Không thể tải tin nhắn. Vui lòng thử lại sau.";
 "ua_mc_no_longer_available" = "Tin nhắn đã chọn không còn nữa.";
+"ua_mc_unsupported_on_device" = "Không thể hiển thị tin nhắn này trên thiết bị này.";
 "ua_message_cell_description" = "Hiển thị thông báo đầy đủ";
 "ua_message_cell_editing_description" = "Chuyển đổi lựa chọn";
 "ua_message_center_title" = "Trung tâm Tin nhắn";

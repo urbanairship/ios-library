@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Tia alama kuwa ujumbe uliochaguliwa umesomwa";
 "ua_mc_failed_to_load" = "Imeshindwa kupakia ujumbe. Tafadhali jaribu tena baadae.";
 "ua_mc_no_longer_available" = "Ujumbe uliochaguliwa haupatikani tena.";
+"ua_mc_unsupported_on_device" = "Ujumbe huu hauwezi kuonyeshwa kwenye kifaa hiki.";
 "ua_message_cell_description" = "Inaonyesha ujumbe kamili";
 "ua_message_cell_editing_description" = "Hugeuza uteuzi";
 "ua_message_center_title" = "Kituo cha Ujumbe";

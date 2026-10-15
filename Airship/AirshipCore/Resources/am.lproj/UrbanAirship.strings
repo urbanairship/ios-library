@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "የተመረጡትን መልዕክቶች እንደተነበቡ ምልክት ያድርጉ";
 "ua_mc_failed_to_load" = "መልእክት መጫን አልተቻለም። እባክዎ ቆየት ብለው ይሞክሩ.";
 "ua_mc_no_longer_available" = "የተመረጠው መልእክት ከአሁን በኋላ አይገኝም።";
+"ua_mc_unsupported_on_device" = "ይህ መልእክት በዚህ መሣሪያ ላይ ሊታይ አይችልም።";
 "ua_message_cell_description" = "ሙሉ መልእክት ያሳያል";
 "ua_message_cell_editing_description" = "ምርጫ ይቀያየራል።";
 "ua_message_center_title" = "የመልእክት ማእከል";

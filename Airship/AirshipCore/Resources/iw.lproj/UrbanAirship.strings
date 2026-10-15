@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "סמן את ההודעות שנבחרו כנקראו";
 "ua_mc_failed_to_load" = "לא ניתן לטעון הודעה. נסה שוב מאוחר יותר.";
 "ua_mc_no_longer_available" = "ההודעה שנבחרה אינה זמינה יותר.";
+"ua_mc_unsupported_on_device" = "לא ניתן להציג הודעה זו במכשיר זה.";
 "ua_message_cell_description" = "מציג את ההודעה המלאה";
 "ua_message_cell_editing_description" = "מחליף בחירה";
 "ua_message_center_title" = "מרכז ההודעות";

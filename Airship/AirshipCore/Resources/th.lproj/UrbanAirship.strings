@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "ทำเครื่องหมายข้อความที่เลือกว่าอ่านแล้ว";
 "ua_mc_failed_to_load" = "ไม่สามารถโหลดข้อความ กรุณาลองใหม่อีกครั้งในภายหลัง";
 "ua_mc_no_longer_available" = "ข้อความที่เลือกไม่สามารถใช้ได้อีกต่อไป";
+"ua_mc_unsupported_on_device" = "ไม่สามารถแสดงข้อความนี้บนอุปกรณ์เครื่องนี้ได้";
 "ua_message_cell_description" = "แสดงข้อความเต็ม";
 "ua_message_cell_editing_description" = "สลับการเลือก";
 "ua_message_center_title" = "ศูนย์ข้อความ";

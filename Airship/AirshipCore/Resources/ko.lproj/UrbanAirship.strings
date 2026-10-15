@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "선택한 메시지를 읽은 상태로 표시";
 "ua_mc_failed_to_load" = "메시지를 로드할 수 없습니다. 나중에 다시 시도해주십시오.";
 "ua_mc_no_longer_available" = "선택한 메시지는 더 이상 사용할 수 없습니다.";
+"ua_mc_unsupported_on_device" = "이 메시지는 이 기기에서 표시할 수 없습니다.";
 "ua_message_cell_description" = "전체 메시지 표시";
 "ua_message_cell_editing_description" = "선택 토글";
 "ua_message_center_title" = "메시지 센터";

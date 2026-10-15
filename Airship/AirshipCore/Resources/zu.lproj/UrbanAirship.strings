@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Maka imilayezo ekhethiwe njengefundiwe";
 "ua_mc_failed_to_load" = "Ayikwazi ukulayisha umlayezo. Sicela uzame futhi emuva kwesikhathi.";
 "ua_mc_no_longer_available" = "Umlayezo okhethiwe awusatholakali.";
+"ua_mc_unsupported_on_device" = "Lo mlayezo awukwazi ukuboniswa kule divayisi.";
 "ua_message_cell_description" = "Ibonisa umlayezo ogcwele";
 "ua_message_cell_editing_description" = "Iguqula ukukhetha";
 "ua_message_center_title" = "Isikhungo Somlayezo";

@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "A kiválasztott üzenetek megjelölése olvasottként";
 "ua_mc_failed_to_load" = "Nem tudtam betölteni az üzenetet. Próbálja újra később.";
 "ua_mc_no_longer_available" = "A kiválasztott üzenet már nem érhető el.";
+"ua_mc_unsupported_on_device" = "Ez az üzenet nem jeleníthető meg ezen az eszközön.";
 "ua_message_cell_description" = "A teljes üzenetet jeleníti meg";
 "ua_message_cell_editing_description" = "Váltsa a kijelölést";
 "ua_message_center_title" = "Üzenetközpont";

@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "Ausgewählte Nachrichten als gelesen markieren";
 "ua_mc_failed_to_load" = "Nachricht konnte nicht geladen werden. Bitte versuchen Sie es später noch einmal.";
 "ua_mc_no_longer_available" = "Die ausgewählte Nachricht ist nicht mehr verfügbar.";
+"ua_mc_unsupported_on_device" = "Diese Nachricht kann auf diesem Gerät nicht angezeigt werden.";
 "ua_message_cell_description" = "Zeigt die vollständige Nachricht an";
 "ua_message_cell_editing_description" = "Schaltet die Auswahl um";
 "ua_message_center_title" = "Nachrichtenzentrum";

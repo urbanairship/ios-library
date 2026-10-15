@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "علامت گذاری پیام های انتخاب شده به عنوان خوانده شده";
 "ua_mc_failed_to_load" = "بارگیری پیام ممکن نیست. لطفاً بعداً دوباره امتحان کنید.";
 "ua_mc_no_longer_available" = "پیام انتخاب شده دیگر در دسترس نیست.";
+"ua_mc_unsupported_on_device" = "این پیام در این دستگاه قابل نمایش نیست.";
 "ua_message_cell_description" = "پیام کامل را نمایش می دهد";
 "ua_message_cell_editing_description" = "انتخاب را تغییر می دهد";
 "ua_message_center_title" = "مرکز پیام";

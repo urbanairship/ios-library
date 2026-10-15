@@ -13,6 +13,7 @@
 "ua_mark_messages_read_description" = "選択したメッセージに既読のマークを付ける";
 "ua_mc_failed_to_load" = "メッセージを読み込むことができません。後ほどもう一度お試しください。";
 "ua_mc_no_longer_available" = "選択したメッセージは使用できなくなります。";
+"ua_mc_unsupported_on_device" = "このメッセージはこのデバイスでは表示できません。";
 "ua_message_cell_description" = "完全なメッセージを表示";
 "ua_message_cell_editing_description" = "選択を切り替えます";
 "ua_message_center_title" = "メッセージ センター";
