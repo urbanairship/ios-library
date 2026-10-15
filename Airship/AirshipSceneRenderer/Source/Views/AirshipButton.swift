@@ -157,7 +157,12 @@ fileprivate extension View {
             self.buttonStyle(.plain)
 #endif
         case .none:
+#if os(tvOS)
+            // `tap_effect` only governs the press effect; the remote still needs to see focus.
+            self.buttonStyle(TVButtonStyle(dimsWhenDisabled: false))
+#else
             self.buttonStyle(AirshipButtonEmptyStyle())
+#endif
         }
     }
 
@@ -174,8 +179,10 @@ fileprivate extension View {
 #if os(tvOS)
 struct TVButtonStyle: ButtonStyle {
 
+    var dimsWhenDisabled: Bool = true
+
     func makeBody(configuration: Configuration) -> some View {
-        return ButtonView(configuration: configuration)
+        return ButtonView(configuration: configuration, dimsWhenDisabled: dimsWhenDisabled)
     }
 
     struct ButtonView: View {
@@ -183,11 +190,12 @@ struct TVButtonStyle: ButtonStyle {
         @Environment(\.isEnabled) private var isEnabled
 
         fileprivate let configuration: ButtonStyle.Configuration
+        fileprivate let dimsWhenDisabled: Bool
 
         var body: some View {
             configuration.label
                 .hoverEffect(.highlight, isEnabled: isFocused)
-                .colorMultiply(isEnabled ? Color.white : ThomasConstants.disabledColor)
+                .colorMultiply(isEnabled || !dimsWhenDisabled ? Color.white : ThomasConstants.disabledColor)
         }
     }
 }
