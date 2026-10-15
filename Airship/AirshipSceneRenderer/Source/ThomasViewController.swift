@@ -239,6 +239,22 @@ final class ThomasModalViewController : ThomasViewController<ModalView> {
     @objc required dynamic init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+#if os(tvOS)
+    // The modal is its own key window, so an unhandled Back press would send the user to the Home screen.
+    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        guard !presses.contains(where: { $0.type == .menu }) else { return }
+        super.pressesBegan(presses, with: event)
+    }
+
+    override func pressesEnded(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        guard presses.contains(where: { $0.type == .menu }) else {
+            super.pressesEnded(presses, with: event)
+            return
+        }
+        rootView.thomasEnvironment.dismiss()
+    }
+#endif
 }
 
 #elseif os(macOS)
