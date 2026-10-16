@@ -35,6 +35,12 @@ fileprivate struct NewContainer: View {
 
     @State private var measuredSize: CGSize? = nil
 
+#if os(tvOS)
+    @FocusState private var focusedItem: Int?
+    @State private var itemFrames: [Int: CGRect] = [:]
+    @Environment(\.airshipContainerFocusEscape) private var focusEscape
+#endif
+
     /// Whether this container has no length of its own on an axis and no item that could give it one.
     ///
     /// Per axis, unlike a stack: a container overlays its items rather than summing them, so width and
@@ -83,6 +89,12 @@ fileprivate struct NewContainer: View {
         .airshipGeometryGroupCompat()
         .constraints(constraints)
         .airshipMeasureView($measuredSize)
+#if os(tvOS)
+        .coordinateSpace(name: Self.focusSpace)
+        .onPreferenceChange(ItemFramesKey.self) { itemFrames = $0 }
+        // Frames are in this container's own space, so an enclosing container must not see them.
+        .transformPreference(ItemFramesKey.self) { $0 = [:] }
+#endif
         .clipped()
         .thomasBackgrounds(info.properties.backgrounds)
         .thomasCommon(self.info)
@@ -157,8 +169,135 @@ fileprivate struct NewContainer: View {
             alignment: item.position.alignment
         )
         .layoutValue(key: ContainerLayout.ContainerItemPositionKey.self, value: item.position)
+#if os(tvOS)
+        .airshipApplyIf(info.properties.items.count > 1 && item.view.containsFocusableControl) {
+            $0.background(
+                GeometryReader { proxy in
+                    Color.clear.preference(
+                        key: ItemFramesKey.self,
+                        value: [index: proxy.frame(in: .named(Self.focusSpace))]
+                    )
+                }
+            )
+            .focused($focusedItem, equals: index)
+            .onMoveCommand { move in
+                if let direction = ContainerFocusDirection(move) {
+                    routeFocus(from: index, direction: direction)
+                }
+            }
+            .environment(\.airshipContainerFocusEscape) { routeFocus(from: index, direction: $0) }
+        }
+#endif
+    }
+
+#if os(tvOS)
+    private static let focusSpace = "airship.container.focus"
+
+    /// Moves focus to the nearest overlapping item that lies in `direction`.
+    ///
+    /// tvOS only finds controls beyond the focused control's edge, so a control drawn inside another's
+    /// frame is otherwise unreachable. Only items with a focusable control take part. When none
+    /// qualifies the press goes to the enclosing container, and the system's own focus move still runs.
+    private func routeFocus(from index: Int, direction routed: ContainerFocusDirection) {
+        if let target = ContainerFocusRouting.target(from: index, direction: routed, frames: itemFrames) {
+            focusedItem = target
+        } else {
+            // Only the innermost move handler receives the press, so the enclosing container has to be handed it.
+            focusEscape?(routed)
+        }
+    }
+#endif
+}
+
+extension ThomasViewInfo {
+    /// Whether this view, or anything it hosts, is a control the remote can focus.
+    var containsFocusableControl: Bool {
+        switch self {
+        case .labelButton, .imageButton, .stackImageButton, .buttonLayout,
+             .checkbox, .radioInput, .textInput, .score, .toggle,
+             .basicToggleLayout, .checkboxToggleLayout, .radioInputToggleLayout, .scoreToggleLayout:
+            true
+        default:
+            immediateChildren?.contains { $0.containsFocusableControl } ?? false
+        }
     }
 }
+
+enum ContainerFocusDirection: Sendable {
+    case up, down, left, right
+
+#if os(tvOS)
+    init?(_ move: MoveCommandDirection) {
+        switch move {
+        case .up: self = .up
+        case .down: self = .down
+        case .left: self = .left
+        case .right: self = .right
+        @unknown default: return nil
+        }
+    }
+#endif
+}
+
+enum ContainerFocusRouting {
+    /// Picks the item focus should move to from an item whose frame is overlapped by other items.
+    ///
+    /// - Parameters:
+    ///   - index: The focused item.
+    ///   - direction: The direction of the move.
+    ///   - frames: Each item's frame in a shared coordinate space, keyed by item index.
+    /// - Returns: The nearest other item whose frame intersects the focused item's and whose centre lies
+    ///   in `direction` from it, the later (drawn on top) of two equally near ones; nil when there is none.
+    static func target(
+        from index: Int,
+        direction: ContainerFocusDirection,
+        frames: [Int: CGRect]
+    ) -> Int? {
+        guard let origin = frames[index] else { return nil }
+
+        func distance(_ frame: CGRect) -> CGFloat {
+            hypot(frame.midX - origin.midX, frame.midY - origin.midY)
+        }
+
+        return frames
+            .filter { $0.key != index && $0.value.intersects(origin) }
+            .filter { _, frame in
+                switch direction {
+                case .up: frame.midY < origin.midY
+                case .down: frame.midY > origin.midY
+                case .left: frame.midX < origin.midX
+                case .right: frame.midX > origin.midX
+                }
+            }
+            .min { lhs, rhs in
+                let (l, r) = (distance(lhs.value), distance(rhs.value))
+                return l == r ? lhs.key > rhs.key : l < r
+            }?
+            .key
+    }
+}
+
+#if os(tvOS)
+/// Hands a directional move this container couldn't route to the container it sits in.
+private struct ContainerFocusEscapeKey: EnvironmentKey {
+    static let defaultValue: (@MainActor (ContainerFocusDirection) -> Void)? = nil
+}
+
+private extension EnvironmentValues {
+    var airshipContainerFocusEscape: (@MainActor (ContainerFocusDirection) -> Void)? {
+        get { self[ContainerFocusEscapeKey.self] }
+        set { self[ContainerFocusEscapeKey.self] = newValue }
+    }
+}
+
+fileprivate struct ItemFramesKey: PreferenceKey {
+    static let defaultValue: [Int: CGRect] = [:]
+
+    static func reduce(value: inout [Int: CGRect], nextValue: () -> [Int: CGRect]) {
+        value.merge(nextValue()) { $1 }
+    }
+}
+#endif
 
 fileprivate struct ContainerLayout: Layout {
     struct ContainerItemPositionKey: LayoutValueKey {

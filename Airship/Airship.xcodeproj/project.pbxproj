@@ -494,6 +494,7 @@
 		088FEEFDABE7A8C400B97EAA /* ScoreWrappingRenderingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7087C65DEEF5505626699554 /* ScoreWrappingRenderingTest.swift */; };
 		6E21C4712FEC586A00EA3E56 /* ThomasViewModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C46A2FEC586A00EA3E56 /* ThomasViewModelTest.swift */; };
 		6E21C4722FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C46E2FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift */; };
+		6E60071D2F90000100E1C0C6 /* ContainerFocusRoutingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60071C2F90000100E1C0C6 /* ContainerFocusRoutingTest.swift */; };
 		B6987A7142C54597BC6295ED /* ThomasTransitionEffectTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EEACD9DBF564C84AB064BAF /* ThomasTransitionEffectTest.swift */; };
 		6E21C4732FEC586A00EA3E56 /* PagerStateLastPageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C4702FEC586A00EA3E56 /* PagerStateLastPageTest.swift */; };
 		6E21C4742FEC586A00EA3E56 /* ThomasAssociatedLabelResolverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C46D2FEC586A00EA3E56 /* ThomasAssociatedLabelResolverTest.swift */; };
@@ -2160,6 +2161,7 @@
 		6E21C46B2FEC586A00EA3E56 /* ThomasAsyncViewStateTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasAsyncViewStateTest.swift; sourceTree = "<group>"; };
 		6E21C46D2FEC586A00EA3E56 /* ThomasAssociatedLabelResolverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasAssociatedLabelResolverTest.swift; sourceTree = "<group>"; };
 		6E21C46E2FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasPresentationModelCodingTest.swift; sourceTree = "<group>"; };
+		6E60071C2F90000100E1C0C6 /* ContainerFocusRoutingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerFocusRoutingTest.swift; sourceTree = "<group>"; };
 		3EEACD9DBF564C84AB064BAF /* ThomasTransitionEffectTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThomasTransitionEffectTest.swift; sourceTree = "<group>"; };
 		6E21C46F2FEC586A00EA3E56 /* PagerControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerControllerTest.swift; sourceTree = "<group>"; };
 		6E21C4702FEC586A00EA3E56 /* PagerStateLastPageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerStateLastPageTest.swift; sourceTree = "<group>"; };
@@ -5106,6 +5108,7 @@
 				6E21C46B2FEC586A00EA3E56 /* ThomasAsyncViewStateTest.swift */,
 				6E21C46D2FEC586A00EA3E56 /* ThomasAssociatedLabelResolverTest.swift */,
 				6E21C46E2FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift */,
+				6E60071C2F90000100E1C0C6 /* ContainerFocusRoutingTest.swift */,
 				3EEACD9DBF564C84AB064BAF /* ThomasTransitionEffectTest.swift */,
 				6E21C46F2FEC586A00EA3E56 /* PagerControllerTest.swift */,
 				6E21C4702FEC586A00EA3E56 /* PagerStateLastPageTest.swift */,
@@ -7741,6 +7744,7 @@
 				6E21C45B2FEC585400EA3E56 /* ThomasAccessibilityActionOutcomeTest.swift in Sources */,
 				6E21C4712FEC586A00EA3E56 /* ThomasViewModelTest.swift in Sources */,
 				6E21C4722FEC586A00EA3E56 /* ThomasPresentationModelCodingTest.swift in Sources */,
+				6E60071D2F90000100E1C0C6 /* ContainerFocusRoutingTest.swift in Sources */,
 				B6987A7142C54597BC6295ED /* ThomasTransitionEffectTest.swift in Sources */,
 				6E21C4732FEC586A00EA3E56 /* PagerStateLastPageTest.swift in Sources */,
 				6E21CB022FEC59AA00EA3E56 /* BannerSwipeDismissLogicTest.swift in Sources */,
