@@ -271,14 +271,45 @@ struct DefaultMessageViewAnalyticsTests {
         #expect(parsed == (try AirshipJSON.from(json: expected)))
     }
 
+    @Test(
+        "event reporting_context merges message_reporting into reporting_context, falling back to the whole object",
+        arguments: [
+            (
+                #"{"message_id": "m", "reporting_context": {"content_types": ["scene"], "experiment_id": ""}, "campaign_categories": []}"#,
+                #"{"message_id": "m", "campaign_categories": [], "content_types": ["scene"], "experiment_id": ""}"#
+            ),
+            // Every message_reporting key is merged in, and wins over the same key in reporting_context.
+            (
+                #"{"message_id": "m", "group_id": "g", "reporting_context": {"message_id": "other", "content_types": ["scene"]}}"#,
+                #"{"message_id": "m", "group_id": "g", "content_types": ["scene"]}"#
+            ),
+            // No reporting_context object: the whole message_reporting.
+            (#"{"message_id": "m", "group_id": "g"}"#, #"{"message_id": "m", "group_id": "g"}"#),
+            (
+                #"{"message_id": "m", "reporting_context": "text"}"#,
+                #"{"message_id": "m", "reporting_context": "text"}"#
+            ),
+            // Keys missing from message_reporting are not added.
+            (
+                #"{"reporting_context": {"content_types": ["scene"]}}"#,
+                #"{"content_types": ["scene"]}"#
+            ),
+        ]
+    )
+    func eventReportingContextFromMessageReporting(reporting: String, expected: String) throws {
+        let merged = DefaultMessageViewAnalytics.eventReportingContext(messageReporting: try AirshipJSON.from(json: reporting))
+        #expect(merged == (try AirshipJSON.from(json: expected)))
+    }
+
     @Test("a message without message_reporting has no reporting context")
     func noMessageReporting() {
         #expect(DefaultMessageViewAnalytics.reportingContext(messageReporting: nil) == nil)
+        #expect(DefaultMessageViewAnalytics.eventReportingContext(messageReporting: nil) == nil)
     }
 
-    @Test("events and the impression both carry the parsed reporting_context")
+    @Test("events carry the merged reporting_context and the impression only reporting_context")
     @MainActor
-    func eventsCarryParsedReportingContext() async throws {
+    func eventsAndImpressionCarryTheirReportingContext() async throws {
         let message = createStubMessage(
             id: "test-message-id",
             reporting: ["message_id": "test-message-id", "reporting_context": ["content_types": ["native"]]]
@@ -289,7 +320,7 @@ struct DefaultMessageViewAnalyticsTests {
         await operationsQueue.waitForCurrentOperations()
 
         let captured = try #require(mockRecorder.lastCapturedData)
-        #expect(captured.context?.reportingContext == ["content_types": ["native"]])
+        #expect(captured.context?.reportingContext == ["message_id": "test-message-id", "content_types": ["native"]])
         let impression = try #require(mockRecorder.lastRecordedImpression)
         #expect(impression.reportingContext == ["content_types": ["native"]])
     }
