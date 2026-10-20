@@ -393,7 +393,10 @@ struct AdoptLayoutEngine: SwiftUI.Layout {
             let isProbe = proposal.width == 0 || proposal.height == 0
             if !isProbe && bounds.width > 0 && bounds.height > 0 {
                 if let constraintsPublisher {
-                    MainActor.assumeIsolated {
+                    // `placeSubviews` isn't guaranteed to run on the main thread: SwiftUI's async
+                    // renderer can lay out on its own thread, where asserting main-actor isolation
+                    // here would trap. Hop to the main queue first, same as the branch below.
+                    DispatchQueue.main.async {
                         constraintsPublisher.publish(newConstraints, to: viewConstraints)
                     }
                 } else {
