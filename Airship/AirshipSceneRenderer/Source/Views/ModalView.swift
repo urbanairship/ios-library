@@ -6,6 +6,7 @@ import SwiftUI
 struct ModalView: View {
 
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let presentation: ThomasPresentationInfo.Modal
     let layout: AirshipLayout
@@ -46,14 +47,20 @@ struct ModalView: View {
                                     modalBackground(placement, environment: environment)
                                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 )
-                                .airshipApplyModalTransition(transition: placement.transition)
+                                .airshipApplyModalTransition(
+                                    transition: placement.transition,
+                                    reduceMotion: reduceMotion
+                                )
                         } else {
                             modalBackground(placement, environment: environment)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .transition(.opacity)
 
                             createModalContent(placement: placement, metrics: metrics)
-                                .airshipApplyModalTransition(transition: placement.transition)
+                                .airshipApplyModalTransition(
+                                    transition: placement.transition,
+                                    reduceMotion: reduceMotion
+                                )
                         }
                     }
                 }
@@ -281,9 +288,12 @@ private extension View {
 
     @ViewBuilder
     func airshipApplyModalTransition(
-        transition: ThomasPresentationInfo.Modal.Transition?
+        transition: ThomasPresentationInfo.Modal.Transition?,
+        reduceMotion: Bool
     ) -> some View {
-        if let transition {
+        // Reduce Motion replaces movement with a plain cross-fade; the authored
+        // durations still apply through the surrounding withAnimation.
+        if let transition, !reduceMotion {
             self.transition(
                 .asymmetric(
                     insertion: .thomasTransition(for: transition.enter),
