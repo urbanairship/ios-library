@@ -183,19 +183,30 @@ struct InAppRemoteData: Sendable {
         var constraints: [FrequencyConstraint]?
         var failedSchedules: [FailedScheduleRecord]
 
+        /// Ids of constraint entries that couldn't be read. Their stored constraints must not be deleted.
+        var failedConstraintIDs: [String]
+
+        /// True when `frequency_constraints` holds something that couldn't be read and has no usable id,
+        /// so no stored constraint can be safely deleted.
+        var constraintsUnreadable: Bool
+
         enum CodingKeys: String, CodingKey {
             case schedules = "in_app_messages"
             case constraints = "frequency_constraints"
         }
-        
+
         init(
             schedules: [AutomationSchedule],
             constraints: [FrequencyConstraint]?,
-            failedSchedules: [FailedScheduleRecord] = []
+            failedSchedules: [FailedScheduleRecord] = [],
+            failedConstraintIDs: [String] = [],
+            constraintsUnreadable: Bool = false
         ) {
             self.schedules = schedules
             self.constraints = constraints
             self.failedSchedules = failedSchedules
+            self.failedConstraintIDs = failedConstraintIDs
+            self.constraintsUnreadable = constraintsUnreadable
         }
         
         init(from decoder: any Decoder) throws {
@@ -227,7 +238,57 @@ struct InAppRemoteData: Sendable {
             
             self.schedules = schedules
             self.failedSchedules = failedScheduleRecords
-            self.constraints = try container.decodeIfPresent([FrequencyConstraint].self, forKey: .constraints)
+
+            let constraints = Self.decodeConstraints(container)
+            self.constraints = constraints.constraints
+            self.failedConstraintIDs = constraints.failedIDs
+            self.constraintsUnreadable = constraints.unreadable
+        }
+
+        /// Reads `frequency_constraints` one entry at a time so a bad entry never fails the payload.
+        ///
+        /// An absent key or an explicit `null` means no constraints. A value that isn't a list, or an
+        /// entry without a readable `id`, marks the constraints unreadable.
+        /// - Parameters:
+        ///   - container: The payload's keyed container.
+        /// - Returns: The readable constraints, the ids of entries that couldn't be read, and whether
+        ///   anything couldn't be read without an id.
+        private static func decodeConstraints(
+            _ container: KeyedDecodingContainer<CodingKeys>
+        ) -> (constraints: [FrequencyConstraint]?, failedIDs: [String], unreadable: Bool) {
+            guard
+                container.contains(.constraints),
+                (try? container.decodeNil(forKey: .constraints)) == false
+            else {
+                return (nil, [], false)
+            }
+
+            guard
+                let entries = try? container.decode([ConstraintDecodeResult].self, forKey: .constraints)
+            else {
+                AirshipLogger.error("Failed to parse frequency constraints, not a list")
+                return (nil, [], true)
+            }
+
+            var constraints: [FrequencyConstraint] = []
+            var failedIDs: [String] = []
+            var unreadable = false
+
+            for entry in entries {
+                switch entry {
+                case .succeed(let constraint):
+                    constraints.append(constraint)
+                case .failed(let identifier, let error):
+                    AirshipLogger.error("Failed to parse frequency constraint \(identifier ?? "without a readable id") \(error)")
+                    if let identifier {
+                        failedIDs.append(identifier)
+                    } else {
+                        unreadable = true
+                    }
+                }
+            }
+
+            return (constraints, failedIDs, unreadable)
         }
     }
 
@@ -238,7 +299,10 @@ struct InAppRemoteData: Sendable {
     }
 
     var payloads: [RemoteDataSource: Payload]
-    
+
+    /// Sources whose latest payload couldn't be parsed. They're absent from `payloads`.
+    var unreadableSources: Set<RemoteDataSource> = []
+
     /// Returns all schedule record that failed to parse across all payloads with their failure timestamps
     var failedSchedules: [FailedScheduleRecord] {
         payloads.values.flatMap { payload in
@@ -298,10 +362,18 @@ struct InAppRemoteData: Sendable {
 
     static func fromPayloads(_ payloads: [RemoteDataPayload]) -> InAppRemoteData {
         var parsed: [RemoteDataSource: Payload] = [:]
+        var unreadable: Set<RemoteDataSource> = []
         payloads.forEach { payload in
-            parsed[payload.remoteDataInfo?.source ?? .app] = parsePayload(payload)
+            let source = payload.remoteDataInfo?.source ?? .app
+            let result = parsePayload(payload)
+            parsed[source] = result
+            if result == nil {
+                unreadable.insert(source)
+            } else {
+                unreadable.remove(source)
+            }
         }
-        return InAppRemoteData(payloads: parsed)
+        return InAppRemoteData(payloads: parsed, unreadableSources: unreadable)
     }
 }
 
@@ -320,7 +392,8 @@ fileprivate struct PartialSchedule: Decodable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.identifier = try container.decode(String.self, forKey: .identifier)
-        self.minSDKVersion = try container.decodeIfPresent(String.self, forKey: .minSDKVersion)
+        // Only a retry hint: a wrong-typed value must not drop the failed-schedule record.
+        self.minSDKVersion = try? container.decodeIfPresent(String.self, forKey: .minSDKVersion)
         
         if let createdString = try? container.decodeIfPresent(String.self, forKey: .created) {
             self.created = AirshipDateFormatter.date(from: createdString)
@@ -345,6 +418,33 @@ fileprivate enum ScheduleDecodeResult: Decodable {
             if let container = try? decoder.singleValueContainer(),
                let partial = try? container.decode(PartialSchedule.self) {
                 self = .failed(partial, error)
+            } else {
+                self = .failed(nil, error)
+            }
+        }
+    }
+}
+
+/// Extracts just the id from a frequency constraint that failed to parse.
+fileprivate struct PartialConstraint: Decodable {
+    fileprivate let identifier: String
+
+    enum CodingKeys: String, CodingKey {
+        case identifier = "id"
+    }
+}
+
+fileprivate enum ConstraintDecodeResult: Decodable {
+    case succeed(FrequencyConstraint)
+    case failed(String?, any Error)
+
+    init(from decoder: any Decoder) throws {
+        do {
+            self = .succeed(try FrequencyConstraint(from: decoder))
+        } catch {
+            if let container = try? decoder.singleValueContainer(),
+               let partial = try? container.decode(PartialConstraint.self) {
+                self = .failed(partial.identifier, error)
             } else {
                 self = .failed(nil, error)
             }

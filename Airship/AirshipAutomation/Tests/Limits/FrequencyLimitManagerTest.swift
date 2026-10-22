@@ -295,5 +295,81 @@ struct FrequencyLimitManagerTest {
         let fooInfo = try await self.store.fetchConstraints(["foo"])
         #expect(fooInfo.first?.occurrences.count == 1)
     }
-    
+
+    @Test
+    func testPreservedConstraintIDIsNotDeleted() async throws {
+        try await self.manager.setConstraints(
+            [
+                FrequencyConstraint(identifier: "foo", range: 10, count: 2),
+                FrequencyConstraint(identifier: "bar", range: 10, count: 2)
+            ]
+        )
+
+        let checker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])
+        let result = await checker.checkAndIncrement()
+        #expect(result)
+
+        try await self.manager.setConstraints(
+            [],
+            preserveConstraintIDs: ["foo"],
+            preserveAll: false
+        )
+        await self.manager.writePending()
+
+        let fooInfo = try await self.store.fetchConstraints(["foo"])
+        #expect(fooInfo.first?.occurrences.count == 1)
+
+        let barInfo = try await self.store.fetchConstraints(["bar"])
+        #expect(barInfo.isEmpty)
+
+        let preservedChecker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])
+        let isOverLimit = await preservedChecker.isOverLimit
+        #expect(!isOverLimit)
+    }
+
+    @Test
+    func testPreserveAllDeletesNothingButStillUpserts() async throws {
+        try await self.manager.setConstraints(
+            [FrequencyConstraint(identifier: "foo", range: 10, count: 2)]
+        )
+
+        let checker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])
+        let result = await checker.checkAndIncrement()
+        #expect(result)
+
+        try await self.manager.setConstraints(
+            [FrequencyConstraint(identifier: "bar", range: 10, count: 2)],
+            preserveConstraintIDs: [],
+            preserveAll: true
+        )
+        await self.manager.writePending()
+
+        let fooInfo = try await self.store.fetchConstraints(["foo"])
+        #expect(fooInfo.first?.occurrences.count == 1)
+
+        let barInfo = try await self.store.fetchConstraints(["bar"])
+        #expect(barInfo.count == 1)
+    }
+
+    @Test
+    func testPreserveAllStillClearsOccurrencesOnRangeChange() async throws {
+        try await self.manager.setConstraints(
+            [FrequencyConstraint(identifier: "foo", range: 10, count: 2)]
+        )
+
+        let checker = try await self.manager.getFrequencyChecker(constraintIDs: ["foo"])
+        let result = await checker.checkAndIncrement()
+        #expect(result)
+        await self.manager.writePending()
+
+        try await self.manager.setConstraints(
+            [FrequencyConstraint(identifier: "foo", range: 20, count: 2)],
+            preserveConstraintIDs: ["foo"],
+            preserveAll: true
+        )
+
+        let fooInfo = try await self.store.fetchConstraints(["foo"])
+        #expect(fooInfo.first?.constraint.range == 20)
+        #expect(fooInfo.first?.occurrences.count == 0)
+    }
 }

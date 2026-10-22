@@ -485,6 +485,121 @@ struct AutomationRemoteDataSubscriberTest {
         }
     }
 
+    @Test
+    func testMalformedConstraintEntryKeepsOtherConstraintsAndMessages() async throws {
+        let schedules = makeSchedules(source: .app)
+        let constraints = [FrequencyConstraint(identifier: "foo", range: 100, count: 10)]
+
+        let data = InAppRemoteData(
+            payloads: [
+                .app: .init(
+                    data: .init(
+                        schedules: schedules,
+                        constraints: constraints,
+                        failedConstraintIDs: ["bad"]
+                    ),
+                    timestamp: Date()
+                )
+            ]
+        )
+
+        await confirmation { confirm in
+            await self.engine.setOnUpsert { upserted in
+                #expect(upserted == schedules)
+                confirm()
+            }
+            await self.subscriber.process(data)
+        }
+
+        #expect(await self.frequencyLimits.constraints == constraints)
+        #expect(await self.frequencyLimits.preserveConstraintIDs == ["bad"])
+        #expect(await self.frequencyLimits.setConstraintsCallCount == 1)
+        #expect(await self.frequencyLimits.preserveAll == false)
+    }
+
+    @Test
+    func testConstraintEntryWithoutIdPreservesAllConstraints() async throws {
+        let constraints = [FrequencyConstraint(identifier: "foo", range: 100, count: 10)]
+
+        let data = InAppRemoteData(
+            payloads: [
+                .app: .init(
+                    data: .init(
+                        schedules: [],
+                        constraints: constraints,
+                        constraintsUnreadable: true
+                    ),
+                    timestamp: Date()
+                )
+            ]
+        )
+
+        await self.subscriber.process(data)
+
+        #expect(await self.frequencyLimits.constraints == constraints)
+        #expect(await self.frequencyLimits.setConstraintsCallCount == 1)
+        #expect(await self.frequencyLimits.preserveAll == true)
+    }
+
+    @Test
+    func testUnreadableListStopsMessagesButKeepsConstraints() async throws {
+        let schedules = makeSchedules(source: .app)
+        await self.engine.setSchedules(schedules)
+
+        let data = InAppRemoteData(payloads: [:], unreadableSources: [.app])
+
+        await confirmation { confirm in
+            await self.engine.setOnStop { _ in
+                confirm()
+            }
+            await self.subscriber.process(data)
+        }
+
+        #expect(await self.frequencyLimits.constraints.isEmpty)
+        #expect(await self.frequencyLimits.setConstraintsCallCount == 1)
+        #expect(await self.frequencyLimits.preserveAll == true)
+    }
+
+    @Test
+    func testOneUnreadableSourceStillUpsertsOtherSourcesConstraints() async throws {
+        let contactConstraints = [FrequencyConstraint(identifier: "new", range: 1, count: 1)]
+
+        let data = InAppRemoteData(
+            payloads: [
+                .contact: .init(
+                    data: .init(schedules: [], constraints: contactConstraints),
+                    timestamp: Date()
+                )
+            ],
+            unreadableSources: [.app]
+        )
+
+        await self.subscriber.process(data)
+
+        #expect(await self.frequencyLimits.constraints == contactConstraints)
+        #expect(await self.frequencyLimits.setConstraintsCallCount == 1)
+        #expect(await self.frequencyLimits.preserveAll == true)
+    }
+
+    @Test
+    func testConstraintsDeletedWhenEverythingIsReadable() async throws {
+        let data = InAppRemoteData(
+            payloads: [
+                .app: .init(
+                    data: .init(schedules: [], constraints: nil),
+                    timestamp: Date()
+                )
+            ]
+        )
+
+        await self.subscriber.process(data)
+
+        #expect(await self.frequencyLimits.constraints.isEmpty)
+        #expect(await self.frequencyLimits.preserveConstraintIDs.isEmpty)
+        #expect(await self.frequencyLimits.setConstraintsCallCount == 1)
+        #expect(await self.frequencyLimits.preserveAll == false)
+    }
+
     // MARK: - Failed schedule tracking tests
 
     @Test

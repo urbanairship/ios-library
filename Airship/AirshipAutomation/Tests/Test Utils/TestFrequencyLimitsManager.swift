@@ -7,7 +7,10 @@ import Foundation
 
 
 final actor TestFrequencyLimitManager: FrequencyLimitManagerProtocol {
-    private var constraints: [FrequencyConstraint] = []
+    private(set) var constraints: [FrequencyConstraint] = []
+    private(set) var preserveConstraintIDs: Set<String> = []
+    private(set) var preserveAll: Bool = false
+    private(set) var setConstraintsCallCount: Int = 0
 
 
     private var checkerBlock: (@Sendable ([String]) async throws -> FrequencyCheckerProtocol)?
@@ -21,8 +24,15 @@ final actor TestFrequencyLimitManager: FrequencyLimitManagerProtocol {
     func setOnConstraints(_ onConstraints: @escaping @Sendable ([FrequencyConstraint]) async throws -> Void) {
         self.onConstraints = onConstraints
     }
-    func setConstraints(_ constraints: [FrequencyConstraint]) async throws {
+    func setConstraints(
+        _ constraints: [FrequencyConstraint],
+        preserveConstraintIDs: Set<String>,
+        preserveAll: Bool
+    ) async throws {
         self.constraints = constraints
+        self.preserveConstraintIDs = preserveConstraintIDs
+        self.preserveAll = preserveAll
+        self.setConstraintsCallCount += 1
         try await onConstraints?(constraints)
     }
 
