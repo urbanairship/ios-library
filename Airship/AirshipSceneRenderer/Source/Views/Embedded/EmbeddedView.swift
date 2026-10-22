@@ -382,8 +382,15 @@ struct AdoptLayoutEngine: SwiftUI.Layout {
             // constraints keep their last real value until the next committed pass.
             if !isProbe && bounds.width > 0 && bounds.height > 0 {
                 if let constraintsPublisher {
-                    MainActor.assumeIsolated {
-                        constraintsPublisher.publish(newConstraints, to: viewConstraints)
+                    // `Layout` is nonisolated and may run off the main thread, where `assumeIsolated` traps.
+                    if Thread.isMainThread {
+                        MainActor.assumeIsolated {
+                            constraintsPublisher.publish(newConstraints, to: viewConstraints)
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            constraintsPublisher.publish(newConstraints, to: viewConstraints)
+                        }
                     }
                 } else {
                     DispatchQueue.main.async {
