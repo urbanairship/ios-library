@@ -298,7 +298,10 @@ final class ThomasState: ObservableObject {
             initialState: AirshipJSON? = nil,
             taskSleeper: any AirshipTaskSleeper = DefaultAirshipTaskSleeper.shared
         ) {
-            self.state = initialState ?? [:]
+            var appliedState = initialState?.object ?? [:]
+            appliedState[ThomasEnvironmentState.stateKey] = nil
+            self.appliedState = appliedState
+            self.state = .object(appliedState)
             self.taskSleeper = taskSleeper
         }
 
