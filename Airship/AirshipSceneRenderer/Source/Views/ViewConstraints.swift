@@ -259,8 +259,6 @@ struct ViewConstraints: Equatable {
         // it would decide whether the view was still short, having just made it taller — the walk
         // between hugging and the floor that the modal used to unpick by discarding the length
         // altogether, taking the floor with it.
-        let declaredWidth = childWidth
-        let declaredHeight = childHeight
         if let contentSize = contentSize {
             if let maxWidth = childMaxWidth, contentSize.width >= maxWidth {
                 childWidth = maxWidth
@@ -277,37 +275,19 @@ struct ViewConstraints: Equatable {
             // the author sees — border included — the same reason `childConstraints` derives before
             // it deducts. Deriving straight from an already-reduced length would leave the visible
             // box off-ratio by the stroke.
-            //
-            // Keyed on the declared lengths: content that reached the ceiling on the derived axis
-            // has set a length there by now, and reading that as declared would drop the ratio.
-            let width = declaredWidth == nil && declaredHeight != nil ? nil : childWidth
-            let height = declaredHeight == nil && declaredWidth != nil ? nil : childHeight
-
-            var derived: CGSize? = nil
-            switch (width, height) {
+            switch (childWidth, childHeight) {
             case (nil, let h?):
-                derived = CGSize(width: (h + stroke) * ratio, height: h + stroke)
+                childWidth = max(0, (h + stroke) * ratio - stroke)
+                    .bound(minValue: childMinWidth, maxValue: childMaxWidth)
                 aspectRatio = ratio
             case (let w?, nil):
-                derived = CGSize(width: w + stroke, height: (w + stroke) / ratio)
+                childHeight = max(0, (w + stroke) / ratio - stroke)
+                    .bound(minValue: childMinHeight, maxValue: childMaxHeight)
                 aspectRatio = ratio
             case (nil, nil):
                 aspectRatio = ratio
             default:
                 break
-            }
-
-            if let derived {
-                let box = Self.fitting(
-                    derived,
-                    ratio: ratio,
-                    maxWidth: childMaxWidth.map { $0 + stroke },
-                    maxHeight: childMaxHeight.map { $0 + stroke }
-                )
-                childWidth = max(0, box.width - stroke)
-                    .bound(minValue: childMinWidth, maxValue: childMaxWidth)
-                childHeight = max(0, box.height - stroke)
-                    .bound(minValue: childMinHeight, maxValue: childMaxHeight)
             }
         }
 
@@ -330,32 +310,6 @@ struct ViewConstraints: Equatable {
             aspectRatio: aspectRatio,
             safeAreaInsets: self.safeAreaInsets
         )
-    }
-
-    /// Returns [size] if it fits within the maxima, otherwise the largest box of [ratio] that does.
-    ///
-    /// A box that overflows on either axis shrinks on both, so the ratio survives and the declared
-    /// length gives way: `auto x 100%` at a ratio of 1 in a window 400 wide and 800 tall is
-    /// 400 x 400, not 400 x 800. A missing maximum leaves that axis unbounded.
-    ///
-    /// - Parameters:
-    ///   - size: The box with one length declared and the other derived from [ratio].
-    ///   - ratio: Width over height, greater than zero.
-    ///   - maxWidth: The widest the box may be, if anything bounds it.
-    ///   - maxHeight: The tallest the box may be, if anything bounds it.
-    /// - Returns: [size] unchanged when it fits, or the fitted box.
-    private static func fitting(
-        _ size: CGSize,
-        ratio: Double,
-        maxWidth: CGFloat?,
-        maxHeight: CGFloat?
-    ) -> CGSize {
-        let fitsWidth = maxWidth.map { size.width <= $0 } ?? true
-        let fitsHeight = maxHeight.map { size.height <= $0 } ?? true
-        if fitsWidth && fitsHeight { return size }
-
-        let width = min(maxWidth ?? .infinity, (maxHeight ?? .infinity) * ratio)
-        return CGSize(width: width, height: width / ratio)
     }
 
     /// [borderStrokeWidth] is the child's own stroke, not ours.
