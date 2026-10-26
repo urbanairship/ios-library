@@ -20,6 +20,12 @@ public struct MessageCenterView: View {
         case split
         /// A navigation style that uses a stack view.
         case stack
+        /// A navigation style that lays the list and the message out with the system's `ArrangementView`.
+        ///
+        /// The two panes stay on screen at every size and stack vertically when the container is taller
+        /// than it is wide, instead of collapsing to a single column. Requires iOS 27.1 or later;
+        /// otherwise this behaves like `split`. `auto` never chooses it.
+        case arrangement
         /// The default navigation style.
         ///
         /// On iOS 26+, always uses `split`, relying on the split view's own adaptivity to collapse
@@ -84,7 +90,7 @@ private struct MessageCenterAdaptiveNavigationView: View {
 
     private var shouldUseSplit: Bool {
         switch navigationStyle {
-        case .split:
+        case .split, .arrangement:
             return true
         case .stack:
             return false
@@ -134,7 +140,8 @@ private struct MessageCenterAdaptiveNavigationView: View {
                 MessageCenterNavigationSplitView(
                     controller: controller,
                     listViewModel: listViewModel,
-                    editMode: $editMode
+                    editMode: $editMode,
+                    usesArrangementView: navigationStyle == .arrangement
                 )
 #else
                 MessageCenterNavigationSplitView(

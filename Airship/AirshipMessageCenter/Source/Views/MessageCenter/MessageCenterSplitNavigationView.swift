@@ -23,15 +23,23 @@ struct MessageCenterNavigationSplitView: View {
     private var editMode: EditMode
 #endif
 
+#if os(iOS)
+    private let usesArrangementView: Bool
+#endif
+
 #if !os(macOS)
     init(
         controller: MessageCenterController,
         listViewModel: MessageCenterMessageListViewModel,
-        editMode: Binding<EditMode>
+        editMode: Binding<EditMode>,
+        usesArrangementView: Bool = false
     ) {
         self.controller = controller
         self.listViewModel = listViewModel
         self._editMode = editMode
+#if os(iOS)
+        self.usesArrangementView = usesArrangementView
+#endif
     }
 #else
     init(
@@ -78,7 +86,7 @@ struct MessageCenterNavigationSplitView: View {
     }
 
     @ViewBuilder
-    public var body: some View {
+    private var navigationSplitView: some View {
         NavigationSplitView {
             self.sidebar
         } detail: {
@@ -86,5 +94,26 @@ struct MessageCenterNavigationSplitView: View {
                 self.detailView
             }
         }
+    }
+
+    @ViewBuilder
+    public var body: some View {
+#if os(iOS) && canImport(SwiftUI, _version: 8.0.85)
+        // Compiled only against the iOS 27.1 SDK so Xcode 27.0 still builds.
+        if usesArrangementView, #available(iOS 27.1, *) {
+            ArrangementView {
+                self.sidebar
+            } secondary: {
+                NavigationStack {
+                    self.detailView
+                }
+            }
+            .arrangementViewStyle(.split)
+        } else {
+            self.navigationSplitView
+        }
+#else
+        self.navigationSplitView
+#endif
     }
 }

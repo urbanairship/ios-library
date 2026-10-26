@@ -239,7 +239,10 @@ public struct MessageCenterListView: View {
                         .opacity(self.listOpacity)
                         .listBackground(listBackgroundColor)
                         .animation(.easeInOut(duration: 0.5), value: self.listOpacity)
-                        .padding(.bottom, 60) // small spacing at bottom to avoid tab bars
+                        // An inset rather than padding, so the list background still reaches the bottom edge.
+                        .safeAreaInset(edge: .bottom, spacing: 0) {
+                            Color.clear.frame(height: 60)
+                        }
                 }
             }
             .airshipOnChangeOf(self.viewModel.messages, initial: true) { messages in

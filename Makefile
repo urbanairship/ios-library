@@ -1,5 +1,5 @@
 
-XCODE ?= 27.0
+XCODE ?= 27.1
 
 export XCBEAUTIFY_RENDERER ?= github-actions
 export TEST_DESTINATION ?= $(shell ./scripts/get_test_destination.sh)
