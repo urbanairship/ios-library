@@ -243,19 +243,13 @@ public final class PreferenceDataStore: @unchecked Sendable {
     /// Scoped to the app's own preferences domain rather than
     /// `dictionaryRepresentation()`, which also exposes `NSGlobalDomain`, managed
     /// configuration and registered defaults. We never wrote to any of those, and
-    /// `removeObject(forKey:)` can't remove from them either.
+    /// `removeObject(forKey:)` can't remove from them either. Without a bundle
+    /// identifier or a persisted app domain, nothing is migrated.
     private func migrateStandardDefaultsKeys() {
         let standardDefaults = UserDefaults.standard
 
-        let appDomain: [String: Any]
-        if let domainName = Bundle.main.bundleIdentifier,
-            let domain = standardDefaults.persistentDomain(forName: domainName)
-        {
-            appDomain = domain
-        } else {
-            // No bundle identifier, so there is no app domain to scope to.
-            appDomain = standardDefaults.dictionaryRepresentation()
-        }
+        let appDomain: [String: Any] = Bundle.main.bundleIdentifier
+            .flatMap { standardDefaults.persistentDomain(forName: $0) } ?? [:]
 
         let legacyPrefix = PreferenceDataStore.legacyKeyPrefix(
             appKey: self.appKey
