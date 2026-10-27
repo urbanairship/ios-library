@@ -488,6 +488,7 @@
 		6EAF17A22FF2000000EA3E56 /* ViewConstraintsAspectFitTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAF17A12FF2000000EA3E56 /* ViewConstraintsAspectFitTest.swift */; };
 		FE04DEECA77299ABD23663AD /* LabelMarkdownColorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5648F0CBDE898242927900A0 /* LabelMarkdownColorTest.swift */; };
 		77FC81C9692E11D05FCA34BD /* GridLayoutRenderingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19444E34611076F65DF01D9 /* GridLayoutRenderingTest.swift */; };
+		A1B2C3D4E5F60718293A4B5C /* LinearLayoutSpacingRenderingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C2D3E4F5061728394A5B6C /* LinearLayoutSpacingRenderingTest.swift */; };
 		010E8751CB1B12DC0E78191B /* GridLayoutTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D311ACFFD5A3A4E1F42DA39 /* GridLayoutTest.swift */; };
 		13633478520AE9F2697E8CEC /* SeededShuffleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3387A0584B2EBC7DFE09162E /* SeededShuffleTest.swift */; };
 		7E15F906C5694D60E0190343 /* SelectorConditionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ED661F0EECD3F7E3C309A9A /* SelectorConditionsTest.swift */; };
@@ -2143,6 +2144,7 @@
 		6EAF17A12FF2000000EA3E56 /* ViewConstraintsAspectFitTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewConstraintsAspectFitTest.swift; sourceTree = "<group>"; };
 		5648F0CBDE898242927900A0 /* LabelMarkdownColorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelMarkdownColorTest.swift; sourceTree = "<group>"; };
 		C19444E34611076F65DF01D9 /* GridLayoutRenderingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLayoutRenderingTest.swift; sourceTree = "<group>"; };
+		B1C2D3E4F5061728394A5B6C /* LinearLayoutSpacingRenderingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinearLayoutSpacingRenderingTest.swift; sourceTree = "<group>"; };
 		9D311ACFFD5A3A4E1F42DA39 /* GridLayoutTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridLayoutTest.swift; sourceTree = "<group>"; };
 		3387A0584B2EBC7DFE09162E /* SeededShuffleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeededShuffleTest.swift; sourceTree = "<group>"; };
 		0ED661F0EECD3F7E3C309A9A /* SelectorConditionsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectorConditionsTest.swift; sourceTree = "<group>"; };
@@ -5090,6 +5092,7 @@
 				6EAF17A12FF2000000EA3E56 /* ViewConstraintsAspectFitTest.swift */,
 				5648F0CBDE898242927900A0 /* LabelMarkdownColorTest.swift */,
 				C19444E34611076F65DF01D9 /* GridLayoutRenderingTest.swift */,
+				B1C2D3E4F5061728394A5B6C /* LinearLayoutSpacingRenderingTest.swift */,
 				9D311ACFFD5A3A4E1F42DA39 /* GridLayoutTest.swift */,
 				3387A0584B2EBC7DFE09162E /* SeededShuffleTest.swift */,
 				0ED661F0EECD3F7E3C309A9A /* SelectorConditionsTest.swift */,
@@ -7740,6 +7743,7 @@
 				6EAF17A22FF2000000EA3E56 /* ViewConstraintsAspectFitTest.swift in Sources */,
 				FE04DEECA77299ABD23663AD /* LabelMarkdownColorTest.swift in Sources */,
 				77FC81C9692E11D05FCA34BD /* GridLayoutRenderingTest.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5C /* LinearLayoutSpacingRenderingTest.swift in Sources */,
 				010E8751CB1B12DC0E78191B /* GridLayoutTest.swift in Sources */,
 				13633478520AE9F2697E8CEC /* SeededShuffleTest.swift in Sources */,
 				7E15F906C5694D60E0190343 /* SelectorConditionsTest.swift in Sources */,
