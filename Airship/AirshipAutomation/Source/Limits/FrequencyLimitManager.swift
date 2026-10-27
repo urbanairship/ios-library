@@ -16,7 +16,29 @@ protocol FrequencyLimitManagerProtocol: Sendable {
         constraintIDs: [String]?
     ) async throws -> any FrequencyCheckerProtocol
 
-    func setConstraints(_ constraints: [FrequencyConstraint]) async throws
+    /// Upserts `constraints` and deletes stored constraints that are no longer listed.
+    ///
+    /// A stored constraint missing from `constraints` survives, with its occurrences, when its id is
+    /// in `preserveConstraintIDs` or when `preserveAll` is true. A listed constraint whose range
+    /// changed is always replaced and its occurrences cleared.
+    /// - Parameters:
+    ///   - constraints: The constraints that could be read.
+    ///   - preserveConstraintIDs: Ids of stored constraints that are never deleted for being unlisted.
+    ///   - preserveAll: When true, no unlisted constraint is deleted.
+    func setConstraints(
+        _ constraints: [FrequencyConstraint],
+        preserveConstraintIDs: Set<String>,
+        preserveAll: Bool
+    ) async throws
+}
+
+extension FrequencyLimitManagerProtocol {
+    /// Upserts `constraints` and deletes every stored constraint that isn't listed.
+    /// - Parameters:
+    ///   - constraints: The constraints.
+    func setConstraints(_ constraints: [FrequencyConstraint]) async throws {
+        try await setConstraints(constraints, preserveConstraintIDs: [], preserveAll: false)
+    }
 }
 
 /// Manager for keeping track of frequency limits and occurrence counts.
@@ -96,7 +118,11 @@ final class FrequencyLimitManager: FrequencyLimitManagerProtocol, Sendable {
         try await setConstraints(constraints)
     }
 
-    func setConstraints(_ constraints: [FrequencyConstraint]) async throws {
+    func setConstraints(
+        _ constraints: [FrequencyConstraint],
+        preserveConstraintIDs: Set<String>,
+        preserveAll: Bool
+    ) async throws {
         try await self.storeQueue.run {
             await self.writePending()
 
@@ -114,7 +140,7 @@ final class FrequencyLimitManager: FrequencyLimitManagerProtocol, Sendable {
             let delete = existing
                 .filter { constraint in
                     if (!incomingIDs.contains(constraint.identifier)) {
-                        return true
+                        return !preserveAll && !preserveConstraintIDs.contains(constraint.identifier)
                     }
 
                     return constraints.contains { incoming in

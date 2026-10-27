@@ -12,6 +12,7 @@ struct BannerView: View {
     @Environment(\.windowSize) private var windowSize
     @Environment(\.orientation) private var orientation
     @Environment(\.layoutDirection) private var layoutDirection
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     static let animationInOutDuration: Double = 0.3
 
@@ -93,7 +94,8 @@ struct BannerView: View {
                     }
                     .airshipApplyBannerTransition(
                         position: placement.position,
-                        transition: placement.transition
+                        transition: placement.transition,
+                        reduceMotion: reduceMotion
                     )
                     // The window, not this view: the view controller shrinks this view to the banner.
                     .reportsHostFrame(.init(
@@ -377,18 +379,20 @@ private extension View {
     @ViewBuilder
     func airshipApplyBannerTransition(
         position: ThomasEdgePosition,
-        transition: ThomasPresentationInfo.Banner.Transition?
+        transition: ThomasPresentationInfo.Banner.Transition?,
+        reduceMotion: Bool
     ) -> some View {
         // A missing transition defaults to sliding both ways, matching Android.
         let enter = transition?.enter ?? .slide(.init())
         let exit = transition?.exit ?? .slide(.init())
         let edge = position.bannerSlideEdge
-        self.transition(
-            .asymmetric(
-                insertion: .bannerTransition(for: enter, edge: edge, isExit: false),
-                removal: .bannerTransition(for: exit, edge: edge, isExit: true)
-            )
+        // Reduce Motion replaces the slide with a plain cross-fade; the authored
+        // durations still apply through the surrounding withAnimation.
+        let resolved: AnyTransition = reduceMotion ? .opacity : .asymmetric(
+            insertion: .bannerTransition(for: enter, edge: edge, isExit: false),
+            removal: .bannerTransition(for: exit, edge: edge, isExit: true)
         )
+        self.transition(resolved)
     }
 }
 

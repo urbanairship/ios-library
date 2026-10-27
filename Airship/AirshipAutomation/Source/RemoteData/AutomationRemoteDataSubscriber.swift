@@ -74,10 +74,19 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
                     return
                 }
 
-                await self?.processConstraints(update)
-                await self?.processAutomations(update)
+                await self?.process(update)
             }
         }
+    }
+
+    /// Syncs constraints, then schedules, for one remote-data update.
+    ///
+    /// Must not run concurrently with the subscription's own processing.
+    /// - Parameters:
+    ///   - data: The parsed in-app remote data.
+    func process(_ data: InAppRemoteData) async {
+        await processConstraints(data)
+        await processAutomations(data)
     }
 
     /// Stops the subscription and cancels any ongoing processing task.
@@ -234,8 +243,26 @@ final class AutomationRemoteDataSubscriber: AutomationRemoteDataSubscriberProtoc
             }
             .reduce([], +)
 
+        let preserveConstraintIDs = Set(
+            data.payloads.values.flatMap { $0.data.failedConstraintIDs }
+        )
+
+        // The constraint store has no source column, so one unreadable source blocks every deletion.
+        let unreadableSources = RemoteDataSource.allCases.filter { source in
+            data.unreadableSources.contains(source)
+                || (data.payloads[source]?.data.constraintsUnreadable ?? false)
+        }
+
+        if !unreadableSources.isEmpty {
+            AirshipLogger.error("Constraints unreadable for \(unreadableSources), keeping all stored constraints")
+        }
+
         do {
-            try await frequencyLimitManager.setConstraints(constraints)
+            try await frequencyLimitManager.setConstraints(
+                constraints,
+                preserveConstraintIDs: preserveConstraintIDs,
+                preserveAll: !unreadableSources.isEmpty
+            )
         } catch {
             AirshipLogger.error("Failed to process constraints \(error)")
         }

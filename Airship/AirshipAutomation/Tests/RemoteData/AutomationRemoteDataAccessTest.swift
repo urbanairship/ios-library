@@ -407,7 +407,132 @@ struct AutomationRemoteDataAccessTest {
         let expectedCreatedDate = AirshipDateFormatter.date(from: "2023-12-20T12:00:00Z")
         #expect(inAppRemoteData.failedSchedules.first?.createdDate == expectedCreatedDate)
     }
-    
+
+    @Test
+    func testMalformedConstraintEntryKeepsItsIdAndOtherConstraints() throws {
+        let json = """
+        {
+            "in_app_messages": [],
+            "frequency_constraints": [
+                { "id": "foo", "range": 10, "boundary": 2, "period": "seconds" },
+                { "id": "bad", "range": 10, "boundary": 2, "period": "fortnight" }
+            ]
+        }
+        """
+
+        let decoded: InAppRemoteData.Data = try AirshipJSON.from(json: json).decode()
+        #expect(decoded.constraints?.map { $0.identifier } == ["foo"])
+        #expect(decoded.failedConstraintIDs == ["bad"])
+        #expect(!decoded.constraintsUnreadable)
+    }
+
+    @Test
+    func testConstraintEntryWithoutIdMarksConstraintsUnreadable() throws {
+        let json = """
+        {
+            "in_app_messages": [],
+            "frequency_constraints": [
+                { "id": "foo", "range": 10, "boundary": 2, "period": "seconds" },
+                { "range": 10, "boundary": 2, "period": "fortnight" }
+            ]
+        }
+        """
+
+        let decoded: InAppRemoteData.Data = try AirshipJSON.from(json: json).decode()
+        #expect(decoded.constraints?.map { $0.identifier } == ["foo"])
+        #expect(decoded.failedConstraintIDs.isEmpty)
+        #expect(decoded.constraintsUnreadable)
+    }
+
+    @Test
+    func testNonListConstraintsKeepSchedulesAndMarkConstraintsUnreadable() throws {
+        let json = """
+        {
+            "in_app_messages": [
+                {
+                    "id": "valid_schedule",
+                    "triggers": [{ "type": "custom_event_count", "goal": 1, "id": "json-id" }],
+                    "type": "actions",
+                    "actions": { "foo": "bar" }
+                }
+            ],
+            "frequency_constraints": { "id": "foo" }
+        }
+        """
+
+        let decoded: InAppRemoteData.Data = try AirshipJSON.from(json: json).decode()
+        #expect(decoded.schedules.map { $0.identifier } == ["valid_schedule"])
+        #expect(decoded.constraints == nil)
+        #expect(decoded.constraintsUnreadable)
+    }
+
+    @Test
+    func testNullConstraintsReadAsAbsent() throws {
+        let decoded: InAppRemoteData.Data = try AirshipJSON.from(
+            json: "{\"in_app_messages\": [], \"frequency_constraints\": null}"
+        ).decode()
+
+        #expect(decoded.constraints == nil)
+        #expect(decoded.failedConstraintIDs.isEmpty)
+        #expect(!decoded.constraintsUnreadable)
+    }
+
+    @Test
+    func testNonObjectConstraintEntryMarksConstraintsUnreadable() throws {
+        let decoded: InAppRemoteData.Data = try AirshipJSON.from(
+            json: "{\"in_app_messages\": [], \"frequency_constraints\": [\"foo\", 1]}"
+        ).decode()
+
+        #expect(decoded.constraints?.isEmpty == true)
+        #expect(decoded.failedConstraintIDs.isEmpty)
+        #expect(decoded.constraintsUnreadable)
+    }
+
+    @Test
+    func testWrongTypedConstraintIdMarksConstraintsUnreadable() throws {
+        let json = """
+        {
+            "in_app_messages": [],
+            "frequency_constraints": [
+                { "id": 5, "range": 10, "boundary": 2, "period": "fortnight" }
+            ]
+        }
+        """
+
+        let decoded: InAppRemoteData.Data = try AirshipJSON.from(json: json).decode()
+        #expect(decoded.failedConstraintIDs.isEmpty)
+        #expect(decoded.constraintsUnreadable)
+    }
+
+    @Test
+    func testFromPayloadsReportsUnreadableSource() throws {
+        let payload = RemoteDataPayload(
+            type: "in_app_messages",
+            timestamp: Date(),
+            data: try AirshipJSON.from(json: "{\"in_app_messages\": \"not a list\"}"),
+            remoteDataInfo: makeRemoteDataInfo(.contact)
+        )
+
+        let inAppRemoteData = InAppRemoteData.fromPayloads([payload])
+        #expect(inAppRemoteData.payloads.isEmpty)
+        #expect(inAppRemoteData.unreadableSources == [.contact])
+    }
+
+    @Test
+    func testFailedScheduleWithWrongTypedMinSDKVersionIsTracked() throws {
+        let json = """
+        {
+            "in_app_messages": [
+                { "id": "failed_schedule_id", "min_sdk_version": 17, "type": "actions" }
+            ]
+        }
+        """
+
+        let decoded: InAppRemoteData.Data = try AirshipJSON.from(json: json).decode()
+        #expect(decoded.failedSchedules.map { $0.identifier } == ["failed_schedule_id"])
+        #expect(decoded.failedSchedules.first?.minSDKVersion == nil)
+    }
+
     private func makeSchedule(remoteDataInfo: RemoteDataInfo?) -> AutomationSchedule {
         return AutomationSchedule(
             identifier: UUID().uuidString,

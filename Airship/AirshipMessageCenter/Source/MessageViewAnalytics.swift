@@ -12,6 +12,7 @@ final class DefaultMessageViewAnalytics: ThomasLayoutMessageAnalyticsProtocol {
     private let messageID: ThomasLayoutEventMessageID
     private let productID: String
     private let reportingContext: AirshipJSON?
+    private let eventReportingContext: AirshipJSON?
     private let eventRecorder: any ThomasLayoutEventRecorderProtocol
     private let eventSource: ThomasLayoutEventSource
     
@@ -34,6 +35,7 @@ final class DefaultMessageViewAnalytics: ThomasLayoutMessageAnalyticsProtocol {
         self.messageID = .airship(identifier: message.id, campaigns: nil)
         self.productID = message.productID ?? Self.defaultProductID
         self.reportingContext = Self.reportingContext(messageReporting: message.messageReporting)
+        self.eventReportingContext = Self.eventReportingContext(messageReporting: message.messageReporting)
         self.eventRecorder = eventRecorder
         self.eventSource = eventSource
         self.date = date
@@ -103,7 +105,7 @@ final class DefaultMessageViewAnalytics: ThomasLayoutMessageAnalyticsProtocol {
             let data = ThomasLayoutEventData(
                 event: event,
                 context: ThomasLayoutEventContext.makeContext(
-                    reportingContext: reportingContext,
+                    reportingContext: eventReportingContext,
                     experimentsResult: nil,
                     layoutContext: layoutContext,
                     displayContext: displayContext.value
@@ -117,13 +119,34 @@ final class DefaultMessageViewAnalytics: ThomasLayoutMessageAnalyticsProtocol {
         }
     }
     
-    /// Returns the reporting context a native message's events carry: `message_reporting.reporting_context`
+    /// Returns the reporting context a native message's impression carries: `message_reporting.reporting_context`
     /// where it has one, else the whole `message_reporting`.
     ///
     /// - Parameter messageReporting: the message's `message_reporting`
     /// - Returns: the reporting context, or `nil` when the message has no reporting
     static func reportingContext(messageReporting: AirshipJSON?) -> AirshipJSON? {
         messageReporting?.object?["reporting_context"] ?? messageReporting
+    }
+
+    /// Returns the reporting context a native message's events carry: `message_reporting.reporting_context`
+    /// with every other `message_reporting` key merged in.
+    ///
+    /// The `message_reporting` keys win over same-named keys in `reporting_context`. Without a
+    /// `reporting_context` object, the whole `message_reporting` is returned.
+    /// `{"message_id": "m", "reporting_context": {"content_types": ["scene"]}}` returns
+    /// `{"message_id": "m", "content_types": ["scene"]}`.
+    ///
+    /// - Parameter messageReporting: the message's `message_reporting`
+    /// - Returns: the reporting context, or `nil` when the message has no reporting
+    static func eventReportingContext(messageReporting: AirshipJSON?) -> AirshipJSON? {
+        guard
+            var message = messageReporting?.object,
+            let context = message.removeValue(forKey: "reporting_context")?.object
+        else {
+            return messageReporting
+        }
+
+        return .object(context.merging(message) { _, fromMessage in fromMessage })
     }
 
     private func shouldRecordImpression(history: MessageDisplayHistory) -> Bool {

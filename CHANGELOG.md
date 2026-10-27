@@ -4,6 +4,16 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 21.1.0 - October 22, 2026
+Minor release that adds Reduce Motion support to Scene transitions, along with fixes for Scenes, In-App Automation, and contacts.
+
+### Changes
+- Scene banner and modal transitions now respect Reduce Motion.
+- Fixed a crash in embedded Scenes with auto-sized placements.
+- Fixed several Scene layout and state issues, including `center_inside` media alignment and initial state being lost after the first state change.
+- Fixed In-App Automation messages re-displaying when their display limit should have been reached, and frequency limits being reset by unreadable remote data.
+- Fixed contact channel and subscription list refreshes continuing after their listeners were removed.
+
 ## Version 21.0.2 - September 18, 2026
 Patch release with additional Scene fixes plus fixes for Message Center, In-App Automation, and on-device AI.
 

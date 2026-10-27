@@ -217,55 +217,81 @@ fileprivate final class AirshipBackgroundTask {
 @available(iOS 16.1, *)
 extension Activity where Attributes : ActivityAttributes {
 
-    fileprivate class func _airshipActiveActivities() -> [Activity<Attributes>] {
-        self.activities.filter { activity in
-            if #available(iOS 16.2, *) {
-                return activity.activityState == .active || activity.activityState == .stale
-            } else {
-                return activity.activityState == .active
-            }
-        }
-    }
-
-    /// Calls `activityBlock` on every active activity on the first call and on each `pushToStartTokenUpdates` update.
+    /// Calls `activityBlock` once for every active activity on the first call, and once for each new activity afterwards.
+    /// A scheduled activity is passed once it becomes active.
     /// - Parameters:
-    ///     - unique: When `true`, `activityBlock` is called at most once per Live Activity, identified by
-    ///     its `id`. When `false` (the default), it is called on every check for every active activity.
     ///     - activityBlock: Block that is called with the activity
     public class func airshipWatchActivities(
-        unique: Bool = false,
         activityBlock: @escaping @Sendable (Activity<Attributes>) -> Void
     ) {
         Task {
             // This nested function is a workaround for a Swift compiler Sendable warning.
             // It avoids the Task's @Sendable closure from directly capturing the generic type.
             func run() async {
-                // Only allocated when `unique` is set. Tracks the ids already handed to
-                // `activityBlock` so each Live Activity only triggers the block once.
-                let handledIDs = unique ? AirshipAtomicValue<Set<String>>([]) : nil
+                let handledIDs = AirshipAtomicValue<Set<String>>([])
+                let markHandled: @Sendable (String) -> Bool = { id in
+                    var isNew = false
+                    handledIDs.update { ids in
+                        isNew = ids.insert(id).inserted
+                    }
+                    return isNew
+                }
 
-                func check() {
-                    for activity in _airshipActiveActivities() {
-                        if let handledIDs {
-                            var isNew = false
-                            handledIDs.update { ids in
-                                isNew = ids.insert(activity.id).inserted
-                            }
-                            guard isNew else { continue }
-                        }
+                func handle(_ activity: Activity<Attributes>) {
+                    if markHandled(activity.id) {
                         activityBlock(activity)
                     }
                 }
 
-                check()
-                if #available(iOS 17.2, *) {
-                    for await _ in Activity<Attributes>.pushToStartTokenUpdates {
-                        check()
+                func consider(_ activity: Activity<Attributes>) {
+                    let state = activity.activityState
+                    if state.isStaleOrActive {
+                        handle(activity)
+                    } else if state != .ended && state != .dismissed {
+                        // A scheduled activity is not active until its start date.
+                        let provider = ActivityProvider<Attributes>(id: activity.id)
+                        Task {
+                            func run() async {
+                                guard let activity = provider.getActivity() else { return }
+                                for await state in activity.activityStateUpdates {
+                                    if state.isStaleOrActive {
+                                        if markHandled(activity.id) {
+                                            activityBlock(activity)
+                                        }
+                                        return
+                                    }
+                                    if state == .ended || state == .dismissed {
+                                        return
+                                    }
+                                }
+                            }
+                            await run()
+                        }
                     }
+                }
+
+                Activity<Attributes>.activities.forEach(consider)
+
+                // Not `pushToStartTokenUpdates`, which `LiveActivityPushToStartTracker` already iterates.
+                for await activity in Activity<Attributes>.activityUpdates {
+                    consider(activity)
                 }
             }
             await run()
         }
+    }
+
+    /// Calls `activityBlock` once for every active activity on the first call, and once for each new activity afterwards.
+    /// - Parameters:
+    ///     - unique: Ignored. `activityBlock` is always called at most once per Live Activity, so `false` no longer
+    ///     calls it again for an activity it has already received.
+    ///     - activityBlock: Block that is called with the activity
+    @available(*, deprecated, message: "`unique` is ignored and `activityBlock` is now always called once per activity. Use `airshipWatchActivities(activityBlock:)`.")
+    public class func airshipWatchActivities(
+        unique: Bool,
+        activityBlock: @escaping @Sendable (Activity<Attributes>) -> Void
+    ) {
+        airshipWatchActivities(activityBlock: activityBlock)
     }
 }
 

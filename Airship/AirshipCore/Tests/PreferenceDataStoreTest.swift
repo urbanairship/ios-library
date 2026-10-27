@@ -215,6 +215,9 @@ import Foundation
         let secondReadSameInstance = await dataStore.isAppRestore
         #expect(secondReadSameInstance == value)
 
+        // The device-ID write is async; flush it before the next launch reads it.
+        dataStore.waitForWrites()
+
         // A genuinely new launch - a fresh PreferenceDataStore sharing the same
         // underlying storage - with a changed device ID must still detect the restore.
         let nextLaunchDataStore = PreferenceDataStore(
