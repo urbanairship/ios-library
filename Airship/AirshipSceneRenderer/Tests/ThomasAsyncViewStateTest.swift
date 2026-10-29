@@ -519,4 +519,20 @@ struct ThomasAsyncViewStateTest {
         await awaitStatus(state) { if case .error = $0 { return true } else { return false } }
         #expect(state.status == .error(.server(statusCode: 404)))
     }
+
+    @Test
+    func resolveKeepsTheResponseRootsNamedColors() async throws {
+        let json = #"""
+        {"type": "empty_view",
+         "background_color": {"type": "color_reference", "name": "brand"},
+         "references": {"colors": {"brand": {"default": {"type": "hex", "hex": "#C8336C", "alpha": 1}}}}}
+        """#
+        let state = ThomasAsyncViewState(
+            properties: try makeProperties(),
+            resolver: resolver([.success(Data(json.utf8))]),
+            taskSleeper: RecordingTaskSleeper()
+        )
+        try await state.resolve()
+        #expect(state.response?.references?.colors?["brand"]?.defaultColor.hex == "#C8336C")
+    }
 }

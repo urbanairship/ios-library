@@ -113,6 +113,16 @@ struct PreparedScheduleInfo: Codable, Equatable {
     private enum LegacyCodingKeys: String, CodingKey {
         case ledgerSharedID
     }
+
+    /// Whether execution reaches a variant experiment's no-message outcome (control or miss).
+    /// A matching global holdout and a failed additional audience check are both resolved ahead
+    /// of the variant, so neither is one. Such a schedule neither takes the display lock nor
+    /// spends frequency budget.
+    var resolvedToVariantNoMessage: Bool {
+        additionalAudienceCheckResult &&
+            experimentResult?.isMatch != true &&
+            variantAudienceResult?.outcome.isDisplaySkipped == true
+    }
 }
 
 /// This schedule's resolved outcome within its variant experiment, stamped at prepare time so

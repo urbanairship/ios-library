@@ -9,6 +9,7 @@ import Combine
 struct AsyncViewController: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.thomasAssociatedLabelResolver) var associatedLabelResolver
+    @Environment(\.thomasSelectorEnvironment) private var selectorEnvironment
     @EnvironmentObject var thomasState: ThomasState
     @EnvironmentObject private var thomasEnvironment: ThomasEnvironment
     
@@ -44,8 +45,9 @@ struct AsyncViewController: View {
     var body: some View {
         Group {
             if let response = state.response {
-                thomasEnvironment.viewFactory.createView(response, constraints: constraints)
+                thomasEnvironment.viewFactory.createView(response.view, constraints: constraints)
                     .environment(\.thomasAssociatedLabelResolver, resolverForResponse)
+                    .environment(\.thomasSelectorEnvironment, selectorEnvironment.overlaying(colors: response.references?.colors))
             } else {
                 thomasEnvironment.viewFactory.createView(info.properties.placeholder, constraints: constraints)
                     .constraints(constraints)
@@ -65,7 +67,7 @@ struct AsyncViewController: View {
         .airshipOnChangeOf(state.status) { status in
             guard case .loaded = status, let response = state.response else { return }
             resolverForResponse = associatedLabelResolver?.merging(
-                viewInfo: response,
+                viewInfo: response.view,
                 localizer: thomasEnvironment.extensions.localizer
             )
         }

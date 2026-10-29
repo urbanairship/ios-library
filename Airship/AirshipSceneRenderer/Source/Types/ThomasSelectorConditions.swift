@@ -27,6 +27,21 @@ struct ThomasSelectorEnvironment: Equatable, Sendable {
     var orientation: ThomasOrientation?
     /// The scene's environment conditions' chosen values; one with none chosen is left out.
     var conditions: [String: AirshipJSON] = [:]
+    /// The named colors a `ThomasColor.reference` looks up: the scene's, overlaid by an async view's own.
+    var colors: [String: ThomasColor.Definition] = [:]
+}
+
+extension ThomasSelectorEnvironment {
+    /// Returns this environment with `colors` laid over its named colors, which win where a name is in both.
+    ///
+    /// - Parameter colors: an async view's own named colors, if it has any
+    /// - Returns: the environment its content resolves color references in
+    func overlaying(colors: [String: ThomasColor.Definition]?) -> ThomasSelectorEnvironment {
+        guard let colors else { return self }
+        var environment = self
+        environment.colors.merge(colors) { _, overlay in overlay }
+        return environment
+    }
 }
 
 extension ThomasSelectorConditions {

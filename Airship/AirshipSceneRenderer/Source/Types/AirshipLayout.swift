@@ -26,6 +26,9 @@ public struct AirshipLayout: ThomasSerializable {
     /// What `$environment` holds beyond the platform's settings.
     let environmentState: ThomasEnvironmentStateInfo?
 
+    /// Values the scene defines once and refers to by name.
+    let references: ThomasSceneReferences?
+
     enum CodingKeys: String, CodingKey {
         case view
         case version
@@ -33,6 +36,7 @@ public struct AirshipLayout: ThomasSerializable {
         case options
         case contentDescription = "content_description"
         case environmentState = "environment_state"
+        case references
     }
 
     public var isEmbedded: Bool {

@@ -200,7 +200,8 @@ struct RootView<Content: View>: View {
             darkMode: colorScheme == .dark,
             windowSize: resolveWindowSize(),
             orientation: orientationTracker.orientation,
-            conditions: environmentState.values.conditions
+            conditions: environmentState.values.conditions,
+            colors: layout.references?.colors ?? [:]
         )
     }
 
