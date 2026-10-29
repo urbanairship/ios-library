@@ -13,14 +13,21 @@ struct LimitConfigTest {
     private let sharedID = "group-1"
     private let now = Date(timeIntervalSince1970: 10_000)
 
+    private let variantAudienceID = "iteration-1"
+
     private var context: LedgerLimitContext {
-        LedgerLimitContext(scheduleID: scheduleID, currentSharedIDs: [sharedID])
+        LedgerLimitContext(
+            scheduleID: scheduleID,
+            currentSharedIDs: [sharedID],
+            currentVariantAudienceID: variantAudienceID
+        )
     }
 
     private func execution(
         scheduleID: String? = nil,
         sharedIDs: [String] = [],
         triggerID: String? = nil,
+        variantAudienceID: String? = nil,
         timestamp: Date? = nil,
         count: Int? = nil,
         result: LedgerExecutionResult = .succeeded,
@@ -31,6 +38,7 @@ struct LimitConfigTest {
                 scheduleID: scheduleID ?? self.scheduleID,
                 sharedIDs: sharedIDs.isEmpty ? nil : sharedIDs,
                 triggerID: triggerID,
+                variantAudienceID: variantAudienceID,
                 timestamp: timestamp ?? self.now,
                 count: count,
                 result: result,
@@ -39,12 +47,16 @@ struct LimitConfigTest {
         )
     }
 
-    private func triggered(scheduleID: String? = nil) -> LedgerEvent {
+    private func triggered(
+        scheduleID: String? = nil,
+        variantAudienceID: String? = nil
+    ) -> LedgerEvent {
         return .triggered(
             LedgerEvent.Triggered(
                 scheduleID: scheduleID ?? self.scheduleID,
                 sharedIDs: nil,
                 triggerID: nil,
+                variantAudienceID: variantAudienceID,
                 timestamp: self.now,
                 count: nil
             )
@@ -54,12 +66,13 @@ struct LimitConfigTest {
     private func isOverLimit(
         limit: UInt,
         events: [LedgerEvent],
-        exclude: ExclusionSet? = nil
+        exclude: ExclusionSet? = nil,
+        context: LedgerLimitContext? = nil
     ) -> Bool {
         return LedgerLimitEvaluator.isOverLimit(
             limit: limit,
             events: events,
-            context: self.context,
+            context: context ?? self.context,
             limitConfig: .shared(exclude: exclude),
             now: self.now
         )
@@ -253,6 +266,128 @@ struct LimitConfigTest {
         #expect(!isOverLimit(limit: 2, events: events, exclude: exclude))
     }
 
+    // MARK: - Variant-audience matching
+
+    private func excludeVariantAudience(_ match: VariantAudienceMatch) -> ExclusionSet {
+        ExclusionSet(or: [
+            ExclusionRule(source: .any, match: .execution(.init(variantAudience: match)))
+        ])
+    }
+
+    private var contextWithoutVariantAudience: LedgerLimitContext {
+        LedgerLimitContext(
+            scheduleID: scheduleID,
+            currentSharedIDs: [sharedID],
+            currentVariantAudienceID: nil
+        )
+    }
+
+    @Test
+    func testExcludeCurrentVariantAudience() {
+        let events = [
+            execution(variantAudienceID: variantAudienceID),
+            execution(variantAudienceID: "iteration-0"),
+            execution()
+        ]
+        // Only the current iteration's event is removed.
+        let exclude = excludeVariantAudience(.current)
+        #expect(isOverLimit(limit: 2, events: events, exclude: exclude))
+        #expect(!isOverLimit(limit: 3, events: events, exclude: exclude))
+    }
+
+    @Test
+    func testExcludeNotCurrentVariantAudience() {
+        let events = [
+            execution(variantAudienceID: variantAudienceID),
+            execution(variantAudienceID: "iteration-0"),
+            execution(variantAudienceID: "iteration--1")
+        ]
+        let exclude = excludeVariantAudience(.notCurrent)
+        #expect(isOverLimit(limit: 1, events: events, exclude: exclude))
+        #expect(!isOverLimit(limit: 2, events: events, exclude: exclude))
+    }
+
+    @Test
+    func testExcludeVariantAudienceByID() {
+        let events = [
+            execution(variantAudienceID: variantAudienceID),
+            execution(variantAudienceID: "iteration-0")
+        ]
+        let exclude = excludeVariantAudience(.id("iteration-0"))
+        #expect(isOverLimit(limit: 1, events: events, exclude: exclude))
+        #expect(!isOverLimit(limit: 2, events: events, exclude: exclude))
+    }
+
+    @Test
+    func testEventsWithoutVariantAudienceNeverMatchAnyForm() {
+        let events = [execution(), execution()]
+        for match in [VariantAudienceMatch.current, .notCurrent, .id("iteration-0")] {
+            // Nothing is excluded, so both events still count.
+            #expect(isOverLimit(limit: 2, events: events, exclude: excludeVariantAudience(match)))
+        }
+    }
+
+    @Test
+    func testCurrentVariantAudienceMatchesNothingWithoutScheduleVariantAudience() {
+        let events = [execution(variantAudienceID: variantAudienceID)]
+        #expect(isOverLimit(
+            limit: 1,
+            events: events,
+            exclude: excludeVariantAudience(.current),
+            context: contextWithoutVariantAudience
+        ))
+    }
+
+    @Test
+    func testNotCurrentVariantAudienceWithoutScheduleVariantAudience() {
+        // Every event recorded under a variant audience is "not current".
+        let recorded = [execution(variantAudienceID: variantAudienceID)]
+        #expect(!isOverLimit(
+            limit: 1,
+            events: recorded,
+            exclude: excludeVariantAudience(.notCurrent),
+            context: contextWithoutVariantAudience
+        ))
+
+        let unrecorded = [execution()]
+        #expect(isOverLimit(
+            limit: 1,
+            events: unrecorded,
+            exclude: excludeVariantAudience(.notCurrent),
+            context: contextWithoutVariantAudience
+        ))
+    }
+
+    @Test
+    func testVariantAudienceCombinesWithOtherFilters() {
+        // Every filter on a match must hold for an event to be excluded.
+        let exclude = ExclusionSet(or: [
+            ExclusionRule(
+                source: .any,
+                match: .execution(.init(sharedGroup: .current, variantAudience: .notCurrent))
+            )
+        ])
+        let pastIteration = execution(sharedIDs: [sharedID], variantAudienceID: "iteration-0")
+        let currentIteration = execution(sharedIDs: [sharedID], variantAudienceID: variantAudienceID)
+        let otherGroup = execution(sharedIDs: ["other-group"], variantAudienceID: "iteration-0")
+
+        #expect(!isOverLimit(limit: 1, events: [pastIteration], exclude: exclude))
+        #expect(isOverLimit(limit: 1, events: [currentIteration], exclude: exclude))
+        #expect(isOverLimit(limit: 1, events: [otherGroup], exclude: exclude))
+    }
+
+    @Test
+    func testVariantAudienceMatchAppliesToTriggeredEvents() {
+        let exclude = ExclusionSet(or: [
+            ExclusionRule(source: .any, match: .triggered(.init(variantAudience: .current)))
+        ])
+        let triggeredEvent = triggered(variantAudienceID: variantAudienceID)
+        #expect(ExclusionRule(source: .any, match: .triggered(.init(variantAudience: .current)))
+            .matches(triggeredEvent, context: context, now: now))
+        #expect(exclude.excludes(triggeredEvent, context: context, now: now))
+        #expect(!exclude.excludes(triggered(), context: context, now: now))
+    }
+
     // MARK: - Forward compatibility
 
     @Test
@@ -288,6 +423,21 @@ struct LimitConfigTest {
     }
 
     @Test
+    func testUnknownVariantAudienceIsNoOp() throws {
+        let json = #"{"type": "execution", "variant_audience": {"type": "future_type"}}"#
+        let match = try JSONDecoder().decode(LedgerEventMatch.self, from: Data(json.utf8))
+        guard case .execution(let execution) = match else {
+            Issue.record("Expected execution match")
+            return
+        }
+        #expect(execution.variantAudience == .unknown)
+
+        let events = [self.execution(variantAudienceID: variantAudienceID)]
+        let exclude = excludeVariantAudience(.unknown)
+        #expect(isOverLimit(limit: 1, events: events, exclude: exclude))
+    }
+
+    @Test
     func testUnknownSharedGroupIsNoOp() throws {
         let json = """
         { "or": [ { "source": { "type": "any" }, "match": { "type": "execution", "shared_group": { "type": "future" } } } ] }
@@ -315,6 +465,7 @@ struct LimitConfigTest {
                   "cancel": true,
                   "trigger_id": "trig-1",
                   "shared_group": { "type": "id", "shared_id": "grp" },
+                  "variant_audience": { "type": "id", "variant_audience_id": "iteration-9" },
                   "time_bounds": { "start_timestamp": 1000, "end_timestamp": 2000 }
                 }
               }
@@ -342,6 +493,33 @@ struct LimitConfigTest {
         #expect(match.cancel == true)
         #expect(match.triggerID == "trig-1")
         #expect(match.sharedGroup == .id("grp"))
+        #expect(match.variantAudience == .id("iteration-9"))
+    }
+
+    @Test
+    func testDecodeVariantAudienceForms() throws {
+        func decode(_ audience: String) throws -> VariantAudienceMatch? {
+            let json = #"{"type": "execution", "variant_audience": \#(audience)}"#
+            guard case .execution(let match) = try JSONDecoder().decode(LedgerEventMatch.self, from: Data(json.utf8)) else {
+                return nil
+            }
+            return match.variantAudience
+        }
+
+        #expect(try decode(#"{"type": "current"}"#) == .current)
+        #expect(try decode(#"{"type": "not_current"}"#) == .notCurrent)
+        #expect(try decode(#"{"type": "id", "variant_audience_id": "x"}"#) == .id("x"))
+
+        // Absent means no filtering.
+        let absent = try JSONDecoder().decode(
+            LedgerEventMatch.self,
+            from: Data(#"{"type": "triggered"}"#.utf8)
+        )
+        guard case .triggered(let triggeredMatch) = absent else {
+            Issue.record("Expected triggered match")
+            return
+        }
+        #expect(triggeredMatch.variantAudience == nil)
     }
 
     @Test
@@ -362,6 +540,8 @@ struct LimitConfigTest {
             exclude: ExclusionSet(or: [
                 ExclusionRule(source: .ownSchedule, match: .execution(.init(results: [.holdout]))),
                 ExclusionRule(source: .schedule("x"), match: .triggered(.init(triggerID: "t"))),
+                ExclusionRule(source: .any, match: .execution(.init(variantAudience: .notCurrent))),
+                ExclusionRule(source: .any, match: .triggered(.init(variantAudience: .id("v")))),
                 ExclusionRule(source: .otherSchedules, match: nil)
             ])
         )

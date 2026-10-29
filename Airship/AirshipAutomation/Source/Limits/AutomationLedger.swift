@@ -17,7 +17,8 @@ protocol AutomationLedgerProtocol: Sendable {
     func recordTriggered(
         scheduleID: String,
         sharedIDs: [String],
-        triggerID: String?
+        triggerID: String?,
+        variantAudienceID: String?
     ) async
 
     /// Records the single outcome `execution` event for an attempt.
@@ -28,6 +29,7 @@ protocol AutomationLedgerProtocol: Sendable {
         scheduleID: String,
         sharedIDs: [String],
         triggerID: String?,
+        variantAudienceID: String?,
         result: LedgerExecutionResult,
         cancel: Bool
     ) async
@@ -50,7 +52,8 @@ final class AutomationLedger: AutomationLedgerProtocol {
     func recordTriggered(
         scheduleID: String,
         sharedIDs: [String],
-        triggerID: String?
+        triggerID: String?,
+        variantAudienceID: String?
     ) async {
         await self.record(
             .triggered(
@@ -58,6 +61,7 @@ final class AutomationLedger: AutomationLedgerProtocol {
                     scheduleID: scheduleID,
                     sharedIDs: LedgerSharedIDs.canonicalOrNil(sharedIDs),
                     triggerID: triggerID,
+                    variantAudienceID: variantAudienceID,
                     timestamp: self.date.now,
                     count: nil
                 )
@@ -69,6 +73,7 @@ final class AutomationLedger: AutomationLedgerProtocol {
         scheduleID: String,
         sharedIDs: [String],
         triggerID: String?,
+        variantAudienceID: String?,
         result: LedgerExecutionResult,
         cancel: Bool
     ) async {
@@ -78,6 +83,7 @@ final class AutomationLedger: AutomationLedgerProtocol {
                     scheduleID: scheduleID,
                     sharedIDs: LedgerSharedIDs.canonicalOrNil(sharedIDs),
                     triggerID: triggerID,
+                    variantAudienceID: variantAudienceID,
                     timestamp: self.date.now,
                     count: nil,
                     result: result,

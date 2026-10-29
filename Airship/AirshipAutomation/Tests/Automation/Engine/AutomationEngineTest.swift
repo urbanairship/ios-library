@@ -241,7 +241,56 @@ final class AutomationEngineTest {
 
         let recorded = await self.ledger.recorded
         #expect(recorded == [
-            .triggered(scheduleID: "record-schedule", sharedIDs: ["group-1"], triggerID: "trigger-1")
+            .triggered(
+                scheduleID: "record-schedule",
+                sharedIDs: ["group-1"],
+                triggerID: "trigger-1",
+                variantAudienceID: nil
+            )
+        ])
+    }
+
+    @Test
+    func testExecutionTriggerRecordsVariantAudienceID() async throws {
+        var schedule = makeSchedule(id: "variant-schedule")
+        schedule.variantAudience = try JSONDecoder().decode(
+            VariantAudience.self,
+            from: Data("""
+            {
+              "id": "iteration-1",
+              "audience_hash": {
+                "hash_prefix": "prefix:",
+                "num_hash_buckets": 16384,
+                "hash_identifier": "contact",
+                "hash_algorithm": "farm_hash"
+              },
+              "audience_subset": { "min_hash_bucket": 0, "max_hash_bucket": 0 }
+            }
+            """.utf8)
+        )
+        try await self.engine.upsertSchedules([schedule])
+
+        self.engine.setEnginePaused(true)
+        self.engine.setExecutionPaused(true)
+        await self.engine.start()
+
+        await self.triggersProcessor.emit(
+            TriggerResult(
+                scheduleID: "variant-schedule",
+                triggerExecutionType: .execution,
+                triggerInfo: TriggeringInfo(date: Date(), triggerID: "trigger-1")
+            )
+        )
+
+        try await waitForTriggeredRecord(scheduleID: "variant-schedule")
+
+        #expect(await self.ledger.recorded == [
+            .triggered(
+                scheduleID: "variant-schedule",
+                sharedIDs: [],
+                triggerID: "trigger-1",
+                variantAudienceID: "iteration-1"
+            )
         ])
     }
 
@@ -280,7 +329,12 @@ final class AutomationEngineTest {
 
         let recorded = await self.ledger.recorded
         #expect(recorded == [
-            .triggered(scheduleID: "barrier-schedule", sharedIDs: ["barrier-group"], triggerID: "trigger-barrier")
+            .triggered(
+                scheduleID: "barrier-schedule",
+                sharedIDs: ["barrier-group"],
+                triggerID: "trigger-barrier",
+                variantAudienceID: nil
+            )
         ])
     }
 
@@ -303,7 +357,7 @@ final class AutomationEngineTest {
         while Date() < deadline {
             let recorded = await self.ledger.recorded
             let found = recorded.contains {
-                if case .triggered(let sid, _, _) = $0 { return sid == scheduleID }
+                if case .triggered(let sid, _, _, _) = $0 { return sid == scheduleID }
                 return false
             }
             if found { return }

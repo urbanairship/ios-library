@@ -140,6 +140,7 @@ struct InAppMessageAutomationExecutorTest {
                 scheduleID: preparedInfo.scheduleID,
                 sharedIDs: [],
                 triggerID: nil,
+                variantAudienceID: nil,
                 result: .interrupted,
                 cancel: false
             )
@@ -203,6 +204,7 @@ struct InAppMessageAutomationExecutorTest {
                 scheduleID: preparedInfo.scheduleID,
                 sharedIDs: [],
                 triggerID: nil,
+                variantAudienceID: nil,
                 result: .succeeded,
                 cancel: false
             )
@@ -238,6 +240,27 @@ struct InAppMessageAutomationExecutorTest {
                 scheduleID: preparedInfo.scheduleID,
                 sharedIDs: [],
                 triggerID: nil,
+                variantAudienceID: nil,
+                result: .holdout,
+                cancel: false
+            )
+        ])
+    }
+
+    @Test
+    func testExecuteRecordsVariantAudienceID() async throws {
+        var preparedInfo = preparedInfo
+        preparedInfo.variantAudienceResult = VariantAudienceResult(outcome: .holdout)
+        preparedInfo.variantAudienceID = "iteration-1"
+
+        _ = try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
+
+        #expect(await self.ledger.recorded == [
+            .execution(
+                scheduleID: preparedInfo.scheduleID,
+                sharedIDs: [],
+                triggerID: nil,
+                variantAudienceID: "iteration-1",
                 result: .holdout,
                 cancel: false
             )
@@ -269,6 +292,7 @@ struct InAppMessageAutomationExecutorTest {
                 scheduleID: preparedInfo.scheduleID,
                 sharedIDs: [],
                 triggerID: nil,
+                variantAudienceID: nil,
                 result: .holdout,
                 cancel: false
             )
@@ -300,6 +324,7 @@ struct InAppMessageAutomationExecutorTest {
                 scheduleID: preparedInfo.scheduleID,
                 sharedIDs: [],
                 triggerID: nil,
+                variantAudienceID: nil,
                 result: .variantMiss,
                 cancel: false
             )
@@ -325,6 +350,7 @@ struct InAppMessageAutomationExecutorTest {
                 scheduleID: preparedInfo.scheduleID,
                 sharedIDs: [],
                 triggerID: nil,
+                variantAudienceID: nil,
                 result: .succeeded,
                 cancel: false
             )

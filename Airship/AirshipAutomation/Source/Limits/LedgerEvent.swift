@@ -123,6 +123,11 @@ enum LedgerEvent: Sendable, Equatable, Hashable {
         /// for matching and reporting only; never a recording scope key.
         var triggerID: String?
 
+        /// The `variant_audience.id` the recording schedule had at record time, or
+        /// nil if it had none. A plain attribute for matching only; never a
+        /// recording scope key.
+        var variantAudienceID: String?
+
         /// When the event was recorded.
         var timestamp: Date
 
@@ -143,6 +148,11 @@ enum LedgerEvent: Sendable, Equatable, Hashable {
         /// ID of the execution-causing trigger, if known. A plain attribute
         /// for matching and reporting only; never a recording scope key.
         var triggerID: String?
+
+        /// The `variant_audience.id` the recording schedule had at record time, or
+        /// nil if it had none. A plain attribute for matching only; never a
+        /// recording scope key.
+        var variantAudienceID: String?
 
         /// When the event was recorded.
         var timestamp: Date
@@ -190,6 +200,15 @@ extension LedgerEvent {
         switch self {
         case .triggered(let event): return event.triggerID
         case .execution(let event): return event.triggerID
+        }
+    }
+
+    /// The `variant_audience.id` the recording schedule had at record time, or nil
+    /// if it had none.
+    var variantAudienceID: String? {
+        switch self {
+        case .triggered(let event): return event.variantAudienceID
+        case .execution(let event): return event.variantAudienceID
         }
     }
 
@@ -265,6 +284,7 @@ extension LedgerEvent.Triggered {
         case scheduleID = "schedule_id"
         case sharedIDs = "shared_ids"
         case triggerID = "trigger_id"
+        case variantAudienceID = "variant_audience_id"
         case timestamp
         case count
     }
@@ -283,6 +303,7 @@ extension LedgerEvent.Triggered {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.scheduleID = try container.decode(String.self, forKey: .scheduleID)
         self.triggerID = try container.decodeIfPresent(String.self, forKey: .triggerID)
+        self.variantAudienceID = try container.decodeIfPresent(String.self, forKey: .variantAudienceID)
         self.timestamp = try container.decode(Date.self, forKey: .timestamp)
         self.count = try container.decodeIfPresent(Int.self, forKey: .count)
 
@@ -301,6 +322,7 @@ extension LedgerEvent.Triggered {
         try container.encode(self.scheduleID, forKey: .scheduleID)
         try container.encodeIfPresent(self.sharedIDs, forKey: .sharedIDs)
         try container.encodeIfPresent(self.triggerID, forKey: .triggerID)
+        try container.encodeIfPresent(self.variantAudienceID, forKey: .variantAudienceID)
         try container.encode(self.timestamp, forKey: .timestamp)
         try container.encodeIfPresent(self.count, forKey: .count)
     }
@@ -311,6 +333,7 @@ extension LedgerEvent.Execution {
         case scheduleID = "schedule_id"
         case sharedIDs = "shared_ids"
         case triggerID = "trigger_id"
+        case variantAudienceID = "variant_audience_id"
         case timestamp
         case count
         case result
@@ -327,6 +350,7 @@ extension LedgerEvent.Execution {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.scheduleID = try container.decode(String.self, forKey: .scheduleID)
         self.triggerID = try container.decodeIfPresent(String.self, forKey: .triggerID)
+        self.variantAudienceID = try container.decodeIfPresent(String.self, forKey: .variantAudienceID)
         self.timestamp = try container.decode(Date.self, forKey: .timestamp)
         self.count = try container.decodeIfPresent(Int.self, forKey: .count)
         self.result = try container.decode(LedgerExecutionResult.self, forKey: .result)
@@ -347,6 +371,7 @@ extension LedgerEvent.Execution {
         try container.encode(self.scheduleID, forKey: .scheduleID)
         try container.encodeIfPresent(self.sharedIDs, forKey: .sharedIDs)
         try container.encodeIfPresent(self.triggerID, forKey: .triggerID)
+        try container.encodeIfPresent(self.variantAudienceID, forKey: .variantAudienceID)
         try container.encode(self.timestamp, forKey: .timestamp)
         try container.encodeIfPresent(self.count, forKey: .count)
         try container.encode(self.result, forKey: .result)

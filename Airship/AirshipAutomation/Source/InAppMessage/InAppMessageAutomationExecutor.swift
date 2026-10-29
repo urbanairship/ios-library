@@ -312,6 +312,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             scheduleID: info.scheduleID,
             sharedIDs: info.ledgerSharedIDs,
             triggerID: info.triggerID,
+            variantAudienceID: info.variantAudienceID,
             result: result,
             cancel: false
         )

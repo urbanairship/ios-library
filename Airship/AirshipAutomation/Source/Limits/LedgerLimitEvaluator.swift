@@ -72,7 +72,8 @@ final class LedgerLimitEvaluator: LedgerLimitEvaluatorProtocol {
             events: events,
             context: LedgerLimitContext(
                 scheduleID: schedule.identifier,
-                currentSharedIDs: Set(schedule.ledgerSharedIDs)
+                currentSharedIDs: Set(schedule.ledgerSharedIDs),
+                currentVariantAudienceID: schedule.variantAudience?.id
             ),
             limitConfig: limitConfig,
             now: self.date.now

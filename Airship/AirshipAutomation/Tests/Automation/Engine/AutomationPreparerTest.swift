@@ -210,6 +210,7 @@ struct AutomationPreparerTest {
                 scheduleID: automationSchedule.identifier,
                 sharedIDs: [],
                 triggerID: "trigger-1",
+                variantAudienceID: nil,
                 result: .audienceMiss,
                 cancel: false
             )
@@ -381,6 +382,7 @@ struct AutomationPreparerTest {
                 scheduleID: automationSchedule.identifier,
                 sharedIDs: [],
                 triggerID: nil,
+                variantAudienceID: nil,
                 result: .audienceMiss,
                 cancel: true
             )
@@ -970,6 +972,7 @@ struct AutomationPreparerTest {
                 scheduleID: "deferred-miss",
                 sharedIDs: [],
                 triggerID: "trigger-1",
+                variantAudienceID: nil,
                 result: .audienceMiss,
                 cancel: true
             )
@@ -1001,6 +1004,7 @@ struct AutomationPreparerTest {
                 scheduleID: "deferred-miss",
                 sharedIDs: [],
                 triggerID: "trigger-1",
+                variantAudienceID: nil,
                 result: .audienceMiss,
                 cancel: false
             )
@@ -1515,7 +1519,8 @@ struct AutomationPreparerTest {
     private func makeVariantAudienceJSON(
         audienceSubset: (min: UInt64, max: UInt64),
         holdoutSubset: (min: UInt64, max: UInt64)? = nil,
-        reportingContext: String? = nil
+        reportingContext: String? = nil,
+        id: String = "iteration-1"
     ) -> String {
         let holdoutJSON: String = if let holdoutSubset {
             """
@@ -1535,6 +1540,7 @@ struct AutomationPreparerTest {
 
         return """
         {
+            "id": "\(id)",
             "audience_hash": {
                 "hash_prefix": "686f2c15-cf8c-47a6-ae9f-e749fc792a9d:",
                 "num_hash_buckets": 16384,
@@ -1587,6 +1593,72 @@ struct AutomationPreparerTest {
             return
         }
         #expect(prepared.info.variantAudienceResult == VariantAudienceResult(outcome: .matched))
+        #expect(prepared.info.variantAudienceID == "iteration-1")
+    }
+
+    @Test
+    func testNoVariantAudienceStampsNoVariantAudienceID() async throws {
+        let schedule = AutomationSchedule(
+            identifier: UUID().uuidString,
+            triggers: [],
+            data: .inAppMessage(
+                InAppMessage(name: "name", displayContent: .custom(.null))
+            )
+        )
+
+        self.remoteDataAccess.contactIDBlock = { _ in nil }
+        self.remoteDataAccess.requiresUpdateBlock = { _ in false }
+        self.remoteDataAccess.bestEffortRefreshBlock = { _ in true }
+
+        let preparedData = self.preparedMessageData!
+        self.messagePreparer.prepareBlock = { _, _ in preparedData }
+
+        let result = await self.preparer.prepare(
+            schedule: schedule,
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString
+        )
+
+        guard case .prepared(let prepared) = result else {
+            Issue.record()
+            return
+        }
+        #expect(prepared.info.variantAudienceID == nil)
+    }
+
+    @Test
+    func testAudienceMissRecordsVariantAudienceID() async throws {
+        var schedule = try variantAudienceSchedule(
+            json: makeVariantAudienceJSON(audienceSubset: (9908, 9908), id: "iteration-3")
+        )
+        schedule.audience = AutomationAudience(
+            audienceSelector: DeviceAudienceSelector(),
+            missBehavior: .penalize
+        )
+
+        self.remoteDataAccess.contactIDBlock = { _ in nil }
+        self.remoteDataAccess.requiresUpdateBlock = { _ in false }
+        self.remoteDataAccess.bestEffortRefreshBlock = { _ in true }
+        self.audienceChecker.onEvaluate = { _, _, _ in .miss }
+
+        let result = await self.preparer.prepare(
+            schedule: schedule,
+            triggerContext: triggerContext,
+            triggerSessionID: UUID().uuidString,
+            triggerID: "trigger-1"
+        )
+
+        #expect(result.isPenalize)
+        #expect(await self.ledger.recorded == [
+            .execution(
+                scheduleID: schedule.identifier,
+                sharedIDs: [],
+                triggerID: "trigger-1",
+                variantAudienceID: "iteration-3",
+                result: .audienceMiss,
+                cancel: false
+            )
+        ])
     }
 
     @Test

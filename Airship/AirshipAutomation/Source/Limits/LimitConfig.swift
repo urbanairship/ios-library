@@ -164,6 +164,10 @@ enum LedgerEventMatch: Sendable, Equatable {
         /// shared group is not filtered.
         var sharedGroup: SharedGroupMatch?
 
+        /// Match only events recorded under a matching variant audience. If nil,
+        /// variant audience is not filtered.
+        var variantAudience: VariantAudienceMatch?
+
         /// Match only events whose `trigger_id` equals this. If nil, all
         /// trigger IDs match.
         var triggerID: String?
@@ -178,6 +182,10 @@ enum LedgerEventMatch: Sendable, Equatable {
         /// Match only events recorded under a matching shared group. If nil,
         /// shared group is not filtered.
         var sharedGroup: SharedGroupMatch?
+
+        /// Match only events recorded under a matching variant audience. If nil,
+        /// variant audience is not filtered.
+        var variantAudience: VariantAudienceMatch?
 
         /// Execution results to match. If nil, all results match. Result values
         /// this SDK version does not recognize are dropped, so a rule that
@@ -224,6 +232,32 @@ enum SharedGroupMatch: Sendable, Equatable {
 
     /// A shared-group match type this SDK version does not recognize. Matches
     /// nothing (a safe no-op).
+    case unknown
+}
+
+/// Matches events by the variant audience they were recorded under (their
+/// `variant_audience_id`), relative to the evaluating schedule's current
+/// `variant_audience.id` or by an absolute ID.
+///
+/// Events recorded with no variant audience never match any case, `notCurrent`
+/// included, so a rule cannot reach history from before the schedule joined an
+/// experiment. This differs from ``SharedGroupMatch/notCurrent``.
+enum VariantAudienceMatch: Sendable, Equatable {
+
+    /// Events recorded under the evaluating schedule's current variant audience.
+    /// Matches nothing if the schedule has no variant audience.
+    case current
+
+    /// Events recorded under a variant audience other than the evaluating
+    /// schedule's current one. If the schedule has no variant audience, matches
+    /// every event that was recorded under one.
+    case notCurrent
+
+    /// Events recorded under a specific variant audience, named absolutely.
+    case id(String)
+
+    /// A variant-audience match type this SDK version does not recognize.
+    /// Matches nothing (a safe no-op).
     case unknown
 }
 
@@ -320,6 +354,7 @@ extension LedgerEventMatch: Codable {
         case type
         case timeBounds = "time_bounds"
         case sharedGroup = "shared_group"
+        case variantAudience = "variant_audience"
         case results
         case cancel
         case triggerID = "trigger_id"
@@ -335,6 +370,7 @@ extension LedgerEventMatch: Codable {
         let rawType = try container.decode(String.self, forKey: .type)
         let timeBounds = try container.decodeIfPresent(AirshipTimeCriteria.self, forKey: .timeBounds)
         let sharedGroup = try container.decodeIfPresent(SharedGroupMatch.self, forKey: .sharedGroup)
+        let variantAudience = try container.decodeIfPresent(VariantAudienceMatch.self, forKey: .variantAudience)
         let triggerID = try container.decodeIfPresent(String.self, forKey: .triggerID)
 
         switch RawType(rawValue: rawType) {
@@ -343,6 +379,7 @@ extension LedgerEventMatch: Codable {
                 .init(
                     timeBounds: timeBounds,
                     sharedGroup: sharedGroup,
+                    variantAudience: variantAudience,
                     triggerID: triggerID
                 )
             )
@@ -356,6 +393,7 @@ extension LedgerEventMatch: Codable {
                 .init(
                     timeBounds: timeBounds,
                     sharedGroup: sharedGroup,
+                    variantAudience: variantAudience,
                     results: results,
                     cancel: try container.decodeIfPresent(Bool.self, forKey: .cancel),
                     triggerID: triggerID
@@ -373,11 +411,13 @@ extension LedgerEventMatch: Codable {
             try container.encode(RawType.triggered.rawValue, forKey: .type)
             try container.encodeIfPresent(match.timeBounds, forKey: .timeBounds)
             try container.encodeIfPresent(match.sharedGroup, forKey: .sharedGroup)
+            try container.encodeIfPresent(match.variantAudience, forKey: .variantAudience)
             try container.encodeIfPresent(match.triggerID, forKey: .triggerID)
         case .execution(let match):
             try container.encode(RawType.execution.rawValue, forKey: .type)
             try container.encodeIfPresent(match.timeBounds, forKey: .timeBounds)
             try container.encodeIfPresent(match.sharedGroup, forKey: .sharedGroup)
+            try container.encodeIfPresent(match.variantAudience, forKey: .variantAudience)
             try container.encodeIfPresent(match.results?.map { $0.rawValue }, forKey: .results)
             try container.encodeIfPresent(match.cancel, forKey: .cancel)
             try container.encodeIfPresent(match.triggerID, forKey: .triggerID)
@@ -426,10 +466,49 @@ extension SharedGroupMatch: Codable {
     }
 }
 
+extension VariantAudienceMatch: Codable {
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case variantAudienceID = "variant_audience_id"
+    }
+
+    private enum RawType: String {
+        case current
+        case notCurrent = "not_current"
+        case id
+    }
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let rawType = try container.decode(String.self, forKey: .type)
+        switch RawType(rawValue: rawType) {
+        case .current: self = .current
+        case .notCurrent: self = .notCurrent
+        case .id: self = .id(try container.decode(String.self, forKey: .variantAudienceID))
+        case nil: self = .unknown
+        }
+    }
+
+    func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .current:
+            try container.encode(RawType.current.rawValue, forKey: .type)
+        case .notCurrent:
+            try container.encode(RawType.notCurrent.rawValue, forKey: .type)
+        case .id(let variantAudienceID):
+            try container.encode(RawType.id.rawValue, forKey: .type)
+            try container.encode(variantAudienceID, forKey: .variantAudienceID)
+        case .unknown:
+            try container.encode("unknown", forKey: .type)
+        }
+    }
+}
+
 // MARK: - Matching
 
-/// The evaluating schedule's identity for relative source/shared-group
-/// matching.
+/// The evaluating schedule's identity for relative source/shared-group/
+/// variant-audience matching.
 struct LedgerLimitContext: Sendable, Equatable {
     /// The evaluating schedule's own ID.
     let scheduleID: String
@@ -437,6 +516,10 @@ struct LedgerLimitContext: Sendable, Equatable {
     /// The evaluating schedule's current shared ledger IDs. Empty when it has
     /// no shared group.
     let currentSharedIDs: Set<String>
+
+    /// The evaluating schedule's current `variant_audience.id`. Nil when it has
+    /// no variant audience.
+    let currentVariantAudienceID: String?
 }
 
 /// Common interface for a schedule's exclude rules, whichever `LimitConfig`
@@ -499,12 +582,18 @@ extension LedgerEventMatch {
             guard match.sharedGroup?.matches(sharedIDs: payload.sharedIDs, context: context) ?? true else {
                 return false
             }
+            guard match.variantAudience?.matches(variantAudienceID: payload.variantAudienceID, context: context) ?? true else {
+                return false
+            }
             if let triggerID = match.triggerID, payload.triggerID != triggerID { return false }
             return true
 
         case (.execution(let match), .execution(let payload)):
             guard match.timeBounds?.isActive(date: payload.timestamp) ?? true else { return false }
             guard match.sharedGroup?.matches(sharedIDs: payload.sharedIDs, context: context) ?? true else {
+                return false
+            }
+            guard match.variantAudience?.matches(variantAudienceID: payload.variantAudienceID, context: context) ?? true else {
                 return false
             }
             if let results = match.results, !results.contains(payload.result) { return false }
@@ -535,6 +624,22 @@ extension SharedGroupMatch {
                 : recorded.isDisjoint(with: context.currentSharedIDs)
         case .id(let id):
             return recorded.contains(id)
+        case .unknown:
+            return false
+        }
+    }
+}
+
+extension VariantAudienceMatch {
+    func matches(variantAudienceID: String?, context: LedgerLimitContext) -> Bool {
+        guard let recorded = variantAudienceID else { return false }
+        switch self {
+        case .current:
+            return recorded == context.currentVariantAudienceID
+        case .notCurrent:
+            return recorded != context.currentVariantAudienceID
+        case .id(let id):
+            return recorded == id
         case .unknown:
             return false
         }

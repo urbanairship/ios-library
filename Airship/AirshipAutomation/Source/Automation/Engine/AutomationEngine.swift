@@ -373,7 +373,8 @@ fileprivate extension AutomationEngine {
                         await self.ledger.recordTriggered(
                             scheduleID: updated.schedule.identifier,
                             sharedIDs: updated.schedule.ledgerSharedIDs,
-                            triggerID: result.triggerInfo.triggerID
+                            triggerID: result.triggerInfo.triggerID,
+                            variantAudienceID: updated.schedule.variantAudience?.id
                         )
                     }
 

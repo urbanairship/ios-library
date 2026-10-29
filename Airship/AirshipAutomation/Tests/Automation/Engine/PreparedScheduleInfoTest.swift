@@ -25,6 +25,28 @@ struct PreparedScheduleInfoTest {
     }
 
     @Test
+    func testVariantAudienceIDRoundtrip() throws {
+        let original = PreparedScheduleInfo(
+            scheduleID: "some-schedule",
+            triggerSessionID: "some-session",
+            priority: 0,
+            variantAudienceID: "iteration-1"
+        )
+
+        let data = try JSONEncoder().encode(original)
+        let decoded = try JSONDecoder().decode(PreparedScheduleInfo.self, from: data)
+
+        #expect(decoded.variantAudienceID == "iteration-1")
+    }
+
+    @Test
+    func testInfoPersistedWithoutVariantAudienceIDDecodesNil() throws {
+        let json = #"{"scheduleID": "some schedule"}"#
+        let info = try JSONDecoder().decode(PreparedScheduleInfo.self, from: Data(json.utf8))
+        #expect(info.variantAudienceID == nil)
+    }
+
+    @Test
     func testSendMetadataRoundtrip() throws {
         let original = PreparedScheduleInfo(
             scheduleID: "some-schedule",

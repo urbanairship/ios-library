@@ -218,7 +218,8 @@ struct AutomationPreparer: AutomationPreparerProtocol {
                         sendMetadata: schedule.sendMetadata,
                         aiSuppression: aiSuppression,
                         ledgerSharedIDs: schedule.ledgerSharedIDs,
-                        triggerID: triggerID
+                        triggerID: triggerID,
+                        variantAudienceID: schedule.variantAudience?.id
                     )
                 },
                 prepareSchedule: { [frequencyChecker] scheduleInfo, data in
@@ -408,6 +409,7 @@ extension AutomationPreparer {
                 scheduleID: schedule.identifier,
                 sharedIDs: schedule.ledgerSharedIDs,
                 triggerID: triggerID,
+                variantAudienceID: schedule.variantAudience?.id,
                 result: .audienceMiss,
                 cancel: behavior == .cancel
             )

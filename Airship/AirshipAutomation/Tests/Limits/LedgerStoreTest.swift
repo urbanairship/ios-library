@@ -36,6 +36,7 @@ struct LedgerStoreTest {
         scheduleID: String,
         sharedIDs: [String] = [],
         triggerID: String? = nil,
+        variantAudienceID: String? = nil,
         timestamp: Date = Date(timeIntervalSince1970: 0),
         count: Int? = nil
     ) -> LedgerEvent {
@@ -44,6 +45,7 @@ struct LedgerStoreTest {
                 scheduleID: scheduleID,
                 sharedIDs: sharedIDs.isEmpty ? nil : sharedIDs,
                 triggerID: triggerID,
+                variantAudienceID: variantAudienceID,
                 timestamp: timestamp,
                 count: count
             )
@@ -54,6 +56,7 @@ struct LedgerStoreTest {
         scheduleID: String,
         sharedIDs: [String] = [],
         triggerID: String? = nil,
+        variantAudienceID: String? = nil,
         timestamp: Date = Date(timeIntervalSince1970: 0),
         count: Int? = nil,
         result: LedgerExecutionResult = .succeeded,
@@ -64,6 +67,7 @@ struct LedgerStoreTest {
                 scheduleID: scheduleID,
                 sharedIDs: sharedIDs.isEmpty ? nil : sharedIDs,
                 triggerID: triggerID,
+                variantAudienceID: variantAudienceID,
                 timestamp: timestamp,
                 count: count,
                 result: result,
@@ -196,6 +200,7 @@ struct LedgerStoreTest {
             scheduleID: "schedule-1",
             sharedIDs: ["group-1"],
             triggerID: "trigger-1",
+            variantAudienceID: "iteration-1",
             timestamp: Date(timeIntervalSince1970: 123),
             count: 3
         )
@@ -203,6 +208,7 @@ struct LedgerStoreTest {
             scheduleID: "schedule-1",
             sharedIDs: ["group-1"],
             triggerID: "trigger-2",
+            variantAudienceID: "iteration-2",
             timestamp: Date(timeIntervalSince1970: 456),
             count: 5,
             result: .audienceMiss,
@@ -213,12 +219,45 @@ struct LedgerStoreTest {
 
         let result = try await store.events(scheduleID: "schedule-1", sharedIDs: ["group-1"])
         #expect(Set(result) == Set([triggeredEvent, executionEvent]))
+        #expect(Set(result.compactMap(\.variantAudienceID)) == ["iteration-1", "iteration-2"])
+    }
+
+    @Test
+    func testVariantAudienceIDIsNotAScope() async throws {
+        try await store.recordEvents([execution(scheduleID: "schedule-1", variantAudienceID: "iteration-1")])
+
+        #expect(try await store.events(scheduleID: "other", sharedIDs: ["iteration-1"]).isEmpty)
+        #expect(try await store.sharedIDRowCount() == 0)
+    }
+
+    @Test
+    func testEventsRecordedWithoutVariantAudienceIDDecodeNil() throws {
+        let json = #"""
+        {"type": "execution", "schedule_id": "s", "result": "succeeded", "timestamp": 0}
+        """#
+        let event = try JSONDecoder().decode(LedgerEvent.self, from: Data(json.utf8))
+        #expect(event.variantAudienceID == nil)
+
+        let triggeredJSON = #"{"type": "triggered", "schedule_id": "s", "timestamp": 0}"#
+        let triggeredEvent = try JSONDecoder().decode(LedgerEvent.self, from: Data(triggeredJSON.utf8))
+        #expect(triggeredEvent.variantAudienceID == nil)
+    }
+
+    @Test
+    func testVariantAudienceIDEncodesAsSnakeCaseKey() throws {
+        let data = try JSONEncoder().encode(execution(scheduleID: "s", variantAudienceID: "iteration-1"))
+        let object = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        #expect(object["variant_audience_id"] as? String == "iteration-1")
+
+        let bare = try JSONEncoder().encode(execution(scheduleID: "s"))
+        let bareObject = try #require(JSONSerialization.jsonObject(with: bare) as? [String: Any])
+        #expect(bareObject["variant_audience_id"] == nil)
     }
 
     @Test
     func testEventCodableRoundTrip() throws {
         let events: [LedgerEvent] = [
-            triggered(scheduleID: "s", sharedIDs: ["g"], triggerID: "t", count: 2),
+            triggered(scheduleID: "s", sharedIDs: ["g"], triggerID: "t", variantAudienceID: "v", count: 2),
             execution(scheduleID: "s", result: .backfill, cancel: false)
         ]
 
@@ -370,6 +409,38 @@ struct LedgerStoreTest {
         #expect(result.first?.timestamp == Self.date(2017, 9, 20))
     }
 
+    @Test
+    func testCompactKeepsVariantAudienceIDWhenMerging() async throws {
+        let now = Self.date(2020, 1, 1)
+        try await store.recordEvents([
+            execution(scheduleID: "s", variantAudienceID: "iteration-1", timestamp: Self.date(2017, 3, 5)),
+            execution(scheduleID: "s", variantAudienceID: "iteration-1", timestamp: Self.date(2017, 9, 20))
+        ])
+
+        try await store.compact(now: now)
+
+        let result = try await store.events(scheduleID: "s", sharedIDs: [])
+        #expect(result.count == 1)
+        #expect(result.first?.count == 2)
+        #expect(result.first?.variantAudienceID == "iteration-1")
+    }
+
+    @Test
+    func testCompactDoesNotMergeAcrossVariantAudienceIDs() async throws {
+        let now = Self.date(2020, 1, 1)
+        try await store.recordEvents([
+            execution(scheduleID: "s", variantAudienceID: "iteration-1", timestamp: Self.date(2017, 3, 5)),
+            execution(scheduleID: "s", variantAudienceID: "iteration-2", timestamp: Self.date(2017, 9, 20)),
+            execution(scheduleID: "s", variantAudienceID: nil, timestamp: Self.date(2017, 10, 1))
+        ])
+
+        try await store.compact(now: now)
+
+        let result = try await store.events(scheduleID: "s", sharedIDs: [])
+        #expect(result.count == 3)
+        #expect(Set(result.map(\.variantAudienceID)) == ["iteration-1", "iteration-2", nil])
+    }
+
     // When the ledger is under the cap and every event is younger than a year,
     // the cheap pre-check skips the decode entirely. Two recent events sharing an
     // exact timestamp would merge in the raw tier if compaction ran, so their
@@ -507,6 +578,14 @@ struct LedgerStoreTest {
             execution(scheduleID: "s", triggerID: "t1", timestamp: old),
             execution(scheduleID: "s", triggerID: "t2", timestamp: older)
         ]
+        let differByVariantAudience = [
+            execution(scheduleID: "s", variantAudienceID: "v1", timestamp: old),
+            execution(scheduleID: "s", variantAudienceID: "v2", timestamp: older)
+        ]
+        let differByVariantAudiencePresence = [
+            triggered(scheduleID: "s", variantAudienceID: "v1", timestamp: old),
+            triggered(scheduleID: "s", variantAudienceID: nil, timestamp: older)
+        ]
         let differByScope = [
             execution(scheduleID: "s1", timestamp: old),
             execution(scheduleID: "s2", timestamp: older)
@@ -516,7 +595,11 @@ struct LedgerStoreTest {
             execution(scheduleID: "s", timestamp: older)
         ]
 
-        for events in [differByResult, differByCancel, differByTrigger, differByScope, differByType] {
+        let all = [
+            differByResult, differByCancel, differByTrigger, differByVariantAudience,
+            differByVariantAudiencePresence, differByScope, differByType
+        ]
+        for events in all {
             #expect(LedgerCompactor.compact(events, now: now).count == 2)
         }
     }
@@ -629,6 +712,29 @@ final class LedgerStoreOnDiskTest {
             sharedIDs: ["g"]
         )
         #expect(found == 1)
+    }
+
+    @Test
+    func testVariantAudienceIDSurvivesReopeningTheStore() async throws {
+        let appKey = UUID().uuidString
+        createdAppKeys.append(appKey)
+
+        let event: LedgerEvent = .execution(
+            .init(
+                scheduleID: "schedule-1",
+                sharedIDs: nil,
+                triggerID: nil,
+                variantAudienceID: "iteration-1",
+                timestamp: Date(timeIntervalSince1970: 0),
+                count: nil,
+                result: .variantMiss,
+                cancel: nil
+            )
+        )
+        try await LedgerStore(appKey: appKey, inMemory: false).recordEvents([event])
+
+        let reopened = LedgerStore(appKey: appKey, inMemory: false)
+        #expect(try await reopened.events(scheduleID: "schedule-1", sharedIDs: []) == [event])
     }
 
     @Test
@@ -913,6 +1019,8 @@ final class LedgerStoreMigrationTest {
         let result = try await store.events(scheduleID: "schedule-1", sharedIDs: [])
         #expect(result.count == 1)
         #expect(result.first?.sharedIDs == ["group-1"])
+        // A stored body with no `variant_audience_id` key decodes to nil.
+        #expect(result.first?.variantAudienceID == nil)
 
         // What migration does NOT restore is the *index*: `sharedID` is a
         // scalar SQL column with no lightweight mapping onto the v2 to-many

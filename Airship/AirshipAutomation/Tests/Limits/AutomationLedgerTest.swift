@@ -10,11 +10,17 @@ import Foundation
 actor TestAutomationLedger: AutomationLedgerProtocol {
 
     enum Recorded: Equatable, Sendable {
-        case triggered(scheduleID: String, sharedIDs: [String], triggerID: String?)
+        case triggered(
+            scheduleID: String,
+            sharedIDs: [String],
+            triggerID: String?,
+            variantAudienceID: String?
+        )
         case execution(
             scheduleID: String,
             sharedIDs: [String],
             triggerID: String?,
+            variantAudienceID: String?,
             result: LedgerExecutionResult,
             cancel: Bool
         )
@@ -25,10 +31,16 @@ actor TestAutomationLedger: AutomationLedgerProtocol {
     func recordTriggered(
         scheduleID: String,
         sharedIDs: [String],
-        triggerID: String?
+        triggerID: String?,
+        variantAudienceID: String?
     ) async {
         self.recorded.append(
-            .triggered(scheduleID: scheduleID, sharedIDs: sharedIDs, triggerID: triggerID)
+            .triggered(
+                scheduleID: scheduleID,
+                sharedIDs: sharedIDs,
+                triggerID: triggerID,
+                variantAudienceID: variantAudienceID
+            )
         )
     }
 
@@ -36,6 +48,7 @@ actor TestAutomationLedger: AutomationLedgerProtocol {
         scheduleID: String,
         sharedIDs: [String],
         triggerID: String?,
+        variantAudienceID: String?,
         result: LedgerExecutionResult,
         cancel: Bool
     ) async {
@@ -44,6 +57,7 @@ actor TestAutomationLedger: AutomationLedgerProtocol {
                 scheduleID: scheduleID,
                 sharedIDs: sharedIDs,
                 triggerID: triggerID,
+                variantAudienceID: variantAudienceID,
                 result: result,
                 cancel: cancel
             )
@@ -58,13 +72,15 @@ struct NoOpAutomationLedger: AutomationLedgerProtocol {
     func recordTriggered(
         scheduleID: String,
         sharedIDs: [String],
-        triggerID: String?
+        triggerID: String?,
+        variantAudienceID: String?
     ) async {}
 
     func recordExecution(
         scheduleID: String,
         sharedIDs: [String],
         triggerID: String?,
+        variantAudienceID: String?,
         result: LedgerExecutionResult,
         cancel: Bool
     ) async {}
@@ -82,7 +98,8 @@ struct AutomationLedgerTest {
         await ledger.recordTriggered(
             scheduleID: "schedule-1",
             sharedIDs: ["group-1"],
-            triggerID: "trigger-1"
+            triggerID: "trigger-1",
+            variantAudienceID: nil
         )
 
         let events = try await store.events(scheduleID: "schedule-1", sharedIDs: ["group-1"])
@@ -107,6 +124,7 @@ struct AutomationLedgerTest {
             scheduleID: "schedule-1",
             sharedIDs: [],
             triggerID: nil,
+            variantAudienceID: nil,
             result: .succeeded,
             cancel: false
         )
@@ -128,6 +146,32 @@ struct AutomationLedgerTest {
     }
 
     @Test
+    func testRecordStampsVariantAudienceID() async throws {
+        let ledger = AutomationLedger(store: store, date: date)
+
+        await ledger.recordTriggered(
+            scheduleID: "schedule-1",
+            sharedIDs: [],
+            triggerID: nil,
+            variantAudienceID: "iteration-1"
+        )
+        await ledger.recordExecution(
+            scheduleID: "schedule-1",
+            sharedIDs: [],
+            triggerID: nil,
+            variantAudienceID: "iteration-1",
+            result: .variantMiss,
+            cancel: false
+        )
+
+        let events = try await store.events(scheduleID: "schedule-1", sharedIDs: [])
+        #expect(events.count == 2)
+        #expect(events.allSatisfy { $0.variantAudienceID == "iteration-1" })
+        // A plain attribute: never a scope the event is also recorded under.
+        #expect(try await store.events(scheduleID: "other", sharedIDs: ["iteration-1"]).isEmpty)
+    }
+
+    @Test
     func testRecordExecutionCancelStampsFlag() async throws {
         let ledger = AutomationLedger(store: store, date: date)
 
@@ -135,6 +179,7 @@ struct AutomationLedgerTest {
             scheduleID: "schedule-1",
             sharedIDs: ["group-1"],
             triggerID: "trigger-1",
+            variantAudienceID: nil,
             result: .audienceMiss,
             cancel: true
         )

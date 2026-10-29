@@ -532,6 +532,7 @@ actor AutomationStore: ScheduleStoreProtocol, TriggerStoreProtocol {
                     scheduleID: entry.id,
                     sharedIDs: nil,
                     triggerID: nil,
+                    variantAudienceID: nil,
                     timestamp: timestamp,
                     count: entry.count,
                     result: .backfill,

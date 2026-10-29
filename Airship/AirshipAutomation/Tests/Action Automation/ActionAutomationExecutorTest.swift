@@ -40,6 +40,26 @@ struct ActionAutomationExecutorTest {
                 scheduleID: "some id",
                 sharedIDs: ["group-1"],
                 triggerID: "trigger-1",
+                variantAudienceID: nil,
+                result: .succeeded,
+                cancel: false
+            )
+        ])
+    }
+
+    @Test
+    func testExecuteRecordsVariantAudienceID() async throws {
+        var info = preparedScheduleInfo
+        info.variantAudienceID = "iteration-1"
+
+        _ = await self.executor.execute(data: actions, preparedScheduleInfo: info)
+
+        #expect(await self.ledger.recorded == [
+            .execution(
+                scheduleID: "some id",
+                sharedIDs: ["group-1"],
+                triggerID: "trigger-1",
+                variantAudienceID: "iteration-1",
                 result: .succeeded,
                 cancel: false
             )

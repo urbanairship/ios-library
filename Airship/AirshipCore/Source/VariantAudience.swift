@@ -32,6 +32,11 @@ public struct VariantAudience: Codable, Sendable, Equatable {
         }
     }
 
+    /// Identifies this iteration of the experiment, identical across every schedule in it.
+    /// Nil if the payload didn't carry one; ledger events recorded without it never match
+    /// a `variant_audience` limit filter.
+    public let id: String?
+
     private let hash: AudienceHashSelector.Hash
     private let audienceSubset: AudienceHashSelector.Bucket
     private let holdoutSubset: AudienceHashSelector.Bucket?
@@ -40,6 +45,7 @@ public struct VariantAudience: Codable, Sendable, Equatable {
     public let reportingContext: AirshipJSON?
 
     enum CodingKeys: String, CodingKey {
+        case id
         case hash = "audience_hash"
         case audienceSubset = "audience_subset"
         case holdoutSubset = "holdout_subset"
@@ -48,6 +54,7 @@ public struct VariantAudience: Codable, Sendable, Equatable {
 
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decodeIfPresent(String.self, forKey: .id)
         self.hash = try container.decode(AudienceHashSelector.Hash.self, forKey: .hash)
         self.audienceSubset = try container.decode(AudienceHashSelector.Bucket.self, forKey: .audienceSubset)
         self.holdoutSubset = try container.decodeIfPresent(AudienceHashSelector.Bucket.self, forKey: .holdoutSubset)
@@ -56,6 +63,7 @@ public struct VariantAudience: Codable, Sendable, Equatable {
 
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(id, forKey: .id)
         try container.encode(hash, forKey: .hash)
         try container.encode(audienceSubset, forKey: .audienceSubset)
         try container.encodeIfPresent(holdoutSubset, forKey: .holdoutSubset)

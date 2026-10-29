@@ -36,6 +36,10 @@ struct PreparedScheduleInfo: Codable, Equatable {
     /// attribution.
     var triggerID: String?
 
+    /// The `variant_audience.id` the schedule had when prepared, recorded on its
+    /// execution-outcome ledger events. Nil if it had none.
+    var variantAudienceID: String?
+
     init(
         scheduleID: String,
         productID: String? = nil,
@@ -50,7 +54,8 @@ struct PreparedScheduleInfo: Codable, Equatable {
         sendMetadata: String? = nil,
         aiSuppression: AutomationAISuppression? = nil,
         ledgerSharedIDs: [String] = [],
-        triggerID: String? = nil
+        triggerID: String? = nil,
+        variantAudienceID: String? = nil
     ) {
         self.scheduleID = scheduleID
         self.productID = productID
@@ -66,6 +71,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.aiSuppression = aiSuppression
         self.ledgerSharedIDs = ledgerSharedIDs
         self.triggerID = triggerID
+        self.variantAudienceID = variantAudienceID
     }
 
     init(from decoder: any Decoder) throws {
@@ -101,6 +107,7 @@ struct PreparedScheduleInfo: Codable, Equatable {
         }
 
         self.triggerID = try container.decodeIfPresent(String.self, forKey: .triggerID)
+        self.variantAudienceID = try container.decodeIfPresent(String.self, forKey: .variantAudienceID)
     }
 
     private enum LegacyCodingKeys: String, CodingKey {

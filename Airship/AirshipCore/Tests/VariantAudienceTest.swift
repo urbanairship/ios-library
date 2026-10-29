@@ -11,7 +11,8 @@ import Foundation
     private func makeVariantAudience(
         audienceSubset: (min: UInt64, max: UInt64),
         holdoutSubset: (min: UInt64, max: UInt64)? = nil,
-        reportingContext: String? = nil
+        reportingContext: String? = nil,
+        id: String? = "iteration-1"
     ) throws -> VariantAudience {
         let holdoutJSON: String = if let holdoutSubset {
             """
@@ -29,8 +30,17 @@ import Foundation
             ""
         }
 
+        let idJSON: String = if let id {
+            """
+            "id": "\(id)",
+            """
+        } else {
+            ""
+        }
+
         let json = """
         {
+            \(idJSON)
             "audience_hash": {
                 "hash_prefix": "686f2c15-cf8c-47a6-ae9f-e749fc792a9d:",
                 "num_hash_buckets": 16384,
@@ -89,6 +99,31 @@ import Foundation
     func testReportingContextDefaultsToNil() throws {
         let variantAudience = try makeVariantAudience(audienceSubset: (9908, 9908))
         #expect(variantAudience.reportingContext == nil)
+    }
+
+    @Test
+    func testDecodesID() throws {
+        let variantAudience = try makeVariantAudience(audienceSubset: (9908, 9908), id: "iteration-7")
+        #expect(variantAudience.id == "iteration-7")
+    }
+
+    @Test
+    func testIDIsOptional() throws {
+        let variantAudience = try makeVariantAudience(audienceSubset: (9908, 9908), id: nil)
+        #expect(variantAudience.id == nil)
+
+        let data = try JSONEncoder().encode(variantAudience)
+        let decoded = try JSONDecoder().decode(VariantAudience.self, from: data)
+        #expect(decoded == variantAudience)
+    }
+
+    @Test
+    func testCodableRoundTripKeepsID() throws {
+        let variantAudience = try makeVariantAudience(audienceSubset: (9908, 9908), id: "iteration-7")
+        let data = try JSONEncoder().encode(variantAudience)
+        let decoded = try JSONDecoder().decode(VariantAudience.self, from: data)
+        #expect(decoded == variantAudience)
+        #expect(decoded.id == "iteration-7")
     }
 
     @Test

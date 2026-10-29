@@ -535,7 +535,8 @@ actor LedgerStore: LedgerStoreProtocol {
 /// Compaction merges events that are *mergeable* — identical in every field
 /// except `timestamp` and `count`, recorded under the same scope — into one
 /// event that sums `count` and keeps the newest `timestamp`. Events differing in
-/// scope, `type`, `trigger_id`, `result`, or `cancel` never merge.
+/// scope, `type`, `trigger_id`, `variant_audience_id`, `result`, or `cancel`
+/// never merge.
 ///
 /// How aggressively mergeable events actually merge depends on their age, so
 /// recent history keeps full timestamp precision:
@@ -575,6 +576,7 @@ enum LedgerCompactor {
         /// their IDs arrived in.
         var sharedIDs: [String]
         var triggerID: String?
+        var variantAudienceID: String?
         var result: LedgerExecutionResult?
         var cancel: Bool?
     }
@@ -602,6 +604,7 @@ enum LedgerCompactor {
                 scheduleID: payload.scheduleID,
                 sharedIDs: LedgerSharedIDs.canonical(payload.sharedIDs),
                 triggerID: payload.triggerID,
+                variantAudienceID: payload.variantAudienceID,
                 result: nil,
                 cancel: nil
             )
@@ -611,6 +614,7 @@ enum LedgerCompactor {
                 scheduleID: payload.scheduleID,
                 sharedIDs: LedgerSharedIDs.canonical(payload.sharedIDs),
                 triggerID: payload.triggerID,
+                variantAudienceID: payload.variantAudienceID,
                 result: payload.result,
                 cancel: payload.cancel
             )
@@ -678,6 +682,7 @@ enum LedgerCompactor {
                     scheduleID: payload.scheduleID,
                     sharedIDs: payload.sharedIDs,
                     triggerID: payload.triggerID,
+                    variantAudienceID: payload.variantAudienceID,
                     timestamp: newest,
                     count: total
                 )
@@ -688,6 +693,7 @@ enum LedgerCompactor {
                     scheduleID: payload.scheduleID,
                     sharedIDs: payload.sharedIDs,
                     triggerID: payload.triggerID,
+                    variantAudienceID: payload.variantAudienceID,
                     timestamp: newest,
                     count: total,
                     result: payload.result,
@@ -742,6 +748,9 @@ enum LedgerCompactor {
         }
         if (leftKey.triggerID ?? "") != (rightKey.triggerID ?? "") {
             return (leftKey.triggerID ?? "") < (rightKey.triggerID ?? "")
+        }
+        if (leftKey.variantAudienceID ?? "") != (rightKey.variantAudienceID ?? "") {
+            return (leftKey.variantAudienceID ?? "") < (rightKey.variantAudienceID ?? "")
         }
         if (leftKey.result?.rawValue ?? "") != (rightKey.result?.rawValue ?? "") {
             return (leftKey.result?.rawValue ?? "") < (rightKey.result?.rawValue ?? "")

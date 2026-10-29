@@ -21,13 +21,31 @@ struct LedgerLimitEvaluatorTest {
         id: String = "schedule-A",
         limit: UInt?,
         sharedIDs: [String] = [],
-        limitConfig: LimitConfig? = nil
+        limitConfig: LimitConfig? = nil,
+        variantAudienceID: String? = nil
     ) -> AutomationSchedule {
+        let variantAudience = variantAudienceID.map { id in
+            let json = """
+            {
+              "id": "\(id)",
+              "audience_hash": {
+                "hash_prefix": "prefix:",
+                "num_hash_buckets": 16384,
+                "hash_identifier": "contact",
+                "hash_algorithm": "farm_hash"
+              },
+              "audience_subset": { "min_hash_bucket": 0, "max_hash_bucket": 0 }
+            }
+            """
+            return try! JSONDecoder().decode(VariantAudience.self, from: Data(json.utf8))
+        }
+
         return AutomationSchedule(
             identifier: id,
             data: .actions(.string("actions")),
             triggers: [],
             limit: limit,
+            variantAudience: variantAudience,
             ledgerConfig: sharedIDs.isEmpty ? nil : AutomationSchedule.LedgerConfig(sharedIDs: sharedIDs),
             limitConfig: limitConfig
         )
@@ -37,7 +55,8 @@ struct LedgerLimitEvaluatorTest {
         scheduleID: String = "schedule-A",
         sharedIDs: [String] = [],
         result: LedgerExecutionResult = .succeeded,
-        count: Int? = nil
+        count: Int? = nil,
+        variantAudienceID: String? = nil
     ) async throws {
         try await self.store.recordEvents([
             .execution(
@@ -45,6 +64,7 @@ struct LedgerLimitEvaluatorTest {
                     scheduleID: scheduleID,
                     sharedIDs: sharedIDs.isEmpty ? nil : sharedIDs,
                     triggerID: nil,
+                    variantAudienceID: variantAudienceID,
                     timestamp: self.date.now,
                     count: count,
                     result: result,
@@ -208,6 +228,74 @@ struct LedgerLimitEvaluatorTest {
         #expect(!overAt2)
     }
 
+    private func excludingVariantAudience(_ match: VariantAudienceMatch) -> LimitConfig {
+        .selfOnly(
+            exclude: SelfExclusionSet(
+                or: [SelfExclusionRule(match: .execution(.init(variantAudience: match)))]
+            )
+        )
+    }
+
+    @Test
+    func testNotCurrentVariantAudienceDropsPastIterations() async throws {
+        try await recordExecution(result: .variantMiss, variantAudienceID: "iteration-1")
+        try await recordExecution(result: .variantMiss, variantAudienceID: "iteration-2")
+        // Recorded before the schedule joined an experiment: never matched.
+        try await recordExecution(result: .succeeded)
+
+        let config = excludingVariantAudience(.notCurrent)
+
+        let overAtThree = await evaluator.isOverLimit(
+            schedule: schedule(limit: 3, limitConfig: config, variantAudienceID: "iteration-2")
+        )
+        #expect(!overAtThree)
+
+        let overAtTwo = await evaluator.isOverLimit(
+            schedule: schedule(limit: 2, limitConfig: config, variantAudienceID: "iteration-2")
+        )
+        #expect(overAtTwo)
+    }
+
+    @Test
+    func testCurrentVariantAudienceDropsCurrentIteration() async throws {
+        try await recordExecution(variantAudienceID: "iteration-1")
+        try await recordExecution(variantAudienceID: "iteration-2")
+
+        let config = excludingVariantAudience(.current)
+
+        let overAtTwo = await evaluator.isOverLimit(
+            schedule: schedule(limit: 2, limitConfig: config, variantAudienceID: "iteration-2")
+        )
+        #expect(!overAtTwo)
+
+        let overAtOne = await evaluator.isOverLimit(
+            schedule: schedule(limit: 1, limitConfig: config, variantAudienceID: "iteration-2")
+        )
+        #expect(overAtOne)
+    }
+
+    @Test
+    func testCurrentVariantAudienceMatchesNothingWithoutScheduleVariantAudience() async throws {
+        try await recordExecution(variantAudienceID: "iteration-1")
+
+        let over = await evaluator.isOverLimit(
+            schedule: schedule(limit: 1, limitConfig: excludingVariantAudience(.current))
+        )
+        #expect(over)
+    }
+
+    @Test
+    func testVariantAudienceIDMatchDropsNamedIteration() async throws {
+        try await recordExecution(variantAudienceID: "iteration-1")
+        try await recordExecution(variantAudienceID: "iteration-2")
+
+        let config = excludingVariantAudience(.id("iteration-1"))
+        let over = await evaluator.isOverLimit(
+            schedule: schedule(limit: 2, limitConfig: config, variantAudienceID: "iteration-2")
+        )
+        #expect(!over)
+    }
+
     @Test
     func testBackfillCountContributes() async throws {
         try await recordExecution(result: .backfill, count: 4)
@@ -216,6 +304,39 @@ struct LedgerLimitEvaluatorTest {
     }
 
     // MARK: - Schedule parsing
+
+    @Test
+    func testScheduleDecodesVariantAudienceMatch() throws {
+        let json = """
+        {
+          "id": "test-schedule",
+          "type": "actions",
+          "actions": { "foo": "bar" },
+          "triggers": [],
+          "limit_config": {
+            "type": "shared",
+            "exclude": {
+              "or": [{
+                "source": { "type": "any" },
+                "match": {
+                  "type": "execution",
+                  "results": ["holdout", "variant_miss"],
+                  "variant_audience": { "type": "not_current" }
+                }
+              }]
+            }
+          }
+        }
+        """
+        let schedule = try JSONDecoder().decode(AutomationSchedule.self, from: Data(json.utf8))
+
+        guard case .shared(let exclude) = schedule.limitConfig,
+              case .execution(let match) = exclude?.or.first?.match else {
+            Issue.record("Expected a shared limitConfig with an execution match")
+            return
+        }
+        #expect(match.variantAudience == .notCurrent)
+    }
 
     @Test
     func testScheduleDecodesSharedLimitConfig() throws {

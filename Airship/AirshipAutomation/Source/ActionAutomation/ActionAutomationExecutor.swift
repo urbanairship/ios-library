@@ -35,6 +35,7 @@ struct ActionAutomationExecutor: AutomationExecutorDelegate {
             scheduleID: preparedScheduleInfo.scheduleID,
             sharedIDs: preparedScheduleInfo.ledgerSharedIDs,
             triggerID: preparedScheduleInfo.triggerID,
+            variantAudienceID: preparedScheduleInfo.variantAudienceID,
             result: .succeeded,
             cancel: false
         )
