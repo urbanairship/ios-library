@@ -85,6 +85,16 @@ struct PreparedScheduleInfo: Codable, Equatable {
         self.ledgerSharedID = try container.decodeIfPresent(String.self, forKey: .ledgerSharedID)
         self.triggerID = try container.decodeIfPresent(String.self, forKey: .triggerID)
     }
+
+    /// Whether execution reaches a variant experiment's no-message outcome (control or miss).
+    /// A matching global holdout and a failed additional audience check are both resolved ahead
+    /// of the variant, so neither is one. Such a schedule neither takes the display lock nor
+    /// spends frequency budget.
+    var resolvedToVariantNoMessage: Bool {
+        additionalAudienceCheckResult &&
+            experimentResult?.isMatch != true &&
+            variantAudienceResult?.outcome.isDisplaySkipped == true
+    }
 }
 
 /// This schedule's resolved outcome within its variant experiment, stamped at prepare time so

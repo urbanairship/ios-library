@@ -14,6 +14,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     private let analyticsFactory: any InAppMessageAnalyticsFactoryProtocol
     private let scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier
     private let ledger: any AutomationLedgerProtocol
+    private let appStateTracker: any AppStateTrackerProtocol
 
     /// Injected at module load so the view-testing `displayTest` path can build a layout
     /// adapter without resolving the AI manager from the shared `Airship` instance.
@@ -21,18 +22,21 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
     private let aiManager: (any AirshipAI.InternalManager)?
 
 #if os(macOS)
+    @MainActor
     init(
         assetManager: any AssetCacheManagerProtocol,
         analyticsFactory: any InAppMessageAnalyticsFactoryProtocol,
         scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier,
         aiManager: (any AirshipAI.InternalManager)? = nil,
-        ledger: any AutomationLedgerProtocol
+        ledger: any AutomationLedgerProtocol,
+        appStateTracker: (any AppStateTrackerProtocol)? = nil
     ) {
         self.assetManager = assetManager
         self.analyticsFactory = analyticsFactory
         self.scheduleConditionsChangedNotifier = scheduleConditionsChangedNotifier
         self.aiManager = aiManager
         self.ledger = ledger
+        self.appStateTracker = appStateTracker ?? AppStateTracker.shared
     }
 #else
     private let sceneManager: any InAppMessageSceneManagerProtocol
@@ -48,13 +52,15 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         }
     }
 
+    @MainActor
     init(
         sceneManager: any InAppMessageSceneManagerProtocol,
         assetManager: any AssetCacheManagerProtocol,
         analyticsFactory: any InAppMessageAnalyticsFactoryProtocol,
         scheduleConditionsChangedNotifier: ScheduleConditionsChangedNotifier,
         aiManager: (any AirshipAI.InternalManager)? = nil,
-        ledger: any AutomationLedgerProtocol
+        ledger: any AutomationLedgerProtocol,
+        appStateTracker: (any AppStateTrackerProtocol)? = nil
     ) {
         self.sceneManager = sceneManager
         self.assetManager = assetManager
@@ -62,6 +68,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         self.scheduleConditionsChangedNotifier = scheduleConditionsChangedNotifier
         self.aiManager = aiManager
         self.ledger = ledger
+        self.appStateTracker = appStateTracker ?? AppStateTracker.shared
     }
 #endif
 
@@ -102,13 +109,28 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             return .notReady
         }
 
-        guard data.displayCoordinator.isReady else {
-            AirshipLogger.info("Schedule \(preparedScheduleInfo.scheduleID) display coordinator not ready")
-            Task { [scheduleConditionsChangedNotifier] in
-                await data.displayCoordinator.waitForReady()
-                scheduleConditionsChangedNotifier.notify()
+        if preparedScheduleInfo.resolvedToVariantNoMessage {
+            // Skips the display slot, but waits for the app to be active like a display would.
+            guard self.appStateTracker.state == .active else {
+                AirshipLogger.info("Schedule \(preparedScheduleInfo.scheduleID) app not active")
+                Task { @MainActor [appStateTracker, scheduleConditionsChangedNotifier] in
+                    // `stateUpdates` starts with the current state; `waitForActive` would miss an activation that lands first.
+                    for await state in appStateTracker.stateUpdates {
+                        if state == .active { break }
+                    }
+                    scheduleConditionsChangedNotifier.notify()
+                }
+                return .notReady
             }
-            return .notReady
+        } else {
+            guard data.displayCoordinator.isReady else {
+                AirshipLogger.info("Schedule \(preparedScheduleInfo.scheduleID) display coordinator not ready")
+                Task { [scheduleConditionsChangedNotifier] in
+                    await data.displayCoordinator.waitForReady()
+                    scheduleConditionsChangedNotifier.notify()
+                }
+                return .notReady
+            }
         }
 
         var isReady: Bool?
@@ -204,7 +226,9 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
              data.message,
              scheduleID: preparedScheduleInfo.scheduleID
         )
-        data.displayCoordinator.messageWillDisplay(data.message)
+        if !preparedScheduleInfo.resolvedToVariantNoMessage {
+            data.displayCoordinator.messageWillDisplay(data.message)
+        }
 
         var result: ScheduleExecuteResult = .finished
         
@@ -261,7 +285,9 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
         }
 
         // Finished
-        data.displayCoordinator.messageFinishedDisplaying(data.message)
+        if !preparedScheduleInfo.resolvedToVariantNoMessage {
+            data.displayCoordinator.messageFinishedDisplaying(data.message)
+        }
         self.delegates.displayDelegate?.messageFinishedDisplaying(
             data.message,
             scheduleID: preparedScheduleInfo.scheduleID

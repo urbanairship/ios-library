@@ -19,6 +19,7 @@ struct InAppMessageAutomationExecutorTest {
     private let actionRunner: TestInAppActionRunner = TestInAppActionRunner()
     private let ledger: TestAutomationLedger = TestAutomationLedger()
     private let displayAdapter: TestDisplayAdapter
+    private let appStateTracker: TestAppStateTracker
 
 
     private let preparedInfo: PreparedScheduleInfo = PreparedScheduleInfo(
@@ -39,6 +40,9 @@ struct InAppMessageAutomationExecutorTest {
         self.displayAdapter = TestDisplayAdapter()
         self.conditionsChangedNotifier = ScheduleConditionsChangedNotifier()
         self.displayCoordinator = TestDisplayCoordinator()
+        let appStateTracker = TestAppStateTracker()
+        appStateTracker.currentState = .active
+        self.appStateTracker = appStateTracker
         self.preparedData = PreparedInAppMessageData(
             message: InAppMessage(
                 name: "",
@@ -56,7 +60,8 @@ struct InAppMessageAutomationExecutorTest {
             assetManager: assetManager,
             analyticsFactory: analyticsFactory,
             scheduleConditionsChangedNotifier: conditionsChangedNotifier,
-            ledger: ledger
+            ledger: ledger,
+            appStateTracker: appStateTracker
         )
 
         let analytics = self.analytics
@@ -90,6 +95,60 @@ struct InAppMessageAutomationExecutorTest {
         #expect(
             self.executor.isReady(data: preparedData, preparedScheduleInfo: preparedInfo) == .notReady
         )
+    }
+
+    @Test(arguments: [VariantAudience.Outcome.holdout, .variantMiss])
+    func testReadyIgnoresCoordinatorForVariantNoMessage(outcome: VariantAudience.Outcome) {
+        self.displayAdapter.isReady = true
+        self.displayCoordinator.isReady = false
+
+        var preparedInfo = preparedInfo
+        preparedInfo.variantAudienceResult = VariantAudienceResult(outcome: outcome)
+
+        #expect(
+            self.executor.isReady(data: preparedData, preparedScheduleInfo: preparedInfo) == .ready
+        )
+    }
+
+    @Test(arguments: [VariantAudience.Outcome.holdout, .variantMiss])
+    func testVariantNoMessageWaitsForActiveApp(outcome: VariantAudience.Outcome) {
+        self.displayAdapter.isReady = true
+        self.displayCoordinator.isReady = true
+        self.appStateTracker.currentState = .background
+
+        var preparedInfo = preparedInfo
+        preparedInfo.variantAudienceResult = VariantAudienceResult(outcome: outcome)
+
+        #expect(
+            self.executor.isReady(data: preparedData, preparedScheduleInfo: preparedInfo) == .notReady
+        )
+    }
+
+    @Test
+    func testVariantNoMessageNotifiesWhenAppActivatesBeforeTheWaitStarts() async throws {
+        self.displayAdapter.isReady = true
+        self.appStateTracker.currentState = .background
+
+        var preparedInfo = preparedInfo
+        preparedInfo.variantAudienceResult = VariantAudienceResult(outcome: .holdout)
+
+        let notifier = self.conditionsChangedNotifier
+        var notified = false
+        Task { @MainActor in
+            await notifier.wait()
+            notified = true
+        }
+        await Task.yield()
+
+        #expect(
+            self.executor.isReady(data: preparedData, preparedScheduleInfo: preparedInfo) == .notReady
+        )
+        self.appStateTracker.currentState = .active
+
+        for _ in 0..<50 where !notified {
+            try await Task.sleep(nanoseconds: 20_000_000)
+        }
+        #expect(notified)
     }
 
     @Test
@@ -304,6 +363,27 @@ struct InAppMessageAutomationExecutorTest {
                 cancel: false
             )
         ])
+    }
+
+    @Test(arguments: [VariantAudience.Outcome.holdout, .variantMiss])
+    func testExecuteVariantNoMessageSkipsDisplayLock(outcome: VariantAudience.Outcome) async throws {
+        var preparedInfo = preparedInfo
+        preparedInfo.variantAudienceResult = VariantAudienceResult(outcome: outcome)
+
+        _ = try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
+
+        #expect(self.displayCoordinator.willDisplayCount == 0)
+        #expect(self.displayCoordinator.finishedDisplayingCount == 0)
+    }
+
+    @Test
+    func testExecuteTakesDisplayLock() async throws {
+        self.displayAdapter.onDisplay = { _, _ in .finished }
+
+        _ = try await self.executor.execute(data: preparedData, preparedScheduleInfo: preparedInfo)
+
+        #expect(self.displayCoordinator.willDisplayCount == 1)
+        #expect(self.displayCoordinator.finishedDisplayingCount == 1)
     }
 
     @Test
