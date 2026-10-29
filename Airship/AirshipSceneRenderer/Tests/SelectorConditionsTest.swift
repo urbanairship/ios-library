@@ -77,8 +77,8 @@ struct SelectorConditionsTest {
         #expect(selectors.resolve(environment()) == "portrait.png")
     }
 
-    private static func color(_ selectors: String) throws -> ThomasColor {
-        try JSONDecoder().decode(ThomasColor.self, from: Data(#"""
+    private static func color(_ selectors: String) throws -> ThomasColor.Definition {
+        try JSONDecoder().decode(ThomasColor.Definition.self, from: Data(#"""
         {"default": {"type": "hex", "hex": "#000000"}, "selectors": [\#(selectors)]}
         """#.utf8))
     }
@@ -94,6 +94,52 @@ struct SelectorConditionsTest {
         #expect(color.selectors?.firstMatch(large)?.color.hex == "#111111")
         #expect(color.selectors?.firstMatch(landscape)?.color.hex == "#222222")
         #expect(color.selectors?.firstMatch(Self.shown) == nil)
+    }
+
+    private static let ink = try! JSONDecoder().decode(ThomasColor.Definition.self, from: Data(#"""
+    {"default": {"type": "hex", "hex": "#1F1F24", "alpha": 1},
+     "selectors": [{"dark_mode": true, "color": {"type": "hex", "hex": "#E5E8EE", "alpha": 1}}]}
+    """#.utf8))
+
+    @Test("a color reference draws the named color, selectors and all")
+    func colorReference() throws {
+        let reference = try JSONDecoder().decode(
+            ThomasColor.self,
+            from: Data(#"{"type": "color_reference", "name": "ink"}"#.utf8)
+        )
+        #expect(reference == .reference(name: "ink"))
+
+        let dark = ThomasSelectorEnvironment(darkMode: true, colors: ["ink": Self.ink])
+        #expect(reference.definition(dark) == Self.ink)
+        #expect(reference.definition(dark).selectors?.firstMatch(dark)?.color.hex == "#E5E8EE")
+    }
+
+    @Test("a reference to a name the scene doesn't define draws opaque black")
+    func unknownColorReference() {
+        let reference = ThomasColor.reference(name: "ink")
+        #expect(reference.definition(Self.shown) == .missing)
+        #expect(reference.definition(ThomasSelectorEnvironment(darkMode: false, colors: ["brand": Self.ink])) == .missing)
+        #expect(ThomasColor.Definition.missing.defaultColor.hex == "#000000")
+    }
+
+    @Test("an async view's named colors win over the scene's, which still fill in the rest")
+    func overlayingColors() throws {
+        let brand = try JSONDecoder().decode(ThomasColor.Definition.self, from: Data(#"""
+        {"default": {"type": "hex", "hex": "#C8336C", "alpha": 1}}
+        """#.utf8))
+        let scene = ThomasSelectorEnvironment(darkMode: false, colors: ["ink": Self.ink, "brand": Self.ink])
+
+        let content = scene.overlaying(colors: ["brand": brand])
+        #expect(ThomasColor.reference(name: "brand").definition(content) == brand)
+        #expect(ThomasColor.reference(name: "ink").definition(content) == Self.ink)
+        #expect(scene.overlaying(colors: nil) == scene)
+    }
+
+    @Test("a color reference encodes back to itself")
+    func colorReferenceRoundTrip() throws {
+        let reference = ThomasColor.reference(name: "ink")
+        let decoded = try JSONDecoder().decode(ThomasColor.self, from: JSONEncoder().encode(reference))
+        #expect(decoded == reference)
     }
 
     @Test("a media URL follows the window size and the platform together")

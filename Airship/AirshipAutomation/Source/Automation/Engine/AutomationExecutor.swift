@@ -3,7 +3,7 @@
 import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 
 fileprivate protocol AutomationExecutorProtocol: Sendable {
     @MainActor
@@ -97,10 +97,23 @@ final class AutomationExecutor: AutomationExecutorProtocol {
     /// spent on an execution that then gets skipped is gone for the rest of the
     /// constraint's window.
     ///
-    /// - Returns: `true` if the schedule was under its frequency limits and the
-    /// occurrence was recorded, `false` if it is over and should be skipped.
+    /// A variant experiment's no-message outcomes (control, miss) neither spend
+    /// nor consult the frequency budget. They still count toward ledger limits.
+    ///
+    /// Charging them would let devices that never see the message starve the
+    /// sibling arms that share the constraint, and a miss exists to confirm the
+    /// trigger fired. The trade-off is that a control device keeps budget a
+    /// matched device would have spent on other messages sharing the constraint.
+    /// The global holdout and an audience-excluded device are unchanged and still charge.
+    ///
+    /// - Returns: `true` if the schedule may execute, recording an occurrence
+    /// unless the outcome is a variant control or miss; `false` if it is over its
+    /// frequency limits and should be skipped.
     @MainActor
     func checkFrequencyLimit(preparedSchedule: PreparedSchedule) -> Bool {
+        if preparedSchedule.info.resolvedToVariantNoMessage {
+            return true
+        }
         return preparedSchedule.frequencyChecker?.checkAndIncrement() != false
     }
 

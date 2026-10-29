@@ -15,7 +15,7 @@ final class ThomasAsyncViewState: ObservableObject {
     private var resolveTask: Task<Void, Never>?
 
     /// Layout decoded from HTTP that still needs a successful image prefetch before `response` is published.
-    private(set) var resolvedLayoutAwaitingPrefetch: ThomasViewInfo?
+    private(set) var resolvedLayoutAwaitingPrefetch: ThomasAsyncViewContent?
 
     init(
         properties: ThomasViewInfo.AsyncViewController.Properties? = nil,
@@ -85,7 +85,7 @@ final class ThomasAsyncViewState: ObservableObject {
     }
 
     @Published
-    var response: ThomasViewInfo?
+    var response: ThomasAsyncViewContent?
 
     @Published
     var status: Status = .loading
@@ -167,9 +167,9 @@ final class ThomasAsyncViewState: ObservableObject {
             try await taskSleeper.sleep(timeInterval: delay)
 
             do {
-                let viewInfo = try await makeRequest(info)
+                let content = try await makeRequest(info)
                 resolvedLayoutAwaitingPrefetch = nil
-                try await commitResolvedLayout(viewInfo)
+                try await commitResolvedLayout(content)
                 return
             } catch {
                 if error is CancellationError {
@@ -198,19 +198,19 @@ final class ThomasAsyncViewState: ObservableObject {
 
     /// Publishes `response` only after any required image prefetch completes. The image loader owns
     /// the prefetched assets and releases them on dismiss.
-    private func commitResolvedLayout(_ viewInfo: ThomasViewInfo) async throws {
-        let imageURLs = imageURLStrings(from: viewInfo)
+    private func commitResolvedLayout(_ content: ThomasAsyncViewContent) async throws {
+        let imageURLs = imageURLStrings(from: content.view)
         do {
             if !imageURLs.isEmpty {
                 try await imageLoader?.prefetch(urls: imageURLs)
             }
         } catch {
-            resolvedLayoutAwaitingPrefetch = viewInfo
+            resolvedLayoutAwaitingPrefetch = content
             throw PrefetchError(underlying: error)
         }
 
         resolvedLayoutAwaitingPrefetch = nil
-        self.response = viewInfo
+        self.response = content
     }
 
     /// Delay before each resolve attempt. `attempt` is the loop index (sleep-then-request).
@@ -234,7 +234,7 @@ final class ThomasAsyncViewState: ObservableObject {
     /// stays in the renderer; the resolver only returns the raw payload.
     private func makeRequest(
         _ info: ThomasViewInfo.AsyncViewController.Request.ContentRequest
-    ) async throws -> ThomasViewInfo {
+    ) async throws -> ThomasAsyncViewContent {
         guard let resolver else {
             throw AsyncViewResolverError.client
         }
@@ -249,10 +249,29 @@ final class ThomasAsyncViewState: ObservableObject {
         let data = try await resolver.resolve(url: info.url, auth: auth)
 
         do {
-            return try JSONDecoder().decode(ThomasViewInfo.self, from: data)
+            return try JSONDecoder().decode(ThomasAsyncViewContent.self, from: data)
         } catch {
             throw AsyncViewResolverError.client
         }
+    }
+}
+
+/// What an async view's request returns: the view to draw, whose root may also name colors.
+///
+/// Within the async view, a color reference looks in these first and then in the scene's, so a name
+/// defined here overrides the scene's for this content only.
+struct ThomasAsyncViewContent: Decodable, Equatable, Sendable {
+    let view: ThomasViewInfo
+    let references: ThomasSceneReferences?
+
+    private enum CodingKeys: String, CodingKey {
+        case references
+    }
+
+    init(from decoder: any Decoder) throws {
+        self.view = try ThomasViewInfo(from: decoder)
+        self.references = try decoder.container(keyedBy: CodingKeys.self)
+            .decodeIfPresent(ThomasSceneReferences.self, forKey: .references)
     }
 }
 

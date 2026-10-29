@@ -6,7 +6,7 @@ import Foundation
 
 @testable @_spi(AirshipInternal)
 import AirshipAutomation
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 @_spi(AirshipInternal) import AirshipScenes
 
 @MainActor
@@ -138,6 +138,123 @@ struct AutomationExecutorTest {
 
         let schedule = PreparedSchedule(
             info: PreparedScheduleInfo(scheduleID: UUID().uuidString, triggerSessionID: UUID().uuidString, priority: 0),
+            data: .actions(AirshipJSON.string("neat")),
+            frequencyChecker: frequencyChecker
+        )
+
+        #expect(self.executor.checkFrequencyLimit(preparedSchedule: schedule))
+        #expect(frequencyChecker.checkAndIncrementCount == 1)
+    }
+
+    @Test(arguments: [VariantAudience.Outcome.holdout, .variantMiss])
+    func testCheckFrequencyLimitSkipsVariantNoMessageOutcomes(outcome: VariantAudience.Outcome) async throws {
+        let frequencyChecker = TestFrequencyChecker()
+        frequencyChecker.checkAndIncrementBlock = { false }
+
+        let schedule = PreparedSchedule(
+            info: PreparedScheduleInfo(
+                scheduleID: UUID().uuidString,
+                variantAudienceResult: VariantAudienceResult(outcome: outcome),
+                triggerSessionID: UUID().uuidString,
+                priority: 0
+            ),
+            data: .actions(AirshipJSON.string("neat")),
+            frequencyChecker: frequencyChecker
+        )
+
+        #expect(self.executor.checkFrequencyLimit(preparedSchedule: schedule))
+        #expect(frequencyChecker.checkAndIncrementCount == 0)
+    }
+
+    @Test
+    func testCheckFrequencyLimitChargesVariantMatch() async throws {
+        let frequencyChecker = TestFrequencyChecker()
+        frequencyChecker.checkAndIncrementBlock = { true }
+
+        let schedule = PreparedSchedule(
+            info: PreparedScheduleInfo(
+                scheduleID: UUID().uuidString,
+                variantAudienceResult: VariantAudienceResult(outcome: .matched),
+                triggerSessionID: UUID().uuidString,
+                priority: 0
+            ),
+            data: .actions(AirshipJSON.string("neat")),
+            frequencyChecker: frequencyChecker
+        )
+
+        #expect(self.executor.checkFrequencyLimit(preparedSchedule: schedule))
+        #expect(frequencyChecker.checkAndIncrementCount == 1)
+    }
+
+    /// `evaluateExperiments` returns a result whenever experiments exist, matching or not.
+    @Test(arguments: [VariantAudience.Outcome.holdout, .variantMiss])
+    func testCheckFrequencyLimitSkipsVariantOutcomesWithNonMatchingExperiment(outcome: VariantAudience.Outcome) async throws {
+        let frequencyChecker = TestFrequencyChecker()
+        frequencyChecker.checkAndIncrementBlock = { false }
+
+        let schedule = PreparedSchedule(
+            info: PreparedScheduleInfo(
+                scheduleID: UUID().uuidString,
+                experimentResult: ExperimentResult(
+                    channelID: "channel",
+                    contactID: "contact",
+                    isMatch: false,
+                    reportingMetadata: []
+                ),
+                variantAudienceResult: VariantAudienceResult(outcome: outcome),
+                triggerSessionID: UUID().uuidString,
+                priority: 0
+            ),
+            data: .actions(AirshipJSON.string("neat")),
+            frequencyChecker: frequencyChecker
+        )
+
+        #expect(self.executor.checkFrequencyLimit(preparedSchedule: schedule))
+        #expect(frequencyChecker.checkAndIncrementCount == 0)
+    }
+
+    /// A matching global holdout decides the outcome ahead of the variant, so it still charges.
+    @Test
+    func testCheckFrequencyLimitChargesGlobalHoldoutOverVariantOutcome() async throws {
+        let frequencyChecker = TestFrequencyChecker()
+        frequencyChecker.checkAndIncrementBlock = { true }
+
+        let schedule = PreparedSchedule(
+            info: PreparedScheduleInfo(
+                scheduleID: UUID().uuidString,
+                experimentResult: ExperimentResult(
+                    channelID: "channel",
+                    contactID: "contact",
+                    isMatch: true,
+                    reportingMetadata: []
+                ),
+                variantAudienceResult: VariantAudienceResult(outcome: .variantMiss),
+                triggerSessionID: UUID().uuidString,
+                priority: 0
+            ),
+            data: .actions(AirshipJSON.string("neat")),
+            frequencyChecker: frequencyChecker
+        )
+
+        #expect(self.executor.checkFrequencyLimit(preparedSchedule: schedule))
+        #expect(frequencyChecker.checkAndIncrementCount == 1)
+    }
+
+    /// A failed additional audience check is resolved ahead of the variant outcome, so it charges
+    /// whichever arm the device landed in.
+    @Test(arguments: [VariantAudience.Outcome.holdout, .variantMiss])
+    func testCheckFrequencyLimitChargesAudienceExcludedOverVariantOutcome(outcome: VariantAudience.Outcome) async throws {
+        let frequencyChecker = TestFrequencyChecker()
+        frequencyChecker.checkAndIncrementBlock = { true }
+
+        let schedule = PreparedSchedule(
+            info: PreparedScheduleInfo(
+                scheduleID: UUID().uuidString,
+                variantAudienceResult: VariantAudienceResult(outcome: outcome),
+                triggerSessionID: UUID().uuidString,
+                additionalAudienceCheckResult: false,
+                priority: 0
+            ),
             data: .actions(AirshipJSON.string("neat")),
             frequencyChecker: frequencyChecker
         )

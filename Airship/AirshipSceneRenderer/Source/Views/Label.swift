@@ -236,13 +236,79 @@ extension Label {
         fileprivate let isHighlight: Bool
         fileprivate let isSuperscript: Bool
         fileprivate let isSubscript: Bool
+        fileprivate let colorName: String?
     }
 
-    private struct DelimitedRange {
+    struct ColorSpan {
+        let range: DelimitedRange
+        let colorName: String
+    }
+
+    private static let colorSpanPrefix: [Character] = Array("{color:")
+
+    /// Finds `[text]{color:name}` spans, innermost first when they nest.
+    ///
+    /// Runs on the parsed characters, so markdown inside the brackets is already applied
+    /// and a backslash-escaped `\[` still opens a span.
+    ///
+    /// - Parameter chars: the characters of the parsed label.
+    /// - Returns: each span's outer range (from `[` through `}`), inner range, and color name.
+    static func findColorSpans(in chars: AttributedString.CharacterView) -> [ColorSpan] {
+        var results: [ColorSpan] = []
+        var openBrackets: [AttributedString.Index] = []
+        let end = chars.endIndex
+        var i = chars.startIndex
+
+        while i < end {
+            let next = chars.index(after: i)
+
+            if chars[i] == "[" {
+                openBrackets.append(i)
+            } else if chars[i] == "]", let open = openBrackets.popLast() {
+                var j = next
+                var prefixMatched = true
+                for expected in Self.colorSpanPrefix {
+                    guard j < end, chars[j] == expected else {
+                        prefixMatched = false
+                        break
+                    }
+                    j = chars.index(after: j)
+                }
+
+                if prefixMatched {
+                    let nameStart = j
+                    while j < end, chars[j] != "}", Self.isColorNameCharacter(chars[j]) {
+                        j = chars.index(after: j)
+                    }
+
+                    let innerStart = chars.index(after: open)
+                    if j < end, chars[j] == "}", nameStart < j, innerStart < i {
+                        let outerEnd = chars.index(after: j)
+                        results.append(ColorSpan(
+                            range: DelimitedRange(outer: open..<outerEnd, inner: innerStart..<i),
+                            colorName: String(chars[nameStart..<j])
+                        ))
+                        i = outerEnd
+                        continue
+                    }
+                }
+            }
+
+            i = next
+        }
+
+        return results
+    }
+
+    private static func isColorNameCharacter(_ char: Character) -> Bool {
+        char.isLetter || char.isNumber || char == "_" || char == "-"
+    }
+
+    struct DelimitedRange {
         /// Full range including the delimiter characters themselves.
-        fileprivate let outer: Range<AttributedString.Index>
+        let outer: Range<AttributedString.Index>
         /// Inner content range, excluding the delimiter characters.
-        fileprivate let inner: Range<AttributedString.Index>
+        let inner: Range<AttributedString.Index>
     }
 
     private func findDelimitedRanges(
@@ -302,11 +368,12 @@ extension Label {
         let highlightRanges   = findDelimitedRanges(in: chars, open: ("=", "="), close: ("=", "="))
         let superscriptRanges = findDelimitedRanges(in: chars, open: ("^", "^"), close: ("^", "^"))
         let subscriptRanges   = findDelimitedRanges(in: chars, open: (",", "{"), close: ("}", ","))
+        let colorSpans        = Self.findColorSpans(in: chars)
 
         // Build boundaries from both outer and inner edges so delimiter
         // characters form their own sub-segments and can be skipped.
         var boundarySet: [AttributedString.Index] = [start, end]
-        for r in highlightRanges + superscriptRanges + subscriptRanges {
+        for r in highlightRanges + superscriptRanges + subscriptRanges + colorSpans.map(\.range) {
             boundarySet.append(r.outer.lowerBound)
             boundarySet.append(r.inner.lowerBound)
             boundarySet.append(r.inner.upperBound)
@@ -332,20 +399,24 @@ extension Label {
             let isDelimiter =
                 highlightRanges.contains   { $0.outer.contains(mid) && !$0.inner.contains(mid) } ||
                 superscriptRanges.contains { $0.outer.contains(mid) && !$0.inner.contains(mid) } ||
-                subscriptRanges.contains   { $0.outer.contains(mid) && !$0.inner.contains(mid) }
+                subscriptRanges.contains   { $0.outer.contains(mid) && !$0.inner.contains(mid) } ||
+                colorSpans.contains        { $0.range.outer.contains(mid) && !$0.range.inner.contains(mid) }
 
             if isDelimiter { continue }
 
             let isHighlight   = highlightRanges.contains   { $0.inner.contains(mid) }
             let isSuperscript = superscriptRanges.contains { $0.inner.contains(mid) }
             let isSubscript   = subscriptRanges.contains   { $0.inner.contains(mid) }
+            // Spans are found innermost first, so a nested span's color wins.
+            let colorName     = colorSpans.first { $0.range.inner.contains(mid) }?.colorName
 
             segments.append(
                 Segment(
                     range: segStart..<segEnd,
                     isHighlight: isHighlight,
                     isSuperscript: isSuperscript,
-                    isSubscript: isSubscript
+                    isSubscript: isSubscript,
+                    colorName: colorName
                 )
             )
         }
@@ -353,14 +424,71 @@ extension Label {
         return segments
     }
 
+    /// Applies an anchor appearance's color and underline to every link.
+    ///
+    /// - Parameters:
+    ///   - anchor: the label's `markdown.appearance.anchor`; `nil` leaves links unstyled.
+    ///   - attributed: the parsed label, updated in place.
+    ///   - selectorEnvironment: picks the anchor color's selector.
+    static func applyAnchorAppearance(
+        _ anchor: ThomasMarkDownOptions.Appearance.Anchor?,
+        to attributed: inout AttributedString,
+        selectorEnvironment: ThomasSelectorEnvironment
+    ) {
+        guard let anchor else { return }
+
+        let color = anchor.color?.toColor(selectorEnvironment)
+        let isUnderlined = anchor.styles?.contains(.underlined) == true
+        let linkRanges = attributed.runs[\.link].compactMap { link, range in link == nil ? nil : range }
+
+        for range in linkRanges {
+            if let color {
+                attributed[range].foregroundColor = color
+            }
+            if isUnderlined {
+                attributed[range].underlineStyle = Text.LineStyle.single
+            }
+        }
+    }
+
+    /// Returns the color a `[text]{color:name}` span names in the scene's `references.colors`.
+    ///
+    /// Unlike a color reference, an unknown name isn't drawn black: the span keeps the label's own color.
+    ///
+    /// - Parameters:
+    ///   - name: the span's color name, or `nil` outside a span.
+    ///   - selectorEnvironment: carries the scene's named colors and picks their selectors.
+    /// - Returns: the color, or `nil` where there's no name or the scene doesn't define it.
+    static func spanColor(named name: String?, in selectorEnvironment: ThomasSelectorEnvironment) -> Color? {
+        guard let name else { return nil }
+        return selectorEnvironment.colors[name]?.toColor(selectorEnvironment)
+    }
+
+    /// Colors every run that isn't a link, so links inside a color span keep their anchor styling.
+    ///
+    /// - Parameters:
+    ///   - color: the span's resolved color.
+    ///   - attributed: the span's text, updated in place.
+    static func applySpanColor(_ color: Color, to attributed: inout AttributedString) {
+        let plainRanges = attributed.runs[\.link].compactMap { link, range in link == nil ? range : nil }
+        for range in plainRanges {
+            attributed[range].foregroundColor = color
+        }
+    }
+
     private var markdownText: Text {
         get throws {
             let resolved = info.resolveLabelString(thomasState: thomasState, localizer: thomasEnvironment.extensions.localizer)
 
             // Parse markdown into attributed
-            let attributed = try AttributedString(
+            var attributed = try AttributedString(
                 markdown: resolved,
                 options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+            )
+            Self.applyAnchorAppearance(
+                self.info.properties.markdown?.appearance?.anchor,
+                to: &attributed,
+                selectorEnvironment: selectorEnvironment
             )
 
             let highlightOptions = self.info.properties.markdown?.appearance?.highlight
@@ -373,8 +501,12 @@ extension Label {
             var result: Text?
 
             for seg in segments {
-                var slice = attributed[seg.range]
+                var slice = AttributedString(attributed[seg.range])
                 let piece: Text
+
+                if let color = Self.spanColor(named: seg.colorName, in: selectorEnvironment) {
+                    Self.applySpanColor(color, to: &slice)
+                }
 
                 if seg.isSuperscript || seg.isSubscript {
                     slice.baselineOffset = seg.isSuperscript
@@ -396,14 +528,14 @@ extension Label {
                             color: highlightOptions?.color?.toColor(selectorEnvironment) ?? Self.defaultHighlightColor,
                             cornerRadius: cornerRadius
                         )
-                        piece = Text(AttributedString(slice))
+                        piece = Text(slice)
                             .customAttribute(highlight)
                     } else {
                         slice.backgroundColor = highlightOptions?.color?.toColor(selectorEnvironment) ?? Self.defaultHighlightColor
-                        piece = Text(AttributedString(slice))
+                        piece = Text(slice)
                     }
                 } else {
-                    piece = Text(AttributedString(slice))
+                    piece = Text(slice)
                 }
 
                 result = result.map { $0 + piece } ?? piece

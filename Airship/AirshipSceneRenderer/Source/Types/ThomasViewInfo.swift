@@ -268,6 +268,8 @@ indirect enum ThomasViewInfo: ThomasSerializable {
             /// Tells a `randomize_children` shuffle apart from others with the same item count.
             var identifier: String?
             var direction: ThomasDirection
+            /// The space between neighbouring items along `direction`, in points. Defaults to 0.
+            var spacing: Double?
             var randomizeChildren: Bool?
             var items: [Item]
             var backgrounds: [ThomasBackground]?
@@ -276,6 +278,7 @@ indirect enum ThomasViewInfo: ThomasSerializable {
                 case type
                 case identifier
                 case direction
+                case spacing
                 case randomizeChildren = "randomize_children"
                 case items
                 case backgrounds

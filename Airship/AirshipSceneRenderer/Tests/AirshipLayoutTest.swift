@@ -287,6 +287,39 @@ struct AirshipLayoutTest {
         #expect(try decode(json).contentDescription == nil)
     }
 
+    @Test
+    func decodesAndEncodesNamedColors() throws {
+        let json = """
+        {
+          "version": 2,
+          "references": {
+            "colors": {
+              "ink": {
+                "default": { "type": "hex", "hex": "#1F1F24", "alpha": 1 },
+                "selectors": [{ "dark_mode": true, "color": { "type": "hex", "hex": "#E5E8EE", "alpha": 1 } }]
+              }
+            }
+          },
+          "presentation": {
+            "type": "modal",
+            "default_placement": {
+              "size": { "width": "100%", "height": "100%" },
+              "background_color": { "type": "color_reference", "name": "ink" }
+            }
+          },
+          "view": { "type": "empty_view", "background_color": { "type": "color_reference", "name": "ink" } }
+        }
+        """
+        let layout = try decode(json)
+        #expect(layout.references?.colors?["ink"]?.defaultColor.hex == "#1F1F24")
+        guard case .emptyView(let info) = layout.view else {
+            Issue.record("Expected empty_view")
+            return
+        }
+        #expect(info.commonProperties.backgroundColor == .reference(name: "ink"))
+        try decodeEncodeCompare(source: json, type: AirshipLayout.self)
+    }
+
     private func decode(_ json: String) throws -> AirshipLayout {
         guard let data = json.data(using: .utf8) else {
             struct Encoding: Error {}

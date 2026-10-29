@@ -89,6 +89,11 @@ struct LinearLayout: View {
         }
     }
 
+    /// The space between neighbouring items; never negative.
+    private var spacing: CGFloat {
+        max(0, CGFloat(info.properties.spacing ?? 0))
+    }
+
     @ViewBuilder
     @MainActor
     private func makeVStack(
@@ -97,7 +102,7 @@ struct LinearLayout: View {
     ) -> some View {
         let items = self.info.properties.items
 
-        VStack(alignment: .center, spacing: 0) {
+        VStack(alignment: .center, spacing: spacing) {
             ForEach(order, id: \.self) { index in
 #if os(tvOS)
                 HStack {
@@ -141,7 +146,7 @@ struct LinearLayout: View {
     ) -> some View {
         let items = self.info.properties.items
 
-        HStack(alignment: .center, spacing: 0) {
+        HStack(alignment: .center, spacing: spacing) {
             ForEach(order, id: \.self) { index in
 #if os(tvOS)
                 VStack {
