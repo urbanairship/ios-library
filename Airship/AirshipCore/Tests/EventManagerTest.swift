@@ -35,6 +35,17 @@ struct EventManagerTest {
         channel.identifier = "some channel"
     }
 
+    /// Runs the upload work block once the manager has registered it.
+    ///
+    /// The manager registers its block from an unawaited `Task` in `init`, so a test that reads
+    /// `workBlock` immediately can see nil and run nothing.
+    private func runWorkBlock() async throws -> AirshipWorkResult? {
+        for _ in 0..<500 where eventScheduler.workBlock == nil {
+            try await Task.sleep(nanoseconds: 10_000_000)
+        }
+        return try await eventScheduler.workBlock?()
+    }
+
     @Test
     func testAddEvent() async throws {
         let eventData = AirshipEventData.makeTestData()
@@ -122,7 +133,7 @@ struct EventManagerTest {
             )
         }
 
-        let result = try await self.eventScheduler.workBlock?()
+        let result = try await self.runWorkBlock()
         #expect(AirshipWorkResult.success == result)
         #expect(requestCalled)
 
@@ -148,7 +159,7 @@ struct EventManagerTest {
             )
         }
 
-        let result = try await self.eventScheduler.workBlock?()
+        let result = try await self.runWorkBlock()
         #expect(AirshipWorkResult.failure == result)
 
         let storedEvents = try await self.eventStore.fetchEvents(
@@ -173,7 +184,7 @@ struct EventManagerTest {
             )
         }
 
-        let result = try await self.eventScheduler.workBlock?()
+        let result = try await self.runWorkBlock()
         #expect(AirshipWorkResult.success == result)
     }
 
@@ -209,7 +220,7 @@ struct EventManagerTest {
             )
         }
 
-        let result = try await self.eventScheduler.workBlock?()
+        let result = try await self.runWorkBlock()
         #expect(AirshipWorkResult.success == result)
         #expect(requestCalled)
     }
@@ -232,7 +243,7 @@ struct EventManagerTest {
             )
         }
 
-        let result = try await self.eventScheduler.workBlock?()
+        let result = try await self.runWorkBlock()
         #expect(AirshipWorkResult.success == result)
     }
 
@@ -258,7 +269,7 @@ struct EventManagerTest {
             )
         }
 
-        let result = try await self.eventScheduler.workBlock?()
+        let result = try await self.runWorkBlock()
         #expect(AirshipWorkResult.success == result)
 
         await self.eventManager.scheduleUpload(eventPriority: .normal)

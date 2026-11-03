@@ -46,8 +46,8 @@ struct DefaultMessageViewAnalyticsTests {
     @Test("Record event pulls out a nested scene template reporting context")
     @MainActor
     func recordEventNestedReportingContext() async throws {
-        // A scene template's reporting_context arrives nested in message_reporting, and is pulled
-        // out to become the event reporting context.
+        // A scene template's reporting_context arrives nested in message_reporting. Events carry it
+        // merged with the other message_reporting keys; the impression carries it alone.
         let sceneReportingContext: AirshipJSON = .object(["campaign": .string("fall-sale")])
         let reporting: AirshipJSON = .object([
             "message_id": .string("test-message-id"),
@@ -65,7 +65,10 @@ struct DefaultMessageViewAnalyticsTests {
         await operationsQueue.waitForCurrentOperations()
 
         let capturedData = try #require(mockRecorder.lastCapturedData, "No event data was captured")
-        #expect(capturedData.context!.reportingContext == sceneReportingContext)
+        #expect(capturedData.context!.reportingContext == .object([
+            "message_id": .string("test-message-id"),
+            "campaign": .string("fall-sale")
+        ]))
 
         let impression = try #require(mockRecorder.lastRecordedImpression)
         #expect(impression.reportingContext == sceneReportingContext)
