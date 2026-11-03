@@ -30,6 +30,19 @@ public final class PreferenceDataStore: @unchecked Sendable {
 
             let deviceIDValue = await deviceID.value
 
+            // An unreadable / unpersistable device ID must not look like a restore
+            // and must not overwrite the stored ID. Cache false so every consumer
+            // on this launch agrees (MOBILE-5852) without persisting the sentinel.
+            if deviceIDValue == AirshipDeviceID.unknownValue {
+                return lock.sync {
+                    if let cachedIsAppRestore {
+                        return cachedIsAppRestore
+                    }
+                    self.cachedIsAppRestore = false
+                    return false
+                }
+            }
+
             let restored: Bool = lock.sync {
                 if let cachedIsAppRestore {
                     return cachedIsAppRestore

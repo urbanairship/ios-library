@@ -1,12 +1,12 @@
 /* Copyright Airship and Contributors */
 
-import Foundation
+public import Foundation
 @_spi(AirshipInternal) import AirshipBasement
 
 /// Keychain credentials
 /// - Note: For internal use only. :nodoc:
 @_spi(AirshipInternal)
-public struct AirshipKeychainCredentials: Sendable {
+public struct AirshipKeychainCredentials: Sendable, Equatable {
 
     /// The username
     public let username: String
@@ -22,6 +22,21 @@ public struct AirshipKeychainCredentials: Sendable {
         self.username = username
         self.password = password
     }
+}
+
+/// Result of a keychain read.
+/// Distinguishes a missing item from an unexpected `OSStatus` so callers
+/// do not treat failures such as `errSecMissingEntitlement` as "not found".
+/// - Note: For internal use only. :nodoc:
+@_spi(AirshipInternal)
+public enum AirshipKeychainReadResult: Sendable, Equatable {
+    /// Credentials were found.
+    case success(AirshipKeychainCredentials)
+    /// No usable item exists for the identifier (`errSecItemNotFound`, or an
+    /// existing item that cannot be decoded and should be overwritten).
+    case itemNotFound
+    /// The keychain returned an unexpected status.
+    case error(OSStatus)
 }
 
 /// Keychain access
@@ -57,11 +72,12 @@ public protocol AirshipKeychainAccessProtocol: Sendable {
     /// - Parameters:
     ///     - identifier: The credential's identifier
     ///     - appKey: The app key
-    /// - Returns: The credentials if found.
+    /// - Returns: The read result. `itemNotFound` is a genuine missing value;
+    ///   any other failure is reported as `error` and must not be treated as missing.
     func readCredentails(
         identifier: String,
         appKey: String
-    ) async -> AirshipKeychainCredentials?
+    ) async -> AirshipKeychainReadResult
 }
 
 /// Keychain access
@@ -128,40 +144,40 @@ public final class AirshipKeychainAccess: AirshipKeychainAccessProtocol {
     public func readCredentails(
         identifier: String,
         appKey: String
-    ) async -> AirshipKeychainCredentials? {
+    ) async -> AirshipKeychainReadResult {
 
         let service = service(appKey: appKey)
 
         return await self.dispatch { [service] in
-            if let credentials = Keychain.readCredentials(
-                identifier: identifier,
-                service: service
-            ) {
-                return credentials
-            }
-
-            // If we do not have a new value, check
-            // the old service location
-            if let bundleID = Bundle.main.bundleIdentifier {
-
-                let old = Keychain.readCredentials(
+            AirshipKeychainReadResolver.resolve(
+                current: Keychain.readCredentials(
                     identifier: identifier,
-                    service: bundleID
-                )
+                    service: service
+                ),
+                legacy: {
+                    // If we do not have a new value, check
+                    // the old service location
+                    guard let bundleID = Bundle.main.bundleIdentifier else {
+                        return .itemNotFound
+                    }
 
-                if let old = old {
-                    // Migrate old data to new service location
-                    let _ = Keychain.writeCredentials(
-                        old,
+                    let result = Keychain.readCredentials(
                         identifier: identifier,
-                        service: service
+                        service: bundleID
                     )
-                    return old
-                }
-            }
-            return nil
-        }
 
+                    if case .success(let old) = result {
+                        // Migrate old data to new service location
+                        let _ = Keychain.writeCredentials(
+                            old,
+                            identifier: identifier,
+                            service: service
+                        )
+                    }
+                    return result
+                }
+            )
+        }
     }
 
     private func dispatch<T>(block: @escaping @Sendable () -> T) async -> T {
@@ -228,9 +244,10 @@ private struct Keychain {
     static func readCredentials(
         identifier: String,
         service: String
-    ) -> AirshipKeychainCredentials? {
+    ) -> AirshipKeychainReadResult {
         guard let identifierData = identifier.data(using: .utf8) else {
-            return nil
+            AirshipLogger.error("Keychain read failed status:\(errSecParam)")
+            return .error(errSecParam)
         }
 
         let searchQuery: [String: Any] = [
@@ -246,34 +263,30 @@ private struct Keychain {
         var item: CFTypeRef?
         let status = SecItemCopyMatching(searchQuery as CFDictionary, &item)
         guard status == errSecSuccess else {
-            return nil
+            if status == errSecItemNotFound {
+                return .itemNotFound
+            }
+            AirshipLogger.error("Keychain read failed status:\(status)")
+            return .error(status)
         }
 
-        guard let existingItem = item as? [String: Any] else {
-            return nil
-        }
-
-        guard let passwordData = existingItem[kSecValueData as String] as? Data,
-              let password = String(
-                data: passwordData,
-                encoding: String.Encoding.utf8
-              ),
-              let username = existingItem[kSecAttrAccount as String] as? String
+        guard let existingItem = item as? [String: Any],
+              let credentials = AirshipKeychainItemDecoder.credentials(from: existingItem)
         else {
-            return nil
+            // An undecodable item will never become readable. Reporting it as not
+            // found lets the caller recreate (and overwrite) it. For the device ID
+            // this means a new UUID, so one restore detection is the accepted cost
+            // versus an "unknown" ID / missing Message Center user forever.
+            AirshipLogger.error("Keychain item could not be decoded, treating as not found")
+            return .itemNotFound
         }
-
-        let credentials = AirshipKeychainCredentials(
-            username: username,
-            password: password
-        )
 
         let attrAccessible = existingItem[kSecAttrAccessible as String] as? String
         if attrAccessible != (kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly as String) {
             updateThisDeviceOnly(credentials: credentials, identifier: identifier, service: service)
         }
 
-        return credentials
+        return .success(credentials)
     }
 
     static func updateThisDeviceOnly(credentials: AirshipKeychainCredentials, identifier: String, service: String) {
@@ -299,9 +312,42 @@ private struct Keychain {
         let updateStatus = SecItemUpdate(searchQuery as CFDictionary, updateQuery as CFDictionary)
 
         if (updateStatus == errSecSuccess) {
-            AirshipLogger.trace("Updated keychain value \(identifier) to this device only")
+            AirshipLogger.trace("Updated keychain value to this device only")
         } else {
-            AirshipLogger.debug("Failed to update keychain value \(identifier) status:\(updateStatus)")
+            AirshipLogger.debug("Failed to update keychain value status:\(updateStatus)")
         }
+    }
+}
+
+/// Decodes the attributes dictionary returned by `SecItemCopyMatching`.
+///
+/// An item that exists but cannot be decoded will never become readable, so
+/// callers report it as not found; recreating it replaces the bad item
+/// (`writeCredentials` deletes any existing item first).
+enum AirshipKeychainItemDecoder {
+    static func credentials(from item: [String: Any]) -> AirshipKeychainCredentials? {
+        guard let passwordData = item[kSecValueData as String] as? Data,
+              let password = String(data: passwordData, encoding: .utf8),
+              let username = item[kSecAttrAccount as String] as? String
+        else {
+            return nil
+        }
+        return AirshipKeychainCredentials(username: username, password: password)
+    }
+}
+
+/// Decides between the current and legacy service location reads.
+enum AirshipKeychainReadResolver {
+    /// The legacy location is only consulted when the current one reports
+    /// `itemNotFound`. An error on the current location is returned as is, so
+    /// a failure is never masked by (or mistaken for) a missing item.
+    static func resolve(
+        current: AirshipKeychainReadResult,
+        legacy: () -> AirshipKeychainReadResult
+    ) -> AirshipKeychainReadResult {
+        guard case .itemNotFound = current else {
+            return current
+        }
+        return legacy()
     }
 }

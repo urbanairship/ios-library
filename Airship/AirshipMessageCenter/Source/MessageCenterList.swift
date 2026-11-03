@@ -524,7 +524,10 @@ final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
     private func getOrCreateUser(
         forChannelID channelID: String
     ) async -> MessageCenterUser? {
-        guard let user = await self.store.user else {
+        switch await self.store.loadUser() {
+        case .failed:
+            return nil
+        case .notFound:
             do {
                 AirshipLogger.debug("Creating Message Center user")
 
@@ -547,7 +550,15 @@ final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
                 )
                 return nil
             }
+        case .available(let user):
+            return await updateUserIfNeeded(user, channelID: channelID)
         }
+    }
+
+    private func updateUserIfNeeded(
+        _ user: MessageCenterUser,
+        channelID: String
+    ) async -> MessageCenterUser? {
 
         let requireUpdate = await self.store.userRequiredUpdate
         let channelMismatch = await self.store.registeredChannelID != channelID

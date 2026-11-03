@@ -2,7 +2,8 @@
 
 import Testing
 
-@testable import AirshipCore
+@testable
+@_spi(AirshipInternal) import AirshipCore
 import Foundation
 
 @Suite struct PreferenceDataStoreTest {
@@ -206,6 +207,7 @@ import Foundation
         )
         let value = await dataStore.isAppRestore
         #expect(!(value))
+        dataStore.waitForWrites()
 
         // A later read on the same instance must return the same cached answer even
         // if the device ID changes afterward - isAppRestore is a query every consumer
@@ -226,6 +228,97 @@ import Foundation
         )
         let restored = await nextLaunchDataStore.isAppRestore
         #expect(restored)
+    }
+
+    @Test
+    func testUnknownDeviceIDIsNotRestoreAndDoesNotOverwrite() async throws {
+        let originalID = await testDeviceID.value
+        let firstLaunch = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: testDeviceID
+        )
+        #expect(!(await firstLaunch.isAppRestore))
+        firstLaunch.waitForWrites()
+
+        await self.testDeviceID.setValue(value: AirshipDeviceID.unknownValue)
+
+        // A new launch (fresh store) with an unreadable device ID must not
+        // look like a restore. Re-reading the same instance cannot test this
+        // after MOBILE-5852: isAppRestore is cached for the lifetime of the store.
+        let unknownLaunch = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: testDeviceID
+        )
+        #expect(!(await unknownLaunch.isAppRestore))
+        unknownLaunch.waitForWrites()
+
+        // Same instance stays stable even if a persistable ID appears later.
+        await self.testDeviceID.setValue(value: UUID().uuidString)
+        #expect(!(await unknownLaunch.isAppRestore))
+
+        // The stored ID must be left in place so a later successful read
+        // of the original value is not treated as a restore.
+        await self.testDeviceID.setValue(value: originalID)
+        let recoveredLaunch = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: testDeviceID
+        )
+        #expect(!(await recoveredLaunch.isAppRestore))
+    }
+
+    @Test
+    func testKeychainReadErrorDoesNotReportRestore() async {
+        let keychain = TestKeyChainAccess()
+        let firstDeviceID = AirshipDeviceID(appKey: self.appKey, keychain: keychain)
+        let dataStore = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: firstDeviceID
+        )
+        #expect(!(await dataStore.isAppRestore))
+        dataStore.waitForWrites()
+        let persistedID = await firstDeviceID.value
+
+        keychain.readError = errSecMissingEntitlement
+        let failingDeviceID = AirshipDeviceID(appKey: self.appKey, keychain: keychain)
+        let failingStore = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: failingDeviceID
+        )
+        #expect(!(await failingStore.isAppRestore))
+
+        keychain.readError = nil
+        let recoveredDeviceID = AirshipDeviceID(appKey: self.appKey, keychain: keychain)
+        let recoveredStore = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: recoveredDeviceID
+        )
+        #expect(!(await recoveredStore.isAppRestore))
+        #expect(await recoveredDeviceID.value == persistedID)
+    }
+
+    @Test
+    func testKeychainWriteFailureDoesNotReportRestore() async {
+        let keychain = TestKeyChainAccess()
+        let firstDeviceID = AirshipDeviceID(appKey: self.appKey, keychain: keychain)
+        let dataStore = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: firstDeviceID
+        )
+        #expect(!(await dataStore.isAppRestore))
+        dataStore.waitForWrites()
+
+        await keychain.deleteCredentials(
+            identifier: "com.urbanairship.deviceID",
+            appKey: self.appKey
+        )
+        keychain.writeSucceeds = false
+
+        let failingDeviceID = AirshipDeviceID(appKey: self.appKey, keychain: keychain)
+        let failingStore = PreferenceDataStore(
+            appKey: self.appKey,
+            deviceID: failingDeviceID
+        )
+        #expect(!(await failingStore.isAppRestore))
     }
 
     @Test

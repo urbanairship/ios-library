@@ -6,6 +6,8 @@ import Foundation
 // Test keychain that performs its in the same queueing as the real AirshipKeyChainAccess
 final class TestKeyChainAccess: AirshipKeychainAccessProtocol, @unchecked Sendable {
     var storedCredentials: [String: AirshipKeychainCredentials] = [:]
+    var readError: OSStatus? = nil
+    var writeSucceeds: Bool = true
     private let dispatchQueue: DispatchQueue = DispatchQueue(
         label: "com.urbanairship.dispatcher.keychain",
         qos: .utility
@@ -18,6 +20,9 @@ final class TestKeyChainAccess: AirshipKeychainAccessProtocol, @unchecked Sendab
     ) async -> Bool {
         let key = "\(appKey).\(identifier)"
         return await self.dispatch {
+            guard self.writeSucceeds else {
+                return false
+            }
             self.storedCredentials[key] = credentials
             return true
         }
@@ -33,10 +38,16 @@ final class TestKeyChainAccess: AirshipKeychainAccessProtocol, @unchecked Sendab
     public func readCredentails(
         identifier: String,
         appKey: String
-    ) async -> AirshipKeychainCredentials? {
+    ) async -> AirshipKeychainReadResult {
         let key = "\(appKey).\(identifier)"
         return await self.dispatch {
-            return self.storedCredentials[key]
+            if let readError = self.readError {
+                return .error(readError)
+            }
+            if let credentials = self.storedCredentials[key] {
+                return .success(credentials)
+            }
+            return .itemNotFound
         }
     }
 

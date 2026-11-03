@@ -359,7 +359,7 @@ fileprivate extension ExecutionWindow.Rule {
     /// formed rule resolves in a couple of iterations; the cap is a backstop so a
     /// rule that can never intersect returns nil instead of spinning, since both
     /// entry points are `@MainActor`.
-    fileprivate static let maxCandidateDays: Int = 366
+    static let maxCandidateDays: Int = 366
 
     func resolve(date: Date, currentTimeZone: Foundation.TimeZone) throws -> DateInterval? {
         switch (self) {

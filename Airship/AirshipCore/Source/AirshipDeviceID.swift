@@ -12,6 +12,12 @@ protocol AirshipDeviceIDProtocol: Actor {
  */
 actor AirshipDeviceID: AirshipDeviceIDProtocol {
     private static let deviceKeychainID: String = "com.urbanairship.deviceID"
+
+    /// Sentinel returned when the device ID cannot be read or persisted.
+    /// Must never be cached or written to the preference store — a restore
+    /// decision must not be made from an unpersistable ID.
+    nonisolated static let unknownValue: String = "unknown"
+
     private var cached: String? = nil
     private let keychain: any AirshipKeychainAccessProtocol
     private var queue: AirshipSerialQueue = AirshipSerialQueue()
@@ -30,27 +36,40 @@ actor AirshipDeviceID: AirshipDeviceIDProtocol {
             return await queue.runSafe {
                 if let cached = await self.cached {
                     return cached
-                } else if let fromKeychain = await self.keychain.readCredentails(
+                }
+
+                switch await self.keychain.readCredentails(
                     identifier: AirshipDeviceID.deviceKeychainID,
                     appKey: self.appKey
                 ) {
+                case .success(let fromKeychain):
                     await self.cacheDeviceId(fromKeychain.password)
                     return fromKeychain.password
-                } else {
-                    let deviceID = UUID().uuidString
-                    await self.cacheDeviceId(deviceID)
-                    let result = await self.keychain.writeCredentials(
-                        AirshipKeychainCredentials(username: "airship", password: deviceID),
-                        identifier: AirshipDeviceID.deviceKeychainID,
-                        appKey: self.appKey
+                case .itemNotFound:
+                    return await self.mintDeviceID()
+                case .error(let status):
+                    AirshipLogger.error(
+                        "Failed to read device ID from the keychain status:\(status)"
                     )
-                    if (!result) {
-                        AirshipLogger.error("Failed to device ID to the keychain")
-                    }
-                    return deviceID
+                    return AirshipDeviceID.unknownValue
                 }
             }
         }
+    }
+
+    private func mintDeviceID() async -> String {
+        let deviceID = UUID().uuidString
+        let result = await self.keychain.writeCredentials(
+            AirshipKeychainCredentials(username: "airship", password: deviceID),
+            identifier: AirshipDeviceID.deviceKeychainID,
+            appKey: self.appKey
+        )
+        guard result else {
+            AirshipLogger.error("Failed to write device ID to the keychain")
+            return AirshipDeviceID.unknownValue
+        }
+        cacheDeviceId(deviceID)
+        return deviceID
     }
 
     private func cacheDeviceId(_ deviceID: String) {

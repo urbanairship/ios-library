@@ -11,6 +11,12 @@ enum MessageCenterStoreError: Error {
     case coreDataError
 }
 
+enum MessageCenterUserReadResult: Sendable, Equatable {
+    case available(MessageCenterUser)
+    case notFound
+    case failed
+}
+
 enum MessageCenterStoreLevel: Int {
     case local
     case global
@@ -49,31 +55,50 @@ actor MessageCenterStore {
     private var _user: MessageCenterUser? = nil
     var user: MessageCenterUser? {
         get async {
-            // Clearing the keychain
-            if UserDefaults.standard.bool(forKey: MessageCenterStore.resetKeychainKey) == true {
-                AirshipLogger.debug("Deleting the keychain credentials")
-                await resetUser()
-                UserDefaults.standard.removeObject(
-                    forKey: MessageCenterStore.resetKeychainKey
-                )
-            }
-
-            if let user = _user {
+            if case .available(let user) = await loadUser() {
                 return user
             }
+            return nil
+        }
+    }
 
-            let credentials = await self.keychainAccess.readCredentails(
-                identifier: self.config.appCredentials.appKey,
-                appKey: self.config.appCredentials.appKey
+    func loadUser() async -> MessageCenterUserReadResult {
+        // Clearing the keychain
+        if UserDefaults.standard.bool(forKey: MessageCenterStore.resetKeychainKey) == true {
+            AirshipLogger.debug("Deleting the keychain credentials")
+            await resetUser()
+            UserDefaults.standard.removeObject(
+                forKey: MessageCenterStore.resetKeychainKey
             )
+        }
 
-            if let credentials = credentials {
-                _user = MessageCenterUser(
-                    username: credentials.username,
-                    password: credentials.password
-                )
-            }
-            return _user
+        if let user = _user {
+            return .available(user)
+        }
+
+        switch await self.keychainAccess.readCredentails(
+            identifier: self.config.appCredentials.appKey,
+            appKey: self.config.appCredentials.appKey
+        ) {
+        case .success(let credentials):
+            let user = MessageCenterUser(
+                username: credentials.username,
+                password: credentials.password
+            )
+            _user = user
+            return .available(user)
+        case .itemNotFound:
+            return .notFound
+        case .error(let status):
+            AirshipLogger.error(
+                "Failed to read Message Center user from the keychain status:\(status)"
+            )
+            return .failed
+        @unknown default:
+            AirshipLogger.error(
+                "Failed to read Message Center user from the keychain"
+            )
+            return .failed
         }
     }
 
@@ -103,11 +128,12 @@ actor MessageCenterStore {
     init(
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
-        date: any AirshipDateProtocol = AirshipDate.shared
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        keychainAccess: any AirshipKeychainAccessProtocol = AirshipKeychainAccess.shared
     ) {
         self.config = config
         self.dataStore = dataStore
-        self.keychainAccess = AirshipKeychainAccess.shared
+        self.keychainAccess = keychainAccess
         self.date = date
         
         let modelURL = AirshipMessageCenterResources.bundle
@@ -139,13 +165,14 @@ actor MessageCenterStore {
         config: RuntimeConfig,
         dataStore: PreferenceDataStore,
         coreData: UACoreData,
-        date: any AirshipDateProtocol = AirshipDate.shared
+        date: any AirshipDateProtocol = AirshipDate.shared,
+        keychainAccess: any AirshipKeychainAccessProtocol = AirshipKeychainAccess.shared
     ) {
         self.inMemory = coreData.inMemory
         self.config = config
         self.dataStore = dataStore
         self.coreData = coreData
-        self.keychainAccess = AirshipKeychainAccess.shared
+        self.keychainAccess = keychainAccess
         self.date = date
     }
 

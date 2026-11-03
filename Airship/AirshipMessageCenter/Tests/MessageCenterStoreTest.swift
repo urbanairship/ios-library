@@ -245,6 +245,112 @@ struct MessageCenterStoreTest {
         fetchedMessage = await store.messages
         #expect(messages == fetchedMessage)
     }
+
+    @Test
+    func testLoadUserNotFound() async {
+        let keychain = TestMessageCenterKeychain()
+        let store = makeStore(keychain: keychain)
+
+        let result = await store.loadUser()
+        #expect(result == .notFound)
+        #expect(await store.user == nil)
+    }
+
+    @Test
+    func testLoadUserFailedDoesNotLookLikeMissingUser() async {
+        let keychain = TestMessageCenterKeychain()
+        let existing = AirshipKeychainCredentials(
+            username: "existing-user",
+            password: "existing-password"
+        )
+        await keychain.writeCredentials(
+            existing,
+            identifier: config.appCredentials.appKey,
+            appKey: config.appCredentials.appKey
+        )
+
+        keychain.readError = errSecMissingEntitlement
+        let store = makeStore(keychain: keychain)
+
+        #expect(await store.loadUser() == .failed)
+        #expect(await store.user == nil)
+
+        keychain.readError = nil
+        let recovered = await store.loadUser()
+        guard case .available(let user) = recovered else {
+            Issue.record("Expected original user after keychain recovers")
+            return
+        }
+        #expect(user.username == existing.username)
+        #expect(user.password == existing.password)
+    }
+
+    private func makeStore(
+        keychain: any AirshipKeychainAccessProtocol
+    ) -> MessageCenterStore {
+        let modelURL = AirshipMessageCenterResources.bundle
+            .url(
+                forResource: "UAInbox",
+                withExtension: "momd"
+            )
+        if let modelURL = modelURL {
+            let storeName = String(
+                format: "Inbox-%@.sqlite",
+                self.config.appCredentials.appKey
+            )
+            let coreData = UACoreData(
+                name: "UAInbox",
+                modelURL: modelURL,
+                inMemory: true,
+                stores: [storeName]
+            )
+            return MessageCenterStore(
+                config: self.config,
+                dataStore: self.dataStore,
+                coreData: coreData,
+                keychainAccess: keychain
+            )
+        }
+
+        return MessageCenterStore(
+            config: self.config,
+            dataStore: self.dataStore,
+            keychainAccess: keychain
+        )
+    }
+}
+
+final class TestMessageCenterKeychain: AirshipKeychainAccessProtocol, @unchecked Sendable {
+    var storedCredentials: [String: AirshipKeychainCredentials] = [:]
+    var readError: OSStatus? = nil
+    var writeSucceeds: Bool = true
+
+    func writeCredentials(
+        _ credentials: AirshipKeychainCredentials,
+        identifier: String,
+        appKey: String
+    ) async -> Bool {
+        guard writeSucceeds else { return false }
+        storedCredentials["\(appKey).\(identifier)"] = credentials
+        return true
+    }
+
+    func deleteCredentials(identifier: String, appKey: String) async {
+        storedCredentials["\(appKey).\(identifier)"] = nil
+    }
+
+    func readCredentails(
+        identifier: String,
+        appKey: String
+    ) async -> AirshipKeychainReadResult {
+        if let readError {
+            return .error(readError)
+        }
+        if let credentials = storedCredentials["\(appKey).\(identifier)"] {
+            return .success(credentials)
+        }
+        return .itemNotFound
+    }
 }
 
 extension MessageCenterMessage {

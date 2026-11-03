@@ -105,6 +105,7 @@ final class ChannelRegistrar: ChannelRegistrarProtocol, Sendable {
         if self.channelID != nil {
             checkAppRestoreTask = Task { [weak self] in
                 if await self?.dataStore.isAppRestore == true {
+                    AirshipLogger.warn("App restored, discarding channel")
                     self?.clearChannelData()
                 }
             }

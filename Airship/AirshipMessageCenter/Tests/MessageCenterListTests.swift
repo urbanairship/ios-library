@@ -13,6 +13,7 @@ struct MessageCenterListTest {
 
     private let dataStore = PreferenceDataStore(appKey: UUID().uuidString)
     private let config: RuntimeConfig = .testConfig()
+    private let keychain = TestMessageCenterKeychain()
 
     private let store: MessageCenterStore
 
@@ -47,13 +48,15 @@ struct MessageCenterListTest {
                 config: self.config,
                 dataStore: self.dataStore,
                 coreData: coreData,
-                date: self.date
+                date: self.date,
+                keychainAccess: self.keychain
             )
         } else {
             store = MessageCenterStore(
                 config: self.config,
                 dataStore: self.dataStore,
-                date: self.date
+                date: self.date,
+                keychainAccess: self.keychain
             )
         }
         self.store = store
@@ -306,6 +309,82 @@ struct MessageCenterListTest {
 
         unreadCountUpdate = await unreadCountUpdates.next()
         #expect(unreadCountUpdate == 1)
+    }
+
+    @Test
+    func testRefreshDoesNotCreateUserOnKeychainError() async throws {
+        let keychain = TestMessageCenterKeychain()
+        keychain.readError = errSecMissingEntitlement
+
+        let store = makeStore(keychain: keychain)
+        let inbox = DefaultMessageCenterInbox(
+            channel: channel,
+            client: client,
+            config: config,
+            store: store,
+            notificationCenter: notificationCenter,
+            date: date,
+            workManager: workManager,
+            taskSleeper: sleeper
+        )
+
+        var createdUser = false
+        self.client.onCreateUser = { _ in
+            createdUser = true
+            return AirshipHTTPResponse(
+                result: MessageCenterUser(
+                    username: UUID().uuidString,
+                    password: UUID().uuidString
+                ),
+                statusCode: 200,
+                headers: [:]
+            )
+        }
+
+        self.channel.identifier = UUID().uuidString
+        inbox.enabled = true
+        self.workManager.autoLaunchRequests = true
+
+        let result = await inbox.refreshMessages()
+        #expect(!result)
+        #expect(!createdUser)
+        #expect(await store.loadUser() == .failed)
+    }
+
+    private func makeStore(
+        keychain: any AirshipKeychainAccessProtocol
+    ) -> MessageCenterStore {
+        let modelURL = AirshipMessageCenterResources.bundle
+            .url(
+                forResource: "UAInbox",
+                withExtension: "momd"
+            )
+        if let modelURL = modelURL {
+            let storeName = String(
+                format: "Inbox-%@.sqlite",
+                UUID().uuidString
+            )
+            let coreData = UACoreData(
+                name: "UAInbox",
+                modelURL: modelURL,
+                inMemory: true,
+                stores: [storeName]
+            )
+            return MessageCenterStore(
+                config: self.config,
+                dataStore: self.dataStore,
+                coreData: coreData,
+                date: self.date,
+                keychainAccess: keychain
+            )
+        }
+
+        return MessageCenterStore(
+            config: self.config,
+            dataStore: self.dataStore,
+            date: self.date,
+            keychainAccess: keychain
+        )
     }
 
     @Test

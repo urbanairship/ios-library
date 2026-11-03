@@ -1147,6 +1147,7 @@
 		6EF13FFE2A16F391009A125D /* AirshipBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3299EF212949EC3E00251E70 /* AirshipBaseTest.swift */; };
 		6EF1401B2A2671ED009A125D /* AirshipDeviceID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1401A2A2671ED009A125D /* AirshipDeviceID.swift */; };
 		6EF1401F2A268CE6009A125D /* TestKeychainAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1401E2A268CE6009A125D /* TestKeychainAccess.swift */; };
+		6EF1401F2A268CE6009A1AA2 /* AirshipKeychainItemDecoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF1401E2A268CE6009A1AA1 /* AirshipKeychainItemDecoderTest.swift */; };
 		6EF140212A269074009A125D /* AirshipDeviceIDTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF140202A269074009A125D /* AirshipDeviceIDTest.swift */; };
 		6EF422662FE9E996000F5A55 /* SuppressionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF422652FE9E996000F5A55 /* SuppressionResult.swift */; };
 		6EF553E32B7EE40B00901A22 /* AirshipLocalizationUtilsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF553E22B7EE40B00901A22 /* AirshipLocalizationUtilsTest.swift */; };
@@ -2813,6 +2814,7 @@
 		6EEE8BA1290B3EDE00230528 /* AirshipKeychainAccess.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AirshipKeychainAccess.swift; sourceTree = "<group>"; };
 		6EF1401A2A2671ED009A125D /* AirshipDeviceID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDeviceID.swift; sourceTree = "<group>"; };
 		6EF1401E2A268CE6009A125D /* TestKeychainAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestKeychainAccess.swift; sourceTree = "<group>"; };
+		6EF1401E2A268CE6009A1AA1 /* AirshipKeychainItemDecoderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipKeychainItemDecoderTest.swift; sourceTree = "<group>"; };
 		6EF140202A269074009A125D /* AirshipDeviceIDTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipDeviceIDTest.swift; sourceTree = "<group>"; };
 		6EF1933B2838062B005F192A /* AirshipLogHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirshipLogHandler.swift; sourceTree = "<group>"; };
 		6EF1933D28380644005F192A /* DefaultLogHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultLogHandler.swift; sourceTree = "<group>"; };
@@ -5727,6 +5729,7 @@
 				6EE49C252A1446B100AB1CF4 /* RemoteDataTestUtils.swift */,
 				6ECB62812A36A45F0095C85C /* TestURLOpener.swift */,
 				6EF1401E2A268CE6009A125D /* TestKeychainAccess.swift */,
+				6EF1401E2A268CE6009A1AA1 /* AirshipKeychainItemDecoderTest.swift */,
 				6E2F5AB62A675ADC00CABD3D /* TestAudienceChecker.swift */,
 				6EC0CA6E2B4B893500333A87 /* TestDeferredResolver.swift */,
 				6EC0CA712B4B897B00333A87 /* TestExperimentDataProvider.swift */,
@@ -8053,6 +8056,7 @@
 				6E07688C29F9F0830014E2A9 /* AirshipLocaleManagerTest.swift in Sources */,
 				6E581C212FB3AE3300CED5C8 /* TestTaskSleeper.swift in Sources */,
 				6EF1401F2A268CE6009A125D /* TestKeychainAccess.swift in Sources */,
+				6EF1401F2A268CE6009A1AA2 /* AirshipKeychainItemDecoderTest.swift in Sources */,
 				6E96ED1029416E8F0053CC91 /* EventAPIClientTest.swift in Sources */,
 				6E92ECB6284ED7330038802D /* CachedListTest.swift in Sources */,
 				6ED735E426CAE8AA003B0A7D /* TestChannelAudienceManager.swift in Sources */,
