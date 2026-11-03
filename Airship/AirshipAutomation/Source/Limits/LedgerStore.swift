@@ -46,9 +46,11 @@ protocol LedgerStoreProtocol: Sendable {
     /// Retention: drops every event whose recording scopes are all dead.
     ///
     /// An event survives while any of the IDs it was recorded under is still
-    /// live, so a shared group's pooled history outlives individual variants. An
-    /// event is deleted only when its `scheduleID` is not in `liveScheduleIDs`
-    /// **and** none of its `sharedIDs` is in `liveSharedIDs`.
+    /// live, so a shared group's pooled history outlives individual variants. A
+    /// live shared ID also keeps the events of the schedule it names, since that
+    /// is how a schedule inherits history from the one it replaces. An event is
+    /// deleted only when its `scheduleID` is in neither `liveScheduleIDs` nor
+    /// `liveSharedIDs` **and** none of its `sharedIDs` is in `liveSharedIDs`.
     /// - Parameters:
     ///   - liveScheduleIDs: Schedule IDs that still reference the ledger.
     ///   - liveSharedIDs: Shared group IDs that still reference the ledger.
@@ -224,17 +226,23 @@ actor LedgerStore: LedgerStoreProtocol {
 
         try await coreData.perform { context in
             // Delete an event only when it's orphaned on both axes: its recording
-            // schedule is gone AND none of its shared groups is still live. The
-            // shared-group half is phrased as a SUBQUERY count rather than `NONE`
-            // so it stays correct for events with no shared groups at all, whose
-            // subquery is trivially empty and therefore dead.
-            let scheduleDead = NSPredicate(format: "NOT (scheduleID IN %@)", liveScheduleIDs)
+            // schedule is gone AND none of its shared groups is still live. A
+            // schedule ID that a live shared ID names is not gone, because
+            // eligibility reads it as a shared group too. The shared-group half
+            // is phrased as a SUBQUERY count rather than `NONE` so it stays
+            // correct for events with no shared groups at all, whose subquery
+            // is trivially empty and therefore dead.
+            let scheduleScopeDead = NSPredicate(
+                format: "NOT (scheduleID IN %@) AND NOT (scheduleID IN %@)",
+                liveScheduleIDs,
+                liveSharedIDs
+            )
             let sharedDead = NSPredicate(
                 format: "SUBQUERY(sharedIDs, $shared, $shared.value IN %@).@count == 0",
                 liveSharedIDs
             )
             let predicate = NSCompoundPredicate(
-                andPredicateWithSubpredicates: [scheduleDead, sharedDead]
+                andPredicateWithSubpredicates: [scheduleScopeDead, sharedDead]
             )
             try self.deleteEvents(predicate: predicate, context: context)
         }

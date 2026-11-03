@@ -391,6 +391,18 @@ struct LedgerStoreTest {
         #expect(try await store.events(scheduleID: "dead", sharedIDs: ["g1", "g2"]).isEmpty)
     }
 
+    @Test
+    func testRetainKeepsEventsOfScheduleNamedByLiveSharedID() async throws {
+        let inherited = execution(scheduleID: "old")
+        let unrelated = execution(scheduleID: "unrelated")
+        try await store.recordEvents([inherited, unrelated])
+
+        try await store.retainEvents(liveScheduleIDs: ["new"], liveSharedIDs: ["old"])
+
+        #expect(try await store.events(scheduleID: "old", sharedIDs: []) == [inherited])
+        #expect(try await store.events(scheduleID: "unrelated", sharedIDs: []).isEmpty)
+    }
+
     // MARK: - Compaction (store)
 
     @Test
@@ -812,6 +824,22 @@ final class LedgerStoreOnDiskTest {
         #expect(try await store.events(scheduleID: "keep", sharedIDs: []).count == 1)
         #expect(try await store.events(scheduleID: "drop", sharedIDs: []).isEmpty)
         #expect(try await store.sharedIDRowCount() == 0)
+    }
+
+    @Test
+    func testRetentionKeepsEventsOfScheduleNamedByLiveSharedID() async throws {
+        let store = makeStore()
+        try await store.recordEvents([
+            execution(scheduleID: "old", sharedIDs: ["dead-group"]),
+            execution(scheduleID: "unrelated", sharedIDs: ["dead-group"])
+        ])
+
+        try await store.retainEvents(liveScheduleIDs: ["new"], liveSharedIDs: ["old"])
+
+        #expect(try await store.events(scheduleID: "old", sharedIDs: []).count == 1)
+        #expect(try await store.events(scheduleID: "unrelated", sharedIDs: []).isEmpty)
+        // The kept event keeps its own group row; the dropped one's row goes with it.
+        #expect(try await store.sharedIDRowCount() == 1)
     }
 
     @Test
