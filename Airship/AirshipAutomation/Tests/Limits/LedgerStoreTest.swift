@@ -255,6 +255,18 @@ struct LedgerStoreTest {
     }
 
     @Test
+    func testVariantControlResultRoundTrips() throws {
+        let event = LedgerEvent.execution(
+            .init(scheduleID: "s", timestamp: Date(timeIntervalSince1970: 0), result: .variantControl)
+        )
+
+        let data = try JSONEncoder().encode(event)
+        let object = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        #expect(object["result"] as? String == "variant_control")
+        #expect(try JSONDecoder().decode(LedgerEvent.self, from: data) == event)
+    }
+
+    @Test
     func testEventCodableRoundTrip() throws {
         let events: [LedgerEvent] = [
             triggered(scheduleID: "s", sharedIDs: ["g"], triggerID: "t", variantAudienceID: "v", count: 2),

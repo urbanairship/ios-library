@@ -307,7 +307,7 @@ struct InAppMessageAutomationExecutorTest {
     }
 
     @Test
-    func testExecuteRecordsVariantAudienceID() async throws {
+    func testExecuteVariantControlRecordsVariantAudienceID() async throws {
         var preparedInfo = preparedInfo
         preparedInfo.variantAudienceResult = VariantAudienceResult(outcome: .holdout)
         preparedInfo.variantAudienceID = "iteration-1"
@@ -320,7 +320,7 @@ struct InAppMessageAutomationExecutorTest {
                 sharedIDs: [],
                 triggerID: nil,
                 variantAudienceID: "iteration-1",
-                result: .holdout,
+                result: .variantControl,
                 cancel: false
             )
         ])
@@ -352,7 +352,7 @@ struct InAppMessageAutomationExecutorTest {
                 sharedIDs: [],
                 triggerID: nil,
                 variantAudienceID: nil,
-                result: .holdout,
+                result: .variantControl,
                 cancel: false
             )
         ])

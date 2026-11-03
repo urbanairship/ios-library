@@ -107,11 +107,12 @@ struct LimitConfigTest {
         let events = [
             execution(result: .succeeded),
             execution(result: .holdout),
+            execution(result: .variantControl),
             execution(result: .variantMiss),
             execution(result: .audienceMiss),
             execution(result: .backfill)
         ]
-        #expect(isOverLimit(limit: 5, events: events))
+        #expect(isOverLimit(limit: 6, events: events))
     }
 
     // MARK: - Source matching
@@ -377,6 +378,28 @@ struct LimitConfigTest {
     }
 
     @Test
+    func testExcludePastIterationControlsAndMisses() {
+        let events = [
+            execution(variantAudienceID: "iteration-0", result: .variantControl),
+            execution(variantAudienceID: "iteration-0", result: .variantMiss),
+            execution(variantAudienceID: "iteration-0", result: .succeeded),
+            execution(variantAudienceID: "iteration-0", result: .holdout),
+            execution(variantAudienceID: nil, result: .variantControl)
+        ]
+        let exclude = ExclusionSet(or: [
+            ExclusionRule(
+                source: .any,
+                match: .execution(.init(variantAudience: .notCurrent, results: [.variantControl, .variantMiss]))
+            )
+        ])
+
+        // Only past-iteration control and miss rows are subtracted; succeeded, global holdout
+        // and untagged rows still count.
+        #expect(isOverLimit(limit: 3, events: events, exclude: exclude))
+        #expect(!isOverLimit(limit: 4, events: events, exclude: exclude))
+    }
+
+    @Test
     func testVariantAudienceMatchAppliesToTriggeredEvents() {
         let exclude = ExclusionSet(or: [
             ExclusionRule(source: .any, match: .triggered(.init(variantAudience: .current)))
@@ -494,6 +517,20 @@ struct LimitConfigTest {
         #expect(match.triggerID == "trig-1")
         #expect(match.sharedGroup == .id("grp"))
         #expect(match.variantAudience == .id("iteration-9"))
+    }
+
+    @Test
+    func testDecodeVariantControlResultDropsUnrecognizedResults() throws {
+        let json = #"""
+        {"type": "execution", "results": ["variant_control", "some_future_result"]}
+        """#
+        let match = try JSONDecoder().decode(LedgerEventMatch.self, from: Data(json.utf8))
+
+        guard case .execution(let execution) = match else {
+            Issue.record("Expected execution match")
+            return
+        }
+        #expect(execution.results == [.variantControl])
     }
 
     @Test

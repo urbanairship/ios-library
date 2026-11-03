@@ -248,7 +248,7 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
                     ThomasLayoutResolutionEvent.variantControl(),
                     layoutContext: nil
                 )
-                await self.recordLedgerExecution(preparedScheduleInfo, result: .holdout)
+                await self.recordLedgerExecution(preparedScheduleInfo, result: .variantControl)
             case .variantMiss:
                 AirshipLogger.info("Schedule \(preparedScheduleInfo.scheduleID) resolved to a sibling variant")
                 data.analytics.recordEvent(
