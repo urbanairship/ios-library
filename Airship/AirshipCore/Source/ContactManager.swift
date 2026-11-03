@@ -981,7 +981,7 @@ actor ContactManager: ContactManagerProtocol {
         let isNewContactID = lastContactInfo?.contactID.lowercased() != result.contact.contactID.lowercased()
 
         var resolvedNamedUser = namedUserID
-        if !isNewContactID, resolvedNamedUser == nil {
+        if !isNewContactID, resolvedNamedUser == nil, !result.contact.isAnonymous {
             resolvedNamedUser = lastContactInfo?.namedUserID
         }
 
