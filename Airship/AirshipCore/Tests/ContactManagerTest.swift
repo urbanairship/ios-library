@@ -1609,3 +1609,170 @@ actor Expectation {
         }
     }
 }
+
+
+/// Repro for MOBILE-6050 / MOBILE-6052.
+///
+/// A resolve that returns the SAME contact ID with isAnonymous flipped to true is what a
+/// server-side disassociation looks like to the device. updateContactInfo carries the old
+/// namedUserID forward in that case, and isSkippable(.identify) does not check isAnonymous.
+/// Thread-safe flag so a stubbed API callback can record that it ran.
+private final class CallFlag: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _value = false
+    var value: Bool { lock.withLock { _value } }
+    func set() { lock.withLock { _value = true } }
+}
+
+@Suite(.timeLimit(.minutes(1)))
+struct ContactManagerStaleNamedUserTest {
+
+    private let date: UATestDate
+    private let channel: TestChannel
+    private let localeManager: TestLocaleManager
+    private let workManager: TestWorkManager
+    private let dataStore: PreferenceDataStore
+    private let apiClient: TestContactAPIClient
+    private let contactManager: ContactManager
+
+    private let associatedDate = AirshipDateFormatter.date(from: "2022-12-29T10:15:30.00")!
+
+    init() async throws {
+        self.date = UATestDate(offset: 0, dateOverride: Date())
+        self.channel = TestChannel()
+        self.localeManager = TestLocaleManager()
+        self.workManager = TestWorkManager()
+        self.dataStore = PreferenceDataStore(appKey: UUID().uuidString)
+        self.apiClient = TestContactAPIClient()
+
+        self.contactManager = ContactManager(
+            dataStore: self.dataStore,
+            channel: self.channel,
+            localeManager: self.localeManager,
+            apiClient: self.apiClient,
+            date: self.date,
+            workManager: self.workManager,
+            internalIdentifyRateLimit: 0.0
+        )
+
+        await self.contactManager.setEnabled(enabled: true)
+        self.channel.identifier = "some channel"
+    }
+
+    private func response(
+        contactID: String,
+        isAnonymous: Bool,
+        token: String
+    ) -> AirshipHTTPResponse<ContactIdentifyResult> {
+        return AirshipHTTPResponse(
+            result: ContactIdentifyResult(
+                contact: ContactIdentifyResult.ContactInfo(
+                    channelAssociatedDate: self.associatedDate,
+                    contactID: contactID,
+                    isAnonymous: isAnonymous
+                ),
+                token: token,
+                tokenExpiresInMilliseconds: 3600000
+            ),
+            statusCode: 200,
+            headers: [:]
+        )
+    }
+
+    private func runWork() async throws {
+        let result = try await self.workManager.launchTask(
+            request: AirshipWorkRequest(workID: ContactManager.updateTaskID)
+        )
+        #expect(result == .success)
+    }
+
+    /// Associates "named-user-1", then has the server report the same contact ID as
+    /// anonymous. Every step is asserted so the setup cannot silently no-op.
+    private func associateThenDisassociateServerSide() async throws {
+        self.apiClient.resolveCallback = { _, _, _ in
+            return self.response(contactID: "contact-anon", isAnonymous: true, token: "token-1")
+        }
+        self.apiClient.identifyCallback = { _, _, _, _ in
+            return self.response(contactID: "contact-named", isAnonymous: false, token: "token-2")
+        }
+
+        await self.contactManager.addOperation(.identify("named-user-1"))
+        try await self.runWork()
+
+        let afterIdentify = await self.contactManager.currentNamedUserID()
+        #expect(afterIdentify == "named-user-1", "setup: the named user should be associated")
+
+        let afterIdentifyID = await self.contactManager.currentContactIDInfo()
+        #expect(afterIdentifyID?.contactID == "contact-named", "setup: contact ID should be the named one")
+
+        // The auth token cache runs on the real clock, so advancing the test date does not
+        // expire it. A required verify forces a resolve while the token is still valid.
+        self.date.advance(by: 60)
+
+        let resolveRan = CallFlag()
+        self.apiClient.resolveCallback = { _, contactID, _ in
+            #expect(contactID == "contact-named", "the resolve should carry the current contact ID")
+            resolveRan.set()
+            return self.response(contactID: "contact-named", isAnonymous: true, token: "token-3")
+        }
+
+        await self.contactManager.addOperation(.verify(self.date.now, required: true))
+        try await self.runWork()
+
+        // Proves the disassociating resolve actually happened.
+        #expect(resolveRan.value, "setup: the disassociating resolve must actually run")
+    }
+
+    @Test("A resolve that returns an anonymous contact clears the stored named user")
+    func anonymousResolveClearsNamedUser() async throws {
+        try await self.associateThenDisassociateServerSide()
+
+        let namedUser = await self.contactManager.currentNamedUserID()
+        #expect(
+            namedUser == nil,
+            "server says the contact is anonymous, so the stored named user should not survive"
+        )
+    }
+
+    @Test("Identify is re-sent after the contact is disassociated server side")
+    func identifyAfterServerSideDisassociation() async throws {
+        try await self.associateThenDisassociateServerSide()
+
+        try await confirmation("identify request sent") { confirm in
+            self.apiClient.identifyCallback = { _, namedUserID, _, _ in
+                #expect(namedUserID == "named-user-1")
+                confirm()
+                return self.response(
+                    contactID: "contact-named",
+                    isAnonymous: false,
+                    token: "token-4"
+                )
+            }
+
+            await self.contactManager.addOperation(.identify("named-user-1"))
+            try await self.runWork()
+        }
+    }
+
+    /// Control: a different named user ID is never skippable, so this one goes out.
+    /// If this fails, the harness is broken rather than the SDK.
+    @Test("Identify is sent when the named user ID differs")
+    func identifyWithDifferentNamedUser() async throws {
+        try await self.associateThenDisassociateServerSide()
+
+        try await confirmation("identify request sent") { confirm in
+            self.apiClient.identifyCallback = { _, namedUserID, _, _ in
+                #expect(namedUserID == "named-user-2")
+                confirm()
+                return self.response(
+                    contactID: "contact-named-2",
+                    isAnonymous: false,
+                    token: "token-4"
+                )
+            }
+
+            await self.contactManager.addOperation(.identify("named-user-2"))
+            try await self.runWork()
+        }
+    }
+}
