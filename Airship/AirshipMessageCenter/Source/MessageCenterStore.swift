@@ -363,7 +363,19 @@ actor MessageCenterStore {
         )
     }
 
-    func clearLastModified(username: String) {
+    /// Removes every local message and the stored `Last-Modified` time.
+    ///
+    /// Call it before creating a user, and don't create one if it throws: pending local reads and
+    /// deletes left behind would be sent with the new user's credentials.
+    ///
+    /// - Throws: If the messages can't be deleted. The `Last-Modified` time is kept in that case.
+    func clearUserData() async throws {
+        if let coreData = self.coreData {
+            try await coreData.perform(skipIfStoreNotCreated: true) { context in
+                try self.delete(predicate: NSPredicate(value: true), context: context)
+            }
+        }
+
         self.dataStore.removeObject(
             forKey: MessageCenterStore.lastMessageListModifiedTime
         )

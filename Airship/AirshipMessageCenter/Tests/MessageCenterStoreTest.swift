@@ -66,6 +66,32 @@ struct MessageCenterStoreTest {
     }
 
     @Test
+    func testClearUserData() async throws {
+        try await seedPreviousUserData()
+
+        try await store.clearUserData()
+
+        #expect(await store.lastMessageListModifiedTime == nil)
+        #expect(await store.messages.isEmpty)
+        #expect(try await store.fetchLocallyReadOnlyMessages().isEmpty)
+        #expect(try await store.fetchLocallyDeletedMessages().isEmpty)
+    }
+
+    /// Stores three messages with one pending local read and one pending local delete.
+    private func seedPreviousUserData() async throws {
+        let messages = MessageCenterMessage.generateMessages(3)
+        try await store.updateMessages(
+            messages: messages,
+            lastModifiedTime: "Mon, 19 Oct 2026 00:00:00 GMT"
+        )
+        try await store.markRead(messageIDs: [messages[0].id], level: .local)
+        try await store.markDeleted(messageIDs: [messages[1].id])
+
+        #expect(try await store.fetchLocallyReadOnlyMessages().count == 1)
+        #expect(try await store.fetchLocallyDeletedMessages().count == 1)
+    }
+
+    @Test
     func testUserRequiredUpdate() async throws {
         // Set setUserRequireUpdate true
         await store.setUserRequireUpdate(true)

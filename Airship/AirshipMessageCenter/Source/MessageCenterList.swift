@@ -529,6 +529,14 @@ final class DefaultMessageCenterInbox: InternalMessageCenterInbox, Sendable {
             return nil
         case .notFound:
             do {
+                try await self.store.clearUserData()
+            } catch {
+                AirshipLogger.error("Failed to clear the previous Message Center user's messages: \(error)")
+                return nil
+            }
+            await self.sendUpdate(.local)
+
+            do {
                 AirshipLogger.debug("Creating Message Center user")
 
                 let response = try await self.client.createUser(

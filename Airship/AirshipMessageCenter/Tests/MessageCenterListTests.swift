@@ -312,6 +312,74 @@ struct MessageCenterListTest {
     }
 
     @Test
+    func testNewUserDoesNotInheritPreviousUserState() async throws {
+        self.channel.identifier = UUID().uuidString
+
+        let previousMessages = MessageCenterMessage.generateMessages(2)
+        try await self.store.updateMessages(
+            messages: previousMessages,
+            lastModifiedTime: "Mon, 19 Oct 2026 00:00:00 GMT"
+        )
+        try await self.store.markRead(messageIDs: [previousMessages[0].id], level: .local)
+        try await self.store.markDeleted(messageIDs: [previousMessages[1].id])
+
+        let newUser = MessageCenterUser(
+            username: UUID().uuidString,
+            password: UUID().uuidString
+        )
+        let newMessages = MessageCenterMessage.generateMessages(1)
+
+        self.client.onCreateUser = { _ in
+            AirshipHTTPResponse(result: newUser, statusCode: 200, headers: [:])
+        }
+        self.client.onRead = { _, _, _ in
+            Issue.record("Previous user's read state was sent for the new user")
+            return AirshipHTTPResponse(result: nil, statusCode: 200, headers: [:])
+        }
+        self.client.onDelete = { _, _, _ in
+            Issue.record("Previous user's deletes were sent for the new user")
+            return AirshipHTTPResponse(result: nil, statusCode: 200, headers: [:])
+        }
+        self.client.onRetrieve = { user, _, lastModified in
+            #expect(user == newUser)
+            #expect(lastModified == nil)
+            return AirshipHTTPResponse(result: newMessages, statusCode: 200, headers: [:])
+        }
+
+        self.inbox.enabled = true
+        self.workManager.autoLaunchRequests = true
+
+        #expect(await self.inbox.refreshMessages())
+        #expect(await self.inbox.messages == newMessages)
+    }
+
+    @Test
+    func testMissingUserClearsPreviousUserStateWhenCreateFails() async throws {
+        self.channel.identifier = UUID().uuidString
+
+        let previousMessages = MessageCenterMessage.generateMessages(2)
+        try await self.store.updateMessages(
+            messages: previousMessages,
+            lastModifiedTime: "Mon, 19 Oct 2026 00:00:00 GMT"
+        )
+        try await self.store.markRead(messageIDs: [previousMessages[0].id], level: .local)
+        try await self.store.markDeleted(messageIDs: [previousMessages[1].id])
+
+        self.client.onCreateUser = { _ in
+            AirshipHTTPResponse(result: nil, statusCode: 500, headers: [:])
+        }
+
+        self.inbox.enabled = true
+        self.workManager.autoLaunchRequests = true
+
+        #expect(await self.inbox.refreshMessages() == false)
+        #expect(await self.inbox.messages.isEmpty)
+        #expect(await self.store.lastMessageListModifiedTime == nil)
+        #expect(try await self.store.fetchLocallyReadOnlyMessages().isEmpty)
+        #expect(try await self.store.fetchLocallyDeletedMessages().isEmpty)
+    }
+
+    @Test
     func testRefreshDoesNotCreateUserOnKeychainError() async throws {
         let keychain = TestMessageCenterKeychain()
         keychain.readError = errSecMissingEntitlement
@@ -628,6 +696,7 @@ struct MessageCenterListTest {
             password: UUID().uuidString
         )
 
+        await self.store.saveUser(mcUser, channelID: self.channel.identifier!)
         try await self.store.updateMessages(messages: messages, lastModifiedTime: "")
 
         self.inbox.enabled = true
@@ -638,14 +707,6 @@ struct MessageCenterListTest {
 
         let pendingBeforeSync = try await self.store.fetchLocallyReadOnlyMessages()
         #expect(pendingBeforeSync.map { $0.id } == [message.id])
-
-        self.client.onCreateUser = { _ in
-            return AirshipHTTPResponse(
-                result: mcUser,
-                statusCode: 200,
-                headers: [:]
-            )
-        }
 
         self.client.onRetrieve = { _, _, _ in
             return AirshipHTTPResponse(
