@@ -273,6 +273,63 @@ struct ThomasOutcomeProcessorTest {
         #expect(delegationCount == 0)
     }
 
+    // MARK: - Button outcomes
+
+    @Test(arguments: [
+        [buttonSubmit, buttonDismiss, buttonAction],
+        [buttonDismiss, buttonAction, buttonSubmit]
+    ])
+    func buttonSubmitRunsBeforeOtherOutcomes(outcomes: [ThomasOutcome]) async {
+        let log = ButtonOutcomeLog()
+
+        await ThomasState.empty.processButtonOutcomes(
+            outcomes,
+            submit: {
+                await Task.yield()
+                log.events.append("submit")
+                return true
+            },
+            dismiss: { _ in log.events.append("dismiss") },
+            runActions: { _ in log.events.append("action") }
+        )
+
+        #expect(log.events == ["submit", "dismiss", "action"])
+    }
+
+    @Test
+    func buttonFailedSubmitSkipsOtherOutcomes() async {
+        let log = ButtonOutcomeLog()
+
+        await ThomasState.empty.processButtonOutcomes(
+            [buttonSubmit, buttonDismiss, buttonAction],
+            submit: {
+                log.events.append("submit")
+                return false
+            },
+            dismiss: { _ in log.events.append("dismiss") },
+            runActions: { _ in log.events.append("action") }
+        )
+
+        #expect(log.events == ["submit"])
+    }
+
+    @Test
+    func buttonWithoutSubmitKeepsOutcomeOrder() async {
+        let log = ButtonOutcomeLog()
+
+        await ThomasState.empty.processButtonOutcomes(
+            [buttonDismiss, buttonAction],
+            submit: {
+                log.events.append("submit")
+                return true
+            },
+            dismiss: { _ in log.events.append("dismiss") },
+            runActions: { _ in log.events.append("action") }
+        )
+
+        #expect(log.events == ["dismiss", "action"])
+    }
+
     // MARK: - Helpers
 
     private func sameDelegation(_ a: DelegatedOutcome, _ b: DelegatedOutcome) -> Bool {
@@ -324,4 +381,18 @@ struct ThomasOutcomeProcessorTest {
             onStateAction: onStateAction
         )
     }
+}
+
+private let buttonSubmit = ThomasOutcome.form(.init(command: .submit, identifier: "submit"))
+private let buttonDismiss = ThomasOutcome.dismiss(.init(cancel: false, identifier: "dismiss"))
+private let buttonAction = ThomasOutcome.airshipAction(
+    .init(
+        actions: ThomasActionsPayload(value: .object(["add_tags": .array([.string("a")])])),
+        identifier: "action"
+    )
+)
+
+@MainActor
+private final class ButtonOutcomeLog {
+    var events: [String] = []
 }

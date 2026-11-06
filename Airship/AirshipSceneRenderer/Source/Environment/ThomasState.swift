@@ -287,6 +287,49 @@ final class ThomasState: ObservableObject {
             delegated: actionsDelegate)
     }
 
+    /// Processes a button's outcomes, submitting the form before anything else runs.
+    ///
+    /// Events from the other outcomes report whether the form was submitted, so they must run
+    /// after `submit` returns, whatever order the outcomes are listed in. If the submit fails,
+    /// none of them run, so `[form_submit, dismiss]` leaves the scene open.
+    ///
+    /// - Parameters:
+    ///   - outcomes: The button's outcomes. Form validation is the caller's job and is ignored here.
+    ///   - submit: Submits the form and returns whether it succeeded.
+    ///   - dismiss: Dismisses the scene.
+    ///   - runActions: Runs Airship actions.
+    func processButtonOutcomes(
+        _ outcomes: [ThomasOutcome],
+        submit: @Sendable @MainActor () async -> Bool,
+        dismiss: @escaping @Sendable @MainActor (ThomasOutcome.DismissOutcome) -> Void,
+        runActions: @escaping @Sendable @MainActor (ThomasOutcome.AirshipActionOutcome) -> Void
+    ) async {
+        let submits = outcomes.contains {
+            if case .form(let form) = $0 { return form.command == .submit }
+            return false
+        }
+
+        if submits {
+            guard await submit() else { return }
+        }
+
+        let remaining = outcomes.filter {
+            if case .form = $0 { return false }
+            return true
+        }
+
+        await process(outcomes: remaining) { delegated in
+            switch(delegated) {
+            case .dismiss(let outcome):
+                dismiss(outcome)
+            case .runAction(let outcome):
+                runActions(outcome)
+            case .formAction:
+                break
+            }
+        }
+    }
+
     @MainActor
     final class MutableState: ObservableObject {
         @Published private(set) var state: AirshipJSON
