@@ -236,6 +236,7 @@ jobs:
           node-version: 26.13.0
       - name: Install odiff and webp
         run: |
+          sudo apt-get update -qq
           sudo apt-get install -y -qq webp python3-pil >/dev/null
           npm --prefix uitests ci
       - name: Download shard screenshots
