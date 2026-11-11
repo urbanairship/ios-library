@@ -520,13 +520,106 @@ struct ThomasAsyncViewStateTest {
         #expect(state.status == .error(.server(statusCode: 404)))
     }
 
+    private static let brandColors = ##"{"colors": {"brand": {"default": {"type": "hex", "hex": "#C8336C", "alpha": 1}}}}"##
+    private static let brandBackground = #"{"type": "color_reference", "name": "brand"}"#
+
+    private func decodeContent(_ json: String) throws -> ThomasAsyncViewContent {
+        try JSONDecoder().decode(ThomasAsyncViewContent.self, from: Data(json.utf8))
+    }
+
+    @Test("a bare view decodes as the content's view, with no named colors")
+    func bareViewDecodes() throws {
+        let content = try decodeContent(#"{"type": "empty_view"}"#)
+        guard case .emptyView = content.view else {
+            Issue.record("expected an empty view, got \(content.view)")
+            return
+        }
+        #expect(content.references == nil)
+    }
+
+    @Test("a bare view's own root references key is not read")
+    func bareViewIgnoresRootReferences() throws {
+        let content = try decodeContent(
+            #"{"type": "empty_view", "background_color": \#(Self.brandBackground), "references": \#(Self.brandColors)}"#
+        )
+        guard case .emptyView = content.view else {
+            Issue.record("expected an empty view, got \(content.view)")
+            return
+        }
+        #expect(content.references == nil)
+    }
+
+    @Test("a wrapper's named colors win over the scene's within the content")
+    func wrapperWithReferencesDecodes() throws {
+        let content = try decodeContent(
+            #"{"type": "async_response", "view": {"type": "empty_view", "background_color": \#(Self.brandBackground)}, "references": \#(Self.brandColors)}"#
+        )
+        guard case .emptyView = content.view else {
+            Issue.record("expected an empty view, got \(content.view)")
+            return
+        }
+        let brand = try #require(content.references?.colors?["brand"])
+        #expect(brand.defaultColor.hex == "#C8336C")
+
+        let sceneBrand = try JSONDecoder().decode(ThomasColor.Definition.self, from: Data(#"""
+        {"default": {"type": "hex", "hex": "#1F1F24", "alpha": 1}}
+        """#.utf8))
+        let scene = ThomasSelectorEnvironment(darkMode: false, colors: ["brand": sceneBrand, "ink": sceneBrand])
+        let environment = scene.overlaying(colors: content.references?.colors)
+        #expect(ThomasColor.reference(name: "brand").definition(environment) == brand)
+        #expect(ThomasColor.reference(name: "ink").definition(environment) == sceneBrand)
+    }
+
+    @Test("a wrapper without references decodes its view")
+    func wrapperWithoutReferencesDecodes() throws {
+        let content = try decodeContent(#"{"type": "async_response", "view": {"type": "empty_view"}}"#)
+        guard case .emptyView = content.view else {
+            Issue.record("expected an empty view, got \(content.view)")
+            return
+        }
+        #expect(content.references == nil)
+    }
+
+    @Test("a wrapper whose view doesn't decode fails as a client error")
+    func wrapperWithBrokenViewFails() async throws {
+        let state = ThomasAsyncViewState(
+            properties: try makeProperties(),
+            resolver: resolver([.success(Data(#"{"type": "async_response", "view": {"type": "not_a_view"}}"#.utf8))]),
+            taskSleeper: RecordingTaskSleeper()
+        )
+        state.retry()
+        await awaitStatus(state) { if case .error = $0 { return true } else { return false } }
+        #expect(state.status == .error(.client))
+        #expect(state.response == nil)
+    }
+
+    @Test("an object with a view but no async_response type is not a wrapper")
+    func untypedWrapperFails() async throws {
+        let state = ThomasAsyncViewState(
+            properties: try makeProperties(),
+            resolver: resolver([.success(Data(#"{"view": {"type": "empty_view"}}"#.utf8))]),
+            taskSleeper: RecordingTaskSleeper()
+        )
+        state.retry()
+        await awaitStatus(state) { if case .error = $0 { return true } else { return false } }
+        #expect(state.status == .error(.client))
+    }
+
+    @Test("a wrapper with malformed references fails as a client error")
+    func wrapperWithMalformedReferencesFails() async throws {
+        let state = ThomasAsyncViewState(
+            properties: try makeProperties(),
+            resolver: resolver([.success(Data(#"{"type": "async_response", "view": {"type": "empty_view"}, "references": {"colors": []}}"#.utf8))]),
+            taskSleeper: RecordingTaskSleeper()
+        )
+        state.retry()
+        await awaitStatus(state) { if case .error = $0 { return true } else { return false } }
+        #expect(state.status == .error(.client))
+    }
+
     @Test
-    func resolveKeepsTheResponseRootsNamedColors() async throws {
-        let json = #"""
-        {"type": "empty_view",
-         "background_color": {"type": "color_reference", "name": "brand"},
-         "references": {"colors": {"brand": {"default": {"type": "hex", "hex": "#C8336C", "alpha": 1}}}}}
-        """#
+    func resolveKeepsTheWrappersNamedColors() async throws {
+        let json = #"{"type": "async_response", "view": {"type": "empty_view", "background_color": \#(Self.brandBackground)}, "references": \#(Self.brandColors)}"#
         let state = ThomasAsyncViewState(
             properties: try makeProperties(),
             resolver: resolver([.success(Data(json.utf8))]),
