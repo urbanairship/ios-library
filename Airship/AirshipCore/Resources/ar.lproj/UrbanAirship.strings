@@ -75,3 +75,4 @@
 "ua_unmute" = "إلغاء كتم الصوت";
 "ua_required_field" = "* مطلوب";
 "ua_invalid_form_message" = "يرجى تصحيح الحقول غير الصالحة للمتابعة";
+"ua_refresh" = "تحديث";

@@ -214,6 +214,7 @@ public struct MessageCenterListView: View {
                     .background(Color.airshipTappableClear)
                 }
                 .disabled(isRefreshing)
+                .accessibilityLabel("ua_refresh".airshipLocalizedString(fallback: "Refresh"))
 
                 Text("ua_empty_message_list".messageCenterLocalizedString)
                     .foregroundColor(refreshColor ?? .primary)

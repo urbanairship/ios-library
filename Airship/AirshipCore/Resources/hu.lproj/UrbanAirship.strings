@@ -75,3 +75,4 @@
 "ua_unmute" = "Némítás feloldása";
 "ua_required_field" = "* Kötelező";
 "ua_invalid_form_message" = "Kérjük, javítsa ki az érvénytelen mezőket a folytatáshoz";
+"ua_refresh" = "Frissítés";

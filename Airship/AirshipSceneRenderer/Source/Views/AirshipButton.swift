@@ -68,6 +68,46 @@ struct AirshipButton<Label> : View  where Label : View {
 
     @MainActor
     private func doButtonActions() async {
+        await ThomasButtonTap(
+            identifier: identifier,
+            description: description,
+            reportingMetadata: reportingMetadata,
+            outcomes: outcomes,
+            eventHandlers: eventHandlers
+        ).perform(
+            formState: formState,
+            thomasState: thomasState,
+            thomasEnvironment: thomasEnvironment,
+            layoutState: layoutState
+        )
+    }
+}
+
+/// A button tap: validates the form, reports the tap, then processes the tap handlers' and button's outcomes.
+@MainActor
+struct ThomasButtonTap {
+    let identifier: String
+    let description: String?
+    let reportingMetadata: AirshipJSON?
+    let outcomes: [ThomasOutcome]
+    let eventHandlers: [ThomasEventHandler]?
+
+    /// Performs the tap.
+    ///
+    /// Tap-handler outcomes run ahead of the button's own, and a form submit runs before both;
+    /// see ``ThomasState/processButtonOutcomes(_:submit:dismiss:runActions:)``.
+    ///
+    /// - Parameters:
+    ///   - formState: The form the button submits or validates.
+    ///   - thomasState: The state outcomes apply to.
+    ///   - thomasEnvironment: Receives the reporting, dismiss and actions.
+    ///   - layoutState: The layout state reported with events, including the button state.
+    func perform(
+        formState: ThomasFormState,
+        thomasState: ThomasState,
+        thomasEnvironment: ThomasEnvironment,
+        layoutState: LayoutState
+    ) async {
         // Tapping a Button does not resign the keyboard in SwiftUI, so a focused text
         // input stays first responder — and once we navigate, UIKit keyboard-avoidance
         // scrolls the pager back to reveal it (the snap-back). Clear the layout's focus
@@ -75,70 +115,56 @@ struct AirshipButton<Label> : View  where Label : View {
         // to this layout, so always safe.
         thomasEnvironment.focusedID = nil
 
-        if outcomes.hasFormOutcome {
-            guard await formState.validate() else { return }
-        }
-        
-        let taps = self.eventHandlers?.filter { $0.type == .tap }
-        if let taps, !taps.isEmpty {
-            
-            let outcomes = taps.flatMap { handler in
-                handler.outcomes ?? handler.stateActions.map(\.asOutcome)
+        var resolved = EventHandlerViewModifier.outcomes(for: eventHandlers ?? [], type: .tap) + outcomes
+
+        // Outside a form the environment's placeholder form never validates, so form outcomes are
+        // dropped and the rest still run, as on Android.
+        if layoutState.formState == nil {
+            resolved = resolved.filter {
+                if case .form = $0 { return false }
+                return true
             }
-            
-            await thomasState.process(outcomes: outcomes)
-            
-            // WORKAROUND: SwiftUI state updates are not immediately available to child views.
-            // Yielding allows the state changes to propagate through the view hierarchy
-            // before executing behaviors that may depend on the updated state.
-            await Task.yield()
         }
 
-        // Button reporting
+        if resolved.hasFormOutcome {
+            guard await formState.validate() else { return }
+        }
+
         thomasEnvironment.buttonTapped(
-            buttonIdentifier: self.identifier,
-            reportingMetadata: self.reportingMetadata,
+            buttonIdentifier: identifier,
+            reportingMetadata: reportingMetadata,
             layoutState: layoutState
         )
-        
-        var asyncTasks: [Task<Void, Never>] = []
-        
-        await thomasState.process(outcomes: outcomes) { delegated in
-            switch(delegated) {
-            case .dismiss(let outcome):
+
+        let dismissDescription = description ?? identifier
+        await thomasState.processButtonOutcomes(
+            resolved,
+            submit: {
+                do {
+                    try await formState.submit(
+                        layoutState: layoutState,
+                        thomasState: thomasState
+                    )
+                    return true
+                } catch {
+                    AirshipLogger.error("Failed to submit \(error)")
+                    return false
+                }
+            },
+            dismiss: { [identifier] outcome in
                 thomasEnvironment.dismiss(
-                    buttonIdentifier: self.identifier,
-                    buttonDescription: self.description ?? self.identifier,
+                    buttonIdentifier: identifier,
+                    buttonDescription: dismissDescription,
                     cancel: outcome.cancel ?? false,
                     layoutState: layoutState
                 )
-            case .formAction(let outcome):
-                switch(outcome.command) {
-                case .validate: break //already handled above
-                case .submit:
-                    asyncTasks.append(Task {
-                        do {
-                            try await formState.submit(
-                                layoutState: layoutState,
-                                thomasState: thomasState
-                            )
-                        } catch {
-                            AirshipLogger.error("Failed to submit \(error)")
-                        }
-                    })
-                }
-            case .runAction(let outcome):
-                self.thomasEnvironment
-                    .runActions(outcome.actions, layoutState: self.layoutState)
+            },
+            runActions: { outcome in
+                thomasEnvironment.runActions(outcome.actions, layoutState: layoutState)
             }
-        }
-        
-        for task in asyncTasks {
-            await task.value
-        }
+        )
     }
 }
-
 
 fileprivate struct AirshipButtonEmptyStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {

@@ -221,7 +221,7 @@ actor Worker {
         }
 
         guard let rateLimitIDs = workRequest.rateLimitIDs, !rateLimitIDs.isEmpty else {
-            await self.conditionsMonitor.awaitConditions(
+            try await self.conditionsMonitor.awaitConditions(
                 workRequest: workRequest
             )
             return
@@ -234,7 +234,7 @@ actor Worker {
             if rateLimit > 0 {
                 try await Self.sleep(rateLimit)
             }
-            await self.conditionsMonitor.awaitConditions(
+            try await self.conditionsMonitor.awaitConditions(
                 workRequest: workRequest
             )
         } while await !rateLimiter.trackIfWithinLimit(rateLimitIDs)

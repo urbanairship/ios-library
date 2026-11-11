@@ -75,3 +75,4 @@
 "ua_unmute" = "Riattiva audio";
 "ua_required_field" = "* Obbligatorio";
 "ua_invalid_form_message" = "Si prega di correggere i campi non validi per continuare";
+"ua_refresh" = "Aggiorna";

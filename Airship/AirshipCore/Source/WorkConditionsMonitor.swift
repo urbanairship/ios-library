@@ -10,7 +10,7 @@ struct WorkConditionsMonitor: @unchecked Sendable {
     private let networkMonitor: any AirshipNetworkCheckerProtocol
 
     init(
-        networkMonitor: AirshipNetworkChecker = AirshipNetworkChecker()
+        networkMonitor: any AirshipNetworkCheckerProtocol = AirshipNetworkChecker()
     ) {
         self.networkMonitor = networkMonitor
         self.cancellable = Publishers.CombineLatest(
@@ -43,22 +43,47 @@ struct WorkConditionsMonitor: @unchecked Sendable {
     }
 
     @MainActor
-    private func waitConditionsUpdate() async {
-        return await withCheckedContinuation { continuation in
-            var cancellable: AnyCancellable? = nil
-            cancellable = self.conditionsSubject
-                .first()
-                .sink { _ in
-                    continuation.resume()
-                    cancellable?.cancel()
-                }
+    private final class ConditionsWaiter {
+        var continuation: CheckedContinuation<Void, Never>?
+        var cancellable: AnyCancellable?
+
+        func resume() {
+            cancellable?.cancel()
+            cancellable = nil
+            continuation?.resume()
+            continuation = nil
         }
     }
 
     @MainActor
-    func awaitConditions(workRequest: AirshipWorkRequest) async {
+    private func waitConditionsUpdate() async {
+        let waiter = ConditionsWaiter()
+        await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                // onCancel ran before the continuation existed, so nothing would resume it.
+                guard !Task.isCancelled else {
+                    continuation.resume()
+                    return
+                }
+                waiter.continuation = continuation
+                waiter.cancellable = self.conditionsSubject
+                    .first()
+                    .sink { _ in waiter.resume() }
+            }
+        } onCancel: {
+            Task { @MainActor in waiter.resume() }
+        }
+    }
+
+    /// Suspends until the request's conditions are met.
+    /// - Parameter workRequest: The request whose conditions to wait on.
+    /// - Throws: `CancellationError` if the calling task is cancelled while waiting.
+    @MainActor
+    func awaitConditions(workRequest: AirshipWorkRequest) async throws {
         while checkConditions(workRequest: workRequest) == false {
+            try Task.checkCancellation()
             await waitConditionsUpdate()
         }
+        try Task.checkCancellation()
     }
 }

@@ -91,32 +91,19 @@ struct ButtonLayout : View {
 
     @MainActor
     private func performButtonAction() async {
-        // Form validation
-        let outcomes = makeOutcomes()
-        if outcomes.hasFormOutcome {
-            guard await formState.validate() else { return }
-        }
-
-        // Tap event handlers
-        let taps = info.commonProperties.eventHandlers?.filter { $0.type == .tap }
-        if let taps, !taps.isEmpty {
-            let tapOutcomes = taps.flatMap { entry in
-                entry.outcomes ?? entry.stateActions.map(\.asOutcome)
-            }
-            
-            await thomasState.process(outcomes: tapOutcomes)
-            
-            await Task.yield()
-        }
-
-        // Button reporting
-        thomasEnvironment.buttonTapped(
-            buttonIdentifier: info.properties.identifier,
+        let identifier = info.properties.identifier
+        await ThomasButtonTap(
+            identifier: identifier,
+            description: thomasEnvironment.resolveContentDescription(for: info.accessible),
             reportingMetadata: info.properties.reportingMetadata,
-            layoutState: layoutState
+            outcomes: makeOutcomes(),
+            eventHandlers: info.commonProperties.eventHandlers
+        ).perform(
+            formState: formState,
+            thomasState: thomasState,
+            thomasEnvironment: thomasEnvironment,
+            layoutState: layoutState.override(buttonState: ButtonState(identifier: identifier))
         )
-
-        await thomasState.process(outcomes: outcomes)
     }
     
     private func makeOutcomes() -> [ThomasOutcome] {

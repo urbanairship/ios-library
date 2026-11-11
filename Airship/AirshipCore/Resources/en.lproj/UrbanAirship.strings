@@ -95,3 +95,4 @@
 "ua_unmute" = "Unmute";
 "ua_required_field" = "* Required";
 "ua_invalid_form_message" = "Please fix the invalid fields to continue";
+"ua_refresh" = "Refresh";

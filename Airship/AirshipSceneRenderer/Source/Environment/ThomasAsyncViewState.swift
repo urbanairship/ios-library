@@ -256,7 +256,11 @@ final class ThomasAsyncViewState: ObservableObject {
     }
 }
 
-/// What an async view's request returns: the view to draw, whose root may also name colors.
+/// What an async view's request returns: the view to draw and any colors it names.
+///
+/// The response body is either a bare view, or a wrapper
+/// `{"type": "async_response", "view": <view>, "references": {"colors": {...}}}` whose `references` is
+/// optional. Any other `type` decodes as a view, and a bare view's own `references` key is not read.
 ///
 /// Within the async view, a color reference looks in these first and then in the scene's, so a name
 /// defined here overrides the scene's for this content only.
@@ -264,14 +268,24 @@ struct ThomasAsyncViewContent: Decodable, Equatable, Sendable {
     let view: ThomasViewInfo
     let references: ThomasSceneReferences?
 
-    private enum CodingKeys: String, CodingKey {
+    /// The `type` that marks the response as a wrapper rather than a view.
+    static let wrapperType = "async_response"
+
+    private enum WrapperKeys: String, CodingKey {
+        case view
+        case type
         case references
     }
 
     init(from decoder: any Decoder) throws {
-        self.view = try ThomasViewInfo(from: decoder)
-        self.references = try decoder.container(keyedBy: CodingKeys.self)
-            .decodeIfPresent(ThomasSceneReferences.self, forKey: .references)
+        if let wrapper = try? decoder.container(keyedBy: WrapperKeys.self),
+           (try? wrapper.decode(String.self, forKey: .type)) == Self.wrapperType {
+            self.view = try wrapper.decode(ThomasViewInfo.self, forKey: .view)
+            self.references = try wrapper.decodeIfPresent(ThomasSceneReferences.self, forKey: .references)
+        } else {
+            self.view = try ThomasViewInfo(from: decoder)
+            self.references = nil
+        }
     }
 }
 

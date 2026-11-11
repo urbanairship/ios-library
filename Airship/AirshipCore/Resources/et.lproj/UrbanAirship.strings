@@ -75,3 +75,4 @@
 "ua_unmute" = "Tühista vaigistus";
 "ua_required_field" = "* Kohustuslik";
 "ua_invalid_form_message" = "Palun parandage jätkamiseks kehtetud väljad";
+"ua_refresh" = "Värskenda";

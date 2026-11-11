@@ -75,3 +75,4 @@
 "ua_unmute" = "取消静音";
 "ua_required_field" = "* 必填";
 "ua_invalid_form_message" = "请修正无效字段以继续";
+"ua_refresh" = "刷新";

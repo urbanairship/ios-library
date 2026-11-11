@@ -75,3 +75,4 @@
 "ua_unmute" = "Sesi Aç";
 "ua_required_field" = "* Zorunlu";
 "ua_invalid_form_message" = "Devam etmek için lütfen geçersiz alanları düzeltin";
+"ua_refresh" = "Yenile";

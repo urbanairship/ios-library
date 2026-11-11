@@ -75,3 +75,4 @@
 "ua_unmute" = "Укључи звук";
 "ua_required_field" = "* Обавезно";
 "ua_invalid_form_message" = "Молимо исправите неважећа поља да бисте наставили";
+"ua_refresh" = "Osveži";

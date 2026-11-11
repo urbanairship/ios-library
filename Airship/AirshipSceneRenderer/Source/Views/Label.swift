@@ -248,8 +248,8 @@ extension Label {
 
     /// Finds `[text]{color:name}` spans, innermost first when they nest.
     ///
-    /// Runs on the parsed characters, so markdown inside the brackets is already applied
-    /// and a backslash-escaped `\[` still opens a span.
+    /// Runs on the parsed characters, so markdown inside the brackets is already applied.
+    /// A backslash-escaped `\[` or `\]` is a stand-in here, so it never opens or closes a span.
     ///
     /// - Parameter chars: the characters of the parsed label.
     /// - Returns: each span's outer range (from `[` through `}`), inner range, and color name.
@@ -311,7 +311,7 @@ extension Label {
         let inner: Range<AttributedString.Index>
     }
 
-    private func findDelimitedRanges(
+    private static func findDelimitedRanges(
         in chars: AttributedString.CharacterView,
         open: (Character, Character),
         close: (Character, Character)
@@ -360,7 +360,7 @@ extension Label {
         return results
     }
 
-    private func formatSegments(in attributed: AttributedString) -> [Segment] {
+    private static func formatSegments(in attributed: AttributedString) -> [Segment] {
         let chars = attributed.characters
         let start = chars.startIndex
         let end = chars.endIndex
@@ -478,71 +478,488 @@ extension Label {
 
     private var markdownText: Text {
         get throws {
-            let resolved = info.resolveLabelString(thomasState: thomasState, localizer: thomasEnvironment.extensions.localizer)
-
-            // Parse markdown into attributed
-            var attributed = try AttributedString(
-                markdown: resolved,
-                options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
-            )
-            Self.applyAnchorAppearance(
-                self.info.properties.markdown?.appearance?.anchor,
-                to: &attributed,
+            let attributed = try Self.markdownAttributedString(
+                info.resolveLabelString(thomasState: thomasState, localizer: thomasEnvironment.extensions.localizer),
+                options: self.info.properties.markdown,
+                textAppearance: resolvedTextAppearance,
+                scaledFontSize: scaledFontSize,
                 selectorEnvironment: selectorEnvironment
             )
 
-            let highlightOptions = self.info.properties.markdown?.appearance?.highlight
-            let fontSize = scaledFontSize
+            // A custom corner radius needs the highlight drawn by `HighlightRenderer` instead of a background color.
+            if #available(iOS 18.0, visionOS 2.0, *),
+               let cornerRadius = self.info.properties.markdown?.appearance?.highlight?.cornerRadius {
+                return Self.roundedHighlightText(attributed, cornerRadius: cornerRadius)
+            }
+            return Text(attributed)
+        }
+    }
 
-            // Find format segments INSIDE the attributed string
-            let segments = formatSegments(in: attributed)
+    /// Builds text whose highlights are drawn with rounded corners by `HighlightRenderer`.
+    ///
+    /// - Parameters:
+    ///   - attributed: text from `markdownAttributedString`, whose highlights are background colors.
+    ///   - cornerRadius: the highlight's corner radius.
+    /// - Returns: the text, with each background color moved to a `HighlightAttribute`.
+    @available(iOS 18.0, visionOS 2.0, *)
+    private static func roundedHighlightText(_ attributed: AttributedString, cornerRadius: CGFloat) -> Text {
+        var result: Text?
+        for (color, range) in attributed.runs[AttributeScopes.SwiftUIAttributes.BackgroundColorAttribute.self] {
+            var slice = AttributedString(attributed[range])
+            let piece: Text
+            if let color {
+                slice.backgroundColor = nil
+                piece = Text(slice).customAttribute(HighlightAttribute(color: color, cornerRadius: cornerRadius))
+            } else {
+                piece = Text(slice)
+            }
+            result = result.map { $0 + piece } ?? piece
+        }
+        return result ?? Text(attributed)
+    }
 
-            // Build Text by slicing
-            var result: Text?
+    /// Renders a label's markdown text as styled text, with highlights drawn as a background color.
+    ///
+    /// Supports standard inline markdown plus `==highlight==`, `^^superscript^^`, `,{subscript},` and
+    /// `[text]{color:name}`. A backslash makes any markdown punctuation literal, an escaped bracket never
+    /// opens or closes a color span, backticks are ordinary characters, HTML entity references draw as
+    /// typed, and markdown inside link text applies: `[**a** b](u)` is a link whose "a" is bold.
+    ///
+    /// - Parameters:
+    ///   - text: the resolved label text.
+    ///   - options: the label's markdown options, for anchor and highlight appearance.
+    ///   - textAppearance: the label's text appearance, for the superscript and subscript font.
+    ///   - scaledFontSize: the label's font size after dynamic type, for superscript and subscript offsets.
+    ///   - selectorEnvironment: resolves the anchor, highlight and span colors.
+    /// - Returns: the styled text.
+    static func markdownAttributedString(
+        _ text: String,
+        options: ThomasMarkDownOptions?,
+        textAppearance: ThomasTextAppearance,
+        scaledFontSize: Double,
+        selectorEnvironment: ThomasSelectorEnvironment
+    ) throws -> AttributedString {
+        var attributed = try parseInlineMarkdown(protectLiterals(text))
+        Self.applyAnchorAppearance(
+            options?.appearance?.anchor,
+            to: &attributed,
+            selectorEnvironment: selectorEnvironment
+        )
 
-            for seg in segments {
-                var slice = AttributedString(attributed[seg.range])
-                let piece: Text
+        let highlightColor = options?.appearance?.highlight?.color?.toColor(selectorEnvironment) ?? Self.defaultHighlightColor
+        let segments = formatSegments(in: attributed)
+        var result = segments.isEmpty ? attributed : AttributedString()
 
-                if let color = Self.spanColor(named: seg.colorName, in: selectorEnvironment) {
-                    Self.applySpanColor(color, to: &slice)
-                }
+        for seg in segments {
+            var slice = AttributedString(attributed[seg.range])
 
-                if seg.isSuperscript || seg.isSubscript {
-                    slice.baselineOffset = seg.isSuperscript
-                        ? fontSize * Self.superscriptBaselineScale
-                        : -(fontSize * Self.subscriptBaselineScale)
-                    slice.font = AirshipFont.resolveFont(
-                        size: resolvedTextAppearance.fontSize * Self.scriptFontScale,
-                        families: resolvedTextAppearance.fontFamilies,
-                        weight: resolvedTextAppearance.fontWeight,
-                        isItalic: resolvedTextAppearance.hasStyle(.italic),
-                        isBold: resolvedTextAppearance.hasStyle(.bold)
-                    )
-                }
-
-                if seg.isHighlight {
-                    // For custom cornerRadius we have to use a custom attribute and renderer
-                    if #available(iOS 18.0, visionOS 2.0, *), let cornerRadius = highlightOptions?.cornerRadius {
-                        let highlight = HighlightAttribute(
-                            color: highlightOptions?.color?.toColor(selectorEnvironment) ?? Self.defaultHighlightColor,
-                            cornerRadius: cornerRadius
-                        )
-                        piece = Text(slice)
-                            .customAttribute(highlight)
-                    } else {
-                        slice.backgroundColor = highlightOptions?.color?.toColor(selectorEnvironment) ?? Self.defaultHighlightColor
-                        piece = Text(slice)
-                    }
-                } else {
-                    piece = Text(slice)
-                }
-
-                result = result.map { $0 + piece } ?? piece
+            if let color = Self.spanColor(named: seg.colorName, in: selectorEnvironment) {
+                Self.applySpanColor(color, to: &slice)
             }
 
-            return result ?? Text(attributed)
+            if seg.isSuperscript || seg.isSubscript {
+                // Nested superscript and subscript both apply, so their offsets add.
+                var offset = 0.0
+                if seg.isSuperscript { offset += scaledFontSize * Self.superscriptBaselineScale }
+                if seg.isSubscript { offset -= scaledFontSize * Self.subscriptBaselineScale }
+                slice.baselineOffset = offset
+                slice.font = AirshipFont.resolveFont(
+                    size: textAppearance.fontSize * Self.scriptFontScale,
+                    families: textAppearance.fontFamilies,
+                    weight: textAppearance.fontWeight,
+                    isItalic: textAppearance.hasStyle(.italic),
+                    isBold: textAppearance.hasStyle(.bold)
+                )
+            }
+
+            if seg.isHighlight {
+                slice.backgroundColor = highlightColor
+            }
+
+            result += slice
         }
+
+        restoreLiterals(in: &result)
+        return result
+    }
+
+    /// Returns the Unicode noncharacter `U+FDD0` plus `offset`.
+    ///
+    /// Stand-ins are noncharacters because no real text holds them, where a private-use character
+    /// may be an icon font's glyph.
+    ///
+    /// - Parameter offset: 0 through 31.
+    /// - Returns: the noncharacter.
+    private static func nonCharacter(_ offset: UInt32) -> Character {
+        // Valid scalars that Swift only rejects as `\u{}` literals.
+        Character(Unicode.Scalar(0xFDD0 + offset)!)
+    }
+
+    /// Stand-ins for backslash-escaped `=`, `^`, `,`, `[` and `]`, so the delimiter and color span scans
+    /// don't see them.
+    private static let escapedLiterals: [Character: Character] = [
+        "=": nonCharacter(0),
+        "^": nonCharacter(1),
+        ",": nonCharacter(2),
+        "[": nonCharacter(3),
+        "]": nonCharacter(4),
+    ]
+
+    /// The stand-in `parseInlineMarkdown` puts in place of every link; links are spliced back in order.
+    private static let linkPlaceholder: Character = nonCharacter(31)
+
+    /// Punctuation either side of every stand-in, since a noncharacter reads as a letter beside emphasis:
+    /// `foo**[x](u)**bar` stays literal as it would beside the link's own `[` and `)`, and `\[_x_\]` is
+    /// italic as it would be beside a `[`.
+    private static let standInOpen: Character = "\u{2045}"
+    private static let standInClose: Character = "\u{2046}"
+
+    /// Returns whether `text` starts with an HTML entity reference such as `&amp;`, `&#65;` or `&#x41;`.
+    ///
+    /// - Parameter text: text starting at an `&`.
+    /// - Returns: `true` for a named, decimal or hex reference closed by `;`.
+    private static func startsWithEntityReference(_ text: Substring) -> Bool {
+        var chars = text.dropFirst().makeIterator()
+        guard let first = chars.next() else { return false }
+
+        let isReferenceCharacter: (Character) -> Bool
+        let maxLength: Int
+        var length = 0
+        if first == "#" {
+            guard let marker = chars.next() else { return false }
+            if marker == "x" || marker == "X" {
+                isReferenceCharacter = \.isHexDigit
+                maxLength = 6
+            } else if marker.isASCII, marker.isNumber {
+                isReferenceCharacter = { $0.isASCII && $0.isNumber }
+                maxLength = 7
+                length = 1
+            } else {
+                return false
+            }
+        } else if first.isASCII, first.isLetter {
+            isReferenceCharacter = { $0.isASCII && ($0.isLetter || $0.isNumber) }
+            maxLength = 32
+            length = 1
+        } else {
+            return false
+        }
+
+        while let char = chars.next() {
+            if char == ";" { return length > 0 }
+            guard isReferenceCharacter(char), length < maxLength else { return false }
+            length += 1
+        }
+        return false
+    }
+
+    /// Swaps escaped `=`, `^`, `,`, `[` and `]` for stand-ins and escapes every backtick and entity
+    /// reference.
+    ///
+    /// The markdown parser drops the backslash, so without a stand-in `\==x==` would still highlight
+    /// and `\[x]{color:brand}` would still color.
+    /// Escaping backticks keeps the parser from making code spans, and escaping the `&` of an entity
+    /// reference keeps `&amp;` as typed, as Android and web draw it. A bare `&` isn't escaped, since
+    /// a backslash inside a plain-text URL would stay in its link.
+    ///
+    /// - Parameter text: the label's markdown.
+    /// - Returns: markdown for `parseInlineMarkdown`; `restoreLiterals` undoes the stand-ins.
+    private static func protectLiterals(_ text: String) -> String {
+        var result = ""
+        var isEscaped = false
+        var index = text.startIndex
+        while index < text.endIndex {
+            let char = text[index]
+            defer { index = text.index(after: index) }
+            if isEscaped {
+                isEscaped = false
+                if let standIn = escapedLiterals[char] {
+                    result.append(standInOpen)
+                    result.append(standIn)
+                    result.append(standInClose)
+                } else {
+                    result.append("\\")
+                    result.append(char)
+                }
+            } else if char == "\\" {
+                isEscaped = true
+            } else if char == "`" {
+                result.append("\\`")
+            } else if char == "&", startsWithEntityReference(text[index...]) {
+                result.append("\\&")
+            } else {
+                result.append(char)
+            }
+        }
+        if isEscaped { result.append("\\") }
+        return result
+    }
+
+    /// Puts the escaped characters `protectLiterals` swapped out back in place, wrappers and all, keeping
+    /// their styling.
+    ///
+    /// - Parameter attributed: the rendered text, updated in place.
+    private static func restoreLiterals(in attributed: inout AttributedString) {
+        let chars = attributed.characters
+        guard chars.contains(where: { literals[$0] != nil }) else { return }
+
+        var restored = AttributedString()
+        var copied = chars.startIndex
+        var index = chars.startIndex
+        while index < chars.endIndex {
+            guard let literal = literals[chars[index]] else {
+                index = chars.index(after: index)
+                continue
+            }
+            let after = chars.index(after: index)
+            var start = index
+            var end = after
+            if index > copied, chars[chars.index(before: index)] == standInOpen,
+               after < chars.endIndex, chars[after] == standInClose {
+                start = chars.index(before: index)
+                end = chars.index(after: after)
+            }
+            restored += AttributedString(attributed[copied..<start])
+            let attributes = attributed[index..<after].runs.first?.attributes ?? AttributeContainer()
+            restored += AttributedString(String(literal), attributes: attributes)
+            copied = end
+            index = end
+        }
+        restored += AttributedString(attributed[copied..<chars.endIndex])
+        attributed = restored
+    }
+
+    /// Each stand-in, mapped back to the character it stands for.
+    private static let literals: [Character: Character] = Dictionary(
+        uniqueKeysWithValues: escapedLiterals.map { ($0.value, $0.key) }
+    )
+
+    private struct InlineLink {
+        let label: String
+        let url: URL
+    }
+
+    /// Parses inline markdown, applying the markdown inside each link's text.
+    ///
+    /// The system parser keeps only the link and drops any emphasis inside its text, so each link is swapped
+    /// for a placeholder, its text parsed on its own, and the result spliced back with the link added and the
+    /// placeholder's own emphasis kept: `**[a _b_](u)**` is a bold link whose "b" is also italic. All of a
+    /// link's text takes its URL, so text that looks like a URL (`[www.a.com](u)`) still opens `u`.
+    ///
+    /// - Parameter markdown: markdown from `protectLiterals`.
+    /// - Returns: the parsed text.
+    private static func parseInlineMarkdown(_ markdown: String) throws -> AttributedString {
+        let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        let (source, links) = extractLinks(markdown)
+        var attributed = try AttributedString(markdown: source, options: options)
+
+        // Links splice back in order, so every placeholder has to have survived the parse.
+        guard attributed.characters.filter({ $0 == linkPlaceholder }).count == links.count else {
+            return try AttributedString(markdown: markdown, options: options)
+        }
+
+        for link in links {
+            let chars = attributed.characters
+            guard let index = chars.firstIndex(of: linkPlaceholder) else { continue }
+            let after = chars.index(after: index)
+            let start = index > chars.startIndex && chars[chars.index(before: index)] == standInOpen
+                ? chars.index(before: index) : index
+            let end = after < chars.endIndex && chars[after] == standInClose ? chars.index(after: after) : after
+            let outerIntent = attributed[index..<after].runs.first?.inlinePresentationIntent ?? []
+
+            var label = try parseLinkText(link.label)
+            let runs = label.runs.map { ($0.range, $0.inlinePresentationIntent ?? []) }
+            for (runRange, intent) in runs {
+                let merged = intent.union(outerIntent)
+                label[runRange].inlinePresentationIntent = merged.isEmpty ? nil : merged
+                label[runRange].link = link.url
+            }
+            attributed.replaceSubrange(start..<end, with: label)
+        }
+
+        return attributed
+    }
+
+    /// Parses a link's text on its own, between the punctuation its `[` and `]` are to emphasis beside
+    /// them: `[*a.**](u)` stays literal, as it does in the whole label.
+    ///
+    /// - Parameter text: the link's text, from `extractLinks`.
+    /// - Returns: the parsed text.
+    private static func parseLinkText(_ text: String) throws -> AttributedString {
+        let parsed = try parseInlineMarkdown(String(standInOpen) + text + String(standInClose))
+        let chars = parsed.characters
+        guard chars.count >= 2, chars.first == standInOpen, chars.last == standInClose else { return parsed }
+        return AttributedString(parsed[chars.index(after: chars.startIndex)..<chars.index(before: chars.endIndex)])
+    }
+
+    /// Replaces each inline link `[text](destination)` with `linkPlaceholder`, wrapped in
+    /// `standInOpen` and `standInClose`.
+    ///
+    /// The text's brackets must balance; an escaped `\[`, an image `![`, or a `]` followed by anything but `(`
+    /// isn't a link, so `[x]{color:name}` spans are left in place.
+    ///
+    /// - Parameter markdown: markdown from `protectLiterals`.
+    /// - Returns: the markdown with placeholders, and each link's text and URL in order.
+    private static func extractLinks(_ markdown: String) -> (String, [InlineLink]) {
+        let chars = Array(markdown)
+        let closes = closingBrackets(in: chars)
+        var result = ""
+        var links: [InlineLink] = []
+        var i = 0
+        var followsEscape = false
+
+        while i < chars.count {
+            if chars[i] == "\\", i + 1 < chars.count {
+                result.append(chars[i])
+                result.append(chars[i + 1])
+                i += 2
+                followsEscape = true
+                continue
+            }
+
+            // `\![x](u)` is a link after a literal "!", not an image.
+            if chars[i] == "[",
+               i == 0 || chars[i - 1] != "!" || followsEscape,
+               let found = link(at: i, in: chars, closes: closes) {
+                let (close, closeParen, url) = found
+                let label = String(chars[(i + 1)..<close])
+                // A link can't hold a link: the inner one is the link, and these brackets are text.
+                if containsLink(chars, in: (i + 1)..<close, closes: closes), let bracket = escapedLiterals["["] {
+                    result.append(standInOpen)
+                    result.append(bracket)
+                    result.append(standInClose)
+                    i += 1
+                    followsEscape = false
+                    continue
+                }
+                links.append(InlineLink(label: label, url: url))
+                result.append(standInOpen)
+                result.append(linkPlaceholder)
+                result.append(standInClose)
+                i = closeParen + 1
+                followsEscape = false
+                continue
+            }
+
+            result.append(chars[i])
+            i += 1
+            followsEscape = false
+        }
+
+        return (result, links)
+    }
+
+    /// Returns where each `[` and `(` closes, by index, skipping escaped characters.
+    ///
+    /// - Parameter chars: the markdown's characters.
+    /// - Returns: the index of each balanced opening bracket's closing one; an unbalanced one has none.
+    private static func closingBrackets(in chars: [Character]) -> [Int: Int] {
+        var closes: [Int: Int] = [:]
+        var squares: [Int] = []
+        var parens: [Int] = []
+        var i = 0
+        while i < chars.count {
+            switch chars[i] {
+            case "\\":
+                i += 1
+            case "[":
+                squares.append(i)
+            case "]":
+                if let open = squares.popLast() { closes[open] = i }
+            case "(":
+                parens.append(i)
+            case ")":
+                if let open = parens.popLast() { closes[open] = i }
+            default:
+                break
+            }
+            i += 1
+        }
+        return closes
+    }
+
+    /// Returns the inline link whose `[` is at `start`: its text's closing `]`, its destination's
+    /// closing `)`, and its URL.
+    ///
+    /// - Parameters:
+    ///   - start: the index of a `[`.
+    ///   - chars: the markdown's characters.
+    ///   - closes: from `closingBrackets(in:)`.
+    /// - Returns: the link, or `nil` when the `[` doesn't open one.
+    private static func link(
+        at start: Int,
+        in chars: [Character],
+        closes: [Int: Int]
+    ) -> (close: Int, closeParen: Int, url: URL)? {
+        guard
+            let close = closes[start],
+            close + 1 < chars.count, chars[close + 1] == "(",
+            let closeParen = closes[close + 1],
+            let url = linkURL(destination: String(chars[(close + 2)..<closeParen]))
+        else { return nil }
+        return (close, closeParen, url)
+    }
+
+    /// Returns whether link text holds a link of its own, read as `extractLinks` reads a label.
+    ///
+    /// Any link counts, not only one `extractLinks` would keep, since a link inside an inner link is
+    /// still in the text. So it never recurses, and deeper nesting doesn't multiply the work.
+    ///
+    /// - Parameters:
+    ///   - chars: the markdown's characters.
+    ///   - range: the link text's range in `chars`.
+    ///   - closes: from `closingBrackets(in:)`.
+    /// - Returns: whether the text holds a link.
+    private static func containsLink(
+        _ chars: [Character],
+        in range: Range<Int>,
+        closes: [Int: Int]
+    ) -> Bool {
+        var i = range.lowerBound
+        var followsEscape = false
+        while i < range.upperBound {
+            if chars[i] == "\\" {
+                i += 2
+                followsEscape = true
+                continue
+            }
+            if chars[i] == "[",
+               i == range.lowerBound || chars[i - 1] != "!" || followsEscape,
+               let found = link(at: i, in: chars, closes: closes),
+               found.closeParen < range.upperBound {
+                return true
+            }
+            i += 1
+            followsEscape = false
+        }
+        return false
+    }
+
+    /// Returns the URL the markdown parser gives a link destination, or `nil` if it isn't a valid one.
+    ///
+    /// - Parameter destination: the text between a link's parentheses, which may include a title.
+    /// - Returns: the link's URL.
+    private static func linkURL(destination: String) -> URL? {
+        var original = ""
+        for char in destination where char != standInOpen && char != standInClose {
+            if let literal = literals[char] {
+                original.append("\\")
+                original.append(literal)
+            } else {
+                original.append(char)
+            }
+        }
+
+        guard
+            let parsed = try? AttributedString(
+                markdown: "[x](\(original))",
+                options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+            ),
+            String(parsed.characters) == "x"
+        else {
+            return nil
+        }
+        return parsed.runs.first?.link
     }
 }
 
