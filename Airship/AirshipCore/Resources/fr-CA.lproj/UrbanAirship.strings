@@ -74,3 +74,4 @@
 "ua_unmute" = "Activer le son";
 "ua_required_field" = "* Obligatoire";
 "ua_invalid_form_message" = "Veuillez corriger les champs non valides pour continuer";
+"ua_refresh" = "Actualiser";

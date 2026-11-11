@@ -74,3 +74,4 @@
 "ua_unmute" = "음소거 해제";
 "ua_required_field" = "* 필수";
 "ua_invalid_form_message" = "계속하려면 잘못된 필드를 수정하세요";
+"ua_refresh" = "새로고침";

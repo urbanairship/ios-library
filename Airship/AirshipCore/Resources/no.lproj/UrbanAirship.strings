@@ -74,3 +74,4 @@
 "ua_unmute" = "Opphev demping";
 "ua_required_field" = "* Påkrevd";
 "ua_invalid_form_message" = "Vennligst rett opp de ugyldige feltene for å fortsette";
+"ua_refresh" = "Oppdater";

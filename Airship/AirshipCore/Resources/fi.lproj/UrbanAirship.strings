@@ -74,3 +74,4 @@
 "ua_unmute" = "Poista mykistys";
 "ua_required_field" = "* Pakollinen";
 "ua_invalid_form_message" = "Korjaa virheelliset kentät jatkaaksesi";
+"ua_refresh" = "Päivitä";

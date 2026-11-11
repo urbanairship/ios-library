@@ -74,3 +74,4 @@
 "ua_unmute" = "取消靜音";
 "ua_required_field" = "* 必填";
 "ua_invalid_form_message" = "請修正無效欄位以繼續";
+"ua_refresh" = "重新整理";
