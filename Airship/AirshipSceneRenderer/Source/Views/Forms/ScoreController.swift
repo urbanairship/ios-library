@@ -78,6 +78,9 @@ struct ScoreController: View {
                 .accessible(
                     self.info.accessible,
                     associatedLabel: associatedLabel,
+                    fallbackContentDescription: associatedLabel == nil
+                        ? thomasEnvironment.localizedString(key: "ua_rating", fallback: "Rating")
+                        : nil,
                     hideIfDescriptionIsMissing: false
                 )
                 .accessibilityAdjustableAction { direction in

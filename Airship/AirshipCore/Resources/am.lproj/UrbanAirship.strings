@@ -66,6 +66,7 @@
 "ua_loading" = "በመጫን ላይ";
 "ua_pager_progress" = "ገጽ %@ ከ %@";
 "ua_x_of_y" = "%@ ከ %@";
+"ua_rating" = "ደረጃ";
 "ua_play" = "አጫውት";
 "ua_pause" = "ለአጭር ጊዜ ቆም";
 "ua_stop" = "አቁም";

@@ -66,6 +66,7 @@
 "ua_loading" = "Memuat";
 "ua_pager_progress" = "Halaman %@ dari %@";
 "ua_x_of_y" = "%@ dari %@";
+"ua_rating" = "Penilaian";
 "ua_play" = "Putar";
 "ua_pause" = "Jeda";
 "ua_stop" = "Berhenti";

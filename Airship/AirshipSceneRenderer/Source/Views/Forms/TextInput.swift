@@ -156,6 +156,7 @@ struct TextInput: View {
                     Icons.icon(info: resolvedIconEndInfo, selectorEnvironment: selectorEnvironment, resizable: false)
                         .frame(maxWidth: size, maxHeight: size)
                         .padding(5)
+                        .accessibilityHidden(true)
                 }
             }
         }

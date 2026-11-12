@@ -30,5 +30,6 @@ struct IconView: View {
             .constraints(constraints, fixedSize: true)
             .background(Color.airshipTappableClear)
             .thomasCommon(self.info)
+            .accessible(self.info.accessible, associatedLabel: nil, hideIfDescriptionIsMissing: false)
     }
 }

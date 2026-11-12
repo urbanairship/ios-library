@@ -66,6 +66,7 @@
 "ua_loading" = "Yükleniyor";
 "ua_pager_progress" = "%@ / %@ Sayfa";
 "ua_x_of_y" = "%@ / %@";
+"ua_rating" = "Puan";
 "ua_play" = "Oynat";
 "ua_pause" = "Duraklat";
 "ua_stop" = "Durdur";

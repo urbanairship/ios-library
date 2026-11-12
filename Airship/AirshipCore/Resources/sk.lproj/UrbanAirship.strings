@@ -66,6 +66,7 @@
 "ua_loading" = "Načítavanie";
 "ua_pager_progress" = "Strana %@ z %@";
 "ua_x_of_y" = "%@ z %@";
+"ua_rating" = "Hodnotenie";
 "ua_play" = "Hrať";
 "ua_pause" = "Pauza";
 "ua_stop" = "Zastaviť";

@@ -66,6 +66,7 @@
 "ua_loading" = "Učitavanje";
 "ua_pager_progress" = "Stranica %@ od %@";
 "ua_x_of_y" = "%@ od %@";
+"ua_rating" = "Ocjena";
 "ua_play" = "Reproduciraj";
 "ua_pause" = "Pauziraj";
 "ua_stop" = "Zaustavi";

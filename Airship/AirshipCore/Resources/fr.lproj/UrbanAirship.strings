@@ -66,6 +66,7 @@
 "ua_loading" = "Chargement";
 "ua_pager_progress" = "Page %@ sur %@";
 "ua_x_of_y" = "%@ sur %@";
+"ua_rating" = "Évaluation";
 "ua_play" = "Jouer";
 "ua_pause" = "Pause";
 "ua_stop" = "Arrêter";

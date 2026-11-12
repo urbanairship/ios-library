@@ -66,6 +66,7 @@
 "ua_loading" = "Ielādē";
 "ua_pager_progress" = "Lapa %@ no %@";
 "ua_x_of_y" = "%@ no %@";
+"ua_rating" = "Vērtējums";
 "ua_play" = "Atskaņot";
 "ua_pause" = "Pauze";
 "ua_stop" = "Apturēt";

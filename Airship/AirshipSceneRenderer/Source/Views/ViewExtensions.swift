@@ -349,7 +349,7 @@ private struct AccessibleModifier<Content: View>: View {
 
     @ViewBuilder
     var body: some View {
-        let contentDescription = accessible.map {
+        let contentDescription = accessible.flatMap {
             thomasEnvironment.resolveContentDescription(for: $0)
         } ?? fallbackContentDescription
 

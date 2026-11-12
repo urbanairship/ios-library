@@ -66,6 +66,7 @@
 "ua_loading" = "Inapakia";
 "ua_pager_progress" = "Ukurasa %@ ya %@";
 "ua_x_of_y" = "%@ kati ya %@";
+"ua_rating" = "Ukadiriaji";
 "ua_play" = "Cheza";
 "ua_pause" = "Sitisha";
 "ua_stop" = "Simamisha";

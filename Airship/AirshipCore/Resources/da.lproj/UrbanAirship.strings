@@ -66,6 +66,7 @@
 "ua_loading" = "Indlæser";
 "ua_pager_progress" = "Side %@ af %@";
 "ua_x_of_y" = "%@ af %@";
+"ua_rating" = "Bedømmelse";
 "ua_play" = "Afspil";
 "ua_pause" = "Pause";
 "ua_stop" = "Stop";

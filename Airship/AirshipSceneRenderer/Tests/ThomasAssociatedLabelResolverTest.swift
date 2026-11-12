@@ -163,4 +163,20 @@ struct ThomasAssociatedLabelResolverTest {
 
         #expect(resolver.labelFor(identifier: "some-view", viewType: .textInput, thomasState: thomasState) == nil)
     }
+
+    // MARK: - Markdown
+
+    @Test
+    func labelTextDropsMarkdown() throws {
+        let resolver = ThomasAssociatedLabelResolver(
+            layout: try makeLayout(viewJSON: makeLabelJSON(
+                text: "I agree to the [terms](https://example.com) and **news**",
+                labelingViewID: "consent",
+                viewType: "checkbox"
+            )),
+            localizer: thomasEnvironment.extensions.localizer
+        )
+
+        #expect(resolver.labelFor(identifier: "consent", viewType: .checkbox, thomasState: thomasState) == "I agree to the terms and news")
+    }
 }

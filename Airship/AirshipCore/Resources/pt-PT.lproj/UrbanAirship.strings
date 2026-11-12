@@ -66,6 +66,7 @@
 "ua_loading" = "Carregando";
 "ua_pager_progress" = "Página %@ de %@";
 "ua_x_of_y" = "%@ de %@";
+"ua_rating" = "Classificação";
 "ua_play" = "Reproduzir";
 "ua_pause" = "Pausar";
 "ua_stop" = "Parar";

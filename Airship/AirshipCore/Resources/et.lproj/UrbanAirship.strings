@@ -66,6 +66,7 @@
 "ua_loading" = "Laadimine";
 "ua_pager_progress" = "Lehekülg %@ / %@";
 "ua_x_of_y" = "%@ / %@";
+"ua_rating" = "Hinnang";
 "ua_play" = "Mängima";
 "ua_pause" = "Paus";
 "ua_stop" = "Peatama";

@@ -66,6 +66,7 @@
 "ua_loading" = "Iyalayisha";
 "ua_pager_progress" = "Ikhasi %@ ye-%@";
 "ua_x_of_y" = "%@ kw %@";
+"ua_rating" = "Isilinganiso";
 "ua_play" = "Dlala";
 "ua_pause" = "Misa";
 "ua_stop" = "Yeka";
