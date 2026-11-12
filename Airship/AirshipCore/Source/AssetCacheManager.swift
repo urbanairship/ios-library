@@ -122,8 +122,17 @@ public actor AssetCacheManager: AssetCacheManagerProtocol {
                                 return
                             }
 
-                            if let cacheURL = cachedAssets.cachedURL(remoteURL: asset) {
+                            guard let cacheURL = cachedAssets.cachedURL(remoteURL: asset) else {
+                                try? FileManager.default.removeItem(at: tempURL)
+                                return
+                            }
+
+                            do {
                                 try self.assetFileManager.moveAsset(from: tempURL, to: cacheURL)
+                            } catch {
+                                // The move failed, so the temp file is still ours to clean up
+                                try? FileManager.default.removeItem(at: tempURL)
+                                throw error
                             }
                         }
                     }

@@ -396,6 +396,34 @@ struct AssetCacheManagerTest {
         #expect(cachedAssets.isCached(remoteURL: assetRemoteURL))
     }
 
+    /// Tests that the downloaded temp file is removed when moving it into the cache fails
+    @Test
+    func testTempFileRemovedWhenMoveFails() async throws {
+        let tempURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("asset-\(UUID().uuidString)")
+        try Data("asset".utf8).write(to: tempURL)
+        defer { try? FileManager.default.removeItem(at: tempURL) }
+
+        let downloader = TestAssetDownloader()
+        downloader.downloadResult = .success(tempURL)
+
+        let assetRemoteURL = URL(string: "http://airship.com/asset1")!
+        let cacheDirectory = URL(fileURLWithPath: "test-user-cache/com.urbanairship.iamassetcache/test-schedule-id", isDirectory: true)
+
+        let fileManager = TestAssetFileManager()
+        fileManager.onEnsureDirectory = { _ in cacheDirectory }
+        fileManager.onAssetItemExists = { $0 == cacheDirectory }
+        fileManager.onMoveAsset = { _, _ in throw URLError(.cannotCreateFile) }
+
+        let manager = AssetCacheManager(assetDownloader: downloader, assetFileManager: fileManager)
+
+        await #expect(throws: URLError.self, "The move failure should fail the caching operation") {
+            try await manager.cacheAssets(identifier: "test-schedule-id", assets: [assetRemoteURL.absoluteString])
+        }
+
+        #expect(!FileManager.default.fileExists(atPath: tempURL.path), "The temp file should be removed when the move fails")
+    }
+
     /// Tests that a path-traversal identifier cannot be used to delete files outside the cache root
     @Test
     func testClearCacheRejectsPathTraversal() async throws {
