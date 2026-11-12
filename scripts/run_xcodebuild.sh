@@ -47,14 +47,29 @@ EXTRA_TEST_FLAGS+=(-parallel-testing-enabled NO)
 
 if [[ "$TARGET_TYPE" == "test" ]]; then
     echo -ne "\n\n *********** RUNNING TESTS $SCHEME *********** \n\n"
-    
-    xcrun xcodebuild \
-    -destination "${TEST_DESTINATION}" \
-    -workspace "${ROOT_PATH}/Airship.xcworkspace" \
-    -scheme $SCHEME \
-    -derivedDataPath $DERIVED_DATA_PATH \
-    "${EXTRA_TEST_FLAGS[@]}" \
-    test | xcbeautify --renderer $XCBEAUTIFY_RENDERER
+
+    RAW_LOG=$(mktemp)
+    run_tests() {
+        : > "$RAW_LOG"
+        xcrun xcodebuild \
+        -destination "${TEST_DESTINATION}" \
+        -workspace "${ROOT_PATH}/Airship.xcworkspace" \
+        -scheme $SCHEME \
+        -derivedDataPath $DERIVED_DATA_PATH \
+        "${EXTRA_TEST_FLAGS[@]}" \
+        test 2> >(tee -a "$RAW_LOG" >&2) | tee -a "$RAW_LOG" | xcbeautify --renderer $XCBEAUTIFY_RENDERER
+    }
+
+    # The simulator sometimes drops the test runner before any test launches. That says nothing
+    # about the code, so it gets one retry; a test failure never does.
+    if ! run_tests; then
+        if grep -qE "never finished bootstrapping|Lost pending connection to the test runner" "$RAW_LOG"; then
+            echo -ne "\n\n *********** TEST RUNNER FAILED TO START, RETRYING $SCHEME *********** \n\n"
+            run_tests
+        else
+            exit 1
+        fi
+    fi
 else
     echo -ne "\n\n *********** BUILDING $SCHEME *********** \n\n"
     

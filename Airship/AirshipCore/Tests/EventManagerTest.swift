@@ -8,7 +8,7 @@ import Foundation
 @_spi(AirshipInternal) import AirshipCore
 
 @MainActor
-@Suite
+@Suite(.timeLimit(.minutes(1)))
 struct EventManagerTest {
 
     private let eventAPIClient = TestEventAPIClient()
@@ -37,13 +37,10 @@ struct EventManagerTest {
 
     /// Runs the upload work block once the manager has registered it.
     ///
-    /// The manager registers its block from an unawaited `Task` in `init`, so a test that reads
-    /// `workBlock` immediately can see nil and run nothing.
+    /// The manager registers its block from an unawaited `Task` in `init`, so this waits for it
+    /// rather than for a fixed time, which a loaded CI machine can outlast.
     private func runWorkBlock() async throws -> AirshipWorkResult? {
-        for _ in 0..<500 where eventScheduler.workBlock == nil {
-            try await Task.sleep(nanoseconds: 10_000_000)
-        }
-        return try await eventScheduler.workBlock?()
+        return try await eventScheduler.registeredWorkBlock()()
     }
 
     @Test
@@ -294,7 +291,20 @@ final class TestEventAPIClient: EventAPIClientProtocol, @unchecked Sendable {
 }
 
 final class TestEventUploadScheduler: EventUploadSchedulerProtocol, @unchecked Sendable {
-    var workBlock: (() async throws -> AirshipWorkResult)?
+    typealias WorkBlock = () async throws -> AirshipWorkResult
+
+    /// Carries the block across the continuation; the lock guards every access to it.
+    private struct Registered: @unchecked Sendable {
+        let block: WorkBlock
+    }
+
+    private let lock = NSLock()
+    private var _workBlock: WorkBlock?
+    private var waiters: [CheckedContinuation<Registered, Never>] = []
+
+    var workBlock: WorkBlock? {
+        lock.withLock { _workBlock }
+    }
 
     var lastScheduleUploadPriority: AirshipEventPriority?
     var lastMinBatchInterval: TimeInterval?
@@ -310,7 +320,24 @@ final class TestEventUploadScheduler: EventUploadSchedulerProtocol, @unchecked S
     func setWorkBlock(
         _ workBlock: @escaping () async throws -> AirshipCore.AirshipWorkResult
     ) async {
+        let waiting = lock.withLock {
+            _workBlock = workBlock
+            defer { waiters.removeAll() }
+            return waiters
+        }
+        waiting.forEach { $0.resume(returning: Registered(block: workBlock)) }
+    }
 
-        self.workBlock = workBlock
+    /// Returns the work block once it's set, however long that takes.
+    func registeredWorkBlock() async -> WorkBlock {
+        let registered = await withCheckedContinuation { continuation in
+            let ready: Registered? = lock.withLock {
+                if let block = _workBlock { return Registered(block: block) }
+                waiters.append(continuation)
+                return nil
+            }
+            if let ready { continuation.resume(returning: ready) }
+        }
+        return registered.block
     }
 }
