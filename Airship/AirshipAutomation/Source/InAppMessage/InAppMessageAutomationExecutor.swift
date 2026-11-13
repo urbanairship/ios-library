@@ -306,7 +306,9 @@ final class InAppMessageAutomationExecutor: AutomationExecutorDelegate {
             return .finish
         }
 
-        guard !message.isEmbedded else {
+        // Push-action embedded content has no end date and can't be cancelled
+        // remotely, so retrying it would keep it around forever.
+        guard !message.isEmbedded || message.source == .pushAction else {
             return .retry
         }
 

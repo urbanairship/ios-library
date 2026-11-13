@@ -248,6 +248,46 @@ struct InAppMessageAutomationExecutorTest {
     }
 
     @Test
+    func testInterruptedEmbeddedPushAction() async throws {
+        let airshipLayout = """
+        {
+          "version":1,
+          "presentation":{
+             "type":"embedded",
+             "embedded_id":"home_banner",
+             "default_placement":{
+                "size":{
+                   "width":"50%",
+                   "height":"50%"
+                }
+             }
+          },
+          "view":{
+             "type":"container",
+             "items":[]
+          }
+        }
+        """
+
+        let embeddedMessage = InAppMessage(
+            name: "embedded",
+            displayContent: .airshipLayout(
+                try JSONDecoder().decode(AirshipLayout.self, from: airshipLayout.data(using: .utf8)!)
+            ),
+            source: .pushAction
+        )
+        let schedule = AutomationSchedule(
+            identifier: preparedInfo.scheduleID,
+            triggers: [],
+            data: .inAppMessage(embeddedMessage)
+        )
+
+        let behavior = await self.executor.interrupted(schedule: schedule, preparedScheduleInfo: preparedInfo)
+        #expect(behavior == .finish)
+        #expect(await self.assetManager.cleared == [self.preparedInfo.scheduleID])
+    }
+
+    @Test
     func testExecute() async throws  {
         self.displayAdapter.onDisplay = { [preparedData] displayTarget, incomingAnalytics in
             #expect(preparedData!.analytics === incomingAnalytics)
