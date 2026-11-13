@@ -9,29 +9,47 @@ public import UIKit
 public import AppKit
 #endif
 
-/// Cross-platform carrier for the window scene a layout is presented in, captured by the
-/// host at display time. Holds the scene weakly and exposes only the values the renderer
-/// needs, so views never touch `UIWindowScene` APIs directly and no platform-specific type
+/// Cross-platform carrier for the window scene values a layout needs, read by the host at
+/// display time. Views never touch `UIWindowScene` APIs directly, and no platform-specific type
 /// leaks into call-site signatures on platforms that have no window scene.
 /// - Note: For internal use only. :nodoc:
 @_spi(AirshipInternal)
-public struct ThomasWindowScene {
-#if !os(tvOS) && !os(watchOS) && !os(macOS)
-    private weak var scene: UIWindowScene?
-
-    public init(_ scene: UIWindowScene?) {
-        self.scene = scene
+public struct ThomasWindowScene: Sendable {
+    /// Status bar content style of the scene when the layout was displayed.
+    enum StatusBarStyle: Sendable {
+        case `default`
+        case lightContent
+        case darkContent
     }
 
-    /// Status bar content style of the captured scene, if any.
-    @MainActor
-    var statusBarStyle: UIStatusBarStyle? {
-        scene?.statusBarManager?.statusBarStyle
-    }
-#endif
+    /// Read once at init: querying `UIStatusBarManager` from a view body can re-enter the
+    /// SwiftUI graph mid-update and abort. https://github.com/urbanairship/ios-library/issues/470
+    let statusBarStyle: StatusBarStyle?
 
-    public init() {}
+    public init() {
+        self.statusBarStyle = nil
+    }
 }
+
+#if !os(tvOS) && !os(watchOS) && !os(macOS)
+extension ThomasWindowScene {
+    @MainActor
+    public init(_ scene: UIWindowScene?) {
+        self.statusBarStyle = scene?.statusBarManager.map { StatusBarStyle($0.statusBarStyle) }
+    }
+}
+
+extension ThomasWindowScene.StatusBarStyle {
+    init(_ style: UIStatusBarStyle) {
+        switch style {
+        case .default: self = .default
+        case .darkContent: self = .darkContent
+        case .lightContent: self = .lightContent
+        @unknown default: self = .default
+        }
+    }
+}
+#endif
 
 #if !os(watchOS) && !os(macOS)
 extension UIWindowScene {

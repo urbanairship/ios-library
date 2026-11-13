@@ -257,8 +257,6 @@ struct ModalView: View {
             return Color.black
         case .default:
             return self.colorScheme == .dark ? Color.black : Color.white
-        @unknown default:
-            return Color.black
         }
         #endif
     }
