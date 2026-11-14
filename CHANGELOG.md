@@ -4,6 +4,17 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 21.2.0 - November 13, 2026
+Minor release that adds aspect ratio sizing and item spacing to Scenes, along with fixes for Scenes and Message Center and tvOS and VoiceOver improvements.
+
+### Changes
+- Added aspect ratio sizing and item spacing support to Scenes.
+- Fixed a crash in Scene modals on iOS 27.3.
+- Fixed Scene surveys reporting as not submitted when the submit button also dismisses.
+- Fixed several Scene layout, rendering, and reporting issues.
+- Fixed Message Center showing the previous user's messages after a user change.
+- Improved tvOS and VoiceOver support.
+
 ## Version 21.1.0 - October 22, 2026
 Minor release that adds Reduce Motion support to Scene transitions, along with fixes for Scenes, In-App Automation, and contacts.
 
