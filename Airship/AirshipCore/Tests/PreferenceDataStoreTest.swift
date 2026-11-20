@@ -196,13 +196,54 @@ class PreferenceDataStoreTest: XCTestCase {
             dispatcher: TestDispatcher(),
             deviceID: testDeviceID
         )
-        var value = await dataStore.isAppRestore
+        let value = await dataStore.isAppRestore
         XCTAssertFalse(value)
 
-
+        // A later read on the same instance must return the same cached answer even
+        // if the device ID changes afterward (MOBILE-5852).
         await self.testDeviceID.setValue(value: UUID().uuidString)
-        value = await dataStore.isAppRestore
-        XCTAssertTrue(value)
+        let secondReadSameInstance = await dataStore.isAppRestore
+        XCTAssertEqual(secondReadSameInstance, value)
+
+        // A genuinely new launch - a fresh PreferenceDataStore sharing the same
+        // underlying storage - with a changed device ID must still detect the restore.
+        let nextLaunchDataStore = PreferenceDataStore(
+            appKey: self.appKey,
+            dispatcher: TestDispatcher(),
+            deviceID: testDeviceID
+        )
+        let restored = await nextLaunchDataStore.isAppRestore
+        XCTAssertTrue(restored)
+    }
+
+    /// Every consumer reading `isAppRestore` during the same launch must see the restore,
+    /// not just whichever one reads first (MOBILE-5852).
+    func testAppRestoreSeenByAllConsumersInLaunch() async throws {
+        let firstLaunch = PreferenceDataStore(
+            appKey: self.appKey,
+            dispatcher: TestDispatcher(),
+            deviceID: testDeviceID
+        )
+        let initial = await firstLaunch.isAppRestore
+        XCTAssertFalse(initial)
+
+        // Simulate a restore: persisted preferences carry over, but the device ID is new.
+        await self.testDeviceID.setValue(value: UUID().uuidString)
+        let restoredLaunch = PreferenceDataStore(
+            appKey: self.appKey,
+            dispatcher: TestDispatcher(),
+            deviceID: testDeviceID
+        )
+
+        // Concurrent readers, as ChannelRegistrar and DefaultAirshipPush are.
+        async let reader1 = restoredLaunch.isAppRestore
+        async let reader2 = restoredLaunch.isAppRestore
+        let results = await [reader1, reader2]
+        XCTAssertEqual(results, [true, true])
+
+        // A reader arriving later in the same launch still sees it.
+        let late = await restoredLaunch.isAppRestore
+        XCTAssertTrue(late)
     }
 
     func testKeyIsStoredAndRetrieved() {

@@ -15,17 +15,33 @@ public final class PreferenceDataStore: @unchecked Sendable {
     private let dispatcher: any UADispatcher
     private var deviceID: any AirshipDeviceIDProtocol
 
+    private var cachedIsAppRestore: Bool?
+
+    /// Whether this launch is a restore/migration (the persisted device ID no longer matches).
+    ///
+    /// Cached for the lifetime of this instance so every consumer that reads it during a launch
+    /// observes the same answer - the underlying persisted device ID is only ever updated once,
+    /// on the first read, rather than on every read.
     var isAppRestore: Bool {
         get async {
+            if let cached = lock.sync(closure: { self.cachedIsAppRestore }) {
+                return cached
+            }
+
             let deviceIDValue = await deviceID.value
 
-            var restored: Bool = false
-            lock.sync {
+            let restored: Bool = lock.sync {
+                if let cachedIsAppRestore {
+                    return cachedIsAppRestore
+                }
+
                 let previousDeviceID = self.string(forKey: PreferenceDataStore.deviceIDKey)
-                if (deviceIDValue != previousDeviceID) {
-                    restored = previousDeviceID != nil
+                let restored = deviceIDValue != previousDeviceID && previousDeviceID != nil
+                if deviceIDValue != previousDeviceID {
                     self.setObject(deviceIDValue, forKey: PreferenceDataStore.deviceIDKey)
                 }
+                self.cachedIsAppRestore = restored
+                return restored
             }
 
             if (restored) {
