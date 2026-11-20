@@ -4,6 +4,12 @@
 [Migration Guides](https://github.com/urbanairship/ios-library/tree/main/Documentation/Migration)
 [All Releases](https://github.com/urbanairship/ios-library/releases)
 
+## Version 20.12.2 - November 20, 2026
+Patch release that fixes a race in app restore detection.
+
+### Changes
+- Fixed `isAppRestore` consuming the restore state on first read, which could cause only one of the channel registrar and push token reset to observe a genuine restore on launch.
+
 ## Version 20.12.1 - September 2, 2026
 Patch release that fixes in-app message banner layout during device rotation.
 
